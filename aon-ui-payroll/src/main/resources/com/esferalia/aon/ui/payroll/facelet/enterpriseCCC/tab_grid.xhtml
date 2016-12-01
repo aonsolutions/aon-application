@@ -29,6 +29,7 @@
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="EnterpriseCCC_type" required="true"
 					value="#{controller.to.type}" rendered="#{formEdit}">
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{controller.CCCTypes}" />
 					<a4j:support event="onchange" ajaxSingle="true"
 						reRender="EnterpriseCCC_SSNumberPanel, EnterpriseCCC_geozone" />
@@ -36,6 +37,7 @@
 				<f:facet name="footer">
 					<aon:selectOneMenu id="EnterpriseCCC_type-New" required="true"
 						value="#{controller.to.type}" rendered="#{formNew}">
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{controller.CCCTypes}" />
 						<a4j:support event="onchange" ajaxSingle="true"
 							reRender="EnterpriseCCC_SSNumberPanel-New, EnterpriseCCC_geozone-New" />
@@ -51,16 +53,14 @@
 				<aon:panelGroup rendered="#{formList}">
 					<aon:outputText value="#{controller.quoteRegimeCode}" />
 					<aon:outputText value="#{to.ccc}" />
-					<aon:outputText 
+					<aon:outputText value="&#160;"
 						rendered="#{controller.validSSNumber}"
 						styleClass="aon-icon-predetermine"
-						style="padding-left: 15px;"
-						value="&#160;" />
-					<aon:outputText 
+						style="padding-left: 15px;" />
+					<aon:outputText value="&#160;"
 						rendered="#{not empty to.ccc and !controller.validSSNumber}"
 						styleClass="aon-icon-exception"
-						style="padding-left: 15px;"
-						value="&#160;" />
+						style="padding-left: 15px;" />
 				</aon:panelGroup>
 				<aon:panelGroup id="EnterpriseCCC_SSNumberPanel" rendered="#{formEdit}">
 					<aon:outputText value="#{controller.quoteRegimeCode}" />
@@ -72,16 +72,14 @@
 							reRender="EnterpriseCCC_SSNumberPanel, EnterpriseCCC_geozone" 
 							ajaxSingle="true" />
 					</aon:inputText>
-					<aon:outputText 
+					<aon:outputText value="&#160;"
 						rendered="#{controller.validSSNumber}"
 						styleClass="aon-icon-predetermine"
-						style="padding-left: 15px;"
-						value="&#160;" />
-					<aon:outputText 
+						style="padding-left: 15px;" />
+					<aon:outputText value="&#160;"
 						rendered="#{not empty to.ccc and !controller.validSSNumber}"
 						styleClass="aon-icon-exception"
-						style="padding-left: 15px;"
-						value="&#160;" />
+						style="padding-left: 15px;" />
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:panelGroup id="EnterpriseCCC_SSNumberPanel-New" rendered="#{formNew}">
@@ -94,16 +92,14 @@
 								reRender="EnterpriseCCC_SSNumberPanel-New, EnterpriseCCC_geozone-New" 
 								ajaxSingle="true" />
 						</aon:inputText>
-						<aon:outputText 
+						<aon:outputText value="&#160;"
 							rendered="#{controller.validSSNumber}"
 							styleClass="aon-icon-predetermine"
-							style="padding-left: 15px;"
-							value="&#160;" />
-						<aon:outputText 
+							style="padding-left: 15px;" />
+						<aon:outputText value="&#160;"
 							rendered="#{not empty controller.to.ccc and !controller.validSSNumber}"
 							styleClass="aon-icon-exception"
-							style="padding-left: 15px;"
-							value="&#160;" />
+							style="padding-left: 15px;" />
 					</aon:panelGroup>
 				</f:facet>
 			</aon:column>

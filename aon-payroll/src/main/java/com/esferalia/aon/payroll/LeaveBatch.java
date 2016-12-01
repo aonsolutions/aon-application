@@ -17,11 +17,13 @@ import org.hibernate.annotations.Formula;
 import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.esferalia.aon.entity.master.LeaveBatchDB;
 
 @Entity
 @Table(name="leave_batch")
+@Heritable
 public class LeaveBatch extends LeaveBatchDB implements IBlobObject {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

@@ -1198,7 +1198,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{certifica2BatchDetailSearch}</value>
+				<value>#{fanBatchDetailSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>

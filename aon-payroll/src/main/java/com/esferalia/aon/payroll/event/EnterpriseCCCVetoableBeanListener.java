@@ -22,7 +22,7 @@ public class EnterpriseCCCVetoableBeanListener extends
 	public void vetoableBeanInserted(ManagerBeanEvent evt)
 			throws ManagerBeanVetoListenerException {
 		try {
-			validate((EnterpriseCCC) evt.getTo());
+			validate((EnterpriseCCC) evt.getTo(), true);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(
 					"Ha ocurrido un error inesperado. Vuelva a intentarlo.");
@@ -32,20 +32,25 @@ public class EnterpriseCCCVetoableBeanListener extends
 	public void vetoableBeanUpdated(ManagerBeanEvent evt)
 			throws ManagerBeanVetoListenerException {
 		try {
-			validate((EnterpriseCCC) evt.getTo());
+			validate((EnterpriseCCC) evt.getTo(), false);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(
 					"Ha ocurrido un error inesperado. Vuelva a intentarlo.");
 		}
 	}
 
-	private void validate(EnterpriseCCC ccc)
+	private void validate(EnterpriseCCC ccc, boolean isNew)
 			throws ManagerBeanVetoListenerException, ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
 				bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_CCC),
 				ccc.getCcc());
+		if(!isNew){
+			criteria.addNotEqualExpression(
+					bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ID),
+					ccc.getId());
+		}
 		Projection projection = Projection.rowCount();
 		Object value = bean.getUniqueResult(projection, criteria);
 		if (value != null && NumberUtils.isNumber(value.toString())

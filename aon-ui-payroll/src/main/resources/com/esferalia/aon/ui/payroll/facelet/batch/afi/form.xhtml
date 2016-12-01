@@ -35,47 +35,49 @@
 						</aon:outputText>
 					</aon:div>	
 	
-					<aon:outputText value="#{bundle.finance_disk} AFI" />
-					<aon:div>
-						<aon:commandButton id="afi-create-button" value="#{bundle.payroll_create_disk}"
-							rendered="#{contractBatch.nevv or (!contractBatch.recorded and contractBatchDetail.model.rowCount > 0)}"
-							reRender="batchForm"
-							styleClass="aon-icon-commandButton aon-icon-accept"
-							actionListener="#{contractBatch.onCreateDisk}"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-
-						<aon:outputText value="Generado el "
-							rendered="#{contractBatch.recorded}"
-							styleClass="aon-bold" />
-						<aon:outputText value="#{contractBatch.to.outcomeFileDate}"
-							rendered="#{contractBatch.recorded}"
-							styleClass="aon-bold aon-margin-right" >
-							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-						
-						<aon:htmlCommandLink id="afi-download" target="_blank"
-							value="&#160;" title="#{bundle.aon_fileupload_download}"
-							rendered="#{contractBatch.recorded}"
-							actionListener="#{contractBatch.onDownloadFile}"
-							styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" >
-						</aon:htmlCommandLink>
-						<aon:commandButton id="afi-remove" 
-							value="&#160;" title="#{bundle.aon_remove}" 
-							rendered="#{contractBatch.recorded}"
-							actionListener="#{contractBatch.onRemoveFile}"
-							styleClass="aon-icon-commandButton aon-icon-delete aon-margin-left" />
-						<aon:if test="#{aonRole.sysAdmin}">
-							<aon:fileUpload id="attach_file" listWidth="100"
-								fileUploadListener="#{contractBatch.fanFileUploaded}" >
-								<f:facet name="label">
-									<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-								</f:facet>
-								<a4j:support event="onuploadcomplete" reRender="dataTable" />
-							</aon:fileUpload>
-						</aon:if>
-					</aon:div>
+					<aon:if test="#{controller.editableSelectedTo}" >
+						<aon:outputText value="#{bundle.finance_disk} AFI" />
+						<aon:div>
+							<aon:commandButton id="afi-create-button" value="#{bundle.payroll_create_disk}"
+								rendered="#{contractBatch.nevv or (!contractBatch.recorded and contractBatchDetail.model.rowCount > 0)}"
+								reRender="batchForm"
+								styleClass="aon-icon-commandButton aon-icon-accept"
+								actionListener="#{contractBatch.onCreateDisk}"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+	
+							<aon:outputText value="Generado el "
+								rendered="#{contractBatch.recorded}"
+								styleClass="aon-bold" />
+							<aon:outputText value="#{contractBatch.to.outcomeFileDate}"
+								rendered="#{contractBatch.recorded}"
+								styleClass="aon-bold aon-margin-right" >
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							
+							<aon:htmlCommandLink id="afi-download" target="_blank"
+								value="&#160;" title="#{bundle.aon_fileupload_download}"
+								rendered="#{contractBatch.recorded}"
+								actionListener="#{contractBatch.onDownloadFile}"
+								styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" >
+							</aon:htmlCommandLink>
+							<aon:commandButton id="afi-remove" 
+								value="&#160;" title="#{bundle.aon_remove}" 
+								rendered="#{contractBatch.recorded}"
+								actionListener="#{contractBatch.onRemoveFile}"
+								styleClass="aon-icon-commandButton aon-icon-delete aon-margin-left" />
+							<aon:if test="#{aonRole.sysAdmin}">
+								<aon:fileUpload id="attach_file" listWidth="100"
+									fileUploadListener="#{contractBatch.fanFileUploaded}" >
+									<f:facet name="label">
+										<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+									</f:facet>
+									<a4j:support event="onuploadcomplete" reRender="dataTable" />
+								</aon:fileUpload>
+							</aon:if>
+						</aon:div>
+					</aon:if>
 					
 				</aon:panelGrid>
 			</ui:define>

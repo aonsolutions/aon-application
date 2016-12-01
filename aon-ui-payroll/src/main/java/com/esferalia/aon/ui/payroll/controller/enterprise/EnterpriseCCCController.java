@@ -33,7 +33,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.util.PayrollUtils;
@@ -77,16 +76,27 @@ public class EnterpriseCCCController extends LinesController {
 			if(cccType==CCCType.LEARNING){
 				item.setDisabled(Boolean.TRUE);
 			}
+			if(isTypeSaved(cccType)){ 
+				item.setDisabled(Boolean.TRUE);
+			}
 			cccTypes.add(item);			
 		}
 		return cccTypes;
 	}
 	
+	private boolean isTypeSaved(CCCType type){
+		long count = this.getWrappedList().stream()
+			.map(to -> (EnterpriseCCC) to)
+			.filter(ccc -> (ccc.getType()==type))
+			.count();
+		return count > 0;
+	}
+	
 	public String getQuoteRegimeCode() throws ManagerBeanException{
 		if(this.getModel().isRowAvailable()){
-			return PayrollUtils.getInstance().getRegimeCode(((EnterpriseCCC) this.getModel().getRowData()));
+			return PayrollUtils.getInstance().getRegimeCode((EnterpriseCCC) this.getModel().getRowData());
 		} else if(this.isNevv()){
-			return ((EnterpriseActivity) this.getMasterController().getTo()).getType().getCode();
+			return PayrollUtils.getInstance().getRegimeCode((EnterpriseCCC) this.getTo());
 		}
 		return null; 
 	}

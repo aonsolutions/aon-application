@@ -19,6 +19,7 @@ import org.hibernate.annotations.Formula;
 import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
+import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
@@ -26,6 +27,7 @@ import com.esferalia.aon.entity.master.FanBatchDB;
 
 @Entity
 @Table(name="fan_batch")
+@Heritable
 public class FanBatch extends FanBatchDB implements IBlobObject {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

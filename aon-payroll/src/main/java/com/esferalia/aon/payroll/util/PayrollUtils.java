@@ -36,11 +36,16 @@ public class PayrollUtils {
 	}
 	
 	public String getRegimeCode(EnterpriseCCC ccc){
-		if(ccc.getType()==CCCType.AGRICULTURAL){
-			return SSRegimeType.AGRICULTURAL.getCode();
-		} else {
-			return ccc.getActivity().getType().getCode();
+		if(ccc!=null){
+			if(ccc.getType()==CCCType.AGRICULTURAL){
+				return SSRegimeType.AGRICULTURAL.getCode();
+			} else if(ccc.getType()==CCCType.HOME_EMPLOYEES){
+				return SSRegimeType.DOMESTIC_EMPLOYEES.getCode();
+			} else {
+				return ccc.getActivity().getType().getCode();
+			}
 		}
+		return null;
 	}
 	
 	public boolean isValidSSNumber(EnterpriseCCC ccc){
