@@ -25,6 +25,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Column;
@@ -136,6 +137,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		invoice.setRegistryDocumentType(DocumentType.values()[loaded.getTipoDocumento()]);
 		invoice.setRegistryDocumentCountry(Country.valueOf( loaded.getPaisDocumento()));
 		invoice.setRegistryName(loaded.getRazonSocial());
+		invoice.setRegistryAddress(obtainRegistryAddress(registry.getId()));
 		invoice.setIssueDate(loaded.getFechaFactura());
 		invoice.setTaxDate(loaded.getFechaIva());
 		invoice.setInvestment( loaded.isInvestment() );
@@ -213,7 +215,19 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 		return r.getRegistry();
 	}
-	
+
+	private RegistryAddress obtainRegistryAddress(Integer registryId) throws AonException {
+		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);
+		criteria.addOrder(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
+		List<ITransferObject> list = rAddressBean.getList(criteria); 
+		if ( list.size() > 0 ) {
+			return (RegistryAddress) list.get(0);
+		}
+		return null;
+	}
+
 	@Override
 	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
 		LoadedInvoice loaded = (LoadedInvoice) loadedPojo;
