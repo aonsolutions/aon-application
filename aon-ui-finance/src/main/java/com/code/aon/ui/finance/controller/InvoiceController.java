@@ -1063,35 +1063,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 
 		generateFinances(true);
-	}
-
-	private void generateFinances(boolean forceRemoveManual) {
-		try {
-			InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
-			List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
-			for (ITransferObject ito : financeList) {
-				Finance finance = (Finance)ito;
-				if (finance.isPending()) {
-					if (!finance.isAdvance()) {
-						if (!finance.isManual() || forceRemoveManual || !getInvoice().getRegistry().equals(finance.getRegistry())) {
-							invoiceFinanceController.getManagerBean().remove(finance);
-						}
-					} else if (!getInvoice().getRegistry().equals(finance.getRegistry())) {
-						invoiceFinanceController.excludeAdvance(finance);
-					}
-				}
-			}
-
-			double pendingAmount = getPendingAmount();
-			if (pendingAmount != 0) {
-				getFinanceGenerator().generateFinances(getInvoice(), pendingAmount);
-			}
-			invoiceFinanceController.onSearch(null);
-		} catch (ManagerBeanException e) {
-			String msg = AonUtil.getMessage(GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
+		FormUtil.getController(invoiceFinanceControllerName).onSearch(null);
 	}
 
 	public void autoGenerateFinances() {
@@ -1100,36 +1072,55 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				if (getInvoice().getRegistry().getPayMethod() != null) {
 					generateFinances(false);
 				} else {
-					InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
-					List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
-					for (ITransferObject ito : financeList) {
-						Finance finance = (Finance)ito;
-						if (finance.isPending()) {
-							Invoice invoice = getInvoice();
-							if (!finance.isAdvance()) {
-								if (!invoice.getRegistry().equals(finance.getRegistry())) {
-									invoiceFinanceController.getManagerBean().remove(finance);
-								} else {
-									finance.setRegistry(invoice.getRegistry());
-									finance.setRegistryName(invoice.getRegistryName());
-									finance.setRegistryDocument(invoice.getRegistryDocument());
-									finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
-									finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
-									finance.setConcept(invoice.getDocumentNumber());
-									finance.setSecurityLevel(invoice.getSecurityLevel());
-									invoiceFinanceController.getManagerBean().update(finance);
-								}
-							} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
-								invoiceFinanceController.excludeAdvance(finance);
-							}
-						}
-					}
-					invoiceFinanceController.onSearch(null);
+					synchronizeFinances(false, false);
 				}
+				FormUtil.getController(invoiceFinanceControllerName).onSearch(null);
 			} catch (ManagerBeanException e) {
 				String msg = AonUtil.getMessage(GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg,e);
+			}
+		}
+	}
+
+	private void generateFinances(boolean forceRemove) {
+		try {
+			synchronizeFinances(forceRemove, true);
+
+			double pendingAmount = getPendingAmount();
+			if (pendingAmount != 0) {
+				getFinanceGenerator().generateFinances(getInvoice(), pendingAmount);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = AonUtil.getMessage(GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+
+	private void synchronizeFinances(boolean forceRemove, boolean removeAutoFinance) throws ManagerBeanException {
+		InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
+		List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
+		for (ITransferObject ito : financeList) {
+			Finance finance = (Finance)ito;
+			if (finance.isPending()) {
+				Invoice invoice = getInvoice();
+				if (!finance.isAdvance()) {
+					if (forceRemove || (removeAutoFinance && !finance.isManual()) || !getInvoice().getRegistry().equals(finance.getRegistry())) {
+						invoiceFinanceController.getManagerBean().remove(finance);
+					} else {
+						finance.setRegistry(invoice.getRegistry());
+						finance.setRegistryName(invoice.getRegistryName());
+						finance.setRegistryDocument(invoice.getRegistryDocument());
+						finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+						finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
+						finance.setConcept(invoice.getDocumentNumber());
+						finance.setSecurityLevel(invoice.getSecurityLevel());
+						invoiceFinanceController.getManagerBean().update(finance);
+					}
+				} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
+					invoiceFinanceController.excludeAdvance(finance);
+				}
 			}
 		}
 	}
