@@ -47,4 +47,12 @@ public class JsBoughtProduct extends JavaScriptObject {
 	public final native AonJsArray<JsBoughtProduct> getArray() /*-{
 		return this.array;
 	}-*/;
+	
+	public final native String getReferenceCode() /*-{
+		return this.reference_code;
+	}-*/;
+	
+	public final native String getName() /*-{
+		return this.name;
+	}-*/;
 }

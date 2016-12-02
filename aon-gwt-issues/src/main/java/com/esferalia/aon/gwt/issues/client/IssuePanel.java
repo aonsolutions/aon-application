@@ -217,8 +217,8 @@ public class IssuePanel extends Composite{
 			openFootPanel();
 			tabLayout.selectTab(south);
 		}
-		
 	}
+	
 	private void initSouthInfo(JsIssue issue){	
 		String nothing = "NO HAY DATOS RELACIONADOS A ESTA TAREA";
 
@@ -240,11 +240,12 @@ public class IssuePanel extends Composite{
 				if(value == 0){
 					openFootPanel();
 				} else if(value == 1){
+					openFootPanel();
 					// AVISOS
 					incidence.getEnterpriseIssues(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsIssue>>() {
 						@Override
 						public void onSuccess(JSON<JsIssue> result) {
-							taskPanel.add(new TaskSouthPanel(result.getData()) {
+							taskPanel.add(new TaskSouthPanel(issue, result.getData()) {
 								@Override 
 								protected void onIssueClick(JsIssue issue) {
 									parent.contentDockLayoutPanel.removeFromParent();
@@ -253,38 +254,37 @@ public class IssuePanel extends Composite{
 									parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
 								}
 							});
-							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
 					});
 				} else if(value == 2){
+					openFootPanel();
 					// NOTAS
 					incidence.getEnterpriseRnoteList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
 						@Override
 						public void onSuccess(JSON<JsRnote> result) {
 							rnotesPanel.add(new NoteSouthPanel(result.getData()));
-							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
 					});
 				} else if(value == 3){
+					openFootPanel();
 					incidence.getEnterpriseBoughtProductList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsBoughtProduct>>() {
 						@Override
 						public void onSuccess(JSON<JsBoughtProduct> result) {
 							invoicePanel.add(new SalesSouthPanel(result.getData()));
-							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
 					});
 				} else if(value == 4){
+					openFootPanel();
 					incidence.getEnterpriseFeeList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsFee>>() {
 						@Override
 						public void onSuccess(JSON<JsFee> result) {
 							feePanel.add(new FeeSouthPanel(result.getData()));
-							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
@@ -305,7 +305,7 @@ public class IssuePanel extends Composite{
 			incidence.getDuplicateIssues(id, new  AsyncCallback<JSON<JsIssue>>() {
 				@Override
 				public void onSuccess(JSON<JsIssue> result) {
-					duplicatePanel.add(new TaskSouthPanel(result.getData()) {
+					duplicatePanel.add(new TaskSouthPanel(issue, result.getData()) {
 						@Override
 						protected void onIssueClick(JsIssue issue) {
 							parent.contentDockLayoutPanel.removeFromParent();
@@ -327,7 +327,7 @@ public class IssuePanel extends Composite{
 			incidence.getDuplicateIssues(issue.getId(), new  AsyncCallback<JSON<JsIssue>>() {
 				@Override
 				public void onSuccess(JSON<JsIssue> result) {
-					faqsPanel.add(new TaskSouthPanel(result.getData()) {
+					faqsPanel.add(new TaskSouthPanel(issue, result.getData()) {
 						@Override
 						protected void onIssueClick(JsIssue issue) {
 							parent.contentDockLayoutPanel.removeFromParent();
@@ -781,20 +781,7 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("commentButton")
 	void onClickCommentButton(ClickEvent event){
-		String str = Utils.checkString(commentTextArea.getText());
-
-		String request = "{\"body\":\""+ str +"\"}";
-		// TODO GITHUB!!!
-		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
-			
-			@Override public void onSuccess(JsComment result) {
-				commentTextArea.setText("");
-				printComment(result);
-				commentButton.setDisabled(true);
-				parent.sendNotification(issue, NotificationType.NEW_INFO);
-			}
-			@Override public void onFailure(Throwable caught) {}
-		});
+		comment();
 	}
 	
 	@UiHandler("commentTextArea")
@@ -805,22 +792,9 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("closedButton")
 	void onClickClosedButton(ClickEvent event){
-		String request = "{\"state\":\"closed\"}";
-		// TODO GITHUB!!!
-		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
-			
-			@Override
-			public void onSuccess(JsIssue result) {
-				headerPanel.getWidget().removeFromParent();
-				initHeader(result);
-				closedButton.setVisible(false);
-				faqButton.setVisible(false);
-				reopenButton.setVisible(true);
-				parent.sendNotification(issue, NotificationType.CLOSE);
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
+		if(commentTextArea.getText() != null && !commentTextArea.getText().equals(""))
+			comment();
+		close();
 	}
 	
 	@UiHandler("removeIssueButton")
@@ -1109,7 +1083,9 @@ public class IssuePanel extends Composite{
 						// TODO GITHUB!!!
 						incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
 							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsUser result) {}
+							@Override public void onSuccess(JsUser result) {
+								parent.sendNotification(issue, NotificationType.ASSIGNEE);
+							}
 						});
 						popup.hide();
 					}
@@ -1127,8 +1103,6 @@ public class IssuePanel extends Composite{
 				popup.setPopupPosition(left, top);
 				popup.show();
 				acb.open();
-			
-
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -1316,6 +1290,43 @@ public class IssuePanel extends Composite{
 	private void closeFootPanel() {
 		dockLayoutPanel.setWidgetSize(footPanel, 30);
 		dockLayoutPanel.animate(500);
+	}
+	
+	//----------------------- ACTIONS
+	
+	private void comment() {
+		String str = Utils.checkString(commentTextArea.getText());
+		String request = "{\"body\":\""+ str +"\"}";
+		// TODO GITHUB!!!
+		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
+			
+			@Override public void onSuccess(JsComment result) {
+				commentTextArea.setText("");
+				printComment(result);
+				commentButton.setDisabled(true);
+				parent.sendNotification(issue, NotificationType.NEW_INFO);
+			}
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	private void close() {
+		String request = "{\"state\":\"closed\"}";
+		// TODO GITHUB!!!
+		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				headerPanel.getWidget().removeFromParent();
+				initHeader(result);
+				closedButton.setVisible(false);
+				faqButton.setVisible(false);
+				reopenButton.setVisible(true);
+				parent.sendNotification(issue, NotificationType.CLOSE);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	//----------------------- SEND NOTIFICATION 

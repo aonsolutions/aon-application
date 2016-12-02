@@ -18,7 +18,7 @@ public class SalesSouthPanel extends SouthPanel {
         vertical.setWidth("100%");
         if(items.length() > 0){
         	items.stream().forEach(js -> {
-        		PaperItem pi = buildPaperItem(js);
+        		PaperItem pi = buildProduct(js);
         		VerticalPanel vp = new VerticalPanel();
         		vp.setVisible(false);
         		if(js.getArray().length() > 0){
@@ -44,13 +44,24 @@ public class SalesSouthPanel extends SouthPanel {
         	vertical.add(new Label(nothing));
         }
     }
+    
+    public PaperItem buildProduct(JsBoughtProduct js){
+    	PaperItem pi = new PaperItem();
+    	IronIcon ironIcon = new IronIcon();
+    	ironIcon.setIcon("receipt");
+    	pi.add(ironIcon);
+    	String str = js.getCode() + " - " + js.getName() + ", Total: " + js.getArray().length() + " - Ultima venta el " + js.getDate();
+    	pi.add(new Label(str));
+    	pi.setStyle("min-height:24px;font-size:12px;padding:0px;");
+    	return pi;
+    }
    
     public PaperItem buildPaperItem(JsBoughtProduct js){
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("receipt");
     	pi.add(ironIcon);
-    	String str = js.getDate() + " - " + js.getQuantity() + " - " + js.getCode() + " - " 
+    	String str = "El " + js.getDate() + " - " + js.getQuantity() + (js.getQuantity() == 1 ? "unidad" : " unidades") + " en Fra.: " + js.getReferenceCode() + " - " 
     			+ js.getDescription();
     	pi.add(new Label(str));
     	pi.setStyle("min-height:24px;font-size:12px;padding:0px;");

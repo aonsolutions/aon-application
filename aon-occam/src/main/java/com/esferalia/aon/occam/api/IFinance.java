@@ -32,7 +32,6 @@ public interface IFinance {
 	Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
 
 	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
-	Stream<InvoiceDetail> getOldBoughtProductStream(AONContext ctx, Integer id, InvoiceFilter filter);
 	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***

@@ -20,6 +20,10 @@ public class JsGeneral extends JavaScriptObject {
 		return this.segmentation;
 	}-*/;
 	
+	public final native String getObservation() /*-{
+		return this.observation;
+	}-*/;
+	
 	public final native AonJsArray<JsRmedia> getRmedia() /*-{
 		return this.rmedia;
 	}-*/;

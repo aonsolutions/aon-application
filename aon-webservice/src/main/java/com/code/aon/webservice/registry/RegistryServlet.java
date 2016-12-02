@@ -16,6 +16,7 @@ import com.code.aon.webservice.issues.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 
 @SuppressWarnings("serial")
@@ -116,13 +117,20 @@ public class RegistryServlet extends HttpServlet{
 			+ " " +n(ra.getAddress3()) + " " + n(ra.getZip()) + " " + n(ra.getCity());
 		commercial = "";
 		segmentation = "";
+		
 		AON.getRSegmentStream(domain.getName(), domain.getId(), login, registryId)
 		.forEach(s -> {segmentation = segmentation + " - " + s.getName();});
 
 		AON.getRSellerStream(domain.getName(), domain.getId(), login, registryId)
 		.forEach(s -> {commercial = commercial + " - " + s.getRegistryName();});
 		
-		return ToJSON.generalToJSON(direction, commercial, segmentation, getRmediaList(domain, login, registryId));
+		String observation = AON.getRNote(domain.getName(), domain.getId(), login,
+				f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getRegistryProperty().eq(registryId))
+    			.and(f.getNoteTypeProperty().eq(NoteType.OBSERVATION.value()))).getComments();
+		
+		
+		return ToJSON.generalToJSON(direction, commercial, segmentation, observation, getRmediaList(domain, login, registryId));
 	}
 
     private JSONArray getRmediaList(Domain domain, String login){
@@ -150,7 +158,8 @@ public class RegistryServlet extends HttpServlet{
     private JSONArray getRnoteList(Domain domain, String login){
     	JSONArray array = new JSONArray();
     	AON.getRNoteStream(domain.getName(), domain.getId(), login,
-    			f -> f.getDomainProperty().eq(domain.getId()))
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value())))
     		.forEach(rn -> array.put(ToJSON.rnoteToJSON(rn)));
     	return array;
     }
@@ -159,14 +168,16 @@ public class RegistryServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
       	AON.getRNoteStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    			.and(f.getRegistryProperty().eq(registryId)))
+    			.and(f.getRegistryProperty().eq(registryId))
+    			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value())))
       		.forEach(rn -> array.put(ToJSON.rnoteToJSON(rn)));
     	return array;
     }
     
     private JSONObject getRnote(Domain domain, String login, Integer id){
     	return ToJSON.rnoteToJSON(AON.getRNote(domain.getName(),
-    			domain.getId(), login,f -> f.getIdProperty().eq(id)));
+    			domain.getId(), login,f -> f.getIdProperty().eq(id)
+    			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value()))));
     }
     
     private String n(String str){

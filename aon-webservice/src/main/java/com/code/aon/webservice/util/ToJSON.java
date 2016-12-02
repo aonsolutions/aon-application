@@ -23,11 +23,12 @@ public class ToJSON {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
-	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, JSONArray rmedia){
+	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, String observation, JSONArray rmedia){
 		JSONObject json = new JSONObject();
 		json.put("direction", direction);
 		json.put("commercial", commercial);
 		json.put("segmentation", segmentation);
+		json.put("observation", observation);
 		json.put("rmedia", rmedia);
 		return json;
 	}
@@ -91,12 +92,14 @@ public class ToJSON {
 		json.put("id", id.getId());
 		json.put("domain", id.getDomain());
 		json.put("description", id.getDescription());
+		json.put("name", id.getItem().getName());
 		json.put("quantity", id.getQuantity());
 		json.put("price", id.getPrice());
 		json.put("discount", Double.parseDouble(id.getDiscountExpression()));
 		json.put("date", dateFormat.format(id.getInvoice().getIssueDate()));
 		json.put("code", id.getItem().getCode());
 		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((Double.parseDouble(id.getDiscountExpression())/100) + 1)));
+		json.put("reference_code", id.getInvoice().getReferenceCode());
 		return json;
 	}
 	

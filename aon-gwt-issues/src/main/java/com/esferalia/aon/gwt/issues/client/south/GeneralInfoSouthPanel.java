@@ -25,6 +25,10 @@ public class GeneralInfoSouthPanel extends SouthPanel {
         if(general.getSegmentation() != null && !general.getSegmentation().equals(""))
         	vertical.add(buildGeneral("view-module", "Segmentacion: " + general.getSegmentation()));
         
+        // OBSERVACION
+        if(general.getObservation() != null && !general.getObservation().equals(""))
+        	vertical.add(buildGeneral("visibility", "Observacion: " + general.getObservation()));
+        
         // RMEDIA
         general.getRmedia().stream().forEach(js -> {
         	vertical.add(buildRmedia(js));

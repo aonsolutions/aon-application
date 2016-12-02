@@ -32,6 +32,7 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -154,46 +155,24 @@ public class InvoiceDAO {
 				.findFirst()
 				.orElse(null);
 	}
-	
-	private static Result<Record> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
+
+	private static Result<Record14<Integer, java.sql.Date, Integer, String, Integer, Integer, String, String, Short, String, Double, Double, String, Double>> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
-		return ctx.getDslContext()
-				.select()
+		return  ctx.getDslContext()
+				.select(INVOICE.ID, DSL.max(INVOICE.ISSUE_DATE), INVOICE.REGISTRY, INVOICE.REFERENCE_CODE
+					, INVOICE_DETAIL.PROJECT, INVOICE_DETAIL.ITEM, PRODUCT.CODE, PRODUCT.NAME, INVOICE_DETAIL.LINE
+					, INVOICE_DETAIL.DESCRIPTION, INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE
+					, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.TAXABLE_BASE)
 				.from(INVOICE)
 				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
 				.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
 				.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
-			.where(INVOICE_DETAIL.ID.in(
-					ctx.getDslContext()
-					.select(DSL.max(INVOICE_DETAIL.ID))
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-					.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
-					.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
-					.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
-					.where(INVOICE_PROPERTIES.getConditions(filter))
-					.groupBy(PRODUCT.CODE)
-					.orderBy(INVOICE.ISSUE_DATE.desc())
-			))	
-			.fetch();
+				.where(INVOICE_PROPERTIES.getConditions(filter))
+				.groupBy(PRODUCT.CODE)
+				.orderBy(PRODUCT.CODE)
+				.fetch();
 	}
-	
-	private static Result<Record> getOldBoughtProductInvoices(AONContext ctx, Integer id, InvoiceFilter filter) {
-		ctx.checkRead();
-		return ctx.getDslContext()
-			.select()
-			.from(INVOICE)
-			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-			.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
-			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
-			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
-			.where(INVOICE_PROPERTIES.getConditions(filter))
-			.and(INVOICE_DETAIL.ID.ne(id))
-			.orderBy(INVOICE.ISSUE_DATE.desc())
-			.fetch();
-	}
-	
 	
 	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
@@ -313,13 +292,19 @@ public class InvoiceDAO {
 	public static Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
 		return getBoughtProductInvoices(ctx, filter)
 			.stream()
-			.map(new BoughtProductInvoiceDetailFiller());
-	}
-	
-	public static Stream<InvoiceDetail> getOldBoughtProductStream(AONContext ctx, Integer id, InvoiceFilter filter) {
-		return getOldBoughtProductInvoices(ctx, id, filter)
-			.stream()
-			.map(new BoughtProductInvoiceDetailFiller());
+			.map(record -> new InvoiceDetail().setId(record.getValue(INVOICE_DETAIL.ID))
+					.setInvoice(new Invoice().setId(record.getValue(INVOICE.ID))
+						.setIssueDate(record.getValue(DSL.max(INVOICE.ISSUE_DATE)))
+						.setRegistry(record.getValue(INVOICE.REGISTRY))
+						.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE)))
+					.setItem((record.getValue(INVOICE_DETAIL.ITEM) == null)? null
+						: new Item().setId(record.getValue(INVOICE_DETAIL.ITEM))
+							.setCode(record.getValue(PRODUCT.CODE ))
+							.setName(record.getValue(PRODUCT.NAME)))	
+					.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))
+					.setQuantity(record.getValue(INVOICE_DETAIL.QUANTITY))
+					.setPrice(record.getValue(INVOICE_DETAIL.PRICE))
+					.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR)));
 	}
 	
 	public static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
@@ -456,32 +441,6 @@ public class InvoiceDAO {
 				.setWarehouseName(record.getValue(WAREHOUSE.NAME));
 		}
 		
-	}
-	
-	private static class BoughtProductInvoiceDetailFiller  implements Function<Record,InvoiceDetail> {
-
-		@Override
-		public InvoiceDetail apply(Record record) {
-			return new InvoiceDetail()
-				.setId(record.getValue(INVOICE_DETAIL.ID))
-				.setInvoice(new Invoice()
-					.setId(record.getValue(INVOICE.ID))
-					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-					.setRegistry(record.getValue(INVOICE.REGISTRY)))
-				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
-				.setItem((record.getValue(INVOICE_DETAIL.ITEM) == null)
-					? null
-					: new Item()
-						.setId(record.getValue(INVOICE_DETAIL.ITEM))
-						.setCode(record.getValue( PRODUCT.CODE )))	
-				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
-				.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))
-				.setQuantity(record.getValue(INVOICE_DETAIL.QUANTITY))
-				.setPrice(record.getValue(INVOICE_DETAIL.PRICE))
-				.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
-				.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE))
-				;
-		}
 	}
 	
 	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
