@@ -14,6 +14,8 @@ public interface InvoiceProperties {
 	Property<Date> getEndIssueDateProperty();
 	Property<Integer> getScopeProperty();
 	Property<Byte> getConfidentialProperty();
+	Property<Byte> getRectificationTypeProperty();
+	Property<Integer> getRectificationInvoiceProperty();
 	Property<Integer> getWorkplaceProperty();
 	Property<Integer> getSellerProperty();
 	Property<Integer> getProductProperty();

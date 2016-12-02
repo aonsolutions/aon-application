@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Country2ListBox;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
@@ -15,13 +16,18 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +42,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -98,6 +105,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		paintChecks1(callback);
 		paintChecks2(callback);
 		paintChecks3(callback);
+		paintButtons(callback);
 	}
 
 
@@ -158,46 +166,46 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonTextCenter());
 		eastPanelInner.add(invoiceTypeLabel);
 		
-		Label rectLabel = new Label();
-		rectLabel.setStyleName(AON.AON_CSS.aonBold());
-		rectLabel.addStyleName(AON.AON_CSS.aonColorRed());
-		rectLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		rectLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-		rectLabel.addStyleName(AON.AON_CSS.aonCursorPointer());
-		rectLabel.addStyleName(AON.AON_CSS.aonTextUnderline());
-		if (callback.getInvoice().getInvoice().isRectifier()) {
-			rectLabel.setText("Factura rectificativa");
-		}
-		if (callback.getInvoice().getInvoice().isRectified()) {
-			rectLabel.setText( "Factura rectificada");
-		}
-		rectLabel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				getFiscalService().getAccountingInvoiceFromInvoice(AccountEntryModule.getCurrentDomainName()
-						,AccountEntryModule.getCurrentDomain()
-						,callback.getInvoice().getInvoice().getRectificationInvoice()
-						,new AsyncCallback<AccountingInvoice>() {
-							
-							@Override
-							public void onSuccess(AccountingInvoice result) {
-								if (result != null) {
-									SelectionEvent.<AccountingInvoice>fire( InvoiceExtraPanel.this, result);
-								} else {
-									callback.getModule().onError("No se ha encontrado la factura.");	
-								}
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {
-								callback.getModule().onError(caught.getMessage());
-							}
-						});								
-			}
-		});
-		eastPanelInner.add(rectLabel);
 		
+		if (callback.getInvoice().getInvoice().getRectificationInvoice() != null 
+			&& (callback.getInvoice().getInvoice().isRectifier() 
+			 || callback.getInvoice().getInvoice().isRectified())) {
+			
+			Label rectLabel = new Label();
+			rectLabel.setStyleName(AON.AON_CSS.aonBold());
+			rectLabel.addStyleName(AON.AON_CSS.aonColorRed());
+			rectLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+			rectLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			rectLabel.addStyleName(AON.AON_CSS.aonCursorPointer());
+			rectLabel.addStyleName(AON.AON_CSS.aonTextUnderline());
+			rectLabel.setText( AON.MSG.seeRectInvoiceAbbr());
+			rectLabel.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					getFiscalService().getAccountingInvoiceFromInvoice(AccountEntryModule.getCurrentDomainName()
+							,AccountEntryModule.getCurrentDomain()
+							,callback.getInvoice().getInvoice().getRectificationInvoice()
+							,new AsyncCallback<AccountingInvoice>() {
+								
+								@Override
+								public void onSuccess(AccountingInvoice result) {
+									if (result != null) {
+										SelectionEvent.<AccountingInvoice>fire( InvoiceExtraPanel.this, result);
+									} else {
+										callback.getModule().onError(AON.MSG.invoiceNotFound());	
+									}
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									callback.getModule().onError(caught.getMessage());
+								}
+							});								
+				}
+			});
+			eastPanelInner.add(rectLabel);
+		}
 		
 		
 		flexContainer.add(eastPanelInner);
@@ -511,6 +519,80 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		
 		flexContainer.add(panel);
 	}
+	
+	private void paintButtons(final IInvoicePanelCallback callback) {
+		if (callback.getInvoice().isSales() && !callback.getInvoice().getInvoice().isRectifier()) {
+			FlowPanel panel = new  FlowPanel();
+			panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
+			panel.addStyleName(AON.AON_CSS.aonMarginTop());
+			
+			Label rectify = new Label(AON.MSG.rectifyInvoice());
+			panel.add(rectify);
+			rectify.addStyleName(AON.AON_CSS.aonTextUnderline());
+			rectify.addStyleName(AON.AON_CSS.aonCursorPointer());
+			rectify.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					final InvoiceRectificationData data = new InvoiceRectificationData();
+					data.setIssueDate(callback.getInvoice().getInvoice().getIssueDate());
+					data.setType(callback.getInvoice().getInvoice().getType());
+					data.setRectificationtype(RectificationType.NORMAL_RECTIFIER);
+					final CustomDialog dialog = new CustomDialog();
+					dialog.setCaption(AON.MSG.rectifyInvoice());
+
+					final InvoiceRectificationDataPanel rectPanel = new InvoiceRectificationDataPanel();
+					rectPanel.show(AccountEntryModule.getCurrentDomainName()
+						,AccountEntryModule.getCurrentDomain()
+						,callback.getModule().getConfiguration()
+						,data
+						, new InvoiceRectificationDataPanelCallback() {
+							
+							@Override
+							public void onCancel() {
+							}
+							
+							@Override
+							public void onAccept(InvoiceRectificationData data) {
+								getFiscalService().rectifyInvoice(AccountEntryModule.getCurrentDomainName()
+										,AccountEntryModule.getCurrentDomain()
+										,callback.getInvoice().getInvoice().getId()
+										,data
+										,new AsyncCallback<AccountingInvoice>() {
+										
+										@Override
+										public void onSuccess(AccountingInvoice result) {
+											dialog.hide();
+											if (result != null) {
+												SelectionEvent.<AccountingInvoice>fire( InvoiceExtraPanel.this, result);
+											} else {
+												callback.getModule().onError("Error al rectificar la factura.");	
+											}
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											dialog.hide();
+											callback.getModule().onError(caught.getMessage());
+										}
+								});	
+							}
+					});
+					dialog.add( rectPanel );
+					dialog.center();
+					dialog.show();
+					
+					Scheduler.get().scheduleDeferred(new Command() {
+				        public void execute() {
+				        	rectPanel.setFocus(true);
+				        }
+				    });		
+
+				}
+			});
+			flexContainer.add(panel);
+		}
+	}
 
 	public boolean isWithholding() {
 		return withholding.getValue();
@@ -525,7 +607,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		if (ar == null || ar.getId() == null) {
 			flexContainer.clear();
 		} else {
-			invoiceTypeLabel.setText( AON.MSG.accountEntryType( ar.getType().getAccountEntryType() ));
+			invoiceTypeLabel.setText( getInvoiceLabel(ar.getType().getInvoiceType(),invoice.getInvoice().getRectificationType()));
 			eastPanelInner.setVisible(true);
 			rDocumentType.setValue(ar.getDocumentType());
 			rDocumentCountry.setValue(ar.getDocumentCountry());
@@ -543,6 +625,21 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	}
 	
 	
+	private String getInvoiceLabel(InvoiceType invoiceType, RectificationType rt) {
+		String x = "";
+		if (rt == null || rt == RectificationType.NONE) {
+			x = "";
+		} else {
+			x = rt.getDescription() + " ";
+		}
+		String l = "";
+		if (invoiceType == InvoiceType.SALES   ) l = "Factura "+x+"de Ventas";
+		if (invoiceType == InvoiceType.EXPENSES) l = "Factura "+x+"de Gastos";
+		if (invoiceType == InvoiceType.PURCHASE) l = "Factura "+x+"de Compra";
+		return l;
+	}
+
+
 	private class AccountingRegistryVisitor implements IAccountingRegistryTypeVisitor {
 
 		@Override

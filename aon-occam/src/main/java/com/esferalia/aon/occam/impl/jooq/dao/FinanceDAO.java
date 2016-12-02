@@ -19,17 +19,20 @@ import org.jooq.Condition;
 import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
+import com.esferalia.aon.jooq.tables.records.FinanceTrackingRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
@@ -123,7 +126,7 @@ public class FinanceDAO {
 				.set(FINANCE.BIC,finance.getBic())
 				.set(FINANCE.CHEQUE_NUMBER,finance.getChequeNumber())
 				.set(FINANCE.STATUS,finance.getFinanceStatus().value())
-				.set(FINANCE.SECURITY_LEVEL,  (byte) (finance.isConfidential()?1:0) )
+				.set(FINANCE.SECURITY_LEVEL, AonEnumUtils.getByte(finance.isConfidential()) )
 				.set(FINANCE.REMARKS,finance.getRemarks())
 				.set(FINANCE.SCOPE,finance.getScope().getId())
 				.set(FINANCE.MANUAL,AonEnumUtils.getByte(finance.isManual()))
@@ -161,7 +164,7 @@ public class FinanceDAO {
 			.set(FINANCE.BIC,finance.getBic())
 			.set(FINANCE.CHEQUE_NUMBER,finance.getChequeNumber())
 			.set(FINANCE.STATUS,finance.getFinanceStatus().value())
-			.set(FINANCE.SECURITY_LEVEL,  (byte) (finance.isConfidential()?1:0) )
+			.set(FINANCE.SECURITY_LEVEL,  AonEnumUtils.getByte(finance.isConfidential()) )
 			.set(FINANCE.REMARKS,finance.getRemarks())
 			.set(FINANCE.SCOPE,finance.getScope().getId())
 			.set(FINANCE.MANUAL,AonEnumUtils.getByte(finance.isManual()))
@@ -306,4 +309,56 @@ public class FinanceDAO {
 			delete(ctx, finance.getId());
 		}
 	}
+	public static Integer settle(AONContext ctx, Integer financeId, double amount) {
+		return settle(ctx, financeId, new Date(), amount
+				,FinanceTrackingType.SETTLED.getDescription(), false);	
+	}
+	public static Integer settle(AONContext ctx, Integer financeId,Date date, double amount, String description, boolean recorded) {
+		return addTracking(ctx,financeId,date,amount,FinanceStatus.SETTLED
+				,FinanceTrackingType.SETTLED,description,recorded);
+	}
+	private static Integer addTracking(AONContext ctx, Integer financeId,Date date, double amount
+			,FinanceStatus financeStatus,FinanceTrackingType type, String description, boolean recorded) {
+		
+		FinanceTracking ft = new FinanceTracking()
+			.setFinance(financeId)
+			.setDomain(ctx.getDomainId())
+        	.setTrackingDate(date)
+        	.setType(type)
+        	.setDescription(description)
+        	.setRegistryBank(null)
+        	.setPayMethodTypeDetail(null)
+        	.setBankStatementLink(null)
+        	.setAmount(amount)
+        	.setRecorded(recorded);
+		ctx.getDslContext().update(FINANCE)
+			.set(FINANCE.STATUS,financeStatus.value())
+			.set(FINANCE.MODIFICATION_USER,ctx.getUser())
+			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(FINANCE.ID.equal( financeId))
+			.execute();
+		return insert(ctx,ft);
+	}
+	
+	public static Integer insert(AONContext ctx, FinanceTracking ft) {
+		ctx.checkWrite();
+		FinanceTrackingRecord record = ctx.getDslContext()
+			.insertInto(FINANCE_TRACKING)
+				.set(FINANCE_TRACKING.DOMAIN,ft.getDomain())
+				.set(FINANCE_TRACKING.FINANCE,ft.getFinance())
+				.set(FINANCE_TRACKING.TRACKING_DATE,AonDateUtils.toSql(ft.getTrackingDate()))
+				.set(FINANCE_TRACKING.TYPE,ft.getType().value())
+				.set(FINANCE_TRACKING.DESCRIPTION,ft.getDescription())
+				.set(FINANCE_TRACKING.PM_TYPE_DETAIL,ft.getPayMethodTypeDetail())
+				.set(FINANCE_TRACKING.RBANK,ft.getRegistryBank())
+				.set(FINANCE_TRACKING.BANK_STATEMENT_LINK,ft.getBankStatementLink())
+				.set(FINANCE_TRACKING.AMOUNT,ft.getAmount())
+				.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(ft.isRecorded()))
+				.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
+				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.returning(FINANCE_TRACKING.ID)
+				.fetchOne();
+		return record.getValue(FINANCE_TRACKING.ID); 
+	}
+	
 }

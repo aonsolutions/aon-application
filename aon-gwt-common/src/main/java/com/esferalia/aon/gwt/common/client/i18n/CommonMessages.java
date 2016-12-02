@@ -552,6 +552,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Informaci\u00F3n Tributaria")
 	String fiscalInformation();
 
+	@DefaultMessage("Serie")
+	String series();
+	
 	@DefaultMessage("N\u00FAmero")
 	String number();
 
@@ -2889,7 +2892,7 @@ public interface CommonMessages extends Messages {
 	    "RETURNED_COLLECTION", "Devoluci\u00F3n de Cobro",
 	    "SOCIAL_INSURANCE_ADJUST", "Ajuste Seg. Social" })
     String accountEntryType(@Select AccountEntryType type);
-    
+
     @DefaultMessage("Tipo asiento")
     String accountEntryTypeLabel();
 
@@ -3107,5 +3110,23 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Vto.")
 	String financeAbbr();
+
+	@DefaultMessage("Crear factura rectificativa")
+	String rectifyInvoice();
+	
+	@DefaultMessage("Fecha factura rectificativa")
+	String rectifyInvoiceDate();
+
+	@DefaultMessage("Motivo")
+	String reason();
+
+	@DefaultMessage("Saldar vencimientos pendientes")
+	String settleFinances();
+	
+	@DefaultMessage("No se ha encontrado la factura.")
+	String invoiceNotFound();
+	
+	@DefaultMessage("Ver fact. rect.")
+	String seeRectInvoiceAbbr();
 
 }

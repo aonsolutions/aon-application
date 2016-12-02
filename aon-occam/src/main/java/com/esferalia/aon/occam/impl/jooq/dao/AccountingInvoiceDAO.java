@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
@@ -44,6 +45,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoiceDAO {
 	
@@ -503,7 +505,11 @@ public class AccountingInvoiceDAO {
 				@Override public void visitClosing(AccountEntry entry) {}
 				@Override public void visitAmortization(AccountEntry entry) {}
 			});
-			entries.add( AccountEntryDAO.getAccountEntry(ctx, entryId) );
+			AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
+			if (newEntry.getEntryType().isInvoice()) {
+				accInvoice.setAccountEntry(newEntry);		
+			}
+			entries.add( newEntry );
 		}
 		accInvoice.setAccountEntries(entries);
 		return accInvoice;
@@ -521,13 +527,14 @@ public class AccountingInvoiceDAO {
 				.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry())
 				.setRegistryName(invoice.getRegistryName())
 				.setScope(invoice.getScope())
-				.setFinanceStatus(accInvoice.isFinanceRecordable()?FinanceStatus.PAID:FinanceStatus.PENDING)
 				.setSecurityLevel(invoice.getSecurityLevel())
 				.setConcept(invoice.getDocumentNumber())
-				.setAmount(invoice.getTotal())
+				.setFinanceStatus(accInvoice.isFinanceRecordable()?FinanceStatus.PAID:FinanceStatus.PENDING)
+				.setAmount(accInvoice.getInvoice().getTotal())
 				;
 			Integer financeId = FinanceDAO.insert(ctx, finance);
 			finance.setId(financeId);
+			break; // TODO Grabar mas de un vencimiento.
 		}
 	}
 	
@@ -695,4 +702,45 @@ public class AccountingInvoiceDAO {
 		}
 		return ai;
 	}
+	
+	public static AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
+		AccountingInvoice ai = getAccountingInvoiceFromInvoice(ctx, invoiceId);
+		RectificationType oldRectificationType = ai.getInvoice().getRectificationType();
+		ai.getAccountEntry().setEntryDate(data.getIssueDate());
+		ai.getAccountEntry().setId(null);
+		ai.getAccountEntry().setJournal(null);
+		ai.getAccountEntry().setComments(data.getCause());
+		InvoiceDAO.mergeRecitificationData(ai.getInvoice(), data);
+		
+		for (InvoiceVAT vat : ai.getVats()) {
+			vat.setBase( AonMathUtils.round(vat.getBase() * (-1),4));
+			vat.setQuota( AonMathUtils.round(vat.getQuota() * (-1)));
+			vat.setSurchargeQuota( AonMathUtils.round(vat.getSurchargeQuota() * (-1)));
+			vat.setDeductibleQuota( AonMathUtils.round(vat.getDeductibleQuota() * (-1)));
+		}
+		ai.getWithholdingData().setBase( AonMathUtils.round(ai.getWithholdingData().getBase() * (-1),4));
+		ai.getWithholdingData().setQuota( AonMathUtils.round(ai.getWithholdingData().getQuota() * (-1)));
+		for (Finance finance : ai.getFinances()) {
+			Integer oldId = finance.getId();
+			
+			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
+			finance.setFinanceStatus(FinanceStatus.PENDING);
+			finance.setInvoice(null);
+			finance.setId( null );
+			Integer financeId = FinanceDAO.insert(ctx, finance);
+			
+			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
+				FinanceDAO.settle(ctx, oldId    ,finance.getAmount());
+				FinanceDAO.settle(ctx, financeId,finance.getAmount());
+			}
+			
+		}
+		
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
+		ai = save(ctx, config, ai);
+		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
+		return ai;
+	}
 }
+
+

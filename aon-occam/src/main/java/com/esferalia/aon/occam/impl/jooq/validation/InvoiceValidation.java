@@ -9,18 +9,19 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class InvoiceValidation {
 
-	private static class AonConfigurationContext {
+	public static class AonConfigurationContext {
 		
 		private AONContext ctx;
 		private AonConfiguration config;
 		
-		private AonConfigurationContext (AONContext ctx,AonConfiguration config) {
+		public AonConfigurationContext (AONContext ctx,AonConfiguration config) {
 			this.ctx = ctx;
 			this.config = config;
 		}
@@ -155,6 +156,14 @@ public class InvoiceValidation {
 		}
 	};
 
+	/**
+	 * Las facturas rectificadas no se pueden borrar.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> RECTIFIED_INVOICE = (inv,ctx) -> {
+		if (inv.isRectified()) 
+			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
+	};
+
 	public static void validateInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
 			.andThen(EMPTY_DATE)
@@ -174,6 +183,13 @@ public class InvoiceValidation {
 		EMPTY_SOURCE
 		.andThen(EMPTY_WORKPLACE)
 			.accept(detail, new AonConfigurationContext(ctx,config));
+	}
+
+	public static void validateInvoiceDeletion(AONContext ctx, AonConfiguration config, Invoice inv) {
+		if (config == null) config = ConfigurationDAO.getConfiguration(ctx, inv.getIssueDate());
+		RECTIFIED_INVOICE
+		.andThen(OPERATIONS_DEADLINE)
+		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 
 }

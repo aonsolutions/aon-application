@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -996,6 +997,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 	
 	@Override
+	public AccountingInvoice rectifyInvoice(String domainName, int domain, Integer invoiceId,
+			InvoiceRectificationData data) throws AonCoreException {
+		return ACCOUNTING.rectifyInvoice(domainName, domain, this.getUserLogin(), invoiceId, data );
+	}
+
+	@Override
 	public AccountingInvoice save(String domainName, int domain, AccountingInvoice invoice)
 			throws AonCoreException {
 		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), invoice);
@@ -1081,4 +1088,5 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return new Attach(new Domain().setId(mod123.getDomain()).setName(domainName)
 				, mod123.getId(), AttachType.MOD123, "Modelo 123", MimeType.MS_EXCEL, null, output.toByteArray());
 	}
+
 }

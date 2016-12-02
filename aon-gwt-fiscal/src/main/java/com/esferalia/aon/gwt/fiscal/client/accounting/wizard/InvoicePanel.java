@@ -558,7 +558,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setAccountEntry(new AccountEntry()
 			.setPeriod(base.getPeriod())
-			.setDomain(base.getDomain())
+			.setDomain(AccountEntryModule.getCurrentDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity()));
@@ -636,7 +636,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 	
 	private void fillSalesSeries() {
-		if (getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
+		if (series.getItemCount() == 0
+			&& getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
 			&& getCallback().getModule().getConfiguration().getInvoiceSalesSeries().size() > 0) {
 			series.addItem(" --- ", (String) null);
 			for (String ser : getCallback().getModule().getConfiguration().getInvoiceSalesSeries()) {

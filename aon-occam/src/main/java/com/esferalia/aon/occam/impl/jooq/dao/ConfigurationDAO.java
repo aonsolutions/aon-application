@@ -28,9 +28,6 @@ public class ConfigurationDAO {
 									,AccountPeriodStatus.OPENING.getValue()
 									,AccountPeriodStatus.OPERATING.getValue()} )))
 						.collect(Collectors.toCollection(LinkedList::new)))
-				.setInvoiceSalesSeries( SeriesDAO.getInvoiceSeries(ctx)
-						.map(series -> series.getCode() )
-						.collect(Collectors.toCollection(LinkedList::new)))
 				.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),atDate)
 						.collect(Collectors.toCollection(LinkedList::new)))
 				.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(),atDate)
@@ -67,6 +64,19 @@ public class ConfigurationDAO {
 				.setVatNegativeAdjustAccount( getAccount(ctx, AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC) )
 				.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
 		;
+		SeriesDAO
+			.getSeries(ctx,
+					p -> 
+					p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
+					.and(p.getActiveProperty().eq((byte) 1)  )
+					.and(p.getInvoiceProperty().eq((byte) 1)  
+					.or(p.getRectificationProperty().eq((byte) 1) )))
+			.forEach(series -> {
+				conf.addInvoiceSalesSeries(series.getCode());
+				if (series.isRectification()) {
+					conf.addInvoiceRectificationSalesSeries(series.getCode());
+				} 
+				});
 		return conf;
 	}
 	

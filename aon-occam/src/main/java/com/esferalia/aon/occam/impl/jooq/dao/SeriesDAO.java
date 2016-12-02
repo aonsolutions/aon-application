@@ -16,8 +16,9 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
-import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SeriesDAO {
 	
@@ -73,8 +74,16 @@ public class SeriesDAO {
 				.and(p.getInvoiceProperty().eq((byte) 1)  )
 				);	
 	}
+	public static Stream<Series> getRectificationSeries(AONContext ctx){
+		return getSeries(ctx, 
+				p -> 
+				p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
+				.and(p.getActiveProperty().eq((byte) 1)  )
+				.and(p.getRectificationProperty().eq((byte) 1)  )
+				);	
+	}
 
-	//	public static LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter){
+//	public static LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter){
 //		return ctx.getDslContext().select().from(WORKPLACE)
 //				.where(WORKPLACE_PROPERTIES.getConditions(filter))
 //				.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
@@ -96,14 +105,14 @@ public class SeriesDAO {
 					.setCode(r.getValue(SERIES.CODE))
 					.setDescription(r.getValue(SERIES.DESCRIPTION))
 					.setActive(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setTas(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setOffer(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setSales(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setDelivery(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setInvoice(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setRectification(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setPos(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
-					.setConfidential(AonEnumUtils.getBoolean( r.getValue(SERIES.ACTIVE)))
+					.setTas(AonEnumUtils.getBoolean( r.getValue(SERIES.TAS)))
+					.setOffer(AonEnumUtils.getBoolean( r.getValue(SERIES.OFFER)))
+					.setSales(AonEnumUtils.getBoolean( r.getValue(SERIES.SALES)))
+					.setDelivery(AonEnumUtils.getBoolean( r.getValue(SERIES.DELIVERY)))
+					.setInvoice(AonEnumUtils.getBoolean( r.getValue(SERIES.INVOICE)))
+					.setRectification(AonEnumUtils.getBoolean( r.getValue(SERIES.RECTIFICATION)))
+					.setPos(AonEnumUtils.getBoolean( r.getValue(SERIES.POS)))
+					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(SERIES.SECURITY_LEVEL)))
 					;
 		}
 	}

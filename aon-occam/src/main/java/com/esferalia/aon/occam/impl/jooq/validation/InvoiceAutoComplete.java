@@ -41,6 +41,11 @@ public class InvoiceAutoComplete {
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SALES_SERIES = (inv,ctx) -> {
 		if (inv.isSales()) {
+			if (inv.getNumber() == 0) {
+				Byte[] types = new Byte[]{InvoiceType.SALES.value()};
+				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
+				inv.setNumber(number);
+			}
 			String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getNumber()), 6, "0");
 			if (!AonStringUtils.isBlank(inv.getSeries())) {
 				referenceCode = inv.getSeries() + "/" + referenceCode;
@@ -136,7 +141,7 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
 		.andThen(COMPLETE_TAX_DATE)
-		.andThen(COMPLETE_ACTIVITY)
+//		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_ACTIVITY)

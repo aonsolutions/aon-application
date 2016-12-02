@@ -28,10 +28,13 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -39,6 +42,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
@@ -306,6 +310,15 @@ public class AccountingImpl implements IAccounting {
 		 );		
 	}
 
+	@Override
+	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountingInvoiceDAO.rectifyInvoice(ctx, invoiceId, data) 
+		 );
+	}
+
+	
+	
 	@Override
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry) {
 		AccountEntry entry = getAccountEntry(ctx, accountEntry);

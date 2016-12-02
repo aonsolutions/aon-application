@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -383,6 +384,19 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, userLogin);
 			return getAccounting().getRegistryLastAccountingInvoice(ctx, registryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+
+	public static AccountingInvoice rectifyInvoice(String domainName, int domain, String userLogin, Integer invoiceId,
+			InvoiceRectificationData data) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, userLogin);
+			return getAccounting().rectifyInvoice(ctx, invoiceId, data);
 		} finally {
 			if (ctx != null)
 				ctx.close();

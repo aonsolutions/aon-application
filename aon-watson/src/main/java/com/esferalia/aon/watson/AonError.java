@@ -119,7 +119,11 @@ public enum AonError implements Serializable{
 	,INVOICE_FIVE_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual") 
 	,INVOICE_EMPTY_SOURCE("No se ha indicado un origen (INVOICE_DETAIL.SOURCE) en la l\u00EDnea de factura (Error interno)")
 	,INVOICE_EMPTY_WORKPLACE("No se ha indicado un centro de trabajo en la l\u00EDnea de factura.")
-	
+	,INVOICE_NOT_FOUND("Factura no encontrada.")
+	,INVOICE_RECTIFIED_NOT_FOUND("Factura rectificada no encontrada.")
+	,INVOICE_INVALID_RECTIFICATION_DATA("Los datos necesarios para rectificar la factura, no son correctos.")
+	,INVOICE_INVALID_RECTIFICATION_TYPE("No se permite rectificar una factura con el tipo {0}.")
+	,INVOICE_CANT_DELETE_RECTIFIED("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa.")
 	// --------------------------------------------- FINANCE
 	,FINANCE_AMOUNT_ZERO("El importe del vencimiento no puede ser cero.")	
 	,FINANCE_EMPTY_SCOPE("No es posible encontrar un \u00E1mbito v\u00E1lido para el vencimiento.")

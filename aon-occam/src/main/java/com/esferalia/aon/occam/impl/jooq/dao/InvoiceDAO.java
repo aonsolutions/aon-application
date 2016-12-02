@@ -44,10 +44,12 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -66,8 +69,12 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDAO {
@@ -93,6 +100,8 @@ public class InvoiceDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.SCOPE);}
 		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SECURITY_LEVEL);}
+		@Override public Property<Byte> getRectificationTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.RECTIFICATION_TYPE);}
+		@Override public Property<Integer> getRectificationInvoiceProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.RECTIFICATION_INVOICE);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.WORKPLACE);}
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.SELLER);}
 		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
@@ -731,7 +740,11 @@ public class InvoiceDAO {
 			.orElse(0);
 		return ++next;
 	}
-
+	
+	public static Invoice insert(AONContext ctx, Invoice invoice) {
+		return insert(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 
+	}
+	
 	public static Invoice insert(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.checkWrite();
 		InvoiceValidation.validateInvoice(ctx, config, invoice);
@@ -852,7 +865,64 @@ public class InvoiceDAO {
 	
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
-		// Se borran los inpouestos
+
+		Invoice inv = getInvoice(ctx, id);
+		if (inv == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		
+		InvoiceValidation.validateInvoiceDeletion(ctx, null, inv);
+		
+		if (inv.isRectifier()) {
+			if (inv.getRectificationInvoice() != null) {
+				final Invoice rectified = getInvoice(ctx, inv.getRectificationInvoice());
+				if (rectified == null) throw new AonCoreException(AonError.INVOICE_RECTIFIED_NOT_FOUND.getMessage());
+				System.out.println("rectified.getRectificationInvoice() ..: " + rectified.getRectificationInvoice());
+				System.out.println("inv.getId() ..........................: " + rectified.getRectificationInvoice());
+				if (rectified.getRectificationInvoice() != null &&
+						AonNumberUtils.equals(inv.getId(), rectified.getRectificationInvoice())) {
+					// La factura rectificada, solo lo esta una vez, y es por la factura que estamos borrando.
+					// Luego marcamos la factura rectificada como "NO RECTIFICADA".
+					ctx.getDslContext().update(INVOICE)
+						.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NONE.value())
+						.set(INVOICE.RECTIFICATION_INVOICE, (Integer) null)
+						.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.where(INVOICE.ID.equal( rectified.getId() ))
+						.execute();
+					ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): " + rectified.getId());
+				} else {
+					// En la factura rectificada no hay constancia de cual es la factura que la 
+					// rectifica, por lo tanto puede haber mas de una.
+					
+					rectified.setRectificationType(RectificationType.NONE);  // Si no entra en el buble, no quedan facturas rectificativas.
+					
+					getInvoiceStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId())
+												.and(p.getRectificationInvoiceProperty().eq(inv.getRectificationInvoice()))
+												.and(p.getIdProperty().ne(inv.getId()))
+												)
+					.forEach( rectifier -> {
+						if (rectified.getRectificationInvoice() == null) {
+							// Primera iteracion.
+							rectified.setRectificationType(RectificationType.RECTIFIED);							
+							rectified.setRectificationInvoice(rectifier.getId());
+						} else {
+							// Segunda iteracion. Hay mas de una, debe continuar a null.
+							rectified.setRectificationInvoice(null);
+						}
+					});
+					
+					ctx.getDslContext().update(INVOICE)
+						.set(INVOICE.RECTIFICATION_TYPE, rectified.getRectificationType().value())
+						.set(INVOICE.RECTIFICATION_INVOICE, rectified.getRectificationInvoice())
+						.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.where(INVOICE.ID.equal( rectified.getId() ))
+						.execute();
+				ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): " + rectified.getId());
+					
+				}
+			}
+		}
+		
 		int count = ctx.getDslContext()
 			.delete(INVOICE_TAX)
 			.where(INVOICE_TAX.INVOICE_DETAIL.in( 
@@ -874,12 +944,100 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().info("DELETE INVOICE factura: " + id);
 	}
+
 	
+	public static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
+		Invoice inv = getInvoice(ctx, invoiceId);
+		if (inv == null) {
+			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		}
+		if (data == null || data.getRectificationtype() == null) {
+			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATA.getMessage());
+		}
+		if (data.getRectificationtype() != RectificationType.SPECIAL_RECTIFIER) {
+			throw new AonCoreException("Las facturas rectificativas especiales, no se encuentran implementadas.");
+		}
+		if (data.getRectificationtype() != RectificationType.NORMAL_RECTIFIER) {
+			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_TYPE
+					.format(data.getRectificationtype().getDescription()));
+		}
+		
+		RectificationType oldRectificationType = inv.getRectificationType();
+		mergeRecitificationData(inv,data);
+		rectifyInvoiceDetails(inv);
+		inv = InvoiceDAO.insert(ctx, inv);
+		LinkedList<Finance> finances = FinanceDAO.getInvoiceFinances(ctx, invoiceId);
+		rectifyInvoiceFinances(ctx,finances, inv, data);
+		rectifyInvoiceUpdate(ctx,invoiceId, inv.getId(), oldRectificationType); 
+		return inv;
+	}
+	
+	public static void mergeRecitificationData(Invoice inv, InvoiceRectificationData data) {
+		Integer invoiceId = inv.getId();
+		inv.setId(null);
+		inv.setSeries(data.getSeries());
+		inv.setNumber(data.getNumber());
+		inv.setComments((AonStringUtils.isBlank(inv.getComments())
+			?""
+			:(inv.getComments() + " "))
+			+ data.getCause());
+		inv.setIssueDate(data.getIssueDate());
+		inv.setTaxDate(data.getIssueDate());
+		inv.setRectificationType(data.getRectificationtype());
+		inv.setRectificationInvoice(invoiceId);
+		inv.setRecorded(false);
+		inv.setTaxableBase( AonMathUtils.round(inv.getTaxableBase() * (-1)));
+		inv.setVatQuota(AonMathUtils.round(inv.getVatQuota() * (-1)));
+		inv.setRetentionQuota(AonMathUtils.round(inv.getRetentionQuota() * (-1)));
+		inv.setTotal(AonMathUtils.round(inv.getTotal() * (-1)));
+	}
+
+	public static void rectifyInvoiceDetails(Invoice inv) {
+		for (InvoiceDetail detail : inv.getDetails()) {
+			detail.setId(null);
+			detail.setQuantity( AonMathUtils.round(detail.getQuantity() * (-1),3));	
+			detail.setSource((detail.getSource() == InvoiceSource.RESERVATION) ? detail.getSource() : InvoiceSource.DIRECT_INVOICE);
+			detail.setSourceId((detail.getSource() == InvoiceSource.RESERVATION) ? detail.getSourceId() : null);
+			detail.setTaxableBase(AonMathUtils.round(detail.getTaxableBase() * (-1), 4));
+			
+			for (InvoiceTax tax : detail.getInvoiceTaxes()) {
+				tax.setId(null);
+				tax.setBase( AonMathUtils.round(tax.getBase() * (-1),4));
+				tax.setQuota(AonMathUtils.round(tax.getQuota() * (-1)));
+				tax.setSurchargeQuota(AonMathUtils.round(tax.getSurchargeQuota() * (-1)));
+				tax.setDeductibleQuota(AonMathUtils.round(tax.getDeductibleQuota() * (-1)));
+			}
+		}
+	}
+	
+	public static void rectifyInvoiceUpdate(AONContext ctx, Integer invoiceId, Integer rectifierInvoice, RectificationType oldRectificationType) {
+		ctx.getDslContext().update(INVOICE)
+			.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())
+			.set(INVOICE.RECTIFICATION_INVOICE, (oldRectificationType == null || oldRectificationType == RectificationType.NONE)
+				?rectifierInvoice
+				:null)
+			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(INVOICE.ID.equal( invoiceId))
+			.execute();
+	}
+	
+	private static void rectifyInvoiceFinances(AONContext ctx, LinkedList<Finance> finances, Invoice newInvoice,
+			InvoiceRectificationData data) {
+		for (Finance finance : finances) {
+			Integer oldId = finance.getId();
+			
+			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
+			finance.setFinanceStatus(FinanceStatus.PENDING);
+			finance.setInvoice(newInvoice);
+			finance.setId( null );
+			Integer financeId = FinanceDAO.insert(ctx, finance);
+			
+			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
+				FinanceDAO.settle(ctx, oldId    ,finance.getAmount());
+				FinanceDAO.settle(ctx, financeId,finance.getAmount());
+			}
+			
+		}
+	}
 }
-
-
-
-
-
-
-

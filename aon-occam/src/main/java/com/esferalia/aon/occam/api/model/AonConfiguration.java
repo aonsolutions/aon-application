@@ -17,6 +17,7 @@ public class AonConfiguration implements Serializable {
 	private User user;
 	private LinkedList<AccountPeriod> periods;
 	private LinkedList<String> invoiceSalesSeries;
+	private LinkedList<String> invoiceRectificationSeries;
 	private LinkedList<EnterpriseActivity> enterpriseActivities;
 	private LinkedList<InvestAsset> investAsset;
 	private LinkedList<Workplace> workplaces;
@@ -75,6 +76,27 @@ public class AonConfiguration implements Serializable {
 	public AonConfiguration setInvoiceSalesSeries(LinkedList<String> invoiceSalesSeries) {
 		this.invoiceSalesSeries = invoiceSalesSeries;
 		return this;
+	}
+	public void addInvoiceSalesSeries(String serie) {
+		if (this.invoiceSalesSeries == null) {
+			this.invoiceSalesSeries = new LinkedList<String>();
+		}
+		this.invoiceSalesSeries.add(serie);
+	}
+
+	public LinkedList<String> getInvoiceRectificationSalesSeries() {
+		return invoiceRectificationSeries;
+	}
+
+	public AonConfiguration setInvoiceRectificationSalesSeries(LinkedList<String> invoiceRectificationSeries) {
+		this.invoiceRectificationSeries = invoiceRectificationSeries;
+		return this;
+	}
+	public void addInvoiceRectificationSalesSeries(String serie) {
+		if (this.invoiceRectificationSeries == null) {
+			this.invoiceRectificationSeries = new LinkedList<String>();
+		}
+		this.invoiceRectificationSeries.add(serie);
 	}
 
 	public LinkedList<EnterpriseActivity> getActivities() {
@@ -248,6 +270,7 @@ public class AonConfiguration implements Serializable {
 		this.operationsDeadline = operationsDeadline;
 		return this;
 	}
+
 
 	
 }
