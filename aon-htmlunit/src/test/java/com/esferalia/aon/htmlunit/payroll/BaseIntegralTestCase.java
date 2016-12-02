@@ -237,6 +237,15 @@ public abstract class BaseIntegralTestCase {
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getTextContent().matches(regex));
 	}
 
+	protected static void wait4Class(String id, String clazz) throws InterruptedException {
+		wait4(htmlPage,
+				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getAttribute("class").contains(clazz));
+	}
+
+	protected static void assertElement(String id) throws ParseException {
+		Assert.assertNotNull(getElementById(id));
+	}
+
 	protected static void assertText(String id, String text) throws ParseException {
 		HtmlElement el = getElementById(id);
 		Assert.assertEquals(text, el.getTextContent());
@@ -261,6 +270,14 @@ public abstract class BaseIntegralTestCase {
 		HtmlInput input = getElementById(id);
 		return NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue();
 	}
+
+	protected static void setText(String id, String text) throws ParseException {
+		HtmlInput input = getElementById(id);
+		input.focus();
+		input.setValueAttribute(text);
+		input.blur();
+	}
+
 
 	protected static DomElement open(String id) throws IndexOutOfBoundsException, IOException {
 		DomElement idElement =  htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id);

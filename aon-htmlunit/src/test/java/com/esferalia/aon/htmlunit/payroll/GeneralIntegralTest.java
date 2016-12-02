@@ -33,6 +33,57 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	// ------------------------------------------------------------------------
 
 	@Test
+	public void TestDraft() throws Exception {
+		open("draft");
+
+		wait4Id("draft_parcial,_vacio");
+
+		draft("DRAFT PARCIAL, VACIO");
+		calculate(Calendar.DECEMBER);
+		setText("description-box-new-payment", "[1] S4L4R10 B4S3");
+		setText("amount-box-new-payment", "1666.00 * DIAS_TRABAJADOS / DIAS_MES");
+		wait4Id("description-box-1");
+		assertElement("editor-horas_sabado");
+		assertElement("editor-horas_domingo");
+		assertElement("editor-horas_lunes");
+		assertElement("editor-horas_martes");
+		assertElement("editor-horas_miercoles");
+		assertElement("editor-horas_jueves");
+		assertElement("editor-horas_viernes");
+
+		draft("DRAFT COMPLETO, VACIO");
+		calculate(Calendar.DECEMBER);
+		setText("description-box-new-payment", "[1] S4L4R10 B4S3");
+		setText("amount-box-new-payment", "1666.00 * DIAS_TRABAJADOS / DIAS_MES");
+		wait4Id("description-box-1");
+		assertValue("cgcBaseLabel", 1666.00);
+		assertValue("totalPaymentsLabel", 1666.00);
+		
+		setText("description-box-new-payment", "[2] PLU3");
+		setText("amount-box-new-payment", "100.00 * DIAS_TRABAJADOS / DIAS_MES");
+		wait4Id("description-box-2");
+		assertValue("cgcBaseLabel", 1666.00 + 100.00);
+		assertValue("totalPaymentsLabel", 1666.00 + 100.00);
+		
+		
+		// [1] SALARIO BASE
+		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [3] PAGA EXTRAORDINARIA DE JULIO
+		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
+		draft("DRAFT COMPLETO, CONVENIO");
+
+		calculate(Calendar.DECEMBER);
+		double cgcBase = getValue("cgcBaseLabel");
+		double totalPayment = getValue("totalPaymentsLabel");
+		wait4Id("description-box-3");
+		
+		setText("description-box-3", "[3] PAGA EXTRAORDINARIA DE VERANO");
+		//wait4Text("payment-row-3", "aon-dataTable-row-highlight");
+		
+		
+	}
+	
+	@Test
 	public void TestFiniquito() throws Exception {
 		
 		open("finiquitos");

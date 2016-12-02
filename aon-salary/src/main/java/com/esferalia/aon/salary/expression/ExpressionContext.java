@@ -634,6 +634,9 @@ public class ExpressionContext {
 		if (script == null) {
 			return Collections.emptyList();
 		}
+		
+		PeriodMap parentBindings = getCurrentBindings();
+
 		List<ITimedResult<T>> values = new LinkedList<ITimedResult<T>>();
 		for (PeriodMap bindings : bindingsList) {
 			try {
@@ -652,6 +655,10 @@ public class ExpressionContext {
 				throw e.getExpressionException();
 			} catch (CompileException e) {
 				throw e;
+			} finally{
+				if ( parentBindings != null ) {
+					setCurrentBindings(parentBindings);
+				}
 			}
 		}
 
