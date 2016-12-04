@@ -191,7 +191,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				new String[] {
 				"( P_1 + P_2 ) * 0.10",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00"}, 
 				new String[] {
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
@@ -222,9 +223,9 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		ISalary salary = calculator.calculate(ctx);
 
-		int monthDays = 30 ;//get(endDate, DAY_OF_MONTH);
+		int monthDays = get(endDate, DAY_OF_MONTH);
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00 * 1.10
-				* (monthDays - 1) / monthDays, salary.getTotalPayment(), DELTA);
+				* (monthDays - 1) / 30, salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
 				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
 
