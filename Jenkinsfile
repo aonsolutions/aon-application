@@ -61,12 +61,12 @@ node {
 
       
       // Create release branch for future HotFixes
-      sh "mv rpms2aws.hotfix rpms2aws.sh"
-      sh "mv Jenkinsfile.hotfix Jenkinsfile"
       // Checking out to release tag
       sh "git checkout ${mavenRelease['tag']}"
       // Create release branch
       sh "git checkout -b ${mavenRelease['branch']}"
+      sh "mv rpms2aws.sh.hotfix rpms2aws.sh"
+      sh "mv Jenkinsfile.hotfix Jenkinsfile"
       sh "git commit -a -m 'For build hotfixes'"
       sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git ${mavenRelease['branch']}"
 
