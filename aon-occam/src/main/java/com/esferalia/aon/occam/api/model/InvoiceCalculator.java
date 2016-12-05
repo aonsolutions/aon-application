@@ -58,7 +58,7 @@ public class InvoiceCalculator {
 		}
 		double tb = (ai.isVatEnabled()) 
 				//? ((total * 100) / (100 + vatPerc + surchargePerc - withHoldingPerc))
-				? reverseCalculate(vatPerc, surchargePerc, withHoldingPerc, total, 2, 2)
+				? reverseCalculate(vatPerc, surchargePerc, withHoldingPerc, total)
 				: total;
 		vat.setBase(tb);
 		calculate(ai,vat);
@@ -66,11 +66,11 @@ public class InvoiceCalculator {
 	}
 	
 	
-	private static double reverseCalculate(double vatPercent, double surchargePercent, double retentionPercent, double total, int minPrecision, int maxPrecision) {
-		total = AonMathUtils.round(total); 
+	private static double reverseCalculate(double vatPercent, double surchargePercent, double retentionPercent, double total) {
+		total = AonMathUtils.round(total);
 		double base = 0;
-		for (int i=minPrecision; i<=maxPrecision; i++) {
-			base = AonMathUtils.round(total / (1 + vatPercent / 100 + surchargePercent / 100 - retentionPercent / 100), i);
+		for (int i=2; i<=4; i++) {
+			base = AonMathUtils.round(total / ( 1 + (vatPercent / 100) + (surchargePercent / 100) - (retentionPercent / 100)), i);
 			if (total == getTotal(vatPercent, surchargePercent , retentionPercent, base)) {
 				break;
 			} else {
@@ -81,7 +81,7 @@ public class InvoiceCalculator {
 					base = AonMathUtils.floor(total / (1 + vatPercent / 100 - retentionPercent / 100), i);
 					if (total == getTotal(vatPercent, surchargePercent ,retentionPercent, base)) {
 						break;
-					} else if (i < maxPrecision && i < 4) {
+					} else if (i < 4) {
 						base = AonMathUtils.round(base + 5 / Math.pow(10, i+1), i+1);
 						if (total == getTotal(vatPercent, surchargePercent ,retentionPercent, base)) {
 							break;
@@ -93,8 +93,12 @@ public class InvoiceCalculator {
 		return base;
 	}
 	
-	private static double getTotal(double vatPercent, double surchargePercent ,double retentionPercent, double price) {
-		return AonMathUtils.round(price * (1 + vatPercent / 100 + surchargePercent / 100 - retentionPercent / 100));
+	private static double getTotal(double vatPercent, double surchargePercent ,double retentionPercent, double base) {
+		return AonMathUtils.round(base 
+				+ AonMathUtils.round(base * vatPercent / 100) 
+				+ AonMathUtils.round(base * surchargePercent / 100) 
+				- AonMathUtils.round(base * retentionPercent / 100)
+				);
 	}
 	
 
