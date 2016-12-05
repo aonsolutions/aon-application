@@ -230,6 +230,18 @@
 						<g:ScrollPanel ui:field="feePanel"
 							styleName="{aonResources.css.aonTextCenter}" />
 					</g:tab>
+					<!--
+				   	<g:tab >
+						<g:customHeader styleName="{style.jeje}">
+							<g:HTMLPanel>
+								<i:IronIcon icon="work" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Comercial" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>	
+						</g:customHeader>
+						<g:ScrollPanel ui:field="commercialPanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+					-->
 				   	
 					<g:tab >
 						<g:customHeader styleName="{style.jeje}"> 

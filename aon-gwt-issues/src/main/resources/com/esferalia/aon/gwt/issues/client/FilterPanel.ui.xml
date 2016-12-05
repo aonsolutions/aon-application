@@ -36,6 +36,7 @@
 				<g:InlineLabel ui:field="typeLabel"></g:InlineLabel>
 				<g:InlineLabel ui:field="creatorLabel"></g:InlineLabel>
 				<g:InlineLabel ui:field="assignedLabel"></g:InlineLabel>
+				<g:InlineLabel ui:field="workgroupLabel"></g:InlineLabel>
 				<g:InlineLabel ui:field="enterpriseLabel"></g:InlineLabel>
 				<g:InlineLabel ui:field="orderLabel"></g:InlineLabel>
 				<g:InlineLabel ui:field="dateLabel"></g:InlineLabel>				
@@ -87,6 +88,11 @@
 		
 			<p:PaperButton ui:field="assignedButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
 			    <g:InlineLabel text="Asignado" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>
+			
+			<p:PaperButton ui:field="workgroupButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="G T" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
         	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 			</p:PaperButton>
 			

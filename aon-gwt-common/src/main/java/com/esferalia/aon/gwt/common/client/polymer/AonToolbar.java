@@ -19,7 +19,8 @@ public abstract class AonToolbar extends Composite {
     private static Binder binder = GWT.create(Binder.class);
 
     @UiField Label  title;
- 
+
+    @UiField PaperIconButton statsButton;
     @UiField PaperIconButton menuButton;
     @UiField PaperIconButton infoButton;
     @UiField PaperIconButton refreshButton;
@@ -141,5 +142,19 @@ public abstract class AonToolbar extends Composite {
     @UiHandler("infoButton")
   	void infoButtonClick(ClickEvent event) {
       	onInfoButtonClick();
+    }
+    
+    // ----------- STATS BUTTON
+    
+	protected abstract void onStatsButtonClick();
+
+    public AonToolbar setVisibleStatsButton(Boolean isVisible){
+    	statsButton.setVisible(isVisible);
+    	return this;
+    }
+
+    @UiHandler("statsButton")
+  	void statsButtonClick(ClickEvent event) {
+      	onStatsButtonClick();
     }
 }

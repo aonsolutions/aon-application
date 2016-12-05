@@ -37,6 +37,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -219,6 +221,9 @@ public class IssuePanel extends Composite{
 		}
 	}
 	
+	private IssueFilter taskIssueFilter; 
+	private Boolean scroll; 
+	
 	private void initSouthInfo(JsIssue issue){	
 		String nothing = "NO HAY DATOS RELACIONADOS A ESTA TAREA";
 
@@ -242,7 +247,12 @@ public class IssuePanel extends Composite{
 				} else if(value == 1){
 					openFootPanel();
 					// AVISOS
-					incidence.getEnterpriseIssues(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsIssue>>() {
+					scroll = true;
+					taskIssueFilter = new IssueFilter().setEnterprise(issue.getEnterprise().getId());
+					incidence.getOrgIssues(taskIssueFilter, new AsyncCallback<JSON<JsIssue>>() {
+
+						@Override public void onFailure(Throwable caught) {}
+
 						@Override
 						public void onSuccess(JSON<JsIssue> result) {
 							taskPanel.add(new TaskSouthPanel(issue, result.getData()) {
@@ -254,9 +264,33 @@ public class IssuePanel extends Composite{
 									parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
 								}
 							});
+							
+							taskPanel.addScrollHandler(new ScrollHandler() {
+								
+								@Override
+								public void onScroll(ScrollEvent event) {
+									Integer scrollTop = taskPanel.getElement().getScrollTop();
+									Integer offsetHeight = taskPanel.getElement().getOffsetHeight();
+									Integer physicalSize = taskPanel.getElement().getScrollHeight();
+									Integer maxScrollPosition = physicalSize - offsetHeight;
+									if(scrollTop >= maxScrollPosition && scroll){
+										TaskSouthPanel tsp = (TaskSouthPanel) taskPanel.getWidget();
+										taskIssueFilter.setPage(taskIssueFilter.getPage() + 1);
+										incidence.getOrgIssues(taskIssueFilter, new AsyncCallback<JSON<JsIssue>>() {
+											
+											@Override public void onSuccess(JSON<JsIssue> result) {
+												scroll = result.getData().length() == 30;
+												tsp.addItems(result.getData());
+											}
+											
+											@Override public void onFailure(Throwable caught) {}
+										});
+										taskPanel.getElement().setScrollTop(scrollTop);
+									}
+								}
+							});
 						}
 						
-						@Override public void onFailure(Throwable caught) {}
 					});
 				} else if(value == 2){
 					openFootPanel();
@@ -291,7 +325,18 @@ public class IssuePanel extends Composite{
 					});				
 				} else if(value == 5){
 					openFootPanel();
+					// COMMERCIAL
+					/*incidence.getCommercialTrackingList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
+						@Override
+						public void onSuccess(JSON<JsRnote> result) {
+							commercialPanel.add(new NoteSouthPanel(result.getData()));
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});*/
 				} else if(value == 6){
+					openFootPanel();
+				} else if(value == 7){
 					openFootPanel();
 				}
 			}

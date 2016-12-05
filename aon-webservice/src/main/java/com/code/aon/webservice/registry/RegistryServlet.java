@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "RegistryServlet", urlPatterns = { "/registry/*" })
@@ -49,7 +50,9 @@ public class RegistryServlet extends HttpServlet{
 						if (pathInfo[4].equals("registry")) {
 							if(pathInfo.length > 5)
 								// LISTA DE RMEDIA CON REGISTRY X
-								object = getGeneralList(domain, userName, Integer.parseInt(pathInfo[5]));
+								if(AonStringUtils.isNumeric(pathInfo[5]))
+									object = getGeneralList(domain, userName, Integer.parseInt(pathInfo[5]));
+								else object = new JSONObject();
 						} 
 					}
 					break;
@@ -58,7 +61,9 @@ public class RegistryServlet extends HttpServlet{
 						if (pathInfo[4].equals("registry")) {
 							if(pathInfo.length > 5)
 								// LISTA DE RMEDIA CON REGISTRY X
-								object = getRmediaList(domain, userName, Integer.parseInt(pathInfo[5]));
+								if(AonStringUtils.isNumeric(pathInfo[5]))
+									object = getRmediaList(domain, userName, Integer.parseInt(pathInfo[5]));
+								else object = new JSONObject();
 						} else if(pathInfo[4].equals("id")) {
 							if(pathInfo.length > 5) 
 								// RMEDIA CON ID X
@@ -74,7 +79,9 @@ public class RegistryServlet extends HttpServlet{
 						if (pathInfo[4].equals("registry")) {
 							if(pathInfo.length > 5)
 								// LISTA DE RMEDIA CON REGISTRY X
-								object = getRnoteList(domain, userName, Integer.parseInt(pathInfo[5]));
+								if(AonStringUtils.isNumeric(pathInfo[5]))
+									object = getRnoteList(domain, userName, Integer.parseInt(pathInfo[5]));
+								else object = new JSONObject();
 						} else if(pathInfo[4].equals("id")) {
 							if(pathInfo.length > 5) 
 								// RMEDIA CON ID X

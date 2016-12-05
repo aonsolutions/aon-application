@@ -31,6 +31,10 @@
             .duplicate-list-issue .pad {
             	padding-left: 30px;
             }
+            
+			.duplicate-list-issue .secondary {
+                font-size: 10px;
+            }
 
     </style>
        <i:IronList ui:field="issueSelector" as="item" selectionEnabled="true">
@@ -38,7 +42,12 @@
                 <div>
                     <div class="item">
                     	<iron-icon style="color:[[item.color]];" icon="error-outline"/> 
-                    	[[item.title]] #[[item.number]]
+                    	[[item.title]] 
+                    	<span class="secondary">
+                    	   <span>[</span> 
+                           			[[item.enterprise.login]]
+	                   		<span>]</span> 
+                    	</span>
 					</div>
                	</div>
         	</template>

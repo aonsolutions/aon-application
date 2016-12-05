@@ -236,8 +236,16 @@ public class Issues implements EntryPoint {
 				dialog.cancel.setVisible(false);
 				dialog.center();
 			}
-		}.setVisibleEditButton(false).setVisibleDeleteButton(false)
-		.setVisibleMoreOptionButton(false));
+
+			@Override
+			protected void onStatsButtonClick() {
+				// TODO Auto-generated method stub
+				
+			}
+		}.setVisibleEditButton(false)
+		.setVisibleDeleteButton(false)
+		.setVisibleMoreOptionButton(false)
+		.setVisibleStatsButton(false));
 	}
 	
 	private HorizontalPanel getInfoPanel(String color, String text){

@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TaskDAO {
 	
@@ -206,12 +207,22 @@ public class TaskDAO {
 		else c = TASK.STATUS.ne(TaskStatus.DELETED.value()).and(TASK.STATUS.ne(TaskStatus.FAQ.value()));
 
 		// assignee
-		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals(""))
-			c = c.and(TASK.TASK_HOLDER.eq(Integer.parseInt(issueFilter.getAssignee())));
+		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals("")){
+			if(issueFilter.getAssignee().equals("-1"))
+				c = c.and(TASK.TASK_HOLDER.isNull());
+			else c = c.and(TASK.TASK_HOLDER.eq(Integer.parseInt(issueFilter.getAssignee())));
+		}
+		
+		// workgroup
+		if(issueFilter.getWorkgroup() != null && !issueFilter.getWorkgroup().equals("")){
+			if(issueFilter.getWorkgroup().equals("-1"))
+				c = c.and(TASK.WORKGROUP.isNull());
+			else c = c.and(TASK.WORKGROUP.eq(Integer.parseInt(issueFilter.getWorkgroup())));
+		}
 
 		// enterprise
 		if(issueFilter.getEnterprise() != null && !issueFilter.getEnterprise().equals(""))
-		c = c.and(TASK.REGISTRY.eq(Integer.parseInt(issueFilter.getEnterprise())));
+			c = c.and(TASK.REGISTRY.eq(Integer.parseInt(issueFilter.getEnterprise())));
 
 		// creator
 		if(issueFilter.getCreator() != null && !issueFilter.getCreator().equals(""))
@@ -232,7 +243,7 @@ public class TaskDAO {
 				
 		// title
 		if(issueFilter.getTitle() != null && !issueFilter.getTitle().equals(""))
-			if(isNumeric(issueFilter.getTitle()))
+			if(AonStringUtils.isNumeric(issueFilter.getTitle()))
 				c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle())
 					.or(TASK.COMMENTS.contains(issueFilter.getTitle()))
 					.or(TASK.NUMBER.eq(Integer.parseInt(issueFilter.getTitle())))
@@ -705,15 +716,6 @@ public class TaskDAO {
 					.setCreationDate(r.getCreationDate())
 					.setModificationUser(r.getModificationUser())
 					.setModificationDate(r.getModificationDate());
-		}
-	}
-	
-	private static boolean isNumeric(String cadena){
-		try {
-			Integer.parseInt(cadena);
-			return true;
-		} catch (NumberFormatException nfe){
-			return false;
 		}
 	}
 }

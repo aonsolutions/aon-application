@@ -47,6 +47,7 @@ public class FilterPanel extends Composite {
     @UiField InlineLabel typeLabel;
     @UiField InlineLabel creatorLabel;
     @UiField InlineLabel assignedLabel;
+    @UiField InlineLabel workgroupLabel;
     @UiField InlineLabel enterpriseLabel;
     @UiField InlineLabel orderLabel;
     @UiField InlineLabel dateLabel;
@@ -65,6 +66,7 @@ public class FilterPanel extends Composite {
     @UiField PaperButton typeButton;
     @UiField PaperButton creatorButton;
     @UiField PaperButton assignedButton;
+    @UiField PaperButton workgroupButton;
     @UiField PaperButton enterpriseButton;
     @UiField PaperButton orderButton;
     @UiField PaperButton dateButton;
@@ -86,8 +88,10 @@ public class FilterPanel extends Composite {
     	typeButton.setNoink(true);
     	creatorButton.setNoink(true);
     	assignedButton.setNoink(true);
+    	workgroupButton.setNoink(true);
     	enterpriseButton.setNoink(true);
     	orderButton.setNoink(true);
+    	dateButton.setNoink(true);
     	
     	titleFilter.addKeyUpHandler(new KeyUpHandler() {
 			
@@ -281,6 +285,48 @@ public class FilterPanel extends Composite {
 				int left = assignedButton.getAbsoluteLeft();
 				int top = assignedButton.getAbsoluteTop()
 						+ assignedButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				acb.open();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("workgroupButton")
+	void workgroupButtonClick(ClickEvent event){
+		incidence.getWorkgroups(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override public void onSuccess(JSON<JsUser> result) {
+				AonJsArray<JsUser> users = result.getData();
+				PopupPanel popup = new PopupPanel();
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(users);
+				acb.setItemLabelPath("login");
+				acb.setLabel("Grupo de Trabajo");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
+					
+					@Override
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsUser jsLabel = acb.getSelectedItem().cast();
+						workgroupButton.setTitle(jsLabel.getLogin());
+						workgroupLabel.setText("Grupo de Trabajo:"+jsLabel.getLogin()+"; ");
+						getIssues().issueFilter.setWorkgroup(jsLabel.getId());
+						getIssues().updateIssueList(issues.issueFilter, false);
+						popup.hide();
+					}
+				});
+				popup.add(acb);
+				int left = workgroupButton.getAbsoluteLeft();
+				int top = workgroupButton.getAbsoluteTop()
+						+ workgroupButton.getOffsetHeight();
 				Integer width = Window.getClientWidth();
 				if(left > width - 200){
 					left = left - 200;
@@ -503,6 +549,7 @@ public class FilterPanel extends Composite {
     	typeButton.setTitle("");typeLabel.setText("");
     	creatorButton.setTitle("");creatorLabel.setText("");
     	assignedButton.setTitle("");assignedLabel.setText("");
+    	workgroupButton.setTitle("");workgroupLabel.setText("");
     	enterpriseButton.setTitle("");enterpriseLabel.setText("");
     	orderButton.setTitle("");orderLabel.setText("");
     	dateButton.setTitle("");dateLabel.setText("");

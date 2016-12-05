@@ -130,11 +130,14 @@ public class Documental implements EntryPoint {
 			@Override protected void onAddButtonClick() {}
 
 			@Override protected void onInfoButtonClick() {}
+
+			@Override protected void onStatsButtonClick() {}
 		}
 		.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false)
-		.setVisibleInfoButton(false));
+		.setVisibleInfoButton(false)
+		.setVisibleStatsButton(false));
 	}
 	
 	private void createSearchPanel(){

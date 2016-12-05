@@ -81,6 +81,8 @@ public class OrgsServlet extends HttpServlet{
 				workgroupId).map(new RegistryToUserFiller());
 		else userList = AON.getTaskMemberStream(domain.getName(), domain.getId(), userName,"%" + filter + "%")
 				.map(new RegistryToUserFiller());
+		
+		array.put(new User().setId(-1).setLogin("Sin Asignar").toJSON());
 		userList.forEach(l->array.put(l.toJSON()));
 		return array;
 	}
@@ -89,6 +91,7 @@ public class OrgsServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
 		Stream<User> userList = AON.getTaskWorkgroupStream(domain.getName(), domain.getId(), userName,"%" + filter + "%")
 				.map(new WorkgroupToUserFiller());
+		array.put(new User().setId(-1).setLogin("Sin Asignar").toJSON());
 		userList.forEach(l->array.put(l.toJSON()));
 
 		return array;

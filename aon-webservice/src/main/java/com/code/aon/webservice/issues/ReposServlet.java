@@ -407,6 +407,15 @@ public class ReposServlet extends HttpServlet{
 	}
 	
 	private Task updateTaskLiberate(Domain domain, String userName, Task task){
+		Long count = AON.getTaskStream(domain.getName(), domain.getId(), userName, f -> f.getParentProperty().eq(task.getParent())
+				.and(f.getIdProperty().ne(task.getParent()))).count();
+		if(count <= 1){
+			Task p = AON.getTask(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(task.getParent()));
+			if(p.getParent().equals(p.getId())){
+				p.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName).setParent(null);
+				AON.updateTaskParent(domain.getName(), domain.getId(), userName, p);
+			}
+		}
 		task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
 			.setParent(null);
 		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
@@ -568,6 +577,8 @@ public class ReposServlet extends HttpServlet{
 			json.put("title", Utils.getShortString(task.getDescription()));
 			json.put("parent", task.getParent());
 			json.put("color", Utils.getStatusColor(task));
+			Registry r = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
+			json.put("enterprise", new User().setId(r.getId()).setLogin(r.getName()).toJSON());
 			array.put(json);
 		});
 		return array;
@@ -627,6 +638,7 @@ public class ReposServlet extends HttpServlet{
 		return new IssueFilter()
 				.setTitle(req.getParameter("title"))
 				.setAssignee(req.getParameter("asignee"))
+				.setWorkgroup(req.getParameter("workgroup"))
 				.setCreator(req.getParameter("creator"))
 				.setDirection(req.getParameter("direction"))
 				.setLabels(req.getParameter("labels"))

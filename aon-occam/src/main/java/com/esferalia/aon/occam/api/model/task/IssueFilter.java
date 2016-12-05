@@ -6,6 +6,7 @@ public class IssueFilter {
 	String milestone;
 	String state;
 	String assignee;
+	String workgroup;
 	String creator;
 	String mentioned;
 	String labels;
@@ -145,6 +146,15 @@ public class IssueFilter {
 
 	public IssueFilter setDateDiff(String dateDiff) {
 		this.dateDiff = dateDiff;
+		return this;
+	}
+
+	public String getWorkgroup() {
+		return workgroup;
+	}
+
+	public IssueFilter setWorkgroup(String workgroup) {
+		this.workgroup = workgroup;
 		return this;
 	}
 	
