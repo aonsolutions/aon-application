@@ -430,6 +430,7 @@ public class SalaryDraft extends ResizeComposite
 		public TextBox create(Variable variable) {
 			TextBox textBox = new ExpressionBox();
 			textBox.setMaxLength(EXPRESSION_MAX_LENGTH);
+			textBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
 			return textBox;
 		}
 
@@ -490,7 +491,7 @@ public class SalaryDraft extends ResizeComposite
 			oracle.add("NO_LABORABLE");
 			
 			
-			return new AllFocusSuggestBox(oracle, textBox){
+			AllFocusSuggestBox allFocusSuggestBox = new AllFocusSuggestBox(oracle, textBox){
 				
 				@Override
 				public void setValue(String value) {
@@ -522,6 +523,10 @@ public class SalaryDraft extends ResizeComposite
 				}
 				
 			};
+			
+			allFocusSuggestBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			
+			return allFocusSuggestBox;
 			
 		}
 
@@ -1431,7 +1436,7 @@ public class SalaryDraft extends ResizeComposite
 		SuggestBox descriptionBox;
 		MultiWordSuggestOracle oracle;
 
-		Map<String, T> itemsConceptsMap;
+		Map<String, T> itemsConceptsMap = new HashMap<String, T>();
 
 		public void setDescriptionBox(SuggestBox descriptionBox) {
 			this.descriptionBox = descriptionBox;
@@ -1475,7 +1480,6 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		protected void initSuggestionItems() {
-			itemsConceptsMap = new HashMap<String, T>();
 
 			for (T item : getAvailableItems()) {
 				String suggestion = item.getDescription();
@@ -3342,6 +3346,7 @@ public class SalaryDraft extends ResizeComposite
 		newButton.setStyleName(AON.AON_ICON_RESET); // clear gwt-Button
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		newPaymentHandler.setNewButton(newButton);
+		newButton.ensureDebugId("button-new-payment");
 
 		paymentsTable.setWidget(row, 0, newButton);
 		paymentsTable.setHTML(row, 1, "&nbsp;");
@@ -3353,6 +3358,7 @@ public class SalaryDraft extends ResizeComposite
 		paymentsTable.setWidget(row, 2, descriptionBox);
 		newPaymentHandler.setOracle(paymentsOracle);
 		newPaymentHandler.setDescriptionBox(descriptionBox);
+		descriptionBox.ensureDebugId("description-box-new-payment");
 
 		TextBox amountBox = new ExpressionBox();
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
@@ -3360,6 +3366,7 @@ public class SalaryDraft extends ResizeComposite
 		amountBox.setVisible(false);
 		paymentsTable.setWidget(row, 3, amountBox);
 		newPaymentHandler.setExpressionBox(amountBox);
+		amountBox.ensureDebugId("amount-box-new-payment");
 
 		paymentsTable.setHTML(row, 4, "&nbsp;");
 		paymentsTable.setHTML(row, 5, "&nbsp;");
@@ -3564,7 +3571,7 @@ public class SalaryDraft extends ResizeComposite
 			}
 		}
 		
-		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-" + row);
+		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
 	}
 
@@ -3588,6 +3595,7 @@ public class SalaryDraft extends ResizeComposite
 		editButton.setTabIndex(Short.MAX_VALUE);
 		editButton.setStyleName(iconStyleName);
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		editButton.ensureDebugId("edit-button-" + row );
 		handler.setEditButton(editButton);
 		if (expandButton != null) {
 			HorizontalPanel editPanel = new HorizontalPanel();
@@ -3667,6 +3675,7 @@ public class SalaryDraft extends ResizeComposite
 			buttonsPanel.add(agreementButton);
 			handler.setAgreementButton(agreementButton);
 			enable(agreementButton, isEditable);
+			agreementButton.ensureDebugId("agreement-button-" + row );
 		}
 
 		Button deleteButton = new Button();
@@ -3675,6 +3684,7 @@ public class SalaryDraft extends ResizeComposite
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		buttonsPanel.add(deleteButton);
 		enable(deleteButton, !isRemove(item) && isEditable);
+		deleteButton.ensureDebugId("delete-button-" + row );
 
 		handler.setDeleteButton(deleteButton);
 
@@ -3939,6 +3949,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> Widget getVariableWidget(
 			final Variable variable, Scope scope, boolean show) {
+
 		HTMLPanel htmlPanel = new HTMLPanel("");
 
 		T editor = createEditor(variable);
@@ -3955,8 +3966,8 @@ public class SalaryDraft extends ResizeComposite
 		Panel valuePanel = new HorizontalPanel();
 		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
-		TextBox variableTextBox = new ExpressionBox();
-		variableTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
+		//TextBox variableTextBox = new ExpressionBox();
+		//variableTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 
 		variableChangeHandler.setEditor(editor);
 
@@ -3965,6 +3976,9 @@ public class SalaryDraft extends ResizeComposite
 		valuePanel.add(new InlineHTML("&nbsp;"));
 
 		boolean enabled = true ;
+		
+
+		String debugName = variable.getName().toLowerCase();
 
 		if (!(variable instanceof UndefinedVariable)) {
 			enabled = wasUniqueDraftPeriod(variable);
@@ -3973,11 +3987,13 @@ public class SalaryDraft extends ResizeComposite
 				Button agreementVarButton = getAgreementVarButton(variable);
 				agreementVarButton.setTabIndex(Short.MAX_VALUE);
 				valuePanel.add(agreementVarButton);
+				agreementVarButton.ensureDebugId("agreement-button-" + debugName );
 			}
 			if ( enabled ){
 				Button deleteButton = getDeleteButton(variable);
 				deleteButton.setTabIndex(Short.MAX_VALUE);
 				valuePanel.add(deleteButton);
+				deleteButton.ensureDebugId("delete-button-" + debugName );
 			}
 		} else if (variable instanceof UndefinedPaymentVariable) {
 			String styles[] = eventStyles.get(Event.Type.WARNING);
@@ -3987,6 +4003,7 @@ public class SalaryDraft extends ResizeComposite
 			valuePanel.add(itemButton);
 			// not show payments of variables at 'to' ...
 			itemButton.setValue(show && variable.getScope().compareTo(Scope.AGREEMENT) >= 0, true);
+			itemButton.ensureDebugId("item-button-" + debugName );
 		} else if (variable instanceof UndefinedDeductionVariable) {
 			String styles[] = eventStyles.get(Event.Type.WARNING);
 
@@ -3996,6 +4013,7 @@ public class SalaryDraft extends ResizeComposite
 
 			valuePanel.add(itemButton);
 			itemButton.setValue(show && variable.getScope() == Scope.SALARY, true);
+			itemButton.ensureDebugId("item-button-" + debugName );
 		}
 
 		if (enabled && scope.compareTo(Scope.APPLICATION) > 0
@@ -4003,6 +4021,7 @@ public class SalaryDraft extends ResizeComposite
 			Button systemButton = getSystemVarButton(variable);
 			systemButton.setTabIndex(Short.MAX_VALUE);
 			valuePanel.add(systemButton);
+			systemButton.ensureDebugId("system-button-" + debugName );
 		}
 
 		htmlPanel.add(valuePanel);
