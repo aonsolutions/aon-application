@@ -274,8 +274,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 								account.setId(ar.getAccountId());
 								account.setCode(ar.getAccountCode());
 								account.setDescription(ar.getAccountDescription());
-								getCallback().getModule().onBalance(account);
-								
+								if (ar.getAccountId() != null) {
+									getCallback().getModule().onBalance(account);
+								}
 								vatPanel.setSuggestedAccounts(getWrapper().getSuggestedAccounts());
 								paint();
 								extraPanel.invoiceChanged(result);
