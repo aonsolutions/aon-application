@@ -87,7 +87,7 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 		}
 	}
 	public void add( final Account account,final Date from,final  Date to ) {
-		if (!accounts.contains(account.getId())) {
+		if (account != null && !accounts.contains(account.getId())) {
 			accounts.add(account.getId());
 			final FlowPanel panel = new FlowPanel("pre");
 			panel.setStyleName(AON.AON_CSS.aonFixedFont());
