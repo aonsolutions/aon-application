@@ -61,7 +61,14 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		setWidth("700px");
 		setHeight("550px");
 		AccountingRegistry accountingRegistry = new AccountingRegistry();
-		if (id == null) {
+		
+		
+		//************************
+		id = null;
+		// TODO Modificar el Registry.
+		//************************
+		
+//		if (id == null) {
 			accountingRegistry = new AccountingRegistry()
 					.setDomain(domain)
 					.setType(AccountingRegistryType.CREDITOR)
@@ -69,11 +76,11 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 					.setNationality(Country.ES)
 					.setTransaction(InvoiceTransactionType.NATIONAL)
 					.cleanDirty();
-		} else {
+//		} else {
 			// TODO Modificar el Registry.
-			accountingRegistry = new AccountingRegistry();
+//			accountingRegistry = new AccountingRegistry();
 			// --------------- borrar linea anterior y buscar el registry.
-		}
+//		}
 		
 		final AccountingRegistry reg = accountingRegistry;
 		 
