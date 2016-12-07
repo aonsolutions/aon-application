@@ -44,14 +44,11 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 public class ReposServlet extends HttpServlet{
 	
 	private static final DBConsults DB = DBConsults.getInstance();
-	
-	String h = "http://";
-	
+		
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
-		if(req.getServerPort() == 80) h = "http://";
-		else if(req.getServerPort() == 443) h = "https://";
+		String scheme = req.getScheme();
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
@@ -66,16 +63,16 @@ public class ReposServlet extends HttpServlet{
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
 				case "faqs":
-					object = getFaqIssuesJSON(domain, userName, getFilter(req));
+					object = getFaqIssuesJSON(domain, userName, getFilter(req), scheme);
 					break;
 				case "duplicates":
 					if(pathInfo.length > 4){
-						object = getDuplicateIssuesJSON(domain, userName, pathInfo[4]);
+						object = getDuplicateIssuesJSON(domain, userName, pathInfo[4], scheme);
 					}
 					break;
 				case "enterprise":
 					if(pathInfo.length > 4){
-						object = getEnterpriseIssuesJSON(domain, userName, pathInfo[4]);
+						object = getEnterpriseIssuesJSON(domain, userName, pathInfo[4], scheme);
 					}
 					break;
 				case "issues_light":
@@ -97,9 +94,9 @@ public class ReposServlet extends HttpServlet{
 							else if(pathInfo[5].equalsIgnoreCase("priority")) // PRIORITY
 								object = getPriorityJSON(domain, userName, pathInfo[4]);	
 						} else // TASK / ISSUE
-							object = getIssueJSON(domain, userName, DB.getTask(domain, userName, Integer.parseInt(pathInfo[4])));
+							object = getIssueJSON(domain, userName, DB.getTask(domain, userName, Integer.parseInt(pathInfo[4])), scheme);
 					}else{ // TASKS / ISSUES
-						object = getIssuesJSON(domain, userName, getFilter(req));
+						object = getIssuesJSON(domain, userName, getFilter(req), scheme);
 						meta = getSizeJSON(domain, userName, getFilter(req));
 					}
 					break;
@@ -144,8 +141,7 @@ public class ReposServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("POST METHOD");
-		if(req.getServerPort() == 80) h = "http://";
-		else if(req.getServerPort() == 443) h = "https://";
+		String scheme = req.getScheme();
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
@@ -281,36 +277,36 @@ public class ReposServlet extends HttpServlet{
 								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
 							}
 							AON.updateTaskStatus(domain.getName(), domain.getId(), userName, task );								
-							object = getIssueJSON(domain, userName, task);
+							object = getIssueJSON(domain, userName, task, scheme);
 						} else if(json.opt("body") != null){
 							task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
 							DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
 							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 							Boolean principal = DB.isPrincipal(domain, userName, task);
-							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal, h).toJSON();
+							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal, scheme).toJSON();
 						} else if(json.opt("duplicate") != null){
 							String d = json.getString("duplicate");
 							if(!d.equals("liberate")){
 								Integer parentId = Integer.parseInt(d); 
 								updateTaskDuplicate(domain, userName, new Task().setId(parentId), parentId);
 								task = updateTaskDuplicate(domain, userName, task, parentId);
-								object = getDuplicateIssueJSON(domain, userName, task);
+								object = getDuplicateIssueJSON(domain, userName, task, scheme);
 							} else if(d.equals("liberate")) {
 								task = updateTaskLiberate(domain, userName, task);
-								object = getIssueJSON(domain, userName, task);								
+								object = getIssueJSON(domain, userName, task, scheme);								
 							}
 						} else if(json.opt("faq") != null){
 							String d = json.getString("faq");	
 							Integer parentId = Integer.parseInt(d);
 							task = updateTaskFaq(domain, userName, task, parentId);
-							object = getDuplicateIssueJSON(domain, userName, task);
+							object = getDuplicateIssueJSON(domain, userName, task, scheme);
 						} else if(json.opt("title") != null){
 							task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
 								.setDescription(json.getString("title"));
 							DB.updateTaskTitle(domain, userName, task.setComments(json.getString("title")));
 							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 							Boolean principal = DB.isPrincipal(domain, userName, task);
-							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal, h).toJSON();
+							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal, scheme).toJSON();
 						}
 						
 					}
@@ -332,6 +328,7 @@ public class ReposServlet extends HttpServlet{
 						.setRegistry(!faq ? registry.getId() : null) 
 						.setPercent((byte) 0) 
 						.setPriority((byte) 0)
+						.setRepeatPeriod((byte) 0)
 						.setSource(TaskSource.MANUAL.value())
 						.setCreationUser(userName)
 						.setCreationDate(Calendar.getInstance().getTime())
@@ -340,7 +337,7 @@ public class ReposServlet extends HttpServlet{
 					
 					Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
 					Boolean principal = DB.isPrincipal(domain, userName, task);
-					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry, principal, h).toJSON();
+					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry, principal, scheme).toJSON();
 				}
 				break;
 			case "labels":
@@ -500,7 +497,7 @@ public class ReposServlet extends HttpServlet{
 		return array;
 	}
 	
-	private JSONObject getIssueJSON(Domain domain, String userName, Task task) {
+	private JSONObject getIssueJSON(Domain domain, String userName, Task task, String scheme) {
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
@@ -511,11 +508,11 @@ public class ReposServlet extends HttpServlet{
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		Boolean principal = DB.isPrincipal(domain, userName, task);
-		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h);		
+		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, scheme);		
 		return issue.toJSON();
 	}
 	
-	private JSONObject getDuplicateIssueJSON(Domain domain, String userName, Task task) {
+	private JSONObject getDuplicateIssueJSON(Domain domain, String userName, Task task, String scheme) {
 		Task padre = DB.getTask(domain, userName, task.getParent());
 		task.setPriority(padre.getPriority());
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, padre.getTaskHolder());
@@ -528,11 +525,11 @@ public class ReposServlet extends HttpServlet{
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		Boolean principal = DB.isPrincipal(domain, userName, task);
-		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h);		
+		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, scheme);		
 		return issue.toJSON();
 	}
 	
-	private JSONArray getIssuesJSON(Domain domain, String userName, IssueFilter filter) {
+	private JSONArray getIssuesJSON(Domain domain, String userName, IssueFilter filter, String scheme) {
 		JSONArray array = new JSONArray();
 		DB.getTaskStream(domain, userName, filter).forEach(task -> {
 			Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
@@ -545,13 +542,13 @@ public class ReposServlet extends HttpServlet{
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
-			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h).toJSON();
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, scheme).toJSON();
 			array.put(json);
 		});
 		return array;
 	}
 	
-	private JSONArray getFaqIssuesJSON(Domain domain, String userName, IssueFilter filter) {
+	private JSONArray getFaqIssuesJSON(Domain domain, String userName, IssueFilter filter, String scheme) {
 		JSONArray array = new JSONArray();
 		DB.getFaqTaskStream(domain, userName, filter).forEach(task -> {
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
@@ -561,7 +558,7 @@ public class ReposServlet extends HttpServlet{
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
-			JSONObject json = new Issue(task, new Registry(), labels, type, comments, domain, userName, new Workgroup(), new Registry(), principal, h).toJSON();
+			JSONObject json = new Issue(task, new Registry(), labels, type, comments, domain, userName, new Workgroup(), new Registry(), principal, scheme).toJSON();
 			array.put(json);
 		});
 		return array;
@@ -584,7 +581,7 @@ public class ReposServlet extends HttpServlet{
 		return array;
 	}
 	
-	private JSONArray getDuplicateIssuesJSON(Domain domain, String userName, String parent) {
+	private JSONArray getDuplicateIssuesJSON(Domain domain, String userName, String parent, String scheme) {
 		Task padre = DB.getTask(domain, userName, Integer.parseInt(parent));
 		JSONArray array = new JSONArray();
 		DB.getDuplicateTaskStream(domain, userName, Integer.parseInt(parent)).forEach(task -> {
@@ -599,13 +596,13 @@ public class ReposServlet extends HttpServlet{
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
-			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h).toJSON();
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, scheme).toJSON();
 			array.put(json);
 		});
 		return array;
 	}
 	
-	private JSONArray getEnterpriseIssuesJSON(Domain domain, String userName, String e) {
+	private JSONArray getEnterpriseIssuesJSON(Domain domain, String userName, String e, String scheme) {
 		JSONArray array = new JSONArray();
 		DB.getEnterpriseTaskStream(domain, userName, Integer.parseInt(e)).forEach(task -> {
 			task.setPriority(task.getPriority());
@@ -619,7 +616,7 @@ public class ReposServlet extends HttpServlet{
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
-			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h).toJSON();
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, scheme).toJSON();
 			array.put(json);
 		});
 		return array;

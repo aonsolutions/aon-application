@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.api.client.Methods;
 import com.esferalia.aon.gwt.api.client.finance.JsBoughtProduct;
 import com.esferalia.aon.gwt.api.client.finance.JsFee;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
+import com.esferalia.aon.gwt.api.client.project.JsProject;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -427,6 +428,7 @@ public class Incidence extends Methods{
 	public void getEnterpriseBoughtProductList(Integer enterprise, AsyncCallback<JSON<JsBoughtProduct>> callback){
 		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/bought_product/registry/"+enterprise, callback);
 	}
+	
 	//-------------------- NOTIFICATIONS
 	
 	public void getNotificationInfo(AsyncCallback<JSON<JsNotify>> callback){
@@ -440,6 +442,12 @@ public class Incidence extends Methods{
 	public void sendNotification(JsIssue issue, String requestData){
 		post(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName(), requestData);
 	}
+	
+	//-------------------- PROJECT - COMMERCIAL
+	
+	public void getProjectCommercialList(Integer enterprise, AsyncCallback<JSON<JsProject>> callback){
+		get(url + "project/"+ getDomainName() + "/" + getUserName() + "/commercial/registry/" + enterprise, callback);
+	}	
 		
 	//-------------------- TASK
 	/**

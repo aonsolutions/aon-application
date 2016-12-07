@@ -55,6 +55,7 @@ public class FeeDAO {
 	
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
 		return ctx.getDslContext().select().from(CUSTOMER_FEE).where(FEE_PROPERTIES.getConditions(filter))
+				.orderBy(CUSTOMER_FEE.LINE)
 			.fetchInto(CUSTOMER_FEE).stream().map(new FeeFiller());
 	}
 	

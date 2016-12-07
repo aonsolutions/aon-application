@@ -170,7 +170,7 @@ public class InvoiceDAO {
 				.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 				.where(INVOICE_PROPERTIES.getConditions(filter))
 				.groupBy(PRODUCT.CODE)
-				.orderBy(PRODUCT.CODE)
+				.orderBy(INVOICE.ISSUE_DATE)
 				.fetch();
 	}
 	

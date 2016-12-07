@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.CommercialActivity;
 import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
@@ -10,8 +11,9 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 
 public interface ICommercial {
 	public CommercialTracking getCommercialTracking(AONContext ctx, CommercialTrackingFilter filter);
-	public LinkedList<CommercialTracking> getCommercialTrackingList(AONContext ctx, CommercialTrackingFilter filter);
+	public Stream<CommercialTracking> getCommercialTrackingStream(AONContext ctx, CommercialTrackingFilter filter);
 
+	
 	public void updateEventId(AONContext ctx, Integer ctId, String eventId);
 	
 	public CommercialActivity getCommercialActivity(AONContext ctx, CommercialActivityFilter filter);

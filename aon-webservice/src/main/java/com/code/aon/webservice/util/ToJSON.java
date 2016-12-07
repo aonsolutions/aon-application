@@ -6,9 +6,12 @@ import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -100,6 +103,37 @@ public class ToJSON {
 		json.put("code", id.getItem().getCode());
 		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((Double.parseDouble(id.getDiscountExpression())/100) + 1)));
 		json.put("reference_code", id.getInvoice().getReferenceCode());
+		return json;
+	}
+
+	public static JSONObject projectCommercialToJSON(ProjectCommercial project, Registry registry, Registry seller) {
+		JSONObject json = new JSONObject();
+		json.put("id", project.getId());
+		json.put("domain", project.getDomain());
+		json.put("name", project.getName());
+		json.put("alias", project.getAlias());
+		json.put("registry", registryToJSON(registry));
+		json.put("seller", registryToJSON(seller));
+		json.put("date", dateFormat.format(project.getDate()));
+		json.put("project_type", project.getProjectTypeId());
+		json.put("comment", project.getComments());
+		return json;
+	}
+	
+	public static JSONObject commercialTrackingToJSON(CommercialTracking ct, Registry seller) {
+		JSONObject json = new JSONObject();
+		json.put("id", ct.getId());
+		json.put("domain", ct.getDomain());
+		json.put("date", dateFormat.format(ct.getDate()));
+		json.put("seller", registryToJSON(seller));
+		json.put("comment", ct.getComments());
+		return json;
+	}
+
+	public static JSONObject registryToJSON(Registry registry) {
+		JSONObject json = new JSONObject();
+		json.put("id", registry.getId());
+		json.put("name", registry.getName());
 		return json;
 	}
 	

@@ -555,5 +555,17 @@ public interface Properties {
 		Property<Double> getPenaltyAmountProperty();
 		Property<Byte> getStatusProperty();
 	}
+	
+	public interface ProjectCommercialProperties{
+		Property<Integer> getProjectProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTargetProperty();
+		Property<Integer> getSellerProperty();
+		Property<String> getCommentsProperty();
+		Property<Byte> getSourceProperty();
+		Property<Byte> getStatusProperty();
+		Property<Date> getStatusDateProperty();
+	}
+
 
 }

@@ -145,6 +145,7 @@ public class FinanceServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getBoughtProductStream(domain.getName(), domain.getId(), login,
     			f -> f.getRegistryProperty().eq(registryId))
+    		.sorted((e1, e2) -> e2.getInvoice().getIssueDate().compareTo(e1.getInvoice().getIssueDate()))
     		.forEach(id -> {
     			JSONObject json = ToJSON.boughtProductToJSON(id);
     			JSONArray ar = new JSONArray();

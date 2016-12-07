@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -81,6 +82,7 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -1831,28 +1833,25 @@ public class AON {
 	// ********************************* Project **
 	// ********************************************
 
-	public static Project getProject(String domainName, Integer domainId,
-			String login, ProjectFilter filter) {
+	public static Stream<Project> getProjectStream(String domainName, Integer domainId, String login, ProjectFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProject().getProject(ctx, filter);
+			return getProject().getProjectStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
+	
+	public static Project getProject(String domainName, Integer domainId, String login, ProjectFilter filter) {
+		return getProjectStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Project());
+	}
 
-	public static LinkedList<Project> getProjectList(String domainName,
-			Integer domainId, String login, ProjectFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProject().getProjectList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login, ProjectFilter filter) {
+		return getProjectStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static Integer insertProject(String domainName, Integer domainId,
@@ -1895,6 +1894,28 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static Stream<ProjectCommercial> getProjectCommercialStream(String domainName,
+			Integer domainId, String login, ProjectCommercialFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().getProjectCommercialStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<ProjectCommercial> getProjectCommercialList(String domainName, Integer domainId, String login, ProjectCommercialFilter filter) {
+		return getProjectCommercialStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static ProjectCommercial getProjectCommercial(String domainName, Integer domainId, String login, ProjectCommercialFilter filter) {
+		return getProjectCommercialStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new ProjectCommercial());
 	}
 
 	// ********************************************
@@ -2194,17 +2215,20 @@ public class AON {
 		}
 	}
 
-	public static LinkedList<CommercialTracking> getCommercialTrackingList(
-			String domainName, Integer domainId, String login,
-			CommercialTrackingFilter filter) {
+	public static Stream<CommercialTracking> getCommercialTrackingStream(String domainName, Integer domainId, String login,	CommercialTrackingFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommercial().getCommercialTrackingList(ctx, filter);
+			return getCommercial().getCommercialTrackingStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static LinkedList<CommercialTracking> getCommercialTrackingList(String domainName, Integer domainId, String login, CommercialTrackingFilter filter) {
+		return getCommercialTrackingStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static void updateEventId(String domainName, Integer domainId,

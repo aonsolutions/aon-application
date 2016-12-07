@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ICommercial;
@@ -21,9 +22,9 @@ public class CommercialImpl implements ICommercial {
 	}
 	
 	@Override
-	public LinkedList<CommercialTracking> getCommercialTrackingList(AONContext ctx, CommercialTrackingFilter filter) {
+	public Stream<CommercialTracking> getCommercialTrackingStream(AONContext ctx, CommercialTrackingFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> CommercialDAO.getCommercialTrackingList(ctx, filter));
+				configuration -> CommercialDAO.getCommercialTrackingStream(ctx, filter));
 	}
 	
 	@Override

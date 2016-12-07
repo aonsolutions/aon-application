@@ -77,11 +77,10 @@ public class CommercialDAO {
 				.findFirst().orElse(null);
 	}
 	
-	public static LinkedList<CommercialTracking> getCommercialTrackingList(AONContext ctx, CommercialTrackingFilter filter){
+	public static Stream<CommercialTracking> getCommercialTrackingStream(AONContext ctx, CommercialTrackingFilter filter){
 		return ctx.getDslContext()
 				.select().from(COMMERCIAL_TRACKING).where(COMMERCIAL_TRACKING_PROPERTIES.getConditions(filter))
-				.fetchInto(COMMERCIAL_TRACKING).stream().map(new FullCommercialTrackingFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
+				.fetchInto(COMMERCIAL_TRACKING).stream().map(new FullCommercialTrackingFiller());
 	}
 	
 	public static void updateEventId(AONContext ctx, Integer ctId, String eventId){

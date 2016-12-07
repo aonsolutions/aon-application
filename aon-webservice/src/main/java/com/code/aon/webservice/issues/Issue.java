@@ -61,12 +61,12 @@ public class Issue {
 	}
 	
 	public Issue(Task task, Registry assignee, LinkedList<Label> labels, Label type, Integer comments,
-			Domain domain, String userName, Workgroup workgroup, Registry enterprise, Boolean principal, String h) {
+			Domain domain, String userName, Workgroup workgroup, Registry enterprise, Boolean principal, String scheme) {
 		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
 		
-		String url = h+domain.getName()+ "/";
+		String url = scheme + "://" + domain.getName() + "/";
 		//url = url + "aon-aio/";
 		this.id = task.getId();
 		this.parent = task.getParent();

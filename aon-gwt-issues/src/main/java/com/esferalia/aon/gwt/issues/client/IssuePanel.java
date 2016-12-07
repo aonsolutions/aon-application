@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsGeneral;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
+import com.esferalia.aon.gwt.api.client.project.JsProject;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
@@ -23,6 +24,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.issues.client.south.CommercialSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.FeeSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.GeneralInfoSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.NoteSouthPanel;
@@ -114,6 +116,7 @@ public class IssuePanel extends Composite{
 	@UiField PaperIconButton typeDeleteButton;
 	@UiField PaperIconButton workgroupDeleteButton;
 
+	@UiField ScrollPanel commercialPanel;
 	@UiField ScrollPanel generalPanel;
 	@UiField ScrollPanel taskPanel;
 	@UiField ScrollPanel duplicatePanel;
@@ -326,14 +329,14 @@ public class IssuePanel extends Composite{
 				} else if(value == 5){
 					openFootPanel();
 					// COMMERCIAL
-					/*incidence.getCommercialTrackingList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
+					incidence.getProjectCommercialList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsProject>>() {
 						@Override
-						public void onSuccess(JSON<JsRnote> result) {
-							commercialPanel.add(new NoteSouthPanel(result.getData()));
+						public void onSuccess(JSON<JsProject> result) {
+							commercialPanel.add(new CommercialSouthPanel(result.getData()));
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
-					});*/
+					});
 				} else if(value == 6){
 					openFootPanel();
 				} else if(value == 7){
@@ -360,7 +363,7 @@ public class IssuePanel extends Composite{
 						}
 					});
 					openFootPanel();
-					tabLayout.selectTab(5);
+					tabLayout.selectTab(6);
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -382,7 +385,7 @@ public class IssuePanel extends Composite{
 						}
 					});
 					openFootPanel();
-					tabLayout.selectTab(6);
+					tabLayout.selectTab(7);
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -633,11 +636,11 @@ public class IssuePanel extends Composite{
 				}
 			}
 		});
-		editButton.setVisible(!issue.isFaqItem() && !issue.isDuplicate() && userLogged.getText().equals(issue.getUser().getLogin()));
+		editButton.setVisible(!issue.isFaqItem() && !issue.isDuplicate() && incidence.getUserName().equals(issue.getUser().getLogin()));
 
 		PaperIconButton lockButton = new PaperIconButton();
 		lockButton.setIcon("lock");
-		lockButton.setVisible(issue.isFaqItem() || issue.isDuplicate() || !userLogged.getText().equals(issue.getUser().getLogin()));
+		lockButton.setVisible(issue.isFaqItem() || issue.isDuplicate() || !incidence.getUserName().equals(issue.getUser().getLogin()));
 		
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("600px");
@@ -682,11 +685,11 @@ public class IssuePanel extends Composite{
 			}
 		});
 
-		editButton.setVisible(!issue.isFaqItem() && !issue.isDuplicate() && AonStringUtils.equals(userLogged.getText(), comment.getUser().getLogin()));
+		editButton.setVisible(!issue.isFaqItem() && !issue.isDuplicate() && AonStringUtils.equals(incidence.getUserName(), comment.getUser().getLogin()));
 		
 		PaperIconButton lockButton = new PaperIconButton();
 		lockButton.setIcon("lock");
-		lockButton.setVisible(issue.isFaqItem() || issue.isDuplicate() || !userLogged.getText().equals(issue.getUser().getLogin()));
+		lockButton.setVisible(issue.isFaqItem() || issue.isDuplicate() || !incidence.getUserName().equals(comment.getUser().getLogin()));
 		
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("600px");
@@ -1075,14 +1078,26 @@ public class IssuePanel extends Composite{
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsUser jsUser = acb.getSelectedItem().cast();
-						workgroup = jsUser;
-						workgroupLabel.setText(jsUser.getLogin());
-						workgroupLabel.getElement().getStyle().setBackgroundColor("#ff704d");
-						workgroupDeleteButton.setVisible(true);
-						incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
-							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsUser result) {}
-						});
+						if(jsUser.getLogin().equals("Sin Asignar")){
+							incidence.deleteWorkgroup2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
+								@Override public void onFailure(Throwable caught) {}
+								@Override public void onSuccess(JsUser result) {
+									workgroup = null;
+									workgroupLabel.setText("Sin Asignar");
+									workgroupLabel.getElement().getStyle().setBackgroundColor("#ddd");
+									workgroupDeleteButton.setVisible(false);
+								}
+							});
+						}else {
+							workgroup = jsUser;
+							workgroupLabel.setText(jsUser.getLogin());
+							workgroupLabel.getElement().getStyle().setBackgroundColor("#ff704d");
+							workgroupDeleteButton.setVisible(true);
+							incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+								@Override public void onFailure(Throwable caught) {}
+								@Override public void onSuccess(JsUser result) {}
+							});
+						}
 						popup.hide();					
 					}
 				});
@@ -1121,17 +1136,29 @@ public class IssuePanel extends Composite{
 					
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+					
 						JsUser jsUser = acb.getSelectedItem().cast();
-						userLabel.setText(jsUser.getLogin());
-						userLabel.getElement().getStyle().setBackgroundColor("#a30c51");
-						userDeleteButton.setVisible(true);
-						// TODO GITHUB!!!
-						incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
-							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsUser result) {
-								parent.sendNotification(issue, NotificationType.ASSIGNEE);
-							}
-						});
+						if(jsUser.getLogin().equals("Sin Asignar")){
+							incidence.deleteUser2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
+								@Override public void onFailure(Throwable caught) {}
+								@Override public void onSuccess(JsUser result) {
+									userLabel.setText("Sin Asignar");
+									userLabel.getElement().getStyle().setBackgroundColor("#ddd");
+									userDeleteButton.setVisible(false);
+								}
+							});
+						} else {
+							userLabel.setText(jsUser.getLogin());
+							userLabel.getElement().getStyle().setBackgroundColor("#a30c51");
+							userDeleteButton.setVisible(true);
+							// TODO GITHUB!!!
+							incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+								@Override public void onFailure(Throwable caught) {}
+								@Override public void onSuccess(JsUser result) {
+									parent.sendNotification(issue, NotificationType.ASSIGNEE);
+								}
+							});
+						}
 						popup.hide();
 					}
 				});

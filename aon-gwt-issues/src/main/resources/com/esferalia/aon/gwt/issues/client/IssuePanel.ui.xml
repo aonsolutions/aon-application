@@ -230,7 +230,7 @@
 						<g:ScrollPanel ui:field="feePanel"
 							styleName="{aonResources.css.aonTextCenter}" />
 					</g:tab>
-					<!--
+					
 				   	<g:tab >
 						<g:customHeader styleName="{style.jeje}">
 							<g:HTMLPanel>
@@ -241,7 +241,6 @@
 						<g:ScrollPanel ui:field="commercialPanel"
 							styleName="{aonResources.css.aonTextCenter}" />
 					</g:tab>
-					-->
 				   	
 					<g:tab >
 						<g:customHeader styleName="{style.jeje}"> 

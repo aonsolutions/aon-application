@@ -1,33 +1,36 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.LinkedList;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.ProjectRecord;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.Properties.ProjectCommercialProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Project;
 
 public class ProjectDAO {
 	private static final ProjectPropertiesDAO PROJECT_PROPERTIES = new ProjectPropertiesDAO();
 	private static final ProjectReservationPropertiesDAO PROJECT_RESERVATION_PROPERTIES = new ProjectReservationPropertiesDAO();
-
+	private static final ProjectCommercialPropertiesDAO PROJECT_COMMERCIAL_PROPERTIES = new ProjectCommercialPropertiesDAO();
 	
 	protected static class ProjectPropertiesDAO implements ProjectProperties {
 		protected Condition[] getConditions(ProjectFilter filter) {
@@ -46,6 +49,23 @@ public class ProjectDAO {
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.REGISTRY);}
 		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.RESERVATION);}
 		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.TAS);}
+	}
+	
+	protected static class ProjectCommercialPropertiesDAO implements ProjectCommercialProperties {
+		protected Condition[] getConditions(ProjectCommercialFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.PROJECT);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.DOMAIN);}
+		@Override public Property<Integer> getTargetProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.TARGET);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.SELLER);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_COMMERCIAL.COMMENTS);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_COMMERCIAL.SOURCE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_COMMERCIAL.STATUS);}
+		@Override public Property<Date> getStatusDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT_COMMERCIAL.STATUS_DATE);}
 	}
 	
 	protected static class ProjectReservationPropertiesDAO implements ProjectReservationProperties {
@@ -103,20 +123,13 @@ public class ProjectDAO {
 		@Override public Property<Double> getPenaltyAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.PENALTY_AMOUNT);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.STATUS);}
 	}
-	
-	public static Project getProject(AONContext ctx, ProjectFilter filter){
-		return ctx.getDslContext()
-				.select().from(PROJECT).where(PROJECT_PROPERTIES.getConditions(filter)).limit(1)
-				.fetchInto(PROJECT).stream().map(new FullProjectFiller()).findFirst().orElse(null);
-	}
-	
-	public static LinkedList<Project> getProjectList(AONContext ctx, ProjectFilter filter){
+
+	public static Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter){
 		return ctx.getDslContext()
 				.select().from(PROJECT).where(PROJECT_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(PROJECT).stream().map(new FullProjectFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
+				.fetchInto(PROJECT).stream().map(new FullProjectFiller());
 	}
-	
+
 	public static ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter){	
 		return ctx.getDslContext()
 				.select().from(PROJECT_RESERVATION).where(PROJECT_RESERVATION_PROPERTIES.getConditions(filter))
@@ -129,6 +142,13 @@ public class ProjectDAO {
 				.fetchInto(PROJECT_RESERVATION).stream().map(new FullProjectReservationFiller());
 	}
 
+	public static Stream<ProjectCommercial> getProjectCommercialStream(AONContext ctx, ProjectCommercialFilter filter){	
+		return ctx.getDslContext().select()
+				.from(PROJECT).join(PROJECT_COMMERCIAL).on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT))
+				.where(PROJECT_COMMERCIAL_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new FullProjectCommercialFiller());
+	}
+	
 	public static Integer insertProject(AONContext ctx, Project project){
 
 		return ctx.getDslContext().insertInto(PROJECT, PROJECT.ACTIVE, PROJECT.ALIAS,
@@ -210,6 +230,31 @@ public class ProjectDAO {
 					.setProjectTypeId(r.getProjectType())
 					.setReservation(r.getReservation().equals(0))
 					.setTas(r.getTas().equals(0));
+		}
+
+	}
+	
+	private static class FullProjectCommercialFiller implements Function<Record, ProjectCommercial> {
+		
+		@Override
+		public ProjectCommercial apply(Record r) {
+			ProjectCommercial pc = new ProjectCommercial();
+			pc.setActive(r.getValue(PROJECT.ACTIVE).equals(0));
+			pc.setAlias(r.getValue(PROJECT.ALIAS));
+			pc.setCommercial(r.getValue(PROJECT.COMMERCIAL).equals(0));
+			pc.setDate(r.getValue(PROJECT.DATE));
+			pc.setDomain(r.getValue(PROJECT.DOMAIN));
+			pc.setId(r.getValue(PROJECT.ID));
+			pc.setName(r.getValue(PROJECT.NAME));
+			pc.setProjectTypeId(r.getValue(PROJECT.PROJECT_TYPE));
+			pc.setReservation(r.getValue(PROJECT.RESERVATION).equals(0));
+			pc.setTas(r.getValue(PROJECT.TAS).equals(0));
+			return pc.setTarget(r.getValue(PROJECT_COMMERCIAL.TARGET))
+					.setSeller(r.getValue(PROJECT_COMMERCIAL.SELLER))
+					.setComments(r.getValue(PROJECT_COMMERCIAL.COMMENTS))
+					.setSource(r.getValue(PROJECT_COMMERCIAL.SOURCE))
+					.setStatus(r.getValue(PROJECT_COMMERCIAL.STATUS))
+					.setStatusDate(r.getValue(PROJECT_COMMERCIAL.STATUS_DATE));	
 		}
 
 	}

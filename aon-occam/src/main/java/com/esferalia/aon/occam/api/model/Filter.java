@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProjectCommercialProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
@@ -179,9 +180,13 @@ public interface Filter {
 		Filter filter(GeoZoneProperties properties);
 	}
 	
-
 	@FunctionalInterface
 	public interface ProjectReservationFilter{
 		Filter filter(ProjectReservationProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ProjectCommercialFilter{
+		Filter filter(ProjectCommercialProperties properties);
 	}
 }
