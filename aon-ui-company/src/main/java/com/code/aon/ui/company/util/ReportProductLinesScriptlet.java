@@ -33,6 +33,14 @@ public class ReportProductLinesScriptlet extends JRDefaultScriptlet implements S
 	private static final String FIELD_DESCRIPTION = "description";
 	
 	
+	public boolean isPrintProductCode() {
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_CODE_PARAM);
+	}
+	
+	public boolean isPrintProductVatPercent() {
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_VAT_PARAM);
+	}
+	
 	@Override
 	public void afterDetailEval() throws JRScriptletException {
 		try {
@@ -54,15 +62,13 @@ public class ReportProductLinesScriptlet extends JRDefaultScriptlet implements S
 	
 	protected String buildLineDescription() throws JRScriptletException {
 		Item item = (Item) super.getFieldValue(FIELD_ITEM);
-		boolean isPrintProductCode = AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_CODE_PARAM);
-		boolean isPrintProductVatPercent = AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_VAT_PARAM);
 
 		StringBuilder builder = new StringBuilder();
-		if(isPrintProductCode && item.getProduct()!=null){
+		if(isPrintProductCode() && item.getProduct()!=null){
 			builder.append(getMessage(ICommonMessages.ID)).append(": ");
 			builder.append(item.getProduct().getCode());
 		}
-		if(isPrintProductVatPercent && item.getProduct()!=null 
+		if(isPrintProductVatPercent() && item.getProduct()!=null 
 				&& item.getProduct().getVat()!=null && item.getProduct().getVat().getType()!=null){
 			builder.append(builder.length()>0?" - con ":"");
 			builder.append(item.getProduct().getVat().getType().getName(getReportLocale()));
