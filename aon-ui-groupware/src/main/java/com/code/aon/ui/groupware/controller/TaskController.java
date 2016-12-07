@@ -43,6 +43,7 @@ public class TaskController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
 
+	private boolean showAuditInfoWindow;
 	private TaskHolder currentTaskHolder;
 	
 	private TaskManager taskManager;
@@ -54,7 +55,14 @@ public class TaskController extends BasicController {
 	private  List<SelectItem> projects;
 	private  List<SelectItem> activityTypes;
 
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
 
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}	
+	
 	public boolean isParentDomain() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean( ConfigConstants.DOMAIN_SWITCHER );
 		return( ds != null && !ds.isChildDomain() && ds.isDomainManagementAvailable());

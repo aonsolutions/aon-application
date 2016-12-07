@@ -63,6 +63,7 @@
 						actionListener="#{task.onFinishTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
 						rendered="#{!task.monitor and !task.nevv and !task.to.finished and !task.to.deleted}" />
+					<ui:include	src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />	
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
@@ -265,5 +266,9 @@
 		
 		<ui:include src="/com/code/aon/ui/groupware/facelet/task/finishTaskPanel.xhtml" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{task}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>
