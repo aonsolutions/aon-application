@@ -87,8 +87,7 @@ public class Mod180Print extends HttpServlet {
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
 		String urlParameters = 
-//				"HID=INV3180A" + 
-				"HID=INV5180A" +
+				"HID=IE6180A" +
 				"&IDI=ES" + 
 				"&FIC="	+ encodedFile + 
 				"&RUT=" + 
@@ -97,7 +96,9 @@ public class Mod180Print extends HttpServlet {
 				"&EJF=" + year +
 				"&MOD=180";
 		
-		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+//		String request = "https://www2.agenciatributaria.gob.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";
+		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
+		
 
 		URL url = new URL(request);
 
