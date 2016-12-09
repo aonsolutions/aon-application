@@ -5,20 +5,32 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_VAT_PAR
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import net.sf.jasperreports.engine.JRDefaultScriptlet;
 import net.sf.jasperreports.engine.JRScriptletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ReportProductLinesScriptlet extends JRDefaultScriptlet implements Serializable {
 	
@@ -39,6 +51,35 @@ public class ReportProductLinesScriptlet extends JRDefaultScriptlet implements S
 	
 	public boolean isPrintProductVatPercent() {
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_VAT_PARAM);
+	}
+	
+	public String getCode(Item item, Customer customer){
+		try {
+			String code = getCustomerCode(item, customer);
+			if(StringUtils.isBlank(code)){
+				code = getCustomerCode(item.getProduct().getBaseItem(), customer);
+			}
+			return StringUtils.isNotBlank(code)?code:item.getProduct().getCode();
+		} catch (Exception e) {
+			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg,e);
+		}
+		return null;
+	}
+
+	private String getCustomerCode(Item item, Customer customer) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), customer.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.CUSTOMER);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY), true);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(list !=null && list.size()>0){
+			return ((RegistryItem)list.get(0)).getCode();
+		}
+		return null;
 	}
 	
 	@Override
