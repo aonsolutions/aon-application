@@ -53,7 +53,6 @@ import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperCheckbox;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperProgress;
-import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
 public class DSIImportForm implements EntryPoint, DSIImportService {
 

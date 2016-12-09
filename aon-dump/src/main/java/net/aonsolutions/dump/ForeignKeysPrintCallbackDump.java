@@ -41,11 +41,11 @@ public class ForeignKeysPrintCallbackDump extends AbstractChaimCallbackDump {
 
 		super.accept("SET @" + DOMAIN.getName().toUpperCase() + "=(SELECT MAX(id) FROM " + DOMAIN.getName() + ");");
 
-//		parentDomain = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where((DOMAIN.ID).equal(id)).fetchOne().value1();
-//
-//		Integer idDomain = idsMap.getOrder(DOMAIN.getName(), id);
-//
-//		idsMap.setEspecificOrder(DOMAIN.getName(), parentDomain, idDomain, false);
+		parentDomain = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where((DOMAIN.ID).equal(id)).fetchOne().value1();
+
+		Integer idDomain = idsMap.getOrder(DOMAIN.getName(), id);
+
+		idsMap.setEspecificOrder(DOMAIN.getName(), parentDomain, idDomain, false);
 
 		super.header(schema, hostName, domainTables, dslContext, id, idsMap);
 	}

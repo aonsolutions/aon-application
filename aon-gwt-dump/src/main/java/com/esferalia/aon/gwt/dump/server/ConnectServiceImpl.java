@@ -33,9 +33,9 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.code.aon.pool.ConnectionInfo;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.groupware.enumeration.TaskStatus;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.pool.ConnectionInfo;
 import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -53,7 +53,6 @@ import net.aonsolutions.dump.CallbackDumpExecute;
 import net.aonsolutions.dump.CallbackDumpPrint;
 import net.aonsolutions.dump.CancelException;
 import net.aonsolutions.dump.CommentsPrintCallbackDump;
-import net.aonsolutions.dump.DomainCeroCallbackDump;
 import net.aonsolutions.dump.EraseUser;
 import net.aonsolutions.dump.ForeignKeysPrintCallbackDump;
 import net.aonsolutions.dump.IndexUniqueCallBackDump;
@@ -190,10 +189,10 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			} else if (parameters.getDownloadType() == 1)
 				cb = new CallbackDumpExecute(aonDump.dslContext);
 
-			// cb = new ParentCallbackDump(cb);
+			cb = new ParentCallbackDump(cb);
 			cb = new IndexUniqueCallBackDump(cb);
 			cb = new ModifyDataCallBack(cb, parameters.getNewDomain(), "domain", "name");
-			cb = new DomainCeroCallbackDump(cb);
+			//cb = new DomainCeroCallbackDump(cb);
 			cb = new ForeignKeysPrintCallbackDump(cb, tr.getId(), idDomain);
 			cb = new BackgroundCallBack(cb, System.out, aonDump, tr.getId(), idDomain);
 

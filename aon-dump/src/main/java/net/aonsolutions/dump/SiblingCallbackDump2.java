@@ -16,7 +16,9 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 public class SiblingCallbackDump2 extends AbstractChaimCallbackDump {
+	
 	private Integer parentDomain;
+	
 	public SiblingCallbackDump2(CallbackDump cb) {
 		super(cb);
 		// TODO Auto-generated constructor stub

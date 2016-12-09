@@ -134,8 +134,7 @@ public class AonDump {
 	}
 
 	private void tablesWontDownload(List<String> tablesNotToDownload) {
-		// TODO Choose which tables (names) we wont download, becasue we dont
-		// need them
+		// TODO Choose which tables (names) we wont download, becasue we dont need them
 
 	}
 

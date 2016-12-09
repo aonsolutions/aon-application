@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.dump.client;
+package com.esferalia.aon.gwt.dump.shared;
 
 import com.google.gwt.user.client.Window;
 

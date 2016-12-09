@@ -35,8 +35,6 @@ public class ModifyDataCallBack extends AbstractChaimCallbackDump {
 			
 			for (String fieldName : fieldNames){
 				Field<?> field = r.field(fieldName);
-				//Object fieldValue = r.get(field);
-				// TODO : JOOQ 8
 				Object fieldValue = r.getValue(field);
 				if (fieldValue != null)
 					value = value.replaceAll("\\{"+fieldName+"\\}", fieldValue.toString());

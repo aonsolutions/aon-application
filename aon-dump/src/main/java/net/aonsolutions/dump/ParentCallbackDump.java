@@ -1,7 +1,5 @@
 package net.aonsolutions.dump;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +38,13 @@ public class ParentCallbackDump extends AbstractChaimCallbackDump{
 				.where(whereParent));
 		
 		
-		aondump.downloadTableReferenceDomain(fk.getKey().getTable(), fk.getKey().getTable().getReferences(), idsMap, cb, ciclica, where);
-		
-		parentDomain = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where((DOMAIN.ID).equal(id)).fetchOne().value1();
-
-		Integer idDomain = idsMap.getOrder(DOMAIN.getName(), id);
-
-		idsMap.setEspecificOrder(DOMAIN.getName(), parentDomain, idDomain, false);
+//		aondump.downloadTableReferenceDomain(fk.getKey().getTable(), fk.getKey().getTable().getReferences(), idsMap, cb, ciclica, where);
+//		
+//		parentDomain = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where((DOMAIN.ID).equal(id)).fetchOne().value1();
+//
+//		Integer idDomain = idsMap.getOrder(DOMAIN.getName(), id);
+//
+//		idsMap.setEspecificOrder(DOMAIN.getName(), parentDomain, idDomain, false);
 		
 		this.cb.downloadParent(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 	}

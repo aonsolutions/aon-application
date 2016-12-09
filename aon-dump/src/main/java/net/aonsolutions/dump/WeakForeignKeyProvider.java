@@ -1,12 +1,31 @@
 package net.aonsolutions.dump;
 
+import static com.esferalia.aon.jooq.Keys.KEY_ACCOUNT_ENTRY_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_ACCOUNT_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_BANK_CONCEPT_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_COMMERCIAL_TRACKING_PRIMARY;
 import static com.esferalia.aon.jooq.Keys.KEY_DELIVERY_DETAIL_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_FBATCH_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_FINANCE_TRACKING_PRIMARY;
 import static com.esferalia.aon.jooq.Keys.KEY_INCOME_DETAIL_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_INVENTORY_DETAIL_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_MK_ACTION_TARGET_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_NOTICE_PRIMARY;
 import static com.esferalia.aon.jooq.Keys.KEY_OFFER_DETAIL_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_PREPAYMENT_PRIMARY;
 import static com.esferalia.aon.jooq.Keys.KEY_PROJECT_RESERVATION_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_PROPOSAL_DETAIL_PRIMARY;
 import static com.esferalia.aon.jooq.Keys.KEY_PURCHASE_DETAIL_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_SALARY_PRIMARY;
 import static com.esferalia.aon.jooq.Keys.KEY_SALES_DETAIL_PRIMARY;
+import static com.esferalia.aon.jooq.Keys.KEY_TASK_PRIMARY;
+import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
+import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LINK;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
+import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -207,6 +226,53 @@ public class WeakForeignKeyProvider {
         INVOICE_DETAIL_WEAK_FK.add(createForeignKey(KEY_PROJECT_RESERVATION_PRIMARY, INVOICE_DETAIL, "WEAK_FK_INVOICE_DETAIL_PROJECT_RESERVATION", INVOICE_DETAIL.SOURCE_ID));
     }
     
+	public static final List BANK_STATEMENT_LINK_WEAK_FK = new LinkedList();
+	    
+	    static {
+	    	BANK_STATEMENT_LINK_WEAK_FK.add(createForeignKey(KEY_FINANCE_TRACKING_PRIMARY, BANK_STATEMENT_LINK, "WEAK_FK_BANK_STATEMENT_LINK_FINANCE_TRACKING", BANK_STATEMENT_LINK.SOURCE_ID));
+	    	BANK_STATEMENT_LINK_WEAK_FK.add(createForeignKey(KEY_FBATCH_PRIMARY, BANK_STATEMENT_LINK, "WEAK_FK_BANK_STATEMENT_LINK_FBATCH", BANK_STATEMENT_LINK.SOURCE_ID));
+	    	BANK_STATEMENT_LINK_WEAK_FK.add(createForeignKey(KEY_BANK_CONCEPT_PRIMARY, BANK_STATEMENT_LINK, "WEAK_FK_BANK_STATEMENT_LINK_BANK_CONCEPT", BANK_STATEMENT_LINK.SOURCE_ID));
+	    	BANK_STATEMENT_LINK_WEAK_FK.add(createForeignKey(KEY_ACCOUNT_PRIMARY, BANK_STATEMENT_LINK, "WEAK_FK_BANK_STATEMENT_LINK_ACCOUNT", BANK_STATEMENT_LINK.SOURCE_ID));
+	    }
+	    
+	public static final List FINANCE_WEAK_FK = new LinkedList();
+		    
+		    static {
+		    	FINANCE_WEAK_FK.add(createForeignKey(KEY_SALARY_PRIMARY, FINANCE, "WEAK_FK_FINANCE_SALARY", FINANCE.SOURCE_ID));
+		    	FINANCE_WEAK_FK.add(createForeignKey(KEY_PREPAYMENT_PRIMARY, FINANCE, "WEAK_FK_FINANCE_PREPAYMENT", FINANCE.SOURCE_ID));
+		    }
+		    
+	public static final List FINANCE_TRACKING_WEAK_FK = new LinkedList();
+		    
+		    static {
+		    	FINANCE_TRACKING_WEAK_FK.add(createForeignKey(KEY_ACCOUNT_ENTRY_PRIMARY, FINANCE_TRACKING, "WEAK_FK_FINANCE_TRACKING_ACCOUNT_ENTRY", FINANCE_TRACKING.DESCRIPTION));
+		    }
+	    
+	public static final List ALARM_WEAK_FK = new LinkedList();
+		    
+		    static {
+		    	ALARM_WEAK_FK.add(createForeignKey(KEY_NOTICE_PRIMARY, ALARM, "WEAK_FK_ALARM_NOTICE", ALARM.SOURCE_ID));
+		    	ALARM_WEAK_FK.add(createForeignKey(KEY_TASK_PRIMARY, ALARM, "WEAK_FK_ALARM_TASK", ALARM.SOURCE_ID));
+		    	ALARM_WEAK_FK.add(createForeignKey(KEY_COMMERCIAL_TRACKING_PRIMARY, ALARM, "WEAK_FK_ALARM_COMMERCIAL_TRACKING", ALARM.SOURCE_ID));
+		    	ALARM_WEAK_FK.add(createForeignKey(KEY_MK_ACTION_TARGET_PRIMARY, ALARM, "WEAK_FK_ALARM_MK_ACTION_TARGET", ALARM.SOURCE_ID));
+		    }
+	
+	public static final List PURCHASE_DETAIL_WEAK_FK = new LinkedList();
+		    
+		    static {
+		    	PURCHASE_DETAIL_WEAK_FK.add(createForeignKey(KEY_PROPOSAL_DETAIL_PRIMARY, PURCHASE_DETAIL, "WEAK_FK_PURCHASE_DETAIL_PROPOSAL_DETAIL", PURCHASE_DETAIL.SOURCE_ID));
+		    	PURCHASE_DETAIL_WEAK_FK.add(createForeignKey(KEY_PURCHASE_DETAIL_PRIMARY, PURCHASE_DETAIL, "WEAK_FK_PURCHASE_DETAIL_PURCHASE_DETAIL", PURCHASE_DETAIL.SOURCE_ID));
+		    	PURCHASE_DETAIL_WEAK_FK.add(createForeignKey(KEY_SALES_DETAIL_PRIMARY, PURCHASE_DETAIL, "WEAK_FK_PURCHASE_DETAIL_SALES_DETAIL", PURCHASE_DETAIL.SOURCE_ID));
+		    }
+		    
+	public static final List WAREHOUSE_TRANSFER_WEAK_FK = new LinkedList();
+		    
+		    static {
+		    	WAREHOUSE_TRANSFER_WEAK_FK.add(createForeignKey(KEY_INVENTORY_DETAIL_PRIMARY, WAREHOUSE_TRANSFER, "WEAK_FK_WAREHOUSE_TRANSFER_INVENTORY_DETAIL", WAREHOUSE_TRANSFER.SOURCE_ID));
+		    	WAREHOUSE_TRANSFER_WEAK_FK.add(createForeignKey(KEY_PURCHASE_DETAIL_PRIMARY, WAREHOUSE_TRANSFER, "WEAK_FK_WAREHOUSE_TRANSFER_PURCHASE_DETAIL", WAREHOUSE_TRANSFER.SOURCE_ID));
+		    	WAREHOUSE_TRANSFER_WEAK_FK.add(createForeignKey(KEY_INVENTORY_DETAIL_PRIMARY, WAREHOUSE_TRANSFER, "WEAK_FK_WAREHOUSE_TRANSFER_INVENTORY_DETAIL", WAREHOUSE_TRANSFER.SOURCE_ID));
+		    }
+
 
     
     public static void main(String[] args) {

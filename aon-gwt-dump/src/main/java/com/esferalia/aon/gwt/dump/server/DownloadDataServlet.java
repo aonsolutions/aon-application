@@ -40,7 +40,7 @@ public class DownloadDataServlet extends HttpServlet {
 		OutputStream out = resp.getOutputStream();
 		Connection connection = null;
 		Settings settings = null;
-		DSLContext dslContext =null;
+		DSLContext dslContext = null;
 		
 		try {
 			connection = AonServletUtils.getConnection();
