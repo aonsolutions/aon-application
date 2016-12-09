@@ -40,7 +40,7 @@ public class CommentsPrintCallbackDump extends AbstractPrintCallbackDump {
 	}
 	
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, boolean ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
 		
 		println();
 		println("--");
@@ -57,7 +57,7 @@ public class CommentsPrintCallbackDump extends AbstractPrintCallbackDump {
 	}
 	
 	@Override
-	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap, CallbackDump cb, boolean ciclica, List<?> references, Condition where) {
+	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap, CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		return this.cb.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 	}
 	
@@ -68,7 +68,7 @@ public class CommentsPrintCallbackDump extends AbstractPrintCallbackDump {
 	
 	@Override
 	public void downloadParent(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump,
-			IdsMap idsMap, CallbackDump cb, boolean ciclica, List<?> references, Condition where) {
+			IdsMap idsMap, CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		this.cb.downloadParent(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 	}
 	

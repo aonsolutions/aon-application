@@ -27,7 +27,7 @@ import net.aonsolutions.dump.ForeignKeysPrintCallbackDump;
 import net.aonsolutions.dump.IndexUniqueCallBackDump;
 import net.aonsolutions.dump.ModifyDataCallBack;
 import net.aonsolutions.dump.ParentCallbackDump;
-import net.aonsolutions.dump.SiblingCallbackDump;
+import net.aonsolutions.dump.SiblingCallbackDump2;
 
 public class ParserMain {
 	
@@ -238,7 +238,7 @@ public class ParserMain {
 				cb = new ParentCallbackDump(cb);
 			if (true)
 				cb = new IndexUniqueCallBackDump(cb);
-			if (false)
+			if (true)
 				cb = new BackgroundCallBack(cb, System.out, aonDump, 0, 0); //MIRAR ESTO
 			if (cmd.hasOption(renameNIF.getLongOpt()))
 				cb = new ModifyDataCallBack(cb, nif, "registry", "document");
@@ -248,7 +248,7 @@ public class ParserMain {
 				cb = new ForeignKeysPrintCallbackDump(cb, 0, 0);
 			
 			if (cmd.hasOption(fkOpt.getLongOpt()))
-				cb = new SiblingCallbackDump(cb);
+				cb = new SiblingCallbackDump2(cb);
 
 			if (cmd.hasOption(commentsOpt.getLongOpt()))
 				cb = new CommentsPrintCallbackDump(out, cb);

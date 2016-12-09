@@ -34,6 +34,7 @@
 	
 	.simple-iconMargin{
 		margin-right: 25px;
+		padding-right: 10px;
 	}
 	
 	.simple-iconStyle{
@@ -43,11 +44,13 @@
 	}
 	
 	.simple-iconCancelStyle{
+		padding-right:10px;
 		border: none;
 		margin-right: 5px;
 		height: 16px;
 		float: right;	
 	}
+	
 	
 	</ui:style>
 
@@ -62,8 +65,8 @@
 					</g:HTMLPanel>
 				</g:VerticalPanel>
 				<g:Label ui:field="progressTab" styleName="aon-outputLabel {style.simple-marginTop} {style.simple-marginBottom}">Proceso descarga: 0 %</g:Label>
-				<paper:PaperProgress />
-				<dump:Progress ui:field="progressBar" max="100" progress="0" styleName="{style.simple-progressWith} {style.simple-marginBottom}"></dump:Progress>
+				<paper:PaperProgress ui:field="progressBar" max="100" value="0" styleName="{style.simple-progressWith} {style.simple-marginBottom}"/>
+				<!-- dump:Progress ui:field="progressBar" max="100" progress="0" styleName="{style.simple-progressWith} {style.simple-marginBottom}"></dump:Progress-->
 				<g:Label styleName="aon-outputLabel {style.simple-marginTop}">Información descarga:</g:Label>
 			</g:VerticalPanel>
 		</g:north>

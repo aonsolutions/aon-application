@@ -1,5 +1,7 @@
 package net.aonsolutions.dump;
 
+import java.util.List;
+
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Table;
@@ -15,8 +17,8 @@ public class CallbackDumpExecute implements CallbackDump{
 	}
 	
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, boolean ciclica, Integer numRows) {
-		if (ciclica){
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
+		if (!ciclica.isEmpty()){
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			inSet.execute();
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");

@@ -1,21 +1,50 @@
 package com.esferalia.aon.gwt.dump.client;
 
-import com.esferalia.aon.gwt.common.shared.Constants;
+import java.util.Arrays;
+
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
+import com.vaadin.polymer.Polymer;
+import com.vaadin.polymer.iron.IronIconsElement;
+import com.vaadin.polymer.iron.IronListElement;
+import com.vaadin.polymer.paper.PaperDialogElement;
+import com.vaadin.polymer.paper.PaperIconButtonElement;
+import com.vaadin.polymer.paper.PaperInputElement;
+import com.vaadin.polymer.paper.PaperSliderElement;
+import com.vaadin.polymer.paper.PaperTextareaElement;
+import com.vaadin.polymer.paper.PaperToggleButtonElement;
+import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
+
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
 
 public class MainEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
 		
-		ensureGwtSelector();
 		
-		DSIImportForm dsiImportForm = new DSIImportForm();
-		dsiImportForm.onModuleLoad();
+		Polymer.importHref(Arrays.asList(
+				IronIconsElement.SRC,
+				PaperInputElement.SRC,
+				PaperTextareaElement.SRC,
+				PaperDialogElement.SRC,
+				VaadinComboBoxElement.SRC,
+				AonComboBoxElement.SRC,
+				PaperIconButtonElement.SRC,
+				IronListElement.SRC,
+				PaperToggleButtonElement.SRC,
+				PaperSliderElement.SRC
+		));
+		
+		Polymer.whenReady(o -> {
+			ensureGwtSelector();
+			DSIImportForm dsiImportForm = new DSIImportForm();
+			dsiImportForm.onModuleLoad();
+			return null;
+		});
+		
 	}
 	
 	public static native String getParameter(String moduleName,

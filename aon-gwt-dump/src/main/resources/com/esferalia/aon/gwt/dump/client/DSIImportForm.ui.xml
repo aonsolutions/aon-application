@@ -1,18 +1,14 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:dump='urn:import:com.esferalia.aon.gwt.dump.client'
-	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client' 
-	xmlns:s="urn:import:com.esferalia.aon.gwt.dump.shared" 
-	xmlns:c="urn:import:com.esferalia.aon.gwt.common.client" 
-	xmlns:a="urn:import:bsh.org.objectweb.asm" 
-	xmlns:collect="urn:import:com.google.common.collect">
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' xmlns:dump='urn:import:com.esferalia.aon.gwt.dump.client'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
+	xmlns:s="urn:import:com.esferalia.aon.gwt.dump.shared" xmlns:c="urn:import:com.esferalia.aon.gwt.common.client"
+	xmlns:a="urn:import:bsh.org.objectweb.asm" xmlns:collect="urn:import:com.google.common.collect"
+	xmlns:paper="urn:import:com.vaadin.polymer.paper.widget" xmlns:p="urn:import:com.vaadin.polymer"
+	xmlns:i="urn:import:com.vaadin.polymer.iron.widget">
 
-	<ui:style>
-	
-	
+	<ui:style type='com.esferalia.aon.gwt.dump.client.DSIImportForm.MyStyle'>
 	.options-scroll-panel>div {
 		height: 99%;
 	}
@@ -25,38 +21,146 @@
 		margin-bottom: 5px;
 	}
 	
-	.simple-marginTop{
+	.simple-marginTop {
 		margin-top: 5px;
 	}
 	
-	.simple-labelStyle{
+	.simple-paddingTop {
+		padding-top: 10px;
+	}
+	
+	.simple-SuggestListBox{
+		margin-left: 15px;
+    	margin-bottom: 8px;
+	}
+	
+	.simple-labelStyle {
 		padding: 2px;
 		border: 1px solid #ccc;
 		border-top: 1px solid #999;
-		font-family: Arial Unicode MS, Arial, sans-serif;
+		font-family: 'Roboto', 'Noto', sans-serif;
 		font-size: 1em;
-		margin: 0px;
 	}
 	
-	.simple-labelMargin{
+	.simple-labelMargin {
 		margin-left: 12px;
 	}
 	
-	.simple-labelErrMargin{
-		color:transparent;
+	.simple-labelErrMargin {
+		color: transparent;
 		margin-left: 5px;
 		padding-bottom: 10px;
 	}
 	
-	.simple-labelSufixMargin{
+	.simple-labelSufixMargin {
 		margin-top: 6px;
+	}
+	
+	.simple-listBox {
+		padding-left: 15px;
+	}
+	
+	.simple-checkBox {
+		margin-top: 5px;
+		margin-left: 15px;
+	}
+	
+	.simple-userBox {
+		margin-left: 15px;
+		margin-top: 12px;
+	}
+	
+	.simple-passBox {
+		margin-left: 15px;
+		margin-top: 8px;
+		margin-bottom: 10px;
+	}
+	
+	.simple-suffix{
+		font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+	}
+	
+	.progressColorGreen {
+	}
+	
+	.progressColorRed #primaryProgress {
+
+	}
+	
+	.progressColorBlue #primaryProgress {
+
+	}
+	
+	.deleteHeight {
+		height: 15px;
+		margin: 0px;
+		padding: 0px;
+		border: none;
+		line-height: 5px;
+		min-width: 15px;
+	}
+	
+	.crossHeight {
+		height: 15px;
+	}
+	
+	@sprite .downloadIcon {
+		gwt-image: 'download';
+		float: left;
+		padding-left: 5px;
+	}
+	
+	@external completed;
+	@external canceled;
+	
+	.completed {
+	}
+	
+	.canceled {
 	}
 	
 	</ui:style>
 
+	<ui:image field='download' src='download.png' />
+
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 		<g:center>
 			<g:HTMLPanel>
+
+				<style is="custom-style">
+					paper-input {
+						--paper-input-container-input: {
+							font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+						};
+						--paper-input-container-label: {
+							font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+						};
+						--paper-input-suffix: {
+							font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+						};
+						--paper-input-container-label-floating: {
+							font-family: 'Roboto', 'Noto', sans-serif;
+							font-size: 11px;
+						};
+						----paper-input-container-label-focus: {
+							font-family: 'Roboto', 'Noto', sans-serif;
+							font-size: 11px;
+						}; 
+					}
+					
+					paper-progress {
+					   --paper-progress-active-color: blue;
+					   --paper-progress-height: 6px;
+					}
+					paper-progress.completed {
+					   --paper-progress-active-color: green;
+					}
+					paper-progress.canceled {
+					   --paper-progress-active-color: red;
+					}
+				
+				</style>
+
 				<g:ScrollPanel styleName="aon-scroll-area {style.options-scroll-panel}">
 
 					<g:HTMLPanel styleName="aon-panelGrid-search">
@@ -67,100 +171,82 @@
 						<div class="aon-scroll-area">
 							<table class="aon-panelGrid" cellspacing="0" cellpadding="0">
 								<tr>
-									<td colspan="2">
-								 		<g:Label styleName="{style.simple-labelErrMargin}" ui:field="errorString" >OK</g:Label>
+									<td>
+										<i:IronLabel>
+											Empresa a descargar:
+										</i:IronLabel>
+									</td>
+									<td>
+										<g:SuggestBox
+											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox}"
+											ui:field="suggestBox" width="100" />
 									</td>
 								</tr>
 								<tr>
-									<td class="aon-panelGrid-odd">
-										<g:Label styleName="aon-outputLabel">Nombre Empresa a Descargar</g:Label>
+									<td>
+										<i:IronLabel>
+											Tipo de copia:
+										</i:IronLabel>
 									</td>
-									<td class="aon-panelGrid-even">
-										<g:SuggestBox  styleName="{style.simple-labelStyle} {style.simple-labelMargin}" ui:field="suggestBox" width="100"/>
-									</td>
-								</tr>
-								<tr>
-									<td class="aon-panelGrid-odd">
-										<g:Label styleName="aon-outputLabel">Tipo de Copia</g:Label>
-									</td>
-									<td class="aon-panelGrid-even">
-										<g:ListBox styleName="{style.simple-labelStyle} {style.simple-labelMargin}" ui:field="downloadListBox" name="downloadType"/>
-									</td>
-								</tr>
-								<tr>
-									<td class="aon-panelGrid-odd">
-										<g:Label styleName="aon-outputLabel">Nuevo Nombre Empresa</g:Label>
-									</td>
-									<td class="aon-panelGrid-even">
-										<g:TextBox ui:field="nombreEmpresa" styleName="{style.simple-labelStyle} {style.simple-labelMargin}"/>
-									</td>
-									<td class="aon-panelGrid-odd">
-										<g:Label ui:field="sufijoEmpresa" styleName="{style.simple-labelSufixMargin}"/>
+									<td>
+										<g:ListBox ui:field="downloadListBox"
+											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox} {style.simple-listBox}" />
 									</td>
 								</tr>
 								<tr>
 									<td colspan="2">
-										<g:DisclosurePanel styleName="{style.simple-marginBottom} {style.simple-marginTop}" animationEnabled="true">
-											<g:header>Avanzado</g:header>
+										<paper:PaperInput ui:field="nombreEmpresa"
+											label="Nuevo nombre empresa" autoValidate="true" pattern="[a-zA-Z0-9_-]{3,}"
+											errorMessage="Solo letras, minimo 3">
+											<div suffix="" styleName="{style.simple-suffix}" ui:field="sufijoEmpresa" />
+										</paper:PaperInput>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<g:DisclosurePanel
+											styleName="{style.simple-marginBottom} {style.simple-marginTop} {style.simple-paddingTop}"
+											animationEnabled="true">
+											<g:header styleName="{style.simple-paddingTop}">Avanzado</g:header>
 											<g:HTMLPanel>
 												<table cellspacing="0" cellpadding="0">
 													<tr>
-														<td class="aon-panelGrid-odd">
-															<g:Label styleName="aon-outputLabel">Añadir Comentarios</g:Label>
-														</td>
-														<td class="aon-panelGrid-even">
-															<g:CheckBox ui:field="checkComment" styleName="aon-selectBooleanCheckbox"></g:CheckBox>
+														<td>
+															<paper:PaperCheckbox ui:field="checkComment"
+																styleName="{style.simple-checkBox}">Añadir comentarios</paper:PaperCheckbox>
 														</td>
 													</tr>
 													<tr>
-														<td class="aon-panelGrid-odd">
-															<g:Label styleName="aon-outputLabel">Bloquear Tablas Descarga (Locks)</g:Label>
-														</td>
-														<td class="aon-panelGrid-even">
-															<g:CheckBox ui:field="checkLocks" styleName="aon-selectBooleanCheckbox"></g:CheckBox>
+														<td>
+															<paper:PaperCheckbox ui:field="checkErase"
+																styleName="{style.simple-checkBox}">Eliminar usuarios</paper:PaperCheckbox>
 														</td>
 													</tr>
 													<tr>
-														<td class="aon-panelGrid-odd">
-															<g:Label styleName="aon-outputLabel">Deshabilitar ForeignKeys</g:Label>
-														</td>
-														<td class="aon-panelGrid-even">
-															<g:CheckBox ui:field="checkFK" styleName="aon-selectBooleanCheckbox"></g:CheckBox>
+														<td>
+															<g:TextBox ui:field="nombreUsuario"
+																styleName="{style.simple-labelStyle} {style.simple-userBox}" />
 														</td>
 													</tr>
 													<tr>
-														<td class="aon-panelGrid-odd">
-															<g:Label styleName="aon-outputLabel">Eliminar Usuarios</g:Label>
-														</td>
-														<td class="aon-panelGrid-even">
-															<g:CheckBox ui:field="checkErase" styleName="aon-selectBooleanCheckbox"></g:CheckBox>
-														</td>
-													</tr>
-													<tr>
-														<td class="aon-panelGrid-odd">
-														</td>
-														<td class="aon-panelGrid-even">
-															<g:TextBox ui:field="nombreUsuario" styleName="{style.simple-labelStyle}"/>
-														</td>
-													</tr>
-													<tr>
-														<td class="aon-panelGrid-odd">
-														</td>
-														<td class="aon-panelGrid-even">
-															<g:TextBox ui:field="nuevaContrasena" styleName="{style.simple-labelStyle}" />
+														<td>
+															<g:TextBox ui:field="nuevaContrasena"
+																styleName="{style.simple-labelStyle} {style.simple-passBox}" />
 														</td>
 													</tr>
 												</table>
 											</g:HTMLPanel>
 										</g:DisclosurePanel>
 									</td>
-								</tr>								
+								</tr>
 								<tr>
 									<td>
-										<g:Button visible="true" ui:field="sendButton" styleName="aon-search-lookup-button">Descargar</g:Button>
-									</td>
-									<td>
-										<g:HorizontalPanel ui:field="barPanel"></g:HorizontalPanel>
+										<paper:PaperButton ui:field="sendButton"
+											raised="true">
+											<!-- div class='{style.downloadIcon}' / -->
+											<i:IronIcon icon="icons:file-download"></i:IronIcon>
+											Iniciar
+										</paper:PaperButton>
 									</td>
 								</tr>
 							</table>
@@ -170,13 +256,14 @@
 			</g:HTMLPanel>
 		</g:center>
 
-		<g:south size="370">
+		<g:south size="350">
 			<aon:MinimizePanel height="300" ui:field="footPanel">
-				<g:TabLayoutPanel addStyleNames="aon-pointer-events-auto" barHeight="26" barUnit="PX"
-					ui:field="footTabPanel" visible="true" height="300" >
-					
+				<g:TabLayoutPanel addStyleNames="aon-pointer-events-auto"
+					barHeight="26" barUnit="PX" ui:field="footTabPanel" visible="true"
+					height="300">
+
 					<!-- TABS DINAMICOS -->
-					
+
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>
 		</g:south>

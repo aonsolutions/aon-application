@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
 import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
@@ -53,7 +54,7 @@ public class BackgroundCallBack extends AbstractChaimCallbackDump{
 	}
 
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, boolean ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
 		
 		
 		process = ( (double) this.numTablesDownloaded / totalTables) * 100;
@@ -61,7 +62,9 @@ public class BackgroundCallBack extends AbstractChaimCallbackDump{
 		
 		String out = "";
 		
+		this.aonDump.dslContext.execute("LOCK TABLES " + TASK.getName() + " READ;");
 		Byte status = this.aonDump.dslContext.select(TASK.STATUS).from(TASK).where((TASK.ID).eq(id_task)).fetchOne().value1();
+		this.aonDump.dslContext.execute("UNLOCK TABLES;");
 		
 		if (status == (byte) TaskStatus.DELETED.ordinal()){
 			out = "<a style='color: red;'> WARNING: Download canceled </a>";

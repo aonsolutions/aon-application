@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.dump.client;
 
 import java.util.List;
 
+import com.esferalia.aon.gwt.dump.shared.Parameters;
 import com.esferalia.aon.gwt.dump.shared.Progress;
 import com.esferalia.aon.gwt.dump.shared.Task;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -12,7 +13,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface ConnectService extends RemoteService {
 
 	List<com.esferalia.aon.gwt.dump.shared.Domain> getAvailableDomains() throws AonCoreException;
-	Task dumpDomain(String domain);
+	Task dumpDomain(String domain, Parameters parameters);
 	Progress process(Integer idTask, int i);
 	Boolean cancelDownload (Integer idTask);
 	List<Task> getTaskPending();

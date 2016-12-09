@@ -5,6 +5,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.dump.shared.Domain;
+import com.esferalia.aon.gwt.dump.shared.Parameters;
 import com.esferalia.aon.gwt.dump.shared.Progress;
 import com.esferalia.aon.gwt.dump.shared.Task;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -23,10 +24,10 @@ public class ConnectServiceAsyncDecorator implements ConnectServiceAsync {
 		csa.getAvailableDomains(new AsyncCallbackWrapper<List<Domain>>(callback));
 	}
 	
-	public void dumpDomain (String domain, AsyncCallback<Task> callback){
+	public void dumpDomain (String domain, Parameters parameters, AsyncCallback<Task> callback){
 		AON.start();
 		csa.dumpDomain(domain,
-				new AsyncCallbackWrapper<Task>(callback));
+				parameters, new AsyncCallbackWrapper<Task>(callback));
 	}
 
 	@Override

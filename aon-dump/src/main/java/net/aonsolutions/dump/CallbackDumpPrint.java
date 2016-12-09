@@ -2,6 +2,7 @@ package net.aonsolutions.dump;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
@@ -21,7 +22,7 @@ public class CallbackDumpPrint extends AbstractPrintCallbackDump {
 	}
 
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, boolean ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
 		print(inSet.getSQL());
 		println(";");
 		

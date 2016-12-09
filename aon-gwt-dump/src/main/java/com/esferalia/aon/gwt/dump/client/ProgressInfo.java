@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperProgress;
 
 public class ProgressInfo extends Composite {
-
+	
 	interface Binder extends UiBinder<Widget, ProgressInfo> {
 	}
 
@@ -41,10 +42,13 @@ public class ProgressInfo extends Composite {
 	Label progressTab;
 
 	@UiField
-	com.esferalia.aon.gwt.dump.client.Progress progressBar;
+	PaperProgress progressBar;
 
 	@UiField
 	ScrollPanel scrollInfo;
+	
+    
+
 
 	private ConnectServiceAsyncDecorator connectServiceAsync;
 
@@ -59,12 +63,11 @@ public class ProgressInfo extends Composite {
 
 		initWidget(binder.createAndBindUi(this));
 	
-		
-		
-		
 		this.eraseDownload.setTitle("Eliminar Descarga");
 		this.cancelDownload.setTitle("Cancelar Descarga");
 		this.eraseInfoButton.setTitle("Limpiar Pantalla");
+		
+		
 
 		ConnectServiceAsync connectServiceRaw = GWT.create(ConnectService.class);
 		connectServiceAsync = new ConnectServiceAsyncDecorator(connectServiceRaw);
@@ -100,7 +103,7 @@ public class ProgressInfo extends Composite {
 			public void onSuccess(Boolean result) {
 				if (result) {
 					progressTab.setText("Proceso descarga: cancelando descarga.");
-					MessageBoxDialog.showTrashDialog("Descarga cancelada.");
+					MessageBoxDialog.showFailDialog("Descarga cancelada.");
 				} else
 					Window.alert("No se ha podido cancelar");
 			}
@@ -134,10 +137,5 @@ public class ProgressInfo extends Composite {
 		return addDomHandler(handler, EraseEvent.getType());
 	}
 	
-	
-//	@Override
-//	protected void onAttach() {
-//		scrollInfo.scrollToBottom();
-//	}
 	
 }

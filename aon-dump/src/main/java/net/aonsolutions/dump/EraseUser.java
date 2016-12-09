@@ -31,7 +31,7 @@ public class EraseUser extends AbstractChaimCallbackDump{
 	}
 	
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, boolean ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
 		
 		if (table.getName().equals("user_scope"))
 			throw new SkipInsertException();
@@ -44,7 +44,7 @@ public class EraseUser extends AbstractChaimCallbackDump{
 	}
 	
 	@Override
-	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap, CallbackDump cb, boolean ciclica, List<?> references, Condition where) {
+	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap, CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		
 		Table<?> tableReference = fk.getKey().getTable();
 		String fieldNameId = fk.getKey().getFields().get(0).getName();
@@ -68,7 +68,7 @@ public class EraseUser extends AbstractChaimCallbackDump{
 				.set(User.USER.LOGIN, this.userLogin)
 				.set(User.USER.PASSWORD, this.userPass);
 		
-		cb.accept(inSet2, User.USER, false, 0);
+		cb.accept(inSet2, User.USER, null, 0);
 		
 		cb.footer();
 	}

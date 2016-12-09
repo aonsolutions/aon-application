@@ -34,12 +34,12 @@ public abstract class AbstractChaimCallbackDump implements CallbackDump {
 
 	@Override
 	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap,
-			CallbackDump cb, boolean ciclica, List<?> references, Condition where) {
+			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		return this.next.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 	}
 
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, boolean ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
 		this.next.accept(inSet, table, ciclica, numRows);
 		
 	}
@@ -51,7 +51,7 @@ public abstract class AbstractChaimCallbackDump implements CallbackDump {
 
 	@Override
 	public void downloadParent(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap,
-			CallbackDump cb, boolean ciclica, List<?> references, Condition where) {
+			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		this.next.downloadParent(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 	}
 

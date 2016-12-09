@@ -41,6 +41,7 @@ import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.dump.client.ConnectService;
 import com.esferalia.aon.gwt.dump.shared.Domain;
+import com.esferalia.aon.gwt.dump.shared.Parameters;
 import com.esferalia.aon.gwt.dump.shared.Progress;
 import com.esferalia.aon.gwt.dump.shared.Task;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
@@ -48,9 +49,12 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 import net.aonsolutions.dump.AonDump;
 import net.aonsolutions.dump.CallbackDump;
+import net.aonsolutions.dump.CallbackDumpExecute;
 import net.aonsolutions.dump.CallbackDumpPrint;
 import net.aonsolutions.dump.CancelException;
 import net.aonsolutions.dump.CommentsPrintCallbackDump;
+import net.aonsolutions.dump.DomainCeroCallbackDump;
+import net.aonsolutions.dump.EraseUser;
 import net.aonsolutions.dump.ForeignKeysPrintCallbackDump;
 import net.aonsolutions.dump.IndexUniqueCallBackDump;
 import net.aonsolutions.dump.ModifyDataCallBack;
@@ -76,7 +80,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 		try {
 			initFacesContext();
 			connection = AonServletUtils.getConnection();
-			
+
 			Integer idDomain = UserUtils.getInstance().getLoggedUser().getDomain();
 
 			settings = new Settings();
@@ -87,22 +91,18 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
 			Result<Record4<Integer, String, String, String>> domainsResult = dslContext
-					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.SUBDOMAINSUFFIX)
-					.from(DOMAIN)
-					.where(DOMAIN.PARENT.eq(idDomain).or(DOMAIN.ID.eq(idDomain)))
-					.fetch();
+					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.SUBDOMAINSUFFIX).from(DOMAIN)
+					.where(DOMAIN.PARENT.eq(idDomain).or(DOMAIN.ID.eq(idDomain))).fetch();
 
-			domainsResult.forEach(d -> 
-				listDomains.add(new Domain().setId(d.getValue(DOMAIN.ID))
-											.setName(d.getValue(DOMAIN.NAME)).setDescription(d.getValue(DOMAIN.DESCRIPTION))
-											.setSuffix(d.getValue(DOMAIN.SUBDOMAINSUFFIX)))
-			);
+			domainsResult.forEach(d -> listDomains.add(new Domain().setId(d.getValue(DOMAIN.ID))
+					.setName(d.getValue(DOMAIN.NAME)).setDescription(d.getValue(DOMAIN.DESCRIPTION))
+					.setSuffix(d.getValue(DOMAIN.SUBDOMAINSUFFIX))));
 
 			return listDomains;
 
 		} catch (SQLException e1) {
 			throw new AonCoreException(e1.getMessage());
-			
+
 		} finally {
 			releaseFacesContext();
 			try {
@@ -113,12 +113,11 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			}
 		}
 
-
 	}
 
 	@Override
-	public Task dumpDomain(String domainName) {
-		
+	public Task dumpDomain(String domainName, Parameters parameters) {
+
 		Connection connection = null;
 
 		try {
@@ -133,7 +132,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			TaskRecord tr = taskStart(aondump, idDomain, domainName);
 			Integer id = tr.getId();
 
-			Thread hiloDump = new Thread(() -> dump(aondump, id, domainName, idDomain, tr), "hiloDump");
+			Thread hiloDump = new Thread(() -> dump(aondump, id, domainName, idDomain, tr, parameters), "hiloDump");
 
 			hiloDump.start();
 
@@ -142,9 +141,9 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 		} catch (SQLException e1) {
 			throw new AonCoreException(e1.getMessage());
 
-		}finally {
+		} finally {
 			releaseFacesContext();
-			
+
 		}
 
 	}
@@ -170,59 +169,70 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 		return tr;
 	}
 
-	private static void dump(AonDump aonDump, int id_task, String domain, int idDomain, TaskRecord tr) {
+	private static void dump(AonDump aonDump, int id_task, String domain, int idDomain, TaskRecord tr,
+			Parameters parameters) {
 
 		try {
 
 			PrintStream outZip = null;
 			ZipOutputStream zos = null;
-
-			File file = File.createTempFile("dumpSQL", ".zip");
+			CallbackDump cb = null;
+			File file = null;
+			file = File.createTempFile("dumpSQL", ".zip");
 			FileOutputStream fos = new FileOutputStream(file);
 			zos = new ZipOutputStream(fos);
 			zos.putNextEntry(new ZipEntry("dump.sql"));
 			outZip = new PrintStream(zos, true, "UTF-8");
 
-			CallbackDump cb;
+			if (parameters.getDownloadType() == 0) {
+				cb = new CallbackDumpPrint(outZip);
 
-			cb = new CallbackDumpPrint(outZip);
-			cb = new ParentCallbackDump(cb);
+			} else if (parameters.getDownloadType() == 1)
+				cb = new CallbackDumpExecute(aonDump.dslContext);
+
+			// cb = new ParentCallbackDump(cb);
 			cb = new IndexUniqueCallBackDump(cb);
-			cb = new BackgroundCallBack(cb, System.out, aonDump, tr.getId(), idDomain);
-			cb = new ModifyDataCallBack(cb, "{name}_2", "domain", "name");
+			cb = new ModifyDataCallBack(cb, parameters.getNewDomain(), "domain", "name");
+			cb = new DomainCeroCallbackDump(cb);
 			cb = new ForeignKeysPrintCallbackDump(cb, tr.getId(), idDomain);
-			cb = new CommentsPrintCallbackDump(outZip, cb);
+			cb = new BackgroundCallBack(cb, System.out, aonDump, tr.getId(), idDomain);
+
+			if (parameters.getComments())
+				cb = new CommentsPrintCallbackDump(outZip, cb);
+			if (parameters.getEraseUsers())
+				cb = new EraseUser(cb, aonDump.dslContext, parameters.getNewUserPass(), parameters.getNewUserName());
 
 			try {
-                                ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
-                                String database = ci.getDomainDatabase(domain);
-				aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, "localhost",
-						database, domain);
+				ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
+				String database = ci.getDomainDatabase(domain);
+				aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, "localhost", database, domain);
 			} catch (CancelException e) {
 				// Window.alert("DESCARGA CANCELADA");
 				System.out.println("DESCARGA CANCELADA");
-				file.delete();
+				if (file != null)
+					file.delete();
 				return;
 			}
 
 			if (zos != null)
 				zos.closeEntry();
 
-			outZip.close();
+			if (outZip != null)
+				outZip.close();
 
-			insert(aonDump, idDomain, new FileInputStream(file), id_task);
+			insert(aonDump, idDomain, new FileInputStream(file), id_task, parameters);
 
 			System.out.println("FIN DEL PROGRAMA");
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (AonConnectionException e ) {
+		} catch (AonConnectionException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	private static void insert(AonDump aonDump, int idDomain, FileInputStream pis, int id_task) {
+	private static void insert(AonDump aonDump, int idDomain, FileInputStream pis, int id_task, Parameters parameters) {
 
 		PreparedStatement preparedStatement = null;
 
@@ -255,21 +265,24 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			Date date = new Date();
 			Timestamp time = new Timestamp(date.getTime());
 
-			Timestamp startDate = aonDump.dslContext.select(TASK.START_DATE).from(TASK).where(TASK.ID.eq(id_task)).fetchOne().value1();
-			
+			Timestamp startDate = aonDump.dslContext.select(TASK.START_DATE).from(TASK).where(TASK.ID.eq(id_task))
+					.fetchOne().value1();
+
 			int totalTime = new Timestamp(time.getTime() - startDate.getTime()).getMinutes();
-			
-			aonDump.dslContext.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT,
-									TASK_COMMENT.CREATION_USER, TASK_COMMENT.CREATION_DATE)
-							.values(idDomain, id_task,"Tiempo total: " + totalTime + " minutos.", "3203", time)
-							.execute();
-			
+
 			aonDump.dslContext
 					.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT,
 							TASK_COMMENT.CREATION_USER, TASK_COMMENT.CREATION_DATE)
-					.values(idDomain, id_task, "DUMP_FINISHED: <a href='downloadDataServlet?idTask=" + idAttach
-							+ "' style='color: blue;'> Descargar </a>", "3203", time)
-					.execute();
+					.values(idDomain, id_task, "Tiempo total: " + totalTime + " minutos.", "3203", time).execute();
+
+			if (parameters.getDownloadType() == 0) {
+				aonDump.dslContext
+						.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT,
+								TASK_COMMENT.CREATION_USER, TASK_COMMENT.CREATION_DATE)
+						.values(idDomain, id_task, "DUMP_FINISHED: <a href='downloadDataServlet?idTask=" + idAttach
+								+ "' style='color: blue;'> Descargar </a>", "3203", time)
+						.execute();
+			}
 
 			aonDump.dslContext.update(TASK).set(TASK.PERCENT, (byte) 100).set(TASK.NUMBER, idAttach)
 					.set(TASK.STATUS, (byte) TaskStatus.FINISHED.ordinal()).set(TASK.COMMENTS, "DUMP FINISHED")
@@ -309,7 +322,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 		} catch (SQLException e1) {
 			throw new AonCoreException(e1.getMessage());
-		}finally {
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -339,7 +352,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -372,8 +385,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			// Establish context
 			dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
-			Result<Record2<Integer, String>> result = 
-					dslContext.select(TASK.ID, TASK.DESCRIPTION).from(TASK)
+			Result<Record2<Integer, String>> result = dslContext.select(TASK.ID, TASK.DESCRIPTION).from(TASK)
 					.where(TASK.CREATION_USER.equal(idUser).and(TASK.ID.greaterThan(0))).fetch();
 
 			result.forEach(
@@ -382,9 +394,9 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 		} catch (SQLException e1) {
 			throw new AonCoreException(e1.getMessage());
 
-		}finally {
+		} finally {
 			releaseFacesContext();
-			
+
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -435,7 +447,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 		} catch (SQLException e1) {
 			throw new AonCoreException(e1.getMessage());
-		}finally {
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
