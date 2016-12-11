@@ -208,7 +208,9 @@ public class SalaryDraft extends ResizeComposite
 	private static final String PORCENTAJE_DESMPL = "PORCENTAJE_DESMPL";
 
 	// @formatter:off
-	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD", // functions
+	private static String[] SKIP_VARIABLES = { 
+			
+			"CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD", // functions
 			"GET_VARIABLE", "SI", "MAX", "MIN", "ABS", // functions
 
 			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF, PORCENTAJE_DESMPL, "PORCENTAJE_DESMPL_E", //
@@ -226,7 +228,7 @@ public class SalaryDraft extends ResizeComposite
 
 			"CONTEXT", "SELF", "THIS", // context
 
-			"OCUPACION_IT", "OCUPACION_IMS" };
+			"OCUPACION_IT", "OCUPACION_IMS", "PREST_IT" };
 
 	// @formatter:on
 
@@ -348,7 +350,15 @@ public class SalaryDraft extends ResizeComposite
 		public void setEnabled(boolean enabled) {
 			datebox.setEnabled(enabled);
 		}
+		
+		// ----------------------------------------------------------- Delegate
+		
+		public final void ensureDebugId(String id) {
+			datebox.ensureDebugId(id);
+		}
 
+		
+		
 		// ------------------------------------------------------------ Private
 		private static Date parse(String str) {
 
@@ -549,6 +559,8 @@ public class SalaryDraft extends ResizeComposite
 		public TextDateBox create(Variable variable) {
 			TextDateBox textDateBox = new TextDateBox();
 
+			textDateBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+
 			return textDateBox;
 		}
 
@@ -589,6 +601,8 @@ public class SalaryDraft extends ResizeComposite
 			} catch (Exception e) {
 
 			}
+
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
 
 			return textListBox;
 		}
@@ -636,6 +650,8 @@ public class SalaryDraft extends ResizeComposite
 				}
 			}
 
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+
 			return textListBox;
 		}
 
@@ -662,6 +678,9 @@ public class SalaryDraft extends ResizeComposite
 			TextListBox textListBox = new TextListBox();
 			for (E e : enunn.getEnumConstants())
 				textListBox.addItem(e.getDescription(), e.name());
+
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			
 			return textListBox;
 		}
 
@@ -702,6 +721,9 @@ public class SalaryDraft extends ResizeComposite
 			};
 			for (int i = 0; i < values.length; i++)
 				textListBox.addItem(labels[i], values[i]);
+
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			
 			return textListBox;
 		}
 
@@ -762,6 +784,8 @@ public class SalaryDraft extends ResizeComposite
 			for (Dismissal e : Dismissal.values())
 				textListBox.addItem(e.getDescription(), e.name());
 
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+
 			return textListBox;
 		}
 
@@ -788,6 +812,9 @@ public class SalaryDraft extends ResizeComposite
 			TextListBox textListBox = new TextListBox();
 			for (E e : enunn.getEnumConstants())
 				textListBox.addItem(e.getDescription(), e.name());
+
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			
 			return textListBox;
 		}
 
@@ -821,6 +848,8 @@ public class SalaryDraft extends ResizeComposite
 			// textListBox.setC
 			textListBox.addItem("SI", String.valueOf(true));
 			textListBox.addItem("NO", String.valueOf(false));
+
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
 
 			return textListBox;
 		}
@@ -4090,6 +4119,8 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 		});
+		
+		expandButton.ensureDebugId("expand-button-" + expandScope.name().toLowerCase());
 
 		return htmlPanel;
 	}

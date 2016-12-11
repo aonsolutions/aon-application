@@ -33,15 +33,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	// ------------------------------------------------------------------------
 
 	@Test
-	public void TestDraft() throws Exception {
+	public void TestDraftWeekHours() throws Exception {
 		open("draft");
 
 		wait4Id("draft_parcial,_vacio");
 
 		draft("DRAFT PARCIAL, VACIO");
 		calculate(Calendar.DECEMBER);
-		setText("description-box-new-payment", "[1] S4L4R10 B4S3");
-		setText("amount-box-new-payment", "1666.00 * DIAS_TRABAJADOS / DIAS_MES");
+		setValue("description-box-new-payment", "[1] S4L4R10 B4S3");
+		setValue("amount-box-new-payment", "1666.00 * DIAS_TRABAJADOS / DIAS_MES");
 		wait4Id("description-box-1");
 		assertElement("editor-horas_sabado");
 		assertElement("editor-horas_domingo");
@@ -50,22 +50,89 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertElement("editor-horas_miercoles");
 		assertElement("editor-horas_jueves");
 		assertElement("editor-horas_viernes");
+	}
 
-		draft("DRAFT COMPLETO, VACIO");
+	@Test
+	public void TestDratPaymentVariables() throws Exception {
+		open("draft");
+
+		wait4Id("draft_completo,_convenio");
+
+		// [1] SALARIO BASE
+		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [3] PAGA EXTRAORDINARIA DE JULIO
+		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
+		draft("DRAFT COMPLETO, CONVENIO");
+
 		calculate(Calendar.DECEMBER);
-		setText("description-box-new-payment", "[1] S4L4R10 B4S3");
-		setText("amount-box-new-payment", "1666.00 * DIAS_TRABAJADOS / DIAS_MES");
-		wait4Id("description-box-1");
-		assertValue("cgcBaseLabel", 1666.00);
-		assertValue("totalPaymentsLabel", 1666.00);
 		
-		setText("description-box-new-payment", "[2] PLU3");
-		setText("amount-box-new-payment", "100.00 * DIAS_TRABAJADOS / DIAS_MES");
-		wait4Id("description-box-2");
-		assertValue("cgcBaseLabel", 1666.00 + 100.00);
-		assertValue("totalPaymentsLabel", 1666.00 + 100.00);
+		click("expand-button-agreement");
+		click("expand-button-system");
 		
+		assertNotElement("editor-antiguedad");
+		assertNotElement("editor-salario_base");
+		assertNotElement("editor-prest_it");
 		
+		// PLUS_EXTRA_SALARIAL
+		// Expression : PLUS_EXTRA_SALARIAL
+		// Description : PLUS REGIMEN GENERAL ( VARIABLE == DEVENGO ) 
+		assertElement("editor-plus_extra_salarial");
+		double totalPayment = getValue("totalPaymentsLabel");
+		
+		setValue("editor-plus_extra_salarial", "66666.00 / 100.00");
+		wait4Value("totalPaymentsLabel", totalPayment * 66666.00 / 100.00 );
+		
+	}
+	
+
+	@Test
+	public void TestDratRedefineSystemVariables() throws Exception {
+		open("draft");
+
+		wait4Id("draft_completo,_convenio");
+
+		// [1] SALARIO BASE
+		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [3] PAGA EXTRAORDINARIA DE JULIO
+		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
+		draft("DRAFT COMPLETO, CONVENIO");
+
+		calculate(Calendar.DECEMBER);
+		
+		click("expand-button-agreement");
+		click("expand-button-system");
+		
+		// Redefine 'FULL_TIME'
+		double totalPayment = getValue("totalPaymentsLabel");
+
+		selectOption("editor-tiempo_completo", "false");
+		wait4Id("editor-horas_lunes");
+		assertElement("editor-horas_martes");
+		assertElement("editor-horas_miercoles");
+		assertElement("editor-horas_jueves");
+		assertElement("editor-horas_viernes");
+		assertElement("editor-horas_sabado");
+		assertElement("editor-horas_domingo");
+		
+		setValue("editor-horas_lunes", "4.00");
+		wait4Value("totalPaymentsLabel", totalPayment * 4.00 / 40.00);
+		setValue("editor-horas_master", "4");
+		wait4Value("totalPaymentsLabel", totalPayment * 8.00 / 40.00);
+		setValue("editor-horas_miercoles", "2");
+		wait4Value("totalPaymentsLabel", totalPayment * 10.00 / 40.00);
+		setValue("editor-horas_jueves", "40/5");
+		wait4Value("totalPaymentsLabel", totalPayment * 14.00 / 40.00);
+		setValue("editor-horas_viernes", "40/5");
+		wait4Value("totalPaymentsLabel", totalPayment * 18.00 / 40.00);
+		
+	}
+
+	@Test
+	public void TestDraftRedefinePayments() throws Exception {
+		open("draft");
+
+		wait4Id("draft_completo,_convenio");
+
 		// [1] SALARIO BASE
 		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
 		// [3] PAGA EXTRAORDINARIA DE JULIO
@@ -75,10 +142,93 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.DECEMBER);
 		double cgcBase = getValue("cgcBaseLabel");
 		double totalPayment = getValue("totalPaymentsLabel");
+		double totalLiquid = getValue("totalLiquidLabel");
+		wait4Id("description-box-1");
+		
+		// Redefine description only.   
+		setValue("description-box-1", "[1] S4L4R10 B4S3");
+		wait4Id("agreement-button-1");
+		
+		assertValue("cgcBaseLabel", cgcBase);
+		assertValue("totalPaymentsLabel", totalPayment);
+		assertValue("totalLiquidLabel", totalLiquid);
+
+		click("agreement-button-1");
+		wait4Value("description-box-1", "[1]SALARIO BASE");
+		assertNotElement("agreement-button-1");
+		
+		click("undoButton");
+		wait4Id("agreement-button-1");
+		
+		selectSaveTo("FROM_THIS_MONTH");
+		click("acceptButton"); // click without waiting for calculate ?
+		wait4Disabled("acceptButton", true);
+		
+		click("agreement-button-1");
+		wait4Value("description-box-1", "[1]SALARIO BASE");
+		assertNotElement("agreement-button-1");
+
+		click("acceptButton"); 
+		wait4Disabled("acceptButton", true);
+		assertValue("description-box-1", "[1]SALARIO BASE");
+		assertNotElement("agreement-button-1");
+		
+		
+		
+	}
+
+	@Test
+	public void TestDraftExtrasRedefine() throws Exception {
+		// [1] SALARIO BASE
+		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [3] PAGA EXTRAORDINARIA DE JULIO
+		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
+		draft("DRAFT COMPLETO, CONVENIO");
+
+		calculate(Calendar.DECEMBER);
+		double cgcBase = getValue("cgcBaseLabel");
+		double totalPayment = getValue("totalPaymentsLabel");
+		double prorationBase = getValue("prorationBaseLabel");
 		wait4Id("description-box-3");
 		
-		setText("description-box-3", "[3] PAGA EXTRAORDINARIA DE VERANO");
-		//wait4Text("payment-row-3", "aon-dataTable-row-highlight");
+		// Redefine description only.   
+		setValue("description-box-3", "[3] PAGA EXTRAORDINARIA DE VERANO");
+		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
+		assertValue("cgcBaseLabel", cgcBase);
+		assertValue("totalPaymentsLabel", totalPayment);
+		assertValue("prorationBaseLabel", prorationBase);
+
+		selectSaveTo("FROM_THIS_MONTH");
+		click("acceptButton");
+		
+		click("agreement-button-3");
+		click("agreement-button-4");
+		
+		
+		
+	}
+	
+	@Test
+	public void TestDraftFromScratch() throws Exception {
+
+		open("draft");
+
+		wait4Id("draft_conpleto,_vacio");
+
+		draft("DRAFT COMPLETO, VACIO");
+		calculate(Calendar.DECEMBER);
+		setValue("description-box-new-payment", "[1] S4L4R10 B4S3");
+		setValue("amount-box-new-payment", "1666.00 * DIAS_TRABAJADOS / DIAS_MES");
+		wait4Id("description-box-1");
+		assertValue("cgcBaseLabel", 1666.00);
+		assertValue("totalPaymentsLabel", 1666.00);
+		
+		setValue("description-box-new-payment", "[2] PLU3");
+		setValue("amount-box-new-payment", "100.00 * DIAS_TRABAJADOS / DIAS_MES");
+		wait4Id("description-box-2");
+		assertValue("cgcBaseLabel", 1666.00 + 100.00);
+		assertValue("totalPaymentsLabel", 1666.00 + 100.00);
 		
 		
 	}

@@ -914,18 +914,20 @@ public class SalaryDraftBuilder
 
 		if (value instanceof MethodStub)
 			return;
+		if ( isPayment(name) )
+			return;
 
-		if (var instanceof IExpressionVariable<?> && !isPayment(name)) {
+		if (var instanceof IExpressionVariable<?>) {
 			IExpressionVariable<?> exprVar = (IExpressionVariable<?>) var;
 			IExpression expr = exprVar.getExpression();
 			Scope scope = getScope(expr.getScope());
-			/*salaryDraft.*/addVariable(name, value, period.getStart(),
+			addVariable(name, value, period.getStart(),
 					period.getEnd(), scope, expr.getExpression(),
 					defined.get(name));
 			addContext(exprVar.getContext());
 		} else {
 			
-			/*salaryDraft.*/addVariable(name, value, period.getStart(),
+			addVariable(name, value, period.getStart(),
 					period.getEnd());
 		}
 

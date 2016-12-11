@@ -165,24 +165,24 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='acceptButton'
+								<g:Button debugId='acceptButton' ui:field='acceptButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 									enabled="false" />
-								<g:Button ui:field='salaryButton'
+								<g:Button debugId='salaryButton' ui:field='salaryButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="EMITIR NOMINA" />
-								<g:Button ui:field='printButton'
+								<g:Button debugId='printButton' ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" />
-								<g:Button ui:field='printPreviewButton'
+								<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconPdfPreview}'
 									text="Vista Preliminar" />
-								<g:Button ui:field='irpfPreviewButton'
+								<g:Button debugId='irpfPreviewButton' ui:field='irpfPreviewButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconIrpfPreview}'
 									text="IRPF" />
 								<e:SalarySelect ui:field="salarySelect" />
 								<g:ListBox ui:field="zoomListBox" />
-								<g:Button ui:field='closePreviewButton'
+								<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
-								<g:Button ui:field='moreButton'
+								<g:Button debugId='moreButton' ui:field='moreButton'
 									styleName='{style.aon-button-view} aon-finding-toolbar-item aon-icon-view'
 									text="M&Aacute;S..." />
 							</g:HTMLPanel>
@@ -204,20 +204,20 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field="fxButton"
+								<g:Button debugId='fxButton' ui:field='fxButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconFx}' enabled="false" />
-								<g:Button ui:field="undoAllButton"
+								<g:Button debugId='undoAllButton' ui:field='undoAllButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}' />
-								<g:Button ui:field="undoButton"
+								<g:Button debugId='undoButton' ui:field='undoButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconUndo}' />
-								<g:Button ui:field='redoButton'
+								<g:Button debugId='redoButton' ui:field='redoButton'
 									styleName="aon-finding-toolbar-item {res.css.aonIconRedo}" />
-								<g:ListBox ui:field='datesListBox'>
+								<g:ListBox debugId='datesListBox' ui:field='datesListBox'>
 									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo este mes</g:item>
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 									<g:item value="{CUSTOM}">Personalizado...</g:item>
 								</g:ListBox>
-								<g:CheckBox ui:field='costsCheck'
+								<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="COSTES Y BONIFICACIONES" checked="false" />
 								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'

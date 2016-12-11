@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.Supplier;
 
 import javax.persistence.Transient;
 
@@ -88,6 +89,16 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		@Transient
 		public ExpressionScope getScope() {
 			return ExpressionScope.SALARY;
+		}
+
+	}
+
+	static class AgreementDraftPayment extends DraftPayment {
+
+		@Override
+		@Transient
+		public ExpressionScope getScope() {
+			return ExpressionScope.AGREEMENT;
 		}
 
 	}
@@ -600,7 +611,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				if (payment.getId().equals(agreementPayment.getId())
 						|| StringUtils.equals(payment.getName(),
 								agreementPayment.getName())) {
-					DraftPayment draftPayment = newDraftPayment(agreementPayment);
+					DraftPayment draftPayment = newDraftPayment(agreementPayment, AgreementDraftPayment::new);
 					draftPayment.setId(payment.getId());
 					return draftPayment;
 				}
@@ -749,6 +760,11 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private static DraftPayment newDraftPayment(IContractPayment payment) {
 		DraftPayment draftPayment = new DraftPayment();
+		return newDraftPayment(draftPayment, DraftPayment::new);
+	}
+
+	private static DraftPayment newDraftPayment(IContractPayment payment, Supplier<DraftPayment> supplier) {
+		DraftPayment draftPayment = supplier.get();
 
 		draftPayment.setId(payment.getId());
 		draftPayment.setName(payment.getName());
