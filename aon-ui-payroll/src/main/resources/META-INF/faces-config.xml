@@ -781,6 +781,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractBatchControllerListener}</value>
+				<value>#{contractBatchSearch}</value>
 				<value>#{contractBatchDetailChildListener}</value>
 				<value>#{contractBatchAttachChildListener}</value>
 			</list-entries>
@@ -790,6 +791,19 @@
 		<managed-bean-name>contractBatchControllerListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.ContractBatchControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractBatchSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>ContractBatch.domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>detailAlias</property-name>
+			<value>ContractBatch.lines.contract.domain</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>contractBatchDetailChildListener</managed-bean-name>
@@ -845,6 +859,22 @@
 					<value>contractBatch.id</value>
 				</map-entry>
 			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractBatchDetailSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractBatchDetailSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>ContractBatchDetail.domain</value>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
@@ -951,6 +981,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{leaveBatchDetailChildListener}</value>
+				<value>#{leaveBatchSearch}</value>
 				<value>#{leaveBatchControllerListener}</value>
 				<value>#{leaveBatchAttachChildListener}</value>
 			</list-entries>
@@ -960,6 +991,19 @@
 		<managed-bean-name>leaveBatchControllerListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.LeaveBatchControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>leaveBatchSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>LeaveBatch.domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>detailAlias</property-name>
+			<value>LeaveBatch.lines.contractLeaveDetail.domain</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>leaveBatchDetailChildListener</managed-bean-name>
@@ -1016,6 +1060,22 @@
 					<value>leaveBatch.id</value>
 				</map-entry>
 			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{leaveBatchDetailSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>leaveBatchDetailSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>LeaveBatchDetail.domain</value>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
@@ -1131,8 +1191,16 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>fanBatchSearch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.FanBatchSearchListener</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>FanBatch.domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>detailAlias</property-name>
+			<value>FanBatch.lines.ccc.domain</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>fanBatchControllerListener</managed-bean-name>
@@ -1329,8 +1397,16 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>craBatchSearch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.CraBatchSearchListener</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>CraBatch.domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>detailAlias</property-name>
+			<value>CraBatch.lines.ccc.domain</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>craBatchDetailChildListener</managed-bean-name>
@@ -1386,6 +1462,22 @@
 					<value>craBatch.id</value>
 				</map-entry>
 			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{craBatchDetailSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>craBatchDetailSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>CraBatchDetail.domain</value>
 		</managed-property>
 	</managed-bean>
 	

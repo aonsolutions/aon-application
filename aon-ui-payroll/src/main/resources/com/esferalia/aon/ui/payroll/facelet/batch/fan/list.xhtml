@@ -23,8 +23,12 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{fanBatch}" />
+					
+					<ui:param name="skipEditSelectedTo"
+						value="#{!domainSwitcher.domainManagementAvailable and !controller.editableSelectedTo}" />
+					
 					<ui:define name="columns">
-
+										
 						<aon:column alias="FanBatch.date"
 							styleClass="aon-editDataTable-numberColumn aon-width-150">
 							<f:facet name="header">

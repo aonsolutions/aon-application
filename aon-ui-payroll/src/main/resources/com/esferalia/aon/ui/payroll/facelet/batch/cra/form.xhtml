@@ -53,7 +53,7 @@
 					
 				</aon:panelGrid>
 			
-				<aon:if test="#{controller.editableSelectedTo}" >
+				<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
 					<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
 						columnClasses="
 						aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,

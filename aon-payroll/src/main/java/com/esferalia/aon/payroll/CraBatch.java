@@ -5,17 +5,21 @@ import static com.code.aon.common.BlobObjectAction.READ;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import com.code.aon.AonVersion;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
@@ -32,6 +36,8 @@ public class CraBatch extends CraBatchDB implements IBlobObject {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private Set<CraBatchDetail> lines = new HashSet<CraBatchDetail>();
+	
 	private byte[] outcomeFile;
 	
 	private Integer outcomeFileSize;
@@ -39,6 +45,15 @@ public class CraBatch extends CraBatchDB implements IBlobObject {
 	private byte[] incomeFile;	
 	
 	private Integer incomeFileSize;
+	
+	@OneToMany(mappedBy = "craBatch", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<CraBatchDetail> getLines() {
+		return this.lines;
+	}
+	public void setLines(Set<CraBatchDetail> lines) {
+		this.lines = lines;
+	}
 	
 	@Transient
 	public Integer getYear() {

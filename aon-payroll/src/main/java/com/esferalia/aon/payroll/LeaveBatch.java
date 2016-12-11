@@ -3,17 +3,21 @@ package com.esferalia.aon.payroll;
 import static com.code.aon.common.BlobObjectAction.READ;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import com.code.aon.AonVersion;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
@@ -28,6 +32,8 @@ public class LeaveBatch extends LeaveBatchDB implements IBlobObject {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private Set<LeaveBatchDetail> lines = new HashSet<LeaveBatchDetail>();
+	
 	private byte[] outcomeFile;
 	
 	private Integer outcomeFileSize;
@@ -35,6 +41,15 @@ public class LeaveBatch extends LeaveBatchDB implements IBlobObject {
 	private byte[] incomeFile;	
 	
 	private Integer incomeFileSize;
+	
+	@OneToMany(mappedBy = "leaveBatch", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<LeaveBatchDetail> getLines() {
+		return this.lines;
+	}
+	public void setLines(Set<LeaveBatchDetail> lines) {
+		this.lines = lines;
+	}
 
 	@Formula("IFNULL(LENGTH(outcome_file),0)")
     public Integer getOutcomeFileSize() {

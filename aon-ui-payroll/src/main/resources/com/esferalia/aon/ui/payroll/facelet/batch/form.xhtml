@@ -15,6 +15,8 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{toolbarTitle}" />
 				<ui:param name="controller" value="#{controller}" />
+				<ui:param name="skipEditTo"
+					value="#{!domainSwitcher.domainManagementAvailable and !controller.editableTo}" />
 			
 				<ui:define name="beforeSpinToolbarContent">
 					<ui:insert name="moreToolbarContent" />
@@ -26,34 +28,39 @@
 			
 				<ui:insert name="batchContent" />
 				
-				<aon:if test="#{!controller.recorded}" >
-					<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.nevv}">
-						<aon:if test="#{controllerDetail.model.rowCount > 0}" >
-							<aon:panelTab id="batchedTab" label="#{bundle.payroll_batch_included}">
-								<ui:insert name="batchedTabContent" />
-							</aon:panelTab>
-						</aon:if>
-						<aon:if test="#{!controller.recorded}" >
-							<aon:panelTab id="noBatchedTab" label="#{bundle.payroll_not_batched}">
-								<ui:insert name="noBatchedTabContent" />
-							</aon:panelTab>
-						</aon:if>
-<!--  
-						<aon:if test="#{controllerAttach.model.rowCount > 0}" >
-							<aon:panelTab id="documentTab" label="#{bundle.aon_tracking}">
-								<ui:insert name="documentTabContent" />
-							</aon:panelTab>
-						</aon:if>
--->
-					</aon:panelTabSet>
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable and !controller.editableSelectedTo}" >
+					<aon:outputText value="&#160;" />
 				</aon:if>
-				<aon:if test="#{controller.recorded}" >
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_pending}"/>
-						</f:facet>
-						<ui:insert name="batchedTabContent" />
-					</aon:panel>
+				<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
+					<aon:if test="#{!controller.recorded}" >
+						<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.nevv}">
+							<aon:if test="#{controllerDetail.model.rowCount > 0}" >
+								<aon:panelTab id="batchedTab" label="#{bundle.payroll_batch_included}">
+									<ui:insert name="batchedTabContent" />
+								</aon:panelTab>
+							</aon:if>
+							<aon:if test="#{!controller.recorded}" >
+								<aon:panelTab id="noBatchedTab" label="#{bundle.payroll_not_batched}">
+									<ui:insert name="noBatchedTabContent" />
+								</aon:panelTab>
+							</aon:if>
+	<!--  
+							<aon:if test="#{controllerAttach.model.rowCount > 0}" >
+								<aon:panelTab id="documentTab" label="#{bundle.aon_tracking}">
+									<ui:insert name="documentTabContent" />
+								</aon:panelTab>
+							</aon:if>
+	-->
+						</aon:panelTabSet>
+					</aon:if>
+					<aon:if test="#{controller.recorded}" >
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_pending}"/>
+							</f:facet>
+							<ui:insert name="batchedTabContent" />
+						</aon:panel>
+					</aon:if>
 				</aon:if>
 
 			</aon:div>

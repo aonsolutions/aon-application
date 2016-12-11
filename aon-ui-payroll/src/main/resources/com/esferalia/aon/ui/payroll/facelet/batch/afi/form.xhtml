@@ -35,7 +35,7 @@
 						</aon:outputText>
 					</aon:div>	
 	
-					<aon:if test="#{controller.editableSelectedTo}" >
+					<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
 						<aon:outputText value="#{bundle.finance_disk} AFI" />
 						<aon:div>
 							<aon:commandButton id="afi-create-button" value="#{bundle.payroll_create_disk}"

@@ -20,12 +20,14 @@
 			<ui:param name="controllerAttach" value="#{fanBatchAttach}" />
 			
 			<ui:define name="moreToolbarContent" >
-				<aon:htmlCommandLink id="quote-excel-report"
-					rendered="#{fanBatch.recorded}"
-					value="#{bundle.aon_listing}"
-					target="_blank" action="#{fanBatch.onQuoteExcelReport}"
-					styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-				</aon:htmlCommandLink>
+				<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
+					<aon:htmlCommandLink id="quote-excel-report"
+						rendered="#{fanBatch.recorded}"
+						value="#{bundle.aon_listing}"
+						target="_blank" action="#{fanBatch.onQuoteExcelReport}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+					</aon:htmlCommandLink>
+				</aon:if>
 			</ui:define>
 			
 			<ui:define name="batchContent" >
@@ -63,7 +65,7 @@
 					</aon:div>
 				</aon:panelGrid>
 			
-				<aon:if test="#{controller.editableSelectedTo}" >
+				<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
 					<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
 						columnClasses="
 						aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto,

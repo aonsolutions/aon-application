@@ -23,6 +23,10 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{contractBatch}" />
+					
+					<ui:param name="skipEditSelectedTo"
+						value="#{!domainSwitcher.domainManagementAvailable and !controller.editableSelectedTo}" />
+					
 					<ui:define name="columns">
 
 						<aon:column alias="ContractBatch.id"
