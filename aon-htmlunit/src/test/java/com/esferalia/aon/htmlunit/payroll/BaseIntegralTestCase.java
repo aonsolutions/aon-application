@@ -315,6 +315,11 @@ public abstract class BaseIntegralTestCase {
 		return NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue();
 	}
 
+	protected static double getText(String id) throws ParseException {
+		HtmlElement el = getElementById(id);
+		return NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(el.getTextContent()).doubleValue();
+	}
+
 	protected static void setValue(String id, String text) throws ParseException {
 		HtmlInput input = getElementById(id);
 		input.focus();

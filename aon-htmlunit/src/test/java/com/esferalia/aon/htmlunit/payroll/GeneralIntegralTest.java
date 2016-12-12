@@ -80,7 +80,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double totalPayment = getValue("totalPaymentsLabel");
 		
 		setValue("editor-plus_extra_salarial", "66666.00 / 100.00");
-		wait4Value("totalPaymentsLabel", totalPayment * 66666.00 / 100.00 );
+		wait4Value("totalPaymentsLabel", totalPayment + 66666.00 / 100.00 );
 		
 	}
 	
@@ -116,7 +116,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		setValue("editor-horas_lunes", "4.00");
 		wait4Value("totalPaymentsLabel", totalPayment * 4.00 / 40.00);
-		setValue("editor-horas_master", "4");
+		setValue("editor-horas_martes", "4");
 		wait4Value("totalPaymentsLabel", totalPayment * 8.00 / 40.00);
 		setValue("editor-horas_miercoles", "2");
 		wait4Value("totalPaymentsLabel", totalPayment * 10.00 / 40.00);
@@ -179,6 +179,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	@Test
 	public void TestDraftExtrasRedefine() throws Exception {
+		open("draft");
+
+		wait4Id("draft_completo,_convenio");
 		// [1] SALARIO BASE
 		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
 		// [3] PAGA EXTRAORDINARIA DE JULIO
@@ -188,7 +191,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.DECEMBER);
 		double cgcBase = getValue("cgcBaseLabel");
 		double totalPayment = getValue("totalPaymentsLabel");
-		double prorationBase = getValue("prorationBaseLabel");
+		double prorationBase = getText("prorationBaseLabel");
 		wait4Id("description-box-3");
 		
 		// Redefine description only.   
@@ -197,13 +200,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
 		assertValue("cgcBaseLabel", cgcBase);
 		assertValue("totalPaymentsLabel", totalPayment);
-		assertValue("prorationBaseLabel", prorationBase);
+		assertText("prorationBaseLabel", prorationBase);
 
-		selectSaveTo("FROM_THIS_MONTH");
-		click("acceptButton");
+		//selectSaveTo("FROM_THIS_MONTH");
+		//click("acceptButton");
 		
-		click("agreement-button-3");
-		click("agreement-button-4");
+		//click("agreement-button-3");
+		//click("agreement-button-4");
 		
 		
 		
@@ -214,7 +217,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		open("draft");
 
-		wait4Id("draft_conpleto,_vacio");
+		wait4Id("draft_completo,_vacio");
 
 		draft("DRAFT COMPLETO, VACIO");
 		calculate(Calendar.DECEMBER);
