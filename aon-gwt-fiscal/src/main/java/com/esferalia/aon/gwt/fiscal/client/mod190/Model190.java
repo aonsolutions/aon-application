@@ -233,14 +233,19 @@ public class Model190 extends MainEntryPoint {
 	}
 	
 	private void showDetail(Mod190 currentMod190) {
-		if ( currentMod190.getYear() == 2015) {
-			Model190Detail2015 detail = new Model190Detail2015();
-			detail.setMod190(currentMod190);	
-			perceptorPanel.setWidget(detail);
-		} else {
+		if ( currentMod190.getYear() == 2014) {
 			Model190Detail2014 detail = new Model190Detail2014();
 			detail.setMod190(currentMod190);	
 			perceptorPanel.setWidget(detail);
+		} else {
+//			if ( currentMod190.getYear() == 2015) 
+			Model190Detail2015 detail = new Model190Detail2015();
+			detail.setMod190(currentMod190);	
+			perceptorPanel.setWidget(detail);
+//		} else {
+//			Model190Detail2016 detail = new Model190Detail2016();
+//			detail.setMod190(currentMod190);	
+//			perceptorPanel.setWidget(detail);
 		}
 	}
 
@@ -344,7 +349,7 @@ public class Model190 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		mod190Service.initializeMod190(getCurrentDomainName(), getCurrentDomain(),2015 ,
+		mod190Service.initializeMod190(getCurrentDomainName(), getCurrentDomain(),2016 ,
 				new AsyncCallback<Mod190>() {
 			@Override
 			public void onSuccess(Mod190 m190) {
