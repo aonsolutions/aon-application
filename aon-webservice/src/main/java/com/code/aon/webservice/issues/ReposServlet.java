@@ -48,7 +48,7 @@ public class ReposServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
-		String scheme = req.getScheme();
+		String scheme = req.getParameter("scheme");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];

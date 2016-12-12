@@ -31,6 +31,7 @@ public class Incidence extends Methods{
 		this.domainName = repositoryName;
 		this.organizationName = organizationName;
 		this.accessToken = accesToken;
+		this.scheme = url.getUrl().contains("https") ? "https" : "http";;
 	}
 	
 	public Incidence(String url, String accesToken, String userName, String organizationName, String repositoryName) {
@@ -40,6 +41,7 @@ public class Incidence extends Methods{
 		this.domainName = repositoryName;
 		this.organizationName = organizationName;
 		this.accessToken = accesToken;
+		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
 	public void solutions() {

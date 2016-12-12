@@ -20,6 +20,7 @@ public class Methods {
 	private final String HTTP_POST = "POST";
 	private final String HTTP_DELETE = "DELETE";
 	protected  String accessToken = "";
+	protected  String scheme = "";	
 	public boolean authorized = false;
 	
 	protected <T extends JavaScriptObject> void get(String url, AsyncCallback<T> callback) {
@@ -44,10 +45,18 @@ public class Methods {
 		};
 	}
 	
-	private  String makeRequestUrl(String url) {
+	private String makeRequestUrl(String url) {
 		String prefix = "?";
 		if (url.contains("?")) prefix = "&";
 		if (accessToken != null) url += prefix + "access_token=" + accessToken;
+		return addScheme(url);
+	}
+	
+	private String addScheme(String url) {
+		String prefix = "?";
+		if (url.contains("?")) prefix = "&";
+		if (scheme != null && !scheme.equals("")) 
+			url += prefix + "scheme=" + scheme;
 		return url;
 	}
 	
