@@ -2021,6 +2021,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("I.R.P.F.")
 	String irpf();
+
+	@DefaultMessage("I.R.P.F. en especie")
+	String inKindIrpf();
 	
 	@DefaultMessage("Recargo equivalencia")
 	String surcharge();
@@ -3129,4 +3132,33 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ver fact. rect.")
 	String seeRectInvoiceAbbr();
 
+	@DefaultMessage("Manual")
+	String manual();
+	
+	@DefaultMessage("N\u00F3mina")
+	String salary();
+
+	@DefaultMessage("Remuneraciones monetaria")
+	String moneySalary();
+	
+	@DefaultMessage("Remuneraciones en especie")
+	String inKindSalary();
+	
+	@DefaultMessage("Dietas")
+	String allowances();
+
+	@DefaultMessage("Indemnizaciones")
+	String salaryCompensations();
+
+	@DefaultMessage("Total devengado")
+	String totalAccrued();
+
+	@DefaultMessage("Seguridad Social empleado")
+	String employeeSocialInsurance();
+
+	@DefaultMessage("Seguridad Social empresa")
+	String companySocialInsurance();
+
+	@DefaultMessage("Salario neto")
+	String netSalary();
 }

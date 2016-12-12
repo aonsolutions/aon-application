@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.Manual;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.SalaryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.WizardContentBase.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -99,7 +100,37 @@ public class AccountEntryModule extends MainEntryPoint {
 	public interface IAccountEntryModuleCallback {
 		AccountEntryModule getModule();
 	}
-	
+
+	private static interface IEntryTypeVisitor {
+		void visitManual();
+		void visitInvoice();
+		void visitSalary();
+	}
+	public interface IEntryTypeVisitorWalker {
+		void visit( IEntryTypeVisitor visitor);
+	}
+	private static enum EntryType {
+		 MANUAL( AON.MSG.manual(), new  IEntryTypeVisitorWalker() {
+			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitManual();}})
+		,INVOICE( AON.MSG.invoice(), new  IEntryTypeVisitorWalker() {
+			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitInvoice();}})
+		,SALARY( AON.MSG.salary(), new  IEntryTypeVisitorWalker() {
+			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitSalary();}})
+		;
+		private String description;
+		private IEntryTypeVisitorWalker walker;
+		
+		private EntryType(String description,IEntryTypeVisitorWalker walker) {
+			this.description = description;
+			this.walker = walker;
+		}
+		public String getDescription() {
+			return description;
+		}
+		private void visit(IEntryTypeVisitor visitor) {
+			walker.visit(visitor);
+		}
+	}
 	private IAccountEntryModuleCallback moduleCallback = new IAccountEntryModuleCallback() {
 		@Override
 		public AccountEntryModule getModule() {
@@ -141,8 +172,10 @@ public class AccountEntryModule extends MainEntryPoint {
 	InlineLabel journal;
 	@UiField
 	CheckBox confidential;
+//	@UiField
+//	CheckBox invoice;
 	@UiField
-	CheckBox invoice;
+	ListBox entryType;
 	@UiField
 	Button commentsButton;
 	@UiField
@@ -205,6 +238,10 @@ public class AccountEntryModule extends MainEntryPoint {
 		accept.setAccessKey('G');
 		reset.setAccessKey('N');
 		remove.setAccessKey('B');
+		
+		for (EntryType et : EntryType.values() ) {
+			entryType.addItem(et.getDescription());
+		}
 		
 		errors = new ErrorPanel();
 		errorsContainer.setWidget(errors);
@@ -429,7 +466,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		period.setEnabled(canEdit);
 		entryDate.setEnabled(canEdit);
 		confidential.setEnabled(canEdit);
-		invoice.setEnabled(canEdit);
+		entryType.setEnabled(canEdit);
 		accept.setEnabled(canEdit);
 		remove.setEnabled(canRemove);
 		
@@ -693,11 +730,11 @@ public class AccountEntryModule extends MainEntryPoint {
 	public void onSelectBalance(SelectionEvent<Integer> event) {
 		showFullStatement(event.getSelectedItem());
 	}
-
-	@UiHandler("invoice")
-	public void onClickInvoice(ClickEvent event) {
+	
+	@UiHandler("entryType")
+	public void onTypeChanged(ChangeEvent event) {
 		final IAccountEntryWrapper wrp = this.wizardContent.getEntryWrapper();
-		IContentAttachCallback cbk = new IContentAttachCallback() {
+		final IContentAttachCallback cbk = new IContentAttachCallback() {
 			@Override
 			public void onAttach() {
 				AccountEntryModule.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
@@ -712,19 +749,27 @@ public class AccountEntryModule extends MainEntryPoint {
 						invalidateModule("Error inesperado");
 					}
 				});
-				
 			}
 		};
-		if (invoice.getValue()) {
-			// No se llama a selectWizardContent, porque es una factura 
-			// nueva y todavía no sabemos el tipo que tiene. 
-			// setWizardContent(new InvoicePanel(callback),cbk);
-			createAndAttachInvoicePanel(cbk);
-		} else {
-			new Manual(moduleCallback).attach(cbk);
-//			wrp.getAccountEntry().setEntryType(AccountEntryType.MANUAL);
-//			selectWizardContent(wrp.getAccountEntry().getId(),wrp);
-		}
+		EntryType type = EntryType.values()[ entryType.getSelectedIndex()];
+		type.visit( new IEntryTypeVisitor() {
+			
+			@Override
+			public void visitSalary() {
+				SalaryPanel panel = new SalaryPanel(moduleCallback);
+				panel.attach(cbk);
+			}
+			
+			@Override
+			public void visitManual() {
+				new Manual(moduleCallback).attach(cbk);
+			}
+			
+			@Override
+			public void visitInvoice() {
+				createAndAttachInvoicePanel(cbk);
+			}
+		});
 	}
 	
 	// ---------------------------------------------------------------- ACTION
@@ -753,7 +798,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onFailure() {
 			}
 			
-		}; 
+		};
 		if (this.wizardContent == null) {
 			first.setValue(1);
 			Manual manual = new Manual(moduleCallback);
@@ -824,24 +869,24 @@ public class AccountEntryModule extends MainEntryPoint {
 		wrp.getAccountEntry().getEntryType().visit(null, new  AccountEntryTypeVisitorAdapter() {
 			@Override
 			public void visitExpenseInvoice(AccountEntry entry) {
-				invoice.setValue(true,false);
+				entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
 				createAndAttachInvoicePanel(wizardCbk);
 			}
 
 			@Override
 			public void visitSalesInvoice(AccountEntry entry) {
-				invoice.setValue(true,false);
+				entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
 				createAndAttachInvoicePanel(wizardCbk);
 			}
 			@Override
 			public void visitPurchaseInvoice(AccountEntry entry) {
-				invoice.setValue(true,false);
+				entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
 				createAndAttachInvoicePanel(wizardCbk);
 			}
 			
 			
 			private void visitManual() {
-				invoice.setValue(false,false);
+				entryType.setSelectedIndex(EntryType.MANUAL.ordinal());
 				new Manual(moduleCallback).attach(wizardCbk);
 			}
 			

@@ -36,6 +36,17 @@ public class AonConfiguration implements Serializable {
 	private Account defaultChargedRetAccount;
 	private Account defaultPaidRetAccount;
 	private Account vatNegativeAdjustAccount;
+	
+	private Account defaultSalary;
+	private Account defaultSalaryInKind;
+	private Account defaultAllowance;
+	private Account defaultCompensation;
+	private Account defaultCompanySocIns;
+	private Account salaryChargedRet;
+	private Account salaryChargedRetInKind;
+	private Account defaultSocialInsurance;
+	private Account defaultPendingSalary;
+	
 	private Date	operationsDeadline;
 
 	public Company getCompany() {
@@ -268,6 +279,87 @@ public class AonConfiguration implements Serializable {
 
 	public AonConfiguration setOperationsDeadline(Date operationsDeadline) {
 		this.operationsDeadline = operationsDeadline;
+		return this;
+	}
+
+	public Account getDefaultSalary() {
+		return defaultSalary;
+	}
+
+	public AonConfiguration setDefaultSalary(Account defaultSalary) {
+		this.defaultSalary = defaultSalary;
+		return this;
+	}
+
+	public Account getDefaultSalaryInKind() {
+		return defaultSalaryInKind;
+	}
+
+	public AonConfiguration setDefaultSalaryInKind(Account defaultSalaryInKind) {
+		this.defaultSalaryInKind = defaultSalaryInKind;
+		return this;
+	}
+
+	public Account getDefaultAllowance() {
+		return defaultAllowance;
+	}
+
+	public AonConfiguration setDefaultAllowance(Account defaultAllowance) {
+		this.defaultAllowance = defaultAllowance;
+		return this;
+	}
+
+	public Account getDefaultCompensation() {
+		return defaultCompensation;
+	}
+
+	public AonConfiguration setDefaultCompensation(Account defaultCompensation) {
+		this.defaultCompensation = defaultCompensation;
+		return this;
+	}
+
+	public Account getDefaultCompanySocIns() {
+		return defaultCompanySocIns;
+	}
+
+	public AonConfiguration setDefaultCompanySocIns(Account defaultCompanySocIns) {
+		this.defaultCompanySocIns = defaultCompanySocIns;
+		return this;
+	}
+
+	public Account getSalaryChargedRet() {
+		return salaryChargedRet;
+	}
+
+	public AonConfiguration setSalaryChargedRet(Account salaryChargedRet) {
+		this.salaryChargedRet = salaryChargedRet;
+		return this;
+	}
+
+	public Account getSalaryChargedRetInKind() {
+		return salaryChargedRetInKind;
+	}
+
+	public AonConfiguration setSalaryChargedRetInKind(Account salaryChargedRetInKind) {
+		this.salaryChargedRetInKind = salaryChargedRetInKind;
+		return this;
+	}
+
+	public Account getDefaultSocialInsurance() {
+		return defaultSocialInsurance;
+	}
+
+	public AonConfiguration setDefaultSocialInsurance(Account defaultSocialInsurance) {
+		this.defaultSocialInsurance = defaultSocialInsurance;
+		return this;
+	}
+
+	public Account getDefaultPendingSalary() {
+		return defaultPendingSalary;
+	}
+
+	public AonConfiguration setDefaultPendingSalary(Account defaultPendingSalary) {
+		this.defaultPendingSalary = defaultPendingSalary;
 		return this;
 	}
 

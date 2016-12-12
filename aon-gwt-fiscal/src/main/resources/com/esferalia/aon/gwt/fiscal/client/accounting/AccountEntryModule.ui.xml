@@ -61,8 +61,16 @@
 								<td style="width: 90px;" class="{aonResources.css.aonPanelGridEven}">
 									<aon:DateBoxEx ui:field="entryDate"/>
 								</td>
+<!-- 
 								<td style="width: auto;" class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextCenter}">
 									<g:CheckBox ui:field="invoice" text="{msg.invoice}"/>
+								</td>
+ -->
+								<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+									<g:InlineLabel text="{msg.type}"/>
+								</td>
+								<td style="width: auto;" class="{aonResources.css.aonPanelGridEven}">
+ 									<g:ListBox ui:field="entryType" />
 								</td>
 								<td style="width: 200px;" class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextCenter}">
 									<g:InlineLabel ui:field="journal"/>

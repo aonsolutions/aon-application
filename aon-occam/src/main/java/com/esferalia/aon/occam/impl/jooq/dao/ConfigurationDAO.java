@@ -63,6 +63,15 @@ public class ConfigurationDAO {
 				.setDefaultPaidRetAccount( getAccount(ctx, AppParam.ACC_DEFAULT_PAID_RET_ACC) )
 				.setVatNegativeAdjustAccount( getAccount(ctx, AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC) )
 				.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
+				.setDefaultSalary( getAccount(ctx, AppParam.ACC_DEFAULT_SALARY_ACC ) )
+				.setDefaultSalaryInKind( getAccount(ctx, AppParam.ACC_DEFAULT_SALARY_IK_ACC ) )
+				.setDefaultAllowance(getAccount(ctx, AppParam.ACC_DEFAULT_ALLOWANCE_ACC))
+				.setDefaultCompensation(getAccount(ctx, AppParam.ACC_DEFAULT_COMPENSATION_ACC))
+				.setDefaultCompanySocIns(getAccount(ctx, AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC ))
+				.setSalaryChargedRet(getAccount(ctx, AppParam.ACC_SALARY_CHARGED_RET_ACC ))
+				.setSalaryChargedRetInKind(getAccount(ctx, AppParam.ACC_SALARY_CHARGED_RET_IK_ACC ))
+				.setDefaultSocialInsurance(getAccount(ctx, AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC ))
+				.setDefaultPendingSalary(getAccount(ctx, AppParam.ACC_DEFAULT_PENDING_SALARY_ACC ))
 		;
 		SeriesDAO
 			.getSeries(ctx,
