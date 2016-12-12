@@ -208,6 +208,9 @@ public class ContrataBatchController extends BasicController {
 		
 		IContrataController contrataController = null;
 		ContrataBatch batch = (ContrataBatch) this.getTo();
+		if(batch.getType()==null){
+			batch.setType(ContrataFileType.CONTRACT);
+		}
 		switch (batch.getType()) {
 		case CONTRACT:
 			contrataController = (ContrataContratosController) AonUtil

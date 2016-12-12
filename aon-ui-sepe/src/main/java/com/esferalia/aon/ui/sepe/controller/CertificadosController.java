@@ -49,7 +49,6 @@ import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
@@ -467,12 +466,14 @@ public class CertificadosController implements ISepeHandler, Serializable {
 	private IAttachment obtainCertificadosAttach(SepeBatchAttachmentType type){
 		try {
 			if(batch!=null && batch.getId()!=null){
-				IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
+				IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
-				SEPEUtils utils = SEPEUtils.getInstance();
-				utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
+//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
+//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
+				criteria.addEqualExpression("Certifica2BatchAttachment.sourceBatch", getBatch().getId());
+				criteria.addEqualExpression("Certifica2BatchAttachment.attachmentType", type);
+//				SEPEUtils utils = SEPEUtils.getInstance();
+//				utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					return (IAttachment) list.get(0);

@@ -296,7 +296,7 @@ public class ContrataContratosHandler implements IContrataHandler, Serializable 
 	 * @return
 	 */
 	public Boolean getShowColectivoEdad() {
-		if(getContract().getPerson().getAge()!=null){
+		if(getContract()!=null && getContract().getPerson().getAge()!=null){
 			return getContractCode()==ContractCode.C421 && getContract().getPerson().getAge()>=21;
 		}
 		return false;
@@ -342,7 +342,7 @@ public class ContrataContratosHandler implements IContrataHandler, Serializable 
 	public Boolean getShowFijoDiscontinuoPeriodico() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(2006, 6, 1);
-		return getContract().getStartDate().after(cal.getTime()) 
+		return getContract()!=null && getContract().getStartDate().after(cal.getTime()) 
 				&& ( getContractCode()==ContractCode.C200 || getContractCode()==ContractCode.C230
 				|| getContractCode()==ContractCode.C250 );
 	}
@@ -394,7 +394,7 @@ public class ContrataContratosHandler implements IContrataHandler, Serializable 
 	public Boolean getShowCertificadoProfesionalidad() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(2010, 6, 18);
-		return getContract().getStartDate().after(cal.getTime()) 
+		return getContract()!=null && getContract().getStartDate().after(cal.getTime()) 
 				&& ( getContractCode()==ContractCode.C420 || getContractCode()==ContractCode.C520
 				|| getContractCode()==ContractCode.C450 || getContractCode()==ContractCode.C550 );
 	}

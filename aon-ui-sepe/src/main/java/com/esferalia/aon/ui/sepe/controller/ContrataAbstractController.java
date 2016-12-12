@@ -47,7 +47,6 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContrataBatch;
 import com.esferalia.aon.payroll.ContrataBatchAttachment;
 import com.esferalia.aon.payroll.ContrataBatchDetail;
-import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
@@ -524,10 +523,12 @@ public abstract class ContrataAbstractController implements IContrataController 
 	private IAttachment obtainContrataAttach(SepeBatchAttachmentType type){
 		try {
 			if(batch!=null && batch.getId()!=null){
-				IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
+				IManagerBean bean = BeanManager.getManagerBean(ContrataBatchAttachment.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
+//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
+//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
+				criteria.addEqualExpression("ContrataBatchAttachment.sourceBatch", getBatch().getId());
+				criteria.addEqualExpression("ContrataBatchAttachment.attachmentType", type);
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					return (IAttachment) list.get(0);
@@ -652,7 +653,7 @@ public abstract class ContrataAbstractController implements IContrataController 
 		String communicationLogContent = "<div>";
 		if( isCommunicationIdReceived() ){
 			if( getCommunicationIdFile().getData()!=null ){
-				communicationLogContent += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
+				communicationLogContent += "<div style='background-color:#E4E4E4; width:98%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
 				communicationLogContent += "NUM ENVIO:         " + getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
 			}
 		}

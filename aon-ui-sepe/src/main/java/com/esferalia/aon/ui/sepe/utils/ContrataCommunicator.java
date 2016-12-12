@@ -283,7 +283,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	public String obtainContractCommunicationStatus(byte[] data, Contract contract) {
 		String status = "";
 		status += "<br /> ";
-		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
+		status += "<div style='background-color:#E4E4E4; width:98%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
 			String errorMsg = new String(data);
 			errorMsg = errorMsg.replaceAll("[\\r\\n\\t]", "");
@@ -388,7 +388,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	public String obtainExtensionCommunicationStatus(byte[] data, Contract contract) {
 		String status = "";
 		status += "<br /> ";
-		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
+		status += "<div style='background-color:#E4E4E4; width:98%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
 			String errorMsg = new String(data);
 			errorMsg = errorMsg.replaceAll("[\\r\\n\\t]", "");
@@ -471,7 +471,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	public String obtainTrasformationCommunicationStatus(byte[] data, Contract contract) {
 		String status = "";
 		status += "<br /> ";
-		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
+		status += "<div style='background-color:#E4E4E4; width:98%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
 			String errorMsg = new String(data);
 			errorMsg = errorMsg.replaceAll("[\\r\\n\\t]", "");
