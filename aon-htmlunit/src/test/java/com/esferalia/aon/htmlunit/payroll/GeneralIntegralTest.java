@@ -67,6 +67,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.DECEMBER);
 		
 		click("expand-button-agreement");
+		wait4Id("expand-button-system");
 		click("expand-button-system");
 		
 		assertNotElement("editor-antiguedad");
@@ -121,9 +122,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("editor-horas_miercoles", "2");
 		wait4Value("totalPaymentsLabel", totalPayment * 10.00 / 40.00);
 		setValue("editor-horas_jueves", "40/5");
-		wait4Value("totalPaymentsLabel", totalPayment * 14.00 / 40.00);
-		setValue("editor-horas_viernes", "40/5");
 		wait4Value("totalPaymentsLabel", totalPayment * 18.00 / 40.00);
+		setValue("editor-horas_viernes", "40/5");
+		wait4Value("totalPaymentsLabel", totalPayment * 26.00 / 40.00);
 		
 	}
 
