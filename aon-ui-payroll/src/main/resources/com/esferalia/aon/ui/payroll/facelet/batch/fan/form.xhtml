@@ -65,30 +65,20 @@
 					</aon:div>
 				</aon:panelGrid>
 			
-				<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
-					<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
-						columnClasses="
-						aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto,
-						" >
-						<aon:outputText value="#{bundle.finance_disk}" />
-						<aon:div>
-							<aon:commandButton id="fan-create-button" value="#{bundle.payroll_create_disk}"
-								rendered="#{fanBatch.nevv or (!fanBatch.recorded and fanBatchDetail.model.rowCount > 0)}"
-								reRender="batchForm"
-								styleClass="aon-commandButton"
-								actionListener="#{fanBatch.onCreateDisk}"
-								onclick="Richfaces.showModalPanel('waitProccess')" 
-					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-	
-							<aon:outputText value="Generado el "
-								rendered="#{fanBatch.recorded}" />
-							<aon:outputText value="#{fanBatch.to.outcomeFileDate}"
-								rendered="#{fanBatch.recorded}"
-								styleClass="aon-bold aon-margin-right" >
-								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							
+				<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto" >
+					<aon:outputText value="#{bundle.finance_disk}" />
+					<aon:div>
+						<aon:outputText value="Generado el "
+							rendered="#{fanBatch.recorded}" />
+						<aon:outputText value="#{fanBatch.to.outcomeFileDate}"
+							rendered="#{fanBatch.recorded}"
+							styleClass="aon-bold aon-margin-right" >
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
 							<aon:htmlCommandLink id="fan-download" target="_blank"
 								value="&#160;" title="#{bundle.aon_fileupload_download}"
 								rendered="#{fanBatch.recorded}"
@@ -109,9 +99,16 @@
 									<a4j:support event="onuploadcomplete" reRender="dataTable" />
 								</aon:fileUpload>
 							</aon:if>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:if>
+							<aon:commandButton id="fan-create-button" value="#{bundle.payroll_create_disk}"
+								rendered="#{fanBatch.nevv or (!fanBatch.recorded and fanBatchDetail.model.rowCount > 0)}"
+								reRender="batchForm"
+								styleClass="aon-commandButton"
+								actionListener="#{fanBatch.onCreateDisk}"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+						</aon:if>
+					</aon:div>
+				</aon:panelGrid>
 			</ui:define>
 			
 			<ui:define name="batchedTabContent" >

@@ -36,27 +36,19 @@
 						</aon:outputText>
 					</aon:div>	
 					
-					<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
-						<aon:outputText value="#{bundle.finance_disk} FDI" />
-						<aon:div>
-							<aon:commandButton id="fdi-create-button" value="#{bundle.payroll_create_disk}"
-								rendered="#{leaveBatch.nevv or (!leaveBatch.recorded and leaveBatchDetail.model.rowCount > 0)}"
-								reRender="batchForm"
-								styleClass="aon-icon-commandButton aon-icon-accept"
-								actionListener="#{leaveBatch.onCreateDisk}"
-								onclick="Richfaces.showModalPanel('waitProccess')" 
-					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-	
-							<aon:outputText value="Generado el "
-								rendered="#{leaveBatch.recorded}"
-								styleClass="aon-bold" />
-							<aon:outputText value="#{leaveBatch.to.outcomeFileDate}"
-								rendered="#{leaveBatch.recorded}"
-								styleClass="aon-bold aon-margin-right" >
-								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							
+					<aon:outputText value="#{bundle.finance_disk} FDI" />
+					<aon:div>
+						<aon:outputText value="Generado el "
+							rendered="#{leaveBatch.recorded}"
+							styleClass="aon-bold" />
+						<aon:outputText value="#{leaveBatch.to.outcomeFileDate}"
+							rendered="#{leaveBatch.recorded}"
+							styleClass="aon-bold aon-margin-right" >
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
 							<aon:htmlCommandLink id="fdi-download" target="_blank"
 								value="&#160;" title="#{bundle.aon_fileupload_download}"
 								rendered="#{leaveBatch.recorded}"
@@ -77,8 +69,15 @@
 									<a4j:support event="onuploadcomplete" reRender="dataTable" />
 								</aon:fileUpload>
 							</aon:if>
-						</aon:div>
-					</aon:if>
+							<aon:commandButton id="fdi-create-button" value="#{bundle.payroll_create_disk}"
+								rendered="#{leaveBatch.nevv or (!leaveBatch.recorded and leaveBatchDetail.model.rowCount > 0)}"
+								reRender="batchForm"
+								styleClass="aon-icon-commandButton aon-icon-accept"
+								actionListener="#{leaveBatch.onCreateDisk}"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+						</aon:if>
+					</aon:div>
 					
 				</aon:panelGrid>
 			</ui:define>

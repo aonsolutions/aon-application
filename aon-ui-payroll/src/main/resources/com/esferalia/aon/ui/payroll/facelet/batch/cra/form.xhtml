@@ -20,14 +20,7 @@
 			<ui:param name="controllerAttach" value="#{craBatchAttach}" />
 			
 			<ui:define name="moreToolbarContent" >
-				<!--  
-				<aon:htmlCommandLink id="cra-excel-report"
-					rendered="#{craBatch.recorded}"
-					value="#{bundle.aon_listing}"
-					target="_blank" action="#{craBatch.onExcelReport}"
-					styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-				</aon:htmlCommandLink>
-				-->
+				
 			</ui:define>
 			
 			<ui:define name="batchContent" >
@@ -53,31 +46,21 @@
 					
 				</aon:panelGrid>
 			
-				<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
-					<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
-						columnClasses="
-						aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,
-						" >
-						<aon:outputText value="#{bundle.finance_disk} CRA" />
-						<aon:div>
-							<aon:commandButton id="cra-create-button" value="#{bundle.payroll_create_disk}"
-								rendered="#{craBatch.nevv or (!craBatch.recorded and craBatchDetail.model.rowCount > 0)}"
-								reRender="batchForm"
-								styleClass="aon-icon-commandButton aon-icon-accept"
-								actionListener="#{craBatch.onCreateDisk}"
-								onclick="Richfaces.showModalPanel('waitProccess')" 
-					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-	
-							<aon:outputText value="Generado el "
-								rendered="#{craBatch.recorded}"
-								styleClass="aon-bold" />
-							<aon:outputText value="#{craBatch.to.outcomeFileDate}"
-								rendered="#{craBatch.recorded}"
-								styleClass="aon-bold aon-margin-right" >
-								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							
+				<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto" >
+					<aon:outputText value="#{bundle.finance_disk} CRA" />
+					<aon:div>
+						<aon:outputText value="Generado el "
+							rendered="#{craBatch.recorded}"
+							styleClass="aon-bold" />
+						<aon:outputText value="#{craBatch.to.outcomeFileDate}"
+							rendered="#{craBatch.recorded}"
+							styleClass="aon-bold aon-margin-right" >
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:if test="#{domainSwitcher.domainManagementAvailable or controller.editableSelectedTo}" >
 							<aon:htmlCommandLink id="cra-download" target="_blank"
 								value="&#160;" title="#{bundle.aon_fileupload_download}"
 								rendered="#{craBatch.recorded}"
@@ -98,9 +81,16 @@
 									<a4j:support event="onuploadcomplete" reRender="dataTable" />
 								</aon:fileUpload>
 							</aon:if>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:if>
+							<aon:commandButton id="cra-create-button" value="#{bundle.payroll_create_disk}"
+								rendered="#{craBatch.nevv or (!craBatch.recorded and craBatchDetail.model.rowCount > 0)}"
+								reRender="batchForm"
+								styleClass="aon-icon-commandButton aon-icon-accept"
+								actionListener="#{craBatch.onCreateDisk}"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+						</aon:if>
+					</aon:div>
+				</aon:panelGrid>
 			</ui:define>
 			
 			<ui:define name="batchedTabContent" >
