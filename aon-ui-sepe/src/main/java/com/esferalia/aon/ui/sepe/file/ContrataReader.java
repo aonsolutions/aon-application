@@ -923,9 +923,7 @@ public class ContrataReader {
 	}
 	
 	private void completeDATOSCONTRATO(DATOSCONTRATOTYPE datos, ContrataProrrogaParams params){
-		datos.getCLAVECONTRATO();
-		datos.getFECHAINICIOCTO();
-		datos.getIDENTIFICADORPFISICA();
+		params.setClaveContrato(datos.getCLAVECONTRATO());
 	}
 	private void completeDATOSEMPRESA(DATOSEMPRESATYPE datos, ContrataProrrogaParams params){
 		datos.getCIFNIFEMPRESA();

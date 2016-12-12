@@ -9,25 +9,32 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGrid id="transformDataTable" columns="2" style="width: 100%;">
-	
-		<!--  
-		<aon:outputLabel for="transformContrata_contractCode"
-			value="#{bundle.payroll_contract_contract_code}" />
-		<aon:selectOneMenu id="transformContrata" required="true" 
-			value="#{transformContrata.params.transformCode}">
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{payrollCollections.contractTransformCodes}" />
-			<a4j:support event="onchange" reRender="transformDataTable" ajaxSingle="#{true}" />
-		</aon:selectOneMenu>
 		
-		<aon:outputLabel for="transformContrata_fechaInicio" 
-			value="#{bundle.aon_start_date}" />
-		<aon:selectInputDate id="transformContrata_fechaInicio"
-			required="#{true}" 
-			value="#{transformContrata.params.fechaInicio}" 
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}"/>
-		-->
+		<aon:outputLabel for="transformContrata_claveContrato" 
+			value="Identificador del contrato a transformar" />
+		<aon:inputText id="transformContrata_claveContrato"
+			size="30"
+			disabled="#{transformContrata.readOnly}"
+			value="#{transformContrata.params.claveContrato}" />
+		
+		<aon:if test="#{showMainFileds}">
+			<aon:outputLabel for="transformContrata_contractCode"
+				value="#{bundle.payroll_contract_contract_code}" />
+			<aon:selectOneMenu id="transformContrata" required="true" 
+				value="#{transformContrata.params.transformCode}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.contractTransformCodes}" />
+				<a4j:support event="onchange" reRender="transformDataTable" ajaxSingle="#{true}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="transformContrata_fechaInicio" 
+				value="#{bundle.aon_start_date}" />
+			<aon:selectInputDate id="transformContrata_fechaInicio"
+				required="#{true}" 
+				value="#{transformContrata.params.fechaInicio}" 
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+		</aon:if>
 
 		<aon:outputLabel for="transformContrata_indicadorDiscontinuidad" 
 			value="INDICADOR_DISCONTINUIDAD" />

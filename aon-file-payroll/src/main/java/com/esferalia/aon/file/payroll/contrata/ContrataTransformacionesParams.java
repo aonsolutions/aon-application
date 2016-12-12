@@ -19,7 +19,7 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private String sourceContractSepeId;
+	private String claveContrato;
 	private ContractCode sourceContractCode;
 	private ITransformacionType transformContract;
 //	private ContractCode transformCode;
@@ -74,12 +74,20 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 	private TELCOLBO colectivoBonificacion;
 	
 	
-	public String getSourceContractSepeId() {
-		return sourceContractSepeId;
+	
+	
+	public String getClaveContrato() {
+		return claveContrato;
 	}
-
-	public void setSourceContractSepeId(String sourceContractSepeId) {
-		this.sourceContractSepeId = sourceContractSepeId;
+	public void setClaveContrato(String claveContrato) {
+		this.claveContrato = claveContrato;
+	}
+	
+	public String getSourceContractSepeId(){
+		return claveContrato;
+	}
+	public void setSourceContractSepeId(String claveContrato) {
+		this.claveContrato = claveContrato;
 	}
 
 	public ContractCode getSourceContractCode() {

@@ -12,7 +12,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -24,7 +23,6 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.CIFNIFTYPE;
@@ -172,33 +170,39 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 	 */
 	private DATOSCONTRATOTYPE createDatosContrato(ContrataProrrogaParams params) {
 		DATOSCONTRATOTYPE datos = factory.createDATOSCONTRATOTYPE();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), getContract().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), ContractVariable.SEPE_CONTRACT_ID.getValue());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE));
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				ContractInfo info = (ContractInfo) list.get(0);
-				datos.setCLAVECONTRATO(info.getExpression().replaceAll("\"", ""));
-			}
-		} catch (ManagerBeanException e) {
-			// nada
-		}
-		if(datos.getCLAVECONTRATO()==null){
-			Person person = getContract().getPerson();
-			if(StringUtils.isEmpty(person.getRegistry().getDocument())){
-				AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento..");
-			} else {
-				if(person.getRegistry().getDocumentType()==DocumentType.NIF){
-					datos.setIDENTIFICADORPFISICA("D"+person.getRegistry().getDocument());
-				} else if(person.getRegistry().getDocumentType()==DocumentType.NIE){
-					datos.setIDENTIFICADORPFISICA("E"+person.getRegistry().getDocument());
+		
+		if(StringUtils.isNotBlank(params.getClaveContrato())){
+			datos.setCLAVECONTRATO(params.getClaveContrato());
+		} else {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), getContract().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), ContractVariable.SEPE_CONTRACT_ID.getValue());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE));
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					ContractInfo info = (ContractInfo) list.get(0);
+					datos.setCLAVECONTRATO(info.getExpression().replaceAll("\"", ""));
 				}
+			} catch (ManagerBeanException e) {
+				// nada
 			}
-			datos.setFECHAINICIOCTO(getFormatedDate(getContract().getStartDate()));
+			if(datos.getCLAVECONTRATO()==null){
+				Person person = getContract().getPerson();
+				if(StringUtils.isEmpty(person.getRegistry().getDocument())){
+					AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento..");
+				} else {
+					if(person.getRegistry().getDocumentType()==DocumentType.NIF){
+						datos.setIDENTIFICADORPFISICA("D"+person.getRegistry().getDocument());
+					} else if(person.getRegistry().getDocumentType()==DocumentType.NIE){
+						datos.setIDENTIFICADORPFISICA("E"+person.getRegistry().getDocument());
+					}
+				}
+				datos.setFECHAINICIOCTO(getFormatedDate(getContract().getStartDate()));
+			}
 		}
+		
 		return datos;
 	}
 	
@@ -386,30 +390,6 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 	 * ***************************************
 	 * ***************************************
 	 */
-//	private Map<String, String> contractDataMap;
-//	
-//	protected Map<String, String> getContractDataMap(Contract contract) {
-//		if(contractDataMap==null){
-//			SEPEUtils utils = new SEPEUtils();
-//			contractDataMap = utils.getContractDataMap(contract);
-//		}
-//		return contractDataMap;
-//	}
-//	protected Map<String, String> getContractDataMap() {
-//		return contractDataMap;
-//	}
-	
-	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return ((EnterpriseCCC)list.get(0)).getCcc();
-		}
-		return null;
-	}
 	
 	private String getFormatedDate(Date date){
 		String pattern = "yyyyMMdd";

@@ -10,6 +10,13 @@
 
 	<aon:panelGrid id="dataTable#{suffix}" columns="2" style="width: 100%;">
 
+		<aon:outputLabel for="extensionContrata_claveContrato#{suffix}" 
+			value="Identificador del contrato a prorrogar" />
+		<aon:inputText id="extensionContrata_claveContrato#{suffix}"
+			size="30"
+			disabled="#{extensionContrata.readOnly}"
+			value="#{extensionContrata.params.claveContrato}" />
+		
 		<aon:outputLabel for="extensionContrata_fechaInicio#{suffix}" 
 			value="#{bundle.aon_start_date}" />
 		<aon:selectInputDate id="extensionContrata_fechaInicio#{suffix}"

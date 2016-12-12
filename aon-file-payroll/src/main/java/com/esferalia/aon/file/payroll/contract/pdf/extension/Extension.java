@@ -17,10 +17,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
@@ -75,7 +77,6 @@ public class Extension extends AbstractContractExtension {
 	
 	@Override
 	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> params) throws UnsupportedContractDocumentException{
-		// TODO
 		
 		try {
 			PdfReader reader = new PdfReader(getContractExtensionUrl(documentName+".pdf"));
@@ -84,8 +85,24 @@ public class Extension extends AbstractContractExtension {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			Map<String, String>  map = getContractInfoMap(contract);
 			
-			ContrataContratoParams contratoParams = (ContrataContratoParams) params.get(0);
-			ContrataProrrogaParams prorrogaParams = (ContrataProrrogaParams) params.get(1);
+			ContrataContratoParams contratoParams = null;
+			try {
+				if(params!=null && params.size()>0){
+					contratoParams = (ContrataContratoParams) params.get(0);
+				}
+			} catch (Exception e) {
+				String msg = "No se puede generar el documento de la prorroga, no hay datos del contrato origen.";
+				throw new UnsupportedContractDocumentException(msg);
+			}
+			ContrataProrrogaParams prorrogaParams = null;
+			try {
+				if(params!=null && params.size()>1){
+					prorrogaParams = (ContrataProrrogaParams) params.get(1);
+				}
+			} catch (Exception e) {
+				String msg = "No se puede generar el documento de la prorroga, faltan los datos de la prorroga.";
+				throw new UnsupportedContractDocumentException(msg);
+			}
 			
 			super.loadPdfCommonFields(contract, params);
 			
@@ -290,7 +307,22 @@ public class Extension extends AbstractContractExtension {
 			getPdfFieldsMap().get(PE191_SEPE_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
 			getPdfFieldsMap().get(PE191_CONTRACT_REGULATION_DATE).setValue(dateFormatter.format(contract.getStartDate()));
 			
-			getPdfFieldsMap().get(PE191_CONTRACT_SEPE_ID).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()));
+			String sepeId = prorrogaParams.getClaveContrato();
+			if(StringUtils.isBlank(sepeId)){
+				sepeId = map.get(ContractVariable.SEPE_CONTRACT_ID.getValue());
+			}
+			if(StringUtils.isBlank(sepeId)){
+				Person person = contract.getPerson();
+				if(StringUtils.isNotEmpty(person.getRegistry().getDocument())){
+					if(person.getRegistry().getDocumentType()==DocumentType.NIF){
+						sepeId = "D"+person.getRegistry().getDocument();
+					} else if(person.getRegistry().getDocumentType()==DocumentType.NIE){
+						sepeId = "E"+person.getRegistry().getDocument();
+					}
+				}
+				sepeId += "-"+dateFormatter.format(contract.getStartDate());
+			}
+			getPdfFieldsMap().get(PE191_CONTRACT_SEPE_ID).setValue(sepeId);
 			
 			Integer totalDurationInMonths = contractDurationInMonths + extensionDurationInMonths;
 			getPdfFieldsMap().get(PE191_TOTAL_DURATION1).setValue(totalDurationInMonths.toString());
@@ -307,11 +339,9 @@ public class Extension extends AbstractContractExtension {
 			
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// do nothing
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// do nothing
 		}
 	}
 	

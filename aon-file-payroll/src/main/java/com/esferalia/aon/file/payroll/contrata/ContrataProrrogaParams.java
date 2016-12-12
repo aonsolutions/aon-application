@@ -12,6 +12,7 @@ public class ContrataProrrogaParams implements IContrataParams, Serializable {
 	/**
 	 * DATOS_GENERALESPRORROGATYPE
 	 */
+	private String claveContrato;
 	private Date fechaInicio;
 	private Date fechaFin;
 	private Boolean indicadorConvCol;
@@ -31,6 +32,15 @@ public class ContrataProrrogaParams implements IContrataParams, Serializable {
 	 */
 	private String usoLibreEmpresa;
 
+
+	
+	public String getClaveContrato() {
+		return claveContrato;
+	}
+
+	public void setClaveContrato(String claveContrato) {
+		this.claveContrato = claveContrato;
+	}
 
 	public Date getFechaInicio() {
 		return fechaInicio;

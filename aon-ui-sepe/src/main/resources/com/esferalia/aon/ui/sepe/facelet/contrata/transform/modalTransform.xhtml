@@ -56,31 +56,10 @@
 									
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									
-										<aon:panelGrid id="transformMainData" columns="2" style="width: 100%;">
-											<aon:outputLabel for="transformContrata_contractCode"
-												value="#{bundle.payroll_contract_contract_code}" />
-											<aon:selectOneMenu id="transformContrata" required="true" 
-												value="#{transformContrata.params.transformCode}">
-												<f:selectItem itemLabel="-" value="#{null}" />
-												<f:selectItems value="#{payrollCollections.contractTransformCodes}" />
-												<a4j:support event="onchange" reRender="transformDataTable" ajaxSingle="#{true}" />
-											</aon:selectOneMenu>
-											
-											<aon:outputLabel for="transformContrata_fechaInicio" 
-												value="#{bundle.aon_start_date}" />
-											<aon:selectInputDate id="transformContrata_fechaInicio"
-												required="#{true}" 
-												value="#{transformContrata.params.fechaInicio}" 
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}"/>
-										</aon:panelGrid>
+										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_content.xhtml" >
+											<ui:param name="showMainFileds" value="#{true}" />
+										</ui:include>
 										
-										<!--  
-										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_content.xhtml" />
-										
-										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_otherData.xhtml" />
-										-->
-									
 									</aon:div>
 									
 								</aon:div>

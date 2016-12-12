@@ -235,7 +235,7 @@ public class TemporaryModel extends AbstractContractModel {
 			/*
 			 * Contract page 1
 			 */
-			if(contrata!=null){
+			if(contrata!=null && contrata.getCno()!=null){
 				setPdfFieldValue(PdfFieldTemporary.PROFESSION.getValue(), contrata.getCno().getTitle());
 			}
 			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){

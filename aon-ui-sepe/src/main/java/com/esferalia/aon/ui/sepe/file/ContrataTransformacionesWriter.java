@@ -16,7 +16,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -26,8 +25,9 @@ import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -602,16 +602,32 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		if(StringUtils.isNotBlank(params.getSourceContractSepeId())){
 			datos.setCLAVECONTRATO(params.getSourceContractSepeId());
 		} else {
-			if(StringUtils.isEmpty(getContract().getPerson().getRegistry().getDocument())){
-				AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento..");
-			} else {
-				if(getContract().getPerson().getRegistry().getDocumentType()==DocumentType.NIF){
-					datos.setIDENTIFICADORPFISICA("D"+getContract().getPerson().getRegistry().getDocument());
-				} else if(getContract().getPerson().getRegistry().getDocumentType()==DocumentType.NIE){
-					datos.setIDENTIFICADORPFISICA("E"+getContract().getPerson().getRegistry().getDocument());
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), getContract().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), ContractVariable.SEPE_CONTRACT_ID.getValue());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE));
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					ContractInfo info = (ContractInfo) list.get(0);
+					datos.setCLAVECONTRATO(info.getExpression().replaceAll("\"", ""));
 				}
+			} catch (ManagerBeanException e) {
+				// nada
 			}
-			datos.setFECHAINICIOCTO(getFormatedDate(getContract().getSeniorityDate()));
+			if(datos.getCLAVECONTRATO()==null){
+				if(StringUtils.isEmpty(getContract().getPerson().getRegistry().getDocument())){
+					AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento..");
+				} else {
+					if(getContract().getPerson().getRegistry().getDocumentType()==DocumentType.NIF){
+						datos.setIDENTIFICADORPFISICA("D"+getContract().getPerson().getRegistry().getDocument());
+					} else if(getContract().getPerson().getRegistry().getDocumentType()==DocumentType.NIE){
+						datos.setIDENTIFICADORPFISICA("E"+getContract().getPerson().getRegistry().getDocument());
+					}
+				}
+				datos.setFECHAINICIOCTO(getFormatedDate(getContract().getSeniorityDate()));
+			}
 		}
 		return datos;
 	}
@@ -851,18 +867,6 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 			LOGGER.error(e.getMessage());
 			return null;
 		}
-	}
-	
-	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return ((EnterpriseCCC)list.get(0)).getCcc();
-		}
-		return null;
 	}
 	
 	private String getFormatedDate(Date date){
