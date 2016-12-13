@@ -72,6 +72,8 @@ public class ConfigurationDAO {
 				.setSalaryChargedRetInKind(getAccount(ctx, AppParam.ACC_SALARY_CHARGED_RET_IK_ACC ))
 				.setDefaultSocialInsurance(getAccount(ctx, AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC ))
 				.setDefaultPendingSalary(getAccount(ctx, AppParam.ACC_DEFAULT_PENDING_SALARY_ACC ))
+				.setSalaryDedAdvPayment(getAccount(ctx, AppParam.ACC_SALARY_DED_ADV_PAYMENT_ACC))
+				.setSalaryDedSeize(getAccount(ctx, AppParam.ACC_SALARY_DED_SEIZE_ACC))
 		;
 		SeriesDAO
 			.getSeries(ctx,

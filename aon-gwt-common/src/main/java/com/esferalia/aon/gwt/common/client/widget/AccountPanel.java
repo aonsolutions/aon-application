@@ -37,7 +37,8 @@ public class AccountPanel extends SimplePanel implements Focusable {
 		}
 	}
 
-	private TextBox codeBox; 
+	private TextBox codeBox = new TextBox();
+	private TextBox descriptionBox = new TextBox();
 	
 	public AccountPanel(final String domainName,final int domain, final AccountPanelCallback callback) {
 		initializeCommonService();
@@ -88,11 +89,10 @@ public class AccountPanel extends SimplePanel implements Focusable {
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
 
-		final TextBox descriptionBox = new TextBox();		
-		
+				
 		table.setWidget(0,0,new InlineLabel(AON.MSG.account()));
 		table.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridOdd());
-		codeBox = new TextBox();
+		 
 		codeBox.setValue(account.getCode());
 		codeBox.setVisibleLength(9);
 		codeBox.setMaxLength(9);
@@ -203,7 +203,6 @@ public class AccountPanel extends SimplePanel implements Focusable {
     	buttons.add(cancelButton);
     	rootPanel.add(buttons);
 		setWidget(rootPanel);
-		codeBox.setFocus(true);
 	}
 
 	@Override
@@ -218,7 +217,13 @@ public class AccountPanel extends SimplePanel implements Focusable {
 
 	@Override
 	public void setFocus(boolean focused) {
-		codeBox.setFocus(focused);
+		if (codeBox.isEnabled()) {
+			codeBox.selectAll();
+			codeBox.setFocus(focused);
+		} else {
+			descriptionBox.selectAll();
+			descriptionBox.setFocus(focused);
+		}		
 	}
 
 	@Override

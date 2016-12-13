@@ -24,6 +24,12 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 	private double salaryCompensation;
 	private Account salaryCompensationAccount;
 	
+	private double salaryDedAdvPayment;
+	private Account salaryDedAdvPaymentAccount;
+
+	private double salaryDedSeize;
+	private Account salaryDedSeizeAccount;
+
 	private double irpf;
 	private Account irpfAccount;
 	
@@ -109,6 +115,34 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 		this.salaryCompensationAccount = salaryCompensationAccount;
 		return this;
 	}
+	public double getSalaryDedAdvPayment() {
+		return salaryDedAdvPayment;
+	}
+	public SalaryEntry setSalaryDedAdvPayment(double salaryDedAdvPayment) {
+		this.salaryDedAdvPayment = salaryDedAdvPayment;
+		return this;
+	}
+	public Account getSalaryDedAdvPaymentAccount() {
+		return salaryDedAdvPaymentAccount;
+	}
+	public SalaryEntry setSalaryDedAdvPaymentAccount(Account salaryDedAdvPaymentAccount) {
+		this.salaryDedAdvPaymentAccount = salaryDedAdvPaymentAccount;
+		return this;
+	}
+	public double getSalaryDedSeize() {
+		return salaryDedSeize;
+	}
+	public SalaryEntry setSalaryDedSeize(double salaryDedSeize) {
+		this.salaryDedSeize = salaryDedSeize;
+		return this;
+	}
+	public Account getSalaryDedSeizeAccount() {
+		return salaryDedSeizeAccount;
+	}
+	public SalaryEntry setSalaryDedSeizeAccount(Account salaryDedSeizeAccount) {
+		this.salaryDedSeizeAccount = salaryDedSeizeAccount;
+		return this;
+	}
 	public double getIrpf() {
 		return irpf;
 	}
@@ -173,7 +207,13 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 	public double getNetSalary(){
-		return AonMathUtils.round(getTotalAccrued() - getIrpf() - getInKindIrpf() - getEmployeeSocialInsurance());
+		return AonMathUtils.round(getTotalAccrued() 
+				- getIrpf() 
+				- getInKindIrpf() 
+				- getEmployeeSocialInsurance()
+				- getSalaryDedAdvPayment()
+				- getSalaryDedSeize()
+				);
 	}
 	public double getTotalSocialInsurance(){
 		return AonMathUtils.round(getEmployeeSocialInsurance() + getCompanySocialInsurance());

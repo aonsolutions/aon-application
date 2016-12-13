@@ -3161,4 +3161,10 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Salario neto")
 	String netSalary();
+
+	@DefaultMessage("Anticipo")
+	String advance();
+
+	@DefaultMessage("Embargo")
+	String seize();
 }
