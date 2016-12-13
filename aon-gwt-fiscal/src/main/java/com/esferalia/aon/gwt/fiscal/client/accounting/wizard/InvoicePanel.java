@@ -63,7 +63,14 @@ import com.google.gwt.user.client.ui.TextBox;
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
 	
 	static final String BACKGROUND_COLOR = "#dfecdf";
+
 	
+	public final static int TAB_OFFSET = 1000;
+	public final static int VAT_PANEL_TAB_OFFSET = 50000;
+	public final static int WITHHOLDING_PANEL_TAB_OFFSET = 200000;
+	public final static int PAY_PANEL_TAB_OFFSET = 250000;
+	public final static int EXTRA_PANEL_TAB_OFFSET = 500000;
+
 	static FinanceServiceAsync financeService;
 	
 	public static interface IInvoicePanelCallback extends IAccountEntryModuleCallback{
@@ -106,7 +113,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		}
 	};
 	
-	
+	private int tabindex = TAB_OFFSET;
 	private AccountingInvoice invoice;
 	private InvoicePanelRegistryVisitor invoicePanelRegistryVisitor;
 	
@@ -128,7 +135,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			@Override
 			public void onValueChange(ValueChangeEvent<Void> event) {
 				vatPanel.extraInfoChanged();
-				withholdingPanel.setVisible(getWrapper().isWithholding());
+				withholdingPanel.setVisible(getWrapper().getInvoice().isWithholding());
 				withholdingPanel.setValue(getWrapper().getWithholdingData());
 				//if (getWrapper().isWithholding()) populateWithholding();
 				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
@@ -160,11 +167,13 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 		createPayTable();
 		dockPanel.addSouth(payTable, 28);
+		SimpleLayoutPanel withholdingContainer = new SimpleLayoutPanel();
 		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
 		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
 				InvoiceCalculator.calculate(getWrapper());
+				withholdingPanel.setValue(getWrapper().getWithholdingData());
 				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
 				_paintEntry();
 				getWrapper().getAccountEntry().setDirty(true);
@@ -180,7 +189,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				getCallback().getModule().refreshIdLabel();
 			}
 		});
-		dockPanel.addSouth(withholdingPanel, 28);
+		withholdingContainer.setWidget( withholdingPanel );
+		dockPanel.addSouth(withholdingContainer, 28);
 
 		SimpleLayoutPanel vatContainerPanel = new SimpleLayoutPanel();
 		ScrollPanel vatContainer = new ScrollPanel();
@@ -240,6 +250,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				,AccountEntryModule.getCurrentDomain()
 				,getCallback().getModule().getConfiguration()
 				,true);
+		registryBox.setTabIndex(++tabindex);
 		registryBox.addKeyUpHandler( new KeyUpHandler() {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
@@ -306,6 +317,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		FlowPanel numberPanel = new FlowPanel();
 		
 		series = new ListBox();
+		series.setTabIndex(++tabindex);
 		series.addKeyUpHandler(f9KeyHandler);
 		series.addChangeHandler(new ChangeHandler() {
 			
@@ -338,6 +350,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		numberPanel.add(series);
 		
 		number = new IntegerBox();
+		number.setTabIndex(++tabindex);
 		number.setStyleName(AON.AON_CSS.aonMarginLeft5());
 		number.addStyleName(AON.AON_CSS.aonInputText());
 		number.addKeyUpHandler(f9KeyHandler);
@@ -356,6 +369,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		numberPanel.add(number);
 		
 		referenceCode = new TextBox();
+		referenceCode.setTabIndex(++tabindex);
 		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
 		referenceCode.addKeyUpHandler(f9KeyHandler);
 		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -380,6 +394,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		flexTable.setWidget(row, 2, label0);
 		
 		invoiceTotal = new DoubleBox();
+		invoiceTotal.setTabIndex(++tabindex);
 		invoiceTotal.addKeyUpHandler( new KeyUpHandler() {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
@@ -420,6 +435,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		flexTable.setWidget(row, 3, invoiceTotal);
 		
 		fastSave = new Button(AON.MSG.saveAction());
+		fastSave.setTabIndex(++tabindex);
 		fastSave.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -435,6 +451,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 
 	private void createPayTable() {
+		int tabindex = PAY_PANEL_TAB_OFFSET;
 		payTable = new FlexTable();
 		payTable.setVisible(false);
 		payTable.setStyleName(AON.AON_CSS.aonBorderTop());
@@ -461,6 +478,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		col++;
 		
 		payDate = new DateBoxEx();
+		payDate.setTabIndex(++tabindex);
 		payTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
 		payTable.getCellFormatter().setWidth(row, col, "1%");
 		payTable.setWidget(row, col, payDate);
@@ -496,6 +514,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			col++;
 			
 			payMethodList = new PayMethodListBox();
+			payMethodList.setTabIndex(++tabindex);
 			payMethodList.fill(getCallback().getModule().getConfiguration().getPayMethods());
 			payMethodList.addChangeHandler(new ChangeHandler() {
 				@Override
@@ -520,6 +539,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		col++;
 		
 		payAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(),AccountEntryModule.getCurrentDomain());
+		payAccount.setTabIndex(++tabindex);
 		payAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
@@ -629,9 +649,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			fillSalesSeries();
 			extraPanel.paint(invoiceCallback);
 			vatPanel.paint();
-			if ( getWrapper().isWithholding() ) {
-				withholdingPanel.paint();
-			}
+			withholdingPanel.paint();
 			_paintEntry();
 		}
 	}

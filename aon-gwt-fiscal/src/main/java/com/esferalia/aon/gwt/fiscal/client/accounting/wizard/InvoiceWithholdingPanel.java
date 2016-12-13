@@ -38,7 +38,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 	private AccountBox withholdingAccount;
 	
 	private IInvoicePanelCallback callback;
-	
+	private int tabindex = InvoicePanel.PAY_PANEL_TAB_OFFSET;	
 	
 	public InvoiceWithholdingPanel(IInvoicePanelCallback callback) {
 		setStyleName(AON.AON_CSS.aonWidthAll());
@@ -64,8 +64,9 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 	}
 	
 	public void paint() {
+		
 		withholdingTable = new FlexTable();
-		withholdingTable.setVisible((getWrapper().isWithholding()));
+//		withholdingTable.setVisible((getWrapper().isWithholding()));
 		setWidget(withholdingTable);
 		withholdingTable.setStyleName(AON.AON_CSS.aonBorderTop());
 		withholdingTable.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -85,6 +86,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		if (getCallback().getModule().getConfiguration().getWithholdingTaxes() != null 
 			&& getCallback().getModule().getConfiguration().getWithholdingTaxes().size() > 0) {
 			withholdingTaxs = new ListBox();
+			withholdingTaxs.setTabIndex(++tabindex);
 			withholdingTaxs.addStyleName(AON.AON_CSS.aonMarginLeft5());
 			withholdingTaxs.setWidth("100px");
 			withholdingTaxs.addItem("--------","-1");
@@ -96,7 +98,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 				@Override
 				public void onChange(ChangeEvent event) {
 					for (Tax tax : getCallback().getModule().getConfiguration().getWithholdingTaxes()) {
-						if ( AonNumberUtils.toInteger( withholdingTaxs.getSelectedValue()).equals(tax.getId())  ) {
+						if ( AonNumberUtils.equals( AonNumberUtils.toInteger( withholdingTaxs.getSelectedValue()),tax.getId())  ) {
 							
 							Account taxAccount = getWrapper().isSales()
 									?tax.getSalesAccount()
@@ -118,10 +120,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 								getWrapper().getWithholdingData().setAccountCode(null);
 								getWrapper().getWithholdingData().setAccountDescription(null);
 							}
-							InvoiceCalculator.calculate(getWrapper());
 							ValueChangeEvent.fire(InvoiceWithholdingPanel.this, getWrapper().getWithholdingData() );
-							getWrapper().getAccountEntry().setDirty(true);
-							getCallback().getModule().refreshIdLabel();
 						}
 					}
 				}
@@ -141,6 +140,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		col++;
 		
 		withholdingBase = new DoubleBox(8,4);
+		withholdingBase.setTabIndex(++tabindex);
 		withholdingBase.setEnabled(false);
 		withholdingTable.setWidget(row, col, withholdingBase);
 		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
@@ -156,6 +156,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		col++;
 		
 		withholdingPercent = new DoubleBox(6,2);
+		withholdingPercent.setTabIndex(++tabindex);
 		withholdingPercent.setVisibleLength(3);
 		withholdingPercent.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		withholdingPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
@@ -181,6 +182,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		col++;
 		
 		withholdingQuota = new DoubleBox(8,2);
+		withholdingQuota.setTabIndex(++tabindex);
 		withholdingQuota.setEnabled(false);
 		withholdingQuota.setVisibleLength(5);
 		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
@@ -198,6 +200,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		
 		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), false);
+		withholdingAccount.setTabIndex(++tabindex);
 		withholdingAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			
 			@Override
@@ -220,6 +223,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		col++;
 		
 		withholdingType = new WithholdingTypeListBox();
+		withholdingType.setTabIndex(++tabindex);
 		withholdingType.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		withholdingType.addChangeHandler(new ChangeHandler() {
 			

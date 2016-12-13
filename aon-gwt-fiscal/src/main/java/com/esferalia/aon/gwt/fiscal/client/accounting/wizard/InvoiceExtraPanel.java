@@ -84,6 +84,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	CheckBox withholding;
 	CheckBox withholdingFarmer;
 	CheckBox vatAccrualPayment;
+	private int tabindex;
 	
 	public InvoiceExtraPanel() {
 		accountingRegistryVisitor = new AccountingRegistryVisitor();
@@ -92,6 +93,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		flexContainer = new  FlowPanel();
 		flexContainer.setStyleName(AON.AON_CSS.aonFlexContainer());
 		add(flexContainer);
+		tabindex = InvoicePanel.EXTRA_PANEL_TAB_OFFSET;
 	}
 	
 	void paint(final IInvoicePanelCallback callback) {
@@ -221,7 +223,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(label);
 		
 		rDocumentType = new DocumentTypeListBox();
-		rDocumentType.setTabIndex(Integer.MAX_VALUE);
+		rDocumentType.setTabIndex(++tabindex);
 		rDocumentType.setStyleName(AON.AON_CSS.aonMarginRight5());
 		rDocumentType.addKeyUpHandler(new KeyUpHandler() {
 			
@@ -235,7 +237,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(rDocumentType);
 		
 		rDocumentCountry = new Country2ListBox();
-		rDocumentCountry.setTabIndex(Integer.MAX_VALUE);
+		rDocumentCountry.setTabIndex(++tabindex);
 		rDocumentCountry.setStyleName(AON.AON_CSS.aonMarginRight5());
 		rDocumentCountry.addKeyUpHandler(new KeyUpHandler() {
 			
@@ -249,7 +251,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(rDocumentCountry);
 		
 		rDocument = new DocumentTextBox();
-		rDocument.setTabIndex(Integer.MAX_VALUE);
+		rDocument.setTabIndex(++tabindex);
 		rDocument.addStyleName(AON.AON_CSS.aonMarginRight5());
 		rDocument.addKeyUpHandler(new KeyUpHandler() {
 			
@@ -275,7 +277,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		
 		rName = new TextBox();
 		rName.setStyleName(AON.AON_CSS.aonInputText());
-		rName.setTabIndex(Integer.MAX_VALUE);
+		rName.setTabIndex(++tabindex);
 		rName.setVisibleLength(30);
 		rName.setMaxLength(40);
 		rName.addKeyUpHandler(new KeyUpHandler() {
@@ -300,7 +302,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(label);
 		
 		taxDate = new DateBoxEx();
-		taxDate.setTabIndex(Integer.MAX_VALUE);
+		taxDate.setTabIndex(++tabindex);
 		taxDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
@@ -332,7 +334,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(label);
 		
 		transactionBox = new InvoiceTransactionListBox();
-		transactionBox.setTabIndex(Integer.MAX_VALUE);
+		transactionBox.setTabIndex(++tabindex);
 		transactionBox.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -361,7 +363,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		
 		service = new CheckBox(AON.MSG.service());
-		service.setTabIndex(Integer.MAX_VALUE);
+		service.setTabIndex(++tabindex);
 		service.setStyleName(AON.AON_CSS.aonInline());
 		service.addStyleName(AON.AON_CSS.aonWidth150());
 		service.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -384,7 +386,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(service);
 		
 		investment = new CheckBox(AON.MSG.investAsset());
-		investment.setTabIndex(Integer.MAX_VALUE);
+		investment.setTabIndex(++tabindex);
 		investment.setStyleName(AON.AON_CSS.aonInline());
 		investment.addStyleName(AON.AON_CSS.aonWidthAuto());
 		investment.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -414,7 +416,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		
 		surcharge = new CheckBox(AON.MSG.surcharge());
-		surcharge.setTabIndex(Integer.MAX_VALUE);
+		surcharge.setTabIndex(++tabindex);
 		surcharge.setStyleName(AON.AON_CSS.aonInline());
 		surcharge.addStyleName(AON.AON_CSS.aonWidth150());
 		surcharge.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -439,7 +441,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(surcharge);
 		
 		vatAccrualPayment = new CheckBox(AON.MSG.vatAccrualPayment());
-		vatAccrualPayment.setTabIndex(Integer.MAX_VALUE);
+		vatAccrualPayment.setTabIndex(++tabindex);
 		vatAccrualPayment.setStyleName(AON.AON_CSS.aonInline());
 		vatAccrualPayment.addStyleName(AON.AON_CSS.aonWidthAuto());
 		vatAccrualPayment.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -468,7 +470,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		
 		withholding = new CheckBox(AON.MSG.withholding());
-		withholding.setTabIndex(Integer.MAX_VALUE);
+		withholding.setTabIndex(++tabindex);
 		withholding.setStyleName(AON.AON_CSS.aonInline());
 		withholding.addStyleName(AON.AON_CSS.aonWidth150());
 		withholding.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -493,7 +495,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		panel.add(withholding);
 		
 		withholdingFarmer = new CheckBox(AON.MSG.withholdingFarmer());
-		withholdingFarmer.setTabIndex(Integer.MAX_VALUE);
+		withholdingFarmer.setTabIndex(++tabindex);
 		withholdingFarmer.setStyleName(AON.AON_CSS.aonInline());
 		withholdingFarmer.addStyleName(AON.AON_CSS.aonWidthAuto());
 		withholdingFarmer.addValueChangeHandler(new ValueChangeHandler<Boolean>() {

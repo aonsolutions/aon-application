@@ -79,6 +79,10 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private int lastScrollPos = 0;
 	
 	public JournalPanel(String domainName,int domainId) {
+		this(domainName,domainId,Integer.MAX_VALUE);
+	}
+	
+	public JournalPanel(String domainName,int domainId, int tabIndex) {
 		super(Unit.PX);
 		this.domainName = domainName;
 		this.domainId = domainId;
@@ -90,7 +94,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
 		northPanel = new SimpleLayoutPanel();
-		fillNorthPanel();
+		fillNorthPanel(tabIndex);
 		addNorth(northPanel, 90);
 		centerPanel = new ScrollPanel();
 		centerPanel.addStyleName(AON.AON_CSS.aonTextCenter());
@@ -148,7 +152,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	}
 	
 
-	private void fillNorthPanel() {
+	private void fillNorthPanel(int tabIndex) {
 		fromDate = new DateBoxEx();
 		toDate = new DateBoxEx();
 		confidential = new CheckBox(AON.MSG.confidential());
@@ -255,7 +259,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		
 		FocusPanel focusPanel = new FocusPanel();
 		focusPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		focusPanel.setTabIndex(Integer.MAX_VALUE);
+		focusPanel.setTabIndex(tabIndex);
 		focusPanel.addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override

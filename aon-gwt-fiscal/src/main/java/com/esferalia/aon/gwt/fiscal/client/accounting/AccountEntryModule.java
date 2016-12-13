@@ -87,6 +87,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	final static int STATEMENT_TAB = 3;
 	final static int JOURNAL_TAB = 4;
 
+	public final static int JOURNAL_PANEL_TAB_OFFSET = 1000000;
+
 	static FiscalServiceAsync fiscalService;
 	static CommonServiceAsync commonService;
 
