@@ -307,9 +307,10 @@ public class Preauthorization {
 			if (hotels == null)
 				hotels = new String[] {};
 			
-			days = Integer.parseInt(line.getOptionValue(daysOption.getOpt()));
-			if(days == null)
+			String daysString = line.getOptionValue(daysOption.getOpt());
+			if(daysString == null)
 				days = 7;
+			else days = Integer.parseInt(daysString);
 		} catch (ParseException e) {
 			System.out.print(e.getMessage());
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
