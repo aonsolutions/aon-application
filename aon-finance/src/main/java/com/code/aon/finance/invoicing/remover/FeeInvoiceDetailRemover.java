@@ -47,6 +47,7 @@ public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
 			customerFee.setBillingDate(feeDate);
 			customerFee.setPeriod(BillingPeriod.NO_PERIOD);
 			customerFee.setSecurityLevel(invoiceDetail.getInvoice().getSecurityLevel());
+			customerFee.setSeller(invoiceDetail.getSeller());
 			customerFee.setWorkPlace(invoiceDetail.getWorkPlace());
 
 			IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
