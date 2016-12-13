@@ -64,7 +64,7 @@ import com.esferalia.aon.payroll.enumeration.ss.T55;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractQuoteType;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController.SpecialQuote;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
@@ -223,17 +223,17 @@ public class ContractUtils implements Serializable {
 			throw new AbortProcessingException(msg,e);
 		}
 		try {
-			if(params.getContractQuoteType()!=null){
+			if(params.getSpecialQuote()!=null){
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
 				data.setEndDate(null);
 				data.setName( "TIPO_COTIZACION" );
-				if(params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
+				if(params.getSpecialQuote()==SpecialQuote.COOPERATIVE_PARTNER){
 					data.setExpression("\"01\"");
-				} else if(params.getContractQuoteType()==ContractQuoteType.ACTIVE_RETIREMENT){
+				} else if(params.getSpecialQuote()==SpecialQuote.ACTIVE_RETIREMENT){
 					data.setExpression("\"02\"");
-				} else if(params.getContractQuoteType()==ContractQuoteType.YOUTH_GUARANTEE){
+				} else if(params.getSpecialQuote()==SpecialQuote.YOUTH_GUARANTEE){
 					data.setExpression("\"03\"");
 				}
 				bean.insert(data);
@@ -490,16 +490,16 @@ public class ContractUtils implements Serializable {
 		}
 		
 		try {
-			if(params.getContractQuoteType()!=null){
+			if(params.getSpecialQuote()!=null){
 				info = new ContractInfo();
 				info.setContract(contract);
 				info.setStartDate(contract.getStartDate());
 				info.setEndDate(contract.getEndDate());
-				if(params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
+				if(params.getSpecialQuote()==SpecialQuote.COOPERATIVE_PARTNER){
 					info.setName( ContractVariable.COOPERATIVE_PARTNER.getValue() );
-				} else if(params.getContractQuoteType()==ContractQuoteType.ACTIVE_RETIREMENT){
+				} else if(params.getSpecialQuote()==SpecialQuote.ACTIVE_RETIREMENT){
 					info.setName( ContractVariable.ACTIVE_RETIREMENT.getValue() );
-				} else if(params.getContractQuoteType()==ContractQuoteType.YOUTH_GUARANTEE){
+				} else if(params.getSpecialQuote()==SpecialQuote.YOUTH_GUARANTEE){
 					info.setName( ContractVariable.YOUTH_GUARANTEE.getValue() );
 				}
 				info.setExpression(Boolean.TRUE.toString());
@@ -680,17 +680,17 @@ public class ContractUtils implements Serializable {
 		}
 		try {
 			ContractData contractQuoteTypeData = obtainContractData(contract, "TIPO_COTIZACION");
-			if(params.getContractQuoteType()!=null && params.getContractQuoteType()!=ContractQuoteType.RETA){
+			if(params.getSpecialQuote()!=null && params.getSpecialQuote()!=SpecialQuote.RETA){
 				data = contractQuoteTypeData!=null?contractQuoteTypeData:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
 				data.setEndDate(null);
 				data.setName( "TIPO_COTIZACION" );
-				if(params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
+				if(params.getSpecialQuote()==SpecialQuote.COOPERATIVE_PARTNER){
 					data.setExpression("\"01\"");
-				} else if(params.getContractQuoteType()==ContractQuoteType.ACTIVE_RETIREMENT){
+				} else if(params.getSpecialQuote()==SpecialQuote.ACTIVE_RETIREMENT){
 					data.setExpression("\"02\"");
-				} else if(params.getContractQuoteType()==ContractQuoteType.YOUTH_GUARANTEE){
+				} else if(params.getSpecialQuote()==SpecialQuote.YOUTH_GUARANTEE){
 					data.setExpression("\"03\"");
 				}
 				bean.insertOrUpdate(data);
@@ -1103,22 +1103,22 @@ public class ContractUtils implements Serializable {
 		Map<String, String> map = getContractInfoMap(contract);
 		if(map.get(ContractVariable.SELF_EMPLOYED.getValue())!=null){
 			if(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue()))){
-				params.setContractQuoteType(ContractQuoteType.RETA);
+				params.setSpecialQuote(SpecialQuote.RETA);
 			}
 		} else if(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue())!=null){
 			if(new Boolean(map.get(ContractVariable.COOPERATIVE_PARTNER.getValue()))){
-				params.setContractQuoteType(ContractQuoteType.COOPERATIVE_PARTNER);
+				params.setSpecialQuote(SpecialQuote.COOPERATIVE_PARTNER);
 			}
 		} else if(map.get(ContractVariable.ACTIVE_RETIREMENT.getValue())!=null){
 			if(new Boolean(map.get(ContractVariable.ACTIVE_RETIREMENT.getValue()))){
-				params.setContractQuoteType(ContractQuoteType.ACTIVE_RETIREMENT);
+				params.setSpecialQuote(SpecialQuote.ACTIVE_RETIREMENT);
 			}
 		} else if(map.get(ContractVariable.YOUTH_GUARANTEE.getValue())!=null){
 			if(new Boolean(map.get(ContractVariable.YOUTH_GUARANTEE.getValue()))){
-				params.setContractQuoteType(ContractQuoteType.YOUTH_GUARANTEE);
+				params.setSpecialQuote(SpecialQuote.YOUTH_GUARANTEE);
 			}
 		} else {
-			params.setContractQuoteType(null);
+			params.setSpecialQuote(null);
 		}
 			
 		if(map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue())!=null){

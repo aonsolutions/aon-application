@@ -20,7 +20,7 @@
 			</ui:include>
 			
 			<aon:outputLabel for="contract-contractQuoteType" value="Tipo de cotización" />
-			<aon:selectOneMenu id="contract-contractQuoteType" value="#{contract.params.contractQuoteType}" >
+			<aon:selectOneMenu id="contract-contractQuoteType" value="#{contract.params.specialQuote}" >
 				<f:selectItem itemLabel="Común" itemValue="#{null}" />
 				<f:selectItem itemLabel="RETA" itemValue="#{'RETA'}" />
 				<f:selectItem itemLabel="SOCIOS COOP." itemValue="#{'COOPERATIVE_PARTNER'}" />

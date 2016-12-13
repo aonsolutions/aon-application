@@ -475,8 +475,8 @@
 					actionListener="#{contract.salaryInfoHandler.onAcceptPeculiarQuote}"
 					reRender="contract_panel"
 					styleClass="aon-finding-toolbar-item aon-icon-accept" />
-				<aon:outputLabel for="contract-contractQuoteType" value="Tipo de cotización" />
-				<aon:selectOneMenu id="contract-contractQuoteType" value="#{contract.salaryInfoHandler.contractQuoteType}" >
+				<aon:outputLabel for="contract-specialQuote" value="Tipo de cotización" />
+				<aon:selectOneMenu id="contract-specialQuote" value="#{contract.salaryInfoHandler.specialQuote}" >
 					<f:selectItem itemLabel="Común" itemValue="#{null}" />
 					<f:selectItem itemLabel="SOCIOS COOP." itemValue="#{'COOPERATIVE_PARTNER'}" />
 					<f:selectItem itemLabel="Jubilación activa." itemValue="#{'ACTIVE_RETIREMENT'}" />

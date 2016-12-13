@@ -963,6 +963,7 @@ public class ContractController extends BasicController {
 	public void onChangeModel(ValueChangeEvent event){
 		ModelOption model = (ModelOption) event.getNewValue();
 		if(!this.isNevv() && model != null){
+			this.getParams().setContractModelOption(model);
 			ContractInfoController controller = (ContractInfoController) FormUtil.getController("contractDocumentInfo");
 			controller.loadContractFields((Contract) this.getTo(), true);
 		}
@@ -1480,7 +1481,7 @@ public class ContractController extends BasicController {
 		return list;
 	}
 	
-	public Map<String, String> obtainContractQuoteTypes() {
+	public Map<String, String> obtainContractSpecialQuote() {
 		// TODO
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
@@ -1515,13 +1516,13 @@ public class ContractController extends BasicController {
 		return values;
 	}
 
-	public List<SelectItem> getContractQuoteTypes() {
+	public List<SelectItem> getSpecialQuotes() {
 		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
 		SelectItem item = new SelectItem("00", "Común");
 		list.add(item);			
 		item = new SelectItem("RETA", "RETA");
 		list.add(item);
-		Map<String, String> values = obtainContractQuoteTypes();
+		Map<String, String> values = obtainContractSpecialQuote();
 		for(String key: values.keySet()){
 			item = new SelectItem(key, values.get(key));
 			list.add(item);			
@@ -1554,7 +1555,7 @@ public class ContractController extends BasicController {
 		// PECULIAR QUOTE PERCENT VALUES
 		private Map<String, ContractData> peculiarQuoteMap;
 		private Map<String, Boolean> checkedQuoteMap;
-		private ContractQuoteType contractQuoteType;
+		private SpecialQuote specialQuote;
 		
 		public SalaryInfoHandler(Contract contract){
 			this.contract = contract;
@@ -1574,11 +1575,11 @@ public class ContractController extends BasicController {
 		public void setCheckedQuoteMap(Map<String, Boolean> checkedQuoteMap) {
 			this.checkedQuoteMap = checkedQuoteMap;
 		}
-		public ContractQuoteType getContractQuoteType() {
-			return contractQuoteType;
+		public SpecialQuote getSpecialQuote() {
+			return specialQuote;
 		}
-		public void setContractQuoteType(ContractQuoteType contractQuoteType) {
-			this.contractQuoteType = contractQuoteType;
+		public void setSpecialQuote(SpecialQuote specialQuote) {
+			this.specialQuote = specialQuote;
 		}
 		public Integer getFilterYear() {
 			return filterYear;
@@ -1800,7 +1801,7 @@ public class ContractController extends BasicController {
 			setSelectedDeduction(null);
 			dataTracking = null;
 			paymentTracking = null;
-			contractQuoteType = null;
+			specialQuote = null;
 			loadContractData(contract);
 			loadPayments(contract);
 			loadDeductions(contract);
@@ -1934,13 +1935,13 @@ public class ContractController extends BasicController {
 			Map<String, ContractData> map = utils.getContractDataMap(contract, contract.getStartDate(), contract.getEndDate());
 
 			if(utils.getContractInfoMap(contract).containsKey(ContractVariable.COOPERATIVE_PARTNER.getValue())){
-				this.setContractQuoteType(ContractQuoteType.COOPERATIVE_PARTNER);
+				this.setSpecialQuote(SpecialQuote.COOPERATIVE_PARTNER);
 			} else if(utils.getContractInfoMap(contract).containsKey(ContractVariable.ACTIVE_RETIREMENT.getValue())){
-				this.setContractQuoteType(ContractQuoteType.ACTIVE_RETIREMENT);
+				this.setSpecialQuote(SpecialQuote.ACTIVE_RETIREMENT);
 			} else if(utils.getContractInfoMap(contract).containsKey(ContractVariable.YOUTH_GUARANTEE.getValue())){
-				this.setContractQuoteType(ContractQuoteType.YOUTH_GUARANTEE);
+				this.setSpecialQuote(SpecialQuote.YOUTH_GUARANTEE);
 			} else {
-				this.setContractQuoteType(null);
+				this.setSpecialQuote(null);
 			}
 
 //			TRABAJADOR
@@ -2086,7 +2087,7 @@ public class ContractController extends BasicController {
 				SEPEUtils utils = SEPEUtils.getInstance();
 				ContractInfo info = utils.getContractInfoMap(contract, null, null).get(ContractVariable.COOPERATIVE_PARTNER.getValue());
 				
-				if(getContractQuoteType()!=null && getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
+				if(getSpecialQuote()!=null && getSpecialQuote()==SpecialQuote.COOPERATIVE_PARTNER){
 					if(info==null || info.getId()==null){
 						ContractUtils.getInstance().enableCooperativePartner(contract);
 					}
@@ -2095,7 +2096,7 @@ public class ContractController extends BasicController {
 						bean.remove(info);
 					}
 				}
-				if(getContractQuoteType()!=null && getContractQuoteType()==ContractQuoteType.ACTIVE_RETIREMENT){
+				if(getSpecialQuote()!=null && getSpecialQuote()==SpecialQuote.ACTIVE_RETIREMENT){
 					if(info==null || info.getId()==null){
 						ContractUtils.getInstance().enableActiveRetirement(contract);
 					}
@@ -2104,7 +2105,7 @@ public class ContractController extends BasicController {
 						bean.remove(info);
 					}
 				}
-				if(getContractQuoteType()!=null && getContractQuoteType()==ContractQuoteType.YOUTH_GUARANTEE){
+				if(getSpecialQuote()!=null && getSpecialQuote()==SpecialQuote.YOUTH_GUARANTEE){
 					if(info==null || info.getId()==null){
 						ContractUtils.getInstance().enableYouthGuarantee(contract);
 					}
@@ -2113,36 +2114,6 @@ public class ContractController extends BasicController {
 						bean.remove(info);
 					}
 				}
-//				if(getContractQuoteType()==null){
-//					if(info!=null){
-//						bean.remove(info);
-//					}
-//				} else if(getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
-//					if(info==null || info.getId()==null){
-//						ContractUtils.getInstance().enableCooperativePartner(contract);
-//					}
-//				}
-//				info = utils.getContractInfoMap(contract, null, null).get(ContractVariable.ACTIVE_RETIREMENT.getValue());
-//				if(getContractQuoteType()==null){
-//					if(info!=null){
-//						bean.remove(info);
-//					}
-//				} else if(getContractQuoteType()==ContractQuoteType.ACTIVE_RETIREMENT){
-//					if(info==null || info.getId()==null){
-//						ContractUtils.getInstance().enableActiveRetirement(contract);
-//					}
-//				}
-//				info = utils.getContractInfoMap(contract, null, null).get(ContractVariable.YOUTH_GUARANTEE.getValue());
-//				if(getContractQuoteType()==null){
-//					if(info!=null){
-//						bean.remove(info);
-//					}
-//				} else if(getContractQuoteType()==ContractQuoteType.YOUTH_GUARANTEE){
-//					if(info==null || info.getId()==null){
-//						ContractUtils.getInstance().enableYouthGuarantee(contract);
-//					}
-//				}
-//				ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
 				controller.getContractUtils().loadContractInfo((Contract) controller.getTo(), controller.getParams());
 			} catch (ManagerBeanException e) {
 				String msg = "Error al grabar los porcentajes de cotizacion. (" +e.getMessage() + ")";
@@ -2168,7 +2139,7 @@ public class ContractController extends BasicController {
 		private ContractInfo ssStatusInfo;
 		
 		private boolean retaPartialTime;
-		private ContractQuoteType contractQuoteType;
+		private SpecialQuote specialQuote;
 		private ContractOption contractOption;
 		private ContractType contractType;
 		private ContractModelCode contractModelCode;
@@ -2394,7 +2365,7 @@ public class ContractController extends BasicController {
 			this.bonusModel = bonusModel;
 		}
 		public boolean isRetaQuote() {
-			return contractQuoteType!=null && contractQuoteType==ContractQuoteType.RETA;
+			return specialQuote!=null && specialQuote==SpecialQuote.RETA;
 		}
 		
 		public boolean isRetaPartialTime() {
@@ -2404,13 +2375,13 @@ public class ContractController extends BasicController {
 			this.retaPartialTime = retaPartialTime;
 		}
 		public boolean isCooperativePartnerQuote() {
-			return contractQuoteType!=null && contractQuoteType==ContractQuoteType.COOPERATIVE_PARTNER;
+			return specialQuote!=null && specialQuote==SpecialQuote.COOPERATIVE_PARTNER;
 		}
-		public ContractQuoteType getContractQuoteType() {
-			return contractQuoteType;
+		public SpecialQuote getSpecialQuote() {
+			return specialQuote;
 		}
-		public void setContractQuoteType(ContractQuoteType contractQuoteType) {
-			this.contractQuoteType = contractQuoteType;
+		public void setSpecialQuote(SpecialQuote specialQuote) {
+			this.specialQuote = specialQuote;
 		}
 		public Double getWeekHours() {
 			return weekHours;
@@ -2479,7 +2450,7 @@ public class ContractController extends BasicController {
 		
 	}
 	
-	public enum ContractQuoteType {
+	public enum SpecialQuote {
 		RETA,
 		COOPERATIVE_PARTNER,
 //		Jubilación Activa

@@ -136,16 +136,18 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 		}
 		
-		IContrataController contrataController = null;
-		if(controller.isTransformedContract()){
-			contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
-		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
-			contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
-		} else {
-			contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		if(controller.getParams().getSpecialQuote()==null){
+			IContrataController contrataController = null;
+			if(controller.isTransformedContract()){
+				contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+			} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
+				contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			} else {
+				contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			}
+			
+			contrataController.initialize((Contract) this.getController().getTo());
 		}
-		
-		contrataController.initialize((Contract) this.getController().getTo());
 		
 	}
 
