@@ -9,16 +9,23 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 
@@ -1101,7 +1108,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			List<ITimedResult<Double>> results = expressionContext.eval(contractPayment.getExpression(), paymentStart,
 					paymentEnd, Double.class);
 			
-			// Fix variable with same name than payment. Remove variable.
+			// Fix variable with same name than payment. Remove variable.?
 			results.stream()
 			.filter(r->r.getContext().containsKey(name))
 			.findAny().ifPresent( r-> expressionContext.removeVariable(name));
@@ -1321,9 +1328,26 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 	protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
 		ExpressionContext expressionContext = ctx.getExpressionContext();
-		for (String name : new String[] { TC2.getName(), QUOTE_DAYS.getName(), CGC_BASE.getName(), CGP_BASE.getName(),
-				ERE_BASE.getName(), MATERNITY_BASE.getName(), STRUCTURAL_OVERTIME_BASE.getName(),
-				NON_STRUCTURAL_OVERTIME_BASE.getName(), WORKED_HOURS.getName(), PREST_IT }) {
+		for (String name : new String[] { 
+				TC2.getName(), 
+				QUOTE_DAYS.getName(), 
+				CGC_BASE.getName(), 
+				CGP_BASE.getName(),
+				ERE_BASE.getName(), 
+				MATERNITY_BASE.getName(), 
+				STRUCTURAL_OVERTIME_BASE.getName(),
+				NON_STRUCTURAL_OVERTIME_BASE.getName(), 
+				WORKED_HOURS.getName(),
+
+				MONDAY_HOURS.getName(),
+				TUESDAY_HOURS.getName(),
+				WEDNESDAY_HOURS.getName(),
+				THURSDAY_HOURS.getName(),
+				FRIDAY_HOURS.getName(),
+				SATURDAY_HOURS.getName(),
+				SUNDAY_HOURS.getName(),
+				
+				PREST_IT }) {
 			try {
 				for (ITimedVariable<Object> data : expressionContext.getVariables(name)) {
 					try {
