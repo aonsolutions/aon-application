@@ -54,7 +54,7 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public class Model3902015 extends ResizeComposite implements IModel390 {
 	
-	private static final Integer DEFAULT_YEAR = 2015;
+	private static final Integer DEFAULT_YEAR = 2016;
 
 	interface Model390Binder extends UiBinder<Widget, Model3902015> {
 	}

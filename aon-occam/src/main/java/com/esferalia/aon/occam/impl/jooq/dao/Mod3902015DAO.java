@@ -457,7 +457,7 @@ public class Mod3902015DAO {
 		mod390.setComments(record.getValue(FS_MODEL390.COMMENTS));
 		StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 		try {
-			if (mod390.getYear() == 2015) {
+			if (mod390.getYear() == 2015 || mod390.getYear() == 2016) {
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2015.class);
 				Unmarshaller um = context.createUnmarshaller();
 				AEATIVA2015 iva = (AEATIVA2015) um.unmarshal(reader);
@@ -491,7 +491,7 @@ public class Mod3902015DAO {
 	
 	private static String getXMLModel( Mod3902015 mod390 ) {
 		try {
-			if (mod390.getYear() == 2015) {
+			if (mod390.getYear() == 2015 || mod390.getYear() == 2016) {
 				AEATIVA2015 iva = Mod390toAEATIVA2015.getAEATIVA2015(mod390);
 				StringWriter writer = new StringWriter();
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2015.class);
@@ -697,7 +697,10 @@ public class Mod3902015DAO {
 									.setSurchargePercent(record.getValue(INVOICE_TAX.SURCHARGE).doubleValue())
 									.setSurcharge(AonMathUtils.round(record.getValue(INVOICE_TAX.SURCHARGE).doubleValue()) > 0)
 									.setPercentage(record.getValue(INVOICE_TAX.PERCENTAGE))
-									.setVatDeductionType(VatDeductionType.values()[record.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)]);
+									.setVatDeductionType(
+											record.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE) == null
+											?VatDeductionType.WITH_RIGHT
+											:VatDeductionType.safeValueOf(record.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)));
 							double percentage = record.getValue(INVOICE_TAX.PERCENTAGE);
 							double taxableBase = record.getValue(sumBase).doubleValue();
 							double quota = record.getValue(sumQuotaOp).doubleValue();

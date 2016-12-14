@@ -71,7 +71,7 @@ public class Mod3902015Print extends HttpServlet {
 
 			String fileName = "Mod390" + "_" + mod390.getYear() + "_" + sb.toString();
 
-			downloadPDF(req, resp, fileName, output.toByteArray());
+			downloadPDF(req, resp, fileName, output.toByteArray(), mod390.getYear());
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -81,7 +81,7 @@ public class Mod3902015Print extends HttpServlet {
 	}
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			String fileName, byte[] content) throws IOException,
+			String fileName, byte[] content, int year) throws IOException,
 			KeyManagementException, NoSuchAlgorithmException {
 
 		String fileString = new String(content);
@@ -97,7 +97,7 @@ public class Mod3902015Print extends HttpServlet {
 				+ "&FIN=" 
 				+ "&MOD=390" 
 				+ "&PRG=PTLINK9T"
-				+ "&EJF=2015";
+				+ "&EJF=" + year;
 
 		// PRODUCCION String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021" PRUEBAS 
 		// String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
