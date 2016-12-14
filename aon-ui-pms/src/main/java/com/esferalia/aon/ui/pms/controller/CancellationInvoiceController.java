@@ -188,7 +188,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 					ConexFlow conexFlow = null;
 					ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 					ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
-						AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+						AonUtil.getRemoteUser(), reservation.getId(), "CHECK-" +  ConexFlowConstant.PREAUTHORIZATION_OP);
 					if(cf == null || Double.parseDouble(cf.getRespuesta().getImporte()) == 0.01
 							|| Double.parseDouble(cf.getRespuesta().getImporte()) < amount)
 						cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
