@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
@@ -138,8 +139,9 @@ public class SalaryDraftObject implements IContextProvider {
 
 		@Override
 		public void undo() {
-			for (T undo : undos)
+			for (T undo : undos){
 				undo.undo();
+			}
 		}
 
 	}
@@ -251,7 +253,6 @@ public class SalaryDraftObject implements IContextProvider {
 			salaryDraft.removeDraftBonus(t);
 
 		}
-
 	}
 
 	private Date draftEndDate;
@@ -817,6 +818,16 @@ public class SalaryDraftObject implements IContextProvider {
 		undoManager.add(undoableCompositeRemove);
 	}
 
+	public void recoverDraftPayment(Payment payment) {
+		List<Payment> payments = new LinkedList<Payment>();
+		payments.addAll(getBottomPayments(payment));
+		for( Payment p : payments ){
+			p.setExpression(payment.getExpression());
+			Window.alert(p.getName() + ":" + p.getDescription() + "(" + p.getExpression() +")");
+		}
+		addDraftPayments(payments);
+	}
+
 	// ------------------------------------------
 
 	private Variable clone(Variable var, String newName) {
@@ -891,24 +902,25 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	private List<Payment> getTopPayments(Payment payment) {
+		
 
 		List<Payment> twins = new LinkedList<Payment>();
 		twins.add(payment);
 
-//		String name = payment.getName();
-//		if (StringUtils.isBlank(name))
-//			return twins;
-		
+
 		if ( payment.getConceptId() == null ) 
 			return twins;
 		
 		for (Payment p : salaryDraft.getPayments()) {
 			if (p.getScope().compareTo(Scope.AGREEMENT) > 0)
 				continue;
-			if (StringUtils.equals(payment.getName(), p.getName()))
+			if (StringUtils.equals(payment.getName(), p.getName())){
 				twins.add(p);
-			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId()))
+				continue;
+			}
+			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId())){
 				twins.add(p);
+			}
 		}
 
 		for (Variable var : salaryDraft.getContext()) {
@@ -917,22 +929,71 @@ public class SalaryDraftObject implements IContextProvider {
 			if (var.getScope().compareTo(Scope.AGREEMENT) > 0)
 				continue;
 			Payment p = ((UndefinedPaymentVariable) var).getPayment();
-			if (StringUtils.equals(payment.getName(), p.getName()))
+			if (StringUtils.equals(payment.getName(), p.getName())){
 				twins.add(p);
-			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId()))
+				continue;
+			}
+			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId())){
 				twins.add(p);
+			}
 		}
 
 		return twins;
 	}
 
+
+	private List<Payment> getBottomPayments(Payment payment) {
+		
+
+		List<Payment> twins = new LinkedList<Payment>();
+		twins.add(payment);
+
+
+		if ( payment.getConceptId() == null ) 
+			return twins;
+		
+		for (Payment p : salaryDraft.getPayments()) {
+			if ( p.equals(payment) )
+				continue;
+			if (p.getScope().compareTo(Scope.AGREEMENT) <= 0)
+				continue;
+			if (StringUtils.equals(payment.getName(), p.getName())){
+				twins.add(p);
+				continue;
+			}
+			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId())){
+				twins.add(p);
+			}
+		}
+
+		for (Variable var : salaryDraft.getContext()) {
+			if (!(var instanceof UndefinedPaymentVariable))
+				continue;
+			if (var.getScope().compareTo(Scope.AGREEMENT) <= 0)
+				continue;
+			Payment p = ((UndefinedPaymentVariable) var).getPayment();
+			if ( p.equals(payment) )
+				continue;
+			if (StringUtils.equals(payment.getName(), p.getName())){
+				twins.add(p);
+				continue;
+			}
+			if (NumberUtils.equals(payment.getConceptId(), p.getConceptId())){
+				twins.add(p);
+			}
+		}
+
+		return twins;
+	}
+
+
 	private void addDraftPayments(Collection<Payment> payments) {
-		List<UndoableEdit<?>> edits = new LinkedList<UndoableEdit<?>>();
+		List<UndoablePaymentEdit> edits = new LinkedList<UndoablePaymentEdit>();
 		for (Payment payment : payments) {
 			Payment oldPayment = salaryDraft.addDraftPayment(payment);
 			edits.add(new UndoablePaymentEdit(oldPayment, payment));
 		}
-		undoManager.add(new CompositeUndoable(edits));
+		undoManager.add(new CompositeUndoable<UndoablePaymentEdit>(edits));
 	}
 
 	private List<ITDataPerson> getDrafLeaveIts() {

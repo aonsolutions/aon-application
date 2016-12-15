@@ -535,9 +535,10 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 
 	private Collection<IContractPayment> getDraftPayments() {
-		Collection<IContractPayment> draftPayments = new LinkedList<IContractPayment>();
+		Collection<IContractPayment> draftPayments = new HashSet<IContractPayment>();
+		List<IContractPayment> agreemenPayments = new ArrayList<IContractPayment>(getAgreementPayments());
 		for (Payment payment : draft.getDraftPayments()) {
-			draftPayments.add(getDraftPayment(payment));
+			draftPayments.add(getDraftPayment(payment, agreemenPayments));
 		}
 		return draftPayments;
 	}
@@ -605,14 +606,23 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		return bonuses;
 	}
 
-	private IContractPayment getDraftPayment(Payment payment) {
+	private IContractPayment getDraftPayment(Payment payment, Collection<IContractPayment> agreementPayments) {
 		if (StringUtils.containsIgnoreCase(payment.getExpression(),"CONVENIO()")){
-			for (IContractPayment agreementPayment : getAgreementPayments()) {
-				if (payment.getId().equals(agreementPayment.getId())
-						|| StringUtils.equals(payment.getName(),
-								agreementPayment.getName())) {
+			
+			for (IContractPayment agreementPayment : agreementPayments) {
+				if (payment.getId().equals(agreementPayment.getId())) {
 					DraftPayment draftPayment = newDraftPayment(agreementPayment, AgreementDraftPayment::new);
 					draftPayment.setId(payment.getId());
+					agreementPayments.remove(agreementPayment);
+					return draftPayment;
+				}
+			}
+			
+			for (IContractPayment agreementPayment : agreementPayments) {
+				if (StringUtils.equals(payment.getName(),agreementPayment.getName())) {
+					DraftPayment draftPayment = newDraftPayment(agreementPayment, AgreementDraftPayment::new);
+					draftPayment.setId(payment.getId());
+					agreementPayments.remove(agreementPayment);
 					return draftPayment;
 				}
 			}

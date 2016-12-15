@@ -3,6 +3,7 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
@@ -66,9 +68,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.DECEMBER);
 		
-		click("expand-button-agreement");
-		wait4Id("expand-button-system");
-		click("expand-button-system");
+		expand("expand-button-agreement");
+		expand("expand-button-system");
 		
 		assertNotElement("editor-antiguedad");
 		assertNotElement("editor-salario_base");
@@ -100,8 +101,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.DECEMBER);
 		
-		click("expand-button-agreement");
-		click("expand-button-system");
+		expand("expand-button-agreement");
+		expand("expand-button-system");
 		
 		// Redefine 'FULL_TIME'
 		double totalPayment = getValue("totalPaymentsLabel");
@@ -183,10 +184,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		open("draft");
 
 		wait4Id("draft_completo,_convenio");
-		// [1] SALARIO BASE
-		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
-		// [3] PAGA EXTRAORDINARIA DE JULIO
-		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
+		// [1]SALARIO BASE
+		// [2]COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [3]PAGA EXTRAORDINARIA JULIO
+		// [4]PAGA EXTRAORDINARIA DICIEMBRE
 		draft("DRAFT COMPLETO, CONVENIO");
 
 		calculate(Calendar.DECEMBER);
@@ -196,19 +197,59 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("description-box-3");
 		
 		// Redefine description only.   
-		setValue("description-box-3", "[3] PAGA EXTRAORDINARIA DE VERANO");
+		setValue("description-box-3", "[3]PAGA EXTRAORDINARIA VERANO");
 		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
 		assertValue("cgcBaseLabel", cgcBase);
 		assertValue("totalPaymentsLabel", totalPayment);
 		assertText("prorationBaseLabel", prorationBase);
 
-		//selectSaveTo("FROM_THIS_MONTH");
-		//click("acceptButton");
+		click("undoButton");
+		wait4Value("description-box-3", "[3]PAGA EXTRAORDINARIA JULIO");
+		assertValue("description-box-4", "[4]PAGA EXTRAORDINARIA DICIEMBRE");
+		assertNotElement("agreement-button-3");
+		assertNotElement("agreement-button-4");
+		assertDisabled("undoButton", true);
+		assertDisabled("undoAllButton", true);
 		
-		//click("agreement-button-3");
-		//click("agreement-button-4");
+		click("redoButton");
+		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
+		assertValue("description-box-3", "[3]PAGA EXTRAORDINARIA VERANO");
+		assertValue("description-box-4", "[4]PAGA EXTRAORDINARIA DICIEMBRE");
+		assertValue("cgcBaseLabel", cgcBase);
+		assertValue("totalPaymentsLabel", totalPayment);
+		assertText("prorationBaseLabel", prorationBase);
+
+		click("agreement-button-3");
+		wait4Value("description-box-3", "[3]PAGA EXTRAORDINARIA JULIO");
+		assertValue("description-box-4", "[4]PAGA EXTRAORDINARIA DICIEMBRE");
+		assertNotElement("agreement-button-3");
+		assertNotElement("agreement-button-4");
+
+		setValue("description-box-4", "[4]PAGA EXTRAORDINARIA NAVIDAD");
+		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
+		assertValue("cgcBaseLabel", cgcBase);
+		assertValue("totalPaymentsLabel", totalPayment);
+		assertText("prorationBaseLabel", prorationBase);
+
+		selectSaveTo("FROM_THIS_MONTH");
+		click("acceptButton");
+		wait4Disabled("acceptButton", true);
 		
+		click("agreement-button-4");
+		wait4Value("description-box-4", "[4]PAGA EXTRAORDINARIA DICIEMBRE");
+		assertValue("description-box-3", "[3]PAGA EXTRAORDINARIA JULIO");
+		assertNotElement("agreement-button-3");
+		assertNotElement("agreement-button-4");
+		
+		click("acceptButton");
+		wait4Disabled("acceptButton", true);
+		assertValue("description-box-4", "[4]PAGA EXTRAORDINARIA DICIEMBRE");
+		assertValue("description-box-3", "[3]PAGA EXTRAORDINARIA JULIO");
+		assertNotElement("agreement-button-3");
+		assertNotElement("agreement-button-4");
 		
 		
 	}
@@ -661,5 +702,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //		draft("NOMINA, OFICINAS Y DESPACHOS");
 	}
 	// -------------------------------------------------------------------------
+	
+	private void expand(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
+		HtmlButton button = getElementById(id);
+		if ( button.getAttribute("class").contains("aon-icon-expandAll"))
+			button.click();
+	}
 
+	private void collapse(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
+		HtmlButton button = getElementById(id);
+		if ( button.getAttribute("class").contains("aon-icon-collapseAll"))
+			button.click();
+	}
 }

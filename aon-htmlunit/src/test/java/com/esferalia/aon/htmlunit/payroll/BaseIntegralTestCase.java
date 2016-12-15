@@ -238,7 +238,7 @@ public abstract class BaseIntegralTestCase {
 	protected static void wait4Value(String id, String value) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
-		LOGGER.warning("Found el: '" + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent()+"'");
+		LOGGER.warning("wait4Value : '" + ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id )).getValueAttribute().trim() +"' = '" +value.trim()+"'");
 		wait4(htmlPage,
 				htmlPage -> ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id)).getValueAttribute().trim().equals(value.trim()));
 	}
@@ -309,6 +309,12 @@ public abstract class BaseIntegralTestCase {
 		HtmlInput input = getElementById(id);
 		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue(), 0.04);
 	}
+
+	protected static void assertDisabled(String id, boolean disabled) throws InterruptedException {
+		HtmlButton button = (HtmlButton)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id);
+		Assert.assertEquals(button.isDisabled(), disabled);
+	}
+
 
 	protected static double getValue(String id) throws ParseException {
 		HtmlInput input = getElementById(id);

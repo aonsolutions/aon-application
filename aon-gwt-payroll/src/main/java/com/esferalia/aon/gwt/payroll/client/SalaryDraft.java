@@ -1138,7 +1138,7 @@ public class SalaryDraft extends ResizeComposite
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					onExpressionChange(item, "CONVENIO()");
+					onRecover(item, "CONVENIO()");
 				}
 			});
 		}
@@ -1148,6 +1148,8 @@ public class SalaryDraft extends ResizeComposite
 		abstract void onExpand(ClickEvent event);
 
 		abstract void onCollapse(ClickEvent event);
+
+		abstract void onRecover(I item, String expression);
 
 		abstract void onExpressionChange(I item, String expression);
 
@@ -1233,6 +1235,13 @@ public class SalaryDraft extends ResizeComposite
 			SalaryDraft.this.calculate(getNextPaymentFocusCallback());
 		}
 
+		@Override
+		void onRecover(Payment payment, String expression) {
+			payment.setScope(Scope.SALARY);
+			payment.setExpression(expression);
+			salaryDraftObject.recoverDraftPayment(payment);
+			SalaryDraft.this.calculate(getNextPaymentFocusCallback());
+		}
 		// --------------------------------------------------------------------
 		private Payment getConcept() {
 			if (item.getName() == null)
@@ -1387,6 +1396,10 @@ public class SalaryDraft extends ResizeComposite
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 
+		@Override
+		void onRecover(Deduction item, String expression) {
+		}
+
 		private int getRowIndex(ClickEvent event) {
 			return paymentsTable.getCellForEvent(event).getRowIndex();
 		}
@@ -1455,6 +1468,10 @@ public class SalaryDraft extends ResizeComposite
 
 			salaryDraftObject.addDraftBonus(item);
 			salaryDraftObject.calculate(SalaryDraft.this);
+		}
+
+		@Override
+		void onRecover(Bonus item, String expression) {
 		}
 	}
 
