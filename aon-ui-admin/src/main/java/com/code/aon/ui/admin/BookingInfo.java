@@ -243,6 +243,7 @@ public class BookingInfo implements Serializable {
 	private List<DomainModuleInfo> calculateBookingModules() {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
 		list.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
+		list.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
 		switch ( getDomain().getType() ) {
 			case GENERIC:
 				list.add(aioInfo.getModuleInfo(Module.FISCAL));

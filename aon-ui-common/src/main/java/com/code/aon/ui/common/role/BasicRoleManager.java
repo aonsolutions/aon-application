@@ -205,6 +205,20 @@ public abstract class BasicRoleManager implements Serializable {
 	public boolean isDocumentManager() {
 		return isAdmin() || isUserInRole(IAonRole.DOCUMENT_MANAGER);
 	}
+	
+	/**
+	 * @return TRUE if user has IAonRole.DOCUMENT role, false otherwise.
+	 */
+	public boolean isCallCenter() {
+		return isCallCenterManager() || isUserInRole(IAonRole.CALL_CENTER);
+	}
+	
+	/**
+	 * @return TRUE if user has IAonRole.DOCUMENT_MANANGER role, false otherwise.
+	 */
+	public boolean isCallCenterManager() {
+		return isAdmin() || isUserInRole(IAonRole.CALL_CENTER_MANAGER);
+	}
 
 	/**
 	 * @return TRUE if user has IAonRole.PAYROLL role, false otherwise.

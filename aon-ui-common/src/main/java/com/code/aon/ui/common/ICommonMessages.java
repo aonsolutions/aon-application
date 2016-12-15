@@ -78,6 +78,7 @@ public interface ICommonMessages {
 	String MODULE_ACCOUNTING = "aon_module_accounting";	
 	String MODULE_COMMERCIAL = "aon_module_commercial";
 	String MODULE_DOCUMENT = "aon_module_document";
+	String MODULE_CALL_CENTER = "aon_module_call_center";
 	String MODULE_FINANCE = "aon_module_finance";	
 	String MODULE_MANAGEMENT_FINANCE = "aon_module_management_finance";
 	String MODULE_WAREHOUSE = "aon_module_warehouse";
@@ -114,6 +115,7 @@ public interface ICommonMessages {
 	String ROLE_ACCOUNTING_MANAGER = "aon_role_accounting_manager";
 	String ROLE_CONFIGURATION = "aon_configuration";
 	String ROLE_DOCUMENT_MANAGER = "aon_role_document_manager";
+	String ROLE_CALL_CENTER_MANAGER = "aon_role_call_center_manager";
 	String ROLE_ESIGNATURE = "aon_role_eSignature";
 	String ROLE_FISCAL = "aon_role_fiscal";
 	String ROLE_GUEST = "aon_role_guest";

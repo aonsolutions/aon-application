@@ -888,5 +888,19 @@
 	<security-role>
 		<role-name>TaskMonitoring</role-name>
 	</security-role>
+	
+	<security-role>
+		<role-name>Document</role-name>
+	</security-role>
+	<security-role>
+		<role-name>DocumentManager</role-name>
+	</security-role>
+	
+	<security-role>
+		<role-name>CallCenter</role-name>
+	</security-role>
+	<security-role>
+		<role-name>CallCenterManager</role-name>
+	</security-role>
 
 </web-app>

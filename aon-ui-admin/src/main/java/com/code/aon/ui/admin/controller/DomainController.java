@@ -489,13 +489,12 @@ public class DomainController extends BasicController {
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
-		String tirant = di.isTirant() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
-		String dehOnline = di.isDehOnline() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
+
 		String booking = String.valueOf(di.getBookingModules().size());
 		if ( di.getType() == DomainType.ENTERPRISE ) {
 			booking = AonUtil.getMessage( di.getBookingModules().contains(Module.AON_ONE) ? ICommonMessages.AON_ONE : ICommonMessages.AON_AIO ); 
 		}
-		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, tirant, dehOnline, booking) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, booking) );
 		if (! di.getBookingModules().isEmpty() && (di.getType() != DomainType.ENTERPRISE) ) {
 			body.append( "<ul>" );
 			for( Module module : di.getBookingModules() ) {

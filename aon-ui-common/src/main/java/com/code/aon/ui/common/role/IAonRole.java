@@ -26,6 +26,7 @@ import static com.code.aon.ui.common.ICommonMessages.SALES;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -144,7 +145,17 @@ public enum IAonRole {
 	/**
 	 * Role de Gestor de Contabilidad.
 	 */
-	ACCOUNTING_MANAGER( "AccountingManager", ROLE_ACCOUNTING_MANAGER  );
+	ACCOUNTING_MANAGER( "AccountingManager", ROLE_ACCOUNTING_MANAGER  ),
+	
+	/**
+	 * Role de acceso al call center.
+	 */
+	CALL_CENTER( "CallCenter",  ICommonMessages.MODULE_CALL_CENTER),
+	
+	/**
+	 * Role de Adminitrador Documental.
+	 */
+	CALL_CENTER_MANAGER( "CallCenterManager", ICommonMessages.ROLE_CALL_CENTER_MANAGER);
 
 	private String name;
 	

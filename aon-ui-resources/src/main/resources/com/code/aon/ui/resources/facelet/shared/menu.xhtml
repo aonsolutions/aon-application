@@ -19,10 +19,23 @@
 						method="#{actionDenied.renderedModule}" />
 					<ui:insert name="menuContent"/>
 				</aon:componentGroup>		
-				<ui:insert name="afterMenuContent"/>		
+				<ui:insert name="afterMenuContent"/>
+					
 				<rich:toolBarGroup id="rightMenuContent"
 					style="padding-right: 5px;padding-left: 5px"
 					location="right" itemSeparator="line">
+					
+					<aon:componentGroup
+						family="javax.faces.Command"
+						method="#{selectedMenu.updateCommands}">	
+						<aon:componentGroupMethod
+							family="javax.faces.Command"
+							rendered="#{aonConfiguration.bean.actionDenied.modulesEnabled}"
+							method="#{actionDenied.renderedModule}" />
+						<ui:insert name="callCenterMenuContent"/>
+					</aon:componentGroup>		
+					
+					
 					<aon:componentGroup
 						family="javax.faces.Command,org.richfaces.DropDownMenu"
 						method="#{selectedMenu.updateCommandsToReset}">		
@@ -38,23 +51,6 @@
 								style="padding-right: 5px;padding-left: 18px"
 								styleClass="aon-bold aon-menu-icon aon-icon-alarm-pending" />					
 						</aon:if>		
-						
-						<aon:if test="#{company.helpdeskEnabled}">	
-							<aon:if test="#{!selectedMenu.issues}">
-								<aon:commandLink id="menu-polymerIssue" 
-									action="gwt_issues"
-									actionListener="#{serviconvenios.onIssues}"
-									title="C.A.U. POLYMER" 
-									value="&#160;"
-									inmediate="true"
-									styleClass="aon-menu-icon aon-icon-helpdesk" />
-							</aon:if>
-							<aon:if test="#{selectedMenu.issues}">
-								<a id="menu-polymerIssue" 
-									onclick="onreload();"
-									class="aon-menu-icon aon-icon-helpdesk aon-height-20"/>
-							</aon:if>
-						</aon:if>
 						<aon:commandLink id="showEmailWindow" 
 							styleClass="aon-menu-icon aon-icon-email"
 							title="#{bundle.webmail_send_email}" 
