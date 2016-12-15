@@ -495,7 +495,22 @@ public class AON {
 				ctx.close();
 		}
 	}
-
+	
+	public static ApplicationParameter getApplicationParamenter(String domainName, Integer domainId, String login, AppParam param){
+		ApplicationParameter ap = fetchApplicationParameter(domainName, domainId, login, param);
+		return ap != null ? ap : new ApplicationParameter();
+	}
+	
+	public static ApplicationParameter insertApplicationParameter(String domainName, Integer domainId, String login, AppParam param, String value){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().insertApplicationParameter(ctx, param, value);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	// --------------------------------- ENTERPRISE
 	public static LinkedList<Enterprise> getParentEnterprises(String domainName,
 			int domain, String login, String query) {
@@ -3077,6 +3092,5 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
 	
 }

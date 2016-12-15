@@ -3,7 +3,10 @@ package com.esferalia.aon.gwt.issues.client;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
+import com.esferalia.aon.gwt.api.client.incidence.JsFastFilter;
+import com.esferalia.aon.gwt.api.client.incidence.JsGithub;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
+import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.google.gwt.core.client.GWT;
@@ -22,6 +25,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.iron.widget.IronCollapse;
@@ -32,6 +36,11 @@ import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
+import com.vaadin.polymer.paper.widget.PaperToggleButton;
+import com.vaadin.polymer.paper.widget.event.ChangeEvent;
+import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class ConfPanel extends Composite {
 
@@ -80,16 +89,109 @@ public class ConfPanel extends Composite {
     // -------------------- FAST FILTER (FILTRO RÁPIDO) CONFIGURATION
     
     private void initFastFilterOptions(){
-    	fastFilterHeading.setVisible(false);
-    	fastFilterCollapse.setVisible(false);
-		if(!fastFilterCollapse.getOpened())
-			fastFilterCollapse.toggle();
+    	incidence.getFastFilter(new AsyncCallback<JSON<JsFastFilter>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsFastFilter> result) {
+				VerticalPanel vp = new VerticalPanel();
+		    	
+		    	PaperToggleButton mias = new PaperToggleButton();
+		    	mias.setDisabled(admin);
+		    	mias.setChecked(result.getOneData().getMine());
+		    	mias.setStyle("padding-left:20px;padding-right:20px;padding-top:20px;");
+		    	InlineLabel label1 = new InlineLabel("Mias");
+		    	label1.getElement().getStyle().setFontSize(16, Unit.PX);
+		    	mias.add(label1);
+		    	mias.addChangeHandler(new ChangeEventHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						String requestData = "{\"mine\":\""+ mias.getChecked()+"\"}";
+						incidence.setFastFilter(requestData);
+					}
+				});
+		    	vp.add(mias);
+
+		    	PaperToggleButton sinGrupo = new PaperToggleButton();
+		    	sinGrupo.setDisabled(admin);
+		    	sinGrupo.setStyle("padding-left:20px;padding-right:20px;");
+		    	sinGrupo.setChecked(result.getOneData().getWithoutGroup());
+		    	InlineLabel label2 = new InlineLabel("Sin Grupo");
+		    	label2.getElement().getStyle().setFontSize(16, Unit.PX);
+		    	sinGrupo.add(label2);
+		    	sinGrupo.addChangeHandler(new ChangeEventHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						String requestData = "{\"without_group\":\""+ sinGrupo.getChecked()+"\"}";
+						incidence.setFastFilter(requestData);
+					}
+				});
+		    	vp.add(sinGrupo);
+
+		    	PaperToggleButton sinOperario = new PaperToggleButton();
+		    	sinOperario.setDisabled(admin);
+		    	sinOperario.setStyle("padding-left:20px;padding-right:20px;");
+		    	sinOperario.setChecked(result.getOneData().getWithoutOperator());
+		    	InlineLabel label3 = new InlineLabel("Sin Operario");
+		    	label3.getElement().getStyle().setFontSize(16, Unit.PX);
+		    	sinOperario.add(label3);
+		    	sinOperario.addChangeHandler(new ChangeEventHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						String requestData = "{\"without_operator\":\""+ sinOperario.getChecked()+"\"}";
+						incidence.setFastFilter(requestData);
+					}
+				});
+		    	vp.add(sinOperario);
+		    	
+				AonComboBox acb1 = new AonComboBox();
+		    	acb1.setDisabled(admin);
+				acb1.setItemLabelPath("name");
+		    	acb1.setItems(result.getOneData().getTypes());
+		    	acb1.setInputElementValue(result.getOneData().getPriority());
+				acb1.setStyle("padding-left:20px;padding-right:20px;width:300px");
+				acb1.setLabel("Tipo");
+				acb1.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
+					
+					@Override
+					public void onSelectedItemChanged(net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent event) {
+						JsLabel js = acb1.getSelectedItem().cast();	
+						String requestData= "{\"type\":\""+ js.getName() +"\"}";
+						incidence.setFastFilter(requestData);	
+					}
+				});
+				vp.add(acb1);
+		    	
+		    	AonComboBox acb2 = new AonComboBox();
+		    	acb2.setDisabled(admin);
+		    	acb2.setItemLabelPath("name");
+		    	acb2.setItems(result.getOneData().getPriorities());
+		    	acb2.setInputElementValue(result.getOneData().getType());
+		    	acb2.setStyle("padding-left:20px;padding-right:20px;padding-bottom: 20px; width:300px;");
+		    	acb2.setLabel("Prioridad");
+		    	acb2.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
+					
+					@Override
+					public void onSelectedItemChanged(net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent event) {
+						JsLabel js = acb2.getSelectedItem().cast();	
+						String requestData= "{\"priority\":\""+ js.getName() +"\"}";
+						incidence.setFastFilter(requestData);	
+					}
+				});
+		    	vp.add(acb2);
+		    	
+		    	fastFilterCollapse.add(vp);
+				if(!fastFilterCollapse.getOpened())
+					fastFilterCollapse.toggle();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
     	
     	fastFilterHeading.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				gitCollapse.toggle();
+				fastFilterCollapse.toggle();
 			}
 		});
     }
@@ -99,21 +201,65 @@ public class ConfPanel extends Composite {
     private void initGitOptions(){
     	gitHeading.setVisible(false);
     	gitCollapse.setVisible(false);
-		if(!gitCollapse.getOpened())
-			gitCollapse.toggle();
-		
-		PaperInput gitUsername = new PaperInput();
-    	gitUsername.setLabel("Nombre de usuario");
-    	gitUsername.setStyle("padding-left:20px;padding-right:20px;");
+    	incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsGithub> result) {
+				VerticalPanel vp = new VerticalPanel();
+				
+		    	PaperInput gitUsername = new PaperInput();
+		    	gitUsername.setDisabled(admin);
+		    	gitUsername.setLabel("Nombre de usuario");
+		    	gitUsername.setValue(result.getOneData().getUsername());
+		    	gitUsername.setStyle("padding-left:20px;padding-right:20px;width:300px;");
+		    	gitUsername.addChangeHandler(new ChangeEventHandler() {
+					
+					@Override
+					public void onChange(ChangeEvent event) {
+						String requestData = "{\"username\":\""+ gitUsername.getValue() +"\"}";
+						incidence.setGithubConfiguration(requestData);
+					}
+				});
+		    	vp.add(gitUsername);
 
-		PaperInput gitRepository = new PaperInput();
-    	gitRepository.setLabel("Repositorio");
-    	gitRepository.setStyle("padding-left:20px;padding-right:20px;");
-
-		PaperInput gitToken = new PaperInput();
-    	gitToken.setLabel("Token");
-    	gitToken.setStyle("padding-left:20px;padding-right:20px;");
-    	
+		    	PaperInput gitRepository = new PaperInput();
+		    	gitRepository.setDisabled(admin);
+		    	gitRepository.setLabel("Repositorio");
+		    	gitRepository.setValue(result.getOneData().getRepository());
+		    	gitRepository.setStyle("padding-left:20px;padding-right:20px;width:300px;");
+		    	gitRepository.addChangeHandler(new ChangeEventHandler() {
+					
+					@Override
+					public void onChange(ChangeEvent event) {
+						String requestData = "{\"repository\":\""+ gitRepository.getValue() +"\"}";
+						incidence.setGithubConfiguration(requestData);
+					}
+				});
+		    	vp.add(gitRepository);
+		    	
+				PaperInput gitToken = new PaperInput();
+		    	gitToken.setDisabled(admin);
+				gitToken.setLabel("Token");
+		    	gitToken.setValue(result.getOneData().getToken());
+		    	gitToken.setStyle("padding-left:20px;padding-right:20px;padding-bottom:20px;width:300px;");
+		    	gitToken.addChangeHandler(new ChangeEventHandler() {
+					
+					@Override
+					public void onChange(ChangeEvent event) {
+						String requestData = "{\"token\":\""+ gitToken.getValue() +"\"}";
+						incidence.setGithubConfiguration(requestData);
+					}
+				});
+		    	vp.add(gitToken);
+		    	
+		    	gitCollapse.add(vp);
+		    	if(!gitCollapse.getOpened())
+					gitCollapse.toggle();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+    		    	
     	gitHeading.addClickHandler(new ClickHandler() {
 			
 			@Override

@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AonUrlApi;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
@@ -62,6 +63,12 @@ public class ReposServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
+				case "github":
+					object = getGithubJSON(domain, userName);
+					break;
+				case "fast_filter":
+					object = getFastFilterJSON(domain, userName);
+					break;
 				case "faqs":
 					object = getFaqIssuesJSON(domain, userName, getFilter(req), scheme);
 					break;
@@ -160,6 +167,12 @@ public class ReposServlet extends HttpServlet{
 							
 			Object object = new Object();
 			switch (pathInfo[3]) {
+			case "github":
+				addGithub(domain, userName, json);
+				break;
+			case "fast_filter":
+				addFastFilter(domain, userName, json);
+				break;
 			case "issues":
 				if(pathInfo.length > 4){
 					if(pathInfo.length > 5){
@@ -562,6 +575,48 @@ public class ReposServlet extends HttpServlet{
 			array.put(json);
 		});
 		return array;
+	}
+	
+	private JSONObject getFastFilterJSON(Domain domain, String userName) {
+		JSONObject json = new JSONObject();
+		String mine = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_MINE).getValue();
+		String withoutGroup = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_GROUP).getValue();
+		String withoutOperator= AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_OPERATOR).getValue();
+		String type = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_TYPE).getValue();
+		String priority = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_PRIORITY).getValue();
+		json.put("mine", mine != null && mine.equalsIgnoreCase("true"));
+		json.put("without_group", withoutGroup != null && withoutGroup.equalsIgnoreCase("true"));
+		json.put("without_operator", withoutOperator != null && withoutOperator.equalsIgnoreCase("true"));
+		json.put("type", type != null ? type : "");
+		json.put("priority", priority != null ? priority : "");
+		return json;
+	}
+	
+	public JSONObject addFastFilter(Domain domain, String userName, JSONObject json){
+		if(json.opt("mine") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_MINE, json.getString("mine"));
+		if(json.opt("without_group") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_GROUP, json.getString("without_group"));
+		if(json.opt("without_operator") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_OPERATOR, json.getString("without_operator"));
+		if(json.opt("type") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_TYPE, json.getString("type"));
+		if(json.opt("priority") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_PRIORITY, json.getString("priority"));
+		return getFastFilterJSON(domain, userName);
+	}
+
+	private JSONObject getGithubJSON(Domain domain, String userName) {
+		JSONObject json = new JSONObject();
+		String username = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_USERNAME).getValue();
+		String repository = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_REPOSITORY).getValue();
+		String token= AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_TOKEN).getValue();
+		json.put("username", username != null ? username : "");
+		json.put("repository", repository != null ? repository : "");
+		json.put("token", token != null && !token.equals("") ? "**********" : "");
+		return json;
+	}
+	
+	public JSONObject addGithub(Domain domain, String userName, JSONObject json){
+		if(json.opt("username") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_USERNAME, json.getString("username"));
+		if(json.opt("repository") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_REPOSITORY, json.getString("repository"));
+		if(json.opt("token") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_TOKEN, json.getString("token"));
+		return getGithubJSON(domain, userName);
 	}
 	
 	private JSONArray getLightIssuesJSON(Domain domain, String userName, IssueFilter filter, String act) {

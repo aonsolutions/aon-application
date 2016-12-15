@@ -507,6 +507,26 @@ public class Incidence extends Methods{
 		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/date_options",callback);
 	}
 	
+	// FAST FILTER
+		
+	public void getFastFilter(AsyncCallback<JSON<JsFastFilter>> callback){
+		get(url + "repos/"+getUserName()+"/"+getDomainName()+"/fast_filter",callback);
+	}
+	
+	public void setFastFilter(String requestData){
+		post(url + "repos/"+getUserName()+"/"+getDomainName()+"/fast_filter", requestData);
+	}
+	
+	// GITHUB CONFIGURATION
+	
+	public void getGithubConfiguration(AsyncCallback<JSON<JsGithub>> callback){
+		get(url + "repos/"+getUserName() + "/" + getDomainName() + "/github", callback);
+	}
+	
+	public void setGithubConfiguration(String requestData){
+		post(url + "repos/"+getUserName()+"/"+getDomainName()+"/github", requestData);
+	}
+	
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

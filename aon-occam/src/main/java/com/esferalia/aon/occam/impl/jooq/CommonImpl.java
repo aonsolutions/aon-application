@@ -48,6 +48,11 @@ public class CommonImpl implements ICommon {
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		return AppParamDAO.fetchOne(ctx, param);
 	}
+	
+	@Override
+	public ApplicationParameter insertApplicationParameter(AONContext ctx, AppParam param, String value) {
+		return AppParamDAO.insertApplicationParameter(ctx, param, value);
+	}
 
 	// ------------------ FISCAL PARAMETERS
 

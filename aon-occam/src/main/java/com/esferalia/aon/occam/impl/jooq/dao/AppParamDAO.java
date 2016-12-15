@@ -175,4 +175,19 @@ public class AppParamDAO {
 		return (AonNumberUtils.toInteger( ap.getValue() )==1);
 	}
 	
+	public static ApplicationParameter insertApplicationParameter(AONContext ctx, AppParam param, String value){
+		if(ctx.getDslContext().select().from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(param.getValue())).fetch().isEmpty())
+			ctx.getDslContext()
+				.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+				.values(ctx.getDomainId(), param.getValue(), value).execute();
+		else ctx.getDslContext()
+				.update(APP_PARAM)
+				.set(APP_PARAM.VALUE, value)
+				.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(param.getValue())).execute();
+		return fetchOne(ctx, param);
+	}
+	
+	
 }
