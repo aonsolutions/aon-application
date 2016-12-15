@@ -1,22 +1,15 @@
 package com.esferalia.aon.gwt.api.client.registry;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 
-public class JsRegistry extends JavaScriptObject {
+public class JsRegistry extends JsObject {
 
 	protected JsRegistry() {
+	
 	}
-
-	public final native int getId() /*-{
-		return this.id;
-	}-*/;
 	
 	public final native String getAlias() /*-{
 		return this.alias;
-	}-*/;
-	
-	public final native String getName() /*-{
-		return this.name;
 	}-*/;
 
 	public final native String getDocument() /*-{

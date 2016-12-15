@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -101,6 +102,7 @@ import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -2059,6 +2061,38 @@ public class AON {
 	// ********************************************
 	// ******************************** Registry **
 	// ********************************************
+	
+	public static Registry insertRegistry(String domainName, Integer domainId, String login, Registry registry){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertRegistry(ctx, registry);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Registry updateRegistry(String domainName, Integer domainId, String login, Registry registry){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().updateRegistry(ctx, registry);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Registry deleteRegistry(String domainName, Integer domainId, String login, Integer registry){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().deleteRegistry(ctx, registry);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	// ------------------------------------- CATEGORY
 
 	public static Category getCategory(String domainName, Integer domainId,
 			String login, Integer categoryId) {
@@ -2109,7 +2143,40 @@ public class AON {
 		return getRMediaStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
-
+	
+	public static RegistryMedia insertRMedia(String domainName, Integer domainId, String login, RegistryMedia rmedia) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertRMedia(ctx, rmedia);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static RegistryMedia updateRMedia(String domainName, Integer domainId, String login, RegistryMedia rmedia) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().updateRMedia(ctx, rmedia);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static RegistryMedia deleteRMedia(String domainName, Integer domainId, String login, Integer registry) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().deleteRMedia(ctx, registry);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
 	// ------------------------------------- RNOTE
 	
 	public static Stream<RegistryNote> getRNoteStream(String domainName, Integer domainId, String login,
@@ -2445,7 +2512,6 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
-
 	}
 
 	public static void updateTag(String domainName, Integer domainId, String login,
@@ -2822,15 +2888,7 @@ public class AON {
 			.findFirst().orElse(new Registry());
 	}
 	
-	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, Integer wId){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getWorkgroup(ctx, wId);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
+
 	
 	public static Stream<Workgroup> getTaskWorkgroupStream(String domainName, Integer domainId, String login, String filter){
 		AONContext ctx = null;
@@ -2926,5 +2984,99 @@ public class AON {
 		return getFilterRegistryStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	// ------------------- TASK HOLDER
+	
+	public static void insertTaskHolder(String domainName, Integer domainId, String login, TaskHolder taskHolder){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().insertTaskHolder(ctx, taskHolder);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteTaskHolder(String domainName, Integer domainId, String login, Integer taskHolder){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().deleteTaskHolder(ctx, taskHolder);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Boolean isTaskHolderWorkgroup(String domainName, Integer domainId, String login, TaskHolderWorkgroupFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().isTaskHolderWorkgroup(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static void insertTaskHolderWorkgroup(String domainName, Integer domainId, String login, Integer taskHolderId, Integer workgroupId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().insertTaskHolderWorkgroup(ctx, taskHolderId, workgroupId);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteTaskHolderWorkgroup(String domainName, Integer domainId, String login, TaskHolderWorkgroupFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().deleteTaskHolderWorkgroup(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	// ------------------- WORKGROUP
+	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, Integer wId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getWorkgroup(ctx, wId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static Workgroup insertWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().insertWorkgroup(ctx, workgroup);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Workgroup updateWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().updateWorkgroup(ctx, workgroup);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Workgroup deleteWorkgroup(String domainName, Integer domainId, String login, Integer workgroup){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().deleteWorkgroup(ctx, workgroup);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	
 }

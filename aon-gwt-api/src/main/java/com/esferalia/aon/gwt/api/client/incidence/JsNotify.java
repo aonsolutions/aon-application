@@ -43,6 +43,10 @@ public class JsNotify extends JavaScriptObject {
 		return this.comment;
 	}-*/;
 	
+	public final native String getAssign() /*-{
+		return this.assign;
+	}-*/;
+	
 	public final native String getCommentHistory() /*-{
 		return this.comment_history;
 	}-*/;

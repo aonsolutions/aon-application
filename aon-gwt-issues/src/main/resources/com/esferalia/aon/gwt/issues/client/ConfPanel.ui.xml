@@ -38,11 +38,28 @@
 	    	<p:PaperIconButton ui:field="newFaqButton" icon="add" ></p:PaperIconButton>
         </g:HorizontalPanel>
 
+	    <g:Button ui:field="fastFilterHeading" addStyleNames="{style.heading}">Filtro rapido</g:Button>
+		<i:IronCollapse ui:field="fastFilterCollapse">
+
+		</i:IronCollapse>
+	    
+	    <g:Button ui:field="workgroupHeading" addStyleNames="{style.heading}">Grupos de Trabajo</g:Button>
+		<i:IronCollapse ui:field="workgroupCollapse">
+		  	<i:IronSelector ui:field="workgroupSelector" multi="true">
+           	
+            </i:IronSelector>
+		</i:IronCollapse>
+		
+		<g:Button ui:field="userHeading" addStyleNames="{style.heading}">Operarios</g:Button>
+		<i:IronCollapse ui:field="userCollapse">
+		  	<i:IronSelector ui:field="userSelector" multi="true">
+           	
+            </i:IronSelector>
+		</i:IronCollapse>
+	    
 	    <g:Button ui:field="gitHeading" addStyleNames="{style.heading}">GitHub</g:Button>
 		<i:IronCollapse ui:field="gitCollapse">
-			<p:PaperInput ui:field="gitUsername"></p:PaperInput>
-			<p:PaperInput ui:field="gitRepository"></p:PaperInput>
-			<p:PaperInput ui:field="gitToken"></p:PaperInput>
+
 		</i:IronCollapse>
     </g:HTMLPanel>
 

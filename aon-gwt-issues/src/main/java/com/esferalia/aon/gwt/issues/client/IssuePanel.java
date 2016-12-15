@@ -228,6 +228,7 @@ public class IssuePanel extends Composite{
 	private Boolean scroll; 
 	
 	private void initSouthInfo(JsIssue issue){	
+		tabLayout.selectTab(7);
 		String nothing = "NO HAY DATOS RELACIONADOS A ESTA TAREA";
 
 		// CONTACTO
@@ -283,7 +284,8 @@ public class IssuePanel extends Composite{
 											
 											@Override public void onSuccess(JSON<JsIssue> result) {
 												scroll = result.getData().length() == 30;
-												tsp.addItems(result.getData());
+												if(result.getData().length() > 0)
+													tsp.addItems(result.getData());
 											}
 											
 											@Override public void onFailure(Throwable caught) {}

@@ -70,6 +70,9 @@
 		<p:PaperToggleButton ui:field="notifyCommentToggle" addStyleNames="{style.comboBox}">
 		    Notificar al comentar 
 		</p:PaperToggleButton>
+		<p:PaperToggleButton ui:field="notifyAssignToggle" addStyleNames="{style.comboBox}">
+		    Notificar al Asignar 
+		</p:PaperToggleButton>
 	</g:VerticalPanel>
 	</g:ScrollPanel>
 </g:HTMLPanel>

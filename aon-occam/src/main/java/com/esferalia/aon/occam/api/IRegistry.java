@@ -37,4 +37,12 @@ public interface IRegistry {
 
 	public Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId);
 	
+	
+	public Registry insertRegistry(AONContext ctx, Registry registry);
+	public Registry updateRegistry(AONContext ctx, Registry registry);
+	public Registry deleteRegistry(AONContext ctx, Integer registry);
+	
+	public RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia);
+	public RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia);
+	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
 }

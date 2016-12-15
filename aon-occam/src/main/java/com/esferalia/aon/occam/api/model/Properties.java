@@ -496,6 +496,13 @@ public interface Properties {
 		Property<String> getModificationUserProperty();
 		Property<Timestamp> getModificationDateProperty();
 	}
+	
+	public interface TaskHolderWorkgroupProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskHolderProperty();
+		Property<Integer> getWorkgroupProperty();
+	}
 
 	public interface GeoZoneProperties{
 		Property<Integer> getIdProperty();

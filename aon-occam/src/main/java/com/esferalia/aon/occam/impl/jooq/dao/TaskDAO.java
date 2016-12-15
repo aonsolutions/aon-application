@@ -29,6 +29,7 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.TaskCommentRecord;
 import com.esferalia.aon.jooq.tables.records.TaskEventRecord;
+import com.esferalia.aon.jooq.tables.records.TaskHolderRecord;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -36,9 +37,11 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Task;
@@ -48,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.Priority;
@@ -60,8 +64,20 @@ public class TaskDAO {
 	private static final TaskTagPropertiesDAO TASK_TAG_PROPERTIES = new TaskTagPropertiesDAO();
 	private static final TaskEventPropertiesDAO TASK_EVENT_PROPERTIES = new TaskEventPropertiesDAO();
 	private static final TaskCommentPropertiesDAO TASK_COMMENT_PROPERTIES = new TaskCommentPropertiesDAO();
-
-
+	private static final TaskHolderWorkgroupPropertiesDAO TASK_HOLDER_WORKGROUP_PROPERTIES = new TaskHolderWorkgroupPropertiesDAO();
+	
+	protected static class TaskHolderWorkgroupPropertiesDAO implements TaskHolderWorkgroupProperties {
+		protected Condition[] getConditions(TaskHolderWorkgroupFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER_WORKGROUP.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER_WORKGROUP.DOMAIN);}
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER_WORKGROUP.TASK_HOLDER);}
+		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER_WORKGROUP.WORKGROUP);}
+	}
+	
 	protected static class TaskTagPropertiesDAO implements TaskTagProperties {
 		protected Condition[] getConditions(TaskTagFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -616,6 +632,68 @@ public class TaskDAO {
 	public static Workgroup getWorkgroup(AONContext ctx, Integer wId ){
 		return ctx.getDslContext().select().from(WORKGROUP).where(WORKGROUP.ID.eq(wId))
 		.fetchInto(WORKGROUP).stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());		
+	}
+	
+
+	public static Workgroup insertWorkgroup(AONContext ctx, Workgroup workgroup ){
+		return ctx.getDslContext().insertInto(WORKGROUP, WORKGROUP.DESCRIPTION, WORKGROUP.DOMAIN, WORKGROUP.STATUS)
+				.values(workgroup.getDescription(), workgroup.getDomain(), workgroup.getStatus())
+			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
+	}
+	
+	public static Workgroup updateWorkgroup(AONContext ctx, Workgroup workgroup ){
+		return ctx.getDslContext().update(WORKGROUP)
+				.set(WORKGROUP.DESCRIPTION, workgroup.getDescription())
+				.set(WORKGROUP.STATUS, workgroup.getStatus())		
+				.where(WORKGROUP.ID.eq(workgroup.getId()))
+			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
+	}
+	
+	public static Workgroup deleteWorkgroup(AONContext ctx, Integer wId ){
+		return ctx.getDslContext().delete(WORKGROUP)
+				.where(WORKGROUP.ID.eq(wId))
+			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
+	}
+	
+	public static TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder){
+		return ctx.getDslContext().insertInto(TASK_HOLDER, TASK_HOLDER.ACTIVE, TASK_HOLDER.COST_PROFILE, TASK_HOLDER.DOMAIN, TASK_HOLDER.REGISTRY, TASK_HOLDER.TYPE, TASK_HOLDER.USER_ID)
+			.values(taskHolder.getActive(), taskHolder.getCostProfile(), taskHolder.getDomain(), taskHolder.getId(),taskHolder.getType(), taskHolder.getUserId())
+			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
+	}
+	
+	public static TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder){
+		return ctx.getDslContext().delete(TASK_HOLDER)
+				.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
+			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
+	}
+	
+	public static Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter){
+		return !ctx.getDslContext().select().from(TASK_HOLDER_WORKGROUP)
+				.where(TASK_HOLDER_WORKGROUP_PROPERTIES.getConditions(filter))
+				.fetch().isEmpty();
+	}
+	
+	public static void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup){
+		ctx.getDslContext().insertInto(TASK_HOLDER_WORKGROUP, TASK_HOLDER_WORKGROUP.DOMAIN, TASK_HOLDER_WORKGROUP.TASK_HOLDER, TASK_HOLDER_WORKGROUP.WORKGROUP)
+			.values(ctx.getDomainId(), taskHolder, workgroup).execute();
+	}
+	
+	public static void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter){
+		ctx.getDslContext().delete(TASK_HOLDER_WORKGROUP)
+				.where(TASK_HOLDER_WORKGROUP_PROPERTIES.getConditions(filter))
+				.execute();
+	}
+	
+	private static class FullTaskHolderFiller implements Function<TaskHolderRecord, TaskHolder> {
+		@Override
+		public TaskHolder apply(TaskHolderRecord t) {
+			return new TaskHolder().setId(t.getRegistry())
+					.setActive(t.getActive())
+					.setCostProfile(t.getCostProfile())
+					.setDomain(t.getDomain())
+					.setType(t.getType())
+					.setUserId(t.getUserId());
+		}
 	}
 	
 	private static class FullTaskFiller implements Function<TaskRecord, Task> {

@@ -578,6 +578,50 @@ public class RegistryDAO {
 				.where(RADDRESS.REGISTRY.eq(registryId))
 				.fetchInto(RADDRESS).stream().map(new RAddressFiller());
 	}
+	
+	
+	public static Registry insertRegistry(AONContext ctx, Registry registry){
+		return ctx.getDslContext().insertInto(REGISTRY, REGISTRY.ALIAS, REGISTRY.DOCUMENT, REGISTRY.DOMAIN,
+				REGISTRY.NAME, REGISTRY.NATIONALITY, REGISTRY.TYPE)
+			.values(registry.getAlias(), registry.getDocument(), registry.getDomain(),
+				registry.getName(), "ES", registry.getType()).returning()
+			.fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
+	}
+	
+	public static Registry updateRegistry(AONContext ctx, Registry registry){
+		return ctx.getDslContext().update(REGISTRY)
+			.set(REGISTRY.ALIAS, registry.getAlias()).set(REGISTRY.NAME, registry.getName())
+			.where(REGISTRY.ID.eq(registry.getId()))
+			.returning().fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());		
+	}
+	
+	public static Registry deleteRegistry(AONContext ctx, Integer registry){
+		return ctx.getDslContext().delete(REGISTRY).where(REGISTRY.ID.eq(registry))
+			.returning().fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
+	}
+	
+	public static RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia){
+		return ctx.getDslContext().insertInto(RMEDIA, RMEDIA.ADMINISTRATIVE, RMEDIA.COMMENT, RMEDIA.COMMERCIAL, RMEDIA.DOMAIN, RMEDIA.MEDIA,
+				RMEDIA.RADDRESS, RMEDIA.REGISTRY, RMEDIA.TECHNICAL, RMEDIA.VALUE)
+			.values(rmedia.getAdministrative(), rmedia.getComment(), rmedia.getCommercial(), rmedia.getDomain(), rmedia.getMedia(),
+					rmedia.getRaddress(), rmedia.getRegistry().getId(), rmedia.getTechnical(), rmedia.getValue()).returning()
+			.fetch().stream().map(new RMediaFiller()).findFirst().orElse(new RegistryMedia());
+	}
+	
+	public static RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia){
+		return ctx.getDslContext().update(RMEDIA)
+			.set(RMEDIA.VALUE, rmedia.getValue())
+			.where(RMEDIA.ID.eq(rmedia.getId()))
+			.returning()
+			.fetch().stream().map(new  RMediaFiller()).findFirst().orElse(new RegistryMedia());
+	}
+	
+	public static RegistryMedia deleteRMedia(AONContext ctx, Integer registry){
+		return ctx.getDslContext().delete(RMEDIA)
+				.where(RMEDIA.REGISTRY.eq(registry)).returning()
+				.fetch().stream().map(new RMediaFiller()).findFirst().orElse(new RegistryMedia());
+	}
+	
 
 	public static class RAddressFiller  implements Function<RaddressRecord, RAddress> {
 

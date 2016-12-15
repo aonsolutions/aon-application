@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
@@ -62,7 +64,17 @@ public interface ITask {
 	public void deleteTaskComment(AONContext ctx, TaskCommentFilter filter);
 	
 	public Workgroup getWorkgroup(AONContext ctx, Integer wId); 
+	public Workgroup insertWorkgroup(AONContext ctx, Workgroup workgroup); 
+	public Workgroup updateWorkgroup(AONContext ctx, Workgroup workgroup); 
+	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId); 
 	public Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
+	
+	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder);
+	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder);
+	
+	public Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
+	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup);
+	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	
 
 }

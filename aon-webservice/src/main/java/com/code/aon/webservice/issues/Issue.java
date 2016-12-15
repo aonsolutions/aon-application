@@ -55,6 +55,7 @@ public class Issue {
 	private Boolean principal = false;
 	
 	private String days;
+	private String assigned;
 	
 	public Issue() {
 	
@@ -100,6 +101,13 @@ public class Issue {
 		this.principal = principal;
 		Integer day = Utils.getDaysBefore(task.getStartDate());
 		this.days = "(hace " + day+ ((day == 1) ? " d\u00EDa)" : " d\u00EDas)");
+		
+		String ass = "";
+		if(workgroup.getDescription() != null || assignee.getName() != null) ass = ass + ", asignado a "; 
+		if(workgroup.getDescription() != null ) ass = ass + workgroup.getDescription();
+		if(workgroup.getDescription() != null && assignee.getName() != null) ass = ass + " / ";
+		if(assignee.getName() != null ) ass = ass + assignee.getName();
+		this.assigned = ass;
 		setColor(Utils.getStatusColor(task));
 	}
 	
@@ -406,6 +414,8 @@ public class Issue {
 		json.put("is_faq_item", isFaqItem());
 		json.put("color", getColor());
 		json.put("days", days);
+		json.put("assigned", assigned);
+		
 		return json;
 	}	
 }

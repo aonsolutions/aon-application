@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 
 @WebServlet(name = "AioGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_aio" })
 public class AioImpl extends AonRemoteServiceServlet implements IAio{
@@ -37,7 +38,8 @@ public class AioImpl extends AonRemoteServiceServlet implements IAio{
 	
 	public AonData getAonData(String domainName, Integer domainId){
 		Domain domain = AON.getDomain(domainName, domainId, getLoggedUser());
-		return new AonData().setLoggedUser(getLoggedUser())
+		User user = AON.getUser(domain.getName(), domain.getId(), getLoggedUser());
+		return new AonData().setUser(user)
 				.setMd5(getMd5(getLoggedUser()+domain.getName()))
 				.setDomain(domain);
 	}

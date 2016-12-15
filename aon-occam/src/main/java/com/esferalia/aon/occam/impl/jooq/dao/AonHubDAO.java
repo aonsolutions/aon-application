@@ -310,14 +310,16 @@ public class AonHubDAO {
 						? history.get(0).getValue().substring(1).equals("1") : false)
 				.setMailAccount(mail.isNotEmpty() && mail.get(0).getValue() != null ? SecurityDAO.getMailAccount(ctx, f-> f.getIdProperty().eq(Integer.parseInt(mail.get(0).getValue()))) : null)
 				
-				.setNotifyOpen(auto.isNotEmpty() && auto.get(0).getValue().length() == 4 
+				.setNotifyOpen(auto.isNotEmpty() && auto.get(0).getValue().length() >= 4 
 						? auto.get(0).getValue().substring(0, 1).equals("1") : false)
-				.setNotifyClose(auto.isNotEmpty() && auto.get(0).getValue().length() == 4
+				.setNotifyClose(auto.isNotEmpty() && auto.get(0).getValue().length() >= 4
 						? auto.get(0).getValue().substring(1, 2).equals("1") : false)
-				.setNotifyReopen(auto.isNotEmpty() && auto.get(0).getValue().length() == 4
+				.setNotifyReopen(auto.isNotEmpty() && auto.get(0).getValue().length() >= 4
 						? auto.get(0).getValue().substring(2, 3).equals("1") : false)
-				.setNotifyComment(auto.isNotEmpty() && auto.get(0).getValue().length() == 4
-						? auto.get(0).getValue().substring(3).equals("1") : false)
+				.setNotifyComment(auto.isNotEmpty() && auto.get(0).getValue().length() >= 4
+						? auto.get(0).getValue().substring(3, 4).equals("1") : false)
+				.setNotifyAssignee(auto.isNotEmpty() && auto.get(0).getValue().length() > 4
+					? auto.get(0).getValue().substring(4).equals("1") : false)
 				
 				.setSignature(signature.isNotEmpty() && signature.get(0).getValue()!= null ? SecurityDAO.getSignature(ctx, Integer.parseInt(signature.get(0).getValue())) : null)
 				.setBcc(bcc.isNotEmpty() ? bcc.get(0).getValue() : "")

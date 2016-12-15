@@ -97,6 +97,43 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getRAddressStream(ctx, registryId));
 	}
+
+	@Override
+	public Registry insertRegistry(AONContext ctx, Registry registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRegistry(ctx, registry));
+	}
+
+	@Override
+	public Registry updateRegistry(AONContext ctx, Registry registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.updateRegistry(ctx, registry));
+	}
+
+	@Override
+	public Registry deleteRegistry(AONContext ctx, Integer registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.deleteRegistry(ctx, registry));
+	}
+
+	@Override
+	public RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRMedia(ctx, rmedia));
+	}
+
+	@Override
+	public RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.updateRMedia(ctx, rmedia));
+	}
+
+	@Override
+	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.deleteRMedia(ctx, registry));
+
+	}
 	
 	
 }

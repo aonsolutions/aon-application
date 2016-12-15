@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.ITask;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO;
@@ -225,5 +227,53 @@ public class TaskImpl implements ITask {
 	public void deleteTaskComment(AONContext ctx, TaskCommentFilter filter) {
 		ctx.getDslContext().transaction(configuration -> 
 				TaskDAO.deleteTaskComment(ctx, filter));
+	}
+
+	@Override
+	public Workgroup insertWorkgroup(AONContext ctx, Workgroup workgroup) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.insertWorkgroup(ctx, workgroup));
+	}
+
+	@Override
+	public Workgroup updateWorkgroup(AONContext ctx, Workgroup workgroup) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.updateWorkgroup(ctx, workgroup));
+	}
+
+	@Override
+	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.deleteWorkgroup(ctx, wId));
+	}
+
+	@Override
+	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.insertTaskHolder(ctx, taskHolder));
+	}
+
+	@Override
+	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.deleteTaskHolder(ctx, taskHolder));
+	}
+
+	@Override
+	public Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.isTaskHolderWorkgroup(ctx, filter));
+	}
+
+	@Override
+	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup) {
+		ctx.getDslContext().transaction(
+				configuration -> TaskDAO.insertTaskHolderWorkgroup(ctx, taskHolder, workgroup));
+	}
+
+	@Override
+	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter) {
+		ctx.getDslContext().transaction(
+				configuration -> TaskDAO.deleteTaskHolderWorkgroup(ctx, filter));
 	}
 }

@@ -373,6 +373,42 @@ public class Incidence extends Methods{
 		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/", "{}", callback);
 	}
 	
+	// -------------------- OPERATOR (OPERARIO)
+	
+	public void getOperators(AsyncCallback<JSON<JsUser>> callback){
+		get(url + "work/" + getDomainName() + "/" + getUserName() + "/operator", callback);
+	}
+	
+	public void addOperator(String requestData, AsyncCallback<JsUser> callback){
+		post(url + "work/" + getDomainName() + "/" + getUserName() + "/operator", requestData, callback);
+	}
+	
+	public void updateOperator(Integer id, String requestData, AsyncCallback<JsUser> callback){
+		post(url + "work/" + getDomainName() + "/" + getUserName() + "/operator/update/" + id, requestData, callback);
+	}
+	
+	public void removeOperator(Integer id, AsyncCallback<JsUser> callback){
+		post(url + "work/" + getDomainName() + "/" + getUserName() + "/operator/remove/" + id, "{}", callback);
+	}
+	
+	// -------------------- WORKGROUP (GRUPO DE TRABAJO)
+	
+	public void getGroups(AsyncCallback<JSON<JsUser>> callback){
+		get(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup", callback);
+	}
+	
+	public void addGroup(String requestData, AsyncCallback<JsUser> callback){
+		post(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup", requestData, callback);
+	}
+	
+	public void updateGroup(Integer id, String requestData, AsyncCallback<JsUser> callback){
+		post(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup/update/" + id, requestData, callback);
+	}
+	
+	public void removeGroup(Integer id, AsyncCallback<JsUser> callback){
+		post(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup/remove/" + id, "{}",callback);
+	}
+	
 	//-------------------- EVENTS
 	
 	public void getEvents(String url, AsyncCallback<JSON<JsEvent>> callback){

@@ -131,8 +131,12 @@ public class NotificationServlet extends HttpServlet{
 			if(!ni.getNotifyOpen()) return;
 			typeTitle = OPEN[0];
 			typeDescription = OPEN[1];
-		} else if(type.equals(NotificationType.NEW_INFO) || type.equals(NotificationType.ASSIGNEE)){
-			if(!ni.getNotifyComment() && !ni.getNotifyAssignee()) return;
+		} else if(type.equals(NotificationType.NEW_INFO)){
+			if(!ni.getNotifyComment()) return;
+			typeTitle = NEW_INFO[0];
+			typeDescription = NEW_INFO[1];
+		}else if(type.equals(NotificationType.ASSIGNEE)){
+			if(!ni.getNotifyAssignee()) return;
 			typeTitle = NEW_INFO[0];
 			typeDescription = NEW_INFO[1];
 		} else if(type.equals(NotificationType.REOPEN)){
@@ -406,6 +410,9 @@ public class NotificationServlet extends HttpServlet{
 		Registry r;
 		if(assignee != null){
 			r = new Registry().setId(assignee);
+			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), login,
+				f -> f.getRegistryProperty().eq(r.getId()).and(f.getMediaProperty().eq((byte)4)));
+			return rm.getValue() != null ? rm.getValue() : "";
 		} else r = AON.getRegistry(domain.getName(), domain.getId(), login, name);
 		
 		LinkedList<RegistryMedia> l = AON.getRMediaList(domain.getName(), domain.getId(), login,
@@ -441,12 +448,14 @@ public class NotificationServlet extends HttpServlet{
 			String status = json.getString("statusHistory").equals("true")? "1": "0";
 			DB.insertNotificationInfo(domain, login, comment+status, AppParam.NOTICE_NOTIFICATION_HISTORY);
 		} else if(json.opt("notifyOpen") != null && json.opt("notifyClose") != null 
-				&& json.opt("notifyReopen") != null && json.opt("notifyComment") != null){
+				&& json.opt("notifyReopen") != null && json.opt("notifyComment") != null
+				&& json.opt("notifyAssign") != null){
 			String open = json.getString("notifyOpen").equals("true")? "1": "0";
 			String close = json.getString("notifyClose").equals("true")? "1": "0";
 			String reopen = json.getString("notifyReopen").equals("true")? "1": "0";
 			String comment = json.getString("notifyComment").equals("true")? "1": "0";
-			DB.insertNotificationInfo(domain, login, open+close+reopen+comment, AppParam.NOTICE_NOTIFICATION_AUTO);
+			String assign = json.getString("notifyAssign").equals("true")? "1": "0";
+			DB.insertNotificationInfo(domain, login, open+close+reopen+comment+assign, AppParam.NOTICE_NOTIFICATION_AUTO);
 		} else if(json.opt("bcc") != null){
 			DB.insertNotificationInfo(domain, login, json.getString("bcc"), AppParam.NOTICE_NOTIFICATION_BCC);
 		}
@@ -487,6 +496,7 @@ public class NotificationServlet extends HttpServlet{
 		json.put("close", notificationInfo.getNotifyClose() ? "1" : "0");
 		json.put("reopen", notificationInfo.getNotifyReopen() ? "1" : "0");
 		json.put("comment", notificationInfo.getNotifyComment() ? "1" : "0");
+		json.put("assign", notificationInfo.getNotifyAssignee() ? "1" : "0");
 		json.put("comment_history", notificationInfo.getCommentsHistory() ? "1" : "0");
 		json.put("status_history", notificationInfo.getStatusHistory() ? "1" : "0");
 		json.put("bcc", notificationInfo.getBcc() != null ? notificationInfo.getBcc() : "");

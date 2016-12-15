@@ -5,6 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 
@@ -67,4 +69,12 @@ public class Utils {
 	public static int getDaysBefore(Date date) {
         return (int)( (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 	}
+	
+    public static void addCorsHeader(HttpServletResponse response){
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        response.addHeader("Access-Control-Max-Age", "1728000");
+    }
+    
 }

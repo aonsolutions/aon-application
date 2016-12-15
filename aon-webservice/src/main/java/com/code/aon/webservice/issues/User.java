@@ -7,6 +7,7 @@ public class User {
 	Integer id;
 	String login;
 	String type;
+	String email;
 	
 	public User() {}
 
@@ -34,10 +35,20 @@ public class User {
 		return this;
 	}
 	
+	public String getEmail() {
+		return email;
+	}
+	public User setEmail(String email) {
+		this.email = email;
+		return this;
+	}
+	
+	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("id", id);
 		json.put("login", getLogin());
+		json.put("email", email);
 		return json;
 	}
 }

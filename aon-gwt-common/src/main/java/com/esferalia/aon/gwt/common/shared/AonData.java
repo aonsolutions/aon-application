@@ -1,19 +1,20 @@
 package com.esferalia.aon.gwt.common.shared;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AonData implements IsSerializable{
 
-	String loggedUser;
+	User user;
 	String md5;
 	Domain domain;
 	
-	public String getLoggedUser() {
-		return loggedUser;
+	public User getUser() {
+		return user;
 	}
-	public AonData setLoggedUser(String loggedUser) {
-		this.loggedUser = loggedUser;
+	public AonData setUser(User user) {
+		this.user = user;
 		return this;
 	}
 	public String getMd5() {

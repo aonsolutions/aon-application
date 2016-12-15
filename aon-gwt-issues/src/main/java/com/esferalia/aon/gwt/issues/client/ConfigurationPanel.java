@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.issues.client;
 
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
+import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -33,9 +36,10 @@ public class ConfigurationPanel extends Composite {
     
     Incidence incidence;
     Issues issues;
-    public ConfigurationPanel(Issues issues, Incidence incidence) {
+    public ConfigurationPanel(Issues issues, AonData aonData, Incidence incidence) {
     	this.issues = issues;
-    	this.incidence = incidence;
+    	this.incidence = incidence;    	
+    	Boolean admin = !isAdmin(aonData.getUser());
     	initWidget(binder.createAndBindUi(this));
     	tabs.setSelected("0");
         tabs.addIronSelectHandler(new IronSelectEventHandler() {
@@ -57,13 +61,13 @@ public class ConfigurationPanel extends Composite {
 				});
 				if(tabs.getSelected().toString().equals(ZERO)
 					|| tabs.getSelected().toString() == ZERO){
-					sp.add(new TagPanel(incidence));
+					sp.add(new TagPanel(incidence, admin));
 				} else if(tabs.getSelected().toString().equals(ONE)
 					|| tabs.getSelected().toString() == ONE){
-					sp.add(new NotificationPanel(incidence));					
+					sp.add(new NotificationPanel(incidence, admin));					
 				} else if(tabs.getSelected().toString().equals(TWO)
 						|| tabs.getSelected().toString() == TWO){
-					sp.add(new ConfPanel(issues, incidence));
+					sp.add(new ConfPanel(issues, incidence, admin));
 				}
 				tabContent.add(sp);
 			}
@@ -71,5 +75,14 @@ public class ConfigurationPanel extends Composite {
                 
     }
     
-    
+    private Boolean isAdmin(User user) {
+    	for(Integer i = 0; i < user.getUserRoles().length; i++){
+    		if(user.getUserRoles()[i] != null && 	
+    			(user.getUserRoles()[i].equals(AonRole.ADMIN) ||
+    			user.getUserRoles()[i].equals(AonRole.CALL_CENTER_MANAGER))){
+    			return true;
+    		}
+    	}
+    	return false;
+	}
 }

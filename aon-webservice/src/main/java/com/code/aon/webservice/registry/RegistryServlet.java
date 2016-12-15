@@ -23,14 +23,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @SuppressWarnings("serial")
 @WebServlet(name = "RegistryServlet", urlPatterns = { "/registry/*" })
 public class RegistryServlet extends HttpServlet{
-		
-	String h = "http://";
-	
+			
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
-		if(req.getServerPort() == 80) h = "http://";
-		else if(req.getServerPort() == 443) h = "https://";
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[2];

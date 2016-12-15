@@ -68,7 +68,7 @@
 									</span>
 								</template>                                
                             </div>
-                            <div class="secondary">[[item.type.name]] #[[item.number]] creado por [[item.user.login]] el [[item.created_at_date]] a las [[item.created_at_hour]] [[item.days]] con prioridad [[item.priority.name]] </div>
+                            <div class="secondary">[[item.type.name]] #[[item.number]] creado por [[item.user.login]] el [[item.created_at_date]] a las [[item.created_at_hour]] [[item.days]] con prioridad [[item.priority.name]] [[item.assigned]] </div>
                         </div>
                         
                     </div>

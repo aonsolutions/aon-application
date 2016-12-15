@@ -29,8 +29,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
+import com.vaadin.polymer.iron.IronCollapseElement;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronListElement;
+import com.vaadin.polymer.iron.IronSelectorElement;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.PaperDialogElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
@@ -99,7 +101,9 @@ public class Issues implements EntryPoint {
 				PaperIconButtonElement.SRC,
 				IronListElement.SRC,
 				PaperToggleButtonElement.SRC,
-				PaperSliderElement.SRC
+				PaperSliderElement.SRC,
+				IronCollapseElement.SRC,
+				IronSelectorElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
@@ -118,7 +122,7 @@ public class Issues implements EntryPoint {
 			
 		String h = GWT.getModuleBaseURL().contains("https") ? HTTPS : HTTP; 
 		incidence = new Incidence(h + aonData.getDomain().getName()+"/", aonData.getMd5(),
-				aonData.getLoggedUser(), aonData.getLoggedUser(), aonData.getDomain().getName());
+				aonData.getUser().getLogin(), aonData.getUser().getLogin(), aonData.getDomain().getName());
 		
 		createAonToolbar();
 		createFilterPanel(new FilterPanel(me, incidence));
@@ -194,7 +198,7 @@ public class Issues implements EntryPoint {
 			@Override
 			protected void onMenuButtonClick() {
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
-					configurationPanel.add(new ConfigurationPanel(me, incidence));
+					configurationPanel.add(new ConfigurationPanel(me, aonData, incidence));
 					dockLayoutPanel.setWidgetSize(configurationPanel, 350);
 				}
 				else {
@@ -239,8 +243,10 @@ public class Issues implements EntryPoint {
 
 			@Override
 			protected void onStatsButtonClick() {
-				// TODO Auto-generated method stub
-				
+				contentDockLayoutPanel.removeFromParent();
+				contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				contentDockLayoutPanel.add(new StatPanel());
+				dockLayoutPanel.add(contentDockLayoutPanel);				
 			}
 		}.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)

@@ -46,9 +46,11 @@ public class TagPanel extends Composite {
     private static Binder binder = GWT.create(Binder.class);
 	
 	Incidence incidence;
+	private Boolean admin;
 	
-    public TagPanel(Incidence incidence) {
+    public TagPanel(Incidence incidence, Boolean admin) {
     	this.incidence = incidence;
+    	this.admin = admin;
     	initWidget(binder.createAndBindUi(this));
    			
 
@@ -75,6 +77,7 @@ public class TagPanel extends Composite {
 					
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");
+					edit.setDisabled(admin);
 					edit.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
 					edit.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
@@ -85,6 +88,7 @@ public class TagPanel extends Composite {
 					
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
+					del.setDisabled(admin);
 					del.setStyle("min-height: 30px;position:absolute;right:10px;padding-top:0px;");
 					del.getElement().getStyle().setLeft(290, Unit.PX);
 					del.addClickHandler(new ClickHandler() {
@@ -119,6 +123,7 @@ public class TagPanel extends Composite {
 				}			
 				PaperIconButton pib = new PaperIconButton();
 				pib.setIcon("add");
+				pib.setDisabled(admin);
 				pib.setStyle("min-height: 30px;");
 				pib.getElement().getStyle().setLeft(290, Unit.PX);
 				pib.addClickHandler(new ClickHandler() {
@@ -170,6 +175,7 @@ public class TagPanel extends Composite {
 
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");
+					edit.setDisabled(admin);
 					edit.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
 					edit.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
@@ -180,6 +186,7 @@ public class TagPanel extends Composite {
 					
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
+					del.setDisabled(admin);
 					del.setStyle("min-height: 30px;position:absolute;right:10px;padding-top:0px;");
 					del.getElement().getStyle().setLeft(290, Unit.PX);
 					del.addClickHandler(new ClickHandler() {
@@ -216,6 +223,7 @@ public class TagPanel extends Composite {
 				}			
 				PaperIconButton pib = new PaperIconButton();
 				pib.setIcon("add");
+				pib.setDisabled(admin);
 				pib.setStyle("min-height: 30px;");
 				pib.getElement().getStyle().setLeft(290, Unit.PX);
 				pib.addClickHandler(new ClickHandler() {

@@ -1,0 +1,49 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
+	
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
+
+<ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
+		field="issuesResources"></ui:with>
+<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+<ui:style>
+	
+</ui:style>
+<g:SplitLayoutPanel ui:field="dockLayoutPanel">
+	<g:center>
+		<g:DockLayoutPanel ui:field="contentDockLayoutPanel">
+			<g:north size="85">
+				<g:HTMLPanel ui:field="searchContent"/>
+			</g:north>
+			<g:center>
+				<g:HTMLPanel ui:field="content"/>	
+			</g:center>
+		</g:DockLayoutPanel>
+	</g:center>
+	
+	<g:south size="30">
+		<aon:MinimizePanel ui:field="footPanel"	styleName="{aonResources.css.aonSelector}">
+			<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
+				<g:tab >
+					<g:customHeader styleName="{style.jeje}">
+						<g:HTMLPanel>
+							<i:IronIcon icon="account-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+							<g:InlineLabel text="Información General" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						</g:HTMLPanel>
+					</g:customHeader>
+					<g:ScrollPanel ui:field="generalPanel" styleName="{aonResources.css.aonTextCenter}" />
+				</g:tab>
+			</g:TabLayoutPanel>
+		</aon:MinimizePanel>
+	</g:south>
+</g:SplitLayoutPanel>
+
+</ui:UiBinder>

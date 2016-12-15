@@ -36,33 +36,37 @@ public class NotificationPanel extends Composite {
     @UiField PaperToggleButton notifyCloseToggle;
     @UiField PaperToggleButton notifyReopenToggle;
     @UiField PaperToggleButton notifyCommentToggle;
+    @UiField PaperToggleButton notifyAssignToggle;
     @UiField PaperSlider logoSlider;
     @UiField PaperInput bccInput;
     
     Incidence incidence;
-    public NotificationPanel(Incidence incidence) {
+   
+    public NotificationPanel(Incidence incidence, Boolean admin) {
         initWidget(binder.createAndBindUi(this));
         this.incidence = incidence;
+        
         incidence.getNotificationInfo(new AsyncCallback<JSON<JsNotify>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsNotify> result) {
 				JsNotify notify = result.getData().get(0);		
-				initEmailComboBox(notify);
-				initSignComboBox(notify);
-				initModeComboBox(notify);
-				initToggles(notify);
-				initLogoSlider(notify);
-				initBccInput(notify);  
+				initEmailComboBox(notify, admin);
+				initSignComboBox(notify, admin);
+				initModeComboBox(notify, admin);
+				initToggles(notify, admin);
+				initLogoSlider(notify, admin);
+				initBccInput(notify, admin);  
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {}
 		});				     
     }
-    
-    private void initEmailComboBox(JsNotify notify) {
+
+    private void initEmailComboBox(JsNotify notify, Boolean admin) {
     	AonComboBox emailComboBox = new AonComboBox();
+    	emailComboBox.setDisabled(admin);
     	emailComboBox.setLabel("Cuenta de Correo");
     	emailComboBox.setWidth("300px");
     	emailComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
@@ -82,8 +86,9 @@ public class NotificationPanel extends Composite {
     	emailPanel.add(emailComboBox);
 	}
     
-    private void initSignComboBox(JsNotify notify) {
+    private void initSignComboBox(JsNotify notify, Boolean admin) {
     	AonComboBox signComboBox = new AonComboBox();
+    	signComboBox.setDisabled(admin);
     	signComboBox.setLabel("Firma de Correo");
     	signComboBox.setWidth("300px");
     	signComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
@@ -103,8 +108,9 @@ public class NotificationPanel extends Composite {
     	signPanel.add(signComboBox);
 	}
     
-    private void initModeComboBox(JsNotify notify) {
+    private void initModeComboBox(JsNotify notify, Boolean admin) {
     	AonComboBox modeComboBox = new AonComboBox();
+    	modeComboBox.setDisabled(admin);
     	modeComboBox.setLabel("Modo");
     	modeComboBox.setWidth("300px");
     	modeComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
@@ -124,21 +130,23 @@ public class NotificationPanel extends Composite {
     	modePanel.add(modeComboBox);
    	}
     
-    private void initToggles(JsNotify notify){
+    private void initToggles(JsNotify notify, Boolean admin){
         logoToggle.setChecked(notify.getLogo().equals("1"));
+        logoToggle.setDisabled(admin);
     	logoToggle.addChangeHandler(new ChangeEventHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
 				if(logoToggle.getChecked())
-					logoSlider.setDisabled(false);
+					logoSlider.setDisabled(admin);
 				else logoSlider.setDisabled(true);
 				updateLogo();
 			}
 		});
     
         commentHistoryToggle.setChecked(notify.getCommentHistory().equals("1"));
-    	commentHistoryToggle.setWidth("300px");
+        commentHistoryToggle.setDisabled(admin);
+        commentHistoryToggle.setWidth("300px");
         commentHistoryToggle.addChangeHandler(new ChangeEventHandler() {
 			
 			@Override
@@ -148,6 +156,7 @@ public class NotificationPanel extends Composite {
 		});
     	
         statusHistoryToggle.setChecked(notify.getStatusHistory().equals("1"));
+        statusHistoryToggle.setDisabled(admin);
         statusHistoryToggle.setWidth("300px");
         statusHistoryToggle.addChangeHandler(new ChangeEventHandler() {
 			@Override
@@ -157,6 +166,7 @@ public class NotificationPanel extends Composite {
 		});
         
         notifyOpenToggle.setChecked(notify.getOpen().equals("1"));
+        notifyOpenToggle.setDisabled(admin);
         notifyOpenToggle.addChangeHandler(new ChangeEventHandler() {
 			
 			@Override
@@ -166,6 +176,7 @@ public class NotificationPanel extends Composite {
 		});
         
         notifyCloseToggle.setChecked(notify.getClose().equals("1"));
+        notifyCloseToggle.setDisabled(admin);
         notifyCloseToggle.addChangeHandler(new ChangeEventHandler() {
 			
 			@Override
@@ -175,6 +186,7 @@ public class NotificationPanel extends Composite {
 		});
         
         notifyReopenToggle.setChecked(notify.getReopen().equals("1"));
+        notifyReopenToggle.setDisabled(admin);
         notifyReopenToggle.addChangeHandler(new ChangeEventHandler() {
 			
 			@Override
@@ -184,7 +196,18 @@ public class NotificationPanel extends Composite {
 		});
         
         notifyCommentToggle.setChecked(notify.getComment().equals("1"));
+        notifyCommentToggle.setDisabled(admin);
         notifyCommentToggle.addChangeHandler(new ChangeEventHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateNotify();
+			}
+		});
+        
+        notifyAssignToggle.setChecked(notify.getAssign().equals("1"));
+        notifyAssignToggle.setDisabled(admin);
+        notifyAssignToggle.addChangeHandler(new ChangeEventHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -193,8 +216,9 @@ public class NotificationPanel extends Composite {
 		});
     }
     
-    private void initBccInput(JsNotify notify) {
+    private void initBccInput(JsNotify notify, Boolean admin) {
         bccInput.setLabel("Incluir en BCC"); 
+        bccInput.setDisabled(admin);
         bccInput.setWidth("300px");
         bccInput.setValue(notify.getBcc());
         bccInput.addChangeHandler(new ChangeEventHandler() {
@@ -207,9 +231,9 @@ public class NotificationPanel extends Composite {
 		});
 	}
     
-    private void initLogoSlider(JsNotify notify) {
+    private void initLogoSlider(JsNotify notify, Boolean admin) {
     	if(notify.getLogo().equals("1"))
-			logoSlider.setDisabled(false);
+			logoSlider.setDisabled(admin);
 		else logoSlider.setDisabled(true);
     	
     	logoSlider.addChangeHandler(new ChangeEventHandler() {
@@ -237,7 +261,8 @@ public class NotificationPanel extends Composite {
 		String r= "{\"notifyOpen\":\""+notifyOpenToggle.getChecked() +"\","
 				+ "\"notifyClose\":\""+notifyCloseToggle.getChecked() +"\","
 				+ "\"notifyReopen\":\""+notifyReopenToggle.getChecked() +"\","
-				+ "\"notifyComment\":\""+notifyCommentToggle.getChecked() +"\"}";
+				+ "\"notifyComment\":\""+notifyCommentToggle.getChecked() +"\","
+				+ "\"notifyAssign\":\""+notifyAssignToggle.getChecked() +"\"}";
 		incidence.updateNotificationInfo(r);
     }
     
