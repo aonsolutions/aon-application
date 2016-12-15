@@ -40,7 +40,7 @@ public class CommentsPrintCallbackDump extends AbstractPrintCallbackDump {
 	}
 	
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows, String varTableName) {
 		
 		println();
 		println("--");
@@ -48,7 +48,7 @@ public class CommentsPrintCallbackDump extends AbstractPrintCallbackDump {
 		println("--");
 		println();
 		
-		cb.accept(inSet, table, ciclica, numRows);
+		cb.accept(inSet, table, ciclica, numRows, varTableName);
 	}
 
 	@Override

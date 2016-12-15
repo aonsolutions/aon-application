@@ -330,7 +330,9 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		this.sendButton.setDisabled(true);
 
 		this.downloadListBox.addItem("BackUp");
+		this.downloadListBox.addItem("BackUp (Stand-alone)");
 		this.downloadListBox.addItem("Duplicar");
+		this.downloadListBox.addItem("Duplicar (Stand-Alone)");
 		this.downloadListBox.addItem("Comprobar Integridad");
 
 		this.suggestBox.addKeyUpHandler(new KeyUpHandler() {		

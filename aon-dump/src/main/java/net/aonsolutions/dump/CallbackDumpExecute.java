@@ -17,13 +17,15 @@ public class CallbackDumpExecute implements CallbackDump{
 	}
 	
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
-		if (!ciclica.isEmpty()){
-			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-			inSet.execute();
-			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
-		} else
-			inSet.execute();
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows,String varTableName) {
+		
+//		if (!ciclica.isEmpty()){
+//			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+//			inSet.execute();
+//			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
+//		} else
+		
+		inSet.execute();
 	}
 
 	@Override

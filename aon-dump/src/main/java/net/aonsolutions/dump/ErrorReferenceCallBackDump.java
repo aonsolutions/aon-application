@@ -9,22 +9,19 @@ import org.jooq.ForeignKey;
 import org.jooq.Record;
 import org.jooq.Table;
 
-public class DomainCeroCallbackDump extends AbstractChaimCallbackDump {
+public class ErrorReferenceCallBackDump extends AbstractChaimCallbackDump {
 
-	public DomainCeroCallbackDump(CallbackDump cb) {
+	public ErrorReferenceCallBackDump(CallbackDump cb) {
 		super(cb);
-
 	}
 
 	@Override
 	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap,
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
-
-		if ((Integer) r.get("domain") == 0){
-			return (Field<Integer>) fk.getKey().getTable().field(0); 		
-		}
 		
-		return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
+		//TODO: ver que mensaje de error mostrar para dar la maxima informacion posible
+		return null;
+		
 	}
 
 }

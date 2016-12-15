@@ -39,8 +39,8 @@ public abstract class AbstractChaimCallbackDump implements CallbackDump {
 	}
 
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
-		this.next.accept(inSet, table, ciclica, numRows);
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows, String varTableName) {
+		this.next.accept(inSet, table, ciclica, numRows, varTableName);
 		
 	}
 

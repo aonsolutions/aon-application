@@ -78,7 +78,7 @@ public class AonDump {
 
 		IdsMap idsMap;
 		Stack<Table<?>> tablesStack = new Stack<Table<?>>();
-		//List<Table<?>> tablesCiclic = new ArrayList<Table<?>>();
+		// List<Table<?>> tablesCiclic = new ArrayList<Table<?>>();
 		List<String> tablesNotToDownload = new ArrayList<String>();
 
 		tablesWontDownload(tablesNotToDownload);
@@ -100,7 +100,7 @@ public class AonDump {
 		idsMap = newIdsMap(dumpTables);
 		idsMap.createTableName(DOMAIN.getName());
 		idsMap.setTableName(DOMAIN.getName());
-		idsMap.setOrder(DOMAIN.getName(), idDomain, false);
+		idsMap.setOrder(DOMAIN.getName(), idDomain, idDomain, false);
 
 		idsMap.createTableName(Scope.SCOPE.getName());
 		idsMap.setTableName(Scope.SCOPE.getName());
@@ -123,7 +123,8 @@ public class AonDump {
 			if (tablesNotToDownload.contains(idsMap.getTableInformation(t.getName())))
 				return;
 			if (idsMap.getTableInformation(t.getName()) == null)
-				downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(), (DSL.field("domain")).equal(idDomain));
+				downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
+						(DSL.field("domain")).equal(idDomain));
 		});
 
 		// Get attachs from DataBase and UPDATE them
@@ -134,7 +135,8 @@ public class AonDump {
 	}
 
 	private void tablesWontDownload(List<String> tablesNotToDownload) {
-		// TODO Choose which tables (names) we wont download, becasue we dont need them
+		// TODO Choose which tables (names) we wont download, becasue we dont
+		// need them
 
 	}
 
@@ -156,23 +158,22 @@ public class AonDump {
 	}
 
 	private void gestionAttachs(CallbackDump cb, DSLContext dslContext, Map<Table<?>, Field<byte[]>> tablasAttach,
-			int id, IdsMap idsMap) {
+			int idDomain, IdsMap idsMap) {
 
 		// Go over throw the attachs of our DataBase and UPDATE them
 		tablasAttach.forEach((t, f) -> {
 
 			Field<Integer> fieldDomain = (Field<Integer>) t.field("domain");
 
-			for (Record r : dslContext.select().from(t).where(fieldDomain.equal(id)).fetchLazy()) {
+			for (Record r : dslContext.select().from(t).where(fieldDomain.equal(idDomain)).fetchLazy()) {
 
-				Field<Integer> varId = DSL.field("@" + t.getName().toUpperCase(), Integer.class);
 				Field<Integer> fieldId = (Field<Integer>) t.field("id");
-				Integer order = idsMap.getOrder(t.getName(), r.getValue(fieldId));
+				Field<Integer> orderId = idsMap.getOrder(t.getName(), r.getValue(fieldId));
 
 				if (f != null) {
 					try {
 						UpdateConditionStep<?> update = dslContext.update(t).set(f, r.getValue(f))
-								.where((fieldId).eq(varId.add(order)));
+								.where((fieldId).eq(orderId));
 						cb.onAttachInsert(update);
 					} catch (Exception e) {
 						e.getMessage();
@@ -191,9 +192,9 @@ public class AonDump {
 		// Push the table in the Stack, in order to download it, and know if it
 		// is ciclic
 		tablesStack.push(t);
-		
+
 		List<Table<?>> myTablesCiclic = new ArrayList<Table<?>>(tablesCiclic);
-		
+
 		for (Object ref : references) {
 			ForeignKey<?, ?> fk = (ForeignKey<?, ?>) ref;
 
@@ -228,19 +229,24 @@ public class AonDump {
 		InsertSetStep<?> insert = dslContext.insertInto(t);
 		InsertSetMoreStep<?> insertMore = null;
 		Integer numRows = 0;
+		String varTableName = "";
+
+		if (t.getName().equals("agreement_level_category"))
+			System.out.println();
 
 		try {
 
-			for (Record r : dslContext.select().from(t).where(where).fetchLazy()) {
+			for (Record r : dslContext.select().from(t).where(where).orderBy(t.field(0).desc()).fetchLazy()) {
 
 				/**
 				 * Creamos el campo que vamos a insertar para actualizar el
 				 * valor antiguo siguiendo el siguiente esquema:
 				 * (@(nombre_campo) +1)
 				 */
-				numRows++;
 				Field<Integer> varId = DSL.field("@" + t.getName().toUpperCase(), Integer.class);
 				Field<Integer> fieldId = (Field<Integer>) t.getPrimaryKey().getFields().get(0);
+				// Field<Integer> domainId = (Field<Integer>)
+				// t.getReferencesTo(DOMAIN).get(0).getFields().get(0);
 
 				// insertMap will contain all the information we want to upload
 				// to our table
@@ -251,6 +257,8 @@ public class AonDump {
 					System.out.println();
 				// Check the correct relationship of the foreignkeys
 				try {
+					
+					
 					fkInsertMap = checksFK(r, references, idsMap, cb, tablesCiclic, where);
 
 				} catch (FkErrorException e) {
@@ -260,27 +268,26 @@ public class AonDump {
 				// If we have a Id field we will rename it like (@(table_name) +
 				// x)
 				if (fieldId != null) {
-					Integer order = null;
-					Pair<Integer, Boolean> pair = idsMap.getIdInformation(t.getName(), r.getValue(fieldId));
+					Threes<Integer, Integer, Boolean> pair = idsMap.getIdInformation(t.getName(), r.getValue(fieldId));
 
-					if (pair != null && pair.getSecond())
+					if (pair != null && pair.getThird())
 						continue;
 
-					if (pair != null)
-						order = pair.getFirst();
-
-					if (order == null) {
-
-						order = idsMap.createNewOrder(t.getName());
-						idsMap.setOrder(t.getName(), r.getValue(fieldId), true);
+					if (pair == null) {
+						idsMap.setOrder(t.getName(), r.getValue(fieldId), r.getValue("domain", Integer.class), true);
 
 					} else if (pair != null) {
 
-						pair.setSecond(true);
+						pair.setThird(true);
 
 					}
 
-					insertMore = insert.set(fieldId, varId.add(order));
+					Field<Integer> order = null;
+					order = idsMap.getOrder(t.getName(), r.getValue(fieldId));
+					insertMore = insert.set(fieldId, order);
+
+					if (varTableName.equals(""))
+						varTableName = idsMap.getVarTableName(t.getName(), r.getValue(fieldId));
 
 				}
 
@@ -312,12 +319,13 @@ public class AonDump {
 				insertMore = insertMore.set(insertMap);
 
 				insert = insertMore.newRecord();
+				numRows++;
 
 			}
 
 			if (insertMore != null)
 				try {
-					cb.accept(insertMore, t, tablesCiclic, numRows);
+					cb.accept(insertMore, t, tablesCiclic, numRows, varTableName);
 
 				} catch (SkipInsertException e) {
 					idsMap.clear(t.getName());
@@ -357,46 +365,36 @@ public class AonDump {
 			else {
 				try {
 
-					Map<Integer, Pair<Integer, Boolean>> map = idsMap.getTableInformation(tableReferenceName);
+					Map<Integer, Threes<Integer, Integer, Boolean>> map = idsMap
+							.getTableInformation(tableReferenceName);
 
 					if (map == null)
 						idsMap.setTableName(tableReferenceName);
 
-					Integer fkOrder = null;
-					Pair<Integer, Boolean> pair = idsMap.getIdInformation(tableReferenceName,
+					Threes<Integer, Integer, Boolean> pair = idsMap.getIdInformation(tableReferenceName,
 							((Integer) r.getValue(fk.getFields().get(0))));
 
-					if (pair != null)
-						fkOrder = pair.getFirst();
+					if (pair == null) {
+						Field<Integer> parentField = cb.onErrFk(dslContext, r, fk, this, idsMap, cb, tablesCiclic,
+								references, where);
+						if (parentField != null) {
+							fkMapInsert.put((Field<Integer>) fk.getFields().get(0), parentField);
+							continue;
+						}
 
-					if (fkOrder == null) {
-						if (tablesCiclic.contains(tableReference)){
-							fkOrder = idsMap.createNewOrder(tableReferenceName);
+						if (tablesCiclic.contains(tableReference)) {
 							idsMap.setOrder(tableReferenceName, ((Integer) r.getValue(fk.getFields().get(0))),
-									false);
-						}
-						// if (tablesCiclic) {
-						// synchronized (idsMap) {
-						// fkOrder = idsMap.createNewOrder(tableReferenceName);
-						// idsMap.setOrder(tableReferenceName, ((Integer)
-						// r.getValue(fk.getFields().get(0))),
-						// false);
-						// }
-						else {
-							Field<Integer> parentField = cb.onErrFk(dslContext, r, fk, this, idsMap, cb, tablesCiclic,
-									references, where);
-							if (parentField != null) {
-								fkMapInsert.put((Field<Integer>) fk.getFields().get(0), parentField);
-								continue;
-							} else
-								throw new FkErrorException(fk);
-						}
+									((Integer) r.getValue("domain")), false);
+						} else
+
+							throw new FkErrorException(fk);
+
 					}
 
-					Field<Integer> varFk = DSL.field("@" + tableReferenceName.toUpperCase(), Integer.class)
-							.add(fkOrder);
+					Field<Integer> fkOrder = idsMap.getOrder(tableReferenceName,
+							(Integer) r.getValue(fk.getFields().get(0)));
 
-					fkMapInsert.put((Field<Integer>) fk.getFields().get(0), varFk);
+					fkMapInsert.put((Field<Integer>) fk.getFields().get(0), fkOrder);
 
 				} catch (NullPointerException e) {
 					e.printStackTrace();

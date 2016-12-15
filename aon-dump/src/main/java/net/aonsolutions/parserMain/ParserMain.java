@@ -23,11 +23,8 @@ import net.aonsolutions.dump.CallbackDumpExecute;
 import net.aonsolutions.dump.CallbackDumpPrint;
 import net.aonsolutions.dump.CommentsPrintCallbackDump;
 import net.aonsolutions.dump.EraseUser;
-import net.aonsolutions.dump.ForeignKeysPrintCallbackDump;
 import net.aonsolutions.dump.IndexUniqueCallBackDump;
 import net.aonsolutions.dump.ModifyDataCallBack;
-import net.aonsolutions.dump.ParentCallbackDump;
-import net.aonsolutions.dump.SiblingCallbackDump2;
 
 public class ParserMain {
 	
@@ -235,7 +232,7 @@ public class ParserMain {
 				cb = new CallbackDumpPrint(out);
 
 			if (true)
-				cb = new ParentCallbackDump(cb);
+				//cb = new ParentCallbackDump(cb);
 			if (true)
 				cb = new IndexUniqueCallBackDump(cb);
 			if (true)
@@ -244,11 +241,9 @@ public class ParserMain {
 				cb = new ModifyDataCallBack(cb, nif, "registry", "document");
 			if (cmd.hasOption(newNameDomainOpt.getLongOpt()))
 				cb = new ModifyDataCallBack(cb, newDomain, "domain", "name");
-			if (!cmd.hasOption(fkOpt.getLongOpt()))
-				cb = new ForeignKeysPrintCallbackDump(cb, 0, 0);
 			
 			if (cmd.hasOption(fkOpt.getLongOpt()))
-				cb = new SiblingCallbackDump2(cb);
+				//cb = new SiblingCallbackDump2(cb);
 
 			if (cmd.hasOption(commentsOpt.getLongOpt()))
 				cb = new CommentsPrintCallbackDump(out, cb);

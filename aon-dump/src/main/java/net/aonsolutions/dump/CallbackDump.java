@@ -17,7 +17,7 @@ public interface CallbackDump {
 	default void header(Schema schema, String hostName, Map<Table<?>, Integer> domainTables, DSLContext dslContext, int id, IdsMap idsMap){};
 	default void footer(){};
 	default Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap, CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where){return null;};
-	void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows);
+	void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows, String varTableName);
 	default void onAttachInsert(UpdateConditionStep<?> update){};
 	default void downloadParent(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap, CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where){}
 	default void onNewRow(Table<?> t, Map<Field<?>, Object> insertMap, Record r){}

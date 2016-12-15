@@ -31,7 +31,7 @@ public class EraseUser extends AbstractChaimCallbackDump{
 	}
 	
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows, String varTableName) {
 		
 		if (table.getName().equals("user_scope"))
 			throw new SkipInsertException();
@@ -40,7 +40,7 @@ public class EraseUser extends AbstractChaimCallbackDump{
 		if (table.getName().equals("user")){
 			throw new SkipInsertException();
 		}
-		cb.accept(inSet, table, ciclica, numRows);
+		cb.accept(inSet, table, ciclica, numRows, varTableName);
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class EraseUser extends AbstractChaimCallbackDump{
 				.set(User.USER.LOGIN, this.userLogin)
 				.set(User.USER.PASSWORD, this.userPass);
 		
-		cb.accept(inSet2, User.USER, null, 0);
+		cb.accept(inSet2, User.USER, null, 0, "");
 		
 		cb.footer();
 	}

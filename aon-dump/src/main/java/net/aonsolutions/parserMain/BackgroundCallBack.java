@@ -9,8 +9,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.InsertSetMoreStep;
+import org.jooq.Record;
 import org.jooq.Schema;
 import org.jooq.Table;
 
@@ -52,10 +56,28 @@ public class BackgroundCallBack extends AbstractChaimCallbackDump{
 		this.totalTables = domainTables.size();
 		super.header(schema, hostName, domainTables, dslContext, id, idsMap);
 	}
+	
+	@Override
+	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap,
+			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
+		
+		Date date = new Date();
+		Timestamp time = new Timestamp(date.getTime());
+
+		dslContext
+				.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT,
+						TASK_COMMENT.CREATION_USER, TASK_COMMENT.CREATION_DATE)
+				.values(this.idDomain, this.id_task, "<a  style='color: orange;'> WARNING: " + fk.toString() + "</a>",
+						"3203", time)
+				.execute();
+		
+		return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
+	}
 
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows, String varTableName) {
 		
+		super.accept(inSet, table, ciclica, numRows, varTableName);
 		
 		process = ( (double) this.numTablesDownloaded / totalTables) * 100;
 		process = Math.rint(process*1)/1;
@@ -90,7 +112,7 @@ public class BackgroundCallBack extends AbstractChaimCallbackDump{
 		
 		this.numTablesDownloaded++;
 
-		super.accept(inSet, table, ciclica, numRows);
+		//super.accept(inSet, table, ciclica, numRows, varTableName);
 	}
 	
 	private void insertTaskComment(String out) {

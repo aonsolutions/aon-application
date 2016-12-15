@@ -36,7 +36,6 @@ import net.aonsolutions.dump.CallbackDump;
 import net.aonsolutions.dump.CallbackDumpPrint;
 import net.aonsolutions.dump.CancelException;
 import net.aonsolutions.dump.CommentsPrintCallbackDump;
-import net.aonsolutions.dump.ForeignKeysPrintCallbackDump;
 import net.aonsolutions.dump.IndexUniqueCallBackDump;
 import net.aonsolutions.dump.ModifyDataCallBack;
 import net.aonsolutions.dump.ParentCallbackDump;
@@ -143,11 +142,11 @@ public class DumpServlet extends HttpServlet {
 			CallbackDump cb;
 			//cb = new CallbackDumpExecute(aonDump.dslContext);
 			cb = new CallbackDumpPrint(outZip);
-			cb = new ParentCallbackDump(cb);
+			//cb = new ParentCallbackDump(cb);
 			cb = new IndexUniqueCallBackDump(cb);
 			cb = new BackgroundCallBack(cb, System.out, aonDump, id_task, idDomain);
 			cb = new ModifyDataCallBack(cb, "{name}_2", "domain", "name");
-			cb = new ForeignKeysPrintCallbackDump(cb, id_task, idDomain);
+			//cb = new ForeignKeysPrintCallbackDump(cb, id_task, idDomain);
 			cb = new CommentsPrintCallbackDump(outZip, cb);
 
 //			cb = new AbstractChaimCallbackDump(cb) {

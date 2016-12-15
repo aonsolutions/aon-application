@@ -22,7 +22,7 @@ public class CallbackDumpPrint extends AbstractPrintCallbackDump {
 	}
 
 	@Override
-	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows) {
+	public void accept(InsertSetMoreStep<?> inSet, Table<?> table, List<Table<?>> ciclica, Integer numRows, String varTableName) {
 		print(inSet.getSQL());
 		println(";");
 		
