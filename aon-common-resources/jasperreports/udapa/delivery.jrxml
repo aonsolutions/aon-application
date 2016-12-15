@@ -349,7 +349,7 @@
 					<bottomPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="9" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(new String($R{purchase_shipping_address})).toUpperCase()]]></textFieldExpression>
 			</textField>
@@ -1132,24 +1132,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="185" uuid="f656ba14-0c01-4626-9721-d9cecbe33b5b">
-						<jr:tableHeader height="14" rowSpan="1">
-							<box>
-								<bottomPen lineWidth="0.0"/>
-							</box>
-							<textField isBlankWhenNull="true">
-								<reportElement uuid="195a2871-709a-4bb1-a831-69689db62c65" key="textField-54" positionType="Float" x="0" y="0" width="185" height="13" isRemoveLineWhenBlank="true"/>
-								<box topPadding="0" leftPadding="5">
-									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<bottomPen lineWidth="1.0" lineColor="#000000"/>
-									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								</box>
-								<textElement verticalAlignment="Top">
-									<font fontName="SansSerif" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$R{finance_prepayments} + ":"]]></textFieldExpression>
-							</textField>
-						</jr:tableHeader>
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<box>
@@ -1167,7 +1149,12 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 										<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 										<paragraph lineSpacing="Single"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{item}.getProduct().getCategory().getName()]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{item}.getProduct()!=null
+    && $F{item}.getProduct().getCategory()!=null
+    && $F{item}.getProduct().getCategory().getName()!=null
+    && !$F{item}.getProduct().getCategory().getName().equals(""))
+    ? $F{item}.getProduct().getCategory().getName()
+    : $R{finance_prepayments}]]></textFieldExpression>
 								</textField>
 							</jr:cell>
 						</jr:groupHeader>
@@ -1191,7 +1178,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="80" uuid="271c9e81-f616-449a-9983-15c5087be723">
-						<jr:tableHeader height="14" rowSpan="1"/>
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
@@ -1235,7 +1221,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="80" uuid="10650fd9-f768-452e-a072-8b2ca5bc665a">
-						<jr:tableHeader height="14" rowSpan="1"/>
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
@@ -1277,7 +1262,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="35" uuid="81ac0038-3bc4-4a9b-96d2-3e0013f9e489">
-						<jr:tableHeader height="14" rowSpan="1"/>
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
@@ -1317,7 +1301,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="70" uuid="4efc6923-a499-42f0-954d-4d0d0d0735c4">
-						<jr:tableHeader height="14" rowSpan="1"/>
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
@@ -1358,7 +1341,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="35" uuid="cd4bd02b-bc41-491c-8d21-957bb5e27a1b">
-						<jr:tableHeader height="14" rowSpan="1"/>
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
@@ -1398,7 +1380,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="51" uuid="7ea4f135-34c0-444f-960b-e03f2ffd4d13">
-						<jr:tableHeader height="14" rowSpan="1"/>
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
