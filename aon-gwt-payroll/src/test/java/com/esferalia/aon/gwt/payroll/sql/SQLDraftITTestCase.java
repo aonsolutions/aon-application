@@ -164,8 +164,8 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 		});
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1750.00 * 1/2, salary.getTotalPayment());
-		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase());
+		Assert.assertEquals(1750.00 * 1/2, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase(), DELTA);
 		
 		// Cret@ 
 		ctx = EmployeesServiceHelper.getSalaryCalculatorContext(connection,
@@ -188,7 +188,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(endDate, datas.get(0).getEndDate());
 					Assert.assertEquals(1750.00 * 0.5,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					// 635 o 634 Base de Accidentes de Trabajo.
 					datas = s.getContextData().get(CGP_BASE.getName());
@@ -196,7 +196,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(endDate, datas.get(0).getEndDate());
 					Assert.assertEquals(1750.00 * 0.5,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(MATERNITY_BASE.getName());
@@ -204,7 +204,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(endDate, datas.get(0).getEndDate());
 					Assert.assertEquals(100.00 * get(endDate, DAY_OF_MONTH) * 0.5,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 				});
 		;
 
@@ -244,7 +244,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
 					Assert.assertEquals(end, datas.get(1).getEndDate());
 					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
-							Double.parseDouble(datas.get(1).getExpression()));
+							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 					
 
 					// 601 o 611 Base de Accidentes de Trabajo.
