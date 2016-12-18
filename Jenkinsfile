@@ -101,7 +101,9 @@ node {
       sh "sudo yum update -y --enablerepo=aon-testing"
    
       //    
-      sh "sudo service tomcat8 restart"
+      sh "[ -f /var/run/tomcat8.pid ] && sudo service tomcat8 stop || echo 'no pid file'"
+
+      sh "sudo service tomcat8 start"
 
       sh 'sudo mysql -e "DROP DATABASE IF EXISTS \\`test-aonsolutions-org\\`"'
 
