@@ -20,6 +20,7 @@ public abstract class AonToolbar extends Composite {
 
     @UiField Label  title;
 
+    @UiField PaperIconButton fastFilterButton;
     @UiField PaperIconButton statsButton;
     @UiField PaperIconButton menuButton;
     @UiField PaperIconButton infoButton;
@@ -157,4 +158,18 @@ public abstract class AonToolbar extends Composite {
   	void statsButtonClick(ClickEvent event) {
       	onStatsButtonClick();
     }
+    
+    // ----------- STATS BUTTON
+    
+   	protected abstract void onFastFilterButtonClick();
+
+   	public AonToolbar setVisibleFastFilterButton(Boolean isVisible){
+   		fastFilterButton.setVisible(isVisible);
+       	return this;
+    }
+
+   	@UiHandler("fastFilterButton")
+   	void fastFilterButtonClick(ClickEvent event) {
+   		onFastFilterButtonClick();
+   	}
 }

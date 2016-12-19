@@ -19,6 +19,7 @@ public class IssueFilter {
 	String enterprise;
 	
 	String dateDiff;
+	String mine;
 	
 	Integer page = 1;
 	Integer perPage = 30;
@@ -158,6 +159,13 @@ public class IssueFilter {
 		return this;
 	}
 	
-	
+	public String getMine() {
+		return mine;
+	}
+
+	public IssueFilter setMine(String mine) {
+		this.mine = mine;
+		return this;
+	}
 	
 }

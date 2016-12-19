@@ -105,6 +105,7 @@ public class Incidence extends Methods{
 	public void getIssues(String url, IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
 		get(url + (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
 				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
+				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
 				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
 				+ (filter.getWorkgroup() != null ? "&workgroup=" + filter.getWorkgroup() : "")
 				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
@@ -125,6 +126,7 @@ public class Incidence extends Methods{
 		get(url + "repos/" + getUserName() + "/" + getRepositoryName() + "/issues"
 				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
 				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
+				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
 				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
 				+ (filter.getWorkgroup() != null ? "&workgroup=" + filter.getWorkgroup() : "")
 				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
@@ -146,6 +148,7 @@ public class Incidence extends Methods{
 				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
 				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
 				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
+				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
 				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
 				+ (filter.getWorkgroup() != null ? "&workgroup=" + filter.getWorkgroup() : "")
 				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
@@ -167,6 +170,7 @@ public class Incidence extends Methods{
 				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
 				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
 				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
+				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
 				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
 				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
 				+ (filter.getMentioned() != null ? "&mentioned=" + filter.getMentioned() : "")
@@ -187,6 +191,7 @@ public class Incidence extends Methods{
 				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
 				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
 				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
+				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
 				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
 				+ (filter.getWorkgroup() != null ? "&workgroup=" + filter.getWorkgroup() : "")
 				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
@@ -508,7 +513,7 @@ public class Incidence extends Methods{
 	}
 	
 	// FAST FILTER
-		
+	
 	public void getFastFilter(AsyncCallback<JSON<JsFastFilter>> callback){
 		get(url + "repos/"+getUserName()+"/"+getDomainName()+"/fast_filter",callback);
 	}

@@ -560,7 +560,7 @@ public class ReposServlet extends HttpServlet{
 		});
 		return array;
 	}
-	
+
 	private JSONArray getFaqIssuesJSON(Domain domain, String userName, IssueFilter filter, String scheme) {
 		JSONArray array = new JSONArray();
 		DB.getFaqTaskStream(domain, userName, filter).forEach(task -> {
@@ -589,6 +589,8 @@ public class ReposServlet extends HttpServlet{
 		json.put("without_operator", withoutOperator != null && withoutOperator.equalsIgnoreCase("true"));
 		json.put("type", type != null ? type : "");
 		json.put("priority", priority != null ? priority : "");
+		json.put("types", getAllLabelsJSON(domain, userName, TagType.TASK_TYPE, ""));
+		json.put("priorities", getAllPrioritiesJSON(domain, userName));
 		return json;
 	}
 	
@@ -689,6 +691,7 @@ public class ReposServlet extends HttpServlet{
 	private IssueFilter getFilter(HttpServletRequest req){
 		return new IssueFilter()
 				.setTitle(req.getParameter("title"))
+				.setMine(req.getParameter("mine"))
 				.setAssignee(req.getParameter("asignee"))
 				.setWorkgroup(req.getParameter("workgroup"))
 				.setCreator(req.getParameter("creator"))
@@ -715,7 +718,7 @@ public class ReposServlet extends HttpServlet{
 		NotificationInfo ni = NS.buildNotificationInfo(domain, login, task, NotificationType.ASSIGNEE);
 		ni.setNotifyAssignee(true);
 		LinkedList<NotificationInfo> list = NS.buildNotificationInfoList(domain, login, task, NotificationType.ASSIGNEE);
- 		String url = "http://"+domain.getName()+ "/aon-aio" + "/emailFunction/"+ thName + "/" + domain.getName() + "/close/" + task.getId();
+ 		String url = "http://"+domain.getName()+ "/emailFunction/"+ thName + "/" + domain.getName() + "/close/" + task.getId();
 		NS.sendNotification(domain, login, ni, list, NotificationType.ASSIGNEE, url, r.getId());
 	}
 	

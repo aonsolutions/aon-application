@@ -503,6 +503,15 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 		Property<Integer> getWorkgroupProperty();
 	}
+	
+	public interface TaskHolderProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getActiveProperty();
+		Property<Integer> getUserIdProperty();
+		Property<Integer> getCostProfileProperty();
+	}
 
 	public interface GeoZoneProperties{
 		Property<Integer> getIdProperty();

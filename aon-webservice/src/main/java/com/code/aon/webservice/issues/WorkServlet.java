@@ -169,7 +169,7 @@ public class WorkServlet extends HttpServlet{
 				.setType((byte) 0);
 		AON.insertTaskHolder(domain.getName(), domain.getId(), userName, taskHolder);
 		if(json.opt("workgroups") != null){
-			String[] workgroups = json.getString("workgroups").split(",");
+			String[] workgroups = json.getString("workgroups").split("@");
 			for(Integer j = 0 ; j< workgroups.length; j++){
 				if(AonStringUtils.isNumeric(workgroups[j])){
 					AON.insertTaskHolderWorkgroup(domain.getName(), domain.getId(), userName, registry.getId(), Integer.parseInt(workgroups[j]));

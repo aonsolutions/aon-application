@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
+import com.esferalia.aon.gwt.api.client.incidence.JsFastFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -248,10 +249,34 @@ public class Issues implements EntryPoint {
 				contentDockLayoutPanel.add(new StatPanel());
 				dockLayoutPanel.add(contentDockLayoutPanel);				
 			}
+
+			@Override
+			protected void onFastFilterButtonClick() {
+				incidence.getFastFilter(new AsyncCallback<JSON<JsFastFilter>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsFastFilter> result) {
+						issueFilter = new IssueFilter();
+						issueFilter.setState("open");
+						if(result.getOneData().getMine()) issueFilter.setMine(aonData.getUser().getLogin());
+						if(result.getOneData().getWithoutGroup()) issueFilter.setWorkgroup(-1);
+						if(result.getOneData().getWithoutOperator()) issueFilter.setAssignee(-1);
+						issueFilter.setType(result.getOneData().getType());
+						issueFilter.setPriority(result.getOneData().getPriority());
+						
+						FilterPanel fp = (FilterPanel) searchContent.getWidget(0);
+						fp.initialize(false);
+						updateIssueList(issueFilter, false);
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
 		}.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false)
-		.setVisibleStatsButton(false));
+		.setVisibleStatsButton(false)
+		.setVisibleFastFilterButton(true));
 	}
 	
 	private HorizontalPanel getInfoPanel(String color, String text){
@@ -350,7 +375,7 @@ public class Issues implements EntryPoint {
 						public void onSuccess(JsIssue result) {
 							contentDockLayoutPanel.removeFromParent();
 							AonToolbar t = (AonToolbar)toolbar.getWidget(0);
-							t.setVisibleRefreshButton(false);
+							t.setVisibleRefreshButton(false).setVisibleFastFilterButton(false);
 							contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 							contentDockLayoutPanel.add(new IssuePanel(me, incidence, result, -1));
 							dockLayoutPanel.add(contentDockLayoutPanel);

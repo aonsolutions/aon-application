@@ -41,6 +41,8 @@ import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
+import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent;
+import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler;
 
 public class ConfPanel extends Composite {
 
@@ -147,9 +149,20 @@ public class ConfPanel extends Composite {
 		    	acb1.setDisabled(admin);
 				acb1.setItemLabelPath("name");
 		    	acb1.setItems(result.getOneData().getTypes());
-		    	acb1.setInputElementValue(result.getOneData().getPriority());
+		    	
+		    	acb1.setInputElementValue(result.getOneData().getType());
 				acb1.setStyle("padding-left:20px;padding-right:20px;width:300px");
 				acb1.setLabel("Tipo");
+		    	acb1.addChangeHandler(new net.aonsolutions.polymer.aon.widget.event.ChangeEventHandler() {
+					
+					@Override
+					public void onChange(net.aonsolutions.polymer.aon.widget.event.ChangeEvent event) {
+						if(acb1.getInputElementValue().equals("")){
+							String requestData= "{\"type\":\""+ acb1.getInputElementValue() +"\"}";
+							incidence.setFastFilter(requestData);
+						}
+					}
+				});
 				acb1.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
 					
 					@Override
@@ -165,9 +178,19 @@ public class ConfPanel extends Composite {
 		    	acb2.setDisabled(admin);
 		    	acb2.setItemLabelPath("name");
 		    	acb2.setItems(result.getOneData().getPriorities());
-		    	acb2.setInputElementValue(result.getOneData().getType());
+		    	acb2.setInputElementValue(result.getOneData().getPriority());
 		    	acb2.setStyle("padding-left:20px;padding-right:20px;padding-bottom: 20px; width:300px;");
 		    	acb2.setLabel("Prioridad");
+		    	acb2.addChangeHandler(new net.aonsolutions.polymer.aon.widget.event.ChangeEventHandler() {
+					
+					@Override
+					public void onChange(net.aonsolutions.polymer.aon.widget.event.ChangeEvent event) {
+						if(acb2.getInputElementValue().equals("")){
+							String requestData= "{\"priority\":\""+ acb2.getInputElementValue() +"\"}";
+							incidence.setFastFilter(requestData);
+						}
+					}
+				});
 		    	acb2.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
 					
 					@Override
@@ -545,35 +568,86 @@ public class ConfPanel extends Composite {
     }
 	
 	private void addUser(){		
-		VerticalPanel vp = new VerticalPanel();
-		PaperInput pi = new PaperInput();
-		pi.setLabel("Operario");
-		vp.add(pi);
-		PaperInput pi2 = new PaperInput();
-		pi2.setLabel("Email");
-		vp.add(pi2);
-		AonDialog2 dialog =  new AonDialog2("Nuevo Operario",vp){
-			@Override protected void onCancel() {hide();}
-			@Override protected void onAccept() {
-				VerticalPanel vp = (VerticalPanel) content.getWidget(0);
-				PaperInput name = (PaperInput) vp.getWidget(0);
-				PaperInput email = (PaperInput) vp.getWidget(1);
-				incidence.addOperator("{\"name\":\""+ name.getValue() +"\",\"email\":\""+ email.getValue() +"\"}", new AsyncCallback<JsUser>() {
+    	incidence.getGroups(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				VerticalPanel vp = new VerticalPanel();
+				PaperInput pi = new PaperInput();
+				pi.setLabel("Operario");
+				vp.add(pi);
+				PaperInput pi2 = new PaperInput();
+				pi2.setLabel("Email");
+				vp.add(pi2);
+				AonComboBox acb = new AonComboBox();
+				acb.setLabel("Grupo de Trabajo");
+				acb.setItemLabelPath("login");
+				acb.setItems(result.getData());
+				acb.addSelectedItemChangedHandler(new SelectedItemChangedEventHandler() {
 					
 					@Override
-					public void onSuccess(JsUser result) {
-						userSelector.removeFromParent();
-						userSelector = new IronSelector();
-						userCollapse.add(userSelector);
-						loadUser();
+					public void onSelectedItemChanged(SelectedItemChangedEvent event) {
+						JsUser js = acb.getSelectedItem().cast();
+						HorizontalPanel hp = new HorizontalPanel();
+						PaperItem item = new PaperItem();
+								
+						IronIcon ii = new IronIcon();
+						ii.setIcon("group-work");
+						item.add(ii);
+						item.add(new Label(js.getLogin()));
+						item.setStyle("min-height: 30px;");	
+						
+						PaperIconButton pib = new PaperIconButton();
+						pib.setIcon("clear");
+						pib.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
+						Integer l = vp.getWidgetCount();
+						pib.addClickHandler(new ClickHandler() {
+							
+							@Override
+							public void onClick(ClickEvent event) {
+								vp.remove(l);
+							}
+						});
+						hp.add(item);hp.add(pib);
+						hp.setLayoutData(js.getId());
+						hp.setWidth("100%");
+						vp.add(hp);
 					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});		
-				hide();
+				});
+				// TODO vp.add(acb);
+				AonDialog2 dialog =  new AonDialog2("Nuevo Operario",vp){
+					@Override protected void onCancel() {hide();}
+					@Override protected void onAccept() {
+						VerticalPanel vp = (VerticalPanel) content.getWidget(0);
+						PaperInput name = (PaperInput) vp.getWidget(0);
+						PaperInput email = (PaperInput) vp.getWidget(1);
+						String str = "";
+						for(Integer i = 3; i < vp.getWidgetCount(); i++){
+							HorizontalPanel hp = (HorizontalPanel) vp.getWidget(i);
+							str = str + hp.getLayoutData().toString() + "@";
+						}
+						
+						incidence.addOperator("{\"name\":\""+ name.getValue() +"\",\"email\":\""+ email.getValue() +"\",\"workgroups\":\""+str+"\"}", new AsyncCallback<JsUser>() {
+							
+							@Override
+							public void onSuccess(JsUser result) {
+								userSelector.removeFromParent();
+								userSelector = new IronSelector();
+								userCollapse.add(userSelector);
+								loadUser();
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});		
+						hide();
+					}
+				};
+				dialog.center();
+
 			}
-		};
-		dialog.center();
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
     private void updateUser(JsUser user){

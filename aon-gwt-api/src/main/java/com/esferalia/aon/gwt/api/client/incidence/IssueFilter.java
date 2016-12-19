@@ -20,6 +20,7 @@ public class IssueFilter {
 	Integer enterprise;
 	
 	Integer dateDiff;
+	String mine;
 	
 	Integer page = 1;
 	Integer perPage = 30;
@@ -155,6 +156,14 @@ public class IssueFilter {
 		this.workgroup = workgroup;
 		return this;
 	}
-	
+
+	public String getMine() {
+		return mine;
+	}
+
+	public IssueFilter setMine(String mine) {
+		this.mine = mine;
+		return this;
+	}
 	
 }

@@ -37,10 +37,12 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
@@ -48,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
@@ -65,6 +68,7 @@ public class TaskDAO {
 	private static final TaskEventPropertiesDAO TASK_EVENT_PROPERTIES = new TaskEventPropertiesDAO();
 	private static final TaskCommentPropertiesDAO TASK_COMMENT_PROPERTIES = new TaskCommentPropertiesDAO();
 	private static final TaskHolderWorkgroupPropertiesDAO TASK_HOLDER_WORKGROUP_PROPERTIES = new TaskHolderWorkgroupPropertiesDAO();
+	private static final TaskHolderPropertiesDAO TASK_HOLDER_PROPERTIES = new TaskHolderPropertiesDAO();
 	
 	protected static class TaskHolderWorkgroupPropertiesDAO implements TaskHolderWorkgroupProperties {
 		protected Condition[] getConditions(TaskHolderWorkgroupFilter filter) {
@@ -76,6 +80,20 @@ public class TaskDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER_WORKGROUP.DOMAIN);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER_WORKGROUP.TASK_HOLDER);}
 		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER_WORKGROUP.WORKGROUP);}
+	}
+	
+	protected static class TaskHolderPropertiesDAO implements TaskHolderProperties {
+		protected Condition[] getConditions(TaskHolderFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_HOLDER.TYPE);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_HOLDER.ACTIVE);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.USER_ID);}
+		@Override public Property<Integer> getCostProfileProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.COST_PROFILE);}
 	}
 	
 	protected static class TaskTagPropertiesDAO implements TaskTagProperties {
@@ -210,7 +228,7 @@ public class TaskDAO {
 	}
 	
 	
-	private static Condition getIssueFilterCondition(IssueFilter issueFilter) {
+	private static Condition getIssueFilterCondition(AONContext ctx, IssueFilter issueFilter) {
 		Condition c;
 		//state
 		if(issueFilter.getState().equals("open")) c = TASK.STATUS.eq(TaskStatus.PENDING.value())
@@ -222,6 +240,19 @@ public class TaskDAO {
 		else if(issueFilter.getState().equals("faq")) c = TASK.STATUS.eq(TaskStatus.FAQ.value()).and(TASK.PARENT.isNull());
 		else c = TASK.STATUS.ne(TaskStatus.DELETED.value()).and(TASK.STATUS.ne(TaskStatus.FAQ.value()));
 
+		// mine (for fast filter)
+		if(issueFilter.getMine() != null && !issueFilter.getMine().equals("")){
+			User user = SecurityDAO.getUser(ctx, issueFilter.getMine());
+			TaskHolder taskHolder = getTaskHolder(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(user.getId())));
+			Condition m = TASK.CREATION_USER.eq(issueFilter.getMine())
+				.or(TASK.MODIFICATION_USER.eq(issueFilter.getMine()))
+				.or(TASK_COMMENT.CREATION_USER.eq(issueFilter.getMine()))
+				.or(TASK_EVENT.CREATION_USER.eq(issueFilter.getMine()))
+				.or(TASK_EVENT.MODIFICATION_USER.eq(issueFilter.getMine()));
+			if(taskHolder.getId() != null) m.or(TASK.TASK_HOLDER.eq(taskHolder.getId()));
+			c = c.and(m);
+		}
+		
 		// assignee
 		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals("")){
 			if(issueFilter.getAssignee().equals("-1"))
@@ -268,8 +299,13 @@ public class TaskDAO {
 					.or(TASK.COMMENTS.contains(issueFilter.getTitle()))
 					.or(TASK_COMMENT.COMMENT.contains(issueFilter.getTitle())));
 		// type
-		if(issueFilter.getType() != null && !issueFilter.getType().equals(""))
-			c = c.and(TASK_TAG.TAG.eq(Integer.parseInt(issueFilter.getType())));	
+		if(issueFilter.getType() != null && !issueFilter.getType().equals("")){
+			if(!AonStringUtils.isNumeric(issueFilter.getType())){
+				Tag tag = TagDAO.getTagStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getNameProperty().eq(issueFilter.getType()))
+					.and(f.getTypeProperty().eq(TagType.TASK_TYPE.value()))).findFirst().orElse(new Tag());
+				c = c.and(TASK_TAG.TAG.eq(tag.getId()));
+			} else c = c.and(TASK_TAG.TAG.eq(Integer.parseInt(issueFilter.getType())));
+		}
 				
 		// priority
 		if(issueFilter.getPriority() != null && !issueFilter.getPriority().equals(""))
@@ -305,13 +341,44 @@ public class TaskDAO {
 		Boolean tagBool = (issueFilter.getLabels() != null && !issueFilter.getLabels().equals(""))
 				|| (issueFilter.getType() != null && !issueFilter.getType().equals(""));
 		Boolean commentBool = issueFilter.getTitle() != null && !issueFilter.getTitle().equals("");
-		
-		Condition openCondition = getIssueFilterCondition(issueFilter.setState("open")); 
-		Condition closedCondition = getIssueFilterCondition(issueFilter.setState("closed")); 
-		Condition deletedCondition = getIssueFilterCondition(issueFilter.setState("deleted")); 
+		Boolean eventBool = false;
+		if(issueFilter.getMine() != null && !issueFilter.getMine().equals("")){
+			tagBool = true;
+			commentBool = true;
+			eventBool = true;
+		}
+		Condition openCondition = getIssueFilterCondition(ctx, issueFilter.setState("open")); 
+		Condition closedCondition = getIssueFilterCondition(ctx, issueFilter.setState("closed")); 
+		Condition deletedCondition = getIssueFilterCondition(ctx, issueFilter.setState("deleted")); 
 		Condition extra = TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
 					.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value())));
-		if(tagBool && commentBool){
+		
+		if(tagBool && commentBool && eventBool){
+			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_EVENT).on(TASK_EVENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
+					.fetch().size();
+			
+			Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_EVENT).on(TASK_EVENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
+					.fetch().size();
+			
+			Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_EVENT).on(TASK_EVENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
+					.fetch().size();
+			return new Integer[]{open,close,delete};
+		} else if(tagBool && commentBool){
 			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
@@ -408,15 +475,35 @@ public class TaskDAO {
 		Boolean tagBool = (issueFilter.getLabels() != null && !issueFilter.getLabels().equals(""))
 				|| (issueFilter.getType() != null && !issueFilter.getType().equals(""));
 		Boolean commentBool = issueFilter.getTitle() != null && !issueFilter.getTitle().equals("");
+		Boolean eventBool = false;
+		if(issueFilter.getMine() != null && !issueFilter.getMine().equals("")){
+			tagBool = true;
+			commentBool = true;
+			eventBool = true;
+		}
 		
-		Condition condition = getIssueFilterCondition(issueFilter); 
+		Condition condition = getIssueFilterCondition(ctx, issueFilter); 
 		SortField<Timestamp> sort = getIssueFilterSortField(issueFilter);
 		
-		/// TODO task_comment usar left outer join!! 
 		Condition extra = TASK.PARENT.isNull();		 
 		if(!issueFilter.getState().equals("faq")) extra = extra.or(TASK.PARENT.eq(TASK.ID))
 					.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value())));
-		if(tagBool && commentBool){
+		if(tagBool && commentBool && eventBool){
+			return ctx.getDslContext().selectDistinct(TASK.ACTIVITY_TYPE,TASK.COMMENTS,TASK.CREATION_DATE, TASK.CREATION_USER
+					,TASK.DESCRIPTION,TASK.DOMAIN, TASK.DUE_DATE,TASK.END_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID, TASK.MODIFICATION_DATE, TASK.ID
+					,TASK.MODIFICATION_USER, TASK.NUMBER, TASK.PARENT, TASK.PRIORITY, TASK.PERCENT, TASK.PROJECT, TASK.REGISTRY, TASK.REPEAT_PERIOD
+					,TASK.SENDER, TASK.SOURCE, TASK.SOURCE_ID, TASK.START_DATE, TASK.STATUS, TASK.TASK_HOLDER, TASK.WORKGROUP)
+					.from(TASK)
+					.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+					.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.leftOuterJoin(TASK_EVENT).on(TASK_EVENT.TASK.eq(TASK.ID))
+				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
+				.and(extra)
+				.orderBy(sort)
+				.limit(issueFilter.getPerPage())
+				.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
+				.fetchInto(TASK).stream().map(new FullTaskFiller());
+		} else if(tagBool && commentBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 									.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
@@ -425,8 +512,7 @@ public class TaskDAO {
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
-		}
-		if(commentBool){
+		}else if(commentBool){
 			return ctx.getDslContext().selectDistinct(
 						TASK.COMMENTS, TASK.CREATION_DATE, TASK.CREATION_USER, TASK.DESCRIPTION, TASK.DOMAIN, TASK.END_DATE, TASK.WORKGROUP,TASK.ID, TASK.MODIFICATION_DATE, TASK.MODIFICATION_USER, TASK.NUMBER, TASK.PARENT, TASK.PRIORITY, TASK.PROJECT, TASK.DUE_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID, TASK.PERCENT, TASK.REGISTRY, TASK.REPEAT_PERIOD, TASK.SENDER, TASK.SOURCE, TASK.START_DATE, TASK.STATUS, TASK.TASK_HOLDER					
 					).from(TASK).leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
@@ -436,8 +522,7 @@ public class TaskDAO {
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
-		}
-		if(tagBool){
+		} else if(tagBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
 					.and(extra)
@@ -445,8 +530,7 @@ public class TaskDAO {
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
-		}
-		return ctx.getDslContext().selectDistinct().from(TASK) 
+		}else return ctx.getDslContext().selectDistinct().from(TASK) 
 				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
 				.and(extra)
 				.orderBy(sort)
@@ -582,7 +666,7 @@ public class TaskDAO {
 	
 	public static Stream<Registry> getTaskMemberStream(AONContext ctx, String filter){
 		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
-			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
+			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter)).orderBy(REGISTRY.NAME)
 			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
 	}
 	
@@ -590,7 +674,7 @@ public class TaskDAO {
 		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
 				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
-				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId))
+				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId)).orderBy(REGISTRY.NAME)
 			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
 	}
 	
@@ -611,7 +695,8 @@ public class TaskDAO {
 	
 	public static Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter){
 		return ctx.getDslContext().select().from(WORKGROUP).where(WORKGROUP.DOMAIN.eq(ctx.getDomainId()))
-			.and(WORKGROUP.DESCRIPTION.like(filter)).fetchInto(WORKGROUP).stream().map(new FullWorkgroupFiller());
+			.and(WORKGROUP.DESCRIPTION.like(filter)).orderBy(WORKGROUP.DESCRIPTION)
+			.fetchInto(WORKGROUP).stream().map(new FullWorkgroupFiller());
 	}
 	
 	public static void deleteTaskTag(AONContext ctx, Integer id, TagType tagType){
@@ -653,6 +738,11 @@ public class TaskDAO {
 		return ctx.getDslContext().delete(WORKGROUP)
 				.where(WORKGROUP.ID.eq(wId))
 			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
+	}
+	
+	public static TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter){
+		return ctx.getDslContext().select().from(TASK_HOLDER).where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+				.fetchInto(TASK_HOLDER).stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
 	public static TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder){
