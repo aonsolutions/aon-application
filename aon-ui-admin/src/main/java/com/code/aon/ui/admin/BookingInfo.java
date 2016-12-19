@@ -363,12 +363,14 @@ public class BookingInfo implements Serializable {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
+			this.bookingModules.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
 			this.bookingModules.add(this.documental);
 			this.displayModules.remove(this.documental);
 		} else {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
+			this.bookingModules.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
 			if ( getParentDomain() != null ) {
 				Integer parentDomainId = getParentDomain().getId();
 				Integer applicationId = aioInfo.getApplication().getId();
