@@ -37,7 +37,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.WarehouseCollectionsController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.Warehouse;
-import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
+import com.esferalia.aon.file.seres.util.writer.connect.ConnectDeliveryWriter;
 import com.esferalia.aon.ingenet.IngenetDeliveryManager;
 import com.esferalia.aon.ingenet.SourceSalesNotFoundException;
 
@@ -216,7 +216,7 @@ public class UdapaDeliveryHandler implements Serializable {
 			String companyEdiCode = company.getEdiCompanyCode();
 
 			// writer file
-			UdapaDeliveryWriter writer = new UdapaDeliveryWriter();
+			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
 			output = writer.createFile(delivery, companyEdiCode,
 					customerEdiCode);
 

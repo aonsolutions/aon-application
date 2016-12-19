@@ -15,6 +15,7 @@ import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -39,17 +40,17 @@ import com.code.aon.ui.finance.controller.SaleInvoiceDetailController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.udapa.invoice.data.SINCC;
-import com.esferalia.aon.file.seres.udapa.invoice.data.SINCL;
-import com.esferalia.aon.file.seres.udapa.invoice.data.SINCT;
-import com.esferalia.aon.file.seres.util.reader.udapa.UdapaInvoiceReader;
+import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
+import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCL;
+import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCT;
+import com.esferalia.aon.file.seres.util.reader.connect.ConnectInvoiceReader;
 
 public class EdiInvoiceImporterHandler implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 210023208960242355L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EdiInvoiceImporterHandler.class);
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
@@ -96,25 +97,25 @@ public class EdiInvoiceImporterHandler implements Serializable {
 
 	public void onImportFile(ActionEvent event) {
 		setShowImportFileWindow(false);
-		UdapaInvoiceReader reader = new UdapaInvoiceReader();
-		SINCC sincc = null;
+		ConnectInvoiceReader reader = new ConnectInvoiceReader();
+		RECTL rectl = null;
 		try {
-			sincc = reader.readFile(aonFile.openStream());
+			rectl = reader.readFile(aonFile.openStream());
 			getLogPanel().info("Fichero leido correctamente");
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		getLogPanel().info("Inicio del proceso de importacion");
-		createInvoice(event, sincc);
+		createInvoice(event, rectl);
 		getLogPanel().info("Proceso finalizado correctamente");
 		setAonFile(null);
 	}
 
-	public void createInvoice(ActionEvent event, SINCC sincc) {
+	public void createInvoice(ActionEvent event, RECTL rectl) {
 		Invoice invoice = (Invoice) controller.getTo();
 
-		String customerInvoiceCode = sincc.getCodigoComprador_QuienPide__BY_();
+		String customerInvoiceCode = rectl.getCodigoEmisor();
 		if (customerInvoiceCode == null) {
 			getLogPanel()
 					.error("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
@@ -130,12 +131,12 @@ public class EdiInvoiceImporterHandler implements Serializable {
 						"Cliente detectado con el codigo de punto de entrega "
 								+ customerInvoiceCode);
 
-				if(sincc.getNumeroDeFactura()!=null){
+				if(rectl.sincc.getNumeroDeFactura()!=null){
 					String serie = null;
 					String number = null;
-					if(sincc.getNumeroDeFactura().matches(SERIE_NUMBER_PATTERN)){
-						serie = sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$1");
-						number = sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$2");
+					if(rectl.sincc.getNumeroDeFactura().matches(SERIE_NUMBER_PATTERN)){
+						serie = rectl.sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$1");
+						number = rectl.sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$2");
 					}
 					invoice.setSeries(serie);
 					invoice.setNumber(Integer.parseInt(number));
@@ -145,21 +146,21 @@ public class EdiInvoiceImporterHandler implements Serializable {
 				invoice.setScope(customer.getScope());
 
 				try {
-					invoice.setIssueDate(dateFormatter.parse(sincc
-							.getFechaFactura().toString()));
+					invoice.setIssueDate(dateFormatter.parse(rectl.sincc
+							.getFechaDeFactura().toString()));
 				} catch (ParseException e) {
 					getLogPanel().error(
 							"No se ha podido convertir la fecha: "
-									+ sincc.getFechaFactura());
+									+ rectl.sincc.getFechaDeFactura());
 					invoice.setIssueDate(null);
 				}
 
 				invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 				invoice.setStatus(InvoiceStatus.PENDING);
 
-				String remarks = "Pedido: " + sincc.getNumeroDePedido_ON_();
+				String remarks = "Pedido: " + rectl.sincc.getNumeroDePedido_ON_();
 				remarks += System.getProperty("line.separator");
-				for (SINCT value : sincc.sinctList) {
+				for (SINCT value : rectl.sinctList) {
 					remarks += (StringUtils.isNotBlank(value.getTexto1()) ? value
 							.getTexto1().trim() : "")
 							+ (StringUtils.isNotBlank(value.getTexto2()) ? ", "
@@ -176,7 +177,7 @@ public class EdiInvoiceImporterHandler implements Serializable {
 				invoice.setComments("");
 
 				List<InvoiceDetail> detailList = new LinkedList<InvoiceDetail>();
-				for (SINCL line : sincc.sinclList) {
+				for (SINCL line : rectl.sinclList) {
 					RegistryItem rItem = searchRegistryItem(line, customer);
 					if (rItem == null) {
 						getLogPanel()
