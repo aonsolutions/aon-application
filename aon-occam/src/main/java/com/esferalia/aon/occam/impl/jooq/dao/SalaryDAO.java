@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -38,18 +39,22 @@ import org.jooq.lambda.Seq;
 
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLine;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDAO {
@@ -62,7 +67,93 @@ public class SalaryDAO {
 	private static final Byte DEDUCTION_TYPE_OTHER = 9;
 
 	// --------------------
-
+	public static Stream<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to) {
+		final TreeMap<Date,SalaryEntry> map = new TreeMap<Date,SalaryEntry>();
+		ctx.getDslContext()
+			.select(SALARY.ID
+					,SALARY.ISSUE_DATE
+					,SALARY.MONEY_IRPF_BASE
+					,SALARY.INKIND_IRPF_BASE
+					,SALARY.IRPF_BASE
+					,SALARY.TOTAL_IRPF
+					,SALARY.SOCIAL_SECURITY_CONTRIBUTIONS
+					,SALARY.TOTAL_ENTERPRISE
+					,SALARY.TOTAL_LIQUID)
+			.from(SALARY)
+			.where(SALARY.DOMAIN.equal(ctx.getDomainId()))
+			.and(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)))
+			.fetch()
+			.stream()
+			.forEach(rec -> {
+				int salaryId = rec.get(SALARY.ID);
+				Date issueDate = rec.get(SALARY.ISSUE_DATE);
+				if (!map.containsKey(issueDate)) {
+					SalaryEntry entry = new SalaryEntry();
+					entry.setAccountEntry(new AccountEntry().setEntryDate(issueDate));
+					map.put(issueDate,entry);	
+				}
+				final SalaryEntry entry = map.get(issueDate);
+				entry.setSalaryCount(entry.getSalaryCount()+1);
+				entry.setEmployeeSocialInsurance( AonMathUtils.round(entry.getEmployeeSocialInsurance() 
+						+ rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));;
+				entry.setCompanySocialInsurance( AonMathUtils.round(entry.getCompanySocialInsurance() 
+						+ rec.getValue(SALARY.TOTAL_ENTERPRISE)));;
+				double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+				if (AonMathUtils.isZero(rec.getValue(SALARY.INKIND_IRPF_BASE))) {
+					entry.setIrpf( AonMathUtils.round(entry.getIrpf() + totalIrpf));
+				} else {
+					double base = rec.getValue(SALARY.IRPF_BASE);
+					double moneyBase = rec.getValue(SALARY.MONEY_IRPF_BASE);
+					double irpf = AonMathUtils.round( moneyBase * totalIrpf  / base ); 	
+					entry.setIrpf( AonMathUtils.round(entry.getIrpf() + irpf));
+					entry.setInKindIrpf( AonMathUtils.round(entry.getInKindIrpf() + AonMathUtils.round( totalIrpf - irpf)));
+				}
+				ctx.getDslContext().select(SALARY_PAYMENT.TYPE,SALARY_PAYMENT.AMOUNT)
+					.from(SALARY_PAYMENT)
+					.where(SALARY_PAYMENT.SALARY.equal(salaryId))
+					.fetch()
+					.stream()
+					.forEach(pay -> {
+						double amount = AonMathUtils.round(pay.getValue(SALARY_PAYMENT.AMOUNT));
+						Byte type = pay.getValue(SALARY_PAYMENT.TYPE);
+						if (AonNumberUtils.between(type, 42, 50) ) {
+							entry.setAllowance( AonMathUtils.round(entry.getAllowance()  + amount));
+						} else if (AonNumberUtils.between(type, 51, 54) ) {
+							entry.setSalaryCompensation( AonMathUtils.round(entry.getSalaryCompensation() + amount));
+						} else if (AonNumberUtils.between(type, 13, 26) ) {
+							entry.setInKindSalary( AonMathUtils.round(entry.getInKindSalary() + amount));
+						} else {
+							entry.setMoneySalary( AonMathUtils.round(entry.getMoneySalary() + amount));
+						}
+				});
+				ctx.getDslContext().select(SALARY_DEDUCTION.TYPE,SALARY_DEDUCTION.AMOUNT)
+					.from(SALARY_DEDUCTION)
+					.where(SALARY_DEDUCTION.SALARY.equal(salaryId))
+					.fetch()
+					.stream()
+					.forEach(ded -> {
+						double amount = AonMathUtils.round(ded.getValue(SALARY_DEDUCTION.AMOUNT));
+						Byte type = ded.getValue(SALARY_DEDUCTION.TYPE);
+						if (AonNumberUtils.equals(type, DEDUCTION_ADVANCE) ) {
+							entry.setSalaryDedAdvPayment(AonMathUtils.round(entry.getSalaryDedAdvPayment() + amount));
+						} else if (AonNumberUtils.equals(type,DEDUCTION_TYPE_OTHER) ){
+							entry.setSalaryOtherDeductions( AonMathUtils.round(entry.getSalaryOtherDeductions() + amount));
+						}
+				});
+				ctx.getDslContext().select(SALARY_EMBARGO.AMOUNT)
+					.from(SALARY_EMBARGO)
+					.where(SALARY_EMBARGO.SALARY.equal(salaryId))
+					.fetch()
+					.stream()
+					.forEach(emb -> {
+						double amount = AonMathUtils.round(emb.getValue(SALARY_EMBARGO.AMOUNT));
+						entry.setSalaryDedSeize( AonMathUtils.round(entry.getSalaryDedSeize() + amount));
+				});
+			});
+		return map.values().stream();
+	}
+	
+	@Deprecated
 	public static Stream<SalaryAccountEntry> getSalaryEntries(AONContext ctx,
 			Integer enterprise, Date from, Date to, String concept,
 			Integer registryBank) {

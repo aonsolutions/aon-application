@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
@@ -1318,7 +1319,14 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.rectifyInvoice(currentDomainName,currentDomain, invoiceId, data,
 				new AsyncCallbackWrapper<AccountingInvoice>(callback));
-		
+	}
+
+	@Override
+	public void getSalaryEntries(String domainName, int domain, Date from, Date to,
+			AsyncCallback<LinkedList<SalaryEntry>> callback) {
+		AON.start();
+		fsa.getSalaryEntries(domainName,domain, from, to,
+				new AsyncCallbackWrapper<LinkedList<SalaryEntry>>(callback));
 	}
 
 	// --------------------------------------------------------------- ACCOUNT
@@ -1361,5 +1369,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		// TODO Apéndice de método generado automáticamente
 		fsa.getMod123Attach(domainName, mod123, callback);
 	}
+
 
 }

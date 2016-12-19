@@ -46,6 +46,9 @@ public interface CommonMessages extends Messages {
 		})
 	String month(@Select int month);
 	
+	@DefaultMessage("Mes")
+	String monthName();
+	
 	@DefaultMessage("Meses")
 	String months();
 
@@ -327,6 +330,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Borrar")
 	String deleteAction();
+	
+	@DefaultMessage("Seleccionar")
+	String selectAction();
 	
 	@DefaultMessage("Auditor\u00eda")
 	String audit();
@@ -3167,4 +3173,8 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Embargo")
 	String seize();
+	
+	@DefaultMessage("Importar desde n\u00F3minas")
+	String importSalaryAction();
+	
 }

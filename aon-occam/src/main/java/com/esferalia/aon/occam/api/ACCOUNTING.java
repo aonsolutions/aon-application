@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
@@ -397,6 +398,18 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, userLogin);
 			return getAccounting().rectifyInvoice(ctx, invoiceId, data);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+
+	public static LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String userLogin, Date from, Date to) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, userLogin);
+			return getAccounting().getSalaryEntries(ctx, from, to);
 		} finally {
 			if (ctx != null)
 				ctx.close();

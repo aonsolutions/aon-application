@@ -1748,6 +1748,7 @@ input:disabled+label {
 
 @sprite .aon-icon-loupe {
 	gwt-image: "aonIconLoupe";
+	width: auto;
 }
 
 @sprite .aon-icon-modules {

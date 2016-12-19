@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
@@ -267,6 +268,8 @@ public interface FiscalServiceAsync {
 			AsyncCallback<AccountingInvoice> asyncCallback);
 	void rectifyInvoice(String currentDomainName, int currentDomain, Integer id, InvoiceRectificationData data,
 			AsyncCallback<AccountingInvoice> asyncCallback);
+	void getSalaryEntries(String domainName, int domain, Date from, Date to,
+			AsyncCallback<LinkedList<SalaryEntry>> callback);
 
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	void getAccountStatement(String domainName, int domain, 
@@ -281,6 +284,7 @@ public interface FiscalServiceAsync {
 	void getMod111Attach(String domainName, Mod111 mod111, AsyncCallback<Attach> callback);
 	void getMod115Attach(String domainName, Mod115 mod115, AsyncCallback<Attach> callback);
 	void getMod123Attach(String domainName, Mod123 mod123, AsyncCallback<Attach> callback);
+
 
 
 	

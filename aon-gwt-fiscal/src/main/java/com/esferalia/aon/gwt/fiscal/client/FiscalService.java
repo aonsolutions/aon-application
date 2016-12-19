@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
@@ -255,7 +256,7 @@ public interface FiscalService extends RemoteService {
 	AccountingInvoice getRegistryLastAccountingInvoice(String currentDomainName, int currentDomain, Integer registryId) throws AonCoreException;
 	AccountingInvoice rectifyInvoice(String currentDomainName, int currentDomain, Integer id,
 		InvoiceRectificationData data) throws AonCoreException;
-	
+	LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, Date from, Date to) throws AonCoreException;
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	AccountStatementReport getAccountStatement(String domainName,int domain, AccountStatementParams params) throws AonCoreException;	
 	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain, AccountStatementParams params) throws AonCoreException;
@@ -263,11 +264,5 @@ public interface FiscalService extends RemoteService {
 	Attach getMod111Attach(String domainName, Mod111 mod111);
 	Attach getMod115Attach(String domainName, Mod115 mod115);
 	Attach getMod123Attach(String domainName, Mod123 mod123);
-
-
-
-
-
 	
-
 }

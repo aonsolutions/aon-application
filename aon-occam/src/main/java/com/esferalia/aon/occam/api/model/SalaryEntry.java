@@ -10,6 +10,8 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 	
 	private AccountEntry accountEntry;
 	
+	private int salaryCount;
+	
 	private String concept;
 	
 	private double moneySalary;
@@ -29,6 +31,9 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 
 	private double salaryDedSeize;
 	private Account salaryDedSeizeAccount;
+	
+	private double salaryOtherDeductions;
+	private Account salaryOtherDeductionsAccount;
 
 	private double irpf;
 	private Account irpfAccount;
@@ -51,6 +56,13 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 	@Override
 	public void setAccountEntry(AccountEntry accountEntry) {
 		this.accountEntry = accountEntry;
+	}
+	public int getSalaryCount() {
+		return salaryCount;
+	}
+	public SalaryEntry setSalaryCount(int salaryCount) {
+		this.salaryCount = salaryCount;
+		return this;
 	}
 	public String getConcept() {
 		return concept;
@@ -143,6 +155,22 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 		this.salaryDedSeizeAccount = salaryDedSeizeAccount;
 		return this;
 	}
+	
+	public double getSalaryOtherDeductions() {
+		return salaryOtherDeductions;
+	}
+	public SalaryEntry setSalaryOtherDeductions(double salaryOtherDeductions) {
+		this.salaryOtherDeductions = salaryOtherDeductions;
+		return this;
+	}
+	public Account getSalaryOtherDeductionsAccount() {
+		return salaryOtherDeductionsAccount;
+	}
+	public SalaryEntry setSalaryOtherDeductionsAccount(Account salaryOtherDeductionsAccount) {
+		this.salaryOtherDeductionsAccount = salaryOtherDeductionsAccount;
+		return this;
+	}
+		
 	public double getIrpf() {
 		return irpf;
 	}

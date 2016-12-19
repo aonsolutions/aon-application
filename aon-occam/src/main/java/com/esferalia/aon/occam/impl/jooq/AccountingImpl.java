@@ -25,16 +25,15 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -42,12 +41,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -331,6 +330,30 @@ public class AccountingImpl implements IAccounting {
 		return null;
 	}
 
+	@Override
+	public LinkedList<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to) {
+		LinkedList<AccountEntry> entries = AccountEntryDAO.fetch(ctx,  
+				p -> p.getDomainProperty().eq(ctx.getDomainId())
+					.and(p.getEntryDateProperty().between(from, to))
+					.and(p.getEntryTypeProperty().eq((byte) AccountEntryType.SALARY.ordinal()))
+				, 0, 1000)
+			.collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<SalaryEntry> salaries = SalaryDAO.getSalaryEntries(ctx, from, to)
+				.collect(Collectors.toCollection(LinkedList::new));
+		for (SalaryEntry salary : salaries ) {
+			Date salaryDate = salary.getAccountEntry().getEntryDate();
+			for (AccountEntry entry : entries) {
+				Date entryDate = entry.getEntryDate();
+				if (AonDateUtils.isSameDay(salaryDate, entryDate)) {
+					salary.setAccountEntry(entry);
+					break;
+				}
+			}
+		}
+		return salaries;
+	}
+
+	
 	// 					      BALANCE
 	public LinkedHashMap<String, AccountBalance>
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException {

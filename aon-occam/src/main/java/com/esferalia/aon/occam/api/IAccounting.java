@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
@@ -67,6 +68,7 @@ public interface IAccounting {
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Date issueDate);
 	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId);
 	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data);
+	public LinkedList<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to);
 	
 	// 			BALANCE
 	public LinkedHashMap<String, AccountBalance> 
@@ -77,7 +79,5 @@ public interface IAccounting {
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException;
-	
-	
 	
 }

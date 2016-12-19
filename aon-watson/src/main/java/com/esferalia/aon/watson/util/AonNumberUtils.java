@@ -4,6 +4,9 @@ package com.esferalia.aon.watson.util;
 
 public class AonNumberUtils {
 
+	public static final Integer INTEGER_ZERO = new Integer(0);
+	public static final Integer INTEGER_ONE = new Integer(1);
+	
 	public static boolean isValid(Double number) {
 		return number != null && !number.isNaN() && !number.isInfinite();
 	}
@@ -104,5 +107,10 @@ public class AonNumberUtils {
 		return value.toString();
 	}
 
+	public static boolean between(Number value, Number limit1, Number limit2) {
+		if (Double.compare(value.doubleValue(), limit1.doubleValue()) < 0) return false;
+		if (Double.compare(value.doubleValue(), limit2.doubleValue()) > 0) return false;
+		return true;
+	}
 
 }

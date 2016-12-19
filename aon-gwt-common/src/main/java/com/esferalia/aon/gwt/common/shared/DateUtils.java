@@ -13,6 +13,10 @@ public class DateUtils {
 	public static int getYear(Date date) {
 		return date.getYear() + 1900;
 	}
+	
+	public static int getMonth(Date date) {
+		return date.getMonth();
+	}
 
 	public static Date getDate(int month, int year) {
 		Date date = new Date();

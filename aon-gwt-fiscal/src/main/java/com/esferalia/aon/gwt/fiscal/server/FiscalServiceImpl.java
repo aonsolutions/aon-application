@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
@@ -963,6 +964,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 					.and(p.getEntryDateProperty().between(from, to))
 					.and(p.getEntryTypeProperty().eq((byte) AccountEntryType.SALARY.ordinal()))
 				, 0, 1000);
+	}
+
+	@Override
+	public LinkedList<SalaryEntry> getSalaryEntries(String domainName,
+			int domain, Date from, Date to ) {
+		return ACCOUNTING.getSalaryEntries(domainName, domain, this.getUserLogin(),from,to);
 	}
 
 	@Override

@@ -990,4 +990,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		return entryDate.getValue();
 	}
 
+	public void changeEntryDate(Date date) {
+		entryDate.setValue( date , true);
+	}
+
 }

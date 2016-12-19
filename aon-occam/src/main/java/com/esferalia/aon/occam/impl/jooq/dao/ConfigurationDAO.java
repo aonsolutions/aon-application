@@ -73,6 +73,7 @@ public class ConfigurationDAO {
 				.setDefaultSocialInsurance(getAccount(ctx, AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC ))
 				.setDefaultPendingSalary(getAccount(ctx, AppParam.ACC_DEFAULT_PENDING_SALARY_ACC ))
 				.setSalaryDedAdvPayment(getAccount(ctx, AppParam.ACC_SALARY_DED_ADV_PAYMENT_ACC))
+				.setSalaryOtherDeductions(getAccount(ctx, AppParam.ACC_SALARY_DED_OTHER_ACC))
 				.setSalaryDedSeize(getAccount(ctx, AppParam.ACC_SALARY_DED_SEIZE_ACC))
 		;
 		SeriesDAO

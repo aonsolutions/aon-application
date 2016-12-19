@@ -46,6 +46,7 @@ public class AonConfiguration implements Serializable {
 	private Account salaryChargedRetInKind;
 	private Account defaultSocialInsurance;
 	private Account defaultPendingSalary;
+	private Account salaryOtherDeductions;
 	private Account salaryDedAdvPayment;
 	private Account salaryDedSeize;
 	
@@ -372,6 +373,15 @@ public class AonConfiguration implements Serializable {
 
 	public AonConfiguration setSalaryDedAdvPayment(Account salaryDedAdvPayment) {
 		this.salaryDedAdvPayment = salaryDedAdvPayment;
+		return this;
+	}
+	
+	public Account getSalaryOtherDeductions() {
+		return salaryOtherDeductions;
+	}
+
+	public AonConfiguration setSalaryOtherDeductions(Account salaryOtherDeductions) {
+		this.salaryOtherDeductions = salaryOtherDeductions;
 		return this;
 	}
 
