@@ -756,6 +756,12 @@ public class TaskDAO {
 				.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
 			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
+
+	public static Stream<Workgroup> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderWorkgroupFilter filter){
+		return ctx.getDslContext().select().from(TASK_HOLDER_WORKGROUP).join(WORKGROUP).on(WORKGROUP.ID.eq(TASK_HOLDER_WORKGROUP.WORKGROUP))
+				.where(TASK_HOLDER_WORKGROUP_PROPERTIES.getConditions(filter))
+				.fetchInto(WORKGROUP).stream().map(new FullWorkgroupFiller());
+	}
 	
 	public static Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter){
 		return !ctx.getDslContext().select().from(TASK_HOLDER_WORKGROUP)

@@ -260,6 +260,12 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
+	public Stream<Workgroup> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderWorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskHolderWorkgroupStream(ctx, filter));
+	}
+	
+	@Override
 	public Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.isTaskHolderWorkgroup(ctx, filter));

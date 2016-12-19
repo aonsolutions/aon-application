@@ -1,6 +1,7 @@
 package com.code.aon.webservice.issues;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 
 import org.json.JSONArray;
@@ -12,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class Issue {
@@ -99,9 +101,10 @@ public class Issue {
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
 		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
 		this.principal = principal;
-		Integer day = Utils.getDaysBefore(task.getStartDate());
-		this.days = "(hace " + day+ ((day == 1) ? " d\u00EDa)" : " d\u00EDas)");
-		
+		Long day =AonDateUtils.getDaysBetweenDates(task.getStartDate(), new Date());
+		if(day == 0) this.days = "(Hoy)";
+		else if(day == 1) this.days = "(Ayer)"; 
+		else this.days = "(hace " + day+ ((day == 1) ? " d\u00EDa)" : " d\u00EDas)");
 		String ass = "";
 		if(workgroup.getDescription() != null || assignee.getName() != null) ass = ass + ", asignado a "; 
 		if(workgroup.getDescription() != null ) ass = ass + workgroup.getDescription();

@@ -12,6 +12,7 @@ public class Domain implements Serializable {
 	Integer parentId;
 	String description;
 	DomainType domainType;
+	Byte domainManagement;
 	
 	boolean parent;
 	boolean child;
@@ -106,6 +107,15 @@ public class Domain implements Serializable {
 
 	public Domain setEnableHeredity(boolean enableHeredity) {
 		this.enableHeredity = enableHeredity;
+		return this;
+	}
+
+	public Byte getDomainManagement() {
+		return domainManagement;
+	}
+
+	public Domain setDomainManagement(Byte domainManagement) {
+		this.domainManagement = domainManagement;
 		return this;
 	}
 	

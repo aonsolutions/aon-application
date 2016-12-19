@@ -85,6 +85,7 @@ public class DomainDAO {
 			domain.setParent(domainRecord.getParent() != null);
 			domain.setParentId(domainRecord.getParent());
 			domain.setEnableHeredity(domainRecord.getEnableheredity() == 1);
+			domain.setDomainManagement(domainRecord.getDomainmanagement());
 		}
 		return domain;
 	}

@@ -3,7 +3,9 @@ package com.code.aon.webservice.issues;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
@@ -143,6 +145,10 @@ public class WorkServlet extends HttpServlet{
 			l.setEmail(AON.getRMedia(domain.getName(), domain.getId(), userName,
 				f -> f.getMediaProperty().eq((byte)4).and(f.getDomainProperty().eq(domain.getId()))
 				.and(f.getRegistryProperty().eq(l.getId()))).getValue());
+			
+			l.setWorkgroups(AON.getTaskHolderWorkgroupStream(domain.getName(), domain.getId(), userName, f2 -> f2.getTaskHolderProperty().eq(l.getId()))
+				.map(new WorkgroupToUserFiller()).collect(Collectors.toCollection(LinkedList::new)));
+			
 			array.put(l.toJSON());
 		});
 		return array;
@@ -194,7 +200,7 @@ public class WorkServlet extends HttpServlet{
 			}
 		}			
 		if(json.opt("workgroups") != null){
-			String[] workgroups = json.getString("workgroups").split(",");
+			String[] workgroups = json.getString("workgroups").split("@");
 			for(Integer j = 0 ; j< workgroups.length; j++){
 				if(AonStringUtils.isNumeric(workgroups[j])){
 					String w = workgroups[j];

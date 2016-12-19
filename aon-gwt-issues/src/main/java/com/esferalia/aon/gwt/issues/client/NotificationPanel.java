@@ -72,6 +72,7 @@ public class NotificationPanel extends Composite {
     	emailComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
     	emailComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	emailComboBox.setItemLabelPath("name");
+    	emailComboBox.setItemValuePath("name");
     	emailComboBox.setItems(notify.getMailAccountList());
     	emailComboBox.setInputElementValue(notify.getMail());
     	emailComboBox.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
@@ -94,6 +95,7 @@ public class NotificationPanel extends Composite {
     	signComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
     	signComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	signComboBox.setItemLabelPath("name");
+    	signComboBox.setItemValuePath("name");
     	signComboBox.setItems(notify.getSignatureList());
     	signComboBox.setInputElementValue(notify.getSign());
     	signComboBox.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
@@ -116,6 +118,7 @@ public class NotificationPanel extends Composite {
     	modeComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
     	modeComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	modeComboBox.setItemLabelPath("name");
+    	modeComboBox.setItemValuePath("name");
     	modeComboBox.setItems(notify.getModeList());
     	modeComboBox.setInputElementValue(notify.getMode());
     	modeComboBox.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {

@@ -31,6 +31,7 @@ import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 
 public class BookingInfo implements Serializable {
 	
@@ -243,7 +244,8 @@ public class BookingInfo implements Serializable {
 	private List<DomainModuleInfo> calculateBookingModules() {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
 		list.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
-		list.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
+		if(AON.getDomain(aioInfo.getDomain().getName(), aioInfo.getDomain().getId(), AonUtil.getRemoteUser()).getDomainManagement() != 1)
+			list.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
 		switch ( getDomain().getType() ) {
 			case GENERIC:
 				list.add(aioInfo.getModuleInfo(Module.FISCAL));

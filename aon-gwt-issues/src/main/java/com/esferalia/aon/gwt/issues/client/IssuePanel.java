@@ -857,7 +857,7 @@ public class IssuePanel extends Composite{
 			public void onSuccess(JsIssue result) {
 				parent.contentDockLayoutPanel.removeFromParent();
 				AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
-				t.setVisibleRefreshButton(true);
+				t.setVisibleRefreshButton(true).setVisibleFastFilterButton(true);
 				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 				parent.contentDockLayoutPanel.addNorth(parent.searchContent, 85);
 				parent.contentDockLayoutPanel.add(parent.content);

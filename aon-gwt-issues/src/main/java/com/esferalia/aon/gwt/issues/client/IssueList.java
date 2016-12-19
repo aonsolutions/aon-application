@@ -70,7 +70,7 @@ public class IssueList extends Composite {
 				if(issue != null && !issue.isDeleted()){
 					parent.contentDockLayoutPanel.removeFromParent();
 					AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
-					t.setVisibleRefreshButton(false);
+					t.setVisibleRefreshButton(false).setVisibleFastFilterButton(false);
 					parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 					parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue, -1));
 					parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				

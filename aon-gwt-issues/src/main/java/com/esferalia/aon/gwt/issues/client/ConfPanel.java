@@ -39,10 +39,9 @@ import com.vaadin.polymer.paper.widget.PaperTextarea;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
+import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
-import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent;
-import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler;
 
 public class ConfPanel extends Composite {
 
@@ -148,6 +147,7 @@ public class ConfPanel extends Composite {
 				AonComboBox acb1 = new AonComboBox();
 		    	acb1.setDisabled(admin);
 				acb1.setItemLabelPath("name");
+				acb1.setItemValuePath("name");
 		    	acb1.setItems(result.getOneData().getTypes());
 		    	
 		    	acb1.setInputElementValue(result.getOneData().getType());
@@ -177,6 +177,7 @@ public class ConfPanel extends Composite {
 		    	AonComboBox acb2 = new AonComboBox();
 		    	acb2.setDisabled(admin);
 		    	acb2.setItemLabelPath("name");
+		    	acb2.setItemValuePath("name");
 		    	acb2.setItems(result.getOneData().getPriorities());
 		    	acb2.setInputElementValue(result.getOneData().getPriority());
 		    	acb2.setStyle("padding-left:20px;padding-right:20px;padding-bottom: 20px; width:300px;");
@@ -344,7 +345,7 @@ public class ConfPanel extends Composite {
 					public void onSuccess(JsIssue result) {
 						issues.contentDockLayoutPanel.removeFromParent();
 						AonToolbar t = (AonToolbar) issues.toolbar.getWidget(0);
-						t.setVisibleRefreshButton(false);
+						t.setVisibleRefreshButton(false).setVisibleFastFilterButton(false);
 						issues.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 						issues.contentDockLayoutPanel.add(new IssuePanel(issues, incidence, result, -1));
 						issues.dockLayoutPanel.add(issues.contentDockLayoutPanel);
@@ -461,6 +462,36 @@ public class ConfPanel extends Composite {
 		if(group) workgroupSelector.add(hp);
 		else userSelector.add(hp);		
     }
+    
+    private void printSelectedWorkgroup(JsUser js, VerticalPanel vp) {
+    	HorizontalPanel hp = new HorizontalPanel();
+		PaperItem item = new PaperItem();
+	
+		IronIcon ii = new IronIcon();
+		ii.setIcon("group-work");
+		item.add(ii);
+		item.add(new Label(js.getLogin()));
+		item.setStyle("min-height: 30px;");	
+	
+		PaperIconButton pib = new PaperIconButton();
+		pib.setIcon("clear");
+		pib.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
+		pib.addClickHandler(new ClickHandler() {
+		
+			@Override
+			public void onClick(ClickEvent event) {
+				for(Integer h = 3; h < vp.getWidgetCount(); h++){
+					HorizontalPanel hor = (HorizontalPanel) vp.getWidget(h);
+					if(js.getId() == hor.getLayoutData())
+						vp.remove(h);									
+				}
+			}
+		});
+		hp.add(item);hp.add(pib);
+		hp.setLayoutData(js.getId());
+		hp.setWidth("100%");
+		vp.add(hp);
+	}
     
     // -------------------- WORKGROUP (GRUPO DE TRABAJO) OPTIONS / ACTIONS
     
@@ -579,42 +610,26 @@ public class ConfPanel extends Composite {
 				PaperInput pi2 = new PaperInput();
 				pi2.setLabel("Email");
 				vp.add(pi2);
-				AonComboBox acb = new AonComboBox();
+				VaadinComboBox acb = new VaadinComboBox();
 				acb.setLabel("Grupo de Trabajo");
 				acb.setItemLabelPath("login");
+				acb.setItemValuePath("login");
 				acb.setItems(result.getData());
-				acb.addSelectedItemChangedHandler(new SelectedItemChangedEventHandler() {
+				acb.addSelectedItemChangedHandler(new com.vaadin.polymer.vaadin.widget.event.SelectedItemChangedEventHandler() {
 					
 					@Override
-					public void onSelectedItemChanged(SelectedItemChangedEvent event) {
+					public void onSelectedItemChanged(com.vaadin.polymer.vaadin.widget.event.SelectedItemChangedEvent event) {
 						JsUser js = acb.getSelectedItem().cast();
-						HorizontalPanel hp = new HorizontalPanel();
-						PaperItem item = new PaperItem();
-								
-						IronIcon ii = new IronIcon();
-						ii.setIcon("group-work");
-						item.add(ii);
-						item.add(new Label(js.getLogin()));
-						item.setStyle("min-height: 30px;");	
-						
-						PaperIconButton pib = new PaperIconButton();
-						pib.setIcon("clear");
-						pib.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
-						Integer l = vp.getWidgetCount();
-						pib.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								vp.remove(l);
-							}
-						});
-						hp.add(item);hp.add(pib);
-						hp.setLayoutData(js.getId());
-						hp.setWidth("100%");
-						vp.add(hp);
+						Boolean bool = true;
+						for(Integer h = 3; h < vp.getWidgetCount(); h++){
+							HorizontalPanel hor = (HorizontalPanel) vp.getWidget(h);
+							if(js.getId() == hor.getLayoutData())
+								bool = false;									
+						}
+						if(bool) printSelectedWorkgroup(js, vp);
 					}
 				});
-				// TODO vp.add(acb);
+				vp.add(acb);
 				AonDialog2 dialog =  new AonDialog2("Nuevo Operario",vp){
 					@Override protected void onCancel() {hide();}
 					@Override protected void onAccept() {
@@ -642,6 +657,7 @@ public class ConfPanel extends Composite {
 						hide();
 					}
 				};
+				dialog.setAutoHideEnabled(false);
 				dialog.center();
 
 			}
@@ -651,38 +667,72 @@ public class ConfPanel extends Composite {
 	}
 	
     private void updateUser(JsUser user){
-    	VerticalPanel vp = new VerticalPanel();
-		PaperInput pi = new PaperInput();
-		pi.setValue(user.getLogin());
-		pi.setLabel("Operario");
-		vp.add(pi);
-		PaperInput pi2 = new PaperInput();
-		pi2.setValue(user.getEmail());
-		pi2.setLabel("Email");
-		vp.add(pi2);
-		
-		AonDialog2 dialog =  new AonDialog2("Editar Operario",vp){
-			@Override protected void onCancel() {hide();}
-			@Override protected void onAccept() {
-				VerticalPanel vp = (VerticalPanel) content.getWidget(0);
-				PaperInput name = (PaperInput) vp.getWidget(0);
-				PaperInput email = (PaperInput) vp.getWidget(1);
-				incidence.updateOperator(user.getId(), "{\"name\":\""+ name.getValue() +"\",\"email\":\""+ email.getValue() +"\"}", new AsyncCallback<JsUser>() {
-					
+    	incidence.getGroups(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				VerticalPanel vp = new VerticalPanel();
+				PaperInput pi = new PaperInput();
+				pi.setValue(user.getLogin());
+				pi.setLabel("Operario");
+				vp.add(pi);
+				PaperInput pi2 = new PaperInput();
+				pi2.setValue(user.getEmail());
+				pi2.setLabel("Email");
+				vp.add(pi2);
+				VaadinComboBox acb = new VaadinComboBox();
+				acb.setLabel("Grupo de Trabajo");
+				acb.setItemLabelPath("login");
+				acb.setItemValuePath("login");
+				acb.setItems(result.getData());
+				acb.addSelectedItemChangedHandler(new com.vaadin.polymer.vaadin.widget.event.SelectedItemChangedEventHandler() {
+			
 					@Override
-					public void onSuccess(JsUser result) {
-						userSelector.removeFromParent();
-						userSelector = new IronSelector();
-						userCollapse.add(userSelector);
-						loadUser();					
+					public void onSelectedItemChanged(com.vaadin.polymer.vaadin.widget.event.SelectedItemChangedEvent event) {
+						JsUser js = acb.getSelectedItem().cast();
+						Boolean bool = true;
+						for(Integer h = 3; h < vp.getWidgetCount(); h++){
+							HorizontalPanel hor = (HorizontalPanel) vp.getWidget(h);
+							if(js.getId() == hor.getLayoutData())
+							bool = false;									
+						}
+						if(bool) printSelectedWorkgroup(js, vp);
 					}
-					
-					@Override public void onFailure(Throwable caught) {}
 				});
-				hide();
+				vp.add(acb);
+				user.getWorkgroups().stream().forEach(r -> printSelectedWorkgroup(r, vp));
+				AonDialog2 dialog =  new AonDialog2("Editar Operario",vp){
+					@Override protected void onCancel() {hide();}
+					@Override protected void onAccept() {
+						VerticalPanel vp = (VerticalPanel) content.getWidget(0);
+						PaperInput name = (PaperInput) vp.getWidget(0);
+						PaperInput email = (PaperInput) vp.getWidget(1);
+						String str = "";
+						for(Integer i = 3; i < vp.getWidgetCount(); i++){
+							HorizontalPanel hp = (HorizontalPanel) vp.getWidget(i);
+							str = str + hp.getLayoutData().toString() + "@";
+						}
+						incidence.updateOperator(user.getId(), "{\"name\":\""+ name.getValue() +"\",\"email\":\""+ email.getValue() +"\",\"workgroups\":\""+str+"\"}", new AsyncCallback<JsUser>() {
+					
+							@Override
+							public void onSuccess(JsUser result) {
+								userSelector.removeFromParent();
+								userSelector = new IronSelector();
+								userCollapse.add(userSelector);
+								loadUser();					
+							}
+					
+							@Override public void onFailure(Throwable caught) {}
+						});
+						hide();
+					}
+				};
+				dialog.setAutoHideEnabled(false);
+				dialog.center();
 			}
-		};
-		dialog.center();
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
     }
     
     private void removeUser(JsUser user){

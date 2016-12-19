@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.incidence;
 
+import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.google.gwt.core.client.JavaScriptObject;
 
 public class JsUser extends JavaScriptObject {
@@ -23,5 +24,9 @@ public class JsUser extends JavaScriptObject {
 	
 	public final native String getEmail() /*-{
 		return this.email;
+	}-*/;
+	
+	public final native AonJsArray<JsUser> getWorkgroups() /*-{
+		return this.workgroups;
 	}-*/;
 }

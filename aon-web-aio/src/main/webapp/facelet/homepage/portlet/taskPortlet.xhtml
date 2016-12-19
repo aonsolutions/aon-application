@@ -9,13 +9,20 @@
 
 	<aon:div styleClass="aon-portlet">
 		<aon:div styleClass="aon-portlet-title">
-			<aon:commandLink id="desktop_groupware_taskInbox"
-				action="task_list"
-				actionListener="#{task.onLaunch}">
+			<aon:if test="#{!task.parentDomain}">
+				<aon:commandLink id="desktop_groupware_taskInbox"
+					action="task_list"
+					actionListener="#{task.onLaunch}">
+					<aon:outputText value="#{bundle.aon_tasks}" 
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
+				</aon:commandLink>
+			</aon:if>
+			<aon:if test="#{task.parentDomain}">
 				<aon:outputText value="#{bundle.aon_tasks}" 
-					style="padding-bottom: 1px;padding-top: 1px;"
-					styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
-			</aon:commandLink>
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>	
+			</aon:if>
 		</aon:div>
 		<aon:div styleClass="aon-portlet-body">
 			<aon:panelGrid columns="3" styleClass="aon-width-all"

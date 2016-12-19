@@ -3052,6 +3052,21 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Workgroup> getTaskHolderWorkgroupStream(String domainName, Integer domainId, String login, TaskHolderWorkgroupFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderWorkgroupStream(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Workgroup> getTaskHolderWorkgroupList(String domainName, Integer domainId, String login, TaskHolderWorkgroupFilter filter){
+		return getTaskHolderWorkgroupStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	// ------------------- WORKGROUP
 	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, Integer wId){
 		AONContext ctx = null;
