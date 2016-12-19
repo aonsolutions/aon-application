@@ -68,7 +68,7 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
-import com.code.aon.ui.sales.udapa.EdiSalesImporterHandler;
+import com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.sales.util.SalesUtils;
