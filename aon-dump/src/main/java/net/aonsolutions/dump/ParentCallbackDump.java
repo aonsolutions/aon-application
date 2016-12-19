@@ -14,7 +14,6 @@ import org.jooq.Record1;
 import org.jooq.Schema;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
-import org.jooq.impl.DSL;
 
 public class ParentCallbackDump extends AbstractChaimCallbackDump{
 
@@ -49,11 +48,7 @@ public class ParentCallbackDump extends AbstractChaimCallbackDump{
 						.and(((Field<Integer>) fk.getKey().getFields().get(0))
 								.eq(r.getValue((Field<Integer>) fk.getFields().get(0)))));
 		
-		System.out.println(select.getSQL());
-		
 		fkField = (Record1<?>) select.fetchAny();
-
-		Field<Integer> parentField = null;
 
 		if (fkField != null) {
 			cb.downloadParent(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);

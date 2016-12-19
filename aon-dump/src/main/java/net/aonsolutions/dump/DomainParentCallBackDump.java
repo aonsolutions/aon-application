@@ -37,12 +37,6 @@ public class DomainParentCallBackDump extends AbstractChaimCallbackDump {
 	}
 
 	@Override
-	public void footer() {
-
-		super.accept("COMMIT;");
-	}
-
-	@Override
 	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap,
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 
@@ -53,7 +47,6 @@ public class DomainParentCallBackDump extends AbstractChaimCallbackDump {
 			idsMap.setEspecificOrder(DOMAIN.getName(), parentDomain, idsMap.getIdInformation(DOMAIN.getName(), idDomain).getSecond(),idDomain, false);
 	
 			SelectConditionStep<Record1<Integer>> select = dslContext.selectOne().from(DOMAIN).where(DOMAIN.ID.equal(parentDomain));
-			System.out.println(select.getSQL());
 			fkField = select.fetchAny();
 	
 			if ( fkField == null ) {

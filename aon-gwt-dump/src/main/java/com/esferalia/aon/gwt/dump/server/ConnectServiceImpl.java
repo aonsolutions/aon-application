@@ -48,7 +48,7 @@ import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import net.aonsolutions.dump.AonDump;
-import net.aonsolutions.dump.BaseCallBackDump;
+import net.aonsolutions.dump.DuplicateCallBackDump;
 import net.aonsolutions.dump.CallbackDump;
 import net.aonsolutions.dump.CallbackDumpExecute;
 import net.aonsolutions.dump.CallbackDumpPrint;
@@ -57,13 +57,14 @@ import net.aonsolutions.dump.CommentsPrintCallbackDump;
 import net.aonsolutions.dump.DomainParentCallBackDump;
 import net.aonsolutions.dump.DomainSiblingCallBackDump;
 import net.aonsolutions.dump.DomainZeroCallbackDump;
+import net.aonsolutions.dump.DownloadCallBackDump;
 import net.aonsolutions.dump.EraseUser;
 import net.aonsolutions.dump.ErrorReferenceCallBackDump;
 import net.aonsolutions.dump.IndexUniqueCallBackDump;
 import net.aonsolutions.dump.ModifyDataCallBack;
 import net.aonsolutions.dump.ParentCallbackDump;
 import net.aonsolutions.dump.SiblingCallBackDump;
-import net.aonsolutions.parserMain.BackgroundCallBack;
+import net.aonsolutions.dump.TaskProcessCallBack;
 
 /**
  * The server side implementation of the RPC service.
@@ -188,7 +189,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 			if (parameters.getDownloadType() == 0 || parameters.getDownloadType() == 1) {
 				cb = new CallbackDumpPrint(outZip);
-
+				
 			} else if (parameters.getDownloadType() == 2 || parameters.getDownloadType() == 3){
 				try {
 					cb = new CallbackDumpExecute(aonDump.dslContext);
@@ -216,8 +217,12 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			
 			cb = new IndexUniqueCallBackDump(cb);
 			cb = new ModifyDataCallBack(cb, parameters.getNewDomain(), "domain", "name");
-			cb = new BackgroundCallBack(cb, System.out, aonDump, tr.getId(), idDomain);
-			cb = new BaseCallBackDump(cb, false);
+			cb = new TaskProcessCallBack(cb, System.out, aonDump, tr.getId(), idDomain);
+			
+			if (parameters.getDownloadType() == 0 || parameters.getDownloadType() == 1 || parameters.getDownloadType() == 4) 
+				cb = new DownloadCallBackDump(cb, false);
+			else
+				cb = new DuplicateCallBackDump(cb, false); 
 
 			if (parameters.getComments())
 				cb = new CommentsPrintCallbackDump(outZip, cb);
@@ -229,7 +234,6 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 				String database = ci.getDomainDatabase(domain);
 				aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, "localhost", database, domain);
 			} catch (CancelException e) {
-				// Window.alert("DESCARGA CANCELADA");
 				System.out.println("DESCARGA CANCELADA");
 				if (file != null)
 					file.delete();

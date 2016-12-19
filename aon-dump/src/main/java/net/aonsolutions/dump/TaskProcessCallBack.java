@@ -1,4 +1,4 @@
-package net.aonsolutions.parserMain;
+package net.aonsolutions.dump;
 
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
@@ -20,13 +20,7 @@ import org.jooq.Table;
 
 import com.code.aon.groupware.enumeration.TaskStatus;
 
-import net.aonsolutions.dump.AbstractChaimCallbackDump;
-import net.aonsolutions.dump.AonDump;
-import net.aonsolutions.dump.CallbackDump;
-import net.aonsolutions.dump.CancelException;
-import net.aonsolutions.dump.IdsMap;
-
-public class BackgroundCallBack extends AbstractChaimCallbackDump{
+public class TaskProcessCallBack extends AbstractChaimCallbackDump{
 
 	PrintStream out;
 	Integer totalTables;
@@ -36,7 +30,7 @@ public class BackgroundCallBack extends AbstractChaimCallbackDump{
 	AonDump aonDump;
 	int idDomain;
 	
-	public BackgroundCallBack(CallbackDump cb, PrintStream out, AonDump aonDump, int id, int idDomain) {
+	public TaskProcessCallBack(CallbackDump cb, PrintStream out, AonDump aonDump, int id, int idDomain) {
 		super(cb);
 		this.out = out;
 		this.numTablesDownloaded = 1;
@@ -84,9 +78,7 @@ public class BackgroundCallBack extends AbstractChaimCallbackDump{
 		
 		String out = "";
 		
-		this.aonDump.dslContext.execute("LOCK TABLES " + TASK.getName() + " READ;");
 		Byte status = this.aonDump.dslContext.select(TASK.STATUS).from(TASK).where((TASK.ID).eq(id_task)).fetchOne().value1();
-		this.aonDump.dslContext.execute("UNLOCK TABLES;");
 		
 		if (status == (byte) TaskStatus.DELETED.ordinal()){
 			out = "<a style='color: red;'> WARNING: Download canceled </a>";
@@ -111,8 +103,6 @@ public class BackgroundCallBack extends AbstractChaimCallbackDump{
 		}
 		
 		this.numTablesDownloaded++;
-
-		//super.accept(inSet, table, ciclica, numRows, varTableName);
 	}
 	
 	private void insertTaskComment(String out) {

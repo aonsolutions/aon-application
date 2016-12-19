@@ -8,11 +8,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -43,6 +47,7 @@ public class AonDump {
 	public DSLContext dslContext;
 	public static PrintStream out;
 	public static Map<Table<?>, Field<byte[]>> tablasAttach;
+	public static FKSpecificMap fkSpecificMap;
 
 	public AonDump(String url, String usr, String password) throws SQLException {
 		// Create a connection to our DataBase
@@ -78,8 +83,8 @@ public class AonDump {
 
 		IdsMap idsMap;
 		Stack<Table<?>> tablesStack = new Stack<Table<?>>();
-		// List<Table<?>> tablesCiclic = new ArrayList<Table<?>>();
 		List<String> tablesNotToDownload = new ArrayList<String>();
+		fkSpecificMap = new FKSpecificMap();
 
 		tablesWontDownload(tablesNotToDownload);
 
@@ -91,8 +96,7 @@ public class AonDump {
 
 		int idDomain = dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
 
-		// We filter all the tables we have so we let only the ones we are going
-		// to use
+		// We filter all the tables we have so we let only the ones we are going to use
 		Map<Table<?>, Integer> dumpTables = new HashMap<Table<?>, Integer>();
 		dumpTables = getDumpTables(tables, idDomain);
 
@@ -120,11 +124,31 @@ public class AonDump {
 
 		// We go over our dumpTables so we can download each one
 		dumpTables.forEach((t, k) -> {
-			if (tablesNotToDownload.contains(idsMap.getTableInformation(t.getName())))
+			if (tablesNotToDownload.contains(t.getName()))
 				return;
-			if (idsMap.getTableInformation(t.getName()) == null)
+			if (idsMap.getTableInformation(t.getName()) != null)
+				return;
+
+			HashMap<Condition, ForeignKey<? extends Record, ?>> map = fkSpecificMap.fkMap.get(t.getName().toUpperCase());
+			
+			if ( map != null) {
+				for (Map.Entry<Condition, ForeignKey<? extends Record,?>> e : map.entrySet()){
+					
+					List<?> references = t.getReferences();
+					List<ForeignKey<?, ?>> newReferences = new LinkedList<ForeignKey<?,?>>();
+					newReferences.addAll((Collection<ForeignKey<?, ?>>) references);
+					ForeignKey<? extends Record, ?> fk = e.getValue();
+					newReferences.add(fk);
+					
+					downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
+							newReferences, (DSL.field("domain")).equal(idDomain), e.getKey());
+				}
+			}
+			else{
 				downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
-						(DSL.field("domain")).equal(idDomain));
+						t.getReferences(), (DSL.field("domain")).equal(idDomain));
+			}
+				
 		});
 
 		// Get attachs from DataBase and UPDATE them
@@ -135,9 +159,9 @@ public class AonDump {
 	}
 
 	private void tablesWontDownload(List<String> tablesNotToDownload) {
-		// TODO Choose which tables (names) we wont download, becasue we dont
-		// need them
-
+		// TODO Choose which tables (names) we wont download, becasue we dont need them
+		tablesNotToDownload.add("action_entry");
+		tablesNotToDownload.add("session");
 	}
 
 	private Map<Table<?>, Integer> getDumpTables(List<Table<?>> tables, int id) {
@@ -185,12 +209,9 @@ public class AonDump {
 	}
 
 	protected void downloadTable(Table<?> t, IdsMap idsMap, CallbackDump cb, PrintStream out,
-			Stack<Table<?>> tablesStack, List<Table<?>> tablesCiclic, Condition where) {
+			Stack<Table<?>> tablesStack, List<Table<?>> tablesCiclic, List<?> references, Condition where, Condition ...filter) {
 
-		List<?> references = t.getReferences();
-
-		// Push the table in the Stack, in order to download it, and know if it
-		// is ciclic
+		// Push the table in the Stack, in order to download it, and know if it is ciclic
 		tablesStack.push(t);
 
 		List<Table<?>> myTablesCiclic = new ArrayList<Table<?>>(tablesCiclic);
@@ -209,19 +230,22 @@ public class AonDump {
 				continue;
 
 			if (idsMap.getTableInformation(tableReference.getName()) == null) {
-				downloadTable(tableReference, idsMap, cb, out, tablesStack, Collections.emptyList(), where);
+				downloadTable(tableReference, idsMap, cb, out, tablesStack, Collections.emptyList(), tableReference.getReferences(), where);
 			}
 		}
 
 		// Initialize the Ids map of every table we have to download
 		idsMap.setTableName(t.getName());
 
+		for (Condition c : filter ) 
+			where  = where.and(c);
+		
 		downloadTableReferenceDomain(t, references, idsMap, cb, myTablesCiclic, where);
 
 		tablesStack.pop();
 
 	}
-
+	
 	protected void downloadTableReferenceDomain(Table<?> t, List<?> references, IdsMap idsMap, CallbackDump cb,
 			List<Table<?>> tablesCiclic, Condition where) {
 
@@ -231,8 +255,7 @@ public class AonDump {
 		Integer numRows = 0;
 		String varTableName = "";
 
-		if (t.getName().equals("agreement_level_category"))
-			System.out.println();
+		System.out.println(t.getName());
 
 		try {
 
@@ -245,28 +268,20 @@ public class AonDump {
 				 */
 				Field<Integer> varId = DSL.field("@" + t.getName().toUpperCase(), Integer.class);
 				Field<Integer> fieldId = (Field<Integer>) t.getPrimaryKey().getFields().get(0);
-				// Field<Integer> domainId = (Field<Integer>)
-				// t.getReferencesTo(DOMAIN).get(0).getFields().get(0);
-
-				// insertMap will contain all the information we want to upload
-				// to our table
+				
+				// insertMap will contain all the information we want to upload to our table
 				Map<Field<Integer>, Field<Integer>> fkInsertMap = new HashMap<Field<Integer>, Field<Integer>>();
 				Map<Field<?>, Object> insertMap = new HashMap<Field<?>, Object>();
 
-				if (t.getName().equals("user") && r.getValue("login").equals("jgarcia"))
-					System.out.println();
 				// Check the correct relationship of the foreignkeys
 				try {
-					
-					
 					fkInsertMap = checksFK(r, references, idsMap, cb, tablesCiclic, where);
 
 				} catch (FkErrorException e) {
 					continue;
 				}
 
-				// If we have a Id field we will rename it like (@(table_name) +
-				// x)
+				// If we have a Id field we will rename it like (@(table_name) + x)
 				if (fieldId != null) {
 					Threes<Integer, Integer, Boolean> pair = idsMap.getIdInformation(t.getName(), r.getValue(fieldId));
 
@@ -277,9 +292,7 @@ public class AonDump {
 						idsMap.setOrder(t.getName(), r.getValue(fieldId), r.getValue("domain", Integer.class), true);
 
 					} else if (pair != null) {
-
 						pair.setThird(true);
-
 					}
 
 					Field<Integer> order = null;
@@ -295,6 +308,9 @@ public class AonDump {
 					insertMore = insertMore.set(fkInsertMap);
 				else
 					insertMore = insert.set(fkInsertMap);
+				
+				Set<String> fkInsertSet = new HashSet<String>(); 
+				fkInsertMap.keySet().forEach(f->fkInsertSet.add(f.getName()));;
 
 				// Fill the remaining fields
 				for (Field<?> f : t.fields()) {
@@ -302,13 +318,8 @@ public class AonDump {
 					if (f.getName().equals("id"))
 						continue;
 
-					if (fkInsertMap.containsKey(f))
+					if (fkInsertSet.contains(f.getName()))
 						continue;
-
-					if (f.getDataType().isBinary() && f.getDataType().nullable()) {
-						tablasAttach.put(t, (Field<byte[]>) f);
-						continue;
-					}
 
 					insertMap.put((Field<Object>) f, r.getValue(f));
 
@@ -345,8 +356,7 @@ public class AonDump {
 
 			ForeignKey<?, ?> fk = (ForeignKey<?, ?>) ref;
 
-			// Get the references table so we will know the table which one we
-			// have to relation to
+			// Get the references table so we will know the table which one we have to relation to
 			Table<?> tableReference = fk.getKey().getTable();
 
 			String fieldNameId = fk.getKey().getFields().get(0).getName();

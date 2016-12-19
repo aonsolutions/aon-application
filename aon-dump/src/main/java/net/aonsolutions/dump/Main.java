@@ -1,4 +1,4 @@
-package net.aonsolutions.parserMain;
+package net.aonsolutions.dump;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,16 +17,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.dump.AonDump;
-import net.aonsolutions.dump.CallbackDump;
-import net.aonsolutions.dump.CallbackDumpExecute;
-import net.aonsolutions.dump.CallbackDumpPrint;
-import net.aonsolutions.dump.CommentsPrintCallbackDump;
-import net.aonsolutions.dump.EraseUser;
-import net.aonsolutions.dump.IndexUniqueCallBackDump;
-import net.aonsolutions.dump.ModifyDataCallBack;
-
-public class ParserMain {
+public class Main {
 	
 	private static AonDump aonDump;
 	
@@ -172,7 +163,6 @@ public class ParserMain {
 			CommandLine cmd = parser.parse(options, args);
 
 			if (cmd.hasOption(helpOpt.getLongOpt())) {
-				
 				// Automatically generate the help statement
 				HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp("aon-dump", options);
@@ -198,8 +188,8 @@ public class ParserMain {
 			String login = cmd.getOptionValue(renameLogin.getLongOpt());
 			
 			String zipName = cmd.getOptionValue(zipOpt.getLongOpt());
-			
 			String sqlName = "";
+			
 			if (cmd.hasOption(sqlOpt.getLongOpt()))
 				sqlName = cmd.getOptionValue(sqlOpt.getLongOpt());
 			else
@@ -224,6 +214,7 @@ public class ParserMain {
 				out = new PrintStream(file, "UTF-8");
 			}
 
+			//Creamos los Callbacks
 			CallbackDump cb;
 			
 			if (cmd.hasOption(executeOpt.getLongOpt()))
@@ -231,22 +222,23 @@ public class ParserMain {
 			else
 				cb = new CallbackDumpPrint(out);
 
-			if (true)
-				//cb = new ParentCallbackDump(cb);
-			if (true)
-				cb = new IndexUniqueCallBackDump(cb);
-			if (true)
-				cb = new BackgroundCallBack(cb, System.out, aonDump, 0, 0); //MIRAR ESTO
+			cb = new ErrorReferenceCallBackDump(cb);
+			cb = new ParentCallbackDump(cb);
+			cb = new DomainZeroCallbackDump(cb);
+			// TODO: como conseguir el ID del domain
+			//cb = new DomainParentCallBackDump(cb, idDomain);
+			cb = new IndexUniqueCallBackDump(cb);
+			cb = new ModifyDataCallBack(cb, newDomain, "domain", "name");
+			cb = new TaskProcessCallBack(cb, System.out, aonDump, 0, 0); //MIRAR ESTO
+			
 			if (cmd.hasOption(renameNIF.getLongOpt()))
 				cb = new ModifyDataCallBack(cb, nif, "registry", "document");
-			if (cmd.hasOption(newNameDomainOpt.getLongOpt()))
-				cb = new ModifyDataCallBack(cb, newDomain, "domain", "name");
 			
-			if (cmd.hasOption(fkOpt.getLongOpt()))
-				//cb = new SiblingCallbackDump2(cb);
+			cb = new DownloadCallBackDump(cb, false);
 
 			if (cmd.hasOption(commentsOpt.getLongOpt()))
 				cb = new CommentsPrintCallbackDump(out, cb);
+			
 			if (cmd.hasOption(eraseUsers.getLongOpt()))
 				cb = new EraseUser(cb, aonDump.dslContext, pass, login);
 

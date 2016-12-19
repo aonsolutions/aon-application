@@ -38,13 +38,11 @@ public class DomainZeroCallbackDump extends AbstractChaimCallbackDump {
 					.and(((Field<Integer>) fk.getKey().getFields().get(0))
 							.eq(r.getValue((Field<Integer>) fk.getFields().get(0))));
 
-		System.out.println("DomainZero: " + select.getSQL());
 		fkField = select.fetchAny();
 
 		if (fkField != null)
 			return DSL.cast(value, Integer.class);
 			
-		
 		return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 	}
 

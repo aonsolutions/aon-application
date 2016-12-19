@@ -39,14 +39,12 @@ public class SiblingCallBackDump extends AbstractChaimCallbackDump {
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 
 		Record1<?> fkField;
-		Field<Integer> parentField = null;
 	
 		SelectConditionStep<Record1<Integer>> select = dslContext.selectOne().from(fk.getKey().getTable().getName())
 					.where((((Field<Integer>) fk.getKey().getTable().field("domain")).equal(parentDomain))
 					.and(((Field<Integer>) fk.getKey().getFields().get(0))
 							.eq(r.getValue((Field<Integer>) fk.getFields().get(0)))));
 
-		//System.out.println("SiblingCallback: "+select.getSQL());
 		fkField = select.fetchAny();
 
 		if (fkField != null)

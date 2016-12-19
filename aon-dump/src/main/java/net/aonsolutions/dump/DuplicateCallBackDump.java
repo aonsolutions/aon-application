@@ -10,33 +10,23 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.Schema;
 import org.jooq.Table;
 
-public class BaseCallBackDump extends AbstractChaimCallbackDump {
+public class DuplicateCallBackDump extends AbstractChaimCallbackDump {
 
-	private boolean safeMode;
+	// TODO: ver como hacer un rollback manual para la duplicacion
+	//private boolean safeMode;
 
-	public BaseCallBackDump(CallbackDump cb, boolean safeMode) {
+	public DuplicateCallBackDump(CallbackDump cb, boolean safeMode) {
 		super(cb);
-		this.safeMode = safeMode;
-
+		//this.safeMode = safeMode;
 	}
 
 	@Override
 	public void header(Schema schema, String hostName, Map<Table<?>, Integer> domainTables, DSLContext dslContext,
 			int id, IdsMap idsMap) {
 
-		super.accept("BEGIN;");
-
 		super.accept("SET @" + DOMAIN.getName().toUpperCase() + "_"+ id + "=(SELECT MAX(id) FROM " + DOMAIN.getName() + ") + 2;");
 
 		super.header(schema, hostName, domainTables, dslContext, id, idsMap);
-	}
-
-	@Override
-	public void footer() {
-		if (safeMode)
-			super.accept("ROLLBACK;");
-		else
-			super.accept("COMMIT;");
 	}
 
 
