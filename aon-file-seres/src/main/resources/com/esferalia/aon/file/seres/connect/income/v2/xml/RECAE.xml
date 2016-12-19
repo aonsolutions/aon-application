@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="RECAE">
+	<field name="Tipo de registro RECAE" value="RECAE" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de jerarquía de embalaje" value="bean" bean ="RECAE" property="numeroDeJerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de jerarquía padre de embalaje" value="bean" bean ="RECAE" property="numeroDeJerarquiaPadreDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de paquetes" value="bean" bean ="RECAE" property="numeroDePaquetes" format="Numeric" pattern="9(8)" />
+	<field name="Información sobre el embalaje, codificado" value="bean" bean ="RECAE" property="informacionSobreElEmbalaje_Codificado" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Términos y Condiciones del embalaje, codificado" value="bean" bean ="RECAE" property="terminosYCondicionesDelEmbalaje_Codificado" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Tipo de embalaje, codificado" value="bean" bean ="RECAE" property="tipoDeEmbalaje_Codificado" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Tipo de embalaje, texto libre" value="bean" bean ="RECAE" property="tipoDeEmbalaje_TextoLibre" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca de envió 1" value="bean" bean ="RECAE" property="marcaDeEnvio1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca de envió 2" value="bean" bean ="RECAE" property="marcaDeEnvio2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca de envió 3" value="bean" bean ="RECAE" property="marcaDeEnvio3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca de envió 4" value="bean" bean ="RECAE" property="marcaDeEnvio4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 1 o número de identificación inferior" value="bean" bean ="RECAE" property="numeroSerial1ONumeroDeIdentificacionInferior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 1 o número de identificación superior" value="bean" bean ="RECAE" property="numeroSerial1ONumeroDeIdentificacionSuperior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 2 o número de identificación inferior" value="bean" bean ="RECAE" property="numeroSerial2ONumeroDeIdentificacionInferior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 2 o número de identificación superior" value="bean" bean ="RECAE" property="numeroSerial2ONumeroDeIdentificacionSuperior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 3 o número de identificación inferior" value="bean" bean ="RECAE" property="numeroSerial3ONumeroDeIdentificacionInferior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 3 o número de identificación superior" value="bean" bean ="RECAE" property="numeroSerial3ONumeroDeIdentificacionSuperior" format="AlphaNumeric" pattern="X(35)" />
+</register>

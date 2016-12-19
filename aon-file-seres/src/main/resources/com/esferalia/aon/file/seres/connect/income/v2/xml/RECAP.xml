@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="RECAP">
+	<field name="Tipo de Registro RECAP" value="RECAP" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador del Interlocutor" value="bean" bean ="RECAP" property="calificadorDelInterlocutor" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Interlocutor" value="bean" bean ="RECAP" property="codigoInterlocutor" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Agencia responsable de la lista de códigos (9)" value="bean" bean ="RECAP" property="agenciaResponsableDeLaListaDeCodigos_9_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Nombre 1" value="bean" bean ="RECAP" property="nombre1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 2" value="bean" bean ="RECAP" property="nombre2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 3" value="bean" bean ="RECAP" property="nombre3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 4" value="bean" bean ="RECAP" property="nombre4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 5" value="bean" bean ="RECAP" property="nombre5" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 1 (Calle + Número)" value="bean" bean ="RECAP" property="direccion1_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 2 (Calle + Número)" value="bean" bean ="RECAP" property="direccion2_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 3 (Calle + Número)" value="bean" bean ="RECAP" property="direccion3_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 4 (Calle + Número)" value="bean" bean ="RECAP" property="direccion4_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Ciudad" value="bean" bean ="RECAP" property="ciudad" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Provincia" value="bean" bean ="RECAP" property="codigoProvincia" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código Postal" value="bean" bean ="RECAP" property="codigoPostal" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código País" value="bean" bean ="RECAP" property="codigoPais" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Identificación Fiscal" value="bean" bean ="RECAP" property="numeroDeIdentificacionFiscal" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Adicional" value="bean" bean ="RECAP" property="codigoAdicional" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calificador referencia adicional" value="bean" bean ="RECAP" property="calificadorReferenciaAdicional" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Referencia adicional" value="bean" bean ="RECAP" property="referenciaAdicional" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Función de contacto" value="bean" bean ="RECAP" property="funcionDeContacto" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código departamento o empleado" value="bean" bean ="RECAP" property="codigoDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Nombre departamento o empleado" value="bean" bean ="RECAP" property="nombreDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Teléfono" value="bean" bean ="RECAP" property="telefono" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Fax" value="bean" bean ="RECAP" property="fax" format="AlphaNumeric" pattern="X(35)" />
+</register>

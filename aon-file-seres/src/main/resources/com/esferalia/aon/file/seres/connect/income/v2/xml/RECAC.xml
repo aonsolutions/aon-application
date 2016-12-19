@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="RECAC">
+	<field name="Tipo de registro RECAC" value="RECAC" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo documento (352)" value="bean" bean ="RECAC" property="tipoDocumento_352_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número documento" value="bean" bean ="RECAC" property="numeroDocumento" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Función del mensaje (9, 31)" value="bean" bean ="RECAC" property="funcionDelMensaje_9_31_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha del documento" value="bean" bean ="RECAC" property="fechaDelDocumento" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Fecha recepción de la mercancía" value="bean" bean ="RECAC" property="fechaRecepcionDeLaMercancia" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Número de pedido (ON)" value="bean" bean ="RECAC" property="numeroDePedido_ON_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha/hora número pedido (171) (102/203)" value="bean" bean ="RECAC" property="fecha_horaNumeroPedido_171__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de albarán (DQ/AAK)" value="bean" bean ="RECAC" property="numeroDeAlbaran_DQ_AAK_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha/hora número albarán (171) (102/203)" value="bean" bean ="RECAC" property="fecha_horaNumeroAlbaran_171__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Fecha/hora en la que la carga es recogida (200)" value="bean" bean ="RECAC" property="fecha_horaEnLaQueLaCargaEsRecogida_200_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Matrícula Vehículo" value="bean" bean ="RECAC" property="matriculaVehiculo" format="AlphaNumeric" pattern="X(35)" />
+</register>

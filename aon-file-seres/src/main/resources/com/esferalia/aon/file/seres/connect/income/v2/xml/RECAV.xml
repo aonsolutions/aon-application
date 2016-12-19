@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="RECAV">
+	<field name="Tipo de Registro RECAV" value="RECAV" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador de Cantidad" value="bean" bean ="RECAV" property="calificadorDeCantidad" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Cantidad" value="bean" bean ="RECAV" property="cantidad" format="Numeric" pattern="9(12).999" />
+	<field name="Código Discrepancia" value="bean" bean ="RECAV" property="codigoDiscrepancia" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Razón del Cambio" value="bean" bean ="RECAV" property="codigoRazonDelCambio" format="AlphaNumeric" pattern="X(3)" />
+</register>

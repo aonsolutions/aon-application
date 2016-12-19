@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCE">
+	<field name="Tipo de Registro SINCE" value="SINCE" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Descuento/Cargo" value="bean" bean ="SINCE" property="numeroDeDescuento_Cargo" format="Numeric" pattern="9(2)" />
+	<field name="Indicador de Descuento/Cargo" value="bean" bean ="SINCE" property="indicadorDeDescuento_Cargo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Indicador secuencia de calculo" value="bean" bean ="SINCE" property="indicadorSecuenciaDeCalculo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Porcentaje Descuento/Cargo" value="bean" bean ="SINCE" property="porcentajeDescuento_Cargo" format="Numeric" pattern="9(4).9999" />
+	<field name="Importe Descuento/Cargo" value="bean" bean ="SINCE" property="importeDescuento_Cargo" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Sujeto a Aplicación" value="bean" bean ="SINCE" property="importeTotalSujetoAAplicacion" format="Numeric" pattern="9(14).999" />
+	<field name="Cantidad de Unidades que se descuentan por Línea" value="bean" bean ="SINCE" property="cantidadDeUnidadesQueSeDescuentanPorLinea" format="Numeric" pattern="9(12).999" />
+	<field name="Tipo Descuento" value="bean" bean ="SINCE" property="tipoDescuento" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Descuentos Monetarios por Unidad" value="bean" bean ="SINCE" property="descuentosMonetariosPorUnidad" format="Numeric" pattern="9(15).999" />
+	<field name="Unidad de Medida" value="bean" bean ="SINCE" property="unidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Descripción Descuento/Cargo" value="bean" bean ="SINCE" property="descripcionDescuento_Cargo" format="AlphaNumeric" pattern="X(35)" />
+</register>

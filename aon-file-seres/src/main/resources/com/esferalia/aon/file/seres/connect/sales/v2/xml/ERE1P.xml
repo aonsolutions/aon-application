@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1P">
+	<field name="Tipo registro ERE1P" value="ERE1P" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador del Interlocutor" value="bean" bean ="ERE1P" property="calificadorDelInterlocutor" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Interlocutor" value="bean" bean ="ERE1P" property="codigoInterlocutor" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Agencia responsable de la lista de códigos" value="bean" bean ="ERE1P" property="agenciaResponsableDeLaListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Nombre 1" value="bean" bean ="ERE1P" property="nombre1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 2" value="bean" bean ="ERE1P" property="nombre2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 3" value="bean" bean ="ERE1P" property="nombre3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 4" value="bean" bean ="ERE1P" property="nombre4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 5" value="bean" bean ="ERE1P" property="nombre5" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calle y numero 1" value="bean" bean ="ERE1P" property="calleYNumero1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calle y numero 2" value="bean" bean ="ERE1P" property="calleYNumero2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calle y numero 3" value="bean" bean ="ERE1P" property="calleYNumero3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calle y numero 4" value="bean" bean ="ERE1P" property="calleYNumero4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Población" value="bean" bean ="ERE1P" property="poblacion" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Provincia" value="bean" bean ="ERE1P" property="provincia" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código postal" value="bean" bean ="ERE1P" property="codigoPostal" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código país" value="bean" bean ="ERE1P" property="codigoPais" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Calificador referencia 1" value="bean" bean ="ERE1P" property="calificadorReferencia1" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Referencia 1" value="bean" bean ="ERE1P" property="referencia1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Función de contacto" value="bean" bean ="ERE1P" property="funcionDeContacto" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Departamento o identificación del empleado" value="bean" bean ="ERE1P" property="departamentoOIdentificacionDelEmpleado" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Departamento o empleado" value="bean" bean ="ERE1P" property="departamentoOEmpleado" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calificador referencia 2" value="bean" bean ="ERE1P" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Referencia 2" value="bean" bean ="ERE1P" property="referencia2" format="AlphaNumeric" pattern="X(17)" />
+</register>

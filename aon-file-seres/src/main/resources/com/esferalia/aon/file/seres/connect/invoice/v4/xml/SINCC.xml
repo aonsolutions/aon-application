@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCC">
+	<field name="Tipo de registro SINCC" value="SINCC" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de factura (325, 380, 381, 383, 385)" value="bean" bean ="SINCC" property="tipoDeFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de factura" value="bean" bean ="SINCC" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Función del mensaje (7, 31, 5)" value="bean" bean ="SINCC" property="funcionDelMensaje_7_31_5_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha de factura" value="bean" bean ="SINCC" property="fechaDeFactura" format="Numeric" pattern="9(8)" />
+	<field name="Fecha de albarán" value="bean" bean ="SINCC" property="fechaDeAlbaran" format="AlphaNumeric" pattern="X(16)" />
+	<field name="Modo de pago" value="bean" bean ="SINCC" property="modoDePago" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Razón de cargo o abono" value="bean" bean ="SINCC" property="razonDeCargoOAbono" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Criterio de modificación" value="bean" bean ="SINCC" property="criterioDeModificacion" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de pedido (ON)" value="bean" bean ="SINCC" property="numeroDePedido_ON_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de albarán (DQ)" value="bean" bean ="SINCC" property="numeroDeAlbaran_DQ_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Calificador documento rectificado / sustituido" value="bean" bean ="SINCC" property="calificadorDocumentoRectificado_Sustituido" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Documento rectificado / sustituido" value="bean" bean ="SINCC" property="documentoRectificado_Sustituido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de contrato/acuerdo (CT)" value="bean" bean ="SINCC" property="numeroDeContrato_acuerdo_CT_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de relación de entrega (REN)" value="bean" bean ="SINCC" property="numeroDeRelacionDeEntrega_REN_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código de moneda" value="bean" bean ="SINCC" property="codigoDeMoneda" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha de vencimiento único" value="bean" bean ="SINCC" property="fechaDeVencimientoUnico" format="Numeric" pattern="9(8)" />
+	<field name="Importe neto total de factura (79)" value="bean" bean ="SINCC" property="importeNetoTotalDeFactura_79_" format="Numeric" pattern="9(14).999" />
+	<field name="Base imponible (125)" value="bean" bean ="SINCC" property="baseImponible_125_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe bruto total de factura (98)" value="bean" bean ="SINCC" property="importeBrutoTotalDeFactura_98_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe total de impuestos / tasas (176)" value="bean" bean ="SINCC" property="importeTotalDeImpuestos_Tasas_176_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe total a pagar (139)" value="bean" bean ="SINCC" property="importeTotalAPagar_139_" format="Numeric" pattern="9(14).999" />
+	<field name="Subvenciones vinculadas al precio (80A)" value="bean" bean ="SINCC" property="subvencionesVinculadasAlPrecio_80A_" format="Numeric" pattern="9(14).999" />
+	<field name="Total incrementos del importe bruto (259)" value="bean" bean ="SINCC" property="totalIncrementosDelImporteBruto_259_" format="Numeric" pattern="9(14).999" />
+	<field name="Total minoraciones del importe bruto (260)" value="bean" bean ="SINCC" property="totalMinoracionesDelImporteBruto_260_" format="Numeric" pattern="9(14).999" />
+	<field name="Periodo imposiciones factura (325)" value="bean" bean ="SINCC" property="periodoImposicionesFactura_325_" format="AlphaNumeric" pattern="X(16)" />
+	<field name="Fecha Pedido" value="bean" bean ="SINCC" property="fechaPedido" format="Numeric" pattern="9(8)" />
+	<field name="Fecha/hora efectiva del servicio (2)" value="bean" bean ="SINCC" property="fecha_horaEfectivaDelServicio_2_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número Confirmación de entrega" value="bean" bean ="SINCC" property="numeroConfirmacionDeEntrega" format="AlphaNumeric" pattern="X(17)" />
+</register>
