@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCL">
+	<field name="Tipo de Registro SINCL" value="SINCL" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de línea" value="bean" bean ="SINCL" property="numeroDeLinea" format="Numeric" pattern="9(6)" />
+	<field name="Código Artículo" value="bean" bean ="SINCL" property="codigoArticulo" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Descripción del Articulo" value="bean" bean ="SINCL" property="descripcionDelArticulo" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Tipo Articulo" value="bean" bean ="SINCL" property="tipoArticulo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Código Interno Articulo Proveedor (SA)" value="bean" bean ="SINCL" property="codigoInternoArticuloProveedor_SA_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Código Interno Articulo Cliente (IN)" value="bean" bean ="SINCL" property="codigoInternoArticuloCliente_IN_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Código Variable Promocional (PV)" value="bean" bean ="SINCL" property="codigoVariablePromocional_PV_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Código Unidad de Expedición (EN)" value="bean" bean ="SINCL" property="codigoUnidadDeExpedicion_EN_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Número de Lote (BN)" value="bean" bean ="SINCL" property="numeroDeLote_BN_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Cantidad Facturada (47)" value="bean" bean ="SINCL" property="cantidadFacturada_47_" format="Numeric" pattern="9(12).999" />
+	<field name="Cantidad Bonificada (15E)" value="bean" bean ="SINCL" property="cantidadBonificada_15E_" format="Numeric" pattern="9(12).999" />
+	<field name="Unidad de Medida" value="bean" bean ="SINCL" property="unidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidades Entregadas" value="bean" bean ="SINCL" property="unidadesEntregadas" format="Numeric" pattern="9(12).999" />
+	<field name="Número Unidades de Consumo en U. Expedición" value="bean" bean ="SINCL" property="numeroUnidadesDeConsumoEnU_Expedicion" format="Numeric" pattern="9(12).999" />
+	<field name="Importe Total Neto de la Línea de Articulo" value="bean" bean ="SINCL" property="importeTotalNetoDeLaLineaDeArticulo" format="Numeric" pattern="9(14).999" />
+	<field name="Precio Bruto Unitario" value="bean" bean ="SINCL" property="precioBrutoUnitario" format="Numeric" pattern="9(11).9999" />
+	<field name="Precio Neto Unitario" value="bean" bean ="SINCL" property="precioNetoUnitario" format="Numeric" pattern="9(11).9999" />
+	<field name="Unidad de Medida del Precio" value="bean" bean ="SINCL" property="unidadDeMedidaDelPrecio" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador IVA/IGIG" value="bean" bean ="SINCL" property="calificadorIVA_IGIG" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Impuesto IVA/IGIG" value="bean" bean ="SINCL" property="porcentajeImpuestoIVA_IGIG" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Impuesto IVA/IGIG" value="bean" bean ="SINCL" property="importeImpuestoIVA_IGIG" format="Numeric" pattern="9(14).999" />
+	<field name="% Recargo de Equivalencia" value="bean" bean ="SINCL" property="porcentajeRecargoDeEquivalencia" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Recargo de Equivalencia" value="bean" bean ="SINCL" property="importeRecargoDeEquivalencia" format="Numeric" pattern="9(14).999" />
+	<field name="Calificador Otro Tipo de Impuesto" value="bean" bean ="SINCL" property="calificadorOtroTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Otro Tipo de Impuesto" value="bean" bean ="SINCL" property="porcentajeOtroTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Otro Tipo de Impuesto" value="bean" bean ="SINCL" property="importeOtroTipoDeImpuesto" format="Numeric" pattern="9(14).999" />
+	<field name="Número Pedido (ON)" value="bean" bean ="SINCL" property="numeroPedido_ON_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Albarán (DQ)" value="bean" bean ="SINCL" property="numeroDeAlbaran_DQ_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Embalajes" value="bean" bean ="SINCL" property="numeroDeEmbalajes" format="Numeric" pattern="9(8)" />
+	<field name="Tipo de Embalaje" value="bean" bean ="SINCL" property="tipoDeEmbalaje" format="AlphaNumeric" pattern="X(7)" />
+	<field name="Importe total bruto de la línea de detalle" value="bean" bean ="SINCL" property="importeTotalBrutoDeLaLineaDeDetalle" format="Numeric" pattern="9(14).999" />
+	<field name="Número de línea superior" value="bean" bean ="SINCL" property="numeroDeLineaSuperior" format="Numeric" pattern="9(6)" />
+	<field name="Número de línea del pedido (ON)" value="bean" bean ="SINCL" property="numeroDeLineaDelPedido_ON_" format="Numeric" pattern="9(6)" />
+	<field name="Unidad base precio" value="bean" bean ="SINCL" property="unidadBasePrecio" format="Numeric" pattern="9(6).999" />
+	<field name="Identificador producto/línea pedido (MP)" value="bean" bean ="SINCL" property="identificadorProducto_lineaPedido_MP_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Categoría Producto (GB)" value="bean" bean ="SINCL" property="categoriaProducto_GB_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Número artículo fabricante (MF)" value="bean" bean ="SINCL" property="numeroArticuloFabricante_MF_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Confirmación de entrega" value="bean" bean ="SINCL" property="numeroConfirmacionDeEntrega" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de línea Confirmación de entrega" value="bean" bean ="SINCL" property="numeroDeLineaConfirmacionDeEntrega" format="Numeric" pattern="9(6)" />
+	<field name="Fecha Pedido (ON/171)" value="bean" bean ="SINCL" property="fechaPedido_ON_171_" format="Numeric" pattern="9(8)" />
+	<field name="Fecha Albarán (DQ/171)" value="bean" bean ="SINCL" property="fechaAlbaran_DQ_171_" format="Numeric" pattern="9(8)" />
+</register>

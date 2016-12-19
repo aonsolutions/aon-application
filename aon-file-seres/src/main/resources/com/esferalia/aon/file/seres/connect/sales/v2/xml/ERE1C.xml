@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1C">
+	<field name="Tipo registro ERE1C" value="ERE1C" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo documento (220, 221, 224, 226, 22E)" value="bean" bean ="ERE1C" property="tipoDocumento_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de pedido" value="bean" bean ="ERE1C" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Función del mensaje" value="bean" bean ="ERE1C" property="funcionDelMensaje" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora documento (137) (102/203)" value="bean" bean ="ERE1C" property="fecha_horaDocumento_137__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador fecha/hora 1" value="bean" bean ="ERE1C" property="calificadorFecha_hora1" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora 1" value="bean" bean ="ERE1C" property="fecha_hora1" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador fecha/hora 2" value="bean" bean ="ERE1C" property="calificadorFecha_hora2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora 2" value="bean" bean ="ERE1C" property="fecha_hora2" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Información adicional" value="bean" bean ="ERE1C" property="informacionAdicional" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número pedido abierto (BO)" value="bean" bean ="ERE1C" property="numeroPedidoAbierto_BO_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número lista de precios (PL)" value="bean" bean ="ERE1C" property="numeroListaDePrecios_PL_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número pedido proveedor (VN)" value="bean" bean ="ERE1C" property="numeroPedidoProveedor_VN_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Calificador referencia adicional" value="bean" bean ="ERE1C" property="calificadorReferenciaAdicional" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número referencia adicional" value="bean" bean ="ERE1C" property="numeroReferenciaAdicional" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código moneda" value="bean" bean ="ERE1C" property="codigoMoneda" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de vencimiento único" value="bean" bean ="ERE1C" property="fechaDeVencimientoUnico" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Método Pago de costes de transportes" value="bean" bean ="ERE1C" property="metodoPagoDeCostesDeTransportes" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Condiciones de Entrega" value="bean" bean ="ERE1C" property="condicionesDeEntrega" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Importe Total Neto (79)" value="bean" bean ="ERE1C" property="importeTotalNeto_79_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Descuentos/Cargos (131)" value="bean" bean ="ERE1C" property="importeTotalDescuentos_Cargos_131_" format="Numeric" pattern="9(14).999" />
+	<field name="Base Imponible (125)" value="bean" bean ="ERE1C" property="baseImponible_125_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Impuestos (176)" value="bean" bean ="ERE1C" property="importeTotalImpuestos_176_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe a Pagar (139)" value="bean" bean ="ERE1C" property="importeAPagar_139_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Bruto (98)" value="bean" bean ="ERE1C" property="importeTotalBruto_98_" format="Numeric" pattern="9(14).999" />
+	<field name="Expediente de contratación SAS (ACD)" value="bean" bean ="ERE1C" property="expedienteDeContratacionSAS_ACD_" format="AlphaNumeric" pattern="X(17)" />
+</register>

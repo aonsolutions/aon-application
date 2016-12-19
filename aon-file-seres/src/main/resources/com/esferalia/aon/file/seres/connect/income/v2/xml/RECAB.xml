@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="RECAB">
+	<field name="Tipo registro RECAB" value="RECAB" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Instrucciones" value="bean" bean ="RECAB" property="codigoInstrucciones" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Marcas de envío" value="bean" bean ="RECAB" property="marcasDeEnvio" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calificador de cantidad (11/12)" value="bean" bean ="RECAB" property="calificadorDeCantidad_11_12_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Cantidad" value="bean" bean ="RECAB" property="cantidad" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador número identidad" value="bean" bean ="RECAB" property="calificadorNumeroIdentidad" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número identidad" value="bean" bean ="RECAB" property="numeroIdentidad" format="AlphaNumeric" pattern="X(35)" />
+</register>

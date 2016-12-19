@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="RECAL">
+	<field name="Tipo de Registro RECAL" value="RECAL" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de línea" value="bean" bean ="RECAL" property="numeroDeLinea" format="Numeric" pattern="9(6)" />
+	<field name="Código EAN del articulo" value="bean" bean ="RECAL" property="codigoEANDelArticulo" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Número de articulo del proveedor (SA)" value="bean" bean ="RECAL" property="numeroDeArticuloDelProveedor_SA_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número variable promocional (PV)" value="bean" bean ="RECAL" property="numeroVariablePromocional_PV_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código DUN-14 (ADU)" value="bean" bean ="RECAL" property="codigoDUN_14_ADU_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código ACU (ACU)" value="bean" bean ="RECAL" property="codigoACU_ACU_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de lote (NB)" value="bean" bean ="RECAL" property="numeroDeLote_NB_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de articulo del comprador (IN)" value="bean" bean ="RECAL" property="numeroDeArticuloDelComprador_IN_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Cantidad enviada (12)" value="bean" bean ="RECAL" property="cantidadEnviada_12_" format="Numeric" pattern="9(12).999" />
+	<field name="Cantidad Recibida y Aceptada" value="bean" bean ="RECAL" property="cantidadRecibidaYAceptada" format="Numeric" pattern="9(12).999" />
+	<field name="Unidad de medida cantidad enviada" value="bean" bean ="RECAL" property="unidadDeMedidaCantidadEnviada" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Unidades de consumo en unidad de expedición (59)" value="bean" bean ="RECAL" property="unidadesDeConsumoEnUnidadDeExpedicion_59_" format="Numeric" pattern="9(12).999" />
+	<field name="Identificador producto/línea pedido (MP)" value="bean" bean ="RECAL" property="identificadorProducto_lineaPedido_MP_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Categoría Producto (GB)" value="bean" bean ="RECAL" property="categoriaProducto_GB_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Número artículo fabricante (MF)" value="bean" bean ="RECAL" property="numeroArticuloFabricante_MF_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de serie del artículo (SN)" value="bean" bean ="RECAL" property="numeroDeSerieDelArticulo_SN_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de albarán (DQ/AAK)" value="bean" bean ="RECAL" property="numeroDeAlbaran_DQ_AAK_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de línea del albarán (DQ/AAK)" value="bean" bean ="RECAL" property="numeroDeLineaDelAlbaran_DQ_AAK_" format="Numeric" pattern="9(6)" />
+</register>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCD">
+	<field name="Tipo de Registro SINCD" value="SINCD" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Descuento/Cargo" value="bean" bean ="SINCD" property="numeroDescuento_Cargo" format="Numeric" pattern="9(2)" />
+	<field name="Indicador Descuento/Cargo (A/C)" value="bean" bean ="SINCD" property="indicadorDescuento_Cargo_A_C_" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Indicador Secuencia de cálculo" value="bean" bean ="SINCD" property="indicadorSecuenciaDeCalculo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Porcentaje Descuento/Cargo" value="bean" bean ="SINCD" property="porcentajeDescuento_Cargo" format="Numeric" pattern="9(4).9999" />
+	<field name="Importe Descuento/Cargo" value="bean" bean ="SINCD" property="importeDescuento_Cargo" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Sujeto a Aplicación (13)" value="bean" bean ="SINCD" property="importeTotalSujetoAAplicacion_13_" format="Numeric" pattern="9(14).999" />
+	<field name="Cantidad de Unidades que se descuentan por Línea" value="bean" bean ="SINCD" property="cantidadDeUnidadesQueSeDescuentanPorLinea" format="Numeric" pattern="9(12).999" />
+	<field name="Tipo Descuento" value="bean" bean ="SINCD" property="tipoDescuento" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Descuentos Monetarios por Unidad" value="bean" bean ="SINCD" property="descuentosMonetariosPorUnidad" format="Numeric" pattern="9(15).999" />
+	<field name="Unidad de Medida" value="bean" bean ="SINCD" property="unidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Descripción de Descuento/Cargo" value="bean" bean ="SINCD" property="descripcionDeDescuento_Cargo" format="AlphaNumeric" pattern="X(35)" />
+</register>

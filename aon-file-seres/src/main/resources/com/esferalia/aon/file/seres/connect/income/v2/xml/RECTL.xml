@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="RECTL">
+	<field name="Tipo de registro RECTL" value="RECTL" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de mensaje" value="bean" bean ="RECTL" property="tipoDeMensaje" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código emisor" value="bean" bean ="RECTL" property="codigoEmisor" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código receptor" value="bean" bean ="RECTL" property="codigoReceptor" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Identificación del mensaje" value="bean" bean ="RECTL" property="identificacionDelMensaje" format="AlphaNumeric" pattern="X(40)" />
+	<field name="Fecha/hora del mensaje" value="bean" bean ="RECTL" property="fecha_horaDelMensaje" format="AlphaNumeric" pattern="X(12)" />
+</register>

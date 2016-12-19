@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1G">
+	<field name="Tipo registro ERE1G" value="ERE1G" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código lugar de entrega" value="bean" bean ="ERE1G" property="codigoLugarDeEntrega" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Agencia responsable lista de códigos" value="bean" bean ="ERE1G" property="agenciaResponsableListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Lugar de entrega, texto libre" value="bean" bean ="ERE1G" property="lugarDeEntrega_TextoLibre" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Fecha/hora de entrega requerida (2)" value="bean" bean ="ERE1G" property="fecha_horaDeEntregaRequerida_2_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Cantidad envío dividida (11)" value="bean" bean ="ERE1G" property="cantidadEnvioDividida_11_" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador unidad de medida" value="bean" bean ="ERE1G" property="calificadorUnidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+</register>
