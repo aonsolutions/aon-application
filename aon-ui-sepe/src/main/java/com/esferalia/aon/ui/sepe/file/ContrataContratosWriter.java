@@ -1595,13 +1595,18 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * @return
 	 */
 	private DATOSREDUCCIONRDL12011TYPE createDatosReduccionRdl2011(ContrataContratoParams params) {
-		// TODO
-//		DATOSREDUCCIONRDL12011TYPE datos = factory.createDATOSREDUCCIONRDL12011TYPE();
-//		datos.setCODIGOCOLECTIVOREDUCCION(params.getCODIGOCOLECTIVOREDUCCION());
-//		datos.setPORCENTAJEREDUCCION(params.getPORCENTAJEREDUCCION());
-//		datos.setPORCENTAJEJORNADAREDUCCION(params.getPORCENTAJEJORNADAREDUCCION());
-//		return datos;
-		return null;
+		DATOSREDUCCIONRDL12011TYPE datos = factory.createDATOSREDUCCIONRDL12011TYPE();
+		if(params.isReductionData()){
+			if(params.getCodigoColectivoReduccion()!=null){
+				datos.setCODIGOCOLECTIVOREDUCCION(params.getCodigoColectivoReduccion().getCode());
+			}
+			datos.setPORCENTAJEREDUCCION(params.getPorcentajeReduccion());
+			if(params.getPorcentajeJornadaReduccion()!=null){
+				int value = (int)(CommonUtil.round(params.getPorcentajeJornadaReduccion())*100);
+				datos.setPORCENTAJEJORNADAREDUCCION(String.valueOf(value));
+			}
+		}
+		return datos;
 	}
 	/**
 	 * <xsd:complexType name="DATOS_BONIFICACIONTYPE">

@@ -452,19 +452,19 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT4){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT4_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT4_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO PRIMER EMPLEO JOVEN. ( pág.7 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT5){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT5_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT5_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO DE TRABAJADORES EN SITUACIÓN DE EXCLUSIÓN SOCIAL, VÍCTIMAS DE VIOLENCIA DE GÉNERO, DOMÉSTICA O VÍCTIMA DE TERRORISMO. ( pág.8 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT6){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT6_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT6_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO DE TRABAJADORES EN SITUACIÓN DE EXCLUSIÓN SOCIAL POR EMPRESA DE INSERCIÓN. ( pág.9 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT7){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT7_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT7_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO DE TRABAJADORES MAYORES DE 52 AÑOS BENEFICIARIOS DE LOS SUBSIDIOS POR DESEMPLEO. ( pág.10 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT8){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT8_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT8_OPTION_CHECK.getValue(),"true");
@@ -474,7 +474,7 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT9){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT9_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT9_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO RELEVO. ( pág.12 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT10){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT10_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT10_OPTION_CHECK.getValue(),"true");
@@ -514,8 +514,14 @@ public class TemporaryModel extends AbstractContractModel {
 						setPdfFieldValue(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT2_TEXT.getValue(), 
 								getContractInfoMap(contract).get(PdfFieldTemporary.OPT10_FORMATION_TYPE_OPT2_TEXT.toString()));
 					}
-				}				
-				setPdfFieldValue(PdfFieldTemporary.OPT10_REDUCTION_OPT1.getValue(), "true");
+				}
+				if(contrata!=null && contrata.isReductionData()){
+					if(contrata.getPorcentajeReduccion().equals("100")){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_REDUCTION_OPT1.getValue(), "true");
+					} else if(contrata.getPorcentajeReduccion().equals("75")){
+						setPdfFieldValue(PdfFieldTemporary.OPT10_REDUCTION_OPT2.getValue(), "true");
+					}
+				}
 			} else if(modelOption == ModelOption.TEMPORARY_OPT11){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT11_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT11_OPTION_CHECK.getValue(),"true");
@@ -770,19 +776,19 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.TEMPORARY_OPT15){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT15_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT15_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO DE INVESTIGADORES. ( pág.18 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT16){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT16_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT16_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO DE TRABAJADOES/AS PENADOS EN INSTITUCIONES PENITENCIARIAS. (pág.19 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT17){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT17_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT17_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO DE MENORES Y JÓVENES EN CENTROS DE MENORES. ( SOMETIDOS A MEDIDADAS DE INTERNAMIENTO PREVISTAS EN LA LEY ORGÁNICA 5/2000 DE 21 DE ENERO ). ( pág.20 )
 			} else if(modelOption == ModelOption.TEMPORARY_OPT18){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT18_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT18_OPTION_CHECK.getValue(),"true");
-				// TODO
+				// TODO OTRAS SITUACIONES. ( pág.21 )
 			}
 			
 		} catch (IOException e) {

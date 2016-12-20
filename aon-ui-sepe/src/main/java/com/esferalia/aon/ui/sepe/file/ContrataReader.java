@@ -17,6 +17,7 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -845,7 +846,18 @@ public class ContrataReader {
 		return StringUtils.isBlank(duracion)?null:duracion.substring(4,6);
 	}
 	private void completeDatosReduccionRdl2011(DATOSREDUCCIONRDL12011TYPE datos, ContrataContratoParams params) {
-		// TODO
+		if(datos != null){
+			params.setReductionData(true);
+			if(datos.getCODIGOCOLECTIVOREDUCCION()!=null){
+				params.setCodigoColectivoReduccion(TQOCOLRE.getEnumByValue(datos.getCODIGOCOLECTIVOREDUCCION()));
+			}
+			if(NumberUtils.isNumber(datos.getPORCENTAJEJORNADAREDUCCION())){
+				params.setPorcentajeJornadaReduccion(Double.valueOf(datos.getPORCENTAJEJORNADAREDUCCION())/100);
+			}
+			if(StringUtils.isNotBlank(datos.getPORCENTAJEREDUCCION())){
+				params.setPorcentajeReduccion(datos.getPORCENTAJEREDUCCION());
+			}
+		}
 	}
 	private void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos, ContrataContratoParams params) {
 		if(datos != null){

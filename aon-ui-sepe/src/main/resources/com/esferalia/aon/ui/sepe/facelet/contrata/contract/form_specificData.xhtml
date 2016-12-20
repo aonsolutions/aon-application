@@ -503,7 +503,6 @@
 						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_reduction_lt_250}" itemValue="100" />
 					</aon:selectOneRadio>
 					
-					<!--  
 					<aon:outputLabel for="reductionJournalPercent"
 						value="#{bundle.sepe_contrata_contract_reduction_journal_percent}" />
 					<aon:div>
@@ -512,9 +511,8 @@
 							value="#{contractContrata.params.porcentajeJornadaReduccion}" >
 							<f:validateDoubleRange minimum="50.00" maximum="75.00" />
 						</aon:inputText>
-						<aon:outputText value="%" />
+						<aon:outputText value="% (Min:50.00 - Max:75.00)" />
 					</aon:div>
-					-->
 					
 				</aon:panelGrid>
 			</aon:panel>
