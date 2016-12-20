@@ -18,8 +18,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import com.esferalia.aon.jooq.tables.Domain;
+import org.jooq.DSLContext;
+import org.jooq.Record3;
+import org.jooq.Record4;
+import org.jooq.Result;
+import org.jooq.SelectJoinStep;
 
 public class Main {
 	
@@ -74,7 +77,6 @@ public class Main {
 		Option nameDomainOpt = OptionBuilder
 				.withArgName("name")
 				.hasArg()
-				.isRequired(true)
 				.withLongOpt("domainDump")
 				.withDescription("Domains' name for dump.")
 				.create();
@@ -82,7 +84,6 @@ public class Main {
 		Option newNameDomainOpt = OptionBuilder
 				.withArgName("name")
 				.hasArg()
-				.isRequired(true)
 				.withLongOpt("newNameDomain")
 				.withDescription("Select how to rename domain. For example: \"Copy_of_{domain}\".")
 				.create();
@@ -141,6 +142,11 @@ public class Main {
 				.withLongOpt("alone")
 				.withDescription("Download domain Stand Alone version. Default option is Sibling")
 				.create();
+		
+		Option listDomains = OptionBuilder
+				.withLongOpt("list")
+				.withDescription("List all the domains you have access.")
+				.create();
 
 		Option helpOpt = OptionBuilder
 				.withLongOpt("help")
@@ -151,7 +157,7 @@ public class Main {
 				.addOption(userOpt).addOption(passwordOpt).addOption(nameDomainOpt).addOption(newNameDomainOpt)
 				.addOption(renameNIF).addOption(executeOpt).addOption(zipOpt).addOption(sqlOpt)
 				.addOption(eraseUsers).addOption(renameLogin).addOption(renamePass).addOption(commentsOpt)
-				.addOption(standAloneOpt).addOption(helpOpt);
+				.addOption(standAloneOpt).addOption(listDomains).addOption(helpOpt);
 
 		// Parser create
 		CommandLineParser parser = new GnuParser();
@@ -199,7 +205,12 @@ public class Main {
 			
 			PrintStream out = null;
 			ZipOutputStream zos = null;
-			Integer idDomain = aonDump.dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
+			Integer idDomain = 0;
+			
+			if (cmd.hasOption(listDomains.getLongOpt())){
+				listDomains(aonDump.dslContext, System.err);
+				return;
+			}
 			
 			if (cmd.hasOption(zipOpt.getLongOpt())){
 				File file = new File(zipName+".zip");
@@ -207,10 +218,12 @@ public class Main {
 				zos = new ZipOutputStream(fos);
 				zos.putNextEntry(new ZipEntry("sql_Java"));
 				out  = new PrintStream(zos, true, "UTF-8");
+				idDomain = aonDump.dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
 		
 			}else if (cmd.hasOption(sqlOpt.getLongOpt())){
 				File file = new File(sqlName+".sql");
 				out = new PrintStream(file, "UTF-8");
+				idDomain = aonDump.dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
 			}
 
 			//Creamos los Callbacks
@@ -237,7 +250,7 @@ public class Main {
 			
 			cb = new IndexUniqueCallBackDump(cb);
 			cb = new ModifyDataCallBack(cb, newDomain, "domain", "name");
-			cb = new TaskProcessCallBack(cb, System.out, aonDump, 0, 0); //MIRAR ESTO
+			cb = new ConsoleInformationCallBack(cb, System.out, aonDump, 0, 0); //MIRAR ESTO
 			
 			if (cmd.hasOption(renameNIF.getLongOpt()))
 				cb = new ModifyDataCallBack(cb, nif, "registry", "document");
@@ -269,5 +282,13 @@ public class Main {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("aon-dump", options);
 		}
+	}
+
+	private static void listDomains(DSLContext dslContext, PrintStream err) {
+		Result<Record3<Integer, String, String>> domainsResult = dslContext
+				.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION).from(DOMAIN).fetch();
+		
+		domainsResult.forEach(d -> err.println(d.getValue(DOMAIN.NAME)));
+		
 	}
 }
