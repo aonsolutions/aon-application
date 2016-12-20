@@ -558,7 +558,7 @@ public interface Properties {
 		Property<String> getCreditCardExpirationMonthProperty();
 		Property<String> getCreditCardExpirationYearProperty();
 		Property<String> getCreditCardCvvProperty();
-		Property<Integer> getCreditPenaltyDaysProperty();	
+		Property<String> getCreditPenaltyValueProperty();	
 		Property<Byte> getTouristTaxFreeProperty();
 		Property<Byte> getCheckStatusProperty();
 		Property<String> getCreationUserProperty();

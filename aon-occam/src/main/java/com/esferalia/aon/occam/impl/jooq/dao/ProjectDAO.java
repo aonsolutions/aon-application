@@ -110,7 +110,7 @@ public class ProjectDAO {
 		@Override public Property<String> getCreditCardExpirationMonthProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_MONTH);}
 		@Override public Property<String> getCreditCardExpirationYearProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_YEAR);}
 		@Override public Property<String> getCreditCardCvvProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_CVV);}
-		@Override public Property<Integer> getCreditPenaltyDaysProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.PENALTY_DAYS);}
+		@Override public Property<String> getCreditPenaltyValueProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.PENALTY_VALUE);}
 		@Override public Property<Byte> getTouristTaxFreeProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.TOURIST_TAX_FREE);}
 		@Override public Property<Byte> getCheckStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.CHECK_STATUS);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREATION_USER);}
