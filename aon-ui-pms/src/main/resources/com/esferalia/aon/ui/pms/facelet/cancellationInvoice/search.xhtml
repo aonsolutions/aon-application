@@ -96,6 +96,14 @@
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{pmsCollections.tariffs}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProjectReservation_manual"
+						value="#{bundle.aon_amount}"/>
+					<aon:selectOneRadio id="ProjectReservation_manual" 
+						value="#{cancellationInvoiceSearch.manual}">
+						<f:selectItem itemLabel="#{bundle.finance_automatic}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{bundle.finance_manual}" itemValue="#{true}" />
+					</aon:selectOneRadio>
 				</ui:define>
 			</ui:decorate>
 

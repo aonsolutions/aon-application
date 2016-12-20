@@ -1339,19 +1339,19 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return obtainAppParamItem(AppParam.PMS_CANCELLATION_ITEM);
 	}
 
-	public Integer obtainEarlyCheckOutPenaltyDays(ProjectReservation reservation, Date date) throws ManagerBeanException {
-		return obtainPenaltyDays(reservation, EARLY_CHECKOUT_PENALTY, date);
+	public String obtainEarlyCheckOutPenaltyValue(ProjectReservation reservation, Date date) throws ManagerBeanException {
+		return obtainPenaltyValue(reservation, EARLY_CHECKOUT_PENALTY, date);
 	}
 
-	public Integer obtainNoShowPenaltyDays(ProjectReservation reservation, Date date) throws ManagerBeanException {
-		return obtainPenaltyDays(reservation, NOSHOW_PENALTY, date);
+	public String obtainNoShowPenaltyValue(ProjectReservation reservation, Date date) throws ManagerBeanException {
+		return obtainPenaltyValue(reservation, NOSHOW_PENALTY, date);
 	}
 
-	public Integer obtainCancellationPenaltyDays(ProjectReservation reservation, Date date) throws ManagerBeanException {
-		return obtainPenaltyDays(reservation, OUTOFDATE_CANCEL_PENALTY, date);
+	public String obtainCancellationPenaltyValue(ProjectReservation reservation, Date date) throws ManagerBeanException {
+		return obtainPenaltyValue(reservation, OUTOFDATE_CANCEL_PENALTY, date);
 	}
 
-	private Integer obtainPenaltyDays(ProjectReservation reservation, String key, Date date) throws ManagerBeanException {
+	private String obtainPenaltyValue(ProjectReservation reservation, String key, Date date) throws ManagerBeanException {
 		String penaltyStr = null;
 		Integer tariffId = reservation.getMainTariffId();
 		if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
@@ -1437,7 +1437,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 				}
 			}
 		}
-		
+
 		if (StringUtils.contains(penaltyStr, "#")) {
 			String penaltyTmp = penaltyStr.substring(0, penaltyStr.indexOf("#"));
 			String dueHours = penaltyStr.substring(penaltyStr.indexOf("#") + 1);
@@ -1449,17 +1449,23 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 				}
 			}
 		}
-		return (NumberUtils.isNumber(penaltyStr)) ? Integer.parseInt(penaltyStr) : null;
+		return penaltyStr;
 	}
 
-	public double obtainCancellationPenaltyPrice(ProjectReservation reservation) throws ManagerBeanException {
-		Integer days = (reservation.getPenaltyDays() != null) ? reservation.getPenaltyDays() : obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
-		if (days != null && days < 0) {
-			return reservation.getCancellationPenaltyPrice(reservation.getStartDate(), reservation.getEndDate());
-		} else if (days != null &&  days > 0) {
-			return reservation.getCancellationPenaltyPrice(reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), days-1));
-		} 
-		return 0;
+	public Double obtainCancellationPenaltyAmount(ProjectReservation reservation) throws ManagerBeanException {
+		String penaltyValue = reservation.getPenaltyValue();
+		if (penaltyValue == null) {
+			penaltyValue = obtainCancellationPenaltyValue(reservation, reservation.getStartDate());
+		}
+		return reservation.getAutoCancellationPenaltyPrice(penaltyValue);
+	}
+
+	public double obtainNoShowPenaltyAmount(ProjectReservation reservation) throws ManagerBeanException {
+		String penaltyValue = reservation.getPenaltyValue();
+		if (penaltyValue == null) {
+			penaltyValue = obtainNoShowPenaltyValue(reservation, reservation.getStartDate());
+		}
+		return reservation.getAutoNoShowPenaltyPrice(penaltyValue);
 	}
 
 	public String obtainProfileData(String profile, Date date) {

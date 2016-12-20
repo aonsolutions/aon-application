@@ -660,18 +660,21 @@ System.out.println(message.toString());
 
 		createReservationGuest(requestRoom.getReservationRequest(), reservation);
 		createReservationRoomAndService(requestRoom, reservation, roomTariff, serviceItem);
+		reservation = finalizeReservation(reservation);
 
 		Criteria criteria = new Criteria();
 		criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
 		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), reservation.getCrsCode());
 		if (reservationBean.getCount(criteria) > 0) {
+			reservation.setPenaltyValue("0");
+			reservation.setPenaltyAmount(0);
+			reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
 			reservation.setStatus(ReservationStatus.CANCELLED);
 			reservation = (ProjectReservation)reservationBean.update(reservation);
 		}
 	}
 
 	private void createReservationGuest(ReservationRequest request, ProjectReservation reservation) throws ManagerBeanException {
-		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
 		IManagerBean requestGuestBean = BeanManager.getManagerBean(ReservationRequestGuest.class);
 		Criteria criteria = new Criteria();
@@ -699,7 +702,6 @@ System.out.println(message.toString());
 			reservationGuestBean.insert(reservationGuest);
 			if (reservationGuest.getGuestIndex() == 1) {
 				getReservationUtils().fillProject(reservation);
-				reservation = (ProjectReservation)reservationBean.update(reservation);
 			}
 		}
 	}
@@ -764,6 +766,11 @@ System.out.println(message.toString());
 
 			serviceBase = CommonUtil.round(serviceBase - serviceDetailBase, 4); 
 		}
+	}
+
+	private ProjectReservation finalizeReservation(ProjectReservation reservation) throws ManagerBeanException{
+		reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
+		return (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
 }

@@ -75,16 +75,18 @@
 												focus="NoShowInvoice_payMethod" />
 										</aon:selectInputDate>
 
-										<aon:outputLabel for="NoShowInvoice_noShowPenalty"
-											value="#{bundle.pms_penalty_days}" />
-										<aon:selectOneMenu id="NoShowInvoice_noShowPenalty"
-											value="#{controller.noShowPenalty}"	ajaxSingle="true">
-											<f:selectItem itemLabel="Auto" value="#{null}" />
-											<f:selectItem itemLabel="0" itemValue="0" />
-											<f:selectItem itemLabel="1"  itemValue="1" />
-											<f:selectItem itemLabel="2" itemValue="2" />
-											<f:selectItem itemLabel="#{bundle.finance_all}" itemValue="-1" />
-										</aon:selectOneMenu>
+										<aon:if test="#{searchListener.manual}">
+											<aon:outputLabel for="NoShowInvoice_noShowPenalty"
+												value="#{bundle.pms_penalty_days}" />
+											<aon:selectOneMenu id="NoShowInvoice_noShowPenalty"
+												value="#{controller.noShowPenalty}" required="true"
+												ajaxSingle="true">
+												<f:selectItem itemLabel=" - " value="#{null}" />
+												<f:selectItem itemLabel="1"  itemValue="1" />
+												<f:selectItem itemLabel="2" itemValue="2" />
+												<f:selectItem itemLabel="#{bundle.finance_all}" itemValue="-1" />
+											</aon:selectOneMenu>
+										</aon:if>
 
 										<aon:outputLabel for="NoShowInvoice_payMethod"
 											value="#{bundle.finance_payMethod}" />

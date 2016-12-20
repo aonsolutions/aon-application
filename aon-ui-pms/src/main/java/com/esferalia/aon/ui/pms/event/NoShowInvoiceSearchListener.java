@@ -23,6 +23,7 @@ public class NoShowInvoiceSearchListener extends ControllerSearchListener {
 	private Hotel hotelReservation;
 	private Customer agency;
 	private Tariff tariff;
+	private boolean manual;
 
 	public boolean isGuestReservationSearch() {
 		return guestReservationSearch;
@@ -52,12 +53,20 @@ public class NoShowInvoiceSearchListener extends ControllerSearchListener {
 		this.tariff = tariff;
 	}
 
+	public boolean isManual() {
+		return manual;
+	}
+	public void setManual(boolean manual) {
+		this.manual = manual;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setGuestReservationSearch(true);
 		setHotelReservation((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setTariff((Tariff)BeanManager.getManagerBean(Tariff.class).createNewTo());
+		setManual(false);
 
 		((NoShowInvoiceController)getController()).clearCheckedReservations();
 	}
@@ -79,6 +88,10 @@ public class NoShowInvoiceSearchListener extends ControllerSearchListener {
 		}
 		if (getTariff() != null && getTariff().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());			
+		}
+		if (!isManual()) {
+			criteria.addNotNullExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_VALUE));
+			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_VALUE), String.valueOf(0));
 		}
 	}
 

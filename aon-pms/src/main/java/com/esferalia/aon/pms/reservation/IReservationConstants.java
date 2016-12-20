@@ -100,4 +100,8 @@ public interface IReservationConstants {
 	String INVENTORY_USER_PASSWORD = "hhg";
 	String INVENTORY_COUNT_TYPE = "1";
 
+	String PENALTY_MODE_DAILY = "D";
+	String PENALTY_MODE_AVERAGE = "M";
+	String PENALTY_MODE_PERCENT = "P";
+
 }

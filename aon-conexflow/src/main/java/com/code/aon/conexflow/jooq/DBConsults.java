@@ -421,7 +421,7 @@ public class DBConsults {
 		reservation.setHotel(hotel);
 		reservation.setStartDate(pr.getStartDate());
 		reservation.setEndDate(pr.getEndDate());
-		reservation.setPenaltyDays(pr.getPenaltyDays());
+		reservation.setPenaltyValue(pr.getPenaltyValue());
 		reservation.setDomain(pr.getDomain());
 		return reservation;
 	}
@@ -448,7 +448,7 @@ public class DBConsults {
 			reservation.setHotel(hotel);
 			reservation.setStartDate(pr.getStartDate());
 			reservation.setEndDate(pr.getEndDate());
-			reservation.setPenaltyDays(pr.getPenaltyDays());
+			reservation.setPenaltyValue(pr.getPenaltyValue());
 			reservation.setDomain(domain.getId());
 			return reservation;
 		}finally{

@@ -310,6 +310,8 @@ public class ReservationManager implements IReservationConstants {
 			createReservationGuest(reservationType, reservation);
 			createReservationRoom(reservationType, reservation);
 			createReservationService(reservationType, reservation);
+
+			reservation = finalizeReservation(reservation);
 		} catch (Exception ex) {
 			if (isNewReservation && reservation.getId() != null) {
 				try {
@@ -396,7 +398,6 @@ public class ReservationManager implements IReservationConstants {
 				reservationGuestBean.insert(reservationGuest);
 				if (reservationGuest.getGuestIndex() == 1) {
 					getReservationUtils().fillProject(reservation);
-					reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 				}
 			}
 		}
@@ -451,7 +452,6 @@ public class ReservationManager implements IReservationConstants {
 		}
 
 		reservation.setRemarks(reservation.getRemarks() + "NUMERO TOTAL DE PERSONAS: " + totalPax + "\n");
-		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
 	private void createReservationService(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
@@ -550,7 +550,11 @@ public class ReservationManager implements IReservationConstants {
 			NumberFormat formatter = new DecimalFormat("#,##0.00");
 			reservation.setRemarks(reservation.getRemarks() + "PRECIO PACTADO: " + formatter.format(agreedPrice) + "\n");
 		}
-		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
+	}
+
+	private ProjectReservation finalizeReservation(ProjectReservation reservation) throws ManagerBeanException{
+		reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
+		return (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
 	private boolean isInvalidCheckInDate(Date checkIn) {
@@ -842,7 +846,8 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setModificationDate(new Date());
 			reservation.setCancellationUser(CRS);
 			reservation.setCancellationDate(new Date());
-			reservation.setPenaltyDays(obtainCancelPenaltyDays(reservation));
+			reservation.setPenaltyValue(getReservationUtils().obtainCancellationPenaltyValue(reservation, reservation.getCancellationDate()));
+			reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
 			if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
 				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
 			} else {
@@ -859,14 +864,6 @@ public class ReservationManager implements IReservationConstants {
 		} finally {
 			SQLUtils.closeQuietly(connection);
 		}
-	}
-
-	private Integer obtainCancelPenaltyDays(ProjectReservation reservation) throws ManagerBeanException {
-		Integer penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, reservation.getCancellationDate());
-		if (penaltyDays != null && (penaltyDays < 0 || penaltyDays > CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()))) {
-			penaltyDays = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());
-		}
-		return penaltyDays;
 	}
 
 	private String findReservationId(ResGlobalInfoType resGlobalInfoType, String source, String type) {

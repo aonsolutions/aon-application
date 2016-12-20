@@ -139,32 +139,36 @@
 							</rich:toolTip>
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="AUTO" />
-							</f:facet>
-							<aon:outputText value="#{to.autoNoShowPenaltyPrice}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column>
+						<aon:if test="#{!noShowInvoiceSearch.manual}">
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="AUTO" />
+								</f:facet>
+								<aon:outputText value="#{(to.penaltyAmount!=0) ? to.penaltyAmount : to.autoNoShowPenaltyPrice}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>
+						</aon:if>
 
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="1N" />
-							</f:facet>
-							<aon:outputText value="#{to.firstNightNoShowPenaltyPrice}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column>
+						<aon:if test="#{noShowInvoiceSearch.manual}">
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="1N" />
+								</f:facet>
+								<aon:outputText value="#{to.firstNightNoShowPenaltyPrice}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="2N" />
-							</f:facet>
-							<aon:outputText value="#{to.firstTwoNightNoShowPenaltyPrice}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column>
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="2N" />
+								</f:facet>
+								<aon:outputText value="#{to.firstTwoNightNoShowPenaltyPrice}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>
+						</aon:if>
 
 						<aon:column alias="ProjectReservation.total"
 							styleClass="aon-editDataTable-numberColumn">
@@ -172,16 +176,6 @@
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
 							<aon:div styleClass="aon-nowrap">
-								<aon:div styleClass="aon-nowrap" style="display:inline;" rendered="#{!empty to.creditCardNumber}">
-									<aon:commandLink id="NoShowInvoice_creditCardShow" immediate="true"
-										value="&#160;" title="#{bundle.aon_credit_card}"
-										styleClass="aon-icon-card" style="margin-left: 5px; padding-right: 12px;"
-										actionListener="#{controller.onCreditCardShow}" 
-										reRender="showCreditCardWindow" ajaxSingle="true">
-										<f:setPropertyActionListener target="#{controller.showCreditCardWindow}"
-											value="#{true}" />
-									</aon:commandLink>
-								</aon:div>
 								<aon:div styleClass="aon-nowrap" style="display:inline;" rendered="#{to.advancedAmount > 0}">
 									<aon:outputText value="&#160;" title="#{bundle.finance_money_advance}"
 										styleClass="aon-icon-cash" style="margin-left: 5px; padding-right: 12px;" />
@@ -204,9 +198,6 @@
 			</aon:div>
 		</aon:form>
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		<ui:include src="/com/esferalia/aon/ui/pms/facelet/noShowInvoice/modalCreditCard.xhtml">
-			<ui:param name="controller" value="#{noShowInvoice}" />
-		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/noShowInvoice/modalInvoice.xhtml">
 			<ui:param name="controller" value="#{noShowInvoice}" />
 			<ui:param name="searchListener" value="#{noShowInvoiceSearch}" />

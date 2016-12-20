@@ -6,7 +6,6 @@ import java.io.Serializable;
 import javax.xml.bind.JAXBException;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.XMLUtils;
@@ -14,8 +13,6 @@ import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
-import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationConexFlow implements Serializable {
 
@@ -92,19 +89,7 @@ public class ProjectReservationConexFlow implements Serializable {
 			String amountStr = confirmPreauthorization.getRespuesta().getImporte();
 			return Double.parseDouble(amountStr);
 		}else{
-			ProjectReservation reservation = getReservation();
-			ReservationCheckStatus rcs = reservation.getCheckStatus();
-			if(rcs.equals(ReservationCheckStatus.CANCEL_INVOICEABLE) || rcs.equals(ReservationCheckStatus.NO_SHOW) || reservation.getAdvance() == 0.0){
-				ReservationUtils reservationUtils = new ReservationUtils(getDomain().getId());
-				try {
-					return (Double) reservationUtils.obtainCancellationPenaltyPrice(getReservation());
-				} catch (ManagerBeanException e) {
-					e.printStackTrace();
-					return 0.0;
-				}
-			} else{
-				return reservation.getAdvance();
-			}
+			return getReservation().getPenaltyAmount();
 		}
 	}
 

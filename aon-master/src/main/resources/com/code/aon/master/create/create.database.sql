@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.78.2
+# Version: 8.81.0
 # Created by: girazu
-# Creation Date: 01/12/2016 13:00
+# Creation Date: 11/11/2016 12:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2177,7 +2177,7 @@ CREATE TABLE `project_reservation` (
   `credit_card_expiration_year` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Año de expiracion de la tarjeta de credito',
   `credit_card_cvv` varchar(24) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de seguridad de la tarjeta de credito',
   `token` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token de preautorizacion de cobro',
-  `penalty_days` int(4) DEFAULT NULL COMMENT 'Dias de penalizacion',
+  `penalty_value` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Valor de penalizacion (patron)',
   `penalty_amount` double(15,2) DEFAULT '0.00' COMMENT 'Importe de penalizacion',
   `tourist_tax_free` tinyint(2) DEFAULT NULL COMMENT 'Tipo de exencion de la Tasa turistica',
   `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
@@ -8204,7 +8204,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.78.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.81.0');
 
 COMMIT;
 

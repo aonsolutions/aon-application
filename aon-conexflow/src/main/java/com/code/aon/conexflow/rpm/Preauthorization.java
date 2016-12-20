@@ -1,6 +1,5 @@
 package com.code.aon.conexflow.rpm;
 
-
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +20,6 @@ import org.apache.commons.cli.PosixParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
@@ -38,7 +36,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ReservationStatus;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
-import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class Preauthorization {
 
@@ -82,16 +79,9 @@ public class Preauthorization {
 				ConexFlow cf = DBConsults.getConexFlowLastOperation(domain, "admin", pr.getProject(), ConexFlowConstant.CREATE_TOKEN_OP);
 				if(cf != null && cf.getRespuesta().getResultado().equals("000"))	{
 					String errorMsg = "";
-					ReservationUtils reservationUtils = new ReservationUtils(domain.getId());
-					Double amount = 0.0;
-					try {
-						amount = reservationUtils.obtainCancellationPenaltyPrice(DBConsults.newProjectReservation(ctx,pr));
-					} catch (ManagerBeanException e) {
-						e.printStackTrace();
-					}
+					Double amount = pr.getPenaltyAmount();
 					if(!dryRun){
 						String token = cf.getRespuesta().getToken();
-					
 						
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
 							, customer.toString(), token, amount);
@@ -143,14 +133,6 @@ public class Preauthorization {
 			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), "");
 			ConexFlowConnection connection = DBConsults.getConection(d);
 			Double amount = r.getPenaltyAmount();
-			if(amount == null || amount <= 0.01){
-				ReservationUtils reservationUtils = new ReservationUtils(d.getId());
-				try {
-					amount = reservationUtils.obtainCancellationPenaltyPrice(DBConsults.newProjectReservation(d,r));
-				} catch (ManagerBeanException e) {
-					e.printStackTrace();
-				}
-			}
 			Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
 				, r.getHotelReservation().toString(), r.getToken(), amount);
 			ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query

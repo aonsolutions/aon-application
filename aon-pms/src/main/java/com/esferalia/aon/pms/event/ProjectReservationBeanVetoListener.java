@@ -11,6 +11,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -33,7 +34,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservation to = (ProjectReservation)evt.getTo();
-    	ReservationUtils reservationUtils = new ReservationUtils();
+    	ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
     	try {
     		reservationUtils.fillProject(to);
     		calculateReservationTotals(reservationUtils, to);
@@ -45,7 +46,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservation to = (ProjectReservation)evt.getTo();
-    	ReservationUtils reservationUtils = new ReservationUtils();
+    	ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
     	try {
     		reservationUtils.fillProject(to);
     		calculateReservationTotals(reservationUtils, to);
@@ -69,6 +70,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 			reservation.setTaxableBase(taxableBase);
 			reservation.setVatQuota(vatQuota);
 			reservation.setTotal(CommonUtil.round(taxableBase + vatQuota));
+			reservation.setPenaltyAmount(reservationUtils.obtainCancellationPenaltyAmount(reservation));
 		}
 	}
 

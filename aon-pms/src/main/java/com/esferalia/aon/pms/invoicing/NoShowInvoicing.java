@@ -66,18 +66,16 @@ public class NoShowInvoicing {
 	}
 
 	public Invoice invoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
-		Integer penaltyDays = (noShowInvoiceTo.getPenaltyDays() != null) ? noShowInvoiceTo.getPenaltyDays() : reservation.getPenaltyDays();
-		if (!reservation.isInvoiced() && noShowInvoiceTo.getItem() != null && penaltyDays != null) {
+		if (!reservation.isInvoiced() && noShowInvoiceTo.getItem() != null && reservation.getPenaltyValue() != null) {
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 			boolean mustCloseSession = HibernateUtil.mustCloseSession();
 			String sessionName = HibernateUtil.getSessionFactoryName();
 			try {
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
-	
+
 				HibernateUtil.beginTransaction(sessionName);
-	
-				reservation.setPenaltyDays(penaltyDays);
+
 				Invoice invoice = createInvoice(noShowInvoiceTo, reservation);
 				double noShowAmount = createInvoiceDetails(invoice, reservation, noShowInvoiceTo);
 				createInvoiceAddress(invoice, reservation);
@@ -140,27 +138,25 @@ public class NoShowInvoicing {
 		double advanceTaxableBase = (advancedAmount != 0) ? CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100), 4) : 0;
 		double advanceVatQuota = (advancedAmount != 0) ? CommonUtil.round(advancedAmount - CommonUtil.round(advanceTaxableBase)) : 0;
 
-		double penaltyAmount = advancedAmount;
+		double penaltyAmount = (noShowInvoiceTo.isKeepAdvance()) ? advancedAmount : reservation.getPenaltyAmount();
 		double penaltyVatPercent = noShowInvoiceTo.getItem().getVat().getDatedPercentage(invoice.getIssueDate());
 		double penaltyTaxableBase = CommonUtil.round(penaltyAmount / (1 + penaltyVatPercent / 100), 4);
-		if (!noShowInvoiceTo.isKeepAdvance()) {
-			penaltyTaxableBase = getPenaltyTaxableBase(reservation, reservation.getPenaltyDays());
-			penaltyAmount = CommonUtil.round(CommonUtil.round(penaltyTaxableBase) * (1 + penaltyVatPercent / 100));
-		}
 		double penaltyVatQuota = CommonUtil.round(penaltyAmount - CommonUtil.round(penaltyTaxableBase));
 		double invoiceTotal = CommonUtil.round(penaltyAmount - advancedAmount);
 
 		Map<Date, Double> penaltyTaxableBases = new HashMap<Date, Double>();
-		if (reservation.getPenaltyDays() < 0 || reservation.getPenaltyDays() > 0) {
+		if (noShowInvoiceTo.isKeepAdvance() || !noShowInvoiceTo.isManual()) {
+			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
+		} else {
 			Date fromDate = reservation.getStartDate();
 			Date toDate = (reservation.getPenaltyDays() < 0) ? reservation.getEndDate() : DateUtils.addDays(fromDate, reservation.getPenaltyDays()-1);
 			penaltyTaxableBases = reservation.getReservationTaxableBasesPerDay(fromDate, toDate, noShowInvoiceTo.getItem().getVat());
-		} else {
-			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
+
+			penaltyTaxableBase = reservation.getNoShowPenaltyTaxableBase(fromDate, toDate);
 		}
 
 		int line = 0;
-		boolean taxDataInDetail = (invoiceTotal != CommonUtil.round(CommonUtil.round((penaltyTaxableBase - advanceTaxableBase) * (1 + penaltyVatPercent / 100))));
+		boolean taxDataInDetail = (invoiceTotal != CommonUtil.round((penaltyTaxableBase - advanceTaxableBase) * (1 + penaltyVatPercent / 100)));
 		for (Date date=reservation.getStartDate(); !date.after(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
 			if (penaltyTaxableBases.containsKey(date)) {
 				double taxableBase = penaltyTaxableBases.get(date);
@@ -340,15 +336,6 @@ public class NoShowInvoicing {
 			return (ProjectReservationGuest)ito;
 		}
 		return null;
-	}
-
-	private double getPenaltyTaxableBase(ProjectReservation reservation, int penaltyDays) throws ManagerBeanException {
-		if (penaltyDays < 0) {
-			return reservation.getNoShowPenaltyTaxableBase(reservation.getStartDate(), reservation.getEndDate());
-		} else if (penaltyDays > 0) {
-			return reservation.getNoShowPenaltyTaxableBase(reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), penaltyDays-1));
-		} 
-		return 0;
 	}
 
 	private String obtainDetailDescription(Date effectiveDate, String room, String description) {

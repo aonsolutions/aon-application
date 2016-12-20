@@ -6,9 +6,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -25,6 +23,7 @@ public class CancellationInvoiceSearchListener extends ControllerSearchListener 
 	private Hotel hotelReservation;
 	private Customer agency;
 	private Tariff tariff;
+	private boolean manual;
 
 	public boolean isGuestReservationSearch() {
 		return guestReservationSearch;
@@ -54,12 +53,20 @@ public class CancellationInvoiceSearchListener extends ControllerSearchListener 
 		this.tariff = tariff;
 	}
 
+	public boolean isManual() {
+		return manual;
+	}
+	public void setManual(boolean manual) {
+		this.manual = manual;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setGuestReservationSearch(true);
 		setHotelReservation((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setTariff((Tariff)BeanManager.getManagerBean(Tariff.class).createNewTo());
+		setManual(false);
 
 		((CancellationInvoiceController)getController()).clearCheckedReservations();
 	}
@@ -68,9 +75,6 @@ public class CancellationInvoiceSearchListener extends ControllerSearchListener 
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
 		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS), ReservationCheckStatus.CANCEL_INVOICEABLE);
-		Expression nullDays = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_DAYS));
-		Expression zeroDays = ExpressionUtilities.getNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_DAYS), 0);
-		criteria.addExpression(ExpressionUtilities.getOrExpression(nullDays, zeroDays));
 		if (getHotelReservation() != null && getHotelReservation().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_ID), getHotelReservation().getId());			
 		}
@@ -84,6 +88,10 @@ public class CancellationInvoiceSearchListener extends ControllerSearchListener 
 		}
 		if (getTariff() != null && getTariff().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());			
+		}
+		if (!isManual()) {
+			criteria.addNotNullExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_VALUE));
+			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_PENALTY_VALUE), String.valueOf(0));
 		}
 	}
 

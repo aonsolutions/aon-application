@@ -21,6 +21,7 @@ public class NoShowInvoiceTo implements Serializable {
 	private RegistryBank registryBank;
 	private Date financeDate;
 	private boolean keepAdvance;
+	private boolean manual;
 	private PosShift posShift;
 
 	public boolean isGuestReservation() {
@@ -78,6 +79,13 @@ public class NoShowInvoiceTo implements Serializable {
 	}
 	public void setKeepAdvance(boolean keepAdvance) {
 		this.keepAdvance = keepAdvance;
+	}
+
+	public boolean isManual() {
+		return manual;
+	}
+	public void setManual(boolean manual) {
+		this.manual = manual;
 	}
 
 	public PosShift getPosShift() {

@@ -712,8 +712,9 @@ public class ProjectReservationController extends BasicController implements IPm
 		if (reservation.getCancellationDate() == null) {
 			reservation.setCancellationDate(new Date());
 		}
-		if (reservation.getPenaltyDays() == null) {
-			reservation.setPenaltyDays(obtainCancelPenaltyDays(reservation, isConfirmNoShow()));
+		if (reservation.getPenaltyValue() == null) {
+			reservation.setPenaltyValue(obtainCancelPenaltyValue(reservation, isConfirmNoShow()));
+			reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
 			if (isConfirmNoShow()) {
 				if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
 					reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE);
@@ -745,17 +746,14 @@ public class ProjectReservationController extends BasicController implements IPm
 		checkPreauthorization(reservation);
 	}
 
-	private Integer obtainCancelPenaltyDays(ProjectReservation reservation, boolean noShow) throws ManagerBeanException {
-		Integer penaltyDays = null;
+	private String obtainCancelPenaltyValue(ProjectReservation reservation, boolean noShow) throws ManagerBeanException {
+		String penaltyValue = null;
 		if (noShow) {
-			penaltyDays = getReservationUtils().obtainNoShowPenaltyDays(reservation, reservation.getStartDate());
+			penaltyValue = getReservationUtils().obtainNoShowPenaltyValue(reservation, reservation.getStartDate());
 		} else {
-			penaltyDays = getReservationUtils().obtainCancellationPenaltyDays(reservation, reservation.getCancellationDate());
+			penaltyValue = getReservationUtils().obtainCancellationPenaltyValue(reservation, reservation.getCancellationDate());
 		}
-		if (penaltyDays != null && (penaltyDays < 0 || penaltyDays > CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()))) {
-			penaltyDays = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());
-		}
-		return penaltyDays;
+		return penaltyValue;
 	}
 
     private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems, Date startDate, Date endDate) throws ManagerBeanException {
@@ -1077,6 +1075,8 @@ public class ProjectReservationController extends BasicController implements IPm
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
         		reservation.setTouristTaxPayed(null);
+        		/*reservation.setSkipDirtyControl(true);
+				accept(event);*/
 				setSelectedTab(INVOICE);
 			}
 		} catch (ManagerBeanException ex) {
@@ -2036,7 +2036,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		if(amount == null || amount <= 0.01){
 			ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 			try {
-				amount = reservationUtils.obtainCancellationPenaltyPrice(reservation);
+				amount = reservationUtils.obtainCancellationPenaltyAmount(reservation);
 			} catch (ManagerBeanException e) {
 				e.printStackTrace();
 			}
