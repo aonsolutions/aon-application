@@ -40,7 +40,7 @@ public class ProjectReservation implements Serializable{
 	Date modificationDate;
 	String modificationUser;
 	Double otherTaxQuota;
-	Integer penaltyDays;
+	String penaltyValue;
 	Byte prepay;
 	Integer project;
 	String remarks;
@@ -287,11 +287,11 @@ public class ProjectReservation implements Serializable{
 		this.otherTaxQuota = otherTaxQuota;
 		return this;
 	}
-	public Integer getPenaltyDays() {
-		return penaltyDays;
+	public String getPenaltyValue() {
+		return penaltyValue;
 	}
-	public ProjectReservation setPenaltyDays(Integer penaltyDays) {
-		this.penaltyDays = penaltyDays;
+	public ProjectReservation setPenaltyValue(String penaltyValue) {
+		this.penaltyValue = penaltyValue;
 		return this;
 	}
 	public Byte getPrepay() {

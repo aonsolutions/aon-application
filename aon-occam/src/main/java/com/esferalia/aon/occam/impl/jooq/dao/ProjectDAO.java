@@ -197,7 +197,7 @@ public class ProjectDAO {
 					.setModificationDate(r.getModificationDate())
 					.setModificationUser(r.getModificationUser())
 					.setOtherTaxQuota(r.getOtherTaxQuota())
-					.setPenaltyDays(r.getPenaltyDays())
+					.setPenaltyValue(r.getPenaltyValue())
 					.setPrepay(r.getPrepay())
 					.setProject(r.getProject())
 					.setRemarks(r.getRemarks())
