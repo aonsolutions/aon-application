@@ -11,6 +11,7 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 	private AccountEntry accountEntry;
 	
 	private int salaryCount;
+	private String salaryDescription;
 	
 	private String concept;
 	
@@ -62,6 +63,13 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 	}
 	public SalaryEntry setSalaryCount(int salaryCount) {
 		this.salaryCount = salaryCount;
+		return this;
+	}
+	public String getSalaryDescription() {
+		return salaryDescription;
+	}
+	public SalaryEntry setSalaryDescription(String salaryDescription) {
+		this.salaryDescription = salaryDescription;
 		return this;
 	}
 	public String getConcept() {
@@ -235,19 +243,24 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 	public double getNetSalary(){
-		return AonMathUtils.round(getTotalAccrued() 
+		return AonMathUtils.round(
+				getMoneySalary() 
+				+ getInKindSalary() 
+				+ getAllowance() 
+				+ getSalaryCompensation() 
 				- getIrpf() 
 				- getInKindIrpf() 
 				- getEmployeeSocialInsurance()
 				- getSalaryDedAdvPayment()
+				- getSalaryOtherDeductions()
 				- getSalaryDedSeize()
 				);
 	}
 	public double getTotalSocialInsurance(){
 		return AonMathUtils.round(getEmployeeSocialInsurance() + getCompanySocialInsurance());
 	}
-	public double getTotalAccrued() {
-		return AonMathUtils.round(getMoneySalary() + getInKindSalary() + getAllowance() + getSalaryCompensation());
-	}
-	
+//	public double getTotalAccrued() {
+//		return AonMathUtils.round(getMoneySalary() + getInKindSalary() + getAllowance() + getSalaryCompensation());
+//	}
+//	
 }

@@ -973,6 +973,11 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
+	public String getSalaryFormatted(String domainName, int domain, Date from, Date to ) {
+		return ACCOUNTING.getSalaryFormatted(domainName, domain, this.getUserLogin(),from,to);
+	}
+
+	@Override
 	public void deleteAccountEntry(String domainName, int domain, Integer id) {
 		ACCOUNTING.deleteAccountEntry(domainName, domain, this.getUserLogin(), id);
 	}

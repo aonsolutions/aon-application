@@ -69,6 +69,7 @@ public interface IAccounting {
 	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId);
 	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data);
 	public LinkedList<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to);
+	public String getSalaryFormatted(AONContext ctx, Date from, Date to);
 	
 	// 			BALANCE
 	public LinkedHashMap<String, AccountBalance> 
@@ -79,5 +80,6 @@ public interface IAccounting {
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException;
+	
 	
 }

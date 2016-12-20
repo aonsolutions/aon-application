@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -353,6 +354,12 @@ public class AccountingImpl implements IAccounting {
 		return salaries;
 	}
 
+	@Override
+	public String getSalaryFormatted(AONContext ctx, Date from, Date to) {
+		LinkedList<SalaryEntry> salaries = SalaryDAO.getSalaryEntries(ctx, from, to, false)
+				.collect(Collectors.toCollection(LinkedList::new));
+		return SalaryFormatter.formatSalariesForAccount("N\u00F3minas", salaries);
+	}
 	
 	// 					      BALANCE
 	public LinkedHashMap<String, AccountBalance>

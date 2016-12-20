@@ -1328,6 +1328,13 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fsa.getSalaryEntries(domainName,domain, from, to,
 				new AsyncCallbackWrapper<LinkedList<SalaryEntry>>(callback));
 	}
+	
+	@Override
+	public void getSalaryFormatted(String domainName, int domain, Date from, Date to, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getSalaryFormatted(domainName,domain, from, to,
+				new AsyncCallbackWrapper<String>(callback));
+	}
 
 	// --------------------------------------------------------------- ACCOUNT
 	// STATEMENT
@@ -1369,6 +1376,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		// TODO Apéndice de método generado automáticamente
 		fsa.getMod123Attach(domainName, mod123, callback);
 	}
+
 
 
 }

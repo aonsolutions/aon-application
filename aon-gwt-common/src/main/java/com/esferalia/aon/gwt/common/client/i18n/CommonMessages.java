@@ -3174,6 +3174,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Embargo")
 	String seize();
 	
+	@DefaultMessage("Otras deducciones.")
+	String salaryOtherDeductions();
+	
 	@DefaultMessage("Importar desde n\u00F3minas")
 	String importSalaryAction();
 	

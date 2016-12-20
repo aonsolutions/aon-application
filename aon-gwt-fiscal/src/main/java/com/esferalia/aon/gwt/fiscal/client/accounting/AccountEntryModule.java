@@ -73,6 +73,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -86,6 +87,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	final static int BALANCES_TAB = 2;
 	final static int STATEMENT_TAB = 3;
 	final static int JOURNAL_TAB = 4;
+	final static int EXTRA_INFO_TAB = 5;
 
 	public final static int JOURNAL_PANEL_TAB_OFFSET = 1000000;
 
@@ -194,7 +196,9 @@ public class AccountEntryModule extends MainEntryPoint {
 	AccountBalancePanel balancePanel;
 	@UiField
 	AccountStatementPanel statementPanel;
-
+	@UiField
+	ScrollPanel extraInfoContainer;
+	
 	@UiField
 	SimplePanel errorsContainer;
 	ErrorPanel errors;
@@ -994,4 +998,12 @@ public class AccountEntryModule extends MainEntryPoint {
 		entryDate.setValue( date , true);
 	}
 
+	public void addExtraInfo( String htmlText) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(EXTRA_INFO_TAB);
+		HTMLPanel panel = new HTMLPanel(htmlText);
+		extraInfoContainer.setWidget(panel);
+		extraInfoContainer.scrollToTop();
+	}
+	
 }

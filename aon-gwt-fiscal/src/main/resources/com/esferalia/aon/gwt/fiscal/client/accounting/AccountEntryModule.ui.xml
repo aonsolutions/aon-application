@@ -143,6 +143,14 @@
 										</g:customHeader>
 										<accPanel:JournalPanel ui:field="journalPanel"/>
 									</g:tab>
+									<g:tab>
+										<g:customHeader>
+											<g:Label
+												styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+												text="{msg.additionalData}" />
+										</g:customHeader>
+										<g:ScrollPanel ui:field="extraInfoContainer"/>
+									</g:tab>
 								</g:TabLayoutPanel>
 							</aon:MinimizePanel>
 						</g:south>

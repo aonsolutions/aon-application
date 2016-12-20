@@ -11,7 +11,9 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonDateUtils {
-
+	private final static SimpleDateFormat ORDER_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd"); 
+	private final static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy"); 
+	
 	private final static int MODIFY_ROUND = 1;
 	private final static int MODIFY_CEILING = 2;
 	private final static int MODIFY_TRUNCATE = 0;
@@ -943,4 +945,26 @@ public class AonDateUtils {
         }
         return str2;
     }
+
+	public static String simpleFormat(Date date) {
+		return date == null ? null : SIMPLE_DATE_FORMAT.format(date);
+	}
+	public static Date simpleParse(String date) {
+		try {
+			return date == null ? null : SIMPLE_DATE_FORMAT.parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
+	public static String orderFormat(Date date) {
+		return date == null ? null : ORDER_DATE_FORMAT.format(date);
+	}
+	public static Date orderParse(String date) {
+		try {
+			return date == null ? null : ORDER_DATE_FORMAT.parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 }

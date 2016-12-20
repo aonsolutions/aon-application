@@ -416,4 +416,14 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static String getSalaryFormatted(String domainName, int domain, String userLogin, Date from, Date to) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, userLogin);
+			return getAccounting().getSalaryFormatted(ctx, from, to);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }

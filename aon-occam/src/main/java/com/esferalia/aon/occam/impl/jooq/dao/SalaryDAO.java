@@ -63,15 +63,19 @@ public class SalaryDAO {
 
 	// TODO ARRRGGGGGHHH!!!
 	private static final Byte DEDUCTION_ADVANCE = 7;
-	// private static final Byte DEDUCTION_IN_KIND = 8;
+	private static final Byte DEDUCTION_IN_KIND = 8;
 	private static final Byte DEDUCTION_TYPE_OTHER = 9;
 
 	// --------------------
 	public static Stream<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to) {
-		final TreeMap<Date,SalaryEntry> map = new TreeMap<Date,SalaryEntry>();
+		return getSalaryEntries(ctx, from, to, true);
+	}
+	public static Stream<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to, boolean aggregated) {
+		final TreeMap<String,SalaryEntry> map = new TreeMap<String,SalaryEntry>();
 		ctx.getDslContext()
 			.select(SALARY.ID
 					,SALARY.ISSUE_DATE
+					,SALARY.EMPLOYEE_NAME
 					,SALARY.MONEY_IRPF_BASE
 					,SALARY.INKIND_IRPF_BASE
 					,SALARY.IRPF_BASE
@@ -87,12 +91,17 @@ public class SalaryDAO {
 			.forEach(rec -> {
 				int salaryId = rec.get(SALARY.ID);
 				Date issueDate = rec.get(SALARY.ISSUE_DATE);
-				if (!map.containsKey(issueDate)) {
+				String keyMap = AonDateUtils.orderFormat( issueDate )
+						+ (aggregated?"":("-"+AonNumberUtils.toString(salaryId)));
+				if (!map.containsKey(keyMap)) {
 					SalaryEntry entry = new SalaryEntry();
 					entry.setAccountEntry(new AccountEntry().setEntryDate(issueDate));
-					map.put(issueDate,entry);	
+					map.put(keyMap,entry);	
 				}
-				final SalaryEntry entry = map.get(issueDate);
+				final SalaryEntry entry = map.get(keyMap);
+				if (!aggregated) {
+					entry.setSalaryDescription(rec.getValue(SALARY.EMPLOYEE_NAME));
+				}
 				entry.setSalaryCount(entry.getSalaryCount()+1);
 				entry.setEmployeeSocialInsurance( AonMathUtils.round(entry.getEmployeeSocialInsurance() 
 						+ rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));;
@@ -122,6 +131,7 @@ public class SalaryDAO {
 							entry.setSalaryCompensation( AonMathUtils.round(entry.getSalaryCompensation() + amount));
 						} else if (AonNumberUtils.between(type, 13, 26) ) {
 							entry.setInKindSalary( AonMathUtils.round(entry.getInKindSalary() + amount));
+							entry.setSalaryOtherDeductions( AonMathUtils.round(entry.getSalaryOtherDeductions() + amount));
 						} else {
 							entry.setMoneySalary( AonMathUtils.round(entry.getMoneySalary() + amount));
 						}
@@ -136,7 +146,8 @@ public class SalaryDAO {
 						Byte type = ded.getValue(SALARY_DEDUCTION.TYPE);
 						if (AonNumberUtils.equals(type, DEDUCTION_ADVANCE) ) {
 							entry.setSalaryDedAdvPayment(AonMathUtils.round(entry.getSalaryDedAdvPayment() + amount));
-						} else if (AonNumberUtils.equals(type,DEDUCTION_TYPE_OTHER) ){
+						} else if (AonNumberUtils.equals(type,DEDUCTION_TYPE_OTHER) 
+								|| AonNumberUtils.equals(type,DEDUCTION_IN_KIND) ){
 							entry.setSalaryOtherDeductions( AonMathUtils.round(entry.getSalaryOtherDeductions() + amount));
 						}
 				});
