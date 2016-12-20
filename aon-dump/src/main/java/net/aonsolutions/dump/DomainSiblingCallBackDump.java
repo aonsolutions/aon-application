@@ -37,7 +37,7 @@ public class DomainSiblingCallBackDump extends AbstractChaimCallbackDump {
 	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap,
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 
-		if (!fk.getTable().equals(DOMAIN))
+		if (!(fk.getKey().getTable().getName().equals(DOMAIN.getName()) && fk.getTable().getName().equals(DOMAIN.getName())))
 			return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 		
 		SelectConditionStep<Record1<Integer>> select = dslContext.selectOne().from(DOMAIN).where(DOMAIN.ID.equal(parentDomain));

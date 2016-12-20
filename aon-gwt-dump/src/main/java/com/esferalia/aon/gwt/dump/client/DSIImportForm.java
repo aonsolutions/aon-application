@@ -22,6 +22,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -37,7 +38,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -49,6 +53,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronIcon;
+import com.vaadin.polymer.iron.widget.IronLabel;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperCheckbox;
 import com.vaadin.polymer.paper.widget.PaperInput;
@@ -187,6 +192,9 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 
 	@UiField
 	PaperInput nombreEmpresa;
+	
+	@UiField
+	PaperInput descripcionEmpresa;
 
 	@UiField
 	TextBox nombreUsuario;
@@ -202,6 +210,9 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 
 	@UiField
 	DivElement sufijoEmpresa;
+	
+	@UiField
+	HTMLPanel warnSuffix;
 
 	private MultiWordSuggestOracle oracle;
 
@@ -273,7 +284,15 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 					
 					// Creamos el tab con la tarea pendiente
 					HorizontalPanel panel = new HorizontalPanel();
+					IronLabel label = new IronLabel();
+					IronIcon iconInfo = new IronIcon();
+					iconInfo.setIcon("icons:tab");
+					iconInfo.addStyleName(style.deleteHeight());
+					label.add(iconInfo);
+					panel.add(label);
+					
 					panel.add(new Label(t.getDescription()));
+					
 					PaperButton boton = new PaperButton();
 					IronIcon icon = new IronIcon();
 					icon.setIcon("icons:close");
@@ -328,6 +347,7 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		this.nombreUsuario.setEnabled(false);
 		this.nuevaContrasena.setEnabled(false);
 		this.sendButton.setDisabled(true);
+		setVisible(this.warnSuffix,false);
 
 		this.downloadListBox.addItem("BackUp");
 		this.downloadListBox.addItem("BackUp (Stand-alone)");
@@ -385,10 +405,12 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		Boolean eraseUser = this.checkErase.getChecked();
 		String nombreNuevo = this.nombreUsuario.getText();
 		String passNueva = this.nuevaContrasena.getText();
+		String descripcionEmpresa = this.descripcionEmpresa.getValue();
 		int tipoDescarga = this.downloadListBox.getSelectedIndex();
 		
+		
 		Parameters parameters = new Parameters();
-		parameters.setNewDomain(domainNuevo).setComments(comentarios).setEraseUsers(eraseUser)
+		parameters.setNewDomain(domainNuevo).setDescripcionEmpresa(descripcionEmpresa).setComments(comentarios).setEraseUsers(eraseUser)
 					.setNewUserName(nombreNuevo).setNewUserPass(passNueva).setDownloadType(tipoDescarga);
 
 		String suggestBoxValue = this.suggestBox.getValue();
@@ -406,6 +428,12 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		});
 		
 		HorizontalPanel panel = new HorizontalPanel();
+		IronLabel label = new IronLabel();
+		IronIcon iconInfo = new IronIcon();
+		iconInfo.setIcon("icons:tab");
+		iconInfo.addStyleName(style.deleteHeight());
+		label.add(iconInfo);
+		panel.add(label);
 		panel.add(new Label(domain));
 		PaperButton boton = new PaperButton();
 		IronIcon icon = new IronIcon();
@@ -440,7 +468,8 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		});
 
 		panel.add(boton);
-		footTabPanel.add(progressInfo, panel);
+		footTabPanel.insert(progressInfo, panel, 0);
+		//footTabPanel.add(progressInfo, panel);
 		int index = footTabPanel.getWidgetIndex(progressInfo);
 		footTabPanel.selectTab(index, false);
 		
@@ -466,6 +495,9 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		DSIImportForm.this.sendButton.setDisabled(true);
 		DSIImportForm.this.sufijoEmpresa.setInnerText("");
 		DSIImportForm.this.nombreEmpresa.setValue("");
+		DSIImportForm.this.descripcionEmpresa.setValue("");
+		DSIImportForm.setVisible(this.warnSuffix,false);
+		
 
 	}
 
@@ -473,10 +505,21 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 	void onSelectSuggestBox(SelectionEvent<Suggestion> event) {
 
 		String suggestBoxValue = this.suggestBox.getValue();
-		Integer id = Integer.parseInt(suggestBoxValue.charAt(0) + "");
+		String[] idString = suggestBoxValue.split(" ");
+		Integer id = Integer.parseInt(idString[0]);
 
 		String sufix = sufixMap.get(id);
-		this.sufijoEmpresa.setInnerText("." + sufix);
+		
+		if (sufix == null){
+			setVisible(this.warnSuffix,true);
+			this.nombreEmpresa.setPattern(".{3,}");
+			this.sufijoEmpresa.setInnerText("");
+		}else{
+			setVisible(this.warnSuffix,false);
+			this.nombreEmpresa.setPattern("[a-zA-Z0-9_-]{3,}");
+			this.sufijoEmpresa.setInnerText("." + sufix);
+		}
+			
 
 		this.sendButton.setDisabled(false);
 		
@@ -503,6 +546,28 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 			break;
 
 		case 1:
+			this.checkComment.setChecked(false);
+			this.checkErase.setChecked(false);
+			this.checkComment.setDisabled(false);
+			this.checkErase.setDisabled(false);
+			this.nombreUsuario.setEnabled(false);
+			this.nuevaContrasena.setEnabled(false);
+			this.nombreUsuario.setText("");
+			this.nuevaContrasena.setText("");
+			break;
+			
+		case 2:
+			this.checkComment.setChecked(false);
+			this.checkErase.setChecked(false);
+			this.checkComment.setDisabled(true);
+			this.checkErase.setDisabled(false);
+			this.nombreUsuario.setEnabled(false);
+			this.nuevaContrasena.setEnabled(false);
+			this.nombreUsuario.setText("");
+			this.nuevaContrasena.setText("");
+			break;
+			
+		case 3:
 			this.checkComment.setChecked(false);
 			this.checkErase.setChecked(false);
 			this.checkComment.setDisabled(true);
@@ -559,5 +624,8 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		Window.alert("Minimizar");
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
-
+	
+	private static void setVisible(IsWidget widget, boolean visible ){
+		widget.asWidget().getElement().getStyle().setVisibility(visible?Visibility.VISIBLE:Visibility.HIDDEN);
+	}
 }

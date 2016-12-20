@@ -24,10 +24,13 @@ public class MessageBoxDialog extends CustomDialog {
 	Button acceptInfoButton;
 	
 	@UiField
-	Button accepTrashButton;
+	Button acceptTrashButton;
 	
 	@UiField
-	Button accepFailButton;
+	Button acceptFailButton;
+	
+	@UiField
+	Button acceptWarningButton;
 
 	@UiField
 	Label informationText;
@@ -39,7 +42,19 @@ public class MessageBoxDialog extends CustomDialog {
 	Label failText;
 	
 	@UiField
+	Label warningText;
+	
+	@UiField
 	HTMLPanel information;
+	
+	@UiField
+	HTMLPanel delete;
+	
+	@UiField
+	HTMLPanel cancel;
+	
+	@UiField
+	HTMLPanel warn;
 
 	@UiField
 	DeckPanel deckPanel;
@@ -52,17 +67,26 @@ public class MessageBoxDialog extends CustomDialog {
 	
 	public void createInfoDialog(String text){
 		this.deckPanel.showWidget(0);
+		information.setTitle("Informacion");
 		informationText.setText(text);
 	}
 	
 	public void createTrashDialog(String text){
 		this.deckPanel.showWidget(1);
+		delete.setTitle("Aviso");
 		trashText.setText(text);
 	}
 	
 	public void createFailDialog(String text){
 		this.deckPanel.showWidget(2);
+		cancel.setTitle("Aviso");
 		failText.setText(text);
+	}
+	
+	public void createWarningDialog(String text){
+		this.deckPanel.showWidget(3);
+		warn.setTitle("Error");
+		warningText.setText(text);
 	}
 	
 	@UiHandler("acceptInfoButton")
@@ -70,13 +94,18 @@ public class MessageBoxDialog extends CustomDialog {
 		hide();
 	}
 	
-	@UiHandler("accepTrashButton")
+	@UiHandler("acceptTrashButton")
 	void onClickTrashButton(ClickEvent event) {
 		hide();
 	}
 	
-	@UiHandler("accepFailButton")
+	@UiHandler("acceptFailButton")
 	void onClickFailButton(ClickEvent event) {
+		hide();
+	}
+	
+	@UiHandler("acceptWarningButton")
+	void onClickWarningButton(ClickEvent event) {
 		hide();
 	}
 	 
@@ -102,6 +131,15 @@ public class MessageBoxDialog extends CustomDialog {
 	public static MessageBoxDialog showFailDialog(String msg) {
 		final MessageBoxDialog messageBoxDialog = new MessageBoxDialog();
 		messageBoxDialog.createFailDialog(msg);
+		messageBoxDialog.setModal(true);
+		setPositionCenter(messageBoxDialog);
+		
+		return messageBoxDialog;
+	}
+	
+	public static MessageBoxDialog showWarningDialog(String msg) {
+		final MessageBoxDialog messageBoxDialog = new MessageBoxDialog();
+		messageBoxDialog.createWarningDialog(msg);
 		messageBoxDialog.setModal(true);
 		setPositionCenter(messageBoxDialog);
 		

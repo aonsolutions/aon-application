@@ -6,7 +6,7 @@
 	xmlns:s="urn:import:com.esferalia.aon.gwt.dump.shared" xmlns:c="urn:import:com.esferalia.aon.gwt.common.client"
 	xmlns:a="urn:import:bsh.org.objectweb.asm" xmlns:collect="urn:import:com.google.common.collect"
 	xmlns:paper="urn:import:com.vaadin.polymer.paper.widget" xmlns:p="urn:import:com.vaadin.polymer"
-	xmlns:i="urn:import:com.vaadin.polymer.iron.widget">
+	xmlns:i="urn:import:com.vaadin.polymer.iron.widget" >
 
 	<ui:style type='com.esferalia.aon.gwt.dump.client.DSIImportForm.MyStyle'>
 	.options-scroll-panel>div {
@@ -104,8 +104,14 @@
 		height: 15px;
 	}
 	
-	@sprite .downloadIcon {
-		gwt-image: 'download';
+	.warningStyle{
+		height: 10px;
+	    padding-bottom: 25px;
+	    color: orange;
+	}
+	
+	@sprite .warningIcon {
+		gwt-image: 'warning';
 		float: left;
 		padding-left: 5px;
 	}
@@ -119,14 +125,22 @@
 	.canceled {
 	}
 	
+	@external gwt-Label;
+	@external gwt-TabLayoutPanelTab-selected;
+	
+	.gwt-TabLayoutPanelTab-selected .gwt-Label{
+	    color: black;
+	    cursor: default;
+	    font-weight: bold ;
+	}
+	
 	</ui:style>
 
-	<ui:image field='download' src='download.png' />
+	<ui:image field='warning' src='warning.png' />
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 		<g:center>
 			<g:HTMLPanel>
-
 				<style is="custom-style">
 					paper-input {
 						--paper-input-container-input: {
@@ -171,6 +185,17 @@
 						<div class="aon-scroll-area">
 							<table class="aon-panelGrid" cellspacing="0" cellpadding="0">
 								<tr>
+									<td colspan="2">
+										<g:HTMLPanel ui:field="warnSuffix" styleName="{style.warningStyle}">
+											<i:IronLabel >
+												<i:IronIcon icon="icons:warning"></i:IronIcon>
+												El dominio seleccionado no tiene sufijo.
+											</i:IronLabel>
+										</g:HTMLPanel>
+										
+									</td>
+								</tr>
+								<tr>
 									<td>
 										<i:IronLabel>
 											Empresa a descargar:
@@ -199,6 +224,13 @@
 											label="Nuevo nombre empresa" autoValidate="true" pattern="[a-zA-Z0-9_-]{3,}"
 											errorMessage="Solo letras, minimo 3">
 											<div suffix="" styleName="{style.simple-suffix}" ui:field="sufijoEmpresa" />
+										</paper:PaperInput>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<paper:PaperInput ui:field="descripcionEmpresa"
+											label="Nueva descripcion empresa">
 										</paper:PaperInput>
 									</td>
 								</tr>
@@ -243,7 +275,6 @@
 									<td>
 										<paper:PaperButton ui:field="sendButton"
 											raised="true">
-											<!-- div class='{style.downloadIcon}' / -->
 											<i:IronIcon icon="icons:file-download"></i:IronIcon>
 											Iniciar
 										</paper:PaperButton>

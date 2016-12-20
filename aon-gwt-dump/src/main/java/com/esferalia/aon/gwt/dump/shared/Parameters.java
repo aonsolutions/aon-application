@@ -7,6 +7,7 @@ public class Parameters implements Serializable {
 	private String newDomain;
 	private String newUserName;
 	private String newUserPass;
+	private String descripcionEmpresa;
 	private Boolean comments;
 	private Boolean fk;
 	private Boolean eraseUsers;
@@ -69,6 +70,12 @@ public class Parameters implements Serializable {
 		this.downloadType = downloadType;
 		return this;
 	}
-
+	public String getDescripcionEmpresa() {
+		return descripcionEmpresa;
+	}
+	public Parameters setDescripcionEmpresa(String descripcionEmpresa) {
+		this.descripcionEmpresa = descripcionEmpresa;
+		return this;
+	}
 	
 }

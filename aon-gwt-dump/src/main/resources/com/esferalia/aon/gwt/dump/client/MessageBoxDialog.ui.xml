@@ -78,11 +78,18 @@
 		padding-right: 10px;
 	}
 	
+	@sprite .warningIcon{
+		gwt-image: 'warning';
+		float: left;
+		padding-right: 10px;
+	}
+	
 	</ui:Style>
 	
 	<ui:image field='success' src='success.png'/>
 	<ui:image field='trash' src='trash.png'/>
 	<ui:image field='fail' src='fail.png'/>
+	<ui:image field='warning' src='warning.png'/>
 	
 	<g:DeckPanel ui:field="deckPanel" styleName="{style.deckPanel}">
 		<g:HTMLPanel ui:field="information" styleName="{style.form}">
@@ -115,7 +122,7 @@
 				</g:row>
 			</g:Grid>
 			<div class="{style.buttons}">
-				<g:Button ui:field="accepTrashButton">Aceptar</g:Button>
+				<g:Button ui:field="acceptTrashButton">Aceptar</g:Button>
 			</div>
 		</g:HTMLPanel>
 
@@ -132,7 +139,24 @@
 				</g:row>
 			</g:Grid>
 			<div class="{style.buttons}">
-				<g:Button ui:field="accepFailButton">Aceptar</g:Button>
+				<g:Button ui:field="acceptFailButton">Aceptar</g:Button>
+			</div>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel ui:field="warn" styleName="{style.form}">
+			<div class="{style.messages}">
+				<div class='{style.warningIcon}' />
+				<g:Label styleName="{style.info}" ui:field="warningLabel">Informacion:</g:Label>
+			</div>
+			<g:Grid width="100%">
+				<g:row>
+					<g:customCell styleName="{style.label}">
+						<g:Label ui:field="warningText"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+			<div class="{style.buttons}">
+				<g:Button ui:field="acceptWarningButton">Aceptar</g:Button>
 			</div>
 		</g:HTMLPanel>
 		

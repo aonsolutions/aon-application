@@ -1,5 +1,7 @@
 package net.aonsolutions.dump;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +18,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import com.esferalia.aon.jooq.tables.Domain;
 
 public class Main {
 	
@@ -80,7 +84,7 @@ public class Main {
 				.hasArg()
 				.isRequired(true)
 				.withLongOpt("newNameDomain")
-				.withDescription("Select how to raname domain. For example: \"Copy_of_{domain}\".")
+				.withDescription("Select how to rename domain. For example: \"Copy_of_{domain}\".")
 				.create();
 
 		Option renameNIF = OptionBuilder
@@ -132,15 +136,10 @@ public class Main {
 				.withLongOpt("comments")
 				.withDescription("Add comments to the SQL file. Required --sql or --zip")
 				.create();
-
-		Option locksOpt = OptionBuilder
-				.withLongOpt("lock")
-				.withDescription("Add locks tables to the SQL file.")
-				.create();
-
-		Option fkOpt = OptionBuilder
-				.withLongOpt("foreignKeys")
-				.withDescription("Disable foreignkeys.")
+		
+		Option standAloneOpt = OptionBuilder
+				.withLongOpt("alone")
+				.withDescription("Download domain Stand Alone version. Default option is Sibling")
 				.create();
 
 		Option helpOpt = OptionBuilder
@@ -152,7 +151,7 @@ public class Main {
 				.addOption(userOpt).addOption(passwordOpt).addOption(nameDomainOpt).addOption(newNameDomainOpt)
 				.addOption(renameNIF).addOption(executeOpt).addOption(zipOpt).addOption(sqlOpt)
 				.addOption(eraseUsers).addOption(renameLogin).addOption(renamePass).addOption(commentsOpt)
-				.addOption(locksOpt).addOption(fkOpt).addOption(helpOpt);
+				.addOption(standAloneOpt).addOption(helpOpt);
 
 		// Parser create
 		CommandLineParser parser = new GnuParser();
@@ -200,13 +199,13 @@ public class Main {
 			
 			PrintStream out = null;
 			ZipOutputStream zos = null;
+			Integer idDomain = aonDump.dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
 			
 			if (cmd.hasOption(zipOpt.getLongOpt())){
 				File file = new File(zipName+".zip");
 				FileOutputStream fos = new FileOutputStream(file);
 				zos = new ZipOutputStream(fos);
 				zos.putNextEntry(new ZipEntry("sql_Java"));
-				
 				out  = new PrintStream(zos, true, "UTF-8");
 		
 			}else if (cmd.hasOption(sqlOpt.getLongOpt())){
@@ -223,10 +222,19 @@ public class Main {
 				cb = new CallbackDumpPrint(out);
 
 			cb = new ErrorReferenceCallBackDump(cb);
-			cb = new ParentCallbackDump(cb);
+			
+			if (cmd.hasOption(standAloneOpt.getLongOpt()))
+				cb = new ParentCallbackDump(cb);
+			else
+				cb = new SiblingCallBackDump(cb);
+			
 			cb = new DomainZeroCallbackDump(cb);
-			// TODO: como conseguir el ID del domain
-			//cb = new DomainParentCallBackDump(cb, idDomain);
+			
+			if (cmd.hasOption(standAloneOpt.getLongOpt()))
+				cb = new DomainParentCallBackDump(cb, idDomain);
+			else
+				cb = new DomainSiblingCallBackDump(cb);
+			
 			cb = new IndexUniqueCallBackDump(cb);
 			cb = new ModifyDataCallBack(cb, newDomain, "domain", "name");
 			cb = new TaskProcessCallBack(cb, System.out, aonDump, 0, 0); //MIRAR ESTO

@@ -296,6 +296,11 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 			int totalTime = new Timestamp(time.getTime() - startDate.getTime()).getMinutes();
 
+			aonDump.dslContext.update(DOMAIN)
+						.set(DOMAIN.DESCRIPTION, parameters.getDescripcionEmpresa())
+						.where(DOMAIN.ID.eq(idDomain))
+						.execute();
+			
 			aonDump.dslContext
 					.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT,
 							TASK_COMMENT.CREATION_USER, TASK_COMMENT.CREATION_DATE)
