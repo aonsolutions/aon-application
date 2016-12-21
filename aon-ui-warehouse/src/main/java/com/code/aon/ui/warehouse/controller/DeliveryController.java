@@ -2,6 +2,11 @@ package com.code.aon.ui.warehouse.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,7 +16,9 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +35,8 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
@@ -47,10 +56,14 @@ import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -69,6 +82,8 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.seres.util.writer.connect.ConnectDeliveryWriter;
+import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
 
 public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
 	
@@ -759,6 +774,95 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getDeliverySeriesIds();
+	}
+	
+	public void onExportEdiFile(ActionEvent event) {
+		FileOutput output = null;
+		HttpServletResponse response = null;
+		OutputStream out = null;
+		try {
+			Delivery delivery = (Delivery) this.getTo();
+			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
+					.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+			String customerEdiCode = ediSupport.getEdiCodes(
+					delivery.getCustomer().getRegistry(),
+					delivery.getRegistryAddress()).get(
+					CustomerEdiSupportController.ALBARANES);
+			CompanyController company = (CompanyController) AonUtil
+					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			String companyEdiCode = company.getEdiCompanyCode();
+
+			// writer file
+			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
+			output = writer.createFile(delivery, companyEdiCode,
+					customerEdiCode);
+
+			// download file
+			String name = "albaran";
+			String number = delivery.getReferenceCode();
+			byte[] data = output.getContent();
+			int size = data.length;
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, name + "." + number,
+					null, size);
+			InputStream fileIn = new BufferedInputStream(
+					new ByteArrayInputStream(data));
+			IOUtils.copy(fileIn, out);
+			IOUtils.closeQuietly(fileIn);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
+	}
+	
+	@Deprecated
+	public void onExportUdapaEdiFile(ActionEvent event) {
+		FileOutput output = null;
+		HttpServletResponse response = null;
+		OutputStream out = null;
+		try {
+			Delivery delivery = (Delivery) this.getTo();
+			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
+					.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+			String customerEdiCode = ediSupport.getEdiCodes(
+					delivery.getCustomer().getRegistry(),
+					delivery.getRegistryAddress()).get(
+					CustomerEdiSupportController.ALBARANES);
+			CompanyController company = (CompanyController) AonUtil
+					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			String companyEdiCode = company.getEdiCompanyCode();
+
+			// writer file
+			UdapaDeliveryWriter writer = new UdapaDeliveryWriter();
+			output = writer.createFile(delivery, companyEdiCode,
+					customerEdiCode);
+
+			// download file
+			String name = "albaran";
+			String number = delivery.getReferenceCode();
+			byte[] data = output.getContent();
+			int size = data.length;
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, name + "." + number,
+					null, size);
+			InputStream fileIn = new BufferedInputStream(
+					new ByteArrayInputStream(data));
+			IOUtils.copy(fileIn, out);
+			IOUtils.closeQuietly(fileIn);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
 	}
 	
 

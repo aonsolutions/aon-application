@@ -39,10 +39,16 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:htmlCommandLink id="delivery-edi" 
+							<aon:htmlCommandLink id="delivery-udapaEdi" 
 								value="#{bundle.aon_edi}" target="_blank"
 								title="#{bundle.webmail_download}"
-								actionListener="#{delivery.udapaDeliveryHandler.onExportUdapaEdiFile}" 
+								actionListener="#{delivery.onExportUdapaEdiFile}" 
+								styleClass="aon-finding-toolbar-item aon-icon-file-download">
+							</aon:htmlCommandLink>
+							<aon:htmlCommandLink id="delivery-edi" 
+								value="#{bundle.aon_edi} (CONNECT)" target="_blank"
+								title="#{bundle.webmail_download}"
+								actionListener="#{delivery.onExportEdiFile}" 
 								styleClass="aon-finding-toolbar-item aon-icon-file-download">
 							</aon:htmlCommandLink>
 						</aon:if>

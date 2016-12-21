@@ -8,10 +8,10 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showImportFileWindow">
-		<aon:if test="#{sales.ediImporter.showImportFileWindow}">
-			<rich:modalPanel id="importFileModalPanel" minHeight="240"
-				minWidth="550" rendered="#{sales.ediImporter.showImportFileWindow}"
+	<aon:panelGroup id="showUdapaImportFileWindow">
+		<aon:if test="#{sales.udapaImporter.showImportFileWindow}">
+			<rich:modalPanel id="udapaImportFileModalPanel" minHeight="240"
+				minWidth="550" rendered="#{sales.udapaImporter.showImportFileWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -23,42 +23,49 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							action="sales_form"
-							reRender="showImportFileWindow" immediate="true">
+							reRender="showUdapaImportFileWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{sales.ediImporter.showImportFileWindow}"
+								target="#{sales.udapaImporter.showImportFileWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="importFileForm">
+				<aon:form id="udapaImportFileForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div id="importFileToolBar" styleClass="aon-toolbar">
-									<aon:commandButton id="importFile-import"
+								<aon:div id="udapaImportFileToolBar" styleClass="aon-toolbar">
+									<aon:commandButton id="udapaImportFile-import"
 										value="#{bundle.aon_import}"
-										disabled="#{sales.ediImporter.aonFile == null}"
-										reRender="showImportFileWindow,salesForm"
-										actionListener="#{sales.ediImporter.onImportFile}"
+										disabled="#{sales.udapaImporter.aonFile == null}"
+										reRender="showUdapaImportFileWindow,salesForm"
+										actionListener="#{sales.udapaImporter.onImportFile}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 										<f:setPropertyActionListener
-											target="#{sales.ediImporter.showImportFileWindow}"
+											target="#{sales.udapaImporter.showImportFileWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:commandButton id="importFile-cancel"
+									<aon:commandButton id="udapaImportFile-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showImportFileWindow"
+										reRender="showUdapaImportFileWindow"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
-											target="#{sales.ediImporter.showImportFileWindow}"
+											target="#{sales.udapaImporter.showImportFileWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
+							
+								<aon:panel style="width: 100%; padding:1em 0 1em 0;">
+									<aon:outputLabel style="color: red; font-weight:bold;"
+										value="IMPORTACION DE FICHEROS DE FORMATO ANTIGUO" />
+								</aon:panel>
+								
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;"
 										columnClasses="aon-panelGrid-odd aon-width-500
 											,aon-panelGrid-even aon-width-auto">
@@ -68,21 +75,21 @@
 											<ui:param name="skipSeriesLabel" value="#{false}" />
 										</ui:include>
 										
-										<aon:outputLabel for="Sales_file"
+										<aon:outputLabel for="Sales_udapaFile"
 											value="#{bundle.finance_disk}" />
 										<aon:div>
-											<aon:fileUpload id="Sales_file"
+											<aon:fileUpload id="Sales_udapaFile"
 												addControlLabel="#{bundle.aon_fileUpload_add}"
-												fileUploadListener="#{sales.ediImporter.fileUploaded}"
+												fileUploadListener="#{sales.udapaImporter.fileUploaded}"
 												maxFilesQuantity="1">
 												<f:facet name="label">
 													<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 												</f:facet>														
-												<a4j:support event="onuploadcomplete" reRender="Sales_fileName,importFileToolBar" />
+												<a4j:support event="onuploadcomplete" reRender="Sales_udapaFileName,udapaImportFileToolBar" />
 											</aon:fileUpload>
-											<aon:div id="Sales_fileName">
-												<aon:outputText value="#{sales.ediImporter.aonFile.fileName}"
-													 rendered="#{sales.ediImporter.aonFile != null}" />
+											<aon:div id="Sales_udapaFileName">
+												<aon:outputText value="#{sales.udapaImporter.aonFile.fileName}"
+													 rendered="#{sales.udapaImporter.aonFile != null}" />
 											</aon:div>
 										</aon:div>	
 

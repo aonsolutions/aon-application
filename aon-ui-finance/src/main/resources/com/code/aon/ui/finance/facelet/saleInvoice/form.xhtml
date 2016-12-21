@@ -58,8 +58,17 @@
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
 						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:htmlCommandLink id="saleInvoice-edi"
+							<aon:htmlCommandLink id="saleInvoice-udapaEdi"
 								value="#{bundle.aon_edi}" target="_blank"
+								rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+								title="#{bundle.webmail_download}"
+								disabled="#{empty saleInvoice.to.registryAddress.id}"
+								actionListener="#{saleInvoice.onExportUdapaEdiFile}"
+								onclick="if (#{empty saleInvoice.to.registryAddress.id}){ alert('No se puede continuar sin cumplimentar la direccion.'); return false;}"
+								styleClass="aon-finding-toolbar-item aon-icon-file-download">
+							</aon:htmlCommandLink>
+							<aon:htmlCommandLink id="saleInvoice-edi"
+								value="#{bundle.aon_edi} (CONNECT)" target="_blank"
 								rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 								title="#{bundle.webmail_download}"
 								disabled="#{empty saleInvoice.to.registryAddress.id}"
@@ -74,6 +83,15 @@
 								ajaxSingle="#{true}"
 								action="salesInvoice_form">
 								<f:setPropertyActionListener target="#{saleInvoice.udapaImporter.showImportFileWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+							<aon:commandButton id="ediImport-Popup"
+								value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
+								styleClass="aon-finding-toolbar-item aon-icon-new-text"
+								actionListener="#{saleInvoice.ediImporter.onImportFileShow}"
+								ajaxSingle="#{true}"
+								action="saleInvoice_form">
+								<f:setPropertyActionListener target="#{saleInvoice.ediImporter.showImportFileWindow}"
 									value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
@@ -346,6 +364,7 @@
 			<ui:param name="controller" value="#{saleInvoiceDetail}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalImport.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalUdapaImport.xhtml" />
 		<aon:if test="#{company.ediSupportEnabled}">
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 				<ui:param name="logPanelTitle" value="#{bundle.aon_import} #{bundle.aon_edi}" />

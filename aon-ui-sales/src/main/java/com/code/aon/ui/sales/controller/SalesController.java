@@ -114,7 +114,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private Integer invoiceId;
 	private BankAccountHelper accountHelper;
 	
-	private EdiSalesImporterHandler udapaImporter;
+	private EdiSalesImporterHandler ediImporter;
+	@Deprecated
+	private com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaImporter;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -298,9 +300,17 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.progressionState = progressionState;
 	}
 	
-	public EdiSalesImporterHandler getUdapaImporter() {
+	public EdiSalesImporterHandler getEdiImporter() {
+		if(ediImporter==null){
+			ediImporter = new EdiSalesImporterHandler(this);
+		}
+		return ediImporter;
+	}
+
+	@Deprecated
+	public com.code.aon.ui.sales.udapa.EdiSalesImporterHandler getUdapaImporter() {
 		if(udapaImporter==null){
-			udapaImporter = new EdiSalesImporterHandler(this);
+			udapaImporter = new com.code.aon.ui.sales.udapa.EdiSalesImporterHandler(this);
 		}
 		return udapaImporter;
 	}
@@ -910,34 +920,43 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void onManufacture(ActionEvent event) {
 		Sales sales = (Sales) this.getTo();
-		
 		SalesUtils utils = new SalesUtils();
-		long manufacturableCount = sales.getDetailList().stream()
-			.map(to -> (SalesDetail)to)
-			.filter(detail -> detail.getItem().getProduct().isManufactured() 
-					&& !utils.isManufactureDone(detail))
-			.count();
-		if(manufacturableCount<=0){
+		long manufacturableCount = sales
+				.getDetailList()
+				.stream()
+				.map(to -> (SalesDetail) to)
+				.filter(detail -> detail.getItem().getProduct()
+						.isManufactured()
+						&& !utils.isManufactureDone(detail)).count();
+		if (manufacturableCount <= 0) {
 			AonUtil.addErrorMessage("No hay ninguna elaboración pendiente");
-			throw new AbortProcessingException("No hay ninguna elaboración pendiente");
+			throw new AbortProcessingException(
+					"No hay ninguna elaboración pendiente");
 		} else {
-			utils.createManufacturingOrder(sales);
-			SalesDetailController detailController = (SalesDetailController) AonUtil.getRegisteredBean(SALES_DETAIL_CONTROLLER_NAME);
-			detailController.loadManufacturingDetailMap();
-			
-			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String ediSupport = company.getEdiSupport();
-			if (ediSupport!=null && ediSupport.equals("seresnet_udapa")) {
-				LOGGER.info(" *** UDAPA INGENET ENABLED ***");
-				try {
-					IngenetSalesManager.getInstance().createSales(
-							AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales);
-					AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
-				} catch (Exception e) {
-					AonUtil.addErrorMessage("No se ha podido traspasar a Ingenet");
-					AonUtil.addErrorMessage(e.getMessage());
-					LOGGER.error(e.getMessage());
-				}
+			manufacture(sales);
+			utils.createManufacture(sales);
+		}
+	}
+	
+	@Deprecated
+	private void manufacture(Sales sales) {
+		SalesUtils utils = new SalesUtils();
+		utils.createManufacturingOrder(sales);
+		SalesDetailController detailController = (SalesDetailController) AonUtil.getRegisteredBean(SALES_DETAIL_CONTROLLER_NAME);
+		detailController.loadManufacturingDetailMap();
+		
+		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		String ediSupport = company.getEdiSupport();
+		if (ediSupport!=null && ediSupport.equals("seresnet_udapa")) {
+			LOGGER.info(" *** UDAPA INGENET ENABLED ***");
+			try {
+				IngenetSalesManager.getInstance().createSales(
+						AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales);
+				AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
+			} catch (Exception e) {
+				AonUtil.addErrorMessage("No se ha podido traspasar a Ingenet");
+				AonUtil.addErrorMessage(e.getMessage());
+				LOGGER.error(e.getMessage());
 			}
 		}
 	}

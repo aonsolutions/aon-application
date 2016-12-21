@@ -255,6 +255,11 @@ public class SalesUtils {
 		}
 	}
 	
+	public void createManufacture(Sales sales) {
+//		TODO method:createManufacture
+	}
+	
+	@Deprecated
 	public void createManufacturingOrder(Sales sales) {
 		AONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
@@ -304,6 +309,7 @@ public class SalesUtils {
 		});
 	}
 	
+	@Deprecated
 	public void createPurchaseLines(AONContext ctx,
 			List<ITransferObject> list, Integer purchaseId) throws ManagerBeanException {
 		list.stream()
