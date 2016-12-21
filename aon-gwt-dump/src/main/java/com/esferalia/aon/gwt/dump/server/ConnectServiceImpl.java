@@ -65,6 +65,7 @@ import net.aonsolutions.dump.ModifyDataCallBack;
 import net.aonsolutions.dump.ParentCallbackDump;
 import net.aonsolutions.dump.SiblingCallBackDump;
 import net.aonsolutions.dump.TaskProcessCallBack;
+import net.aonsolutions.dump.UpdateCallBack;
 
 /**
  * The server side implementation of the RPC service.
@@ -199,6 +200,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 				}
 			}
 
+			cb = new UpdateCallBack(cb, System.out, aonDump, parameters.getDescripcionEmpresa(), idDomain);
 			cb = new ErrorReferenceCallBackDump(cb);
 			
 			if (parameters.getDownloadType() == 0 || parameters.getDownloadType() == 2)
@@ -229,6 +231,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			if (parameters.getEraseUsers())
 				cb = new EraseUser(cb, aonDump.dslContext, parameters.getNewUserPass(), parameters.getNewUserName());
 
+			
 			try {
 				ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
 				String database = ci.getDomainDatabase(domain);
@@ -296,11 +299,6 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 			int totalTime = new Timestamp(time.getTime() - startDate.getTime()).getMinutes();
 
-			aonDump.dslContext.update(DOMAIN)
-						.set(DOMAIN.DESCRIPTION, parameters.getDescripcionEmpresa())
-						.where(DOMAIN.ID.eq(idDomain))
-						.execute();
-			
 			aonDump.dslContext
 					.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT,
 							TASK_COMMENT.CREATION_USER, TASK_COMMENT.CREATION_DATE)

@@ -263,6 +263,9 @@ public class Main {
 			if (cmd.hasOption(eraseUsers.getLongOpt()))
 				cb = new EraseUser(cb, aonDump.dslContext, pass, login);
 
+			System.out.println("DUMP INICIADO:");
+			System.out.println();
+			
 			aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, hostName, database, domain);
 			
 			// Close our file
@@ -271,7 +274,8 @@ public class Main {
 			
 			out.close();
 			
-			System.out.println("FIN DEL PROGRAMA, TODO OKKKKK");
+			System.out.println();
+			System.out.println("FIN DEL PROGRAMA.");
 
 		} catch (ParseException e) {
 

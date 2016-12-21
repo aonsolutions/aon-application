@@ -36,7 +36,7 @@ public class ConsoleInformationCallBack extends AbstractChaimCallbackDump{
 	public void header(Schema schema, String hostName, Map<Table<?>, Integer> domainTables, DSLContext dslContext,
 			int id, IdsMap idsMap) {
 		
-		this.out.println("\033[0;32mHOLAINFO: Starting progress... 0%. Rest tables: " + domainTables.size() + ". Dowloaded tables: 0\033[0;0m");
+		this.out.println("[  \033[0;32mOK\033[0;0m  ]\tStarting progress... 0%. Rest tables: " + domainTables.size() + ". Dowloaded tables: 0");
 		this.totalTables = domainTables.size();
 		super.header(schema, hostName, domainTables, dslContext, id, idsMap);
 	}
@@ -45,8 +45,14 @@ public class ConsoleInformationCallBack extends AbstractChaimCallbackDump{
 	public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap,
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		
-		this.out.println("\033[0;31mWARNING: " + fk.toString()+"\033[0;0m");
+		String errorFK = fkToString(fk);
+		
+		this.out.println("[  \033[0;31mWARNING\033[0;0m  ]\t" + errorFK);
 		return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
+	}
+
+	private String fkToString(ForeignKey<?, ?> fk) {
+		return "Error reference " + fk.getName() + " foreing key (" + fk.getKey().getName() + ") references to " + fk.getKey().getTable().getName();
 	}
 
 	@Override
@@ -55,7 +61,11 @@ public class ConsoleInformationCallBack extends AbstractChaimCallbackDump{
 		process = ( (double) this.numTablesDownloaded / totalTables) * 100;
 		process = Math.rint(process*1)/1;
 		
-		this.out.println("\033[0;32mINFO: table downloaded: " + table.getName() +  ", se han descargado: " + numRows +" filas. Porcentaje: "+process+"\033[0;0m");
+		if (process >= 100)
+			this.out.println("[  \033[0;32mOK\033[0;0m  ]\tTable downloaded: " + table.getName() +  ", se han descargado: " + numRows +" filas. Porcentaje: 100");
+		else
+			this.out.println("[  \033[0;32mOK\033[0;0m  ]\tTable downloaded: " + table.getName() +  ", se han descargado: " + numRows +" filas. Porcentaje: "+ process);
+			
 		this.numTablesDownloaded++;
 		
 		super.accept(inSet, table, ciclica, numRows, varTableName);
@@ -63,7 +73,7 @@ public class ConsoleInformationCallBack extends AbstractChaimCallbackDump{
 	
 	@Override
 	public void footer() {
-		this.out.println("\033[0;32mINFO: Download Finished\033[0;0m");
+		this.out.println("[  \033[0;32mINFO\033[0;0m  ]\tDownload Finished");
 		super.footer();
 	}
 }

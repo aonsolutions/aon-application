@@ -255,8 +255,6 @@ public class AonDump {
 		Integer numRows = 0;
 		String varTableName = "";
 
-		System.out.println(t.getName());
-
 		try {
 
 			for (Record r : dslContext.select().from(t).where(where).orderBy(t.field(0).desc()).fetchLazy()) {
