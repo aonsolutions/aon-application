@@ -407,8 +407,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.Item" sqlName="item">
-		<alias names="id,domain,description,barcode,internet,product_id,detail,detail2,detail3,serialNumber,serialDate,price,status,expensesPercent,expensesFixed,profitPercent,purchasePrice,product_name,product_code,product_brand_id,product_brand_name,product_category_id,product_category_name,product_inventoriable,product_composition,product_type,product_kind,product_serializable,product_lotable" />
-		<hibernate names="id,domain,description,barcode,internet,product.id,detail,detail2,detail3,serialNumber,serialDate,price,status,expensesPercent,expensesFixed,profitPercent,purchasePrice,product.name,product.code,product.brand&lt;id,product.brand&lt;name,product.category.id,product.category.name,product.inventoriable,product.composition,product.type,product.kind,product.serializable,product.lotable" />
+		<alias names="id,domain,description,barcode,internet,product_id,detail,detail2,detail3,serialNumber,serialDate,price,status,expensesPercent,expensesFixed,profitPercent,purchasePrice,product_name,product_code,product_brand_id,product_brand_name,product_category_id,product_category_name,product_inventoriable,product_composition,product_type,product_kind,product_serializable,product_lotable,product_status" />
+		<hibernate names="id,domain,description,barcode,internet,product.id,detail,detail2,detail3,serialNumber,serialDate,price,status,expensesPercent,expensesFixed,profitPercent,purchasePrice,product.name,product.code,product.brand&lt;id,product.brand&lt;name,product.category.id,product.category.name,product.inventoriable,product.composition,product.type,product.kind,product.serializable,product.lotable,product.status" />
 	</bean>
 
 	<bean class="com.code.aon.product.ItemComposition" sqlName="item_composition">
