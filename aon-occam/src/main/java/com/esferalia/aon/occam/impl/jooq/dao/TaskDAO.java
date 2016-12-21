@@ -204,7 +204,7 @@ public class TaskDAO {
 			.select()
 			.from(TASK_COMMENT)
 			.where(TASK_COMMENT_PROPERTIES.getConditions(filter))
-			.orderBy(TASK_COMMENT.ID.desc())
+			.orderBy(TASK_COMMENT.CREATION_DATE.asc())
 			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller());
 	}
 	

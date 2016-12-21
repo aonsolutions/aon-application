@@ -148,23 +148,22 @@ public class ReposServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("POST METHOD");
-		String scheme = req.getScheme();
+		String line = "";
+		String s = "";
+		while((line = req.getReader().readLine()) != null)
+			s = s + " " + line;
+		System.out.println(s);
+		s = Utils.checkString(s);
+		System.out.println(s);
+		if(s == null || s.equals("")) s = "{}";
+		JSONObject json = new JSONObject(s);
+		String scheme = req.getParameter("scheme");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
 			
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
-		if(pathInfo.length > 3){
-			String line = "";
-			String s = "";
-			while((line = req.getReader().readLine()) != null)
-				s = s + " " + line;
-			System.out.println(s);
-			s = Utils.checkString(s);
-			System.out.println(s);
-			if(s == null || s.equals("")) s = "{}";
-			JSONObject json = new JSONObject(s);
-							
+		if(pathInfo.length > 3){				
 			Object object = new Object();
 			switch (pathInfo[3]) {
 			case "github":

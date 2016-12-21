@@ -46,7 +46,9 @@ public abstract class TaskSouthPanel extends SouthPanel {
     	ironIcon.setStyle("color:" + js.getColor());
     	ironIcon.setTitle(js.getBody());
     	pi.add(ironIcon);
-    	String str = js.getTitle() + "#" + js.getNumber() +" creado por "+ js.getUser().getLogin() 
+    	String enterprise =js.getEnterprise().getLogin() != null && !js.getEnterprise().getLogin().equals("") && !js.getEnterprise().getLogin().equals("Sin Asignar")?
+    			"[" + js.getEnterprise().getLogin() + "]" : "";
+    	String str = enterprise + js.getTitle() + "#" + js.getNumber() +" creado por "+ js.getUser().getLogin() 
     			+ " el "+ js.getCreatedAtDate() + " a las "+ js.getCreatedAtHour() + js.getDays();
     	pi.add(new Label(str));
     	if(issue.getId() == js.getId()) 
