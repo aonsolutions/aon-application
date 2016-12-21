@@ -94,7 +94,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		try {
 			insertProjectReservationGuest(reservation, controller.getGuestName(), controller.getGuestSurname());
 			if (controller.getRoomItem() != null) {
-				insertProjectReservationRoom(reservation, controller.getRoomItem(), controller.getRoomTariff());
+				insertProjectReservationRoom(reservation, controller.getRoomItem(), controller.getRoomTariff(), controller.getAdults(), controller.getChildren());
 			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -179,12 +179,15 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservationGuestBean.insert(reservationGuest);
 	}
 
-	private void insertProjectReservationRoom(ProjectReservation reservation, Item roomItem, Tariff roomTariff) throws ManagerBeanException {
+	private void insertProjectReservationRoom(ProjectReservation reservation, Item roomItem, Tariff roomTariff, int adults, int children) 
+			throws ManagerBeanException {
 		ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
 		reservationRoom.setProjectReservation(reservation);
 		reservationRoom.setRoomIndex(1);
 		reservationRoom.setItem(roomItem);
 		reservationRoom.setTariff(roomTariff);
+		reservationRoom.setAdults(adults);
+		reservationRoom.setChildren(children);
 		
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		reservationRoom = (ProjectReservationRoom)reservationRoomBean.insert(reservationRoom);

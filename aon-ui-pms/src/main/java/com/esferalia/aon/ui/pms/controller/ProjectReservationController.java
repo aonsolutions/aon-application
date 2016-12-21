@@ -121,6 +121,8 @@ public class ProjectReservationController extends BasicController implements IPm
 	private String guestName;
 	private String guestSurname;
 	private Item roomItem;
+	private int adults;
+	private int children;
 	private Tariff roomTariff;
 	private boolean showConfirmWindow;
 	private boolean confirmNoShow;
@@ -253,6 +255,20 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 	public void resetRoomItem() {
 		setRoomItem(null);
+	}
+
+	public int getAdults() {
+		return adults;
+	}
+	public void setAdults(int adults) {
+		this.adults = adults;
+	}
+
+	public int getChildren() {
+		return children;
+	}
+	public void setChildren(int children) {
+		this.children = children;
 	}
 
 	public Tariff getRoomTariff() {

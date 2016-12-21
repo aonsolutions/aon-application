@@ -180,7 +180,7 @@
 			<aon:outputText value="#{reservation.nights}" styleClass="aon-bold" 
 				rendered="#{!reservation.nevv and !reservation.reservationPermission.reservationDatesEditable}" />
 			<aon:inputText id="ProjectReservation_nights" value="#{reservation.nights}"
-				size="1" maxlength="3"
+				size="1" maxlength="3" required="true" 
 				rendered="#{reservation.nevv or reservation.reservationPermission.reservationDatesEditable}"
 				valueChangeListener="#{reservation.onNightsChanged}"
 				reRender="ProjectReservation_endDate"
@@ -379,7 +379,8 @@
 
 	<aon:outputLabel for="ProjectReservation_roomItem" value="#{bundle.pms_room_type}" 
 		rendered="#{reservation.nevv}" />
-	<aon:selectOneMenu id="ProjectReservation_roomItem" value="#{reservation.roomItem}" 
+	<aon:selectOneMenu id="ProjectReservation_roomItem" 
+		value="#{reservation.roomItem}" styleClass="aon-width-350"
 		rendered="#{reservation.nevv}" required="true">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{reservation.hotelRoomItems}" />
@@ -387,11 +388,25 @@
 
 	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{bundle.report_tariff}" 
 		rendered="#{reservation.nevv}" />
-	<aon:selectOneMenu id="ProjectReservation_roomTariff" value="#{reservation.roomTariff}" 
+	<aon:selectOneMenu id="ProjectReservation_roomTariff" 
+		value="#{reservation.roomTariff}" styleClass="aon-width-350" 
 		rendered="#{reservation.nevv}" required="true">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{pmsCollections.tariffs}" />
 	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_pax" value="#{bundle.report_occupation}" 
+		rendered="#{reservation.nevv}" />
+	<aon:div rendered="#{reservation.nevv}">
+		<aon:outputLabel for="ProjectReservation_adults" value="#{bundle.pms_adults}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_adults" value="#{reservation.adults}"
+			size="1" maxlength="2" required="true" />
+		<aon:outputLabel for="ProjectReservation_children" value="#{bundle.pms_children}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_children" value="#{reservation.children}"
+			size="1" maxlength="2" required="true" />
+	</aon:div>
 
 	<aon:outputLabel for="ProjectReservation_comments" value="#{bundle.aon_remark} #{bundle.aon_module_hotel}" />
 	<aon:inputTextarea id="ProjectReservation_comments" value="#{reservation.to.comments}"
