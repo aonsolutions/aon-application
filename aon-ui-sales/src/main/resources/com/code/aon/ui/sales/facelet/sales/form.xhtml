@@ -47,6 +47,16 @@
 								<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
 									value="#{true}" />
 							</aon:commandButton>
+							<aon:commandButton id="ediImport-Popup"
+								value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
+								title="#{bundle.aon_import}"
+								styleClass="aon-finding-toolbar-item aon-icon-new-text"
+								actionListener="#{controller.ediImporter.onImportFileShow}"
+								ajaxSingle="#{true}"
+								action="sales_form">
+								<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
+									value="#{true}" />
+							</aon:commandButton>
 						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">
@@ -485,6 +495,7 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalShipment.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalImport.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalUdapaImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include
