@@ -32,7 +32,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.product.Item;
 
-@WebServlet(name = "DownloadAmazonProduct", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_product/*" })
+@WebServlet(name = "DownloadAmazonProduct", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_product/*"
+															,"/aon_gwt_aio/gwt_download_amazon_product/*"})
 public class DownloadAmazonProductServlet extends HttpServlet{
 
 	/**

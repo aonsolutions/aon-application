@@ -44,7 +44,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-@WebServlet(name = "DownloadTemplatesProduct", urlPatterns = { "/aon_gwt_template/gwt_download_product/*" })
+@WebServlet(name = "DownloadTemplatesProduct", urlPatterns = { "/aon_gwt_template/gwt_download_product/*"
+															   ,"/aon_gwt_aio/gwt_download_product/*"})
 public class DownloadProductServlet extends HttpServlet {
 
 

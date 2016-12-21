@@ -299,6 +299,7 @@ public class Issues implements EntryPoint {
 		AonComboBox acb = new AonComboBox();
 		acb.setLabel("Remitente");
 		acb.setItemLabelPath("login");
+		acb.setItemValuePath("login");
 		acb.setFilterEnable(false);
 		
 

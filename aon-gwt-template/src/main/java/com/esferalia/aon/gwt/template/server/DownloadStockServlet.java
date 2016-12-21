@@ -40,7 +40,8 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
-@WebServlet(name = "DownloadTemplatesStock", urlPatterns = { "/aon_gwt_template/gwt_download_stock/*" })
+@WebServlet(name = "DownloadTemplatesStock", urlPatterns = { "/aon_gwt_template/gwt_download_stock/*"
+															 ,"/aon_gwt_aio/gwt_download_stock/*"})
 public class DownloadStockServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

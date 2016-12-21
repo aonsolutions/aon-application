@@ -33,7 +33,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-@WebServlet(name = "DownloadTemplatesCatalogue", urlPatterns = { "/aon_gwt_template/gwt_download_catalogue/*" })
+@WebServlet(name = "DownloadTemplatesCatalogue", urlPatterns = { "/aon_gwt_template/gwt_download_catalogue/*"
+																 ,"/aon_gwt_aio/gwt_download_catalogue/*"})
 public class DownloadCatalogueServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

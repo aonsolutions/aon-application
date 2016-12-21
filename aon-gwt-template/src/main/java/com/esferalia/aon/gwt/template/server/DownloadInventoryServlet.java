@@ -29,7 +29,8 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 
-@WebServlet(name = "DownloadTemplatesInventory", urlPatterns = { "/aon_gwt_template/gwt_download_inventory/*" })
+@WebServlet(name = "DownloadTemplatesInventory", urlPatterns = { "/aon_gwt_template/gwt_download_inventory/*"
+																 ,"/aon_gwt_aio/gwt_download_inventory/*"})
 public class DownloadInventoryServlet extends HttpServlet {
 	
 	/**

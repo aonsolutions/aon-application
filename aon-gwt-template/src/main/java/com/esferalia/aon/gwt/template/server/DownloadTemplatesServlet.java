@@ -29,7 +29,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
-@WebServlet(name = "DownloadTemplates", urlPatterns = { "/aon_gwt_template/gwt_download/*" })
+@WebServlet(name = "DownloadTemplates", urlPatterns = { "/aon_gwt_template/gwt_download/*"
+														,"/aon_gwt_aio/gwt_download/*"})
 public class DownloadTemplatesServlet extends HttpServlet {
 
 	/**

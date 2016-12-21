@@ -24,7 +24,8 @@ import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
 
-@WebServlet(name = "DownloadAmazonDelivery", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_delivery/*" })
+@WebServlet(name = "DownloadAmazonDelivery", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_delivery/*"
+															 ,"/aon_gwt_aio/gwt_download_amazon_delivery/*"})
 public class DownloadAmazonDeliveryServlet extends HttpServlet {
 
 
