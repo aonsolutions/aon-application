@@ -6057,6 +6057,8 @@ INSERT INTO `role` VALUES
   (20,'Payroll'),
   (21,'Fiscal'),
   (22,'AccountingManager'),
+  (23,'CallCenter'),
+  (24,'CallCenterManager'),
   (101,'Administrador'),
   (102,'Invitado'),
   (103,'Manager'),
@@ -6376,7 +6378,9 @@ INSERT INTO `application_role` VALUES
   (233,28,19),
   (234,28,20),
   (235,28,21),
-  (236,28,22);
+  (236,28,22),
+  (237,28,23),
+  (238,28,24);
 
   /*  
  Con esta deberíamos hacer igual que la anterior pero prefiero esperar hasta
