@@ -962,23 +962,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
             
 				if(row.getRowNum() > 1){ 
 					si.setRow(row.getRowNum());
-					if(transfer){
-						if(si.getQuantity() != null && si.getQuantity()!= 0){
-							stock.add(si);
-							if(!stockMap.containsKey(si.getProduct())){
-								stockMap.put(si.getProduct(), si);
-							}
-							else{
-								Double q = stockMap.get(si.getProduct()).getQuantity();
-								Double q2 = si.getQuantity();
-								si.setQuantity(q+q2);
-								stockMap.remove(si.getProduct());
-								stockMap.put(si.getProduct(), si);
-							}
-						}
-					}
-					else if(si.getQuantity() != null)
+					if((si.getQuantity() != null && !transfer)
+						|| (transfer && si.getQuantity() != null && si.getQuantity()!= 0)){
+						String key = si.getProduct() + si.getItem().getDetails() 
+							+ si.getItem().getSerialNumber() != null ? si.getItem().getSerialNumber() : "";
 						stock.add(si);
+						if(stockMap.containsKey(key))
+							stockMap.get(key).setQuantity(si.getQuantity() + stockMap.get(key).getQuantity());
+						else stockMap.put(key, si);
+					}
 				}
 			}
 		});
@@ -1006,7 +998,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
-			error = DBStock.insertStock2(domain.getName(), domain.getId(),stock,transferInfo, inventoryId,ai, getUser().getLogin());
+			error = DBStock.insertStock2(domain.getName(), domain.getId(), new Vector<>(stockMap.values()) ,transferInfo, inventoryId,ai, getUser().getLogin());
 
 	        //insertar STOCK en base de datos.!!
 		}
