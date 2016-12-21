@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.stat.client;
 
 import com.esferalia.aon.gwt.stat.client.panel.StatControlPanel;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 
 public class MainEntryPoint implements EntryPoint {
 
@@ -15,12 +14,12 @@ public class MainEntryPoint implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
+		
+		/*String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
 		if ( entryPoint.equalsIgnoreCase(ST_STATS_ENTRY_POINT)) {
-			//new StatControlPiePanel().onModuleLoad();		
+		*/
 			new StatControlPanel().onModuleLoad();
-		}
-
+		//}
 	}
 
 	/**

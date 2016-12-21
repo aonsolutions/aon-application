@@ -24,12 +24,12 @@
 				<g:HTMLPanel ui:field="searchContent"/>
 			</g:north>
 			<g:center>
-				<g:HTMLPanel ui:field="content"/>	
+				<g:SimpleLayoutPanel ui:field="content"/>	
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:center>
 	
-	<g:south size="30">
+	<!-- <g:south size="30">
 		<aon:MinimizePanel ui:field="footPanel"	styleName="{aonResources.css.aonSelector}">
 			<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
 				<g:tab >
@@ -43,7 +43,7 @@
 				</g:tab>
 			</g:TabLayoutPanel>
 		</aon:MinimizePanel>
-	</g:south>
+	</g:south> -->
 </g:SplitLayoutPanel>
 
 </ui:UiBinder>

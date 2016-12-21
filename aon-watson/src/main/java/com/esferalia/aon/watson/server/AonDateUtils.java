@@ -463,7 +463,33 @@ public class AonDateUtils {
 		c.setTime(date);
 		return c.get(Calendar.DAY_OF_MONTH);
 	}
+	
+	/**
+	 * Devuelve el dia de la semana de la fecha indicada.
+	 * 
+	 * @param date
+	 *            La fecha de la que se desea saber el dia de la semana.
+	 * @return El dia de la semana.
+	 */
+	public static int getDayOfWeek(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.DAY_OF_WEEK);
+	}
 
+	/**
+	 * Devuelve la hora del dia de la fecha indicada.
+	 * 
+	 * @param date
+	 *            La fecha de la que se desea saber la hora del dia.
+	 * @return La hora del dia.
+	 */
+    public static Integer getHour(Date date){
+    	Calendar c = Calendar.getInstance();
+    	c.setTime(date);
+    	return c.get(Calendar.HOUR_OF_DAY);
+    }
+	
 	/**
 	 * Devuelve el numero de dias del mes en curso indicado en la fecha.
 	 * 

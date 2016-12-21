@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.issues.client;
 
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.google.gwt.event.dom.client.KeyCodes;
 
 public class Utils {
@@ -74,6 +76,17 @@ public class Utils {
 		if(str.substring(str.length()-1).equals("\n"))
 			s = s + "\\n";
 		return s;
+	}
+	
+    public static Boolean isAdmin(User user) {
+    	for(Integer i = 0; i < user.getUserRoles().length; i++){
+    		if(user.getUserRoles()[i] != null && 	
+    			(user.getUserRoles()[i].equals(AonRole.ADMIN) ||
+    			user.getUserRoles()[i].equals(AonRole.CALL_CENTER_MANAGER))){
+    			return true;
+    		}
+    	}
+    	return false;
 	}
 	
 }

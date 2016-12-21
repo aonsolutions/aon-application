@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.project.JsProject;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
+import com.esferalia.aon.gwt.api.client.stat.JsStatData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Incidence extends Methods{
@@ -103,92 +104,31 @@ public class Incidence extends Methods{
 	//-------------------- ISSUES
 	
 	public void getIssues(String url, IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
-				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
-				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
-				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
-				+ (filter.getWorkgroup() != null ? "&workgroup=" + filter.getWorkgroup() : "")
-				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
-				+ (filter.getMentioned() != null ? "&mentioned=" + filter.getMentioned() : "")
-				+ (filter.getLabels() != null ? "&labels=" + filter.getLabels() : "")
-				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
-				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
-				+ (filter.getPriority() != null ? "&priority=" + filter.getPriority() : "")
-				+ (filter.getDateDiff() != null ? "&date_diff=" + filter.getDateDiff() : "")
-				+ (filter.getEnterprise() != null ? "&enterprise=" + filter.getEnterprise() : "")
-				+ (filter.getType() != null ? "&type=" + filter.getType() : "")
-				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
-				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
-				, callback);
+		get(url + getIssueFilter(filter), callback);
 	}
 	
 	public void getUserIssues(IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
 		get(url + "repos/" + getUserName() + "/" + getRepositoryName() + "/issues"
-				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
-				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
-				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
-				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
-				+ (filter.getWorkgroup() != null ? "&workgroup=" + filter.getWorkgroup() : "")
-				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
-				+ (filter.getMentioned() != null ? "&mentioned=" + filter.getMentioned() : "")
-				+ (filter.getLabels() != null ? "&labels=" + filter.getLabels() : "")
-				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
-				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
-				+ (filter.getPriority() != null ? "&priority=" + filter.getPriority() : "")
-				+ (filter.getDateDiff() != null ? "&date_diff=" + filter.getDateDiff() : "")
-				+ (filter.getEnterprise() != null ? "&enterprise=" + filter.getEnterprise() : "")
-				+ (filter.getType() != null ? "&type=" + filter.getType() : "")
-				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
-				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
-				, callback);
+				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getOrgIssues(IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
 		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues"
-				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
-				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
-				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
-				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
-				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
-				+ (filter.getWorkgroup() != null ? "&workgroup=" + filter.getWorkgroup() : "")
-				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
-				+ (filter.getMentioned() != null ? "&mentioned=" + filter.getMentioned() : "")
-				+ (filter.getLabels() != null ? "&labels=" + filter.getLabels() : "")
-				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
-				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
-				+ (filter.getPriority() != null ? "&priority=" + filter.getPriority() : "")
-				+ (filter.getDateDiff() != null ? "&date_diff=" + filter.getDateDiff() : "")
-				+ (filter.getEnterprise() != null ? "&enterprise=" + filter.getEnterprise() : "")
-				+ (filter.getType() != null ? "&type=" + filter.getType() : "")
-				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
-				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
-				, callback);
+				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getLightIssues(Integer id, IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
 		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues_light/" + id
-				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
-				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
-				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
-				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
-				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
-				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
-				+ (filter.getMentioned() != null ? "&mentioned=" + filter.getMentioned() : "")
-				+ (filter.getLabels() != null ? "&labels=" + filter.getLabels() : "")
-				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
-				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
-				+ (filter.getPriority() != null ? "&priority=" + filter.getPriority() : "")
-				+ (filter.getDateDiff() != null ? "&date_diff=" + filter.getDateDiff() : "")
-				+ (filter.getEnterprise() != null ? "&enterprise=" + filter.getEnterprise() : "")
-				+ (filter.getType() != null ? "&type=" + filter.getType() : "")
-				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
-				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
-				, callback);
+				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getFaqIssues(IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
 		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/faqs/"
-				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
+				+ getIssueFilter(filter), callback);
+	}
+	
+	protected String getIssueFilter(IssueFilter filter){
+		return (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
 				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
 				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
 				+ (filter.getMine() != null ? "&mine=" + filter.getMine() : "")
@@ -204,8 +144,7 @@ public class Incidence extends Methods{
 				+ (filter.getEnterprise() != null ? "&enterprise=" + filter.getEnterprise() : "")
 				+ (filter.getType() != null ? "&type=" + filter.getType() : "")
 				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
-				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
-				, callback);
+				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage();
 	}
 	
 	public void getDuplicateIssues(Integer parent, AsyncCallback<JSON<JsIssue>> callback){
@@ -532,6 +471,27 @@ public class Incidence extends Methods{
 		post(url + "repos/"+getUserName()+"/"+getDomainName()+"/github", requestData);
 	}
 	
+	// STAT
+	
+	public void getStatDataByStatus(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/status"
+				+ getIssueFilter(filter), callback);
+	}
+	
+	public void getStatDataByType(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/type"
+				+ getIssueFilter(filter), callback);
+	}
+	
+	public void getStatDataBySchedule(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/schedule"
+				+ getIssueFilter(filter), callback);
+	}
+	
+	public void getStatDataByDayOfWeek(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/day_of_week"
+				+ getIssueFilter(filter), callback);
+	}
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

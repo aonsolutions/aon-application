@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='aon_gwt_aio' >
 	<inherits name='com.google.gwt.user.User' />
-	
 	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name='com.google.gwt.visualization.Visualization'/>
+	<inherits name="com.google.gwt.logging.Logging"/>
 	<inherits name='com.esferalia.aon.gwt.viewer.Viewer' />
 	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	<inherits name="com.esferalia.aon.gwt.api.Api" />
 	<inherits name='com.esferalia.aon.gwt.issues.IssuesAio' />
 	<inherits name='com.esferalia.aon.gwt.document.DocumentAio' />
+		<inherits name='com.esferalia.aon.gwt.stat.StatAio' />
 	<inherits name="com.google.gwt.resources.Resources" />
 	<inherits name="com.vaadin.polymer.Elements"/>
 	

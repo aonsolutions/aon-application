@@ -29,7 +29,8 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 
 @SuppressWarnings("serial")
-@WebServlet(name = "gwtStatTableToExcel", urlPatterns = { "/aon_gwt_stat/_GWTexcel" })
+@WebServlet(name = "gwtStatTableToExcel", urlPatterns = { "/aon_gwt_stat/_GWTexcel" 
+														  ,"/aon_gwt_aio/_GWTexcel"})
 public class TableToExcelServlet extends HttpServlet {
 
 	private String encoding = "ISO-8859-1";

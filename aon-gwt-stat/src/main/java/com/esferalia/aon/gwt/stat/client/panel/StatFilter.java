@@ -145,7 +145,8 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 					chartType.setStyleName(AON.AON_CSS.aonMarginRight());
 					chartType.addStyleName(AON.AON_CSS.aonWidth300());
 					for (StatChartType type : StatChartType.values()) {
-						chartType.addItem(type.getDescription());
+						if(type.getType().equals(StatChartType.INVOICE))
+							chartType.addItem(type.getDescription());
 					}
 					
 					chartType.setSelectedIndex(result.getChartType().ordinal());

@@ -8,6 +8,9 @@ import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.Task.TASK;
+import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
@@ -33,6 +36,8 @@ import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.AonDayOfWeek;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -341,6 +346,53 @@ public class StatDAO {
 									, d);
 						}
 					});
+			}
+
+			@Override
+			public void visitTaskByType() {
+				ctx.getDslContext().select(DSL.count(TASK.ID), TAG.NAME)
+					.from(TASK).join(TASK_TAG).on(TASK.ID.eq(TASK_TAG.TASK))
+						.join(TAG).on(TASK_TAG.TAG.eq(TAG.ID))
+					.where(TAG.TYPE.eq(TagType.TASK_TYPE.value()))
+						.and(TASK.DOMAIN.eq(ctx.getDomainId()))
+						.and(TASK.NUMBER.isNotNull())
+					.groupBy(TAG.NAME).fetch().stream().forEach(r -> 
+						table.put(r.getValue(TAG.NAME), "CANTIDAD", r.value1().doubleValue()));
+			}
+
+			@Override
+			public void visitTaskBySchedule() {
+				LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
+					.from(TASK)
+					.where(TASK.DOMAIN.eq(ctx.getDomainId()))
+					.and(TASK.NUMBER.isNotNull())
+					.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
+					.collect(Collectors.toCollection(LinkedList::new));
+				for(Integer i = 0; i < 24; i++){
+					Integer hora = i;
+					Long count = list.stream().filter(r -> AonDateUtils.getHour(r) == hora).count();
+					table.put("De " + String.format("%02d", hora) + "h a " + String.format("%02d", hora+1) + "h", "CANTIDAD",  count.doubleValue());	
+				}
+			}
+			
+			@Override
+			public void visitTaskByDayOfWeek() {
+				LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
+					.from(TASK)
+					.where(TASK.DOMAIN.eq(ctx.getDomainId()))
+					.and(TASK.NUMBER.isNotNull())
+					.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
+					.collect(Collectors.toCollection(LinkedList::new));
+				for(Integer i = 0; i < 7; i++){
+					Integer day = i;
+					Long count = list.stream().filter(r -> AonDateUtils.getDayOfWeek(r) == day+1).count();
+					table.put(AonDayOfWeek.values()[day].getName(), "CANTIDAD",  count.doubleValue());	
+				}
+			}
+
+			@Override
+			public void visitTaskByStatus() {
+			
 			}
 			
 		});

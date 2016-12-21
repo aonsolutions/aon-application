@@ -5,7 +5,7 @@
 	<!-- =================== STATS ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_stat</from-outcome>
+			<from-outcome>gwt_statOLD</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/stat/facelet/gwt.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

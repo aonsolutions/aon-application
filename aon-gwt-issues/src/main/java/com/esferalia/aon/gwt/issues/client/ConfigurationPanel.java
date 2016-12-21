@@ -39,7 +39,7 @@ public class ConfigurationPanel extends Composite {
     public ConfigurationPanel(Issues issues, AonData aonData, Incidence incidence) {
     	this.issues = issues;
     	this.incidence = incidence;    	
-    	Boolean admin = !isAdmin(aonData.getUser());
+    	Boolean admin = !Utils.isAdmin(aonData.getUser());
     	initWidget(binder.createAndBindUi(this));
     	tabs.setSelected("0");
         tabs.addIronSelectHandler(new IronSelectEventHandler() {

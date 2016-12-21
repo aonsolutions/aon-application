@@ -1,0 +1,132 @@
+package com.code.aon.webservice.stat;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.code.aon.webservice.issues.Utils;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.stat.StatChartType;
+import com.esferalia.aon.occam.api.model.stat.StatData;
+import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.task.IssueFilter;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "StatServlet", urlPatterns = { "/stat/*" })
+public class StatServlet extends HttpServlet{
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("GET METHOD");
+		String accessToken = req.getParameter("access_token");
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1];
+		String userName = pathInfo[2]; 
+		String md5 = Utils.getMd5(userName+domainName);
+		
+		if(accessToken.equals(md5)){
+			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+			if(pathInfo.length > 3){
+				Object object = new Object();
+				JSONObject meta = new JSONObject();
+				switch (pathInfo[3]) {
+				case "task":
+					object = getTaskStatData(domain, userName, pathInfo[4], getFilter(req));
+					break;
+				default:
+					break;
+				}
+				String js = req.getParameter("callback");
+				if(js != null){
+					resp.setContentType("application/javascript; charset=utf-8");     
+					PrintWriter out = resp.getWriter();
+					out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
+					out.flush();
+				} else {
+					resp.setContentType("application/json");     
+					PrintWriter out = resp.getWriter();
+					out.print(object);
+					out.flush();
+				}
+			}
+		}
+	}
+	
+	// -------------------- TASK STAT
+	
+	private JSONArray getTaskStatData(Domain domain, String userName, String by, IssueFilter filter) {
+		switch (by) {
+		case "status":
+			return getTaskStatusStatData(domain, userName, filter);
+		case "type":
+			return getTaskStatData(domain, userName, StatChartType.TASK_BY_TYPE, filter);
+		case "schedule":
+			return getTaskStatData(domain, userName, StatChartType.TASK_BY_SCHEDULE, filter);
+		case "day_of_week":
+			return getTaskStatData(domain, userName, StatChartType.TASK_BY_DAY_OF_WEEK, filter);
+		default:
+			return new JSONArray();
+		}
+	}
+	
+	private JSONArray getTaskStatusStatData(Domain domain, String userName, IssueFilter filter) {
+		JSONArray array = new JSONArray();
+		String[] status = {"ABIERTAS","CERRADAS","BORRADAS"};
+		Integer[] sizes = AON.getTaskCount(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()), filter);
+		for(Integer i = 0; i < sizes.length; i++){
+			JSONObject json = new JSONObject();
+			json.put("row", status[i]);
+			json.put("column", "CANTIDAD");
+			json.put("quantity", sizes[i]);	
+			array.put(json);
+		}
+		return array;
+	}
+	
+	private JSONArray getTaskStatData(Domain domain, String userName, StatChartType chartType, IssueFilter filter){
+		JSONArray array = new JSONArray();
+		StatData<String, String, Double> statData = AON.getStatData(domain.getName(), domain.getId(), userName, new StatParams().setChartType(chartType));
+		statData.getMap().keySet().stream().forEach(row -> {
+			statData.getMap().get(row).keySet().stream().forEach(col-> {
+				JSONObject json = new JSONObject();
+				json.put("row", row);
+				json.put("column", col);
+				json.put("quantity", statData.getMap().get(row).get(col));
+				array.put(json);
+			});
+		});
+		return array;
+	}
+
+	private IssueFilter getFilter(HttpServletRequest req){
+		return new IssueFilter()
+				.setTitle(req.getParameter("title"))
+				.setMine(req.getParameter("mine"))
+				.setAssignee(req.getParameter("asignee"))
+				.setWorkgroup(req.getParameter("workgroup"))
+				.setCreator(req.getParameter("creator"))
+				.setDirection(req.getParameter("direction"))
+				.setLabels(req.getParameter("labels"))
+				.setMentioned(req.getParameter("mentioned"))
+				.setMilestone(req.getParameter("milestone"))
+				.setSince(req.getParameter("since"))
+				.setSort(req.getParameter("sort"))
+				.setState(req.getParameter("state"))
+				.setPriority(req.getParameter("priority"))
+				.setType(req.getParameter("type"))
+				.setEnterprise(req.getParameter("enterprise"))
+				.setPerPage(Integer.parseInt(req.getParameter("per_page")))
+				.setPage(Integer.parseInt(req.getParameter("page")))
+				.setDateDiff(req.getParameter("date_diff"));
+	}
+	
+}

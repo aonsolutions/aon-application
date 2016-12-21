@@ -246,7 +246,7 @@ public class Issues implements EntryPoint {
 			protected void onStatsButtonClick() {
 				contentDockLayoutPanel.removeFromParent();
 				contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				contentDockLayoutPanel.add(new StatPanel());
+				contentDockLayoutPanel.add(new StatPanel(incidence));
 				dockLayoutPanel.add(contentDockLayoutPanel);				
 			}
 
@@ -275,7 +275,7 @@ public class Issues implements EntryPoint {
 		}.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false)
-		.setVisibleStatsButton(false)
+		.setVisibleStatsButton(Utils.isAdmin(aonData.getUser()))
 		.setVisibleFastFilterButton(true));
 	}
 	

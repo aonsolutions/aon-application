@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.document.client.Documents;
 import com.esferalia.aon.gwt.issues.client.Issues;
+import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,6 +21,7 @@ public class Aio implements EntryPoint {
 	
 	private Issues issues;
 	private Documents documents;
+	private MainEntryPoint stat; 
 	//private Documental documental;
 
 	public static native String getCurrentDomainName()
@@ -65,6 +67,10 @@ public class Aio implements EntryPoint {
 			// NUEVO DOCUMENTAL CON POLYMEROS
 			//documental = new Documental(aonData);
 			//documental.onModuleLoad();
+			break;
+		case Modules.STAT:
+			stat = new MainEntryPoint();
+			stat.onModuleLoad();
 			break;
 		default:
 			break;

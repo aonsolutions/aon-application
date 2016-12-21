@@ -66,20 +66,10 @@
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.occam</artifactId>
-			<version>${project.version}</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.gwt.common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>
@@ -90,14 +80,17 @@
 		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.gwt.issues</artifactId>
+			<artifactId>aon.gwt.api</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
+			<classifier>sources</classifier>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.issues</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
 		

@@ -19,4 +19,14 @@ public interface IStatChartTypeVisitor {
 	void visitAbcInvoiceSeller();
 
 	void visitGeoProvince();
+	
+	// -------------------- TASK STAT
+
+	void visitTaskByStatus();
+	
+	void visitTaskByType();
+
+	void visitTaskBySchedule();
+	
+	void visitTaskByDayOfWeek();
 }

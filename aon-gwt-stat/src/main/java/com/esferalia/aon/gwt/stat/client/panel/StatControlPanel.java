@@ -771,6 +771,13 @@ public class StatControlPanel extends MainEntryPoint {
 				}
 			});
 		}
+
+		// -------------------- TASK STAT
+		
+		@Override public void visitTaskByType() {}
+		@Override public void visitTaskBySchedule() {}
+		@Override public void visitTaskByDayOfWeek() {}
+		@Override public void visitTaskByStatus() {}
 	}
 
 }
