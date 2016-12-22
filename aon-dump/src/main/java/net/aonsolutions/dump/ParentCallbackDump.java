@@ -46,14 +46,14 @@ public class ParentCallbackDump extends AbstractChaimCallbackDump{
 		SelectConditionStep<?> select = dslContext.select(fk.getKey().getFields().get(0)).from(fk.getKey().getTable().getName())
 				.where((((Field<Integer>) fk.getKey().getTable().field("domain")).equal(parentDomain))
 						.and(((Field<Integer>) fk.getKey().getFields().get(0))
-								.eq(r.getValue((Field<Integer>) fk.getFields().get(0)))));
+								.eq(r.getValue((Field<Integer>) fk.getFields().get(0), Integer.class))));
 		
 		fkField = (Record1<?>) select.fetchAny();
 
 		if (fkField != null) {
 			cb.downloadParent(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 
-			return idsMap.getOrder(fk.getKey().getTable().getName(), r.getValue((Field<Integer>) fk.getFields().get(0)));
+			return idsMap.getOrder(fk.getKey().getTable().getName(), r.getValue((Field<Integer>) fk.getFields().get(0), Integer.class));
 		}
 
 		return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);

@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -48,8 +49,9 @@ public class AonDump {
 	public static PrintStream out;
 	public static Map<Table<?>, Field<byte[]>> tablasAttach;
 	public static FKSpecificMap fkSpecificMap;
+	public Stack<Integer> stackContId;
 
-	public AonDump(String url, String usr, String password) throws SQLException {
+ 	public AonDump(String url, String usr, String password) throws SQLException {
 		// Create a connection to our DataBase
 		connection = DriverManager.getConnection(url, usr, password);
 
@@ -62,7 +64,7 @@ public class AonDump {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
 		tablasAttach = new HashMap<>();
-
+		stackContId = new Stack<Integer>();
 	}
 
 	public AonDump(Connection connection) {
@@ -76,6 +78,7 @@ public class AonDump {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
 		tablasAttach = new HashMap<>();
+		stackContId = new Stack<Integer>();
 	}
 
 	public void findDomainInTables(Connection connection, DSLContext dslContext, CallbackDump cb, String hostName,
@@ -95,10 +98,11 @@ public class AonDump {
 		List<Table<?>> tables = schema.get().getTables();
 
 		int idDomain = dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
+		int idParent = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
 
 		// We filter all the tables we have so we let only the ones we are going to use
 		Map<Table<?>, Integer> dumpTables = new HashMap<Table<?>, Integer>();
-		dumpTables = getDumpTables(tables, idDomain);
+		dumpTables = getDumpTables(tables, idDomain, idParent);
 
 		// Initialize the Ids map and add our domain to it
 		idsMap = newIdsMap(dumpTables);
@@ -164,14 +168,15 @@ public class AonDump {
 		tablesNotToDownload.add("session");
 	}
 
-	private Map<Table<?>, Integer> getDumpTables(List<Table<?>> tables, int id) {
+	private Map<Table<?>, Integer> getDumpTables(List<Table<?>> tables, int id, int idParent) {
 
 		// Map <Table, Number of lines we are going to download>
 		Map<Table<?>, Integer> dumpTables = new HashMap<Table<?>, Integer>();
 
 		Map<Table<?>, Integer> domainTables = tables.stream().filter(t -> t.field("domain") != null)
 				.collect(Collectors.toMap(t -> t, t -> dslContext.select(DSL.count()).from(t)
-						.where((((Field<Integer>) t.field("domain")).eq(id))).fetchOne(DSL.count())));
+						.where((((Field<Integer>) t.field("domain")).eq(id))
+								.or(((Field<Integer>) t.field("domain")).eq(idParent))).fetchOne(DSL.count())));
 
 		domainTables.forEach((t, k) -> {
 			if (k != 0)
@@ -254,7 +259,8 @@ public class AonDump {
 		InsertSetMoreStep<?> insertMore = null;
 		Integer numRows = 0;
 		String varTableName = "";
-
+		stackContId.push((int) (Math.random() * Integer.MAX_VALUE));
+		
 		try {
 
 			for (Record r : dslContext.select().from(t).where(where).orderBy(t.field(0).desc()).fetchLazy()) {
@@ -273,7 +279,7 @@ public class AonDump {
 
 				// Check the correct relationship of the foreignkeys
 				try {
-					fkInsertMap = checksFK(r, references, idsMap, cb, tablesCiclic, where);
+					fkInsertMap = checksFK(r, references, idsMap, cb, tablesCiclic, where, stackContId.peek());
 
 				} catch (FkErrorException e) {
 					continue;
@@ -287,7 +293,8 @@ public class AonDump {
 						continue;
 
 					if (pair == null) {
-						idsMap.setOrder(t.getName(), r.getValue(fieldId), r.getValue("domain", Integer.class), true);
+						//idsMap.setOrder(t.getName(), r.getValue(fieldId), r.getValue("domain", Integer.class), true);
+						idsMap.setOrder(t.getName(), r.getValue(fieldId), stackContId.peek(), true);
 
 					} else if (pair != null) {
 						pair.setThird(true);
@@ -341,12 +348,13 @@ public class AonDump {
 				}
 
 		} finally {
+			stackContId.pop();
 		}
 
 	}
 
 	private Map<Field<Integer>, Field<Integer>> checksFK(Record r, List<?> references, IdsMap idsMap, CallbackDump cb,
-			List<Table<?>> tablesCiclic, Condition where) throws FkErrorException {
+			List<Table<?>> tablesCiclic, Condition where, int contId2) throws FkErrorException {
 
 		Map<Field<Integer>, Field<Integer>> fkMapInsert = new HashMap<Field<Integer>, Field<Integer>>();
 
@@ -380,7 +388,7 @@ public class AonDump {
 						idsMap.setTableName(tableReferenceName);
 
 					Threes<Integer, Integer, Boolean> pair = idsMap.getIdInformation(tableReferenceName,
-							((Integer) r.getValue(fk.getFields().get(0))));
+							((Integer) r.getValue(fk.getFields().get(0), Integer.class)));
 
 					if (pair == null) {
 						Field<Integer> parentField = cb.onErrFk(dslContext, r, fk, this, idsMap, cb, tablesCiclic,
@@ -392,7 +400,7 @@ public class AonDump {
 
 						if (tablesCiclic.contains(tableReference)) {
 							idsMap.setOrder(tableReferenceName, ((Integer) r.getValue(fk.getFields().get(0))),
-									((Integer) r.getValue("domain")), false);
+									contId2, false);
 						} else
 
 							throw new FkErrorException(fk);
@@ -400,7 +408,7 @@ public class AonDump {
 					}
 
 					Field<Integer> fkOrder = idsMap.getOrder(tableReferenceName,
-							(Integer) r.getValue(fk.getFields().get(0)));
+							(Integer) r.getValue(fk.getFields().get(0), Integer.class));
 
 					fkMapInsert.put((Field<Integer>) fk.getFields().get(0), fkOrder);
 

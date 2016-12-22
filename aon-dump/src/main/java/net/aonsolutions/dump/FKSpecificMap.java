@@ -24,6 +24,7 @@ import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.util.HashMap;
 
@@ -57,6 +58,7 @@ public class FKSpecificMap {
 		fkMap.put("ALARM", new HashMap<Condition, ForeignKey<?,?>>());
 		fkMap.put("PURCHASE_DETAIL", new HashMap<Condition, ForeignKey<?,?>>());
 		fkMap.put("WAREHOUSE_TRANSFER", new HashMap<Condition, ForeignKey<?,?>>());
+		fkMap.put("APP_PARAM", new HashMap<Condition, ForeignKey<?,?>>());
 	
 		fkMap.get("INVOICE_DETAIL").put((DSL.field("source")).equal(1), createForeignKey(KEY_PURCHASE_DETAIL_PRIMARY, INVOICE_DETAIL, "WEAK_FK_INVOICE_DETAIL_PURCHASE_DETAIL", INVOICE_DETAIL.SOURCE_ID));
 		fkMap.get("INVOICE_DETAIL").put((DSL.field("source")).equal(2), createForeignKey(KEY_SALES_DETAIL_PRIMARY, INVOICE_DETAIL, "WEAK_FK_INVOICE_DETAIL_SALES_DETAIL", INVOICE_DETAIL.SOURCE_ID));
@@ -86,6 +88,7 @@ public class FKSpecificMap {
 		fkMap.get("WAREHOUSE_TRANSFER").put((DSL.field("source")).equal(2), createForeignKey(KEY_PURCHASE_DETAIL_PRIMARY, WAREHOUSE_TRANSFER, "WEAK_FK_WAREHOUSE_TRANSFER_PURCHASE_DETAIL", WAREHOUSE_TRANSFER.SOURCE_ID));
 		fkMap.get("WAREHOUSE_TRANSFER").put((DSL.field("source")).equal(3), createForeignKey(KEY_INVENTORY_DETAIL_PRIMARY, WAREHOUSE_TRANSFER, "WEAK_FK_WAREHOUSE_TRANSFER_INVENTORY_DETAIL", WAREHOUSE_TRANSFER.SOURCE_ID));
 			
+		fkMap.get("APP_PARAM").put((DSL.field("name")).like("%_ACC"), createForeignKey(KEY_ACCOUNT_PRIMARY, APP_PARAM, "WEAK_FK_APP_PARAM_ACCOUNT", APP_PARAM.VALUE));
 	}
 
 	protected static <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(UniqueKey<U> key,

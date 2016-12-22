@@ -25,7 +25,7 @@ public class DomainZeroCallbackDump extends AbstractChaimCallbackDump {
 		Record1<?> fkField;
 		Field<Integer> parentField = null;
 		
-		Integer value = r.getValue((Field<Integer>) fk.getFields().get(0));
+		Integer value = r.getValue((Field<Integer>) fk.getFields().get(0), Integer.class);
 
 		Field<Integer> domainField = (Field<Integer>) fk.getKey().getTable().field("domain");
 		if (domainField == null)
@@ -36,7 +36,7 @@ public class DomainZeroCallbackDump extends AbstractChaimCallbackDump {
 					.from(fk.getKey().getTable())
 					.where(((domainField).equal(0)))
 					.and(((Field<Integer>) fk.getKey().getFields().get(0))
-							.eq(r.getValue((Field<Integer>) fk.getFields().get(0))));
+							.eq(r.getValue((Field<Integer>) fk.getFields().get(0), Integer.class)));
 
 		fkField = select.fetchAny();
 
