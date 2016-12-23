@@ -134,6 +134,8 @@ public class Documental implements EntryPoint {
 			@Override protected void onStatsButtonClick() {}
 
 			@Override protected void onFastFilterButtonClick() {}
+
+			@Override protected void onTitleClick() {}
 		}
 		.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
