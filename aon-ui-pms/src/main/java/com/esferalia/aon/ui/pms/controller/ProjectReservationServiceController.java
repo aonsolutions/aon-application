@@ -29,7 +29,6 @@ import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -56,14 +55,14 @@ public class ProjectReservationServiceController extends LinesController {
 	private List<ITransferObject> reservationServiceDetails;
 
 	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
+		if (priceStrategy == null) {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
 	}
 
 	public ItemPricesManager getPricesManager(){
-		if(pricesManager == null){
+		if (pricesManager == null) {
 			pricesManager = new ItemPricesManager();
 		}
 		return pricesManager;
@@ -158,9 +157,9 @@ public class ProjectReservationServiceController extends LinesController {
 		masterController.accept(event);
 		try {
 			if (getModel().isRowAvailable()) {
-				ProjectReservationService reservationService = (ProjectReservationService)getModel().getRowData();
+				super.onSelect(event);
+				ProjectReservationService reservationService = (ProjectReservationService)getTo();
 				reservationService.setProjectReservation((ProjectReservation)getMasterController().getTo());
-				setTo(reservationService);
 				masterController.getReservationPermission().setReservationService(reservationService);
 
 				fillReservationServiceValues(reservationService);
@@ -238,7 +237,7 @@ public class ProjectReservationServiceController extends LinesController {
 		return reservationDates;
 	}
 
-	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
+	public void onItemChanged(ValueChangeEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();

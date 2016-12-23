@@ -64,6 +64,8 @@ import com.code.aon.marketing.MailProcess;
 import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.marketing.util.MailProcessUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.pricing.ItemPricesManager;
+import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -90,6 +92,8 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.card.CardOperationTo;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
@@ -120,10 +124,11 @@ public class ProjectReservationController extends BasicController implements IPm
 	private int nights;
 	private String guestName;
 	private String guestSurname;
-	private Item roomItem;
-	private int adults;
-	private int children;
-	private Tariff roomTariff;
+	private ProjectReservationRoom newRoom;
+	private ProjectReservationService newService;
+	private ProjectReservationServiceDetail newServiceDetail;
+	private ProjectReservationService newExtraPax;
+	private ProjectReservationServiceDetail newExtraPaxDetail;
 	private boolean showConfirmWindow;
 	private boolean confirmNoShow;
 	private boolean showAuditInfoWindow;
@@ -247,39 +252,57 @@ public class ProjectReservationController extends BasicController implements IPm
 		setGuestSurname(null);
 	}
 
-	public Item getRoomItem() {
-		return roomItem;
+	public ProjectReservationRoom getNewRoom() {
+		return newRoom;
 	}
-	public void setRoomItem(Item roomItem) {
-		this.roomItem = roomItem;
+	public void setNewRoom(ProjectReservationRoom newRoom) {
+		this.newRoom = newRoom;
 	}
-	public void resetRoomItem() {
-		setRoomItem(null);
+	public void resetNewRoom() {
+		setNewRoom(new ProjectReservationRoom());
 	}
-
-	public int getAdults() {
-		return adults;
-	}
-	public void setAdults(int adults) {
-		this.adults = adults;
+	public void resetNewTariff() {
+		getNewRoom().setTariff((obtainReservationTariff((ProjectReservation)getTo())));
 	}
 
-	public int getChildren() {
-		return children;
+	public ProjectReservationService getNewService() {
+		return newService;
 	}
-	public void setChildren(int children) {
-		this.children = children;
+	public void setNewService(ProjectReservationService newService) {
+		this.newService = newService;
+	}
+	public void resetNewService() {
+		setNewService(new ProjectReservationService());
 	}
 
-	public Tariff getRoomTariff() {
-		return roomTariff;
+	public ProjectReservationServiceDetail getNewServiceDetail() {
+		return newServiceDetail;
 	}
-	public void setRoomTariff(Tariff roomTariff) {
-		this.roomTariff = roomTariff;
+	public void setNewServiceDetail(ProjectReservationServiceDetail newServiceDetail) {
+		this.newServiceDetail = newServiceDetail;
 	}
-	public void resetRoomTariff() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		setRoomTariff(obtainReservationTariff(reservation));
+	public void resetNewServiceDetail() {
+		setNewServiceDetail(new ProjectReservationServiceDetail());
+	}
+
+	public ProjectReservationService getNewExtraPax() {
+		return newExtraPax;
+	}
+	public void setNewExtraPax(ProjectReservationService newExtraPax) {
+		this.newExtraPax = newExtraPax;
+	}
+	public void resetNewExtraPax() {
+		setNewExtraPax(new ProjectReservationService());
+	}
+
+	public ProjectReservationServiceDetail getNewExtraPaxDetail() {
+		return newExtraPaxDetail;
+	}
+	public void setNewExtraPaxDetail(ProjectReservationServiceDetail newExtraPaxDetail) {
+		this.newExtraPaxDetail = newExtraPaxDetail;
+	}
+	public void resetNewExtraPaxDetail() {
+		setNewExtraPaxDetail(new ProjectReservationServiceDetail());
 	}
 
 	public boolean isShowConfirmWindow() {
@@ -563,13 +586,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setHotel((Hotel)event.getNewValue());
-			resetRoomItem();
-			resetRoomTariff();
+			resetNewRoom();
+			resetNewTariff();
+			resetNewService();
 		}
-	}
-
-	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
-		return PmsUtils.getRoomItems(((ProjectReservation)getTo()).getHotel());
 	}
 
 	public void onStartDateChanged(ActionEvent event) {
@@ -612,7 +632,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			if (!reservation.isGuestHolder()) {
 				reservation.setAdvance(0);
 			}
-			resetRoomTariff();
+			resetNewTariff();
 		}
 	}
 
@@ -620,7 +640,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setAgency((Customer)event.getNewValue());
-			resetRoomTariff();
+			resetNewTariff();
 		}
 	}
 
@@ -628,17 +648,12 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setCompany((Customer)event.getNewValue());
-			resetRoomTariff();
+			resetNewTariff();
 		}
 	}
 
-	public void onEnableAdvance(ActionEvent event) {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		if (reservation.isAdvanceInvoiced()) {
-			reservation.setAdvanceInvoiced(false);
-			reservation.setAdvance(0);
-			accept(event);
-		}
+	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
+		return PmsUtils.getRoomItems(((ProjectReservation)getTo()).getHotel());
 	}
 
 	private Tariff obtainReservationTariff(ProjectReservation reservation) {
@@ -651,6 +666,99 @@ public class ProjectReservationController extends BasicController implements IPm
 			tariff = reservation.getHotel().getCustomer().getTariff();
 		}
 		return tariff;
+	}
+
+	public void onRoomTariffChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			getNewRoom().setTariff((Tariff)event.getNewValue());
+		} else {
+			getNewRoom().setTariff(null);
+		}
+		setServiceSalesPrice();
+		setExtraPaxSalesPrice();
+	}
+
+	public List<SelectItem> getRoomServiceItems() throws ManagerBeanException {
+		if (getNewRoom() != null) {
+			return PmsUtils.getRoomServiceItems(getNewRoom().getItem());
+		}
+		return null;
+	}
+
+	public void onServiceItemChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			getNewService().setItem((Item)event.getNewValue());
+			if (getNewServiceDetail().getQuantity() == 0) {
+				getNewServiceDetail().setQuantity(1);
+			}
+		} else {
+			getNewService().setItem(null);
+		}
+		setServiceSalesPrice();
+	}
+
+	public void onServiceQuantityChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			getNewServiceDetail().setQuantity((Double)event.getNewValue());
+		} else {
+			getNewServiceDetail().setQuantity(0);
+		}
+		setServiceSalesPrice();
+	}
+
+	private void setServiceSalesPrice() {
+		getNewServiceDetail().setProjectReservationService(getNewService());
+		setServiceDetailSalesPrice(getNewServiceDetail());
+	}
+
+	public void onExtraPaxItemChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			getNewExtraPax().setItem((Item)event.getNewValue());
+			if (getNewExtraPaxDetail().getQuantity() == 0) {
+				getNewExtraPaxDetail().setQuantity(1);
+			}
+		} else {
+			getNewExtraPax().setItem(null);
+		}
+		setExtraPaxSalesPrice();
+	}
+
+	public void onExtraPaxQuantityChanged(ValueChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			getNewExtraPaxDetail().setQuantity((Double)event.getNewValue());
+		} else {
+			getNewExtraPaxDetail().setQuantity(0);
+		}
+		setExtraPaxSalesPrice();
+	}
+
+	private void setExtraPaxSalesPrice() {
+		getNewExtraPaxDetail().setProjectReservationService(getNewExtraPax());
+		setServiceDetailSalesPrice(getNewExtraPaxDetail());
+	}
+
+	private void setServiceDetailSalesPrice(ProjectReservationServiceDetail serviceDetail) {
+		try {
+			if (serviceDetail.getItem() != null && serviceDetail.getItem().getId() != null) {
+				ProjectReservation reservation = (ProjectReservation)getTo();
+				double vatPercent = serviceDetail.getItem().getProduct().getVat().getDatedPercentage(reservation.getDate());
+				double price = PriceStrategyFactory.getPriceStrategy().getUnitPrice(serviceDetail, reservation.getDate(), getNewRoom().getTariff());
+	
+				ItemPricesManager pricesManager = new ItemPricesManager();
+				serviceDetail.setEditableSalesPrice(pricesManager.getSalesPrice(vatPercent, 0, price));
+			}
+		} catch(ManagerBeanException ex) {
+			throw new AbortProcessingException("Error al asignar el Precio Unitario.");
+		}
+	}
+
+	public void onEnableAdvance(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if (reservation.isAdvanceInvoiced()) {
+			reservation.setAdvanceInvoiced(false);
+			reservation.setAdvance(0);
+			accept(event);
+		}
 	}
 
 	public void onCheckIn(ActionEvent event) {

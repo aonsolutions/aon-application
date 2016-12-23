@@ -400,7 +400,8 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	public void insertProjectReservationServiceDetails(ProjectReservationService reservationService, Date fromDate, Date toDate, double quantity, double price, 
     													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
-    	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		strategy = (strategy != null) ? strategy : PriceStrategyFactory.getPriceStrategy();
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
     	Date effectiveDate = fromDate;
 		while (!effectiveDate.after(toDate)) {
 			ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
@@ -428,6 +429,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
     public void updateProjectReservationServiceDetails(ProjectReservationService reservationService, Double quantity, Double price, 
     													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
+		strategy = (strategy != null) ? strategy : PriceStrategyFactory.getPriceStrategy();
     	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
@@ -1343,17 +1345,32 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return obtainPenaltyValue(reservation, EARLY_CHECKOUT_PENALTY, date);
 	}
 
+	public String obtainEarlyCheckOutPenaltyValue(ProjectReservation reservation, Integer tariffId, Date date) throws ManagerBeanException {
+		return obtainPenaltyValue(reservation, tariffId, EARLY_CHECKOUT_PENALTY, date);
+	}
+
 	public String obtainNoShowPenaltyValue(ProjectReservation reservation, Date date) throws ManagerBeanException {
 		return obtainPenaltyValue(reservation, NOSHOW_PENALTY, date);
+	}
+
+	public String obtainNoShowPenaltyValue(ProjectReservation reservation, Integer tariffId, Date date) throws ManagerBeanException {
+		return obtainPenaltyValue(reservation, tariffId, NOSHOW_PENALTY, date);
 	}
 
 	public String obtainCancellationPenaltyValue(ProjectReservation reservation, Date date) throws ManagerBeanException {
 		return obtainPenaltyValue(reservation, OUTOFDATE_CANCEL_PENALTY, date);
 	}
 
+	public String obtainCancellationPenaltyValue(ProjectReservation reservation, Integer tariffId, Date date) throws ManagerBeanException {
+		return obtainPenaltyValue(reservation, tariffId, OUTOFDATE_CANCEL_PENALTY, date);
+	}
+
 	private String obtainPenaltyValue(ProjectReservation reservation, String key, Date date) throws ManagerBeanException {
+		return obtainPenaltyValue(reservation, reservation.getMainTariffId(), key, date);
+	}
+
+	private String obtainPenaltyValue(ProjectReservation reservation, Integer tariffId, String key, Date date) throws ManagerBeanException {
 		String penaltyStr = null;
-		Integer tariffId = reservation.getMainTariffId();
 		if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
 			for (String profileTmp : obtainTariffCodes(tariffId, key + "_" + reservation.getHotel().getCode())) {
 				if (profileTmp.contains("|")) {

@@ -27,7 +27,7 @@
 	<aon:selectOneMenu id="ProjectReservation_hotel_id" value="#{reservation.to.hotel}" 
 		rendered="#{reservation.nevv}" required="true"
 		valueChangeListener="#{reservation.onHotelChanged}"
-		reRender="ProjectReservation_roomItem,ProjectReservation_roomTariff">
+		reRender="ProjectReservation_roomItem,ProjectReservation_roomTariff,ProjectReservation_serviceItem">
 		<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 	</aon:selectOneMenu>
 
@@ -380,32 +380,91 @@
 	<aon:outputLabel for="ProjectReservation_roomItem" value="#{bundle.pms_room_type}" 
 		rendered="#{reservation.nevv}" />
 	<aon:selectOneMenu id="ProjectReservation_roomItem" 
-		value="#{reservation.roomItem}" styleClass="aon-width-350"
-		rendered="#{reservation.nevv}" required="true">
+		value="#{reservation.newRoom.item}" styleClass="aon-width-350"
+		rendered="#{reservation.nevv}" required="true"
+		reRender="ProjectReservation_serviceItem">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{reservation.hotelRoomItems}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{bundle.report_tariff}" 
+	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{bundle.report_tariff}"
 		rendered="#{reservation.nevv}" />
 	<aon:selectOneMenu id="ProjectReservation_roomTariff" 
-		value="#{reservation.roomTariff}" styleClass="aon-width-350" 
-		rendered="#{reservation.nevv}" required="true">
+		value="#{reservation.newRoom.tariff}" styleClass="aon-width-350" 
+		rendered="#{reservation.nevv}" required="true"
+		valueChangeListener="#{reservation.onRoomTariffChanged}"
+		reRender="ProjectReservation_serviceSalesPrice,ProjectReservation_extraPaxSalesPrice">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{pmsCollections.tariffs}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ProjectReservation_pax" value="#{bundle.report_occupation}" 
+	<aon:outputLabel value="#{bundle.report_occupation}" 
+		styleClass="aon-input-required"
 		rendered="#{reservation.nevv}" />
 	<aon:div rendered="#{reservation.nevv}">
 		<aon:outputLabel for="ProjectReservation_adults" value="#{bundle.pms_adults}"
 			styleClass="aon-margin-left aon-margin-right aon-italic" />
-		<aon:inputText id="ProjectReservation_adults" value="#{reservation.adults}"
+		<aon:inputText id="ProjectReservation_adults" value="#{reservation.newRoom.adults}"
 			size="1" maxlength="2" required="true" />
 		<aon:outputLabel for="ProjectReservation_children" value="#{bundle.pms_children}"
 			styleClass="aon-margin-left aon-margin-right aon-italic" />
-		<aon:inputText id="ProjectReservation_children" value="#{reservation.children}"
+		<aon:inputText id="ProjectReservation_children" value="#{reservation.newRoom.children}"
 			size="1" maxlength="2" required="true" />
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_serviceItem" value="#{bundle.pms_service}" 
+		rendered="#{reservation.nevv}" />
+	<aon:selectOneMenu id="ProjectReservation_serviceItem" 
+		value="#{reservation.newService.item}" styleClass="aon-width-350"
+		rendered="#{reservation.nevv}" required="true"
+		valueChangeListener="#{reservation.onServiceItemChanged}"
+		reRender="ProjectReservation_serviceDetail">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{reservation.roomServiceItems}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel value="#{bundle.aon_detail} #{bundle.pms_service}" 
+		styleClass="aon-input-required"
+		rendered="#{reservation.nevv}" />
+	<aon:div id="ProjectReservation_serviceDetail" rendered="#{reservation.nevv}">
+		<aon:outputLabel for="ProjectReservation_serviceQuantity" value="#{bundle.aon_units}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_serviceQuantity" value="#{reservation.newServiceDetail.quantity}"
+			size="2" required="true"
+			valueChangeListener="#{reservation.onServiceQuantityChanged}" 
+			reRender="ProjectReservation_serviceSalesPrice"
+			focus="ProjectReservation_serviceSalesPrice" />
+		<aon:outputLabel for="ProjectReservation_serviceSalesPrice"	value="#{bundle.aon_unit_price}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_serviceSalesPrice" value="#{reservation.newServiceDetail.editableSalesPrice}"
+			size="5" required="true" />
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_extraPaxItem" value="#{bundle.pms_extra_pax}" 
+		rendered="#{reservation.nevv}" />
+	<aon:selectOneMenu id="ProjectReservation_extraPaxItem" 
+		value="#{reservation.newExtraPax.item}" styleClass="aon-width-350"
+		rendered="#{reservation.nevv}"
+		valueChangeListener="#{reservation.onExtraPaxItemChanged}"
+		reRender="ProjectReservation_extraPaxDetail">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{pmsCollections.extraPaxItems}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel value="#{bundle.aon_detail} #{bundle.pms_extra_pax}" 
+		rendered="#{reservation.nevv}" />
+	<aon:div id="ProjectReservation_extraPaxDetail" rendered="#{reservation.nevv}">
+		<aon:outputLabel for="ProjectReservation_extraPaxQuantity" value="#{bundle.aon_units}"
+			styleClass="aon-margin-left aon-margin-right aon-italic aon-bold" />
+		<aon:inputText id="ProjectReservation_extraPaxQuantity" value="#{reservation.newExtraPaxDetail.quantity}"
+			size="2" required="#{reservation.newExtraPax.item.id != null}"
+			valueChangeListener="#{reservation.onExtraPaxQuantityChanged}" 
+			reRender="ProjectReservation_extraPaxSalesPrice"
+			focus="ProjectReservation_extraPaxSalesPrice" />
+		<aon:outputLabel for="ProjectReservation_extraPaxSalesPrice" value="#{bundle.aon_unit_price}"
+			styleClass="aon-margin-left aon-margin-right aon-italic aon-bold" />
+		<aon:inputText id="ProjectReservation_extraPaxSalesPrice" value="#{reservation.newExtraPaxDetail.editableSalesPrice}"
+			size="5" required="#{reservation.newExtraPax.item.id != null}" />
 	</aon:div>
 
 	<aon:outputLabel for="ProjectReservation_comments" value="#{bundle.aon_remark} #{bundle.aon_module_hotel}" />

@@ -24,9 +24,12 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
@@ -283,11 +286,13 @@ public class PmsCollectionsController implements Serializable {
 
 	public List<SelectItem> getRoomItems() throws ManagerBeanException {
 		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		String roomCategory = AppParamUtil.getValue(AppParam.PMS_ROOM_CATEGORY);
+		int roomCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_ROOM_CATEGORY));
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), NumberUtils.toInt(roomCategory));
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), roomCategory);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
 		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
 		for (ITransferObject itr : itemBean.getList(criteria)) {
 			Item item = (Item)itr;
@@ -297,13 +302,72 @@ public class PmsCollectionsController implements Serializable {
 		return roomItems;
 	}
 
-	public List<SelectItem> getBoardItems() throws ManagerBeanException {
-		List<SelectItem> boardItems = new LinkedList<SelectItem>();
-		String boardCategory = AppParamUtil.getValue(AppParam.PMS_BOARD_CATEGORY);
+	public List<SelectItem> getServiceItems() throws ManagerBeanException {
+		List<SelectItem> serviceItems = new LinkedList<SelectItem>();
+		int serviceCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_SERVICE_CATEGORY));
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), NumberUtils.toInt(boardCategory));
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), serviceCategory);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		for (ITransferObject itr : itemBean.getList(criteria)) {
+			Item item = (Item)itr;
+			SelectItem serviceItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+			serviceItems.add(serviceItem);
+		}
+		return serviceItems;
+	}
+
+	public List<SelectItem> getExtraPaxItems() throws ManagerBeanException {
+		List<SelectItem> extraPaxItems = new LinkedList<SelectItem>();
+		int extraPaxCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_EXTRAPAX_CATEGORY));
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), extraPaxCategory);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		for (ITransferObject itr : itemBean.getList(criteria)) {
+			Item item = (Item)itr;
+			SelectItem extraPaxItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+			extraPaxItems.add(extraPaxItem);
+		}
+		return extraPaxItems;
+	}
+
+	public List<SelectItem> getServiceAndExtraPaxItems() throws ManagerBeanException {
+		List<SelectItem> serviceItems = new LinkedList<SelectItem>();
+		int serviceCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_SERVICE_CATEGORY));
+		int extraPaxCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_EXTRAPAX_CATEGORY));
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria = new Criteria();
+		Expression serviceExp = ExpressionUtilities.getEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), serviceCategory);
+		Expression extraPaxExp = ExpressionUtilities.getEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), extraPaxCategory);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(serviceExp, extraPaxExp));
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		for (ITransferObject itr : itemBean.getList(criteria)) {
+			Item item = (Item)itr;
+			SelectItem serviceItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+			serviceItems.add(serviceItem);
+		}
+		return serviceItems;
+	}
+
+	public List<SelectItem> getBoardItems() throws ManagerBeanException {
+		List<SelectItem> boardItems = new LinkedList<SelectItem>();
+		int boardCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_BOARD_CATEGORY));
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), boardCategory);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_COMPOSITION), Boolean.FALSE);
 		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 		for (ITransferObject itr : itemBean.getList(criteria)) {

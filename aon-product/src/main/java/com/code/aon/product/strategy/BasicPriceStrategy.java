@@ -60,9 +60,17 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 	public double getUnitPurchasePrice(ICalculable calc, Date date, ITariffable iTariffable) {
 		double purchasePrice = 0;
 		if (iTariffable != null) {
-			purchasePrice = getUnitPrice(calc, date, iTariffable, RegistryMode.SUPPLIER);
+			purchasePrice = getUnitPrice(calc, date, iTariffable.getRegistry(), iTariffable.getTariff(), RegistryMode.SUPPLIER);
 		}
 		return (purchasePrice > 0) ? purchasePrice : getUnitPurchasePrice(calc);
+	}
+
+	public double getUnitPurchasePrice(ICalculable calc, Date date, Tariff tariff) {
+		double price = 0;
+		if (tariff != null) {
+			price = getUnitPrice(calc, date, null, tariff, RegistryMode.SUPPLIER);
+		}
+		return (price > 0) ? price : getUnitPrice(calc);
 	}
 
 	public double getUnitPrice(ICalculable calc) {
@@ -76,17 +84,23 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 	public double getUnitPrice(ICalculable calc, Date date, ITariffable iTariffable) {
 		double price = 0;
 		if (iTariffable != null) {
-			price = getUnitPrice(calc, date, iTariffable, RegistryMode.CUSTOMER);
+			price = getUnitPrice(calc, date, iTariffable.getRegistry(), iTariffable.getTariff(), RegistryMode.CUSTOMER);
 		}
 		return (price > 0) ? price : getUnitPrice(calc);
 	}
 
-	private double getUnitPrice(ICalculable calc, Date date, ITariffable iTariffable, RegistryMode rMode) {
-		Registry registry = iTariffable.getRegistry();
-		Tariff tariff = iTariffable.getTariff();
+	public double getUnitPrice(ICalculable calc, Date date, Tariff tariff) {
+		double price = 0;
+		if (tariff != null) {
+			price = getUnitPrice(calc, date, null, tariff, RegistryMode.CUSTOMER);
+		}
+		return (price > 0) ? price : getUnitPrice(calc);
+	}
+
+	private double getUnitPrice(ICalculable calc, Date date, Registry registry, Tariff tariff, RegistryMode rMode) {
 		Item item = calc.getItem();
 		try {
-			if (item != null && item.getId() != null && iTariffable != null) {
+			if (item != null && item.getId() != null) {
 				Product product = item.getProduct();
 				if (registry != null && registry.getId() != null) {
 					IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);

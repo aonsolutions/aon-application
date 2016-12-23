@@ -11,8 +11,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.Tariff;
-import com.code.aon.product.Item;
+import com.code.aon.product.pricing.ItemPricesManager;
+import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -23,11 +24,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.InventoryManager;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
@@ -52,8 +55,12 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 			controller.resetEndTime();
 			controller.resetNights();
 			controller.resetGuestName();
-			controller.resetRoomItem();
-			controller.resetRoomTariff();
+			controller.resetNewRoom();
+			controller.resetNewTariff();
+			controller.resetNewService();
+			controller.resetNewServiceDetail();
+			controller.resetNewExtraPax();
+			controller.resetNewExtraPaxDetail();
 			controller.setInvoiceModel(null);
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -85,6 +92,51 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservation.setStartTime(controller.obtainStartTime());
 		reservation.setEndTime(controller.obtainEndTime());
 		reservation.setHotelReservation(reservation.getHotel());
+		try {
+			IPriceStrategy priceStrategy = PriceStrategyFactory.getPriceStrategy();
+			ItemPricesManager pricesManager = new ItemPricesManager();
+			if (controller.getNewService().getItem() != null && controller.getNewServiceDetail().getEditableSalesPrice() != 0) {
+				reservation.setVatPercent(controller.getNewService().getItem().getProduct().getVat().getDatedPercentage(reservation.getDate()));
+				double price = pricesManager.getPrice(reservation.getVatPercent(), 0, controller.getNewServiceDetail().getEditableSalesPrice(), 4);
+				controller.getNewServiceDetail().setProjectReservationService(controller.getNewService());
+				controller.getNewServiceDetail().setPrice(price);
+				controller.getNewServiceDetail().setTaxableBase(priceStrategy.getBasePrice(controller.getNewServiceDetail()));
+
+				reservation.setTaxableBase(CommonUtil.round(controller.getNewServiceDetail().getTaxableBase() * reservation.getNights(), 4));
+				reservation.setVatQuota(CommonUtil.round(reservation.getTaxableBase() * reservation.getVatPercent() / 100));
+			}
+			if (controller.getNewExtraPax().getItem() != null && controller.getNewExtraPaxDetail().getEditableSalesPrice() != 0) {
+				double vatPercent = controller.getNewExtraPax().getItem().getProduct().getVat().getDatedPercentage(reservation.getDate());
+				double price = pricesManager.getPrice(vatPercent, 0, controller.getNewExtraPaxDetail().getEditableSalesPrice(), 4);
+				controller.getNewExtraPaxDetail().setProjectReservationService(controller.getNewExtraPax());
+				controller.getNewExtraPaxDetail().setPrice(price);
+				controller.getNewExtraPaxDetail().setTaxableBase(priceStrategy.getBasePrice(controller.getNewExtraPaxDetail()));
+
+				double base = CommonUtil.round(controller.getNewExtraPaxDetail().getTaxableBase() * reservation.getNights(), 4);
+				reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase() + base, 4));
+				if (vatPercent == reservation.getVatPercent()) {
+					reservation.setVatQuota(CommonUtil.round(reservation.getTaxableBase() * reservation.getVatPercent() / 100));
+				} else {
+					double vatQuota = CommonUtil.round(base * vatPercent / 100);
+					reservation.setVatQuota(CommonUtil.round(reservation.getVatQuota() + vatQuota));
+				}
+			}
+			reservation.setTaxableBase(CommonUtil.round(reservation.getTaxableBase()));
+			reservation.setTotal(CommonUtil.round(reservation.getTaxableBase() + reservation.getVatQuota()));
+
+			String penaltyValue = null;
+			if (controller.getNewRoom().getTariff() != null) {
+				Integer tariffId = controller.getNewRoom().getTariff().getId();
+				penaltyValue = controller.getReservationUtils().obtainCancellationPenaltyValue(reservation, tariffId, reservation.getDate());
+			} else {
+				penaltyValue = controller.getReservationUtils().obtainCancellationPenaltyValue(reservation, reservation.getDate());
+			}
+			if (penaltyValue != null) {
+				reservation.setPenaltyAmount(reservation.getAutoCancellationPenaltyPrice(penaltyValue, true));
+			}
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException(ex.getMessage(), ex);
+		}
 	}
 
 	@Override
@@ -93,8 +145,23 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		try {
 			insertProjectReservationGuest(reservation, controller.getGuestName(), controller.getGuestSurname());
-			if (controller.getRoomItem() != null) {
-				insertProjectReservationRoom(reservation, controller.getRoomItem(), controller.getRoomTariff(), controller.getAdults(), controller.getChildren());
+			if (controller.getNewRoom() != null && controller.getNewRoom().getItem() != null) {
+				controller.getNewRoom().setRoomIndex(1);
+				insertProjectReservationRoom(reservation, controller.getNewRoom());
+			}
+			if (controller.getNewService() != null && controller.getNewService().getItem() != null) {
+				controller.getNewService().setServiceIndex(1);
+				controller.getNewService().setMealPlan(controller.getReservationUtils().obtainMealPlan(controller.getNewService().getItem().getDetail()));
+				controller.getNewService().setProjectReservationRoom(controller.getNewRoom().getId());
+				insertProjectReservationService(reservation, controller.getNewService(), controller.getNewServiceDetail().getQuantity(), 
+						controller.getNewServiceDetail().getPrice(), controller.getReservationUtils());
+			}
+			if (controller.getNewExtraPax() != null && controller.getNewExtraPax().getItem() != null) {
+				controller.getNewExtraPax().setServiceIndex(2);
+				controller.getNewExtraPax().setMealPlan(controller.getReservationUtils().obtainMealPlan(controller.getNewExtraPax().getItem().getDetail()));
+				controller.getNewExtraPax().setProjectReservationRoom(controller.getNewRoom().getId());
+				insertProjectReservationService(reservation, controller.getNewExtraPax(), controller.getNewExtraPaxDetail().getQuantity(), 
+						controller.getNewExtraPaxDetail().getPrice(), controller.getReservationUtils());
 			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -179,18 +246,9 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservationGuestBean.insert(reservationGuest);
 	}
 
-	private void insertProjectReservationRoom(ProjectReservation reservation, Item roomItem, Tariff roomTariff, int adults, int children) 
-			throws ManagerBeanException {
-		ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
+	private void insertProjectReservationRoom(ProjectReservation reservation, ProjectReservationRoom reservationRoom) throws ManagerBeanException {
 		reservationRoom.setProjectReservation(reservation);
-		reservationRoom.setRoomIndex(1);
-		reservationRoom.setItem(roomItem);
-		reservationRoom.setTariff(roomTariff);
-		reservationRoom.setAdults(adults);
-		reservationRoom.setChildren(children);
-		
-		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-		reservationRoom = (ProjectReservationRoom)reservationRoomBean.insert(reservationRoom);
+		reservationRoom = (ProjectReservationRoom)BeanManager.getManagerBean(ProjectReservationRoom.class).insert(reservationRoom);
 
 		sendInventoryData(reservationRoom);
 	}
@@ -199,5 +257,16 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
     	InventoryManager manager = new InventoryManager();
     	manager.processInventoryQuery(reservationRoom);
     }
+
+	private void insertProjectReservationService(ProjectReservation reservation, ProjectReservationService reservationService, double quantity, double price,
+			ReservationUtils reservationUtils) throws ManagerBeanException {
+		reservationService.setProjectReservation(reservation);
+		reservationService.setExtra(false);
+		reservationService = (ProjectReservationService)BeanManager.getManagerBean(ProjectReservationService.class).insert(reservationService);
+
+		Date fromDate = reservation.getStartDate();
+		Date toDate = DateUtils.addDays(reservation.getEndDate(), -1);
+		reservationUtils.insertProjectReservationServiceDetails(reservationService, fromDate, toDate, quantity, price, null, null);
+	}
 
 }

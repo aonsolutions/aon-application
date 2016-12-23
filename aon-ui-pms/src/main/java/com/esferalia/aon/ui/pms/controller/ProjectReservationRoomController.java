@@ -105,9 +105,9 @@ public class ProjectReservationRoomController extends LinesController {
 		masterController.accept(event);
 		try {
 			if (getModel().isRowAvailable()) {
-				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getModel().getRowData();
+				super.onSelect(event);
+				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 				reservationRoom.setProjectReservation((ProjectReservation)getMasterController().getTo());
-				setTo(reservationRoom);
 				masterController.getReservationPermission().setReservationRoom(reservationRoom);
 
 				Date startDate = reservationRoom.getProjectReservation().getStartDate();

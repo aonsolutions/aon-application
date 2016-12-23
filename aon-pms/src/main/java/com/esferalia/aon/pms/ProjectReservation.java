@@ -809,16 +809,21 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	@Transient
 	public Double getAutoNoShowPenaltyPrice(String penaltyValue) throws ManagerBeanException {
+		return getAutoNoShowPenaltyPrice(penaltyValue, false);
+	}
+
+	@Transient
+	public Double getAutoNoShowPenaltyPrice(String penaltyValue, boolean samePrice) throws ManagerBeanException {
 		if (penaltyValue != null) {
 			Integer penaltyDays = getPenaltyDays(penaltyValue);
 			if (penaltyDays != null && penaltyDays.intValue() != 0) {
 				String penaltyMode = getPenaltyMode(penaltyValue);
-				if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_DAILY) || penaltyMode.equals(StringUtils.EMPTY)) {
-					return getNoShowPenaltyPrice(getStartDate(), DateUtils.addDays(getStartDate(), penaltyDays-1));
-				} else if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_AVERAGE)) {
+				if (samePrice || penaltyMode.equals(IReservationConstants.PENALTY_MODE_AVERAGE)) {
 					return CommonUtil.round(getTotal() * penaltyDays / getNights());
 				} else if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_PERCENT)) {
 					return CommonUtil.round(getTotal() * penaltyDays / 100);
+				} else if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_DAILY) || penaltyMode.equals(StringUtils.EMPTY)) {
+					return getNoShowPenaltyPrice(getStartDate(), DateUtils.addDays(getStartDate(), penaltyDays-1));
 				}
 			}
 			return 0.0;
@@ -855,16 +860,21 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	@Transient
 	public Double getAutoCancellationPenaltyPrice(String penaltyValue) throws ManagerBeanException {
+		return getAutoCancellationPenaltyPrice(penaltyValue, false);
+	}
+
+	@Transient
+	public Double getAutoCancellationPenaltyPrice(String penaltyValue, boolean samePrice) throws ManagerBeanException {
 		if (penaltyValue != null) {
 			Integer penaltyDays = getPenaltyDays(penaltyValue);
 			if (penaltyDays != null && penaltyDays.intValue() != 0) {
 				String penaltyMode = getPenaltyMode(penaltyValue);
-				if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_DAILY) || penaltyMode.equals(StringUtils.EMPTY)) {
-					return getCancellationPenaltyPrice(getStartDate(), DateUtils.addDays(getStartDate(), penaltyDays-1));
-				} else if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_AVERAGE)) {
+				if (samePrice || penaltyMode.equals(IReservationConstants.PENALTY_MODE_AVERAGE)) {
 					return CommonUtil.round(getTotal() * penaltyDays / getNights());
 				} else if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_PERCENT)) {
 					return CommonUtil.round(getTotal() * penaltyDays / 100);
+				} else if (penaltyMode.equals(IReservationConstants.PENALTY_MODE_DAILY) || penaltyMode.equals(StringUtils.EMPTY)) {
+					return getCancellationPenaltyPrice(getStartDate(), DateUtils.addDays(getStartDate(), penaltyDays-1));
 				}
 			}
 			return 0.0;

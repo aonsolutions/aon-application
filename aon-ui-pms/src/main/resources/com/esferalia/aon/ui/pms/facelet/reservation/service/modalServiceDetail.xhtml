@@ -121,23 +121,18 @@
 											</aon:selectOneMenu>
 										</aon:div>
 
-										<aon:outputLabel for="Item_id" 
+										<aon:outputLabel for="ProjectReservationService_item" 
 											value="#{bundle.finance_service}" />
 										<aon:outputText	value="#{controller.to.item.product.code} - #{controller.to.item.product.name}" styleClass="aon-bold"
 											rendered="#{!reservation.reservationPermission.reservationServicesEditable}" />
-										<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-											<ui:param name="lookupBean" value="#{saleItemLookup}" />
-											<ui:param name="lookupTo" value="#{controller.to.item}" />
-											<ui:param name="idRequired" value="#{true}" />
-											<ui:param name="skipLabel" value="#{true}" />
-											<ui:param name="skipNewButton" value="#{true}" />
-											<ui:param name="skipGoToButton" value="#{true}" />
-											<ui:param name="lookupRendered" value="#{reservation.reservationPermission.reservationServicesEditable}" />
-											<ui:param name="lookupInputOnFocus" value="ProjectReservationService_quantity" />
-											<ui:param name="lookupReRender" value="ProjectReservationService_quantity,ProjectReservationService_salesPrice" />
-											<aon:methodParam name="lookupChangeListener"
-												value="#{controller.onItemChanged}" type="lookupChangeListener" />
-										</ui:include>
+										<aon:selectOneMenu id="ProjectReservationService_item" 
+											value="#{controller.to.item}" required="true"
+											rendered="#{reservation.reservationPermission.reservationServicesEditable}"
+											valueChangeListener="#{controller.onItemChanged}"
+											reRender="ProjectReservationService_quantity,ProjectReservationService_salesPrice">
+											<f:selectItem itemLabel="-" value="#{null}" />
+											<f:selectItems value="#{pmsCollections.serviceAndExtraPaxItems}" />
+										</aon:selectOneMenu>
 
 										<aon:outputLabel for="ProjectReservationService_quantity" 
 											value="#{bundle.aon_units}" />

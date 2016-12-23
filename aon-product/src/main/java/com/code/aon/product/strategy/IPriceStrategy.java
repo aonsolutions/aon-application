@@ -3,6 +3,7 @@ package com.code.aon.product.strategy;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.config.Tariff;
 import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
 
@@ -12,9 +13,13 @@ public interface IPriceStrategy {
 	
 	public double getUnitPurchasePrice(ICalculable calc, Date date, ITariffable iTariffable);
 	
+	public double getUnitPurchasePrice(ICalculable calc, Date date, Tariff tariff);
+	
 	public double getUnitPrice(ICalculable calc);
 	
 	public double getUnitPrice(ICalculable calc, Date date, ITariffable iTariffable);
+	
+	public double getUnitPrice(ICalculable calc, Date date, Tariff tariff);
 	
 	public double getBasePrice(ICalculable calc);
 	

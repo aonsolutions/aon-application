@@ -5,11 +5,16 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -30,6 +35,14 @@ public class PmsUtils implements IPmsConstants {
 		}
 		PmsCollectionsController pmsCollections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 		return pmsCollections.getRoomItems();
+	}
+
+	public static List<SelectItem> getServiceItems(Item roomItem) throws ManagerBeanException {
+		if (roomItem != null && roomItem.getId() != null) {
+			return getRoomServiceItems(roomItem);
+		}
+		PmsCollectionsController pmsCollections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		return pmsCollections.getServiceItems();
 	}
 
 	public static List<SelectItem> getCurrentUserHotelRoomItems() throws ManagerBeanException {
@@ -70,6 +83,44 @@ public class PmsUtils implements IPmsConstants {
 			}
 		}
 		return roomItems;
+	}
+
+	public static List<SelectItem> getRoomServiceItems(Item roomItem) throws ManagerBeanException {
+		List<SelectItem> serviceItems = new LinkedList<SelectItem>();
+		if (roomItem != null && roomItem.getId() != null) {
+			int serviceCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_SERVICE_CATEGORY));
+			List<Integer> items = new LinkedList<Integer>();
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), serviceCategory);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_COMPOSITION), Boolean.TRUE);
+			criteria.addEqualExpression("Item.compositions.compositionItem.id", roomItem.getId());
+			Projection prjId = Projection.property(itemBean.getFieldName(IEntityAlias.ITEM_ID));
+			for (Object obj : itemBean.getList(new ProjectionList(prjId), criteria)) {
+				items.add((Integer)obj);
+			}
+
+			criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), serviceCategory);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_COMPOSITION), Boolean.FALSE);
+			for (Object obj : itemBean.getList(new ProjectionList(prjId), criteria)) {
+				items.add((Integer)obj);
+			}
+
+			criteria = new Criteria();
+			criteria.addInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items);
+			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+			for (ITransferObject ito : itemBean.getList(criteria)) {
+				Item item = (Item)ito;
+				SelectItem serviceItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+				serviceItems.add(serviceItem);
+			}
+		}
+		return serviceItems;
 	}
 
 	public static String getHotelName(int hotelId) throws ManagerBeanException {
