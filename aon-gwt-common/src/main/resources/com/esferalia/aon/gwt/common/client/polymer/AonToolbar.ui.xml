@@ -11,6 +11,10 @@
 
 <ui:style>
 	
+	.button-right{
+		position:absolute;
+		right:0px;
+	}
 </ui:style>
 
 <g:HTMLPanel addStyleNames="paper-toolbar">
@@ -23,16 +27,19 @@
 	<p:PaperToolbar height="40px" styleName="aon-menuBar" 
 			style="border-top: 0px;">
        	<p:PaperIconButton ui:field="menuButton" icon="menu"/>
-       	<g:Label ui:field="title" styleName="title" text="Toolbar"/>
-       	<p:PaperIconButton ui:field="fastFilterButton" visible="false" icon="filter-list"/>
-      	<p:PaperIconButton ui:field="statsButton" icon="assessment"/>
-      	<p:PaperIconButton ui:field="infoButton" icon="info-outline"/>
-      	<p:PaperIconButton ui:field="refreshButton" icon="refresh"/>
-       	<p:PaperIconButton ui:field="addButton" icon="add" />
-       	<p:PaperIconButton ui:field="editButton" icon="create" />
-   		<p:PaperIconButton ui:field="deleteButton" icon="delete" />
-   		<p:PaperIconButton ui:field="moreOptionButton" icon="more-vert" />
-   		
+       	<p:PaperButton ui:field="titleButton">
+		    <g:InlineLabel ui:field="titleLabel" text="Toolbar" styleName="title" />
+		</p:PaperButton>	
+	    <g:HorizontalPanel styleName="{style.button-right}">
+       		<p:PaperIconButton ui:field="fastFilterButton" visible="false" icon="filter-list"/>
+      		<p:PaperIconButton ui:field="statsButton" icon="assessment"/>
+      		<p:PaperIconButton ui:field="infoButton" icon="info-outline"/>
+      		<p:PaperIconButton ui:field="refreshButton" icon="refresh"/>
+       		<p:PaperIconButton ui:field="addButton" icon="add" />
+       		<p:PaperIconButton ui:field="editButton" icon="create" />
+   			<p:PaperIconButton ui:field="deleteButton" icon="delete" />
+   			<p:PaperIconButton ui:field="moreOptionButton" icon="more-vert" />
+   		</g:HorizontalPanel>
     </p:PaperToolbar>
 </g:HTMLPanel>
 

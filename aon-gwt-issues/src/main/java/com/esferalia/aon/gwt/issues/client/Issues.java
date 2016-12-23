@@ -245,6 +245,8 @@ public class Issues implements EntryPoint {
 			@Override
 			protected void onStatsButtonClick() {
 				contentDockLayoutPanel.removeFromParent();
+				AonToolbar t = (AonToolbar)toolbar.getWidget(0);
+				t.setVisibleRefreshButton(false).setVisibleFastFilterButton(false);
 				contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 				contentDockLayoutPanel.add(new StatPanel(incidence));
 				dockLayoutPanel.add(contentDockLayoutPanel);				
@@ -258,7 +260,9 @@ public class Issues implements EntryPoint {
 					public void onSuccess(JSON<JsFastFilter> result) {
 						issueFilter = new IssueFilter();
 						issueFilter.setState("open");
+						
 						if(result.getOneData().getMine()) issueFilter.setMine(aonData.getUser().getLogin());
+						if(result.getOneData().getAssignee()) issueFilter.setAssignee(aonData.getUserOperator());
 						if(result.getOneData().getWithoutGroup()) issueFilter.setWorkgroup(-1);
 						if(result.getOneData().getWithoutOperator()) issueFilter.setAssignee(-1);
 						issueFilter.setType(result.getOneData().getType());
@@ -271,6 +275,23 @@ public class Issues implements EntryPoint {
 					
 					@Override public void onFailure(Throwable caught) {}
 				});
+			}
+
+			@Override
+			protected void onTitleClick() {
+				contentDockLayoutPanel.removeFromParent();
+				AonToolbar t = (AonToolbar)toolbar.getWidget(0);
+				t.setVisibleRefreshButton(true).setVisibleFastFilterButton(true);
+				contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				contentDockLayoutPanel.addNorth(searchContent, 85);
+				contentDockLayoutPanel.add(content);
+				dockLayoutPanel.add(contentDockLayoutPanel);
+
+				issueFilter = new IssueFilter();
+				issueFilter.setState("open");
+				FilterPanel fp = (FilterPanel) searchContent.getWidget(0);
+				fp.initialize(false);
+				updateIssueList(issueFilter, false);
 			}
 		}.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)

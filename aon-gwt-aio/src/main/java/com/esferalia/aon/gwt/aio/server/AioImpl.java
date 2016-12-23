@@ -39,9 +39,12 @@ public class AioImpl extends AonRemoteServiceServlet implements IAio{
 	public AonData getAonData(String domainName, Integer domainId){
 		Domain domain = AON.getDomain(domainName, domainId, getLoggedUser());
 		User user = AON.getUser(domain.getName(), domain.getId(), getLoggedUser());
+		Integer operator = AON.getTaskHolder(domainName, domainId, getLoggedUser(), 
+				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
 		return new AonData().setUser(user)
 				.setMd5(getMd5(getLoggedUser()+domain.getName()))
-				.setDomain(domain);
+				.setDomain(domain)
+				.setUserOperator(operator);
 	}
 	
 	public String getMd5(String str){

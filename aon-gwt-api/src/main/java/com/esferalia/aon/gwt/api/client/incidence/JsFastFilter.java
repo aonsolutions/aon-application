@@ -10,6 +10,10 @@ public class JsFastFilter extends JavaScriptObject {
 	public final native Boolean getMine() /*-{
 		return this.mine;
 	}-*/;
+	
+	public final native Boolean getAssignee() /*-{
+		return this.assignee;
+	}-*/;
 
 	public final native Boolean getWithoutGroup() /*-{
 		return this.without_group;

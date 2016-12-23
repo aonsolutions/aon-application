@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.AonDayOfWeek;
@@ -109,6 +111,24 @@ public class StatDAO {
 		c = visitor.appendCondition(c);
 		return c;
 	}
+	
+	private static  Condition getTaskCondition(AONContext ctx, StatParams params) {
+		Condition c = TASK.DOMAIN.eq(ctx.getDomainId())
+				.and(TASK.NUMBER.isNotNull());
+		if (params.getFrom() != null) c = c.and(TASK.START_DATE.ge(new Timestamp(params.getFrom().getTime())));
+		if (params.getTo() != null) c = c.and(TASK.START_DATE.le(new Timestamp(params.getTo().getTime())));
+		if (params.getIssueFilter() != null && params.getIssueFilter().getState() != null){
+			if(params.getIssueFilter().getState().equals("open"))
+				c = c.and(TASK.STATUS.eq(TaskStatus.PENDING.value())
+					 .or(TASK.STATUS.eq(TaskStatus.IN_PROGRESS.value())));
+			else if(params.getIssueFilter().getState().equals("closed"))
+				c = c.and(TASK.STATUS.eq(TaskStatus.FINISHED.value()));
+			else if(params.getIssueFilter().getState().equals("deleted"))
+				c = c.and(TASK.STATUS.eq(TaskStatus.DELETED.value()));
+		}
+		return c;
+	}
+	
 	private static AggregateFunction<BigDecimal> getSelectField(final StatParams params) {
 		return params.mustViewAmounts()
 				?DSL.sum(INVOICE_DETAIL.QUANTITY)
@@ -354,8 +374,7 @@ public class StatDAO {
 					.from(TASK).join(TASK_TAG).on(TASK.ID.eq(TASK_TAG.TASK))
 						.join(TAG).on(TASK_TAG.TAG.eq(TAG.ID))
 					.where(TAG.TYPE.eq(TagType.TASK_TYPE.value()))
-						.and(TASK.DOMAIN.eq(ctx.getDomainId()))
-						.and(TASK.NUMBER.isNotNull())
+						.and(getTaskCondition(ctx, params))
 					.groupBy(TAG.NAME).fetch().stream().forEach(r -> 
 						table.put(r.getValue(TAG.NAME), "CANTIDAD", r.value1().doubleValue()));
 			}
@@ -364,8 +383,7 @@ public class StatDAO {
 			public void visitTaskBySchedule() {
 				LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
 					.from(TASK)
-					.where(TASK.DOMAIN.eq(ctx.getDomainId()))
-					.and(TASK.NUMBER.isNotNull())
+					.where(getTaskCondition(ctx, params))
 					.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
 					.collect(Collectors.toCollection(LinkedList::new));
 				for(Integer i = 0; i < 24; i++){
@@ -379,8 +397,7 @@ public class StatDAO {
 			public void visitTaskByDayOfWeek() {
 				LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
 					.from(TASK)
-					.where(TASK.DOMAIN.eq(ctx.getDomainId()))
-					.and(TASK.NUMBER.isNotNull())
+					.where(getTaskCondition(ctx, params))
 					.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
 					.collect(Collectors.toCollection(LinkedList::new));
 				for(Integer i = 0; i < 7; i++){
@@ -392,7 +409,51 @@ public class StatDAO {
 
 			@Override
 			public void visitTaskByStatus() {
-			
+				AggregateFunction<Integer> count = DSL.count(TASK.ID);
+				ctx.getDslContext().select(TASK.STATUS,  count)
+					.from(TASK)
+					.where(getTaskCondition(ctx, params))
+					.groupBy(TASK.STATUS)
+					.orderBy(TASK.STATUS)				
+					.fetch().stream().forEach(rec -> {
+						double amount = rec.getValue(count).doubleValue();
+						table.put(TaskStatus.values()[rec.getValue(TASK.STATUS)].getName(),"CANTIDAD", amount);
+					});
+			}
+
+			@Override
+			public void visitTaskByMonth() {
+				final Field<Integer> year = DSL.year(TASK.START_DATE);
+				final Field<Integer> month = DSL.month(TASK.START_DATE);
+				AggregateFunction<Integer> count = DSL.count(TASK.ID);
+				ctx.getDslContext().select(TASK.STATUS, year, month, count)
+					.from(TASK)
+					.where(getTaskCondition(ctx, params))
+					.groupBy(year,month, TASK.STATUS)
+					.orderBy(year,month, TASK.STATUS)				
+					.fetch()
+					.stream()
+					.forEach(rec -> {
+						String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
+						double amount = rec.getValue(count).doubleValue();
+						table.put(monthKey, TaskStatus.values()[rec.getValue(TASK.STATUS)].getName(), amount);
+					});
+			}
+
+			@Override
+			public void visitTaskByDay() {
+				Field<java.sql.Date> date = DSL.date(TASK.START_DATE);
+				AggregateFunction<Integer> count = DSL.count(TASK.ID);
+				ctx.getDslContext().select(date, TASK.STATUS,  count)
+					.from(TASK)
+					.where(getTaskCondition(ctx, params))
+					.groupBy(date, TASK.STATUS)
+					.orderBy(date, TASK.STATUS)				
+					.fetch().stream().forEach(rec -> {
+						String date1= FMT.format( rec.getValue(date));
+						double amount = rec.getValue(count).doubleValue();
+						table.put(date1, TaskStatus.values()[rec.getValue(TASK.STATUS)].getName(), amount);
+					});
 			}
 			
 		});

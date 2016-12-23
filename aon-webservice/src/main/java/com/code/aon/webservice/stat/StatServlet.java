@@ -2,6 +2,9 @@ package com.code.aon.webservice.stat;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +26,8 @@ import com.esferalia.aon.occam.api.model.task.IssueFilter;
 @SuppressWarnings("serial")
 @WebServlet(name = "StatServlet", urlPatterns = { "/stat/*" })
 public class StatServlet extends HttpServlet{
+	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -66,13 +71,17 @@ public class StatServlet extends HttpServlet{
 	private JSONArray getTaskStatData(Domain domain, String userName, String by, IssueFilter filter) {
 		switch (by) {
 		case "status":
-			return getTaskStatusStatData(domain, userName, filter);
+			return getTaskStatData(domain, userName, StatChartType.TASK_BY_STATUS, filter);
 		case "type":
 			return getTaskStatData(domain, userName, StatChartType.TASK_BY_TYPE, filter);
 		case "schedule":
 			return getTaskStatData(domain, userName, StatChartType.TASK_BY_SCHEDULE, filter);
 		case "day_of_week":
 			return getTaskStatData(domain, userName, StatChartType.TASK_BY_DAY_OF_WEEK, filter);
+		case "month":
+			return getTaskStatData(domain, userName, StatChartType.TASK_BY_MONTH, filter);
+		case "day":
+			return getTaskStatData(domain, userName, StatChartType.TASK_BY_DAY, filter);
 		default:
 			return new JSONArray();
 		}
@@ -82,7 +91,7 @@ public class StatServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
 		String[] status = {"ABIERTAS","CERRADAS","BORRADAS"};
 		Integer[] sizes = AON.getTaskCount(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()), filter);
-		for(Integer i = 0; i < sizes.length; i++){
+		for(Integer i = 0; i < status.length; i++){
 			JSONObject json = new JSONObject();
 			json.put("row", status[i]);
 			json.put("column", "CANTIDAD");
@@ -93,8 +102,11 @@ public class StatServlet extends HttpServlet{
 	}
 	
 	private JSONArray getTaskStatData(Domain domain, String userName, StatChartType chartType, IssueFilter filter){
+		StatParams params = new StatParams().setChartType(chartType)
+				.setFrom(filter.getFrom()).setTo(filter.getTo())
+				.setIssueFilter(filter);
 		JSONArray array = new JSONArray();
-		StatData<String, String, Double> statData = AON.getStatData(domain.getName(), domain.getId(), userName, new StatParams().setChartType(chartType));
+		StatData<String, String, Double> statData = AON.getStatData(domain.getName(), domain.getId(), userName, params);
 		statData.getMap().keySet().stream().forEach(row -> {
 			statData.getMap().get(row).keySet().stream().forEach(col-> {
 				JSONObject json = new JSONObject();
@@ -108,6 +120,17 @@ public class StatServlet extends HttpServlet{
 	}
 
 	private IssueFilter getFilter(HttpServletRequest req){
+		Date from = new Date();from.setYear(from.getYear()-1);
+		Date to = new Date();
+		try {
+			if(req.getParameter("from") != null && !req.getParameter("from").equals(""))
+				from = dateFormat.parse(req.getParameter("from"));
+			if(req.getParameter("to") != null && !req.getParameter("to").equals(""))
+				to = dateFormat.parse(req.getParameter("to"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
 		return new IssueFilter()
 				.setTitle(req.getParameter("title"))
 				.setMine(req.getParameter("mine"))
@@ -126,7 +149,9 @@ public class StatServlet extends HttpServlet{
 				.setEnterprise(req.getParameter("enterprise"))
 				.setPerPage(Integer.parseInt(req.getParameter("per_page")))
 				.setPage(Integer.parseInt(req.getParameter("page")))
-				.setDateDiff(req.getParameter("date_diff"));
+				.setDateDiff(req.getParameter("date_diff"))
+				.setFrom(from)
+				.setTo(to);
 	}
 	
 }

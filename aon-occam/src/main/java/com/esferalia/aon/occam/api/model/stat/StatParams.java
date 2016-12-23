@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
+import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public class StatParams implements Serializable, Cloneable {
@@ -15,6 +16,7 @@ public class StatParams implements Serializable, Cloneable {
 	private Date to;
 	private StatChartType chartType;
 	private boolean viewAmounts;
+	private IssueFilter issueFilter;
 	
 	private LinkedList<StatFilterItem> filterItems; 
 	
@@ -49,6 +51,15 @@ public class StatParams implements Serializable, Cloneable {
 	}
 	public StatParams setViewAmounts(boolean viewAmounts) {
 		this.viewAmounts = viewAmounts;
+		return this;
+	}
+
+	public IssueFilter getIssueFilter() {
+		return issueFilter;
+	}
+
+	public StatParams setIssueFilter(IssueFilter issueFilter) {
+		this.issueFilter = issueFilter;
 		return this;
 	}
 

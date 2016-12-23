@@ -149,6 +149,28 @@ public enum StatChartType implements Serializable {
 			return TASK;
 		}
 	})
+	,TASK_BY_MONTH("Tareas por mes", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitTaskByMonth();
+		}
+
+		@Override
+		public String type() {
+			return TASK;
+		}
+	})
+	,TASK_BY_DAY("Tareas por dia", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitTaskByDay();
+		}
+
+		@Override
+		public String type() {
+			return TASK;
+		}
+	})
 	;
 	
 	public static final String TASK = "task";

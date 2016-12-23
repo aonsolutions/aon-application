@@ -141,6 +141,8 @@ public class Incidence extends Methods{
 				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
 				+ (filter.getPriority() != null ? "&priority=" + filter.getPriority() : "")
 				+ (filter.getDateDiff() != null ? "&date_diff=" + filter.getDateDiff() : "")
+				+ (filter.getFrom() != null ? "&from=" + filter.getFrom() : "")
+				+ (filter.getTo() != null ? "&to=" + filter.getTo() : "")
 				+ (filter.getEnterprise() != null ? "&enterprise=" + filter.getEnterprise() : "")
 				+ (filter.getType() != null ? "&type=" + filter.getType() : "")
 				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
@@ -492,6 +494,22 @@ public class Incidence extends Methods{
 		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/day_of_week"
 				+ getIssueFilter(filter), callback);
 	}
+	
+	public void getStatDataByMonth(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/month"
+				+ getIssueFilter(filter), callback);
+	}
+	
+	public void getStatDataByDay(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/day"
+				+ getIssueFilter(filter), callback);
+	}
+	
+	// -------------------- STATUS
+	public void getStatuses( AsyncCallback<JSON<JsObject>> callback){
+		get(url + "repos/"+getUserName()+"/"+getDomainName()+"/statuses", callback);
+	}
+	
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

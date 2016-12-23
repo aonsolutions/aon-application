@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
@@ -69,6 +70,7 @@ public interface ITask {
 	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId); 
 	public Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
 	
+	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter);
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder);
 	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder);
 	

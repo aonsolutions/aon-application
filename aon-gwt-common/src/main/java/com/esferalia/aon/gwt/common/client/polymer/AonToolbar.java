@@ -2,12 +2,14 @@ package com.esferalia.aon.gwt.common.client.polymer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 public abstract class AonToolbar extends Composite {
@@ -18,7 +20,8 @@ public abstract class AonToolbar extends Composite {
     
     private static Binder binder = GWT.create(Binder.class);
 
-    @UiField Label  title;
+    @UiField PaperButton titleButton;
+    @UiField Label  titleLabel;
 
     @UiField PaperIconButton fastFilterButton;
     @UiField PaperIconButton statsButton;
@@ -38,13 +41,23 @@ public abstract class AonToolbar extends Composite {
     
     public AonToolbar(String title) {
         initWidget(binder.createAndBindUi(this));
+
+        this.titleButton.setNoink(true);
+        this.titleButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onTitleClick();
+			}
+		});
+        
         setTitle(title);
     }
     
     // ----------- TITLE LABEL
+    protected abstract void onTitleClick();
     
     public void setTitle(String title){
-    	this.title.setText(title);
+    	this.titleLabel.setText(title);
     }
     
     // ----------- MENU BUTTON    

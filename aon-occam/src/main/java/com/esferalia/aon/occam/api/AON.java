@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
@@ -3001,6 +3002,16 @@ public class AON {
 	}
 	
 	// ------------------- TASK HOLDER
+
+	public static TaskHolder getTaskHolder(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolder(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	
 	public static void insertTaskHolder(String domainName, Integer domainId, String login, TaskHolder taskHolder){
 		AONContext ctx = null;

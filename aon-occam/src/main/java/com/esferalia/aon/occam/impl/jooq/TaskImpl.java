@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.ITask;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
@@ -247,6 +248,12 @@ public class TaskImpl implements ITask {
 				configuration -> TaskDAO.deleteWorkgroup(ctx, wId));
 	}
 
+	@Override
+	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskHolder(ctx, filter));
+	}
+	
 	@Override
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder) {
 		return ctx.getDslContext().transactionResult(

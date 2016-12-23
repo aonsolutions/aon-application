@@ -100,7 +100,7 @@ public class ConfPanel extends Composite {
 		    	mias.setDisabled(admin);
 		    	mias.setChecked(result.getOneData().getMine());
 		    	mias.setStyle("padding-left:20px;padding-right:20px;padding-top:20px;");
-		    	InlineLabel label1 = new InlineLabel("Mias");
+		    	InlineLabel label1 = new InlineLabel("Aparezco yo");
 		    	label1.getElement().getStyle().setFontSize(16, Unit.PX);
 		    	mias.add(label1);
 		    	mias.addChangeHandler(new ChangeEventHandler() {
@@ -111,6 +111,22 @@ public class ConfPanel extends Composite {
 					}
 				});
 		    	vp.add(mias);
+		    	
+		    	PaperToggleButton assignee = new PaperToggleButton();
+		    	assignee.setDisabled(admin);
+		    	assignee.setChecked(result.getOneData().getAssignee());
+		    	assignee.setStyle("padding-left:20px;padding-right:20px;");
+		    	InlineLabel label = new InlineLabel("Asignadas a mi");
+		    	label.getElement().getStyle().setFontSize(16, Unit.PX);
+		    	assignee.add(label);
+		    	assignee.addChangeHandler(new ChangeEventHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						String requestData = "{\"assignee\":\""+ assignee.getChecked()+"\"}";
+						incidence.setFastFilter(requestData);
+					}
+				});
+		    	vp.add(assignee);
 
 		    	PaperToggleButton sinGrupo = new PaperToggleButton();
 		    	sinGrupo.setDisabled(admin);

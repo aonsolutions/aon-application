@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class AonData implements IsSerializable{
 
 	User user;
+	Integer userOperator;
 	String md5;
 	Domain domain;
 	
@@ -31,4 +32,12 @@ public class AonData implements IsSerializable{
 		this.domain = domain;
 		return this;
 	}
+	public Integer getUserOperator() {
+		return userOperator;
+	}
+	public AonData setUserOperator(Integer userOperator) {
+		this.userOperator = userOperator;
+		return this;
+	}
+	
 }

@@ -1,6 +1,10 @@
 package com.esferalia.aon.occam.api.model.task;
 
-public class IssueFilter {
+import java.io.Serializable;
+import java.util.Date;
+
+@SuppressWarnings("serial")
+public class IssueFilter implements Serializable, Cloneable{
 	String title;
 	
 	String milestone;
@@ -19,6 +23,9 @@ public class IssueFilter {
 	String enterprise;
 	
 	String dateDiff;
+	Date from;
+	Date to;
+	
 	String mine;
 	
 	Integer page = 1;
@@ -165,6 +172,24 @@ public class IssueFilter {
 
 	public IssueFilter setMine(String mine) {
 		this.mine = mine;
+		return this;
+	}
+
+	public Date getFrom() {
+		return from;
+	}
+
+	public IssueFilter setFrom(Date from) {
+		this.from = from;
+		return this;
+	}
+
+	public Date getTo() {
+		return to;
+	}
+
+	public IssueFilter setTo(Date to) {
+		this.to = to;
 		return this;
 	}
 	

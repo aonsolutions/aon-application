@@ -29,4 +29,8 @@ public interface IStatChartTypeVisitor {
 	void visitTaskBySchedule();
 	
 	void visitTaskByDayOfWeek();
+	
+	void visitTaskByMonth();
+	
+	void visitTaskByDay();
 }

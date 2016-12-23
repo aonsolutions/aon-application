@@ -116,6 +116,9 @@ public class ReposServlet extends HttpServlet{
 				case "priorities": // ALL PRIORITIES
 					object = getAllPrioritiesJSON(domain, userName);
 					break;
+				case "statuses": // ALL PRIORITIES
+					object = getAllStatusesJSON(domain, userName);
+					break;
 				case "registries": // ALL REGISTRIES
 					if(!filter.equals("")) object = getFilterRegistriesJSON(domain, userName, filter);
 					else object = getAllRegistriesJSON(domain, userName);
@@ -509,6 +512,32 @@ public class ReposServlet extends HttpServlet{
 		return array;
 	}
 	
+	private JSONArray getAllStatusesJSON(Domain domain, String userName) {
+		JSONArray array = new JSONArray();
+		
+		JSONObject js1 = new JSONObject();
+		js1.put("id", 1);
+		js1.put("name", "TODAS");
+		array.put(js1);
+
+		JSONObject js2 = new JSONObject();
+		js2.put("id", 2);
+		js2.put("name", "ABIERTAS");
+		array.put(js2);
+		
+		JSONObject js3 = new JSONObject();
+		js3.put("id", 3);
+		js3.put("name", "CERRADAS");
+		array.put(js3);
+		
+		JSONObject js4 = new JSONObject();
+		js4.put("id", 4);
+		js4.put("name", "BORRADAS");
+		array.put(js4);
+
+		return array;
+	}
+	
 	private JSONObject getIssueJSON(Domain domain, String userName, Task task, String scheme) {
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
@@ -579,11 +608,13 @@ public class ReposServlet extends HttpServlet{
 	private JSONObject getFastFilterJSON(Domain domain, String userName) {
 		JSONObject json = new JSONObject();
 		String mine = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_MINE).getValue();
+		String assignee = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_ASSIGNEE).getValue();
 		String withoutGroup = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_GROUP).getValue();
 		String withoutOperator= AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_OPERATOR).getValue();
 		String type = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_TYPE).getValue();
 		String priority = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_PRIORITY).getValue();
 		json.put("mine", mine != null && mine.equalsIgnoreCase("true"));
+		json.put("assignee", assignee != null && assignee.equalsIgnoreCase("true"));
 		json.put("without_group", withoutGroup != null && withoutGroup.equalsIgnoreCase("true"));
 		json.put("without_operator", withoutOperator != null && withoutOperator.equalsIgnoreCase("true"));
 		json.put("type", type != null ? type : "");
@@ -595,6 +626,7 @@ public class ReposServlet extends HttpServlet{
 	
 	public JSONObject addFastFilter(Domain domain, String userName, JSONObject json){
 		if(json.opt("mine") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_MINE, json.getString("mine"));
+		if(json.opt("assignee") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_ASSIGNEE, json.getString("assignee"));
 		if(json.opt("without_group") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_GROUP, json.getString("without_group"));
 		if(json.opt("without_operator") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_OPERATOR, json.getString("without_operator"));
 		if(json.opt("type") != null) AON.insertApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_TYPE, json.getString("type"));

@@ -20,6 +20,9 @@ public class IssueFilter {
 	Integer enterprise;
 	
 	Integer dateDiff;
+	String from;
+	String to;
+	
 	String mine;
 	
 	Integer page = 1;
@@ -163,6 +166,24 @@ public class IssueFilter {
 
 	public IssueFilter setMine(String mine) {
 		this.mine = mine;
+		return this;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public IssueFilter setFrom(String from) {
+		this.from = from;
+		return this;
+	}
+
+	public String getTo() {
+		return to;
+	}
+
+	public IssueFilter setTo(String to) {
+		this.to = to;
 		return this;
 	}
 	
