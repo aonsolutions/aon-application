@@ -70,7 +70,7 @@ public class Mod190Print extends HttpServlet {
 			String fileName = "Mod190" + "_" + mod190.getYear() + "_"
 					+ sb.toString();
 
-			downloadPDF(req, resp, fileName, output.toByteArray());
+			downloadPDF(req, resp, fileName, output.toByteArray(), mod190);
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
@@ -79,23 +79,39 @@ public class Mod190Print extends HttpServlet {
 	}
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+			String fileName, byte[] content, Mod190 mod190) throws IOException, KeyManagementException, NoSuchAlgorithmException {
 		String fileString = new String(content);
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters = 
-				"HID=INV5190A" + 
-				"&IDI=ES" + 
-				"&FIC="	+ encodedFile + 
-				"&RUT=" + 
-				"&PRG=" + 
-				"&FIN=" + 
-				"&EJF=2015" + 
-				"&MOD=190";
+		String urlParameters = "";
+		String request = "";
 		
-		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+		if (mod190.getYear() < 2016) {
+			urlParameters = 
+					"HID=INV5190A" + 
+					"&IDI=ES" + 
+					"&FIC="	+ encodedFile + 
+					"&RUT=" + 
+					"&PRG=" + 
+					"&FIN=" + 
+					"&EJF=2015" + 
+					"&MOD=190";
+			request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+		} else {
+			urlParameters = 
+					"HID=INV6190A" + 
+					"&IDI=ES" + 
+					"&FIC="	+ encodedFile + 
+					"&RUT=" + 
+					"&PRG=" + 
+					"&FIN=" + 
+					"&EJF=2016" + 
+					"&MOD=190";
+			// request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+			request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+		}
 
 		URL url = new URL(request);
 

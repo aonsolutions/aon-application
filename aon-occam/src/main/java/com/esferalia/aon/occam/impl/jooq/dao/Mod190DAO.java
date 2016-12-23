@@ -187,14 +187,18 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.FIRST_CHILD_CALCULATION,
 								FS_MODEL190_DETAIL.SECOND_CHILD_CALCULATION,
 								FS_MODEL190_DETAIL.THIRD_CHILD_CALCULATION,
-								FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION)
+								FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION,
+								FS_MODEL190_DETAIL.PERCEPTION_IL,
+								FS_MODEL190_DETAIL.RETENTION_IL,
+								FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL
+								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
-								null, null));
+								null, null, null, null, null));
 		IrpfData irpfData = null;
 		IrpfResult irpfResult = null;
 		for (Mod190Detail detail : mod190.getDetails()) {
@@ -202,47 +206,60 @@ public class Mod190DAO {
 					.getIrpfData();
 			irpfResult = detail.getIrpfResult() == null ? EMPTY_IRPF_RESULT
 					: detail.getIrpfResult();
-			batch.bind(detail.getDomain(), detail.getMod190(), AonStringUtils
-					.substring(detail.getDocument(), 0, 9), AonStringUtils
-					.substring(detail.getName(), 0, 40), AonStringUtils
-					.substring(detail.getRepresentativeDocument(), 0, 9),
-					detail.getProvince(), detail.getKey(), detail.getSubKey(),
-					detail.getPerception(), detail.getRetention(), detail
-							.getInKindPerception(), detail.getInKindDeposit(),
-					detail.getInKindOutputDeposit(), detail.getAccrualYear(),
-					AonEnumUtils.getByte(irpfData.isCeutaMelilla()), irpfData
-							.getBirthYear(), irpfData.getFamilySituation(),
-					irpfData.getSpouseDocument(), irpfData.getDisability(),
-					irpfData.getContract(), AonEnumUtils.getByte(irpfData
-							.isWorkActivityExtension()), AonEnumUtils
-							.getByte(irpfData.isGeographicMobility()),
-					irpfResult.getApplicableReduction(), irpfResult
-							.getDeducibleExpense(), irpfResult
-							.getCompensatoryPension(), irpfResult
-							.getFoodAnnuality(), irpfResult
-							.getLessThan3Descendent(), irpfResult
-							.getLessThan3DescendentRatio(), irpfResult
-							.getOtherDescendent(), irpfResult
-							.getOtherDescendentRatio(), irpfResult
-							.getDisabilityDescendent33(), irpfResult
-							.getDisabilityDescendent33Ratio(), irpfResult
-							.getDisabilityDescendentDependence(), irpfResult
-							.getDisabilityDescendentDependenceRatio(),
-					irpfResult.getDisabilityDescendent65(), irpfResult
-							.getDisabilityDescendent65Ratio(), irpfResult
-							.getLessThan75Ascendant(), irpfResult
-							.getLessThan75AscendantRatio(), irpfResult
-							.getAscendant(), irpfResult.getAscendantRatio(),
-					irpfResult.getDisabilityAscendant33(), irpfResult
-							.getDisabilityAscendant33Ratio(), irpfResult
-							.getDisabilityAscendantDependence(), irpfResult
-							.getDisabilityAscendantDependenceRatio(),
-					irpfResult.getDisabilityAscendant65(), irpfResult
-							.getDisabilityAscendant65Ratio(), irpfResult
-							.getFirstChildCalculation(), irpfResult
-							.getSecondChildCalculation(), irpfResult
-							.getThirdChildCalculation(), AonEnumUtils
-							.getByte(irpfResult.isHomeLoanCommunnication()));
+			batch.bind(detail.getDomain()
+					, detail.getMod190()
+					, AonStringUtils.substring(detail.getDocument(), 0, 9)
+					, AonStringUtils.substring(detail.getName(), 0, 40)
+					, AonStringUtils.substring(detail.getRepresentativeDocument(), 0, 9)
+					, detail.getProvince()
+					, detail.getKey()
+					, detail.getSubKey()
+					, detail.getPerception()
+					, detail.getRetention()
+					, detail.getInKindPerception()
+					, detail.getInKindDeposit()
+					, detail.getInKindOutputDeposit()
+					, detail.getAccrualYear()
+					, AonEnumUtils.getByte(irpfData.isCeutaMelilla())
+					, irpfData.getBirthYear()
+					, irpfData.getFamilySituation()
+					, irpfData.getSpouseDocument()
+					, irpfData.getDisability()
+					, irpfData.getContract()
+					, AonEnumUtils.getByte(irpfData.isWorkActivityExtension())
+					, AonEnumUtils.getByte(irpfData.isGeographicMobility())
+					, irpfResult.getApplicableReduction()
+					, irpfResult.getDeducibleExpense()
+					, irpfResult.getCompensatoryPension()
+					, irpfResult.getFoodAnnuality()
+					, irpfResult.getLessThan3Descendent()
+					, irpfResult.getLessThan3DescendentRatio()
+					, irpfResult.getOtherDescendent()
+					, irpfResult.getOtherDescendentRatio()
+					, irpfResult.getDisabilityDescendent33()
+					, irpfResult.getDisabilityDescendent33Ratio()
+					, irpfResult.getDisabilityDescendentDependence()
+					, irpfResult.getDisabilityDescendentDependenceRatio()
+					, irpfResult.getDisabilityDescendent65()
+					, irpfResult.getDisabilityDescendent65Ratio()
+					, irpfResult.getLessThan75Ascendant()
+					, irpfResult.getLessThan75AscendantRatio()
+					, irpfResult.getAscendant()
+					, irpfResult.getAscendantRatio()
+					, irpfResult.getDisabilityAscendant33()
+					, irpfResult.getDisabilityAscendant33Ratio()
+					, irpfResult.getDisabilityAscendantDependence()
+					, irpfResult.getDisabilityAscendantDependenceRatio()
+					, irpfResult.getDisabilityAscendant65()
+					, irpfResult.getDisabilityAscendant65Ratio()
+					, irpfResult.getFirstChildCalculation()
+					, irpfResult.getSecondChildCalculation()
+					, irpfResult.getThirdChildCalculation()
+					, AonEnumUtils.getByte(irpfResult.isHomeLoanCommunnication())
+					, detail.getPerceptionIL()
+					, detail.getRetentionIL()
+					, detail.getOutputRetentionIL()
+					);
 		}
 		batch.execute();
 	}
@@ -364,7 +381,11 @@ public class Mod190DAO {
 						irpfResult.getThirdChildCalculation())
 				.set(FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION,
 						AonEnumUtils.getByte(irpfResult
-								.isHomeLoanCommunnication()));
+								.isHomeLoanCommunnication()))
+				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerception())
+				.set(FS_MODEL190_DETAIL.RETENTION_IL, detail.getRetentionIL())
+				.set(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL, detail.getOutputRetentionIL())
+				;
 	}
 
 	private static void insertDetail(AONContext ctx, Mod190Detail detail) {
@@ -466,6 +487,9 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION,
 						AonEnumUtils.getByte(irpfResult
 								.isHomeLoanCommunnication()))
+				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerception())
+				.set(FS_MODEL190_DETAIL.RETENTION_IL, detail.getRetentionIL())
+				.set(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL, detail.getOutputRetentionIL())
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -951,6 +975,9 @@ public class Mod190DAO {
 				.setInKindOutputDeposit(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT)))
 				.setAccrualYear(record.getValue(FS_MODEL190_DETAIL.ACCRUAL_YEAR))
 				.setRetention(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.RETENTION)))
+				.setPerceptionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.PERCEPTION_IL)))
+				.setRetentionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.RETENTION_IL)))
+				.setOutputRetentionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL)))
 				.setIrpfData(new IrpfData()
 						.setBirthYear(record.getValue(FS_MODEL190_DETAIL.BIRTH_YEAR))
 						.setCeutaMelilla(AonEnumUtils.getBoolean(record.getValue(FS_MODEL190_DETAIL.CEUTA_MELILLA)))

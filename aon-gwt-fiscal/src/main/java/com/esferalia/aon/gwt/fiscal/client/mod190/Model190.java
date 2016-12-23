@@ -237,15 +237,14 @@ public class Model190 extends MainEntryPoint {
 			Model190Detail2014 detail = new Model190Detail2014();
 			detail.setMod190(currentMod190);	
 			perceptorPanel.setWidget(detail);
-		} else {
-//			if ( currentMod190.getYear() == 2015) 
+		} else if ( currentMod190.getYear() == 2015) { 
 			Model190Detail2015 detail = new Model190Detail2015();
 			detail.setMod190(currentMod190);	
 			perceptorPanel.setWidget(detail);
-//		} else {
-//			Model190Detail2016 detail = new Model190Detail2016();
-//			detail.setMod190(currentMod190);	
-//			perceptorPanel.setWidget(detail);
+		} else {
+			Model190Detail2016 detail = new Model190Detail2016();
+			detail.setMod190(currentMod190);	
+			perceptorPanel.setWidget(detail);
 		}
 	}
 

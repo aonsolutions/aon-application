@@ -28,6 +28,10 @@ public class Mod190Detail implements Serializable {
 	private IrpfData irpfData;
 	private IrpfResult irpfResult;
 
+	private double perceptionIL;
+	private double retentionIL;
+	private double outputRetentionIL;
+	
 	private boolean dirty;
 	private boolean deleted;
 
@@ -183,6 +187,31 @@ public class Mod190Detail implements Serializable {
 		this.irpfResult = irpfResult;
 		return this;
 	}
+
+	public double getPerceptionIL() {
+		return perceptionIL;
+	}
+	public Mod190Detail setPerceptionIL(double perceptionIL) {
+		this.perceptionIL = perceptionIL;
+		return this;
+	}
+
+	public double getRetentionIL() {
+		return retentionIL;
+	}
+	public Mod190Detail setRetentionIL(double retentionIL) {
+		this.retentionIL = retentionIL;
+		return this;
+	}
+
+	public double getOutputRetentionIL() {
+		return outputRetentionIL;
+	}
+	public Mod190Detail setOutputRetentionIL(double outputRetentionIL) {
+		this.outputRetentionIL = outputRetentionIL;
+		return this;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -209,5 +238,6 @@ public class Mod190Detail implements Serializable {
 		this.tempId = tempId;
 		return this;
 	}
+
 	
 }
