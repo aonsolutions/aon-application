@@ -69,7 +69,7 @@ public class Mod193Print extends HttpServlet {
 			String fileName = "Mod193" + "_" + mod193.getYear() + "_"
 					+ sb.toString();
 
-			downloadPDF(req, resp, fileName, output.toByteArray());
+			downloadPDF(req, resp, fileName, output.toByteArray(),mod193);
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
@@ -78,24 +78,45 @@ public class Mod193Print extends HttpServlet {
 	}
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+			String fileName, byte[] content, Mod193 mod193) throws IOException, KeyManagementException, NoSuchAlgorithmException {
 		String fileString = new String(content);
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters = 
+		String urlParameters = "";
+		String request = "";
+		if (mod193.getYear() == 2016) {
+			urlParameters = 
+				"HID=IE6193A" + 
+				"&IDI=ES" +
+				"&LEV=000000000000" +
+				"&FIC="	+ encodedFile + 
+				"&RUT=" + 
+				"&PRG=" + 
+				"&FIN=" + 
+				"&EJF=" + mod193.getYear() +
+				"&MOD=193";
+			// IMPRESION PRODUCCION
+			//request = "https://www2.agenciatributaria.gob.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";
+			// IMPRESION PRUEBAS
+			//request = "https://www6.aeat.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";
+			// VALIDACION PRUEBAS
+			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
+		} else {
+			urlParameters = 
 				"HID=INV5193A" + 
 				"&IDI=ES" + 
 				"&FIC="	+ encodedFile + 
 				"&RUT=" + 
 				"&PRG=" + 
 				"&FIN=" + 
-				"&EJF=2013" + 
+				"&EJF=" + mod193.getYear() +
 				"&MOD=193";
+			request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";	
+		}
 
-		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
-
+		
 		URL url = new URL(request);
 
 		SSLContext ctx = SSLContext.getInstance("TLS");

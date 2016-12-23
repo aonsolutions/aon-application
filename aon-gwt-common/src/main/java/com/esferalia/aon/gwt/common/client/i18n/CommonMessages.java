@@ -1927,7 +1927,10 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Compensaciones")
 	String compensations();
-	
+
+	@DefaultMessage("Penalizaciones")
+	String penalizations();
+
 	@DefaultMessage("Garant\u00EDas")
 	String guarantee();
 

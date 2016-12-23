@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.jooq.BatchBindStep;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
@@ -78,7 +77,7 @@ public class Mod193DAO {
 		ctx.checkWrite();
 		if (mod193.getId() == null) {
 			mod193 = insert(ctx, mod193);
-			insertDetails(ctx, mod193);
+			//insertDetails(ctx, mod193);
 		} else {
 			mod193 = update(ctx, mod193);
 			ArrayList<Mod193Detail> details = new ArrayList<Mod193Detail>();
@@ -147,84 +146,84 @@ public class Mod193DAO {
 		return mod193;
 	}
 
-	private static void insertDetails(AONContext ctx, Mod193 mod193) {
-		BatchBindStep batch = ctx
-				.getDslContext()
-				.batch(ctx
-						.getDslContext()
-						.insertInto(
-								FS_MODEL193_DETAIL,
-								FS_MODEL193_DETAIL.DOMAIN,
-								FS_MODEL193_DETAIL.FS_MODEL193,
-								FS_MODEL193_DETAIL.TYPE,
-								FS_MODEL193_DETAIL.DOCUMENT,
-								FS_MODEL193_DETAIL.NAME,
-								FS_MODEL193_DETAIL.REPRESENTATIVE_DOCUMENT,
-								FS_MODEL193_DETAIL.INTERMEDIARY_PAYMENT,
-								FS_MODEL193_DETAIL.PROVINCE,
-								FS_MODEL193_DETAIL.KEY_CODE,
-								FS_MODEL193_DETAIL.ISSUING_CODE,
-								FS_MODEL193_DETAIL.KEY,
-								FS_MODEL193_DETAIL.NATURE,
-								FS_MODEL193_DETAIL.PAYMENT,
-								FS_MODEL193_DETAIL.CODE_TYPE,
-								FS_MODEL193_DETAIL.ACCOUNT_CODE,
-								FS_MODEL193_DETAIL.PENDING,
-								FS_MODEL193_DETAIL.ACCRUAL_YEAR,
-								FS_MODEL193_DETAIL.IN_KIND,
-								FS_MODEL193_DETAIL.PERCEPTION,
-								FS_MODEL193_DETAIL.REDUCTION,
-								FS_MODEL193_DETAIL.RETENTION_BASE,
-								FS_MODEL193_DETAIL.PERCENT,
-								FS_MODEL193_DETAIL.RETENTION,
-								FS_MODEL193_DETAIL.DEPONENT_NATURE,
-								FS_MODEL193_DETAIL.LOAN_START_DATE,
-								FS_MODEL193_DETAIL.LOAN_DUE_DATE,
-								FS_MODEL193_DETAIL.COMPENSATION,
-								FS_MODEL193_DETAIL.GUARANTEE,
-								FS_MODEL193_DETAIL.EXPENSES
-								)
-						.values(null, null, null, null, null, null, null, null,
-								null, null, null, null, null, null, null, null,
-								null, null, null, null, null, null, null, null,
-								null, null, null, null, null));
-		ArrayList<Mod193Detail> details = new ArrayList<Mod193Detail>();
-		details.addAll(mod193.getDetails());
-		details.addAll(mod193.getExpenses());
-		for (Mod193Detail detail : details) {
-			batch.bind(detail.getDomain()
-					 , detail.getMod193()
-					 , detail.getType()
-					 , AonStringUtils.substring(detail.getDocument(), 0, 9)
-					 , AonStringUtils.substring(detail.getName(), 0, 40)
-					 , AonStringUtils.substring(detail.getRepresentativeDocument(), 0, 9)
-					 , detail.isIntermediaryPayment()
-					 , detail.getProvince()
-					 , detail.getKeyCode()
-					 , detail.getIssuingCode()
-					 , detail.getKey()
-					 , detail.getNature()
-					 , detail.getPayment()
-					 , detail.getCodeType()
-					 , detail.getAccountCode()
-					 , detail.isPending()
-					 , detail.getAccrualYear()
-					 , detail.isInKind()
-					 , detail.getPerception()
-					 , detail.getReduction()
-					 , detail.getRetentionBase()
-					 , detail.getPercent()
-					 , detail.getRetention()
-					 , detail.isDeponentNature()
-					 , detail.getLoanStartDate()
-					 , detail.getLoanDueDate()
-					 , detail.getCompensation()
-					 , detail.getGuarantee()
-					 , detail.getExpenses()
-					);
-		}
-		batch.execute();
-	}
+//	private static void insertDetails(AONContext ctx, Mod193 mod193) {
+//		BatchBindStep batch = ctx
+//				.getDslContext()
+//				.batch(ctx
+//						.getDslContext()
+//						.insertInto(
+//								FS_MODEL193_DETAIL,
+//								FS_MODEL193_DETAIL.DOMAIN,
+//								FS_MODEL193_DETAIL.FS_MODEL193,
+//								FS_MODEL193_DETAIL.TYPE,
+//								FS_MODEL193_DETAIL.DOCUMENT,
+//								FS_MODEL193_DETAIL.NAME,
+//								FS_MODEL193_DETAIL.REPRESENTATIVE_DOCUMENT,
+//								FS_MODEL193_DETAIL.INTERMEDIARY_PAYMENT,
+//								FS_MODEL193_DETAIL.PROVINCE,
+//								FS_MODEL193_DETAIL.KEY_CODE,
+//								FS_MODEL193_DETAIL.ISSUING_CODE,
+//								FS_MODEL193_DETAIL.KEY,
+//								FS_MODEL193_DETAIL.NATURE,
+//								FS_MODEL193_DETAIL.PAYMENT,
+//								FS_MODEL193_DETAIL.CODE_TYPE,
+//								FS_MODEL193_DETAIL.ACCOUNT_CODE,
+//								FS_MODEL193_DETAIL.PENDING,
+//								FS_MODEL193_DETAIL.ACCRUAL_YEAR,
+//								FS_MODEL193_DETAIL.IN_KIND,
+//								FS_MODEL193_DETAIL.PERCEPTION,
+//								FS_MODEL193_DETAIL.REDUCTION,
+//								FS_MODEL193_DETAIL.RETENTION_BASE,
+//								FS_MODEL193_DETAIL.PERCENT,
+//								FS_MODEL193_DETAIL.RETENTION,
+//								FS_MODEL193_DETAIL.DEPONENT_NATURE,
+//								FS_MODEL193_DETAIL.LOAN_START_DATE,
+//								FS_MODEL193_DETAIL.LOAN_DUE_DATE,
+//								FS_MODEL193_DETAIL.COMPENSATION,
+//								FS_MODEL193_DETAIL.GUARANTEE,
+//								FS_MODEL193_DETAIL.EXPENSES
+//								)
+//						.values(null, null, null, null, null, null, null, null,
+//								null, null, null, null, null, null, null, null,
+//								null, null, null, null, null, null, null, null,
+//								null, null, null, null, null));
+//		ArrayList<Mod193Detail> details = new ArrayList<Mod193Detail>();
+//		details.addAll(mod193.getDetails());
+//		details.addAll(mod193.getExpenses());
+//		for (Mod193Detail detail : details) {
+//			batch.bind(detail.getDomain()
+//					 , detail.getMod193()
+//					 , detail.getType()
+//					 , AonStringUtils.substring(detail.getDocument(), 0, 9)
+//					 , AonStringUtils.substring(detail.getName(), 0, 40)
+//					 , AonStringUtils.substring(detail.getRepresentativeDocument(), 0, 9)
+//					 , detail.isIntermediaryPayment()
+//					 , detail.getProvince()
+//					 , detail.getKeyCode()
+//					 , detail.getIssuingCode()
+//					 , detail.getKey()
+//					 , detail.getNature()
+//					 , detail.getPayment()
+//					 , detail.getCodeType()
+//					 , detail.getAccountCode()
+//					 , detail.isPending()
+//					 , detail.getAccrualYear()
+//					 , detail.isInKind()
+//					 , detail.getPerception()
+//					 , detail.getReduction()
+//					 , detail.getRetentionBase()
+//					 , detail.getPercent()
+//					 , detail.getRetention()
+//					 , detail.isDeponentNature()
+//					 , detail.getLoanStartDate()
+//					 , detail.getLoanDueDate()
+//					 , detail.getCompensation()
+//					 , detail.getGuarantee()
+//					 , detail.getExpenses()
+//					);
+//		}
+//		batch.execute();
+//	}
 
 	public static void saveDetail(AONContext ctx, Mod193 mod193, Mod193Detail detail) {
 		ctx.checkWrite();
@@ -276,6 +275,8 @@ public class Mod193DAO {
 			.set(FS_MODEL193_DETAIL.COMPENSATION,detail.getCompensation())
 			.set(FS_MODEL193_DETAIL.GUARANTEE,detail.getGuarantee())
 			.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
+			.set(FS_MODEL193_DETAIL.PENALIZATION,detail.getPenalization())
+			.set(FS_MODEL193_DETAIL.DECLARANT_NATURE,AonEnumUtils.getByte( detail.isDeclarantNature()))
 			.execute();
 	}
 
@@ -309,6 +310,8 @@ public class Mod193DAO {
 				.set(FS_MODEL193_DETAIL.COMPENSATION,detail.getCompensation())
 				.set(FS_MODEL193_DETAIL.GUARANTEE,detail.getGuarantee())
 				.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
+				.set(FS_MODEL193_DETAIL.PENALIZATION,detail.getPenalization())
+				.set(FS_MODEL193_DETAIL.DECLARANT_NATURE,AonEnumUtils.getByte( detail.isDeclarantNature()))
 				.where(FS_MODEL193_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -460,7 +463,9 @@ public class Mod193DAO {
 				.setLoanDueDate(record.getValue(FS_MODEL193_DETAIL.LOAN_DUE_DATE))
 				.setCompensation(record.getValue(FS_MODEL193_DETAIL.COMPENSATION))
 				.setGuarantee(record.getValue(FS_MODEL193_DETAIL.GUARANTEE))
-				.setExpenses(record.getValue(FS_MODEL193_DETAIL.EXPENSES));
+				.setExpenses(record.getValue(FS_MODEL193_DETAIL.EXPENSES))
+				.setPenalization(record.getValue(FS_MODEL193_DETAIL.PENALIZATION))
+				.setDeclarantNature(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.DECLARANT_NATURE)));
 		}
 	}
 

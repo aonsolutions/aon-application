@@ -44,6 +44,9 @@ public class Mod193Detail implements Serializable {
 	private double guarantee;
 	private double expenses;
 	
+	private double penalization;
+	private boolean declarantNature;
+	
 	private boolean dirty;
 	private boolean deleted;
 
@@ -327,6 +330,24 @@ public class Mod193Detail implements Serializable {
 		return this;
 	}
 
+	public double getPenalization() {
+		return penalization;
+	}
+
+	public Mod193Detail setPenalization(double penalization) {
+		this.penalization = penalization;
+		return this;
+	}
+
+	public boolean isDeclarantNature() {
+		return declarantNature;
+	}
+
+	public Mod193Detail setDeclarantNature(boolean declarantNature) {
+		this.declarantNature = declarantNature;
+		return this;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -344,4 +365,5 @@ public class Mod193Detail implements Serializable {
 		this.deleted = deleted;
 		return this;
 	}
+
 }

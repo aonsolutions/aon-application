@@ -1,0 +1,235 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:m193='urn:import:com.esferalia.aon.gwt.fiscal.client.mod193'
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	<g:DockLayoutPanel>
+		<g:west size="300">
+			<g:DockLayoutPanel>
+				<g:north size="20">
+					<g:FlowPanel height="100%" styleName="{aonResources.css.aonTextRight} {aonResources.css.aonWidthAll}">
+						<g:FlowPanel styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonBorderBottom} {aonResources.css.aonPadding2}">
+							<g:Button ui:field="deleteDetailButton" title="{msg.deleteAction}" 
+								styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconDelete}  {aonResources.css.aonMarginRight}"/>
+							<g:Button ui:field="restoreDeletedButton" title="{msg.restoreAction}"
+								styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconRedo} {aonResources.css.aonMarginRight}"/>
+							<g:Button ui:field="newDetailButton" title="{msg.newPerceptor}"
+								styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconReset}  {aonResources.css.aonMarginRight}"/>
+						</g:FlowPanel>
+					</g:FlowPanel>
+				</g:north>
+				<g:center>
+					<g:ScrollPanel ui:field="detailListPanel" styleName="{aonResources.css.aonScrollArea} {aonResources.css.aonBorderRight}">
+						<cell:CellList ui:field="detailList" styleName="{aonResources.css.aonWidthAll}"/>
+					</g:ScrollPanel>
+				</g:center>
+			</g:DockLayoutPanel>
+		</g:west>
+		<g:center>
+			<g:ScrollPanel styleName="{aonResources.css.aonWidthAll}">
+				<g:FlowPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:HTMLPanel>
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
+						<tr>
+							<td class="{aonResources.css.aonBorderBottom} {aonResources.css.aonBold}" colspan="4">
+								<g:InlineLabel text="{msg.perceptionData}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+							</td>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:Label text="{msg.receiverDocument}" />
+							</td>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:Label text="{msg.representativeDocument}" />
+							</td>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:Label text="{msg.fullName}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:CheckBox ui:field="pending" text="{msg.pending}" />
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="receiverDocument"/>
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="representativeDocument"/>
+							</td>
+							<td>
+								<g:TextBox maxLength="40" visibleLength="40" ui:field="fullName" styleName="{aonResources.css.aonInputText}"/>
+							</td>
+						</tr>
+					</table>
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
+						<tr>
+							<td class="{aonResources.css.aonBorderBottom} {aonResources.css.aonBold}" colspan="7">
+								<g:InlineLabel text="{msg.operationData}" />
+							</td>
+						</tr>
+						<tr>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.key}" />
+							</td>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.nature}" />
+							</td>
+							
+							<td></td>
+							
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.province}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.keyCode}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.issuingCode}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.accrualYear}" />
+							</td>	
+						</tr>
+						<tr>
+							<td>
+								<m193:Model193Detail2016.KeyListBox ui:field="key"/>
+							</td>
+							<td>
+								<g:ListBox ui:field="nature"/>
+							</td>
+							<td>
+								<g:CheckBox ui:field="intermediaryPayment" text="{msg.intermediaryPayment}"/>
+							</td>
+							<td>
+								<aon:ProvinceListBox ui:field="province" />
+							</td>
+							<td>
+								<g:ListBox ui:field="keyCode"/>
+							</td>
+							<td>
+								<g:TextBox maxLength="12" visibleLength="14" ui:field="issuingCode" styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<aon:IntegerBox maxLength="4" visibleLength="4" ui:field="accrualYear"/>
+							</td>
+						</tr>
+					</table>
+											
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
+						<tr>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.payment}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.codeType}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.ccv}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.lenderAmount}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.reductions}" />
+							</td>	
+						</tr>
+						<tr>
+							<td>
+								<g:ListBox ui:field="payment" />
+							</td>
+							<td>
+								<g:ListBox ui:field="codeType" />
+							</td>
+							<td>
+								<g:TextBox maxLength="12" visibleLength="14" ui:field="accountCode" styleName="{aonResources.css.aonInputText}"/>
+							</td>
+							<td>
+								<g:CheckBox ui:field="inKind" text="{msg.inKind}"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="lenderAmount"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="reduction"/>
+							</td>
+						</tr>
+					</table>
+
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
+						<tr>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.retentionBase}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.percent}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.retentionAccount}" />
+							</td>	
+						</tr>
+						<tr>
+							<td>
+								<aon:DoubleBox ui:field="retentionBase"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="percent"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="retention"/>
+							</td>
+						</tr>
+					</table>
+
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
+						<tr>
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.loanStart}" />
+								<g:InlineLabel text="2016" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.loanDueStart}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.penalizations}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.compensations}" />
+							</td>	
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:InlineLabel text="{msg.guarantee}" />
+							</td>	
+						</tr>
+						<tr>
+							<td>
+								<aon:DateBoxEx  ui:field="loanStartDate"/>
+							</td>
+							<td>
+								<aon:DateBoxEx  ui:field="loanDueDate"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="penalization"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="compensation"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="guarantee"/>
+							</td>
+						</tr>
+					</table>
+				</g:HTMLPanel>
+				</g:FlowPanel>
+			</g:ScrollPanel>
+		</g:center>
+		
+	</g:DockLayoutPanel>
+</ui:UiBinder>

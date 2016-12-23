@@ -128,7 +128,7 @@
 								</g:HTMLPanel>
 							</g:north>
 							<g:center>
-								<m193:Model193Detail2014 ui:field="perceptorPanel"/>
+								<g:SimpleLayoutPanel  ui:field="perceptorPanel" />
 							</g:center>
 						</g:DockLayoutPanel>
 		
