@@ -93,7 +93,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(connection, startDate, endDate,
 				contractCriteria);
 
-		IrpfOutcome irpfOutcome = IrpfCalculator.calculateIrpf(irpfCalculatorContext);
+		IrpfOutcome irpfOutcome = IrpfCalculator.calculateIrpf(irpfCalculatorContext, endDate);
 
 		onIrpf(irpfOutcome);
 

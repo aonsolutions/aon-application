@@ -15,19 +15,39 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>1.6</version>
+				<!--version>1.6</version-->
 				<executions>
 					<execution>
-						<id>xjc</id>
+						<id>xjc-2016</id>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
-					</execution>
+						<configuration>
+							<sources>
+                    						<source>src/main/xsd/AEATRetenciones2016.xsd</source>
+					                </sources>
+							<!-- The name of your generated source package -->
+							<packageName>com.esferalia.aon.aeat.jaxb</packageName> 
+						</configuration>
+                                        </execution>
+					<execution>
+						<id>xjc-2017</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources>
+                    						<source>src/main/xsd/AEATRetenciones2017.xsd</source>
+					                </sources>
+							<packageName>com.esferalia.aon.aeat.v2017.jaxb</packageName> 
+					                <!--
+					                    Don't clear the output directory before generating the sources.
+					                    Clearing the output directory removes the 2016 schema from above.
+					                -->
+					                <clearOutputDir>false</clearOutputDir>
+						</configuration>
+                                        </execution>
 				</executions>
-				<configuration>
-					<!-- The name of your generated source package -->
-					<packageName>com.esferalia.aon.aeat.jaxb</packageName> 
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
