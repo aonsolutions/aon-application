@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.81.0
+# Version: 8.81.1
 # Created by: girazu
-# Creation Date: 11/11/2016 12:45
+# Creation Date: 23/12/2016 11:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4705,9 +4705,9 @@ CREATE TABLE `fs_model190_detail` (
   `second_child_calculation` tinyint(1) DEFAULT '0',
   `third_child_calculation` tinyint(1) DEFAULT '0',
   `home_loan_communnication` tinyint(1) DEFAULT '0',
-  `perception_il` double(15,3) DEFAULT 0 COMMENT 'Percepción Integra/valoracion derivada de incapacidad laboral',
-  `retention_il` double(15,3) DEFAULT 0 COMMENT 'Retenciones practicadas/ingresos a cuenta efectuados derivadas de incapacidad laboral',
-  `output_retention_il` double(15,3) DEFAULT 0 COMMENT 'Ingresos a cuenta repercutidos derivados de incapacidad laboral',
+  `perception_il` double(15,3) DEFAULT '0.000' COMMENT 'Percepción Integra/valoracion derivada de incapacidad laboral',
+  `retention_il` double(15,3) DEFAULT '0.000' COMMENT 'Retenciones practicadas/ingresos a cuenta efectuados derivadas de incapacidad laboral',
+  `output_retention_il` double(15,3) DEFAULT '0.000' COMMENT 'Ingresos a cuenta repercutidos derivados de incapacidad laboral',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL190_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL190_DETAIL_FS_MODEL190` (`fs_model190`),
@@ -4785,8 +4785,8 @@ CREATE TABLE `fs_model193_detail` (
   `compensation` double(15,3) NOT NULL DEFAULT '0.000',
   `guarantee` double(15,3) NOT NULL DEFAULT '0.000',
   `expenses` double(15,3) NOT NULL DEFAULT '0.000',
-  `penalization` double(15,3) DEFAULT 0 COMMENT 'Penalizaciones',
-  `declarant_nature` tinyint(1) DEFAULT 0 COMMENT 'Naturaleza del declarante',
+  `penalization` double(15,3) DEFAULT '0.000' COMMENT 'Penalizaciones',
+  `declarant_nature` tinyint(1) DEFAULT '0' COMMENT 'Naturaleza del declarante',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL193_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL193_DETAIL_FS_MODEL193` (`fs_model193`),
