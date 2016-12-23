@@ -596,6 +596,7 @@ public class Bases {
 				put("51", "Modalidad de salario");
 
 				put("500", "Base de contingencias comunes");
+				put("509", "Base de contingencias comunes");
 				put("501", "Base de Horas Extras Fuerza Mayor");
 				put("502", "Base de Otras Horas Extras");
 				put("537", "Base de horas complementarias");
@@ -1202,12 +1203,21 @@ public class Bases {
 
 			put("51", new MonthlySalaryCretaData());
 
-			put("509", new MandatoryCompositecContextData(MATERNITY_BASE.getName(),
-					ERE_BASE.getName()));
-			put("603", new MandatoryCompositecContextData(MATERNITY_BASE.getName(),
-					ERE_BASE.getName(), CGP_BASE.getName()));
-			put("613", new MandatoryCompositecContextData(MATERNITY_BASE.getName(),
-					ERE_BASE.getName()));
+			
+			put("509", new MandatoryCompositecContextData(
+					MATERNITY_BASE.getName(),
+					ERE_BASE.getName(),
+					CGC_BASE.getName())
+					);
+			
+			put("603", new MandatoryCompositecContextData(
+					MATERNITY_BASE.getName(),
+					ERE_BASE.getName(), 
+					CGP_BASE.getName()));
+			put("613", new MandatoryCompositecContextData(
+					MATERNITY_BASE.getName(),
+					ERE_BASE.getName(),
+					CGP_BASE.getName()));
 		}
 	};
 
