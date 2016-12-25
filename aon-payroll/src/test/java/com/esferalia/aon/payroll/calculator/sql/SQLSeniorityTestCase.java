@@ -252,7 +252,7 @@ public class SQLSeniorityTestCase extends
 		
 		// @formatter:off
 
-		Date startContract = add(add(getToday(), Calendar.DAY_OF_MONTH, 10), Calendar.YEAR, -2);
+		Date startContract = add(add(getToday(), Calendar.DAY_OF_MONTH, -1), Calendar.YEAR, -2);
 		
 		AgreementRecord agreement = newAgreement(aonContext);
 		
