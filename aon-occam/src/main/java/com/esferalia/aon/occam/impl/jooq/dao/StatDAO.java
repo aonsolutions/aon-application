@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -27,6 +28,7 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.stat.IStatChartTypeVisitor;
@@ -127,6 +129,13 @@ public class StatDAO {
 				c = c.and(TASK.STATUS.eq(TaskStatus.DELETED.value()));
 		}
 		return c;
+	}
+	
+	public static Stream<Task> getStatTaskStream(AONContext ctx, StatParams params){
+		return ctx.getDslContext().select().from(TASK)
+			.where(getTaskCondition(ctx, params))
+			.orderBy(TASK.START_DATE.desc()).fetchInto(TASK)
+			.stream().map(new TaskDAO.FullTaskFiller());
 	}
 	
 	private static AggregateFunction<BigDecimal> getSelectField(final StatParams params) {

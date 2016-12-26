@@ -108,7 +108,7 @@ public class StatServlet extends HttpServlet{
 		return array;
 	}
 
-	private IssueFilter getFilter(HttpServletRequest req){
+	public static IssueFilter getFilter(HttpServletRequest req){
 		Date from = new Date();from.setYear(from.getYear()-1);
 		Date to = new Date();
 		try {

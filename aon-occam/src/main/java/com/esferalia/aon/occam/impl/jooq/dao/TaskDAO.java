@@ -802,7 +802,7 @@ public class TaskDAO {
 		}
 	}
 	
-	private static class FullTaskFiller implements Function<TaskRecord, Task> {
+	public static class FullTaskFiller implements Function<TaskRecord, Task> {
 		@Override
 		public Task apply(TaskRecord r) {
 			return new Task().setId(r.getId())

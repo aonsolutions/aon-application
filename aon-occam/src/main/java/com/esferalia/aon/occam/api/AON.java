@@ -1846,7 +1846,17 @@ public class AON {
 				ctx.close();
 		}
 	}
-
+	
+	public static Stream<Task> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,login);
+			return getStats().getStatTaskStream(ctx, params);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}		
+	}
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************
