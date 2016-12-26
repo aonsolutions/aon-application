@@ -44,6 +44,7 @@ public class StatFilterPanel extends Composite {
 	public static final AonGwtIssuesCSS ICSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 
     @UiField HorizontalPanel panel;
+    @UiField InlineLabel statusLabel;
     Incidence incidence;
     StatPanel stat;
     public StatFilterPanel(StatPanel stat, Incidence incidence) {
@@ -94,12 +95,43 @@ public class StatFilterPanel extends Composite {
 		// ------------------ FILTER BUTTONS
 		FlowPanel fpanel = new FlowPanel(); 
 		
+		// DATE
+		PaperButton datepb = new PaperButton();
+		datepb.setStyleName(ICSS.aonPaperButtonFilterIssues());
+		
+		InlineLabel dateLabel = new InlineLabel("FECHA");
+		dateLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		datepb.add(dateLabel);
+		
+		IronIcon dateii = new IronIcon();
+		dateii.setStyleName(ICSS.aonIronIconFilterIssues()); 
+		dateii.setIcon("arrow-drop-down");
+		datepb.add(dateii);
+		datepb.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				incidence.getDateOptions(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(datepb, result, "Fecha");
+					}
+
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		});
+		fpanel.add(datepb);
+		
+		panel.add(fpanel);
+		
 		// --------- STATUS
 		PaperButton pb = new PaperButton();
 		pb.setStyleName(ICSS.aonPaperButtonFilterIssues());
 		
 		InlineLabel statusLabel = new InlineLabel("Estado");
-		toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		statusLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		pb.add(statusLabel);
 		
 		IronIcon ii = new IronIcon();
@@ -169,11 +201,13 @@ public class StatFilterPanel extends Composite {
 			@Override
 			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 				JsObject js = acb.getSelectedItem().cast();
-				if(js.getName().equalsIgnoreCase("TODAS")) stat.getIssueFilter().setState("all");
-				if(js.getName().equalsIgnoreCase("ABIERTAS")) stat.getIssueFilter().setState("open");
-				if(js.getName().equalsIgnoreCase("CERRADAS")) stat.getIssueFilter().setState("closed");
-				if(js.getName().equalsIgnoreCase("BORRADAS")) stat.getIssueFilter().setState("deleted");
+				if(label.equalsIgnoreCase("estado")){
+					statusClick(js);
+				} else if(label.equalsIgnoreCase("fecha")){
+					dateClick(js);
+				}
 				stat.selectStat(stat.getSelectedChart());
+				
 				popup.hide();
 			}
 		});
@@ -190,5 +224,65 @@ public class StatFilterPanel extends Composite {
 		popup.setPopupPosition(left, top);
 		popup.show();
 		acb.open();
+    }
+    
+    private void statusClick(JsObject js){
+    	if(js.getName().equalsIgnoreCase("TODAS")){
+    		statusLabel.setText("");
+    		stat.getIssueFilter().setState("all");
+    	}
+		if(js.getName().equalsIgnoreCase("ABIERTAS")){
+			statusLabel.setText("Estado: ABIERTAS;");
+			stat.getIssueFilter().setState("open");
+		}
+		if(js.getName().equalsIgnoreCase("CERRADAS")){
+			statusLabel.setText("Estado: CERRADAS;");
+			stat.getIssueFilter().setState("closed");
+		}
+		if(js.getName().equalsIgnoreCase("BORRADAS")){
+			statusLabel.setText("Estado: BORRADAS;");
+			stat.getIssueFilter().setState("deleted");
+		}
+    }
+    
+    private void dateClick(JsObject js){
+    	
+    	if(js.getName().equalsIgnoreCase("HOY")) changeFromValue(new Date());
+		if(js.getName().equalsIgnoreCase("AYER")){
+			Date d = new Date();
+			d.setDate(d.getDate()-1);
+			changeFromValue(d);
+		}
+		if(js.getName().equalsIgnoreCase("HACE 1 SEMANA")){
+			Date d = new Date();
+			d.setDate(d.getDate()-7);
+			changeFromValue(d);
+		}
+		if(js.getName().equalsIgnoreCase("HACE 1 MES")) {
+			Date d = new Date();
+			d.setMonth(d.getMonth()-1);
+			changeFromValue(d);
+		}
+		if(js.getName().equalsIgnoreCase("Hace 1 a\u00f1o")){
+			Date d = new Date();
+			d.setYear(d.getYear()-1);
+			changeFromValue(d);
+		}
+    }
+    
+    private void changeFromValue(Date date){
+    	HorizontalPanel hp = (HorizontalPanel) panel.getWidget(0);
+    	DateBoxEx db = (DateBoxEx) hp.getWidget(1);
+    	db.setValue(date);
+    	stat.getParams().setFrom(db.getValue());
+		stat.getIssueFilter().setFrom(db.getFormat().format(db, db.getValue()));
+    }
+    
+    private void changeToValue(Date date){
+    	HorizontalPanel hp = (HorizontalPanel) panel.getWidget(0);
+    	DateBoxEx db = (DateBoxEx) hp.getWidget(3);
+    	db.setValue(date);
+    	stat.getParams().setFrom(db.getValue());
+		stat.getIssueFilter().setFrom(db.getFormat().format(db, db.getValue()));
     }
 }

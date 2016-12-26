@@ -780,6 +780,7 @@ public class StatControlPanel extends MainEntryPoint {
 		@Override public void visitTaskByStatus() {}
 		@Override public void visitTaskByMonth() {}
 		@Override public void visitTaskByDay() {}
+		@Override public void visitTaskByTag() {}
 	}
 
 }

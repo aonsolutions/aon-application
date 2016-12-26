@@ -5,7 +5,7 @@ public class IssueFilter {
 	
 	String milestone;
 	String state;
-	Integer assignee;
+	String assignee;
 	Integer workgroup;
 	String creator;
 	String mentioned;
@@ -47,10 +47,10 @@ public class IssueFilter {
 		this.state = state;
 		return this;
 	}
-	public Integer getAssignee() {
+	public String getAssignee() {
 		return assignee;
 	}
-	public IssueFilter setAssignee(Integer assignee) {
+	public IssueFilter setAssignee(String assignee) {
 		this.assignee = assignee;
 		return this;
 	}

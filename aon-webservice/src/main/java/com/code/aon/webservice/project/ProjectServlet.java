@@ -20,7 +20,8 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "ProjectServlet", urlPatterns = { "/project/*" })
+@WebServlet(name = "ProjectServlet", urlPatterns = { "/project/*",
+													 "/aon_gwt_aio/project/*"})
 public class ProjectServlet extends HttpServlet{
 			
 	@Override

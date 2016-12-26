@@ -26,7 +26,7 @@ public class Incidence extends Methods{
 	}
 	
 	public Incidence(AonUrlApi url, String accesToken, String userName, String organizationName, String repositoryName) {
-		this.url = url.getUrl(); //+ "aon-aio/";
+		this.url = url.getUrl();
 		this.userName = userName;
 		this.repositoryName = repositoryName;
 		this.domainName = repositoryName;
@@ -36,7 +36,7 @@ public class Incidence extends Methods{
 	}
 	
 	public Incidence(String url, String accesToken, String userName, String organizationName, String repositoryName) {
-		this.url = url; //+ "aon-aio/";
+		this.url = url;
 		this.userName = userName;
 		this.repositoryName = repositoryName;
 		this.domainName = repositoryName;
@@ -482,6 +482,11 @@ public class Incidence extends Methods{
 	
 	public void getStatDataByType(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
 		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/type"
+				+ getIssueFilter(filter), callback);
+	}
+	
+	public void getStatDataByTag(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/tag"
 				+ getIssueFilter(filter), callback);
 	}
 	

@@ -17,7 +17,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "FinanceServlet", urlPatterns = { "/finance/*" })
+@WebServlet(name = "FinanceServlet", urlPatterns = { "/finance/*",
+													 "/aon_gwt_aio/finance/*"})
 public class FinanceServlet extends HttpServlet{
 		
 	String h = "http://";

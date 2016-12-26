@@ -26,7 +26,8 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "WorkServlet", urlPatterns = { "/work/*" })
+@WebServlet(name = "WorkServlet", urlPatterns = { "/work/*",
+												  "/aon_gwt_aio/work/*"})
 public class WorkServlet extends HttpServlet{
 	
 	@Override

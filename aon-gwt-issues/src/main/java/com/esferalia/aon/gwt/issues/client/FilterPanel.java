@@ -276,7 +276,7 @@ public class FilterPanel extends Composite {
 						JsUser jsLabel = acb.getSelectedItem().cast();
 						assignedButton.setTitle(jsLabel.getLogin());
 						assignedLabel.setText("Asignado:"+jsLabel.getLogin()+"; ");
-						getIssues().issueFilter.setAssignee(jsLabel.getId());
+						getIssues().issueFilter.setAssignee(jsLabel.getId().toString());
 						getIssues().updateIssueList(issues.issueFilter, false);
 						popup.hide();
 					}
@@ -499,8 +499,10 @@ public class FilterPanel extends Composite {
 							getIssues().issueFilter.setDateDiff(2);
 						else if(jsObject.getName().contains("Hace 1 semana")) 
 							getIssues().issueFilter.setDateDiff(7);
-						else getIssues().issueFilter.setDateDiff(30);
-						
+						else if(jsObject.getName().contains("Hace 1 mes"))
+							getIssues().issueFilter.setDateDiff(30);
+						else getIssues().issueFilter.setDateDiff(365);
+
 						dateButton.setTitle(jsObject.getName());
 						dateLabel.setText("Fecha:"+jsObject.getName()+"; ");
 						getIssues().updateIssueList(issues.issueFilter, false);	
