@@ -121,10 +121,9 @@ public class Issues implements EntryPoint {
 		root.add(ui);
 		me = this;
 			
-		String h = GWT.getModuleBaseURL().contains("https") ? HTTPS : HTTP; 
-		incidence = new Incidence(h + aonData.getDomain().getName()+"/", aonData.getMd5(),
+		incidence = new Incidence(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getUser().getLogin(), aonData.getUser().getLogin(), aonData.getDomain().getName());
-		
+
 		createAonToolbar();
 		createFilterPanel(new FilterPanel(me, incidence));
 		createIssueList(issueFilter = new IssueFilter());
@@ -262,9 +261,11 @@ public class Issues implements EntryPoint {
 						issueFilter.setState("open");
 						
 						if(result.getOneData().getMine()) issueFilter.setMine(aonData.getUser().getLogin());
-						if(result.getOneData().getAssignee()) issueFilter.setAssignee(aonData.getUserOperator());
+						
+						Boolean assignee = result.getOneData().getAssignee() && !result.getOneData().getMine();
 						if(result.getOneData().getWithoutGroup()) issueFilter.setWorkgroup(-1);
-						if(result.getOneData().getWithoutOperator()) issueFilter.setAssignee(-1);
+						if(result.getOneData().getWithoutOperator() && assignee) issueFilter.setAssignee("-1");
+						if(result.getOneData().getWithoutOperator() && !assignee) issueFilter.setAssignee("-1@"+aonData.getUserOperator());
 						issueFilter.setType(result.getOneData().getType());
 						issueFilter.setPriority(result.getOneData().getPriority());
 						

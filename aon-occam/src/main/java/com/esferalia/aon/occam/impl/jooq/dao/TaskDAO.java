@@ -250,14 +250,24 @@ public class TaskDAO {
 				.or(TASK_EVENT.CREATION_USER.eq(issueFilter.getMine()))
 				.or(TASK_EVENT.MODIFICATION_USER.eq(issueFilter.getMine()));
 			if(taskHolder.getId() != null) m.or(TASK.TASK_HOLDER.eq(taskHolder.getId()));
+			if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals("") && issueFilter.getAssignee().equals("-1")){
+				m.or(TASK.TASK_HOLDER.isNull());
+				issueFilter.setAssignee(null);
+			}
 			c = c.and(m);
 		}
 		
 		// assignee
 		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals("")){
-			if(issueFilter.getAssignee().equals("-1"))
-				c = c.and(TASK.TASK_HOLDER.isNull());
-			else c = c.and(TASK.TASK_HOLDER.eq(Integer.parseInt(issueFilter.getAssignee())));
+			String[] s = issueFilter.getAssignee().split("@");
+			Condition m;
+			if(s[0].equals("-1")) m = TASK.TASK_HOLDER.isNull();
+			else m =TASK.TASK_HOLDER.eq(Integer.parseInt(s[0]));
+			for(Integer j = 1; j < s.length; j++){
+				if(s[j].equals("-1")) m = m.or(TASK.TASK_HOLDER.isNull());
+				else m = m.or(TASK.TASK_HOLDER.eq(Integer.parseInt(s[j])));
+			}
+			c = c.and(m);
 		}
 		
 		// workgroup

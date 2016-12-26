@@ -70,6 +70,12 @@ public class Utils {
         return (int)( (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 	}
 	
+	public static String getUrl(String scheme, String domain, Boolean local){
+		String url = scheme + "://" + domain + "/";
+		if(local) url = url + "aon-aio/";
+		return url;
+	}
+	
     public static void addCorsHeader(HttpServletResponse response){
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");

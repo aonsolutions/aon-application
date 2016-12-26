@@ -19,7 +19,8 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "OrgsServlet", urlPatterns = { "/orgs/*" })
+@WebServlet(name = "OrgsServlet", urlPatterns = { "/orgs/*",
+												  "/aon_gwt_aio/orgs/*"})
 public class OrgsServlet extends HttpServlet{
 	
 	@Override

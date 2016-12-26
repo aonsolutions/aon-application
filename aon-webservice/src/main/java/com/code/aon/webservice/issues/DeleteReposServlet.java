@@ -18,7 +18,8 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "DeleteReposServlet", urlPatterns = { "/delete/repos/*" })
+@WebServlet(name = "DeleteReposServlet", urlPatterns = { "/delete/repos/*",
+														 "/aon_gwt_aio/delete/repos/*"})
 public class DeleteReposServlet extends HttpServlet{
 
 	private static final DBConsults DB = DBConsults.getInstance();

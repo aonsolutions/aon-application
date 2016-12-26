@@ -24,7 +24,8 @@ import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "StatServlet", urlPatterns = { "/stat/*" })
+@WebServlet(name = "StatServlet", urlPatterns = { "/stat/*",
+												  "/aon_gwt_aio/stat/*"})
 public class StatServlet extends HttpServlet{
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -74,6 +75,8 @@ public class StatServlet extends HttpServlet{
 			return getTaskStatData(domain, userName, StatChartType.TASK_BY_STATUS, filter);
 		case "type":
 			return getTaskStatData(domain, userName, StatChartType.TASK_BY_TYPE, filter);
+		case "tag":
+			return getTaskStatData(domain, userName, StatChartType.TASK_BY_TAG, filter);
 		case "schedule":
 			return getTaskStatData(domain, userName, StatChartType.TASK_BY_SCHEDULE, filter);
 		case "day_of_week":
@@ -85,20 +88,6 @@ public class StatServlet extends HttpServlet{
 		default:
 			return new JSONArray();
 		}
-	}
-	
-	private JSONArray getTaskStatusStatData(Domain domain, String userName, IssueFilter filter) {
-		JSONArray array = new JSONArray();
-		String[] status = {"ABIERTAS","CERRADAS","BORRADAS"};
-		Integer[] sizes = AON.getTaskCount(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()), filter);
-		for(Integer i = 0; i < status.length; i++){
-			JSONObject json = new JSONObject();
-			json.put("row", status[i]);
-			json.put("column", "CANTIDAD");
-			json.put("quantity", sizes[i]);	
-			array.put(json);
-		}
-		return array;
 	}
 	
 	private JSONArray getTaskStatData(Domain domain, String userName, StatChartType chartType, IssueFilter filter){

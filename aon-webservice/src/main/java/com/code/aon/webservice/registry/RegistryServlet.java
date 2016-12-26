@@ -21,7 +21,8 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "RegistryServlet", urlPatterns = { "/registry/*" })
+@WebServlet(name = "RegistryServlet", urlPatterns = { "/registry/*",
+													  "/aon_gwt_aio/registry/*"})
 public class RegistryServlet extends HttpServlet{
 			
 	@Override

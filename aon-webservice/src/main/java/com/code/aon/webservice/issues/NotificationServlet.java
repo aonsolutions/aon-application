@@ -40,7 +40,8 @@ import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
-@WebServlet(name = "NotificationGwtServlet2", urlPatterns = { "/notification/*" })
+@WebServlet(name = "NotificationGwtServlet2", urlPatterns = { "/notification/*",
+															  "/aon_gwt_aio/notification/*"})
 public class NotificationServlet extends HttpServlet{
 	
 	private static final DBConsults DB = DBConsults.getInstance();

@@ -417,7 +417,7 @@ public class StatDAO {
 					.orderBy(TASK.STATUS)				
 					.fetch().stream().forEach(rec -> {
 						double amount = rec.getValue(count).doubleValue();
-						table.put(TaskStatus.values()[rec.getValue(TASK.STATUS)].getName(),"CANTIDAD", amount);
+						table.put(TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(),"CANTIDAD", amount);
 					});
 			}
 
@@ -436,7 +436,7 @@ public class StatDAO {
 					.forEach(rec -> {
 						String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
 						double amount = rec.getValue(count).doubleValue();
-						table.put(monthKey, TaskStatus.values()[rec.getValue(TASK.STATUS)].getName(), amount);
+						table.put(monthKey, TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(), amount);
 					});
 			}
 
@@ -452,8 +452,19 @@ public class StatDAO {
 					.fetch().stream().forEach(rec -> {
 						String date1= FMT.format( rec.getValue(date));
 						double amount = rec.getValue(count).doubleValue();
-						table.put(date1, TaskStatus.values()[rec.getValue(TASK.STATUS)].getName(), amount);
+						table.put(date1, TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(), amount);
 					});
+			}
+
+			@Override
+			public void visitTaskByTag() {
+				ctx.getDslContext().select(DSL.count(TASK.ID), TAG.NAME)
+				.from(TASK).join(TASK_TAG).on(TASK.ID.eq(TASK_TAG.TASK))
+					.join(TAG).on(TASK_TAG.TAG.eq(TAG.ID))
+				.where(TAG.TYPE.eq(TagType.TASK_LABEL.value()))
+					.and(getTaskCondition(ctx, params))
+				.groupBy(TAG.NAME).fetch().stream().forEach(r -> 
+					table.put(r.getValue(TAG.NAME), "CANTIDAD", r.value1().doubleValue()));
 			}
 			
 		});

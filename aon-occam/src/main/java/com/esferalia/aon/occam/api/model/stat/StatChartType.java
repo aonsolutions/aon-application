@@ -127,6 +127,17 @@ public enum StatChartType implements Serializable {
 			return TASK;
 		}
 	})
+	,TASK_BY_TAG("Tareas por etiqueta", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitTaskByTag();
+		}
+
+		@Override
+		public String type() {
+			return TASK;
+		}
+	})
 	,TASK_BY_SCHEDULE("Tareas por franja horaria", new ITypeVisitor() {
 		@Override
 		public void visit(IStatChartTypeVisitor chartVisitor) {
