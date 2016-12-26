@@ -425,6 +425,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
 
+	@DefaultMessage("Validar / Imprimir via AEAT")
+	String validatePrintViaAeat();
+
 	@DefaultMessage("Validar / Borrador / Predeclaraci\u00F3n")
 	String predeclaration();
 
@@ -868,7 +871,13 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Percepciones \u00CDntegras")
 	String perception();
-
+	
+	@DefaultMessage("Percepci\u00F3n \u00CDntegras / Valoraci\u00F3n")
+	String perceptionValoration();
+	
+	@DefaultMessage("Retenciones aplicadas / Ingresos a cuenta efectuados")
+	String retentionIncome();
+	
 	@DefaultMessage("Retenciones")
 	String retention();
 

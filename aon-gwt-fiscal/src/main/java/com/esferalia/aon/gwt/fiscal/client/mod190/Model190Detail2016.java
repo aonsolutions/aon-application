@@ -158,6 +158,12 @@ public class Model190Detail2016 extends ResizeComposite {
 	@UiField
 	DoubleBox inKindOutputDeposit;
 	@UiField
+	DoubleBox perceptionIL;
+	@UiField
+	DoubleBox retentionIL;
+	@UiField
+	DoubleBox outputRetentionIL;
+	@UiField
 	IntegerBox birthYear;
 	@UiField
 	ListBox familySituation;
@@ -167,8 +173,6 @@ public class Model190Detail2016 extends ResizeComposite {
 	ListBox disability;
 	@UiField
 	ListBox contract;
-	@UiField
-	CheckBox workActivityExtension;
 	@UiField
 	CheckBox geographicMobility;
 	@UiField
@@ -305,6 +309,9 @@ public class Model190Detail2016 extends ResizeComposite {
 		inKindPerception.setValue(getDetail().getInKindPerception());
 		inKindDeposit.setValue(getDetail().getInKindDeposit());
 		inKindOutputDeposit.setValue(getDetail().getInKindOutputDeposit());
+		perceptionIL.setValue(getDetail().getPerceptionIL());
+		retentionIL.setValue(getDetail().getRetentionIL());
+		outputRetentionIL.setValue(getDetail().getOutputRetentionIL());
 
 		IrpfData irpfData = getDetail().getIrpfData();
 		if (irpfData != null) {
@@ -314,7 +321,6 @@ public class Model190Detail2016 extends ResizeComposite {
 			spouseDocument.setValue(irpfData.getSpouseDocument());
 			disability.setSelectedIndex(irpfData.getDisability());
 			contract.setSelectedIndex(irpfData.getContract());
-			workActivityExtension.setValue(irpfData.isWorkActivityExtension());
 			geographicMobility.setValue(irpfData.isGeographicMobility());
 		}
 		IrpfResult irpfResult = getDetail().getIrpfResult();
@@ -492,6 +498,24 @@ public class Model190Detail2016 extends ResizeComposite {
 		markAsDirty();
 	}
 
+	@UiHandler("perceptionIL")
+	void onChangePerceptionIL(ChangeEvent event) {
+		getDetail().setPerceptionIL(perceptionIL.getValue());
+		markAsDirty();
+	}
+
+	@UiHandler("retentionIL")
+	void onChangeRetentionIL(ChangeEvent event) {
+		getDetail().setRetentionIL(retentionIL.getValue());
+		markAsDirty();
+	}
+
+	@UiHandler("outputRetentionIL")
+	void onChangeOutputRetentionIL(ChangeEvent event) {
+		getDetail().setOutputRetentionIL(outputRetentionIL.getValue());
+		markAsDirty();
+	}
+	
 	@UiHandler("birthYear")
 	void onChangeBirthYear(ChangeEvent event) {
 		getDetail().getIrpfData().setBirthYear(birthYear.getValue());
@@ -521,13 +545,6 @@ public class Model190Detail2016 extends ResizeComposite {
 	@UiHandler("contract")
 	void onChangeContract(ChangeEvent event) {
 		getDetail().getIrpfData().setContract((byte) contract.getSelectedIndex());
-		markAsDirty();
-	}
-
-	@UiHandler("workActivityExtension")
-	void onChangeWorkActivityExtension(ClickEvent event) {
-		getDetail().getIrpfData().setWorkActivityExtension(
-				workActivityExtension.getValue());
 		markAsDirty();
 	}
 

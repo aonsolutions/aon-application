@@ -35,7 +35,7 @@
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
 								<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-								<g:Button ui:field="printButton" text="{msg.printViaAeat}"
+								<g:Button ui:field="printButton" text="{msg.validatePrintViaAeat}"
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
 								<g:Button ui:field="generateFileButton" text="{msg.generateFile}"
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}"  />

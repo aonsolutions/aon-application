@@ -144,12 +144,44 @@
 							</td>
 						</tr>
 					</table>
+					
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
+						<tr>
+							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth150}" colspan="3">
+								<g:Label text="Percepciones derivadas de incapacidad laboral (solo para percepciones de las claves A, B.01" />
+							</td>
+						</tr>
+						<tr>
+							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth150}">
+								<g:Label text="{msg.perceptionValoration}" />
+							</td>
+							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth150}">
+								<g:Label text="{msg.retentionIncome}" />
+							</td>
+							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth150}">
+								<g:Label text="{msg.inKindOutputDeposit}" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<aon:DoubleBox ui:field="perceptionIL"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="retentionIL"/>
+							</td>
+							<td>
+								<aon:DoubleBox ui:field="outputRetentionIL"/>
+							</td>
+						</tr>
+					</table>
+					
+					
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel ui:field="additionalDataPanel" styleName="{aonResources.css.aonMarginTop}">
 					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
 						<tr>
-							<td class="{aonResources.css.aonBorderBottom} {aonResources.css.aonBold}" colspan="10">
+							<td class="{aonResources.css.aonBorderBottom} {aonResources.css.aonBold}" colspan="11">
 								<g:InlineLabel text="{msg.additionalData}" />
 							</td>
 						</tr>
@@ -184,18 +216,8 @@
 							<td class="{aonResources.css.aonWidthAuto}">
 								<g:ListBox width="40px" ui:field="contract"/>
 							</td>
-						</tr>
-						<tr>
-							<td class="{aonResources.css.aonFontMedium}" colspan="3">
-								<g:CheckBox ui:field="workActivityExtension" 
-									text="{msg.geographicMobility2014}" />
-							</td>
-							<td class="{aonResources.css.aonFontMedium}" colspan="3">
+							<td class="{aonResources.css.aonFontMedium}" >
 								<g:CheckBox ui:field="geographicMobility" text="{msg.geographicMobility}"/>
-							</td>
-							<td class="{aonResources.css.aonFontMedium}" colspan="4">
-								<g:CheckBox ui:field="homeLoanCommunnication" 
-									text="{msg.homeLoanCommunnication}" />
 							</td>
 						</tr>
 					</table>
@@ -235,7 +257,16 @@
 					
 					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
 						<tr>
-							<td class="{aonResources.css.aonBold} {aonResources.css.aonBorderBottom} {aonResources.css.aonWidthAuto}">
+							<td class="{aonResources.css.aonFontMedium}">
+								<g:CheckBox ui:field="homeLoanCommunnication" 
+									text="{msg.homeLoanCommunnication}" />
+							</td>
+						</tr>
+					</table>
+					
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonNowrap}">
+						<tr>
+							<td class="{aonResources.css.aonBold} {aonResources.css.aonBorderBottom} {aonResources.css.aonWidth300}">
 								<g:InlineLabel text="{msg.descendant}"/>
 							</td>
 							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth60}">
@@ -260,7 +291,7 @@
 							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth40} {aonResources.css.aonPaddingLeft}">
 								<g:Label text="{msg.second}" />
 							</td>
-							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth40} {aonResources.css.aonPaddingLeft}">
+							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidthAuto} {aonResources.css.aonPaddingLeft}">
 								<g:Label text="{msg.third}" />
 							</td>
 						</tr>

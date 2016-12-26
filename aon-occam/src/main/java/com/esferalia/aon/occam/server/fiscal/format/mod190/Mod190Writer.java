@@ -36,8 +36,10 @@ public class Mod190Writer {
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getReplacedReceipt(),13,0))
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().size(),9,0))
 		   // repasar
-		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(mod190.getDetails().stream().mapToDouble(det -> AonMathUtils.round(det.getPerception() + det.getInKindPerception())).sum(),16,2))
-		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().stream().mapToDouble( det -> AonMathUtils.round(det.getRetention() + det.getInKindDeposit())).sum(),15,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(mod190.getDetails().stream().mapToDouble(
+			   det -> AonMathUtils.round(det.getPerception() + det.getInKindPerception() + det.getPerceptionIL())).sum(),16,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().stream().mapToDouble( 
+			   det -> AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL())).sum(),15,2))
 		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 312))		
 		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 13))
 		   ,(wr, mod190,detail) -> wr.append("\r\n")
@@ -66,6 +68,7 @@ public class Mod190Writer {
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getIrpfData().getSpouseDocument(), 9))
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getIrpfData().getDisability(), 1,0))
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getIrpfData().getContract(), 1,0))
+		   ,(wr, mod190,detail) -> wr.append(" ")
 		   ,(wr, mod190,detail) -> wr.append(detail.getIrpfData().isGeographicMobility()?"1":"0")
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getIrpfResult().getApplicableReduction()),13,2))
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getIrpfResult().getDeducibleExpense()),13,2))

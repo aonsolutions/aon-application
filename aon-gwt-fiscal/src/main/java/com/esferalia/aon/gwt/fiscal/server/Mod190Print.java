@@ -102,15 +102,17 @@ public class Mod190Print extends HttpServlet {
 		} else {
 			urlParameters = 
 					"HID=INV6190A" + 
-					"&IDI=ES" + 
+					"&IDI=ES" +
+					"&LEV=000000000000" +
 					"&FIC="	+ encodedFile + 
 					"&RUT=" + 
-					"&PRG=" + 
+					"&PRG=PTLINKG2" + 
 					"&FIN=" + 
 					"&EJF=2016" + 
 					"&MOD=190";
-			// request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+//			request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
 			request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+			
 		}
 
 		URL url = new URL(request);

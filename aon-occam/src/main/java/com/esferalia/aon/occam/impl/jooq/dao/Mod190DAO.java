@@ -62,7 +62,9 @@ public class Mod190DAO {
 		ctx.checkWrite();
 		if (mod190.getId() == null) {
 			mod190 = insert(ctx, mod190);
-			insertDetails(ctx, mod190);
+			if (mod190.getDetails() != null && !mod190.getDetails().isEmpty()) {
+				insertDetails(ctx, mod190);
+			}
 		} else {
 			mod190 = update(ctx, mod190);
 			for (Mod190Detail detail : mod190.getDetails()) {
@@ -382,7 +384,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION,
 						AonEnumUtils.getByte(irpfResult
 								.isHomeLoanCommunnication()))
-				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerception())
+				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerceptionIL())
 				.set(FS_MODEL190_DETAIL.RETENTION_IL, detail.getRetentionIL())
 				.set(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL, detail.getOutputRetentionIL())
 				;
@@ -487,7 +489,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION,
 						AonEnumUtils.getByte(irpfResult
 								.isHomeLoanCommunnication()))
-				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerception())
+				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerceptionIL())
 				.set(FS_MODEL190_DETAIL.RETENTION_IL, detail.getRetentionIL())
 				.set(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL, detail.getOutputRetentionIL())
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
