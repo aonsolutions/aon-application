@@ -34,6 +34,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
@@ -402,6 +403,28 @@ public class Mod3902015DAO {
 			.setDocument(params.getDocument())
 			.setEnterpriseName(params.getName())
 			.setYear( year );
+		
+		if (year == 2016) {
+			LinkedList<Mod390> mod390s = Mod390DAO.getByDomain(ctx, ctx.getDomainId());
+			for (Mod390 m390 : mod390s) {
+				if (m390.getYear() == 2015) {
+					Mod3902015 mod3902015 = getById(ctx, m390.getId());
+					mod390.setMainActivity(mod3902015.getMainActivity());
+					mod390.setActivity1(mod3902015.getActivity1());
+					mod390.setActivity2(mod3902015.getActivity2());
+					mod390.setActivity3(mod3902015.getActivity3());
+					mod390.setActivity4(mod3902015.getActivity4());
+					mod390.setActivity5(mod3902015.getActivity5());
+					mod390.setAddress(mod3902015.getAddress());
+					mod390.setLegalRepr1(mod3902015.getLegalRepr1());
+					mod390.setLegalRepr1(mod3902015.getLegalRepr1());
+					mod390.setLegalRepr2(mod3902015.getLegalRepr2());
+					mod390.setLegalRepr3(mod3902015.getLegalRepr3());
+					break;
+				}
+			}
+		}
+		
 		if (mod390.isLegalEntity()) {
 			mod390.setName(mod390.getEnterpriseName());
 		} else {
