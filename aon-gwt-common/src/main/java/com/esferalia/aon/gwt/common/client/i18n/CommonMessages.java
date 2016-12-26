@@ -875,7 +875,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Percepci\u00F3n \u00CDntegras / Valoraci\u00F3n")
 	String perceptionValoration();
 	
-	@DefaultMessage("Retenciones aplicadas / Ingresos a cuenta efectuados")
+	@DefaultMessage("Ret. aplic./ Ingr. a cta.")
 	String retentionIncome();
 	
 	@DefaultMessage("Retenciones")

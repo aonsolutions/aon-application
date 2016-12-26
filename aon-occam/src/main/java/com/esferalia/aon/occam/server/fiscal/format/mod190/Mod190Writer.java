@@ -7,8 +7,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod190Writer {
 
@@ -211,6 +211,81 @@ public class Mod190Writer {
 	}
 
 	// **********************************************************************
+	// 								BIZKAIA 								
+	// **********************************************************************
+	private enum Mod190File2016Bizkaia {
+		TYPE_1 (new IPropertyFiller[] { 
+			(wr, mod190,detail) -> wr.append("1")
+		   ,(wr, mod190,detail) -> wr.append("190")
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getYear(), 4,0))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getDocument(),9))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getName(),40))
+		   ,(wr, mod190,detail) -> wr.append("T")
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getContactPhone(),9))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getContactPerson(),40))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getReceipt(),13,0))
+		   ,(wr, mod190,detail) -> wr.append(" ")
+		   ,(wr, mod190,detail) -> wr.append(mod190.isReplacement()?"S":" ")
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getReplacedReceipt(),13,0))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().size(),9,0))
+		   // repasar
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(mod190.getDetails().stream().mapToDouble(
+			   det -> AonMathUtils.round(det.getPerception() + det.getInKindPerception() + det.getPerceptionIL())).sum(),16,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().stream().mapToDouble( 
+			   det -> AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL())).sum(),15,2))
+		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 312))		
+		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 13))
+		   ,(wr, mod190,detail) -> wr.append("\r\n")
+		})
+			
+		,TYPE_2 (new IPropertyFiller[] { 
+			(wr, mod190,detail) -> wr.append("2")
+		   ,(wr, mod190,detail) -> wr.append("190")
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getYear(), 4,0))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getDocument(),9))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getDocument(),9))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getRepresentativeDocument(),9))	 									// APELLIDOS Y NOMBRE, RAZÓN DENOMINACIÓN DEL PERCEPTOR
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(AonFiscalFileUtils.changeInvalidCharacters(detail.getName()),40))	 			
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getProvince(),2,0))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getKey(),1))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text((AonStringUtils.isBlank(detail.getSubKey())?"00":detail.getSubKey()),2))	
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(AonMathUtils.round(detail.getPerception()),14,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getRetention()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(AonMathUtils.round(detail.getInKindPerception()),14,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindDeposit()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindOutputDeposit()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getAccrualYear(), 4,0))
+		   ,(wr, mod190,detail) -> wr.append("0")
+		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 14))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getIrpfData().getDisability(), 1,0))
+		   ,(wr, mod190,detail) -> wr.append("000")
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getIrpfResult().getApplicableReduction()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getIrpfResult().getDeducibleExpense()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getIrpfResult().getCompensatoryPension()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat('0', 17))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getIrpfResult().getOtherDescendent(),2,0))
+		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat('0', 26))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(AonMathUtils.round(detail.getPerceptionIL()),14,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getRetentionIL()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getOutputRetentionIL()),13,2))
+		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 206))		
+		   ,(wr, mod190,detail) -> wr.append("\r\n")
+		})
+		;
+		private IPropertyFiller[] propertyFillers;
+
+		private Mod190File2016Bizkaia(IPropertyFiller[] pf) {
+			this.propertyFillers = pf;
+		}
+
+		private void fillPage(Mod190 mod190, Mod190Detail detail, Writer wr) throws IOException {
+			for (IPropertyFiller propertyFiller : this.propertyFillers) {
+				propertyFiller.propertyFill(wr, mod190, detail);
+			}
+		}
+	}
+
+	// **********************************************************************
 	// 								GIPUZKOA 								
 	// **********************************************************************
 	private enum Mod190File2015Gipuzkoa {
@@ -285,6 +360,8 @@ public class Mod190Writer {
 		Administration adm = Administration.values()[mod190.getAdministration()];
 		if (adm == Administration.GIPUZKOA) {
 			fillWriterGipuzkoa(mod190, wr);
+		} else if (adm == Administration.BIZKAIA) {
+			fillWriterBizkaia(mod190, wr);
 		} else {
 			if (mod190.getYear() < 2016) {
 				fillWriterAeat2015(mod190, wr);
@@ -302,6 +379,13 @@ public class Mod190Writer {
 		}
 	}
 	
+	private static void fillWriterBizkaia(Mod190 mod190, Writer wr) throws IOException {
+		Mod190File2016Bizkaia.TYPE_1.fillPage(mod190, null, wr);	
+		for (Mod190Detail detail : mod190.getDetails()) {
+			Mod190File2016Bizkaia.TYPE_2.fillPage(mod190, detail, wr);	
+		}
+	}
+
 	private static void fillWriterAeat2015(Mod190 mod190, Writer wr) throws IOException {
 		Mod190File2015Aeat.TYPE_1.fillPage(mod190, null, wr);
 		for (Mod190Detail detail : mod190.getDetails()) {

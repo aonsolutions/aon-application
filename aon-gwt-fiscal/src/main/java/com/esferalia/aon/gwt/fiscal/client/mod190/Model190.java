@@ -242,10 +242,18 @@ public class Model190 extends MainEntryPoint {
 			detail.setMod190(currentMod190);	
 			perceptorPanel.setWidget(detail);
 		} else {
-			Model190Detail2016 detail = new Model190Detail2016();
-			detail.setMod190(currentMod190);	
-			perceptorPanel.setWidget(detail);
+			if (currentMod190.getAdministration() == Administration.BIZKAIA.ordinal()) {
+				Model190Detail2016Bizkaia detail = new Model190Detail2016Bizkaia();
+				detail.setMod190(currentMod190);	
+				perceptorPanel.setWidget(detail);
+			} else {
+				Model190Detail2016 detail = new Model190Detail2016();
+				detail.setMod190(currentMod190);	
+				perceptorPanel.setWidget(detail);
+			}
 		}
+		printButton.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
+		printMod190Button.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
 	}
 
 	@UiHandler("table")
@@ -372,7 +380,9 @@ public class Model190 extends MainEntryPoint {
 	}
 	@UiHandler("administration")
 	void onAdministrationChanged(ChangeEvent event) {
-		currentMod190.setAdministration((byte) administration.getSelectedIndex());		
+		currentMod190.setAdministration((byte) administration.getSelectedIndex());
+		printButton.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
+		printMod190Button.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
 		paintHeaderTable();	
 	}
 	
