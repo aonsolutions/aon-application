@@ -223,7 +223,7 @@ public enum Record5Bizkaia2015 implements Serializable,IMod140Record {
 			 (writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(account).get(vatIdx).getDeductibleQuota(), 14 ));}
 			 )
 	,CRITERIO_CAJA(
-			 (writer,ctx,invoice,account,vatIdx) -> {writer.append( invoice.isVatAccrualPayment()?'X':' ' );}
+			 (writer,ctx,invoice,account,vatIdx) -> {writer.append( invoice.isVatAccrualPayment()?'S':'N' );}
 			 )
 	,IMPORTE_DEVENGADO(
 			 (writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( 0.0, 14 ));}
