@@ -1605,8 +1605,9 @@ public class ContrataContratosWriter implements IContrataWriter{
 				int value = (int)(CommonUtil.round(params.getPorcentajeJornadaReduccion())*100);
 				datos.setPORCENTAJEJORNADAREDUCCION(String.valueOf(value));
 			}
+			return datos;
 		}
-		return datos;
+		return null;
 	}
 	/**
 	 * <xsd:complexType name="DATOS_BONIFICACIONTYPE">
