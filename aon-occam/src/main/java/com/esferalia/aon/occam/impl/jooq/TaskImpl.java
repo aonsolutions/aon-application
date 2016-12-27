@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -186,9 +187,9 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
-	public Stream<Registry> getTaskRegistryStream(AONContext ctx){
+	public Stream<Customer> getTaskCustomerStream(AONContext ctx){
 		return ctx.getDslContext().transactionResult(
-			configuration -> TaskDAO.getTaskRegistryStream(ctx));	
+			configuration -> TaskDAO.getTaskCustomerStream(ctx));	
 	}
 	
 	@Override
@@ -219,9 +220,9 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter) {
+	public Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getFilterRegistryStream(ctx, filter));	
+				configuration -> TaskDAO.getFilterCustomerStream(ctx, filter));	
 	}
 
 	@Override

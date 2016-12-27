@@ -26,13 +26,14 @@ public class ToJSON {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
-	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, String observation, JSONArray rmedia){
+	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, String observation, JSONArray rmedia, String status){
 		JSONObject json = new JSONObject();
 		json.put("direction", direction);
 		json.put("commercial", commercial);
 		json.put("segmentation", segmentation);
 		json.put("observation", observation);
 		json.put("rmedia", rmedia);
+		json.put("status", status);
 		return json;
 	}
 	

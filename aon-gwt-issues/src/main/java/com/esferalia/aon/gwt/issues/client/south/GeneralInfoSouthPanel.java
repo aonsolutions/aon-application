@@ -12,6 +12,14 @@ public class GeneralInfoSouthPanel extends SouthPanel {
     public GeneralInfoSouthPanel(JsGeneral general) {   
     	super();
         vertical.setWidth("100%");
+  
+        // OBSERVACION
+        if(general.getStatus() != null && !general.getStatus().equals(""))
+        	vertical.add(buildGeneral("report-problem", general.getStatus()));
+  
+        // OBSERVACION
+        if(general.getObservation() != null && !general.getObservation().equals(""))
+        	vertical.add(buildGeneral("visibility", "Observacion: " + general.getObservation()));
         
         // DIRECCION
         if(general.getDirection() != null && !general.getDirection().equals(""))
@@ -24,10 +32,6 @@ public class GeneralInfoSouthPanel extends SouthPanel {
         // SEGMENTACION
         if(general.getSegmentation() != null && !general.getSegmentation().equals(""))
         	vertical.add(buildGeneral("view-module", "Segmentacion: " + general.getSegmentation()));
-        
-        // OBSERVACION
-        if(general.getObservation() != null && !general.getObservation().equals(""))
-        	vertical.add(buildGeneral("visibility", "Observacion: " + general.getObservation()));
         
         // RMEDIA
         general.getRmedia().stream().forEach(js -> {

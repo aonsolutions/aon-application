@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Contact;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
@@ -2118,6 +2119,16 @@ public class AON {
 		}
 	}
 	
+	
+	public static Customer getCustomer(String domainName, Integer domainId, String login, Integer registry){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCustomer(ctx, registry);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	// ------------------------------------- CATEGORY
 
 	public static Category getCategory(String domainName, Integer domainId,
@@ -2981,33 +2992,33 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Registry> getTaskRegistryStream(String domainName, Integer domainId, String login){
+	public static Stream<Customer> getTaskCustomerStream(String domainName, Integer domainId, String login){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskRegistryStream(ctx);
+			return getTask().getTaskCustomerStream(ctx);
 		} finally {
 			if(ctx != null) ctx.close();
 		}
 	}
 	
-	public static LinkedList<Registry> getTaskRegistryList(String domainName, Integer domainId, String login){
-		return getTaskRegistryStream(domainName, domainId, login)
+	public static LinkedList<Customer> getTaskCustomerList(String domainName, Integer domainId, String login){
+		return getTaskCustomerStream(domainName, domainId, login)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static Stream<Registry> getFilterRegistryStream(String domainName, Integer domainId, String login, String filter){
+	public static Stream<Customer> getFilterCustomerStream(String domainName, Integer domainId, String login, String filter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getFilterRegistryStream(ctx, filter);
+			return getTask().getFilterCustomerStream(ctx, filter);
 		} finally {
 			if(ctx != null) ctx.close();
 		}
 	}
 	
-	public static LinkedList<Registry> getFilterRegistryList(String domainName, Integer domainId, String login, String filter){
-		return getFilterRegistryStream(domainName, domainId, login, filter)
+	public static LinkedList<Customer> getFilterCustomerList(String domainName, Integer domainId, String login, String filter){
+		return getFilterCustomerStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	

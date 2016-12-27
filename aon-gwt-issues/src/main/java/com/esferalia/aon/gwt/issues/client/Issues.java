@@ -193,7 +193,7 @@ public class Issues implements EntryPoint {
 				updateIssueList(issueFilter, false);
 			}
 			
-			@Override protected void onMoreOptionButtonClick() {}
+			
 			
 			@Override
 			protected void onMenuButtonClick() {
@@ -206,10 +206,7 @@ public class Issues implements EntryPoint {
 					dockLayoutPanel.setWidgetSize(configurationPanel, 0);
 				}		
 			}
-			
-			@Override protected void onEditButtonClick() {}
-			
-			@Override protected void onDeleteButtonClick() {}
+
 			
 			@Override
 			protected void onAddButtonClick() {
@@ -245,7 +242,8 @@ public class Issues implements EntryPoint {
 			protected void onStatsButtonClick() {
 				contentDockLayoutPanel.removeFromParent();
 				AonToolbar t = (AonToolbar)toolbar.getWidget(0);
-				t.setVisibleRefreshButton(false).setVisibleFastFilterButton(false);
+				t.setVisibleRefreshButton(false).setVisibleFastFilterButton(false)
+				.setVisibleDownloadButton(true).setVisibleInfoButton(false);
 				contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 				contentDockLayoutPanel.add(new StatPanel(incidence));
 				dockLayoutPanel.add(contentDockLayoutPanel);				
@@ -271,6 +269,7 @@ public class Issues implements EntryPoint {
 						
 						FilterPanel fp = (FilterPanel) searchContent.getWidget(0);
 						fp.initialize(false);
+						fp.fastFilterLabel.setText("Filtro R\u00e1pido;");
 						updateIssueList(issueFilter, false);
 					}
 					
@@ -282,7 +281,8 @@ public class Issues implements EntryPoint {
 			protected void onTitleClick() {
 				contentDockLayoutPanel.removeFromParent();
 				AonToolbar t = (AonToolbar)toolbar.getWidget(0);
-				t.setVisibleRefreshButton(true).setVisibleFastFilterButton(true);
+				t.setVisibleRefreshButton(true).setVisibleFastFilterButton(true)
+				.setVisibleDownloadButton(false).setVisibleInfoButton(true);
 				contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 				contentDockLayoutPanel.addNorth(searchContent, 85);
 				contentDockLayoutPanel.add(content);
@@ -294,6 +294,15 @@ public class Issues implements EntryPoint {
 				fp.initialize(false);
 				updateIssueList(issueFilter, false);
 			}
+			
+			@Override protected void onDownloadButtonClick() {
+				StatPanel stat = (StatPanel) contentDockLayoutPanel.getWidget(0);
+				incidence.downloadStat(stat.getIssueFilter());
+			}
+
+			@Override protected void onMoreOptionButtonClick() {}
+			@Override protected void onEditButtonClick() {}
+			@Override protected void onDeleteButtonClick() {}
 		}.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false)

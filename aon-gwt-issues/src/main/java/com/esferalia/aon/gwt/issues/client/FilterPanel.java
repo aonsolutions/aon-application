@@ -40,8 +40,10 @@ public class FilterPanel extends Composite {
 	public static final AonGwtIssuesCSS ICSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 
     Issues issues;
+    
 
     @UiField HorizontalPanel filterHorizontal;
+    @UiField InlineLabel fastFilterLabel;
     @UiField InlineLabel priorityLabel;
     @UiField InlineLabel tagLabel;
     @UiField InlineLabel typeLabel;
@@ -555,6 +557,7 @@ public class FilterPanel extends Composite {
     	enterpriseButton.setTitle("");enterpriseLabel.setText("");
     	orderButton.setTitle("");orderLabel.setText("");
     	dateButton.setTitle("");dateLabel.setText("");
+    	fastFilterLabel.setText("");
     	
     	titleFilter.setValue("");
     	

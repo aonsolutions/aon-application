@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -45,4 +46,7 @@ public interface IRegistry {
 	public RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia);
 	public RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia);
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
+	
+	
+	public Customer getCustomer(AONContext ctx, Integer registry);
 }

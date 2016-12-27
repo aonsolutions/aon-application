@@ -49,8 +49,8 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
 		System.out.println("GET METHOD");
 		String[] pathInfo = req.getPathInfo().split("/");
-		String userName = pathInfo[1];
-		String domainName = pathInfo[2]; 
+		String domainName = pathInfo[1];
+		String userName = pathInfo[2]; 
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));		
 	 	
         HSSFWorkbook libro = new HSSFWorkbook();

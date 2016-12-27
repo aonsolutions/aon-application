@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRegistry;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -132,6 +133,13 @@ public class RegistryImpl implements IRegistry{
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.deleteRMedia(ctx, registry));
+
+	}
+	
+	@Override
+	public Customer getCustomer(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getCustomer(ctx, registry));
 
 	}
 	

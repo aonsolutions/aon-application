@@ -29,4 +29,8 @@ public class JsUser extends JavaScriptObject {
 	public final native AonJsArray<JsUser> getWorkgroups() /*-{
 		return this.workgroups;
 	}-*/;
+	
+	public final native JsObject getStatus() /*-{
+		return this.customer_status;
+	}-*/;	
 }

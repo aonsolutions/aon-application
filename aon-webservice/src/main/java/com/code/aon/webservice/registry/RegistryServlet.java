@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -128,13 +129,15 @@ public class RegistryServlet extends HttpServlet{
 		AON.getRSellerStream(domain.getName(), domain.getId(), login, registryId)
 		.forEach(s -> {commercial = commercial + " - " + s.getRegistryName();});
 		
+		CustomerStatus status = AON.getCustomer(domain.getName(), domain.getId(), login, registryId).getStatus();
+		String st = !CustomerStatus.ACTIVE.equals(status) ? status.getDescription() : "";
 		String observation = AON.getRNote(domain.getName(), domain.getId(), login,
 				f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getRegistryProperty().eq(registryId))
     			.and(f.getNoteTypeProperty().eq(NoteType.OBSERVATION.value()))).getComments();
 		
 		
-		return ToJSON.generalToJSON(direction, commercial, segmentation, observation, getRmediaList(domain, login, registryId));
+		return ToJSON.generalToJSON(direction, commercial, segmentation, observation, getRmediaList(domain, login, registryId), st);
 	}
 
     private JSONArray getRmediaList(Domain domain, String login){

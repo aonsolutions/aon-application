@@ -26,19 +26,20 @@
     </style>
 	<p:PaperToolbar height="40px" styleName="aon-menuBar" 
 			style="border-top: 0px;">
-       	<p:PaperIconButton ui:field="menuButton" icon="menu"/>
+       	<p:PaperIconButton ui:field="menuButton" title="menu" icon="menu"/>
        	<p:PaperButton ui:field="titleButton">
 		    <g:InlineLabel ui:field="titleLabel" text="Toolbar" styleName="title" />
 		</p:PaperButton>	
 	    <g:HorizontalPanel styleName="{style.button-right}">
-       		<p:PaperIconButton ui:field="fastFilterButton" visible="false" icon="filter-list"/>
-      		<p:PaperIconButton ui:field="statsButton" icon="assessment"/>
-      		<p:PaperIconButton ui:field="infoButton" icon="info-outline"/>
-      		<p:PaperIconButton ui:field="refreshButton" icon="refresh"/>
-       		<p:PaperIconButton ui:field="addButton" icon="add" />
-       		<p:PaperIconButton ui:field="editButton" icon="create" />
-   			<p:PaperIconButton ui:field="deleteButton" icon="delete" />
-   			<p:PaperIconButton ui:field="moreOptionButton" icon="more-vert" />
+	           		<p:PaperIconButton ui:field="downloadButton" title="Descargar" visible="false" icon="file-download"/>
+       		<p:PaperIconButton ui:field="fastFilterButton" title="Filtro Rápido" visible="false" icon="filter-list"/>
+      		<p:PaperIconButton ui:field="statsButton" title="Estadísticas" icon="assessment"/>
+      		<p:PaperIconButton ui:field="infoButton" title="Información" icon="info-outline"/>
+      		<p:PaperIconButton ui:field="refreshButton" title="Refrescar" icon="refresh"/>
+       		<p:PaperIconButton ui:field="addButton" title="Añadir" icon="add" />
+       		<p:PaperIconButton ui:field="editButton" title="Editar" icon="create" />
+   			<p:PaperIconButton ui:field="deleteButton" title="Borrar" icon="delete" />
+   			<p:PaperIconButton ui:field="moreOptionButton" title="Más Opciones" icon="more-vert" />
    		</g:HorizontalPanel>
     </p:PaperToolbar>
 </g:HTMLPanel>

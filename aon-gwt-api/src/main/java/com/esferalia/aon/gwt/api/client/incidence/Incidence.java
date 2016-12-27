@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.api.client.project.JsProject;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.esferalia.aon.gwt.api.client.stat.JsStatData;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Incidence extends Methods{
@@ -513,6 +514,13 @@ public class Incidence extends Methods{
 	// -------------------- STATUS
 	public void getStatuses( AsyncCallback<JSON<JsObject>> callback){
 		get(url + "repos/"+getUserName()+"/"+getDomainName()+"/statuses", callback);
+	}
+	
+	// -------------------- DOWNLOAD
+	
+	public void downloadStat(IssueFilter filter){
+		Window.open(url + "download_task_stat_excel/" + getDomainName() + "/" + getUserName()
+			+ getIssueFilter(filter), "_blank", null);
 	}
 	
 	//---------------------- Métodos Get & Set

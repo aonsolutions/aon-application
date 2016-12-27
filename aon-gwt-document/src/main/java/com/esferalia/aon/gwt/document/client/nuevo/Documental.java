@@ -107,11 +107,7 @@ public class Documental implements EntryPoint {
 	private void createAonToolbar(){
 		
 		toolbar.add(new AonToolbar("Documental") {
-			
-			@Override protected void onRefreshButtonClick() {}
-			
-			@Override protected void onMoreOptionButtonClick() {}
-			
+
 			@Override protected void onMenuButtonClick() {
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
 					configurationPanel.add(new ConfigurationPanel());
@@ -123,19 +119,17 @@ public class Documental implements EntryPoint {
 				}	
 			}
 			
+			@Override protected void onRefreshButtonClick() {}
+			@Override protected void onMoreOptionButtonClick() {}
 			@Override protected void onEditButtonClick() {}
-			
 			@Override protected void onDeleteButtonClick() {}
-			
 			@Override protected void onAddButtonClick() {}
-
 			@Override protected void onInfoButtonClick() {}
-
 			@Override protected void onStatsButtonClick() {}
-
 			@Override protected void onFastFilterButtonClick() {}
-
 			@Override protected void onTitleClick() {}
+			@Override protected void onDownloadButtonClick() {}
+			
 		}
 		.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)

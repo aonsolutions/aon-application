@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.Record2;
+import org.jooq.Record;
+import org.jooq.Record3;
 import org.jooq.SortField;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.TaskCommentRecord;
 import com.esferalia.aon.jooq.tables.records.TaskEventRecord;
@@ -33,6 +33,7 @@ import com.esferalia.aon.jooq.tables.records.TaskHolderRecord;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -57,6 +58,7 @@ import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -688,19 +690,19 @@ public class TaskDAO {
 			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
 	}
 	
-	public static Stream<Registry> getTaskRegistryStream(AONContext ctx){
+	public static Stream<Customer> getTaskCustomerStream(AONContext ctx){
 		return ctx.getDslContext().select().from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
-			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(CUSTOMER.STATUS.eq((byte) 0))
-			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
+			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId()))
+			.fetch().stream().map(new TaskCustomerFiller());
 	}
 	
-	public static Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter){
-		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.NAME)
+	public static Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter){
+		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.NAME, CUSTOMER.STATUS)
 				.from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
 							.join(RMEDIA).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
-			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(CUSTOMER.STATUS.eq((byte) 0))
+			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId()))
 				.and(REGISTRY.NAME.contains(filter).or(REGISTRY.ALIAS.contains(filter)).or(RMEDIA.VALUE.contains(filter)).or(REGISTRY.DOCUMENT.contains(filter)))
-			.fetch().stream().map(new TaskFilterRegistryFiller());
+			.fetch().stream().map(new TaskFilterCustomerFiller());
 	}
 	
 	public static Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter){
@@ -834,23 +836,36 @@ public class TaskDAO {
 		}
 	}
 	
-	private static class TaskRegistryFiller implements Function<RegistryRecord, Registry> {
+	private static class TaskRegistryFiller implements Function<Record, Registry> {
 		@Override
-		public Registry apply(RegistryRecord r) {
-			return new Registry().setId(r.getId())
-					.setDomain(r.getDomain())
-					.setAlias(r.getAlias())
-					.setName(r.getName())
-					.setType(r.getType());
+		public Registry apply(Record r) {
+			return new Registry().setId(r.getValue(REGISTRY.ID))
+					.setDomain(r.getValue(REGISTRY.DOMAIN))
+					.setAlias(r.getValue(REGISTRY.ALIAS))
+					.setName(r.getValue(REGISTRY.NAME))
+					.setType(r.getValue(REGISTRY.TYPE));
 		}
 	}
 	
-	private static class TaskFilterRegistryFiller implements Function<Record2<Integer, String>, Registry> {
+	private static class TaskCustomerFiller implements Function<Record, Customer> {
 		@Override
-		public Registry apply(Record2<Integer, String> r) {
-			return new Registry()
-					.setId(r.getValue(REGISTRY.ID))
-					.setName(r.getValue(REGISTRY.NAME));
+		public Customer apply(Record r) {
+			return new Customer().setRegistry(new Registry().setId(r.getValue(REGISTRY.ID))
+								.setDomain(r.getValue(REGISTRY.DOMAIN))
+								.setAlias(r.getValue(REGISTRY.ALIAS))
+								.setName(r.getValue(REGISTRY.NAME))
+								.setType(r.getValue(REGISTRY.TYPE)))
+					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
+		}
+	}
+	
+	private static class TaskFilterCustomerFiller implements Function<Record3<Integer, String, Byte>, Customer> {
+		@Override
+		public Customer apply(Record3<Integer, String, Byte> r) {
+			return new Customer().setRegistry(new Registry()
+								.setId(r.getValue(REGISTRY.ID))
+								.setName(r.getValue(REGISTRY.NAME)))
+					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
 	

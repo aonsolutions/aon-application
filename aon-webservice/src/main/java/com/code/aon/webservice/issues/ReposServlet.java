@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -486,15 +487,15 @@ public class ReposServlet extends HttpServlet{
 	
 	private JSONArray getAllRegistriesJSON(Domain domain, String userName) {		
 		JSONArray array = new JSONArray();
-		AON.getTaskRegistryStream(domain.getName(), domain.getId(), userName)
-			.map(new RegistryToUserFiller()).forEach(l->array.put(l.toJSON()));
+		AON.getTaskCustomerStream(domain.getName(), domain.getId(), userName)
+			.map(new CustomerToUserFiller()).forEach(l->array.put(l.toJSON()));
 		return array;
 	}
 	
 	private JSONArray getFilterRegistriesJSON(Domain domain, String userName, String filter) {		
-		Stream<Registry> str = AON.getFilterRegistryStream(domain.getName(), domain.getId(), userName, filter);
+		Stream<Customer> str = AON.getFilterCustomerStream(domain.getName(), domain.getId(), userName, filter);
 		JSONArray array = new JSONArray();
-		str.map(new RegistryToUserFiller()).forEach(l -> array.put(l.toJSON()));
+		str.map(new CustomerToUserFiller()).forEach(l -> array.put(l.toJSON()));
 		return array;
 	}
 	
@@ -503,7 +504,9 @@ public class ReposServlet extends HttpServlet{
 		AON.getTagStream(domain.getName(), domain.getId(), userName,
 				f -> f.getDomainProperty().eq(domain.getId()).and(f.getTypeProperty().eq(tt.value()))
 				.and(f.getNameProperty().like( "%" + filter +"%")))
-				.map(new TagToLabelFiller(domain, userName)).forEach(l->array.put(l.toJSON()));
+				.map(new TagToLabelFiller(domain, userName))
+				.sorted((n1,n2)-> n1.getName().compareTo(n2.getName()))
+				.forEach(l->array.put(l.toJSON()));
 		return array;
 	}
 	
@@ -863,13 +866,14 @@ public class ReposServlet extends HttpServlet{
 		}
 	}
 	
-	private static class RegistryToUserFiller implements Function<Registry, User>{
+	private static class CustomerToUserFiller implements Function<Customer, User>{
 	
 		@Override
-		public User apply(Registry r) {
+		public User apply(Customer r) {
 			return new User()
-					.setId(r.getId())
-					.setLogin(r.getName());
+					.setId(r.getRegistry().getId())
+					.setLogin(r.getRegistry().getName())
+					.setStatus(r.getStatus());
 		}
 	}
 	

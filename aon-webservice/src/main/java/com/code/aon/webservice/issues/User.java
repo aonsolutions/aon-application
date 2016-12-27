@@ -5,12 +5,15 @@ import java.util.LinkedList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+
 public class User {
 
 	Integer id;
 	String login;
 	String type;
 	String email;
+	CustomerStatus status;
 	LinkedList<User> workgroups;
 	
 	public User() {}
@@ -65,12 +68,27 @@ public class User {
 		return this;
 	}
 
+	public CustomerStatus getStatus() {
+		return status;
+	}
+
+	public User setStatus(CustomerStatus status) {
+		this.status = status;
+		return this;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("id", id);
 		json.put("login", getLogin());
 		json.put("email", email);
 		json.put("workgroups", getWorkgroupsJSON());
+		if(getStatus() != null){
+			JSONObject jsStatus = new JSONObject();
+			jsStatus.put("id", getStatus().value());
+			jsStatus.put("name", getStatus().getDescription());
+			json.put("customer_status", jsStatus);
+		}
 		return json;
 	}
 }

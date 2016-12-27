@@ -24,6 +24,10 @@ public class JsGeneral extends JavaScriptObject {
 		return this.observation;
 	}-*/;
 	
+	public final native String getStatus() /*-{
+		return this.status;
+	}-*/;
+	
 	public final native AonJsArray<JsRmedia> getRmedia() /*-{
 		return this.rmedia;
 	}-*/;

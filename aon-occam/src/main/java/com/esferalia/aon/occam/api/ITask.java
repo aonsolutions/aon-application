@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -53,10 +54,10 @@ public interface ITask {
 	public TaskEvent updateTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskEventId);
 	
 	public Stream<Registry> getTaskMemberStream(AONContext ctx, String filter);
-	public Stream<Registry> getTaskRegistryStream(AONContext ctx);
+	public Stream<Customer> getTaskCustomerStream(AONContext ctx);
 	public Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter);
 	
-	public Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter);
+	public Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter);
 	
 	public void deleteTaskTag(AONContext ctx, Integer taskId, TagType tagType);
 	public void createTaskTag(AONContext ctx, TaskTag taskTag);

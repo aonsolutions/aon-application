@@ -33,6 +33,7 @@ import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RnoteRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -643,6 +644,23 @@ public class RegistryDAO {
 					.setStreet_type(r.getStreetType())
 					.setType(r.getType())
 					.setZip(r.getZip());
+		}
+	}
+	
+	// ------------------- CUSTOMER
+	
+	public static Customer getCustomer(AONContext ctx, Integer registry){
+		return ctx.getDslContext().select().from(CUSTOMER).where(CUSTOMER.REGISTRY.eq(registry))
+				.fetch().stream().map(new CustomerFiller()).findFirst().orElse(new Customer());
+	}
+	
+	public static class CustomerFiller  implements Function<Record, Customer> {
+
+		@Override
+		public Customer apply(Record r) {
+			return new Customer()
+					.setId(r.getValue(CUSTOMER.REGISTRY))
+					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
 }
