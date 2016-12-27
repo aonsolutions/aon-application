@@ -965,7 +965,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					if((si.getQuantity() != null && !transfer)
 						|| (transfer && si.getQuantity() != null && si.getQuantity()!= 0)){
 						String key = si.getProduct() + si.getItem().getDetails() 
-							+ si.getItem().getSerialNumber() != null ? si.getItem().getSerialNumber() : "";
+							+ (si.getItem().getSerialNumber() != null ? si.getItem().getSerialNumber() : "");
 						stock.add(si);
 						if(stockMap.containsKey(key))
 							stockMap.get(key).setQuantity(si.getQuantity() + stockMap.get(key).getQuantity());
