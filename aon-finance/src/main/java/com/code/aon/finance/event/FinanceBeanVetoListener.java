@@ -66,6 +66,9 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		if (!finance.isEmptyInvoice()) {
 	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
+	        if ((finance.getInvoice().isSales() && finance.isPayment()) || (!finance.getInvoice().isSales() && !finance.isPayment())) {
+	        	finance.setPayment(!finance.isPayment());
+	        }
 		}
 		if (finance.getSecurityLevel() == null) {
 			if (!finance.isEmptyInvoice()) {
