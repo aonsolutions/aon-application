@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -78,7 +79,7 @@ public class TagPanel extends Composite {
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");
 					edit.setDisabled(admin);
-					edit.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
+					edit.setStyle("min-height: 30px;padding-top:0px;");
 					edit.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickEditTypeButton(event, label);
@@ -89,8 +90,7 @@ public class TagPanel extends Composite {
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
 					del.setDisabled(admin);
-					del.setStyle("min-height: 30px;position:absolute;right:10px;padding-top:0px;");
-					del.getElement().getStyle().setLeft(290, Unit.PX);
+					del.setStyle("min-height: 30px;padding-top:0px;");
 					del.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickRemoveTypeButton(event, label);
@@ -98,9 +98,14 @@ public class TagPanel extends Composite {
 					});
 					del.setVisible(false);
 					
+					HorizontalPanel hoption = new HorizontalPanel();
+					hoption.getElement().getStyle().setPosition(Position.ABSOLUTE);
+					hoption.getElement().getStyle().setRight(10, Unit.PX);
+					hoption.add(edit);
+					hoption.add(del);
+
 					hp.add(item);
-					hp.add(edit);
-					hp.add(del);
+					hp.add(hoption);
 					hp.setWidth("100%");
 					hp.addDomHandler(new MouseOverHandler() {
 						
@@ -176,7 +181,7 @@ public class TagPanel extends Composite {
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");
 					edit.setDisabled(admin);
-					edit.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
+					edit.setStyle("min-height: 30px;padding-top:0px;");
 					edit.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickEditTagButton(event, label);
@@ -187,8 +192,7 @@ public class TagPanel extends Composite {
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
 					del.setDisabled(admin);
-					del.setStyle("min-height: 30px;position:absolute;right:10px;padding-top:0px;");
-					del.getElement().getStyle().setLeft(290, Unit.PX);
+					del.setStyle("min-height: 30px;padding-top:0px;");
 					del.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickRemoveTagButton(event, label);
@@ -196,9 +200,14 @@ public class TagPanel extends Composite {
 					});
 					del.setVisible(false);
 					
+					HorizontalPanel hoption = new HorizontalPanel();
+					hoption.getElement().getStyle().setPosition(Position.ABSOLUTE);
+					hoption.getElement().getStyle().setRight(10, Unit.PX);
+					hoption.add(edit);
+					hoption.add(del);
+					
 					hp.add(item);
-					hp.add(edit);
-					hp.add(del);
+					hp.add(hoption);
 					hp.setWidth("100%");
 					
 					hp.addDomHandler(new MouseOverHandler() {
