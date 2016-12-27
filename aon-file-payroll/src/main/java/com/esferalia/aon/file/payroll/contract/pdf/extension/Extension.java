@@ -289,15 +289,19 @@ public class Extension extends AbstractContractExtension {
 			getPdfFieldsMap().get(PE191_EXTENSION_NUMBER).setValue(getContractExtensionNumber(contract));
 
 			Integer extensionDurationInMonths = 0;
-			if(prorrogaParams!=null){
-				dateFormatter.applyPattern("dd/MM/yyyy");
-				getPdfFieldsMap().get(PE191_EXTENSION_START_DATE).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
-				getPdfFieldsMap().get(PE191_EXTENSION_END_DATE).setValue(dateFormatter.format(prorrogaParams.getFechaFin()));
-				extensionDurationInMonths = getMonthsBetweenDates(prorrogaParams.getFechaInicio(), prorrogaParams.getFechaFin());
-				if(extensionDurationInMonths==null){
-					extensionDurationInMonths = 0;
+			try {
+				if(prorrogaParams!=null){
+					dateFormatter.applyPattern("dd/MM/yyyy");
+					getPdfFieldsMap().get(PE191_EXTENSION_START_DATE).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
+					getPdfFieldsMap().get(PE191_EXTENSION_END_DATE).setValue(dateFormatter.format(prorrogaParams.getFechaFin()));
+					extensionDurationInMonths = getMonthsBetweenDates(prorrogaParams.getFechaInicio(), prorrogaParams.getFechaFin());
+					if(extensionDurationInMonths==null){
+						extensionDurationInMonths = 0;
+					}
+					getPdfFieldsMap().get(PE191_EXTENSION_MONTH_COUNT).setValue(extensionDurationInMonths.toString());
 				}
-				getPdfFieldsMap().get(PE191_EXTENSION_MONTH_COUNT).setValue(extensionDurationInMonths.toString());
+			} catch (Exception e) {
+				// nada
 			}
 			
 			getPdfFieldsMap().get(PE191_CONTRACT_START_DATE).setValue(dateFormatter.format(contract.getStartDate()));
@@ -331,14 +335,18 @@ public class Extension extends AbstractContractExtension {
 			getPdfFieldsMap().get(PE191_TOTAL_DURATION1).setValue(totalDurationInMonths.toString());
 			getPdfFieldsMap().get(PE191_TOTAL_DURATION2).setValue("meses");
 			
-			if(prorrogaParams!=null){
-				getPdfFieldsMap().get(PE191_SIGN_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
-				dateFormatter.applyPattern("dd");
-				getPdfFieldsMap().get(PE191_SIGN_DAY).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
-				dateFormatter.applyPattern("MMMM");
-				getPdfFieldsMap().get(PE191_SIGN_MONTH).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
-				dateFormatter.applyPattern("yy");
-				getPdfFieldsMap().get(PE191_SIGN_YEAR).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
+			try {
+				if(prorrogaParams!=null){
+					getPdfFieldsMap().get(PE191_SIGN_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
+					dateFormatter.applyPattern("dd");
+					getPdfFieldsMap().get(PE191_SIGN_DAY).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
+					dateFormatter.applyPattern("MMMM");
+					getPdfFieldsMap().get(PE191_SIGN_MONTH).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
+					dateFormatter.applyPattern("yy");
+					getPdfFieldsMap().get(PE191_SIGN_YEAR).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
+				}
+			} catch (Exception e) {
+				// nada
 			}
 			
 			
