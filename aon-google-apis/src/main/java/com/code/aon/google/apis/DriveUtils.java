@@ -41,6 +41,7 @@ import com.code.aon.common.IBlobObject;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.drive.SearchFiles;
+import com.code.aon.google.apis.drive.ShareFiles;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DBSync;
@@ -236,7 +237,6 @@ public class DriveUtils implements IBlobManager {
 			throws IOException, KeyStoreException, GeneralSecurityException {
 		About about = drive.about().get().execute();
 		String rootId = about.getRootFolderId();
-		Vector<String> emails = new Vector<String>();
 		Vector<ParentReference> parents = new Vector<ParentReference>();
 		FileList domainFolders = SearchFiles.searchFilesTitleEqualAndMimetype(drive, fileInfo.getDomain());
 		File domainFolder;
@@ -257,7 +257,8 @@ public class DriveUtils implements IBlobManager {
 			parents.add(new ParentReference().setId(typeFolder.getId()));
 			File file = new File();
 			try {
-				file = insertFile(drive, fileInfo, parents, emails, domain);
+				file = insertFile(drive, fileInfo, parents, domain);
+				ShareFiles.setPermissions(drive, file.getId(), fileInfo.getEmails());
 			} catch (MessagingException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
@@ -381,7 +382,7 @@ public class DriveUtils implements IBlobManager {
 	}
 
 	private static File insertFile(Drive drive, FileInfo fileInfo,
-			Vector<ParentReference> parents, Vector<String> emails,
+			Vector<ParentReference> parents,
 			Domain domain) throws IOException, MessagingException, KeyStoreException,
 			GeneralSecurityException {
 		// File's metadata.

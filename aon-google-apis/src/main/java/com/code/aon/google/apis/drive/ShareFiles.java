@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -42,10 +43,15 @@ public class ShareFiles {
 	 		drive.permissions().insert(fileId, p).execute();
 	}
 	
+    public static void setPermissions(Drive drive, String fileId, Vector<String> emails) throws IOException{
+   	 	for (String email : emails) {
+    		setPermission(drive, fileId,email);
+		}
+    }
+    
     public static void setPermissions(Drive drive, String fileId) throws IOException{
    	 	for (String email : emails) {
     		setPermission(drive, fileId,email);
-
 		}
     }
     

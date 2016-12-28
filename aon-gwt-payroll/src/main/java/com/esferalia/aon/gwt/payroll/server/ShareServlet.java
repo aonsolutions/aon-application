@@ -5,7 +5,6 @@ import static com.code.aon.common.enumeration.SecurityLevel.CONFIDENTIAL;
 import static com.code.aon.registry.enumeration.RegistryAttachmentType.DOCUMENT;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.getSalaryReport;
-import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
@@ -52,8 +51,9 @@ import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
-import com.esferalia.aon.jooq.tables.records.DomainGserviceaccountRecord;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.payroll.Salary;
 
 public class ShareServlet extends HttpServlet implements ShareService {
@@ -133,8 +133,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 				}
 					
 				
-				com.esferalia.aon.occam.api.model.DomainGserviceaccount domainGserviceaccount = 
-						getDomainGserviceaccount(dslContext, salary.getDomain());
+				DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(req.getServerName(), salary.getDomain(), "");
 				
 				reportManager.setCollectionProvider(new SalaryProvider(salary
 						.getId(), beanManager));
@@ -422,17 +421,4 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		return ret;
 	}
 	
-	private static com.esferalia.aon.occam.api.model.DomainGserviceaccount getDomainGserviceaccount(DSLContext dslContext, int domain) {
-		DomainGserviceaccountRecord record =
-				dslContext.selectFrom(DOMAIN_GSERVICEACCOUNT).where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(domain)).fetchOne();
-		com.esferalia.aon.occam.api.model.DomainGserviceaccount domainGserviceaccount = new  com.esferalia.aon.occam.api.model.DomainGserviceaccount();
-		
-		domainGserviceaccount.setClientId(record.getClientId());
-		domainGserviceaccount.setPublicKey(record.getPublicKey());
-		domainGserviceaccount.setEmailAddress(record.getEmailAddress());
-		domainGserviceaccount.setPrivateKey(record.getPrivateKey());
-		domainGserviceaccount.setClientSecret(record.getClientSecret());
-		
-		return domainGserviceaccount;
-	}
 }
