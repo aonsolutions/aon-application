@@ -293,6 +293,13 @@ public class MOD340Writer implements IFinanceConstants{
 					inv.setTotal(total);
 					inv.setCostTaxableBase(0);
 					inv.setDeductibleQuota(taxRs.getDouble("deductible_quota"));
+					
+					// TODO Hay que cambiar el programa y aplicar el porcentaje de deducibilidad.
+					if (MOD340.RECEIVED.equals(inv.getType())) {
+						inv.setDeductibleQuota(quota);	
+					}
+					// ------------------------------------------------
+					
 					deponent.setTotalTaxableBase( CommonUtil.round(deponent.getTotalTaxableBase() + taxableBase ));
 					deponent.setTotalInvoice( CommonUtil.round(deponent.getTotalInvoice() + total));
 					deponent.setTotalQuota( CommonUtil.round(deponent.getTotalQuota() + quota));
@@ -413,7 +420,7 @@ public class MOD340Writer implements IFinanceConstants{
 		return deponent;
 	}
 
-	
+/*	
 	private Invoice fillInvoice(PreparedStatement rectifiedInvoicePs, ResultSet  rectifiedInvoiceRs
 			, ResultSet rs) throws SQLException {
 		Invoice inv = new Invoice();
@@ -502,5 +509,5 @@ public class MOD340Writer implements IFinanceConstants{
 		inv.setDocumentNumber(documentNumber);
 		return inv;
 	}
-	
+*/	
 }
