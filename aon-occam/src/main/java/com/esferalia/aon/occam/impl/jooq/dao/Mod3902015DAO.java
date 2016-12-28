@@ -900,8 +900,8 @@ public class Mod3902015DAO {
 					.and(FINANCE.STATUS.eq((byte)0)
 					.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 					.and(INVOICE.TAX_DATE.between(
-							 AonDateUtils.toSql(AonDateUtils.getYearFirstDay(2014))
-							,AonDateUtils.toSql(AonDateUtils.getYearLastDay(2014))) ))
+							 AonDateUtils.toSql(AonDateUtils.getYearFirstDay((mod390.getYear() - 1)))
+							,AonDateUtils.toSql(AonDateUtils.getYearLastDay((mod390.getYear() - 1))))))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
 					.groupBy(INVOICE_TAX.ID
 							,INVOICE_TAX.PERCENTAGE
