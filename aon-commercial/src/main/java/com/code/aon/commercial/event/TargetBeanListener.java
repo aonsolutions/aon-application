@@ -31,8 +31,8 @@ public class TargetBeanListener extends ManagerBeanListenerAdapter {
 			customer.setTransaction(target.getTransaction());
 			customer.setSkipUpdateTarget(true);
 			customer = (Customer)customerBean.update(customer);
+			customer.setSkipUpdateTarget(false);
 		}
-		customer.setSkipUpdateTarget(false);
 		return customer;
 	}
 
