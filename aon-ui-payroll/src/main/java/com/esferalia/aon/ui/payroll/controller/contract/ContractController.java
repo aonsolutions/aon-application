@@ -166,36 +166,40 @@ public class ContractController extends BasicController {
 	}
 	public boolean isRowContractRetaQuote() {
 		try {
-			Contract contract = (Contract) getModel().getRowData();
-			String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.SELF_EMPLOYED.getValue());
-			return new Boolean( value );
+			return isContractRetaQuote((Contract) getModel().getRowData());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}
 		return false;
+	}
+	public boolean isContractRetaQuote(Contract contract) {
+		String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.SELF_EMPLOYED.getValue());
+		return new Boolean( value );
 	}
 	public boolean isRowCooperativePartnerQuote() {
 		try {
-			Contract contract = (Contract) getModel().getRowData();
-			String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.COOPERATIVE_PARTNER.getValue());
-			return new Boolean( value );
+			return isCooperativePartnerQuote((Contract) getModel().getRowData());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}
 		return false;
 	}
+	public boolean isCooperativePartnerQuote(Contract contract) {
+		String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.COOPERATIVE_PARTNER.getValue());
+		return new Boolean( value );
+	}
 	public boolean isRowContractInternship() {
-		Contract contract = null;
-		String code = null;
 		try {
-			contract = (Contract) getModel().getRowData();
-			code = getContractUtils().getDataCurrentValue(contract, ContextVariable.TC2.getName());
-			return contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getType()==CCCType.FELLOWS 
-					&& code!=null && code.equals("000");
+			return isContractInternship((Contract) getModel().getRowData());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
 		return false;
+	}
+	public boolean isContractInternship(Contract contract) {
+		String code = getContractUtils().getDataCurrentValue(contract, ContextVariable.TC2.getName());
+		return contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getType()==CCCType.FELLOWS 
+				&& code!=null && code.equals("000");
 	}
 	
 	public String getRowContractCode(){

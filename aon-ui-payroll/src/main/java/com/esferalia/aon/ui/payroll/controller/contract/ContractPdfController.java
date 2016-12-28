@@ -55,7 +55,6 @@ import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.Enterpr
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
-import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -405,31 +404,36 @@ public class ContractPdfController implements Serializable {
 		IContrataController contrataController = null;
 		IContrataParams newParams = null;
 		
-		// always load INITIAL CONTRACT contrata data
-		contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-		contrataController.initialize(getContract());
-		contrataController.onContrataDataShow(null);
-		if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
-			newParams = contrataController.getHandler().getParams();
-		} else {
-			newParams = new ContrataContratoParams();
-		}
-		getContrataParams().add(newParams);
-		
-		// load EXTENSION contrata data
-		if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
-			contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		ContractController contractController = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
+		if(!contractController.isContractInternship(getContract())
+				&& !contractController.isContractRetaQuote(getContract())){
+			
+			// always load INITIAL CONTRACT contrata data
+			contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize(getContract());
 			contrataController.onContrataDataShow(null);
-			getContrataParams().add(contrataController.getHandler().getParams());
-		}
-		
-		// load TRANSFORM contrata data
-		if(code!=null && isTransformedContract(code) && getDocumentType()==getContractPdfType()){
-			contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize(getContract());
-			contrataController.onContrataDataShow(null);
-			getContrataParams().add(contrataController.getHandler().getParams());
+			if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
+				newParams = contrataController.getHandler().getParams();
+			} else {
+				newParams = new ContrataContratoParams();
+			}
+			getContrataParams().add(newParams);
+			
+			// load EXTENSION contrata data
+			if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
+				contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+				contrataController.initialize(getContract());
+				contrataController.onContrataDataShow(null);
+				getContrataParams().add(contrataController.getHandler().getParams());
+			}
+			
+			// load TRANSFORM contrata data
+			if(code!=null && isTransformedContract(code) && getDocumentType()==getContractPdfType()){
+				contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+				contrataController.initialize(getContract());
+				contrataController.onContrataDataShow(null);
+				getContrataParams().add(contrataController.getHandler().getParams());
+			}
 		}
 		
 		loadPdfDocument(forceRefresh);

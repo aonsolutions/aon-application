@@ -111,9 +111,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setContractUtils(null);
 		controller.setShowWorkdayHoursWindow(false);
 		controller.setWorkdayManager(null);
+		Contract contract = (Contract) controller.getTo();
 		
 		try {
-			Contract contract = (Contract) controller.getTo();
 			if(contract.getAgreementLevelCategory()!=null 
 					&& contract.getAgreementLevelCategory().getLevel()!=null 
 					&& contract.getAgreementLevelCategory().getLevel().getAgreement()!=null 
@@ -136,7 +136,10 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 		}
 		
-		if(controller.getParams().getSpecialQuote()==null){
+		if(controller.getParams().getSpecialQuote()==null
+			&& !controller.isContractInternship(contract)
+			&& !controller.isContractRetaQuote(contract)
+			&& !controller.isCooperativePartnerQuote(contract)){
 			IContrataController contrataController = null;
 			if(controller.isTransformedContract()){
 				contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
@@ -212,7 +215,14 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractUtils utils = ContractUtils.getInstance();
 		if(!controller.getParams().isRetaQuote()){
 			utils.updateContractData((Contract) controller.getTo(), controller.getParams());
-			updateContrataData();
+			Contract contract = (Contract) controller.getTo();
+			if(controller.getParams().getSpecialQuote()==null
+					&& !controller.isContractInternship(contract)
+					&& !controller.isContractRetaQuote(contract)
+					&& !controller.isCooperativePartnerQuote(contract)){
+				
+				updateContrataData();
+			}
 			updateContractDocumentFields();
 		} else {
 			utils.updateRetaContractData((Contract) controller.getTo(), controller.getParams());
@@ -240,10 +250,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		}
 		
 		contrataController.onContrataAccept(null);
-//		if(contrataController.getHandler()!=null){
-//			contrataController.getHandler().initialize((Contract) this.getController().getTo());
-//			contrataController.onContrataAccept(null);
-//		}
 	}
 	
 	private void updateContractDocumentFields() {
