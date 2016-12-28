@@ -15,6 +15,7 @@ public class LoadedAmortization implements ILoadedPojo{
 	private String cuentaDot;
 	private String codigoActividad;
 	
+	
 	@Override
 	public String getIdentifier() {
 		return getCodigo();

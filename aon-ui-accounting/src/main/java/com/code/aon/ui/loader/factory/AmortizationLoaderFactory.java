@@ -126,8 +126,8 @@ public class AmortizationLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			iv.setActivity(activity);
 			iv.setDescription(loaded.getDescripcion());
 			
-			// Estos dos campos son obligatorios, como no se leen en la carga de datos
-			// se pone por defecto los primeros valores que tienen 
+			// Estos dos campos son obligatorios, como no se leen en la carga de 
+			// datos se pone por defecto los primeros valores que tienen 
 			iv.setRegime(InvestAssetRegime.values()[0]);
 			iv.setType(InvestAssetType.values()[0]);
 			
