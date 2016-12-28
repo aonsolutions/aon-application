@@ -13,6 +13,9 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.company.InvestAsset;
+import com.code.aon.company.enumeration.InvestAssetRegime;
+import com.code.aon.company.enumeration.InvestAssetType;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.ILoaderFactory;
@@ -20,6 +23,7 @@ import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.LoaderUtils;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 import com.code.aon.ui.loader.pojo.LoadedAmortization;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class AmortizationLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
@@ -32,17 +36,18 @@ public class AmortizationLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(AMC,"importe"	 	,1,17	,true	,null)  // Importe 
 		,new Column(AMC,"cuentaInm"		,2,9	,true	,null)  // Cuenta contable inmovilizado
 		,new Column(AMC,"cuentaAcu"		,2,9	,true	,null)  // Cuenta contable amortizacion acumulada
-		,new Column(AMC,"cuentaDot"		,2,9	,true	,null)  // Cuenta contable dotación 
+		,new Column(AMC,"cuentaDot"		,2,9	,true	,null)  // Cuenta contable dotación
+		,new Column(AMC,"codigoActividad",2,3   ,false  ,null)  // Código actividad		 
 	};
 	
-	//private ILoaderEngine engine;
+	private ILoaderEngine engine;
 	private Map<String, Column[]> columns;
 
 	public AmortizationLoaderFactory() {
 	}
 	
 	public AmortizationLoaderFactory(ILoaderEngine engine) {
-		//this.engine = engine;
+		this.engine = engine;
 	}
 
 	public Map<String, Column[]> getColumns() {
@@ -107,6 +112,35 @@ public class AmortizationLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		AmortizationType at = new AmortizationType();
 		at.setPercentage(loaded.getCoeficiente());
 		amor.setAmortizationType(at);
+		
+		// Actividad: Si se indica actividad, es necesario crear un bien afecto, que es 
+		// donde va la actividad y asignar el bien afecto creado a la amortizacion
+		if (StringUtils.isNotBlank(loaded.getCodigoActividad())) {
+			
+			EnterpriseActivity activity = (EnterpriseActivity) engine.getAonEntity(ILoaderFactory.ACT, loaded.getCodigoActividad());
+			if (activity  == null) {
+				throw new AonException("La actividad con codigo " + loaded.getCodigoActividad() + " no existe.");
+			}
+					
+			InvestAsset iv = new InvestAsset();
+			iv.setActivity(activity);
+			iv.setDescription(loaded.getDescripcion());
+			
+			// Estos dos campos son obligatorios, como no se leen en la carga de datos
+			// se pone por defecto los primeros valores que tienen 
+			iv.setRegime(InvestAssetRegime.values()[0]);
+			iv.setType(InvestAssetType.values()[0]);
+			
+			// Tambien le ponemos el 100% en los % Afectación
+			iv.setVatPercent(100);
+			iv.setRetentionPercent(100);
+			
+			IManagerBean beanIV = BeanManager.getManagerBean(InvestAsset.class);
+			iv = (InvestAsset) beanIV.insert(iv);
+			
+			amor.setInvestAsset(iv);
+			
+		}		
 		
 		amor = (Amortization) bean.insert(amor);
 		return amor.getId();

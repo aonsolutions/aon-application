@@ -13,6 +13,7 @@ public class LoadedAmortization implements ILoadedPojo{
 	private String cuentaInm;
 	private String cuentaAcu;
 	private String cuentaDot;
+	private String codigoActividad;
 	
 	@Override
 	public String getIdentifier() {
@@ -89,6 +90,14 @@ public class LoadedAmortization implements ILoadedPojo{
 
 	public void setCuentaDot(String cuentaDot) {
 		this.cuentaDot = cuentaDot;
+	}
+
+	public String getCodigoActividad() {
+		return codigoActividad;
+	}
+
+	public void setCodigoActividad(String codigoActividad) {
+		this.codigoActividad = codigoActividad;
 	}	
 	
 }
