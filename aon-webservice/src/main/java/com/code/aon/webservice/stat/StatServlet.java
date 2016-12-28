@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +24,7 @@ import com.esferalia.aon.occam.api.model.stat.StatChartType;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "StatServlet", urlPatterns = { "/stat/*",
@@ -46,7 +49,7 @@ public class StatServlet extends HttpServlet{
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
 				case "task":
-					object = getTaskStatData(domain, userName, pathInfo[4], getFilter(req));
+					object = getTaskStatData(domain, userName, pathInfo[4], getFilter(domain, userName, req));
 					break;
 				default:
 					break;
@@ -108,7 +111,18 @@ public class StatServlet extends HttpServlet{
 		return array;
 	}
 
-	public static IssueFilter getFilter(HttpServletRequest req){
+	private static LinkedList<Integer> getList(String str){
+		if(str == null) return new LinkedList<Integer>();
+		String[] arr = str.split("@@");
+		LinkedList<Integer> list = new LinkedList<Integer>();
+		for (String s : arr) {
+			if(AonStringUtils.isNumeric(s))
+				list.add(Integer.parseInt(s));
+		}
+		return list;
+	}
+
+	public static IssueFilter getFilter(Domain domain, String userName, HttpServletRequest req){
 		Date from = new Date();from.setYear(from.getYear()-1);
 		Date to = new Date();
 		try {
@@ -119,12 +133,15 @@ public class StatServlet extends HttpServlet{
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+
+		LinkedList<Integer> assignee = getList(req.getParameter("asignee"));
+		LinkedList<Integer> workgroup = getList(req.getParameter("workgroup"));
+	
 		return new IssueFilter()
 				.setTitle(req.getParameter("title"))
 				.setMine(req.getParameter("mine"))
-				.setAssignee(req.getParameter("asignee"))
-				.setWorkgroup(req.getParameter("workgroup"))
+				.setAssignee(assignee)
+				.setWorkgroup(workgroup)
 				.setCreator(req.getParameter("creator"))
 				.setDirection(req.getParameter("direction"))
 				.setLabels(req.getParameter("labels"))

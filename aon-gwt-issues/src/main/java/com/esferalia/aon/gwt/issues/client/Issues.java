@@ -262,8 +262,11 @@ public class Issues implements EntryPoint {
 						
 						Boolean assignee = result.getOneData().getAssignee() && !result.getOneData().getMine();
 						if(result.getOneData().getWithoutGroup()) issueFilter.setWorkgroup(-1);
-						if(result.getOneData().getWithoutOperator() && assignee) issueFilter.setAssignee("-1");
-						if(result.getOneData().getWithoutOperator() && !assignee) issueFilter.setAssignee("-1@"+aonData.getUserOperator());
+						if(result.getOneData().getWithoutOperator()) issueFilter.setAssignee("-1");
+						
+						if(result.getOneData().getWithoutOperator() && assignee) issueFilter.setAssignee("-1@@"+aonData.getUserOperator());
+						else if(assignee) issueFilter.setAssignee(aonData.getUserOperator().toString());
+						
 						issueFilter.setType(result.getOneData().getType());
 						issueFilter.setPriority(result.getOneData().getPriority());
 						

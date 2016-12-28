@@ -113,7 +113,10 @@
     	justify-content: flex-end;
     }
     
-    
+    .filter-label-issues {
+    	position: relative;
+    	top: 2px;
+    }
 	
 	
 	

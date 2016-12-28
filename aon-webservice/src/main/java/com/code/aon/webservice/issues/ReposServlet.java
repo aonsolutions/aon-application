@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.type.AonUrlApi;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ReposServlet", urlPatterns = { "/repos/*" ,
@@ -71,7 +72,7 @@ public class ReposServlet extends HttpServlet{
 					object = getFastFilterJSON(domain, userName);
 					break;
 				case "faqs":
-					object = getFaqIssuesJSON(domain, userName, getFilter(req), url);
+					object = getFaqIssuesJSON(domain, userName, getFilter(domain, userName, req), url);
 					break;
 				case "duplicates":
 					if(pathInfo.length > 4){
@@ -85,7 +86,7 @@ public class ReposServlet extends HttpServlet{
 					break;
 				case "issues_light":
 					if(pathInfo.length > 4){
-						object = getLightIssuesJSON(domain, userName,getFilter(req), pathInfo[4]);				
+						object = getLightIssuesJSON(domain, userName,getFilter(domain, userName, req), pathInfo[4]);				
 					}
 					break;
 				case "issues":
@@ -104,8 +105,8 @@ public class ReposServlet extends HttpServlet{
 						} else // TASK / ISSUE
 							object = getIssueJSON(domain, userName, DB.getTask(domain, userName, Integer.parseInt(pathInfo[4])), url);
 					}else{ // TASKS / ISSUES
-						object = getIssuesJSON(domain, userName, getFilter(req), url);
-						meta = getSizeJSON(domain, userName, getFilter(req));
+						object = getIssuesJSON(domain, userName, getFilter(domain, userName, req), url);
+						meta = getSizeJSON(domain, userName, getFilter(domain, userName, req));
 					}
 					break;
 				case "labels": // ALL LABELS
@@ -725,12 +726,27 @@ public class ReposServlet extends HttpServlet{
 		return json;
 	}
 	
-	private IssueFilter getFilter(HttpServletRequest req){
+	
+	private LinkedList<Integer> getList(String str){
+		if(str == null) return new LinkedList<Integer>();
+		String[] arr = str.split("##");
+		LinkedList<Integer> list = new LinkedList<Integer>();
+		for (String s : arr) {
+			if(AonStringUtils.isNumeric(s))
+				list.add(Integer.parseInt(s));
+		}
+		return list;
+	}
+	
+	private IssueFilter getFilter(Domain domain, String userName, HttpServletRequest req){
+		LinkedList<Integer> assignee = getList(req.getParameter("asignee"));
+		LinkedList<Integer> workgroup = getList(req.getParameter("workgroup"));
+		
 		return new IssueFilter()
 				.setTitle(req.getParameter("title"))
 				.setMine(req.getParameter("mine"))
-				.setAssignee(req.getParameter("asignee"))
-				.setWorkgroup(req.getParameter("workgroup"))
+				.setAssignee(assignee)
+				.setWorkgroup(workgroup)
 				.setCreator(req.getParameter("creator"))
 				.setDirection(req.getParameter("direction"))
 				.setLabels(req.getParameter("labels"))

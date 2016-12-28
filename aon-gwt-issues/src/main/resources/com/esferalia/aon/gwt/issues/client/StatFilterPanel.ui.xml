@@ -31,7 +31,7 @@
 		<g:HorizontalPanel ui:field="filterHorizontal" styleName="aon-width-all">
 			<g:HTMLPanel>
 				<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>
-				<g:InlineLabel ui:field="statusLabel"></g:InlineLabel>
+				<g:InlineLabel ui:field="statusLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
 			</g:HTMLPanel>			
 		</g:HorizontalPanel>					
 	</div>

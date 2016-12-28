@@ -246,37 +246,47 @@ public class TaskDAO {
 		if(issueFilter.getMine() != null && !issueFilter.getMine().equals("")){
 			User user = SecurityDAO.getUser(ctx, issueFilter.getMine());
 			TaskHolder taskHolder = getTaskHolder(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(user.getId())));
+			LinkedList<Integer> workgroups = getTaskHolderWorkgroupStream(ctx, f -> f.getTaskHolderProperty().eq(taskHolder.getId())).
+					map(r -> r.getId()).collect(Collectors.toCollection(LinkedList::new));
 			Condition m = TASK.CREATION_USER.eq(issueFilter.getMine())
 				.or(TASK.MODIFICATION_USER.eq(issueFilter.getMine()))
 				.or(TASK_COMMENT.CREATION_USER.eq(issueFilter.getMine()))
 				.or(TASK_EVENT.CREATION_USER.eq(issueFilter.getMine()))
 				.or(TASK_EVENT.MODIFICATION_USER.eq(issueFilter.getMine()));
-			if(taskHolder.getId() != null) m.or(TASK.TASK_HOLDER.eq(taskHolder.getId()));
-			if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals("") && issueFilter.getAssignee().equals("-1")){
-				m.or(TASK.TASK_HOLDER.isNull());
+			if(taskHolder.getId() != null) m = m.or(TASK.TASK_HOLDER.eq(taskHolder.getId()));
+			if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().isEmpty() && issueFilter.getAssignee().contains(-1)){
+				m = m.or(TASK.TASK_HOLDER.isNull());
 				issueFilter.setAssignee(null);
+			}
+			if(!workgroups.isEmpty()) m = m.or(TASK.WORKGROUP.in(workgroups));
+			if(issueFilter.getWorkgroup() != null  && !issueFilter.getWorkgroup().isEmpty() && issueFilter.getWorkgroup().contains(-1)){
+				m = m.or(TASK.WORKGROUP.isNull());
+				issueFilter.setWorkgroup(null);
 			}
 			c = c.and(m);
 		}
 		
 		// assignee
-		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals("")){
-			String[] s = issueFilter.getAssignee().split("@");
-			Condition m;
-			if(s[0].equals("-1")) m = TASK.TASK_HOLDER.isNull();
-			else m =TASK.TASK_HOLDER.eq(Integer.parseInt(s[0]));
-			for(Integer j = 1; j < s.length; j++){
-				if(s[j].equals("-1")) m = m.or(TASK.TASK_HOLDER.isNull());
-				else m = m.or(TASK.TASK_HOLDER.eq(Integer.parseInt(s[j])));
+		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().isEmpty()){
+			Condition m = TASK.TASK_HOLDER.in(issueFilter.getAssignee());
+			if(issueFilter.getAssignee().contains(-1)) m = m.or(TASK.TASK_HOLDER.isNull());
+			if(issueFilter.getWorkgroup() != null && (issueFilter.getWorkgroup().isEmpty()
+				|| (issueFilter.getWorkgroup().size() == 1 && issueFilter.getWorkgroup().get(0) == -1))){
+				LinkedList<Integer> L =getTaskHolderWorkgroupStream(ctx,
+						f -> f.getTaskHolderProperty().in(issueFilter.getAssignee().toArray(new Integer[issueFilter.getAssignee().size()])))
+					.map(r -> r.getId()).collect(Collectors.toCollection(LinkedList::new));
+				if(!issueFilter.getAssignee().contains(-1)) m = m.or(TASK.TASK_HOLDER.isNull());
+				m = m.and(TASK.WORKGROUP.in(L).or(TASK.WORKGROUP.isNull()));
+				issueFilter.setWorkgroup(null);
 			}
-			c = c.and(m);
+			c = c.and(m);			
 		}
 		
-		// workgroup
-		if(issueFilter.getWorkgroup() != null && !issueFilter.getWorkgroup().equals("")){
-			if(issueFilter.getWorkgroup().equals("-1"))
-				c = c.and(TASK.WORKGROUP.isNull());
-			else c = c.and(TASK.WORKGROUP.eq(Integer.parseInt(issueFilter.getWorkgroup())));
+		// WORKGROUP
+		if(issueFilter.getWorkgroup() != null && !issueFilter.getWorkgroup().isEmpty()){
+			Condition m = TASK.WORKGROUP.in(issueFilter.getWorkgroup());
+			if(issueFilter.getWorkgroup().contains(-1)) m = m.or(TASK.WORKGROUP.isNull());
+			c = c.and(m);
 		}
 
 		// enterprise

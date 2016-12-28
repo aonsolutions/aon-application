@@ -139,7 +139,7 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
     	
     	cont = 1;
     	AON.getStatTaskStream(domain.getName(), domain.getId(), userName, 
-    			new StatParams().setIssueFilter(StatServlet.getFilter(req))).forEach(task -> {
+    			new StatParams().setIssueFilter(StatServlet.getFilter(domain, userName, req))).forEach(task -> {
     		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());

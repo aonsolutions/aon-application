@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 
 @SuppressWarnings("serial")
 public class IssueFilter implements Serializable, Cloneable{
@@ -9,8 +10,6 @@ public class IssueFilter implements Serializable, Cloneable{
 	
 	String milestone;
 	String state;
-	String assignee;
-	String workgroup;
 	String creator;
 	String mentioned;
 	String labels;
@@ -31,6 +30,10 @@ public class IssueFilter implements Serializable, Cloneable{
 	Integer page = 1;
 	Integer perPage = 30;
 	
+	
+	LinkedList<Integer> assignee;
+	LinkedList<Integer> workgroup;
+	
 	public IssueFilter() {
 		this.page = 1;
 		this.perPage = 30;
@@ -50,10 +53,10 @@ public class IssueFilter implements Serializable, Cloneable{
 		this.state = state;
 		return this;
 	}
-	public String getAssignee() {
+	public LinkedList<Integer> getAssignee() {
 		return assignee;
 	}
-	public IssueFilter setAssignee(String assignee) {
+	public IssueFilter setAssignee(LinkedList<Integer> assignee) {
 		this.assignee = assignee;
 		return this;
 	}
@@ -157,11 +160,11 @@ public class IssueFilter implements Serializable, Cloneable{
 		return this;
 	}
 
-	public String getWorkgroup() {
+	public LinkedList<Integer> getWorkgroup() {
 		return workgroup;
 	}
 
-	public IssueFilter setWorkgroup(String workgroup) {
+	public IssueFilter setWorkgroup(LinkedList<Integer> workgroup) {
 		this.workgroup = workgroup;
 		return this;
 	}

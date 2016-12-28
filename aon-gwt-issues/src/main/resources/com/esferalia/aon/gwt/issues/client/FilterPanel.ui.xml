@@ -31,16 +31,16 @@
 		<g:HorizontalPanel ui:field="filterHorizontal" styleName="aon-width-all">
 			<g:HTMLPanel>
 				<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>
-				<g:InlineLabel ui:field="fastFilterLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="priorityLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="tagLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="typeLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="creatorLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="assignedLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="workgroupLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="enterpriseLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="orderLabel"></g:InlineLabel>
-				<g:InlineLabel ui:field="dateLabel"></g:InlineLabel>				
+				<g:InlineLabel ui:field="fastFilterLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="priorityLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="tagLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="typeLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="creatorLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="assignedLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="workgroupLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="enterpriseLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="orderLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>
+				<g:InlineLabel ui:field="dateLabel" styleName="{issuesResources.css.filterLabelIssues}"></g:InlineLabel>				
 			</g:HTMLPanel>			
 		</g:HorizontalPanel>					
 	</div>

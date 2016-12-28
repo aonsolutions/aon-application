@@ -142,6 +142,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setLabel("Prioridad");
 				acb.setItemLabelPath("name");
+				acb.setItemValuePath("name");
 				acb.setItems(labels);
 				
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
@@ -185,6 +186,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setLabel("Tipo");
 				acb.setItemLabelPath("name");
+				acb.setItemValuePath("name");
 				acb.setItems(labels);
 				
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
@@ -228,6 +230,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setItems(labels);
 				acb.setItemLabelPath("name");
+				acb.setItemValuePath("name");
 				acb.setLabel("Etiqueta");
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
@@ -270,6 +273,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setItems(users);
 				acb.setItemLabelPath("login");
+				acb.setItemValuePath("login");
 				acb.setLabel("Asignado");
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
@@ -312,6 +316,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setItems(users);
 				acb.setItemLabelPath("login");
+				acb.setItemValuePath("login");
 				acb.setLabel("Grupo de Trabajo");
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
@@ -354,6 +359,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setItems(users);
 				acb.setItemLabelPath("login");
+				acb.setItemValuePath("login");
 				acb.setLabel("Creador");
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
@@ -396,6 +402,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setItems(users);
 				acb.setItemLabelPath("login");
+				acb.setItemValuePath("login");
 				acb.setLabel("Empresa");
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
@@ -438,6 +445,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setLabel("Orden");
 				acb.setItemLabelPath("name");
+				acb.setItemValuePath("name");
 				acb.setItems(items);
 				
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
@@ -488,6 +496,7 @@ public class FilterPanel extends Composite {
 				AonComboBox acb = new AonComboBox();
 				acb.setLabel("Fecha");
 				acb.setItemLabelPath("name");
+				acb.setItemValuePath("name");
 				acb.setItems(items);
 				
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
