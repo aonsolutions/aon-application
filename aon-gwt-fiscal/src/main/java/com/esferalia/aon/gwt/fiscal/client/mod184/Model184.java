@@ -396,7 +396,7 @@ public class Model184 extends MainEntryPoint {
 	}
 
 	private void showDetail(Mod184 currentMod1842) {
-		if ( currentMod184.getYear() == 2015) {
+		if ( currentMod184.getYear() == 2015 || currentMod184.getYear() == 2016) {
 			Model184Income2015 income = new Model184Income2015();
 			income.setMod184(currentMod184);	
 			incomesPanel.setWidget(income);
@@ -497,7 +497,7 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		fiscalService.initializeMod184(getCurrentDomainName(),getCurrentDomain(), 2015,
+		fiscalService.initializeMod184(getCurrentDomainName(),getCurrentDomain(), 2016,
 				new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 m184) {
