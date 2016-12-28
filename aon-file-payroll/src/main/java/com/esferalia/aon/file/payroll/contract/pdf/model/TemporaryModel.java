@@ -3,12 +3,10 @@ package com.esferalia.aon.file.payroll.contract.pdf.model;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
@@ -21,7 +19,6 @@ import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.contrata.TEIINTER;
 import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
@@ -257,27 +254,7 @@ public class TemporaryModel extends AbstractContractModel {
 			}
 			
 			
-			Map<String, String> map = getContractDataMap(contract);
-			
-			String monday = map.get(ContextVariable.MONDAY_HOURS.toString());
-			String tuesday = map.get(ContextVariable.TUESDAY_HOURS.toString());
-			String thursday = map.get(ContextVariable.THURSDAY_HOURS.toString());
-			String wednesday = map.get(ContextVariable.WEDNESDAY_HOURS.toString());
-			String friday = map.get(ContextVariable.FRIDAY_HOURS.toString());
-			String saturday = map.get(ContextVariable.SATURDAY_HOURS.toString());
-			String sunday = map.get(ContextVariable.SUNDAY_HOURS.toString());
-			double weekHours = 0.0;
-			if(StringUtils.isNotBlank(monday) || StringUtils.isNotBlank(tuesday) || StringUtils.isNotBlank(thursday) 
-					|| StringUtils.isNotBlank(wednesday) || StringUtils.isNotBlank(friday) 
-					|| StringUtils.isNotBlank(saturday) || StringUtils.isNotBlank(sunday)){
-				weekHours += NumberUtils.isNumber(monday)?new Double(monday):0.0;
-				weekHours += NumberUtils.isNumber(tuesday)?new Double(tuesday):0.0;
-				weekHours += NumberUtils.isNumber(thursday)?new Double(thursday):0.0;
-				weekHours += NumberUtils.isNumber(wednesday)?new Double(wednesday):0.0;
-				weekHours += NumberUtils.isNumber(friday)?new Double(friday):0.0;
-				weekHours += NumberUtils.isNumber(saturday)?new Double(saturday):0.0;
-				weekHours += NumberUtils.isNumber(sunday)?new Double(sunday):0.0;
-			}
+			String weekJournalHours = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_WEEK_HOURS.toString());
 			
 			if(code.getValue().startsWith("1") || code.getValue().startsWith("4")){
 				setPdfFieldValue(PdfFieldTemporary.FULL_TIME.getValue(), "true");
@@ -292,8 +269,8 @@ public class TemporaryModel extends AbstractContractModel {
 				}
 			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5")){
 				setPdfFieldValue(PdfFieldTemporary.PARTIALLY_TIME.getValue(), "true");
-				if(weekHours>0){
-					setPdfFieldValue(PdfFieldTemporary.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(weekHours));
+				if(weekJournalHours!=null){
+					setPdfFieldValue(PdfFieldTemporary.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(weekJournalHours));
 					setPdfFieldValue(PdfFieldTemporary.PARTIALLY_TIME_WEEKLY.getValue(), "true");
 				} else if(contrata!=null){
 					if(contrata.getHorasJornada()!=null){

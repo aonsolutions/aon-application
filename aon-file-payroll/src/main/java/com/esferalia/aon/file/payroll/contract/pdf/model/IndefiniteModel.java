@@ -321,6 +321,7 @@ public class IndefiniteModel extends AbstractContractModel {
 				weekHours += NumberUtils.isNumber(sunday)?new Double(sunday):0.0;
 				weekHours = CommonUtil.round(weekHours);
 			}
+			
 			boolean isFullTimeDiscontinuous = code.getValue().startsWith("3") && weekHours>0;
 			boolean isPartialTimeDiscontinuous = code.getValue().startsWith("3") && weekHours>0;
 			
@@ -337,8 +338,9 @@ public class IndefiniteModel extends AbstractContractModel {
 				}
 			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5") || isPartialTimeDiscontinuous){
 				setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME.getValue(), "true");
-				if(weekHours>0){
-					setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(weekHours));
+				String weekJournalHours = getContractInfoMap(contract).get(PdfFieldIndefinite.PARTIALLY_TIME_HOURS.toString());
+				if(weekJournalHours!=null){
+					setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(weekJournalHours));
 					setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME_WEEKLY.getValue(), "true");
 				} else if(contrata!=null){
 					if(contrata.getHorasJornada()!=null){
