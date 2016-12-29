@@ -38,13 +38,20 @@ public class SearchFiles {
         return (FileList) drive.files().list().setQ("properties has {key='" + key + "' and value='" + property + "' and visibility='PRIVATE'}").execute();
     }
 	
-	public static FileList searchFilesProperties2(final Drive drive, final String[] key, final String[] property) throws IOException {
-        String q = "";
+	public static FileList searchFilesProperties(final Drive drive, final String[] key, final String[] property) {
+
+		String q = "";
         for(Integer i = 0; i < key.length; i++){
         	if(i > 0) q = q + " and ";
         	q = q +  "properties has {key='" + key[i] + "' and value='" + property[i] + "' and visibility='PRIVATE'}";
         }
-		return (FileList) drive.files().list().setQ(q).execute();
+        FileList fileList = new FileList();
+        try {
+			fileList = (FileList) drive.files().list().setQ(q).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fileList;
     }
 
 	
@@ -81,13 +88,23 @@ public class SearchFiles {
 		return fl;
 	}
 	
-	public static FileList searchFilesTitleEqualAndMimetype(Drive drive, String searcher) throws IOException{
-		FileList fl = drive.files().list().setQ("title = '"+searcher+"' and mimeType = 'application/vnd.google-apps.folder'").execute();
+	public static FileList searchFilesTitleEqualAndMimetype(Drive drive, String searcher) {
+		FileList fl = new FileList();
+		try {
+			fl = drive.files().list().setQ("title = '"+searcher+"' and mimeType = 'application/vnd.google-apps.folder'").execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return fl;
 	}
 	
-	public static FileList searchFilesTitleAndParent(Drive drive, String searcher, String parent) throws IOException{
-		FileList fl = drive.files().list().setQ("'"+parent+"' in parents and title = '"+searcher+"'").execute();
+	public static FileList searchFilesTitleAndParent(Drive drive, String searcher, String parent){
+		FileList fl = new FileList();
+		try {
+			fl = drive.files().list().setQ("'"+parent+"' in parents and title = '"+searcher+"'").execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return fl;
 	}
 	

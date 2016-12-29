@@ -332,11 +332,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 					Drive d = DriveUtils.serviceInitialize(g);
 					d.files().delete(fi.getDriveId()).execute();
 				}
-			} catch (KeyStoreException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
 				e.printStackTrace();
 			}
 		}
@@ -853,30 +849,17 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	public void shareMydrive(String email, Vector<FileInfo> fvector){
 		Drive drive = GoogleDriveController.dconnection;
 		for(FileInfo f: fvector){
-			try {
-				ShareFiles.setPermission(drive, f.getDriveId(), email);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			ShareFiles.setPermission(drive, f.getDriveId(), email);
 		}
 	}
 	
 	public void share(Domain domain, String email, Vector<FileInfo> fvector) {
-		DomainGserviceaccount g;
-		Drive d = null;
-		try {
-			g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain.getName(), domain.getId());
-			d = DriveUtils.serviceInitialize(g);
-		} catch ( IOException | GeneralSecurityException e1) {
-			e1.printStackTrace();
-		}
+		DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+		Drive d = DriveUtils.serviceInitialize(g);
+	
 		for(FileInfo f : fvector){
 			if (f.getDriveId() != null) {
-				try {
-					ShareFiles.setPermission(d, f.getDriveId(), email);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				ShareFiles.setPermission(d, f.getDriveId(), email);
 			}
 			else{
 				//TODO  dbn badago! Drive-ra igo ta banatu!
@@ -932,11 +915,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
         		d = GoogleDriveController.dconnection;
         	}
         	else{
-				try {
-					d = DriveUtils.serviceInitialize(g);
-				} catch (IOException | GeneralSecurityException e) {
-					e.printStackTrace();
-				}
+				d = DriveUtils.serviceInitialize(g);
         	}
 			com.google.api.services.drive.model.File f = null;
 			try {
@@ -1133,15 +1112,8 @@ public MailAccountList getMailAccounts(Domain domain) {
 							if (fi.getIsDrive()) {
 								d = GoogleDriveController.dconnection;
 							} else {
-								DomainGserviceaccount g;
-								try {
-									g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(fi.getDomain(),fi.getDomainId());
-									d = DriveUtils.serviceInitialize(g);
-								} catch (KeyStoreException e) {
-									e.printStackTrace();
-								} catch (GeneralSecurityException e) {
-									e.printStackTrace();
-								}
+								DomainGserviceaccount g = AON.getDomainGserviceaccount(fi.getDomain(), fi.getDomainId(), "");
+								d = DriveUtils.serviceInitialize(g);	
 							}
 							com.google.api.services.drive.model.File f = d
 									.files().get(fi.getDriveId()).execute();

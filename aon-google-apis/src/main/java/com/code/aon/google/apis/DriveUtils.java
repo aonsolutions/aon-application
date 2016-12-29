@@ -121,48 +121,51 @@ public class DriveUtils implements IBlobManager {
 
 	}
 	
-	public static Drive serviceInitialize(DomainGserviceaccount d)
-			throws KeyStoreException, IOException, GeneralSecurityException {
+	public static Drive serviceInitialize(DomainGserviceaccount d){
+		try {
+			final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+			final JsonFactory JSON_FACTORY = new JacksonFactory();
+			final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
+	
+			InputStream keyStream = new ByteArrayInputStream(d.getPrivateKey());
+			PrivateKey serviceAccountPrivateKey;
 		
-		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-		final JsonFactory JSON_FACTORY = new JacksonFactory();
-		final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
-		
-		
-		
-		InputStream keyStream = new ByteArrayInputStream(d.getPrivateKey());
-		PrivateKey serviceAccountPrivateKey = SecurityUtils
-				.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(),
-						keyStream, "notasecret", "privatekey", "notasecret");
-		String googleAccount = d.getGoogleAccount();
-		GoogleCredential credential;
-		if(googleAccount != null){
-			credential = new GoogleCredential.Builder()
-				.setTransport(HTTP_TRANSPORT)
-				.setJsonFactory(JSON_FACTORY)
-				.setServiceAccountId(SERVICE_ACCOUNT_ID)
-				.setServiceAccountScopes(
-						java.util.Collections.singletonList(DriveScopes.DRIVE))
-				.setServiceAccountPrivateKey(serviceAccountPrivateKey)
-				.setServiceAccountUser(googleAccount)
-				.build();
-		}
-		else{
-			credential = new GoogleCredential.Builder()
-			.setTransport(HTTP_TRANSPORT)
-			.setJsonFactory(JSON_FACTORY)
-			.setServiceAccountId(SERVICE_ACCOUNT_ID)
-			.setServiceAccountScopes(
-					java.util.Collections.singletonList(DriveScopes.DRIVE))
-			.setServiceAccountPrivateKey(serviceAccountPrivateKey)
-			.build();
-		}
-		client = new com.google.api.services.drive.Drive.Builder(
-				HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(
-				"AON SOLUTIONS").build();
+			serviceAccountPrivateKey = SecurityUtils
+					.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(),
+							keyStream, "notasecret", "privatekey", "notasecret");
 
+			String googleAccount = d.getGoogleAccount();
+			GoogleCredential credential;
+			if(googleAccount != null){
+				credential = new GoogleCredential.Builder()
+						.setTransport(HTTP_TRANSPORT)
+						.setJsonFactory(JSON_FACTORY)
+						.setServiceAccountId(SERVICE_ACCOUNT_ID)
+						.setServiceAccountScopes(
+								java.util.Collections.singletonList(DriveScopes.DRIVE))
+						.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+						.setServiceAccountUser(googleAccount)
+					.build();
+			}
+			else{
+				credential = new GoogleCredential.Builder()
+						.setTransport(HTTP_TRANSPORT)
+						.setJsonFactory(JSON_FACTORY)
+						.setServiceAccountId(SERVICE_ACCOUNT_ID)
+						.setServiceAccountScopes(
+								java.util.Collections.singletonList(DriveScopes.DRIVE))
+						.setServiceAccountPrivateKey(serviceAccountPrivateKey)
+					.build();
+			}
+			client = new com.google.api.services.drive.Drive.Builder(
+					HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(
+						"AON SOLUTIONS").build();
+		} catch (IOException e) {
+			LOGGER.error("I/O Error connecting to Drive: {}", e.getMessage());
+		} catch (GeneralSecurityException e1) {
+			LOGGER.error("Security Error connecting to Drive: {}", e1.getMessage());
+		}
 		return client;
-
 	}
 
 	/****
@@ -216,8 +219,8 @@ public class DriveUtils implements IBlobManager {
 		return folder;
 	}
 
-	private static File createFolder(Drive drive, String title, String parent) throws IOException{
-		File f = drive.files().get(parent).execute();
+	private static File createFolder(Drive drive, String title, String parent) {
+		File f = getFileN(drive, parent);
 		if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
 			LOGGER.info(f.getMimeType());
 			LOGGER.error(title + "- The specified parent is not a folder.");
@@ -228,9 +231,58 @@ public class DriveUtils implements IBlobManager {
 			folder.setParents(Arrays.asList(new ParentReference().setId(parent)));
 			folder.setTitle(title);
 			folder.setMimeType("application/vnd.google-apps.folder");
-			folder = drive.files().insert(folder).execute();
+			folder = insertFile(drive, folder);
 			return folder;
 		}	
+	}
+	
+	public static File getFileN(Drive drive, String id){
+		File file  = new File();
+		try {
+			file = drive.files().get(id).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file;
+	}
+	
+	public static File insertFile(Drive drive, File file){
+		try {
+			file = drive.files().insert(file).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file;
+	}
+	
+	public static About getAbout(Drive drive){
+		About about = new About();
+		try {
+			about = drive.about().get().execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return about;
+	}
+	
+	public static File principal(Drive drive, Attach attach) {
+		About about = getAbout(drive);
+		String rootId = about.getRootFolderId();
+		FileList domainFolders = SearchFiles.searchFilesTitleEqualAndMimetype(drive, attach.getDomain().getName());
+		File domainFolder = domainFolders.getItems().size()>0 ? domainFolders.getItems().get(0)
+				: createFolder(drive, attach.getDomain().getName(), rootId);
+	
+		
+		FileList typeFolders = SearchFiles.searchFilesTitleAndParent(drive, attach.getAttachType().getName(), domainFolder.getId());
+		File typeFolder = typeFolders.getItems().size()>0 ? typeFolders.getItems().get(0)
+				:createFolder(drive, attach.getAttachType().getName(), domainFolder.getId());
+				
+		if(domainFolder != null && typeFolder != null){
+			Vector<ParentReference> parents = new Vector<ParentReference>();
+			parents.add(new ParentReference().setId(typeFolder.getId()));
+			return insertFile(drive, attach, parents);
+		}
+		return new File();
 	}
 	
 	public static File principal(Drive drive, Domain domain, FileInfo fileInfo)
@@ -380,6 +432,31 @@ public class DriveUtils implements IBlobManager {
 
 		return f2.getId();// insertFile(rattach, f2.getId());
 	}
+	
+	private static File insertFile(Drive drive, Attach attach ,Vector<ParentReference> parents) {
+		// File's metadata.
+		File file = newFile(attach.getMimeType().value(), attach.getDescription());
+		file.setModifiedDate(new DateTime(new Date()));
+		file.setParents(parents);
+		file.setProperties(setProperties(drive, attach));
+
+		// File's content.
+		LOGGER.info("Document info, mimetype:{} , file_ID {}", file.getMimeType(), attach.getId());
+		ByteArrayContent  mediaContent = new ByteArrayContent (
+				file.getMimeType(), attach.getData());
+		try {
+			long start = System.currentTimeMillis();
+			file = drive.files().insert(file, mediaContent).execute();
+			long time = System.currentTimeMillis() - start;
+			LOGGER.info("Uploading document: {}-{} ({}s)", file.getId()
+					+ file.getTitle(), (time/1000d));
+			return file;
+		} catch (IOException e) {
+			LOGGER.error("Error uploading document: {}-{}. {}", file.getId()
+					+ file.getTitle(), e.getMessage());
+			return null;
+		}
+	}
 
 	private static File insertFile(Drive drive, FileInfo fileInfo,
 			Vector<ParentReference> parents,
@@ -418,6 +495,56 @@ public class DriveUtils implements IBlobManager {
 		}
 	}
 
+	private static List<Property> setProperties(Drive drive, Attach attach) {// TODO 
+		String name = "otros";
+		if(attach.getCategory()!= null){
+			User user = new User().setLogin(""); 
+			Category c = getCategory(attach.getDomain(), user, attach.getCategory());
+			name = c.getName() != null ? c.getName() : "otros";
+		}
+		Property property1 = new Property();
+		property1.setValue(name);
+		property1.setKey("category");
+
+		String type = (attach.getType() != null && attach.getType() != -1) ? RegistryAttachmentType
+				.values()[attach.getType()].name() : "UNKNOWN";
+		Property property2 = new Property();
+		property2.setValue(type);
+		property2.setKey("type");
+		property2.setVisibility("PRIVATE");
+
+		Property property3 = new Property();
+		property3.setValue(attach.getDomain().getName());
+		property3.setKey("domain");
+
+		Property property4 = new Property();
+		property4.setValue(attach.getAttachType() != null ? attach.getAttachType().getName() : "");
+		property4.setKey("aontype");
+		
+		Property property5 = new Property();
+		property5.setValue(attach.getId() != null ? attach.getId().toString() : "");
+		property5.setKey("fileId");
+		
+		Property property6 = new Property();
+		property6.setValue(attach.getAttachModule() != null ? attach.getAttachModule().toString() : "");
+		property6.setKey("aonmodule");
+		
+		Property property7 = new Property();
+		property7.setValue(attach.getDate() != null ? attach.getDate().toString() : "");
+		property7.setKey("date");
+		
+		List<Property> properties = new ArrayList<Property>(4);
+		properties.add(property1);
+		properties.add(property2);
+		properties.add(property3);
+		properties.add(property4);
+		properties.add(property5);
+		properties.add(property6);
+		properties.add(property7);
+
+		return properties;
+	}
+	
 	private static List<Property> setProperties(Drive drive, FileInfo fileInfo, Domain domain) throws IOException {
 		String name = "otros";
 		if(fileInfo.getCategory()!= null){
@@ -855,6 +982,17 @@ public class DriveUtils implements IBlobManager {
 			}
 		}
 	}
+	
+	public static File updateFile(Drive drive, File file, byte[] data){
+		ByteArrayInputStream bais = new ByteArrayInputStream(data);
+		InputStreamContent isc = new InputStreamContent(file.getMimeType(), bais);
+		try {
+			file = drive.files().update(file.getId(), file, isc).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file;
+	}
 
 	public static void setTypes(Vector<RegistryAttachmentType> types2) {
 		int i = 0;
@@ -932,6 +1070,27 @@ public class DriveUtils implements IBlobManager {
 			i++;
 		}
 		return bool;
+	}
+	
+	
+	public static File paysheet(DomainGserviceaccount d, Attach attach, Vector<String> emails) {
+		Drive drive = serviceInitialize(d);
+		File file = new File();
+		String[] keys = {"domain", "aontype", "aonmodule", "date"};
+		String[] properties = {attach.getDomain().getName(), attach.getAttachType().getName()
+				, attach.getAttachModule() != null ? attach.getAttachModule().toString() : "" 
+				, attach.getDate() != null ? attach.getDate().toString() : ""};
+		FileList fileList = SearchFiles.searchFilesProperties(drive, keys, properties);
+		if(fileList.getItems().size() > 0){
+			file = fileList.getItems().get(0);
+			if (!file.getMd5Checksum().equals(AonFileUtils.getMD5Checksum(attach.getData())))
+				file = updateFile(drive, file, attach.getData());
+			ShareFiles.setPermissions(drive, file.getId(), emails);
+		} else {
+			file = principal(drive, attach);
+			ShareFiles.setPermissions(drive, file.getId(), emails);
+		}
+		return file;
 	}
 	
 	// nominaas!!!
@@ -1241,22 +1400,19 @@ public class DriveUtils implements IBlobManager {
 			try {
 				Drive drive = serviceInitialize(map.get(domain.getId()));
 				drive.files().delete(fileId).execute();
-			} catch (IOException | GeneralSecurityException e) {
-			} 
+			} catch (IOException e) {} 
 		}
 		else if(domain.getParentId() != null && map.containsKey(domain.getParentId())){
 			try{
 				Drive drive = serviceInitialize(map.get(domain.getParentId()));
 				drive.files().delete(fileId).execute();
-			} catch (IOException | GeneralSecurityException e) {
-			}
+			} catch (IOException e) {}
 		}
 		else if(map.containsKey(0)){
 			try {
 				Drive drive = serviceInitialize(map.get(0));
 				drive.files().delete(fileId).execute();
-			} catch (IOException | GeneralSecurityException e) {
-			}
+			} catch (IOException e) {}
 		}
 	}
 
@@ -1352,19 +1508,7 @@ public class DriveUtils implements IBlobManager {
 		String driveId = (String) blobObject.getReference(property);
 		if (driveId != null) {
 			DomainGserviceaccount sa = DBConsults.getServiceAccount(domain, new User().setLogin(""));			
-
-			Drive drive = null;
-
-			try {
-				drive = serviceInitialize(sa);
-			} catch (KeyStoreException e) {
-				LOGGER.error(e.getMessage(), e);
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			} catch (GeneralSecurityException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-
+			Drive drive = serviceInitialize(sa);
 			InputStream data = null;
 
 			try {
@@ -1414,18 +1558,8 @@ public class DriveUtils implements IBlobManager {
 		String[] aux = { "LOGO", "DOCUMENT", "CORPORATE_IDENTITY" };
 		types = aux;
 		DomainGserviceaccount sa = DBConsults.getServiceAccount(domain, new User().setLogin(""));
-		Drive drive = null;
-
-		try {
-			drive = serviceInitialize(sa);
-		} catch (KeyStoreException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (GeneralSecurityException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-
+		Drive drive = serviceInitialize(sa);
+	
 		if (blobObject.getId() != null) {
 
 			FileInfo file = getFileInfo(blobObject);
@@ -1457,18 +1591,8 @@ public class DriveUtils implements IBlobManager {
 		if ( blobObject.getId() != null ) {
 			DomainGserviceaccount sa = DBConsults.getServiceAccount(domain, new User().setLogin(""));
 	
-			Drive drive = null;
-
-			try {
-				drive = serviceInitialize(sa);
-			} catch (KeyStoreException e) {
-				LOGGER.error(e.getMessage(), e);
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			} catch (GeneralSecurityException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			
+			Drive drive = serviceInitialize(sa);
+	
 			for( String property : blobObject.getBlobProperties() ) {
 				String driveId = (String) blobObject.getReference(property);
 				if (driveId != null) {

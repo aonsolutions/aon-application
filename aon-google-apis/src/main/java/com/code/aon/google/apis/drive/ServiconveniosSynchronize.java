@@ -37,7 +37,6 @@ import org.jooq.tools.csv.CSVReader;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
-import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DBSync;
@@ -185,7 +184,7 @@ public class ServiconveniosSynchronize {
 				}
 				DBDrive.updateSCModificationDate(domainAux, getUser(), fileInfo, date);
 				
-			} catch (IOException | GeneralSecurityException e1) {
+			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}	

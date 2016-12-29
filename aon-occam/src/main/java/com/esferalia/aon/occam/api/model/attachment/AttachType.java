@@ -11,7 +11,8 @@ public enum AttachType {
 	,SEPE("sepe")
 	,MOD111("mod111")
 	,MOD115("mod115")
-	,MOD123("mod123");
+	,MOD123("mod123")
+	,PAYSHEET("paysheet");
 	
 	private String name;
 	

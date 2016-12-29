@@ -17,8 +17,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
@@ -36,9 +34,6 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Property;
 
 public class DeleteFiles {
-	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DeleteFiles.class.getName());
 	
 	public static Map<String, Integer> initializeDomainMap(){
 		Map<String, Integer> map  = new HashMap<String, Integer>();
@@ -194,16 +189,10 @@ public class DeleteFiles {
 	public static void deleteFileId(Domain domain, Integer id) throws IOException {
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, getUser());
 		if (g.getClientId() != null) {
-			Drive drive;
-			try {
-				drive = DriveUtils.serviceInitialize(g);
-				FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", id.toString());
-				File f = fl.getItems().get(0);
-				deleteFile(drive, f, domain);
-			} catch (GeneralSecurityException e) {
-				LOGGER.error(e.getMessage(), e);					
-			}
-			
+			Drive drive = DriveUtils.serviceInitialize(g);
+			FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", id.toString());
+			File f = fl.getItems().get(0);
+			deleteFile(drive, f, domain);
 		}
 	}
 

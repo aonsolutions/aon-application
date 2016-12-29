@@ -1,20 +1,13 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.code.aon.common.enumeration.MimeType.MIME_PDF;
-import static com.code.aon.common.enumeration.SecurityLevel.CONFIDENTIAL;
-import static com.code.aon.registry.enumeration.RegistryAttachmentType.DOCUMENT;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.getSalaryReport;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -47,13 +40,15 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
-import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Salary;
 
 public class ShareServlet extends HttpServlet implements ShareService {
@@ -133,34 +128,27 @@ public class ShareServlet extends HttpServlet implements ShareService {
 				}
 					
 				
-				DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(req.getServerName(), salary.getDomain(), "");
+				Domain domain = AON.getDomain(req.getServerName(), salary.getDomain(), "");
+				DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
 				
 				reportManager.setCollectionProvider(new SalaryProvider(salary
 						.getId(), beanManager));
 				byte data[] = generate(reportManager, salary);
-				int rattachId = save(dslContext, salary, data);
-				try {
-					Rattach rattach = getRattach(dslContext, rattachId);
-					rattach.setData(new ByteArrayInputStream(data));
 
-					DriveUtils.sync(rattach, emails, domainGserviceaccount);
-
-					doJson(salary, data.length, rattach.getDescription(), null,
-							os);
-					connection.commit();
-				} catch (KeyStoreException e) {
-					doJson(salary, data.length, null, e.getLocalizedMessage(),
-							os);
-					connection.rollback();
-				} catch (GeneralSecurityException e) {
-					doJson(salary, data.length, null, e.getLocalizedMessage(),
-							os);
-					connection.rollback();
-				} catch (Throwable t) {
-					t.printStackTrace();
-					connection.rollback();
-				}
-
+				Attach attach = new Attach()
+						.setData(data)
+						.setAttachType(AttachType.PAYSHEET)
+						.setAttachModule(salary.getContract().getPerson().getId())
+						.setDomain(domain)
+						.setMimeType(MimeType.PDF)
+						.setDate(new Date(System.currentTimeMillis()))
+						.setDescription(getDescrition(salary))
+						.setDate(salary.getIssueDate());
+								
+				DriveUtils.paysheet(domainGserviceaccount, attach, emails);
+				
+				doJson(salary, data.length, attach.getDescription(), null,
+						os);
 			}
 
 			os.close();
@@ -347,66 +335,26 @@ public class ShareServlet extends HttpServlet implements ShareService {
 				employeesList);
 	}
 
-	private static int save(DSLContext dslContext, Salary salary, byte data[])
-			throws SQLException {
-
-		int domain = salary.getDomain();
-		int registry = salary.getContract().getPerson().getId();
-
-		//@formatter:off
-		return dslContext.insertInto(RATTACH)
-		.set(RATTACH.DOMAIN, domain)
-		.set(RATTACH.REGISTRY, registry)
-		.set(RATTACH.DATA,data)
-		.set(RATTACH.MIMETYPE, (byte)MIME_PDF.ordinal())
-		.set(RATTACH.TYPE, (byte)DOCUMENT.ordinal())
-		.set(RATTACH.SECURITY_LEVEL, (byte)CONFIDENTIAL.ordinal())
-		.set(RATTACH.ATTACH_DATE, new Date(System.currentTimeMillis()))
-		.set(RATTACH.DESCRIPTION, getDescrition(salary))
-		.returning(RATTACH.ID)
-		.fetchOne()
-		.getId();
-		//@formatter:on
-
-	}
-
 	private static String getDescrition(final Salary salary) {
 		if (salary.getEndDate().getYear() == salary.getStartDate().getYear())
 			if (salary.getEndDate().getMonth() == salary.getStartDate()
 					.getMonth())
-				return String.format(
-						"%1$s del %2$te al %3$te de %3$tB de %3$tY", salary
+				return String.format(salary.getContract().getPerson().getName() + 
+						" - %1$s del %2$te al %3$te de %3$tB de %3$tY", salary
 								.getType().getName(ES), salary.getStartDate(),
 						salary.getEndDate());
 			else
-				return String.format(
-						"%1$s del %2$te de %2$tB  al %3$te de %3$tB de %3$tY",
+				return String.format(salary.getContract().getPerson().getName() +
+						" - %1$s del %2$te de %2$tB  al %3$te de %3$tB de %3$tY",
 						salary.getType().getName(ES), salary.getStartDate(),
 						salary.getEndDate());
 
 		else
 			return String
-					.format("%1$s del %2$te de %2$tB de %3$tY al %3$te de %3$tB de %3$tY",
-							salary.getType().getName(ES),
-							salary.getStartDate(), salary.getEndDate());
-	}
-
-	private static Rattach getRattach(DSLContext dslContext, int rattachId) {
-		RattachRecord record = dslContext.selectFrom(RATTACH)
-				.where(RATTACH.ID.eq(rattachId)).fetchOne();
-		Rattach rattach = new Rattach();
-
-		rattach.setId(record.getId());
-		rattach.setDomain(record.getDomain());
-		rattach.setType((short) record.getType());
-		rattach.setCategory(record.getCategory());
-		rattach.setRegistry(record.getRegistry());
-		rattach.setAttachDate(record.getAttachDate());
-		rattach.setDescription(record.getDescription());
-		rattach.setMimeType((short) record.getMimetype());
-		// rattach.setSecurityLevel((Short) record.getSecurityLevel());
-
-		return rattach;
+					.format(salary.getContract().getPerson().getName() +
+						" - %1$s del %2$te de %2$tB de %3$tY al %3$te de %3$tB de %3$tY",
+						salary.getType().getName(ES),
+						salary.getStartDate(), salary.getEndDate());
 	}
 
 	private static Vector<String> getEmails(DSLContext dslContext,

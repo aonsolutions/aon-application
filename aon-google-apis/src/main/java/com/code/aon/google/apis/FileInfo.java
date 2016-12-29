@@ -67,8 +67,9 @@ public class FileInfo{
 		return modificationDate;
 	}
 
-	public void setModificationDate(Date modificationDate) {
+	public FileInfo setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 
 	public FileInfo() {
@@ -92,56 +93,63 @@ public class FileInfo{
 		return attachType;
 	}
 
-	public void setAttachType(AttachType attachType) {
+	public FileInfo setAttachType(AttachType attachType) {
 		this.attachType = attachType;
+		return this;
 	}
 
 	public Vector<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(Vector<String> tags) {
+	public FileInfo setTags(Vector<String> tags) {
 		this.tags = tags;
+		return this;
 	}
 
 	public String getAonType() {
 		return aonType;
 	}
 
-	public void setAonType(String aonType) {
+	public FileInfo setAonType(String aonType) {
 		this.aonType = aonType;
+		return this;
 	}
 
 	public short getType() {
 		return type;
 	}
 
-	public void setType(short type) {
+	public FileInfo setType(short type) {
 		this.type = type;
+		return this;
 	}
 
 	public Integer getCategory() {
 		return category;
 	}
 
-	public void setCategory(Integer category) {
+	public FileInfo setCategory(Integer category) {
 		this.category = category;
+		return this;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public FileInfo setTitle(String title) {
 		this.title = title;
+		return this;
 	}
 
 	public Byte getMimetype() {
 		return mimetype;
 	}
 
-	public void setMimetype(Byte mimetype) {
+	public FileInfo setMimetype(Byte mimetype) {
 		this.mimetype = mimetype;
+		return this;
 	}
 
 	public byte[] getData() {
@@ -157,96 +165,108 @@ public class FileInfo{
 		return driveId;
 	}
 
-	public void setDriveId(String driveId) {
+	public FileInfo setDriveId(String driveId) {
 		this.driveId = driveId;
+		return this;
 	}
 
 	public Integer getFileId() {
 		return fileId;
 	}
 
-	public void setFileId(Integer fileId) {
+	public FileInfo setFileId(Integer fileId) {
 		this.fileId = fileId;
+		return this;
 	}
 
 	public Vector<String> getEmails() {
 		return emails;
 	}
 
-	public void setEmails(Vector<String> emails) {
+	public FileInfo setEmails(Vector<String> emails) {
 		this.emails = emails;
+		return this;
 	}
 
 	public Boolean getIsNomina() {
 		return isNomina;
 	}
 
-	public void setIsNomina(Boolean isNomina) {
+	public FileInfo setIsNomina(Boolean isNomina) {
 		this.isNomina = isNomina;
+		return this;
 	}
 
 	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public FileInfo setDate(Date date) {
 		this.date = date;
+		return this;
 	}
 
 	public java.sql.Date getDateSql() {
 		return dateSql;
 	}
 
-	public void setDateSql(java.sql.Date dateSql) {
+	public FileInfo setDateSql(java.sql.Date dateSql) {
 		this.dateSql = dateSql;
+		return this;
 	}
 
 	public String getTag() {
 		return tag;
 	}
 
-	public void setTag(String tag) {
+	public FileInfo setTag(String tag) {
 		this.tag = tag;
+		return this;
 	}
 
 	public Integer getScopeId() {
 		return scopeId;
 	}
 
-	public void setScopeId(Integer scopeId) {
+	public FileInfo setScopeId(Integer scopeId) {
 		this.scopeId = scopeId;
+		return this;
 	}
 
 	public Byte getSecurityLevel() {
 		return securityLevel;
 	}
 
-	public void setSecurityLevel(Byte securityLevel) {
+	public FileInfo setSecurityLevel(Byte securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
 	}
 
 	public Integer getDomainId() {
 		return domainId;
 	}
 
-	public void setDomainId(Integer domainId) {
+	public FileInfo setDomainId(Integer domainId) {
 		this.domainId = domainId;
+		return this;
 	}
 
 	public Integer getSize() {
 		return size;
 	}
 
-	public void setSize(Integer size) {
+	public FileInfo setSize(Integer size) {
 		this.size = size;
+		return this;
 	}
 
 	public String getDomain() {
 		return domain;
 	}
 
-	public void setDomain(String domain) {
+	public FileInfo setDomain(String domain) {
 		this.domain = domain;
+		return this;
 	}
 	
 }

@@ -52,23 +52,13 @@ public class SynchronizeFiles2 {
 		return map;
 	}
 	
-	private static Drive getDriveConnection(String domainName, Integer domainId)throws  IOException, GeneralSecurityException{
+	private static Drive getDriveConnection(String domainName, Integer domainId){
 		DomainGserviceaccount g = DBConsults.getGeneralServiceAccount(domainName, domainId);
 		Drive drive = null;
 		if(g.getClientId() == null)
 			LOGGER.info("No service account found ");
 		else{
-			try {
-				drive = DriveUtils.serviceInitialize(g);
-			} catch (IOException e1) {
-				LOGGER.error("I/O Error connecting to Drive: {}",
-					e1.getMessage());
-				throw e1;
-			} catch (GeneralSecurityException e1) {
-				LOGGER.error("Security Error connecting to Drive: {}",
-					e1.getMessage());
-				throw e1;			
-			}
+			drive = DriveUtils.serviceInitialize(g);
 			LOGGER.info("Connected to Drive: {}", g.getEmailAddress());
 		}
 		return drive;
