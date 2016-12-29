@@ -190,6 +190,7 @@ public class ContextFunctions {
 				ContextVariable.PREST_IT,
 				ContextVariable.CGC_BASE.getName(),
 				ContextVariable.CGP_BASE.getName(),
+				ContextVariable.MATERNITY_BASE.getName(),
 				ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(),
 				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),
 				})
