@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showBases;
+import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showResults;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -545,7 +548,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class EnterpriseContextMenu extends ContextMenu {
 
-		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[5];
+		EnterpriseCommand enterpriseCommands[] = new EnterpriseCommand[6];
 
 		public EnterpriseContextMenu() {
 
@@ -553,19 +556,35 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					enterpriseCommands[0] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases", enterpriseCommands[1] = new MainEnterpriseCreateResponseCommand(File.BASES,
-					File.TRABAJADORES_TRAMOS), AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					enterpriseCommands[2] = new MainEnterpriseCretaRequestCommand(
+					enterpriseCommands[1] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
-					enterpriseCommands[3] = new MainEnterpriseCretaRequestCommand(
+					enterpriseCommands[2] = new MainEnterpriseCretaRequestCommand(
 							CretaService.File.SOLICITUD_CALCULOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					enterpriseCommands[4] = new MainEnterpriseDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
+					enterpriseCommands[3] = new MainEnterpriseDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)", 
+					enterpriseCommands[4] = new MainEnterpriseCretaRequestCommand(File.BASES){
+						@Override
+						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
+								int toYear, String tipo, Collection<CCC> cccs) {
+							JsBasesResult result = showBases(json, detailPanel);
+							showResults(result, 
+									resultsPanel, 
+									r -> { /*TODO: */},  
+									r -> showResultsPanel() );
+						}				
+						
+					}, 
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)", 
+					enterpriseCommands[5] = new MainEnterpriseCreateResponseCommand(File.BASES,
+					File.TRABAJADORES_TRAMOS), AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 
@@ -635,7 +654,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class ActivityContextMenu extends ContextMenu {
 
-		ActivityCommand activityCommands[] = new ActivityCommand[6];
+		ActivityCommand activityCommands[] = new ActivityCommand[7];
 
 		public ActivityContextMenu() {
 
@@ -643,22 +662,37 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					activityCommands[0] = new MainActivityCretaRequestCommand(
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases",
-					activityCommands[1] = new MainActivityCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					activityCommands[2] = new MainActivityCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
+					activityCommands[1] = new MainActivityCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					activityCommands[3] = new MainActivityCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
+					activityCommands[2] = new MainActivityCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
-					activityCommands[4] = new MainActivityCretaRequestCommand(
+					activityCommands[3] = new MainActivityCretaRequestCommand(
 							CretaService.File.SOLICITUD_CALCULOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					activityCommands[5] = new MainActivityDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
+					activityCommands[4] = new MainActivityDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
+					activityCommands[5] = new MainActivityCretaRequestCommand(File.BASES){
+						@Override
+						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
+								int toYear, String tipo, Collection<CCC> cccs) {
+							JsBasesResult result = showBases(json, detailPanel);
+							showResults(result, 
+									resultsPanel, 
+									r -> { /*TODO: */},  
+									r -> showResultsPanel() );
+						}				
+						
+					},
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
+					activityCommands[6] = new MainActivityCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 		}
@@ -814,26 +848,42 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class CCCContextMenu extends ContextMenu {
 
-		CCCCommand cccCommands[] = new CCCCommand[6];
+		CCCCommand cccCommands[] = new CCCCommand[7];
 
 		public CCCContextMenu() {
 
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos",
 					cccCommands[0] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases",
-					cccCommands[1] = new MainCCCCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					cccCommands[2] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
+					cccCommands[1] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					cccCommands[3] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
+					cccCommands[2] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
-					cccCommands[4] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_CALCULOS),
+					cccCommands[3] = new MainCCCCretaRequestCommand(CretaService.File.SOLICITUD_CALCULOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", cccCommands[5] = new MainCCCDBACommand(),
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", 
+					cccCommands[4] = new MainCCCDBACommand(),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
+					cccCommands[5] = new MainCCCCretaRequestCommand(File.BASES){
+						@Override
+						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
+								int toYear, String tipo, Collection<CCC> cccs) {
+							JsBasesResult result = showBases(json, detailPanel);
+							showResults(result, 
+									resultsPanel, 
+									r -> { /*TODO: */},  
+									r -> showResultsPanel() );
+						}				
+						
+					},
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
+					cccCommands[6] = new MainCCCCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
@@ -977,7 +1027,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private class EnterprisesContextMenu extends ContextMenu {
 
-		EnterprisesCommand cretaRequestCommands[] = new EnterprisesCommand[6];
+		EnterprisesCommand cretaRequestCommands[] = new EnterprisesCommand[7];
 
 		public EnterprisesContextMenu() {
 
@@ -985,24 +1035,39 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					cretaRequestCommands[0] = new EnterprisesCretaRequestCommand(
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases",
-					cretaRequestCommands[1] = new MainEnterprisesCreateResponseCommand(File.BASES,
-							File.TRABAJADORES_TRAMOS),
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					cretaRequestCommands[2] = new EnterprisesCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
+					cretaRequestCommands[1] = new EnterprisesCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					cretaRequestCommands[3] = new EnterprisesCretaRequestCommand(
+					cretaRequestCommands[2] = new EnterprisesCretaRequestCommand(
 							CretaService.File.SOLICITUD_CONFIRMACION),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
-					cretaRequestCommands[4] = new EnterprisesCretaRequestCommand(
+					cretaRequestCommands[3] = new EnterprisesCretaRequestCommand(
 							CretaService.File.SOLICITUD_CALCULOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					cretaRequestCommands[5] = new EnterprisesDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
+					cretaRequestCommands[4] = new EnterprisesDBACommand(), AON.AON_ICON_SEGSOCIAL_SMALL,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
+					cretaRequestCommands[5] = new EnterprisesCretaRequestCommand(
+							File.BASES){
+						@Override
+						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
+								int toYear, String tipo, Collection<CCC> cccs) {
+							JsBasesResult result = showBases(json, detailPanel);
+							showResults(result, 
+									resultsPanel, 
+									r -> { /*TODO: */},  
+									r -> showResultsPanel() );
+						}				
+					},
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
+					cretaRequestCommands[6] = new MainEnterprisesCreateResponseCommand(File.BASES,
+							File.TRABAJADORES_TRAMOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 

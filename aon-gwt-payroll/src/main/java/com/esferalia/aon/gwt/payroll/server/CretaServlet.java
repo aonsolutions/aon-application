@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringBufferInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +51,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
@@ -60,6 +61,7 @@ import com.esferalia.aon.payroll.tgss.creta.DBA;
 import com.esferalia.aon.payroll.tgss.creta.DCL;
 import com.esferalia.aon.payroll.tgss.creta.DCL.LineaSalary;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
+import com.esferalia.aon.payroll.tgss.creta.SolicitudTrabajadoresTramos;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -69,7 +71,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.tgss.creta.jaxb.Dato;
 import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.tgss.creta.jaxb.Fecha;
-import net.aonsolutions.tgss.creta.jaxb.FechaHoraRecaudacion;
 import net.aonsolutions.tgss.creta.jaxb.Liquidacion;
 import net.aonsolutions.tgss.creta.jaxb.Periodo;
 import net.aonsolutions.tgss.creta.jaxb.Trabajador;
@@ -139,18 +140,25 @@ public class CretaServlet extends HttpServlet
 
 		List<InputStream> respuestasIss = new ArrayList<InputStream>();
 		List<InputStream> trabajadoresYTramosIss = new ArrayList<InputStream>();
-		for (Part part : req.getParts()) {
-			try {
-				CretaService.File file = CretaService.File.valueOf(part.getName());
-				if (file == CretaService.File.TRABAJADORES_TRAMOS)
-					trabajadoresYTramosIss.add(part.getInputStream());
-				else if (file == CretaService.File.RESPUESTA)
-					respuestasIss.add(part.getInputStream());
-			} catch (IllegalArgumentException e) {
-
+		
+		try {
+			for (Part part : req.getParts()) {
+				try {
+					CretaService.File file = CretaService.File.valueOf(part.getName());
+					if (file == CretaService.File.TRABAJADORES_TRAMOS)
+						trabajadoresYTramosIss.add(part.getInputStream());
+					else if (file == CretaService.File.RESPUESTA)
+						respuestasIss.add(part.getInputStream());
+				} catch (IllegalArgumentException e) {
+	
+				}
 			}
 		}
-
+		catch ( ServletException e ) { 
+			//if this request is not of type multipart/form-data
+			trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
+		}
+		
 		try {
 			os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
 					trabajadoresYTramosIss, respuestasIss, pickerBasesCb));
@@ -160,16 +168,22 @@ public class CretaServlet extends HttpServlet
 
 		respuestasIss.clear();
 		trabajadoresYTramosIss.clear();
-		for (Part part : req.getParts()) {
-			try {
-				CretaService.File file = CretaService.File.valueOf(part.getName());
-				if (file == CretaService.File.TRABAJADORES_TRAMOS)
-					trabajadoresYTramosIss.add(part.getInputStream());
-				else if (file == CretaService.File.RESPUESTA)
-					respuestasIss.add(part.getInputStream());
-			} catch (IllegalArgumentException e) {
-
+		try {
+			for (Part part : req.getParts()) {
+				try {
+					CretaService.File file = CretaService.File.valueOf(part.getName());
+					if (file == CretaService.File.TRABAJADORES_TRAMOS)
+						trabajadoresYTramosIss.add(part.getInputStream());
+					else if (file == CretaService.File.RESPUESTA)
+						respuestasIss.add(part.getInputStream());
+				} catch (IllegalArgumentException e) {
+	
+				}
 			}
+		}
+		catch ( ServletException e ) { 
+			//if this request is not of type multipart/form-data
+			trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 		}
 
 		NoSkippedCallback skippedCallback = new NoSkippedCallback();
@@ -263,7 +277,7 @@ public class CretaServlet extends HttpServlet
 		String ctrlMes = req.getParameter(CretaService.Parameter.CTRL_MES.name());
 		String ctrlAnho = req.getParameter(CretaService.Parameter.CTRL_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		TrabajadoresTramos.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, resp.getOutputStream());
+		SolicitudTrabajadoresTramos.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override
@@ -336,6 +350,7 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	
+	
 	@Override
 	public void visitDocumentoCalculoLiquidacion(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		PrintWriter os = resp.getWriter();
@@ -369,6 +384,39 @@ public class CretaServlet extends HttpServlet
 
 	// ------------------------------------------------------------------------
 
+	private static InputStream generateTrabajadoresYTramos(Connection connection, HttpServletRequest req ) throws JAXBException, IOException {
+		
+		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
+		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
+		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
+		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
+		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
+		String ctrlMes = req.getParameter(CretaService.Parameter.CTRL_MES.name());
+		String ctrlAnho = req.getParameter(CretaService.Parameter.CTRL_ANHO.name());
+		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
+		
+		
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		TrabajadoresTramos.generate(
+				connection, 
+				autorizado, 
+				desdeMes, 
+				desdeAnho, 
+				hastaMes, 
+				hastaAnho, 
+				ctrlMes, 
+				ctrlAnho, 
+				tipo, 
+				cccs, 
+				os);
+		os.close();
+		
+		return new StringBufferInputStream(String.format("%s", os.toString(), "UTF-8"));
+		//return new ByteArrayInputStream(os.toByteArray());
+	
+	}
 	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
 			boolean acceptPrevBases, String nafs[], String defaults[], InputStream is, BasesCallback... cbs)
 					throws EmptyBasesException, JAXBException, XMLStreamException, FactoryConfigurationError,
@@ -1134,4 +1182,6 @@ public class CretaServlet extends HttpServlet
 		return calendar.getTime();
 		
 	}
+	
+	
 }

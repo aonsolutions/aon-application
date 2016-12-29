@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
@@ -39,6 +41,8 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -607,9 +611,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		}
 
-		// --------------------------------------------------------------------
-
-		private void onRequestDone(String response, int fromMonth, int fromYear, int toMonth, int toYear,
+		protected void onRequestDone(String response, int fromMonth, int fromYear, int toMonth, int toYear,
 				String tipo, Collection<CCC> cccs) {
 			fileEditor.setMode("xml");
 			fileEditor.setText(response);
@@ -621,6 +623,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			detailPanel.setWidget(fileEditor);
 			fileEditor.autoRefresh();
 		}
+
+		// --------------------------------------------------------------------
+
 
 		private String getFileName(int month, int year, String tipo,
 				Collection<CCC> cccs) {
@@ -691,58 +696,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void onBases(CretaService.JsBasesResult result) {
 			dialog.hide();
 
+			showBases(result, detailPanel);
+			
+			showResults(result, 
+					dialog.getSelectedData(), 
+					resultsPanel, 
+					CreateResponseCommand.this::onBases, 
+					r -> showResultsPanel() );
 
-			MergeEditor mergeEditor = new MergeEditor();
-			mergeEditor.setOrig(result.getBasesFile());
-			mergeEditor.setMode("text/xml");
-			mergeEditor.setFoldGutter(true);
-			mergeEditor.setLineNumbers(true);
-			mergeEditor.setOrig(result.getBasesFile());
-
-			try {
-				
-				mergeEditor.setText(result.getChangedBasesFile());
-				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
-				detailPanel.setWidget(mergeEditor);
-				mergeEditor.autoRefresh();
-
-			} catch (NoSuchElementException e1) {
-				try {
-					mergeEditor.setShowDifferences(false);
-					mergeEditor.setText(result.getDraftRequestFile());
-					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
-					detailPanel.setWidget(mergeEditor);
-					mergeEditor.autoRefresh();
-				} catch ( NoSuchElementException e2 ){
-					FileEditor basesEditor = new FileEditor();
-					basesEditor.setMode("text/xml");
-					basesEditor.setFoldGutter(true);
-					basesEditor.setLineNumbers(true);
-					basesEditor.setText(result.getBasesFile());
-					basesEditor.setTitle(CretaService.File.BASES.getFilename());
-					basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
-					detailPanel.setWidget(basesEditor);
-					basesEditor.autoRefresh();
-				}
-			}	
-
-			CretaResults cretaResults = new CretaResults() {
-				@Override
-				protected void onBases(JsBasesResult result) {
-					CreateResponseCommand.this.onBases(result);
-				}
-			};
-			cretaResults.addErrors(result.getErrors());
-			cretaResults.addWarnings(result.getWarnings());
-			cretaResults.addUnknown(result.getUnknown());
-			cretaResults.setJsFiles(dialog.getSelectedData());
-			resultsPanel.setWidget(cretaResults);
-
-			if (result.getErrors().length > 0
-					|| result.getWarnings().length > 0)
-				showResultsPanel();
+//			CretaResults cretaResults = new CretaResults() {
+//				@Override
+//				protected void onBases(JsBasesResult result) {
+//					CreateResponseCommand.this.onBases(result);
+//				}
+//			};
+//			cretaResults.addErrors(result.getErrors());
+//			cretaResults.addWarnings(result.getWarnings());
+//			cretaResults.addUnknown(result.getUnknown());
+//			cretaResults.setJsFiles(dialog.getSelectedData());
+//			resultsPanel.setWidget(cretaResults);
+//
+//			if (result.getErrors().length > 0
+//					|| result.getWarnings().length > 0)
+//				showResultsPanel();
 
 		}
 
@@ -1225,7 +1201,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		CalcWorkplaceCommand calcCmd;
 		PasteEmployeeCommand pasteCmd;
 
-		WorkplaceCommand workplaceCmds[] = new WorkplaceCommand[7];
+		WorkplaceCommand workplaceCmds[] = new WorkplaceCommand[8];
 		WorkplaceCreateResponseCommand cretaResponseCmds[] = new WorkplaceCreateResponseCommand[1];
 
 		public WorkplaceContextMenu() {
@@ -1258,16 +1234,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Bases",
-					cretaResponseCmds[0] = new WorkplaceCreateResponseCommand(
-							CretaService.File.BASES,
-							CretaService.File.TRABAJADORES_TRAMOS,
-							employeeDetail, resultsPanel) {
-						@Override
-						protected void showResultsPanel() {
-							EmployeeTree.this.showResultsPanel();
-						}
-					}, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
 					workplaceCmds[2] = new WorkplaceCreateRequestCommand(
 							CretaService.File.SOLICITUD_BORRADOR,
@@ -1288,10 +1254,36 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					workplaceCmds[5] = new WorkplaceDBACommand(
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
+					workplaceCmds[6] = new WorkplaceCreateRequestCommand(
+							CretaService.File.BASES,
+							employeeDetail, fileEditor){
+				
+				protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth, int toYear, String tipo, java.util.Collection<CCC> cccs) {
+					JsBasesResult result = showBases(json, detailPanel);
+					showResults(result, 
+							resultsPanel, 
+							r -> { /*TODO: */},  
+							r -> showResultsPanel() );
+
+				};
+			}
+					, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
+					cretaResponseCmds[0] = new WorkplaceCreateResponseCommand(
+							CretaService.File.BASES,
+							CretaService.File.TRABAJADORES_TRAMOS,
+							employeeDetail, resultsPanel) {
+						@Override
+						protected void showResultsPanel() {
+							EmployeeTree.this.showResultsPanel();
+						}
+					}, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			
 			addSeparator();
 			addItem("Refrescar",
-					workplaceCmds[6] = new RefreshWorkplaceCommand(),
+					workplaceCmds[7] = new RefreshWorkplaceCommand(),
 					AON.AON_ICON_REFRESH, AON.AON_ICON_CMD_BUTTON);
 		}
 
@@ -2040,7 +2032,89 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 	
+	// ------------------------------------------------------ Protected methods
 	
+	protected static JsBasesResult showBases(String json , DetailPanel detailPanel) {
+		JsBasesResult result = eval("(" + json + ")");
+		showBases(result, detailPanel);
+		return result;
+	}
+
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel) {
+		MergeEditor mergeEditor = new MergeEditor();
+		mergeEditor.setOrig(result.getBasesFile());
+		mergeEditor.setMode("text/xml");
+		mergeEditor.setFoldGutter(true);
+		mergeEditor.setLineNumbers(true);
+		mergeEditor.setOrig(result.getBasesFile());
+
+		try {
+			
+			mergeEditor.setText(result.getChangedBasesFile());
+			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+			detailPanel.setWidget(mergeEditor);
+			mergeEditor.autoRefresh();
+
+		} catch (NoSuchElementException e1) {
+			try {
+				mergeEditor.setShowDifferences(false);
+				mergeEditor.setText(result.getDraftRequestFile());
+				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				detailPanel.setWidget(mergeEditor);
+				mergeEditor.autoRefresh();
+			} catch ( NoSuchElementException e2 ){
+				FileEditor basesEditor = new FileEditor();
+				basesEditor.setMode("text/xml");
+				basesEditor.setFoldGutter(true);
+				basesEditor.setLineNumbers(true);
+				basesEditor.setText(result.getBasesFile());
+				basesEditor.setTitle(CretaService.File.BASES.getFilename());
+				basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				detailPanel.setWidget(basesEditor);
+				basesEditor.autoRefresh();
+			}
+		}	
+
+		
+	}
+	
+	protected static void showResults(
+			JsBasesResult result, 
+			Set<JsFile> jsFiles, 
+			ResultsPanel resultsPanel, 
+			Consumer<JsBasesResult> onBases,
+			Consumer<ResultsPanel> showResultsPanel
+			) {
+		
+		CretaResults cretaResults = new CretaResults() {
+			@Override
+			protected void onBases(JsBasesResult result) {
+				onBases.accept(result);
+			}
+		};
+		cretaResults.addErrors(result.getErrors());
+		cretaResults.addWarnings(result.getWarnings());
+		cretaResults.addUnknown(result.getUnknown());
+		cretaResults.setJsFiles(jsFiles);
+		resultsPanel.setWidget(cretaResults);
+
+		if (result.getErrors().length > 0
+				|| result.getWarnings().length > 0)
+			showResultsPanel.accept(resultsPanel);
+		
+	}
+	
+	protected static void showResults(
+			JsBasesResult result, 
+			ResultsPanel resultsPanel, 
+			Consumer<JsBasesResult> onBases,
+			Consumer<ResultsPanel> showResultsPanel
+			) {
+		showResults(result, Collections.emptySet(), resultsPanel, onBases, showResultsPanel);
+	}
+
 	// --------------------------------------------------------- Private methods
 
 	private static void showSalaryDraft(int employeeId, int workplaceId,
@@ -2361,5 +2435,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}-*/;
 	
 	
-
+	private static native <T extends JavaScriptObject> T eval(String javascript)
+	/*-{
+		return eval(javascript);
+	}-*/;
 }

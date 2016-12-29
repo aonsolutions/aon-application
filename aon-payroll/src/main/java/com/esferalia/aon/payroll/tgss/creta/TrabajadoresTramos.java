@@ -1,8 +1,24 @@
 package com.esferalia.aon.payroll.tgss.creta;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringBufferInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.Month;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -15,9 +31,23 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
+import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Trabajador;
+import net.aonsolutions.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
+import net.aonsolutions.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
+import net.aonsolutions.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
+import net.aonsolutions.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
+import net.aonsolutions.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class TrabajadoresTramos {
 
@@ -26,7 +56,7 @@ public class TrabajadoresTramos {
 	}
 
 	public static void main(String[] args) throws JAXBException,
-			DatatypeConfigurationException {
+			DatatypeConfigurationException, ClassNotFoundException, SQLException, IOException {
 		String tipo = "L00";
 		String desdeAnho = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
 		String desdeMes = Integer.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
@@ -35,18 +65,27 @@ public class TrabajadoresTramos {
 		String ctrlAnho = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
 		String ctrlMes = Integer.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
 
+		Option hostName = Bases.getHostNameOption();
+		Option user = Bases.getDbUserOption();
+		Option password = Bases.getDbPasswordOption();
+		Option database = Bases.getDatabaseOption();
+
 		//@formatter:off
-		Option fromYear =  Borrador.getFromYearOption(desdeAnho);
-		Option fromMonth =  Borrador.getFromMonthOption(desdeMes);
-		Option toYear =  Borrador.getToYearOption(hastaAnho);
-		Option toMonth =  Borrador.getToMonthOption(hastaMes);
-		Option ctrlYear =  Borrador.getCtrlYearOption(ctrlAnho);
-		Option ctrlMonth =  Borrador.getCtrlMonthOption(ctrlMes);
-		Option ccc =  Borrador.getCCCOption();
-		Option authorized =  Borrador.getAuthorizedOption();
-		Option type =  Borrador.getTypeOption(tipo);
+		Option fromYear =  SolicitudBorrador.getFromYearOption(desdeAnho);
+		Option fromMonth =  SolicitudBorrador.getFromMonthOption(desdeMes);
+		Option toYear =  SolicitudBorrador.getToYearOption(hastaAnho);
+		Option toMonth =  SolicitudBorrador.getToMonthOption(hastaMes);
+		Option ctrlYear =  SolicitudBorrador.getCtrlYearOption(ctrlAnho);
+		Option ctrlMonth =  SolicitudBorrador.getCtrlMonthOption(ctrlMes);
+		Option ccc =  SolicitudBorrador.getCCCOption();
+		Option authorized =  SolicitudBorrador.getAuthorizedOption();
+		Option type =  SolicitudBorrador.getTypeOption(tipo);
 		
 		Options options = new Options()
+		.addOption(hostName)
+		.addOption(user)
+		.addOption(password)
+		.addOption(database)
 		.addOption(authorized)
 		.addOption(fromYear)
 		.addOption(fromMonth)
@@ -67,6 +106,16 @@ public class TrabajadoresTramos {
 			// parse the command line arguments
 			CommandLine cmd = parser.parse(options, args);
 
+			Class.forName(com.mysql.jdbc.Driver.class.getName());
+
+			Connection connection = DriverManager.getConnection(
+					String.format("jdbc:mysql://%s:%d/%s",
+							cmd.getOptionValue(hostName.getLongOpt(),
+									"127.0.0.1"),
+							3306, cmd.getOptionValue(database.getLongOpt())),
+					cmd.getOptionValue(user.getLongOpt()),
+					cmd.getOptionValue(password.getLongOpt()));
+
 			desdeMes = cmd.getOptionValue(fromMonth.getLongOpt(), desdeMes);
 			desdeAnho = cmd.getOptionValue(fromYear.getLongOpt(), desdeAnho);
 			hastaMes = cmd.getOptionValue(toMonth.getLongOpt(), hastaMes);
@@ -74,8 +123,21 @@ public class TrabajadoresTramos {
 			tipo = cmd.getOptionValue(type.getLongOpt(), tipo);
 			String cccs[] = cmd.getOptionValues(ccc.getLongOpt());
 			String autorizado = cmd.getOptionValue(authorized.getLongOpt());
-
-			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, System.out);
+			
+			ByteArrayOutputStream trabajadoresYTramosOs = new ByteArrayOutputStream();
+			generate(connection, autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, trabajadoresYTramosOs);
+			trabajadoresYTramosOs.close();
+			
+			InputStream trabajadoresTramosIs= new StringBufferInputStream(String.format("%s", trabajadoresYTramosOs.toString(), "UTF-8"));
+			
+			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+					.unmarshal(
+							net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+							trabajadoresTramosIs);
+			
+			Utils.marshal(trabajadoresTramos, System.out);
+			
+			trabajadoresTramosIs.close();
 
 		} catch (ParseException e) {
 			// oops, something went wrong
@@ -88,7 +150,7 @@ public class TrabajadoresTramos {
 
 	}
 
-	public static void generate(String autorizado, String desdeMes, String desdeAnho,
+	public static void generate(Connection conn, String autorizado, String desdeMes, String desdeAnho,
 			String hastaMes, String hastaAnho, String ctrlMes, String ctrlAnho,  String tipo, String cccs[], OutputStream os) throws JAXBException {
 
 		int authorized = Integer.parseInt(autorizado);
@@ -99,18 +161,18 @@ public class TrabajadoresTramos {
 		Month ctrlMonth = Month.of(Integer.parseInt(ctrlMes));
 		int ctrlYear = Integer.parseInt(ctrlAnho);
 
-		generate(authorized, fromMonth, fromYear, toMonth, toYear, ctrlMonth, ctrlYear, tipo, cccs, os);
+		generate(conn, authorized, fromMonth, fromYear, toMonth, toYear, ctrlMonth, ctrlYear, tipo, cccs, os);
 	}
 
-	public static void generate(int autorizado, Month desdeMes, int desdeAnho, Month hastaMes, int hastaAnho, 
+	public static void generate(Connection conn, int autorizado, Month desdeMes, int desdeAnho, Month hastaMes, int hastaAnho, 
 			Month ctrlMes, int ctrlAnho,
 			String tipo, String cccs[], OutputStream os) throws JAXBException {
 
-		SolicitudTrabajadoresTramosBuilder builder = new SolicitudTrabajadoresTramosBuilder()
+		TrabajadoresTramosBuilder trabajadoresTramosBuilder = new TrabajadoresTramosBuilder()
 				.setAutorizado(autorizado);
 
 		for (String cCC : cccs) {
-			builder.setCCC(cCC)
+			trabajadoresTramosBuilder.setCCC(cCC)
 			.setTipo(tipo)
 			.setMesDesde(desdeMes)
 			.setAnhoDesde(desdeAnho)
@@ -120,9 +182,314 @@ public class TrabajadoresTramos {
 			.setAnhoControl(ctrlAnho)
 			.addLiquidacion();
 		}
-		SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder
-				.createSolicitudBorrador();
+		
+		AONContext aonContext = new AONContext(conn);
+		
+		
+		Date fromDate = getFirstDayOf(desdeMes, desdeAnho);
+		Date toDate = getLastDayOf(hastaMes, hastaAnho);
+		for (Date date = fromDate; date.before(toDate); date = AonDateUtils.add(date,Calendar.MONTH,1))
+			for ( String ccc: cccs ) {
+				String ccc_prov_num_dc = ccc.substring(4); // PROVINCIA (2) + N� (7) + D�GITOS CONTROL (2)
+				liquidacionMes(aonContext, trabajadoresTramosBuilder, desdeAnho, desdeMes, ccc_prov_num_dc, tipo);
+			}
+		
 
-		Utils.marshal(solicitudTrabajadoresTramos, os);
+		net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = trabajadoresTramosBuilder
+				.create();
+
+		Utils.marshal(trabajadoresTramos, os);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	private static void liquidacionMes(AONContext aonContext, 
+			TrabajadoresTramosBuilder trabajadoresTramosBuilder,
+			int anho, 
+			Month mes,
+			String ccc,
+			String tipo) {
+		
+		LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
+		
+		liquidacionMesBuilder.setMes(mes);
+		liquidacionMesBuilder.setAnho(anho);
+		
+		Date startDate = getFirstDayOf(mes, anho);
+		Date endDate = getLastDayOf(mes, anho);
+		
+
+		AON.getSalaryData(aonContext, 
+				props -> props.getCCCProperty().eq(ccc)
+				.and(props.getEndDateProperty().ge(startDate))
+				.and(props.getStartDateProperty().le(endDate))
+				.and(props.getIsDelayProperty().eq(AonStringUtils.equalsIgnoreCase("L03", tipo)))
+				.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
+				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91,L90", tipo)))
+				)
+		.forEach(
+				salary -> {
+					TrabajadorBuilder trabajadorBuilder  = new TrabajadorBuilder();
+					trabajadorBuilder.setNaf(salary.getEmployeeSSNumber());
+					//trabajadorBuilder.setFullName(salary.getEmployeeName());
+					trabajadorBuilder.setTipoIpf(TrabajadorBuilder.TipoIpf.DNI); // TODO: Hardwired... To Self-Destructed 
+					trabajadorBuilder.setNumeroIpf(salary.getEmployeeDocument());
+					
+					List<Period> cgcBasePeriods = new LinkedList<Period>();
+					
+					for ( ContextData cgcData: salary.getContextData().get(CGC_BASE.getName()) )
+						cgcBasePeriods.add( new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+					
+					List<Period> periods = cgcBasePeriods;
+					for ( Period p: periods ) {
+						
+						TramoBuilder tramoBuilder  = new TramoBuilder();
+
+						Calendar start = Calendar.getInstance();
+						start.setTime(p.getStart());
+						tramoBuilder.setDiaDesde(start.get(Calendar.DATE));
+						tramoBuilder.setMesDesde(start.get(Calendar.MONTH)+1);
+						tramoBuilder.setAnhoDesde(start.get(Calendar.YEAR));
+
+						Calendar end = Calendar.getInstance();
+						end.setTime(p.getEnd());
+						tramoBuilder.setDiaHasta(end.get(Calendar.DATE));
+						tramoBuilder.setMesHasta(end.get(Calendar.MONTH)+1);
+						tramoBuilder.setAnhoHasta(end.get(Calendar.YEAR));
+
+						Double diasCotizados = getContextData(salary, 
+										QUOTE_DAYS, 
+										p.getStart(), 
+										p.getEnd(),
+										Collectors.summingDouble(Double::parseDouble) );
+						tramoBuilder.setDiasCotizados(diasCotizados.intValue());
+						
+						visit(salary, p.getStart(), p.getEnd(), new SalaryVisitor() {
+							DatoSolicitadoBuilder dataSolicitadoBuilder  = new DatoSolicitadoBuilder();
+
+							
+							@Override
+							public void visitTiempoCompletoNormal() {
+								// 2.1 Situación de activo “normal” 
+								// 2.1.1 Trabajador a Tiempo Completo  
+
+								// Base de contingencias comunes
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("500");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Horas Extras Fuerza Mayor
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("501");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base Otras Horas Extras
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("502");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("601");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitTiempoParcialNormal() {
+								// 2.1 Situación de activo “normal” 
+								visitTiempoCompletoNormal();
+								// 2.1.1 Trabajador a Tiempo Parcial
+								// Nº horas realizadas  a tiempo parcial 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("01");
+								dataSolicitadoBuilder.setObligatorio(true);
+								// Nº horas complementarias 
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("02");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitGrupoCotizacionDiario() {
+								// Modalidad de Salario (Para grupos de cotización diario con retribución mensual.)
+								dataSolicitadoBuilder.setTipo("I");
+								dataSolicitadoBuilder.setCodigo("51");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitIncapacidadTemporal15PrimerosDias() {
+								// 2.2 Situaciones de Incapacidad Temporal  
+								// 2.2.1 Incapacidad Temporal 15 primeros días 
+								// Base de contingencias comunes en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("500");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("603");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitIncapacidadTemporalPagoDelegado() {
+								// 2.2 Situaciones de Incapacidad Temporal  
+								// 2.2.2 Incapacidad Temporal pago delegado 
+								// Base de contingencias comunes en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("500");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Compensación IT Contingencias Comunes
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("563");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("603");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitIncapacidadTemporalATEPPagoDelegado() {
+								// 2.2 Situaciones de Incapacidad Temporal  
+								// 2.2.3 Incapacidad Temporal de AT Y EP pago delegado 
+								// Base de contingencias comunes en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("500");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Compensación IT AT y EP
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("663");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("603");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+						});
+						
+						
+						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd()));
+						tramoBuilder.setGrupoCotizacion(getContextData(QUOTE_GROUP.getName(), salary, p.getStart(), p.getEnd()));
+						
+
+						trabajadorBuilder.addTramo(tramoBuilder.create());
+						
+					}
+					
+					Trabajador trabajador = trabajadorBuilder.create();
+					liquidacionMesBuilder.add(trabajador);
+				}
+		)
+		;
+		
+		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMesBuilder.create());
+	}
+	
+	
+	private static Date getFirstDayOf(Month mes, int anho) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR , anho);
+		calendar.set(Calendar.MONTH , mes.getValue()-1);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		return calendar.getTime();
+	}
+	
+	private static Date getLastDayOf(Month mes, int anho) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR , anho);
+		calendar.set(Calendar.MONTH , mes.getValue()-1);
+		calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return calendar.getTime();
+	}
+	
+	private static <A, R> R getContextData(Salary salary, ContextVariable var, 
+			Date startDate, Date endDate, Collector<? super String, A, R> collector) {
+		List<ContextData> datas = salary.getContextData().get(var.getName());
+		if (datas == null)
+			return null;
+		R r = datas.stream()
+				.filter(d->d.getStartDate().compareTo(startDate) >= 0)
+				.filter(d->d.getEndDate().compareTo(endDate) <= 0)
+				.map(d -> d.getExpression()).collect(collector);
+		return r;
+	}
+	
+	private static interface SalaryVisitor {
+		void visitTiempoParcialNormal();
+		void visitTiempoCompletoNormal();
+		void visitGrupoCotizacionDiario();
+		void visitIncapacidadTemporal15PrimerosDias();
+		void visitIncapacidadTemporalPagoDelegado();
+		void visitIncapacidadTemporalATEPPagoDelegado();
+		
+	}
+	
+	private static void visit(Salary salary, Date startDate, Date endDate, SalaryVisitor visitor) {
+		String tc2 = getContextData(TC2.getName(),salary, startDate, endDate);
+
+		
+		boolean iT15primerosDias = (
+		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_1_3.getName(), salary, startDate, endDate)
+		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_4_15.getName(), salary, startDate, endDate) 
+		) > 0.00;
+		
+		boolean iTPagoDelegado = (
+		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_16_20.getName(), salary, startDate, endDate)
+		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_21.getName(), salary, startDate, endDate) 
+		) > 0.00;
+
+		boolean atEPPagoDelegado = (
+		getSumContextData(ContextVariable.OCCUPATIONAL_DISEASE_DAYS.getName(), salary, startDate, endDate)
+		) > 0.00;
+
+		boolean tiempoCompleto = ("14".indexOf(tc2.charAt(0)) != -1);
+
+		if ( iT15primerosDias )
+			visitor.visitIncapacidadTemporal15PrimerosDias();
+		else if ( iTPagoDelegado )
+			visitor.visitIncapacidadTemporalPagoDelegado();
+		else if ( atEPPagoDelegado )
+			visitor.visitIncapacidadTemporalATEPPagoDelegado();
+		else if (tiempoCompleto)
+			visitor.visitTiempoCompletoNormal();
+		else 
+			visitor.visitTiempoParcialNormal();
+			
+		String quoteGroup = getContextData(QUOTE_GROUP.getName(),salary, startDate, endDate);
+		if ( Integer.parseInt(quoteGroup ) >= 8 )
+			visitor.visitGrupoCotizacionDiario();
+	}
+
+	private static String getContextData(String name, Salary salary, Date startDate, Date endDate) {
+		List<ContextData> datas= salary.getContextData(name, startDate, endDate);
+		String data = datas.get(0).getExpression().trim();
+		for ( int i= 1; i < datas.size(); i++) {
+			String nextData = datas.get(i).getExpression().trim();
+			if ( !data.equalsIgnoreCase(nextData))
+				throw new RuntimeException();
+			data = nextData;
+		}
+		return data;
+	}
+
+	private static double getSumContextData(String name, Salary salary, Date startDate, Date endDate) {
+		List<ContextData> datas= salary.getContextData(name, startDate, endDate);
+		double data = 0.00;
+		for ( int i= 0; i < datas.size(); i++)
+			data += Double.parseDouble(datas.get(i).getExpression());
+		return data;
 	}
 }
