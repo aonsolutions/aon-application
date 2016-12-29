@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.81.1
+# Version: 8.82.0
 # Created by: girazu
-# Creation Date: 23/12/2016 11:10
+# Creation Date: 29/12/2016 13:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3656,7 +3656,7 @@ CREATE TABLE `customer_fee` (
   `project` int(4) DEFAULT NULL COMMENT 'Identificador del Proyecto',
   `customer` int(4) DEFAULT NULL COMMENT 'Identificador del Cliente',
   `line` smallint(2) DEFAULT '1' COMMENT 'Numero de linea de Cuota',
-  `item` int(4) DEFAULT NULL COMMENT 'Identificador del Articulo',
+  `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
   `description` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion de la Cuota',
   `quantity` double(15,3) DEFAULT '0.000' COMMENT 'Cantidad de la Cuota',
   `price` double DEFAULT '0' COMMENT 'Precio de la Cuota',
@@ -8209,7 +8209,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.81.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.82.0');
 
 COMMIT;
 
