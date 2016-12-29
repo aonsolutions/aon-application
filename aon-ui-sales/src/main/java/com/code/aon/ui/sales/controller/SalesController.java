@@ -80,6 +80,7 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.ingenet.IngenetSalesManager;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
@@ -117,6 +118,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
 	private com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaImporter;
+	private boolean showEdiFtpWindow;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -291,7 +293,15 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public void setShowShipmentWindow(boolean showShipmentWindow) {
 		this.showShipmentWindow = showShipmentWindow;
 	}
+	
+	public boolean isShowEdiFtpWindow() {
+		return showEdiFtpWindow;
+	}
 
+	public void setShowEdiFtpWindow(boolean showEdiFtpWindow) {
+		this.showEdiFtpWindow = showEdiFtpWindow;
+	}
+	
 	public ProgressionState getProgressionState() {
 		return progressionState;
 	}
@@ -959,6 +969,18 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				LOGGER.error(e.getMessage());
 			}
 		}
+	}
+
+	private List<String> ftpEdiList;
+	
+	public void onRetrieveFtpEdi(ActionEvent event) {
+		SeresFtpConnectionProvider seres = new SeresFtpConnectionProvider();
+		String remotePath = "recepcion/orders_d96a";
+		ftpEdiList = seres.obtainFiles(remotePath);
+	}
+	
+	public List<String> getFtpEdiOrders() {
+		return ftpEdiList;
 	}
 	
 	
