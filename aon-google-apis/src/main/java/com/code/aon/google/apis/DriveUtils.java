@@ -1073,7 +1073,7 @@ public class DriveUtils implements IBlobManager {
 	}
 	
 	
-	public static File paysheet(DomainGserviceaccount d, Attach attach, Vector<String> emails) {
+	public static Boolean paysheet(DomainGserviceaccount d, Attach attach, Vector<String> emails) {
 		Drive drive = serviceInitialize(d);
 		File file = new File();
 		String[] keys = {"domain", "aontype", "aonmodule", "date"};
@@ -1085,12 +1085,8 @@ public class DriveUtils implements IBlobManager {
 			file = fileList.getItems().get(0);
 			if (!file.getMd5Checksum().equals(AonFileUtils.getMD5Checksum(attach.getData())))
 				file = updateFile(drive, file, attach.getData());
-			ShareFiles.setPermissions(drive, file.getId(), emails);
-		} else {
-			file = principal(drive, attach);
-			ShareFiles.setPermissions(drive, file.getId(), emails);
-		}
-		return file;
+		} else 	file = principal(drive, attach);
+		return ShareFiles.setPermissions(drive, file.getId(), emails);
 	}
 	
 	// nominaas!!!

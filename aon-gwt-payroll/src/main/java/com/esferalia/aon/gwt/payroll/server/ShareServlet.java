@@ -145,10 +145,9 @@ public class ShareServlet extends HttpServlet implements ShareService {
 						.setDescription(getDescrition(salary))
 						.setDate(salary.getIssueDate());
 								
-				DriveUtils.paysheet(domainGserviceaccount, attach, emails);
+				Boolean ok = DriveUtils.paysheet(domainGserviceaccount, attach, emails);
 				
-				doJson(salary, data.length, attach.getDescription(), null,
-						os);
+				doJson(salary, data.length, attach.getDescription(), !ok ? "Error al compartir" : "",	os);
 			}
 
 			os.close();
@@ -339,19 +338,19 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		if (salary.getEndDate().getYear() == salary.getStartDate().getYear())
 			if (salary.getEndDate().getMonth() == salary.getStartDate()
 					.getMonth())
-				return String.format(salary.getContract().getPerson().getName() + 
+				return String.format(salary.getContract().getPerson().getFullName() + 
 						" - %1$s del %2$te al %3$te de %3$tB de %3$tY", salary
 								.getType().getName(ES), salary.getStartDate(),
 						salary.getEndDate());
 			else
-				return String.format(salary.getContract().getPerson().getName() +
+				return String.format(salary.getContract().getPerson().getFullName() +
 						" - %1$s del %2$te de %2$tB  al %3$te de %3$tB de %3$tY",
 						salary.getType().getName(ES), salary.getStartDate(),
 						salary.getEndDate());
 
 		else
 			return String
-					.format(salary.getContract().getPerson().getName() +
+					.format(salary.getContract().getPerson().getFullName() +
 						" - %1$s del %2$te de %2$tB de %3$tY al %3$te de %3$tB de %3$tY",
 						salary.getType().getName(ES),
 						salary.getStartDate(), salary.getEndDate());

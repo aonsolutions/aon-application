@@ -35,21 +35,27 @@ import com.google.api.services.drive.model.Permission;
 
 public class ShareFiles {
 
-	public static void setPermission(Drive drive, String fileId, String email){
-			Permission p=new Permission();
-	 		p.setValue(email);
-	 		p.setType("user");//user || group || domain || anyone
-	 		p.setRole("reader");//owner || reader || writer || commenter		  		
-	 		try {
-				drive.permissions().insert(fileId, p).execute();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public static Boolean setPermission(Drive drive, String fileId, String email){
+		Permission p=new Permission();
+		p.setValue(email);
+		p.setType("user");//user || group || domain || anyone
+		p.setRole("reader");//owner || reader || writer || commenter		  		
+		try {
+			drive.permissions().insert(fileId, p).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
-    public static void setPermissions(Drive drive, String fileId, Vector<String> emails){
-    	emails.stream().forEach(email -> setPermission(drive, fileId,email));
-    }
+    public static Boolean setPermissions(Drive drive, String fileId, Vector<String> emails){
+   	 	for (String email : emails) {
+   	 		if(!setPermission(drive, fileId,email));
+   	 			return false;
+   	 	}
+   	 	return true;
+   }
     
     public static void setPermissions(Drive drive, String fileId) throws IOException{
    	 	for (String email : emails) {
