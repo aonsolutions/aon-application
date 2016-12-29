@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showEdiFtpWindow">
+		<aon:if test="#{delivery.showEdiFtpWindow}">
+			<rich:modalPanel id="ediFtpModalPanel" minHeight="240"
+				minWidth="520" rendered="#{delivery.showEdiFtpWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Enviar al servidor FTP de Seres" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showEdiFtpWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{delivery.showEdiFtpWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="ediFtpForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="ediFtp-accept"
+										value="Enviar"
+										actionListener="#{delivery.onEdiFtpTransfer}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="ediFtpModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{delivery.showEdiFtpWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="ediFtp-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showEdiFtpWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{delivery.showEdiFtpWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid columns="2" dir="true" style="width: 80%;">
+
+										<aon:outputLabel for="EdiFtp_remotePath"
+											value="Directorio remoto FTP" />
+										<aon:inputText id="EdiFtp_remotePath"
+											value="/envio/desadv_d96a"
+											size="30"
+											disabled="#{true}" />
+										
+										<aon:outputLabel for="EdiFtp_username"
+											value="Usuario" />
+										<aon:inputText id="EdiFtp_username"
+											value="ftp1251"
+											disabled="#{true}" />
+										
+										<aon:outputLabel for="EdiFtp_password"
+											value="Contraseña" />
+										<aon:inputSecret id="EdiFtp_password"
+											value="x1xx0wub"
+											disabled="#{true}" />
+										
+									</aon:panelGrid>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

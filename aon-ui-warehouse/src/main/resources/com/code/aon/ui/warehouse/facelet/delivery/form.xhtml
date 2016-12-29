@@ -51,6 +51,13 @@
 								actionListener="#{delivery.onExportEdiFile}" 
 								styleClass="aon-finding-toolbar-item aon-icon-file-download">
 							</aon:htmlCommandLink>
+							<aon:commandButton id="delivery-ediFtp"
+								value="EDI FTP" 
+								title="Enviar a la carpeta FTP de Seres"
+								styleClass="aon-finding-toolbar-item aon-icon-sincronize">
+								<f:setPropertyActionListener target="#{delivery.showEdiFtpWindow}"
+									value="#{true}" />
+							</aon:commandButton>															
 						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">
@@ -413,6 +420,7 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalConfirmStock.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalIngenet.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalEdiFtp.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">

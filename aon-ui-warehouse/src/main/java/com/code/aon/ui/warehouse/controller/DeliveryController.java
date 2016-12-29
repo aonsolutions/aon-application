@@ -82,6 +82,7 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.file.seres.util.writer.connect.ConnectDeliveryWriter;
 import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
 
@@ -113,6 +114,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private boolean shippingAlternativeAddress;
 	private BankAccountHelper accountHelper;
 	private UdapaDeliveryHandler udapaDeliveryHandler;
+	private boolean showEdiFtpWindow;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
@@ -248,6 +250,14 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void setShowWarehouseChangeWindow(boolean showWarehouseChangeWindow) {
 		this.showWarehouseChangeWindow = showWarehouseChangeWindow;
+	}
+
+	public boolean isShowEdiFtpWindow() {
+		return showEdiFtpWindow;
+	}
+
+	public void setShowEdiFtpWindow(boolean showEdiFtpWindow) {
+		this.showEdiFtpWindow = showEdiFtpWindow;
 	}
 
 	public Warehouse getNewWarehouse() {
@@ -819,7 +829,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			DownloadUtil.finishDownload(response, out);
 		}
 	}
-	
 	@Deprecated
 	public void onExportUdapaEdiFile(ActionEvent event) {
 		FileOutput output = null;
@@ -863,6 +872,49 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		} finally {
 			DownloadUtil.finishDownload(response, out);
 		}
+	}
+	
+	public void onEdiFtpTransfer(ActionEvent event) {
+		
+		FileOutput output = null;
+		try {
+			Delivery delivery = (Delivery) this.getTo();
+			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
+					.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+			String customerEdiCode = ediSupport.getEdiCodes(
+					delivery.getCustomer().getRegistry(),
+					delivery.getRegistryAddress()).get(
+					CustomerEdiSupportController.ALBARANES);
+			CompanyController company = (CompanyController) AonUtil
+					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			String companyEdiCode = company.getEdiCompanyCode();
+
+			// writer file
+			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
+			output = writer.createFile(delivery, companyEdiCode,
+					customerEdiCode);
+
+			// download file
+			String name = "albaran";
+			String number = delivery.getReferenceCode();
+			byte[] data = output.getContent();
+			InputStream fileIn = new BufferedInputStream(
+					new ByteArrayInputStream(data));
+			
+			SeresFtpConnectionProvider seres = new SeresFtpConnectionProvider();
+			String remotePath = "envio/desadv_d96a";
+			seres.storeFile(remotePath, name+"."+number, fileIn);
+			
+			IOUtils.closeQuietly(fileIn);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		
+		
 	}
 	
 

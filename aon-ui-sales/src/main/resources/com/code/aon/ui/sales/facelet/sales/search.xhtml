@@ -33,6 +33,13 @@
 							<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
 								value="#{true}" />
 						</aon:commandButton>
+						<aon:commandButton id="sales-ediFtp"
+							value="EDI FTP" 
+							title="Recuperar de la carpeta FTP de Seres"
+							styleClass="aon-finding-toolbar-item aon-icon-sincronize">
+							<f:setPropertyActionListener target="#{sales.showEdiFtpWindow}"
+								value="#{true}" />
+						</aon:commandButton>
 					</aon:if>
 				</ui:define>
 			</ui:decorate>
@@ -54,5 +61,6 @@
 		<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		</aon:if>
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalEdiFtp.xhtml" />
 	</ui:define>
 </ui:composition>

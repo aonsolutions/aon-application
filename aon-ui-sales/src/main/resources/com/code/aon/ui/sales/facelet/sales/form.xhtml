@@ -57,6 +57,13 @@
 								<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
 									value="#{true}" />
 							</aon:commandButton>
+							<aon:commandButton id="sales-ediFtp"
+								value="EDI FTP" 
+								title="Recuperar de la carpeta FTP de Seres"
+								styleClass="aon-finding-toolbar-item aon-icon-sincronize">
+								<f:setPropertyActionListener target="#{sales.showEdiFtpWindow}"
+									value="#{true}" />
+							</aon:commandButton>
 						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">
@@ -496,6 +503,7 @@
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalShipment.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalUdapaImport.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalEdiFtp.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include
