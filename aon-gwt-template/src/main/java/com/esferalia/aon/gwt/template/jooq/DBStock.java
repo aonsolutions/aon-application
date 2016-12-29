@@ -635,7 +635,7 @@ public class DBStock {
 										error.setTextError(v);
 									} else if(error.getError())
 										updateStockList.add(new StockAux().setStockId(stockId).setItemId(itemId).setQuantity((quantity+s.getQuantity()))
-												.setWarehouseId(ti.getSourceWarehouse().getId()));
+												.setWarehouseId(ti.getTargetWarehouse().getId()));
 								}
 								else{
 									//INSERT target
@@ -657,7 +657,6 @@ public class DBStock {
 				for (StockAux sa : updateStockList) {
 					updateStock(ctx, sa.stockId, sa.getItemId(), sa.getQuantity(), sa.getWarehouseId());
 				}
-				ctx.deactivateForeignKeys();
 				stockInsertQuery.execute();
 				
 				if(transferDeleteIds.size() > 0){
@@ -666,8 +665,6 @@ public class DBStock {
 					transferUpdate.execute();
 				}
 				transferInsert.execute();
-				
-				ctx.activateForeignKeys();
 			}
 			return error;
 			
