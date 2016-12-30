@@ -220,11 +220,11 @@ public class AccountEntryModule extends MainEntryPoint {
 		splitLayoutPanel = new SplitLayoutPanel(4);
 		journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentDomain());
 
-		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
-			public void onUncaughtException(Throwable e) {
-				showError("ERROR INESPERADO! [" + e.getMessage() + "]");
-			}
-		});
+//		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+//			public void onUncaughtException(Throwable e) {
+//				showError("ERROR INESPERADO! [" + e.getMessage() + "]");
+//			}
+//		});
 		        
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
