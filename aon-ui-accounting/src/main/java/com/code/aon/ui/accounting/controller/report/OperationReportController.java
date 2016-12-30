@@ -23,6 +23,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
@@ -178,6 +179,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 			exporter.startExport(IReportExporter.DEFAULT_NAME);
 			exporter.exportHeader(metadata);
 			List<OperationReport> list = (List<OperationReport>) getDetailModel().getWrappedData();
+			double totalBalance = 0;
 			for (OperationReport op : list) {
 				exporter.startLine();
 				int i = 0;
@@ -186,6 +188,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getAccount() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getConcept() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getBalance() );
+				totalBalance  = CommonUtil.round(totalBalance  + op.getBalance());
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getDocumentNumber() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getRdocument() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getRname() );
@@ -218,9 +221,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
-			exporter.exportColumn(metadata.getColumns().get((i++)), list
-					.stream().filter(o -> o.getTotalBase() != null)
-					.mapToDouble(OperationReport::getTotalBase).sum());
+			exporter.exportColumn(metadata.getColumns().get((i++)), totalBalance);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
