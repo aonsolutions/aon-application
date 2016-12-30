@@ -13,7 +13,7 @@ public class AccountEntryListBox extends ListBox {
 	
 	@SuppressWarnings("deprecation")
 	public AccountEntryListBox() {
-		setWidth("190px");
+		setWidth("160px");
 		addItem("","------");
 		for (AccountEntryType type : AccountEntryType.values()) {
 			if ( type != AccountEntryType.LEASING && type != AccountEntryType.LEASING_FEE) {

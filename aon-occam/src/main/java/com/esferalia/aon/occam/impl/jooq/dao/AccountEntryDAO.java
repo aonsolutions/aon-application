@@ -617,6 +617,11 @@ public class AccountEntryDAO {
 		}
 
 		@Override
+		public Property<Integer> getJournalProperty() {
+			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.JOURNAL);
+		}
+
+		@Override
 		public Property<Integer> getDomainProperty() {
 			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.DOMAIN);
 		}

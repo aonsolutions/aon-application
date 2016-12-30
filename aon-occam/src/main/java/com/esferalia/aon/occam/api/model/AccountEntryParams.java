@@ -14,6 +14,7 @@ public class AccountEntryParams implements Serializable{
 	private Date from;
 	private Date to;
 	private AccountEntryType type;
+	private Integer journal;
 	private boolean confidential; 
 	private boolean hasConfidentialityRole; 
 	
@@ -46,6 +47,13 @@ public class AccountEntryParams implements Serializable{
 	}
 	public AccountEntryParams setType(AccountEntryType type) {
 		this.type = type;
+		return this;
+	}
+	public Integer getJournal() {
+		return journal;
+	}
+	public AccountEntryParams setJournal(Integer journal) {
+		this.journal = journal;
 		return this;
 	}
 	public AccountEntryParams setTo(Date to) {

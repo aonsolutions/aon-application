@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.AccountEntryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -68,6 +69,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private DateBoxEx toDate;
 	private AccountEntryListBox entryListBox;
 	private CheckBox confidential;
+	private IntegerBox journal;
 	private AccountBox account;
 	private DoubleBox debit;
 	private DoubleBox credit;
@@ -160,6 +162,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		account.setRequired(false);
 		debit = new DoubleBox();
 		credit = new DoubleBox();
+		journal = new IntegerBox();
 		concept = new TextBox();
 		concept.setStyleName(AON.AON_CSS.aonInputText());
 		document = new TextBox();
@@ -185,8 +188,10 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.getColumnFormatter().setWidth(2, "80px");
 		tab.getColumnFormatter().setWidth(3, "175px");
 		tab.getColumnFormatter().setWidth(4, "110px");
-		tab.getColumnFormatter().setWidth(5, "auto");
-		tab.getColumnFormatter().setWidth(6, "50px");
+		tab.getColumnFormatter().setWidth(5, "80px");
+		tab.getColumnFormatter().setWidth(6, "110px");
+		tab.getColumnFormatter().setWidth(7, "auto");
+		tab.getColumnFormatter().setWidth(8, "50px");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.date()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
@@ -218,13 +223,14 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.getCellFormatter().setStyleName(0,4, AON.AON_CSS.aonPanelGridOdd());
 
 		tab.setWidget(0, 5, account);
+		tab.getFlexCellFormatter().setColSpan(0, 5, 3);
 		tab.getCellFormatter().setStyleName(0,5, AON.AON_CSS.aonPanelGridEven());
 		
-		tab.getFlexCellFormatter().setRowSpan(0, 6, 2);
-		tab.getCellFormatter().setStyleName(0,6, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0,6, AON.AON_CSS.aonVerticalAlignMiddle());
-		tab.getCellFormatter().addStyleName(0,6, AON.AON_CSS.aonTextCenter());
-		tab.setWidget(0, 6, filter);
+		tab.getFlexCellFormatter().setRowSpan(0, 8, 2);
+		tab.getCellFormatter().setStyleName(0,8, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().addStyleName(0,8, AON.AON_CSS.aonVerticalAlignMiddle());
+		tab.getCellFormatter().addStyleName(0,8, AON.AON_CSS.aonTextCenter());
+		tab.setWidget(0, 8, filter);
 		
 		tab.setWidget(1, 0, new Label(AON.MSG.amount()));
 		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
@@ -257,6 +263,12 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.setWidget(1, 5, document);
 		tab.getCellFormatter().setStyleName(1,5, AON.AON_CSS.aonPanelGridEven());
 		
+		tab.setWidget(1, 6, new Label(AON.MSG.journal()));
+		tab.getCellFormatter().setStyleName(1,6, AON.AON_CSS.aonPanelGridOdd());
+
+		tab.setWidget(1, 7, journal);
+		tab.getCellFormatter().setStyleName(1,7, AON.AON_CSS.aonPanelGridEven());
+
 		FocusPanel focusPanel = new FocusPanel();
 		focusPanel.addStyleName(AON.AON_CSS.aonWidthAll());
 		focusPanel.setTabIndex(tabIndex);
@@ -316,6 +328,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			.setFrom(fromDate.getValue())
 			.setTo(toDate.getValue())
 			.setType(entryListBox.getValue())
+			.setJournal(journal.getValue())
 			.setAccount(account.getId())
 			.setDebit(debit.getValue())
 			.setCredit(credit.getValue())

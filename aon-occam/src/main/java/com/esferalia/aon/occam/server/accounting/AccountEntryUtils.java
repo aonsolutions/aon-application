@@ -12,6 +12,9 @@ public class AccountEntryUtils {
 	public static Filter getFilter(AccountEntryProperties p,
 			AccountEntryParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
+		if (params.getJournal()  != null && params.getJournal().intValue() != 0 ) {
+			prop = prop.and(p.getJournalProperty().eq(params.getJournal()));
+		}
 		if (params.getFrom() != null) {
 			prop = prop.and(p.getEntryDateProperty().ge(params.getFrom()));
 		}
