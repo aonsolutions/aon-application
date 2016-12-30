@@ -537,8 +537,6 @@ public class DBStock {
 							error.setTextError(v);
 						} else{
 							Integer itemId = data.get(0).value1();
-							ti.getSourceWarehouse();
-							ti.getTargetWarehouse();
 							Result<Record2<Double, Integer>> data2 = null;
 							if(ti.getTargetWarehouse() != null && ti.getTargetWarehouse().getId() != null)
 								data2 = sctx.getDslContext().select(STOCK.QUANTITY, STOCK.ID)
@@ -641,6 +639,10 @@ public class DBStock {
 									//INSERT target
 									stockInsertQuery.values(domain.getId(), itemId, s.getQuantity(), ti.getTargetWarehouse().getId());
 								}
+							} else {
+								v.add("Error en la selección de almacenes.");
+								error.setError(false);
+								error.setTextError(v);
 							}
 						}
 					}

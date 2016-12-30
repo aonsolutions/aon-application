@@ -826,7 +826,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		Vector<StockInfo> stock = new Vector<StockInfo>();
 		Map<String, StockInfo> stockMap =  new HashMap<String, StockInfo>();
 		
-		if(warehouse1.equals("-") && (warehouse2.equals("-") || warehouse2 == null)){
+		if((warehouse1 == null || warehouse1.equals("-")) && (warehouse2 == null || warehouse2.equals("-"))){
 			error.setError(false);
 			textError = textError + "*Error : No ha seleccionado ning\u00fan almac\u00e9n. \n";
     		verror.add("*Error : No ha seleccionado ning\u00fan almac\u00e9n.");
@@ -844,7 +844,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		if (ti.getDomainId().equals(0)) domId = domain.getId(); 
 		else domId = ti.getDomainId();
 		
-		if(!warehouse1.equals("-")) w = DBStock.getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse1);
+		if(warehouse1 != null && !warehouse1.equals("-")) w = DBStock.getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse1);
 		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse2);
 		s = DBStock.getSeries(domain, series, getUser().getLogin());
 
