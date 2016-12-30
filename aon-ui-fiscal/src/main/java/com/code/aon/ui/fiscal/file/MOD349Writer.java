@@ -148,7 +148,7 @@ public class MOD349Writer implements IFinanceConstants{
 		for (ITransferObject to: list) {
 			Mod349Detail detail = (Mod349Detail) to;	
 			Operator op = new Operator();
-			op.setDocument(detail.getDocument()==null?null:detail.getDocument());
+			op.setDocument(detail.getDocument()==null?null:StringUtils.trim(detail.getDocument()));
 			op.setName(detail.getName());
 			op.setKey(detail.getType().getValue());
 			String c = null;
