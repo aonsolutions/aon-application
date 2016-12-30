@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
@@ -655,15 +656,19 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 	
 	private void fillSalesSeries() {
-		if (series.getItemCount() == 0
-			&& getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
+		series.clear();
+		series.addItem(" --- ", (String) null);
+		if (getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
 			&& getCallback().getModule().getConfiguration().getInvoiceSalesSeries().size() > 0) {
-			series.addItem(" --- ", (String) null);
+			LinkedList<String> rectificationSeries = getCallback().getModule().getConfiguration().getInvoiceRectificationSalesSeries();
 			for (String ser : getCallback().getModule().getConfiguration().getInvoiceSalesSeries()) {
-				series.addItem(ser);
+				boolean rectifierSerie = (rectificationSeries != null && rectificationSeries.contains(ser));
+				if (!rectifierSerie || (rectifierSerie && getWrapper().getInvoice().isRectifier())) {
+					series.addItem(ser);
+				}
 			}
-			series.setSelectedIndex(0);
 		}
+		series.setSelectedIndex(0);
 	}
 	
 	private class InvoicePanelVisitor implements IAccountingInvoiceTypeVisitor {
