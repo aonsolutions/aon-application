@@ -56,29 +56,48 @@
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:panelGrid columns="2" dir="true" style="width: 80%;">
-
+								<aon:div styleClass="aon-scroll-area">
+									
+									<aon:panelGrid columns="2" dir="true" style="width: 100%;">
 										<aon:outputLabel for="EdiFtp_remotePath"
 											value="Directorio remoto FTP" />
+										<!--  
+										<aon:inputText id="EdiFtp_remotePath"
+											value="#{sales.ftpEdiImporter.ftpRemotePath}"
+											size="30" />
+										-->
 										<aon:inputText id="EdiFtp_remotePath"
 											value="/envio/desadv_d96a"
 											size="30"
 											disabled="#{true}" />
-										
-										<aon:outputLabel for="EdiFtp_username"
-											value="Usuario" />
-										<aon:inputText id="EdiFtp_username"
-											value="ftp1251"
-											disabled="#{true}" />
-										
-										<aon:outputLabel for="EdiFtp_password"
-											value="Contraseña" />
-										<aon:inputSecret id="EdiFtp_password"
-											value="x1xx0wub"
-											disabled="#{true}" />
-										
 									</aon:panelGrid>
+										
+									<aon:panel>
+										<f:facet name="header">
+											<aon:outputText value="Datos de acceso" />
+										</f:facet>
+										<aon:panelGrid columns="4" dir="true" style="width: 100%;">
+											<aon:outputLabel for="EdiFtp_username"
+												value="Usuario" />
+											<!--  
+											<aon:inputText id="EdiFtp_username"
+												value="#{sales.ftpEdiImporter.user}" />
+											-->
+											<aon:inputText id="EdiFtp_username"
+												value="ftp1251"
+												disabled="#{true}" />
+											
+											<aon:outputLabel for="EdiFtp_password"
+												value="Contraseña" />
+											<!--  
+											<aon:inputSecret id="EdiFtp_password"
+												value="#{sales.ftpEdiImporter.password}" />
+											-->
+											<aon:inputSecret id="EdiFtp_password"
+												value="x1xx0wub"
+												disabled="#{true}" />
+										</aon:panelGrid>
+									</aon:panel>
 									
 								</aon:div>
 							</aon:div>

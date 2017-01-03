@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showEdiFtpWindow">
-		<aon:if test="#{sales.showEdiFtpWindow}">
-			<rich:modalPanel id="ediFtpModalPanel" minHeight="240"
-				minWidth="520" rendered="#{sales.showEdiFtpWindow}"
+		<aon:if test="#{sales.ftpEdiImporter.showEdiFtpWindow}">
+			<rich:modalPanel id="ediFtpModalPanel" minHeight="450"
+				minWidth="520" rendered="#{sales.ftpEdiImporter.showEdiFtpWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -25,7 +25,7 @@
 							reRender="showEdiFtpWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{sales.showEdiFtpWindow}"
+								target="#{sales.ftpEdiImporter.showEdiFtpWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -38,9 +38,11 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="ediFtp-accept"
 										value="Recuperar"
-										actionListener="#{sales.onRetrieveFtpEdi}"
+										actionListener="#{sales.ftpEdiImporter.onRetrieveFtpEdi}"
 										reRender="showEdiFtpWindow"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+										oncomplete="Richfaces.hideModalPanel('waitProccess')">
 									</aon:commandButton>
 									<aon:commandButton id="ediFtp-cancel"
 										value="#{bundle.aon_cancel}"
@@ -48,39 +50,82 @@
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
-											target="#{sales.showEdiFtpWindow}"
+											target="#{sales.ftpEdiImporter.showEdiFtpWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:panelGrid columns="2" dir="true" style="width: 80%;">
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid columns="2" dir="true" style="width: 100%;">
 										<aon:outputLabel for="EdiFtp_remotePath"
 											value="Directorio remoto FTP" />
 										<aon:inputText id="EdiFtp_remotePath"
-											value="/recepcion/orders_d96a"
-											size="30"
-											disabled="#{true}" />
-										
-										<aon:outputLabel for="EdiFtp_username"
-											value="Usuario" />
-										<aon:inputText id="EdiFtp_username"
-											value="ftp1251"
-											disabled="#{true}" />
-										
-										<aon:outputLabel for="EdiFtp_password"
-											value="Contraseña" />
-										<aon:inputSecret id="EdiFtp_password"
-											value="x1xx0wub"
-											disabled="#{true}" />
+											value="#{sales.ftpEdiImporter.ftpRemotePath}"
+											size="30" />
 									</aon:panelGrid>
+										
+									<aon:panel>
+										<f:facet name="header">
+											<aon:outputText value="Datos de acceso" />
+										</f:facet>
+										<aon:panelGrid columns="4" dir="true" style="width: 100%;">
+											<aon:outputLabel for="EdiFtp_username"
+												value="Usuario" />
+											<aon:inputText id="EdiFtp_username"
+												value="#{sales.ftpEdiImporter.user}" />
+											
+											<aon:outputLabel for="EdiFtp_password"
+												value="Contraseña" />
+											<aon:inputSecret id="EdiFtp_password"
+												value="#{sales.ftpEdiImporter.password}" />
+										</aon:panelGrid>
+									</aon:panel>
 									
-									<c:forEach items="#{sales.ftpEdiOrders}"
-										var="order" >
-										<aon:div>
-											<aon:outputText value="#{order}" />
-										</aon:div>
-									</c:forEach>
+									<aon:dataTable id="ftpOrdersData" value="#{sales.ftpEdiImporter.unreadSalesModel}"
+										var="to" rows="10" rendered="#{sales.ftpEdiImporter.unreadSalesModel.rowCount > 0}">
+
+										<aon:column styleClass="aon-editDataTable-iconColumn">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:commandButton id="ftpSales-import"
+												value="&#160;" styleClass="aon-icon-file-entrance aon-noborder"
+												title="Importar"
+												actionListener="#{sales.ftpEdiImporter.onImportFile}"
+												reRender="showEdiFtpWindow, salesForm" />
+										</aon:column>
+	
+										<aon:column styleClass="aon-editDataTable-textColumn">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_name}" />
+											</f:facet>
+											<aon:outputText value="#{to.name}" />
+										</aon:column>
+	
+										<aon:column styleClass="aon-editDataTable-textColumn">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_date}" />
+											</f:facet>
+											<aon:outputText value="#{to.modificationDate}">
+												<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+										</aon:column>
+										
+										<aon:column styleClass="aon-editDataTable-iconColumn">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:htmlCommandLink id="ftpSales-download" 
+												value="&#160;" target="_blank"
+												title="#{bundle.webmail_download}"
+												actionListener="#{sales.ftpEdiImporter.onDownloadFile}"
+												styleClass="aon-finding-toolbar-item aon-icon-file-download">
+											</aon:htmlCommandLink>
+										</aon:column>
+									</aon:dataTable>
 									
+									<aon:dataScroller for="ftpOrdersData" showNote="true" pageSize="10"
+										rowCount="#{sales.ftpEdiImporter.unreadSalesModel.rowCount}" />
 									
 								</aon:div>
 							</aon:div>
