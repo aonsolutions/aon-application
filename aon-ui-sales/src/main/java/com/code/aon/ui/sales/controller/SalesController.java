@@ -69,6 +69,7 @@ import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler;
+import com.code.aon.ui.sales.importer.edi.FtpSalesImporterHandler;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.sales.util.SalesUtils;
@@ -80,7 +81,6 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.ingenet.IngenetSalesManager;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
@@ -118,7 +118,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
 	private com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaImporter;
-	private boolean showEdiFtpWindow;
+	
+	private FtpSalesImporterHandler ftpEdiImporter;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -293,15 +294,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public void setShowShipmentWindow(boolean showShipmentWindow) {
 		this.showShipmentWindow = showShipmentWindow;
 	}
-	
-	public boolean isShowEdiFtpWindow() {
-		return showEdiFtpWindow;
-	}
-
-	public void setShowEdiFtpWindow(boolean showEdiFtpWindow) {
-		this.showEdiFtpWindow = showEdiFtpWindow;
-	}
-	
+		
 	public ProgressionState getProgressionState() {
 		return progressionState;
 	}
@@ -323,6 +316,13 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			udapaImporter = new com.code.aon.ui.sales.udapa.EdiSalesImporterHandler(this);
 		}
 		return udapaImporter;
+	}
+	
+	public FtpSalesImporterHandler getFtpEdiImporter() {
+		if(ftpEdiImporter==null){
+			ftpEdiImporter = new FtpSalesImporterHandler(this);
+		}
+		return ftpEdiImporter;
 	}
 
 	public Integer getInvoiceId() {
@@ -969,18 +969,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				LOGGER.error(e.getMessage());
 			}
 		}
-	}
-
-	private List<String> ftpEdiList;
-	
-	public void onRetrieveFtpEdi(ActionEvent event) {
-		SeresFtpConnectionProvider seres = new SeresFtpConnectionProvider();
-		String remotePath = "recepcion/orders_d96a";
-		ftpEdiList = seres.obtainFiles(remotePath);
-	}
-	
-	public List<String> getFtpEdiOrders() {
-		return ftpEdiList;
 	}
 	
 	

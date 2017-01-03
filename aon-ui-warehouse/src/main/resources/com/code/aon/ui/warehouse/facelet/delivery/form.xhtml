@@ -52,12 +52,12 @@
 								styleClass="aon-finding-toolbar-item aon-icon-file-download">
 							</aon:htmlCommandLink>
 							<aon:commandButton id="delivery-ediFtp"
-								value="EDI FTP" 
-								title="Enviar a la carpeta FTP de Seres"
-								styleClass="aon-finding-toolbar-item aon-icon-sincronize">
+								value="SERESNET"
+								title="Enviar al servidor FTP de Seresnet"
+								styleClass="aon-finding-toolbar-item aon-icon-seresnet">
 								<f:setPropertyActionListener target="#{delivery.showEdiFtpWindow}"
 									value="#{true}" />
-							</aon:commandButton>															
+							</aon:commandButton>
 						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">

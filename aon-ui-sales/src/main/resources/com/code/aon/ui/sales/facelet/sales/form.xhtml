@@ -58,10 +58,13 @@
 									value="#{true}" />
 							</aon:commandButton>
 							<aon:commandButton id="sales-ediFtp"
-								value="EDI FTP" 
-								title="Recuperar de la carpeta FTP de Seres"
-								styleClass="aon-finding-toolbar-item aon-icon-sincronize">
-								<f:setPropertyActionListener target="#{sales.showEdiFtpWindow}"
+								value="SERESNET"
+								title="Recuperar del servidor FTP de Seresnet"
+								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
+								actionListener="#{controller.ftpEdiImporter.onShowFtpEdi}"
+								ajaxSingle="#{true}"
+								action="sales_form">
+								<f:setPropertyActionListener target="#{sales.ftpEdiImporter.showEdiFtpWindow}"
 									value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
