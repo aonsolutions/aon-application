@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.parent</artifactId>
-	<version>8.82</version>
+	<version>8.82.1</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos AON</description>
 	<name>AON PARENT</name>
@@ -204,7 +204,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/aonsolutions/aon-application.git</connection>
 		<url>https://github.com/aonsolutions/aon-application</url>
-	  <tag>8.82.x</tag>
+	  <tag>8.82.1.x</tag>
   </scm>
 
 	<organization>
