@@ -123,8 +123,44 @@ public class ConnectDeliveryWriter {
 		List<SEH1D> list = new ArrayList<>();
 		delivery.getDetailList().forEach(
 				to -> {
-					list.add(createSEH1DRecord((DeliveryDetail) to,
-							companyEdiCode, customerEdiCode));
+
+//					MS - Emisor del mensaje
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            MR - Receptor del mensaje
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            SU - Proveedor.
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            PW - Punto desde donde se envían las mercancías
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            DP - Punto destino de la mercancía
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            UC - Destinatario final
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            BY - Comprador
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            SH - Expedidor
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+//		            IV - A quien se factura
+					list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
+							(DeliveryDetail) to, companyEdiCode,
+							customerEdiCode));
+					
 				});
 		return list;
 	}
@@ -161,11 +197,25 @@ public class ConnectDeliveryWriter {
 		return list;
 	}
 
-	private SEH1D createSEH1DRecord(DeliveryDetail detail,
+	/*
+	 La linea SEH1D hay que repetirla por cada uno de los siguientes conceptos, según lo requiera el receptor del mensaje. 
+	 
+	 En el fichero se está indicando solo el BY en todas las lineas, y no se están indicando los campos obligatorios.
+            MS - Emisor del mensaje
+            MR - Receptor del mensaje
+            SU - Proveedor.
+            PW - Punto desde donde se envían las mercancías
+            DP - Punto destino de la mercancía
+            UC - Destinatario final
+            BY - Comprador
+            SH - Expedidor
+            IV - A quien se factura	 
+	 */
+	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, DeliveryDetail detail,
 			String companyEdiCode, String customerEdiCode) {
 		// TODO Auto-generated method stub
 		SEH1D record = new SEH1D();
-		record.setCalificadorDelInterlocutor(SEH1D.SEH1D_2.COMPRADOR_BY.getValue());
+		record.setCalificadorDelInterlocutor(type.getValue());
 		record.setCodigoInterlocutor(customerEdiCode);
 		record.setAgenciaResponsableDeLaListaDeCodigos(null);
 		record.setNombre1(null);
