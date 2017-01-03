@@ -570,6 +570,26 @@
 		<servlet-name>UploadFiscalFile</servlet-name>
 		<url-pattern>/aon_gwt_deposit/gwt_deposit_upload</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Ingenet Servlet -->
+	<servlet>
+		<servlet-name>IngenetSalesServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.ingenet.servlet.IngenetSalesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IngenetSalesServlet</servlet-name>
+		<url-pattern>/ingenet/sales</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>IngenetDeliveryServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.ingenet.servlet.IngenetDeliveryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IngenetDeliveryServlet</servlet-name>
+		<url-pattern>/ingenet/delivery</url-pattern>
+	</servlet-mapping>
+	
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<description>State saving method: "client" or "server" (= default) See
