@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -158,14 +159,15 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		cleanSystemPayments(aonContext);
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
-				"TRACE('DIAS_MATERNIDAD=%f\r\n',DIAS_MATERNIDAD);0.00",
-				"DIAS_MATERNIDAD * BASE_REGULADORA", "0.00");
+				"TRACE('DIAS_COTIZADOS=%f\r\n',DIAS_COTIZADOS);0.00",
+				"DIAS_COTIZADOS * BASE_REGULADORA", "0.00");
 		//@formatter:off
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
 				getFirstDayOfYear(getToday()),
 				new HashMap<String, String>() {
 					{
+						put(MONTH_DAYS.getName(), String.format("%f", 30.00));
 						put(TC2.getName(), String.format("\"%s\"", C100.getValue()));
 					}
 				},
