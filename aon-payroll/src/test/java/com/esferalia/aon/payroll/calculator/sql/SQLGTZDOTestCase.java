@@ -43,7 +43,9 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.sql.AbstractSQL.PaymentConcept;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -2581,14 +2583,15 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		agreement = getAgreement(aonContext, category.getAgreementLevel());
 		extra = getExtra(aonContext, agreement.getId(), "15/12");
 
-		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, 2016, getLastDayOfYear(getToday()));
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(),Calendar.YEAR), getLastDayOfYear(getToday()));
+		ExpressionContext expressionContext = ctx.getExpressionContext();
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
 					Map<String, ITimedVariable<?>> context) {
 				// TODO Auto-generated method stub
-				System.out.println(payment.getExpression() +" = " + amount );
+				System.out.println(payment.getExpression() + "[" + startDate + "..."+ endDate +"]  = " + amount );
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			};
 		}).calculate(ctx);

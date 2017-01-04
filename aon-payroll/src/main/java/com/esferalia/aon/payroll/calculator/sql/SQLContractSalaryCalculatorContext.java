@@ -821,10 +821,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		protected double getDays(Double workDays, ExpressionContext ctx, Period p) {
-
-			// if ( guaranteePeriods.size() == 0)
-			// return workDays;
-
+			
+			if ( isWholeMonth(p)  ) 
+				return workDays;
+			
+			if ( isLastMonthPeriod(p))
+				return getRemainDays(workDays, ctx, p);
+	
 			if (p.getEnd().before(lastLeaveEnd))
 				return workDays;
 
@@ -847,6 +850,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		private Date getGuaranteeEnd() {
 			return guaranteePeriods.get(guaranteePeriods.size() - 1).getEnd();
 		}
+		
+		private double getRemainDays(Double workDays, ExpressionContext ctx, Period p) {
+			double realMonthDays = getMax(p.getEnd(), DAY_OF_MONTH);
+			double ctxMonthDays = super.getContexVariable(ctx, p, MONTH_DAYS);
+			return ctxMonthDays - ( realMonthDays - workDays );
+		}
+		
+		
 	}
 
 	/**
@@ -2763,7 +2774,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
 
 		return workedDays == monthDays ? ctxMonthDays : workedDays;
-
 	}
 
 	private double getDays(ExpressionContext ctx, Period p, double factor) {
@@ -4367,6 +4377,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	protected static boolean isWholeMonth(Period period) {
 		return AonDateUtils.get(period.getStart(), Calendar.DAY_OF_MONTH) == 1 && AonDateUtils.get(period.getEnd(),
+				Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(), Calendar.DAY_OF_MONTH);
+	}
+
+	protected static boolean isLastMonthPeriod(Period period) {
+		return AonDateUtils.get(period.getEnd(),
 				Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(), Calendar.DAY_OF_MONTH);
 	}
 
