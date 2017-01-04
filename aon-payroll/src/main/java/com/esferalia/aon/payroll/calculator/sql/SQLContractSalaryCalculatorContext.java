@@ -825,7 +825,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if ( isWholeMonth(p)  ) 
 				return workDays;
 			
-			if ( isLastMonthPeriod(p))
+			if ( p.getStart().after(getStartDate()) && isLastMonthPeriod(p))
 				return getRemainDays(workDays, ctx, p);
 	
 			if (p.getEnd().before(lastLeaveEnd))
@@ -852,6 +852,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		
 		private double getRemainDays(Double workDays, ExpressionContext ctx, Period p) {
+			
 			double realMonthDays = getMax(p.getEnd(), DAY_OF_MONTH);
 			double ctxMonthDays = super.getContexVariable(ctx, p, MONTH_DAYS);
 			return ctxMonthDays - ( realMonthDays - workDays );
