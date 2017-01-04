@@ -213,7 +213,7 @@ public class SQLSeniorityTestCase extends
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
-		int month = AonDateUtils.get(getToday(), Calendar.MONTH) +1 ; // +1 remember starts 14 
+		int month = AonDateUtils.get(getToday(), Calendar.MONTH) +1 ; // +1 remember starts at end 
 		
 		//@formatter:off
 		Assert.assertEquals( 
@@ -224,7 +224,7 @@ public class SQLSeniorityTestCase extends
 
 		startDate = add(add(getFirstDayOfYear(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
 		endDate = getLastDayOfMonth(add(getFirstDayOfYear(getToday()),Calendar.MONTH,5)); // 30/06
-		issueDate = add(startDate, Calendar.YEAR, 2 );
+		issueDate = add(startDate, Calendar.YEAR, 1 );
 		
 		year = get(issueDate,YEAR);
 		extra = getExtra(aonContext, agreement.getId(), "01/07");
@@ -233,8 +233,8 @@ public class SQLSeniorityTestCase extends
 		
 		if ( month < 7 )
 			Assert.assertEquals( 
-					(1500.00/12 * (12 - ( 6-month )) 
-					+(1500.00 * 1.05 / 12 * (6-month))), 
+					(1500.00/12 * (12 - ( 6-month  )) 		// without seniority  
+					+(1500.00 * 1.05 / 12 * (6-month))), 	// with seniority
 					salary.getTotalPayment() );
 		else
 			Assert.assertEquals( 
