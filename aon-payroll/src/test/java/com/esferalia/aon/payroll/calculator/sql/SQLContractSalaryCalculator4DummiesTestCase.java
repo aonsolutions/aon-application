@@ -36,6 +36,9 @@ import junit.framework.Assert;
  */
 public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTestCase {
 
+	private static final double DELTA = 0.001;
+
+
 	@Test
 	public void test4FixConstantFirstMonthI()
 			throws ExpressionException, SQLException, SalaryException {
@@ -273,7 +276,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalLiquid(), 0.0001);
+		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30.00 , salary.getTotalLiquid(), DELTA);
 		
 		Set<com.esferalia.aon.payroll.SalaryPayment> payments = salary.getSalaryPayments();
 		Assert.assertEquals(2, payments.size());
@@ -328,7 +331,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 					+ " (" + payment.getExpression() + ")" );
 		}
 
-		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalLiquid(), 0.00001);
+		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalLiquid(), DELTA);
 
 	}
 
@@ -424,7 +427,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), 0.0001);
+		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), DELTA);
 		
 		Set<com.esferalia.aon.payroll.SalaryPayment> payments = salary.getSalaryPayments();
 		Assert.assertEquals(2, payments.size());
@@ -487,7 +490,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), 0.0001);
+		Assert.assertEquals(1000.00 * (get(endDate, Calendar.DAY_OF_MONTH) -11) / 30 , salary.getTotalPayment(), DELTA);
 		
 		Set<com.esferalia.aon.payroll.SalaryPayment> payments = salary.getSalaryPayments();
 		Assert.assertEquals(3, payments.size());
