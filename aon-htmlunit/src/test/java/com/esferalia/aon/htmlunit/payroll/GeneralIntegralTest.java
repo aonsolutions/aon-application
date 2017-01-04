@@ -375,11 +375,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("BASE, MÍNIMA ( GRUPO 07 )");
 
 		draft("BASE, MÍNIMA IT ( GRUPO 01 )");
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 764.40);
 
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 13 * 1067.40 / 30 + 764.40 * 17 / 30);
 
@@ -393,65 +393,65 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("base_minima_diaria,_i.t");
 
 		draft("BASE MÍNIMA DIARIA, I.T");
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 25.48 * 31); // GRUPO 09
 		assertValue("cgpBaseLabel", 25.48 * 31); // GRUPO 09
 
 		draft("BASE MÍNIMA MENSUAL, I.T");
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 764.40); // GRUPO 05
 		assertValue("cgpBaseLabel", 764.40); // GRUPO 05
 
 		draft("ENFERMEDAD, COMÚN");
-		calculate(Calendar.MARCH);
+		calculate(Calendar.MARCH,2016);
 
 		draft("ENFERMEDAD, PROFESIONAL");
 
 		draft("EXTRAS, IT");
 
 		draft("GARANTIZADO, 100%");
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6);
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6);
 		assertValue("totalPaymentsLabel", 1067.40 * 13 / 30 + (1067.40 + 1067.40 / 6) * 17 / 30 // 17
 																								// DIAS
 																								// COTIZADOS
 		);
-		calculate(Calendar.AUGUST);
+		calculate(Calendar.AUGUST,2016);
 		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6);
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6);
 		assertValue("totalPaymentsLabel", 1067.40 + 1067.40 / 6);
 
 		draft("GARANTIZADO, ENFERMEDAD COMÚN");
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 1067.40);
 		assertValue("totalPaymentsLabel", 1067.40);
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 1067.40);
 		assertValue("totalPaymentsLabel", 1067.40);
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 1067.40);
 		assertValue("totalPaymentsLabel", 1067.40);
 
 		draft("GARANTIZADO, ENFERMEDAD PROFESIONAL");
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 1067.40);
 		assertValue("totalPaymentsLabel", 1067.40);
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 1067.40);
 		assertValue("totalPaymentsLabel", 1067.40);
 
 		draft("GARANTIZADO, EXTRAS CON GARANTIZADO"); // 3 PAGAS
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1200.00 + 1200.00 / 4);
 		assertValue("cgpBaseLabel", 1200.00 + 1200.00 / 4);
 		assertValue("totalPaymentsLabel", 1200.00);
-		calculate(Calendar.AUGUST);
+		calculate(Calendar.AUGUST,2016);
 		assertValue("cgcBaseLabel", 1200.00 + 1200.00 / 4);
 		assertValue("cgpBaseLabel", 1200.00 + 1200.00 / 4);
 		assertValue("totalPaymentsLabel", 1200.00);
@@ -464,36 +464,36 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", 764.40);
 
 		draft("GARANTIZADOS, ENFERMEDAD COMÚN");
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 764.40);
 		assertValue("cgpBaseLabel", 764.40);
 		assertValue("totalPaymentsLabel", 764.40);
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 764.40);
 		assertValue("cgpBaseLabel", 764.40);
 		assertValue("totalPaymentsLabel", 764.40);
 
 		draft("GARANTIZADOS, ENFERMEDAD PROFESIONAL");
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 1000.00);
 		assertValue("cgpBaseLabel", 1000.00);
 		assertValue("totalPaymentsLabel", 1000.00 * 20 / 30 + 900.00 * 10 / 30);
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1000.00);
 		assertValue("cgpBaseLabel", 1000.00);
 		assertValue("totalPaymentsLabel", 1000.00);
 
 		draft("EXTRAS, IT");
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
-		calculate(Calendar.AUGUST);
+		calculate(Calendar.AUGUST,2016);
 		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
-		calculate(Calendar.SEPTEMBER);
+		calculate(Calendar.SEPTEMBER,2016);
 		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
-		calculate(Calendar.OCTOBER);
+		calculate(Calendar.OCTOBER,2016);
 		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
 		
@@ -508,42 +508,42 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		
 		draft("EXTRAS, IT (REDEFINIDO)");
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40  + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
-		calculate(Calendar.AUGUST);
+		calculate(Calendar.AUGUST,2016);
 		assertValue("cgcBaseLabel", 1067.40  + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
-		calculate(Calendar.SEPTEMBER);
+		calculate(Calendar.SEPTEMBER,2016);
 		assertValue("cgcBaseLabel", 1067.40  + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
 		extra(issueDate, endDate);
 		assertValue("totalPaymentsLabel", 1067.40/6 * 5  + (1067.40*20/30)/6);
 		
 		draft("MATERNIDAD, COMPLETA");
-		calculate(Calendar.FEBRUARY);
+		calculate(Calendar.FEBRUARY,2016);
 		double cgcBase = getValue("cgcBaseLabel");
-		calculate(Calendar.MARCH);
+		calculate(Calendar.MARCH,2016);
 		assertValue("cgcBaseLabel", cgcBase );
 		// Here start I.T
-		calculate(Calendar.APRIL);
+		calculate(Calendar.APRIL,2016);
 		assertValue("cgcBaseLabel", cgcBase );
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", cgcBase );
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", cgcBase );
 
 
 		draft("MATERNIDAD, PARCIAL");
-		calculate(Calendar.NOVEMBER);
+		calculate(Calendar.NOVEMBER,2016);
 		cgcBase = getValue("cgcBaseLabel");
-		calculate(Calendar.DECEMBER);
+		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", cgcBase );
 
 		draft("PATERNIDAD, PARCIAL");
-		calculate(Calendar.NOVEMBER);
+		calculate(Calendar.NOVEMBER,2016);
 		cgcBase = getValue("cgcBaseLabel");
-		calculate(Calendar.DECEMBER);
+		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", cgcBase );
 
 	}
@@ -556,21 +556,21 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("bruto,_enfermedad_comun_(bases)");
 
 		draft("BRUTO, ENFERMEDAD COMÚN (BASES)");
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE, 2016);
 		assertValue("totalPaymentsLabel", 1067.40 / 30 * 5 * 0.60 + 1000.00 * 22 / 30);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 1067.40 / 30 * 8 + 1000.00 * 22 / 30);
 
 		draft("BRUTO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY, 2016);
 		assertValue("totalPaymentsLabel", 1500.00);
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE, 2016);
 		assertValue("totalPaymentsLabel", 1500.00);
 
 		draft("NETO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY, 2016);
 		assertValue("totalLiquidLabel", 2125.00);
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE, 2016);
 		assertValue("totalLiquidLabel", 2125.00);
 
 	}
@@ -583,7 +583,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("i.r.p.f_araba_tiempo_completo_ordinario,_indefinido");
 
 		draft("I.R.P.F ARABA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.JANUARY);
+		calculate(Calendar.JANUARY, 2016);
 		assertValue("irpfPercentTexTBox", "2,00 %");
 
 	}
@@ -596,7 +596,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("i.r.p.f_bizkaia_tiempo_completo_ordinario,_indefinido");
 
 		draft("I.R.P.F BIZKAIA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.JANUARY);
+		calculate(Calendar.JANUARY, 2016);
 		assertValue("irpfPercentTexTBox", "39,00 %");
 
 	}
@@ -659,38 +659,38 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("nomina,_diferencias");
 
 		draft("NOMINA, DIFERENCIAS");
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE, 2016);
 		HtmlCheckBoxInput dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
 		Assert.assertTrue(dbSalaryCheck.isChecked());
 		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
 		
 		
-		calculate(Calendar.JULY);
+		calculate(Calendar.JULY, 2016);
 		dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
 		Assert.assertTrue(dbSalaryCheck.isChecked());
 		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
 
-		calculate(Calendar.AUGUST);
+		calculate(Calendar.AUGUST, 2016);
 		dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
 		Assert.assertTrue(dbSalaryCheck.isChecked());
 		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
 
-		calculate(Calendar.SEPTEMBER);
+		calculate(Calendar.SEPTEMBER, 2016);
 		dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
 		Assert.assertTrue(dbSalaryCheck.isChecked());
 		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
 		
-		calculate(Calendar.OCTOBER);
+		calculate(Calendar.OCTOBER, 2016);
 		dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
 		Assert.assertFalse(dbSalaryCheck.isChecked());
 		Assert.assertFalse(getElementById("dbTotalLiquidLabel").isDisplayed());
 
-		calculate(Calendar.DECEMBER);
+		calculate(Calendar.DECEMBER, 2016);
 		dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertFalse(dbSalaryCheck.isDisplayed());
 		Assert.assertFalse(getElementById("dbTotalLiquidLabel").isDisplayed());

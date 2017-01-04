@@ -112,6 +112,15 @@ public abstract class BaseIntegralTestCase {
 	protected static void calculate(int month) throws IOException, InterruptedException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calculate(calendar.getTime());
+	}
+
+	protected static void calculate(int month, int year) throws IOException, InterruptedException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calculate(calendar.getTime());
 	}
 
