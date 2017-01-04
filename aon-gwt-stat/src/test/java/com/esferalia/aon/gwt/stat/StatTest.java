@@ -30,7 +30,7 @@ public class StatTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void testInvoices() throws ClassNotFoundException, SQLException, IOException {
 		StatParams params = new StatParams();
 		params.getFilterItems().add(
