@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.stat.StatChartType;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -123,8 +124,9 @@ public class StatServlet extends HttpServlet{
 	}
 
 	public static IssueFilter getFilter(Domain domain, String userName, HttpServletRequest req){
-		Date from = new Date();from.setYear(from.getYear()-1);
-		Date to = new Date();
+		Date from = new Date();from.setHours(0);
+		AonDateUtils.addYears(from, -1);
+		Date to = new Date();to.setHours(0);
 		try {
 			if(req.getParameter("from") != null && !req.getParameter("from").equals(""))
 				from = dateFormat.parse(req.getParameter("from"));
@@ -133,7 +135,8 @@ public class StatServlet extends HttpServlet{
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
+		to = AonDateUtils.addDays(to, 1);
+		
 		LinkedList<Integer> assignee = getList(req.getParameter("asignee"));
 		LinkedList<Integer> workgroup = getList(req.getParameter("workgroup"));
 	
