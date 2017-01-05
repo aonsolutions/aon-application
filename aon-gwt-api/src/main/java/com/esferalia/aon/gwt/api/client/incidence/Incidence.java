@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.api.client.finance.JsBoughtProduct;
 import com.esferalia.aon.gwt.api.client.finance.JsFee;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.project.JsProject;
+import com.esferalia.aon.gwt.api.client.registry.JsProfile;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.esferalia.aon.gwt.api.client.stat.JsStatData;
@@ -398,6 +399,10 @@ public class Incidence extends Methods{
 	
 	public void getEnterpriseGeneralList(Integer enterprise, AsyncCallback<JSON<JsGeneral>> callback){
 		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/general/registry/"+enterprise, callback);
+	}
+	
+	public void getEnterpriseProfileList(Integer enterprise, AsyncCallback<JSON<JsProfile>> callback){
+		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rprofile/registry/"+enterprise, callback);
 	}
 	
 	//-------------------- FINANCE

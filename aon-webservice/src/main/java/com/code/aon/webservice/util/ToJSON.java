@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
-import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -87,7 +87,7 @@ public class ToJSON {
 				dateFormat.format(fee.getEndDate()) : "");
 		json.put("billing_month", getMonth(fee.getBillingDate()));
 		json.put("billing_year", AonDateUtils.getYear(fee.getBillingDate()));
-		json.put("period", getPeriod(Period.values()[fee.getPeriod()]));
+		json.put("period", getPeriod(BillingPeriod.values()[fee.getPeriod()]));
 		return json;
 	}
 
@@ -138,12 +138,20 @@ public class ToJSON {
 		return json;
 	}
 	
-	public static String getPeriod(Period period){
-		if(period.equals(Period.YEAR))
+	public static String getPeriod(BillingPeriod period){
+		if(period.equals(BillingPeriod.YEARLY))
 			return "Anual";
-		else if(period.equals(Period.T1) || period.equals(Period.T2) || period.equals(Period.T3) || period.equals(Period.T4))
+		else if(period.equals(BillingPeriod.SIX_MONTHLY))
+			return "Semestral";
+		else if(period.equals(BillingPeriod.FOUR_MONTHLY))
+			return "Cuatrimestral";
+		else if(period.equals(BillingPeriod.THREE_MONTHLY))
 			return "Trimestral";
-		else return "Mensual";
+		else if(period.equals(BillingPeriod.BI_MONTHLY))
+			return "Bi-mensual";
+		else if(period.equals(BillingPeriod.MONTHLY))
+			return "Mensual";
+		else return "Sin Periodo";
 	}
 	
 	public static String getMonth(Date date){

@@ -18,6 +18,10 @@ public class JsUser extends JavaScriptObject {
 		return this.login;
 	}-*/;
 	
+	public final native String getDescription() /*-{
+		return this.description;
+	}-*/;
+	
 	public final native String getType() /*-{
 		return this.type;
 	}-*/;

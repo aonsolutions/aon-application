@@ -4,10 +4,12 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
+import static com.esferalia.aon.jooq.tables.Rprofile.RPROFILE;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
@@ -45,10 +47,12 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -663,4 +667,53 @@ public class RegistryDAO {
 					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
+	
+	// ------------------- REGISTRY PROFILE
+	
+	public static Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry){
+		return ctx.getDslContext().selectDistinct(QUESTION.ID, QUESTION.DOMAIN, QUESTION.ACTIVE, QUESTION.QUESTION_TEXT,
+										QUESTION.TYPE, QUESTION.ARGUMENT, QUESTION.ALIAS)
+				.from(QUESTION).join(RPROFILE).on(QUESTION.ID.eq(RPROFILE.QUESTION))
+				.where(RPROFILE.REGISTRY.eq(registry))
+				.fetch().stream().map(new QuestionFiller());
+	}
+	
+	public static Stream<RegistryProfile> getRegistryProfileStream(AONContext ctx, Integer registry, Integer question){
+		return ctx.getDslContext().select().from(RPROFILE)
+				.where(RPROFILE.REGISTRY.eq(registry))
+					.and(RPROFILE.QUESTION.eq(question))
+				.fetch().stream().map(new RegistryProfileFiller());
+	}
+	
+	public static class QuestionFiller  implements Function<Record, Question> {
+
+		@Override
+		public Question apply(Record r) {
+			return new Question()
+					.setId(r.getValue(QUESTION.ID))
+					.setActive(r.getValue(QUESTION.ACTIVE))
+					.setAlias(r.getValue(QUESTION.ALIAS))
+					.setArgument(r.getValue(QUESTION.ARGUMENT))
+					.setDomain(r.getValue(QUESTION.DOMAIN))
+					.setQuestionText(r.getValue(QUESTION.QUESTION_TEXT))
+					.setType(r.getValue(QUESTION.TYPE));
+		}
+	}
+	
+	public static class RegistryProfileFiller  implements Function<Record, RegistryProfile> {
+
+		@Override
+		public RegistryProfile apply(Record r) {
+			return new RegistryProfile()
+					.setId(r.getValue(RPROFILE.ID))
+					.setRegistry(r.getValue(RPROFILE.REGISTRY))
+					.setDomain(r.getValue(RPROFILE.DOMAIN))
+					.setLastUpdate(r.getValue(RPROFILE.LAST_UPDATE))
+					.setQuestion(r.getValue(RPROFILE.QUESTION))
+					.setValueText(r.getValue(RPROFILE.VALUE_TEXT))
+					.setValueDate(r.getValue(RPROFILE.VALUE_DATE))
+					.setValueNumber(r.getValue(RPROFILE.VALUE_NUMBER));
+		}
+	}
+	
 }

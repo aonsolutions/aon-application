@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.api.client.project.JsProject;
+import com.esferalia.aon.gwt.api.client.registry.JsProfile;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
@@ -28,6 +29,7 @@ import com.esferalia.aon.gwt.issues.client.south.CommercialSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.FeeSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.GeneralInfoSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.NoteSouthPanel;
+import com.esferalia.aon.gwt.issues.client.south.ProfileSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.SalesSouthPanel;
 import com.esferalia.aon.gwt.issues.client.south.TaskSouthPanel;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
@@ -118,6 +120,7 @@ public class IssuePanel extends Composite{
 
 	@UiField ScrollPanel commercialPanel;
 	@UiField ScrollPanel generalPanel;
+	@UiField ScrollPanel profilePanel;
 	@UiField ScrollPanel taskPanel;
 	@UiField ScrollPanel duplicatePanel;
 	@UiField ScrollPanel faqsPanel;
@@ -228,7 +231,7 @@ public class IssuePanel extends Composite{
 	private Boolean scroll; 
 	
 	private void initSouthInfo(JsIssue issue){	
-		tabLayout.selectTab(7);
+		tabLayout.selectTab(8);
 		String nothing = "NO HAY DATOS RELACIONADOS A ESTA TAREA";
 
 		// CONTACTO
@@ -249,6 +252,16 @@ public class IssuePanel extends Composite{
 				if(value == 0){
 					openFootPanel();
 				} else if(value == 1){
+					openFootPanel();
+					incidence.getEnterpriseProfileList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsProfile>>() {
+						@Override
+						public void onSuccess(JSON<JsProfile> result) {
+							profilePanel.add(new ProfileSouthPanel(result.getData()));
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				} else if(value == 2){
 					openFootPanel();
 					// AVISOS
 					scroll = true;
@@ -297,7 +310,7 @@ public class IssuePanel extends Composite{
 						}
 						
 					});
-				} else if(value == 2){
+				} else if(value == 3){
 					openFootPanel();
 					// NOTAS
 					incidence.getEnterpriseRnoteList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
@@ -308,7 +321,7 @@ public class IssuePanel extends Composite{
 						
 						@Override public void onFailure(Throwable caught) {}
 					});
-				} else if(value == 3){
+				} else if(value == 4){
 					openFootPanel();
 					incidence.getEnterpriseBoughtProductList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsBoughtProduct>>() {
 						@Override
@@ -318,7 +331,7 @@ public class IssuePanel extends Composite{
 						
 						@Override public void onFailure(Throwable caught) {}
 					});
-				} else if(value == 4){
+				} else if(value == 5){
 					openFootPanel();
 					incidence.getEnterpriseFeeList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsFee>>() {
 						@Override
@@ -328,7 +341,7 @@ public class IssuePanel extends Composite{
 						
 						@Override public void onFailure(Throwable caught) {}
 					});				
-				} else if(value == 5){
+				} else if(value == 6){
 					openFootPanel();
 					// COMMERCIAL
 					incidence.getProjectCommercialList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsProject>>() {
@@ -339,9 +352,9 @@ public class IssuePanel extends Composite{
 						
 						@Override public void onFailure(Throwable caught) {}
 					});
-				} else if(value == 6){
-					openFootPanel();
 				} else if(value == 7){
+					openFootPanel();
+				} else if(value == 8){
 					openFootPanel();
 				}
 			}
@@ -365,7 +378,7 @@ public class IssuePanel extends Composite{
 						}
 					});
 					openFootPanel();
-					tabLayout.selectTab(6);
+					tabLayout.selectTab(7);
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -387,7 +400,7 @@ public class IssuePanel extends Composite{
 						}
 					});
 					openFootPanel();
-					tabLayout.selectTab(7);
+					tabLayout.selectTab(8);
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -1023,18 +1036,23 @@ public class IssuePanel extends Composite{
 								
 								@Override
 								public void onClick(ClickEvent event) {
-									// TODO GITHUB!!!
+									// TODO GITHUB!
 									incidence.deleteLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 										@Override public void onFailure(Throwable caught) {}
 										@Override public void onSuccess(JsLabel result) {
-											Integer index = Integer.parseInt(pib.getTitle());
-											labelsVPanel.remove(index);
+											for(Integer h = 0; h < labelsVPanel.getWidgetCount(); h++){
+												HorizontalPanel hor = (HorizontalPanel) labelsVPanel.getWidget(h);
+												if(jsLabel.getId() == hor.getLayoutData()){
+													labelsVPanel.remove(h);	
+												}									
+											}
 										}
 									});
 								}
 							});
 						
 							hp.add(pib);
+							hp.setLayoutData(jsLabel.getId());
 							labelsVPanel.add(hp);
 							// TODO GITHUB!!!
 							incidence.addLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {

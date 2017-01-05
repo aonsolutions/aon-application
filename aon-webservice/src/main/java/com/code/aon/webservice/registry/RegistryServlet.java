@@ -2,6 +2,7 @@ package com.code.aon.webservice.registry;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +18,7 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -26,6 +28,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 													  "/aon_gwt_aio/registry/*"})
 public class RegistryServlet extends HttpServlet{
 			
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
@@ -50,6 +54,17 @@ public class RegistryServlet extends HttpServlet{
 								// LISTA DE RMEDIA CON REGISTRY X
 								if(AonStringUtils.isNumeric(pathInfo[5]))
 									object = getGeneralList(domain, userName, Integer.parseInt(pathInfo[5]));
+								else object = new JSONObject();
+						} 
+					}
+					break;
+				case "rprofile":
+					if(pathInfo.length > 4){
+						if (pathInfo[4].equals("registry")) {
+							if(pathInfo.length > 5)
+								// LISTA DE RMEDIA CON REGISTRY X
+								if(AonStringUtils.isNumeric(pathInfo[5]))
+									object = getProfileList(domain, userName, Integer.parseInt(pathInfo[5]));
 								else object = new JSONObject();
 						} 
 					}
@@ -185,6 +200,35 @@ public class RegistryServlet extends HttpServlet{
     	return ToJSON.rnoteToJSON(AON.getRNote(domain.getName(),
     			domain.getId(), login,f -> f.getIdProperty().eq(id)
     			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value()))));
+    }
+    
+    private JSONArray getProfileList(Domain domain, String login, Integer registryId){
+    	JSONArray array = new JSONArray();
+    	AON.getRegistryQuestionStream(domain.getName(), domain.getId(), login, registryId).forEach(q -> {
+    		JSONObject json = new JSONObject();
+    		json.put("id", q.getId());
+    		json.put("question", q.getQuestionText());
+    		JSONArray array2 = new JSONArray();
+    		AON.getRegistryProfileStream(domain.getName(), domain.getId(), login, q.getId(), registryId)
+			.sorted((n1,n2)-> n2.getLastUpdate().compareTo(n1.getLastUpdate())).forEach(rp -> {
+        		JSONObject json2 = new JSONObject();
+        		json2.put("id", rp.getId());
+        		if(q.getType().equals(QuestionType.INFO.value())
+        				|| q.getType().equals(QuestionType.TEXT.value()))
+        			json2.put("name", rp.getValueText());
+        		else if(q.getType().equals(QuestionType.NUMBER.value()))
+        			json2.put("name", rp.getValueNumber());
+        		else if(q.getType().equals(QuestionType.BOOLEAN.value()))
+        			json2.put("name", rp.getValueNumber().equals(1));
+        		else if(q.getType().equals(QuestionType.DATE.value()))
+        			json2.put("name", rp.getValueDate());
+        		json2.put("date", dateFormat.format(rp.getLastUpdate()));
+        		array2.put(json2);
+    		});
+    		json.put("array", array2);
+    		array.put(json);
+    	});
+    	return array;
     }
     
     private String n(String str){

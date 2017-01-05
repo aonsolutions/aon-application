@@ -193,8 +193,9 @@ public class WorkServlet extends HttpServlet{
 		if(json.opt("email") != null){
 			RegistryMedia rmedia = AON.getRMedia(domain.getName(), domain.getId(), userName,
 				f -> f.getMediaProperty().eq((byte) 4).and(f.getRegistryProperty().eq(id)));
-			if(rmedia.getValue() != null && rmedia.getValue().equals(json.getString("email"))){
-				AON.updateRMedia(domain.getName(), domain.getId(), userName, rmedia);
+			if(rmedia.getValue() != null && !rmedia.getValue().equals(json.getString("email"))){
+				AON.updateRMedia(domain.getName(), domain.getId(), userName,
+						rmedia.setValue(json.getString("email")));
 			} else if(rmedia.getValue() == null){
 				rmedia = new RegistryMedia().setMedia((byte) 4).setValue(json.getString("email"));
 				AON.insertRMedia(domain.getName(), domain.getId(), userName, rmedia);

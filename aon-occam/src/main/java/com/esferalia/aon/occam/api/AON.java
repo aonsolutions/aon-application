@@ -91,10 +91,12 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -3139,5 +3141,27 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
+	
+	public static Stream<Question> getRegistryQuestionStream(String domainName, Integer domainId, String login, Integer registry){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRegistryQuestionStream(ctx, registry);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<RegistryProfile> getRegistryProfileStream(String domainName, Integer domainId, String login, Integer question, Integer registry){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRegistryProfileStream(ctx, registry, question);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	
 	
 }

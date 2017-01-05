@@ -81,6 +81,7 @@ public class User {
 		JSONObject json = new JSONObject();
 		json.put("id", id);
 		json.put("login", getLogin());
+		json.put("description", getLogin());
 		json.put("email", email);
 		json.put("workgroups", getWorkgroupsJSON());
 		if(getStatus() != null){
@@ -88,6 +89,10 @@ public class User {
 			jsStatus.put("id", getStatus().value());
 			jsStatus.put("name", getStatus().getDescription());
 			json.put("customer_status", jsStatus);
+			if(getStatus().equals(CustomerStatus.BLOCKED))
+				json.put("description", "[B] " + getLogin());
+			if(getStatus().equals(CustomerStatus.INACTIVE))
+				json.put("description", "[I] " + getLogin());
 		}
 		return json;
 	}

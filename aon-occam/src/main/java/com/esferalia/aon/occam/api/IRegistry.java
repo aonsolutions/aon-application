@@ -9,10 +9,12 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
+import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 
@@ -49,4 +51,7 @@ public interface IRegistry {
 	
 	
 	public Customer getCustomer(AONContext ctx, Integer registry);
+	
+	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry);
+	public Stream<RegistryProfile> getRegistryProfileStream(AONContext ctx, Integer registry, Integer question);
 }

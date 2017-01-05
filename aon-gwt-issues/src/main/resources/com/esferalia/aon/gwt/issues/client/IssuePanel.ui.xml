@@ -179,11 +179,22 @@
 				    <g:tab >
 						<g:customHeader styleName="{style.jeje}">
 							<g:HTMLPanel>
-								<i:IronIcon icon="account-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<i:IronIcon icon="info" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 								<g:InlineLabel text="Información General" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 							</g:HTMLPanel>
 						</g:customHeader>
 						<g:ScrollPanel ui:field="generalPanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+					
+					<g:tab >
+						<g:customHeader styleName="{style.jeje}">
+							<g:HTMLPanel>
+								<i:IronIcon icon="account-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Perfil" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>
+						</g:customHeader>
+						<g:ScrollPanel ui:field="profilePanel"
 							styleName="{aonResources.css.aonTextCenter}" />
 					</g:tab>
 				    

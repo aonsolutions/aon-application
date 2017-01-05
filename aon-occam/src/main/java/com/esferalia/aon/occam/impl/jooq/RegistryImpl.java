@@ -11,10 +11,12 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
+import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
@@ -140,7 +142,18 @@ public class RegistryImpl implements IRegistry{
 	public Customer getCustomer(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getCustomer(ctx, registry));
+	}
 
+	@Override
+	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRegistryQuestionStream(ctx, registry));
+	}
+
+	@Override
+	public Stream<RegistryProfile> getRegistryProfileStream(AONContext ctx, Integer registry, Integer question) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRegistryProfileStream(ctx, registry, question));
 	}
 	
 	

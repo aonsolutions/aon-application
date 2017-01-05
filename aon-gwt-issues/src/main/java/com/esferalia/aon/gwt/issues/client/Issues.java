@@ -332,8 +332,8 @@ public class Issues implements EntryPoint {
 
 		AonComboBox acb = new AonComboBox();
 		acb.setLabel("Remitente");
-		acb.setItemLabelPath("login");
-		acb.setItemValuePath("login");
+		acb.setItemLabelPath("description");
+		acb.setItemValuePath("description");
 		acb.setFilterEnable(false);
 		
 
@@ -401,8 +401,9 @@ public class Issues implements EntryPoint {
 				if(ptb.getChecked()) {
 					// TODO GITHUB!!!
 				} else {
+					JsUser js = acb.getSelectedItem().cast();
 					String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ Utils.checkString(pi4.getValue()) +" \",\"assignee\":\" \",\"labels\":[],"
-						+ "\"enterprise\":\""+ acb.getInputElementValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";
+						+ "\"enterprise\":\""+ js.getLogin()+"\", \"due_date\":\""+ "31/12/2100" +"\"}";
 		
 					incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
 					
