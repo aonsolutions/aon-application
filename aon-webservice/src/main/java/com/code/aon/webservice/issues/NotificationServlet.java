@@ -406,16 +406,15 @@ public class NotificationServlet extends HttpServlet{
 	}
 	
 	private String getToEmails(Domain domain, String login, String name, Boolean send, Integer assignee){
+		if(assignee != null){
+			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), login,
+				f -> f.getRegistryProperty().eq(assignee).and(f.getMediaProperty().eq((byte)4)));
+			return rm.getValue() != null ? rm.getValue() : "";
+		} 
+		
 		if(send) return ""; 
 		
-		Registry r;
-		if(assignee != null){
-			r = new Registry().setId(assignee);
-			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), login,
-				f -> f.getRegistryProperty().eq(r.getId()).and(f.getMediaProperty().eq((byte)4)));
-			return rm.getValue() != null ? rm.getValue() : "";
-		} else r = AON.getRegistry(domain.getName(), domain.getId(), login, name);
-		
+		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, name);
 		LinkedList<RegistryMedia> l = AON.getRMediaList(domain.getName(), domain.getId(), login,
 				f -> f.getRegistryProperty().eq(r.getId()).and(f.getMediaProperty().eq((byte)4)));
 		
