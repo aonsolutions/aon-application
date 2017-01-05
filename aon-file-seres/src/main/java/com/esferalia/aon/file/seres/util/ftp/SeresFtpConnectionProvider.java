@@ -4,17 +4,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
+
+import com.code.aon.common.ILogger;
 
 public class SeresFtpConnectionProvider implements Serializable {
 
@@ -24,364 +28,134 @@ public class SeresFtpConnectionProvider implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String ftpServer = "webconnect.seresnet.com";
-	private Integer ftpPort = 21;
-	private String ftpUser = "ftp1251";
-	private String ftpPassword = "x1xx0wub";
-
-	public void storeFile(String remotePath, String fileName, InputStream localInputStream) {
-		
+	public static boolean checkLogin(String server, Integer port, String user,
+			String passwd) throws FtpLoginException, FtpException {
 		FtpConnector ftp = new FtpConnector() {
-			
 			@Override
 			public void onSuccess() throws IOException {
-				
-				boolean success = changeWorkingDirectory(remotePath);
-				
-				if (success) {
-					this.setFileType(FTP.BINARY_FILE_TYPE);
-					
-					System.out.println("Start uploading first file");
-					boolean done = this.storeFile(fileName, localInputStream);
-					localInputStream.close();
-					if (done) {
-						System.out.println("The first file is uploaded successfully.");
-					}
-				
-					boolean completed = this.completePendingCommand();
-					if (completed) {
-						System.out.println("file upload finished.");
-					}
-				}
-				
+				// FtpLoginException is throwed if login failed
 			}
 		};
-		try {
-			assignJvmSystemProperies();
-			ftp.connect(ftpServer, ftpPort, ftpUser, ftpPassword);
-		} finally{
-			restoreJvmSystemProperies();
-		}
+		ftp.connect(server, port, user, passwd);
+		return true;
 	}
 	
-	public byte[] retrieveFile(String path, String remoteFile) {
-		
-//		byte[] out = null;
-		ByteArrayOutputStream localOutputStream = new ByteArrayOutputStream();
-		
+	public static boolean storeFile(String remotePath, String fileName,
+			InputStream localInputStream, String server, Integer port,
+			String user, String passwd) throws FtpLoginException, FtpException {
+		boolean completed = false;
 		FtpConnector ftp = new FtpConnector() {
 			@Override
 			public void onSuccess() throws IOException {
-				
-//				printFileTree("/", "", 0);
-				
-				boolean success = changeWorkingDirectory(path);
-				
-				if (success) {
-					
-					this.setFileType(FTP.BINARY_FILE_TYPE);
-//					String remoteFile = "ORDERS_1482924688-17457.TXT";
-//					File localFile = new File("/tmp/"+remoteFile);
-//					OutputStream localOutputStream = new BufferedOutputStream(
-//							new FileOutputStream(localFile));
-//					ByteArrayOutputStream localOutputStream = new ByteArrayOutputStream();
-					success = this.retrieveFile(remoteFile, localOutputStream);
-					if (!success) {
-						System.out.println("There was some problem retrieving file.");
-						return;
-					}
-					System.out.println("File was downloaded!");
-					
-				} else {
-					System.out.println("Could not change directory!");
-				}
-				
+				this.storeFile(remotePath, fileName, localInputStream,
+						completed);
+				localInputStream.close();
 			}
 		};
-		
+		ftp.connect(server, port, user, passwd);
+		return completed;
+	}
+	
+	public static byte[] retrieveFile(String remotePath, String remoteFile,
+			String server, Integer port, String user, String passwd)
+			throws FtpLoginException, FtpException {
+
+		ByteArrayOutputStream localOutputStream = new ByteArrayOutputStream();
+		FtpConnector ftp = new FtpConnector() {
+			@Override
+			public void onSuccess() throws IOException {
+				boolean success = this.retrieveFile(remotePath, remoteFile,
+						localOutputStream);
+				if (!success) {
+					System.out
+							.println("There was some problem retrieving file.");
+					return;
+				}
+				System.out.println("File was downloaded!");
+			}
+		};
 		try {
-			assignJvmSystemProperies();
-			ftp.connect(ftpServer, ftpPort, ftpUser, ftpPassword);
+			ftp.connect(server, port, user, passwd);
 			return localOutputStream.toByteArray();
-		} finally{
+		} finally {
 			try {
 				localOutputStream.close();
 			} catch (IOException e) {
 				// nothing
 			}
-			restoreJvmSystemProperies();
 		}
-		
 	}
 	
-	public List<FtpFile> obtainFiles(String path) {
+	public static List<FtpFile> retrieveDirectoryList(String remotePath,
+			String server, Integer port, String user, String passwd)
+			throws FtpLoginException, FtpException {
 		List<FtpFile> fileList = new LinkedList<>();
-		
+
+		// printFileTree("/", "", 0);
+
 		FtpConnector ftp = new FtpConnector() {
 			@Override
 			public void onSuccess() throws IOException {
-				if (changeWorkingDirectory(path)) {
-					this.fillDirectoryFileList(path, fileList);
+				this.fillDirectoryList(remotePath, fileList);
+			}
+		};
+
+		ftp.connect(server, port, user, passwd);
+
+		return fileList;
+	}
+	
+	public static List<FtpFile> retrieveFileList(String remotePath, Date start,
+			Date end, String server, Integer port, String user, String passwd)
+			throws FtpLoginException, FtpException {
+		List<FtpFile> fileList = new LinkedList<>();
+
+		FtpConnector ftp = new FtpConnector() {
+			@Override
+			public void onSuccess() throws IOException, FtpException {
+				if (changeWorkingDirectory(remotePath)) {
+					this.fillFileList(remotePath, start, end, fileList);
 				} else {
 					System.out.println("Could not change directory!");
 				}
 			}
 		};
-		
-		try {
-			assignJvmSystemProperies();
-			ftp.connect(ftpServer, ftpPort, ftpUser, ftpPassword);
-		} finally{
-			restoreJvmSystemProperies();
-		}
+
+		ftp.connect(server, port, user, passwd);
+
 		return fileList;
 	}
 	
 	
-	
-	private void printFiles(FTPFile[] listFiles){
-		System.out.println("LIST COUNT: "+listFiles.length);
-		for(int i=0; i<listFiles.length;i++){
-			System.out.print(listFiles[i].getName());
-			System.out.print(" (size: "+listFiles[i].getSize());
-			System.out.print(", group: "+listFiles[i].getGroup());
-			System.out.print(", type: "+listFiles[i].getType());
-			System.out.print(", link: "+listFiles[i].getLink());
-			System.out.print(", timestamp: "+listFiles[i].getTimestamp().getTime());
-			System.out.println(")");
-			System.out.print("   File: "+listFiles[i].isFile());
-			System.out.print(" - Directory: "+listFiles[i].isDirectory());
-			System.out.print(" - Unknown: "+listFiles[i].isUnknown());
-			System.out.println(" - SymbolicLink: "+listFiles[i].isSymbolicLink());
-			System.out.println("");
-		}
-	}
-	
-	private void printFileDetails(FTPFile[] files) {
-		DateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		for (FTPFile file : files) {
-			String details = file.getName();
-			details = file.isDirectory() ? "[" + details + "]" : details;
-			details += "\t\t" + file.getSize();
-			details += "\t\t" + formater.format(file.getTimestamp().getTime());
-			System.out.println(details);
-		}
-	}
-	
-
-	
-	abstract class FtpConnector {
-		
-		private String server;
-		private Integer port;
-		private String user;
-		private String passwd;
-		
-		private List<String> fileTree;
-		
-		private FTPClient ftp = new FTPClient();
-		
-		public abstract void onSuccess() throws IOException;
-		
-		public void connect(String server, Integer port, String user, String passwd){
-			this.server = server;
-			this.port = port;
-			this.user = user;
-			this.passwd = passwd;
-			assignJvmSystemProperies();
-			try {
-				boolean success = login();
-				if (success) {
-					onSuccess();
-				}
-			} catch (IOException ex) {
-	            System.out.println("Error: " + ex.getMessage());
-	            ex.printStackTrace();
-	        } finally {
-	        	restoreJvmSystemProperies();
-	        	disconnect();
-	        }
-		}
-		
-		private boolean login() throws IOException {
-			try {
-				ftp.connect(server, port);
-			} catch (Exception e) {
-				System.out.println("Connection failed! (check hostname and port)");
-			}
-			
-			String replyString = ftp.getReplyString();
-			System.out.print("REPLY: ");
-			System.out.println(replyString);
-			
-			int replyCode = ftp.getReplyCode();
-			if (!FTPReply.isPositiveCompletion(replyCode)) {
-				System.out.println("Some error!");
-				return false;
-			}
-			ftp.enterLocalPassiveMode();
-			System.out.print("FTP LOGIN: " + server + (port!=null?":"+port:"") + "@" + user
-					+ " (using password "
-					+ (passwd != null ? "YES" : "NO") + ")");
-			boolean success = ftp.login(user, passwd);
-			if (success) {
-				System.out.println(" -> SUCCESS!");
-				return success;
-			} else {
-				System.out.println(" -> FAILED! (check username and password)");
-				return !success;
-			}
-		}
-		
-		private void disconnect() {
-			try {
-				if (ftp.isConnected()) {
-					ftp.logout();
-					ftp.disconnect();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-		
-		protected boolean changeWorkingDirectory(String path) throws IOException{
-			boolean success = ftp.changeWorkingDirectory(path);
-			if(success){
-				System.out.print("WorkingDirectory changed to ");
-				System.out.println("'"+ftp.printWorkingDirectory()+"'");
-//				FTPFile[] listFiles = ftp.listFiles();
-//				printFiles(listFiles);
-//				printFileDetails(listFiles);
-			}
-			return success;
-		}
-		
-			
-		protected void printFileTree(String parentDir, String currentDir, int level)
-				throws IOException {
-			buildFileTree(parentDir, currentDir, level);
-			fileTree.forEach(System.out::println);
-		}
-		
-		protected void buildFileTree(String parentDir, String currentDir,
-				int level) throws IOException {
-			String dirToList = parentDir!=null?parentDir:"/";
-			
-			if (currentDir==null || currentDir.equals("")) {
-				fileTree = new LinkedList<>();
-			}
-			if (!currentDir.equals("")) {
-				dirToList += "/" + currentDir;
-			}
-			
-//			FTPFileFilter filter = FTPFileFilters.ALL;
-//			filter.;
-			
-			FTPFile[] subFiles = ftp.listFiles(dirToList);
-			if (subFiles != null && subFiles.length > 0) {
-				for (FTPFile aFile : subFiles) {
-					String currentFileName = aFile.getName();
-					if (currentFileName.equals(".")
-							|| currentFileName.equals("..")) {
-						continue;
-					}
-					if (aFile.isDirectory()) {
-						fileTree.add(String.format("%0" + (level + 1) + "d", 0)
-								.replace("0", "\t")
-								+ "[" + currentFileName + "]");
-						buildFileTree(dirToList, currentFileName, level + 1);
-					} else {
-						fileTree.add(String.format("%0" + (level + 1) + "d", 0)
-								.replace("0", "\t") + currentFileName);
-					}
-				}
-			}
-		}
-		
-		protected void fillDirectoryFileList(String directoryPath, List<FtpFile> list) throws IOException {
-			if(list!=null){
-//				FTPFile[] subFiles = ftp.listFiles(directoryPath);
-				FTPFile[] subFiles = ftp.listFiles();
-				if (subFiles != null && subFiles.length > 0) {
-					for (FTPFile aFile : subFiles) {
-						String currentFileName = aFile.getName();
-						if (currentFileName.equals(".")
-								|| currentFileName.equals("..")) {
-							continue;
-						}
-						if (aFile.isFile()) {
-							// list.add(currentFileName);
-							list.add((new FtpFile()).setName(aFile.getName())
-									.setGroup(aFile.getGroup())
-									.setSize(aFile.getSize())
-									.setTimestamp(aFile.getTimestamp()));
-						}
-					}
-				}
-			}
-		}
-		
-		protected void setFileType(int fileType) throws IOException {
-			ftp.setFileType(fileType);
-		}
-		
-		protected boolean retrieveFile(String remoteFile, OutputStream localOutputStream) throws IOException {
-			return ftp.retrieveFile(remoteFile, localOutputStream);
-		}
-//		protected boolean retrieveFile(String remoteFile, OutputStream localOutputStream, byte[] out) throws IOException {
-//			boolean success = ftp.retrieveFile(remoteFile, localOutputStream);
-//			out = ((ByteArrayOutputStream) localOutputStream).toByteArray();
-//			return success;
-////			return ftp.retrieveFile(remoteFile, localOutputStream);
+//	private void printFiles(FTPFile[] listFiles){
+//		System.out.println("LIST COUNT: "+listFiles.length);
+//		for(int i=0; i<listFiles.length;i++){
+//			System.out.print(listFiles[i].getName());
+//			System.out.print(" (size: "+listFiles[i].getSize());
+//			System.out.print(", group: "+listFiles[i].getGroup());
+//			System.out.print(", type: "+listFiles[i].getType());
+//			System.out.print(", link: "+listFiles[i].getLink());
+//			System.out.print(", timestamp: "+listFiles[i].getTimestamp().getTime());
+//			System.out.println(")");
+//			System.out.print("   File: "+listFiles[i].isFile());
+//			System.out.print(" - Directory: "+listFiles[i].isDirectory());
+//			System.out.print(" - Unknown: "+listFiles[i].isUnknown());
+//			System.out.println(" - SymbolicLink: "+listFiles[i].isSymbolicLink());
+//			System.out.println("");
 //		}
-		
-		protected boolean storeFile(String remote, InputStream localInputStream) throws IOException {
-			return ftp.storeFile(remote, localInputStream);
-		}
-		
-		protected boolean completePendingCommand() throws IOException {
-			return ftp.completePendingCommand();
-		}
-		
-		// **************************************************
-		// JVM system properties
-		// **************************************************
-		private String preferIPv4Stack = null;
-		private final static String PROPERTY_preferIPv4Stack = "java.net.preferIPv4Stack";
-		
-		private void assignJvmSystemProperies() {
-			preferIPv4Stack = System.getProperty(PROPERTY_preferIPv4Stack);
-			System.setProperty(PROPERTY_preferIPv4Stack, "true");
-		}
-
-		private void restoreJvmSystemProperies() {
-			if(StringUtils.isBlank(preferIPv4Stack)){
-				System.clearProperty(PROPERTY_preferIPv4Stack);
-			} else {
-				System.setProperty(PROPERTY_preferIPv4Stack, preferIPv4Stack);
-			}
-		}
-		
-	}
-
-	// **************************************************
-	// JVM system properties
-	// **************************************************
-	private static String preferIPv4Stack = null;
-	private final static String PROPERTY_preferIPv4Stack = "java.net.preferIPv4Stack";
+//	}
 	
-	private static void assignJvmSystemProperies() {
-		preferIPv4Stack = System.getProperty(PROPERTY_preferIPv4Stack);
-		System.setProperty(PROPERTY_preferIPv4Stack, "true");
-	}
-
-	private static void restoreJvmSystemProperies() {
-		if(StringUtils.isBlank(preferIPv4Stack)){
-			System.clearProperty(PROPERTY_preferIPv4Stack);
-		} else {
-			System.setProperty(PROPERTY_preferIPv4Stack, preferIPv4Stack);
-		}
-	}
+//	private void printFileDetails(FTPFile[] files) {
+//		DateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		for (FTPFile file : files) {
+//			String details = file.getName();
+//			details = file.isDirectory() ? "[" + details + "]" : details;
+//			details += "\t\t" + file.getSize();
+//			details += "\t\t" + formater.format(file.getTimestamp().getTime());
+//			System.out.println(details);
+//		}
+//	}
+	
 	
 	
 	// ***************
@@ -389,31 +163,304 @@ public class SeresFtpConnectionProvider implements Serializable {
 	// ***************
 	public static void main(String[] args) {
 		
-//		String ftpServer = "webconnect.seresnet.com";
-//		Integer ftpPort = 21;
-//		String ftpUser = "ftp1251";
-//		String ftpPassword = "x1xx0wub";
-		
-		SeresFtpConnectionProvider connection = new SeresFtpConnectionProvider();
-
-		String remoteFile = "";
+		String ftpServer = "webconnect.seresnet.com";
+		Integer ftpPort = 21;
+		String ftpUser = "ftp1251";
+		String ftpPassword = "x1xx0wub";
+		String orderPath = "/recepcion/orders_d96a";
+		String deliveryPath = "/envio/desadv_d96a";
 		String remotePath = "";
 		
-		// SHOW FILES
-		System.out.println("# Operation: show files");
-		remotePath = "recepcion/orders_d96a";
-		connection.obtainFiles(remotePath).forEach(System.out::println);
+		try {
+			// SHOW FILES
+			System.out.println("# ACTION: show files");
+			remotePath = orderPath;
+			SeresFtpConnectionProvider.retrieveFileList(remotePath, null, null, ftpServer,
+					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
+			
+			// SHOW DIRECTRY TREE
+			System.out.println("# ACTION: show directory tree");
+			remotePath = "/";
+			SeresFtpConnectionProvider.retrieveDirectoryList(remotePath, ftpServer,
+					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
+			
+			// RETRIEVE FILE
+//			System.out.println("# ACTIOB: retrieve file");
+//			remoteFile = "ORDERS_1482924688-17457.TXT";
+//			SeresFtpConnectionProvider.retrieveFile("recepcion/orders_d96a", remoteFile, ftpServer,
+//				ftpPort, ftpUser, ftpPassword);
+			
+			// STORE FILE
+			System.out.println("# ACTION: store file");
+			remotePath = deliveryPath;
+//			SeresFtpConnectionProvider.storeFile(null, null, null);
+		} catch (FtpLoginException e) {
+			e.printStackTrace();
+		} catch (FtpException e) {
+			e.printStackTrace();
+		}
 		
-		// RETRIEVE FILE
-//		System.out.println("# Operation: retrieve file");
-//		remoteFile = "ORDERS_1482924688-17457.TXT";
-//		connection.retrieveFile("recepcion/orders_d96a", remoteFile);
+		System.out.println("## DONE !!!");
 		
-		// STORE FILE
-//		System.out.println("# Operation: store file");
-//		connection.storeFile(null, null, null);
+	}
+}
+
+
+
+
+
+
+
+abstract class FtpConnector {
+	
+	private List<String> fileTree;
+	
+	private FTPClient ftp = new FTPClient();
+	
+	public abstract void onSuccess() throws IOException, FtpException;
+	
+	
+	public void connect(String server, Integer port, String user, String passwd)
+			throws FtpLoginException, FtpException {
+		assignJvmSystemProperies();
+		try {
+			boolean success = login(server, port, user, passwd);
+			if (success) {
+				onSuccess();
+			}
+		} catch (IOException ex) {
+			System.out.println("Error: " + ex.getMessage());
+			ex.printStackTrace();
+		} finally {
+			restoreJvmSystemProperies();
+			disconnect();
+		}
+	}
+	
+	private boolean login(String server, Integer port, String user,
+			String passwd) throws IOException, FtpLoginException, FtpException {
+		try {
+			ftp.connect(server, port);
+		} catch (Exception e) {
+//			System.out.println("Connection failed! (check hostname and port)");
+			throw new FtpException("Connection failed! (check hostname and port)", e);
+		}
+
+		String replyString = ftp.getReplyString();
+		System.out.println("REPLY: " + replyString);
+
+		int replyCode = ftp.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(replyCode)) {
+			System.err.println("Some error!");
+			return false;
+		}
+		ftp.enterLocalPassiveMode();
+		System.out.print("FTP LOGIN: " + server
+				+ (port != null ? ":" + port : "") + "@" + user
+				+ " (using password "
+				+ (passwd != null && !"".equals(passwd) ? "YES" : "NO") + ")");
+		boolean success = ftp.login(user, passwd);
+		if (success) {
+			System.out.println(" -> SUCCESS!");
+		} else {
+			System.out.println(" -> FAILED! (check username and password)");
+			throw new FtpLoginException(
+					"Login failed! (check username and password)");
+		}
+		return success;
+	}
+	
+	private void disconnect() {
+		try {
+			if (ftp.isConnected()) {
+				ftp.logout();
+				ftp.disconnect();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	protected boolean changeWorkingDirectory(String path) throws IOException{
+		boolean success = ftp.changeWorkingDirectory(path);
+		if(success){
+			System.out.print("WorkingDirectory changed to ");
+			System.out.println("'"+ftp.printWorkingDirectory()+"'");
+		}
+		return success;
+	}
+	
 		
-		System.out.println("## FINISH!!!");
+	protected void printFileTree(String parentDir, String currentDir, int level)
+			throws IOException {
+		buildFullTree(parentDir, currentDir, level);
+		fileTree.forEach(System.out::println);
+	}
+	
+	protected void buildFullTree(String parentDir, String currentDir,
+			int level) throws IOException {
+		String dirToList = parentDir!=null?parentDir:"/";
+		
+		if (currentDir==null || currentDir.equals("")) {
+			fileTree = new LinkedList<>();
+		}
+		if (!currentDir.equals("")) {
+			dirToList += "/" + currentDir;
+		}
+		
+		FTPFile[] subFiles = ftp.listFiles(dirToList);
+		if (subFiles != null && subFiles.length > 0) {
+			for (FTPFile aFile : subFiles) {
+				String currentFileName = aFile.getName();
+				if (currentFileName.equals(".")
+						|| currentFileName.equals("..")) {
+					continue;
+				}
+				if (aFile.isDirectory()) {
+					fileTree.add(String.format("%0" + (level + 1) + "d", 0)
+							.replace("0", "\t")
+							+ "[" + currentFileName + "]");
+					buildFullTree(dirToList, currentFileName, level + 1);
+				} else {
+					fileTree.add(String.format("%0" + (level + 1) + "d", 0)
+							.replace("0", "\t") + currentFileName);
+				}
+			}
+		}
+	}
+	
+	protected void fillDirectoryList(String directoryPath, List<FtpFile> list) throws IOException {
+		if(list!=null) {
+			list = new LinkedList<>();
+		}
+		FTPFile[] subDirectories = null;
+		try {
+			if(directoryPath!=null){
+				subDirectories = ftp.listFiles(directoryPath);
+			}
+		} catch (IOException e) {
+			subDirectories = ftp.listFiles();
+		}
+		if (subDirectories != null && subDirectories.length > 0) {
+			for (FTPFile f : subDirectories) {
+				String currentFileName = f.getName();
+				if (currentFileName.equals(".")
+						|| currentFileName.equals("..")) {
+					continue;
+				}
+				if (f.isDirectory()) {
+					list.add(new FtpFile(f));
+				}
+			}
+		}
+	}
+	
+	protected void fillFileList(String directoryPath, Date start, Date end,
+			List<FtpFile> list) throws IOException, FtpException {
+		if (list == null) {
+			list = new LinkedList<>();
+		}
+		FTPFile[] subFiles = null;
+		try {
+			FTPFileFilter filter = null;
+			if (start != null || end != null) {
+				filter = new FTPFileFilter() {
+					@Override
+					public boolean accept(FTPFile arg0) {
+						return DateUtils.ceiling(arg0.getTimestamp().getTime(),
+								Calendar.DAY_OF_MONTH)
+								.compareTo(
+										DateUtils.ceiling(start,
+												Calendar.DAY_OF_MONTH)) >= 0
+								&& DateUtils.ceiling(
+										arg0.getTimestamp().getTime(),
+										Calendar.DAY_OF_MONTH).compareTo(
+										DateUtils.ceiling(end,
+												Calendar.DAY_OF_MONTH)) <= 0;
+					}
+				};
+			}
+			if (directoryPath != null && filter != null) {
+				subFiles = ftp.listFiles(directoryPath, filter);
+			} else if (directoryPath != null) {
+				subFiles = ftp.listFiles(directoryPath);
+			} else {
+				subFiles = ftp.listFiles();
+			}
+		} catch (IOException e) {
+			throw new FtpException(e);
+		}
+		if (subFiles != null && subFiles.length > 0) {
+			for (FTPFile f : subFiles) {
+				String currentFileName = f.getName();
+				if (currentFileName.equals(".") || currentFileName.equals("..")) {
+					continue;
+				}
+				if (f.isFile()) {
+					list.add(new FtpFile(f));
+				}
+			}
+		}
+	}
+
+	protected boolean retrieveFile(String remotePath, String remoteFile, OutputStream localOutputStream) throws IOException {
+		boolean success = changeWorkingDirectory(remotePath);
+		if (success) {
+			ftp.setFileType(FTP.BINARY_FILE_TYPE);
+			success = ftp.retrieveFile(remoteFile, localOutputStream);
+		}
+		return success;
+	}
+	
+	protected void storeFile(String remotePath, String fileName, InputStream localInputStream, boolean completed) throws IOException {
+		boolean success = changeWorkingDirectory(remotePath);
+		if (success) {
+			ftp.setFileType(FTP.BINARY_FILE_TYPE);
+			success =  ftp.storeFile(fileName, localInputStream);
+			if (success) {
+				System.out.println("The first file is uploaded successfully.");
+			}
+			completed = ftp.completePendingCommand();
+		}
+	}
+	
+	
+	// **************************************************
+	// JVM system properties
+	// **************************************************
+	private String preferIPv4Stack = null;
+	private final static String PROPERTY_preferIPv4Stack = "java.net.preferIPv4Stack";
+	
+	private void assignJvmSystemProperies() {
+		preferIPv4Stack = System.getProperty(PROPERTY_preferIPv4Stack);
+		System.setProperty(PROPERTY_preferIPv4Stack, "true");
+	}
+
+	private void restoreJvmSystemProperies() {
+		if(StringUtils.isBlank(preferIPv4Stack)){
+			System.clearProperty(PROPERTY_preferIPv4Stack);
+		} else {
+			System.setProperty(PROPERTY_preferIPv4Stack, preferIPv4Stack);
+		}
+	}
+
+	
+	class DefaultLogger implements ILogger {
+
+		@Override
+		public void error(String arg0) {
+			System.err.println("# FTP ERROR: " + arg0);
+		}
+
+		@Override
+		public void info(String arg0) {
+			System.out.println("# FTP: " + arg0);
+		}
+
+		@Override
+		public void warn(String arg0) {
+			System.out.println("# FTP WARN: " + arg0);
+		}
 		
 	}
 }

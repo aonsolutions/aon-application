@@ -54,8 +54,9 @@
 							<aon:commandButton id="delivery-ediFtp"
 								value="SERESNET"
 								title="Enviar al servidor FTP de Seresnet"
+								actionListener="#{delivery.ftpEdiUploader.onShowFtpEdi}"
 								styleClass="aon-finding-toolbar-item aon-icon-seresnet">
-								<f:setPropertyActionListener target="#{delivery.showEdiFtpWindow}"
+								<f:setPropertyActionListener target="#{delivery.ftpEdiUploader.showEdiFtpWindow}"
 									value="#{true}" />
 							</aon:commandButton>
 						</aon:if>

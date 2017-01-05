@@ -61,10 +61,10 @@
 								value="SERESNET"
 								title="Recuperar del servidor FTP de Seresnet"
 								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
-								actionListener="#{controller.ftpEdiImporter.onShowFtpEdi}"
+								actionListener="#{controller.ftpEdiDownloader.onShowFtpEdi}"
 								ajaxSingle="#{true}"
 								action="sales_form">
-								<f:setPropertyActionListener target="#{sales.ftpEdiImporter.showEdiFtpWindow}"
+								<f:setPropertyActionListener target="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
 									value="#{true}" />
 							</aon:commandButton>
 						</aon:if>

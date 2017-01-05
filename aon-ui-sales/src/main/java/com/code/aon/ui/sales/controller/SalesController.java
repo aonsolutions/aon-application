@@ -69,7 +69,7 @@ import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler;
-import com.code.aon.ui.sales.importer.edi.FtpSalesImporterHandler;
+import com.code.aon.ui.sales.importer.edi.FtpSalesDownloadHandler;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.sales.util.SalesUtils;
@@ -119,7 +119,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	@Deprecated
 	private com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaImporter;
 	
-	private FtpSalesImporterHandler ftpEdiImporter;
+	private FtpSalesDownloadHandler ftpEdiDownloader;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -318,11 +318,11 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		return udapaImporter;
 	}
 	
-	public FtpSalesImporterHandler getFtpEdiImporter() {
-		if(ftpEdiImporter==null){
-			ftpEdiImporter = new FtpSalesImporterHandler(this);
+	public FtpSalesDownloadHandler getFtpEdiDownloader() {
+		if(ftpEdiDownloader==null){
+			ftpEdiDownloader = new FtpSalesDownloadHandler(this);
 		}
-		return ftpEdiImporter;
+		return ftpEdiDownloader;
 	}
 
 	public Integer getInvoiceId() {
