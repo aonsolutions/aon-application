@@ -22,7 +22,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	private IAccMiningKeyAccept resolver;
 	private Stack<String> stack = new Stack<String>();
 	
-	public AccMiningMVELContext( IAccMiningKeyAccept resolver) {
+	public AccMiningMVELContext(IAccMiningKeyAccept resolver) {
 		this.context = new HashMap<String, Object>();
 		this.accounts = new HashMap<String, AccountBalance>();
 		this.expressionMap = new HashMap<String, String>();
@@ -71,34 +71,32 @@ public class AccMiningMVELContext implements Map<String, Object> {
 
 	@Override
 	public Object get(Object keyObject) {
-		String key = (String) keyObject;
-		Object obj = null;
-		if (this.context.containsKey(key) 
-			&& (!expressionMap.containsKey(key) || stack.contains(key))) {
-			obj = this.context.get(key);
-		} else {
-			obj = evaluate(key);
-		}
-		return obj;
+		return getContainsKey(keyObject) ? context.get(keyObject) : evaluate(keyObject.toString());
 	}
-    
+	
+	private Boolean getContainsKey(Object keyObject) {
+		return this.context.containsKey(keyObject) 
+			&& (!expressionMap.containsKey(keyObject) || stack.contains(keyObject));
+	}
+	
 	public Object evaluate(String key) {
 		if (expressionMap != null) {
 			String exp = expressionMap.get(key);
-			Object ret = null;
 			if (AonStringUtils.isNotEmpty(exp)) {
-				ret =  mvelEval(key,exp);
-			}
-			if (ret != null) {
-				put(key, ret);
-				return ret;
+				Object ret =  mvelEval(key,exp);
+				if (ret != null) {
+					put(key, ret);
+					return ret;
+				}
 			}
 		}
 		return new Double(0);
 	}
+	
 	public Object evaluateExpression(String key,String expression) {
 		return mvelEval(key,expression);
 	}
+	
 	private Object mvelEval(String key,String expression) {
 		try {
 			stack.push(key);
@@ -239,7 +237,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AonCoreException
 	 */
-	public double sap(int[] accounts  ) throws AonCoreException {
+	public double sap(int[] accounts) throws AonCoreException {
 		return getCreditPyG(accounts);
 	}
 
@@ -372,4 +370,5 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		}
 		return d;
 	}
+	
 }

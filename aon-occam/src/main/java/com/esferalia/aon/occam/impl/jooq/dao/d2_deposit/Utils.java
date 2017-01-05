@@ -754,7 +754,7 @@ public class Utils {
 	}	
 
 	public static Map<String, String> compute(Map<String, String> map, String type) {
-		D2MVELContext ctx = new D2MVELContext(map, new IAccMiningKeyAccept() {
+		AccMiningMVELContext ctx = new AccMiningMVELContext(new IAccMiningKeyAccept() {
 			@Override
 			public boolean acceptKey(Object key) {
 				return AonStringUtils.isNotEmpty((String) key);

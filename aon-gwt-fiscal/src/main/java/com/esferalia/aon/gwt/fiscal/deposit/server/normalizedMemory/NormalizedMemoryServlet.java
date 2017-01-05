@@ -39,7 +39,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2MVELContext;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2PrevioustoD2Current;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
@@ -49,6 +48,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002015toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
+import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -562,7 +562,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 	
 	public Map<String, String> calculate(Map<String, String> map) {
-		D2MVELContext ctx = new D2MVELContext(map, new IAccMiningKeyAccept() {
+		AccMiningMVELContext ctx = new AccMiningMVELContext(new IAccMiningKeyAccept() {
 			@Override
 			public boolean acceptKey(Object key) {
 				return AonStringUtils.isNotEmpty((String) key);
@@ -590,7 +590,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return map;
 	}
 	
-	public Map<String, String> calculate(Map<String, String> map, D2MVELContext ctx, Map<String, String> computeMap){
+	public Map<String, String> calculate(Map<String, String> map, AccMiningMVELContext ctx, Map<String, String> computeMap){
 		for (String key : computeMap.keySet()) {
 			String expression = computeMap.get(key);
 			Object ret = ctx.evaluateExpression(key,expression);
