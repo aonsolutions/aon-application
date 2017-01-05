@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
@@ -140,7 +141,12 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 
 	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Item item){
 		EcommerceProduct ecommerceProduct = null;
+
 		if(attach!=null){
+			if(attach.getData() == null && attach.getDriveId() != null){
+				byte[] data = DriveUtils.getByteFile(domain.getName(), domain.getId(), getUserLogin(), attach.getDriveId(), attach.getId());
+				attach.setData(data);
+			}
 			try {
 				ecommerceProduct = XMLUtils.readXml(attach.getData());
 				ecommerceProduct.setProduct(new EcommerceProduct.Product());
