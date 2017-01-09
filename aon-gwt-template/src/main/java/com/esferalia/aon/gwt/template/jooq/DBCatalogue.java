@@ -185,7 +185,7 @@ public class DBCatalogue {
 			user = AON.getUser(domain.getName(), domain.getId(), user.getLogin());
 		}
 		Domain domainAux = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
-		return domainAux.getParentId().equals(user.getDomain());
+		return domainAux.getParentId() != null && domainAux.getParentId().equals(user.getDomain());
 	}
 	
 }
