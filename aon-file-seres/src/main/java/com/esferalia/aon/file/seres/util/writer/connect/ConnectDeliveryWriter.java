@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,7 @@ import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistryMode;
@@ -43,10 +45,10 @@ public class ConnectDeliveryWriter {
 
 
 	public FileOutput createFile(Delivery delivery, String companyEdiCode,
-			String customerEdiCode) throws FileNotFoundException,
+			String customerEdiCode, String deliveryPointEdiCode) throws FileNotFoundException,
 			UnsupportedEncodingException {
 		RECTL rectl = createRECTLRecord(delivery, companyEdiCode,
-				customerEdiCode);
+				customerEdiCode, deliveryPointEdiCode);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new ConnectDelivery(rectl, writer);
@@ -57,7 +59,7 @@ public class ConnectDeliveryWriter {
 	}
 
 	private RECTL createRECTLRecord(Delivery delivery, String companyEdiCode,
-			String customerEdiCode) {
+			String customerEdiCode, String deliveryPointEdiCode) {
 		RECTL rectl = new RECTL();
 		rectl.setTipoDeMensaje(RECTL.RECTL_2.AVISO_DE_EXPEDICION_DESADV.getValue());
 		rectl.setCodigoEmisor(companyEdiCode);
@@ -66,9 +68,9 @@ public class ConnectDeliveryWriter {
 		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		
 		rectl.seh1c = createSEH1CRecord(delivery, companyEdiCode,
-				customerEdiCode);
+				customerEdiCode, deliveryPointEdiCode);
 		rectl.seh1dList = createSEH1DList(delivery, companyEdiCode,
-				customerEdiCode);
+				customerEdiCode, deliveryPointEdiCode);
 		rectl.seh1pList = createSEH1PList(delivery);
 		rectl.seh1lList = createSEH1LList(delivery, companyEdiCode,
 				customerEdiCode);
@@ -79,8 +81,7 @@ public class ConnectDeliveryWriter {
 	}
 	
 	private SEH1C createSEH1CRecord(Delivery delivery, String companyEdiCode,
-			String customerEdiCode) {
-		// TODO Auto-generated method stub
+			String customerEdiCode, String deliveryPointEdiCode) {
 		SEH1C seh1c = new SEH1C();
 		
 		seh1c.setTipoDeDocumento_351_35E_(SEH1C.SEH1C_2.NOTAS_DE_ENVIO_351
@@ -88,7 +89,7 @@ public class ConnectDeliveryWriter {
 		seh1c.setNumeroDelDocumento(delivery.getReferenceCode());
 		seh1c.setFuncionDelMensaje(SEH1C.SEH1C_4.ORIGINAL___EL_ENVIO_DE_UN_AVISO_DE_EXPEDICION_ORIGINAL_9
 				.getValue());
-		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateFormat().format(delivery
+		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery
 				.getDate()));
 		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(null);
 		seh1c.setCalificadorFecha_Hora1_2_11_64_(null);
@@ -110,58 +111,44 @@ public class ConnectDeliveryWriter {
 		seh1c.setCondicionesDeEntregaOTransporte_Codificada(null);
 		seh1c.setCondicionesDeEntregaOTransporte_TextoLibre(null);
 		seh1c.setModoDeTransporte_Codificado(null);
-		seh1c.setIdentificacionDeTransportista(null);
-		seh1c.setNombreDelTransportista(null);
-		seh1c.setMatriculaDelVehiculo(null);
-		seh1c.setLugarDeEntrega_Codificado_8_(null);
-		seh1c.setLugarDeEntrega_TextoLibre_8_(null);
+		seh1c.setIdentificacionDeTransportista(delivery.getDriverDocument());
+		seh1c.setNombreDelTransportista(delivery.getDriver());
+		seh1c.setMatriculaDelVehiculo(delivery.getNumberPlate());
+		seh1c.setLugarDeEntrega_Codificado_8_(deliveryPointEdiCode);
+		String deliveryAddress = delivery.getRegistryAddress().getFullAddress();
+		deliveryAddress = deliveryAddress != null
+				&& deliveryAddress.length() > 70 ? StringUtils.abbreviate(
+				deliveryAddress, 70) : deliveryAddress;
+		seh1c.setLugarDeEntrega_TextoLibre_8_(deliveryAddress);
 		return seh1c;
 	}
 
 	private List<SEH1D> createSEH1DList(Delivery delivery,
-			String companyEdiCode, String customerEdiCode) {
+			String companyEdiCode, String customerEdiCode,
+			String deliveryPointEdiCode) {
 		List<SEH1D> list = new ArrayList<>();
-		delivery.getDetailList().forEach(
-				to -> {
 
-//					MS - Emisor del mensaje
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            MR - Receptor del mensaje
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            SU - Proveedor.
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            PW - Punto desde donde se envían las mercancías
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            DP - Punto destino de la mercancía
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            UC - Destinatario final
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            BY - Comprador
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            SH - Expedidor
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-//		            IV - A quien se factura
-					list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
-							(DeliveryDetail) to, companyEdiCode,
-							customerEdiCode));
-					
-				});
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
+				companyEdiCode, delivery.getWorkPlace().getEnterprise()));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
+				customerEdiCode, delivery.getCustomer()));
+		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
+		// null, null));
+		list.add(createSEH1DRecord(
+				SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
+				companyEdiCode, delivery.getWorkPlace().getEnterprise()));
+		list.add(createSEH1DRecord(
+				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
+				customerEdiCode, delivery.getCustomer()));
+		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
+		// null, null));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
+				delivery.getCustomer()));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, companyEdiCode,
+				delivery.getWorkPlace().getEnterprise()));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
+				customerEdiCode, delivery.getCustomer()));
+
 		return list;
 	}
 
@@ -169,7 +156,10 @@ public class ConnectDeliveryWriter {
 		List<SEH1P> list = new ArrayList<>();
 		delivery.getDetailList().forEach(
 				to -> {
-					list.add(createSEH1PRecord((DeliveryDetail) to));
+					DeliveryDetail detail = (DeliveryDetail) to;
+					if(isPackageItem(detail.getItem())){
+						list.add(createSEH1PRecord(detail));
+					}
 				});
 		return list;
 	}
@@ -179,8 +169,11 @@ public class ConnectDeliveryWriter {
 		List<SEH1L> list = new ArrayList<>();
 		delivery.getDetailList().forEach(
 				to -> {
-					list.add(createSEH1LRecord((DeliveryDetail) to,
-							companyEdiCode, customerEdiCode));
+					DeliveryDetail detail = (DeliveryDetail) to;
+					if(!isPackageItem(detail.getItem())){
+						list.add(createSEH1LRecord(detail,
+								companyEdiCode, customerEdiCode));
+					}
 				});
 		return list;
 	}
@@ -188,12 +181,14 @@ public class ConnectDeliveryWriter {
 	// TODO createSEH1GList
 	private List<SEH1G> createSEH1GList(Delivery delivery) {
 		List<SEH1G> list = new ArrayList<>();
+		createSEH1GRecord(delivery);
 		return list;
 	}
 
 	// TODO createSEH1BList
 	private List<SEH1B> createSEH1BList(Delivery delivery) {
 		List<SEH1B> list = new ArrayList<>();
+		createSEH1BRecord(delivery);
 		return list;
 	}
 
@@ -211,26 +206,28 @@ public class ConnectDeliveryWriter {
             SH - Expedidor
             IV - A quien se factura	 
 	 */
-	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, DeliveryDetail detail,
-			String companyEdiCode, String customerEdiCode) {
-		// TODO Auto-generated method stub
+	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, IRegistry registry) {
 		SEH1D record = new SEH1D();
 		record.setCalificadorDelInterlocutor(type.getValue());
-		record.setCodigoInterlocutor(customerEdiCode);
+		record.setCodigoInterlocutor(ediCode);
 		record.setAgenciaResponsableDeLaListaDeCodigos(null);
-		record.setNombre1(null);
+		record.setNombre1(registry.getRegistry().getName());
 		record.setNombre2(null);
 		record.setNombre3(null);
 		record.setNombre4(null);
 		record.setNombre5(null);
-		record.setCalleYNumero1(null);
-		record.setCalleYNumero2(null);
-		record.setCalleYNumero3(null);
-		record.setCalleYNumero4(null);
-		record.setPoblacion(null);
-		record.setProvincia(null);
-		record.setCodigoPostal(null);
-		record.setCodigoPais(null);
+		try {
+			record.setCalleYNumero1(registry.getRegistry().getDefaultAddress().getAddress());
+			record.setCalleYNumero2(registry.getRegistry().getDefaultAddress().getAddress2());
+			record.setCalleYNumero3(registry.getRegistry().getDefaultAddress().getAddress3());
+			record.setCalleYNumero4(registry.getRegistry().getDefaultAddress().getNumber());
+			record.setPoblacion(registry.getRegistry().getDefaultAddress().getCity());
+			record.setProvincia(registry.getRegistry().getDefaultAddress().getGeozone().getName());
+			record.setCodigoPostal(registry.getRegistry().getDefaultAddress().getZip());
+			record.setCodigoPais(registry.getRegistry().getDefaultAddress().getGeozone().getGeoZoneCountry().getCode());
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
 		record.setCalificadorReferencia1(null);
 		record.setReferencia1(null);
 		record.setFuncionDeContacto(null);
@@ -310,7 +307,7 @@ public class ConnectDeliveryWriter {
 		record.setNumeroDeLote_NB_(item.getSerialNumber());
 		record.setNumeroDeArticuloDelComprador_IN_(null);
 		record.setCantidadEnviada_12_(detail.getQuantity());
-		record.setUnidadDeMedidaCantidadEnviada(null);;
+		record.setUnidadDeMedidaCantidadEnviada(null);
 		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(null);
 		record.setFechaDeCaducidad_36__102_203_(null);
 		record.setCalificadorReferencia1(null);
@@ -356,8 +353,8 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	private SEH1G createSEH1GRecord(DeliveryDetail detail) {
-		// TODO Auto-generated method stub
+	private SEH1G createSEH1GRecord(Delivery delivery) {
+		// TODO createSEH1GRecord
 		SEH1G record = new SEH1G();
 		record.setCodigoLugar_localizacion(null);
 		record.setAgenciaResponsableListaDeCodigos(null);
@@ -370,8 +367,8 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	private SEH1B createSEH1BRecord(DeliveryDetail detail) {
-		// TODO Auto-generated method stub
+	private SEH1B createSEH1BRecord(Delivery delivery) {
+		// TODO createSEH1BRecord
 		SEH1B record = new SEH1B();
 		record.setCodigoInstrucciones(null);
 		record.setMarcasDeEnvio(null);
@@ -412,6 +409,11 @@ public class ConnectDeliveryWriter {
 			LOGGER.error(e.getMessage());
 		}
 		return "";
+	}
+
+	private boolean isPackageItem(Item item) {
+		return item != null && item.getSerialNumber() == null
+				&& item.getSerialDate() == null;
 	}
 
 }

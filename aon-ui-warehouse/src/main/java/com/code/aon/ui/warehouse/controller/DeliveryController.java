@@ -807,6 +807,10 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 					delivery.getCustomer().getRegistry(),
 					delivery.getRegistryAddress()).get(
 					CustomerEdiSupportController.ALBARANES);
+			String deliveryPointEdiCode = ediSupport.getEdiCodes(
+					delivery.getCustomer().getRegistry(),
+					delivery.getRegistryAddress()).get(
+							CustomerEdiSupportController.PTO_ENTREGA);
 			CompanyController company = (CompanyController) AonUtil
 					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
@@ -814,7 +818,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			// writer file
 			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
 			output = writer.createFile(delivery, companyEdiCode,
-					customerEdiCode);
+					customerEdiCode, deliveryPointEdiCode);
 
 			// download file
 			String name = "albaran";
