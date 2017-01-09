@@ -1,22 +1,23 @@
 FROM tomcat:9.0-jre8
 
-ARG AON_VERSION=8.81-SNAPSHOT
-
 ENV CATALINA_HOME /usr/local/tomcat
 
 ENV AON_AIO_HOME $CATALINA_HOME/webapps/ROOT
 
-ENV AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse_snapshot/com/code/aon
+ENV AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse/com/code/aon
 
 ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
 
 WORKDIR $TOMCAT_LIBDIR
 
 
+
 RUN set -x \
 	\
-	&& wget $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/aon.jaas-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)"`.jar \
-	&& wget $AON_MAVEN_REPOSITORY_URL/aon.pool/$AON_VERSION/aon.pool-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.pool/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)"`.jar
+	&& JAAS_VERSION=`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.jaas/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<release>).*(?=</release>)"`\
+	&& wget $AON_MAVEN_REPOSITORY_URL/aon.jaas/$JAAS_VERSION/aon.jaas-$JAAS_VERSION.jar \
+	&& POOL_VERSION=`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.pool/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<release>).*(?=</release>)"`\
+	&& wget $AON_MAVEN_REPOSITORY_URL/aon.pool/$POOL_VERSION/aon.pool-$POOL_VERSION.jar
 
 
 ENV SLF4J_API_URL=http://central.maven.org/maven2/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar
@@ -63,7 +64,8 @@ WORKDIR $AON_AIO_HOME
 
 RUN set -x \
 	\
-	&& wget -O aon-aio.war $AON_MAVEN_REPOSITORY_URL/aon-aio/$AON_VERSION/aon-aio-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon-aio/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)"`.war \
+	&& AIO_VERSION=`wget -O - $AON_MAVEN_REPOSITORY_URL/aon-aio/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<release>).*(?=</release>)"` \
+	&& wget -O aon-aio.war $AON_MAVEN_REPOSITORY_URL/aon-aio/$AIO_VERSION/aon-aio-$AIO_VERSION.war \
 	&& unzip aon-aio.war \
 	&& rm aon-aio.war 
 
