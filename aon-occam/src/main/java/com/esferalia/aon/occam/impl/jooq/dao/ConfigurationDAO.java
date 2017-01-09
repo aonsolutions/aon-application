@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -23,10 +22,11 @@ public class ConfigurationDAO {
 				.setUser(SecurityDAO.getUser(ctx))
 				.setPeriods(AccountPeriodDAO.getPeriods(ctx, 
 						p -> p.getDomainProperty().eq(ctx.getDomainId())
-							.and(p.getStatusProperty().in( new Byte[] {
-									 AccountPeriodStatus.ACTIVE.getValue()
-									,AccountPeriodStatus.OPENING.getValue()
-									,AccountPeriodStatus.OPERATING.getValue()} )))
+//							.and(p.getStatusProperty().in( new Byte[] {
+//									 AccountPeriodStatus.ACTIVE.getValue()
+//									,AccountPeriodStatus.OPENING.getValue()
+//									,AccountPeriodStatus.OPERATING.getValue()} ))
+							)
 						.collect(Collectors.toCollection(LinkedList::new)))
 				.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),atDate)
 						.collect(Collectors.toCollection(LinkedList::new)))

@@ -93,6 +93,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	static FiscalServiceAsync fiscalService;
 	static CommonServiceAsync commonService;
+	private AccountEntry base;
 
 	interface AccountEntryModuleBinder extends
 			UiBinder<Widget, AccountEntryModule> {
@@ -509,6 +510,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(AccountEntry[] result) {
+				base = result[0];
 				sessionLog.addSaved(AccountEntryModule.getWrapperArray(result));
 				reset();
 				
@@ -809,13 +811,9 @@ public class AccountEntryModule extends MainEntryPoint {
 			first.setValue(1);
 			Manual manual = new Manual(moduleCallback);
 			manual.attach(null);
-			// manual.select(null,manual.create(null),null, selectionCallback );
-			manual.reset( getModuleEntry(), selectionCallback  );
 			this.wizardContent = manual;	
-		} else {
-			AccountEntry base = this.wizardContent.getMainEntry();
-			this.wizardContent.reset( base, selectionCallback  );
 		}
+		this.wizardContent.reset( getEntryBase(), selectionCallback  );
 		
 	}
 	
@@ -825,18 +823,21 @@ public class AccountEntryModule extends MainEntryPoint {
 		panel.attach(wizardCbk);
 	}
 
-	private AccountEntry getModuleEntry() {
-		EnterpriseActivity ea = getConfiguration().getMainActivity();
-		Integer activity = (ea==null?null:ea.getId());
-		AccountPeriod period = getConfiguration().getDefaultAccountPeriod();
-		Integer periodId = (period == null? null : period.getId());
-		return new AccountEntry()
-			.setPeriod(periodId)
-			.setDomain(AccountEntryModule.getCurrentDomain())
-			.setConfidential(false)
-			.setEntryDate(new Date())
-			.setActivity(activity)
-			.setDirty(false);
+	private AccountEntry getEntryBase() {
+		if (base == null) {
+			EnterpriseActivity ea = getConfiguration().getMainActivity();
+			Integer activity = (ea==null?null:ea.getId());
+			AccountPeriod period = getConfiguration().getDefaultAccountPeriod();
+			Integer periodId = (period == null? null : period.getId());
+			base = new AccountEntry()
+					.setPeriod(periodId)
+					.setDomain(AccountEntryModule.getCurrentDomain())
+					.setConfidential(false)
+					.setEntryDate(new Date())
+					.setActivity(activity)
+					.setDirty(false);
+		}
+		return base;
 	}
 
 	private void showFullStatement(Integer selectedItem) {
