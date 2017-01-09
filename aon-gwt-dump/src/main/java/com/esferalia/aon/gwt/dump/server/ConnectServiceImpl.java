@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,10 +26,12 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.annotation.WebServlet;
 
 import org.jooq.DSLContext;
+import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.SelectConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -44,6 +47,7 @@ import com.esferalia.aon.gwt.dump.shared.Domain;
 import com.esferalia.aon.gwt.dump.shared.Parameters;
 import com.esferalia.aon.gwt.dump.shared.Progress;
 import com.esferalia.aon.gwt.dump.shared.Task;
+import com.esferalia.aon.jooq.tables.AppParam;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -121,7 +125,58 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 	}
 
-	@Override
+	public Integer getDomainPermission(){
+		
+		Connection connection = null;
+		Settings settings = null;
+		DSLContext dslContext = null;
+
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+
+			Integer idDomain = getDomainID();//UserUtils.getInstance().getLoggedUser().getDomain();
+
+			settings = new Settings();
+			settings.setRenderSchema(false);
+			settings.setParamType(ParamType.INLINED);
+
+			// Establish context
+			dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
+
+			String domainResultAllow = dslContext.select(APP_PARAM.VALUE)
+					 .from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(idDomain)
+							 .and(APP_PARAM.NAME.eq("ALLOW_DUPLICATE_DOMAIN")))
+					 .fetchOne(APP_PARAM.VALUE);
+			
+			if (idDomain == 0 || Boolean.valueOf(domainResultAllow))
+				return 2; //FULL EQUIPE
+			
+			Byte domainsResultManagement = dslContext
+					.select(DOMAIN.DOMAINMANAGEMENT).from(DOMAIN)
+					.where(DOMAIN.ID.eq(idDomain)).fetchOne(DOMAIN.DOMAINMANAGEMENT);
+
+			if (domainsResultManagement == 1)
+				return 1; //DOS MODOS BACKUP
+			else
+				return 0; //UN MODO BACKUP
+
+		} catch (SQLException e1) {
+			throw new AonCoreException(e1.getMessage());
+
+		} finally {
+			releaseFacesContext();
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	@Override	
 	public Task dumpDomain(String domainName, Parameters parameters) {
 
 		Connection connection = null;

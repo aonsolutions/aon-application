@@ -21,4 +21,6 @@ public interface ConnectServiceAsync {
 
 	void eraseDownload(Integer idTask, AsyncCallback<Boolean> callback);
 
+	void getDomainPermission(AsyncCallback<Integer> callback);
+
 }

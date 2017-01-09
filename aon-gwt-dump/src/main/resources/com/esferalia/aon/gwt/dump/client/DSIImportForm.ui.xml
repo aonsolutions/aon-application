@@ -290,7 +290,7 @@
 
 		<g:south size="100">
 		    <!-- styleName="{aonResources.css.aonSelector}" -->
-			<aon:MinimizePanel height="300" ui:field="footPanel">
+			<aon:MinimizePanel height="300" ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
 				<g:TabLayoutPanel addStyleNames="aon-pointer-events-auto"
 					barHeight="26" barUnit="PX" ui:field="footTabPanel" visible="true"
 					height="300">

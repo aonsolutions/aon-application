@@ -258,6 +258,8 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 			}
 		});
 		
+		
+		
 		connectServiceAsync.getTaskPending(new AsyncCallback<List<Task>>() {
 
 			@Override
@@ -350,11 +352,32 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		this.sendButton.setDisabled(true);
 		setVisible(this.warnSuffix,false);
 
-		this.downloadListBox.addItem("BackUp");
-		this.downloadListBox.addItem("BackUp (Stand-alone)");
-		this.downloadListBox.addItem("Duplicar");
-		this.downloadListBox.addItem("Duplicar (Stand-Alone)");
-		this.downloadListBox.addItem("Comprobar Integridad");
+		connectServiceAsync.getDomainPermission(new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onSuccess(Integer result) {
+				if (result == 0){
+					DSIImportForm.this.downloadListBox.addItem("BackUp");
+				} else if (result == 1){
+					DSIImportForm.this.downloadListBox.addItem("BackUp");
+					DSIImportForm.this.downloadListBox.addItem("BackUp (Stand-alone)");
+				} else if (result == 2){
+					DSIImportForm.this.downloadListBox.addItem("BackUp");
+					DSIImportForm.this.downloadListBox.addItem("BackUp (Stand-alone)");
+					DSIImportForm.this.downloadListBox.addItem("Duplicar");
+					DSIImportForm.this.downloadListBox.addItem("Duplicar (Stand-Alone)");
+					DSIImportForm.this.downloadListBox.addItem("Comprobar Integridad");
+				}
+					
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		this.suggestBox.addKeyUpHandler(new KeyUpHandler() {		
 			@Override
@@ -452,7 +475,6 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		boton.addStyleName(style.deleteHeight());
 		boton.setTitle("Eliminar Descarga");
 		boton.add(icon);
-		
 		boton.addClickHandler(new ClickHandler() {
 			
 			@Override

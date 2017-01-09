@@ -18,5 +18,6 @@ public interface ConnectService extends RemoteService {
 	Boolean cancelDownload (Integer idTask);
 	List<Task> getTaskPending();
 	Boolean eraseDownload(Integer idTask);
+	Integer getDomainPermission();
 
 }

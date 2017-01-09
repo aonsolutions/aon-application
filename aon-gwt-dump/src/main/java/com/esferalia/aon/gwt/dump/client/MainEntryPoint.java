@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
+import com.vaadin.polymer.iron.IronLabelElement;
 import com.vaadin.polymer.iron.IronListElement;
 import com.vaadin.polymer.paper.PaperDialogElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
@@ -35,7 +36,8 @@ public class MainEntryPoint implements EntryPoint {
 				PaperIconButtonElement.SRC,
 				IronListElement.SRC,
 				PaperToggleButtonElement.SRC,
-				PaperSliderElement.SRC
+				PaperSliderElement.SRC,
+				IronLabelElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {

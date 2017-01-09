@@ -60,4 +60,11 @@ public class ConnectServiceAsyncDecorator implements ConnectServiceAsync {
 		
 	}
 
+	@Override
+	public void getDomainPermission(AsyncCallback<Integer> callback) {
+		AON.start();
+		csa.getDomainPermission(new AsyncCallbackWrapper<Integer>(callback));
+		
+	}
+
 }
