@@ -190,6 +190,10 @@ public class FtpDeliveryUploadHandler implements Serializable {
 					delivery.getCustomer().getRegistry(),
 					delivery.getRegistryAddress()).get(
 					CustomerEdiSupportController.ALBARANES);
+			String deliveryPointEdiCode = ediSupport.getEdiCodes(
+					delivery.getCustomer().getRegistry(),
+					delivery.getRegistryAddress()).get(
+							CustomerEdiSupportController.PTO_ENTREGA);
 			CompanyController company = (CompanyController) AonUtil
 					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
@@ -197,7 +201,7 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			// writer file
 			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
 			output = writer.createFile(delivery, companyEdiCode,
-					customerEdiCode);
+					customerEdiCode, deliveryPointEdiCode);
 
 			// upload file
 			String name = "albaran";
