@@ -6,7 +6,7 @@
 BEGIN;
 
 DELETE FROM `customer_fee` WHERE `item` IS NULL;
-ALTER TABLE `customer_fee` MODIFY `item` int(4) NOT NULL COMMENT 'Identificador del Articulo';
+
 
 
 UPDATE `db_version` SET `version_number` = '8.82.0';

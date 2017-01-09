@@ -8,6 +8,7 @@
 	xmlns:paper="urn:import:com.vaadin.polymer.paper.widget" xmlns:p="urn:import:com.vaadin.polymer"
 	xmlns:i="urn:import:com.vaadin.polymer.iron.widget" >
 
+    <ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 	<ui:style type='com.esferalia.aon.gwt.dump.client.DSIImportForm.MyStyle'>
 	.options-scroll-panel>div {
 		height: 99%;
@@ -287,7 +288,8 @@
 			</g:HTMLPanel>
 		</g:center>
 
-		<g:south size="350">
+		<g:south size="100">
+		    <!-- styleName="{aonResources.css.aonSelector}" -->
 			<aon:MinimizePanel height="300" ui:field="footPanel">
 				<g:TabLayoutPanel addStyleNames="aon-pointer-events-auto"
 					barHeight="26" barUnit="PX" ui:field="footTabPanel" visible="true"

@@ -33,6 +33,7 @@
 	}
 	
 	.simple-iconMargin{
+		padding-top: 5px;
 		margin-right: 25px;
 		padding-right: 10px;
 	}
@@ -44,6 +45,7 @@
 	}
 	
 	.simple-iconCancelStyle{
+		padding-top: 5px;
 		padding-right:10px;
 		border: none;
 		margin-right: 5px;

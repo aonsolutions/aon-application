@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.dump.shared.DSIImportService;
 import com.esferalia.aon.gwt.dump.shared.Domain;
@@ -388,11 +389,20 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 	}
 
 	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		// TODO: ver como minimizar el foot panel
-		Window.alert("Minimizar");
-		closeFootPanel();
-	}
+    void onFootMinimize(MinimizeEvent event) {
+            closeFootPanel();
+    }
+
+    @UiHandler("footPanel")
+    void onFootMaximize(MaximizeEvent event) {
+            splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
+            splitLayoutPanel.animate(500);
+    }
+
+    private void closeFootPanel() {
+            splitLayoutPanel.setWidgetSize(footPanel, 26);
+            splitLayoutPanel.animate(500);
+    }
 	
 	@UiHandler("sendButton")
 	void onClickSendButton(ClickEvent event) {
@@ -616,13 +626,6 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 	public void setCanceled(PaperProgress progressBar){
 		progressBar.addStyleName(style.canceled());
 		progressBar.updateStyles();
-	}
-	
-	
-	
-	private void closeFootPanel() {
-		Window.alert("Minimizar");
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 	
 	private static void setVisible(IsWidget widget, boolean visible ){
