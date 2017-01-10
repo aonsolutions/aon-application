@@ -22,65 +22,55 @@ public class GeozoneCollectionsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private List<SelectItem> geoZones;
-	private List<SelectItem> geoTrees;
-	private List<SelectItem> systemGeoTrees;
-
 	public GeoZone getGeoZone() {
 		return null;
 	}
-	public void setGeoZone( GeoZone geoZone ) {
+	public void setGeoZone(GeoZone geoZone) {
 	}
 	
     public List<SelectItem> getGeoZones() throws ManagerBeanException {
-        if (geoZones == null) {
-            geoZones = new LinkedList<SelectItem>();
-            IManagerBean geozoneBean = BeanManager.getManagerBean(GeoZone.class);
-            Criteria criteria = new Criteria();
-            criteria.addOrder(geozoneBean.getFieldName(IEntityAlias.GEO_ZONE_NAME));
-            Iterator<ITransferObject> iter = geozoneBean.getList(criteria).iterator();
-            while (iter.hasNext()){
-                GeoZone geozone = (GeoZone) iter.next();
-                SelectItem item = new SelectItem(geozone, geozone.getName());
-                geoZones.add( item );
-            }
+    	List<SelectItem> geoZones = new LinkedList<SelectItem>();
+        IManagerBean geozoneBean = BeanManager.getManagerBean(GeoZone.class);
+        Criteria criteria = new Criteria();
+        criteria.addOrder(geozoneBean.getFieldName(IEntityAlias.GEO_ZONE_NAME));
+        Iterator<ITransferObject> iter = geozoneBean.getList(criteria).iterator();
+        while (iter.hasNext()){
+            GeoZone geozone = (GeoZone) iter.next();
+            SelectItem item = new SelectItem(geozone, geozone.getName());
+            geoZones.add( item );
         }
         return geoZones;
     }
 
 	public List<SelectItem> getGeoTrees() throws ManagerBeanException {
-		if (geoTrees == null) {
-			geoTrees = new LinkedList<SelectItem>();
-			IManagerBean geoTreeBean = BeanManager.getManagerBean(GeoTree.class);
-			Criteria criteria = new Criteria();
-			criteria.addNullExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_PARENT));
-			criteria.addOrder(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_NAME));
-			Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				GeoTree geoTree = (GeoTree)iter.next();
-				String name = geoTree.getChild().getName();
-				SelectItem[] selectItems = obtainGeoTreeChilds(geoTree.getChild().getId());
-				SelectItemGroup itemGroup = new SelectItemGroup(name, name, false, selectItems);
-				geoTrees.add(itemGroup);
-			}
+		List<SelectItem> geoTrees = new LinkedList<SelectItem>();
+		IManagerBean geoTreeBean = BeanManager.getManagerBean(GeoTree.class);
+		Criteria criteria = new Criteria();
+		criteria.addNullExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_PARENT));
+		criteria.addOrder(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_NAME));
+		Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			GeoTree geoTree = (GeoTree)iter.next();
+			String name = geoTree.getChild().getName();
+			SelectItem[] selectItems = obtainGeoTreeChilds(geoTree.getChild().getId());
+			SelectItemGroup itemGroup = new SelectItemGroup(name, name, false, selectItems);
+			geoTrees.add(itemGroup);
 		}
 		return geoTrees;
 	}
 
 	public List<SelectItem> getSystemGeoTrees() throws ManagerBeanException {
-		if (systemGeoTrees == null) {
-			systemGeoTrees = new LinkedList<SelectItem>();
-			IManagerBean geoTreeBean = BeanManager.getManagerBean(GeoTree.class);
-			Criteria criteria = new Criteria();
-			criteria.addNotNullExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_PARENT));
-			criteria.addEqualExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_SYSTEM), Boolean.TRUE);
-			criteria.addOrder(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_NAME));
-			Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				GeoTree geoTree = (GeoTree)iter.next();
-                SelectItem item = new SelectItem(geoTree.getChild().getName(), geoTree.getChild().getName());
-				systemGeoTrees.add(item);
-			}
+		List<SelectItem> systemGeoTrees = new LinkedList<SelectItem>();
+		IManagerBean geoTreeBean = BeanManager.getManagerBean(GeoTree.class);
+		Criteria criteria = new Criteria();
+		criteria.addNotNullExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_PARENT));
+		criteria.addEqualExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_SYSTEM), Boolean.TRUE);
+		criteria.addOrder(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_NAME));
+		Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			GeoTree geoTree = (GeoTree)iter.next();
+            SelectItem item = new SelectItem(geoTree.getChild().getName(), geoTree.getChild().getName());
+			systemGeoTrees.add(item);
 		}
 		return systemGeoTrees;
 	}
