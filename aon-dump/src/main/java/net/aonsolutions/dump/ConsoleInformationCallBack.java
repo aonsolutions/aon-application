@@ -19,7 +19,6 @@ public class ConsoleInformationCallBack extends AbstractChaimCallbackDump{
 	Integer totalTables;
 	Integer numTablesDownloaded;
 	double process;
-	int id_task;
 	AonDump aonDump;
 	int idDomain;
 	
@@ -28,7 +27,6 @@ public class ConsoleInformationCallBack extends AbstractChaimCallbackDump{
 		this.out = out;
 		this.numTablesDownloaded = 1;
 		this.aonDump = aonDump;
-		this.id_task = id;
 		this.idDomain = idDomain;
 	}
 	
