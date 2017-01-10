@@ -121,14 +121,16 @@ public class EdiSalesImporterHandler implements Serializable {
 		Sales sales = (Sales) controller.getTo();
 		try {
 			if(rectl.getCodigoEmisor()==null){
-				getLogPanel().error("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
-				getLogPanel().error("Comprador: " + rectl.getCodigoEmisor());
+				getLogPanel().error("Imposible continuar, el fichero no contiene CodigoEmisor.");
+				getLogPanel().error("CodigoEmisor: " + rectl.getCodigoEmisor());
+				getLogPanel().info("PROCESO ABORTADO");
 			} else {
 				RegistryNote customerRegistryNote = searchCustomerNote(rectl.getCodigoEmisor().trim());
 				if(customerRegistryNote==null 
 						|| customerRegistryNote.getRegistry()==null 
 						|| customerRegistryNote.getRegistry().getId()==null){
-					getLogPanel().error("No existe el cliente con el codigo de punto de entrega " + rectl.getCodigoEmisor());
+					getLogPanel().error("No existe el cliente con CodigoEmisor " + rectl.getCodigoEmisor());
+					getLogPanel().info("PROCESO ABORTADO");
 				} else {
 					Customer customer = obtainCustomer(customerRegistryNote.getRegistry().getId());
 					getLogPanel().info("Cliente detectado con el codigo de punto de entrega " + rectl.getCodigoEmisor());
@@ -154,8 +156,9 @@ public class EdiSalesImporterHandler implements Serializable {
 						undefinedItems.forEach(ere1l -> {
 							getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
 									+ " : La referencia de producto: " + StringUtils.trimToEmpty(ere1l.getDescripcion1Articulo())
-									+ " (Cod. cliente final: " + StringUtils.trimToEmpty(ere1l.getCodigoClienteFinal()) + ")"
-									+ " (Cod. EAN: " + StringUtils.trimToEmpty(ere1l.getCodigoEAN_13_DUN_14DelArticulo()) + ")"
+									+ " (NumeroArticuloComprador: " + StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_())
+									+ ", Cod. cliente final: " + StringUtils.trimToNull(ere1l.getCodigoClienteFinal())
+									+ ", Cod. EAN: " + StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo()) + ")"
 									+ " no existe para el cliente " + customer.getRegistry().getFullName());
 						});
 						getLogPanel().info("PROCESO ABORTADO");
@@ -213,7 +216,8 @@ public class EdiSalesImporterHandler implements Serializable {
 								getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
 										+ " omitida: La referencia de producto: " + ere1l.getDescripcion1Articulo().trim()
 										+ " no existe para el cliente " + customer.getRegistry().getFullName()
-										+ " (CodigoClienteFinal: " + StringUtils.trimToNull(ere1l.getCodigoClienteFinal())
+										+ " (NumeroArticuloComprador: " + StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_())
+										+ ", CodigoClienteFinal: " + StringUtils.trimToNull(ere1l.getCodigoClienteFinal())
 										+ ", CodigoDeArticuloEAN: " + StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo())
 										+ ")");
 							} else {
@@ -299,7 +303,7 @@ public class EdiSalesImporterHandler implements Serializable {
 			criteria.addEqualExpression(rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.PTO_ENTREGA + "="
+					"%" + CustomerEdiSupportController.CABECERA + "="
 							+ customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
 			rNote = list != null && !list.isEmpty() ? ((RegistryNote) list
@@ -356,7 +360,10 @@ public class EdiSalesImporterHandler implements Serializable {
 	
 	private RegistryItem searchRegistryItem(ERE1L ere1l, Customer customer) {
 		try {			
-			String itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoClienteFinal());
+			String itemCustomerCode = StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_());
+			if(itemCustomerCode==null){
+				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoClienteFinal());
+			}
 			if(itemCustomerCode==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoGrupoArticuloComprador_GB_());
 			}

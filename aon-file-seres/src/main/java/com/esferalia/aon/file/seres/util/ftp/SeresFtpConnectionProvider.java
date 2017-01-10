@@ -28,6 +28,8 @@ public class SeresFtpConnectionProvider implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	
+	
 	public static boolean checkLogin(String server, Integer port, String user,
 			String passwd) throws FtpLoginException, FtpException {
 		FtpConnector ftp = new FtpConnector() {
@@ -126,83 +128,29 @@ public class SeresFtpConnectionProvider implements Serializable {
 		return fileList;
 	}
 	
-	
-//	private void printFiles(FTPFile[] listFiles){
-//		System.out.println("LIST COUNT: "+listFiles.length);
-//		for(int i=0; i<listFiles.length;i++){
-//			System.out.print(listFiles[i].getName());
-//			System.out.print(" (size: "+listFiles[i].getSize());
-//			System.out.print(", group: "+listFiles[i].getGroup());
-//			System.out.print(", type: "+listFiles[i].getType());
-//			System.out.print(", link: "+listFiles[i].getLink());
-//			System.out.print(", timestamp: "+listFiles[i].getTimestamp().getTime());
-//			System.out.println(")");
-//			System.out.print("   File: "+listFiles[i].isFile());
-//			System.out.print(" - Directory: "+listFiles[i].isDirectory());
-//			System.out.print(" - Unknown: "+listFiles[i].isUnknown());
-//			System.out.println(" - SymbolicLink: "+listFiles[i].isSymbolicLink());
-//			System.out.println("");
-//		}
-//	}
-	
-//	private void printFileDetails(FTPFile[] files) {
-//		DateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		for (FTPFile file : files) {
-//			String details = file.getName();
-//			details = file.isDirectory() ? "[" + details + "]" : details;
-//			details += "\t\t" + file.getSize();
-//			details += "\t\t" + formater.format(file.getTimestamp().getTime());
-//			System.out.println(details);
-//		}
-//	}
-	
-	
-	
-	// ***************
-	// main method	
-	// ***************
-	public static void main(String[] args) {
+	public static boolean deleteFile(String remotePath,
+			String server, Integer port, String user, String passwd)
+					throws FtpLoginException, FtpException {
+		boolean completed = false;
 		
-		String ftpServer = "webconnect.seresnet.com";
-		Integer ftpPort = 21;
-		String ftpUser = "ftp1251";
-		String ftpPassword = "x1xx0wub";
-		String orderPath = "/recepcion/orders_d96a";
-		String deliveryPath = "/envio/desadv_d96a";
-		String remotePath = "";
+		FtpConnector ftp = new FtpConnector() {
+			@Override
+			public void onSuccess() throws IOException, FtpException {
+				if (changeWorkingDirectory(remotePath)) {
+					this.deleteFile(remotePath, completed);
+				} else {
+					System.out.println("Could not change directory!");
+				}
+			}
+		};
 		
-		try {
-			// SHOW FILES
-			System.out.println("# ACTION: show files");
-			remotePath = orderPath;
-			SeresFtpConnectionProvider.retrieveFileList(remotePath, null, null, ftpServer,
-					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
-			
-			// SHOW DIRECTRY TREE
-			System.out.println("# ACTION: show directory tree");
-			remotePath = "/";
-			SeresFtpConnectionProvider.retrieveDirectoryList(remotePath, ftpServer,
-					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
-			
-			// RETRIEVE FILE
-//			System.out.println("# ACTIOB: retrieve file");
-//			remoteFile = "ORDERS_1482924688-17457.TXT";
-//			SeresFtpConnectionProvider.retrieveFile("recepcion/orders_d96a", remoteFile, ftpServer,
-//				ftpPort, ftpUser, ftpPassword);
-			
-			// STORE FILE
-			System.out.println("# ACTION: store file");
-			remotePath = deliveryPath;
-//			SeresFtpConnectionProvider.storeFile(null, null, null);
-		} catch (FtpLoginException e) {
-			e.printStackTrace();
-		} catch (FtpException e) {
-			e.printStackTrace();
-		}
+		ftp.connect(server, port, user, passwd);
 		
-		System.out.println("## DONE !!!");
-		
+		return completed;
 	}
+	
+	
+	
 }
 
 
@@ -422,6 +370,15 @@ abstract class FtpConnector {
 			}
 			completed = ftp.completePendingCommand();
 		}
+	}
+	
+	protected boolean deleteFile(String remotePath, boolean completed) throws IOException {
+		boolean success = changeWorkingDirectory(remotePath);
+		if (success) {
+			ftp.setFileType(FTP.BINARY_FILE_TYPE);
+			completed = ftp.deleteFile(remotePath);
+		}
+		return completed;
 	}
 	
 	
