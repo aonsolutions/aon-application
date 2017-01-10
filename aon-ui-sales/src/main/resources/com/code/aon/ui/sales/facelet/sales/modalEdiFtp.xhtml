@@ -10,12 +10,12 @@
 
 	<aon:panelGroup id="showEdiFtpWindow">
 		<aon:if test="#{sales.ftpEdiDownloader.showEdiFtpWindow}">
-			<rich:modalPanel id="ediFtpModalPanel" minHeight="450"
-				minWidth="520" rendered="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
+			<rich:modalPanel id="ediFtpModalPanel" minHeight="460"
+				minWidth="550" rendered="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="Servidor FTP de Seres: Recuperar pedidos" />
+						<aon:outputText value="Servidor FTP de Seres: Gestionar pedidos" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -102,24 +102,30 @@
 										</aon:panel>
 									</aon:if>
 									
-									<aon:panel>
+									<aon:panel styleClass="aon-panelGrid-search">
 										<f:facet name="header">
 											<aon:outputText value="Filtrar" />
 										</f:facet>
 										<aon:panelGrid columns="2" dir="true" style="width: 100%;">
 											<aon:outputLabel for="EdiFtp_startDate"
-												value="#{bundle.aon_start_date}" />
-											<aon:selectInputDate id="EdiFtp_startDate"
-												value="#{sales.ftpEdiDownloader.startDate}"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}"/>
-	
-											<aon:outputLabel for="EdiFtp_endDate"
-												value="#{bundle.aon_end_date}" />
-											<aon:selectInputDate id="EdiFtp_endDate"
-												value="#{sales.ftpEdiDownloader.endDate}"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}"/>
+												value="#{bundle.aon_date}" />
+											<aon:div>
+												<aon:outputLabel for="EdiFtp_startDate"
+													value="#{bundle.aon_date_from}"
+													styleClass="aon-margin-right" />
+												<aon:selectInputDate id="EdiFtp_startDate"
+													value="#{sales.ftpEdiDownloader.startDate}"
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+		
+												<aon:outputLabel for="EdiFtp_endDate"
+													value="#{bundle.aon_date_to}"
+													styleClass="aon-margin-right" />
+												<aon:selectInputDate id="EdiFtp_endDate"
+													value="#{sales.ftpEdiDownloader.endDate}"
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+											</aon:div>
 										</aon:panelGrid>
 									</aon:panel>
 									
@@ -133,9 +139,11 @@
 											</f:facet>
 											<aon:commandButton id="ftpSales-import"
 												value="&#160;" styleClass="aon-icon-file-entrance aon-noborder"
-												title="Importar"
+												title="#{bundle.aon_import}"
 												actionListener="#{sales.ftpEdiDownloader.onImportFile}"
-												reRender="showEdiFtpWindow, salesForm" />
+												reRender="showEdiFtpWindow, salesForm" >
+												<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+											</aon:commandButton>
 										</aon:column>
 	
 										<aon:column styleClass="aon-editDataTable-textColumn">
@@ -165,6 +173,13 @@
 												actionListener="#{sales.ftpEdiDownloader.onDownloadFile}"
 												styleClass="aon-finding-toolbar-item aon-noborder aon-icon-file-download">
 											</aon:htmlCommandLink>
+											<aon:commandButton id="ftpSales-deleteFile"
+												value="&#160;" title="#{bundle.aon_remove}"
+												reRender="showEdiFtpWindow, salesForm"
+												onclick="if(!confirm('#{bundle.aon_remove_confirm}')) return false;"
+												actionListener="#{sales.ftpEdiDownloader.onDeleteFile}"
+												styleClass="aon-finding-toolbar-item aon-noborder aon-icon-rubber">
+											</aon:commandButton>
 										</aon:column>
 									</aon:dataTable>
 									

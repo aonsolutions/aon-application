@@ -22,11 +22,14 @@ public class TestSeresFtpConnectionProvider {
 		
 		Map<String, String> arguments = obtainParams(args);
 		
+		
 		String ftpServer = "webconnect.seresnet.com";
-		String ftpPort = arguments.containsKey(ARG_PORT)?arguments.get(ARG_PORT):"21";
+		Integer ftpPort = Integer.valueOf(arguments.containsKey(ARG_PORT)?arguments.get(ARG_PORT):"21");
 		String ftpUser = "ftp1251";
 		String ftpPassword = "x1xx0wub";
-		String remotePath = "recepcion/orders_d96a";
+		String orderPath = "/recepcion/orders_d96a";
+		String deliveryPath = "/envio/desadv_d96a";
+		String remotePath = "";
 		
 		
 		System.out.println("# Operation: show all files and directories");
@@ -144,17 +147,34 @@ public class TestSeresFtpConnectionProvider {
 		fileList.forEach(System.out::println);
 		
 		
-		
-		
-		
-		// RETRIEVE FILE
-//		System.out.println("# Operation: retrieve file");
-//		remoteFile = "ORDERS_1482924688-17457.TXT";
-//		connection.retrieveFile("recepcion/orders_d96a", remoteFile);
-		
-		// STORE FILE
-//		System.out.println("# Operation: store file");
-//		connection.storeFile(null, null, null);
+		try {
+			// SHOW FILES
+			System.out.println("# ACTION: show files");
+			remotePath = orderPath;
+			SeresFtpConnectionProvider.retrieveFileList(remotePath, null, null, ftpServer,
+					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
+			
+			// SHOW DIRECTRY TREE
+			System.out.println("# ACTION: show directory tree");
+			remotePath = "/";
+			SeresFtpConnectionProvider.retrieveDirectoryList(remotePath, ftpServer,
+					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
+			
+			// RETRIEVE FILE
+//			System.out.println("# ACTIOB: retrieve file");
+//			remoteFile = "ORDERS_1482924688-17457.TXT";
+//			SeresFtpConnectionProvider.retrieveFile("recepcion/orders_d96a", remoteFile, ftpServer,
+//				ftpPort, ftpUser, ftpPassword);
+			
+			// STORE FILE
+			System.out.println("# ACTION: store file");
+			remotePath = deliveryPath;
+//			SeresFtpConnectionProvider.storeFile(null, null, null);
+		} catch (FtpLoginException e) {
+			e.printStackTrace();
+		} catch (FtpException e) {
+			e.printStackTrace();
+		}
 		
 		System.out.println("## FINISH!!!");
 		

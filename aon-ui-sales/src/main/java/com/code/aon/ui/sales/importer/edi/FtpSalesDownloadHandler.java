@@ -234,10 +234,10 @@ public class FtpSalesDownloadHandler implements Serializable {
 			}
 		} catch (FtpLoginException e) {
 			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
+			getLogPanel().error(e.getMessage());
 		} catch (FtpException e) {
 			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
+			getLogPanel().error(e.getMessage());
 		}
 		return null;
 	}
@@ -276,10 +276,11 @@ public class FtpSalesDownloadHandler implements Serializable {
 		return null;
 	}
 	
-	
 	public void onImportFile(ActionEvent event) {
 		
-		if(getUnreadSalesModel().isRowAvailable()){
+		if(getUnreadSalesModel().isRowAvailable()) {
+			setShowEdiFtpWindow(false);
+			
 			FtpFile ftpFile = (FtpFile) getUnreadSalesModel().getRowData();
 
 			byte[] byteFile = obtainFtpFile(ftpFile.getName());
@@ -292,9 +293,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			connectHandler.getAonFile().setData(byteFile);
 			try {
 				connectHandler.onImportFile(event);
-				// TODO: mark this order as imported and exclude in future retrieves
-			} catch(Throwable th){
-				AonUtil.addErrorMessage("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
+			} catch (Throwable th) {
 				getLogPanel()
 						.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
 				getLogPanel().info(
@@ -305,7 +304,6 @@ public class FtpSalesDownloadHandler implements Serializable {
 				udapaHandler.getAonFile().setData(byteFile);
 				try {
 					udapaHandler.onImportFile(event);
-					// TODO: mark this order as imported and exclude in future retrieves
 				} catch (Throwable th2) {
 					getLogPanel()
 							.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
@@ -313,6 +311,27 @@ public class FtpSalesDownloadHandler implements Serializable {
 			}
 		}
 		
+	}
+	
+	public void onDeleteFile(ActionEvent event) {
+		if (getUnreadSalesModel().isRowAvailable()) {
+			FtpFile ftpFile = (FtpFile) getUnreadSalesModel().getRowData();
+			getLogPanel().info(
+					"Borrando el fichero EDI del servidor FTP de SERESNET");
+			try {
+				String remotePath = this.remotePath;
+				remotePath += remotePath != null && remotePath.endsWith("/") ? ""
+						: "/";
+				remotePath += ftpFile.getName();
+				boolean completed = SeresFtpConnectionProvider.deleteFile(
+						remotePath, server, port, user, password);
+				if (!completed) {
+					getLogPanel().error("El fichero no se ha podido borrar.");
+				}
+			} catch (Throwable th) {
+				getLogPanel().error(th.getMessage());
+			}
+		}
 	}
 	
 	

@@ -38,20 +38,6 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:outputText value="&#160;"
 										styleClass="aon-finding-toolbar-item" />
-									<!--  
-									<aon:commandButton id="ediFtp-accept"
-										value="Enviar"
-										actionListener="#{delivery.ftpEdiUploader.onEdiFtpTransfer}"
-										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										onclick="Richfaces.showModalPanel('waitProccess')" 
-										oncomplete="Richfaces.hideModalPanel('waitProccess')">
-										<rich:componentControl for="ediFtpModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{delivery.ftpEdiUploader.showEdiFtpWindow}"
-											value="#{false}" />
-									</aon:commandButton>
-									-->
 									<aon:commandButton id="ediFtp-showSettings"
 										value="&#160;" ajaxSingle="#{true}"
 										title="Mostrar opciones de configuracion"
