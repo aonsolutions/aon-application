@@ -287,12 +287,12 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 					
 					// Creamos el tab con la tarea pendiente
 					HorizontalPanel panel = new HorizontalPanel();
-					IronLabel label = new IronLabel();
+					//IronLabel label = new IronLabel();
 					IronIcon iconInfo = new IronIcon();
 					iconInfo.setIcon("icons:tab");
 					iconInfo.addStyleName(style.deleteHeight());
-					label.add(iconInfo);
-					panel.add(label);
+					//label.add(iconInfo);
+					panel.add(iconInfo);
 					
 					panel.add(new Label(t.getDescription()));
 					
@@ -461,13 +461,13 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		});
 		
 		HorizontalPanel panel = new HorizontalPanel();
-		IronLabel label = new IronLabel();
+		//IronLabel label = new IronLabel();
 		IronIcon iconInfo = new IronIcon();
 		iconInfo.setIcon("icons:tab");
 		iconInfo.addStyleName(style.deleteHeight());
-		label.add(iconInfo);
-		panel.add(label);
-		panel.add(new Label(domain));
+		//label.add(iconInfo);
+		panel.add(iconInfo);
+		panel.add(new Label(descripcionEmpresa));
 		PaperButton boton = new PaperButton();
 		IronIcon icon = new IronIcon();
 		icon.setIcon("icons:close");

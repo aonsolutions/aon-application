@@ -39,12 +39,14 @@
 	}
 	
 	.simple-iconStyle{
+	    margin-top: 3px;
 		border: none;
 		height: 19px;
 		float: right;		
 	}
 	
 	.simple-iconCancelStyle{
+		margin-top: 3px;
 		padding-top: 5px;
 		padding-right:10px;
 		border: none;

@@ -190,7 +190,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			int idDomain = aondump.dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domainName))
 					.fetchOne().value1();
 
-			TaskRecord tr = taskStart(aondump, domainName);
+			TaskRecord tr = taskStart(aondump, parameters.getDescripcionEmpresa());
 			Integer id = tr.getId();
 			Thread hiloDump = new Thread(() -> dump(aondump, id, domainName, idDomain, tr, parameters), "hiloDump");
 
@@ -208,7 +208,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 	}
 
-	private TaskRecord taskStart(AonDump aonDump, String domainName) {
+	private TaskRecord taskStart(AonDump aonDump, String domainDescription) {
 
 		Date date = new Date();
 		Timestamp time = new Timestamp(date.getTime());
@@ -219,7 +219,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 		TaskRecord tr = aonDump.dslContext
 				.insertInto(TASK, TASK.DOMAIN, TASK.NUMBER, TASK.DESCRIPTION, TASK.START_DATE, TASK.STATUS,
 						TASK.PERCENT, TASK.CREATION_USER, TASK.COMMENTS)
-				.values(idDomain, 0, domainName, time, (byte) TaskStatus.IN_PROGRESS.ordinal(), (byte) 0, idUser,
+				.values(idDomain, 0, domainDescription, time, (byte) TaskStatus.IN_PROGRESS.ordinal(), (byte) 0, idUser,
 						"Dump starting")
 				.returning(TASK.ID, TASK.DOMAIN, TASK.NUMBER, TASK.DESCRIPTION, TASK.START_DATE, TASK.STATUS,
 						TASK.PERCENT, TASK.CREATION_USER, TASK.COMMENTS)

@@ -129,10 +129,15 @@
 	@external gwt-Label;
 	@external gwt-TabLayoutPanelTab-selected;
 	
+	.gwt-TabLayoutPanelTab-selected{
+		border-bottom: 1px solid white;
+		margin-bottom: -1px;
+	}
+
 	.gwt-TabLayoutPanelTab-selected .gwt-Label{
 	    color: black;
 	    cursor: default;
-	    font-weight: bold ;
+	    font-weight: bold;
 	}
 	
 	</ui:style>
