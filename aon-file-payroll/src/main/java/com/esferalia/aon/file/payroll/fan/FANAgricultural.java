@@ -106,6 +106,64 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	}
 	
 	
+	
+	
+	@Override
+	public void createEDLCd01Segment(Double ecssAmount, DAT dat) {
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd03Segment(Double atepAmount, DAT dat) {
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd05Segment(DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd12Segment(Double bonusAmount, DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd18Segment(DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd20Segment(Double bonusAmount, DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd21Segment(DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd24Segment(DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd25Segment(Double bonusAmonut, DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd26Segment(DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd27Segment(DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd31Segment(Double bonusAmount, DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	@Override
+	public void createEDLCd34Segment(Integer bonusDays, Double bonusAmount, DAT dat){
+		// Clave de deduccion no permitida para el regimen
+	}
+	
+	
+	
+	
 	/**
 	 *  29 Reducciones SEA. Contingencias comunes Sistema Especial Agrario 
 	 * @param salary
