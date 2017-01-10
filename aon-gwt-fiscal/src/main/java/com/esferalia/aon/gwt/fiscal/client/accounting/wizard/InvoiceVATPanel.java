@@ -12,6 +12,8 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,11 +29,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandlers<InvoiceVAT>, HasSelectionHandlers<Account> {
+public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandlers<InvoiceVAT>, HasSelectionHandlers<Account>, Focusable {
 	
 	private FlowPanel container;
 	private FlexTable tab;
@@ -249,6 +252,18 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				callback.getModule().onAccept(event);
 			}
 		});
+		saveButton.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				if (callback.getInvoice().isWithholding() ) {
+					callback.setFocusOnWithholding();
+				} else {
+					callback.setFocusOnPayDate();
+				}
+			}
+		});
+
 		panel.add(saveButton);
 		
 		container.add(panel);
@@ -278,7 +293,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 
 
-	private class InvoicePanelRow {
+	private class InvoicePanelRow implements Focusable {
 		private final AccountBox expAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
 		private final DoubleBox taxableBase = new DoubleBox(12,4);
 		private final DoubleBox vatPercent = new DoubleBox(6);
@@ -624,6 +639,27 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			dedPercent.setValue( vat.getDeductiblePercent() , false);
 			dedQuota.setValue( vat.getDeductibleQuota() , false);
 		}
+
+		@Override
+		public int getTabIndex() {
+			return expAccount.getTabIndex();
+		}
+
+		@Override
+		public void setAccessKey(char key) {
+			expAccount.setAccessKey(key);
+			
+		}
+
+		@Override
+		public void setFocus(boolean focused) {
+			expAccount.setFocus(focused);
+		}
+
+		@Override
+		public void setTabIndex(int index) {
+			expAccount.setTabIndex(index);
+		}
 	}
 
 	@Override
@@ -654,6 +690,27 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	public void enableElements(boolean canRemove, boolean canEdit) {
 		addButton.setVisible(canEdit);
 		saveButton.setVisible(canEdit);
+	}
+
+	@Override
+	public int getTabIndex() {
+		if (rows != null &&  rows.size() > 0) return rows.get(0).getTabIndex();
+		return 0;
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		if (rows != null &&  rows.size() > 0) rows.get(0).setAccessKey(key);
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		if (rows != null &&  rows.size() > 0) rows.get(0).setFocus(focused);
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		if (rows != null &&  rows.size() > 0) rows.get(0).setTabIndex(index);
 	}
 
 }

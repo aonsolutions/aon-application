@@ -88,11 +88,6 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	}
 
 	@Override
-	public void setFocus(boolean b) {
-		table.setFocus(b);
-	}
-	
-	@Override
 	public boolean isUpdatable() {
 		return super.isUpdatable() && getAccountEntry().isManual();
 	}
@@ -149,5 +144,24 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		
 	}
 
+	@Override
+	public int getTabIndex() {
+		return table!=null?table.getTabIndex():0;
+	}
 
+	@Override
+	public void setAccessKey(char key) {
+		if (table!=null) table.setAccessKey(key);
+		
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		if (table!=null) table.setTabIndex(index);
+	}
+
+	@Override
+	public void setFocus(boolean b) {
+		if (table!=null) table.setFocus(b);
+	}
 }

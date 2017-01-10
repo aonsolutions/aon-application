@@ -50,6 +50,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -229,7 +231,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		        
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		confidential.setTabIndex(Integer.MAX_VALUE - 1);
+		activity.setTabIndex(Integer.MAX_VALUE - 2);
+		confidential.setTabIndex(Integer.MAX_VALUE  - 1);
 		commentsButton.setTabIndex(Integer.MAX_VALUE);
 		root.add(ui);
 		tabLayout.setAnimationDuration(300);
@@ -262,6 +265,15 @@ public class AccountEntryModule extends MainEntryPoint {
 		            wizardContent.setFocus(true);
 		        }
 			}
+		});
+		
+		entryType.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				wizardContent.setFocus(true);
+			}
+			
 		});
 		
 		commonService.getAonConfiguration(getCurrentDomainName(),

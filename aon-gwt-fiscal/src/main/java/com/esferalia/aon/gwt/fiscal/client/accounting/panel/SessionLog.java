@@ -79,7 +79,7 @@ public class SessionLog extends ScrollPanel
 	private void add( final IAccountEntryWrapper wrapper, String status) {
 		final AccountEntry entry = wrapper.getAccountEntry();
 		final FocusPanel entryPanel = new FocusPanel();
-		entryPanel.setTabIndex(Integer.MAX_VALUE);
+		//entryPanel.setTabIndex(Integer.MAX_VALUE);
 		FlowPanel panel = new FlowPanel("pre");
 		panel.setStyleName(AON.AON_CSS.aonClickableBlock());		
 		panel.addStyleName(AON.AON_CSS.aonFixedFont());

@@ -123,6 +123,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 			panel.add(label);
 			final ListBox workplaces = new ListBox();
 			workplaces.setStyleName(AON.AON_CSS.aonMarginRight5());
+			workplaces.setTabIndex(++tabindex);
 			panel.add(workplaces);
 			flexContainer.add(panel);
 			

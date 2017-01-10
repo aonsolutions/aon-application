@@ -689,10 +689,6 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 		onLog( getWrapper() );
 	}
 	
-	public void setFocus(boolean b) {
-		concept.setFocus(b);
-	}
-
 	public void onLog(IAccountEntryWrapper wrapper) {
 		workingLog.clear();
 		workingLog.addPreview(wrapper);			
@@ -1158,5 +1154,25 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 //		});
 //		extraContainer.add(importButton);
 		return extraPanel;
+	}
+
+	@Override
+	public int getTabIndex() {
+		return concept.getTabIndex();
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		concept.setAccessKey(key);
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		concept.setTabIndex(index);
+	}
+	
+	@Override
+	public void setFocus(boolean b) {
+		concept.setFocus(b);
 	}
 }

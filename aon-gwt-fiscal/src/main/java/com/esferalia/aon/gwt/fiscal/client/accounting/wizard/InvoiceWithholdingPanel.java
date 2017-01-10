@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -23,11 +25,12 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChangeHandlers<InvoiceWithholding>, HasSelectionHandlers<Account> {
+public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChangeHandlers<InvoiceWithholding>, HasSelectionHandlers<Account>, Focusable {
 	
 	private FlexTable withholdingTable;
 	private ListBox withholdingTaxs;
@@ -140,7 +143,6 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		col++;
 		
 		withholdingBase = new DoubleBox(8,4);
-		withholdingBase.setTabIndex(++tabindex);
 		withholdingBase.setEnabled(false);
 		withholdingTable.setWidget(row, col, withholdingBase);
 		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
@@ -182,7 +184,6 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		col++;
 		
 		withholdingQuota = new DoubleBox(8,2);
-		withholdingQuota.setTabIndex(++tabindex);
 		withholdingQuota.setEnabled(false);
 		withholdingQuota.setVisibleLength(5);
 		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
@@ -233,6 +234,14 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 				ValueChangeEvent.fire(InvoiceWithholdingPanel.this, getWrapper().getWithholdingData() );
 			}
 		});
+		withholdingType.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				callback.setFocusOnPayDate();
+			}
+		});
+		
 		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
 		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonWidthAuto());
 		withholdingTable.setWidget(row, col, withholdingType);
@@ -249,6 +258,22 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 					,data.getAccountCode()
 					,data.getAccountDescription(),false);
 		}
+	}
+	@Override
+	public int getTabIndex() {
+		return withholdingTaxs.getTabIndex();
+	}
+	@Override
+	public void setAccessKey(char key) {
+		withholdingTaxs.setAccessKey(key);
+	}
+	@Override
+	public void setFocus(boolean focused) {
+		withholdingTaxs.setFocus(focused);
+	}
+	@Override
+	public void setTabIndex(int index) {
+		withholdingTaxs.setTabIndex(index);
 	}
 	
 }

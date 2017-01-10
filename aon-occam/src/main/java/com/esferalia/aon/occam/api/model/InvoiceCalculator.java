@@ -52,13 +52,12 @@ public class InvoiceCalculator {
 		InvoiceVAT vat = ai.getFirstVat();
 		double vatPerc = vat.getPercentage();
 		double surchargePerc = vat.getSurcharge();
-		double withHoldingPerc = 0.0;
+		double withholdingPerc = 0.0;
 		if (ai.isWithholding()) {
-			withHoldingPerc = ai.getWithholdingData().getPercentage();
+			withholdingPerc = ai.getWithholdingData().getPercentage();
 		}
 		double tb = (ai.isVatEnabled()) 
-				//? ((total * 100) / (100 + vatPerc + surchargePerc - withHoldingPerc))
-				? reverseCalculate(vatPerc, surchargePerc, withHoldingPerc, total)
+				? reverseCalculate(vatPerc, surchargePerc, withholdingPerc, total)
 				: total;
 		vat.setBase(tb);
 		calculate(ai,vat);
@@ -66,24 +65,24 @@ public class InvoiceCalculator {
 	}
 	
 	
-	private static double reverseCalculate(double vatPercent, double surchargePercent, double retentionPercent, double total) {
+	private static double reverseCalculate(double vatPercent, double surchargePercent, double withholdingPerc, double total) {
 		total = AonMathUtils.round(total);
 		double base = 0;
 		for (int i=2; i<=4; i++) {
-			base = AonMathUtils.round(total / ( 1 + (vatPercent / 100) + (surchargePercent / 100) - (retentionPercent / 100)), i);
-			if (total == getTotal(vatPercent, surchargePercent , retentionPercent, base)) {
+			base = AonMathUtils.round(total / ( 1 + (vatPercent / 100) + (surchargePercent / 100) - (withholdingPerc / 100)), i);
+			if (total == getTotal(vatPercent, surchargePercent , withholdingPerc, base)) {
 				break;
 			} else {
-				base = AonMathUtils.ceil(total / (1 + vatPercent / 100 - retentionPercent / 100), i);
-				if (total == getTotal(vatPercent, surchargePercent ,retentionPercent, base)) {
+				base = AonMathUtils.ceil(total / (1 + vatPercent / 100 - withholdingPerc / 100), i);
+				if (total == getTotal(vatPercent, surchargePercent ,withholdingPerc, base)) {
 					break;
 				} else {
-					base = AonMathUtils.floor(total / (1 + vatPercent / 100 - retentionPercent / 100), i);
-					if (total == getTotal(vatPercent, surchargePercent ,retentionPercent, base)) {
+					base = AonMathUtils.floor(total / (1 + vatPercent / 100 - withholdingPerc / 100), i);
+					if (total == getTotal(vatPercent, surchargePercent ,withholdingPerc, base)) {
 						break;
 					} else if (i < 4) {
 						base = AonMathUtils.round(base + 5 / Math.pow(10, i+1), i+1);
-						if (total == getTotal(vatPercent, surchargePercent ,retentionPercent, base)) {
+						if (total == getTotal(vatPercent, surchargePercent ,withholdingPerc, base)) {
 							break;
 						}
 					}

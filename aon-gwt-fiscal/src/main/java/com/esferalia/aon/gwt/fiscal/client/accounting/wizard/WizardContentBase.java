@@ -14,7 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
-public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends ResizeComposite implements RequiresResize, IWizardContent {
+public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends ResizeComposite implements RequiresResize, IWizardContent  {
 
 	static FiscalServiceAsync fiscalService;
 	protected IAccountEntryModuleCallback callback;
