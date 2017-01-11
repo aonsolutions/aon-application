@@ -151,6 +151,8 @@ node {
 
       sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.occam -Dsonar.sources=aon-occam/src/main/java"
 
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.watson -Dsonar.sources=aon-watson/src/main/java"
+
       sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java"
 
       }
