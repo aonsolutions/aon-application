@@ -122,7 +122,7 @@ public class FeePdfProjection extends HttpServlet{
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Proyección de Cuotas");
 		sheet.getPrintSetup().setLandscape(true);
-		sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A4_ROTATED_PAPERSIZE); 
+		sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A4_PAPERSIZE); 
         Integer rowIndex = printTitle(workbook, sheet, from);
         
 		LinkedList<Fee> list = AON.getFeeList(domain.getName(), domain.getId(), login, 
@@ -246,7 +246,7 @@ public class FeePdfProjection extends HttpServlet{
 	private CellStyle getTitleStyle(HSSFWorkbook libro){
 		 CellStyle style = libro.createCellStyle();
 		 Font font = libro.createFont();
-		 font.setFontHeightInPoints((short)5);
+		 font.setFontHeightInPoints((short)7);
 		 font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		 style.setFont(font);
 		 style.setAlignment(CellStyle.ALIGN_CENTER);
@@ -257,7 +257,7 @@ public class FeePdfProjection extends HttpServlet{
 	private CellStyle getValueStyle(HSSFWorkbook libro){
 		CellStyle style3 = libro.createCellStyle();
         Font font2 = libro.createFont();
-        font2.setFontHeightInPoints((short) 4.5);
+        font2.setFontHeightInPoints((short) 7);
 		style3.setFont(font2);
 		style3.setAlignment(CellStyle.ALIGN_LEFT);
 		style3.setBorderBottom(CellStyle.BORDER_THIN);
@@ -267,7 +267,7 @@ public class FeePdfProjection extends HttpServlet{
 	private CellStyle getDoubleStyle(HSSFWorkbook libro){
 		CellStyle style3 = libro.createCellStyle();
         Font font2 = libro.createFont();
-        font2.setFontHeightInPoints((short)4.5);
+        font2.setFontHeightInPoints((short)7);
 		style3.setFont(font2);
 		style3.setAlignment(CellStyle.ALIGN_RIGHT);
 		style3.setBorderBottom(CellStyle.BORDER_THIN);
