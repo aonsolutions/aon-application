@@ -44,9 +44,6 @@ import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.InvoiceDetail;
-import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
-
 public class WeakForeignKeyProvider {
 
     protected static <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(UniqueKey<U> key,
@@ -273,27 +270,4 @@ public class WeakForeignKeyProvider {
 		    	WAREHOUSE_TRANSFER_WEAK_FK.add(createForeignKey(KEY_INVENTORY_DETAIL_PRIMARY, WAREHOUSE_TRANSFER, "WEAK_FK_WAREHOUSE_TRANSFER_INVENTORY_DETAIL", WAREHOUSE_TRANSFER.SOURCE_ID));
 		    }
 
-
-    
-    public static void main(String[] args) {
-        
-        List<ForeignKey<InvoiceDetailRecord,?>> references = new LinkedList<ForeignKey<InvoiceDetailRecord,?>>();
-        references.addAll(InvoiceDetail.INVOICE_DETAIL.getReferences());
-        for (Object o : INVOICE_DETAIL_WEAK_FK) {
-            ForeignKey<InvoiceDetailRecord, ?> fk = (ForeignKey<InvoiceDetailRecord, ?>) o;
-            references.add(fk);
-        }
-        
-        for(ForeignKey<InvoiceDetailRecord, ?> fk : references) {
-            System.out.println( "****************" );
-            System.out.println( fk.getName() );
-            System.out.println( fk.getFields() + " ---> " + fk.getKey() );
-            
-            System.out.println( );
-            
-            
-        }
-        
-        
-    }
 }

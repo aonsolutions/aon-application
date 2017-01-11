@@ -13,11 +13,9 @@ import org.jooq.Table;
 public class DuplicateCallBackDump extends AbstractChaimCallbackDump {
 
 	// TODO: ver como hacer un rollback manual para la duplicacion
-	//private boolean safeMode;
 
 	public DuplicateCallBackDump(CallbackDump cb, boolean safeMode) {
 		super(cb);
-		//this.safeMode = safeMode;
 	}
 
 	@Override

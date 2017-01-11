@@ -23,7 +23,6 @@ public class DomainZeroCallbackDump extends AbstractChaimCallbackDump {
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 
 		Record1<?> fkField;
-		Field<Integer> parentField = null;
 		
 		Integer value = r.getValue((Field<Integer>) fk.getFields().get(0), Integer.class);
 

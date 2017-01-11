@@ -45,12 +45,10 @@ public class FKSpecificMap {
     public FKSpecificMap(){
     	
     	fkMap = new HashMap<String, HashMap<Condition, ForeignKey<? extends Record,?>>>();
-    	
     	rellenarFKMpa (fkMap);
     }
 
 	private void rellenarFKMpa(HashMap<String, HashMap<Condition, ForeignKey<? extends Record, ?>>> fkMap) {
-		// TODO Auto-generated method stub
 		fkMap.put("INVOICE_DETAIL", new HashMap<Condition, ForeignKey<?,?>>());
 		fkMap.put("BANK_STATEMENT_LINK", new HashMap<Condition, ForeignKey<?,?>>());
 		fkMap.put("FINACE", new HashMap<Condition, ForeignKey<?,?>>());

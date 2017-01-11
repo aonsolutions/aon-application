@@ -15,7 +15,6 @@ import org.jooq.UpdateConditionStep;
 
 public class CallbackDumpPrint extends AbstractPrintCallbackDump {
 	
-	
 	// Consumer that will make our sql to an String
 	public CallbackDumpPrint(PrintStream out) {
 		super(out);

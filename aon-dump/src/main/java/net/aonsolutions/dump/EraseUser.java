@@ -44,7 +44,6 @@ public class EraseUser extends AbstractChaimCallbackDump{
 	@Override
 	public void header(Schema schema, String hostName, Map<Table<?>, Integer> domainTables, DSLContext dslContext,
 			int id, IdsMap idsMap) {
-		// TODO Auto-generated method stub
 		this.idOldDomain = id;
 		this.idsMap = idsMap;
 		super.header(schema, hostName, domainTables, dslContext, id, idsMap);
@@ -78,8 +77,6 @@ public class EraseUser extends AbstractChaimCallbackDump{
 	
 	@Override
 	public void footer() {
-		
-		
 		Field<Integer> varDomain = this.idsMap.getOrder(Domain.DOMAIN.getName(), idOldDomain);
 		String varUser = "@USER_" + idOldDomain;
 		InsertSetStep<?> insert = this.dslContext.insertInto(User.USER);

@@ -20,9 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
-import org.jooq.Record4;
 import org.jooq.Result;
-import org.jooq.SelectJoinStep;
 
 public class Main {
 	

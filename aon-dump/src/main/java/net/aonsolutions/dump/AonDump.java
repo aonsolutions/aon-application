@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -270,7 +269,6 @@ public class AonDump {
 				 * valor antiguo siguiendo el siguiente esquema:
 				 * (@(nombre_campo) +1)
 				 */
-				Field<Integer> varId = DSL.field("@" + t.getName().toUpperCase(), Integer.class);
 				Field<Integer> fieldId = (Field<Integer>) t.getPrimaryKey().getFields().get(0);
 				
 				// insertMap will contain all the information we want to upload to our table
@@ -433,10 +431,12 @@ public class AonDump {
 
 	private static class FkErrorException extends Exception {
 
-		private ForeignKey<?, ?> fk;
-
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		
 		public FkErrorException(ForeignKey<?, ?> fk) {
-			this.fk = fk;
 		}
 	}
 
