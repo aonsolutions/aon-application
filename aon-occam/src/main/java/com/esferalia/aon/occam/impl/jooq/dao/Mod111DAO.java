@@ -69,6 +69,11 @@ public class Mod111DAO extends FiscalModelDAO {
 				,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown br);
 	}
 	
+	@FunctionalInterface
+	public static interface IValueUniqueIntializer {
+		void initialize(AONContext ctx,Mod111 mod);
+	}
+	
 	private static void addPerceptor(Mod111Key key,Mod111 mod
 			,Map<Mod111Key,Set<String>> docs
 			,Map<Mod111Key,Set<String>> pdocs
@@ -115,122 +120,121 @@ public class Mod111DAO extends FiscalModelDAO {
 		// *************************************************************************
 		 AR_907(Mod111Key.AR_907,false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			,null,null,null)
+			,null,null,null,null)
 		,AR_908(Mod111Key.AR_908,false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			,null,null,null)
+			,null,null,null,null)
 		,AR_909(Mod111Key.AR_909,false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			,null,null,null)
+			,null,null,null,null)
 		,AR_C50(Mod111Key.AR_C50,false
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C50,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,AR_C60(Mod111Key.AR_C60,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C60,mod,br)
-			,null)
+			,null,null)
 		,AR_C70(Mod111Key.AR_C70,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C70,mod,br)
-			,null)
-		,AR_C51(Mod111Key.AR_C51,false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C61(Mod111Key.AR_C61,true, (mod -> mod.isAraba()),null,null,null)
-		,AR_C71(Mod111Key.AR_C71,true, (mod -> mod.isAraba()),null,null,null)
-		,AR_C52(Mod111Key.AR_C52,false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C62(Mod111Key.AR_C62,true, (mod -> mod.isAraba()),null,null,null)
-		,AR_C72(Mod111Key.AR_C72,true, (mod -> mod.isAraba()),null,null,null)
-		,AR_C53(Mod111Key.AR_C53,false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C63(Mod111Key.AR_C63,true, (mod -> mod.isAraba()),null,null,null)
-		,AR_C73(Mod111Key.AR_C73,true, (mod -> mod.isAraba()),null,null,null)
+			,null,null)
+		,AR_C51(Mod111Key.AR_C51,false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C61(Mod111Key.AR_C61,true, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C71(Mod111Key.AR_C71,true, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C52(Mod111Key.AR_C52,false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C62(Mod111Key.AR_C62,true, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C72(Mod111Key.AR_C72,true, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C53(Mod111Key.AR_C53,false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C63(Mod111Key.AR_C63,true, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C73(Mod111Key.AR_C73,true, (mod -> mod.isAraba()),null,null,null,null)
 		,AR_C54(Mod111Key.AR_C54,false 
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C54,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,AR_C64(Mod111Key.AR_C64,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C64,mod,br)
-			,null)
+			,null,null)
 		,AR_C74(Mod111Key.AR_C74,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C74,mod,br)
-			,null)
-			
+			,null,null)
 		,AR_C58(Mod111Key.AR_C58,false
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C58,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,AR_C68(Mod111Key.AR_C68,true 
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C68,mod,br)
-			,null)
+			,null,null)
 		,AR_C78(Mod111Key.AR_C78,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C78,mod,br)
-			,null)
+			,null,null)
 		,AR_C55(Mod111Key.AR_C55,false
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C55,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,AR_C65(Mod111Key.AR_C65,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C65,mod,br)
-			,null)
+			,null,null)
 		,AR_C75(Mod111Key.AR_C75,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C75,mod,br)
-			,null)
-		,AR_C56(Mod111Key.AR_C56,false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C66(Mod111Key.AR_C66,true, (mod -> mod.isAraba()),null,null,null)
-		,AR_C76(Mod111Key.AR_C76,true, (mod -> mod.isAraba()),null,null,null)
+			,null,null)
+		,AR_C56(Mod111Key.AR_C56,false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C66(Mod111Key.AR_C66,true, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C76(Mod111Key.AR_C76,true, (mod -> mod.isAraba()),null,null,null,null)
 		,AR_C57(Mod111Key.AR_C57,false
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C56,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,AR_C67(Mod111Key.AR_C67,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C66,mod,br)
-			,null)
+			,null,null)
 		,AR_C77(Mod111Key.AR_C77,true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C76,mod,br)
-			,null)
+			,null,null)
 		,AR_C80(Mod111Key.AR_C80,false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			, null,null, "AR_C50+AR_C51+AR_C52+AR_C53+AR_C54+AR_C58+AR_C55+AR_C56+AR_C57")
+			, null,null,null, "AR_C50+AR_C51+AR_C52+AR_C53+AR_C54+AR_C58+AR_C55+AR_C56+AR_C57")
 		,AR_C81(Mod111Key.AR_C81,false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			, null,null, "AR_C60+AR_C61+AR_C62+AR_C63+AR_C64+AR_C68+AR_C65+AR_C66+AR_C67")
+			, null,null,null, "AR_C60+AR_C61+AR_C62+AR_C63+AR_C64+AR_C68+AR_C65+AR_C66+AR_C67")
 		,AR_C82(Mod111Key.AR_C82,false
 			, (mod -> mod.isAraba())
-			, null,null, "AR_C70+AR_C71+AR_C72+AR_C73+AR_C74+AR_C78+AR_C75+AR_C76+AR_C77")
-		,AR_C83(Mod111Key.AR_C83,false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
-		,AR_C84(Mod111Key.AR_C84,false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C85(Mod111Key.AR_C85,false, (mod -> mod.isAraba()),null,null,null)
+			, null,null,null, "AR_C70+AR_C71+AR_C72+AR_C73+AR_C74+AR_C78+AR_C75+AR_C76+AR_C77")
+		,AR_C83(Mod111Key.AR_C83,false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null,null)
+		,AR_C84(Mod111Key.AR_C84,false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C85(Mod111Key.AR_C85,false, (mod -> mod.isAraba()),null,null,null,null)
 		,AR_C87(Mod111Key.AR_C87,false
 			, (mod -> mod.isAraba() && mod.getYear() <= 2015)
-			, null,null, "AR_C82+AR_C84+AR_C85")
+			, null,null,null, "AR_C82+AR_C84+AR_C85")
 		,AR_C87B(Mod111Key.AR_C87,false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			, null,null, "AR_C82-AR_C83+AR_C84+AR_C85")
+			, null,null,null, "AR_C82-AR_C83+AR_C84+AR_C85")
 		,AR_TIP(Mod111Key.AR_TIP,false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			, null,null,null)
+			, null,null,null,null)
 		// *************************************************************************
 		// ************************************************************* BIZKAIA ***
 		// *************************************************************************
@@ -238,121 +242,121 @@ public class Mod111DAO extends FiscalModelDAO {
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C01,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,BZ_C12 (Mod111Key.BZ_C12,true 
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C12,mod,br)
-			,null)
+			,null,null)
 		,BZ_C23 (Mod111Key.BZ_C23,true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C23,mod,br)
-			,null)
-		,BZ_C02 (Mod111Key.BZ_C02,false , (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C13 (Mod111Key.BZ_C13,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C24 (Mod111Key.BZ_C24,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C03 (Mod111Key.BZ_C03,false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C14 (Mod111Key.BZ_C14,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C25 (Mod111Key.BZ_C25,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C04 (Mod111Key.BZ_C04,false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C15 (Mod111Key.BZ_C15,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C26 (Mod111Key.BZ_C26,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C05 (Mod111Key.BZ_C05,false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C16 (Mod111Key.BZ_C16,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C27 (Mod111Key.BZ_C27,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C06 (Mod111Key.BZ_C06,false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C17 (Mod111Key.BZ_C17,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C28 (Mod111Key.BZ_C28,true, (mod -> mod.isBizkaia()),null,null,null)
+			,null,null)
+		,BZ_C02 (Mod111Key.BZ_C02,false , (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C13 (Mod111Key.BZ_C13,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C24 (Mod111Key.BZ_C24,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C03 (Mod111Key.BZ_C03,false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C14 (Mod111Key.BZ_C14,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C25 (Mod111Key.BZ_C25,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C04 (Mod111Key.BZ_C04,false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C15 (Mod111Key.BZ_C15,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C26 (Mod111Key.BZ_C26,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C05 (Mod111Key.BZ_C05,false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C16 (Mod111Key.BZ_C16,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C27 (Mod111Key.BZ_C27,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C06 (Mod111Key.BZ_C06,false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C17 (Mod111Key.BZ_C17,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C28 (Mod111Key.BZ_C28,true, (mod -> mod.isBizkaia()),null,null,null,null)
 		,BZ_C07 (Mod111Key.BZ_C07,false 
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C07,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,BZ_C18 (Mod111Key.BZ_C18,true 
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C18,mod,br)
-			,null)
+			,null,null)
 		,BZ_C29 (Mod111Key.BZ_C29,true 
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C29,mod,br)
-			,null)
+			,null,null)
 		,BZ_C50 (Mod111Key.BZ_C50,false
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isQuarterPeriod())
 			, (mod,br) ->  br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C50,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,BZ_C51 (Mod111Key.BZ_C51,true
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isQuarterPeriod())
 			, (mod,br) ->  br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C51,mod,br)
-			,null)
+			,null,null)
 		,BZ_C52 (Mod111Key.BZ_C52,true
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isQuarterPeriod())
 			, (mod,br) ->  br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C52,mod,br)
-			,null)
+			,null,null)
 		,BZ_C08 (Mod111Key.BZ_C08,false
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C08,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,BZ_C19 (Mod111Key.BZ_C19,true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C19,mod,br)
-			,null)
+			,null,null)
 		,BZ_C30 (Mod111Key.BZ_C30,true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C30,mod,br)
-			,null)
+			,null,null)
 		,BZ_C09 (Mod111Key.BZ_C09,false 
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C09,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,BZ_C20 (Mod111Key.BZ_C20,true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C20,mod,br)
-			,null)
+			,null,null)
 		,BZ_C31 (Mod111Key.BZ_C31,true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C31,mod,br)
-			,null)
-		,BZ_C10 (Mod111Key.BZ_C10,false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C21 (Mod111Key.BZ_C21,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C32 (Mod111Key.BZ_C32,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C11 (Mod111Key.BZ_C11,false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C22 (Mod111Key.BZ_C22,true, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C33 (Mod111Key.BZ_C33,true, (mod -> mod.isBizkaia()),null,null,null)
+			,null,null)
+		,BZ_C10 (Mod111Key.BZ_C10,false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C21 (Mod111Key.BZ_C21,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C32 (Mod111Key.BZ_C32,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C11 (Mod111Key.BZ_C11,false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C22 (Mod111Key.BZ_C22,true, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C33 (Mod111Key.BZ_C33,true, (mod -> mod.isBizkaia()),null,null,null,null)
 		
 		,BZ_C34M(Mod111Key.BZ_C34T,false
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isMonthPeriod())
-			, null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C08+BZ_C09+BZ_C10+BZ_C11")
+			, null,null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C08+BZ_C09+BZ_C10+BZ_C11")
 		,BZ_C35M(Mod111Key.BZ_C35T,false
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isMonthPeriod())
-			, null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C19+BZ_C20+BZ_C21+BZ_C22")
+			, null,null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C19+BZ_C20+BZ_C21+BZ_C22")
 		,BZ_C36M(Mod111Key.BZ_C36T,false
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isMonthPeriod())
-			, null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C30+BZ_C31+BZ_C32+BZ_C33")
+			, null,null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C30+BZ_C31+BZ_C32+BZ_C33")
 		
 		,BZ_C34T(Mod111Key.BZ_C34T,false
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isQuarterPeriod())
-			, null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C50+BZ_C08+BZ_C09+BZ_C10+BZ_C11")
+			, null,null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C50+BZ_C08+BZ_C09+BZ_C10+BZ_C11")
 		,BZ_C35T(Mod111Key.BZ_C35T,false
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isQuarterPeriod())
-			, null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C51+BZ_C19+BZ_C20+BZ_C21+BZ_C22")
+			, null,null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C51+BZ_C19+BZ_C20+BZ_C21+BZ_C22")
 		,BZ_C36T(Mod111Key.BZ_C36T,false
 			, (mod ->  mod.isBizkaia() && mod.getPeriod().isQuarterPeriod())
-			, null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C52+BZ_C30+BZ_C31+BZ_C32+BZ_C33")
+			, null,null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C52+BZ_C30+BZ_C31+BZ_C32+BZ_C33")
 		
-		,BZ_C39T(Mod111Key.BZ_C39 ,false, (mod -> mod.isBizkaia()), null,null, "BZ_C36T")
-		,BZ_TIP (Mod111Key.BZ_TIP ,false, (mod -> mod.isBizkaia()), null,null,null)
+		,BZ_C39T(Mod111Key.BZ_C39 ,false, (mod -> mod.isBizkaia()), null,null,null, "BZ_C36T")
+		,BZ_TIP (Mod111Key.BZ_TIP ,false, (mod -> mod.isBizkaia()), null,null,null,null)
 		// *************************************************************************
 		// **************************************************** COMMON TERRITORY ***
 		// *************************************************************************
@@ -360,73 +364,80 @@ public class Mod111DAO extends FiscalModelDAO {
 			, (mod -> mod.isAEAT())
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C01,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,CT_C02(Mod111Key.CT_C02,true
 			, (mod -> mod.isAEAT())
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.CT_C02,mod,br)
-			,null)
+			,null,null)
 		,CT_C03(Mod111Key.CT_C03,true
 			, (mod -> mod.isAEAT())
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C03,mod,br)
-			,null)
+			,null,null)
 		,CT_C04(Mod111Key.CT_C04,false
 			, (mod -> mod.isAEAT())
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C04,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,CT_C05(Mod111Key.CT_C05,true
 			, (mod -> mod.isAEAT())
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.CT_C05,mod,br)
-			,null)
+			,null,null)
 		,CT_C06(Mod111Key.CT_C06,true
 			, (mod -> mod.isAEAT())
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C06,mod,br)
-			,null)
+			,null,null)
 		,CT_C07(Mod111Key.CT_C07,false
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C07,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,CT_C08(Mod111Key.CT_C08,true
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.CT_C08,mod,br)
-			,null)
+			,null,null)
 		,CT_C09(Mod111Key.CT_C09,true
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C09,mod,br)
-			,null)
-		,CT_C10(Mod111Key.CT_C10,false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C11(Mod111Key.CT_C11,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C12(Mod111Key.CT_C12,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C13(Mod111Key.CT_C13,false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C14(Mod111Key.CT_C14,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C15(Mod111Key.CT_C15,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C16(Mod111Key.CT_C16,false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C17(Mod111Key.CT_C17,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C18(Mod111Key.CT_C18,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C19(Mod111Key.CT_C19,false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C20(Mod111Key.CT_C20,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C21(Mod111Key.CT_C21,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C22(Mod111Key.CT_C22,false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C23(Mod111Key.CT_C23,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C24(Mod111Key.CT_C24,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C25(Mod111Key.CT_C25,false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C26(Mod111Key.CT_C26,true, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C27(Mod111Key.CT_C27,true, (mod -> mod.isAEAT()),null,null,null)
+			,null,null)
+		,CT_C10(Mod111Key.CT_C10,false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C11(Mod111Key.CT_C11,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C12(Mod111Key.CT_C12,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C13(Mod111Key.CT_C13,false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C14(Mod111Key.CT_C14,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C15(Mod111Key.CT_C15,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C16(Mod111Key.CT_C16,false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C17(Mod111Key.CT_C17,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C18(Mod111Key.CT_C18,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C19(Mod111Key.CT_C19,false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C20(Mod111Key.CT_C20,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C21(Mod111Key.CT_C21,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C22(Mod111Key.CT_C22,false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C23(Mod111Key.CT_C23,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C24(Mod111Key.CT_C24,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C25(Mod111Key.CT_C25,false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C26(Mod111Key.CT_C26,true, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C27(Mod111Key.CT_C27,true, (mod -> mod.isAEAT()),null,null,null,null)
 		,CT_C28(Mod111Key.CT_C28,false
 			, (mod -> mod.isAEAT())
-			, null,null, "CT_C03+CT_C06+CT_C09+CT_C12+CT_C15+CT_C18+CT_C21+CT_C24" )
-		,CT_C29(Mod111Key.CT_C29,false, (mod -> mod.isAEAT()),null,null,null)
+			, null,null,null, "CT_C03+CT_C06+CT_C09+CT_C12+CT_C15+CT_C18+CT_C21+CT_C24" )
+		,CT_C29(Mod111Key.CT_C29,false
+			, (mod -> mod.isAEAT())
+			, null
+			, null
+			, (ctx,mod) -> mod.putAmount(Mod111Key.CT_C29,mod.isComplementary()
+								?getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getResult()).sum()
+								:0.0)
+			,null)
 		,CT_C30(Mod111Key.CT_C30,false
 			, (mod -> mod.isAEAT())
-			, null,null, "CT_C28-CT_C29" )
-		,CT_TIP (Mod111Key.CT_TIP,false, (mod -> mod.isAEAT()), null,null,null)
+			, null,null,null, "CT_C28-CT_C29" )
+		,CT_TIP (Mod111Key.CT_TIP,false, (mod -> mod.isAEAT()), null,null,null,null)
 		// *************************************************************************
 		// ************************************************************ GIPUZKOA ***
 		// *************************************************************************
@@ -434,90 +445,90 @@ public class Mod111DAO extends FiscalModelDAO {
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C01,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,GP_C02(Mod111Key.GP_C02,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C02,mod,br)
-			,null)
+			,null,null)
 		,GP_C03(Mod111Key.GP_C03,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C03,mod,br)
-			,null)
+			,null,null)
 		,GP_C04(Mod111Key.GP_C04,false
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C04,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,GP_C05(Mod111Key.GP_C05,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C05,mod,br)
-			,null)
+			,null,null)
 		,GP_C06(Mod111Key.GP_C06,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C06,mod,br)
-			,null)
+			,null,null)
 		,GP_C07(Mod111Key.GP_C07,false
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C07,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,GP_C08(Mod111Key.GP_C08,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C08,mod,br)
-			,null)
+			,null,null)
 		,GP_C09(Mod111Key.GP_C09,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C09,mod,br)
-			,null)
-		,GP_C10(Mod111Key.GP_C10,false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C11(Mod111Key.GP_C11,true, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C12(Mod111Key.GP_C12,true, (mod -> mod.isGipuzkoa()),null,null,null)
+			,null,null)
+		,GP_C10(Mod111Key.GP_C10,false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C11(Mod111Key.GP_C11,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C12(Mod111Key.GP_C12,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
 		,GP_C13(Mod111Key.GP_C13,false
 			, (mod -> mod.isGipuzkoa())
-			,null,null, "GP_C02+GP_C05+GP_C08+GP_C11" )
+			,null,null,null, "GP_C02+GP_C05+GP_C08+GP_C11" )
 		,GP_C14(Mod111Key.GP_C14,false
 			, (mod -> mod.isGipuzkoa())
-			,null,null, "GP_C03+GP_C06+GP_C09+GP_C12" )
+			,null,null,null, "GP_C03+GP_C06+GP_C09+GP_C12" )
 		,GP_C15(Mod111Key.GP_C15,false
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C15,mod,docs,pdocs,br)
-			,null)
+			,null,null)
 		,GP_C16(Mod111Key.GP_C16,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C16,mod,br)
-			,null)
+			,null,null)
 		,GP_C17(Mod111Key.GP_C17,true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C17,mod,br)
-			,null)
-		,GP_C18(Mod111Key.GP_C18,false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C19(Mod111Key.GP_C19,true, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C20(Mod111Key.GP_C20,true, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C21(Mod111Key.GP_C21,false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C22(Mod111Key.GP_C22,true, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C23(Mod111Key.GP_C23,true, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C24(Mod111Key.GP_C24,false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C25(Mod111Key.GP_C25,true, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C26(Mod111Key.GP_C26,true, (mod -> mod.isGipuzkoa()),null,null,null)
+			,null,null)
+		,GP_C18(Mod111Key.GP_C18,false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C19(Mod111Key.GP_C19,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C20(Mod111Key.GP_C20,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C21(Mod111Key.GP_C21,false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C22(Mod111Key.GP_C22,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C23(Mod111Key.GP_C23,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C24(Mod111Key.GP_C24,false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C25(Mod111Key.GP_C25,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C26(Mod111Key.GP_C26,true, (mod -> mod.isGipuzkoa()),null,null,null,null)
 		,GP_C27(Mod111Key.GP_C27,false
 			, (mod -> mod.isGipuzkoa())
-			,null,null, "GP_C16+GP_C19+GP_C22+GP_C25")
+			,null,null,null, "GP_C16+GP_C19+GP_C22+GP_C25")
 		,GP_C28(Mod111Key.GP_C28,false
 			, (mod -> mod.isGipuzkoa())
-			,null,null, "GP_C17+GP_C20+GP_C23+GP_C26" )
+			,null,null,null, "GP_C17+GP_C20+GP_C23+GP_C26" )
 		,GP_C29(Mod111Key.GP_C29,false
 			, (mod -> mod.isGipuzkoa())
-			,null,null, "GP_C14+GP_C28" )
-		,GP_TIP (Mod111Key.GP_TIP,false, (mod -> mod.isGipuzkoa()), null,null,null)
+			,null,null,null, "GP_C14+GP_C28" )
+		,GP_TIP (Mod111Key.GP_TIP,false, (mod -> mod.isGipuzkoa()), null,null,null,null)
 		
 		// *************************************************************************
 		// ************************************************************* NAVARRA ***
@@ -526,8 +537,8 @@ public class Mod111DAO extends FiscalModelDAO {
 			, (mod -> mod.isNavarra())
 			, (mod,br) -> (br.isProfessional() || br.isTransportOperator() || br.isFarmer() || br.isSalaryRetention() || br.isSalaryInKindRetention()) 
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.NF_A1,mod,br)
-			,null)
-		,NF_TIP (Mod111Key.NF_TIP,false , (mod -> mod.isNavarra()), null,null,null)
+			,null,null)
+		,NF_TIP (Mod111Key.NF_TIP,false , (mod -> mod.isNavarra()), null,null,null,null)
 		;
 		
 		private Mod111Key key;
@@ -535,6 +546,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		private IModelAccepter acceptModel;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
+		private IValueUniqueIntializer uniqueInitializer;
 		private String expression;
 
 		private Mod111KeyDAO(Mod111Key key
@@ -542,12 +554,14 @@ public class Mod111DAO extends FiscalModelDAO {
 				, IModelAccepter acceptModel
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
-				,String expression) {
+				, IValueUniqueIntializer uniqueInitializer
+				, String expression) {
 			this.key = key;
 			this.diffEnabled = diffEnabled;
 			this.acceptModel =  acceptModel;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
+			this.uniqueInitializer = uniqueInitializer;
 			this.expression =  expression;
 		}
 		
@@ -568,6 +582,11 @@ public class Mod111DAO extends FiscalModelDAO {
 				,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown  br) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, docs, pdocs, br);
+			}
+		}
+		public void uniqueInitialize(AONContext ctx,Mod111 mod) {
+			if (uniqueInitializer != null) {
+				uniqueInitializer.initialize(ctx, mod);
 			}
 		}
 		public String getExpression() {
@@ -657,9 +676,13 @@ public class Mod111DAO extends FiscalModelDAO {
 				detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 			}
 		}
+		for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
+			if (key.acceptModel(mod111)) {
+				key.uniqueInitialize(ctx, mod111);
+			};
+		}
 		return calculateMod111(ctx, mod111);
 	}
-
 	public static String getMod111Info(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
 		Mod111KeyInfoDAO k = Mod111KeyInfoDAO.valueOf(infoKey.toString());
 		for (Mod111KeyDAO keyDAO : Mod111KeyDAO.values()) {
@@ -717,8 +740,9 @@ public class Mod111DAO extends FiscalModelDAO {
 				"DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
 				,script.getLabel()
 				,script.getKeys()
-				,getPreviousModels(ctx,mod111)
-			 		.collect(Collectors.toCollection(LinkedList::new))	
+//				,getPreviousModels(ctx,mod111)
+				,getEffectivePreviousModels(ctx,mod111)
+				 .collect(Collectors.toCollection(LinkedList::new))	
 				,IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
 					.filter( br ->  keyDAO.acceptValue(mod111, br) )	
 					.collect(Collectors.toCollection(LinkedList::new))
@@ -802,6 +826,16 @@ public class Mod111DAO extends FiscalModelDAO {
 							};
 						}
 				});
+		
+		getEffectivePreviousModels(ctx, mod111)
+			.forEach(mod -> {
+				for (String keyString : mod.getMap().keySet()) {
+					double amount = mod.getAmount(keyString);
+					mod111.ensureDetail(keyString).addDeclaredAmount(amount);
+				}
+			});
+		
+/*		
 		getPreviousModels(ctx, mod111)
 			.forEach(mod -> {
 				for (String keyString : mod.getMap().keySet()) {
@@ -809,6 +843,7 @@ public class Mod111DAO extends FiscalModelDAO {
 					mod111.ensureDetail(keyString).addDeclaredAmount(amount);
 				}
 			});
+*/
 	}
 	
 	private static String getInvoicesInfo(AONContext ctx, final Mod111 mod111
@@ -833,7 +868,8 @@ public class Mod111DAO extends FiscalModelDAO {
 		return IRPFFormatter.formatDiffInvoices(title
 			,script.getLabel()
 			,script.getKeys()
-			, getPreviousModels(ctx,mod111)
+			,getEffectivePreviousModels(ctx, mod111)
+//			,getPreviousModels(ctx,mod111)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
 			,IRPFDAO.getInvoiceDiffIrpfBreakdown(ctx, mod111)
 				.filter( br ->  keyDAO.acceptValue(mod111, br) )	

@@ -7,7 +7,9 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
@@ -106,6 +108,25 @@ public class FiscalModelDAO {
 								.forEach( detail -> model.put( detail) )
 					 );
 	}
+	
+	public static Stream<FiscalModel> getEffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel) {
+		LinkedList<FiscalModel> effectivePreviousModels = new LinkedList<FiscalModel>();
+		LinkedList<FiscalModel> previousModels = getPreviousModels(ctx, fiscalModel).collect(Collectors.toCollection(LinkedList::new));
+		
+		for ( FiscalModel fm : previousModels ) {
+			boolean effective = fm.isComplementary() ||  
+				(!fm.isComplementary() && !previousModels.stream()
+				.anyMatch(fm2 -> fm2.isComplementary() 
+					&& 	fm2.getYear() == fm.getYear()
+					&& 	fm2.getPeriod().ordinal() == fm.getPeriod().ordinal()
+				));
+			if (effective) {
+				effectivePreviousModels.add(fm);
+			}
+		}
+		return effectivePreviousModels.stream();
+	}
+	
 	public static Stream<FiscalModel> getSamePeriodModels(AONContext ctx,FiscalModel fiscalModel) {
 		ctx.checkRead();
 		return ctx.getDslContext()
