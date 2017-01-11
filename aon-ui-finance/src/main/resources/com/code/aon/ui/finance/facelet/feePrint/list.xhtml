@@ -44,13 +44,24 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="feePrintListByCustomer" />
 					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="feePrintListByDate" rendered="#{feePrintSearch.anual}"
+					
+					<!-- <aon:htmlCommandLink id="feePrintListByDate" rendered="#{feePrintSearch.anual}"
 						value="Por Mes" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-							actionListener="#{feePrint.onOrderCustomerFeeByDate}"
+						actionListener="#{feePrint.onOrderCustomerFeeByDate}"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="feePrintListByDate" />
 					</aon:htmlCommandLink>
+					 -->
+					<h:outputLink title="Por Mes Excel" 
+						value="#{feePrint.onOrderCustomerFeeByDateLinkExcel}" target="_blank">
+						<aon:outputText value="" styleClass="aon-finding-toolbar-item aon-icon-excel"/>
+					</h:outputLink> 
+					<h:outputLink title="Por Mes Pdf" 
+						value="#{feePrint.onOrderCustomerFeeByDateLinkPdf}" target="_blank">
+						<aon:outputText value="Por Mes" styleClass="aon-finding-toolbar-item aon-icon-pdf"/>
+					</h:outputLink> 
+				
 				</ui:define>				
 				
 			</ui:decorate>
