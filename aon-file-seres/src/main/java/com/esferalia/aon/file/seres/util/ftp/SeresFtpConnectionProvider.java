@@ -88,12 +88,12 @@ public class SeresFtpConnectionProvider implements Serializable {
 		}
 	}
 	
-	public static List<FtpFile> retrieveDirectoryList(String remotePath,
+	public static List<String> retrieveDirectoryList(String remotePath,
 			String server, Integer port, String user, String passwd)
 			throws FtpLoginException, FtpException {
-		List<FtpFile> fileList = new LinkedList<>();
+		List<String> fileList = new LinkedList<>();
 
-		// printFileTree("/", "", 0);
+//		printFileTree("/", "", 0);
 
 		FtpConnector ftp = new FtpConnector() {
 			@Override
@@ -277,14 +277,16 @@ abstract class FtpConnector {
 		}
 	}
 	
-	protected void fillDirectoryList(String directoryPath, List<FtpFile> list) throws IOException {
-		if(list!=null) {
+	protected void fillDirectoryList(String directoryPath, List<String> list) throws IOException {
+		if (list == null) {
 			list = new LinkedList<>();
 		}
 		FTPFile[] subDirectories = null;
 		try {
 			if(directoryPath!=null){
 				subDirectories = ftp.listFiles(directoryPath);
+			} else {
+				subDirectories = ftp.listFiles();
 			}
 		} catch (IOException e) {
 			subDirectories = ftp.listFiles();
@@ -297,7 +299,8 @@ abstract class FtpConnector {
 					continue;
 				}
 				if (f.isDirectory()) {
-					list.add(new FtpFile(f));
+					list.add((directoryPath!=null?directoryPath:"")+"/"+f.getName());
+					fillDirectoryList((directoryPath!=null?directoryPath:"")+"/"+f.getName(), list);
 				}
 			}
 		}
@@ -315,16 +318,17 @@ abstract class FtpConnector {
 				filter = new FTPFileFilter() {
 					@Override
 					public boolean accept(FTPFile arg0) {
-						return DateUtils.ceiling(arg0.getTimestamp().getTime(),
+						return (start == null ? true : DateUtils.ceiling(
+								arg0.getTimestamp().getTime(),
 								Calendar.DAY_OF_MONTH)
 								.compareTo(
 										DateUtils.ceiling(start,
-												Calendar.DAY_OF_MONTH)) >= 0
-								&& DateUtils.ceiling(
+												Calendar.DAY_OF_MONTH)) >= 0)
+								&& (end == null ? true : DateUtils.ceiling(
 										arg0.getTimestamp().getTime(),
 										Calendar.DAY_OF_MONTH).compareTo(
 										DateUtils.ceiling(end,
-												Calendar.DAY_OF_MONTH)) <= 0;
+												Calendar.DAY_OF_MONTH)) <= 0);
 					}
 				};
 			}

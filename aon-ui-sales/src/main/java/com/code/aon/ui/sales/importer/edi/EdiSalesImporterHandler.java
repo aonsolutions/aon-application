@@ -58,7 +58,8 @@ public class EdiSalesImporterHandler implements Serializable {
 	 */
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final Logger LOGGER = LoggerFactory.getLogger(EdiSalesImporterHandler.class);
-	private SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyMMddhhmm");
+	private SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyyMMddhhmm");
+	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	
 	private IController controller;
 	private AonFile aonFile;
@@ -99,6 +100,10 @@ public class EdiSalesImporterHandler implements Serializable {
 	}
 	
 	public void onImportFile(ActionEvent event) {
+		importFile(event, false);
+	}
+		
+	public void importFile(ActionEvent event, boolean testing) {
 		ConnectSalesReader reader = new ConnectSalesReader();
 		RECTL rectl = null;
 		try {
@@ -109,13 +114,13 @@ public class EdiSalesImporterHandler implements Serializable {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		getLogPanel().info("Inicio del proceso.");
-		createSales(event, rectl);
+		createSales(event, rectl, testing);
 		getLogPanel().info("Proceso finalizado.");
 		setAonFile(null);
 		setShowImportFileWindow(false);
 	}
 	
-	public void createSales(ActionEvent event, RECTL rectl) {
+	public void createSales(ActionEvent event, RECTL rectl, boolean testing) {
 //		System.out.println(ere1c.toString());
 //		System.out.println(ere1c.ere1lList.get(0).toString());
 		Sales sales = (Sales) controller.getTo();
@@ -157,6 +162,7 @@ public class EdiSalesImporterHandler implements Serializable {
 							getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
 									+ " : La referencia de producto: " + StringUtils.trimToEmpty(ere1l.getDescripcion1Articulo())
 									+ " (NumeroArticuloComprador: " + StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_())
+									+ ", CodigoEANDelArticuloAdicional: " + StringUtils.trimToNull(ere1l.getCodigoEANDelArticuloAdicional_1__EN_())
 									+ ", Cod. cliente final: " + StringUtils.trimToNull(ere1l.getCodigoClienteFinal())
 									+ ", Cod. EAN: " + StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo()) + ")"
 									+ " no existe para el cliente " + customer.getRegistry().getFullName());
@@ -182,9 +188,14 @@ public class EdiSalesImporterHandler implements Serializable {
 						try {
 							sales.setIssueDate(dateTimeFormatter.parse(rectl.ere1c
 									.getFecha_horaDocumento_137__102_203_().toString()));
-						} catch (ParseException e) {
-							getLogPanel().error("No se ha podido convertir la fecha: " + rectl.ere1c.getFecha_horaDocumento_137__102_203_());
-							sales.setIssueDate(null);
+						} catch (ParseException e1) {
+							try {
+								sales.setIssueDate(dateFormatter.parse(rectl.ere1c
+										.getFecha_horaDocumento_137__102_203_().toString()));
+							} catch (ParseException e2) {
+								getLogPanel().error("No se ha podido convertir la fecha: " + rectl.ere1c.getFecha_horaDocumento_137__102_203_());
+								sales.setIssueDate(null);
+							}
 						}
 						sales.setDocumentType(DocumentType.NORMAL);
 						sales.setSecurityLevel(SecurityLevel.OFFICIAL);
@@ -205,7 +216,9 @@ public class EdiSalesImporterHandler implements Serializable {
 						sales.setRemarks(remarks);
 						sales.setComments("");
 						
-						salesController.accept(event);
+						if (!testing) {
+							salesController.accept(event);
+						}
 						
 						getLogPanel().info("Pedido creado: " + sales.getReferenceCode());
 						
@@ -217,12 +230,11 @@ public class EdiSalesImporterHandler implements Serializable {
 										+ " omitida: La referencia de producto: " + ere1l.getDescripcion1Articulo().trim()
 										+ " no existe para el cliente " + customer.getRegistry().getFullName()
 										+ " (NumeroArticuloComprador: " + StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_())
+										+ ", CodigoEANDelArticuloAdicional: " + StringUtils.trimToNull(ere1l.getCodigoEANDelArticuloAdicional_1__EN_())
 										+ ", CodigoClienteFinal: " + StringUtils.trimToNull(ere1l.getCodigoClienteFinal())
 										+ ", CodigoDeArticuloEAN: " + StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo())
 										+ ")");
 							} else {
-								detailController.onReset(event);
-								SalesDetail detail = (SalesDetail) detailController.getTo();
 								Integer line = Integer.valueOf(ere1l.getNumeroDeLineaArticulo());
 								String description = String.format("%s. %s. %s.",
 										StringUtils.trimToEmpty(ere1l
@@ -235,18 +247,22 @@ public class EdiSalesImporterHandler implements Serializable {
 								Tag customerPackingTag = searchPackingTag(customerRegistryNote);
 								Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
 								Double price = rItem.getPrice();
-								detail.setSales(sales);
-								detail.setItem(rItem.getItem());
-								detail.setLine(line);
-								detail.setDescription(description);
-								detail.setQuantity(quantity);
-								detail.setPrice(price);
-//								detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
-								detail.setTaxes(0.0);
-								detail.setStatus(SalesDetailStatus.PENDING);
-								detail.setOfferDetail(null);
-								detail.setDelivered(0.0);
-								detailController.onAccept(event);
+								if (!testing) {
+									detailController.onReset(event);
+									SalesDetail detail = (SalesDetail) detailController.getTo();
+									detail.setSales(sales);
+									detail.setItem(rItem.getItem());
+									detail.setLine(line);
+									detail.setDescription(description);
+									detail.setQuantity(quantity);
+									detail.setPrice(price);
+//									detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
+									detail.setTaxes(0.0);
+									detail.setStatus(SalesDetailStatus.PENDING);
+									detail.setOfferDetail(null);
+									detail.setDelivered(0.0);
+									detailController.onAccept(event);
+								}
 								Tag itemPackMeasurementTag = rItem.getItem().getPackMeasurementTag();
 								Tag itemPackingTag = rItem.getItem().getPackUnitsTag();
 								Tag itemPackFormatTag = rItem.getItem().getPackFormatTag();
@@ -361,6 +377,9 @@ public class EdiSalesImporterHandler implements Serializable {
 	private RegistryItem searchRegistryItem(ERE1L ere1l, Customer customer) {
 		try {			
 			String itemCustomerCode = StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_());
+			if(itemCustomerCode==null){
+				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoEANDelArticuloAdicional_1__EN_());
+			}
 			if(itemCustomerCode==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoClienteFinal());
 			}
