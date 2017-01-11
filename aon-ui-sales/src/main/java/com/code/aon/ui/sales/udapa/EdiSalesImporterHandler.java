@@ -98,6 +98,10 @@ public class EdiSalesImporterHandler implements Serializable {
 	}
 	
 	public void onImportFile(ActionEvent event) {
+		importFile(event, false);
+	}
+	
+	public void importFile(ActionEvent event, boolean testing) {
 		UdapaSalesReader reader = new UdapaSalesReader();
 		ERE1C ere1c = null;
 		try {
@@ -108,13 +112,13 @@ public class EdiSalesImporterHandler implements Serializable {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		getLogPanel().info("Inicio del proceso.");
-		createSales(event, ere1c);
+		createSales(event, ere1c, testing);
 		getLogPanel().info("Proceso finalizado.");
 		setAonFile(null);
 		setShowImportFileWindow(false);
 	}
 	
-	public void createSales(ActionEvent event, ERE1C ere1c) {
+	public void createSales(ActionEvent event, ERE1C ere1c, boolean testing) {
 //		System.out.println(ere1c.toString());
 //		System.out.println(ere1c.ere1lList.get(0).toString());
 		Sales sales = (Sales) controller.getTo();
@@ -206,7 +210,9 @@ public class EdiSalesImporterHandler implements Serializable {
 						sales.setRemarks(remarks);
 						sales.setComments("");
 						
-						salesController.accept(event);
+						if (testing) {
+							salesController.accept(event);
+						}
 						
 						getLogPanel().info("Pedido creado: " + sales.getReferenceCode());
 						
@@ -222,8 +228,6 @@ public class EdiSalesImporterHandler implements Serializable {
 										+ ", CodigoDeArticuloEAN: " + StringUtils.trimToNull(ere1l.getCodigoDeArticuloEAN_13ODUN_14())
 										+ ")");
 							} else {
-								detailController.onReset(event);
-								SalesDetail detail = (SalesDetail) detailController.getTo();
 								Integer line = Integer.valueOf(ere1l.getNumeroDeLineaArticulo());
 								String description = String.format("%s. %s. %s.",
 										StringUtils.trimToEmpty(ere1l
@@ -236,18 +240,22 @@ public class EdiSalesImporterHandler implements Serializable {
 								Tag customerPackingTag = searchPackingTag(customerRegistryNote);
 								Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
 								Double price = rItem.getPrice();
-								detail.setSales(sales);
-								detail.setItem(rItem.getItem());
-								detail.setLine(line);
-								detail.setDescription(description);
-								detail.setQuantity(quantity);
-								detail.setPrice(price);
-//								detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
-								detail.setTaxes(0.0);
-								detail.setStatus(SalesDetailStatus.PENDING);
-								detail.setOfferDetail(null);
-								detail.setDelivered(0.0);
-								detailController.onAccept(event);
+								if (testing) {
+									detailController.onReset(event);
+									SalesDetail detail = (SalesDetail) detailController.getTo();
+									detail.setSales(sales);
+									detail.setItem(rItem.getItem());
+									detail.setLine(line);
+									detail.setDescription(description);
+									detail.setQuantity(quantity);
+									detail.setPrice(price);
+//									detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
+									detail.setTaxes(0.0);
+									detail.setStatus(SalesDetailStatus.PENDING);
+									detail.setOfferDetail(null);
+									detail.setDelivered(0.0);
+									detailController.onAccept(event);
+								}
 								Tag itemPackMeasurementTag = rItem.getItem().getPackMeasurementTag();
 								Tag itemPackingTag = rItem.getItem().getPackUnitsTag();
 								Tag itemPackFormatTag = rItem.getItem().getPackFormatTag();

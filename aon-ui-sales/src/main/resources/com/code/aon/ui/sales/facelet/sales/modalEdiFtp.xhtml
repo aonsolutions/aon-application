@@ -75,12 +75,42 @@
 												
 											<aon:outputLabel for="EdiFtp_remotePath"
 												value="Directorio remoto FTP" />
-											<aon:inputText id="EdiFtp_remotePath"
-												value="#{sales.ftpEdiDownloader.remotePath}"
-												size="30"
-												required="#{true}" />
+											<aon:div>
+												<aon:inputText id="EdiFtp_remotePath"
+													value="#{sales.ftpEdiDownloader.remotePath}"
+													size="30"
+													required="#{true}" />
+												<aon:commandButton id="ediFtp-folderTree"
+													value="&#160;"
+													title="Mostrar estructura de directorios"
+													actionListener="#{sales.ftpEdiDownloader.onShowFtpDirectoryTree}"
+													reRender="showEdiFtpWindow"
+													styleClass="aon-finding-toolbar-item aon-noborder aon-icon-tree-root"
+													onclick="Richfaces.showModalPanel('waitProccess')" 
+													oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+											</aon:div>
 										</aon:panelGrid>
 											
+										<aon:panel rendered="#{sales.ftpEdiDownloader.remoteDirectoryModel.rowCount > 0}">
+											<f:facet name="header">
+												<aon:outputText value="Estructura remota de directorios" />
+											</f:facet>
+											<aon:dataTable id="ftpDirectoryTree" var="to" rows="100" 
+												value="#{sales.ftpEdiDownloader.remoteDirectoryModel}"
+												rendered="#{sales.ftpEdiDownloader.remoteDirectoryModel.rowCount > 0}">
+												<aon:column styleClass="aon-editDataTable-iconColumn">
+													<aon:commandButton id="ftpSales-import"
+														value="&#160;" styleClass="aon-icon-commandButton aon-icon-rowSelector"
+														title="#{bundle.aon_check}"
+														actionListener="#{sales.ftpEdiDownloader.onSelectFtpDirectory}"
+														reRender="showEdiFtpWindow" />
+												</aon:column>
+												<aon:column styleClass="aon-editDataTable-textColumn">
+													<aon:outputText value="#{to}" />
+												</aon:column>
+											</aon:dataTable>
+										</aon:panel>
+										
 										<aon:panel>
 											<f:facet name="header">
 												<aon:outputText value="Datos de acceso" />
@@ -104,7 +134,7 @@
 									
 									<aon:panel styleClass="aon-panelGrid-search">
 										<f:facet name="header">
-											<aon:outputText value="Filtrar" />
+											<aon:outputText value="Opciones adicionales" />
 										</f:facet>
 										<aon:panelGrid columns="2" dir="true" style="width: 100%;">
 											<aon:outputLabel for="EdiFtp_startDate"
@@ -125,6 +155,22 @@
 													value="#{sales.ftpEdiDownloader.endDate}"
 													timeZone="#{timeZoneController.timeZone}"
 													popupDateFormat="#{bundle.aon_date_pattern}"/>
+											</aon:div>
+											
+											<aon:outputText value="&#160;" />
+											<aon:div>
+												<aon:selectBooleanCheckbox id="EdiFtp_deleteOnComplete"
+													value="#{sales.ftpEdiDownloader.deleteOnComplete}"/>
+												<aon:outputLabel for="EdiFtp_deleteOnComplete"
+													value="Borrar el fichero remoto tras importar" />
+											</aon:div>
+											
+											<aon:outputText value="&#160;" />
+											<aon:div>
+												<aon:selectBooleanCheckbox id="EdiFtp_testing"
+													value="#{sales.ftpEdiDownloader.testing}"/>
+												<aon:outputLabel for="EdiFtp_testing"
+													value="Modo TEST (se comprueba la integridad pero no se guarda)" />
 											</aon:div>
 										</aon:panelGrid>
 									</aon:panel>

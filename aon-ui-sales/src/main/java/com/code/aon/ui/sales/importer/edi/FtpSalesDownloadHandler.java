@@ -53,12 +53,18 @@ public class FtpSalesDownloadHandler implements Serializable {
 	
 	private Date startDate;
 	private Date endDate;
+	private boolean deleteOnComplete;
+	private boolean testing;
 	
 	private boolean showFtpServerConnectionData;
 	
 	private List<FtpFile> unreadSalesList;
 			
 	private SerializableListDataModel unreadSalesModel;
+	
+	private List<String> remoteDirectoryList;
+	
+	private SerializableListDataModel remoteDirectoryModel;
 	
 	public FtpSalesDownloadHandler(IController controller) {
 		this.controller = controller;
@@ -70,6 +76,13 @@ public class FtpSalesDownloadHandler implements Serializable {
 			unreadSalesModel = new SerializableListDataModel(unreadSalesList);
 		}
 		return unreadSalesModel;
+	}
+	
+	public SerializableListDataModel getRemoteDirectoryModel() {
+		if(remoteDirectoryModel == null){
+			remoteDirectoryModel = new SerializableListDataModel(remoteDirectoryList);
+		}
+		return remoteDirectoryModel;
 	}
 	
 	public String getServer() {
@@ -118,6 +131,22 @@ public class FtpSalesDownloadHandler implements Serializable {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public boolean isDeleteOnComplete() {
+		return deleteOnComplete;
+	}
+
+	public void setDeleteOnComplete(boolean deleteOnComplete) {
+		this.deleteOnComplete = deleteOnComplete;
+	}
+
+	public boolean isTesting() {
+		return testing;
+	}
+
+	public void setTesting(boolean testing) {
+		this.testing = testing;
 	}
 
 	public boolean isShowEdiFtpWindow() {
@@ -180,6 +209,8 @@ public class FtpSalesDownloadHandler implements Serializable {
 		controller.onReset(event);
 		unreadSalesList = null;
 		unreadSalesModel = null;
+		remoteDirectoryList = null;
+		remoteDirectoryModel = null;
 		showFtpServerConnectionData = false;
 		getLogPanel().reset();
 		
@@ -187,11 +218,35 @@ public class FtpSalesDownloadHandler implements Serializable {
 		checkValidLogin();
 		
 		setStartDate(new Date());
-		setEndDate(new Date());
+		setEndDate(null);
+		deleteOnComplete = true;
+		testing = false;
 	}
 	
 	public void onShowFtpServerConnectionData(ActionEvent event) {
 		showFtpServerConnectionData = !showFtpServerConnectionData;
+	}
+	
+	public void onShowFtpDirectoryTree(ActionEvent event) {
+		try {
+			remoteDirectoryList = SeresFtpConnectionProvider.retrieveDirectoryList(null,
+					server, port, user, password);
+		} catch (FtpLoginException e) {
+			LOGGER.error(e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (FtpException e) {
+			LOGGER.error(e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+		remoteDirectoryModel = null;
+	}
+	
+	public void onSelectFtpDirectory(ActionEvent event) {
+		if (remoteDirectoryModel.isRowAvailable()){
+			setRemotePath((String) remoteDirectoryModel.getRowData());
+		}
+		remoteDirectoryList = null;
+		remoteDirectoryModel = null;
 	}
 	
 	public void onRetrieveFtpEdi(ActionEvent event) {
@@ -279,7 +334,9 @@ public class FtpSalesDownloadHandler implements Serializable {
 	public void onImportFile(ActionEvent event) {
 		
 		if(getUnreadSalesModel().isRowAvailable()) {
-			setShowEdiFtpWindow(false);
+			if(! isTesting()){
+				setShowEdiFtpWindow(false);
+			}
 			
 			FtpFile ftpFile = (FtpFile) getUnreadSalesModel().getRowData();
 
@@ -292,7 +349,10 @@ public class FtpSalesDownloadHandler implements Serializable {
 			connectHandler.setAonFile(new AonFile());
 			connectHandler.getAonFile().setData(byteFile);
 			try {
-				connectHandler.onImportFile(event);
+				connectHandler.importFile(event, isTesting());
+				if(isDeleteOnComplete()){
+					deleteFile(ftpFile);
+				}
 			} catch (Throwable th) {
 				getLogPanel()
 						.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
@@ -303,7 +363,10 @@ public class FtpSalesDownloadHandler implements Serializable {
 				udapaHandler.setAonFile(new AonFile());
 				udapaHandler.getAonFile().setData(byteFile);
 				try {
-					udapaHandler.onImportFile(event);
+					udapaHandler.importFile(event, isTesting());
+					if(isDeleteOnComplete()){
+						deleteFile(ftpFile);
+					}
 				} catch (Throwable th2) {
 					getLogPanel()
 							.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
@@ -316,6 +379,12 @@ public class FtpSalesDownloadHandler implements Serializable {
 	public void onDeleteFile(ActionEvent event) {
 		if (getUnreadSalesModel().isRowAvailable()) {
 			FtpFile ftpFile = (FtpFile) getUnreadSalesModel().getRowData();
+			deleteFile(ftpFile);
+		}
+	}
+		
+	private void deleteFile(FtpFile ftpFile) {
+		if (ftpFile!=null) {
 			getLogPanel().info(
 					"Borrando el fichero EDI del servidor FTP de SERESNET");
 			try {
