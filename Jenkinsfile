@@ -146,7 +146,13 @@ node {
       // requires SonarQube Scanner 2.8+
       def scannerHome = tool 'SonarQube Scanner 2.8'
       withSonarQubeEnv('My SonarQube Server') {
-      sh "${scannerHome}/bin/sonar-scanner"
+
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=net.aonsolutions:aon-dump -Dsonar.sources=aon-dump/src/main/java"
+
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.occam -Dsonar.sources=aon-occam/src/main/java"
+
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java"
+
       }
       
       
