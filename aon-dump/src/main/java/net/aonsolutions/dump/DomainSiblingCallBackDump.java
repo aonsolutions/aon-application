@@ -28,7 +28,7 @@ public class DomainSiblingCallBackDump extends AbstractChaimCallbackDump {
 	public void header(Schema schema, String hostName, Map<Table<?>, Integer> domainTables, DSLContext dslContext,
 			int id, IdsMap idsMap) {
 
-		parentDomain = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where((DOMAIN.ID).equal(id)).fetchOne().value1();
+		parentDomain = dslContext.select(DSL.ifnull(DOMAIN.PARENT, -666)).from(DOMAIN).where((DOMAIN.ID).equal(id)).fetchOne().value1();
 
 		super.header(schema, hostName, domainTables, dslContext, id, idsMap);
 	}

@@ -97,7 +97,7 @@ public class AonDump {
 		List<Table<?>> tables = schema.get().getTables();
 
 		int idDomain = dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
-		int idParent = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
+		int idParent = dslContext.select(DSL.ifnull(DOMAIN.PARENT, -666)).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
 
 		// We filter all the tables we have so we let only the ones we are going to use
 		Map<Table<?>, Integer> dumpTables = new HashMap<Table<?>, Integer>();

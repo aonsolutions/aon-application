@@ -81,6 +81,10 @@
 		font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 	}
 	
+	.marginIL{
+		margin-left: 30px;
+	}
+	
 	.progressColorGreen {
 	}
 	
@@ -109,6 +113,10 @@
 		height: 10px;
 	    padding-bottom: 25px;
 	    color: orange;
+	}
+	
+	.paddingH{
+		padding-left: 30px;
 	}
 	
 	@sprite .warningIcon {
@@ -198,7 +206,6 @@
 												El dominio seleccionado no tiene sufijo.
 											</i:IronLabel>
 										</g:HTMLPanel>
-										
 									</td>
 								</tr>
 								<tr>
@@ -212,10 +219,9 @@
 											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox}"
 											ui:field="suggestBox" width="100" />
 									</td>
-								</tr>
-								<tr>
+									<td></td>
 									<td>
-										<i:IronLabel>
+										<i:IronLabel styleName="{style.marginIL}">
 											Tipo de copia:
 										</i:IronLabel>
 									</td>
@@ -224,6 +230,7 @@
 											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox} {style.simple-listBox}" />
 									</td>
 								</tr>
+								<tr></tr>
 								<tr>
 									<td colspan="2">
 										<paper:PaperInput ui:field="nombreEmpresa"
@@ -232,14 +239,14 @@
 											<div suffix="" styleName="{style.simple-suffix}" ui:field="sufijoEmpresa" />
 										</paper:PaperInput>
 									</td>
-								</tr>
-								<tr>
+									<td></td>
 									<td colspan="2">
 										<paper:PaperInput ui:field="descripcionEmpresa"
-											label="Nueva descripcion empresa">
+											label="Nueva descripcion empresa" styleName="{style.paddingH}">
 										</paper:PaperInput>
 									</td>
 								</tr>
+								<tr></tr>
 								<tr>
 									<td colspan="2">
 										<g:DisclosurePanel
