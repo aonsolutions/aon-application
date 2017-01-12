@@ -58,6 +58,21 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface ElaborationFilter{
+		Filter filter(ElaborationProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ElaborationDetailFilter{
+		Filter filter(ElaborationDetailProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface ElaborationDetailCompositionFilter{
+		Filter filter(ElaborationDetailCompositionProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface FeeFilter{
 		Filter filter(FeeProperties properties);
 	}
