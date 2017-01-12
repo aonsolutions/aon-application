@@ -38,30 +38,37 @@ public class AccountPeriodBox extends ListBox {
 	}
 	
 	public boolean isOutOfRange(Date date) {
+		if (date == null) return true;
 		AccountPeriod ap = periods.get(getSelectedIndex());
-		return (ap.getId() != null &&  
-			(ap.getInitiationDate().after(date) 
-		  || ap.getDeadline().before(date)));
+		if (ap == null || ap.getId() == null) return true;
+		return (
+				ap.getInitiationDate().after(date)
+				|| ap.getDeadline().before(date)
+				);
 	}
 
 	public void select(Integer accountPeriod) {
-		boolean found = false;
-		for (int i = 0 ;  i < getItemCount(); i++) {
-			int a = AonNumberUtils.toInteger( getValue(i) );
-					int b = accountPeriod;
-			if ( a == b) {
-				setSelectedIndex(i);
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
+		if (accountPeriod != null) {
+			boolean found = false;
 			for (int i = 0 ;  i < getItemCount(); i++) {
-				if ( periods.get(i).isDefaultPeriod()) {
+				int a = AonNumberUtils.toInteger( getValue(i) );
+				int b = accountPeriod;
+				if ( a == b) {
 					setSelectedIndex(i);
+					found = true;
 					break;
-				}				
+				}
 			}
+			if (!found) {
+				for (int i = 0 ;  i < getItemCount(); i++) {
+					if ( periods.get(i).isDefaultPeriod()) {
+						setSelectedIndex(i);
+						break;
+					}				
+				}
+			}
+		} else {
+			setSelectedIndex(0);			
 		}
 	}
 }
