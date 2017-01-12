@@ -14,6 +14,7 @@ public interface IReservationConstants {
 	String PERCENT = "Percent";
 	String AMOUNT = "Amount";
 	String BOOKING_HOLDER = "BookingHolder";
+	String TOKEN_IDISO = "TokenIdiso";
 	String VAT_TAX = "IVA";
 	String OTHER_TAX = "Others";
 	String BANK_TRANSACTION = "BankTransaction";

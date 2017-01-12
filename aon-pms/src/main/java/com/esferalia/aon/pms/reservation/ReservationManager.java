@@ -241,6 +241,7 @@ public class ReservationManager implements IReservationConstants {
 			String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
 			String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
 			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
+			String token = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), TOKEN_IDISO, null);
 			String remarks =  findComments(reservationType.getResGlobalInfo());
 			String prepayTransaction = findPrepayInfo(reservationType.getResGlobalInfo(), BANK_TRANSACTION);
 			String prepayPayment = findPrepayInfo(reservationType.getResGlobalInfo(), PAYMENT_TRANSACTION);
@@ -284,6 +285,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setAdvance((NumberUtils.isNumber(prepayPayment)) ? Double.parseDouble(prepayPayment) : 0);
 			reservation.setPrepay(prepayTransaction!=null);
 			reservation.setBankTransaction(prepayTransaction);
+			reservation.setToken(token);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 
