@@ -108,8 +108,8 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 									:tax.getPurchaseAccount();
 							if (taxAccount == null) {
 								taxAccount = getWrapper().isSales()
-									?getCallback().getModule().getConfiguration().getDefaultChargedRetAccount()
-									:getCallback().getModule().getConfiguration().getDefaultPaidRetAccount();
+									?getCallback().getModule().getConfiguration().getDefaultPaidRetAccount()
+									:getCallback().getModule().getConfiguration().getDefaultChargedRetAccount();
 							}
 							getWrapper().getWithholdingData().setPercentage(tax.getPercentage());
 							getWrapper().getWithholdingData().setWithholdingType(tax.getWithholdingType());
