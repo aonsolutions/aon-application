@@ -147,15 +147,15 @@ node {
       def scannerHome = tool 'SonarQube Scanner 2.8'
       withSonarQubeEnv('My SonarQube Server') {
 
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=net.aonsolutions:aon-dump -Dsonar.sources=aon-dump/src/main/java"
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=net.aonsolutions:aon-dump -Dsonar.sources=aon-dump/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
 
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.occam -Dsonar.sources=aon-occam/src/main/java"
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.occam -Dsonar.sources=aon-occam/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
 
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.watson -Dsonar.sources=aon-watson/src/main/java"
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.watson -Dsonar.sources=aon-watson/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
 
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java"
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
 
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.code.aon:aon.webservice -Dsonar.sources=aon-webservice/src/main/java"
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.code.aon:aon.webservice -Dsonar.sources=aon-webservice/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
       }
       
       
