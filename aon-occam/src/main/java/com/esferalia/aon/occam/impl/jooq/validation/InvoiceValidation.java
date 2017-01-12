@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceValidation {
 
@@ -84,6 +85,15 @@ public class InvoiceValidation {
 		}
 	};
 	
+	/**
+	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> EMPTY_REFERENCE_CODE = (inv,ctx) -> {
+		if (!inv.isSales() && AonStringUtils.isBlank( inv.getReferenceCode()) ) {
+			throw new AonCoreException(AonError.INVOICE_EMPTY_REFERENCE_CODE.getMessage());
+		}
+	};
+
 	/**
 	 * El Domain/Serie/Número/Tipo no puede estar duplicado
 	 */
@@ -171,6 +181,7 @@ public class InvoiceValidation {
 			.andThen(EMPTY_INVOICE_TYPE)
 			.andThen(EMPTY_INVOICE_REGISTRY)
 			.andThen(EMPTY_INVOICE_SCOPE)
+			.andThen(EMPTY_REFERENCE_CODE)
 			.andThen(DUPLICATED_SERIES_NUMBER)
 			.andThen(DUPLICATED_REFERENCE_CODE)
 			.andThen(OPERATIONS_DEADLINE)
