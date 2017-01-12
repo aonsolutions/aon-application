@@ -583,20 +583,22 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		payAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				if (event.getSelectedItem() != null) {
-					getWrapper().setFinanceRecordable(true);
-					getWrapper().getFinances().get(0).setPayAccountId(event.getSelectedItem().getId());
-					getWrapper().getFinances().get(0).setPayAccountCode(event.getSelectedItem().getCode());
-					getWrapper().getFinances().get(0).setPayAccountDescription(event.getSelectedItem().getDescription());
-				} else {
-					getWrapper().setFinanceRecordable(false);
-					getWrapper().getFinances().get(0).setPayAccountId(null);
-					getWrapper().getFinances().get(0).setPayAccountCode(null);
-					getWrapper().getFinances().get(0).setPayAccountDescription(null);
+				if ( getWrapper().getFinances().get(0).isPending() ) {
+					if (event.getSelectedItem() != null) {
+						getWrapper().setFinanceRecordable(true);
+						getWrapper().getFinances().get(0).setPayAccountId(event.getSelectedItem().getId());
+						getWrapper().getFinances().get(0).setPayAccountCode(event.getSelectedItem().getCode());
+						getWrapper().getFinances().get(0).setPayAccountDescription(event.getSelectedItem().getDescription());
+					} else {
+						getWrapper().setFinanceRecordable(false);
+						getWrapper().getFinances().get(0).setPayAccountId(null);
+						getWrapper().getFinances().get(0).setPayAccountCode(null);
+						getWrapper().getFinances().get(0).setPayAccountDescription(null);
+					}
+					_paintEntry();
+					getWrapper().getAccountEntry().setDirty(true);
+					getCallback().getModule().refreshIdLabel();
 				}
-				_paintEntry();
-				getWrapper().getAccountEntry().setDirty(true);
-				getCallback().getModule().refreshIdLabel();
 			}
 		});
 		payTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonWidthAuto());
@@ -777,14 +779,32 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 
 	private void populatePayment(AccountingInvoice invoice) {
+		payAccount.setEnabled(true);
 		payStatusLabel.setText(AonStringUtils.EMPTY);
 		if (invoice.hasFinances()) {
 			if (invoice.getFinances().size() == 1) {
 				Finance finance = invoice.getFinances().get(0);
 				payDate.setValue(finance.getDueDate());
-				payMethodList.setValue(finance.getPayMethod());
+				if (finance.getId() == null) { // NUEVO
+					finance.setPayMethod(payMethodList.getValue());
+					if (payAccount.getId() != null) {
+						getWrapper().setFinanceRecordable(true);
+						finance.setPayAccountId(payAccount.getId());
+						finance.setPayAccountCode(payAccount.getValue());
+						finance.setPayAccountDescription(payAccount.getDescription());
+					} else {
+						getWrapper().setFinanceRecordable(false);
+						finance.setPayAccountId(null);
+						finance.setPayAccountCode(null);
+						finance.setPayAccountDescription(null);
+					}
+					payMethodList.setValue(finance.getPayMethod());
+				} else {
+					payMethodList.setValue(finance.getPayMethod());	
+				}
 				if (!finance.isPending()) {
 					payStatusLabel.setText(finance.getFinanceStatus().getDescription());
+					payAccount.setEnabled(false);
 				}
 			} 
 		} 

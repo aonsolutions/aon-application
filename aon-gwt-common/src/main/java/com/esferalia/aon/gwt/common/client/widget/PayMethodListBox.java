@@ -34,4 +34,9 @@ public class PayMethodListBox extends ListBox {
 		}
 		if (!found) setSelectedIndex(0);
 	}
+
+	public Integer getValue() {
+		if (getSelectedIndex() == 0) return null;
+		return AonNumberUtils.toInteger( getSelectedValue() );
+	}
 }
