@@ -447,6 +447,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		// Populate header values
 		period.select(wizardContent.getMainEntry().getPeriod());
 		entryDate.setValue(wizardContent.getMainEntry().getEntryDate());
+		checkDate();
 		confidential.setValue(wizardContent.getMainEntry().isConfidential());
 		journal.setText(AonMathUtils.toInt(wizardContent.getMainEntry()
 				.getJournal()) == 0 ? AonStringUtils.EMPTY : AON.MSG.journal()
