@@ -53,7 +53,7 @@ public class PmsUtils implements IPmsConstants {
 		Criteria criteria = new Criteria();
 		criteria.addInExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), pmsCollections.getCurrentUserHotelIds());
 		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
-		criteria.addOrder(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_PRODUCT_NAME));
+		criteria.addOrder(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_PRODUCT_CODE));
 		ProjectionList projectionList = new ProjectionList(Projection.group(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_ID)));
 		for (Object obj : roomBean.getList(projectionList, criteria)) {
 			Item item = (Item)itemBean.get((Integer)obj);
@@ -71,7 +71,7 @@ public class PmsUtils implements IPmsConstants {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel.getId());
 			criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
-			criteria.addOrder(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_PRODUCT_NAME));
+			criteria.addOrder(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_PRODUCT_CODE));
 			for (ITransferObject ito : roomBean.getList(criteria)) {
 				Item item = ((Room)ito).getItem();
 				if (!items.contains(item.getId())) {
@@ -113,7 +113,7 @@ public class PmsUtils implements IPmsConstants {
 
 			criteria = new Criteria();
 			criteria.addInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items);
-			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 			for (ITransferObject ito : itemBean.getList(criteria)) {
 				Item item = (Item)ito;
 				SelectItem serviceItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());

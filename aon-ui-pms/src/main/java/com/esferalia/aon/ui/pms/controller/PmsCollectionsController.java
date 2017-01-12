@@ -293,7 +293,7 @@ public class PmsCollectionsController implements Serializable {
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), roomCategory);
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
-		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 		for (ITransferObject itr : itemBean.getList(criteria)) {
 			Item item = (Item)itr;
 			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
@@ -304,14 +304,17 @@ public class PmsCollectionsController implements Serializable {
 
 	public List<SelectItem> getServiceItems() throws ManagerBeanException {
 		List<SelectItem> serviceItems = new LinkedList<SelectItem>();
+		int roomCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_ROOM_CATEGORY));
 		int serviceCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_SERVICE_CATEGORY));
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), serviceCategory);
+		Expression roomExp = ExpressionUtilities.getEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), roomCategory);
+		Expression serviceExp = ExpressionUtilities.getEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), serviceCategory);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(roomExp, serviceExp));
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
-		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 		for (ITransferObject itr : itemBean.getList(criteria)) {
 			Item item = (Item)itr;
 			SelectItem serviceItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
@@ -329,7 +332,7 @@ public class PmsCollectionsController implements Serializable {
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), extraPaxCategory);
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
-		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 		for (ITransferObject itr : itemBean.getList(criteria)) {
 			Item item = (Item)itr;
 			SelectItem extraPaxItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
@@ -340,17 +343,19 @@ public class PmsCollectionsController implements Serializable {
 
 	public List<SelectItem> getServiceAndExtraPaxItems() throws ManagerBeanException {
 		List<SelectItem> serviceItems = new LinkedList<SelectItem>();
+		int roomCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_ROOM_CATEGORY));
 		int serviceCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_SERVICE_CATEGORY));
 		int extraPaxCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_EXTRAPAX_CATEGORY));
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria = new Criteria();
+		Expression roomExp = ExpressionUtilities.getEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), roomCategory);
 		Expression serviceExp = ExpressionUtilities.getEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), serviceCategory);
 		Expression extraPaxExp = ExpressionUtilities.getEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), extraPaxCategory);
-		criteria.addExpression(ExpressionUtilities.getOrExpression(serviceExp, extraPaxExp));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(roomExp, ExpressionUtilities.getOrExpression(serviceExp, extraPaxExp)));
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_STATUS), ProductStatus.ACTIVE);
-		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 		for (ITransferObject itr : itemBean.getList(criteria)) {
 			Item item = (Item)itr;
 			SelectItem serviceItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
