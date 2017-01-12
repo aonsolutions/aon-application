@@ -285,7 +285,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		++row;
 
-		if ( config.getAvailableScopes() != null &&  config.getAvailableScopes().size() > 1) {
+		if ( config.getAvailableScopes() != null &&  config.getAvailableScopes().size() > 0) {
 			
 			table.setWidget(row,0,new InlineLabel(AON.MSG.scope()));
 			table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
