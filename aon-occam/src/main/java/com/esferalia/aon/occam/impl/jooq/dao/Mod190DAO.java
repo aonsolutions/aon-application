@@ -19,8 +19,10 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -104,6 +106,7 @@ public class Mod190DAO {
 		mod190.setId(record.getId());
 		insertDetailsFromInvoice(ctx, mod190);
 		insertDetailsFromSalary(ctx, mod190);
+		// insertDetailsFromSalary2(ctx, mod190);
 		return mod190;
 	}
 
@@ -740,12 +743,10 @@ public class Mod190DAO {
 							detail.setMod190(mod190.getId());
 							detail.setDocument(salaryData.getValue(SALARY.EMPLOYEE_DOCUMENT));
 							detail.setName(salaryData.getValue(SALARY.EMPLOYEE_NAME));
+							detail.setKey(Mod1902015Key.A.getValue());
 							if (mod190.getYear() == 2015) {
-								detail.setKey(Mod1902015Key.A.getValue());
 								detail.setSubKey("01");
-							} else {
-								detail.setKey(Mod1902014Key.A.getValue());
-							}
+							} 
 							detail.setPerception(salaryData.getValue(moneyIrpfBase).doubleValue());
 							detail.setInKindPerception(salaryData.getValue(inKindIrpfBase).doubleValue());
 							detail.setRetention( salaryData.getValue(moneyQuota).doubleValue());
@@ -830,6 +831,7 @@ public class Mod190DAO {
 			int curYear = AonDateUtils.getYear(fromDate);
 			byte ZERO = 0;
 			byte ONE = 1;
+			byte TWO = 2;
 			if (descs != null && descs.size() > 0) {
 				int i = 1;
 				for (IrpfDataDescendientsRecord desc : descs) {
@@ -862,11 +864,11 @@ public class Mod190DAO {
 						}
 					}
 					if (i == 1) {
-						result.setFirstChildCalculation(byInteger?ONE:ZERO);
+						result.setFirstChildCalculation(byInteger?ONE:TWO);
 					} else if (i == 2) {
-						result.setSecondChildCalculation(byInteger?ONE:ZERO);
+						result.setSecondChildCalculation(byInteger?ONE:TWO);
 					} else if (i == 3) {
-						result.setThirdChildCalculation(byInteger?ONE:ZERO);
+						result.setThirdChildCalculation(byInteger?ONE:TWO);
 					}
 					i++;
 				}
@@ -1021,5 +1023,114 @@ public class Mod190DAO {
 		}
 	}
 
+	private static void insertDetailsFromSalary2(AONContext ctx, final Mod190 mod190) {
+		Date firstDay = AonDateUtils.getYearFirstDay(mod190.getYear());
+		Date lastDay = AonDateUtils.getYearLastDay(mod190.getYear());
+/*		
+		Field<BigDecimal> moneyIrpfBase = DSL.sum(DSL.decode()
+				.when(SALARY.INKIND_IRPF_BASE.equal(0.0), SALARY.IRPF_BASE)
+				.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0), SALARY.MONEY_IRPF_BASE));
+		Field<BigDecimal> inKindIrpfBase = DSL.sum(SALARY.INKIND_IRPF_BASE);
+		Field<BigDecimal> socialSecurityContributions = DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+		
+		Field<Double> moneyQuotaOp = DSL.round((SALARY.MONEY_IRPF_BASE.mul(SALARY.TOTAL_IRPF)).div( SALARY.IRPF_BASE ),2);  
+		Field<BigDecimal> moneyQuota = DSL.sum(DSL.decode()
+			.when(SALARY.INKIND_IRPF_BASE.equal(0.0), SALARY.TOTAL_IRPF)
+			.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0), moneyQuotaOp));
+		Field<BigDecimal> inKindQuota = DSL.sum( DSL.decode()
+				.when(DSL.round(SALARY.INKIND_IRPF_BASE,2).equal(0.0), 0.0)
+				.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0),SALARY.TOTAL_IRPF.minus(moneyQuotaOp)));
+*/		
+		Field<Integer> birthYear = DSL.year(PERSON.BIRTH_DATE);
+		final TreeMap<String, Mod190Detail> map = new TreeMap<String, Mod190Detail>();
+		ctx.getDslContext()
+				.select(SALARY.EMPLOYEE_DOCUMENT
+						,SALARY.EMPLOYEE_NAME
+						,SALARY.IRPF_BASE
+						,SALARY.MONEY_IRPF_BASE
+						,SALARY.INKIND_IRPF_BASE
+						,SALARY.TOTAL_IRPF
+						,SALARY.SOCIAL_SECURITY_CONTRIBUTIONS
+						,PERSON.REGISTRY
+						,birthYear)
+				.from(SALARY)
+				.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+				.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+				.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
+				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration()))
+				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+				.fetch()
+				.stream()
+				.forEach(
+						salaryData -> {
+							String document = salaryData.getValue(SALARY.EMPLOYEE_DOCUMENT);
+							Integer person = salaryData.getValue(PERSON.REGISTRY);
+							String key = document + "_" + person;
+							if (!map.containsKey(key)) {
+								final Mod190Detail detail = new Mod190Detail();
+								map.put(key, detail);
+								detail.setDomain(mod190.getDomain());
+								detail.setMod190(mod190.getId());
+								detail.setDocument(salaryData.getValue(SALARY.EMPLOYEE_DOCUMENT));
+								detail.setName(salaryData.getValue(SALARY.EMPLOYEE_NAME));
+								Integer birthData = salaryData.getValue(birthYear);
+								detail.setIrpfData(getLastIrpfDataByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay, detail));
+								detail.getIrpfData().setBirthYear(birthData==null?0:birthData);
+								ctx.getDslContext()
+									.select(GEOZONE.CODE)
+									.from(RADDRESS)
+									.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+									.where(RADDRESS.REGISTRY.equal(salaryData.getValue(PERSON.REGISTRY)))
+									.and(RADDRESS.TYPE.equal((byte) 0))
+									.limit(1)
+									.fetch()
+									.stream()
+									.forEach(
+										province -> {
+											try {detail.setProvince(Integer.parseInt(province.getValue(GEOZONE.CODE)));
+											} catch (NumberFormatException e) {
+												// nothing. If not a number,  not a valid province.
+											}
+										});
+							}
+							Mod190Detail detail = map.get(key);
+							
+							double irpfBase = AonMathUtils.round( salaryData.getValue(SALARY.IRPF_BASE));
+							if (AonStringUtils.equals("02876047N",document)) {
+								System.out.println( salaryData.getValue(SALARY.IRPF_BASE) + " **** " + irpfBase );
+							}
+							double moneyIrpfBase = AonMathUtils.round( salaryData.getValue(SALARY.MONEY_IRPF_BASE));
+							double inKindIrpfBase = AonMathUtils.round( salaryData.getValue(SALARY.INKIND_IRPF_BASE));
+							double totalIrpf = AonMathUtils.round( salaryData.getValue(SALARY.TOTAL_IRPF));
+							double socialSecurityContributions = AonMathUtils.round( salaryData.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS));
+							double moneyQuota = 0;
+							double inKindQuota = 0;
+							
+							if (inKindIrpfBase == 0.0) {
+								moneyIrpfBase = irpfBase;
+								moneyQuota = totalIrpf; 	
+								inKindQuota = 0;
+							} else {
+								moneyQuota = AonMathUtils.round(moneyIrpfBase * totalIrpf / irpfBase);
+								inKindQuota = AonMathUtils.round(totalIrpf - moneyQuota);
+							}
+							
+							detail.setKey(Mod1902015Key.A.getValue());
+							if (mod190.getYear() == 2015) {
+								detail.setSubKey("01");
+							} 
+							detail.setPerception(AonMathUtils.round( detail.getPerception() + moneyIrpfBase ));
+							detail.setRetention(AonMathUtils.round( detail.getRetention() + moneyQuota));
+							
+							detail.setInKindPerception(AonMathUtils.round( detail.getInKindPerception() + inKindIrpfBase));
+							detail.setInKindDeposit(AonMathUtils.round( detail.getInKindDeposit() + inKindQuota));
+
+							detail.getIrpfResult().setDeducibleExpense(
+									AonMathUtils.round( detail.getIrpfResult().getDeducibleExpense() + socialSecurityContributions ));
+						});
+		mod190.getDetails().addAll( map.values() );
+	}
 
 }
