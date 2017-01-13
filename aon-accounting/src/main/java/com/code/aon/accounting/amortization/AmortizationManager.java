@@ -283,6 +283,11 @@ public class AmortizationManager {
 		}
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
+		if ( a.getInvestAsset() != null && a.getInvestAsset().getActivity() != null) {
+			entry.setActivity(a.getInvestAsset().getActivity()); 
+		} else {
+			entry.setActivity(null);
+		}
 		entry.setAccountPeriod(period);
 		entry.setEntryDate(accountEntryDate);
 		entry.setSecurityLevel( a.getSecurityLevel() );

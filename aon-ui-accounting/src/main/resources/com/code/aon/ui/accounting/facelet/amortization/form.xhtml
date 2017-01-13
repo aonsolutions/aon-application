@@ -73,6 +73,15 @@
 
 				<aon:panelGrid columns="2" style="width: 100%;margin-top:2px;"
 					columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even">
+					
+					<aon:outputLabel for="Invoice_investAsset"
+						value="#{bundle.accounting_invest_asset}" />
+					<aon:selectOneMenu id="Amortization_investAsset"
+						value="#{amortization.to.investAsset}" ajaxSingle="true">
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{amortization.investAssets}" />
+					</aon:selectOneMenu>
+					
 					<aon:outputLabel for="Amortization_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputText id="Amortization_comments"
@@ -131,7 +140,7 @@
 				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>
-		
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />		
 		<ui:include src="modalSale.xhtml" />
 		<ui:include src="modalAddInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />

@@ -1,8 +1,8 @@
 package com.code.aon.ui.accounting.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
-import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.amortization.AmortizationController;
@@ -36,11 +36,16 @@ public class AmortizationListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
 	}
-	
+
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		AmortizationController ac = (AmortizationController) event.getController();
-		ac.resetInvoices();
+		try {
+			AmortizationController ac = (AmortizationController) event.getController();
+			ac.resetInvoices();
+			ac.synchronize();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(),e);
+		}
 	}
 	
 	

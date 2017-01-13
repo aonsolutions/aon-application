@@ -13,6 +13,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
@@ -23,12 +25,16 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.BasicController;
@@ -37,6 +43,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationController extends BasicController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AmortizationController.class.getName());
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private DataModel investmentInvoices;
@@ -427,6 +434,46 @@ public class AmortizationController extends BasicController {
 			throw new AbortProcessingException(message,e);
 		}
 		resetInvoices();
+	}
+	public void synchronize() throws ManagerBeanException {
+		
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+
+			Amortization am = (Amortization) getTo();
+			am = (Amortization) getManagerBean().get( am.getId() );
+			am.getDetails();
+			setTo( am );
+			
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			String msg = "No se pudo generar el apunte contable. " + e.getMessage();
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+	
+	public List<SelectItem> getInvestAssets() throws ManagerBeanException {
+		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		return isNevv()?companyCollections.getActiveCompanyInvestAssets():companyCollections.getCompanyInvestAssets();
 	}
 	
 }

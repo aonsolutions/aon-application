@@ -101,15 +101,28 @@
 	
 			<aon:outputText value="#{bundle.accounting_fixed_asset_account}" />
 			<aon:panelGroup id="fixedAssetAccount" styleClass="aon-nowrap">
+			<!--  
 				<aon:outputText rendered="#{!amortization.nevv}"
 					value="#{amortization.to.fixedAssetAccount.fullDescription}" />
+			-->
+				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupTo" value="#{amortization.to.fixedAssetAccount}" />
+					<ui:param name="lookupRendered" value="#{!amortization.nevv}" />
+					<ui:param name="idRequired" value="true" />
+					<ui:param name="lookupSuffix" value="fixedAsset" />
+				</ui:include>
+			
+				
 				<aon:selectOneMenu id="Amortization_fixedAssetAccount"
 					rendered="#{amortization.nevv and amortization.to.amortizationType != null}"
 					value="#{amortization.to.fixedAssetAccount}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{amortization.fixedAssetAccounts}" />
 				</aon:selectOneMenu>
+				
 				<aon:outputText rendered="#{!amortization.nevv and amortization.to.amortizationType == null}" value="&#160;" />
+				
 				<aon:commandButton
 					value="&#160;"
 					title="#{bundle.account_synchronize}"
@@ -120,14 +133,25 @@
 					reRender="AmortizationData"
 					actionListener="#{amortization.onFixedAssetAccountSynchronize}">
 				</aon:commandButton>
+				
 			</aon:panelGroup>
 				
 	
 			<aon:outputText
 				value="#{bundle.accounting_accumulated_account}" />
 			<aon:panelGroup id="accumulatedAccount" styleClass="aon-nowrap">
+			<!-- 
 				<aon:outputText rendered="#{!amortization.nevv}"
 					value="#{amortization.to.accumulatedAccount.fullDescription}" />
+			 -->
+				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupTo" value="#{amortization.to.accumulatedAccount}" />
+					<ui:param name="lookupRendered" value="#{!amortization.nevv}" />
+					<ui:param name="idRequired" value="true" />
+					<ui:param name="lookupSuffix" value="accumulatedAccount" />				
+				</ui:include>
+			 
 				<aon:selectOneMenu id="Amortization_accumulatedAccount"
 					rendered="#{amortization.nevv and amortization.to.amortizationType != null}"
 					value="#{amortization.to.accumulatedAccount}">
@@ -152,8 +176,17 @@
 			<aon:outputText
 				value="#{bundle.accounting_amortization_alloc_account}" />
 			<aon:panelGroup id="allocationAccount" styleClass="aon-nowrap">
+				<!-- 
 				<aon:outputText rendered="#{!amortization.nevv}"
 					value="#{amortization.to.allocationAccount.fullDescription}" />
+				 -->
+				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupTo" value="#{amortization.to.allocationAccount}" />
+					<ui:param name="lookupRendered" value="#{!amortization.nevv}" />
+					<ui:param name="idRequired" value="true" />
+					<ui:param name="lookupSuffix" value="allocationAccount" />				
+				</ui:include>
 				<aon:selectOneMenu id="Amortization_allocationAccount"
 					rendered="#{amortization.nevv and amortization.to.amortizationType != null}"
 					value="#{amortization.to.allocationAccount}">
