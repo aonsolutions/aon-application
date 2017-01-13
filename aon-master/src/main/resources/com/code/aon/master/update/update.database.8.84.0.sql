@@ -5,7 +5,7 @@
 
 BEGIN;
 
-CREATE TABLE `carrier_list` ( 
+CREATE TABLE `carrier_packing` ( 
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la hoja de ruta',
   `domain` int(4) NOT NULL COMMENT 'Identificador del dominio',
   `series` char(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Serie de la hoja de ruta',
@@ -19,18 +19,21 @@ CREATE TABLE `carrier_list` (
   `number_plate` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de matricula del vehiculo',
   `driver_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del conductor',
   `driver_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de documento del conductor',
-  `source` tinyint(2) DEFAULT NULL default '0' COMMENT 'Origen',
-  `source_id` int(4) DEFAULT NULL default '0' COMMENT 'Identificador del origen',
   `creation_user` varchar(16) collate latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) collate latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
-  KEY `IDX_CARRIER_LIST_DOMAIN` (`domain`),
-  KEY `IDX_CARRIER_LIST_CARRIER` (`carrier`),
-  CONSTRAINT `FK_CARRIER_LIST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_CARRIER_LIST_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`)
+  KEY `IDX_CARRIER_PACKING_DOMAIN` (`domain`),
+  KEY `IDX_CARRIER_PACKING_CARRIER` (`carrier`),
+  CONSTRAINT `FK_CARRIER_PACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CARRIER_PACKING_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hojas de ruta';
+
+ALTER TABLE `sales` ADD `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la hoja de ruta';
+ALTER TABLE `purchase` ADD `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la hoja de ruta';
+ALTER TABLE `delivery` ADD `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la hoja de ruta';
+ALTER TABLE `income` ADD `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la hoja de ruta';
 
 ALTER TABLE `sales_detail` ADD `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega';
 ALTER TABLE `purchase_detail` ADD `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega';
