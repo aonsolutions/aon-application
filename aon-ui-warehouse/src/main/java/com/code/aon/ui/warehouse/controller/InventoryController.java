@@ -156,8 +156,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
-		if(user.contains("cau="))
-			user = user.substring(4);
+		if(user.contains("=")){
+			Integer index = user.indexOf("=");
+			user = user.substring(index + 1);
+		}
 		Integer userId = AON.getUser(domainName, domainId, user).getId();
 		System.out.println(userId);
 		Integer[] array = AON.getUserScopes(domainName, domainId, user, userId);
