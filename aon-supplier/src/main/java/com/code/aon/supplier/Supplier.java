@@ -1,6 +1,7 @@
 package com.code.aon.supplier;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,9 +14,16 @@ import org.hibernate.annotations.Where;
 
 import com.code.aon.AonVersion;
 import com.code.aon.account.IAccount;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.Company;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
@@ -23,6 +31,7 @@ import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.supplier.enumeration.SupplierStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.SupplierDB;
 
 @Entity
@@ -30,6 +39,8 @@ import com.esferalia.aon.entity.master.SupplierDB;
 public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopable, IAccount, ITariffable, IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+	private Boolean surcharge;
 
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	private Set<RegistryItem> items = new HashSet<RegistryItem>();
@@ -67,7 +78,20 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 
 	@Transient
 	public boolean isSurcharge() {
-		return false;
+		if (surcharge == null) {
+			surcharge = false;
+			try {
+				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(companyBean.getFieldName(IEntityAlias.COMPANY_DOMAIN), DomainManager.getCurrentDomain());
+				List<ITransferObject> companyList = companyBean.getList(criteria, 0, 1);
+				if (companyList.size() > 0) {
+					Company company = (Company)companyList.get(0);
+					surcharge = company.isSurcharge();
+				}
+			} catch (ManagerBeanException ex) {}
+		}
+		return surcharge;
 	}
 
 	@Transient
