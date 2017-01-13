@@ -154,10 +154,11 @@ public class OfferInvoicingManager {
 			invoiceDetail.setQuantity(offerDetail.getQuantity());
 			invoiceDetail.setPrice(offerDetail.getPrice());
 			invoiceDetail.setDiscountExpression(offerDetail.getDiscountExpression());
-			invoiceDetail.setWorkPlace(offer.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.OFFER);
 			invoiceDetail.setSourceId(offerDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.setSeller(offer.getSeller());
+			invoiceDetail.setWorkPlace(offer.getWorkPlace());
 			invoiceDetail.getInvoice().setUpdateEnabled(line == offerDetailList.size());
 			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);

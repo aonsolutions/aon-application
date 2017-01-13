@@ -153,10 +153,11 @@ public class SalesInvoicingManager {
 			invoiceDetail.setQuantity(salesDetail.getQuantity());
 			invoiceDetail.setPrice(salesDetail.getPrice());
 			invoiceDetail.setDiscountExpression(salesDetail.getDiscountExpression());
-			invoiceDetail.setWorkPlace(sales.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.SALES);
 			invoiceDetail.setSourceId(salesDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+			invoiceDetail.setSeller(sales.getSeller());
+			invoiceDetail.setWorkPlace(sales.getWorkPlace());
 			invoiceDetail.getInvoice().setUpdateEnabled(line == salesDetailList.size());
 			invoiceDetailBean.restoreNullSubPOJOs(invoiceDetail);
 			invoiceDetailBean.insert(invoiceDetail);

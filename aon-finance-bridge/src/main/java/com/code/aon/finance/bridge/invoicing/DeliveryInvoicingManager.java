@@ -133,9 +133,11 @@ public class DeliveryInvoicingManager {
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), deliveryId);
 		criteria.addNotNullExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_SALES_DETAIL_ID));
 		criteria.addOrder(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
-		List<ITransferObject> deliveryDetailList = deliveryDetailBean.getList(criteria, 0, 1);
-		if (deliveryDetailList.size() > 0) {
-			return ((DeliveryDetail)deliveryDetailList.get(0)).getSalesDetail().getSales().getSeller();
+		for (ITransferObject ito : deliveryDetailBean.getList(criteria)) {
+			DeliveryDetail deliveryDetail = (DeliveryDetail)ito;
+			if (deliveryDetail.getSalesDetail().getSales().getSeller() != null) {
+				return deliveryDetail.getSalesDetail().getSales().getSeller();
+			}
 		}
 		return null;
 	}
