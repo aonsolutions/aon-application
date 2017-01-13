@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationRoom;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationService;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationServiceDetail;
+import com.esferalia.aon.occam.api.model.project.ReservationCheckStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 
 public class PMSDAO {
@@ -288,8 +289,12 @@ public class PMSDAO {
 	}
 	
 	public static Stream<Integer> getFailPreauthorizationProjectIdStream(AONContext ctx){
-		return ctx.getDslContext().select(PROJECT_ATTACH.PROJECT).from(PROJECT_ATTACH)
-				.where(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-CHECK-NO-P")).fetch().stream().map(f -> f.value1());
+		return ctx.getDslContext().select(PROJECT_RESERVATION.PROJECT)
+			.from(PROJECT_RESERVATION).join(PROJECT_ATTACH).on(PROJECT_RESERVATION.PROJECT.eq(PROJECT_ATTACH.PROJECT))
+			.where(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-CHECK-NO-P"))
+				.and(PROJECT_RESERVATION.CHECK_STATUS.ne(ReservationCheckStatus.CANCEL_NO_INVOICEABLE.value()))
+				.and(PROJECT_RESERVATION.CHECK_STATUS.ne(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE.value()))
+			.fetch().stream().map(f -> f.value1());
 	}
 
 	public static void updateToken(AONContext ctx, Integer projectId, String token){
