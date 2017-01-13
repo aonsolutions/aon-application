@@ -47,6 +47,8 @@
 	<table-filter match-name="elaboration" exclude="true" />
 	<table-filter match-name="elaboration_detail" exclude="true" />
 	<table-filter match-name="elaboration_detail_composition" exclude="true" />
+	
+	<table-filter match-name="carrier_list" exclude="true" />
 
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
