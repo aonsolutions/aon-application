@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
 import static com.esferalia.aon.jooq.tables.ElaborationDetail.ELABORATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORATION_DETAIL_COMPOSITION;
@@ -180,6 +181,12 @@ public class ElaborationDAO {
 				.where(ELABORATION_PROPERTIES.getConditions(filter)).execute();
 	}
 	
+	public static int deleteElaboration(AONContext ctx,
+			Elaboration elaboration) {
+		return ctx.getDslContext().delete(ELABORATION)
+				.where(ELABORATION.ID.eq(elaboration.getId())).execute();
+	}
+	
 	
 	/*
 	 * ELABORATION DETAIL
@@ -274,6 +281,12 @@ public class ElaborationDAO {
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
 				.execute();
 	}
+
+	public static int deleteElaborationDetail(AONContext ctx,
+			ElaborationDetail detail) {
+		return ctx.getDslContext().delete(ELABORATION_DETAIL)
+				.where(ELABORATION_DETAIL.ID.eq(detail.getId())).execute();
+	}
 	
 	
 	/*
@@ -311,8 +324,10 @@ public class ElaborationDAO {
 				.getDslContext()
 				.select()
 				.from(ELABORATION_DETAIL_COMPOSITION)
-				.where(ELABORATION_DETAIL_COMPOSITION.ID
-						.eq(elaborationDetailCompositionId)).limit(1)
+				.where(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(
+						ctx.getDomainId()).and(
+						ELABORATION_DETAIL_COMPOSITION.ID
+								.eq(elaborationDetailCompositionId))).limit(1)
 				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
 				.map(new FullElaborationDetailCompositionFiller()).findFirst()
 				.orElse(new ElaborationDetailComposition());
@@ -389,14 +404,41 @@ public class ElaborationDAO {
 						.getConditions(filter)).execute();
 	}
 	
+	public static int deleteElaborationDetailComposition(AONContext ctx,
+			ElaborationDetailComposition composition) {
+		return ctx
+				.getDslContext()
+				.delete(ELABORATION_DETAIL_COMPOSITION)
+				.where(ELABORATION_DETAIL_COMPOSITION.ID.eq(composition.getId()))
+				.execute();
+	}
+	
 
 	
 	public static int getSerieMaxNumber(AONContext ctx, String series) {
 		try {
 			return ctx.getDslContext().select(DSL.max(ELABORATION.NUMBER))
-					.from(ELABORATION).fetchOne().value1();
+					.from(ELABORATION)
+					.where(ELABORATION.DOMAIN.eq(ctx.getDomainId())).fetchOne()
+					.value1();
 		} catch (NullPointerException e) {
 			return 0;
+		}
+	}
+	
+	public static String getCustomerItemCode(AONContext ctx, Integer itemId,
+			Integer customerId) {
+		try {
+			return ctx
+					.getDslContext()
+					.select(RITEM.CODE)
+					.from(RITEM)
+					.where(RITEM.DOMAIN.eq(ctx.getDomainId())
+							.and(RITEM.ITEM.eq(itemId))
+							.and(RITEM.REGISTRY.eq(customerId)))
+					.orderBy(RITEM.PRIORITY).limit(1).fetchOne().value1();
+		} catch (NullPointerException e) {
+			return null;
 		}
 	}
 	

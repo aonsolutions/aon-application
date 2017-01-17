@@ -573,12 +573,12 @@
 	
 	<!-- Ingenet Servlet -->
 	<servlet>
-		<servlet-name>IngenetSalesServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.ingenet.servlet.IngenetSalesServlet</servlet-class>
+		<servlet-name>IngenetElaborationServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.ingenet.servlet.IngenetElaborationServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>IngenetSalesServlet</servlet-name>
-		<url-pattern>/ingenet/sales</url-pattern>
+		<servlet-name>IngenetElaborationServlet</servlet-name>
+		<url-pattern>/ingenet/elaboration</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>

@@ -25,7 +25,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 
-
+@Deprecated
 public class IngenetDeliveryManager {
 
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

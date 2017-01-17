@@ -27,7 +27,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-
+@Deprecated
 public class IngenetSalesManager {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetSalesManager.class.getName());
