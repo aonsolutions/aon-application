@@ -7,21 +7,21 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public enum AccountingRegistryType implements Serializable {
 	
-	CREDITOR ("Acreedor",InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "410"
+	CREDITOR ("Acreedor",InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "4100"
 			, new IAccountingRegistryTypeVisitorWalker() {
 				@Override
 				public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
 					visitor.visitCreditor(reg);
 				}
 			})
-	,SUPPLIER ("Proveedor",InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "400"
+	,SUPPLIER ("Proveedor",InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "4000"
 		,new IAccountingRegistryTypeVisitorWalker() {
 			@Override
 			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
 				visitor.visitSupplier(reg);
 			}
 		})
-	,CUSTOMER ("Cliente",InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "430"
+	,CUSTOMER ("Cliente",InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "4300"
 		, new IAccountingRegistryTypeVisitorWalker() {
 			@Override
 			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
