@@ -184,7 +184,8 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if (event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3) {
+				if ((event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3)
+				 || (event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS && AonStringUtils.PLUS.equals(accountingRegistryTextBox.getValue()))) {
 					showDialog(domainName,domain,config);
 				}
 			}
