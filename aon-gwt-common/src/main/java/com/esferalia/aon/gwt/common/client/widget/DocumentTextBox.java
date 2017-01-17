@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.TextBox;
 public class DocumentTextBox extends TextBox {
 
 	public DocumentTextBox() {
-		setVisibleLength(9);
-		setMaxLength(9);
+		setVisibleLength(11);
+		setMaxLength(15);
 		setStyleName(AON.AON_CSS.aonInputText());
 		addValueChangeHandler( new ValueChangeHandler<String>() {
 
