@@ -374,6 +374,24 @@ public interface Properties {
 		Property<Integer> getUserIdProperty();
 	}
 	
+	public interface RegistryAddressProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Byte> getTypeProperty();	
+		Property<String> getRecipientProperty();
+		Property<String> getStreetTypeProperty();
+		Property<String> getAddressProperty();
+		Property<String> getAddress2Property();
+		Property<String> getAddress3Property();
+		Property<String> getNumberProperty();
+		Property<String> getZipProperty();
+		Property<String> getCityProperty();
+		Property<Integer> getGeozoneProperty();
+		Property<String> getAliasProperty();
+		Property<String> getMunicipalityCodeProperty();
+	}
+	
 	public interface RegistryMediaProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

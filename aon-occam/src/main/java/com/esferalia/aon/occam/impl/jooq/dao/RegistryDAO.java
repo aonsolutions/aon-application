@@ -37,8 +37,10 @@ import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
+import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -108,6 +110,31 @@ public class RegistryDAO {
 		@Override public Property<String> getAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.CODE);}
 		@Override public Property<String> getAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);}
 	}
+	
+	private static final RAddressPropertiesDAO RADDRESS_PROPERTIES = new RAddressPropertiesDAO();
+	private static class RAddressPropertiesDAO implements RegistryAddressProperties {
+		private Condition[] getConditions(RegistryAddressFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.REGISTRY);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RADDRESS.TYPE);}
+		@Override public Property<String> getRecipientProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.RECIPIENT);}
+		@Override public Property<String> getStreetTypeProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.STREET_TYPE);}
+		@Override public Property<String> getAddressProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ADDRESS);}
+		@Override public Property<String> getAddress2Property() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ADDRESS2);}
+		@Override public Property<String> getAddress3Property() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ADDRESS3);}
+		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.NUMBER);}
+		@Override public Property<String> getZipProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ZIP);}
+		@Override public Property<String> getCityProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.CITY);}
+		@Override public Property<Integer> getGeozoneProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.GEOZONE);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ALIAS);}
+		@Override public Property<String> getMunicipalityCodeProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.MUNICIPALITY_CODE);}
+	}
+	
 	
 	public static Category getCategory(AONContext ctx, Integer categoryId){
 		return ctx.getDslContext()
@@ -520,6 +547,7 @@ public class RegistryDAO {
 		@Override public Property<Byte> getNoteTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.NOTE_TYPE);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.SECURITY_LEVEL);}
 	}
+
 	
 	public static Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter){
 		return ctx.getDslContext().select().from(RNOTE).where(RNOTE_PROPERTIES.getConditions(filter))
@@ -581,6 +609,13 @@ public class RegistryDAO {
 	public static Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId){
 		return ctx.getDslContext().select().from(RADDRESS)
 				.where(RADDRESS.REGISTRY.eq(registryId))
+				.fetchInto(RADDRESS).stream().map(new RAddressFiller());
+	}
+
+	public static Stream<RAddress> getRAddressStream(AONContext ctx,
+			RegistryAddressFilter filter) {
+		return ctx.getDslContext().select().from(RADDRESS)
+				.where(RADDRESS_PROPERTIES.getConditions(filter))
 				.fetchInto(RADDRESS).stream().map(new RAddressFiller());
 	}
 	
@@ -664,6 +699,24 @@ public class RegistryDAO {
 		public Customer apply(Record r) {
 			return new Customer()
 					.setId(r.getValue(CUSTOMER.REGISTRY))
+					.setAccount(r.getValue(CUSTOMER.ACCOUNT))
+					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
+					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
+					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED))
+					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED))
+					.setDomain(r.getValue(CUSTOMER.DOMAIN))
+					.seteInvoice(r.getValue(CUSTOMER.E_INVOICE))
+					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
+					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
+					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED))
+					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY)))
+					.setScope(r.getValue(CUSTOMER.SCOPE))
+					.setStatus(CustomerStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
+					.setSurcharge(r.getValue(CUSTOMER.STATUS))
+					.setTariff(r.getValue(CUSTOMER.TARIFF))
+					.setTransaction(r.getValue(CUSTOMER.TRANSACTION))
+					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING))
 					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
