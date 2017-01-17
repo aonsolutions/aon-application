@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectCommercialProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
@@ -140,6 +141,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface SignatureFilter{
 		Filter filter(SignatureProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface RegistryAddressFilter{
+		Filter filter(RegistryAddressProperties properties);
 	}
 	
 	@FunctionalInterface
