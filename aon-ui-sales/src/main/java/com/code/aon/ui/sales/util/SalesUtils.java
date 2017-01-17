@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -51,8 +52,12 @@ import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Elaboration;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
+import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
 public class SalesUtils {
@@ -255,8 +260,47 @@ public class SalesUtils {
 		}
 	}
 	
-	public void createManufacture(Sales sales) {
+	public void createElaboration(SalesDetail salesDetail) {
 //		TODO method:createManufacture
+		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(),
+				salesDetail.getDomain(), AonUtil.getRemoteUser());
+		
+		String series = salesDetail.getSales().getSeries();
+		int number = ElaborationDAO.getSerieMaxNumber(ctx, series);
+		number++;
+		
+		Elaboration elaboration = new Elaboration();
+		elaboration.setDomain(salesDetail.getDomain());
+		elaboration.setSeries(series);
+		elaboration.setNumber(number);
+		elaboration.setDate(new Date());
+		elaboration.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(salesDetail.getItem().getId()));
+		elaboration.setWarehouse(null);
+		elaboration.setQuantity(salesDetail.getQuantity());
+		elaboration.setStatus(ElaborationStatus.PENDING.value());
+		elaboration.setComments(salesDetail.getSales().getComments());
+		elaboration.setSource(ElaborationSource.SALES.value());
+		elaboration.setSourceId(salesDetail.getId());
+		
+		int elaborationId = ElaborationDAO.insertElaboration(ctx, elaboration);
+		
+		// TODO
+//		salesDetail.getItem().getCompositions().forEach(p -> {
+//			
+//		});
+		
+	}
+	
+
+	public List<SalesDetail> getManufacturableList(Sales sales) {
+		return sales
+				.getDetailList()
+				.stream()
+				.map(to -> (SalesDetail) to)
+				.filter(detail -> detail.getItem().getProduct()
+						.isManufactured()
+						&& !isManufactureDone(detail))
+				.collect(Collectors.toList());
 	}
 	
 	@Deprecated
