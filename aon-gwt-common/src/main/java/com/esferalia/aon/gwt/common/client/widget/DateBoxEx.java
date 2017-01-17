@@ -103,6 +103,7 @@ public class DateBoxEx extends com.google.gwt.user.datepicker.client.DateBox {
 
 	public DateBoxEx() {
 		super(new DatePicker(), null, DEFAULT_FORMAT);
+		setFireNullValues(true);
 		setStyleName(AON.AON_CSS.aonInputText());
 		setWidth("80px");
 	}
