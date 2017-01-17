@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>8.85-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.ingenet.api</artifactId>
+	<name>AON INGENET API</name>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.igormaznitsa</groupId>
+				<artifactId>jcp</artifactId>
+				<executions>
+					<execution>
+						<id>preprocessSources</id>
+						<phase />
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source-pedidos</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-source-albaranes</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			
+			<!-- ***************************************************** -->
+			<!-- SEPE UPDATE 17/04/2013, ESFERALIA UPDATE 22/05/2013 -->
+			<!-- ***************************************************** -->
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.8.2</version>
+				<executions>
+					<!-- ================================ -->
+					<!-- Esquemas de ficheros a comunicar -->
+					<!-- ================================ -->
+					<execution>
+						<id>generate-pedidos</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/pedidos</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.pedidos</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+<!--  
+								<include>EsquemaContratos50.xsd</include>
+-->
+								<include>EsquemaPedidos.xsd</include>
+							</schemaIncludes>
+<!--  
+							<bindingIncludes>
+	                            <include>../binding.xjb</include>
+	                        </bindingIncludes>
+-->  
+							<forceRegenerate>false</forceRegenerate>
+							<!-- whether old output should be removed, this field should generally be set to "true" -->  
+							<removeOldOutput>true</removeOldOutput>  
+							<!-- generate lots of output -->  
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-albaranes</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/albaranes</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.albaranes</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaAlbaranes.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<args>
+								<param>-npa</param>
+								<arg>-Xinheritance</arg>
+							</args>
+	                        <plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build> 
+</project>

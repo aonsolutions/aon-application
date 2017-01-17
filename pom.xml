@@ -169,6 +169,7 @@
 		<module>aon-audabridge-api</module>
 		<module>aon-pms-api</module>
 		<module>aon-sepe-api</module>
+		<module>aon-ingenet-api</module>
 
 		<!-- UTILITY -->
 		<module>aon-file-format</module>
