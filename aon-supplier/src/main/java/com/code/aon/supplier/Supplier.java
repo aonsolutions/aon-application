@@ -19,11 +19,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
-import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
@@ -31,7 +29,6 @@ import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.supplier.enumeration.SupplierStatus;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.SupplierDB;
 
 @Entity
@@ -82,9 +79,7 @@ public class Supplier extends SupplierDB implements IRegistry, ITaxInfo, IScopab
 			surcharge = false;
 			try {
 				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(companyBean.getFieldName(IEntityAlias.COMPANY_DOMAIN), DomainManager.getCurrentDomain());
-				List<ITransferObject> companyList = companyBean.getList(criteria, 0, 1);
+				List<ITransferObject> companyList = companyBean.getList(null, 0, 1);
 				if (companyList.size() > 0) {
 					Company company = (Company)companyList.get(0);
 					surcharge = company.isSurcharge();
