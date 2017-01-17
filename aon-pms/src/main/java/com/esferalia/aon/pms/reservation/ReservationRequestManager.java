@@ -17,31 +17,6 @@ import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
-import noNamespace.AvailabilitySummaryRecordDocument.AvailabilitySummaryRecord;
-import noNamespace.AvailabilitySummaryRecordsDocument.AvailabilitySummaryRecords;
-import noNamespace.BookingRulesDocument.BookingRules;
-import noNamespace.CancelPenaltyType;
-import noNamespace.CustProfileDocument.CustProfile;
-import noNamespace.ErrorsDocument.Errors;
-import noNamespace.GuestCountsDocument.GuestCounts;
-import noNamespace.HITISMessageDocument;
-import noNamespace.HITISMessageDocument.HITISMessage;
-import noNamespace.HITISOperationType;
-import noNamespace.HITISOperationType.OperationType;
-import noNamespace.PaymentInstructionsDocument.PaymentInstructions;
-import noNamespace.PaymentInstructionsDocument.PaymentInstructions.PaymentInstruction.PaymentMethodType;
-import noNamespace.ProfileDocument.Profile.ProfileType;
-import noNamespace.RateDescriptionsDocument.RateDescriptions.RateDescription;
-import noNamespace.RatePlansDocument.RatePlans;
-import noNamespace.ResProfilesDocument.ResProfiles.ResProfile;
-import noNamespace.ReservationRequestTypeDocument.ReservationRequestType.ReservationRequestType2;
-import noNamespace.ReservationTransactionDocument.ReservationTransaction.ActionCode;
-import noNamespace.ReservationTransactionDocument.ReservationTransaction.ReservationTransactionType;
-import noNamespace.RoomInformationsDocument.RoomInformations;
-import noNamespace.RoomInformationsDocument.RoomInformations.RoomInformation;
-import noNamespace.RoomStaysDocument.RoomStays;
-import noNamespace.RoomStaysDocument.RoomStays.RoomStay;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -72,6 +47,31 @@ import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+
+import noNamespace.AvailabilitySummaryRecordDocument.AvailabilitySummaryRecord;
+import noNamespace.AvailabilitySummaryRecordsDocument.AvailabilitySummaryRecords;
+import noNamespace.BookingRulesDocument.BookingRules;
+import noNamespace.CancelPenaltyType;
+import noNamespace.CustProfileDocument.CustProfile;
+import noNamespace.ErrorsDocument.Errors;
+import noNamespace.GuestCountsDocument.GuestCounts;
+import noNamespace.HITISMessageDocument;
+import noNamespace.HITISMessageDocument.HITISMessage;
+import noNamespace.HITISOperationType;
+import noNamespace.HITISOperationType.OperationType;
+import noNamespace.PaymentInstructionsDocument.PaymentInstructions;
+import noNamespace.PaymentInstructionsDocument.PaymentInstructions.PaymentInstruction.PaymentMethodType;
+import noNamespace.ProfileDocument.Profile.ProfileType;
+import noNamespace.RateDescriptionsDocument.RateDescriptions.RateDescription;
+import noNamespace.RatePlansDocument.RatePlans;
+import noNamespace.ResProfilesDocument.ResProfiles.ResProfile;
+import noNamespace.ReservationRequestTypeDocument.ReservationRequestType.ReservationRequestType2;
+import noNamespace.ReservationTransactionDocument.ReservationTransaction.ActionCode;
+import noNamespace.ReservationTransactionDocument.ReservationTransaction.ReservationTransactionType;
+import noNamespace.RoomInformationsDocument.RoomInformations;
+import noNamespace.RoomInformationsDocument.RoomInformations.RoomInformation;
+import noNamespace.RoomStaysDocument.RoomStays;
+import noNamespace.RoomStaysDocument.RoomStays.RoomStay;
 
 public class ReservationRequestManager implements IReservationConstants {
 
@@ -264,6 +264,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_SIMPLE_AVAILABILITY_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
+			soapRequest.getMimeHeaders().addHeader("Content-Type", "text/xml;charset=UTF-8");
 			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
 			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
@@ -514,11 +515,12 @@ System.out.println(message.toString());
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_BOOKING_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
+			soapRequest.getMimeHeaders().addHeader("Content-Type", "text/xml;charset=UTF-8");
 			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
 			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
-		
+
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
 			return obtainReservationId(hitisDocument.getHITISMessage(), availableRoomStay);
 		} catch (Exception ex) {
@@ -593,6 +595,7 @@ System.out.println(message.toString());
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_BOOKING_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
+			soapRequest.getMimeHeaders().addHeader("Content-Type", "text/xml;charset=UTF-8");
 			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
 			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
