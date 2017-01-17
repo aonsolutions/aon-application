@@ -229,14 +229,27 @@
 						<aon:methodParam name="lookupChangeListener"
 							value="#{purchase.supplierData}" type="lookupChangeListener" />
 					</ui:include>
+					
+					<aon:outputLabel for="Purchase_deliveryDate" 
+						value="#{bundle.aon_date} entrega" />
+					<aon:selectInputDate id="Purchase_deliveryDate"
+						value="#{purchase.linesDeliveryDate}" 
+						disabled="#{!purchase.pending || purchase.nevv || purchaseDetail.model.rowCount eq 0}"						
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-					<aon:outputLabel for="Purchase_scope" 
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Purchase_scope" 
-						value="#{purchase.to.scope}"
-						disabled="true">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</aon:selectOneMenu>
+					<aon:outputLabel for="Purchase_address"
+						value="#{bundle.aon_address}" />
+					<aon:div id="PurchaseAddress">
+						<aon:selectOneMenu id="Purchase_address" 
+							value="#{purchase.to.registryAddress}" rendered="#{purchase.addressCount > 0}"
+							disabled="#{!purchase.pending}">
+							<f:selectItems value="#{purchase.addresses}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel value="#{bundle.registry_no_address_available}"
+							rendered="#{purchase.addressCount == 0}"
+							styleClass="aon-italic" />
+					</aon:div>
 
 					<aon:outputLabel for="Purchase_workPlace" 
 						value="#{bundle.purchase_workplace}" />
@@ -251,6 +264,14 @@
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Purchase_scope" 
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Purchase_scope" 
+						value="#{purchase.to.scope}"
+						disabled="true">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Purchase_warehouse" 
 						value="#{bundle.aon_module_warehouse}" />
 					<aon:selectOneMenu id="Purchase_warehouse"
@@ -261,19 +282,6 @@
 						</c:if>
 						<f:selectItems value="#{purchase.warehouses}" />
 					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Purchase_address"
-						value="#{bundle.aon_address}" />
-					<aon:div id="PurchaseAddress">
-						<aon:selectOneMenu id="Purchase_address" 
-							value="#{purchase.to.registryAddress}" rendered="#{purchase.addressCount > 0}"
-							disabled="#{!purchase.pending}">
-							<f:selectItems value="#{purchase.addresses}" />
-						</aon:selectOneMenu>
-						<aon:outputLabel value="#{bundle.registry_no_address_available}"
-							rendered="#{purchase.addressCount == 0}"
-							styleClass="aon-italic" />
-					</aon:div>
 
 					<aon:outputLabel for="Purchase_defaultPayMethod" 
 						value="#{bundle.finance_payMethod}" />

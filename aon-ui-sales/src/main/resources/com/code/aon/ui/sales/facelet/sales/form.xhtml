@@ -263,11 +263,13 @@
 							value="#{sales.customerData}" type="lookupChangeListener" />
 					</ui:include>
 
-					<aon:outputLabel for="Customer_registry_document" 
-						value="#{bundle.aon_company_document}" />
-					<aon:inputText id="Customer_registry_document" 
-						value="#{sales.to.customer.registry.document}"
-						disabled="true" size="10" />
+					<aon:outputLabel for="Sales_deliveryDate" 
+						value="#{bundle.aon_date} entrega" />
+					<aon:selectInputDate id="Sales_deliveryDate"
+						value="#{sales.linesDeliveryDate}" 
+						disabled="#{!sales.pending || sales.nevv || salesDetail.model.rowCount eq 0}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Sales_address"
 						value="#{bundle.aon_address}" />

@@ -97,6 +97,7 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
+	private Date linesDeliveryDate;
 	private boolean showAuditInfoWindow;
 	private Double listTotal;
 	private PurchaseEmailUtil emailUtil;
@@ -220,6 +221,14 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		this.invoiceDate = invoiceDate;
 	}
 	
+	public Date getLinesDeliveryDate() {
+		return linesDeliveryDate;
+	}
+
+	public void setLinesDeliveryDate(Date linesDeliveryDate) {
+		this.linesDeliveryDate = linesDeliveryDate;
+	}
+
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
 	}

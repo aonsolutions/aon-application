@@ -114,6 +114,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private ProgressionState progressionState;
 	private Integer invoiceId;
 	private BankAccountHelper accountHelper;
+	private Date linesDeliveryDate;
 	
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
@@ -308,6 +309,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			ediImporter = new EdiSalesImporterHandler(this);
 		}
 		return ediImporter;
+	}
+
+	public Date getLinesDeliveryDate() {
+		return linesDeliveryDate;
+	}
+
+	public void setLinesDeliveryDate(Date linesDeliveryDate) {
+		this.linesDeliveryDate = linesDeliveryDate;
 	}
 
 	@Deprecated
@@ -931,20 +940,16 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public void onManufacture(ActionEvent event) {
 		Sales sales = (Sales) this.getTo();
 		SalesUtils utils = new SalesUtils();
-		long manufacturableCount = sales
-				.getDetailList()
-				.stream()
-				.map(to -> (SalesDetail) to)
-				.filter(detail -> detail.getItem().getProduct()
-						.isManufactured()
-						&& !utils.isManufactureDone(detail)).count();
-		if (manufacturableCount <= 0) {
+		List<SalesDetail> manufacturableList = utils.getManufacturableList(sales);
+		if (manufacturableList.size() <= 0) {
 			AonUtil.addErrorMessage("No hay ninguna elaboración pendiente");
 			throw new AbortProcessingException(
 					"No hay ninguna elaboración pendiente");
 		} else {
 			manufacture(sales);
-			utils.createManufacture(sales);
+			manufacturableList.forEach(salesDetail -> {
+				utils.createElaboration(salesDetail);
+			});
 		}
 	}
 	
