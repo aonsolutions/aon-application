@@ -834,8 +834,6 @@ public class InvoiceDAO {
 			if (inv.getRectificationInvoice() != null) {
 				final Invoice rectified = getInvoice(ctx, inv.getRectificationInvoice());
 				if (rectified == null) throw new AonCoreException(AonError.INVOICE_RECTIFIED_NOT_FOUND.getMessage());
-				System.out.println("rectified.getRectificationInvoice() ..: " + rectified.getRectificationInvoice());
-				System.out.println("inv.getId() ..........................: " + rectified.getRectificationInvoice());
 				if (rectified.getRectificationInvoice() != null &&
 						AonNumberUtils.equals(inv.getId(), rectified.getRectificationInvoice())) {
 					// La factura rectificada, solo lo esta una vez, y es por la factura que estamos borrando.

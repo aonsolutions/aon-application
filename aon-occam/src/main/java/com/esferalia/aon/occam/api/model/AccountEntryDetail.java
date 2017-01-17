@@ -138,7 +138,7 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 	}
 
 	public AccountEntryDetail addDebit(double debit) {
-		return setDebit(getDebit() + debit);
+		return setDebit((getDebit() - getCredit()) + debit);
 	}
 
 	public double getCredit() {
@@ -167,7 +167,7 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 		return this;
 	}
 	public AccountEntryDetail addCredit(double credit) {
-		return setCredit(getCredit() + credit);
+		return setCredit((getCredit() - getDebit()) + credit);
 	}
 
 	public Integer getBalancingAccount() {
