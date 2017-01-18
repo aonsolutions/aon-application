@@ -39,6 +39,25 @@
 					value="#{bundle.aon_amount}" />
 				<aon:inputText id="Sales_lines_taxableBase"
 					valueChangeListener="#{controller.addExpression}" size="40" />
+					
+				<aon:outputLabel value="#{bundle.aon_delivery_date}" />
+				<aon:div>
+					<aon:outputLabel for="Sales_lines_deliveryDate-From" 
+						styleClass="aon-form-date-label aon-padding-right"
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectInputDate id="Sales_lines_deliveryDate-From"
+						valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Sales_lines_deliveryDate-To" 
+						styleClass="aon-form-date-label aon-padding-right"
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectInputDate id="Sales_lines_deliveryDate-To"
+						valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</aon:div>
 								
 			</aon:panelGrid>
 		</aon:panelCollapsible>
