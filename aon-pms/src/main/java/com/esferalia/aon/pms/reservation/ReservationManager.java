@@ -241,7 +241,7 @@ public class ReservationManager implements IReservationConstants {
 			String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
 			String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
 			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
-			String token = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), TOKEN_IDISO, null);
+			String token = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), TOKEN_CONEX_FLOW, null);
 			String remarks =  findComments(reservationType.getResGlobalInfo());
 			String prepayTransaction = findPrepayInfo(reservationType.getResGlobalInfo(), BANK_TRANSACTION);
 			String prepayPayment = findPrepayInfo(reservationType.getResGlobalInfo(), PAYMENT_TRANSACTION);
