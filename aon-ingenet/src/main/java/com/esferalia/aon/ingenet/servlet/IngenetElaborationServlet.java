@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -146,8 +147,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		    pedido.getPRODUCTO().setNUMEROSERIE(null);
 		    pedido.getPRODUCTO().setCODIGOBARRAS(item.getBarcode());
 		    pedido.getPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
-			pedido.setCANTIDAD(String.valueOf((int)elaboration.getQuantity()));
-		    pedidos.getPEDIDO().add(pedido);
+		    pedido.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
+			pedidos.getPEDIDO().add(pedido);
 		});
 		return pedidos;
 	}
@@ -176,7 +177,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		datos.getDATOSREGISTRO().getNACIONALIDAD().setDESCRIPCION(null);
 		datos.getDATOSREGISTRO().setTELEFONOFIJO(null);
 		datos.getDATOSREGISTRO().setTELEFONOMOVIL(null);
-		
 		return datos;
 	}
 
@@ -331,7 +331,10 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	}
 	
 	
-	public String convertToXml(Object source, Class<?>... type) {
+	/*
+	 * JAXB
+	 */
+	private String convertToXml(Object source, Class<?>... type) {
         String result;
         StringWriter sw = new StringWriter();
         try {
@@ -346,35 +349,14 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
         return result;
     }
 
-    public String extractValue(String xml, String xpathExpression) {
-        String actual;
-        try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
-            documentBuilderFactory.setIgnoringElementContentWhitespace(true);
-            DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
-
-            byte[] bytes = xml.getBytes("UTF-8");
-            InputStream inputStream = new ByteArrayInputStream(bytes);
-            Document doc = docBuilder.parse(inputStream);
-            XPathFactory xPathFactory = XPathFactory.newInstance();
-            XPath xpath = xPathFactory.newXPath();
-
-            actual = xpath.evaluate(xpathExpression, doc, XPathConstants.STRING).toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return actual;
-    }
-
 	
 
+    
 	public static void main(String[] args) throws Exception {
 		String path = "http://";
-		path += "udapa.aonsolutions.net";
+		path += "udapa.esferalia.net";
 		path += ":8080";
-		path += "/aon-aio/";
+		path += "/aon-aio";
 		path += "/ingenet/elaboration";
 		
 		String user = "ingenet";

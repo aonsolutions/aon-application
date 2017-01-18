@@ -63,13 +63,6 @@
 					<xsd:documentation xml:lang="es">Datos de la direccion de entrega del pedido.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
-			<!--  
-			<xsd:element name="DATOS_PROVEEDOR" type="DATOS_PROVEEDOR_TYPE" minOccurs="0">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Datos del proveedor del pedido</xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-			-->
 			<xsd:element name="FECHA_EMISION" type="FECHA_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Fecha de emision del pedido</xsd:documentation>
@@ -129,6 +122,7 @@
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
+	
 	<xsd:complexType name="DATOS_AGENCIA_TRANSPORTE_TYPE">
 		<xsd:sequence>
 			<xsd:element name="DATOS_REGISTRO" type="DATOS_REGISTRO_TYPE">
@@ -138,6 +132,7 @@
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
+	
 	<xsd:complexType name="DATOS_DIRECCION_TYPE">
 		<xsd:sequence>
 			<xsd:element name="DIRECCION">
@@ -184,6 +179,7 @@
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
+	
 	<xsd:complexType name="DATOS_CENTRO_TRABAJO_TYPE">
 		<xsd:sequence>
 			<xsd:element name="DESCRIPCION">
