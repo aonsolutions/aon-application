@@ -120,6 +120,21 @@ public class AonDateUtils {
 		Date date = c.getTime();
 		return truncate(date, Calendar.DAY_OF_MONTH);
 	}
+	
+	/**
+	 * Devuelve un objecto java.sql.Date para los parámetros indicados sin hora.
+	 * 
+	 * @param date
+	 *            El año de la fecha.
+	 * @return
+	 */
+	public static Date getDateWithoutTime(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.YEAR, getYear(date));
+		c.set(Calendar.MONTH, getMonth(date));
+		c.set(Calendar.DAY_OF_MONTH, getDay(date));
+		return truncate(c.getTime(), Calendar.DAY_OF_MONTH);
+	}
 
 	/**
 	 * <p>
