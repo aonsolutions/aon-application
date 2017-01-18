@@ -6,8 +6,10 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
+import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
@@ -137,12 +139,6 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.deleteRMedia(ctx, registry));
 
 	}
-	
-	@Override
-	public Customer getCustomer(AONContext ctx, Integer registry) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.getCustomer(ctx, registry));
-	}
 
 	@Override
 	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry) {
@@ -156,5 +152,19 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.getRegistryProfileStream(ctx, registry, question));
 	}
 	
+	// -------------------- CUSTOMER
 	
+	@Override
+	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getCustomerStream(ctx, filter));
+	}
+	
+	// -------------------- SELLER
+	
+	@Override
+	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getSellerStream(ctx, filter));
+	}
 }

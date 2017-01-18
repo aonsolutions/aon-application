@@ -14,11 +14,12 @@ import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
 import com.esferalia.aon.gwt.stat.client.panel.GeoChartWrapper.DisplayMode;
 import com.esferalia.aon.gwt.stat.client.util.StatUtils;
-import com.esferalia.aon.occam.api.model.stat.IStatChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.stat.invoice.IInvoiceChartTypeVisitor;
+import com.esferalia.aon.occam.api.model.stat.invoice.InvoiceChartType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -67,7 +68,7 @@ public class StatControlPanel extends MainEntryPoint {
 	interface StatControlPanelBinder extends UiBinder<Widget, StatControlPanel> {
 	}
 
-	private static final StatControlPanelBinder INVOICE_STAT_BINDER = GWT.create(StatControlPanelBinder.class);
+	protected static final StatControlPanelBinder INVOICE_STAT_BINDER = GWT.create(StatControlPanelBinder.class);
 
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -318,7 +319,7 @@ public class StatControlPanel extends MainEntryPoint {
 	
 	protected void paintChart() {
 		excel.setEnabled(false);
-		filter.getParams().getChartType().visit( statChartTypeVisitor );
+		InvoiceChartType.values()[filter.getParams().getChartType()].visit(statChartTypeVisitor);
 		back.setEnabled(stack.size() > 0);
 	}
 
@@ -357,7 +358,7 @@ public class StatControlPanel extends MainEntryPoint {
 	}
 	
 
-	private class StatChartTypeVisitor implements IStatChartTypeVisitor {
+	private class StatChartTypeVisitor implements IInvoiceChartTypeVisitor {
 		
 		protected boolean hasNegativeValues(StatData<String, String, Double> result) {
 			for (String rowKey : result.getMap().keySet()) {
@@ -772,15 +773,6 @@ public class StatControlPanel extends MainEntryPoint {
 			});
 		}
 
-		// -------------------- TASK STAT
-		
-		@Override public void visitTaskByType() {}
-		@Override public void visitTaskBySchedule() {}
-		@Override public void visitTaskByDayOfWeek() {}
-		@Override public void visitTaskByStatus() {}
-		@Override public void visitTaskByMonth() {}
-		@Override public void visitTaskByDay() {}
-		@Override public void visitTaskByTag() {}
 	}
 
 }

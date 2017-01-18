@@ -1,0 +1,59 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
+	
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
+
+<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+<ui:style>
+	
+</ui:style>
+<g:DockLayoutPanel ui:field="dockLayoutPanel">
+	<g:north size="26">
+		<g:FlowPanel height="100%"
+			styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+			<g:HorizontalPanel>
+				<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+						<g:Label text="Proyección de Cuotas" />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel>
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+						<g:Label></g:Label>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="toolbarPanel" styleName="{aonResources.css.aonFindingToolbar}">
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+						<g:Button ui:field='excel'
+							styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
+							text="" />
+						<g:Button ui:field='pdf'
+							styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" 
+							text="{msg.export}" />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:HorizontalPanel>
+		</g:FlowPanel>
+	</g:north>
+	<g:center>
+		<g:DockLayoutPanel ui:field="contentDockLayoutPanel">
+			<g:north size="85">
+				<g:HTMLPanel ui:field="searchContent"/>
+			</g:north>
+			<g:center>
+				<g:SimpleLayoutPanel ui:field="content"/>	
+			</g:center>
+		</g:DockLayoutPanel>
+	</g:center>
+</g:DockLayoutPanel>
+
+</ui:UiBinder>

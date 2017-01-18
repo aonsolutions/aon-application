@@ -15,6 +15,7 @@ import com.code.aon.webservice.issues.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "FinanceServlet", urlPatterns = { "/finance/*",
@@ -73,6 +74,10 @@ public class FinanceServlet extends HttpServlet{
 								object = getBoughtProductList(domain, userName, Integer.parseInt(pathInfo[5]));
 						}
 					}
+					break;
+					
+				case "billing_period": // FEE
+					object = getBillingPeriodList();
 					break;
 				default:
 					break;
@@ -160,6 +165,17 @@ public class FinanceServlet extends HttpServlet{
     			json.put("array", ar);
     			array.put(json);
     		});
+    	return array;
+    }
+    
+    private JSONArray getBillingPeriodList(){
+    	JSONArray array = new JSONArray();
+    	for (BillingPeriod period : BillingPeriod.values()) {
+			JSONObject json = new JSONObject();
+			json.put("id", period.value());
+			json.put("name", ToJSON.getPeriod(period));
+			array.put(json);
+		}
     	return array;
     }
 }

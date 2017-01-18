@@ -19,5 +19,4 @@ public interface ICommercial {
 	public CommercialActivity getCommercialActivity(AONContext ctx, CommercialActivityFilter filter);
 	public LinkedList<CommercialActivity> getCommercialActivityList(AONContext ctx, CommercialActivityFilter filter);
 
-	public Seller getSeller(AONContext ctx, Integer sellerId);
 }

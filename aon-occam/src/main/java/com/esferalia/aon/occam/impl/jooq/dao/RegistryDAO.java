@@ -12,7 +12,9 @@ import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rprofile.RPROFILE;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.sql.Date;
@@ -36,11 +38,14 @@ import com.esferalia.aon.jooq.tables.records.RnoteRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
+import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
+
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -48,6 +53,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -65,6 +71,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -93,7 +101,9 @@ public class RegistryDAO {
 		CRE_TYPE.setInline(true);
 	}
 	
-	
+	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
+	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
+
 	private static final AccountingRegistryPropertiesDAO ACCOUNTING_REGISTRY_PROPERTIES = new AccountingRegistryPropertiesDAO();
 	private static class AccountingRegistryPropertiesDAO implements AccountingRegistryProperties {
 		private Condition[] getConditions(AccountingRegistryFilter filter) {
@@ -134,7 +144,6 @@ public class RegistryDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ALIAS);}
 		@Override public Property<String> getMunicipalityCodeProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.MUNICIPALITY_CODE);}
 	}
-	
 	
 	public static Category getCategory(AONContext ctx, Integer categoryId){
 		return ctx.getDslContext()
@@ -688,9 +697,11 @@ public class RegistryDAO {
 	
 	// ------------------- CUSTOMER
 	
-	public static Customer getCustomer(AONContext ctx, Integer registry){
-		return ctx.getDslContext().select().from(CUSTOMER).where(CUSTOMER.REGISTRY.eq(registry))
-				.fetch().stream().map(new CustomerFiller()).findFirst().orElse(new Customer());
+	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter){
+		return ctx.getDslContext().select().from(CUSTOMER)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+				.where(CUSTOMER_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new CustomerFiller());
 	}
 	
 	public static class CustomerFiller  implements Function<Record, Customer> {
@@ -710,7 +721,8 @@ public class RegistryDAO {
 					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
 					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED))
-					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY)))
+					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY))
+							.setName(r.getValue(REGISTRY.NAME)))
 					.setScope(r.getValue(CUSTOMER.SCOPE))
 					.setStatus(CustomerStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
 					.setSurcharge(r.getValue(CUSTOMER.STATUS))
@@ -718,6 +730,52 @@ public class RegistryDAO {
 					.setTransaction(r.getValue(CUSTOMER.TRANSACTION))
 					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING))
 					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
+		}
+	}
+	
+	// ------------------- SELLER
+
+	public static Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter){
+		return ctx.getDslContext().select()
+				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
+				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.where(SELLER_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new FullSellerFiller());
+	}
+	
+	public static Stream<Seller> getSellers(AONContext ctx){
+		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
+				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,
+				REGISTRY.NATIONALITY, REGISTRY.SECURITY_LEVEL)
+				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
+				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.where(SELLER.DOMAIN.eq(ctx.getDomainId()))
+				.and(SecurityDAO.getUserScopesCondition(ctx, SELLER.SCOPE))
+				.and(SecurityDAO.getSecurityLevelCondition(ctx, REGISTRY.SECURITY_LEVEL))
+				.orderBy( REGISTRY.NAME )
+				.fetch()
+				.stream()
+				.map(new FullSellerFiller());
+	}
+	
+	private static class FullSellerFiller implements Function<Record, Seller> {
+		@Override
+		public Seller apply(Record r) {
+			return new Seller()
+					.setDomain(r.getValue(SELLER.DOMAIN))
+					.setId(r.getValue(SELLER.REGISTRY))
+					.setActive(r.getValue(SELLER.STATUS) == 1)
+					.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
+					.setScope(r.getValue(SCOPE.DESCRIPTION))
+					
+					.setRegistryAlias(r.getValue(REGISTRY.ALIAS))
+					.setRegistryConfidential(r.getValue(REGISTRY.SECURITY_LEVEL) == 1)
+					.setRegistryDocument(r.getValue(REGISTRY.DOCUMENT))
+					.setRegistryDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+					.setRegistryName(r.getValue(REGISTRY.NAME))
+					.setRegistryDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)])
+					.setRegistryNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY)))
+					;			
 		}
 	}
 	

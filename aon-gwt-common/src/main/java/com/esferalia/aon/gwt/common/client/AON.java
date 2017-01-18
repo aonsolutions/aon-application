@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.css.AonCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.AonHubMessages;
@@ -31,6 +32,8 @@ public class AON {
 	public static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	public static final AonCSS AON_CSS = GWT.<AonResources> create(AonResources.class).css();
 	public static final GWTResources GWT_RESOURCES = GWT.create(GWTResources.class);
+	public static final AonGwtIssuesResources ISSUES_RESOURCES = GWT.create(AonGwtIssuesResources.class);
+
 	public static final CellTable.Resources AON_CELL_TABLE_STYLE = GWT.create(AonCellTable.class);
 	public static AonCalendarCSS Calendar_CSS = GWT.<AonCalendarResources> create(AonCalendarResources.class).calendar();
 	
@@ -187,6 +190,7 @@ public class AON {
 
 	public static void ensureInjected() {
 		GWT_RESOURCES.css().ensureInjected();
+		ISSUES_RESOURCES.css().ensureInjected();
 		AON_CSS.ensureInjected();
 	}
 

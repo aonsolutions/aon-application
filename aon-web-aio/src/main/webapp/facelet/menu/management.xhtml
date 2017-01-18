@@ -190,7 +190,18 @@
 												target="#{feePrintSearch.anual}" />
 										</aon:commandLink>
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
+									<aon:if test="#{domainSwitcher.betaDomain}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_fee_print_anual"
+												action="gwt_fee_projection"
+												title="#{bundle.finance_fee_print_proy_module}">
+												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="#{bundle.finance_fee_print_proy_module}" />												
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
+									<!-- <aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aon_fee_print_anual"
 											action="feePrint_search-anual"
 											actionListener="#{feePrint.onEditSearch}"
@@ -199,6 +210,7 @@
 												target="#{feePrintSearch.anual}" />
 										</aon:commandLink>
 									</aon:div>
+									 -->
 								</aon:div>
 							</aon:panelGrid>
 								

@@ -155,6 +155,8 @@ public interface Properties {
 		Property<Integer> getInvoicingGroupProperty();
 		Property<Integer> getSellerProperty();
 		Property<Integer> getWorkplaceProperty();
+		
+		Property<Integer> getCategoryProperty();
 	}
 	
 	public interface DepartmentProperties {
@@ -599,6 +601,35 @@ public interface Properties {
 		Property<Byte> getSourceProperty();
 		Property<Byte> getStatusProperty();
 		Property<Date> getStatusDateProperty();
+	}
+	
+	public interface CustomerProperties{
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTariffProperty();
+		Property<Byte> getSurchargeProperty();
+		Property<Byte> getWithholdingProperty();
+		Property<Byte> getTransactionProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getScopeProperty();
+		Property<Byte> getEInvoiceProperty();
+		Property<Integer> getInvoicingGroupProperty();
+		Property<Byte> getProjectGroupedProperty();
+		Property<Byte> getDeliveryGroupedProperty();
+		Property<Byte> getDeliveryValuatedProperty();
+		Property<Integer> getAccountProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+	}
+	
+	public interface SellerProperties{
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getCommissionTypeProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getScopeProperty();
 	}
 
 

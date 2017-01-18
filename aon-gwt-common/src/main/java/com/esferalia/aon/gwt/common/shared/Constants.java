@@ -19,5 +19,6 @@ public interface Constants {
 	public static final String BOE_IMPORT_ENTRY_POINT = "BOEImportForm";
 
 	public static final String ENTRY_POINT_PARAM = "entryPoint";
+	public static final String SUB_ENTRY_POINT_PARAM = "subEntryPoint";
 	public static final String NOT_ASSIGNED = "Sin asignar";
 }

@@ -105,30 +105,9 @@ public class CommercialDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static Stream<Seller> getSellers(AONContext ctx){
-		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
-				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,
-				REGISTRY.NATIONALITY, REGISTRY.SECURITY_LEVEL)
-				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
-				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
-				.where(SELLER.DOMAIN.eq(ctx.getDomainId()))
-				.and(SecurityDAO.getUserScopesCondition(ctx, SELLER.SCOPE))
-				.and(SecurityDAO.getSecurityLevelCondition(ctx, REGISTRY.SECURITY_LEVEL))
-				.orderBy( REGISTRY.NAME )
-				.fetch()
-				.stream()
-				.map(new FullSellerFiller());
-	}
 
-	public static Seller getSeller(AONContext ctx, Integer sellerId){
-		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
-				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,
-				REGISTRY.NATIONALITY, REGISTRY.SECURITY_LEVEL)
-				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
-				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
-				.where(SELLER.REGISTRY.eq(sellerId)).fetch().stream().map(new FullSellerFiller()).findFirst().orElse(new Seller());
-	}
 
+	
 	private static class FullCommercialTrackingFiller implements Function<CommercialTrackingRecord, CommercialTracking> {
 		@Override
 		public CommercialTracking apply(CommercialTrackingRecord r) {
@@ -161,25 +140,6 @@ public class CommercialDAO {
 		}
 	}
 	
-	private static class FullSellerFiller implements Function<Record13<Integer, Integer, Integer, Integer, Byte, String, String, String , String, String, Byte, String, Byte>, Seller> {
-		@Override
-		public Seller apply(Record13<Integer, Integer, Integer, Integer, Byte, String, String, String , String, String, Byte, String, Byte> r) {
-			return new Seller()
-					.setDomain(r.getValue(SELLER.DOMAIN))
-					.setId(r.getValue(SELLER.REGISTRY))
-					.setActive(r.getValue(SELLER.STATUS) == 1)
-					.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
-					.setScope(r.getValue(SCOPE.DESCRIPTION))
-					
-					.setRegistryAlias(r.getValue(REGISTRY.ALIAS))
-					.setRegistryConfidential(r.getValue(REGISTRY.SECURITY_LEVEL) == 1)
-					.setRegistryDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setRegistryDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-					.setRegistryName(r.getValue(REGISTRY.NAME))
-					.setRegistryDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)])
-					.setRegistryNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY)))
-					;			
-		}
-	}
+	
 
 }

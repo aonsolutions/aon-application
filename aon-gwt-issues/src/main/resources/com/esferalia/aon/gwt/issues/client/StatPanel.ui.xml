@@ -28,22 +28,6 @@
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:center>
-	
-	<!-- <g:south size="30">
-		<aon:MinimizePanel ui:field="footPanel"	styleName="{aonResources.css.aonSelector}">
-			<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
-				<g:tab >
-					<g:customHeader styleName="{style.jeje}">
-						<g:HTMLPanel>
-							<i:IronIcon icon="account-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-							<g:InlineLabel text="Información General" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						</g:HTMLPanel>
-					</g:customHeader>
-					<g:ScrollPanel ui:field="generalPanel" styleName="{aonResources.css.aonTextCenter}" />
-				</g:tab>
-			</g:TabLayoutPanel>
-		</aon:MinimizePanel>
-	</g:south> -->
 </g:SplitLayoutPanel>
 
 </ui:UiBinder>

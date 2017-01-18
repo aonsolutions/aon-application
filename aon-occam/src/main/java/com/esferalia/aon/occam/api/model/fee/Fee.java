@@ -16,6 +16,7 @@ public class Fee implements Serializable{
 	private Integer clientId;
 	private Integer domain;
 	private Integer customer;
+	private String customerName;
 	private String product;
 	private Double quantity;
 	private Date startDate;
@@ -99,7 +100,7 @@ public class Fee implements Serializable{
 		return this;
 	}
 	public Double getDiscount() {
-		return discount;
+		return Double.parseDouble(getDiscountExpr());
 	}
 	public Fee setDiscount(Double discount) {
 		this.discount = discount;
@@ -254,6 +255,13 @@ public class Fee implements Serializable{
 	}
 	public Fee setCustomer(Integer customer) {
 		this.customer = customer;
+		return this;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public Fee setCustomerName(String customerName) {
+		this.customerName = customerName;
 		return this;
 	}
 	

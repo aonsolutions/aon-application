@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
-import com.esferalia.aon.occam.api.model.stat.StatChartType;
+import com.esferalia.aon.occam.api.model.stat.task.TaskChartType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -169,9 +169,8 @@ public class StatFilterPanel extends Composite {
 		final ListBox chartType = new ListBox();
 		chartType.setStyleName(AON.AON_CSS.aonMarginRight());
 		chartType.addStyleName(AON.AON_CSS.aonWidth300());
-		for (StatChartType type : StatChartType.values()) {
-			if(type.getType().equals(StatChartType.TASK))
-				chartType.addItem(type.getDescription());
+		for (TaskChartType type : TaskChartType.values()) {
+			chartType.addItem(type.getDescription());
 		}
 		
 		chartType.setSelectedIndex(0);
@@ -179,8 +178,8 @@ public class StatFilterPanel extends Composite {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				Integer init = StatChartType.TASK_BY_STATUS.ordinal();
-				stat.selectStat(StatChartType.values()[chartType.getSelectedIndex() + init]);
+				Integer init = TaskChartType.TASK_BY_STATUS.ordinal();
+				stat.selectStat(TaskChartType.values()[chartType.getSelectedIndex() + init]);
 			}
 		});
 		

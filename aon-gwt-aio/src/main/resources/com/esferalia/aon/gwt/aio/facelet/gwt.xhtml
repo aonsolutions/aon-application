@@ -15,6 +15,7 @@
        content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
 
 	<aon:valueParam name="entryPoint" default="documents" />
+	<aon:valueParam name="subEntryPoint" default="" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
 
@@ -65,6 +66,10 @@
         }
         function getCurrentDomainName() {
         	return "#{gwtDomainName}"
+        }
+     
+        function getSubEntryPoint() {
+        	return "#{subEntryPoint}"
         }
         ]]>
     </script>

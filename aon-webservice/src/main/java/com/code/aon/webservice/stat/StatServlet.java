@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,9 +20,11 @@ import org.json.JSONObject;
 import com.code.aon.webservice.issues.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.stat.StatChartType;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.stat.StatType;
+import com.esferalia.aon.occam.api.model.stat.fee.FeeChartType;
+import com.esferalia.aon.occam.api.model.stat.task.TaskChartType;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -52,6 +54,8 @@ public class StatServlet extends HttpServlet{
 				case "task":
 					object = getTaskStatData(domain, userName, pathInfo[4], getFilter(domain, userName, req));
 					break;
+				case "fee":
+					object = getFeeStatData(domain, userName, params(req));
 				default:
 					break;
 				}
@@ -71,45 +75,43 @@ public class StatServlet extends HttpServlet{
 		}
 	}
 	
+	// -------------------- FEE STAT
+
+	private JSONArray getFeeStatData(Domain domain, String userName, StatParams params) {
+		params.setStatType(StatType.FEE).setChartType(FeeChartType.FEE_TYPE.value());
+		return toJSON(AON.getStatData(domain.getName(), domain.getId(), userName, params));
+	}
+	
 	// -------------------- TASK STAT
 	
 	private JSONArray getTaskStatData(Domain domain, String userName, String by, IssueFilter filter) {
 		switch (by) {
 		case "status":
-			return getTaskStatData(domain, userName, StatChartType.TASK_BY_STATUS, filter);
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_STATUS, filter);
 		case "type":
-			return getTaskStatData(domain, userName, StatChartType.TASK_BY_TYPE, filter);
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_TYPE, filter);
 		case "tag":
-			return getTaskStatData(domain, userName, StatChartType.TASK_BY_TAG, filter);
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_TAG, filter);
 		case "schedule":
-			return getTaskStatData(domain, userName, StatChartType.TASK_BY_SCHEDULE, filter);
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_SCHEDULE, filter);
 		case "day_of_week":
-			return getTaskStatData(domain, userName, StatChartType.TASK_BY_DAY_OF_WEEK, filter);
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_DAY_OF_WEEK, filter);
 		case "month":
-			return getTaskStatData(domain, userName, StatChartType.TASK_BY_MONTH, filter);
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_MONTH, filter);
 		case "day":
-			return getTaskStatData(domain, userName, StatChartType.TASK_BY_DAY, filter);
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_DAY, filter);
 		default:
 			return new JSONArray();
 		}
 	}
 	
-	private JSONArray getTaskStatData(Domain domain, String userName, StatChartType chartType, IssueFilter filter){
-		StatParams params = new StatParams().setChartType(chartType)
+	private JSONArray getTaskStatData(Domain domain, String userName, TaskChartType chartType, IssueFilter filter){
+		StatParams params = new StatParams()
+				.setStatType(StatType.TASK)
+				.setChartType(chartType.value())
 				.setFrom(filter.getFrom()).setTo(filter.getTo())
 				.setIssueFilter(filter);
-		JSONArray array = new JSONArray();
-		StatData<String, String, Double> statData = AON.getStatData(domain.getName(), domain.getId(), userName, params);
-		statData.getMap().keySet().stream().forEach(row -> {
-			statData.getMap().get(row).keySet().stream().forEach(col-> {
-				JSONObject json = new JSONObject();
-				json.put("row", row);
-				json.put("column", col);
-				json.put("quantity", statData.getMap().get(row).get(col));
-				array.put(json);
-			});
-		});
-		return array;
+		return toJSON(AON.getStatData(domain.getName(), domain.getId(), userName, params));
 	}
 
 	private static LinkedList<Integer> getList(String str){
@@ -123,9 +125,18 @@ public class StatServlet extends HttpServlet{
 		return list;
 	}
 
+	private StatParams params(HttpServletRequest req) {
+		StatParams params = new StatParams();
+		params.setFilterMap((HashMap<String, String[]>) req.getParameterMap());
+		if(req.getParameter("from") != null && !req.getParameter("from").equals("")){
+			params.setFrom(new Date(Long.parseLong(req.getParameter("from"))));
+		} else params.setFrom(new Date());
+		return params;
+	}
+	
 	public static IssueFilter getFilter(Domain domain, String userName, HttpServletRequest req){
 		Date from = new Date();from.setHours(0);
-		AonDateUtils.addYears(from, -1);
+		from = AonDateUtils.addYears(from, -1);
 		Date to = new Date();to.setHours(0);
 		try {
 			if(req.getParameter("from") != null && !req.getParameter("from").equals(""))
@@ -136,7 +147,6 @@ public class StatServlet extends HttpServlet{
 			e.printStackTrace();
 		}
 		to = AonDateUtils.addDays(to, 1);
-		
 		LinkedList<Integer> assignee = getList(req.getParameter("asignee"));
 		LinkedList<Integer> workgroup = getList(req.getParameter("workgroup"));
 	
@@ -163,4 +173,17 @@ public class StatServlet extends HttpServlet{
 				.setTo(to);
 	}
 	
+	public JSONArray toJSON(StatData<String, String, Double> statData) {
+		JSONArray array = new JSONArray();
+		statData.getMap().keySet().stream().forEach(row -> {
+			statData.getMap().get(row).keySet().stream().forEach(col-> {
+				JSONObject json = new JSONObject();
+				json.put("row", row);
+				json.put("column", col);
+				json.put("quantity", statData.getMap().get(row).get(col));
+				array.put(json);
+			});
+		});
+		return array;
+	}
 }

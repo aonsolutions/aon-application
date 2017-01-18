@@ -16,6 +16,10 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class Methods {
 	
+	protected String url;
+	protected String domainName;
+	protected String userName;
+	
 	public final String HTTP_GET = "GET";
 	private final String HTTP_POST = "POST";
 	private final String HTTP_DELETE = "DELETE";
@@ -245,6 +249,33 @@ public class Methods {
 			GWT.log(log.toString());
 		}
 	}
+
+	//---------------------- Métodos Get & Set
+	
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	
 	
 	
 }

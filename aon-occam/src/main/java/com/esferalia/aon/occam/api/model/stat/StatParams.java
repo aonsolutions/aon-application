@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.stat;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
@@ -14,11 +15,14 @@ public class StatParams implements Serializable, Cloneable {
 
 	private Date from;
 	private Date to;
-	private StatChartType chartType;
 	private boolean viewAmounts;
 	private IssueFilter issueFilter;
+
+	private StatType statType;
+	private Byte chartType;
 	
 	private LinkedList<StatFilterItem> filterItems; 
+	private HashMap<String, String[]> filterMap;
 	
 	public Date getFrom() {
 		return from;
@@ -38,14 +42,6 @@ public class StatParams implements Serializable, Cloneable {
 		return this;
 	}
 
-	public StatChartType getChartType() {
-		return chartType;
-	}
-
-	public StatParams setChartType(StatChartType chartType) {
-		this.chartType = chartType;
-		return this;
-	}
 	public boolean mustViewAmounts() {
 		return viewAmounts;
 	}
@@ -74,7 +70,34 @@ public class StatParams implements Serializable, Cloneable {
 		this.filterItems = map;
 		return this;
 	}
+
+	public StatType getStatType() {
+		return statType;
+	}
+
+	public StatParams setStatType(StatType statType) {
+		this.statType = statType;
+		return this;
+	}
+
+	public Byte getChartType() {
+		return chartType;
+	}
+
+	public StatParams setChartType(Byte chartType) {
+		this.chartType = chartType;
+		return this;
+	}
 	
+	public HashMap<String, String[]> getFilterMap() {
+		return filterMap;
+	}
+
+	public StatParams setFilterMap(HashMap<String, String[]> filterMap) {
+		this.filterMap = filterMap;
+		return this;
+	}
+
 	public StatParams clone(){
 		return null;
 	}

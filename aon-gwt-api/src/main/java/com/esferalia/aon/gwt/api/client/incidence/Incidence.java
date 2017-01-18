@@ -16,15 +16,19 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Incidence extends Methods{
 	
-	String url;
-	String userName;
 	String repositoryName;
-	String domainName;
 	String organizationName;
 	
 	public Incidence(AonUrlApi url, String accessToken) {
 		this.url = url.getUrl();
 		this.accessToken = accessToken;
+	}
+	
+	public Incidence(String url, String accesToken, String domainName, String userName) {
+		this.url = url;
+		this.accessToken = accesToken;
+		this.domainName = domainName;
+		this.userName = userName;
 	}
 	
 	public Incidence(AonUrlApi url, String accesToken, String userName, String organizationName, String repositoryName) {
@@ -529,22 +533,6 @@ public class Incidence extends Methods{
 	}
 	
 	//---------------------- Métodos Get & Set
-	
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
 
 	public String getRepositoryName() {
 		return repositoryName;
@@ -562,11 +550,4 @@ public class Incidence extends Methods{
 		this.organizationName = organizationName;
 	}
 	
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
 }

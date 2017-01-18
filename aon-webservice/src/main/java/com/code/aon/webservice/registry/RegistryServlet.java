@@ -84,7 +84,7 @@ public class RegistryServlet extends HttpServlet{
 						}
 					} else {
 						// LISTA DE RMEDIA CONDICION DOMAIN
-						getRmediaList(domain, userName);
+						object = getRmediaList(domain, userName);
 					}
 					break;
 				case "rnote": // RNOTE
@@ -102,8 +102,14 @@ public class RegistryServlet extends HttpServlet{
 						}
 					} else {
 						// LISTA DE RMEDIA CONDICION DOMAIN
-						getRnoteList(domain, userName);
+						object = getRnoteList(domain, userName);
 					}
+					break;
+				case "customer": // customer
+					object = getCustomerList(domain, userName);
+					break;
+				case "seller": // customer
+					object = getSellerList(domain, userName);
 					break;
 				default:
 					break;
@@ -184,6 +190,34 @@ public class RegistryServlet extends HttpServlet{
     			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value())))
     		.forEach(rn -> array.put(ToJSON.rnoteToJSON(rn)));
     	return array;
+    }
+    
+    private JSONArray getCustomerList(Domain domain, String login){
+    	JSONArray array = new JSONArray();
+    	AON.getCustomerStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+    		.forEach(customer -> {
+				JSONObject json = new JSONObject();
+				json.put("id", customer.getId());
+				json.put("name", customer.getRegistry().getName());
+				array.put(json);
+    	});
+    	return array;    	
+    }
+    
+    private JSONArray getSellerList(Domain domain, String login){
+    	JSONArray array = new JSONArray();
+    	AON.getSellerStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+    		.forEach(seller -> {
+				JSONObject json = new JSONObject();
+				json.put("id", seller.getId());
+				json.put("name", seller.getRegistryName());
+				array.put(json);
+    	});
+    	return array;    	
     }
     
     private JSONArray getRnoteList(Domain domain, String login, Integer registryId){

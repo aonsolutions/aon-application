@@ -3,12 +3,20 @@ package com.code.aon.webservice.issues;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Utils {
 	
@@ -83,4 +91,56 @@ public class Utils {
         response.addHeader("Access-Control-Max-Age", "1728000");
     }
     
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    private static LinkedList<Integer> getList(String str){
+		if(str == null) return new LinkedList<Integer>();
+		String[] arr = str.split("@@");
+		LinkedList<Integer> list = new LinkedList<Integer>();
+		for (String s : arr) {
+			if(AonStringUtils.isNumeric(s))
+				list.add(Integer.parseInt(s));
+		}
+		return list;
+	}
+    
+    public static IssueFilter getFilter(Domain domain, String userName, HashMap<String,String> parameters){
+		Date from = AonDateUtils.getDateWithoutTime(new Date());
+		AonDateUtils.addYears(from, -1);
+		Date to = AonDateUtils.getDateWithoutTime(new Date());
+		try {
+			if(parameters.containsKey("from") && !parameters.get("from").equals(""))
+				from = dateFormat.parse(parameters.get("from"));
+			if(parameters.containsKey("to") && !parameters.get("to").equals(""))
+				to = dateFormat.parse(parameters.get("to"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		to = AonDateUtils.addDays(to, 1);
+		
+		LinkedList<Integer> assignee = getList(parameters.get("asignee"));
+		LinkedList<Integer> workgroup = getList(parameters.get("workgroup"));
+	
+		return new IssueFilter()
+				.setTitle(parameters.get("title"))
+				.setMine(parameters.get("mine"))
+				.setAssignee(assignee)
+				.setWorkgroup(workgroup)
+				.setCreator(parameters.get("creator"))
+				.setDirection(parameters.get("direction"))
+				.setLabels(parameters.get("labels"))
+				.setMentioned(parameters.get("mentioned"))
+				.setMilestone(parameters.get("milestone"))
+				.setSince(parameters.get("since"))
+				.setSort(parameters.get("sort"))
+				.setState(parameters.get("state"))
+				.setPriority(parameters.get("priority"))
+				.setType(parameters.get("type"))
+				.setEnterprise(parameters.get("enterprise"))
+				.setPerPage(Integer.parseInt(parameters.get("per_page")))
+				.setPage(Integer.parseInt(parameters.get("page")))
+				.setDateDiff(parameters.get("date_diff"))
+				.setFrom(from)
+				.setTo(to);
+	}
 }

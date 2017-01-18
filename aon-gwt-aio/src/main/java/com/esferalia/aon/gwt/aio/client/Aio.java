@@ -18,12 +18,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class Aio implements EntryPoint {
 	
 	final IAioAsync impl = GWT.create(IAio.class);
-	
+
 	private Issues issues;
 	private Documents documents;
-	private MainEntryPoint stat; 
-	//private Documental documental;
-
+	
 	public static native String getCurrentDomainName()
 	/*-{
 		return $wnd.getCurrentDomainName();
@@ -32,6 +30,11 @@ public class Aio implements EntryPoint {
 	public static native int getCurrentDomain()
 	/*-{
 		return $wnd.getCurrentDomain();
+	}-*/;
+	
+	public static native String getSubEntryPoint()
+	/*-{
+		return $wnd.getSubEntryPoint();
 	}-*/;
 	
 	@Override
@@ -69,8 +72,8 @@ public class Aio implements EntryPoint {
 			//documental.onModuleLoad();
 			break;
 		case Modules.STAT:
-			stat = new MainEntryPoint();
-			stat.onModuleLoad();
+			MainEntryPoint stat = new MainEntryPoint(aonData);
+			stat.onModuleLoad(getSubEntryPoint());
 			break;
 		default:
 			break;

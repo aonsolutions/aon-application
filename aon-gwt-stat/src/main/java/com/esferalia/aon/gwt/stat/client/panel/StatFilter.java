@@ -8,10 +8,11 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.stat.client.StatService;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.stat.StatChartType;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.stat.StatType;
+import com.esferalia.aon.occam.api.model.stat.invoice.InvoiceChartType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -57,7 +58,7 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 				@Override
 				public void onSuccess(StatParams result) {
 					params = result;
-					
+					params.setStatType(StatType.INVOICE);
 					InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
 					fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 					add(fromLabel);
@@ -144,17 +145,16 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 					final ListBox chartType = new ListBox();
 					chartType.setStyleName(AON.AON_CSS.aonMarginRight());
 					chartType.addStyleName(AON.AON_CSS.aonWidth300());
-					for (StatChartType type : StatChartType.values()) {
-						if(type.getType().equals(StatChartType.INVOICE))
-							chartType.addItem(type.getDescription());
+					for (InvoiceChartType type : InvoiceChartType.values()) {
+						chartType.addItem(type.getDescription());
 					}
-					
-					chartType.setSelectedIndex(result.getChartType().ordinal());
+
+					chartType.setSelectedIndex(result.getChartType());
 					chartType.addChangeHandler( new ChangeHandler() {
 						
 						@Override
 						public void onChange(ChangeEvent event) {
-							params.setChartType(StatChartType.values()[chartType.getSelectedIndex()]);
+							params.setChartType((byte) chartType.getSelectedIndex());
 							ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
 						}
 					});

@@ -4,8 +4,10 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
+import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
@@ -49,9 +51,13 @@ public interface IRegistry {
 	public RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia);
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
 	
-	
-	public Customer getCustomer(AONContext ctx, Integer registry);
-	
 	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry);
 	public Stream<RegistryProfile> getRegistryProfileStream(AONContext ctx, Integer registry, Integer question);
+
+	// ------------------- CUSTOMER
+	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
+
+	// ------------------- SELLER
+	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
+
 }

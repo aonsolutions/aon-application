@@ -1,6 +1,6 @@
-package com.esferalia.aon.occam.api.model.stat;
+package com.esferalia.aon.occam.api.model.stat.invoice;
 
-public interface IStatChartTypeVisitor {
+public interface IInvoiceChartTypeVisitor {
 
 	void visitInvoiceTypeByYearComboChart();
 
@@ -20,19 +20,4 @@ public interface IStatChartTypeVisitor {
 
 	void visitGeoProvince();
 	
-	// -------------------- TASK STAT
-
-	void visitTaskByStatus();
-	
-	void visitTaskByType();
-
-	void visitTaskByTag();
-	
-	void visitTaskBySchedule();
-	
-	void visitTaskByDayOfWeek();
-	
-	void visitTaskByMonth();
-	
-	void visitTaskByDay();
 }

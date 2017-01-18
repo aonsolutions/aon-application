@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,17 +29,26 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
-import com.esferalia.aon.occam.api.model.stat.IStatChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
-import com.esferalia.aon.occam.api.model.stat.StatChartType;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.stat.StatType;
+import com.esferalia.aon.occam.api.model.stat.fee.FeeChartType;
+import com.esferalia.aon.occam.api.model.stat.fee.IFeeChartTypeVisitor;
+import com.esferalia.aon.occam.api.model.stat.invoice.IInvoiceChartTypeVisitor;
+import com.esferalia.aon.occam.api.model.stat.invoice.InvoiceChartType;
+import com.esferalia.aon.occam.api.model.stat.task.ITaskChartTypeVisitor;
+import com.esferalia.aon.occam.api.model.stat.task.TaskChartType;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.AonDayOfWeek;
@@ -54,8 +64,7 @@ public class StatDAO {
 
 	public static StatParams createStatParams(AONContext ctx) {
 		StatParams params = new StatParams();
-		params.setChartType(StatChartType.INVOICE_TYPE_BY_MONTHS_COMBO_CHART);
-		
+		params.setChartType(InvoiceChartType.INVOICE_TYPE_BY_MONTHS_COMBO_CHART.value());
 		// Se entra con fecha hasta igual a hoy y fecha desde trece meses menos.
 		Date today = new Date();
 		params.setTo(new Date());
@@ -84,13 +93,13 @@ public class StatDAO {
 				.setType(StatFilterType.WORKPLACE));
 		}
 		
-		CommercialDAO.getSellers(ctx).forEach(
+		RegistryDAO.getSellers(ctx).forEach(
 				seller -> params.getFilterItems().add(new StatFilterItem()
 							.setId(seller.getId())
 							.setLabel(seller.getRegistryName())
 							.setType(StatFilterType.SELLER))
 						);
-	
+		params.setFilterMap(new HashMap<String, String[]>());
 		return params;
 	}
 	
@@ -144,341 +153,444 @@ public class StatDAO {
 				:DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
 	}
 	
-	
-	public static StatData<String, String, Double> getStatData(final AONContext ctx, final StatParams params) {
-		
+	public static StatData<String, String, Double> getStatData(final AONContext ctx, final StatParams params){
 		final StatData<String, String, Double> table = new StatData<String, String, Double>();
-		
-		params.getChartType().visit( new IStatChartTypeVisitor() {
-			
-			@Override
-			public void visitInvoiceTypeByYearComboChart() {
-				final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(year, INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(year, INVOICE.TYPE)
-					.orderBy(year, DSL.decode()
-							   .when(INVOICE.TYPE.equal((byte) 1), 0)
-							   .when(INVOICE.TYPE.equal((byte) 0), 1)
-							   .when(INVOICE.TYPE.equal((byte) 2), 2)
-							   .when(INVOICE.TYPE.equal((byte) 3), 3))				
-					.fetch()
-					.stream()
-					.forEach(rec -> {
-						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-						double amount = rec.getValue(sum).doubleValue();
-						String y = AonNumberUtils.toString( rec.getValue(year));
-						if (params.isResultVisible()) {
-							Double d = table.get(y, RESULT);
-							d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
-							table.put(y, RESULT, d);
-						}
-						table.put(y, type.getDescription(), amount);
-					});
-			}
 
-			@Override
-			public void visitInvoiceTypeByMonthsComboChart() {
-				final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
-				final Field<Integer> month = DSL.month(INVOICE.ISSUE_DATE);
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(year,month, INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(year,month, INVOICE.TYPE)
-					.orderBy(year,month, DSL.decode()
-							   .when(INVOICE.TYPE.equal((byte) 1), 0)
-							   .when(INVOICE.TYPE.equal((byte) 0), 1)
-							   .when(INVOICE.TYPE.equal((byte) 2), 2)
-							   .when(INVOICE.TYPE.equal((byte) 3), 3))				
-					.fetch()
-					.stream()
-					.forEach(rec -> {
-						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-						String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
-						double amount = rec.getValue(sum).doubleValue();
-						if (params.isResultVisible()) {
-							Double d = table.get(monthKey, RESULT);
-							d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
-							table.put(monthKey, RESULT, d);
-						}
-						table.put(monthKey, type.getDescription(), amount);
-					});
-			}
-
-			@Override
-			public void visitInvoiceTypeByDaysComboChart() {
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
-					.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
-							   .when(INVOICE.TYPE.equal((byte) 1), 0)
-							   .when(INVOICE.TYPE.equal((byte) 0), 1)
-							   .when(INVOICE.TYPE.equal((byte) 2), 2)
-							   .when(INVOICE.TYPE.equal((byte) 3), 3))				
-					.fetch().stream().forEach(rec -> {
-						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-						String date = FMT.format( rec.getValue(INVOICE.ISSUE_DATE));
-						double amount = rec.getValue(sum).doubleValue();
-						if (params.isResultVisible()) {
-							Double dou = table.get(date, RESULT);
-							dou = AonMathUtils.round((dou == null ? 0.0 : dou) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
-							table.put(date, RESULT, dou);
-						}
-						table.put(date, type.getDescription(), amount);
-					});
-			}
-
-			@Override
-			public void visitAbcInvoiceTitular() {
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(INVOICE.REGISTRY, INVOICE.RNAME , INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(INVOICE.REGISTRY, INVOICE.TYPE)
-					.orderBy(sum.desc())
-					.fetch().stream().forEach(rec -> {
-						double d = rec.getValue(sum).doubleValue();
-						if (d >= 0) {
+		if(params.getStatType().equals(StatType.INVOICE)){
+			InvoiceChartType.values()[params.getChartType()].visit(new IInvoiceChartTypeVisitor() {
+				
+				@Override
+				public void visitInvoiceTypeByYearComboChart() {
+					final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(year, INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(year, INVOICE.TYPE)
+						.orderBy(year, DSL.decode()
+								   .when(INVOICE.TYPE.equal((byte) 1), 0)
+								   .when(INVOICE.TYPE.equal((byte) 0), 1)
+								   .when(INVOICE.TYPE.equal((byte) 2), 2)
+								   .when(INVOICE.TYPE.equal((byte) 3), 3))				
+						.fetch()
+						.stream()
+						.forEach(rec -> {
 							InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-							table.put(rec.getValue(INVOICE.RNAME)
-									, type.getDescription()
-									, d);
-						}
-					});
-			}
-
-			@Override
-			public void visitAbcInvoiceCategory() {
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME, INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.join(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(PCATEGORY.ID, INVOICE.TYPE)
-					.orderBy(sum.desc())
-					.fetch().stream().forEach(rec -> {
-						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-						table.put(AonStringUtils.defaultIfBlank(rec.getValue(PCATEGORY.NAME), UNKNOWN)
-								, type.getDescription()
-								, rec.getValue(sum).doubleValue());
-					});
-			}
-
-			@Override
-			public void visitAbcInvoiceProduct() {
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(PRODUCT.ID,PRODUCT.NAME, INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(PRODUCT.ID, INVOICE.TYPE)
-					.orderBy(sum.desc())
-					.fetch().stream().forEach(rec -> {
-						double d = rec.getValue(sum).doubleValue();
-						if (d >= 0) {
+							double amount = rec.getValue(sum).doubleValue();
+							String y = AonNumberUtils.toString( rec.getValue(year));
+							if (params.isResultVisible()) {
+								Double d = table.get(y, RESULT);
+								d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+								table.put(y, RESULT, d);
+							}
+							table.put(y, type.getDescription(), amount);
+						});
+				}
+				
+				@Override
+				public void visitInvoiceTypeByMonthsComboChart() {
+					final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
+					final Field<Integer> month = DSL.month(INVOICE.ISSUE_DATE);
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(year,month, INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(year,month, INVOICE.TYPE)
+						.orderBy(year,month, DSL.decode()
+								   .when(INVOICE.TYPE.equal((byte) 1), 0)
+								   .when(INVOICE.TYPE.equal((byte) 0), 1)
+								   .when(INVOICE.TYPE.equal((byte) 2), 2)
+								   .when(INVOICE.TYPE.equal((byte) 3), 3))				
+						.fetch()
+						.stream()
+						.forEach(rec -> {
 							InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-							table.put(AonStringUtils.defaultIfBlank(rec.getValue(PRODUCT.NAME), UNKNOWN)
-									, type.getDescription()
-									, d);
-						}
-					});
-			}
-
-			@Override
-			public void visitAbcInvoiceWorkplace() {
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(INVOICE_DETAIL.WORKPLACE,WORKPLACE.DESCRIPTION, INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
-					.where( getCondition(ctx, params))
-					.groupBy(INVOICE_DETAIL.WORKPLACE, INVOICE.TYPE)
-					.orderBy(sum.desc())
-					.fetch().stream().forEach(rec -> {
-						double d = rec.getValue(sum).doubleValue();
-						if (d >= 0) {
+							String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
+							double amount = rec.getValue(sum).doubleValue();
+							if (params.isResultVisible()) {
+								Double d = table.get(monthKey, RESULT);
+								d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+								table.put(monthKey, RESULT, d);
+							}
+							table.put(monthKey, type.getDescription(), amount);
+						});
+				}
+				
+				@Override
+				public void visitInvoiceTypeByDaysComboChart() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
+						.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
+								   .when(INVOICE.TYPE.equal((byte) 1), 0)
+								   .when(INVOICE.TYPE.equal((byte) 0), 1)
+								   .when(INVOICE.TYPE.equal((byte) 2), 2)
+								   .when(INVOICE.TYPE.equal((byte) 3), 3))				
+						.fetch().stream().forEach(rec -> {
 							InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-							table.put( AonStringUtils.defaultIfBlank(rec.getValue(WORKPLACE.DESCRIPTION), UNKNOWN)
-									, type.getDescription()
-									, d);
-						}
-					});
-			}
-
-			@Override
-			public void visitAbcInvoiceSeller() {
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(INVOICE_DETAIL.SELLER,
-						DSL.nvl(REGISTRY.NAME, UNKNOWN)
-						, INVOICE.TYPE, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.leftOuterJoin(REGISTRY).on(INVOICE_DETAIL.SELLER.eq(REGISTRY.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(INVOICE_DETAIL.SELLER, INVOICE.TYPE)
-					.orderBy(sum.desc())
-					.fetch().stream().forEach(rec -> {
-						double d = rec.getValue(sum).doubleValue();
-						if (d >= 0) {
+							String date = FMT.format( rec.getValue(INVOICE.ISSUE_DATE));
+							double amount = rec.getValue(sum).doubleValue();
+							if (params.isResultVisible()) {
+								Double dou = table.get(date, RESULT);
+								dou = AonMathUtils.round((dou == null ? 0.0 : dou) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+								table.put(date, RESULT, dou);
+							}
+							table.put(date, type.getDescription(), amount);
+						});
+				}
+				
+				@Override
+				public void visitGeoProvince() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(GEOZONE.NAME, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(INVOICE.REGISTRY).and(RADDRESS.TYPE.eq((byte) 0)))
+						.join(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(GEOZONE.NAME)
+						.orderBy(sum.desc())
+						.fetch().stream().forEach(rec -> {
+							double d = rec.getValue(sum).doubleValue();
+							if (d >= 0) {
+								table.put( "CHART"
+										, AonStringUtils.defaultIfBlank(rec.getValue(GEOZONE.NAME), UNKNOWN)
+										, d);
+							}
+						});
+				}
+				
+				@Override
+				public void visitAbcInvoiceWorkplace() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(INVOICE_DETAIL.WORKPLACE,WORKPLACE.DESCRIPTION, INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
+						.where( getCondition(ctx, params))
+						.groupBy(INVOICE_DETAIL.WORKPLACE, INVOICE.TYPE)
+						.orderBy(sum.desc())
+						.fetch().stream().forEach(rec -> {
+							double d = rec.getValue(sum).doubleValue();
+							if (d >= 0) {
+								InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+								table.put( AonStringUtils.defaultIfBlank(rec.getValue(WORKPLACE.DESCRIPTION), UNKNOWN)
+										, type.getDescription()
+										, d);
+							}
+						});
+				}
+				
+				@Override
+				public void visitAbcInvoiceTitular() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(INVOICE.REGISTRY, INVOICE.RNAME , INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(INVOICE.REGISTRY, INVOICE.TYPE)
+						.orderBy(sum.desc())
+						.fetch().stream().forEach(rec -> {
+							double d = rec.getValue(sum).doubleValue();
+							if (d >= 0) {
+								InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+								table.put(rec.getValue(INVOICE.RNAME)
+										, type.getDescription()
+										, d);
+							}
+						});
+				}
+				
+				@Override
+				public void visitAbcInvoiceSeller() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(INVOICE_DETAIL.SELLER,
+							DSL.nvl(REGISTRY.NAME, UNKNOWN)
+							, INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(REGISTRY).on(INVOICE_DETAIL.SELLER.eq(REGISTRY.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(INVOICE_DETAIL.SELLER, INVOICE.TYPE)
+						.orderBy(sum.desc())
+						.fetch().stream().forEach(rec -> {
+							double d = rec.getValue(sum).doubleValue();
+							if (d >= 0) {
+								InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+								table.put(rec.getValue(DSL.nvl(REGISTRY.NAME, UNKNOWN))
+										, type.getDescription()
+										, d);
+							}
+						});
+				}
+				
+				@Override
+				public void visitAbcInvoiceProduct() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(PRODUCT.ID,PRODUCT.NAME, INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(PRODUCT.ID, INVOICE.TYPE)
+						.orderBy(sum.desc())
+						.fetch().stream().forEach(rec -> {
+							double d = rec.getValue(sum).doubleValue();
+							if (d >= 0) {
+								InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+								table.put(AonStringUtils.defaultIfBlank(rec.getValue(PRODUCT.NAME), UNKNOWN)
+										, type.getDescription()
+										, d);
+							}
+						});
+				}
+				
+				@Override
+				public void visitAbcInvoiceCategory() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME, INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.join(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(PCATEGORY.ID, INVOICE.TYPE)
+						.orderBy(sum.desc())
+						.fetch().stream().forEach(rec -> {
 							InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-							table.put(rec.getValue(DSL.nvl(REGISTRY.NAME, UNKNOWN))
+							table.put(AonStringUtils.defaultIfBlank(rec.getValue(PCATEGORY.NAME), UNKNOWN)
 									, type.getDescription()
-									, d);
-						}
-					});
-			}
-
-			@Override
-			public void visitGeoProvince() {
-				final AggregateFunction<BigDecimal> sum = getSelectField(params);
-				ctx.getDslContext().select(GEOZONE.NAME, sum)
-					.from(INVOICE)
-					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-					.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(INVOICE.REGISTRY).and(RADDRESS.TYPE.eq((byte) 0)))
-					.join(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
-					.where( getCondition(ctx, params))
-					.groupBy(GEOZONE.NAME)
-					.orderBy(sum.desc())
-					.fetch().stream().forEach(rec -> {
-						double d = rec.getValue(sum).doubleValue();
-						if (d >= 0) {
-							table.put( "CHART"
-									, AonStringUtils.defaultIfBlank(rec.getValue(GEOZONE.NAME), UNKNOWN)
-									, d);
-						}
-					});
-			}
-
-			@Override
-			public void visitTaskByType() {
-				ctx.getDslContext().select(DSL.count(TASK.ID), TAG.NAME)
+									, rec.getValue(sum).doubleValue());
+						});
+				}
+			});
+		} else if(params.getStatType().equals(StatType.TASK)){
+			TaskChartType.values()[params.getChartType()].visit(new ITaskChartTypeVisitor() {
+				
+				@Override
+				public void visitTaskByType() {
+					ctx.getDslContext().select(DSL.count(TASK.ID), TAG.NAME)
 					.from(TASK).join(TASK_TAG).on(TASK.ID.eq(TASK_TAG.TASK))
 						.join(TAG).on(TASK_TAG.TAG.eq(TAG.ID))
 					.where(TAG.TYPE.eq(TagType.TASK_TYPE.value()))
 						.and(getTaskCondition(ctx, params))
 					.groupBy(TAG.NAME).fetch().stream().forEach(r -> 
 						table.put(r.getValue(TAG.NAME), "CANTIDAD", r.value1().doubleValue()));
-			}
-
-			@Override
-			public void visitTaskBySchedule() {
-				LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
-					.from(TASK)
-					.where(getTaskCondition(ctx, params))
-					.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
-					.collect(Collectors.toCollection(LinkedList::new));
-				for(Integer i = 0; i < 24; i++){
-					Integer hora = i;
-					Long count = list.stream().filter(r -> AonDateUtils.getHour(r) == hora).count();
-					table.put("De " + String.format("%02d", hora) + "h a " + String.format("%02d", hora+1) + "h", "CANTIDAD",  count.doubleValue());	
 				}
-			}
-			
-			@Override
-			public void visitTaskByDayOfWeek() {
-				LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
-					.from(TASK)
-					.where(getTaskCondition(ctx, params))
-					.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
-					.collect(Collectors.toCollection(LinkedList::new));
-				for(Integer i = 0; i < 7; i++){
-					Integer day = i;
-					Long count = list.stream().filter(r -> AonDateUtils.getDayOfWeek(r) == day+1).count();
-					table.put(AonDayOfWeek.values()[day].getName(), "CANTIDAD",  count.doubleValue());	
+				
+				@Override
+				public void visitTaskByTag() {
+					ctx.getDslContext().select(DSL.count(TASK.ID), TAG.NAME)
+					.from(TASK).join(TASK_TAG).on(TASK.ID.eq(TASK_TAG.TASK))
+						.join(TAG).on(TASK_TAG.TAG.eq(TAG.ID))
+					.where(TAG.TYPE.eq(TagType.TASK_LABEL.value()))
+						.and(getTaskCondition(ctx, params))
+					.groupBy(TAG.NAME).fetch().stream().forEach(r -> 
+						table.put(r.getValue(TAG.NAME), "CANTIDAD", r.value1().doubleValue()));
 				}
-			}
-
-			@Override
-			public void visitTaskByStatus() {
-				AggregateFunction<Integer> count = DSL.count(TASK.ID);
-				ctx.getDslContext().select(TASK.STATUS,  count)
-					.from(TASK)
-					.where(getTaskCondition(ctx, params))
-					.groupBy(TASK.STATUS)
-					.orderBy(TASK.STATUS)				
-					.fetch().stream().forEach(rec -> {
-						double amount = rec.getValue(count).doubleValue();
-						table.put(TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(),"CANTIDAD", amount);
-					});
-			}
-
-			@Override
-			public void visitTaskByMonth() {
-				final Field<Integer> year = DSL.year(TASK.START_DATE);
-				final Field<Integer> month = DSL.month(TASK.START_DATE);
-				AggregateFunction<Integer> count = DSL.count(TASK.ID);
-				ctx.getDslContext().select(TASK.STATUS, year, month, count)
-					.from(TASK)
-					.where(getTaskCondition(ctx, params))
-					.groupBy(year,month, TASK.STATUS)
-					.orderBy(year,month, TASK.STATUS)				
-					.fetch()
-					.stream()
-					.forEach(rec -> {
-						String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
-						double amount = rec.getValue(count).doubleValue();
-						table.put(monthKey, TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(), amount);
-					});
-			}
-
-			@Override
-			public void visitTaskByDay() {
-				Field<java.sql.Date> date = DSL.date(TASK.START_DATE);
-				AggregateFunction<Integer> count = DSL.count(TASK.ID);
-				ctx.getDslContext().select(date, TASK.STATUS,  count)
-					.from(TASK)
-					.where(getTaskCondition(ctx, params))
-					.groupBy(date, TASK.STATUS)
-					.orderBy(date, TASK.STATUS)				
-					.fetch().stream().forEach(rec -> {
-						String date1= FMT.format( rec.getValue(date));
-						double amount = rec.getValue(count).doubleValue();
-						table.put(date1, TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(), amount);
-					});
-			}
-
-			@Override
-			public void visitTaskByTag() {
-				ctx.getDslContext().select(DSL.count(TASK.ID), TAG.NAME)
-				.from(TASK).join(TASK_TAG).on(TASK.ID.eq(TASK_TAG.TASK))
-					.join(TAG).on(TASK_TAG.TAG.eq(TAG.ID))
-				.where(TAG.TYPE.eq(TagType.TASK_LABEL.value()))
-					.and(getTaskCondition(ctx, params))
-				.groupBy(TAG.NAME).fetch().stream().forEach(r -> 
-					table.put(r.getValue(TAG.NAME), "CANTIDAD", r.value1().doubleValue()));
-			}
-			
-		});
+				
+				@Override
+				public void visitTaskByStatus() {
+					AggregateFunction<Integer> count = DSL.count(TASK.ID);
+					ctx.getDslContext().select(TASK.STATUS,  count)
+						.from(TASK)
+						.where(getTaskCondition(ctx, params))
+						.groupBy(TASK.STATUS)
+						.orderBy(TASK.STATUS)				
+						.fetch().stream().forEach(rec -> {
+							double amount = rec.getValue(count).doubleValue();
+							table.put(TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(),"CANTIDAD", amount);
+						});
+				}
+				
+				@Override
+				public void visitTaskBySchedule() {
+					LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
+							.from(TASK)
+							.where(getTaskCondition(ctx, params))
+							.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
+							.collect(Collectors.toCollection(LinkedList::new));
+						for(Integer i = 0; i < 24; i++){
+							Integer hora = i;
+							Long count = list.stream().filter(r -> AonDateUtils.getHour(r) == hora).count();
+							table.put("De " + String.format("%02d", hora) + "h a " + String.format("%02d", hora+1) + "h", "CANTIDAD",  count.doubleValue());	
+						}
+				}
+				
+				@Override
+				public void visitTaskByMonth() {
+					final Field<Integer> year = DSL.year(TASK.START_DATE);
+					final Field<Integer> month = DSL.month(TASK.START_DATE);
+					AggregateFunction<Integer> count = DSL.count(TASK.ID);
+					ctx.getDslContext().select(TASK.STATUS, year, month, count)
+						.from(TASK)
+						.where(getTaskCondition(ctx, params))
+						.groupBy(year,month, TASK.STATUS)
+						.orderBy(year,month, TASK.STATUS)				
+						.fetch()
+						.stream()
+						.forEach(rec -> {
+							String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
+							double amount = rec.getValue(count).doubleValue();
+							table.put(monthKey, TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(), amount);
+						});
+				}
+				
+				@Override
+				public void visitTaskByDayOfWeek() {
+					LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
+							.from(TASK)
+							.where(getTaskCondition(ctx, params))
+							.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
+							.collect(Collectors.toCollection(LinkedList::new));
+						for(Integer i = 0; i < 7; i++){
+							Integer day = i;
+							Long count = list.stream().filter(r -> AonDateUtils.getDayOfWeek(r) == day+1).count();
+							table.put(AonDayOfWeek.values()[day].getName(), "CANTIDAD",  count.doubleValue());	
+						}
+				}
+				
+				@Override
+				public void visitTaskByDay() {
+					Field<java.sql.Date> date = DSL.date(TASK.START_DATE);
+					AggregateFunction<Integer> count = DSL.count(TASK.ID);
+					ctx.getDslContext().select(date, TASK.STATUS,  count)
+						.from(TASK)
+						.where(getTaskCondition(ctx, params))
+						.groupBy(date, TASK.STATUS)
+						.orderBy(date, TASK.STATUS)				
+						.fetch().stream().forEach(rec -> {
+							String date1= FMT.format( rec.getValue(date));
+							double amount = rec.getValue(count).doubleValue();
+							table.put(date1, TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(), amount);
+						});
+				}
+			});
+		} else if(params.getStatType().equals(StatType.FEE)){
+			FeeChartType.values()[params.getChartType()].visit(new IFeeChartTypeVisitor() {
+				
+				@Override
+				public void visitFeeType() {
+					Date from = AonDateUtils.getDate(AonDateUtils.getYear(params.getFrom()),
+							AonDateUtils.getMonth(params.getFrom()), 1);
+					Date to = AonDateUtils.addDays(AonDateUtils.addYears(from, 1), -1);
+					HashMap<String, Double> map = new HashMap<String, Double>();
+					
+					LinkedList<Fee> list = FeeDAO.getFeeStream(ctx, f -> getFeeFilter(from, to, ctx.getDomainId(), params.getFilterMap(), f))
+							.collect(Collectors.toCollection(LinkedList::new));
+					
+					for(Integer i = 0; i < 12 ; i++){
+						Date date = AonDateUtils.addMonths(from, i);
+						String monthKey = AonDateUtils.getYear(date)+ "/" 
+								+ (AonDateUtils.getMonth(date) < 9 ? "0" : "") 
+								+(AonDateUtils.getMonth(date)+ 1);	
+						Double d = list.stream()
+						.filter(r -> {
+							int fromMonth = AonDateUtils.getMonth(date) + 1;
+							int billingMonth = AonDateUtils.getMonth(r.getBillingDate()) +1;
+							int period = BillingPeriod.values()[r.getPeriod()].getValue();
+							Boolean endDate = r.getEndDate() == null || (r.getEndDate() != null && date.compareTo(r.getEndDate()) <= 0);
+							if(period == 0) return endDate && fromMonth == billingMonth && 
+									AonDateUtils.getYear(r.getBillingDate()) == AonDateUtils.getYear(date);
+							return endDate && r.getBillingDate().compareTo(date) <= 0 
+									&& (fromMonth % period) == (billingMonth % period);
+						})
+						.mapToDouble(r -> r.getPrice() * r.getQuantity() * (r.getDiscount() != null ? ((100 - r.getDiscount())/100) :1.0)
+							* getPercent(r.getStartDate(), r.getEndDate(), date, BillingPeriod.values()[r.getPeriod()].getValue())).sum();						
+						map.put(monthKey, d);
+					}
+					map.keySet().stream().sorted((n1,n2)-> n1.compareTo(n2))
+					.forEach(key -> table.put(key, "Cuotas", map.get(key)));
+				}
+			});
+		}
 		return table;
 	}
+	
+	public static Filter getFeeFilter(Date from, Date to, Integer domainId,
+			HashMap<String, String[]> filterMap, FeeProperties f) {
+		Filter filter = f.getFinalDateProperty().ge(AonDateUtils.toSql(from))
+				.or(f.getFinalDateProperty().isNull())
+			.and(f.getBillingDateProperty().lt(AonDateUtils.toSql(to)))
+			.and(f.getDomainProperty().eq(domainId));
+		
+		if(filterMap.containsKey("category")){
+			Integer category = Integer.parseInt(filterMap.get("category")[0]);
+			filter = filter.and(f.getCategoryProperty().eq(category));
+		}
+		
+		if(filterMap.containsKey("customer")){
+			Integer customer = Integer.parseInt(filterMap.get("customer")[0]);
+			filter = filter.and(f.getCustomerProperty().eq(customer));
+		}
+		
+		if(filterMap.containsKey("seller")){
+			Integer seller = Integer.parseInt(filterMap.get("seller")[0]);
+			filter = filter.and(f.getSellerProperty().eq(seller));
+		}
+		
+		if(filterMap.containsKey("workplace")){
+			Integer workplace = Integer.parseInt(filterMap.get("workplace")[0]);
+			filter = filter.and(f.getWorkplaceProperty().eq(workplace));
+		}
+		
+		if(filterMap.containsKey("period")){
+			Integer period = Integer.parseInt(filterMap.get("period")[0]);
+			filter = filter.and(f.getPeriodProperty().eq(period.shortValue()));
+		}
+		return filter;
+	}
+	public static Double getPercent(Date startDate, Date endDate, Date date, int period){
+		if(period == 0 || (startDate.compareTo(date) < 0 && (endDate == null 
+				|| AonDateUtils.addMonths(date, period).compareTo(endDate) <= 0 )))
+			return 1.0;
+		
+		int sMonth = AonDateUtils.getMonth(startDate);
+		int sYear = AonDateUtils.getYear(startDate);
+		int eMonth = endDate != null ? AonDateUtils.getMonth(endDate) : -1;
+		int eYear = endDate != null ? AonDateUtils.getYear(endDate) : -1;
+		
+		Integer d1 = 0;
+		Integer d2 = 0;
+		for(Integer i = 0; i < period; i++){
+			Date d = AonDateUtils.addMonths(date, i);
+			int month = AonDateUtils.getMonth(d);
+			int year = AonDateUtils.getYear(d);
+			Integer lastDay = AonDateUtils.getDay(AonDateUtils.getMonthLastDay(d));
+			Integer start = lastDay;
+			Integer end = 0;
+			if(sMonth == month && sYear == year)
+				start = lastDay - (AonDateUtils.getDay(startDate) - 1);
+			if(eMonth == month && eYear == year)
+				end = lastDay - AonDateUtils.getDay(endDate);
+			
+			d1 = d1 + start - end;
+			d2 = d2 + lastDay;
+		}
+		return d1.doubleValue()/d2.doubleValue();
+	}
+	
 	private static class StatDAOStatFilterItemVisitor implements IStatFilterItemVisitor {
 		
 		private Condition productCategoriesCondition = null;

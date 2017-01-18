@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -135,6 +136,14 @@ public class ToJSON {
 		JSONObject json = new JSONObject();
 		json.put("id", registry.getId());
 		json.put("name", registry.getName());
+		return json;
+	}
+	
+	public static JSONObject productCategoryToJSON(ProductCategory pc) {
+		JSONObject json = new JSONObject();
+		json.put("id", pc.getId());
+		json.put("domain", pc.getDomain());
+		json.put("name", pc.getName());
 		return json;
 	}
 	

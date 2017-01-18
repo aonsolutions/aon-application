@@ -98,6 +98,7 @@ public class DeleteReposServlet extends HttpServlet{
 				PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
 				os.println(object.toString());
 				os.flush();
+				os.close();
 			}
 		//}
 	}

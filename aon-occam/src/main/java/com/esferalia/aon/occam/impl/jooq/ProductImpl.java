@@ -198,9 +198,9 @@ public class ProductImpl implements IProduct{
 	// ------------------------------------- PRODUCT CATEGORY
 	
 	@Override
-	public ProductCategory getProductCategory(AONContext ctx, ProductCategoryFilter filter){
+	public Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ProductDAO.getProductCategory(ctx, filter));
+			ProductDAO.getProductCategoryStream(ctx, filter));
 	}
 	
 	@Override

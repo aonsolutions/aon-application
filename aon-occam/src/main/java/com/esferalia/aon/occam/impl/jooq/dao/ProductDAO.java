@@ -760,15 +760,10 @@ public class ProductDAO {
 	}
 	
 	// ------------------------------------- PRODUCT CATEGORY
-	
-	public static ProductCategory getProductCategory(AONContext ctx, Integer productCategoryId){
-		return ctx.getDslContext().select().from(PCATEGORY).where(PCATEGORY.ID.eq(productCategoryId))
-				.fetchInto(PCATEGORY).stream().map(new FullProductCategoryFiller()).findFirst().orElse(new ProductCategory());
-	}
-	
-	public static ProductCategory getProductCategory(AONContext ctx, ProductCategoryFilter filter){
+
+	public static Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter){
 		return ctx.getDslContext().select().from(PCATEGORY).where(PRODUCT_CATEGORY_PROPERTIES.getConditions(filter))
-				.fetchInto(PCATEGORY).stream().map(new FullProductCategoryFiller()).findFirst().orElse(new ProductCategory());
+				.fetchInto(PCATEGORY).stream().map(new FullProductCategoryFiller());
 	}
 		
 	public static ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){

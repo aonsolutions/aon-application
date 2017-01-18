@@ -49,6 +49,6 @@ public interface IProduct {
 	public Brand insertBrand(AONContext ctx, Brand brand); 
 	
 	// PRODUCT CATEGORY
-	public ProductCategory getProductCategory(AONContext ctx, ProductCategoryFilter filter);
+	public Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter);
 	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory); 
 }

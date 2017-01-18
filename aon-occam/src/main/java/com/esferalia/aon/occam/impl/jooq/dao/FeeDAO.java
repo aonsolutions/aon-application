@@ -2,6 +2,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+
 
 import java.sql.Date;
 import java.util.Vector;
@@ -10,8 +14,10 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.InsertValuesStep17;
+import org.jooq.Record;
 import org.jooq.Record17;
 
+import com.esferalia.aon.jooq.tables.Item;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -19,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 
 
@@ -50,39 +57,51 @@ public class FeeDAO {
 		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.INVOICING_GROUP);}
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.SELLER);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.WORKPLACE);}
-
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
 	}
 	
-	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
+	public static Stream<Fee> getFeeStream2(AONContext ctx, FeeFilter filter){
 		return ctx.getDslContext().select().from(CUSTOMER_FEE).where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.LINE)
 			.fetchInto(CUSTOMER_FEE).stream().map(new FeeFiller());
 	}
 	
-	public static class FeeFiller  implements Function<CustomerFeeRecord, Fee> {
+	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
+		return ctx.getDslContext().select().from(CUSTOMER_FEE)
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(REGISTRY).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.where(FEE_PROPERTIES.getConditions(filter))
+				.and(CUSTOMER.STATUS.eq(CustomerStatus.ACTIVE.value()))
+				.orderBy(CUSTOMER_FEE.LINE)
+			.fetch().stream().map(new FeeFiller());
+	}
+	
+	public static class FeeFiller  implements Function<Record, Fee> {
 
 		@Override
-		public Fee apply(CustomerFeeRecord r) {
+		public Fee apply(Record r) {
 			return new Fee()
-					.setId(r.getId())
-					.setDomain(r.getDomain())
-					.setDescription(r.getDescription())
-					.setSecurityLevel(r.getSecurityLevel())
-					.setBillingDate(r.getBillingDate())
-					.setBillingGroup(r.getInvoicingGroup())
-					.setCustomer(r.getCustomer())
-					.setSecurityLevel(r.getSecurityLevel())
-					.setDiscountExpr(r.getDiscountExpr())
-					.setStartDate(r.getInitialDate())
-					.setEndDate(r.getFinalDate())
-					.setItemId(r.getItem())
-					.setLine(r.getLine())
-					.setPeriod(r.getPeriod())
-					.setPrice(r.getPrice())
-					.setProjectId(r.getProject())
-					.setQuantity(r.getQuantity())
-					.setSellerId(r.getSeller())
-					.setWorkplaceId(r.getWorkplace());
+					.setId(r.getValue(CUSTOMER_FEE.ID))
+					.setDomain(r.getValue(CUSTOMER_FEE.DOMAIN))
+					.setDescription(r.getValue(CUSTOMER_FEE.DESCRIPTION))
+					.setSecurityLevel(r.getValue(CUSTOMER_FEE.SECURITY_LEVEL))
+					.setBillingDate(r.getValue(CUSTOMER_FEE.BILLING_DATE))
+					.setBillingGroup(r.getValue(CUSTOMER_FEE.INVOICING_GROUP))
+					.setCustomer(r.getValue(CUSTOMER_FEE.CUSTOMER))
+					.setCustomerName(r.getValue(REGISTRY.NAME))
+					.setDiscountExpr(r.getValue(CUSTOMER_FEE.DISCOUNT_EXPR))
+					.setStartDate(r.getValue(CUSTOMER_FEE.INITIAL_DATE))
+					.setEndDate(r.getValue(CUSTOMER_FEE.FINAL_DATE))
+					.setItemId(r.getValue(CUSTOMER_FEE.ITEM))
+					.setLine(r.getValue(CUSTOMER_FEE.LINE))
+					.setPeriod(r.getValue(CUSTOMER_FEE.PERIOD))
+					.setPrice(r.getValue(CUSTOMER_FEE.PRICE))
+					.setProjectId(r.getValue(CUSTOMER_FEE.PROJECT))
+					.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
+					.setSellerId(r.getValue(CUSTOMER_FEE.SELLER))
+					.setWorkplaceId(r.getValue(CUSTOMER_FEE.WORKPLACE));
 		}
 	}
 

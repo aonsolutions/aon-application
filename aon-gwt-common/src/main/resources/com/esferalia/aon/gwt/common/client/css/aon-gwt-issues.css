@@ -1,0 +1,123 @@
+@external .*;
+
+
+
+	.aon-panelGrid-search-issues{
+		height: 55px;margin: 10px;
+	}
+	
+	.aon-panelGrid-search-info-issues{
+		margin-bottom:0px !important;
+	}
+
+	.aon-configuration-panel-issues{
+		background:#eee;
+		border-right: 1px solid #ddd;
+	}
+
+	.scrollpanel-options-issues {
+		padding-left: 15%;
+	}
+	
+	.buttons-issues {
+		padding-top: 10px;
+		text-align: right;
+	}
+	
+	.table-issues {
+		vertical-align: top;
+	}
+	
+	.display-none-issues{
+		display: none !important;
+	}
+	.avatar {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                overflow: hidden;
+            }
+            
+            
+    .dialog-issues{
+   		 border:1px solid #bbb !important;
+    }
+    
+    .aon-search-box-issues{
+    	width: 90%;
+    	margin-left: 10px;
+    	margin-top: 10px;
+    	padding: 3px 3px 3px 3px;
+    	border: solid 1px #dedede;
+    	font-size: 16px;
+    	height: 16px;
+	}
+	
+	.aon-paper-button-filter-issues{
+		padding-top:13px;
+		margin:0px;
+	}
+	
+	.aon-iron-icon-filter-issues{
+		width:16px !important;
+		height:16px !important;
+	}
+	
+	.aon-inline-label-filter-issues{
+		font-size:10.5px;
+	}
+	
+	.tag-notice-issues{
+    	color: #fff;
+    	font-weight: bold;
+    	width:90%;
+    	background-color: #a30c51;
+    }
+    
+    .tag-priority-issues{
+    	color: #fff;
+    	font-weight: bold;
+    	width:90%;
+    	background-color: #ff704d;
+    }
+    
+    .tag-type-issues{
+    	color: #fff;
+    	font-weight: bold;
+    	width:90%;
+    	background-color: #668cff;
+    }
+    
+    .faq-configuration-button-issues{
+        margin-right: 200px;
+    	font-family: 'Roboto', 'Noto', sans-serif;
+	    font-size: 16px;
+    }
+    
+    
+    
+    .buttons-popup-issues {
+		position: relative;
+    	padding: 8px 8px 8px 24px;
+    	margin: 0;
+    	color: #3f51b5;
+    	display: -ms-flexbox;
+    	display: -webkit-flex;
+    	display: flex;
+    	-ms-flex-direction: row;
+    	-webkit-flex-direction: row;
+    	flex-direction: row;
+    	-ms-flex-pack: end;
+    	-webkit-justify-content: flex-end;
+    	justify-content: flex-end;
+    }
+    
+    .filter-label-issues {
+    	position: relative;
+    	top: 2px;
+    }
+	
+	
+	
+	

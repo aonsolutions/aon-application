@@ -46,10 +46,4 @@ public class CommercialImpl implements ICommercial {
 				configuration -> CommercialDAO.getCommercialActivityList(ctx, filter));
 	}
 
-	@Override
-	public Seller getSeller(AONContext ctx, Integer sellerId){
-		return ctx.getDslContext().transactionResult(
-				congiguration -> CommercialDAO.getSeller(ctx, sellerId));
-	}
-
 }

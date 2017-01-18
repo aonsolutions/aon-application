@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.stat.client;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.stat.client.panel.StatControlPanel;
+import com.esferalia.aon.gwt.stat.client.panel.fee.StatFeeProjectionPanel;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 
 public class MainEntryPoint implements EntryPoint {
 
@@ -11,15 +14,31 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== STATS
 	//
 	private static final String ST_STATS_ENTRY_POINT = "StatControlPanel";
+	private static final String FEE_PROJECTION_ENTRY_POINT = "feeProjection";
+
+	AonData aonData;
+
+	
+	public MainEntryPoint(AonData aonData) {
+		this.aonData = aonData;
+	}
+	
+	public MainEntryPoint() {
+
+	}
+	
+	public void onModuleLoad(String entryPoint){
+		if(entryPoint.equalsIgnoreCase(ST_STATS_ENTRY_POINT))
+			new StatControlPanel().onModuleLoad();
+		else if(entryPoint.equalsIgnoreCase(FEE_PROJECTION_ENTRY_POINT)){
+			new StatFeeProjectionPanel(aonData);
+		}
+	}
 	
 	@Override
 	public void onModuleLoad() {
-		
-		/*String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
-		if ( entryPoint.equalsIgnoreCase(ST_STATS_ENTRY_POINT)) {
-		*/
-			new StatControlPanel().onModuleLoad();
-		//}
+		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
+		onModuleLoad(entryPoint);
 	}
 
 	/**

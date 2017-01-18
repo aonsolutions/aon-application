@@ -12,9 +12,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.stat.client.panel.ResizableComboChart;
 import com.esferalia.aon.gwt.stat.client.panel.ResizablePieChart;
 import com.esferalia.aon.gwt.stat.client.util.StatUtils;
-import com.esferalia.aon.occam.api.model.stat.StatChartType;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.stat.task.TaskChartType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -58,7 +58,7 @@ public class StatPanel extends Composite {
 	
 	private StatParams params;
 	private IssueFilter issueFilter;
-	private StatChartType selectedChart;
+	private TaskChartType selectedChart;
 
 	private static final FlowPanel ERROR_PANEL = new FlowPanel();
 	static {
@@ -86,12 +86,12 @@ public class StatPanel extends Composite {
 		initWidget(binder.createAndBindUi(this));
 
 		searchContent.add(new StatFilterPanel(this, incidence));
-		selectStat(StatChartType.TASK_BY_STATUS);
+		selectStat(TaskChartType.TASK_BY_STATUS);
 	}
 	
-	public void selectStat(StatChartType sct) {
+	public void selectStat(TaskChartType sct) {
 		selectedChart = sct;
-		if(sct.equals(StatChartType.TASK_BY_STATUS)){
+		if(sct.equals(TaskChartType.TASK_BY_STATUS)){
 			incidence.getStatDataByStatus(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
 				
 				@Override
@@ -101,7 +101,7 @@ public class StatPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else if(sct.equals(StatChartType.TASK_BY_TYPE)){
+		} else if(sct.equals(TaskChartType.TASK_BY_TYPE)){
 			incidence.getStatDataByType(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
 				
 				@Override
@@ -111,7 +111,7 @@ public class StatPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else if(sct.equals(StatChartType.TASK_BY_TAG)){
+		} else if(sct.equals(TaskChartType.TASK_BY_TAG)){
 			incidence.getStatDataByTag(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
 						
 				@Override
@@ -121,7 +121,7 @@ public class StatPanel extends Composite {
 						
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else if(sct.equals(StatChartType.TASK_BY_SCHEDULE)){
+		} else if(sct.equals(TaskChartType.TASK_BY_SCHEDULE)){
 	    	incidence.getStatDataBySchedule(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
 				
 				@Override
@@ -131,7 +131,7 @@ public class StatPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else if(sct.equals(StatChartType.TASK_BY_DAY_OF_WEEK)){
+		} else if(sct.equals(TaskChartType.TASK_BY_DAY_OF_WEEK)){
 			incidence.getStatDataByDayOfWeek(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
 				
 				@Override
@@ -141,7 +141,7 @@ public class StatPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else if(sct.equals(StatChartType.TASK_BY_MONTH)){
+		} else if(sct.equals(TaskChartType.TASK_BY_MONTH)){
 			incidence.getStatDataByMonth(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
 				
 				@Override
@@ -151,7 +151,7 @@ public class StatPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else if(sct.equals(StatChartType.TASK_BY_DAY)){
+		} else if(sct.equals(TaskChartType.TASK_BY_DAY)){
 			incidence.getStatDataByDay(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
 				
 				@Override
@@ -233,11 +233,11 @@ public class StatPanel extends Composite {
 		this.params = params;
 	}
 
-	public StatChartType getSelectedChart() {
+	public TaskChartType getSelectedChart() {
 		return selectedChart;
 	}
 
-	public void setSelectedChart(StatChartType selectedChart) {
+	public void setSelectedChart(TaskChartType selectedChart) {
 		this.selectedChart = selectedChart;
 	}
 

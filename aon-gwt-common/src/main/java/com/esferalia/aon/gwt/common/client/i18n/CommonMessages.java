@@ -2963,6 +2963,12 @@ public interface CommonMessages extends Messages {
 
  	@DefaultMessage("Categor\u00EDas de productos")
 	String productCategories();
+ 	
+ 	@DefaultMessage("Categor\u00EDa")
+	String category();
+ 	
+ 	@DefaultMessage("Categor\u00EDas")
+	String categories();
 
  	@DefaultMessage("IVA deducible en operaciones interiores")
 	String internOpVatDeduction();
@@ -3191,5 +3197,11 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Importar desde n\u00F3minas")
 	String importSalaryAction();
+	
+	@DefaultMessage("Comercial")
+	String seller();
+	
+	@DefaultMessage("Cliente")
+	String customer();
 	
 }

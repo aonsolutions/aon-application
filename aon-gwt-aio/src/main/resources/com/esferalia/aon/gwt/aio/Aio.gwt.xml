@@ -10,10 +10,9 @@
 	<inherits name="com.esferalia.aon.gwt.api.Api" />
 	<inherits name='com.esferalia.aon.gwt.issues.IssuesAio' />
 	<inherits name='com.esferalia.aon.gwt.document.DocumentAio' />
-		<inherits name='com.esferalia.aon.gwt.stat.StatAio' />
+	<inherits name='com.esferalia.aon.gwt.stat.StatAio' />
 	<inherits name="com.google.gwt.resources.Resources" />
 	<inherits name="com.vaadin.polymer.Elements"/>
-	
 	<inherits name="net.aonsolutions.polymer.Elements"/>
 
 	<!--inherits name='com.smartgwt.SmartGwt'/-->
