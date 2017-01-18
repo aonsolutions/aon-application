@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.dump.client;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -222,6 +223,7 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 	private HashMap<Integer, String> sufixMap;
 	private Integer idTask;
 	private List<String> aviableDomain;
+	private int permissionDomain;
 
 	@Override
 	public void onModuleLoad() {
@@ -356,6 +358,7 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 			
 			@Override
 			public void onSuccess(Integer result) {
+				permissionDomain = result;
 				if (result == 0){
 					DSIImportForm.this.downloadListBox.addItem("BackUp");
 				} else if (result == 1){
@@ -539,7 +542,7 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		String suggestBoxValue = this.suggestBox.getValue();
 		String[] idString = suggestBoxValue.split(" ");
 		Integer id = Integer.parseInt(idString[0]);
-
+		
 		String sufix = sufixMap.get(id);
 		
 		if (sufix == null){
@@ -553,11 +556,30 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		}
 			
 
-		this.sendButton.setDisabled(false);
+		if(permissionDomain == 0 || permissionDomain == 1){
+			Date date = new Date();
+			String dateFormat = dateFormat(date);
+			String domain = idString[1];
+			String domainAux[] = domain.split("\\.");
+			
+			this.descripcionEmpresa.setValue(dateFormat + " " + idString[1]);
+			if(sufijoEmpresa.getInnerText() != "")
+				this.nombreEmpresa.setValue("copia-"+domainAux[0]);
+			else{
+				Window.alert("copia-"+domain);
+				this.nombreEmpresa.setValue("copia-"+domain);
+			}
+		}
 		
+		this.sendButton.setDisabled(false);
 		
 	}
 
+	private String dateFormat(Date date) {
+		String fecha[] = date.toGMTString().split(" ");
+		return fecha[0] + " " + fecha[1] + " " + fecha[2];
+	}
+	
 
 	@UiHandler("downloadListBox")
 	void onDownloadListBoxChange(ChangeEvent event) {

@@ -1,11 +1,16 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' xmlns:dump='urn:import:com.esferalia.aon.gwt.dump.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' 
+	xmlns:dump='urn:import:com.esferalia.aon.gwt.dump.client'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
-	xmlns:s="urn:import:com.esferalia.aon.gwt.dump.shared" xmlns:c="urn:import:com.esferalia.aon.gwt.common.client"
-	xmlns:a="urn:import:bsh.org.objectweb.asm" xmlns:collect="urn:import:com.google.common.collect"
-	xmlns:paper="urn:import:com.vaadin.polymer.paper.widget" xmlns:p="urn:import:com.vaadin.polymer"
+	xmlns:s="urn:import:com.esferalia.aon.gwt.dump.shared" 
+	xmlns:c="urn:import:com.esferalia.aon.gwt.common.client"
+	xmlns:a="urn:import:bsh.org.objectweb.asm" 
+	xmlns:collect="urn:import:com.google.common.collect"
+	xmlns:paper="urn:import:com.vaadin.polymer.paper.widget" 
+	xmlns:p="urn:import:com.vaadin.polymer"
 	xmlns:i="urn:import:com.vaadin.polymer.iron.widget" >
 
     <ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
@@ -41,6 +46,7 @@
 		border-top: 1px solid #999;
 		font-family: 'Roboto', 'Noto', sans-serif;
 		font-size: 1em;
+		width: 150px;
 	}
 	
 	.simple-labelMargin {
@@ -59,6 +65,7 @@
 	
 	.simple-listBox {
 		padding-left: 15px;
+		width: 300px;
 	}
 	
 	.simple-checkBox {
@@ -211,38 +218,38 @@
 								<tr>
 									<td>
 										<i:IronLabel>
+											Acción a realizar:
+										</i:IronLabel>
+									</td>
+									<td>
+										<g:ListBox ui:field="downloadListBox"
+											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox}" />
+									</td>
+									<td></td>
+									<td>
+										<i:IronLabel styleName="{style.marginIL}">
 											Empresa a descargar:
 										</i:IronLabel>
 									</td>
 									<td>
 										<g:SuggestBox
-											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox}"
+											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox} {style.simple-listBox}"
 											ui:field="suggestBox" width="100" />
-									</td>
-									<td></td>
-									<td>
-										<i:IronLabel styleName="{style.marginIL}">
-											Tipo de copia:
-										</i:IronLabel>
-									</td>
-									<td>
-										<g:ListBox ui:field="downloadListBox"
-											styleName="{style.simple-labelStyle} {style.simple-SuggestListBox} {style.simple-listBox}" />
 									</td>
 								</tr>
 								<tr></tr>
 								<tr>
 									<td colspan="2">
-										<paper:PaperInput ui:field="nombreEmpresa"
-											label="Nuevo nombre empresa" autoValidate="true" pattern="[a-zA-Z0-9_-]{3,}"
-											errorMessage="Solo letras, minimo 3">
-											<div suffix="" styleName="{style.simple-suffix}" ui:field="sufijoEmpresa" />
+										<paper:PaperInput ui:field="descripcionEmpresa"
+											label="Nueva descripcion empresa">
 										</paper:PaperInput>
 									</td>
 									<td></td>
 									<td colspan="2">
-										<paper:PaperInput ui:field="descripcionEmpresa"
-											label="Nueva descripcion empresa" styleName="{style.paddingH}">
+										<paper:PaperInput ui:field="nombreEmpresa"
+											label="Nuevo nombre empresa" autoValidate="true" pattern="[a-zA-Z0-9_-]{3,}"
+											errorMessage="Solo letras, minimo 3" styleName="{style.paddingH}">
+											<div suffix="" styleName="{style.simple-suffix}" ui:field="sufijoEmpresa" />
 										</paper:PaperInput>
 									</td>
 								</tr>

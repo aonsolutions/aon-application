@@ -91,7 +91,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			initFacesContext();
 			connection = AonServletUtils.getConnection();
 
-			Integer idDomain = UserUtils.getInstance().getLoggedUser().getDomain();
+			Integer idDomain = getDomainID(); //UserUtils.getInstance().getLoggedUser().getDomain();
 
 			settings = new Settings();
 			settings.setRenderSchema(false);
