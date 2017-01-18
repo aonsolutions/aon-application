@@ -1501,6 +1501,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
+	private EmployeeCalendarDraft employeeCalendarDraft;
 	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
 	private BonusEditor bonusEditor;
@@ -1529,6 +1530,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private MenuItem pasteItem;
 
 	private Storage storage;
+
 
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -1725,6 +1727,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				calendarDraftObjectData);
 	}
 
+	@Override
+	public void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar) {
+		employeeDetail.setWidget(getEmployeeCalendarDraft());
+	}
+	
 	@Override
 	public void onSalariesSelected(SalariesDocuments docs) {
 		getCost().setTitle("N\u00F3minas");
@@ -1990,6 +1997,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (calendarDraft == null)
 			calendarDraft = new CalendarDraft();
 		return calendarDraft;
+	}
+
+	private EmployeeCalendarDraft getEmployeeCalendarDraft() {
+		if (employeeCalendarDraft == null)
+			employeeCalendarDraft = new EmployeeCalendarDraft();
+		return employeeCalendarDraft;
 	}
 
 	private EmployeeContextMenu getEmployeeContextMenu() {

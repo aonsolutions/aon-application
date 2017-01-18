@@ -1,0 +1,274 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:i="urn:import:com.vaadin.polymer.iron.widget"
+	xmlns:p="urn:import:com.vaadin.polymer.paper.widget"
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget' >
+
+	<ui:style type='com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraft.MyStyle'>
+	
+	.tableStyle {
+	    border-collapse: collapse;   
+	}
+	
+	.labelDayStyle{
+		margin: 6px;
+	}
+	
+	.tableStyle td {
+	    text-align: center;
+	    padding: 2px;
+	    border-bottom: 1px solid #ddd;
+	    font-family: Arial, Helvetica, sans-serif;
+	}
+	
+	.cabeceraStyle {
+		font-weight: bold;
+		padding: 3px;
+		margin: 6px;
+	}
+	
+	.sundayStyle{
+		background-color: salmon;
+		border-radius: 15px;
+		padding: 3px;
+		color: #a5473c;
+	}
+	
+	.cellStyle{
+		padding: 3px;
+	}	
+	
+	.year {
+		font-size: 30px;
+		color: #FF704D;
+		padding-left: 28px;
+		padding-top: 2px;
+	}
+	
+	.optionButtons {
+		width: 30px;
+		height: 25px;
+		cursor: pointer;
+		border: none;
+	}
+	
+	.optionButtonsLeft {
+		margin-top: 8px;
+		margin-left: 8px;
+	}
+	
+	.optionButtonsRight {
+		margin-top: 8px;
+	}
+	
+	
+	</ui:style>
+	
+	<g:HTMLPanel>
+		
+		
+		<g:HorizontalPanel>
+			<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
+			<g:Button styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous" ui:field="lastYearButton" />
+			<g:Button styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next" ui:field="nextYearButton" />
+		</g:HorizontalPanel>
+		
+		<style is="custom-style">
+			paper-button {
+				--paper-button: {
+					min-width: 15px;
+	 				min-height: 15px;
+	 				margin-bottom: 1em;
+				    margin-left: 1em;
+				    margin-top: 1em;
+				}
+			}	
+		</style>
+		
+		<g:HorizontalPanel>
+			<i:IronLabel>
+				<p:PaperButton styleName="{style.cellStyle} {style.sundayStyle}" ui:field="diaNoLaborableButton"></p:PaperButton>
+	   			Dias no laborables
+	   		</i:IronLabel>
+		</g:HorizontalPanel>
+		<g:Grid ui:field="calendarGrid" styleName="{style.tableStyle}">
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">&nbsp;</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">L</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">M</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">X</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">J</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">V</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">S</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label styleName="{style.labelDayStyle}">D</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>L</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>M</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>X</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>J</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>V</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>S</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>D</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>L</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>M</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>X</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>J</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>V</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>S</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>D</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>L</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>M</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>X</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>J</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>V</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>S</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>D</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>L</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>M</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>X</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>J</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>V</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>S</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>D</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>L</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>M</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Enero</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Febrero</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Marzo</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Abril</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Mayo</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Junio</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Julio</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Agosto</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Septiembre</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Octubre</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Noviembre</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Diciembre</g:Label>
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+	</g:HTMLPanel>
+</ui:UiBinder> 

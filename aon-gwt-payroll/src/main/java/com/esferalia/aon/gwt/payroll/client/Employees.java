@@ -128,6 +128,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event);
 
+		void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar);
+
 		void onEmployeeCopy(Employee employee);
 
 		void onEmployeePaste(Workplace workplace);
@@ -410,7 +412,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onCategoryDraftSelected((CategoryDraftObject) userObject);
 		} else if (userObject instanceof AgreementDraftObject) {
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
-		}
+		}else if (userObject instanceof EmployeeCalendarDraftObjectData) {
+			onEmployeeCalendarDraftSelected((EmployeeCalendarDraftObjectData) userObject);
+		} 
 	}
 
 	@Override
@@ -1266,6 +1270,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 
+	private void onEmployeeCalendarDraftSelected(EmployeeCalendarDraftObjectData employeeEventsDraftObject) {
+		for (Listener listener : listeners) {
+			listener.onEmployeeCalendarSelected(employeeEventsDraftObject);
+		}
+	}
+
 	public void addEmployee(TreeItem workplaceItem, Employees employee, int limit) {
 
 		List<Employees> employees = new ArrayList<Employees>();
@@ -1320,6 +1330,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		// addImageItem(employeeItem, "Calendario",
 		// images.laboralCalendar());
+		TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
+		calendarDraftItem.setUserObject(new EmployeeCalendarDraftObjectData(employee.getId(), employeesService));
+		
 
 		if (extended) {
 			ITDataObject dataObject = getITDataObject(workplaceItem);
@@ -1431,6 +1444,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					categoryItem.setUserObject(categoryDraftObject);
 				};
 			});
+			
+			
 		}
 
 	}
