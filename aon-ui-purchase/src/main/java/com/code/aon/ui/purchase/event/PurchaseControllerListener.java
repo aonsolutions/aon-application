@@ -144,10 +144,8 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
 		for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
 			PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
-			if (purchaseDetail.getDeliveryDate() == null) {
-				purchaseDetail.setDeliveryDate(deliveryDate);
-				purchaseDetailBean.update(purchaseDetail);
-			}
+			purchaseDetail.setDeliveryDate(deliveryDate);
+			purchaseDetailBean.update(purchaseDetail);
 		}
 		IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
 		purchaseDetailController.onSearch(null);

@@ -153,10 +153,8 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
 		for (ITransferObject ito : salesDetailBean.getList(criteria)) {
 			SalesDetail salesDetail = (SalesDetail)ito;
-			if (salesDetail.getDeliveryDate() == null) {
-				salesDetail.setDeliveryDate(deliveryDate);
-				salesDetailBean.update(salesDetail);
-			}
+			salesDetail.setDeliveryDate(deliveryDate);
+			salesDetailBean.update(salesDetail);
 		}
 		IController salesDetailController = FormUtil.getController(SALES_DETAIL_CONTROLLER_NAME);
 		salesDetailController.onSearch(null);
