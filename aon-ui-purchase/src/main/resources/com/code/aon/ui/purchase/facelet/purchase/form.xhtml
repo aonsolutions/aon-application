@@ -234,7 +234,7 @@
 						value="#{bundle.aon_date} entrega" />
 					<aon:selectInputDate id="Purchase_deliveryDate"
 						value="#{purchase.linesDeliveryDate}" 
-						disabled="#{!purchase.pending || purchase.nevv || purchaseDetail.model.rowCount eq 0}"						
+						disabled="#{!purchase.pending}"						
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 

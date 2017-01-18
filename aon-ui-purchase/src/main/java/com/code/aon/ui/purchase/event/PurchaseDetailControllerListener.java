@@ -14,6 +14,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.purchase.controller.PurchaseController;
 import com.code.aon.ui.purchase.controller.PurchaseDetailController;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 
@@ -41,10 +42,12 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		Purchase purchase = (Purchase)((LinesController)event.getController()).getMasterController().getTo();
+		PurchaseController purchaseController = (PurchaseController) ((LinesController)event.getController()).getMasterController();
+		Purchase purchase = (Purchase) purchaseController.getTo();
 		PurchaseDetail purchaseDetail = (PurchaseDetail)event.getController().getTo();
 		checkQuantities(purchase, purchaseDetail);
 		checkSerializable(purchaseDetail);
+		purchaseDetail.setDeliveryDate(purchaseController.getLinesDeliveryDate());
 	}
 	
 	@Override

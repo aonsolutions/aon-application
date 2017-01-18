@@ -13,6 +13,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sales.controller.SalesDetailController;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -39,10 +40,12 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		Sales sales = (Sales)((LinesController)event.getController()).getMasterController().getTo();
+		SalesController salesController = (SalesController) ((LinesController)event.getController()).getMasterController();
+		Sales sales = (Sales) salesController.getTo();
 		SalesDetail salesDetail = (SalesDetail)event.getController().getTo();
 		checkQuantities(sales, salesDetail);
 		checkSerializable(salesDetail);
+		salesDetail.setDeliveryDate(salesController.getLinesDeliveryDate());
 	}
 	
 	@Override
