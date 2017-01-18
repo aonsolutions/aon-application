@@ -16,18 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-
-
-
-
-
-
-
-
-
-
-
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,31 +28,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-
-
-
-
-
-
-
-
-
-
-
-
 import org.w3c.dom.Document;
-
-
-
-
-
-
-
-
-
-
-
-
 
 import com.esferalia.aon.ingenet.api.pedidos.CIFNIFTYPE;
 import com.esferalia.aon.ingenet.api.pedidos.DATOSAGENCIATRANSPORTETYPE;
@@ -76,6 +40,7 @@ import com.esferalia.aon.ingenet.api.pedidos.PAISTYPE;
 import com.esferalia.aon.ingenet.api.pedidos.PEDIDOS;
 import com.esferalia.aon.ingenet.api.pedidos.PEDIDOTYPE;
 import com.esferalia.aon.ingenet.api.pedidos.PRODUCTOTYPE;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -96,7 +61,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
-import com.google.gson.Gson;
 
 public class IngenetElaborationServlet extends AbstractIngenetServlet {
 
@@ -281,7 +245,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private Customer obtainCustomer(AONContext ctx, Integer salesId){
 		if(salesId!=null){
 			Sales sales = obtainSales(ctx, salesId);
-			return RegistryDAO.getCustomer(ctx, sales.getCustomer());
+			return AON.getCustomer(ctx.getDomainName(), ctx.getDomainId(),
+					ctx.getUser(), sales.getCustomer());
 		}
 		return null;
 	}
