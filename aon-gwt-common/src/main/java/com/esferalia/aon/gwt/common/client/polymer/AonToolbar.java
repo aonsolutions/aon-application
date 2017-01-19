@@ -200,4 +200,20 @@ public abstract class AonToolbar extends Composite {
    	void downloadButtonClick(ClickEvent event) {
    		onDownloadButtonClick();
    	}
+   
+ // ----------- ALL BUTTONS
+
+   	public AonToolbar setVisibleAllButton(Boolean isVisible){
+   		menuButton.setVisible(isVisible);
+   		refreshButton.setVisible(isVisible);
+   		addButton.setVisible(isVisible);
+   		editButton.setVisible(isVisible);
+   		deleteButton.setVisible(isVisible);
+   		moreOptionButton.setVisible(isVisible);
+   		infoButton.setVisible(isVisible);
+   		statsButton.setVisible(isVisible);
+   		fastFilterButton.setVisible(isVisible);
+   		downloadButton.setVisible(isVisible);
+       	return this;
+    }
 }

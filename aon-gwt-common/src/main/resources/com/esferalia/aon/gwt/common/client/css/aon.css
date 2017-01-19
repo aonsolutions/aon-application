@@ -353,11 +353,18 @@ input[type="checkbox"]:focus + label {
 	margin-top: 5px;
 }
 
+.aon-margin-top10 {
+	margin-top: 10px;
+}
+
 .aon-margin-left {
 	margin-left: 1em;
 }
 .aon-margin-left5 {
 	margin-left: 5px;
+}
+.aon-margin-left10 {
+	margin-left: 10px;
 }
 .aon-margin-left20 {
 	margin-left: 20px;
@@ -369,12 +376,18 @@ input[type="checkbox"]:focus + label {
 .aon-margin-bottom5 {
 	margin-bottom: 5px;
 }
+.aon-margin-bottom10 {
+	margin-bottom: 10px;
+}
 
 .aon-margin-right {
 	margin-right: 1em;
 }
 .aon-margin-right5 {
 	margin-right: 5px;
+}
+.aon-margin-right10 {
+	margin-right: 10px;
 }
 .aon-margin-right20 {
 	margin-right: 20px;

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
@@ -26,10 +27,10 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.DeliveryDetailRecord;
 import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
-import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
@@ -57,6 +59,10 @@ import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
+
 
 public class WarehouseDAO {
 	
@@ -68,6 +74,7 @@ public class WarehouseDAO {
 
 	private static final DepartmentPropertiesDAO DEPARTMENT_PROPERTIES = new DepartmentPropertiesDAO();
 	private static final StockPropertiesDAO STOCK_PROPERTIES = new StockPropertiesDAO();
+	private static final CarrierPackingPropertiesDAO CARRIER_PACKING_PROPERTIES = new CarrierPackingPropertiesDAO();
 	
 	
 	protected static class WarehousePropertiesDAO implements WarehouseProperties {
@@ -578,18 +585,9 @@ public class WarehouseDAO {
 		.execute();
 	}
 	
-	
-	private static class FullWarehouseFiller implements Function<WarehouseRecord, Warehouse> {
-		@Override
-		public Warehouse apply(WarehouseRecord r) {
-			return new Warehouse()
-					.setActive(r.getActive())
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setDepartment(r.getDepartment())
-					.setName(r.getName())
-					.setWorkplace(r.getWorkplace());
-		}
+	public static Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter){
+		return ctx.getDslContext().select().from(CARRIER_PACKING).where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new CarrierPackingFiller());
 	}
 	
 	private static class FullWarehouseTransferFiller implements Function<WarehouseTransferRecord, WarehouseTransfer> {

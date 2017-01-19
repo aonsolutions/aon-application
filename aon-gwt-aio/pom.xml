@@ -28,6 +28,7 @@
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.issues</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.document</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.stat</compileSourcesArtifact>
+					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.warehouse</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>  
 					</compileSourcesArtifacts>
 				</configuration>
@@ -185,6 +186,19 @@
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.stat</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.warehouse</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.warehouse</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 			<classifier>sources</classifier>

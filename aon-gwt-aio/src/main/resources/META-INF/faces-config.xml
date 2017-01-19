@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-			
+	<!-- AON GWT DOCUMENTS -->
 
 	<navigation-rule>
 		<navigation-case>
@@ -12,12 +12,16 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- AON GWT ISSUES -->
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_issues</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/issues.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- AON GWT STAT -->
 	
 	<navigation-rule>
 		<navigation-case>
@@ -30,6 +34,15 @@
 		<navigation-case>
 			<from-outcome>gwt_fee_projection</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/fee_projection.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- AON GWT WAREHOUSE -->
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_carrier_packing</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/carrier_packing.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

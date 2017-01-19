@@ -1,0 +1,222 @@
+package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
+
+import java.util.Date;
+import java.util.HashMap;
+
+import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
+import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.vaadin.polymer.iron.widget.IronIcon;
+import com.vaadin.polymer.paper.widget.PaperButton;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
+
+public class FilterPanel extends Composite {
+	
+    interface Binder extends UiBinder<HTMLPanel, FilterPanel> {
+    	
+    }
+    
+    private static Binder binder = GWT.create(Binder.class);
+
+	public static final AonGwtIssuesCSS ICSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
+
+    @UiField HorizontalPanel panel;
+    @UiField InlineLabel categoryLabel;
+    @UiField InlineLabel customerLabel;
+    @UiField InlineLabel sellerLabel;
+    @UiField InlineLabel workplaceLabel;
+    @UiField InlineLabel periodLabel;
+    @UiField PaperIconButton cleanFilter;
+    
+    CarrierPacking carrierPacking;
+    API API;
+    
+    public FilterPanel(CarrierPacking carrierPacking) {
+    	this.carrierPacking = carrierPacking;
+    	API = carrierPacking.API;
+    	initWidget(binder.createAndBindUi(this));       
+
+    	// -------------------- DATE - FROM _____ TO ______
+    	HorizontalPanel datePanel = new HorizontalPanel(); 
+    	datePanel.addStyleName(AON.AON_CSS.aonMarginTop());  
+    	InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
+		fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		fromLabel.setWidth("20px");
+		datePanel.add(fromLabel);
+		
+		final DateBoxEx from = new DateBoxEx();
+		from.setValue(new Date());
+		from.setWidth("70px");
+		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				//FILTRAR POR FECHA!
+			}
+		});
+		datePanel.add(from);
+		
+		panel.add(datePanel);
+    
+		
+		// ------------------ FILTER BUTTONS
+		FlowPanel fpanel = new FlowPanel(); 
+		
+		// ------------------ SERIES
+		PaperButton seriesButton = filterButton(AON.MSG.series());
+		seriesButton.addClickHandler(new ClickHandler() {
+					
+			@Override
+			public void onClick(ClickEvent event) {
+				API.getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(seriesButton, result, AON.MSG.series());
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		});
+		fpanel.add(seriesButton);
+		
+		// ------------------ TYPE
+		PaperButton typeButton = filterButton(AON.MSG.type());
+		typeButton.addClickHandler(new ClickHandler() {
+					
+			@Override
+			public void onClick(ClickEvent event) {
+				API.getWarehouse().getCarrierPackingTypes(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(typeButton, result, AON.MSG.type());
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		});
+		fpanel.add(typeButton);
+		
+		// ------------------ STATUS
+		PaperButton statusButton = filterButton(AON.MSG.status());
+		statusButton.addClickHandler(new ClickHandler() {
+					
+			@Override
+			public void onClick(ClickEvent event) {
+				API.getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(statusButton, result, AON.MSG.status());
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		});
+		fpanel.add(statusButton);
+		
+		panel.add(fpanel);
+    }
+    
+    private PaperButton filterButton(String title) {
+		PaperButton button = new PaperButton();
+		button.setNoink(true);
+		button.setStyleName(ICSS.aonPaperButtonFilterIssues());
+				
+		InlineLabel label = new InlineLabel(title);
+		label.setStyleName(AON.AON_CSS.aonInnerLabel());
+		button.add(label);
+				
+		IronIcon icon = new IronIcon();
+		icon.setStyleName(ICSS.aonIronIconFilterIssues()); 
+		icon.setIcon("arrow-drop-down");
+		button.add(icon);
+		return button;
+	}
+    
+    @UiHandler("cleanFilter")
+	void cleanFilter(ClickEvent event){		
+    	categoryLabel.setText("");
+    	customerLabel.setText("");
+    	sellerLabel.setText("");
+    	workplaceLabel.setText("");
+    	periodLabel.setText("");
+    	
+
+		HashMap<String, String[]> map = new HashMap<String, String[]>();
+		map.put("from", new String[]{Long.toString(new Date().getTime())});
+    	carrierPacking.setFilterMap(map);
+    	carrierPacking.content();
+	}
+    
+    private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label){
+		PopupPanel popup = new PopupPanel();
+		AonComboBox acb = new AonComboBox();
+		acb.setItems(result.getData());
+		acb.setItemLabelPath("name");
+		acb.setItemValuePath("name");
+		acb.setLabel(label);
+		
+		acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
+			
+			@Override
+			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+				JsObject js = acb.getSelectedItem().cast();
+				String id = js.getId() + "";
+				
+				if(label.equalsIgnoreCase(AON.MSG.series())){
+					categoryLabel.setText(AON.MSG.series() + ":" +js.getName() + "; ");
+					carrierPacking.getFilterMap().put("series",new String[]{id});
+				}
+				if(label.equalsIgnoreCase(AON.MSG.type())){
+					categoryLabel.setText(AON.MSG.type() + ":" +js.getName() + "; ");
+					carrierPacking.getFilterMap().put("type",new String[]{id});
+				}
+				if(label.equalsIgnoreCase(AON.MSG.status())){
+					categoryLabel.setText(AON.MSG.status() + ":" +js.getName() + "; ");
+					carrierPacking.getFilterMap().put("status",new String[]{id});
+				}
+				carrierPacking.content();
+				popup.hide();
+			}
+		});
+		popup.add(acb);
+		int left = pb.getAbsoluteLeft();
+		int top = pb.getAbsoluteTop()
+				+ pb.getOffsetHeight();
+		Integer width = Window.getClientWidth();
+		if(left > width - 200){
+			left = left - 200;
+		}
+		popup.setAutoHideEnabled(true);
+		popup.addAutoHidePartner(acb.getElementById("overlay"));
+		popup.setPopupPosition(left, top);
+		popup.show();
+		acb.open();
+    }
+}

@@ -1,35 +1,37 @@
-package com.esferalia.aon.gwt.issues.client;
+package com.esferalia.aon.gwt.common.client.polymer;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperButton;
-import com.vaadin.polymer.paper.widget.PaperDialog;
 
-public abstract class AonDialog  extends Composite {
+public abstract class AonDialog extends PopupPanel  {
 	
     interface Binder extends UiBinder<HTMLPanel, AonDialog> {}
   
     private static Binder binder = GWT.create(Binder.class);
 
-	@UiField PaperDialog dialog;
 	@UiField Label title;
 	@UiField HTMLPanel content;
 	@UiField PaperButton accept;
 	@UiField PaperButton cancel;
-	
+
 	public AonDialog(String title, Widget widget) {
-		initWidget(binder.createAndBindUi(this));
-    	
+		setWidget(binder.createAndBindUi(this));
     	this.title.setText(title);
     	setTitle(title);
     	setContent(widget);
+		setGlassEnabled(true);
+		setAutoHideEnabled(true);
+		setStyleName(AON.AON_CSS.aonDialogBoxShadow());
+		getElement().getStyle().setBackgroundColor("#FFF");
 	}
 	
 	protected abstract void onAccept();
@@ -42,18 +44,6 @@ public abstract class AonDialog  extends Composite {
 	
 	private void setContent(Widget widget) {
 		this.content.add(widget);
-	}
-	
-	public void open(){
-		dialog.open();
-	}
-	
-	public void center(){
-		dialog.center();
-	}
-	
-	public void notifyResize(){
-		dialog.notifyResize();
 	}
 	
 	@UiHandler("accept")

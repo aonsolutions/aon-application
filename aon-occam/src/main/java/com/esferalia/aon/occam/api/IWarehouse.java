@@ -4,12 +4,14 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -90,5 +92,8 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	Stream<Stock> getStockStream(AONContext ctx, StockFilter filter);
+	
+	// ------------------- CARRIER PACKING
+	Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter);
 	
 }

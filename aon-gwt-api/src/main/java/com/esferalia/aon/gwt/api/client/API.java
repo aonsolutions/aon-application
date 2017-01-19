@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.api.client.finance.Finance;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.product.Product;
 import com.esferalia.aon.gwt.api.client.registry.Registry;
+import com.esferalia.aon.gwt.api.client.warehouse.Warehouse;
 
 public class API {
 	private String url;
@@ -42,5 +43,9 @@ public class API {
 	
 	public Common getCommon() {
 		return new Common(url, accessToken, domainName, userName);
+	}
+	
+	public Warehouse getWarehouse() {
+		return new Warehouse(url, accessToken, domainName, userName);
 	}
 }

@@ -631,6 +631,25 @@ public interface Properties {
 		Property<Byte> getStatusProperty();
 		Property<Integer> getScopeProperty();
 	}
-
+	
+	public interface CarrierPackingProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getSeriesProperty();
+		Property<Integer> getNumberProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getStatusProperty();
+		Property<Timestamp> getIssueDateProperty();
+		Property<Integer> getCarrierProperty();
+		Property<Timestamp> getDeliveryDateProperty();
+		Property<String> getCarrierReferenceProperty();
+		Property<String> getNumberPlateProperty();
+		Property<String> getDriverNameProperty();
+		Property<String> getDriverDocumentProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+	}
 
 }

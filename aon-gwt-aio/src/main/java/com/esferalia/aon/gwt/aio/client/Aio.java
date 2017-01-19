@@ -14,6 +14,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import net.aonsolutions.aon.gwt.warehouse.client.Warehouse;
 
 public class Aio implements EntryPoint {
 	
@@ -74,6 +75,10 @@ public class Aio implements EntryPoint {
 		case Modules.STAT:
 			MainEntryPoint stat = new MainEntryPoint(aonData);
 			stat.onModuleLoad(getSubEntryPoint());
+			break;
+		case Modules.WAREHOUSE:
+			Warehouse warehouse = new Warehouse(aonData);
+			warehouse.onModuleLoad(getSubEntryPoint());
 			break;
 		default:
 			break;

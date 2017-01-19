@@ -3204,4 +3204,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cliente")
 	String customer();
 	
+	@DefaultMessage("Empresa de Transporte")
+	String carrier();
+	
 }

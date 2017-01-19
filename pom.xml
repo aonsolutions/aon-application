@@ -163,6 +163,7 @@
 		<module>aon-gwt-stat</module>
 		<module>aon-gwt-api</module>
 		<module>aon-gwt-issues</module>
+		<module>aon-gwt-warehouse</module>
 		<module>aon-gwt-dump</module>
 
 		<!-- GENERATED -->

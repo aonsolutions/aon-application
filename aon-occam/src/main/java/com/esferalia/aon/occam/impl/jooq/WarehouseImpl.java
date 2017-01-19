@@ -6,12 +6,14 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IWarehouse;
+import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -173,6 +175,14 @@ public class WarehouseImpl implements IWarehouse {
 	public Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			WarehouseDAO.getWarehouseTransferNextNumber(ctx, serie));
+	}
+	
+	// ------------------ CARRIER PACKING
+	
+	@Override
+	public Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+			WarehouseDAO.getCarrierPackingStream(ctx, filter));
 	}
 	
 }

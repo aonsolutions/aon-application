@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
+import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
@@ -112,6 +113,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -2097,7 +2099,33 @@ public class AON {
 				ctx.close();
 		}
 	}
-
+	
+	// ------------------ CARRIER PACKING
+	
+	public static Stream<CarrierPacking> getCarrierPackingStream(String domainName, Integer domainId, String login, CarrierPackingFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getCarrierPackingStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<CarrierPacking> getCarrierPackingList(String domainName, Integer domainId, String login, CarrierPackingFilter filter) {
+		return getCarrierPackingStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static CarrierPacking getCarrierPacking(String domainName, Integer domainId, String login, CarrierPackingFilter filter) {
+		return getCarrierPackingStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new CarrierPacking());
+	}
+	
+	public static CarrierPacking getCarrierPacking(String domainName, Integer domainId, String login, Integer id) {
+		return getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
 	// ********************************************
 	// ******************************** Registry **
 	// ********************************************

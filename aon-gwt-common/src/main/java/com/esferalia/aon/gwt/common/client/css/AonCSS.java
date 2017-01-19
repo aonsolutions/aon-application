@@ -318,12 +318,18 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-margin-top5")
 	String aonMarginTop5();
 
+	@ClassName("aon-margin-top10")
+	String aonMarginTop10();
+	
 	@ClassName("aon-margin-left")
 	String aonMarginLeft();
 
 	@ClassName("aon-margin-left5")
 	String aonMarginLeft5();
-	
+
+	@ClassName("aon-margin-left10")
+	String aonMarginLeft10();
+
 	@ClassName("aon-margin-left20")
 	String aonMarginLeft20();
 
@@ -333,6 +339,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-margin-right5")
 	String aonMarginRight5();
 
+	@ClassName("aon-margin-right10")
+	String aonMarginRight10();
+	
 	@ClassName("aon-margin-right20")
 	String aonMarginRight20();
 	
@@ -341,6 +350,9 @@ public interface AonCSS extends CssResource {
 	
 	@ClassName("aon-margin-bottom5")
 	String aonMarginBottom5();
+
+	@ClassName("aon-margin-bottom10")
+	String aonMarginBottom10();
 
 	@ClassName("aon-bold")
 	String aonBold();
