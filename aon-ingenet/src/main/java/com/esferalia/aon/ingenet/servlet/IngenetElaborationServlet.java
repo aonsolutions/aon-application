@@ -1,9 +1,7 @@
 package com.esferalia.aon.ingenet.servlet;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,24 +21,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Document;
-
-import com.esferalia.aon.ingenet.api.pedidos.CIFNIFTYPE;
-import com.esferalia.aon.ingenet.api.pedidos.DATOSAGENCIATRANSPORTETYPE;
-import com.esferalia.aon.ingenet.api.pedidos.DATOSCENTROTRABAJOTYPE;
-import com.esferalia.aon.ingenet.api.pedidos.DATOSCLIENTETYPE;
-import com.esferalia.aon.ingenet.api.pedidos.DATOSDIRECCIONTYPE;
-import com.esferalia.aon.ingenet.api.pedidos.DATOSREGISTROTYPE;
-import com.esferalia.aon.ingenet.api.pedidos.PAISTYPE;
-import com.esferalia.aon.ingenet.api.pedidos.PEDIDOS;
-import com.esferalia.aon.ingenet.api.pedidos.PEDIDOTYPE;
-import com.esferalia.aon.ingenet.api.pedidos.PRODUCTOTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.CIFNIFTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.DATOSCENTROTRABAJOTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.DATOSCLIENTETYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.DATOSDIRECCIONTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.DATOSPRODUCTOTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.DATOSREGISTROTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.PAISTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.ELABORACIONES;
+import com.esferalia.aon.ingenet.api.elaboraciones.ELABORACIONTYPE;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -103,8 +93,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 //			});
 //		});
 
-		PEDIDOS orders = fillElaborationData(ctx, pendingList);
-		returnValue = convertToXml(orders, PEDIDOS.class);
+		ELABORACIONES elaboraciones = fillElaborationData(ctx, pendingList);
+		returnValue = convertToXml(elaboraciones, ELABORACIONES.class);
         
 		
 //		httpResponse.setHeader("", "");
@@ -118,39 +108,37 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		out.flush();
 	}
 	
-	private PEDIDOS fillElaborationData(AONContext ctx, List<Elaboration> pendingList) {
-		PEDIDOS pedidos = new PEDIDOS();
+	private ELABORACIONES fillElaborationData(AONContext ctx, List<Elaboration> pendingList) {
+		ELABORACIONES elaboraciones = new ELABORACIONES();
 		pendingList.forEach(elaboration -> {
 			Item item = ProductDAO.getItem(ctx, elaboration.getItem().getId());
 			Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
 			SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
 			Sales sales = obtainSales(ctx, salesDetail.getSales());
 			Customer customer = obtainCustomer(ctx, salesDetail.getSales());
-			PEDIDOTYPE pedido = new PEDIDOTYPE();
-			pedido.setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
-		    pedido.setSERIE(elaboration.getSeries());
-		    pedido.setNUMERO(String.valueOf(elaboration.getNumber()));
-		    pedido.setREFERENCIAPEDIDO("");
-		    pedido.setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
-		    pedido.setFECHAEMISION(dateFormatter.format(elaboration.getDate()));
-		    pedido.setCOMENTARIOS(elaboration.getComments());
-		    pedido.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
-		    pedido.setDATOSAGENCIATRANSPORTE(obtainDATOSAGENCIATRANSPORTE(elaboration));
-		    pedido.setPRODUCTO(new PRODUCTOTYPE());
-		    pedido.getPRODUCTO().setCODIGO(product.getCode());
-		    pedido.getPRODUCTO().setNOMBRE(product.getName());
-		    pedido.getPRODUCTO().setDESCRIPCION(item.getDescription());
-		    pedido.getPRODUCTO().setDETALLE(item.getDetail());
-		    pedido.getPRODUCTO().setDETALLE2(item.getDetail2());
-		    pedido.getPRODUCTO().setDETALLE3(item.getDetail3());
-		    pedido.getPRODUCTO().setFECHASERIE(null);
-		    pedido.getPRODUCTO().setNUMEROSERIE(null);
-		    pedido.getPRODUCTO().setCODIGOBARRAS(item.getBarcode());
-		    pedido.getPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
-		    pedido.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
-			pedidos.getPEDIDO().add(pedido);
+			ELABORACIONTYPE elaboracion = new ELABORACIONTYPE();
+			elaboracion.setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
+			elaboracion.setSERIE(elaboration.getSeries());
+			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
+			elaboracion.setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
+			elaboracion.setFECHAEMISION(dateFormatter.format(elaboration.getDate()));
+			elaboracion.setCOMENTARIOS(elaboration.getComments());
+			elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
+			elaboracion.setDATOSPRODUCTO(new DATOSPRODUCTOTYPE());
+			elaboracion.getDATOSPRODUCTO().setCODIGO(product.getCode());
+			elaboracion.getDATOSPRODUCTO().setNOMBRE(product.getName());
+			elaboracion.getDATOSPRODUCTO().setDESCRIPCION(item.getDescription());
+			elaboracion.getDATOSPRODUCTO().setDETALLE(item.getDetail());
+			elaboracion.getDATOSPRODUCTO().setDETALLE2(item.getDetail2());
+			elaboracion.getDATOSPRODUCTO().setDETALLE3(item.getDetail3());
+			elaboracion.getDATOSPRODUCTO().setFECHASERIE(null);
+			elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
+			elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
+			elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
+			elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
+			elaboraciones.getDATOSELABORACIONES().add(elaboracion);
 		});
-		return pedidos;
+		return elaboraciones;
 	}
 
 	private String obtainCustomerProductCode(AONContext ctx, Item item, Customer customer) {
@@ -161,25 +149,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		return null;
 	}
 	
-	private DATOSAGENCIATRANSPORTETYPE obtainDATOSAGENCIATRANSPORTE(
-			Elaboration elaboration) {
-		// TODO Auto-generated method stub
-		DATOSAGENCIATRANSPORTETYPE datos = new DATOSAGENCIATRANSPORTETYPE();
-		datos.setDATOSREGISTRO(new DATOSREGISTROTYPE());
-		datos.getDATOSREGISTRO().setDOCUMENTO(new CIFNIFTYPE());
-		datos.getDATOSREGISTRO().getDOCUMENTO().setPAISDOCUMENTO(null);
-		datos.getDATOSREGISTRO().getDOCUMENTO().setTIPODOCUMENTO(null);
-		datos.getDATOSREGISTRO().getDOCUMENTO().setDOCUMENTO(null);
-		datos.getDATOSREGISTRO().setNOMBRE(null);
-		datos.getDATOSREGISTRO().setALIAS(null);
-		datos.getDATOSREGISTRO().setNACIONALIDAD(new PAISTYPE());
-		datos.getDATOSREGISTRO().getNACIONALIDAD().setCODIGO(null);
-		datos.getDATOSREGISTRO().getNACIONALIDAD().setDESCRIPCION(null);
-		datos.getDATOSREGISTRO().setTELEFONOFIJO(null);
-		datos.getDATOSREGISTRO().setTELEFONOMOVIL(null);
-		return datos;
-	}
-
 	private DATOSCENTROTRABAJOTYPE obtainDATOSCENTROTRABAJO(AONContext ctx,
 			Sales sales) {
 		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, p -> p.getIdProperty().eq(sales.getWorkplace()));

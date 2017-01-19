@@ -50,7 +50,7 @@
 				<version>1.7</version>
 				<executions>
 					<execution>
-						<id>add-source-pedidos</id>
+						<id>add-source-elaboraciones</id>
 						<phase>process-sources</phase>
 						<goals>
 							<goal>add-source</goal>
@@ -93,19 +93,16 @@
 					<!-- Esquemas de ficheros a comunicar -->
 					<!-- ================================ -->
 					<execution>
-						<id>generate-pedidos</id>
+						<id>generate-elaboraciones</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<generateDirectory>${project.build.directory}/generated-sources/pedidos</generateDirectory>
-							<generatePackage>com.esferalia.aon.ingenet.api.pedidos</generatePackage>
+							<generateDirectory>${project.build.directory}/generated-sources/elaboraciones</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.elaboraciones</generatePackage>
 							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
 							<schemaIncludes>
-<!--  
-								<include>EsquemaContratos50.xsd</include>
--->
-								<include>EsquemaPedidos.xsd</include>
+								<include>EsquemaElaboraciones.xsd</include>
 							</schemaIncludes>
 <!--  
 							<bindingIncludes>
