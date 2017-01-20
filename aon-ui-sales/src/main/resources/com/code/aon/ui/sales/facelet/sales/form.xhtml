@@ -38,32 +38,15 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:commandButton id="import-Popup"
-								value="#{bundle.aon_import} #{bundle.aon_edi}"
-								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-								actionListener="#{sales.udapaImporter.onImportFileShow}"
-								ajaxSingle="#{true}"
-								action="sales_form">
-								<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-							<aon:commandButton id="ediImport-Popup"
-								value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
-								title="#{bundle.aon_import}"
-								styleClass="aon-finding-toolbar-item aon-icon-new-text"
-								actionListener="#{controller.ediImporter.onImportFileShow}"
-								ajaxSingle="#{true}"
-								action="sales_form">
-								<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
-									value="#{true}" />
-							</aon:commandButton>
 							<aon:commandButton id="sales-ediFtp"
 								value="SERESNET"
 								title="Recuperar del servidor FTP de Seresnet"
 								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
 								actionListener="#{controller.ftpEdiDownloader.onShowFtpEdi}"
 								ajaxSingle="#{true}"
-								action="sales_form">
+								action="sales_form"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+								oncomplete="Richfaces.hideModalPanel('waitProccess')">
 								<f:setPropertyActionListener target="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
 									value="#{true}" />
 							</aon:commandButton>
@@ -128,6 +111,27 @@
 							<f:setPropertyActionListener target="#{sales.showShipmentWindow}"
 								value="#{true}" />
 						</aon:menuItem>
+						<aon:if test="#{company.ediSupportEnabled}">
+							<rich:separator />
+							<aon:menuItem id="import-Popup"
+								value="#{bundle.aon_import} #{bundle.aon_edi}"
+								iconClass="aon-icon-file-entrance"
+								actionListener="#{sales.udapaImporter.onImportFileShow}"
+								ajaxSingle="#{true}"
+								action="sales_form">
+								<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
+									value="#{true}" />
+							</aon:menuItem >
+							<aon:menuItem id="ediImport-Popup"
+								value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
+								iconClass="aon-icon-new-text"
+								actionListener="#{controller.ediImporter.onImportFileShow}"
+								ajaxSingle="#{true}"
+								action="sales_form">
+								<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</aon:if>
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>

@@ -962,7 +962,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		
 		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		String ediSupport = company.getEdiSupport();
-		if (ediSupport!=null && ediSupport.equals("seresnet_udapa")) {
+		if ("seresnet_udapa".equals(ediSupport) || "seresnet_connect".equals(ediSupport)) {
 			LOGGER.info(" *** UDAPA INGENET ENABLED ***");
 			try {
 				IngenetSalesManager.getInstance().createSales(

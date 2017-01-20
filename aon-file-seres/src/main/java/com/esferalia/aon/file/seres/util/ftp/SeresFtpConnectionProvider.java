@@ -73,7 +73,8 @@ public class SeresFtpConnectionProvider implements Serializable {
 							.println("There was some problem retrieving file.");
 					return;
 				}
-				System.out.println("File was downloaded!");
+				// TODO log me
+//				System.out.println("File was downloaded!");
 			}
 		};
 		try {
@@ -195,7 +196,8 @@ abstract class FtpConnector {
 		}
 
 		String replyString = ftp.getReplyString();
-		System.out.println("REPLY: " + replyString);
+		// TODO log me
+//		System.out.println("REPLY: " + replyString);
 
 		int replyCode = ftp.getReplyCode();
 		if (!FTPReply.isPositiveCompletion(replyCode)) {
@@ -203,15 +205,18 @@ abstract class FtpConnector {
 			return false;
 		}
 		ftp.enterLocalPassiveMode();
-		System.out.print("FTP LOGIN: " + server
-				+ (port != null ? ":" + port : "") + "@" + user
-				+ " (using password "
-				+ (passwd != null && !"".equals(passwd) ? "YES" : "NO") + ")");
+		// TODO log me
+//		System.out.print("FTP LOGIN: " + server
+//				+ (port != null ? ":" + port : "") + "@" + user
+//				+ " (using password "
+//				+ (passwd != null && !"".equals(passwd) ? "YES" : "NO") + ")");
 		boolean success = ftp.login(user, passwd);
 		if (success) {
-			System.out.println(" -> SUCCESS!");
+			// TODO log me
+//			System.out.println(" -> SUCCESS!");
 		} else {
-			System.out.println(" -> FAILED! (check username and password)");
+			// TODO log me
+//			System.out.println(" -> FAILED! (check username and password)");
 			throw new FtpLoginException(
 					"Login failed! (check username and password)");
 		}
@@ -232,8 +237,9 @@ abstract class FtpConnector {
 	protected boolean changeWorkingDirectory(String path) throws IOException{
 		boolean success = ftp.changeWorkingDirectory(path);
 		if(success){
-			System.out.print("WorkingDirectory changed to ");
-			System.out.println("'"+ftp.printWorkingDirectory()+"'");
+			// TODO log me
+//			System.out.print("WorkingDirectory changed to ");
+//			System.out.println("'"+ftp.printWorkingDirectory()+"'");
 		}
 		return success;
 	}
@@ -370,7 +376,8 @@ abstract class FtpConnector {
 			ftp.setFileType(FTP.BINARY_FILE_TYPE);
 			success =  ftp.storeFile(fileName, localInputStream);
 			if (success) {
-				System.out.println("The first file is uploaded successfully.");
+				// TODO log me
+//				System.out.println("The first file is uploaded successfully.");
 			}
 			completed = ftp.completePendingCommand();
 		}

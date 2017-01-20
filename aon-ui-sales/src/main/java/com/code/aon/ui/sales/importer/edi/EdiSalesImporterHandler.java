@@ -70,6 +70,12 @@ public class EdiSalesImporterHandler implements Serializable {
 		this.controller = controller;
 	}
 	
+	public SimpleDateFormat getDateTimeFormatter() {
+		return dateTimeFormatter;
+	}
+	public SimpleDateFormat getDateFormatter() {
+		return dateFormatter;
+	}
 	public AonFile getAonFile() {
 		return aonFile;
 	}
@@ -311,7 +317,7 @@ public class EdiSalesImporterHandler implements Serializable {
 		return quantity;
 	}
 
-	private RegistryNote searchCustomerNote(String customerCode) {
+	protected RegistryNote searchCustomerNote(String customerCode) {
 		RegistryNote rNote = null;
 		try {
 			IManagerBean rnoteBean = BeanManager.getManagerBean(RegistryNote.class);
@@ -348,7 +354,7 @@ public class EdiSalesImporterHandler implements Serializable {
 		return null;
 	}
 	
-	private Customer obtainCustomer(Integer registryId) {		
+	protected Customer obtainCustomer(Integer registryId) {		
 		if(registryId!=null){
 			try {
 				IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
@@ -361,7 +367,7 @@ public class EdiSalesImporterHandler implements Serializable {
 		return null;
 	}
 
-	private RegistryAddress obtainAddress(Integer addressId) {		
+	protected RegistryAddress obtainAddress(Integer addressId) {		
 		if(addressId!=null){
 			try {
 				IManagerBean addressBean = BeanManager.getManagerBean(RegistryAddress.class);

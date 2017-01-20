@@ -15,30 +15,14 @@
 				<ui:param name="controller" value="#{sales}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:if test="#{company.ediSupportEnabled}">
-						<aon:commandButton id="import-Popup"
-							value="#{bundle.aon_import} #{bundle.aon_edi}"
-							title="#{bundle.aon_import}"
-							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-							actionListener="#{controller.udapaImporter.onImportFileShow}"
-							action="sales_form">
-							<f:setPropertyActionListener target="#{controller.udapaImporter.showImportFileWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-						<aon:commandButton id="ediImport-Popup"
-							value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
-							title="#{bundle.aon_import}"
-							styleClass="aon-finding-toolbar-item aon-icon-new-text"
-							actionListener="#{controller.ediImporter.onImportFileShow}"
-							action="sales_form">
-							<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
-								value="#{true}" />
-						</aon:commandButton>
 						<aon:commandButton id="sales-ediFtp"
 							value="SERESNET"
 							title="Recuperar del servidor FTP de Seresnet"
 							styleClass="aon-finding-toolbar-item aon-icon-seresnet"
 							actionListener="#{controller.ftpEdiDownloader.onShowFtpEdi}"
-							action="sales_form">
+							action="sales_form"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+							oncomplete="Richfaces.hideModalPanel('waitProccess')">
 							<f:setPropertyActionListener target="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
 								value="#{true}" />
 						</aon:commandButton>
@@ -63,6 +47,9 @@
 		<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		</aon:if>
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+			<ui:param name="addWaitProcessPoll" value="#{true}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalEdiFtp.xhtml" />
 	</ui:define>
 </ui:composition>

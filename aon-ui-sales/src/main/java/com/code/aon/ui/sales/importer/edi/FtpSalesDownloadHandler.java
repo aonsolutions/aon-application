@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -23,16 +24,21 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.customer.Customer;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
 import com.esferalia.aon.file.seres.util.ftp.FtpException;
 import com.esferalia.aon.file.seres.util.ftp.FtpFile;
 import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
 import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
+import com.esferalia.aon.file.seres.util.reader.connect.ConnectSalesReader;
 
 public class FtpSalesDownloadHandler implements Serializable {
 	
@@ -51,14 +57,13 @@ public class FtpSalesDownloadHandler implements Serializable {
 	private String password;
 	private String remotePath;
 	
-	private Date startDate;
-	private Date endDate;
+	private Date date;
 	private boolean deleteOnComplete;
 	private boolean testing;
 	
 	private boolean showFtpServerConnectionData;
 	
-	private List<FtpFile> unreadSalesList;
+	private List<FtpFileOrder> unreadSalesList;
 			
 	private SerializableListDataModel unreadSalesModel;
 	
@@ -117,20 +122,12 @@ public class FtpSalesDownloadHandler implements Serializable {
 		this.password = password;
 	}
 	
-	public Date getStartDate() {
-		return startDate;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public boolean isDeleteOnComplete() {
@@ -217,10 +214,11 @@ public class FtpSalesDownloadHandler implements Serializable {
 		initContext();
 		checkValidLogin();
 		
-		setStartDate(new Date());
-		setEndDate(null);
+		setDate(new Date());
 		deleteOnComplete = true;
 		testing = false;
+		
+		onRetrieveFtpEdi(event);
 	}
 	
 	public void onShowFtpServerConnectionData(ActionEvent event) {
@@ -255,9 +253,18 @@ public class FtpSalesDownloadHandler implements Serializable {
 			checkValidLogin();
 		}
 		try {
-			unreadSalesList = SeresFtpConnectionProvider.retrieveFileList(
-					remotePath, startDate, endDate, server, port, user,
+			List<FtpFile> list = SeresFtpConnectionProvider.retrieveFileList(
+					remotePath, date, date, server, port, user,
 					password);
+			ConnectSalesReader reader = new ConnectSalesReader();
+			com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler connectHandler = new com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler(
+					controller);
+			if(list!=null && !list.isEmpty()){
+				unreadSalesList = new LinkedList<>();
+				list.forEach(ftpFile -> {
+					unreadSalesList.add(obtainStrippedOrder(reader, connectHandler, ftpFile));
+				});
+			}
 		} catch (FtpLoginException e) {
 			LOGGER.error(e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
@@ -266,27 +273,61 @@ public class FtpSalesDownloadHandler implements Serializable {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 		if(unreadSalesList!=null) {
-			unreadSalesList.sort(new Comparator<FtpFile>() {
+			unreadSalesList.sort(new Comparator<FtpFileOrder>() {
 				@Override
-				public int compare(FtpFile file0, FtpFile file1) {
-					return file1.getModificationDate().compareTo(
-							file0.getModificationDate());
+				public int compare(FtpFileOrder file0, FtpFileOrder file1) {
+					return file1.getFtpFile().getModificationDate().compareTo(
+							file0.getFtpFile().getModificationDate());
 				}
 			});
 		}
 		unreadSalesModel = null;
 	}
 	
+	private FtpFileOrder obtainStrippedOrder(ConnectSalesReader reader, EdiSalesImporterHandler connectHandler, FtpFile ftpFile) {
+		FtpFileOrder order = new FtpFileOrder();
+		order.setFtpFile(ftpFile);
+		
+		byte[] byteFile = obtainFtpFile(ftpFile.getName());
+		RECTL rectl = null;
+		try {
+			AonFile aonFile  = (new AonFile());
+			aonFile.setData(byteFile);
+			rectl = reader.readFile(aonFile.openStream());
+			
+			RegistryNote customerRegistryNote = connectHandler.searchCustomerNote(rectl.getCodigoEmisor().trim());
+			order.setCustomerCode(rectl.getCodigoEmisor().trim());
+			if(customerRegistryNote!=null && customerRegistryNote.getId()!=null){
+				Customer customer = connectHandler.obtainCustomer(customerRegistryNote.getRegistry().getId());
+				RegistryAddress address = connectHandler.obtainAddress(Integer.valueOf(customerRegistryNote.getDescription()));
+				if(customer!=null && customer.getId()!=null){
+					order.setCustomerName(customer.getRegistry().getName());
+				}
+				if(address!=null && address.getId()!=null){
+					order.setDeliveryAddress(address.getFullAddress());
+				}
+			} else {
+				order.setCustomerName("***no registrado***");
+			}
+			order.setChargeDate(connectHandler.getDateTimeFormatter().parse(rectl.getFecha_horaDelMensaje()));
+			
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage());
+		}
+		return order;
+	}
+
+
 	public void onImportFileHide(ActionEvent event) {
 		getLogPanel().finish();
 	}
 	
 	private byte[] obtainFtpFile(String name) {
 		try {
-			if (getUnreadSalesModel().isRowAvailable()) {
-				return SeresFtpConnectionProvider.retrieveFile(remotePath,
-						name, server, port, user, password);
-			}
+			return SeresFtpConnectionProvider.retrieveFile(remotePath,
+					name, server, port, user, password);
 		} catch (FtpLoginException e) {
 			LOGGER.error(e.getMessage());
 			getLogPanel().error(e.getMessage());
@@ -408,5 +449,44 @@ public class FtpSalesDownloadHandler implements Serializable {
 		return LogPanelController.getInstance();
 	}
 
+
+	public class FtpFileOrder implements Serializable {
+		private static final long serialVersionUID = 1L;
+		private FtpFile ftpFile;
+		private String customerName;
+		private String customerCode;
+		private String deliveryAddress;
+		private Date chargeDate;
+		public FtpFile getFtpFile() {
+			return ftpFile;
+		}
+		public void setFtpFile(FtpFile ftpFile) {
+			this.ftpFile = ftpFile;
+		}
+		public String getCustomerName() {
+			return customerName;
+		}
+		public void setCustomerName(String customerName) {
+			this.customerName = customerName;
+		}
+		public String getCustomerCode() {
+			return customerCode;
+		}
+		public void setCustomerCode(String customerCode) {
+			this.customerCode = customerCode;
+		}
+		public String getDeliveryAddress() {
+			return deliveryAddress;
+		}
+		public void setDeliveryAddress(String deliveryAddress) {
+			this.deliveryAddress = deliveryAddress;
+		}
+		public Date getChargeDate() {
+			return chargeDate;
+		}
+		public void setChargeDate(Date chargeDate) {
+			this.chargeDate = chargeDate;
+		}
+	}
 	
 }

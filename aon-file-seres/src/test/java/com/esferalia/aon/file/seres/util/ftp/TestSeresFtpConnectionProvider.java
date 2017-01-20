@@ -144,15 +144,16 @@ public class TestSeresFtpConnectionProvider {
 		} finally{
 			restoreJvmSystemProperies();
 		}
-		fileList.forEach(System.out::println);
+		
+//		fileList.forEach(System.out::println);
 		
 		
 		try {
 			// SHOW FILES
 			System.out.println("# ACTION: show files");
 			remotePath = orderPath;
-			SeresFtpConnectionProvider.retrieveFileList(remotePath, null, null, ftpServer,
-					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
+//			SeresFtpConnectionProvider.retrieveFileList(remotePath, null, null, ftpServer,
+//					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
 			
 			// SHOW DIRECTRY TREE
 			System.out.println("# ACTION: show directory tree");
