@@ -14,12 +14,15 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.FinanceEntry;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
@@ -80,6 +83,10 @@ public interface IAccounting {
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException;
+	
+	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params,
+			int offset, int limit);
+	public FinanceEntry save(AONContext ctx, FinanceEntry financeEntry);
 	
 	
 }

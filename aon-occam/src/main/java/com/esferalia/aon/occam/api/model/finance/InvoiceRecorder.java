@@ -27,7 +27,7 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "??????";
+						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
 						String description = invoice.getRegistry().getAccountDescription();
 						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
 						detail = new AccountEntryDetail()
@@ -61,7 +61,7 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "??????";
+						if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "?????";
 						String description = invoice.getRegistry().getAccountDescription();
 						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
 						detail = new AccountEntryDetail()
@@ -110,7 +110,7 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "??????";
+						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
 						String description = invoice.getRegistry().getAccountDescription();
 						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
 						detail = new AccountEntryDetail()
@@ -133,7 +133,7 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "??????";
+						if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "?????";
 						String description = invoice.getRegistry().getAccountDescription();
 						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
 						detail = new AccountEntryDetail()

@@ -12,7 +12,10 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConfigurationDAO {
-
+	public static AonConfiguration getConfiguration(final AONContext ctx) {
+		return getConfiguration(ctx, new Date());
+	}
+	
 	public static AonConfiguration getConfiguration(final AONContext ctx, Date atDate) {
 		ctx.checkRead();
 		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);

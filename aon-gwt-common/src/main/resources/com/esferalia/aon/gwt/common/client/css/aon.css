@@ -317,6 +317,10 @@ input[type="checkbox"]:focus + label {
 	white-space: nowrap;
 }
 
+.aon-pre {
+	white-space: pre;
+}
+
 .aon-inline {
 	display: inline;
 }
@@ -2042,8 +2046,7 @@ input:disabled+label {
 }
 
 .aon-clickable-block {
-	background-color: white;
-	border: solid white 1px;
+	background-color: transparent;
 	cursor: pointer;
 }
 

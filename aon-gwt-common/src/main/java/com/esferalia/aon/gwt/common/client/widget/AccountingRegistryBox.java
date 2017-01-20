@@ -30,6 +30,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -190,7 +191,15 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 				}
 			}
 		});
-		
+		accountingRegistry.addValueChangeHandler( new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if ( AonStringUtils.isBlank( accountingRegistry.getValue() )) {
+					select( null );	
+				}
+			}
+		});
 		rooPanel = new FlowPanel();
 		rooPanel.setStyleName(AON.AON_CSS.aonNowrap() );
 		rooPanel.addStyleName(AON.AON_CSS.aonInline() );
@@ -205,10 +214,21 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 	}
 	
 	private void select(AccountingRegistry accountingRegistry) {
-		accountingRegistryTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-		id = accountingRegistry.getId();
-		descriptionLabel.setText(accountingRegistry.getName());
-		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		if (accountingRegistry != null) {
+			accountingRegistryTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+			id = accountingRegistry.getId();
+			descriptionLabel.setText(accountingRegistry.getName());
+			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		} else {
+			id = null;
+			if (isRequired()) {
+				accountingRegistryTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+			} else {
+				accountingRegistryTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+			}
+			descriptionLabel.setText(null);
+			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		}
 		SelectionEvent.fire(AccountingRegistryBox.this, accountingRegistry );
 	}
 	

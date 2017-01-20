@@ -147,7 +147,14 @@ public enum AccountEntryType  implements Serializable {
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitSocialInsuranceAdjust(entry);
 		}
-	});
+	}),
+	FINANCE ( new  IAccountEntryTypeVisitorWalker() {
+		@Override
+		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
+			visitor.visitFinance(entry);
+		}
+	}),
+	;
 
 	public interface IAccountEntryTypeVisitorWalker {
 		void visit( AccountEntry entry, IAccountEntryTypeVisitor visitor);

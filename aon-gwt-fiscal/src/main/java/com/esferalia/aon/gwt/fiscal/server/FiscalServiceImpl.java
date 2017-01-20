@@ -25,10 +25,13 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.FinanceEntry;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
@@ -1101,4 +1104,13 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				, mod123.getId(), AttachType.MOD123, "Modelo 123", MimeType.MS_EXCEL, null, output.toByteArray());
 	}
 
+	public LinkedList<Finance> getAccountFinances(String domainName, int domain
+			, FinanceParams params, int offset, int limit) {
+		return ACCOUNTING.getAccountFinances(domainName, domain, this.getUserLogin(), params, offset, limit);		
+	}
+	@Override
+	public FinanceEntry save(String domainName, int domain, FinanceEntry financeEntry)
+			throws AonCoreException {
+		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), financeEntry);		
+	};
 }

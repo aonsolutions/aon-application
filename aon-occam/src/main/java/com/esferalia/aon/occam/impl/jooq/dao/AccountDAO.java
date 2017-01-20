@@ -38,7 +38,7 @@ public class AccountDAO {
 		@Override public Property<String> getCostCenterProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.COST_CENTER);}
 	}
 	
-	private static class FullAccountFiller  implements Function<Record,Account> {
+	public static class FullAccountFiller  implements Function<Record,Account> {
 		@Override
 		public Account apply(Record record) {
 			return new Account()

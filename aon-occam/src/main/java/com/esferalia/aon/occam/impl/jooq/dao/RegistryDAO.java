@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
@@ -38,6 +39,7 @@ import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RnoteRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -75,6 +77,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -302,7 +305,41 @@ public class RegistryDAO {
 					);			
 		
 	}
-
+	
+	public static Account getCustomerAccount(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().select(ACCOUNT.fields())
+			.from ( CUSTOMER )
+			.join( ACCOUNT ).on(CUSTOMER.ACCOUNT.eq(ACCOUNT.ID))
+			.where(CUSTOMER.REGISTRY.eq(registry))
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller() )
+			.findFirst()
+			.orElse(null);
+	}
+	public static Account getSupplierAccount(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().select(ACCOUNT.fields())
+			.from ( SUPPLIER )
+			.join( ACCOUNT ).on(SUPPLIER.ACCOUNT.eq(ACCOUNT.ID))
+			.where(SUPPLIER.REGISTRY.eq(registry))
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller() )
+			.findFirst()
+			.orElse(null);
+	}
+	public static Account getCreditorAccount(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().select(ACCOUNT.fields())
+			.from ( CREDITOR )
+			.join( ACCOUNT ).on(CREDITOR.ACCOUNT.eq(ACCOUNT.ID))
+			.where(CREDITOR.REGISTRY.eq(registry))
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller() )
+			.findFirst()
+			.orElse(null);
+	}
+	
 	public static void updateCreditorAccount(AONContext ctx, Integer registry, Integer account) {
 		ctx.checkWrite();
 		ctx.getDslContext().update(CREDITOR)

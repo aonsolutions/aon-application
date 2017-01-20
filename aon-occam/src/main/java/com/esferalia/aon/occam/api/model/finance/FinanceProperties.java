@@ -11,6 +11,8 @@ public interface FinanceProperties {
 	Property<Integer> getRegistryProperty();
 	Property<Date> getDueDateProperty();
 	Property<Integer> getInvoiceProperty();
+	Property<Double> getAmountProperty();
+	Property<String> getConceptProperty();
 	Property<Byte> getStatusProperty();
 	Property<Byte> getConfidentialProperty();
 

@@ -23,12 +23,15 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.FinanceEntry;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
@@ -41,10 +44,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
+import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -377,6 +382,19 @@ public class AccountingImpl implements IAccounting {
 	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException {
 		return AccountStatementDAO.balance(ctx, params);		
+	}
+	@Override
+	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params, int offset, int limit) {
+		return FinanceDAO.accountFetch(ctx, 
+					p -> FinanceUtils.getPendingFilter(p, params) 
+					,offset,limit)
+				;
+	}
+	@Override
+	public FinanceEntry save(AONContext ctx, FinanceEntry financeEntry) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> FinanceDAO.save(ctx, financeEntry)
+		 );		
 	}
 
 }

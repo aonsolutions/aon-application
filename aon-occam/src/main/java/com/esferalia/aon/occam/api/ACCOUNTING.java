@@ -16,11 +16,14 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.FinanceEntry;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
@@ -421,6 +424,32 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, userLogin);
 			return getAccounting().getSalaryFormatted(ctx, from, to);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+
+	public static LinkedList<Finance> getAccountFinances(String domainName, int domain, String userLogin,
+			FinanceParams params, int offset, int limit) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, userLogin);
+			return getAccounting().getAccountFinances(ctx,params, offset, limit)
+					.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+
+	public static FinanceEntry save(String domainName, int domain, String user, FinanceEntry financeEntry) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().save(ctx, financeEntry);
 		} finally {
 			if (ctx != null)
 				ctx.close();

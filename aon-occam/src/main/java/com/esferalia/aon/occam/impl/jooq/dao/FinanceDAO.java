@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
+import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -21,11 +21,15 @@ import org.jooq.Record;
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.FinanceTrackingRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
+import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -88,11 +92,54 @@ public class FinanceDAO {
 				.limit(offset,numberOfRows)
 				.fetch()
 				.stream()
-				.map( new FullFinanceFiller() )
+				.map( new FullFinanceFiller() );
+	}
+	
+	public static Stream<Finance> accountFetch(final AONContext ctx
+			, FinanceFilter filter
+			, int offset
+			, int numberOfRows) {
+		return fetch(ctx, filter, offset, numberOfRows)
+				.peek(finance -> fillCustomerAcccount(ctx,finance))
+				.peek(finance -> fillSupplierAcccount(ctx,finance))
+				.peek(finance -> fillCreditorAcccount(ctx,finance))
 			;
 	}
 	
 	
+	private static Finance fillCustomerAcccount(AONContext ctx,Finance finance) {
+		if (finance.getRegistry() != null && finance.isFromSalesInvoice()) {
+			Account account = RegistryDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
+			fillRegistryAccountData(finance,account);
+		}
+		return finance;
+	}
+	private static Finance fillSupplierAcccount(AONContext ctx,Finance finance) {
+		if (finance.getRegistry() != null && finance.isFromPurchaseInvoice()) {
+			Account account = RegistryDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
+			fillRegistryAccountData(finance,account);
+		}
+		return finance;
+	}
+	private static Finance fillCreditorAcccount(AONContext ctx,Finance finance) {
+		if (finance.getRegistry() != null && (finance.isFromExpensesInvoice() || finance.isFromUndeductibleInvoice())) {
+			Account account = RegistryDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
+			fillRegistryAccountData(finance,account);
+		}
+		return finance;
+	}
+	
+	private static void fillRegistryAccountData(Finance finance, Account account) {
+		if (account == null) {
+			finance.setRegistryAccountId(null);
+			finance.setRegistryAccountCode(null);
+			finance.setRegistryAccountDescription(null);
+		} else {
+			finance.setRegistryAccountId(account.getId());
+			finance.setRegistryAccountCode(account.getCode());
+			finance.setRegistryAccountDescription(account.getDescription());
+		}
+	}
 	// ------------------------------------------------------------- ESCRITURA
 	public static Integer save(AONContext ctx, Finance finance) {
 		if (finance.getId() == null) {
@@ -211,41 +258,15 @@ public class FinanceDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override
-		public Property<Integer> getIdProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(FINANCE.ID);
-		}
-
-		@Override
-		public Property<Integer> getDomainProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(FINANCE.DOMAIN);
-		}
-
-		@Override
-		public Property<Byte> getConfidentialProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);
-		}
-
-		@Override
-		public Property<Integer> getRegistryProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(FINANCE.REGISTRY);
-		}
-
-		@Override
-		public Property<Date> getDueDateProperty() {
-			return new FilterDAO.DatePropertyDAO(FINANCE.DUE_DATE);
-		}
-
-		@Override
-		public Property<Integer> getInvoiceProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(FINANCE.INVOICE);
-		}
-
-		@Override
-		public Property<Byte> getStatusProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(FINANCE.STATUS);
-		}
-		
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.DOMAIN);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.SECURITY_LEVEL);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.REGISTRY);}
+		@Override public Property<Date> getDueDateProperty() {return new FilterDAO.DatePropertyDAO(FINANCE.DUE_DATE);}
+		@Override public Property<Integer> getInvoiceProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.INVOICE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.STATUS);}
+		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<Double>(FINANCE.AMOUNT);}
+		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(FINANCE.CONCEPT);}
 	}
 	
 	// ---------------------------------------------------------- MAP
@@ -361,4 +382,33 @@ public class FinanceDAO {
 		return record.getValue(FINANCE_TRACKING.ID); 
 	}
 	
+	public static FinanceEntry save(AONContext ctx, FinanceEntry financeEntry) {
+		if (!financeEntry.isMultipleGeneration()) {
+			AccountEntry[] entries = FinanceRecorder.recordFinanceEntry(financeEntry);
+			if (entries != null && entries.length == 1) {
+				AccountEntry entry = entries[0];
+				Integer entryId = AccountEntryDAO.save(ctx, entry);
+				entry.setId(entryId);
+				financeEntry.setAccountEntry(entry);
+				
+				for (Finance finance : financeEntry.getFinances().values()) {
+					finance.setFinanceStatus(FinanceStatus.PAID);
+					Integer trackingId = addTracking(ctx
+							, finance.getId()
+							, entry.getEntryDate()
+							, finance.getAmount()
+							, FinanceStatus.PAID
+							, FinanceTrackingType.PAID
+							, "CONTABILIZADO"
+							, true);
+					ctx.getDslContext()
+						.insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
+						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY,entryId)
+						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING,trackingId);
+				}
+			}
+		}
+		return financeEntry;
+	}
 }

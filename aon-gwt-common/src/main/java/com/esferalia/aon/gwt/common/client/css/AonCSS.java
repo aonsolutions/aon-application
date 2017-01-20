@@ -279,6 +279,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-nowrap")
 	String aonNowrap();
 
+	@ClassName("aon-pre")
+	String aonPre();
+
 	@ClassName("aon-inline")
 	String aonInline();
 

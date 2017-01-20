@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountStatementPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.Manual;
@@ -112,6 +113,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		void visitManual();
 		void visitInvoice();
 		void visitSalary();
+		void visitFinance();
 	}
 	public interface IEntryTypeVisitorWalker {
 		void visit( IEntryTypeVisitor visitor);
@@ -123,6 +125,8 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitInvoice();}})
 		,SALARY( AON.MSG.salary(), new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitSalary();}})
+		,FINANCE( AON.MSG.treasury(), new  IEntryTypeVisitorWalker() {
+			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitFinance();}})
 		;
 		private String description;
 		private IEntryTypeVisitorWalker walker;
@@ -774,21 +778,23 @@ public class AccountEntryModule extends MainEntryPoint {
 		};
 		EntryType type = EntryType.values()[ entryType.getSelectedIndex()];
 		type.visit( new IEntryTypeVisitor() {
-			
+			@Override
+			public void visitManual() {
+				new Manual(moduleCallback).attach(cbk);
+			}
+			@Override
+			public void visitInvoice() {
+				createAndAttachInvoicePanel(cbk);
+			}
 			@Override
 			public void visitSalary() {
 				SalaryPanel panel = new SalaryPanel(moduleCallback);
 				panel.attach(cbk);
 			}
-			
 			@Override
-			public void visitManual() {
-				new Manual(moduleCallback).attach(cbk);
-			}
-			
-			@Override
-			public void visitInvoice() {
-				createAndAttachInvoicePanel(cbk);
+			public void visitFinance() {
+				FinanceEntryPanel panel = new FinanceEntryPanel(moduleCallback);
+				panel.attach(cbk);
 			}
 		});
 	}
@@ -909,7 +915,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				entryType.setSelectedIndex(EntryType.MANUAL.ordinal());
 				new Manual(moduleCallback).attach(wizardCbk);
 			}
-			
+			@Override public void visitFinance(AccountEntry entry) {visitManual();}
 			@Override public void visitManual(AccountEntry entry) {visitManual();}
 			@Override public void visitOpening(AccountEntry entry) {visitManual();}
 			@Override public void visitClosing(AccountEntry entry) {visitManual();}

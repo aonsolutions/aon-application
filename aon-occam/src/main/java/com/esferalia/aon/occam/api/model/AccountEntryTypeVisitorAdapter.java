@@ -23,6 +23,7 @@ public class AccountEntryTypeVisitorAdapter implements IAccountEntryTypeVisitor 
 	@Override public void visitReturnedPayment(AccountEntry entry) {}
 	@Override public void visitReturnedCollection(AccountEntry entry) {}
 	@Override public void visitSocialInsuranceAdjust(AccountEntry entry) {}
+	@Override public void visitFinance(AccountEntry entry) {}
 	@Override public void visitLeasing(AccountEntry entry) {}
 	@Override public void visitLeasingFee(AccountEntry entry) {}
 

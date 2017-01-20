@@ -15,6 +15,8 @@ public class Finance implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = -1224312562688230254L;
 
+	private boolean checked;
+	
 	private Integer id;
 	private Invoice invoice;
 	private Integer payMethod;
@@ -26,6 +28,9 @@ public class Finance implements Serializable, HasAudit {
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryName;
+	private Integer registryAccountId;
+	private String registryAccountCode;
+	private String registryAccountDescription;
 	private double amount;
 	private double expenses;
 	private String concept;
@@ -70,7 +75,19 @@ public class Finance implements Serializable, HasAudit {
 		this.invoice = invoice;
 		return this;
 	}
-
+	public boolean isFromSalesInvoice(){
+		return getInvoice() != null && getInvoice().isSales();
+	}
+	public boolean isFromExpensesInvoice(){
+		return getInvoice() != null && getInvoice().isExpenses();
+	}
+	public boolean isFromPurchaseInvoice(){
+		return getInvoice() != null && getInvoice().isPurchase();
+	}
+	public boolean isFromUndeductibleInvoice(){
+		return getInvoice() != null && getInvoice().isUndeductible();
+	}
+	
 	public Integer getPayMethod() {
 		return payMethod;
 	}
@@ -158,6 +175,27 @@ public class Finance implements Serializable, HasAudit {
 
 	public Finance setRegistryName(String registryName) {
 		this.registryName = registryName;
+		return this;
+	}
+	public Integer getRegistryAccountId() {
+		return registryAccountId;
+	}
+	public Finance setRegistryAccountId(Integer registryAccountId) {
+		this.registryAccountId = registryAccountId;
+		return this;
+	}
+	public String getRegistryAccountCode() {
+		return registryAccountCode;
+	}
+	public Finance setRegistryAccountCode(String registryAccountCode) {
+		this.registryAccountCode = registryAccountCode;
+		return this;
+	}
+	public String getRegistryAccountDescription() {
+		return registryAccountDescription;
+	}
+	public Finance setRegistryAccountDescription(String registryAccountDescription) {
+		this.registryAccountDescription = registryAccountDescription;
 		return this;
 	}
 
@@ -376,6 +414,14 @@ public class Finance implements Serializable, HasAudit {
 	}
 	public boolean isEmptyInvoice() {
 		return (getInvoice() == null || getInvoice().getId() == null);
+	}
+	
+	public boolean isChecked() {
+		return checked;
+	}
+	public Finance setChecked(boolean checked) {
+		this.checked = checked;
+		return this;
 	}
 	
 }

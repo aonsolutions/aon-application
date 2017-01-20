@@ -472,6 +472,7 @@ public class AccountingInvoiceDAO {
 				@Override public void visitSalary(AccountEntry entry) {}
 				@Override public void visitReturnedPayment(AccountEntry entry) {}
 				@Override public void visitReturnedCollection(AccountEntry entry) {}
+				@Override public void visitFinance(AccountEntry entry) {}
 				
 				@Override
 				public void visitSalesInvoice(AccountEntry entry) {

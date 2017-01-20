@@ -2907,11 +2907,12 @@ public interface CommonMessages extends Messages {
 	    "STOCK_VARIATION", "Variaci\u00F3n de Existencias",
 	    "AMORTIZATION", "Amortizaci\u00F3n",
 	    "SOCIAL_INSURANCE", "Seg. Social",
-	    "LOAN_FEE", "Cuotas Prestamos",
+	    "LOAN_FEE", "Cuotas Pr\u00E9stamos",
 	    "LEASING_FEE", "Cuotas Leasing",
 	    "RETURNED_PAYMENT", "Devoluci\u00F3n de Pago",
 	    "RETURNED_COLLECTION", "Devoluci\u00F3n de Cobro",
-	    "SOCIAL_INSURANCE_ADJUST", "Ajuste Seg. Social" })
+	    "SOCIAL_INSURANCE_ADJUST", "Ajuste Seg. Social",
+	    "FINANCE", "Tesorer\u00EDa"})
     String accountEntryType(@Select AccountEntryType type);
 
     @DefaultMessage("Tipo asiento")
@@ -3207,4 +3208,6 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Empresa de Transporte")
 	String carrier();
 	
+	@DefaultMessage("Tesorer\u00EDa")
+	String treasury();
 }
