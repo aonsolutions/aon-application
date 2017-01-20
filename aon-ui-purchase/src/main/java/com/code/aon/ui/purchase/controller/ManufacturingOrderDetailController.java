@@ -278,7 +278,7 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		((ManufacturingOrderController)this.getMasterController()).onClose(event);
 	}
 
-	public void onSelectCloseDetail(ActionEvent event) {
+	public void onSelectCloseDetail(ActionEvent event) throws ManagerBeanException {
 		TransferPurchaseDetail transfer = (TransferPurchaseDetail)getManufacturingOrderManager().getDetailModel().getRowData();
 		getManufacturingOrderManager().setSelectedDetail(transfer);
 		getManufacturingOrderManager().setCompositeList(transfer.getCompositionList());

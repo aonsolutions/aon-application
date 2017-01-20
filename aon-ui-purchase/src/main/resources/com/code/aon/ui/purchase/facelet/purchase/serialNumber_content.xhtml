@@ -17,9 +17,18 @@
 		<aon:if test="#{controller.serializableItem.product.lotable}">
 			<aon:outputLabel for="PurchaseDetail_serialQuantity"
 				value="#{bundle.aon_quantity}" />
-			<aon:inputText id="PurchaseDetail_serialQuantity" 
-				value="#{controller.serializableQuantity}"
-				required="true" size="5" />
+			<aon:div>
+				<aon:inputText id="PurchaseDetail_serialQuantity" 
+					value="#{controller.serializableQuantity}"
+					required="true" size="5" />
+				<aon:if test="#{allowQuantityChange}">
+					<aon:commandButton id="PurchaseDetail_serialQuantity-change"
+						styleClass="aon-finding-toolbar-item aon-noborder aon-icon-drop-down"
+						value="&#160;"
+						actionListener="#{controller.onChangeSerialQuantity}"
+						reRender="serialNumberGrid" />
+				</aon:if>
+			</aon:div>
 		</aon:if>
 
 		<aon:outputLabel for="PurchaseDetail_serialDate"

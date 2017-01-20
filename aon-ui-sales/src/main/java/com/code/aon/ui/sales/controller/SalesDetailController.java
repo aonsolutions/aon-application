@@ -622,9 +622,9 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 
 	public static class SerializableBreakdown implements Serializable {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
+
 		private Item item;
 		private boolean lotable;
 		private String serialNumber;

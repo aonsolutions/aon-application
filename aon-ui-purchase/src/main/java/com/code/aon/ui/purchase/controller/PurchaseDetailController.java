@@ -23,6 +23,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -295,14 +296,43 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		}
 	}
 	
-	protected void loadAssignSerialNumber(PurchaseDetail purchaseDetail) {
+	protected void loadAssignSerialNumber(PurchaseDetail purchaseDetail) throws ManagerBeanException {
 		setPurchaseDetail(purchaseDetail);
 		setSerializableItem(purchaseDetail.getItem());
 		setSerializableQuantity(purchaseDetail.getItem().getProduct().isLotable() ? purchaseDetail.getQuantity() : 1);
 		setSerialNumber(null);
 		setSerialDate(null);
-		setSerialNumbers(new LinkedList<SelectItem>());
+		setSerialNumbers(obtainItemSerialNumbers(purchaseDetail.getItem().getProduct()));
 		setSelectedBreakdown(null);
+	}
+
+	private List<SelectItem> obtainItemSerialNumbers(Product product) throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), product.getId());
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addNotNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), StringUtils.EMPTY);
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		for (ITransferObject ito : itemBean.getList(criteria)) {
+			SerializableBreakdown breakdown = new SerializableBreakdown((Item)ito);
+			breakdown.setQuantity(getSerializableQuantity());
+			items.add(new SelectItem(breakdown, breakdown.getLabel()));
+		}
+		return items;
+	}
+
+	public void onChangeSerialQuantity(ActionEvent event) {
+		for (SelectItem selectItem : getSerialNumbers()) {
+			if (ArrayUtils.contains(getSelectedBreakdown(), selectItem.getLabel())) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				int index = ArrayUtils.indexOf(getSelectedBreakdown(), breakdown.getLabel());
+				breakdown.setQuantity(getSerializableQuantity());
+				selectItem.setLabel(breakdown.getLabel());
+				setSelectedBreakdown((String[])ArrayUtils.add(getSelectedBreakdown(), index, breakdown.getLabel()));
+			}
+		}
 	}
 
 	public void onAddSerialNumber(ActionEvent event) {
@@ -361,12 +391,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	private void assignSerialNumber(PurchaseDetail purchaseDetail) throws ManagerBeanException {
 		int line = purchaseDetail.getLine();
-		double quantity = 0;
-		for (SelectItem selectItem : getSerialNumbers()) {
-			SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
-			quantity += CommonUtil.round(breakdown.getQuantity(), 3);
-		}
-
+		double quantity = getSelectedBreakdownQuantity();
 		if (purchaseDetail.getQuantity() > quantity) {
 			purchaseDetail.setQuantity(CommonUtil.round(purchaseDetail.getQuantity() - quantity, 3));
 			getManagerBean().restoreNullSubPOJOs(purchaseDetail);
@@ -377,51 +402,65 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		}
 
 		for (SelectItem selectItem : getSerialNumbers()) {
-			SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
-			Item item = null;
+			if (ArrayUtils.contains(getSelectedBreakdown(), selectItem.getLabel())) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				Item item = breakdown.getItem();
+				if (item == null) {
+					IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getSerializableItem().getProduct().getId());
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), breakdown.getSerialNumber());
+					List<ITransferObject> itemList = itemBean.getList(criteria);
+					if (!itemList.isEmpty()) {
+						item = (Item)itemList.get(0);
+					} else {
+						item = new Item();
+						Product product = (Product)HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).merge(getSerializableItem().getProduct());
+						item.setProduct(product);
+						item.setDescription(getSerializableItem().getDescription());
+						item.setSerialNumber(breakdown.getSerialNumber());
+						item.setSerialDate(breakdown.getSerialDate());
+						item.setPrice(getSerializableItem().getPrice());
+						item.setProfitPercent(getSerializableItem().getProfitPercent());
+						item.setPurchasePrice(getSerializableItem().getPurchasePrice());
+						item.setStatus(ProductStatus.ACTIVE);
+						itemBean.restoreNullSubPOJOs(item);
+						item = (Item)itemBean.insert(item);
+					}
+				}
 
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getSerializableItem().getProduct().getId());
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), breakdown.getSerialNumber());
-			List<ITransferObject> itemList = itemBean.getList(criteria);
-			if (!itemList.isEmpty()) {
-				item = (Item)itemList.get(0);
-			} else {
-				item = new Item();
-				Product product = (Product)HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).merge(getSerializableItem().getProduct());
-				item.setProduct(product);
-				item.setDescription(getSerializableItem().getDescription());
-				item.setSerialNumber(breakdown.getSerialNumber());
-				item.setSerialDate(breakdown.getSerialDate());
-				item.setPrice(getSerializableItem().getPrice());
-				item.setProfitPercent(getSerializableItem().getProfitPercent());
-				item.setPurchasePrice(getSerializableItem().getPurchasePrice());
-				item.setStatus(ProductStatus.ACTIVE);
-				itemBean.restoreNullSubPOJOs(item);
-				item = (Item)itemBean.insert(item);
-			}
-
-			if (item != null) {
-				PurchaseDetail newPurchaseDetail = new PurchaseDetail();
-				newPurchaseDetail.setPurchase(purchaseDetail.getPurchase());
-				newPurchaseDetail.setProject(purchaseDetail.getProject());
-				newPurchaseDetail.setLine(++line);
-				newPurchaseDetail.setItem(item);
-				newPurchaseDetail.setDescription(purchaseDetail.getDescription() + " #" + item.getSerialNumber());
-				newPurchaseDetail.setQuantity(breakdown.getQuantity());
-				newPurchaseDetail.setPrice(purchaseDetail.getPrice());
-				newPurchaseDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
-				newPurchaseDetail.setTaxes(purchaseDetail.getTaxes());
-				newPurchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
-				newPurchaseDetail.setProposalDetail(purchaseDetail.getProposalDetail());
-				newPurchaseDetail.setDelivered(0);
-				newPurchaseDetail.setSource(purchaseDetail.getSource());
-				newPurchaseDetail.setSourceId(purchaseDetail.getSourceId());
-				getManagerBean().restoreNullSubPOJOs(newPurchaseDetail);
-				getManagerBean().insert(newPurchaseDetail);
+				if (item != null) {
+					PurchaseDetail newPurchaseDetail = new PurchaseDetail();
+					newPurchaseDetail.setPurchase(purchaseDetail.getPurchase());
+					newPurchaseDetail.setProject(purchaseDetail.getProject());
+					newPurchaseDetail.setLine(++line);
+					newPurchaseDetail.setItem(item);
+					newPurchaseDetail.setDescription(purchaseDetail.getDescription() + " #" + item.getSerialNumber());
+					newPurchaseDetail.setQuantity(breakdown.getQuantity());
+					newPurchaseDetail.setPrice(purchaseDetail.getPrice());
+					newPurchaseDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
+					newPurchaseDetail.setTaxes(purchaseDetail.getTaxes());
+					newPurchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+					newPurchaseDetail.setProposalDetail(purchaseDetail.getProposalDetail());
+					newPurchaseDetail.setDelivered(0);
+					newPurchaseDetail.setSource(purchaseDetail.getSource());
+					newPurchaseDetail.setSourceId(purchaseDetail.getSourceId());
+					getManagerBean().restoreNullSubPOJOs(newPurchaseDetail);
+					getManagerBean().insert(newPurchaseDetail);
+				}
 			}
 		}
+	}
+
+	private double getSelectedBreakdownQuantity() {
+		double quantity = 0;
+		for (SelectItem selectItem : getSerialNumbers()) {
+			if (ArrayUtils.contains(getSelectedBreakdown(), selectItem.getLabel())) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				quantity = CommonUtil.round(quantity + breakdown.getQuantity(), 3);
+			}
+		}
+		return quantity;
 	}
 
 	public void onItemPackageShow(ActionEvent event) {
@@ -562,15 +601,32 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
+		private Item item;
 		private boolean lotable;
 		private String serialNumber;
 		private Date serialDate;
 		private double quantity;
 
 		public SerializableBreakdown() {
+			setItem(null);
 			setLotable(false);
 			setSerialNumber("");
 			setQuantity(0);
+		}
+
+		public SerializableBreakdown(Item item) {
+			setItem(item);
+			setLotable(item.getProduct().isLotable());
+			setSerialNumber(item.getSerialNumber());
+			setSerialDate(item.getSerialDate());
+			setQuantity(0);
+		}
+
+		public Item getItem() {
+			return item;
+		}
+		public void setItem(Item item) {
+			this.item = item;
 		}
 
 		public boolean isLotable() {
