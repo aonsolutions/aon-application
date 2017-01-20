@@ -651,5 +651,22 @@ public interface Properties {
 		Property<String> getModificationUserProperty();
 		Property<Timestamp> getModificationDateProperty();
 	}
+	
+	public interface RegistryProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDocumentProperty();
+		Property<Byte> getDocumentTypeProperty();
+		Property<String> getDocumentCountryProperty();
+		Property<String> getNameProperty();
+		Property<String> getAliasProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getNationalityProperty();
+		Property<Byte> getSecurityLevelProperty();
+	}
+	
+	public interface CarrierProperties extends RegistryProperties{
+		Property<Integer> getScopeProperty();
+	}
 
 }

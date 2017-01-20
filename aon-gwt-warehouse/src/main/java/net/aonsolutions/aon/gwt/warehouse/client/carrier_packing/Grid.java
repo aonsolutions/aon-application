@@ -164,7 +164,7 @@ public class Grid extends Composite {
 			
 			@Override
 			public String getValue(JsCarrierPacking object) {
-				return object.getType();
+				return object.getType() != null ? object.getType().getName() : "";
 			}
 		};
 		

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
@@ -38,20 +39,21 @@ import com.esferalia.aon.jooq.tables.records.RnoteRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
-import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
-
+import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
@@ -71,6 +73,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -103,7 +107,9 @@ public class RegistryDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
+	private static final CarrierPropertiesDAO CARRIER_PROPERTIES = new CarrierPropertiesDAO();
 
+	
 	private static final AccountingRegistryPropertiesDAO ACCOUNTING_REGISTRY_PROPERTIES = new AccountingRegistryPropertiesDAO();
 	private static class AccountingRegistryPropertiesDAO implements AccountingRegistryProperties {
 		private Condition[] getConditions(AccountingRegistryFilter filter) {
@@ -777,6 +783,16 @@ public class RegistryDAO {
 					.setRegistryNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY)))
 					;			
 		}
+	}
+	
+	// ------------------- CARRIER
+
+	public static Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter){
+		return ctx.getDslContext().select()
+				.from(CARRIER).join(SCOPE).on(CARRIER.SCOPE.eq(SCOPE.ID))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CARRIER.REGISTRY))
+				.where(CARRIER_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new CarrierFiller());
 	}
 	
 	// ------------------- REGISTRY PROFILE

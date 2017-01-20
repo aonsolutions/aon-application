@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
+import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -90,6 +91,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
@@ -2099,6 +2101,32 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	// ------------------ CARRIER 
+	
+	public static Stream<Carrier> getCarrierStream(String domainName, Integer domainId, String login, CarrierFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCarrierStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Carrier> getCarrierList(String domainName, Integer domainId, String login, CarrierFilter filter) {
+		return getCarrierStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Carrier getCarrier(String domainName, Integer domainId, String login, CarrierFilter filter) {
+		return getCarrierStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Carrier());
+	}
+	
+	public static Carrier getCarrier(String domainName, Integer domainId, String login, Integer id) {
+		return getCarrier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
 	
 	// ------------------ CARRIER PACKING
 	
@@ -2124,6 +2152,44 @@ public class AON {
 	
 	public static CarrierPacking getCarrierPacking(String domainName, Integer domainId, String login, Integer id) {
 		return getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static CarrierPacking insertCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertCarrierPacking(ctx, carrierPacking);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static CarrierPacking updateCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking, CarrierPackingFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().updateCarrierPacking(ctx, carrierPacking, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static CarrierPacking updateCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking) {
+		return updateCarrierPacking(domainName, domainId, login, carrierPacking, f -> f.getIdProperty().eq(carrierPacking.getId()));
+	}
+	
+	public static void deleteCarrierPacking(String domainName, Integer domainId, String login, CarrierPackingFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getWarehouse().deleteCarrierPacking(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteCarrierPacking(String domainName, Integer domainId, String login, Integer id) {
+		deleteCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
 	// ********************************************

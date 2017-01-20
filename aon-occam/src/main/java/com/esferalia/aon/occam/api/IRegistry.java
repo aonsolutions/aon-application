@@ -4,10 +4,12 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
@@ -59,5 +61,8 @@ public interface IRegistry {
 
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
+	
+	// ------------------- CARRIER
+	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter);
 
 }

@@ -56,6 +56,7 @@ public class StatServlet extends HttpServlet{
 					break;
 				case "fee":
 					object = getFeeStatData(domain, userName, params(req));
+					break;
 				default:
 					break;
 				}

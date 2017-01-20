@@ -184,5 +184,27 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 			WarehouseDAO.getCarrierPackingStream(ctx, filter));
 	}
+
+
+	@Override
+	public CarrierPacking insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			WarehouseDAO.insertCarrierPacking(ctx, carrierPacking));
+	}
+
+
+	@Override
+	public CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking,
+			CarrierPackingFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			WarehouseDAO.updateCarrierPacking(ctx, carrierPacking, filter));
+	}
+
+
+	@Override
+	public void deleteCarrierPacking(AONContext ctx, CarrierPackingFilter filter) {
+		ctx.getDslContext().transaction(configuration ->
+			WarehouseDAO.deleteCarrierPacking(ctx, filter));
+	}
 	
 }

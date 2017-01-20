@@ -6,10 +6,12 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
@@ -166,5 +168,13 @@ public class RegistryImpl implements IRegistry{
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getSellerStream(ctx, filter));
+	}
+	
+	// -------------------- CARRIER
+	
+	@Override
+	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getCarrierStream(ctx, filter));
 	}
 }

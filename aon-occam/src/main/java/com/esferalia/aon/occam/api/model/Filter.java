@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
+import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -239,5 +241,15 @@ public interface Filter {
 	@FunctionalInterface
 	public interface CarrierPackingFilter{
 		Filter filter(CarrierPackingProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface CarrierFilter{
+		Filter filter(CarrierProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface RegistryFilter{
+		Filter filter(RegistryProperties properties);
 	}
 }

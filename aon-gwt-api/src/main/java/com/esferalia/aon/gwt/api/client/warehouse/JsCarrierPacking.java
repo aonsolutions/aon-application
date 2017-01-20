@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.warehouse;
 
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -15,17 +16,76 @@ public class JsCarrierPacking extends JavaScriptObject {
 	public final native Integer getId() /*-{
 		return this.id;
 	}-*/;
+	
+	public final native Integer getDomain() /*-{
+		return this.domain;
+	}-*/;
+
+	public final native String getSeries() /*-{
+		return this.series;
+	}-*/;
+	
+	public final native Integer getNumber() /*-{
+		return this.type;
+	}-*/;
+
+	public final native JsObject getType() /*-{
+		return this.type;
+	}-*/;
+
+	public final native JsObject getStatus() /*-{
+		return this.status;
+	}-*/;
+
+	public final native Long getIssueDate() /*-{
+		return this.issue_date;
+	}-*/;
+	
+	public final native JsObject getCarrier() /*-{
+		return this.carrier;
+	}-*/;
+	
+	public final native Long getDeliveryDate() /*-{
+		return this.delivery_date;
+	}-*/;
+	
+	public final native String getCarrierReference() /*-{
+		return this.carrier_reference;
+	}-*/;
+	
+	public final native String getNumberPlate() /*-{
+		return this.number_plate;
+	}-*/;
+	
+	public final native String getDriverName() /*-{	
+		return this.driver_name;
+	}-*/;	
+	
+	public final native String getDriverDocument() /*-{
+		return this.driver_document;
+	}-*/;
+	
+	public final native String getCreationUser() /*-{
+		return this.creation_user;
+	}-*/;
+	
+	public final native Long getCreationDate() /*-{
+		return this.creation_user;
+	}-*/;
+
+	public final native String getModificationUser() /*-{
+		return this.modification_user;
+	}-*/;
+
+	public final native Long getModificationDate() /*-{
+		return this.modification_user;
+	}-*/;
+
+	
+	
 
 	public final native String getName() /*-{
 		return this.name;
-	}-*/;
-	
-	public final native String getType() /*-{
-		return this.type;
-	}-*/;
-	
-	public final native String getDate() /*-{
-		return this.date;
 	}-*/;
 
 }

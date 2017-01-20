@@ -95,5 +95,8 @@ public interface IWarehouse {
 	
 	// ------------------- CARRIER PACKING
 	Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter);
+	CarrierPacking insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking);
+	CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking, CarrierPackingFilter filter);
+	void deleteCarrierPacking(AONContext ctx, CarrierPackingFilter filter);
 	
 }

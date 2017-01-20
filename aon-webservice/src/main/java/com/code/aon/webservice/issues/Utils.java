@@ -8,10 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
@@ -20,12 +21,18 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Utils {
 	
+	private static final Logger LOGGER  = Logger.getLogger(Utils.class.getName());
+
+	private Utils() {
+		throw new IllegalAccessError("Utility class");
+	}
+
 	public static String getMd5(String str){
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
         md.update(str.getBytes());
         byte byteData[] = md.digest();
@@ -40,17 +47,17 @@ public class Utils {
 	}
 	
 	public static String getShortString(String str){
-		String title = "";
+		StringBuilder title = new StringBuilder();
 		String[] string = str.split(" ");
 		for(Integer i = 0; i < string.length; i++){
 			String s = string[i];
 			while(s.length()>30){
-				title = title + s.substring(0, 29)+ " ";
+				title.append(s.substring(0, 29)+ " ");
 				s = s.substring(30);
 			}
-			title = title +  s + " ";
+			title.append(s + " ");
 		}
-		return title;
+		return title.toString();
 	}
 	
 	public static String checkString(String str){
@@ -64,7 +71,9 @@ public class Utils {
 			return "gray";
 		else if(taskStatus.equals(TaskStatus.IN_PROGRESS)
 				|| taskStatus.equals(TaskStatus.PENDING)){
-			if(task.getParent() != null) return "red";
+			if(task.getParent() != null){
+				return "red";
+			}
 			else return "green";
 		}
 		else if(taskStatus.equals(TaskStatus.FINISHED))
@@ -80,7 +89,9 @@ public class Utils {
 	
 	public static String getUrl(String scheme, String domain, Boolean local){
 		String url = scheme + "://" + domain + "/";
-		if(local) url = url + "aon-aio/";
+		if(local){
+			url = url + "aon-aio/";
+		}
 		return url;
 	}
 	
@@ -90,13 +101,13 @@ public class Utils {
         response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
         response.addHeader("Access-Control-Max-Age", "1728000");
     }
-    
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     private static LinkedList<Integer> getList(String str){
-		if(str == null) return new LinkedList<Integer>();
+		if(str == null){
+			return new LinkedList<>();
+		}
 		String[] arr = str.split("@@");
-		LinkedList<Integer> list = new LinkedList<Integer>();
+		LinkedList<Integer> list = new LinkedList<>();
 		for (String s : arr) {
 			if(AonStringUtils.isNumeric(s))
 				list.add(Integer.parseInt(s));
@@ -104,17 +115,18 @@ public class Utils {
 		return list;
 	}
     
-    public static IssueFilter getFilter(Domain domain, String userName, HashMap<String,String> parameters){
-		Date from = AonDateUtils.getDateWithoutTime(new Date());
+    public static IssueFilter getFilter(HashMap<String,String> parameters){
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    	Date from = AonDateUtils.getDateWithoutTime(new Date());
 		AonDateUtils.addYears(from, -1);
 		Date to = AonDateUtils.getDateWithoutTime(new Date());
 		try {
-			if(parameters.containsKey("from") && !parameters.get("from").equals(""))
+			if(parameters.containsKey("from") && !"".equals(parameters.get("from")))
 				from = dateFormat.parse(parameters.get("from"));
-			if(parameters.containsKey("to") && !parameters.get("to").equals(""))
+			if(parameters.containsKey("to") && !"".equals(parameters.get("to")))
 				to = dateFormat.parse(parameters.get("to"));
 		} catch (ParseException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		to = AonDateUtils.addDays(to, 1);
 		

@@ -24,9 +24,9 @@ import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class CarrierPacking extends AonTemplate{
 
-	API API;
+	protected API API;
 	private HashMap<String, String[]> filterMap;
-	Boolean future = false;
+	private Boolean future = false;
 	
 	public CarrierPacking(AonData aonData, Boolean future) {
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
@@ -93,10 +93,14 @@ public class CarrierPacking extends AonTemplate{
 					Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 					toolbar.back.setVisible(true);
 					toolbar.remove.setVisible(true);
-					setNorthContent(new CarrierPackingPanel());
+					setNorthContent(new CarrierPackingPanel(API));
 					setContent(new Label(""));
 				}
-				@Override protected void remove() {}
+				@Override protected void remove() {
+					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
+					API.getWarehouse().deleteCarrierPacking(w.getJsCarrierPacking().getId());
+					startApplication();
+				}
 				@Override protected void back() {
 					startApplication();
 				}
@@ -118,7 +122,7 @@ public class CarrierPacking extends AonTemplate{
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
-		setNorthContent(new CarrierPackingPanel(js));
+		setNorthContent(new CarrierPackingPanel(API,js));
 		setContent(new Label(""));
 	}
 	

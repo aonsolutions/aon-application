@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
+import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
@@ -585,9 +586,67 @@ public class WarehouseDAO {
 		.execute();
 	}
 	
+	// ----------------- CARRIER PACKING
+	
 	public static Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter){
 		return ctx.getDslContext().select().from(CARRIER_PACKING).where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new CarrierPackingFiller());
+	}
+	
+	public static CarrierPacking insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking){
+		return ctx.getDslContext().insertInto(CARRIER_PACKING, CARRIER_PACKING.CARRIER,
+				CARRIER_PACKING.CARRIER_REFERENCE, CARRIER_PACKING.CREATION_DATE,
+				CARRIER_PACKING.CREATION_USER, CARRIER_PACKING.DELIVERY_DATE,
+				CARRIER_PACKING.DOMAIN, CARRIER_PACKING.DRIVER_DOCUMENT, 
+				CARRIER_PACKING.DRIVER_NAME, CARRIER_PACKING.ISSUE_DATE,
+				CARRIER_PACKING.MODIFICATION_DATE, CARRIER_PACKING.MODIFICATION_USER,
+				CARRIER_PACKING.NUMBER, CARRIER_PACKING.NUMBER_PLATE,
+				CARRIER_PACKING.SERIES,	CARRIER_PACKING.STATUS, CARRIER_PACKING.TYPE)
+				.values(carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0,
+						carrierPacking.getCarrierReference(), carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null,
+						carrierPacking.getCreationUser(), carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null,
+						carrierPacking.getDomain() != null ? carrierPacking.getDomain() : ctx.getDomainId(), carrierPacking.getDriverDocument(),
+						carrierPacking.getDriverName(), carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null,
+						carrierPacking.getModificationDate() != null ? new Timestamp(carrierPacking.getModificationDate().getTime()) : null, carrierPacking.getModificationUser(),
+						carrierPacking.getNumber() != null ? carrierPacking.getNumber() : 1, carrierPacking.getNumberPlate(), 
+						carrierPacking.getSeries(), carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : 0, carrierPacking.getStatus() != null ? carrierPacking.getType().value() : 0)
+				.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
+	}
+	
+	public static CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking, CarrierPackingFilter filter){
+		return ctx.getDslContext().update(CARRIER_PACKING)
+				.set(CARRIER_PACKING.CARRIER, carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0)
+				.set(CARRIER_PACKING.CARRIER_REFERENCE, carrierPacking.getCarrierReference())
+				.set(CARRIER_PACKING.CREATION_DATE, carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null)
+				.set(CARRIER_PACKING.CREATION_USER, carrierPacking.getCreationUser())
+				.set(CARRIER_PACKING.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null)
+				.set(CARRIER_PACKING.DOMAIN, carrierPacking.getDomain())
+				.set(CARRIER_PACKING.DRIVER_DOCUMENT, carrierPacking.getDriverDocument())
+				.set(CARRIER_PACKING.DRIVER_NAME, carrierPacking.getDriverName())
+				.set(CARRIER_PACKING.ISSUE_DATE, carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null)
+				.set(CARRIER_PACKING.MODIFICATION_DATE, carrierPacking.getModificationDate() != null ? new Timestamp(carrierPacking.getModificationDate().getTime()) : null)
+				.set(CARRIER_PACKING.MODIFICATION_USER, carrierPacking.getModificationUser())
+				.set(CARRIER_PACKING.NUMBER, carrierPacking.getNumber())
+				.set(CARRIER_PACKING.NUMBER_PLATE, carrierPacking.getNumberPlate())
+				.set(CARRIER_PACKING.SERIES, carrierPacking.getSeries())
+				.set(CARRIER_PACKING.STATUS, carrierPacking.getStatus().value())
+				.set(CARRIER_PACKING.TYPE, carrierPacking.getType().value())
+			.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
+	}
+	
+	public static void deleteCarrierPacking(AONContext ctx, CarrierPackingFilter filter){
+		Integer nullInt = null;
+		
+		LinkedList<Integer> list = getCarrierPackingStream(ctx, filter).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
+
+		ctx.getDslContext().update(PURCHASE)
+			.set(PURCHASE.CARRIER_PACKING, nullInt)
+			.where(PURCHASE.CARRIER_PACKING.in(list))
+			.execute();
+			
+		ctx.getDslContext().delete(CARRIER_PACKING)
+			.where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	private static class FullWarehouseTransferFiller implements Function<WarehouseTransferRecord, WarehouseTransfer> {

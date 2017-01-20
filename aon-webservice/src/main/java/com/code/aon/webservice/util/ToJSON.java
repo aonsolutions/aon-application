@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -145,6 +146,32 @@ public class ToJSON {
 		json.put("domain", pc.getDomain());
 		json.put("name", pc.getName());
 		return json;
+	}
+	
+	public static JSONObject carrierPackingToJSON(CarrierPacking carrierPacking) {
+		return new JSONObject()
+			.put("id", carrierPacking.getId())
+			.put("domain", carrierPacking.getDomain())
+			.put("series", carrierPacking.getSeries())
+			.put("type", new JSONObject()
+				.put("id", carrierPacking.getType() != null ? carrierPacking.getType().value() : "")
+				.put("name", carrierPacking.getType() != null ? carrierPacking.getType().getName() : ""))
+			.put("status", new JSONObject()
+				.put("id", carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : "")
+				.put("name", carrierPacking.getStatus() != null ? carrierPacking.getStatus().getName(): "")) 
+			.put("issue_date", carrierPacking.getIssueDate() != null ? carrierPacking.getIssueDate().getTime() : "")
+			.put("carrier", new JSONObject()
+				.put("id", carrierPacking.getCarrier())
+				.put("id", "")) // TODO
+			.put("delivery_date", carrierPacking.getDeliveryDate() != null ? carrierPacking.getDeliveryDate().getTime() : "")
+			.put("carrier_reference", carrierPacking.getCarrierReference())
+			.put("number_plate", carrierPacking.getNumberPlate())
+			.put("driver_name", carrierPacking.getDriverName())
+			.put("driver_document", carrierPacking.getDriverDocument())
+			.put("creation_date", carrierPacking.getCreationDate() != null ? carrierPacking.getCreationDate().getTime(): "")
+			.put("creation_user", carrierPacking.getCreationUser())
+			.put("modification_date", carrierPacking.getModificationDate() != null ? carrierPacking.getModificationDate().getTime() : "")
+			.put("modification_user", carrierPacking.getModificationUser());
 	}
 	
 	public static String getPeriod(BillingPeriod period){

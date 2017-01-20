@@ -8,8 +8,8 @@ public class CarrierPacking {
 	private Integer domain;
 	private String series;
 	private Integer number;
-	private Byte type;
-	private Byte status;
+	private CarrierPackingType type;
+	private CarrierPackingStatus status;
 	private Date issueDate;
 	private Integer carrier;
 	private Date deliveryDate;
@@ -50,17 +50,17 @@ public class CarrierPacking {
 		this.number = number;
 		return this;
 	}
-	public Byte getType() {
+	public CarrierPackingType getType() {
 		return type;
 	}
-	public CarrierPacking setType(Byte type) {
+	public CarrierPacking setType(CarrierPackingType type) {
 		this.type = type;
 		return this;
 	}
-	public Byte getStatus() {
+	public CarrierPackingStatus getStatus() {
 		return status;
 	}
-	public CarrierPacking setStatus(Byte status) {
+	public CarrierPacking setStatus(CarrierPackingStatus status) {
 		this.status = status;
 		return this;
 	}
