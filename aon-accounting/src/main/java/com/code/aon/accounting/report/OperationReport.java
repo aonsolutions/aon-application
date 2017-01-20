@@ -103,4 +103,12 @@ public class OperationReport implements Serializable {
 	public Double getTotalSurchargeQuota(){
 		return taxes==null?0.0:taxes.stream().filter((o) -> o.getSurchargeQuota()!=null).mapToDouble(OperationReportTax::getSurchargeQuota).sum();
 	}
+	public Double getTotalIvaQuota(){
+		return taxes==null?0.0:taxes.stream().filter(o -> o.getQuota()!=null && o.getTaxType().equals("IVA")).mapToDouble(OperationReportTax::getQuota).sum();
+	}
+	public Double getTotalIrpfQuota(){
+		return taxes==null?0.0:taxes.stream().filter(o -> o.getQuota()!=null && o.getTaxType().equals("IRPF")).mapToDouble(OperationReportTax::getQuota).sum();
+	}
+
 }
+

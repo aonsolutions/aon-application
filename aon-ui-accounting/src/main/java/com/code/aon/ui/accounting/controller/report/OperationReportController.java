@@ -3,6 +3,7 @@ package com.code.aon.ui.accounting.controller.report;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -42,7 +43,6 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 	private static final String DATE = "date";
 	private static final String ACCOUNT = "cuenta";
 	private static final String CONCEPT = "concepto";
-	private static final String AMOUNT = "importe";
 	private static final String DOCUMENT_NUMBER = "numDoc";
 	private static final String RDOCUMENT = "rdocument";
 	private static final String RNAME = "rname";
@@ -52,13 +52,13 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 	private static final String QUOTA = "quota";
 	private static final String SURCHARGE_PERCENTAGE = "surchargePercent";
 	private static final String SURCHARGE_QUOTA = "surcharge";
+	private static final String AMOUNT = "importe";
 	
 	private static final ReportColumnMetadata[] COLUMN_LABELS = new ReportColumnMetadata[]{
 		new ReportColumnMetadata(ID,Types.INTEGER,ID,10)
 		,new ReportColumnMetadata(DATE,Types.DATE,"Fecha",10)
 		,new ReportColumnMetadata(ACCOUNT,Types.VARCHAR,"Cuenta",50)
 		,new ReportColumnMetadata(CONCEPT,Types.VARCHAR,"Concepto",50)
-		,new ReportColumnMetadata(AMOUNT,Types.DOUBLE,"Importe",10)
 		,new ReportColumnMetadata(DOCUMENT_NUMBER,Types.VARCHAR,"Nº Docum.",15)
 		,new ReportColumnMetadata(RDOCUMENT,Types.VARCHAR,"NIF",15)
 		,new ReportColumnMetadata(RNAME,Types.VARCHAR,"Titular",40)
@@ -68,6 +68,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 		,new ReportColumnMetadata(QUOTA,Types.DOUBLE,"Cuota",10)
 		,new ReportColumnMetadata(SURCHARGE_PERCENTAGE,Types.VARCHAR,"Porc.Rec.",10)
 		,new ReportColumnMetadata(SURCHARGE_QUOTA,Types.DOUBLE,"Recargo",10)
+		,new ReportColumnMetadata(AMOUNT,Types.DOUBLE,"Importe",10)
 	};
 
 	private OperationReportParams params;
@@ -180,6 +181,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 			exporter.exportHeader(metadata);
 			List<OperationReport> list = (List<OperationReport>) getDetailModel().getWrappedData();
 			double totalBalance = 0;
+			HashMap<String, Double> resumen = new HashMap<String, Double>();
 			for (OperationReport op : list) {
 				exporter.startLine();
 				int i = 0;
@@ -187,8 +189,6 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getEntryDate() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getAccount() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getConcept() );
-				exporter.exportColumn(metadata.getColumns().get((i++)), op.getBalance() );
-				totalBalance  = CommonUtil.round(totalBalance  + op.getBalance());
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getDocumentNumber() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getRdocument() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getRname() );
@@ -198,10 +198,23 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 						if (!first) {
 							exporter.endLine();
 							exporter.startLine();
-							for (i=0;i<8;i++){
+							for (i=0;i<7;i++){
 								exporter.exportColumn(metadata.getColumns().get((i)), null );	
 							}
 						}
+						String key = null;
+						if(opt.getTaxType().equals("IVA")){
+							if(opt.getPercentage() != 0)
+								key = opt.getTaxType()+"-"+opt.getPercentage();
+						} else if(opt.getTaxType().equals("IRPF")) {
+							 key = opt.getTaxType();
+						}
+						
+						if(key != null)
+							if(resumen.containsKey(key)) 
+								resumen.put(key, resumen.get(key) + opt.getQuota());
+							else resumen.put(key, opt.getQuota());
+						
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getTaxType() );
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getBase() );
 						exporter.exportColumn(metadata.getColumns().get((i++)), String.format( "%.2f", opt.getPercentage()!=null?opt.getPercentage():0) );
@@ -210,7 +223,35 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getSurchargeQuota() );
 						first = false;
 					}
+				} else { 
+					for (i=i;i<13;i++)
+						exporter.exportColumn(metadata.getColumns().get((i)), null );	
 				}
+				exporter.exportColumn(metadata.getColumns().get((i++)), (op.getBalance()));
+				totalBalance  = CommonUtil.round(totalBalance  + op.getBalance());
+				exporter.endLine();
+			}
+			
+			// rows for summary of tax
+			for (String key : resumen.keySet()) {
+				String[] k = key.split("-");
+				int j = 0;
+				exporter.startLine();
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), k[0]);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), k.length>1 ? k[1] : "");
+				exporter.exportColumn(metadata.getColumns().get((j++)), resumen.get(key));
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
+				exporter.exportColumn(metadata.getColumns().get((j++)), null);
 				exporter.endLine();
 			}
 			
@@ -221,7 +262,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
-			exporter.exportColumn(metadata.getColumns().get((i++)), totalBalance);
+			
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
 			exporter.exportColumn(metadata.getColumns().get((i++)), null);
@@ -237,6 +278,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 			exporter.exportColumn(metadata.getColumns().get((i++)), list
 					.stream().filter(o -> o.getTotalSurchargeQuota() != null)
 					.mapToDouble(OperationReport::getTotalSurchargeQuota).sum());
+			exporter.exportColumn(metadata.getColumns().get((i++)), totalBalance);
 			exporter.endLine();
 			
 			exporter.endExport(output);

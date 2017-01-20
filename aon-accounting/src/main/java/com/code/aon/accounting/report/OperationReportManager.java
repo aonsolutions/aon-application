@@ -91,6 +91,7 @@ public class OperationReportManager {
 			while (rs.next()) {
 				op = new OperationReport();
 				op.setEntryDate(rs.getDate(2));;
+				Double taxes = 0.0;
 				if (id != rs.getInt(1)) {
 					op.setId(++counter);
 					id = rs.getInt(1);
@@ -113,6 +114,12 @@ public class OperationReportManager {
 								opt.setSurchargePercentage(surchargePercent);
 								opt.setSurchargeQuota(taxRs.getDouble(6));								
 							}
+							
+							if(opt.getTaxType().equals("IVA"))
+								taxes = taxes + opt.getQuota();	
+							else if(opt.getTaxType().equals("IRPF")) 
+								taxes = taxes - opt.getQuota();
+							
 							op.getTaxes().add(opt);
 						}
 						taxRs.close();
@@ -120,7 +127,7 @@ public class OperationReportManager {
 				}
 				op.setConcept(rs.getString(3));
 				op.setAccount(rs.getString(4));
-				op.setBalance(rs.getDouble(5));
+				op.setBalance(rs.getDouble(5) + taxes);
 				op.setDocumentNumber(rs.getString(6));
 				op.setReferenceCode(rs.getString(7));
 				op.setRdocument(rs.getString(8));
