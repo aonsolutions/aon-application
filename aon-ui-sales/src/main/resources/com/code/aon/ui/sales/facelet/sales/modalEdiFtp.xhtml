@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showEdiFtpWindow">
 		<aon:if test="#{sales.ftpEdiDownloader.showEdiFtpWindow}">
-			<rich:modalPanel id="ediFtpModalPanel" minHeight="600"
+			<rich:modalPanel id="ediFtpModalPanel" minHeight="650"
 				minWidth="800" rendered="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -141,6 +141,7 @@
 												value="#{bundle.aon_date}" />
 											<aon:selectInputDate id="EdiFtp_date"
 												value="#{sales.ftpEdiDownloader.date}"
+												required="#{true}"
 												timeZone="#{timeZoneController.timeZone}"
 												popupDateFormat="#{bundle.aon_date_pattern}"/>
 																				
@@ -162,76 +163,78 @@
 										</aon:panelGrid>
 									</aon:panel>
 									
-									<aon:dataTable id="ftpOrdersData" var="to" rows="10" 
-										value="#{sales.ftpEdiDownloader.unreadSalesModel}"
-										rendered="#{sales.ftpEdiDownloader.unreadSalesModel.rowCount > 0}">
-
-										<aon:column styleClass="aon-editDataTable-iconColumn">
-											<f:facet name="header">
-												<aon:outputText value="&#160;" />
-											</f:facet>
-											<aon:commandButton id="ftpSales-import"
-												value="&#160;" styleClass="aon-icon-file-entrance aon-noborder"
-												title="#{bundle.aon_import}"
-												actionListener="#{sales.ftpEdiDownloader.onImportFile}"
-												reRender="showEdiFtpWindow, salesForm" >
-												<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
-											</aon:commandButton>
-										</aon:column>
-									
-										<aon:column styleClass="aon-editDataTable-textColumn">
-											<f:facet name="header">
-												<aon:outputText value="#{bundle.aon_name}" />
-											</f:facet>
-											<aon:outputText value="#{to.customerName}" />
-										</aon:column>
-										
-										<aon:column styleClass="aon-editDataTable-textColumn">
-											<f:facet name="header">
-												<aon:outputText value="#{bundle.aon_id}" />
-											</f:facet>
-											<aon:outputText value="#{to.customerCode}" />
-										</aon:column>
-										
-										<aon:column styleClass="aon-editDataTable-textColumn">
-											<f:facet name="header">
-												<aon:outputText value="#{bundle.aon_address}" />
-											</f:facet>
-											<aon:outputText value="#{to.deliveryAddress}" />
-										</aon:column>
+									<aon:div styleClass="aon-margin-top">
+										<aon:dataTable id="ftpOrdersData" var="to" rows="10" 
+											value="#{sales.ftpEdiDownloader.unreadSalesModel}"
+											rendered="#{sales.ftpEdiDownloader.unreadSalesModel.rowCount > 0}">
 	
-										<aon:column styleClass="aon-editDataTable-textColumn">
-											<f:facet name="header">
-												<aon:outputText value="#{bundle.aon_date}" />
-											</f:facet>
-											<aon:outputText value="#{to.chargeDate}">
-												<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-													timeZone="#{timeZoneController.timeZoneId}" />
-											</aon:outputText>
-										</aon:column>
+											<aon:column styleClass="aon-editDataTable-iconColumn">
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+												<aon:commandButton id="ftpSales-import"
+													value="&#160;" styleClass="aon-icon-file-entrance aon-noborder"
+													title="#{bundle.aon_import}"
+													actionListener="#{sales.ftpEdiDownloader.onImportFile}"
+													reRender="showEdiFtpWindow, salesForm" >
+													<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+												</aon:commandButton>
+											</aon:column>
 										
-										<aon:column styleClass="aon-editDataTable-iconColumn">
-											<f:facet name="header">
-												<aon:outputText value="&#160;" />
-											</f:facet>
-											<aon:htmlCommandLink id="ftpSales-download" 
-												value="&#160;" target="_blank"
-												title="#{bundle.webmail_download}"
-												actionListener="#{sales.ftpEdiDownloader.onDownloadFile}"
-												styleClass="aon-finding-toolbar-item aon-noborder aon-icon-file-download">
-											</aon:htmlCommandLink>
-											<aon:commandButton id="ftpSales-deleteFile"
-												value="&#160;" title="#{bundle.aon_remove}"
-												reRender="showEdiFtpWindow, salesForm"
-												onclick="if(!confirm('#{bundle.aon_remove_confirm}')) return false;"
-												actionListener="#{sales.ftpEdiDownloader.onDeleteFile}"
-												styleClass="aon-finding-toolbar-item aon-noborder aon-icon-rubber">
-											</aon:commandButton>
-										</aon:column>
-									</aon:dataTable>
-									
-									<aon:dataScroller for="ftpOrdersData" showNote="true" pageSize="10"
-										rowCount="#{sales.ftpEdiDownloader.unreadSalesModel.rowCount}" />
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_name}" />
+												</f:facet>
+												<aon:outputText value="#{to.customerName}" />
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_id}" />
+												</f:facet>
+												<aon:outputText value="#{to.customerCode}" />
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_address}" />
+												</f:facet>
+												<aon:outputText value="#{to.deliveryAddress}" />
+											</aon:column>
+		
+											<aon:column styleClass="aon-editDataTable-buttonsColumn">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_date}" />
+												</f:facet>
+												<aon:outputText value="#{to.chargeDate}">
+													<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+														timeZone="#{timeZoneController.timeZoneId}" />
+												</aon:outputText>
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-iconColumn">
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+												<aon:htmlCommandLink id="ftpSales-download" 
+													value="&#160;" target="_blank"
+													title="#{bundle.webmail_download}"
+													actionListener="#{sales.ftpEdiDownloader.onDownloadFile}"
+													styleClass="aon-finding-toolbar-item aon-noborder aon-icon-file-download">
+												</aon:htmlCommandLink>
+												<aon:commandButton id="ftpSales-deleteFile"
+													value="&#160;" title="#{bundle.aon_remove}"
+													reRender="ftpOrdersData, showEdiFtpWindow, salesForm"
+													onclick="if(!confirm('#{bundle.aon_remove_confirm}')) return false;"
+													actionListener="#{sales.ftpEdiDownloader.onDeleteFile}"
+													styleClass="aon-finding-toolbar-item aon-noborder aon-icon-rubber">
+												</aon:commandButton>
+											</aon:column>
+										</aon:dataTable>
+										
+										<aon:dataScroller for="ftpOrdersData" showNote="true" pageSize="10"
+											rowCount="#{sales.ftpEdiDownloader.unreadSalesModel.rowCount}" />
+									</aon:div> 
 									
 								</aon:div>
 							</aon:div>

@@ -137,11 +137,7 @@ public class SeresFtpConnectionProvider implements Serializable {
 		FtpConnector ftp = new FtpConnector() {
 			@Override
 			public void onSuccess() throws IOException, FtpException {
-				if (changeWorkingDirectory(remotePath)) {
-					this.deleteFile(remotePath, completed);
-				} else {
-					System.out.println("Could not change directory!");
-				}
+				this.deleteFile(remotePath, completed);
 			}
 		};
 		
@@ -195,8 +191,8 @@ abstract class FtpConnector {
 			throw new FtpException("Connection failed! (check hostname and port)", e);
 		}
 
-		String replyString = ftp.getReplyString();
 		// TODO log me
+//		String replyString = ftp.getReplyString();
 //		System.out.println("REPLY: " + replyString);
 
 		int replyCode = ftp.getReplyCode();
@@ -384,11 +380,8 @@ abstract class FtpConnector {
 	}
 	
 	protected boolean deleteFile(String remotePath, boolean completed) throws IOException {
-		boolean success = changeWorkingDirectory(remotePath);
-		if (success) {
-			ftp.setFileType(FTP.BINARY_FILE_TYPE);
-			completed = ftp.deleteFile(remotePath);
-		}
+		ftp.setFileType(FTP.BINARY_FILE_TYPE);
+		completed = ftp.deleteFile(remotePath);
 		return completed;
 	}
 	

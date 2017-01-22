@@ -172,6 +172,13 @@ public class RegistryDAO {
 			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	
+	public static Registry getRegistry2(AONContext ctx, String document){
+		return ctx.getDslContext().select().from(REGISTRY)
+				.where(REGISTRY.DOMAIN.eq(ctx.getDomainId()))
+				.and(REGISTRY.DOCUMENT.eq(document)).fetchInto(REGISTRY)
+				.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
+	}
+	
 	public static Registry getRegistry(AONContext ctx, Integer domainId, String name){
 		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.NAME.eq(name))
 				.and(REGISTRY.DOMAIN.eq(domainId)).fetchInto(REGISTRY)

@@ -28,14 +28,14 @@ import com.esferalia.aon.ingenet.api.elaboraciones.DATOSCLIENTETYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSDIRECCIONTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSPRODUCTOTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSREGISTROTYPE;
-import com.esferalia.aon.ingenet.api.elaboraciones.PAISTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.ELABORACIONES;
 import com.esferalia.aon.ingenet.api.elaboraciones.ELABORACIONTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.PAISTYPE;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Elaboration;
-import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
@@ -64,7 +65,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 
 	private static final String PARAM_DATE = "date";
 	
-	private String returnValue;
 	
 	
 	protected void processRequest(HttpServletRequest httpRequest,
@@ -83,29 +83,32 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		
 		List<Elaboration> pendingList = getPendingList(ctx, date);
-//		Gson gson = new Gson();
-//		returnValue = "";
-//		pendingList.forEach(elaboration -> {
-//			fillResponse(gson, elaboration);
-//			List<ElaborationDetail> detailList = getDetailList(ctx, elaboration.getId());
-//			detailList.forEach(elaborationDetail -> {
-//				fillResponse(gson, elaborationDetail);
-//			});
-//		});
+		
+		manageElaborationList(ctx, pendingList);
 
 		ELABORACIONES elaboraciones = fillElaborationData(ctx, pendingList);
-		returnValue = convertToXml(elaboraciones, ELABORACIONES.class);
+		String xml = convertToXml(elaboraciones, ELABORACIONES.class);
         
 		
 //		httpResponse.setHeader("", "");
 //		httpResponse.setContentType("application/json");
 		httpResponse.setContentType("application/xml");
 //		httpResponse.setContentType("text/xml;charset=UTF-8");
-		httpResponse.setContentLength(returnValue.length());
+		httpResponse.setContentLength(xml.length());
 		
 		PrintWriter out = httpResponse.getWriter();
-		out.print(returnValue);
+		out.print(xml);
 		out.flush();
+	}
+	
+	private void manageElaborationList(AONContext ctx,
+			List<Elaboration> list) {
+		ctx.transaction(t -> {
+			list.forEach(elaboration -> {
+				elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
+				ElaborationDAO.updateElaboration(ctx, elaboration);
+			});
+		});
 	}
 	
 	private ELABORACIONES fillElaborationData(AONContext ctx, List<Elaboration> pendingList) {
@@ -120,6 +123,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			elaboracion.setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
 			elaboracion.setSERIE(elaboration.getSeries());
 			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
+			elaboracion.setSERIEPEDIDO(sales.getSeries());
+			elaboracion.setNUMEROPEDIDO(String.valueOf(sales.getNumber()));
+			elaboracion.setREFERENCIACOMPRA(sales.getPurchaseReference());
 			elaboracion.setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
 			elaboracion.setFECHAEMISION(dateFormatter.format(elaboration.getDate()));
 			elaboracion.setCOMENTARIOS(elaboration.getComments());
@@ -134,6 +140,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			elaboracion.getDATOSPRODUCTO().setFECHASERIE(null);
 			elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
 			elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
+			elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
 			elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
 			elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
 			elaboraciones.getDATOSELABORACIONES().add(elaboracion);
@@ -169,15 +176,29 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		return datos;
 	}
 
-	private DATOSDIRECCIONTYPE obtainDATOSDIRECCIONENTREGA(
-			AONContext ctx, Sales sales) {
+	private DATOSDIRECCIONTYPE obtainDATOSDIRECCIONENTREGA(AONContext ctx,
+			Sales sales) {
 		DATOSDIRECCIONTYPE datos = new DATOSDIRECCIONTYPE();
-		datos.setDIRECCION(sales.getShippingAlternativeAddress());
-		datos.setDIRECCION2(sales.getShippingAlternativeAddress2());
-		datos.setDIRECCION3(null);
-		datos.setCIUDAD(sales.getShippingAlternativeCity());
-		datos.setCODIGOPOSTAL(sales.getShippingAlternativeZip());
-		datos.setPROVINCIA(null);
+		if (sales.getShippingAlternativeAddress() != null
+				&& sales.getShippingAlternativeAddress2() != null
+				&& sales.getShippingAlternativeCity() != null
+				&& sales.getShippingAlternativeZip() != null) {
+			datos.setDIRECCION(sales.getShippingAlternativeAddress());
+			datos.setDIRECCION2(sales.getShippingAlternativeAddress2());
+			datos.setDIRECCION3(null);
+			datos.setCIUDAD(sales.getShippingAlternativeCity());
+			datos.setCODIGOPOSTAL(sales.getShippingAlternativeZip());
+			datos.setPROVINCIA(null);
+		} else {
+			RAddress address = obtainAddress(ctx, sales.getShippingAddress());
+			GeoZone gz = obtainGeozone(ctx, address.getGeozone());
+			datos.setDIRECCION(address.getAddress());
+			datos.setDIRECCION2(address.getAddress2());
+			datos.setDIRECCION3(address.getAddress3());
+			datos.setCIUDAD(address.getCity());
+			datos.setCODIGOPOSTAL(address.getZip());
+			datos.setPROVINCIA(gz.getName());
+		}
 		return datos;
 	}
 
@@ -187,12 +208,12 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		DATOSCLIENTETYPE datos = new DATOSCLIENTETYPE();
 		datos.setALBARANVALORADO(new Byte("1").equals(customer.getDeliveryValuated())?"S":"N");
 		datos.setDATOSREGISTRO(new DATOSREGISTROTYPE());
-		datos.getDATOSREGISTRO().setDOCUMENTO(new CIFNIFTYPE());
-		datos.getDATOSREGISTRO().getDOCUMENTO().setPAISDOCUMENTO(new PAISTYPE());
-		datos.getDATOSREGISTRO().getDOCUMENTO().getPAISDOCUMENTO().setCODIGO(String.valueOf(registry.getDocumentCountry().getIsoCode()));
-		datos.getDATOSREGISTRO().getDOCUMENTO().getPAISDOCUMENTO().setDESCRIPCION(registry.getDocumentCountry().getName());
-		datos.getDATOSREGISTRO().getDOCUMENTO().setTIPODOCUMENTO(registry.getDocumentType().name());
-		datos.getDATOSREGISTRO().getDOCUMENTO().setDOCUMENTO(registry.getDocument());
+		datos.getDATOSREGISTRO().setDATOSDOCUMENTO(new CIFNIFTYPE());
+		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setPAISDOCUMENTO(new PAISTYPE());
+		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setCODIGO(String.valueOf(registry.getDocumentCountry().getIsoCode()));
+		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setDESCRIPCION(registry.getDocumentCountry().getName());
+		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setTIPODOCUMENTO(registry.getDocumentType().name());
+		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setDOCUMENTO(registry.getDocument());
 		datos.getDATOSREGISTRO().setNOMBRE(registry.getName());
 		datos.getDATOSREGISTRO().setALIAS(registry.getAlias());
 		datos.getDATOSREGISTRO().setNACIONALIDAD(new PAISTYPE());
@@ -265,21 +286,21 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		return null;
 	}
 	
-	private RAddress obtainAddress(AONContext ctx, Integer registry) {
-		if (registry != null) {
-			return RegistryDAO.getRAddressStream(ctx, registry).findFirst()
-					.orElse(new RAddress());
+	private RAddress obtainAddress(AONContext ctx, Integer id) {
+		if (id != null) {
+			return RegistryDAO
+					.getRAddressStream(ctx, f -> f.getIdProperty().eq(id))
+					.findFirst().orElse(new RAddress());
 		}
 		return null;
 	}
-
-//	private void fillResponse(Gson gson, Elaboration elaboration) {
-//		this.returnValue += gson.toJson(elaboration);
-//	}
-//	
-//	private void fillResponse(Gson gson, ElaborationDetail detail) {
-//		this.returnValue += gson.toJson(detail);
-//	}
+	
+	private GeoZone obtainGeozone(AONContext ctx, Integer id) {
+		if (id != null) {
+			return GeoZoneDAO.get(ctx, id);
+		}
+		return null;
+	}
 
 	private List<Elaboration> getPendingList(AONContext ctx, Date date){
 		List<Elaboration> elaborationList = ElaborationDAO.getElaborationList(ctx, p -> {
@@ -289,14 +310,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 							;
 		});
 		return elaborationList;
-	}
-
-	private List<ElaborationDetail> getDetailList(AONContext ctx, Integer elaborationId){
-		List<ElaborationDetail> list = ElaborationDAO.getElaborationDetailList(ctx, p -> {
-			return p.getElaborationProperty().eq(elaborationId)
-					;
-		});
-		return list;
 	}
 	
 	

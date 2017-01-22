@@ -259,8 +259,8 @@ public class FtpSalesDownloadHandler implements Serializable {
 			ConnectSalesReader reader = new ConnectSalesReader();
 			com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler connectHandler = new com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler(
 					controller);
+			unreadSalesList = new LinkedList<>();
 			if(list!=null && !list.isEmpty()){
-				unreadSalesList = new LinkedList<>();
 				list.forEach(ftpFile -> {
 					unreadSalesList.add(obtainStrippedOrder(reader, connectHandler, ftpFile));
 				});
@@ -340,9 +340,9 @@ public class FtpSalesDownloadHandler implements Serializable {
 			
 	public String onDownloadFile(ActionEvent event) {
 		if(getUnreadSalesModel().isRowAvailable()){
-			FtpFile ftpFile = (FtpFile) getUnreadSalesModel().getRowData();
+			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
 			
-			byte[] byteFile = obtainFtpFile(ftpFile.getName());
+			byte[] byteFile = obtainFtpFile(ftpFileOrder.getFtpFile().getName());
 			
 			FileOutput output = null;
 			HttpServletResponse response = null;
@@ -355,7 +355,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 				byte[] data = output.getContent();
 				int size = data.length;
 				response = DownloadUtil.getResponse();
-				out = DownloadUtil.initDownload(response, ftpFile.getName(), null, size);
+				out = DownloadUtil.initDownload(response, ftpFileOrder.getFtpFile().getName(), null, size);
 				InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
 				IOUtils.copy( fileIn, out );
 				IOUtils.closeQuietly(fileIn);
@@ -379,9 +379,9 @@ public class FtpSalesDownloadHandler implements Serializable {
 				setShowEdiFtpWindow(false);
 			}
 			
-			FtpFile ftpFile = (FtpFile) getUnreadSalesModel().getRowData();
-
-			byte[] byteFile = obtainFtpFile(ftpFile.getName());
+			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
+			
+			byte[] byteFile = obtainFtpFile(ftpFileOrder.getFtpFile().getName());
 			
 			getLogPanel()
 					.info("Iniciando importacion de fichero EDI (CONNECT)");
@@ -392,7 +392,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			try {
 				connectHandler.importFile(event, isTesting());
 				if(isDeleteOnComplete()){
-					deleteFile(ftpFile);
+					deleteFile(ftpFileOrder.getFtpFile());
 				}
 			} catch (Throwable th) {
 				getLogPanel()
@@ -406,7 +406,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 				try {
 					udapaHandler.importFile(event, isTesting());
 					if(isDeleteOnComplete()){
-						deleteFile(ftpFile);
+						deleteFile(ftpFileOrder.getFtpFile());
 					}
 				} catch (Throwable th2) {
 					getLogPanel()
@@ -419,12 +419,14 @@ public class FtpSalesDownloadHandler implements Serializable {
 	
 	public void onDeleteFile(ActionEvent event) {
 		if (getUnreadSalesModel().isRowAvailable()) {
-			FtpFile ftpFile = (FtpFile) getUnreadSalesModel().getRowData();
-			deleteFile(ftpFile);
+			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
+			deleteFile(ftpFileOrder.getFtpFile());
+			unreadSalesList.remove(ftpFileOrder);
+			getUnreadSalesModel().setWrappedData(unreadSalesList);
 		}
 	}
 		
-	private void deleteFile(FtpFile ftpFile) {
+	private boolean deleteFile(FtpFile ftpFile) {
 		if (ftpFile!=null) {
 			getLogPanel().info(
 					"Borrando el fichero EDI del servidor FTP de SERESNET");
@@ -438,10 +440,12 @@ public class FtpSalesDownloadHandler implements Serializable {
 				if (!completed) {
 					getLogPanel().error("El fichero no se ha podido borrar.");
 				}
+				return completed;
 			} catch (Throwable th) {
 				getLogPanel().error(th.getMessage());
 			}
 		}
+		return false;
 	}
 	
 	
