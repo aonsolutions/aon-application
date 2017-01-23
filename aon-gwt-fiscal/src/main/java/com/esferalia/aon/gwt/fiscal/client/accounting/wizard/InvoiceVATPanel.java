@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
@@ -181,6 +183,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		withholdingLabel = new Label("IRPF");
 		withholdingLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, withholdingLabel);
+		decorateHeader(row, col, "1%");
+		++col;
+
+		label = new Label("X");
+		tab.setWidget(row, col, label);
 		decorateHeader(row, col, "1%");
 		++col;
 
@@ -578,9 +585,47 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			tab.setWidget(currentRow, col, withholding);
 			++col;
 			
+			Button removeButton = new Button();
+			removeButton.setTabIndex(Integer.MAX_VALUE);
+			removeButton.setTitle( AON.MSG.deleteAction() );
+			removeButton.setAccessKey( 'L' );
+			removeButton.setStyleName(AON.AON_CSS.aonIconDelete());
+			removeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+			removeButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+			removeButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+			removeButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					if (callback.getInvoice().getVats().size() > 1 ) {
+						ConfirmDialog cd = new ConfirmDialog();
+						cd.confirm(AON.MSG.confirmDeleteAction(), AON.MSG.deleteAction(),new ConfirmDialogCallback() {
+							
+							@Override
+							public void onCancel() {
+							}
+							
+							@Override
+							public void onAccept() {
+								tab.removeRow(currentRow);
+								rows.remove(currentRow-1);
+								callback.getInvoice().getVats().remove(currentRow-1);
+								paint();
+								ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
+							}
+						});
+					} else {
+						callback.getModule().onError("Al menos debe haber una l\u00EDnea.");
+					}
+					
+				}
+			});
+			tab.setWidget(currentRow, col,removeButton);
+			++col;
+
 			tab.setWidget(currentRow, col, new Label());
 			tab.getCellFormatter().setWidth(currentRow, col, "auto");
 			++col;
+			
 			if (focus) {
 				expAccount.setFocus(true);
 			}
