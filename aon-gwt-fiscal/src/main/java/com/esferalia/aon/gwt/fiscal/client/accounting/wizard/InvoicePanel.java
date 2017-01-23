@@ -646,7 +646,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 					select(getWrapper(),cbk);
 				} else {
 					setWrapper(ai);
-					registryBox.setValue(new AccountingRegistry());
+					registryBox.setValue(new AccountingRegistry(),false);
 					flexTable.setVisible(false);
 					payTable.setVisible(false);
 					withholdingPanel.setVisible(false);
