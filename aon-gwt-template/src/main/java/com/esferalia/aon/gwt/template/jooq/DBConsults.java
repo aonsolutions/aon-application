@@ -20,6 +20,7 @@ import org.jooq.Record4;
 import org.jooq.Result;
 
 import com.code.aon.AonVersion;
+import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -76,8 +77,7 @@ public class DBConsults {
 					byte[] b;
 					if(r.value4()!=null){
 						ti.setDriveId(r.value4());
-						//TODO GET FILE TO DRIVE SERVICE ACCOUNT!!!
-						b = null;
+						b = DriveUtils.getByteFile(domain, user, ti.getDriveId(), ti.getId());
 					}
 					else{ 
 						b = getXml(domain, user, ti.getId());
