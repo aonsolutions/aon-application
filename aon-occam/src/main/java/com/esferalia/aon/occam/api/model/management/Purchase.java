@@ -50,6 +50,7 @@ public class Purchase implements Serializable {
 	private String shippingAlternativeRecipient;
 	private String shippingContact;
 	private Integer shippingPeriod;
+	private Integer carrierPacking;
 	
 	
 	public Integer getId() {
@@ -267,6 +268,12 @@ public class Purchase implements Serializable {
 	}
 	public void setShippingPeriod(Integer shippingPeriod) {
 		this.shippingPeriod = shippingPeriod;
+	}
+	public Integer getCarrierPacking() {
+		return carrierPacking;
+	}
+	public void setCarrierPacking(Integer carrierPacking) {
+		this.carrierPacking = carrierPacking;
 	}
 	
 }

@@ -26,7 +26,7 @@ public class JsCarrierPacking extends JavaScriptObject {
 	}-*/;
 	
 	public final native Integer getNumber() /*-{
-		return this.type;
+		return this.number;
 	}-*/;
 
 	public final native JsObject getType() /*-{
@@ -37,7 +37,7 @@ public class JsCarrierPacking extends JavaScriptObject {
 		return this.status;
 	}-*/;
 
-	public final native Long getIssueDate() /*-{
+	public final native String getIssueDate() /*-{
 		return this.issue_date;
 	}-*/;
 	
@@ -45,7 +45,7 @@ public class JsCarrierPacking extends JavaScriptObject {
 		return this.carrier;
 	}-*/;
 	
-	public final native Long getDeliveryDate() /*-{
+	public final native String getDeliveryDate() /*-{
 		return this.delivery_date;
 	}-*/;
 	
@@ -69,23 +69,16 @@ public class JsCarrierPacking extends JavaScriptObject {
 		return this.creation_user;
 	}-*/;
 	
-	public final native Long getCreationDate() /*-{
-		return this.creation_user;
+	public final native String getCreationDate() /*-{
+		return this.creation_date;
 	}-*/;
 
 	public final native String getModificationUser() /*-{
 		return this.modification_user;
 	}-*/;
 
-	public final native Long getModificationDate() /*-{
-		return this.modification_user;
-	}-*/;
-
-	
-	
-
-	public final native String getName() /*-{
-		return this.name;
+	public final native String getModificationDate() /*-{
+		return this.modification_date;
 	}-*/;
 
 }

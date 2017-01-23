@@ -2037,6 +2037,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha de emisi\u00F3n")
 	String issueDate();
 	
+	@DefaultMessage("Fecha de Entrega")
+	String deliveryDate();
+	
 	@DefaultMessage("I.R.P.F.")
 	String irpf();
 

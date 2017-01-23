@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,7 +74,6 @@ public class CarrierPackingPanel extends Composite{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
-		
 		series.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -81,8 +81,7 @@ public class CarrierPackingPanel extends Composite{
 				updateCarrierPacking();
 			}
 		});
-		
-		number.setText(jsCarrierPacking != null && jsCarrierPacking.getNumber() != null ? jsCarrierPacking.getNumber().toString() : "");
+		number.setText(jsCarrierPacking != null && jsCarrierPacking.getNumber() != null ? (jsCarrierPacking.getNumber() + "") : "");
 		number.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -97,7 +96,7 @@ public class CarrierPackingPanel extends Composite{
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
 				result.getData().stream().forEach(s -> 
-					type.addItem(s.getId().toString(), s.getName()));
+					type.addItem(s.getName(), s.getId()+""));
 				
 				if(jsCarrierPacking != null &&  jsCarrierPacking.getType() != null){
 					for(Integer i = 0; i < type.getItemCount(); i++){
@@ -124,7 +123,7 @@ public class CarrierPackingPanel extends Composite{
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
 				result.getData().stream().forEach(s -> 
-					status.addItem(s.getId().toString(), s.getName()));
+					status.addItem(s.getName(), s.getId()+""));
 
 				if(jsCarrierPacking != null &&  jsCarrierPacking.getStatus() != null){
 					for(Integer i = 0; i < status.getItemCount(); i++){
@@ -147,7 +146,8 @@ public class CarrierPackingPanel extends Composite{
 		});
 		
 		if(jsCarrierPacking != null && jsCarrierPacking.getIssueDate() != null){
-			issueDate.setValue(new Date(jsCarrierPacking.getIssueDate()));
+			Date date = DateTimeFormat.getFormat("dd/MM/yyyy").parse(jsCarrierPacking.getIssueDate());
+			issueDate.setValue(date);
 		}	
 		issueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
@@ -157,8 +157,9 @@ public class CarrierPackingPanel extends Composite{
 			}
 		});
 		
-		if(jsCarrierPacking != null && jsCarrierPacking.getIssueDate() != null){
-			deliveryDate.setValue(new Date(jsCarrierPacking.getIssueDate()));
+		if(jsCarrierPacking != null && jsCarrierPacking.getDeliveryDate() != null){
+			Date date = DateTimeFormat.getFormat("dd/MM/yyyy").parse(jsCarrierPacking.getDeliveryDate());
+			deliveryDate.setValue(date);
 		}
 		deliveryDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
@@ -240,22 +241,22 @@ public class CarrierPackingPanel extends Composite{
 	
 	private void updateCarrierPacking(){
 		if(jsCarrierPacking != null){
-			API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), getData(), new AsyncCallback<JSON<JsCarrierPacking>>() {
+			API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), getData(), new AsyncCallback<JsCarrierPacking>() {
 			
 				@Override
-				public void onSuccess(JSON<JsCarrierPacking> result) {
-					jsCarrierPacking = result.getOneData();
+				public void onSuccess(JsCarrierPacking result) {
+					jsCarrierPacking = result;
 					load();
 				}
 			
 				@Override public void onFailure(Throwable caught) { }
 			});
 		} else {
-			this.API.getWarehouse().insertCarrierPacking(getData(), new AsyncCallback<JSON<JsCarrierPacking>>() {
+			this.API.getWarehouse().insertCarrierPacking(getData(), new AsyncCallback<JsCarrierPacking>() {
 				
 				@Override
-				public void onSuccess(JSON<JsCarrierPacking> result) {
-					jsCarrierPacking = result.getOneData();
+				public void onSuccess(JsCarrierPacking result) {
+					jsCarrierPacking = result;
 					load();
 				}
 				
@@ -265,16 +266,17 @@ public class CarrierPackingPanel extends Composite{
 	}
 
 	private String getData() {
-		return "{\"series\":\""+ series.getSelectedValue() +"\""
-				+ "\"number\":\""+ number.getValue() +"\""
-				+ "\"type\":\""+ type.getSelectedValue() +"\""
-				+ "\"status\":\""+ status.getSelectedValue() +"\""
-				+ "\"issue_date\":\""+ issueDate.getValue().getTime() +"\""
-				+ "\"delivery_date\":\""+ deliveryDate.getValue().getTime() +"\""
-				+ "\"carrier\":\""+ carrier.getSelectedValue() +"\""
-				+ "\"number_plate\":\""+ numberPlate.getValue() +"\""
-				+ "\"driver_document\":\""+ driverDocument.getValue() +"\""
-				+ "\"driver_name\":\""+ driverName.getValue() +"\""																		
+		return "{\"series\":\""+ series.getSelectedValue() +"\","
+				+ "\"number\":\""+ number.getValue() +"\","
+				+ "\"type\":\""+ type.getSelectedValue() +"\","
+				+ "\"status\":\""+ status.getSelectedValue() +"\","
+				+ "\"issue_date\":\""+ (issueDate.getValue() != null ? issueDate.getValue().getTime() : "")+"\","
+				+ "\"delivery_date\":\""+ (deliveryDate.getValue() != null ? deliveryDate.getValue().getTime() : "") +"\","
+				+ "\"carrier\":\""+ carrier.getSelectedValue() +"\","
+				+ "\"carrier_reference\":\""+ reference.getValue() +"\","
+				+ "\"number_plate\":\""+ numberPlate.getValue() +"\","
+				+ "\"driver_document\":\""+ driverDocument.getValue() +"\","
+				+ "\"driver_name\":\""+ driverName.getValue() +"\""
 				+ "}";
 	}
 

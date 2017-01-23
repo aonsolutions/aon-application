@@ -53,7 +53,10 @@ public class FillerDAO {
 					.setNumberPlate(r.getValue(CARRIER_PACKING.NUMBER_PLATE))
 					.setSeries(r.getValue(CARRIER_PACKING.SERIES))
 					.setStatus(CarrierPackingStatus.values()[r.getValue(CARRIER_PACKING.STATUS)])
-					.setType(CarrierPackingType.values()[r.getValue(CARRIER_PACKING.TYPE)]);
+					.setType(CarrierPackingType.values()[r.getValue(CARRIER_PACKING.TYPE)])
+					
+					.setCarrierName(r.getValue(REGISTRY.NAME))
+					;
 		}
 	}
 	

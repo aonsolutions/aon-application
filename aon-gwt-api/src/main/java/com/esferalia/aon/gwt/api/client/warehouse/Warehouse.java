@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Warehouse extends Methods{
@@ -29,7 +28,7 @@ public class Warehouse extends Methods{
 	}
 	
 	public void getCarrierPackingTypes(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/type/", callback);
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/type", callback);
 	}
 	
 	public void getCarrierPackingStatuses(AsyncCallback<JSON<JsObject>> callback){
@@ -40,11 +39,11 @@ public class Warehouse extends Methods{
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/carrier", callback);
 	}
 	
-	public void insertCarrierPacking(String requestData, AsyncCallback<JSON<JsCarrierPacking>> callback) {
+	public void insertCarrierPacking(String requestData, AsyncCallback<JsCarrierPacking> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing", requestData, callback);
 	}
 	
-	public void updateCarrierPacking(Integer id, String requestData, AsyncCallback<JSON<JsCarrierPacking>> callback) {
+	public void updateCarrierPacking(Integer id, String requestData, AsyncCallback<JsCarrierPacking> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/update/" + id, requestData, callback);
 	}
 	

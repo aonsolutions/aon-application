@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,6 +28,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -58,24 +61,51 @@ public class FilterPanel extends Composite {
     	API = carrierPacking.API;
     	initWidget(binder.createAndBindUi(this));       
 
+    	TextBox text = new TextBox(); 
+    	text.setStyleName(ICSS.aonSearchBoxIssues());
+    	text.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				// filtrar por referencia/conductor(name y document)/ matricula
+			}
+		});
+    	panel.add(text);
+    	
     	// -------------------- DATE - FROM _____ TO ______
     	HorizontalPanel datePanel = new HorizontalPanel(); 
     	datePanel.addStyleName(AON.AON_CSS.aonMarginTop());  
-    	InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
-		fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		fromLabel.setWidth("20px");
-		datePanel.add(fromLabel);
+    	InlineLabel issueLabel = new InlineLabel( AON.MSG.issueDate());
+    	issueLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+    	issueLabel.setWidth("20px");
+		datePanel.add(issueLabel);
 		
-		final DateBoxEx from = new DateBoxEx();
-		from.setValue(new Date());
-		from.setWidth("70px");
-		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+		final DateBoxEx issue = new DateBoxEx();
+		issue.setValue(new Date());
+		issue.setWidth("70px");
+		issue.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				//FILTRAR POR FECHA!
 			}
 		});
-		datePanel.add(from);
+		datePanel.add(issue);
+		
+		InlineLabel deliveryLabel = new InlineLabel(AON.MSG.deliveryDate());
+		deliveryLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		deliveryLabel.setWidth("20px");
+		datePanel.add(issueLabel);
+		
+		final DateBoxEx delivery = new DateBoxEx();
+		delivery.setValue(new Date());
+		delivery.setWidth("70px");
+		delivery.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				//FILTRAR POR FECHA!
+			}
+		});
+		datePanel.add(delivery);
 		
 		panel.add(datePanel);
     
@@ -101,6 +131,25 @@ public class FilterPanel extends Composite {
 			}
 		});
 		fpanel.add(seriesButton);
+		
+		// ------------------ CARRIERS
+		PaperButton carrierButton = filterButton(AON.MSG.carrier());
+		carrierButton.addClickHandler(new ClickHandler() {
+					
+			@Override
+			public void onClick(ClickEvent event) {
+				API.getWarehouse().getCarrierPackingCarriers(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(carrierButton, result, AON.MSG.carrier());
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		});
+		fpanel.add(carrierButton);
 		
 		// ------------------ TYPE
 		PaperButton typeButton = filterButton(AON.MSG.type());

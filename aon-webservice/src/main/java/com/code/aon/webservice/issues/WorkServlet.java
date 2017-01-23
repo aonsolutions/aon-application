@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,9 +30,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @WebServlet(name = "WorkServlet", urlPatterns = { "/work/*",
 												  "/aon_gwt_aio/work/*"})
 public class WorkServlet extends HttpServlet{
-	
+	private static final Logger LOGGER  = Logger.getLogger(WorkServlet.class.getName());
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		LOGGER.info("Work Servlet - GET METHOD");
 		System.out.println("GET METHOD");
 		String accessToken = req.getParameter("access_token");
 		
@@ -72,7 +75,7 @@ public class WorkServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("POST METHOD");
+		LOGGER.info("Work Servlet - POST METHOD");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String domainName = pathInfo[1]; 
 		String userName = pathInfo[2];
@@ -134,6 +137,7 @@ public class WorkServlet extends HttpServlet{
 			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
 			os.println(object.toString());
 			os.flush();
+			os.close();
 		}
 	}
 	

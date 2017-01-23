@@ -153,24 +153,25 @@ public class ToJSON {
 			.put("id", carrierPacking.getId())
 			.put("domain", carrierPacking.getDomain())
 			.put("series", carrierPacking.getSeries())
+			.put("number", carrierPacking.getNumber())
 			.put("type", new JSONObject()
 				.put("id", carrierPacking.getType() != null ? carrierPacking.getType().value() : "")
 				.put("name", carrierPacking.getType() != null ? carrierPacking.getType().getName() : ""))
 			.put("status", new JSONObject()
 				.put("id", carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : "")
 				.put("name", carrierPacking.getStatus() != null ? carrierPacking.getStatus().getName(): "")) 
-			.put("issue_date", carrierPacking.getIssueDate() != null ? carrierPacking.getIssueDate().getTime() : "")
+			.put("issue_date", carrierPacking.getIssueDate() != null ? dateFormat.format(carrierPacking.getIssueDate()) : "")
 			.put("carrier", new JSONObject()
 				.put("id", carrierPacking.getCarrier())
-				.put("id", "")) // TODO
-			.put("delivery_date", carrierPacking.getDeliveryDate() != null ? carrierPacking.getDeliveryDate().getTime() : "")
+				.put("name", carrierPacking.getCarrierName())) // TODO
+			.put("delivery_date", carrierPacking.getDeliveryDate() != null ? dateFormat.format(carrierPacking.getDeliveryDate()) : "")
 			.put("carrier_reference", carrierPacking.getCarrierReference())
 			.put("number_plate", carrierPacking.getNumberPlate())
 			.put("driver_name", carrierPacking.getDriverName())
 			.put("driver_document", carrierPacking.getDriverDocument())
-			.put("creation_date", carrierPacking.getCreationDate() != null ? carrierPacking.getCreationDate().getTime(): "")
+			.put("creation_date", carrierPacking.getCreationDate() != null ? dateFormat.format(carrierPacking.getCreationDate()): "")
 			.put("creation_user", carrierPacking.getCreationUser())
-			.put("modification_date", carrierPacking.getModificationDate() != null ? carrierPacking.getModificationDate().getTime() : "")
+			.put("modification_date", carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")
 			.put("modification_user", carrierPacking.getModificationUser());
 	}
 	

@@ -12,6 +12,7 @@ public class CarrierPacking {
 	private CarrierPackingStatus status;
 	private Date issueDate;
 	private Integer carrier;
+	private String carrierName;
 	private Date deliveryDate;
 	private String carrierReference;
 	private String numberPlate;
@@ -76,6 +77,13 @@ public class CarrierPacking {
 	}
 	public CarrierPacking setCarrier(Integer carrier) {
 		this.carrier = carrier;
+		return this;
+	}
+	public String getCarrierName() {
+		return carrierName;
+	}
+	public CarrierPacking setCarrierName(String carrierName) {
+		this.carrierName = carrierName;
 		return this;
 	}
 	public Date getDeliveryDate() {

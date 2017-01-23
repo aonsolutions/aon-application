@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,12 +35,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @WebServlet(name = "StatServlet", urlPatterns = { "/stat/*",
 												  "/aon_gwt_aio/stat/*"})
 public class StatServlet extends HttpServlet{
-	
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static final Logger LOGGER  = Logger.getLogger(StatServlet.class.getName());
+	private static final String EMPTY = "";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("GET METHOD");
+		LOGGER.info("Stat Servlet - GET METHOD");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String domainName = pathInfo[1];
@@ -116,9 +118,11 @@ public class StatServlet extends HttpServlet{
 	}
 
 	private static LinkedList<Integer> getList(String str){
-		if(str == null) return new LinkedList<Integer>();
+		if(str == null){
+			return new LinkedList<>();
+		}
 		String[] arr = str.split("@@");
-		LinkedList<Integer> list = new LinkedList<Integer>();
+		LinkedList<Integer> list = new LinkedList<>();
 		for (String s : arr) {
 			if(AonStringUtils.isNumeric(s))
 				list.add(Integer.parseInt(s));
@@ -129,23 +133,26 @@ public class StatServlet extends HttpServlet{
 	private StatParams params(HttpServletRequest req) {
 		StatParams params = new StatParams();
 		params.setFilterMap((HashMap<String, String[]>) req.getParameterMap());
-		if(req.getParameter("from") != null && !req.getParameter("from").equals("")){
+		if(req.getParameter("from") != null && !"".equals(req.getParameter("from"))){
 			params.setFrom(new Date(Long.parseLong(req.getParameter("from"))));
 		} else params.setFrom(new Date());
 		return params;
 	}
 	
 	public static IssueFilter getFilter(Domain domain, String userName, HttpServletRequest req){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date from = new Date();from.setHours(0);
 		from = AonDateUtils.addYears(from, -1);
 		Date to = new Date();to.setHours(0);
 		try {
-			if(req.getParameter("from") != null && !req.getParameter("from").equals(""))
+			if(req.getParameter("from") != null && !EMPTY.equals(req.getParameter("from"))){
 				from = dateFormat.parse(req.getParameter("from"));
-			if(req.getParameter("to") != null && !req.getParameter("to").equals(""))
+			}
+			if(req.getParameter("to") != null && !EMPTY.equals(req.getParameter("to"))){
 				to = dateFormat.parse(req.getParameter("to"));
+			}
 		} catch (ParseException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		to = AonDateUtils.addDays(to, 1);
 		LinkedList<Integer> assignee = getList(req.getParameter("asignee"));
@@ -176,15 +183,15 @@ public class StatServlet extends HttpServlet{
 	
 	public JSONArray toJSON(StatData<String, String, Double> statData) {
 		JSONArray array = new JSONArray();
-		statData.getMap().keySet().stream().forEach(row -> {
+		statData.getMap().keySet().stream().forEach(row -> 
 			statData.getMap().get(row).keySet().stream().forEach(col-> {
 				JSONObject json = new JSONObject();
 				json.put("row", row);
 				json.put("column", col);
 				json.put("quantity", statData.getMap().get(row).get(col));
 				array.put(json);
-			});
-		});
+			})
+		);
 		return array;
 	}
 }

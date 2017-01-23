@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,11 +47,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @WebServlet(name = "ReposServlet", urlPatterns = { "/repos/*" ,
 													"/aon_gwt_aio/repos/*"})
 public class ReposServlet extends HttpServlet{
-	
+	private static final Logger LOGGER  = Logger.getLogger(ReposServlet.class.getName());
 	private static final DBConsults DB = DBConsults.getInstance();
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("GET METHOD");
+		LOGGER.info("Repos Servlet - GET METHOD");
 		String scheme = req.getParameter("scheme");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
@@ -152,7 +153,7 @@ public class ReposServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("POST METHOD");
+		LOGGER.info("Repos Servlet - POST METHOD");
 		String line = "";
 		String s = "";
 		while((line = req.getReader().readLine()) != null)
@@ -399,6 +400,7 @@ public class ReposServlet extends HttpServlet{
 			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
 			os.println(object.toString());
 			os.flush();
+			os.close();
 		}
 	}
 

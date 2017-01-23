@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
@@ -589,7 +590,9 @@ public class WarehouseDAO {
 	// ----------------- CARRIER PACKING
 	
 	public static Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter){
-		return ctx.getDslContext().select().from(CARRIER_PACKING).where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
+		return ctx.getDslContext().select().from(CARRIER_PACKING)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CARRIER_PACKING.CARRIER))				
+				.where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new CarrierPackingFiller());
 	}
 	
@@ -631,6 +634,7 @@ public class WarehouseDAO {
 				.set(CARRIER_PACKING.SERIES, carrierPacking.getSeries())
 				.set(CARRIER_PACKING.STATUS, carrierPacking.getStatus().value())
 				.set(CARRIER_PACKING.TYPE, carrierPacking.getType().value())
+			.where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
 			.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
 	}
 	

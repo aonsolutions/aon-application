@@ -11,51 +11,37 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.jooq.Condition;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.PurchaseDetailRecord;
-import com.esferalia.aon.jooq.tables.records.PurchaseRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
-import com.esferalia.aon.occam.api.model.management.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchaseDetailPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
 
 
 public class PurchaseDAO {
 	
 	private static final PurchaseDetailPropertiesDAO PURCHASE_DETAIL_PROPERTIES = new PurchaseDetailPropertiesDAO();
+	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
+
 	
-	protected static class PurchaseDetailPropertiesDAO implements PurchaseDetailProperties {
-		protected Condition[] getConditions(PurchaseDetailFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getPurchaseProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.PURCHASE);}
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.PROJECT);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.ITEM);}
-		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<Short>(PURCHASE_DETAIL.LINE);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(PURCHASE_DETAIL.DESCRIPTION);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.QUANTITY);}
-		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.PRICE);}
-		@Override public Property<String> getDiscountExpressionProperty() {return new FilterDAO.PropertyDAO<String>(PURCHASE_DETAIL.DISCOUNT_EXPR);}
-		@Override public Property<Double> getTaxesProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.TAXES);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PURCHASE_DETAIL.STATUS);}
-		@Override public Property<Integer> getProposalDetailProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.PROPOSAL_DETAIL);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(PURCHASE_DETAIL.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.SOURCE_ID);}
-		@Override public Property<Double> getDeliveredProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.DELIVERED);}
+
+
+	public static Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter){
+		return ctx.getDslContext().select().from(PURCHASE).where(PURCHASE_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new FullPurchaseFiller());
 	}
 	
 	public static Purchase getPurchase(AONContext ctx, Integer id){
@@ -258,46 +244,47 @@ public class PurchaseDAO {
 	
 
 	
-	private static class FullPurchaseFiller implements Function<PurchaseRecord, Purchase> {
+	private static class FullPurchaseFiller implements Function<Record, Purchase> {
 		@Override
-		public Purchase apply(PurchaseRecord r) {
+		public Purchase apply(Record r) {
 			Purchase purchase = new Purchase();
-			purchase.setId(r.getId());
-			purchase.setDomain(r.getDomain());
-			purchase.setProject(r.getProject());
-			purchase.setSupplier(r.getSupplier());
-			purchase.setSeries(r.getSeries());
-			purchase.setNumber(r.getNumber());
-			purchase.setPurchaseReference(r.getPurchaseReference());
-			purchase.setAddress(r.getAddress());
-			purchase.setDiscountExpr(r.getDiscountExpr());
-			purchase.setIssueDate(r.getIssueDate());
-			purchase.setPayMethod(r.getPayMethod());
-			purchase.setDocumentType(PurchaseType.values()[r.getDocumentType()]);
-			purchase.setSecurityLevel(r.getSecurityLevel());
-			purchase.setStatus(PurchaseStatus.values()[r.getStatus()]);
-			purchase.setComments(r.getComments());
-			purchase.setRemarks(r.getRemarks());
-			purchase.setWorkplace(r.getWorkplace());
-			purchase.setWarehouse(r.getWarehouse());
-			purchase.setScope(r.getScope());
-			purchase.setNumberOfPymnts(r.getNumberOfPymnts());
-			purchase.setDaysToFirstPymnt(r.getDaysToFirstPymnt());
-			purchase.setDaysBetweenPymnts(r.getDaysBetweenPymnts());
-			purchase.setPymntDays(r.getPymntDays());
-			purchase.setBankAccount(r.getBankAccount());
-			purchase.setBankAlias(r.getBankAlias());
-			purchase.setBic(r.getBic());
-			purchase.setEmailCommunication(r.getEmailCommunication()==1);
-			purchase.setCarrier(r.getCarrier());
-			purchase.setShippingAlternativeAddress(r.getShippingAlternativeAddress());
-			purchase.setShippingAlternativeAddress2(r.getShippingAlternativeAddress2());
-			purchase.setShippingAlternativeZip(r.getShippingAlternativeZip());
-			purchase.setShippingAlternativeCity(r.getShippingAlternativeCity());
-			purchase.setShippingAlternativePhone(r.getShippingAlternativePhone());
-			purchase.setShippingAlternativeRecipient(r.getShippingAlternativeRecipient());
-			purchase.setShippingContact(r.getShippingContact());
-			purchase.setShippingPeriod(r.getShippingPeriod()!=null?r.getShippingPeriod().intValue():null);
+			purchase.setId(r.getValue(PURCHASE.ID));
+			purchase.setDomain(r.getValue(PURCHASE.DOMAIN));
+			purchase.setProject(r.getValue(PURCHASE.PROJECT));
+			purchase.setSupplier(r.getValue(PURCHASE.SUPPLIER));
+			purchase.setSeries(r.getValue(PURCHASE.SERIES));
+			purchase.setNumber(r.getValue(PURCHASE.NUMBER));
+			purchase.setPurchaseReference(r.getValue(PURCHASE.PURCHASE_REFERENCE));
+			purchase.setAddress(r.getValue(PURCHASE.ADDRESS));
+			purchase.setDiscountExpr(r.getValue(PURCHASE.DISCOUNT_EXPR));
+			purchase.setIssueDate(r.getValue(PURCHASE.ISSUE_DATE));
+			purchase.setPayMethod(r.getValue(PURCHASE.PAY_METHOD));
+			purchase.setDocumentType(PurchaseType.values()[r.getValue(PURCHASE.DOCUMENT_TYPE)]);
+			purchase.setSecurityLevel(r.getValue(PURCHASE.SECURITY_LEVEL));
+			purchase.setStatus(PurchaseStatus.values()[r.getValue(PURCHASE.STATUS)]);
+			purchase.setComments(r.getValue(PURCHASE.COMMENTS));
+			purchase.setRemarks(r.getValue(PURCHASE.REMARKS));
+			purchase.setWorkplace(r.getValue(PURCHASE.WORKPLACE));
+			purchase.setWarehouse(r.getValue(PURCHASE.WAREHOUSE));
+			purchase.setScope(r.getValue(PURCHASE.SCOPE));
+			purchase.setNumberOfPymnts(r.getValue(PURCHASE.NUMBER_OF_PYMNTS));
+			purchase.setDaysToFirstPymnt(r.getValue(PURCHASE.DAYS_TO_FIRST_PYMNT));
+			purchase.setDaysBetweenPymnts(r.getValue(PURCHASE.DAYS_BETWEEN_PYMNTS));
+			purchase.setPymntDays(r.getValue(PURCHASE.PYMNT_DAYS));
+			purchase.setBankAccount(r.getValue(PURCHASE.BANK_ACCOUNT));
+			purchase.setBankAlias(r.getValue(PURCHASE.BANK_ALIAS));
+			purchase.setBic(r.getValue(PURCHASE.BIC));
+			purchase.setEmailCommunication(r.getValue(PURCHASE.EMAIL_COMMUNICATION) == 1);
+			purchase.setCarrier(r.getValue(PURCHASE.CARRIER));
+			purchase.setShippingAlternativeAddress(r.getValue(PURCHASE.SHIPPING_ALTERNATIVE_ADDRESS));
+			purchase.setShippingAlternativeAddress2(r.getValue(PURCHASE.SHIPPING_ALTERNATIVE_ADDRESS2));
+			purchase.setShippingAlternativeZip(r.getValue(PURCHASE.SHIPPING_ALTERNATIVE_ZIP));
+			purchase.setShippingAlternativeCity(r.getValue(PURCHASE.SHIPPING_ALTERNATIVE_CITY));
+			purchase.setShippingAlternativePhone(r.getValue(PURCHASE.SHIPPING_ALTERNATIVE_PHONE));
+			purchase.setShippingAlternativeRecipient(r.getValue(PURCHASE.SHIPPING_ALTERNATIVE_RECIPIENT));
+			purchase.setShippingContact(r.getValue(PURCHASE.SHIPPING_CONTACT));
+			purchase.setShippingPeriod(r.getValue(PURCHASE.SHIPPING_PERIOD)!=null?r.getValue(PURCHASE.SHIPPING_PERIOD).intValue():null);
+			purchase.setCarrierPacking(r.getValue(PURCHASE.CARRIER_PACKING));
 			return purchase;
 		}
 	}
