@@ -264,6 +264,7 @@ public class AccountingInvoiceDAO {
 				.setFinances(new LinkedList<Finance>());
 		ai.getFinances().add(new Finance()
 				.setDueDate(issueDate)
+				.setPayment(!ai.isSales())
 				.setFinanceStatus(FinanceStatus.PENDING));
 		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx,ai.getRegistry().getId()));
