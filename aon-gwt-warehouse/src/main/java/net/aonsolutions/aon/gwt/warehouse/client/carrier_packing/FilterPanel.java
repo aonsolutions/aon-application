@@ -20,20 +20,16 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
-
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class FilterPanel extends Composite {
 	
@@ -94,7 +90,7 @@ public class FilterPanel extends Composite {
 		InlineLabel deliveryLabel = new InlineLabel(AON.MSG.deliveryDate());
 		deliveryLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		deliveryLabel.setWidth("20px");
-		datePanel.add(issueLabel);
+		datePanel.add(deliveryLabel);
 		
 		final DateBoxEx delivery = new DateBoxEx();
 		delivery.setValue(new Date());
@@ -224,7 +220,7 @@ public class FilterPanel extends Composite {
 	}
     
     private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label){
-		PopupPanel popup = new PopupPanel();
+	/*	PopupPanel popup = new PopupPanel();
 		AonComboBox acb = new AonComboBox();
 		acb.setItems(result.getData());
 		acb.setItemLabelPath("name");
@@ -266,6 +262,6 @@ public class FilterPanel extends Composite {
 		popup.addAutoHidePartner(acb.getElementById("overlay"));
 		popup.setPopupPosition(left, top);
 		popup.show();
-		acb.open();
+		acb.open();*/
     }
 }

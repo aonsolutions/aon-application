@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.api.client.warehouse;
 
+import java.util.HashMap;
+
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -49,5 +51,14 @@ public class Warehouse extends Methods{
 	
 	public void deleteCarrierPacking(Integer id) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}");
+	}
+	
+	public void getPurchases(HashMap<String, String[]> filterMap, AsyncCallback<JSON<JsPurchase>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase" + filter, callback);
+	}
+	
+	public void updatePurchase(Integer id, String requestData, AsyncCallback<JsPurchase> callback){
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/purchase/update/" + id, requestData, callback);
 	}
 }

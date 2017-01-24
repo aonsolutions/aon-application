@@ -1,11 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
@@ -596,7 +596,13 @@ public class WarehouseDAO {
 				.fetch().stream().map(new CarrierPackingFiller());
 	}
 	
-	public static CarrierPacking insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking){
+	public static Integer insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking){
+		if(carrierPacking.getNumber()==null || carrierPacking.getNumber()==0){
+			Integer num = getCarrierPackingStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getSeriesProperty().eq(carrierPacking.getSeries())))
+					.mapToInt(r -> r.getNumber()).max().orElse(0);
+			carrierPacking.setNumber(num +1);
+		}
 		return ctx.getDslContext().insertInto(CARRIER_PACKING, CARRIER_PACKING.CARRIER,
 				CARRIER_PACKING.CARRIER_REFERENCE, CARRIER_PACKING.CREATION_DATE,
 				CARRIER_PACKING.CREATION_USER, CARRIER_PACKING.DELIVERY_DATE,
@@ -613,7 +619,7 @@ public class WarehouseDAO {
 						carrierPacking.getModificationDate() != null ? new Timestamp(carrierPacking.getModificationDate().getTime()) : null, carrierPacking.getModificationUser(),
 						carrierPacking.getNumber() != null ? carrierPacking.getNumber() : 1, carrierPacking.getNumberPlate(), 
 						carrierPacking.getSeries(), carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : 0, carrierPacking.getStatus() != null ? carrierPacking.getType().value() : 0)
-				.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
+				.returning(CARRIER_PACKING.ID).fetchOne().getId();
 	}
 	
 	public static CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking, CarrierPackingFilter filter){

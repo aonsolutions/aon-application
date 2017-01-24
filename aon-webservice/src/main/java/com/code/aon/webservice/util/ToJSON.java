@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -173,6 +174,24 @@ public class ToJSON {
 			.put("creation_user", carrierPacking.getCreationUser())
 			.put("modification_date", carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")
 			.put("modification_user", carrierPacking.getModificationUser());
+	}
+	
+	public static JSONObject purchaseToJSON(Purchase purchase) {
+		return new JSONObject()
+			.put("id", purchase.getId())
+			.put("domain", purchase.getDomain())
+			.put("series", purchase.getSeries())
+			.put("number", purchase.getNumber())
+			.put("supplier", new JSONObject()
+				.put("id", purchase.getSupplier())
+				.put("name", purchase.getSupplierName())) 
+			.put("issue_date", purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "");
+	}
+	
+	public static JSONObject objectToJSON(Integer id, String name) {
+		return new JSONObject()
+			.put("id", id)
+			.put("name", name);
 	}
 	
 	public static String getPeriod(BillingPeriod period){

@@ -40,18 +40,20 @@ public class CarrierPackingPanel extends Composite{
 	@UiField TextBox driverDocument;
 	@UiField TextBox driverName;
 	
+	private CarrierPacking parent;
 	private API API;
 	private JsCarrierPacking jsCarrierPacking;
 	
-	public CarrierPackingPanel(API API) {
+	public CarrierPackingPanel(CarrierPacking carrierPacking) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = API;
+		this.API = carrierPacking.API;
+		this.parent = carrierPacking;
 		load();
 	}
 	
-	public CarrierPackingPanel(API API, JsCarrierPacking js) {
+	public CarrierPackingPanel(CarrierPacking carrierPacking, JsCarrierPacking js) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = API;
+		this.API = carrierPacking.API;
 		this.jsCarrierPacking = js;
 		load();
 	}
@@ -118,6 +120,7 @@ public class CarrierPackingPanel extends Composite{
 			}
 		});
 		
+
 		API.getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
@@ -145,7 +148,8 @@ public class CarrierPackingPanel extends Composite{
 			}
 		});
 		
-		if(jsCarrierPacking != null && jsCarrierPacking.getIssueDate() != null){
+		if(jsCarrierPacking != null && jsCarrierPacking.getIssueDate() != null
+				&& !"".equals(jsCarrierPacking.getIssueDate())){
 			Date date = DateTimeFormat.getFormat("dd/MM/yyyy").parse(jsCarrierPacking.getIssueDate());
 			issueDate.setValue(date);
 		}	
@@ -157,7 +161,8 @@ public class CarrierPackingPanel extends Composite{
 			}
 		});
 		
-		if(jsCarrierPacking != null && jsCarrierPacking.getDeliveryDate() != null){
+		if(jsCarrierPacking != null && jsCarrierPacking.getDeliveryDate() != null
+				&& !"".equals(jsCarrierPacking.getDeliveryDate())){
 			Date date = DateTimeFormat.getFormat("dd/MM/yyyy").parse(jsCarrierPacking.getDeliveryDate());
 			deliveryDate.setValue(date);
 		}
@@ -246,7 +251,8 @@ public class CarrierPackingPanel extends Composite{
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
-					load();
+					number.setValue(jsCarrierPacking.getNumber() + "");
+					parent.setSelectContent(jsCarrierPacking);
 				}
 			
 				@Override public void onFailure(Throwable caught) { }
@@ -257,7 +263,8 @@ public class CarrierPackingPanel extends Composite{
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
-					load();
+					number.setValue(jsCarrierPacking.getNumber() + "");
+					parent.setSelectContent(jsCarrierPacking);
 				}
 				
 				@Override public void onFailure(Throwable caught) { }

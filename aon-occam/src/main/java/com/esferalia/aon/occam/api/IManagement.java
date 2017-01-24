@@ -17,5 +17,8 @@ public interface IManagement {
 
 	// -------------------- PURCHASE 
 	Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter);
+	Purchase insertPurchase(AONContext ctx, Purchase purchase);
+	Purchase updatePurchase(AONContext ctx, Purchase purchase, PurchaseFilter filter);
+	void deletePurchase(AONContext ctx, PurchaseFilter filter);
 	
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:accPanel='urn:import:com.esferalia.aon.gwt.fiscal.client.accounting.panel'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:DockLayoutPanel ui:field="splitLayoutPanel">
+		<g:west size="350">
+			<g:VerticalPanel ui:field="westPanel">
+			
+			</g:VerticalPanel>
+		</g:west>
+		<g:center>
+			<g:VerticalPanel ui:field="centerPanel">
+			
+			</g:VerticalPanel>		
+		</g:center>
+	</g:DockLayoutPanel>
+
+</ui:UiBinder>

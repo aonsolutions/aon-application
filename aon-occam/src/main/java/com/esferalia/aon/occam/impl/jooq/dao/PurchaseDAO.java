@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
@@ -13,11 +14,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.PurchaseDetailRecord;
+import com.esferalia.aon.jooq.tables.records.PurchaseRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
@@ -29,6 +32,7 @@ import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchaseDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class PurchaseDAO {
@@ -40,7 +44,9 @@ public class PurchaseDAO {
 
 
 	public static Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter){
-		return ctx.getDslContext().select().from(PURCHASE).where(PURCHASE_PROPERTIES.getConditions(filter))
+		return ctx.getDslContext().select().from(PURCHASE)
+				.join(REGISTRY).on(REGISTRY.ID.eq(PURCHASE.SUPPLIER))
+				.where(PURCHASE_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new FullPurchaseFiller());
 	}
 	
@@ -106,7 +112,7 @@ public class PurchaseDAO {
 		return insertPurchase(ctx, purchase);
 	}
 	
-	public static int insertPurchase(AONContext ctx, Purchase purchase) {
+	public static InsertValuesStepN<PurchaseRecord> insertPurchase2(AONContext ctx, Purchase purchase) {
 		ctx.checkWrite();
 		Timestamp creationDate = null, modificationDate = null;
 		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
@@ -131,7 +137,7 @@ public class PurchaseDAO {
 						PURCHASE.DAYS_BETWEEN_PYMNTS, PURCHASE.PYMNT_DAYS,
 						PURCHASE.BANK_ACCOUNT, PURCHASE.BANK_ALIAS,
 						PURCHASE.BIC, PURCHASE.EMAIL_COMMUNICATION,
-						PURCHASE.CARRIER,
+						PURCHASE.CARRIER, PURCHASE.CARRIER_PACKING,
 						PURCHASE.SHIPPING_ALTERNATIVE_ADDRESS,
 						PURCHASE.SHIPPING_ALTERNATIVE_ADDRESS2,
 						PURCHASE.SHIPPING_ALTERNATIVE_ZIP,
@@ -156,7 +162,8 @@ public class PurchaseDAO {
 						purchase.getDaysBetweenPymnts(),
 						purchase.getPymntDays(), purchase.getBankAccount(),
 						purchase.getBankAlias(), purchase.getBic(),
-						purchase.isEmailCommunication(), purchase.getCarrier(),
+						purchase.isEmailCommunication(),
+						purchase.getCarrier(), purchase.getCarrierPacking(),
 						purchase.getShippingAlternativeAddress(),
 						purchase.getShippingAlternativeAddress2(),
 						purchase.getShippingAlternativeZip(),
@@ -165,8 +172,81 @@ public class PurchaseDAO {
 						purchase.getShippingAlternativeRecipient(),
 						purchase.getShippingContact(),
 						purchase.getShippingPeriod(), ctx.getUser(),
-						creationDate, ctx.getUser(), modificationDate)
-						.returning(PURCHASE.ID).fetchOne().getId();
+						creationDate, ctx.getUser(), modificationDate);
+	}
+
+	
+	public static int insertPurchase(AONContext ctx, Purchase purchase) {
+		return insertPurchase2(ctx, purchase).returning(PURCHASE.ID).fetchOne().getId();
+	}
+	
+	public static Purchase insertPurchase3(AONContext ctx, Purchase purchase) {
+		return insertPurchase2(ctx, purchase).returning().fetch().stream()
+				.map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
+	}
+	
+	public static void deletePurchase(AONContext ctx, PurchaseFilter filter) {
+		Integer[] ids = getPurchaseStream(ctx, filter).map(r -> r.getId()).toArray(Integer[]::new);
+		deletePurchaseDetail(ctx, f -> f.getPurchaseProperty().in(ids));
+		ctx.getDslContext().delete(PURCHASE).where(PURCHASE_PROPERTIES.getConditions(filter));
+	}
+	
+	public static void deletePurchaseDetail(AONContext ctx, PurchaseDetailFilter filter) {
+		ctx.getDslContext().delete(PURCHASE_DETAIL).where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Purchase updatePurchase(AONContext ctx, Purchase purchase, PurchaseFilter filter) {
+		ctx.checkWrite();
+		purchase.setModificationDate(new Date());
+		purchase.setModificationUser(ctx.getUser());
+		if(purchase.getNumber()==null || purchase.getNumber()==0){
+			Integer number = obtainManufactureMaxNumber(ctx, purchase.getDomain(), purchase.getSeries());
+			purchase.setNumber(number!=null?++number:1);
+		}
+		return ctx.getDslContext()
+				.update(PURCHASE)
+				.set(PURCHASE.DOMAIN,purchase.getDomain())
+				.set(PURCHASE.PROJECT, purchase.getProject())
+				.set(PURCHASE.SUPPLIER, purchase.getSupplier())
+				.set(PURCHASE.SERIES, purchase.getSeries())
+				.set(PURCHASE.NUMBER, purchase.getNumber())
+				.set(PURCHASE.PURCHASE_REFERENCE, purchase.getPurchaseReference())
+				.set(PURCHASE.ADDRESS, purchase.getAddress())
+				.set(PURCHASE.DISCOUNT_EXPR, purchase.getDiscountExpr())
+				.set(PURCHASE.ISSUE_DATE, AonDateUtils.toSql(purchase.getIssueDate()))
+				.set(PURCHASE.PAY_METHOD, purchase.getPayMethod())
+				.set(PURCHASE.DOCUMENT_TYPE, purchase.getDocumentType().value())
+				.set(PURCHASE.SECURITY_LEVEL, (byte) purchase.getSecurityLevel())
+				.set(PURCHASE.STATUS, purchase.getStatus().value())
+				.set(PURCHASE.COMMENTS, purchase.getComments())
+				.set(PURCHASE.REMARKS, purchase.getRemarks())
+				.set(PURCHASE.WORKPLACE, purchase.getWorkplace())
+				.set(PURCHASE.WAREHOUSE, purchase.getWarehouse())
+				.set(PURCHASE.SCOPE, purchase.getScope())
+				.set(PURCHASE.NUMBER_OF_PYMNTS, (short) purchase.getNumberOfPymnts())
+				.set(PURCHASE.DAYS_TO_FIRST_PYMNT, (short) purchase.getDaysToFirstPymnt())
+				.set(PURCHASE.DAYS_BETWEEN_PYMNTS, (short) purchase.getDaysBetweenPymnts())
+				.set(PURCHASE.PYMNT_DAYS, purchase.getPymntDays())
+				.set(PURCHASE.BANK_ACCOUNT, purchase.getBankAccount())
+				.set(PURCHASE.BANK_ALIAS, purchase.getBankAlias())
+				.set(PURCHASE.BIC, purchase.getBic())
+				.set(PURCHASE.EMAIL_COMMUNICATION, purchase.isEmailCommunication() ? (byte) 1 :(byte) 0)
+				.set(PURCHASE.CARRIER, purchase.getCarrier())
+				.set(PURCHASE.CARRIER_PACKING, purchase.getCarrierPacking())
+				.set(PURCHASE.SHIPPING_ALTERNATIVE_ADDRESS, purchase.getShippingAlternativeAddress())
+				.set(PURCHASE.SHIPPING_ALTERNATIVE_ADDRESS2, purchase.getShippingAlternativeAddress2())
+				.set(PURCHASE.SHIPPING_ALTERNATIVE_ZIP, purchase.getShippingAlternativeZip())
+				.set(PURCHASE.SHIPPING_ALTERNATIVE_CITY, purchase.getShippingAlternativeCity())
+				.set(PURCHASE.SHIPPING_ALTERNATIVE_PHONE, purchase.getShippingAlternativePhone())
+				.set(PURCHASE.SHIPPING_ALTERNATIVE_RECIPIENT, purchase.getShippingAlternativeRecipient())
+				.set(PURCHASE.SHIPPING_CONTACT, purchase.getShippingContact())
+				.set(PURCHASE.SHIPPING_PERIOD, purchase.getShippingPeriod() != null ? purchase.getShippingPeriod().byteValue() : null)
+				.set(PURCHASE.CREATION_USER, purchase.getCreationUser())
+				.set(PURCHASE.CREATION_DATE, AonDateUtils.toTimestamp(purchase.getCreationDate()))
+				.set(PURCHASE.MODIFICATION_USER, purchase.getModificationUser())
+				.set(PURCHASE.MODIFICATION_DATE, AonDateUtils.toTimestamp(purchase.getModificationDate()))
+			.where(PURCHASE_PROPERTIES.getConditions(filter))
+			.returning().fetch().stream().map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
 	}
 	
 	public static int insertPurchaseDetail(AONContext ctx, PurchaseDetail detail) {
@@ -252,6 +332,7 @@ public class PurchaseDAO {
 			purchase.setDomain(r.getValue(PURCHASE.DOMAIN));
 			purchase.setProject(r.getValue(PURCHASE.PROJECT));
 			purchase.setSupplier(r.getValue(PURCHASE.SUPPLIER));
+			purchase.setSupplierName(r.getValue(REGISTRY.NAME));
 			purchase.setSeries(r.getValue(PURCHASE.SERIES));
 			purchase.setNumber(r.getValue(PURCHASE.NUMBER));
 			purchase.setPurchaseReference(r.getValue(PURCHASE.PURCHASE_REFERENCE));

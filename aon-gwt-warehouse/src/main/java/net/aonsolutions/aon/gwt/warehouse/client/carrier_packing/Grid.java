@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
-import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.cell.client.TextCell;
@@ -21,7 +20,6 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -51,24 +49,18 @@ public class Grid extends Composite {
 	
 	CarrierPacking carrierPacking;
 	API API;
-	public Grid(CarrierPacking carrierPacking) {
+	public Grid(CarrierPacking carrierPacking, LinkedList<JsCarrierPacking> list) {
 		this.carrierPacking = carrierPacking;
 		this.API = carrierPacking.API; 
 		
 		dataGrid = new DataGrid<JsCarrierPacking>(Integer.MAX_VALUE, resources,
 				JsCarrierPacking.PROVIDES_KEY);
-		
+	
 		initWidget(binder.createAndBindUi(this));
-		API.getWarehouse().getCarrierPacking(new AsyncCallback<JSON<JsCarrierPacking>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsCarrierPacking> result) {
-				load(result.getData().toLinkedList());				
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
+		
+		load(list);				
 
+		
 	}	
 	
 	private void load(LinkedList<JsCarrierPacking> list) {

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
@@ -12,12 +13,12 @@ import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
-import com.vaadin.polymer.paper.PaperIconButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -27,6 +28,7 @@ public class CarrierPacking extends AonTemplate{
 	protected API API;
 	private HashMap<String, String[]> filterMap;
 	private Boolean future = false;
+	private CarrierPacking me = this;
 	
 	public CarrierPacking(AonData aonData, Boolean future) {
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
@@ -42,10 +44,7 @@ public class CarrierPacking extends AonTemplate{
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC,
-				//PaperInputElement.SRC,
-				//AonComboBoxElement.SRC,
-				PaperIconButtonElement.SRC
+				IronIconsElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
@@ -93,7 +92,7 @@ public class CarrierPacking extends AonTemplate{
 					Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 					toolbar.back.setVisible(true);
 					toolbar.remove.setVisible(true);
-					setNorthContent(new CarrierPackingPanel(API));
+					setNorthContent(new CarrierPackingPanel(me));
 					setContent(new Label(""));
 				}
 				@Override protected void remove() {
@@ -115,19 +114,31 @@ public class CarrierPacking extends AonTemplate{
 	
 	private void northContent(){
 		setNorthContent(new FilterPanel(this));
-		setContent(new Label(""));
 	}
 	
 	public void carrierPackingContent(JsCarrierPacking js){
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
-		setNorthContent(new CarrierPackingPanel(API,js));
-		setContent(new Label(""));
+		setNorthContent(new CarrierPackingPanel(me,js));
+		setContent(new CarrierPackingSelect(API, js));
+	}
+	
+	public void setSelectContent(JsCarrierPacking js){
+		setContent(new CarrierPackingSelect(API, js));
 	}
 	
 	public void content(){
-		setContent(new Grid(this));
+		API.getWarehouse().getCarrierPacking(new AsyncCallback<JSON<JsCarrierPacking>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsCarrierPacking> result) {
+				setContent(new Grid(me, result.getData().toLinkedList()));
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
 	}
 	
 	private void southContent(){

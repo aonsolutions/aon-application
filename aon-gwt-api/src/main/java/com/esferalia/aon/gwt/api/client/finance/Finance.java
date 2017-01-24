@@ -59,14 +59,5 @@ public class Finance extends Methods{
 	}
 	
 	
-	private String getFilter(HashMap<String, String[]> map) {
-		String str = "";
-		Integer cont = 0;
-		for (String key : map.keySet()) {
-			if(cont > 0) str = str + "&";
-			str = str + key + "=" + map.get(key)[0];
-			cont++;
-		}
-		return str;
-	}
+
 }

@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.api.client;
 
 
+import java.util.HashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
@@ -277,5 +279,14 @@ public class Methods {
 	}
 	
 	
-	
+	protected String getFilter(HashMap<String, String[]> map) {
+		String str = "";
+		Integer cont = 0;
+		for (String key : map.keySet()) {
+			if(cont > 0) str = str + "&";
+			str = str + key + "=" + map.get(key)[0];
+			cont++;
+		}
+		return str;
+	}
 }

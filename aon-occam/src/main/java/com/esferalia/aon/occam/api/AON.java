@@ -1087,7 +1087,61 @@ public class AON {
 				ctx.close();
 		}
 	}
-
+	
+	public static LinkedList<Purchase> getPurchaseList(String domainName,
+			Integer domainId, String login, PurchaseFilter filter) {
+		return getPurchaseStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Purchase getPurchase(String domainName,
+			Integer domainId, String login, PurchaseFilter filter) {
+		return getPurchaseStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Purchase());
+	}
+	
+	public static Purchase getPurchase(String domainName,
+			Integer domainId, String login, Integer id) {
+		return getPurchase(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
+	}
+	
+	public static Purchase insertPurchase(String domainName, Integer domainId, String login, Purchase purchase) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().insertPurchase(ctx, purchase);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Purchase updatePurchase(String domainName, Integer domainId, String login, Purchase purchase, PurchaseFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().updatePurchase(ctx, purchase, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Purchase updatePurchase(String domainName, Integer domainId, String login, Purchase purchase) {
+		return updatePurchase(domainName, domainId, login, purchase, f -> f.getIdProperty().eq(purchase.getId()));
+	}
+	
+	public static void deletePurchase(String domainName, Integer domainId, String login, PurchaseFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getManagement().deletePurchase(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deletePurchase(String domainName, Integer domainId, String login, Integer id) {
+		deletePurchase(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
 	// ********************************************
 	// ********************************* PAYROLL **
 	// ********************************************
@@ -2168,7 +2222,7 @@ public class AON {
 		return getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
-	public static CarrierPacking insertCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking) {
+	public static Integer insertCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);

@@ -24,4 +24,23 @@ public class ManagementImpl implements IManagement {
 			configuration -> PurchaseDAO.getPurchaseStream(ctx, filter));
 	}
 
+	@Override
+	public Purchase insertPurchase(AONContext ctx, Purchase purchase) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PurchaseDAO.insertPurchase3(ctx, purchase));
+	}
+
+	@Override
+	public Purchase updatePurchase(AONContext ctx, Purchase purchase, PurchaseFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PurchaseDAO.updatePurchase(ctx, purchase, filter));
+
+	}
+
+	@Override
+	public void deletePurchase(AONContext ctx, PurchaseFilter filter) {
+		 ctx.getDslContext().transaction(
+				configuration -> PurchaseDAO.deletePurchase(ctx, filter));		
+	}
+
 }

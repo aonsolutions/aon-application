@@ -18,6 +18,7 @@ public class Purchase implements Serializable {
 	private int domain;
 	private Integer project;
 	private int supplier;
+	private String supplierName;
 	private String series;
 	private Integer number;
 	private String purchaseReference;
@@ -52,228 +53,304 @@ public class Purchase implements Serializable {
 	private Integer shippingPeriod;
 	private Integer carrierPacking;
 	
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
 	
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Purchase setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public Purchase setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Integer getProject() {
 		return project;
 	}
-	public void setProject(Integer project) {
+	public Purchase setProject(Integer project) {
 		this.project = project;
+		return this;
 	}
 	public int getSupplier() {
 		return supplier;
 	}
-	public void setSupplier(int supplier) {
+	public Purchase setSupplier(int supplier) {
 		this.supplier = supplier;
+		return this;
+	}
+	public String getSupplierName() {
+		return supplierName;
+	}
+	public Purchase setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
+		return this;
 	}
 	public String getSeries() {
 		return series;
 	}
-	public void setSeries(String series) {
+	public Purchase setSeries(String series) {
 		this.series = series;
+		return this;
 	}
 	public Integer getNumber() {
 		return number;
 	}
-	public void setNumber(Integer number) {
+	public Purchase setNumber(Integer number) {
 		this.number = number;
+		return this;
 	}
 	public String getPurchaseReference() {
 		return purchaseReference;
 	}
-	public void setPurchaseReference(String purchaseReference) {
+	public Purchase setPurchaseReference(String purchaseReference) {
 		this.purchaseReference = purchaseReference;
+		return this;
 	}
 	public Integer getAddress() {
 		return address;
 	}
-	public void setAddress(Integer address) {
+	public Purchase setAddress(Integer address) {
 		this.address = address;
+		return this;
 	}
 	public String getDiscountExpr() {
 		return discountExpr;
 	}
-	public void setDiscountExpr(String discountExpr) {
+	public Purchase setDiscountExpr(String discountExpr) {
 		this.discountExpr = discountExpr;
+		return this;
 	}
 	public Date getIssueDate() {
 		return issueDate;
 	}
-	public void setIssueDate(Date issueDate) {
+	public Purchase setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+		return this;
 	}
 	public Integer getPayMethod() {
 		return payMethod;
 	}
-	public void setPayMethod(Integer payMethod) {
+	public Purchase setPayMethod(Integer payMethod) {
 		this.payMethod = payMethod;
+		return this;
 	}
 	public PurchaseType getDocumentType() {
 		return documentType;
 	}
-	public void setDocumentType(PurchaseType documentType) {
+	public Purchase setDocumentType(PurchaseType documentType) {
 		this.documentType = documentType;
+		return this;
 	}
 	public int getSecurityLevel() {
 		return securityLevel;
 	}
-	public void setSecurityLevel(int securityLevel) {
+	public Purchase setSecurityLevel(int securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
 	}
 	public PurchaseStatus getStatus() {
 		return status;
 	}
-	public void setStatus(PurchaseStatus status) {
+	public Purchase setStatus(PurchaseStatus status) {
 		this.status = status;
+		return this;
 	}
 	public String getComments() {
 		return comments;
 	}
-	public void setComments(String comments) {
+	public Purchase setComments(String comments) {
 		this.comments = comments;
+		return this;
 	}
 	public String getRemarks() {
 		return remarks;
 	}
-	public void setRemarks(String remarks) {
+	public Purchase setRemarks(String remarks) {
 		this.remarks = remarks;
+		return this;
 	}
 	public int getWorkplace() {
 		return workplace;
 	}
-	public void setWorkplace(int workplace) {
+	public Purchase setWorkplace(int workplace) {
 		this.workplace = workplace;
+		return this;
 	}
 	public Integer getWarehouse() {
 		return warehouse;
 	}
-	public void setWarehouse(Integer warehouse) {
+	public Purchase setWarehouse(Integer warehouse) {
 		this.warehouse = warehouse;
+		return this;
 	}
 	public Integer getScope() {
 		return scope;
 	}
-	public void setScope(Integer scope) {
+	public Purchase setScope(Integer scope) {
 		this.scope = scope;
+		return this;
 	}
 	public int getNumberOfPymnts() {
 		return numberOfPymnts;
 	}
-	public void setNumberOfPymnts(int numberOfPymnts) {
+	public Purchase setNumberOfPymnts(int numberOfPymnts) {
 		this.numberOfPymnts = numberOfPymnts;
+		return this;
 	}
 	public int getDaysToFirstPymnt() {
 		return daysToFirstPymnt;
 	}
-	public void setDaysToFirstPymnt(int daysToFirstPymnt) {
+	public Purchase setDaysToFirstPymnt(int daysToFirstPymnt) {
 		this.daysToFirstPymnt = daysToFirstPymnt;
+		return this;
 	}
 	public int getDaysBetweenPymnts() {
 		return daysBetweenPymnts;
 	}
-	public void setDaysBetweenPymnts(int daysBetweenPymnts) {
+	public Purchase setDaysBetweenPymnts(int daysBetweenPymnts) {
 		this.daysBetweenPymnts = daysBetweenPymnts;
+		return this;
 	}
 	public String getPymntDays() {
 		return pymntDays;
 	}
-	public void setPymntDays(String pymntDays) {
+	public Purchase setPymntDays(String pymntDays) {
 		this.pymntDays = pymntDays;
+		return this;
 	}
 	public String getBankAccount() {
 		return bankAccount;
 	}
-	public void setBankAccount(String bankAccount) {
+	public Purchase setBankAccount(String bankAccount) {
 		this.bankAccount = bankAccount;
+		return this;
 	}
 	public String getBankAlias() {
 		return bankAlias;
 	}
-	public void setBankAlias(String bankAlias) {
+	public Purchase setBankAlias(String bankAlias) {
 		this.bankAlias = bankAlias;
+		return this;
 	}
 	public String getBic() {
 		return bic;
 	}
-	public void setBic(String bic) {
+	public Purchase setBic(String bic) {
 		this.bic = bic;
+		return this;
 	}
 	public boolean isEmailCommunication() {
 		return emailCommunication;
 	}
-	public void setEmailCommunication(boolean emailCommunication) {
+	public Purchase setEmailCommunication(boolean emailCommunication) {
 		this.emailCommunication = emailCommunication;
+		return this;
 	}
 	public Integer getCarrier() {
 		return carrier;
 	}
-	public void setCarrier(Integer carrier) {
+	public Purchase setCarrier(Integer carrier) {
 		this.carrier = carrier;
+		return this;
 	}
 	public String getShippingAlternativeAddress() {
 		return shippingAlternativeAddress;
 	}
-	public void setShippingAlternativeAddress(String shippingAlternativeAddress) {
+	public Purchase setShippingAlternativeAddress(String shippingAlternativeAddress) {
 		this.shippingAlternativeAddress = shippingAlternativeAddress;
+		return this;
 	}
 	public String getShippingAlternativeAddress2() {
 		return shippingAlternativeAddress2;
 	}
-	public void setShippingAlternativeAddress2(String shippingAlternativeAddress2) {
+	public Purchase setShippingAlternativeAddress2(String shippingAlternativeAddress2) {
 		this.shippingAlternativeAddress2 = shippingAlternativeAddress2;
+		return this;
 	}
 	public String getShippingAlternativeZip() {
 		return shippingAlternativeZip;
 	}
-	public void setShippingAlternativeZip(String shippingAlternativeZip) {
+	public Purchase setShippingAlternativeZip(String shippingAlternativeZip) {
 		this.shippingAlternativeZip = shippingAlternativeZip;
+		return this;
 	}
 	public String getShippingAlternativeCity() {
 		return shippingAlternativeCity;
 	}
-	public void setShippingAlternativeCity(String shippingAlternativeCity) {
+	public Purchase setShippingAlternativeCity(String shippingAlternativeCity) {
 		this.shippingAlternativeCity = shippingAlternativeCity;
+		return this;
 	}
 	public String getShippingAlternativePhone() {
 		return shippingAlternativePhone;
 	}
-	public void setShippingAlternativePhone(String shippingAlternativePhone) {
+	public Purchase setShippingAlternativePhone(String shippingAlternativePhone) {
 		this.shippingAlternativePhone = shippingAlternativePhone;
+		return this;
 	}
 	public String getShippingAlternativeRecipient() {
 		return shippingAlternativeRecipient;
 	}
-	public void setShippingAlternativeRecipient(String shippingAlternativeRecipient) {
+	public Purchase setShippingAlternativeRecipient(String shippingAlternativeRecipient) {
 		this.shippingAlternativeRecipient = shippingAlternativeRecipient;
+		return this;
 	}
 	public String getShippingContact() {
 		return shippingContact;
 	}
-	public void setShippingContact(String shippingContact) {
+	public Purchase setShippingContact(String shippingContact) {
 		this.shippingContact = shippingContact;
+		return this;
 	}
 	public Integer getShippingPeriod() {
 		return shippingPeriod;
 	}
-	public void setShippingPeriod(Integer shippingPeriod) {
+	public Purchase setShippingPeriod(Integer shippingPeriod) {
 		this.shippingPeriod = shippingPeriod;
+		return this;
 	}
 	public Integer getCarrierPacking() {
 		return carrierPacking;
 	}
-	public void setCarrierPacking(Integer carrierPacking) {
+	public Purchase setCarrierPacking(Integer carrierPacking) {
 		this.carrierPacking = carrierPacking;
+		return this;
+	}
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public Purchase setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public Purchase setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public Purchase setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public Purchase setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
 	}
 	
 }

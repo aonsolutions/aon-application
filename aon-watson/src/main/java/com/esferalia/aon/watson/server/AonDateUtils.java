@@ -1,5 +1,6 @@
 package com.esferalia.aon.watson.server;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -78,6 +79,16 @@ public class AonDateUtils {
 	 */
 	public static java.sql.Date toSql(Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
+	}
+	
+	/**
+	 * @param Convierte
+	 *            la fecha pasada por parámetro en un objeto java.sql.Date.
+	 * @return El objeto java.sql.Date correspondiente. Si la fecha es NULL,
+	 *         devuelve NULL.
+	 */
+	public static Timestamp toTimestamp(Date date) {
+		return date == null ? null : new Timestamp(date.getTime());
 	}
 
 	/**
