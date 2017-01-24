@@ -256,7 +256,7 @@ public class Model193Detail2016 extends ResizeComposite {
 		payment.setSelectedIndex(getDetail().getPayment());
 		if (AonStringUtils.equals("C", getDetail().getCodeType())) {
 			codeType.setSelectedIndex(1);	
-		} else if (AonStringUtils.equals("0", getDetail().getCodeType())) {
+		} else if (AonStringUtils.equals("O", getDetail().getCodeType())) {
 			codeType.setSelectedIndex(2);
 		} else if (AonStringUtils.equals("P", getDetail().getCodeType())) {
 			codeType.setSelectedIndex(3);
