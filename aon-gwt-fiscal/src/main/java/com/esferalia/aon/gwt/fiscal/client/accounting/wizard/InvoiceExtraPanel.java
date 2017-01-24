@@ -235,6 +235,13 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		        }
 			}
 		});
+		rDocumentType.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent arg0) {
+				callback.getInvoice().getInvoice().setRegistryDocumentType(rDocumentType.getValue());
+			}
+		});
 		panel.add(rDocumentType);
 		
 		rDocumentCountry = new Country2ListBox();
@@ -249,6 +256,13 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		        }
 			}
 		});
+		rDocumentCountry.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent arg0) {
+				callback.getInvoice().getInvoice().setRegistryDocumentCountry(rDocumentCountry.getValue());
+			}
+		});
 		panel.add(rDocumentCountry);
 		
 		rDocument = new DocumentTextBox();
@@ -261,6 +275,13 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
 					callback.setFocusOnRegistry();
 		        }
+			}
+		});
+		rDocument.addValueChangeHandler(new  ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				callback.getInvoice().getInvoice().setRegistryDocument(rDocument.getValue());
 			}
 		});
 		panel.add(rDocument);
@@ -288,6 +309,13 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
 					callback.setFocusOnRegistry();
 		        }
+			}
+		});
+		rName.addValueChangeHandler(new  ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				callback.getInvoice().getInvoice().setRegistryName(rName.getValue());
 			}
 		});
 		panel.add(rName);
