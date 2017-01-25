@@ -167,11 +167,11 @@ public class Mod130DAO extends FiscalModelDAO {
 			,"C09 - C10"
 			,"<li>@{C09} menos @{C10} igual <b>@{C11}</b></li>")
 		,C12 (Mod130Key.C12 , (mod -> mod.isAEAT()),null
-			,"(C07 - C11)<0?0.0:(C07 - C11)"
-			,"@if{ (C07 - C11) >= 0}"
-					+"<li>@{C07} menos @{C11} igual <b>@{C12}</b></li>"
+			,"(C07 + C11)<0?0.0:(C07 + C11)"
+			,"@if{ (C07 + C11) >= 0}"
+					+"<li>@{C07} m\u00E1s @{C11} igual <b>@{C12}</b></li>"
 			+"@else{}"
-					+"<li>Al ser [007] - [011] una cantidad negativa, se consigna cero"
+					+"<li>Al ser [007] + [011] una cantidad negativa, se consigna cero"
 			+"@end{}"
 			+"<li>Resultado: <b>@{C12}</b></li>")
 		,C131(Mod130Key.C131, (mod -> mod.isAEAT() && mod.getYear() > 2014)
