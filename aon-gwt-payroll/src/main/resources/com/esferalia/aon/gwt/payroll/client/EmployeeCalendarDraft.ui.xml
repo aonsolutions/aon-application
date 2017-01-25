@@ -28,11 +28,56 @@
 		margin: 6px;
 	}
 	
+	.doubleBoxStyle{
+		width: 10px;
+	    text-align: center;
+	    color: #4b4b4b;
+	    background-color: #eee;
+	    font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+	}
+	
+	.doubleBoxDisableStyle{
+		border: none;
+    	width: 10px;
+    	color: #4b4b4b;
+	    text-align: center;
+	    background-color: #eee;
+	    font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+    }
+    
+    .doubleBoxDisableStyle2{
+		border: none;
+    	width: 10px;
+    	color: #4b4b4b;
+	    text-align: center;
+	    background-color: white;
+	    font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+    }
+	
+	.isSelectedStyle{
+		background-color: #166ef3;
+		color: #ffffff;
+	}
+	
 	.sundayStyle{
 		background-color: salmon;
 		border-radius: 15px;
 		padding: 3px;
-		color: #a5473c;
+		color: #ffffff;
+	}
+	
+	.holidayStyle{
+		background-color: #52ab3c;
+		border-radius: 15px;
+		padding: 3px;
+		color: #ffffff;
+	}
+	
+	.dropStyle{
+		background-color: #733969;
+		border-radius: 15px;
+		padding: 3px;
+		color: #ffffff;
 	}
 	
 	.cellStyle{
@@ -62,12 +107,21 @@
 		margin-top: 8px;
 	}
 	
+	.iconEraseStyle {
+		border: none;
+	    margin-left: 560px;
+	}
+	
+	.mesesImparesStyle{
+		background-color: #eee;
+	}
+	
 	
 	</ui:style>
 	
 	<g:HTMLPanel>
 		
-		
+		<!-- font-family: Arial, Helvetica, sans-serif; -->
 		<g:HorizontalPanel>
 			<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
 			<g:Button styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous" ui:field="lastYearButton" />
@@ -91,7 +145,21 @@
 				<p:PaperButton styleName="{style.cellStyle} {style.sundayStyle}" ui:field="diaNoLaborableButton"></p:PaperButton>
 	   			Dias no laborables
 	   		</i:IronLabel>
+	   		<i:IronLabel>
+				<p:PaperButton styleName="{style.cellStyle} {style.holidayStyle}" ui:field="diaVacacionesButton"></p:PaperButton>
+	   			Dias de vacaciones
+	   		</i:IronLabel>
+	   		<i:IronLabel>
+				<p:PaperButton styleName="{style.cellStyle} {style.dropStyle}" ui:field="diaBajaButton"></p:PaperButton>
+	   			Dias de baja
+	   		</i:IronLabel>
+	   		<i:IronLabel>
+	   			<p:PaperButton styleName="aon-icon-delete {style.cellStyle} {style.iconEraseStyle}" ui:field="eraseButton"></p:PaperButton>
+				<!-- g:Button ui:field="eraseButton" styleName="aon-icon-delete {style.cellStyle} {style.iconEraseStyle}"/ -->
+	   			Borrar
+	   		</i:IronLabel>
 		</g:HorizontalPanel>
+		
 		<g:Grid ui:field="calendarGrid" styleName="{style.tableStyle}">
 			<g:row>
 				<g:customCell styleName="{style.cabeceraStyle}">
@@ -209,9 +277,14 @@
 					<g:Label>M</g:Label>
 				</g:customCell>
 			</g:row>
-			<g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
 				<g:customCell styleName="{style.cabeceraStyle}">
 					<g:Label>Enero</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -221,7 +294,17 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
 					<g:Label>Marzo</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -231,7 +314,17 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
 					<g:Label>Mayo</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -241,7 +334,17 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
 					<g:Label>Julio</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -251,7 +354,17 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
 					<g:Label>Septiembre</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -261,12 +374,27 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
 					<g:Label>Noviembre</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row styleName="{style.mesesImparesStyle}">
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
 				</g:customCell>
 			</g:row>
 			<g:row>
 				<g:customCell styleName="{style.cabeceraStyle}">
 					<g:Label>Diciembre</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.cabeceraStyle}">
+					<g:Label>Horas</g:Label>
 				</g:customCell>
 			</g:row>
 		</g:Grid>
