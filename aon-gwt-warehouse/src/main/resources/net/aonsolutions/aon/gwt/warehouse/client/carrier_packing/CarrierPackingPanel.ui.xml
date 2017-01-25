@@ -13,38 +13,38 @@
 		<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
 			<tr>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="{msg.fiscalYear}"/>
+					<g:InlineLabel text="{msg.type}"/>
 				</td>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
 					<g:HorizontalPanel>
-						<g:ListBox ui:field="series" />
-						<g:TextBox ui:field="number" width="30px" styleName="aon-inputText"/>
+						<g:ListBox ui:field="type" styleName="{aonResources.css.aonListBox}" />
+						<g:ListBox ui:field="status" styleName="{aonResources.css.aonListBox}"/>
 					</g:HorizontalPanel>
 				</td>
 				
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="{msg.type}"/>
+					<g:InlineLabel text="{msg.issueDate}"/>
 				</td>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
-					<g:ListBox ui:field="type" />
+					<aon:DateBoxEx ui:field="issueDate" styleName="{aonResources.css.aonTextBox}"/>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="{msg.fiscalYear}"/>
+				</td>
+				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel>
+						<g:ListBox ui:field="series" styleName="{aonResources.css.aonListBox}"/>
+						<g:TextBox ui:field="number" width="50px" styleName="{aonResources.css.aonTextBox}"/>
+					</g:HorizontalPanel>
 				</td>
 				
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="{msg.status}"/>
+					<g:InlineLabel text="Referencia"/>
 				</td>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
-					<g:ListBox ui:field="status" />
-				</td>
-				
-				
-				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="{msg.date}"/>
-				</td>
-				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
-					<g:InlineLabel text="Solicitud:"/>
-					<aon:DateBoxEx ui:field="issueDate"/>
-					<g:InlineLabel text="Entrega:"/>	
-					<aon:DateBoxEx ui:field="deliveryDate"/>
+					<g:TextBox ui:field="reference" styleName="{aonResources.css.aonTextBox}"/>
 				</td>
 			</tr>
 			<tr>
@@ -52,21 +52,25 @@
 					<g:InlineLabel text="{msg.carrier}"/>
 				</td>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
-					<g:ListBox ui:field="carrier" />
+					<g:ListBox ui:field="carrier" styleName="{aonResources.css.aonListBox}" />
 				</td>
 				
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="Referencia"/>
+					<g:InlineLabel text="{msg.deliveryDate}"/>
 				</td>
-				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
-					<g:TextBox ui:field="reference" styleName="aon-inputText"/>
+				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
+					<aon:DateBoxEx ui:field="deliveryDate" styleName="{aonResources.css.aonTextBox}"/>
 				</td>
-				
+
+			</tr>
+		</table>
+		<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonMarginTop5} {aonResources.css.aonWidthAll}">
+			<tr>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
 					<g:InlineLabel text="Matricula"/>
 				</td>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
-					<g:TextBox ui:field="numberPlate" styleName="aon-inputText"/>
+					<g:TextBox ui:field="numberPlate" styleName="{aonResources.css.aonTextBox}"/>
 				</td>
 				
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
@@ -74,11 +78,11 @@
 				</td>
 				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
 					<g:InlineLabel text="Documento:"/>
-					<g:TextBox ui:field="driverDocument" styleName="aon-inputText"/>
+					<g:TextBox ui:field="driverDocument" styleName="{aonResources.css.aonTextBox}"/>
 					<g:InlineLabel text="{msg.name}:"/>	
-					<g:TextBox ui:field="driverName" styleName="aon-inputText"/>
+					<g:TextBox ui:field="driverName" styleName="{aonResources.css.aonTextBox}"/>
 				</td>
-			</tr>
+			</tr> 
 		</table>
 	</g:HTMLPanel> 
 

@@ -20,6 +20,7 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -66,7 +67,7 @@ public class WarehouseServlet extends HttpServlet{
 							object = getCarrierList(domain, userName);
 						} 
 					} else {// LISTA DE PRODUCT CATEGPRY
-						object = getCarrierPackingList(domain, userName);
+						object = getCarrierPackingList(domain, userName, req.getParameterMap());
 					}
 				} else if("purchase".equals(pathInfo[3])){
 					object = getPurchaseList(domain, userName, req.getParameterMap());
@@ -212,10 +213,10 @@ public class WarehouseServlet extends HttpServlet{
 		return purchase;
 	}
 	
-    private JSONArray getCarrierPackingList(Domain domain, String login){
+    private JSONArray getCarrierPackingList(Domain domain, String login, Map<String, String[]> filterMap){
     	JSONArray array = new JSONArray();
     	AON.getCarrierPackingStream(domain.getName(), domain.getId(), login,
-    		f ->f.getDomainProperty().eq(domain.getId()))
+    		f -> carrierPackingFilter(domain, filterMap, f))
     	.forEach(cp -> array.put(ToJSON.carrierPackingToJSON(cp)));
     	return array;
     }
@@ -234,6 +235,44 @@ public class WarehouseServlet extends HttpServlet{
     		.forEach(purchase -> array.put(ToJSON.purchaseToJSON(purchase)));
     	return array;
     }
+    
+    private Filter carrierPackingFilter(Domain domain, Map<String, String[]> filterMap, CarrierPackingProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+
+		if(filterMap.containsKey(SERIES)){
+			Filter fseries = f.getSeriesProperty().eq(filterMap.get(SERIES)[0]); 
+			for(Integer i = 1; i < filterMap.get(SERIES).length ; i++){
+				fseries = fseries.or(f.getSeriesProperty().eq(filterMap.get(SERIES)[i]));
+			}
+			filter = filter.and(fseries);
+		}
+		
+		if(filterMap.containsKey(CARRIER)){
+			Filter fcarrier = f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(CARRIER)[0])); 
+			for(Integer i = 1; i < filterMap.get(CARRIER).length ; i++){
+				fcarrier = fcarrier.or(f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(CARRIER)[i])));
+			}
+			filter = filter.and(fcarrier);
+		}
+		
+		if(filterMap.containsKey(TYPE)){
+			Filter ftype = f.getTypeProperty().eq((byte) Integer.parseInt(filterMap.get(TYPE)[0])); 
+			for(Integer i = 1; i < filterMap.get(TYPE).length ; i++){
+				ftype = ftype.or(f.getTypeProperty().eq((byte) Integer.parseInt(filterMap.get(TYPE)[i])));
+			}
+			filter = filter.and(ftype);
+		}
+		
+		if(filterMap.containsKey(STATUS)){
+			Filter fstatus = f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(STATUS)[0])); 
+			for(Integer i = 1; i < filterMap.get(STATUS).length ; i++){
+				fstatus = fstatus.or(f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(STATUS)[i])));
+			}
+			filter = filter.and(fstatus);
+		}
+
+		return filter;
+}
     
     private Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
     		Filter filter = f.getDomainProperty().eq(domain.getId());

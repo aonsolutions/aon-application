@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.api.client;
 
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -288,5 +289,13 @@ public class Methods {
 			cont++;
 		}
 		return str;
+	}
+	
+	protected String getFilter2(HashMap<String, LinkedList<String>> map) {	
+		StringBuilder bld = new StringBuilder();
+		for (String key : map.keySet()) {
+			map.get(key).stream().forEach(s -> bld.append(key + "=" + s + "&"));
+		}
+		return bld.toString().substring(0, bld.length()-1);
 	}
 }

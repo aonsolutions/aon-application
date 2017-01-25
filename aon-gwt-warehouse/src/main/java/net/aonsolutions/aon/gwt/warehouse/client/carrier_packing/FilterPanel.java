@@ -2,6 +2,7 @@ package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -213,55 +214,48 @@ public class FilterPanel extends Composite {
     	periodLabel.setText("");
     	
 
-		HashMap<String, String[]> map = new HashMap<String, String[]>();
-		map.put("from", new String[]{Long.toString(new Date().getTime())});
+		HashMap<String, LinkedList<String>> map = new HashMap<>();
+		LinkedList<String> from = new LinkedList<>();
+		from.add(Long.toString(new Date().getTime()));
+		map.put("from", from );
     	carrierPacking.setFilterMap(map);
     	carrierPacking.content();
 	}
     
+    private String key;
     private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label){
-	/*	PopupPanel popup = new PopupPanel();
-		AonComboBox acb = new AonComboBox();
-		acb.setItems(result.getData());
-		acb.setItemLabelPath("name");
-		acb.setItemValuePath("name");
-		acb.setLabel(label);
-		
-		acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
-			
+    	if(AON.MSG.series().equals(label)){
+    		key = "series"; 
+    	} else if(AON.MSG.carrier().equals(label)){
+    		key = "carrier"; 
+    	} else if(AON.MSG.type().equals(label)){
+    		key = "type"; 
+    	} else if(AON.MSG.status().equals(label)){
+    		key = "status"; 
+    	}
+    	LinkedList<String> filterList = carrierPacking.getFilterMap().containsKey(key) ? 
+    			carrierPacking.getFilterMap().get(key) : new LinkedList<>();
+    	SearchWidget sw = new SearchWidget(pb, label, "",
+    			filterList, result.getData()){
+
 			@Override
-			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
-				JsObject js = acb.getSelectedItem().cast();
-				String id = js.getId() + "";
-				
-				if(label.equalsIgnoreCase(AON.MSG.series())){
-					categoryLabel.setText(AON.MSG.series() + ":" +js.getName() + "; ");
-					carrierPacking.getFilterMap().put("series",new String[]{id});
-				}
-				if(label.equalsIgnoreCase(AON.MSG.type())){
-					categoryLabel.setText(AON.MSG.type() + ":" +js.getName() + "; ");
-					carrierPacking.getFilterMap().put("type",new String[]{id});
-				}
-				if(label.equalsIgnoreCase(AON.MSG.status())){
-					categoryLabel.setText(AON.MSG.status() + ":" +js.getName() + "; ");
-					carrierPacking.getFilterMap().put("status",new String[]{id});
+			protected void onSelect(JsObject js, Boolean apply) {
+				if(apply){
+					if(carrierPacking.getFilterMap().containsKey(key)){
+						carrierPacking.getFilterMap().get(key).add(js.getId()+"");
+					} else {
+						LinkedList<String> list = new LinkedList<>();
+						list.add(js.getId()+"");
+						carrierPacking.getFilterMap().put(key, list);
+					}
+				} else {
+					if(carrierPacking.getFilterMap().containsKey(key)){
+						boolean a = carrierPacking.getFilterMap().get(key).remove(js.getId()+"");
+					}
 				}
 				carrierPacking.content();
-				popup.hide();
 			}
-		});
-		popup.add(acb);
-		int left = pb.getAbsoluteLeft();
-		int top = pb.getAbsoluteTop()
-				+ pb.getOffsetHeight();
-		Integer width = Window.getClientWidth();
-		if(left > width - 200){
-			left = left - 200;
-		}
-		popup.setAutoHideEnabled(true);
-		popup.addAutoHidePartner(acb.getElementById("overlay"));
-		popup.setPopupPosition(left, top);
-		popup.show();
-		acb.open();*/
+    	};
+    	sw.show();
     }
 }

@@ -2,6 +2,7 @@ package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
+import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -26,17 +28,19 @@ import net.aonsolutions.polymer.aon.widget.AonComboBox;
 public class CarrierPacking extends AonTemplate{
 
 	protected API API;
-	private HashMap<String, String[]> filterMap;
+	private HashMap<String, LinkedList<String>> filterMap;
 	private Boolean future = false;
 	private CarrierPacking me = this;
 	
 	public CarrierPacking(AonData aonData, Boolean future) {
+		filterMap = new HashMap<>();
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getUser().getLogin());
 		this.future = future; 
 	}
 	
 	public CarrierPacking(AonData aonData) {
+		filterMap = new HashMap<>();
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getUser().getLogin());
 	}
@@ -44,7 +48,8 @@ public class CarrierPacking extends AonTemplate{
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC
+				IronIconsElement.SRC,
+				PaperItemElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
@@ -92,6 +97,7 @@ public class CarrierPacking extends AonTemplate{
 					Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 					toolbar.back.setVisible(true);
 					toolbar.remove.setVisible(true);
+					getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 					setNorthContent(new CarrierPackingPanel(me));
 					setContent(new Label(""));
 				}
@@ -113,6 +119,7 @@ public class CarrierPacking extends AonTemplate{
 	}
 	
 	private void northContent(){
+		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 85);
 		setNorthContent(new FilterPanel(this));
 	}
 	
@@ -120,6 +127,7 @@ public class CarrierPacking extends AonTemplate{
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
+		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 		setNorthContent(new CarrierPackingPanel(me,js));
 		setContent(new CarrierPackingSelect(API, js));
 	}
@@ -129,7 +137,7 @@ public class CarrierPacking extends AonTemplate{
 	}
 	
 	public void content(){
-		API.getWarehouse().getCarrierPacking(new AsyncCallback<JSON<JsCarrierPacking>>() {
+		API.getWarehouse().getCarrierPacking(filterMap, new AsyncCallback<JSON<JsCarrierPacking>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsCarrierPacking> result) {
@@ -199,11 +207,11 @@ public class CarrierPacking extends AonTemplate{
 		};
 	}
 	
-	public HashMap<String, String[]> getFilterMap() {
+	public HashMap<String, LinkedList<String>> getFilterMap() {
 		return filterMap;
 	}
 	
-	public void setFilterMap(HashMap<String, String[]> filterMap) {
+	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
 		this.filterMap = filterMap;
 	}
 }

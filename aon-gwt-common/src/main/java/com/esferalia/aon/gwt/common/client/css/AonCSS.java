@@ -542,6 +542,12 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-inputText")
 	String aonInputText();
+	
+	@ClassName("aon-text-box")
+	String aonTextBox();
+	
+	@ClassName("aon-list-box")
+	String aonListBox();
 
 	@ClassName("aon-fiscal-container")
 	String aonFiscalContainer();
