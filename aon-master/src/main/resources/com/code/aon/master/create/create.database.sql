@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.84.0
+# Version: 8.86.0
 # Created by: girazu
-# Creation Date: 11/01/2017 09:25
+# Creation Date: 25/01/2017 10:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2424,6 +2424,35 @@ CREATE TABLE `carrier` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agencias de Transporte';
 
 #
+# Structure for the `carrier_packing` table : 
+#
+
+CREATE TABLE `carrier_packing` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico de la hoja de ruta',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del dominio',
+  `series` char(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Serie de la hoja de ruta',
+  `number` int(4) NOT NULL DEFAULT '0' COMMENT 'Numero de la hoja de ruta',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Indica el tipo de la hoja de ruta',
+  `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Indica el estado de la hoja de ruta',
+  `issue_date` datetime DEFAULT NULL COMMENT 'Fecha de emision',
+  `carrier` int(4) NOT NULL COMMENT 'Identificador de la agencia de transporte',
+  `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
+  `carrier_reference` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia de la agencia de transporte',
+  `number_plate` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de matricula del vehiculo',
+  `driver_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del conductor',
+  `driver_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de documento del conductor',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_CARRIER_PACKING_DOMAIN` (`domain`),
+  KEY `IDX_CARRIER_PACKING_CARRIER` (`carrier`),
+  CONSTRAINT `FK_CARRIER_PACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CARRIER_PACKING_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hojas de ruta';
+
+#
 # Structure for the `cashflow_forecast` table : 
 #
 
@@ -3819,6 +3848,7 @@ CREATE TABLE `delivery` (
   `bank_alias` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Alias del Banco',
   `bic` varchar(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la agencia de transporte',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `number_plate` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de matricula',
   `driver` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del conductor',
   `driver_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Documento del conductor',
@@ -3921,6 +3951,7 @@ CREATE TABLE `sales` (
   `bic` varchar(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `purchase_generated` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se han generado los Pedidos de Compra derivados',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
   `shipping_alternative_address2` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Segunda parte de la Direccion de entrega',
   `shipping_alternative_zip` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo Postal de entrega',
@@ -3974,6 +4005,7 @@ CREATE TABLE `sales_detail` (
   `status` tinyint(2) DEFAULT '0' COMMENT 'Estado del Detalle de Pedido',
   `offer_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle del Presupuesto Origen',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
+  `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -5239,6 +5271,7 @@ CREATE TABLE `income` (
   `bank_account` varchar(34) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
   `bank_alias` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Alias del Banco',
   `bic` varchar(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'BIC - Codigo Identificador del Banco',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -5360,6 +5393,7 @@ CREATE TABLE `purchase` (
   `bic` varchar(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `email_communication` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se ha comunicado a traves de email',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
   `shipping_alternative_address2` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Segunda parte de la Direccion de entrega',
   `shipping_alternative_zip` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo Postal de entrega',
@@ -5415,6 +5449,7 @@ CREATE TABLE `purchase_detail` (
   `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del Origen del Detalle de la Compra',
   `proposal_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle de Solicitud',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
+  `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -8294,7 +8329,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.84.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.86.0');
 
 COMMIT;
 
