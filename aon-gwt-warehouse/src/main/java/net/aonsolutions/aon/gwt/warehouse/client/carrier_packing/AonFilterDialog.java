@@ -8,6 +8,8 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -15,20 +17,19 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
-import com.vaadin.polymer.paper.widget.event.ChangeEvent;
-import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
-public abstract class SearchWidget extends PopupPanel {
+public abstract class AonFilterDialog extends PopupPanel {
 
 	HashMap<String, Boolean> selectedMap;
 	
-	public SearchWidget(Widget w, String label, String icon,
+	public AonFilterDialog(Widget w, String label, String icon,
 		LinkedList<String> filterList, AonJsArray<JsObject> data) {
 		selectedMap = new HashMap<>();
 		
@@ -37,16 +38,18 @@ public abstract class SearchWidget extends PopupPanel {
 		VerticalPanel verticalPanel = new VerticalPanel();
 		PaperInput textBox = new PaperInput();
 		textBox.setLabel(label);
-		
-		// TODO KEYUP
-		textBox.addChangeHandler(new ChangeEventHandler() {
+
+		textBox.addDomHandler(new KeyUpHandler() {
 			
 			@Override
-			public void onChange(ChangeEvent event) {
+			public void onKeyUp(KeyUpEvent event) {
 				verticalPanel.remove(1);
 				verticalPanel.add(buildItems(data, textBox.getValue(), icon));
 			}
-		});
+		}, KeyUpEvent.getType());
+		
+
+
 		verticalPanel.add(textBox);
 		verticalPanel.add(buildItems(data, textBox.getValue(), icon));
 			
@@ -66,9 +69,9 @@ public abstract class SearchWidget extends PopupPanel {
 	protected abstract void onSelect(JsObject js, Boolean apply);
 
 	
-	private VerticalPanel buildItems(AonJsArray<JsObject> data, String filter, String icon){
-		//ScrollPanel scrollPanel = new ScrollPanel();
-				//scrollPanel.setStyleName(AON.AON_CSS.aonStatMenuStyle());
+	private ScrollPanel buildItems(AonJsArray<JsObject> data, String filter, String icon){
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName(AON.AON_CSS.aonStatMenuStyle());
 			
 		VerticalPanel vp = new VerticalPanel();
 		vp.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -76,7 +79,8 @@ public abstract class SearchWidget extends PopupPanel {
 		
 		data.stream().filter(js -> js.getName().toLowerCase().contains(filter.toLowerCase()))
 				.forEach(js -> vp.add(buildItem(js, icon)));
-		return vp;
+		scrollPanel.add(vp);
+		return scrollPanel;
 	}
 	
 	private SimplePanel buildItem(JsObject js, String icon) {

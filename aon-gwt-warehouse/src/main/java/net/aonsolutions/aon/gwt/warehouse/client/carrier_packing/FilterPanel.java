@@ -235,7 +235,7 @@ public class FilterPanel extends Composite {
     	}
     	LinkedList<String> filterList = carrierPacking.getFilterMap().containsKey(key) ? 
     			carrierPacking.getFilterMap().get(key) : new LinkedList<>();
-    	SearchWidget sw = new SearchWidget(pb, label, "",
+    	AonFilterDialog sw = new AonFilterDialog(pb, label, "",
     			filterList, result.getData()){
 
 			@Override
