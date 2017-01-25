@@ -246,6 +246,10 @@ public class Model190 extends MainEntryPoint {
 				Model190Detail2016Bizkaia detail = new Model190Detail2016Bizkaia();
 				detail.setMod190(currentMod190);	
 				perceptorPanel.setWidget(detail);
+			} else if (currentMod190.getAdministration() == Administration.GIPUZKOA.ordinal()) {
+				Model190Detail2016Gipuzkoa detail = new Model190Detail2016Gipuzkoa();
+				detail.setMod190(currentMod190);	
+				perceptorPanel.setWidget(detail);
 			} else {
 				Model190Detail2016 detail = new Model190Detail2016();
 				detail.setMod190(currentMod190);	
