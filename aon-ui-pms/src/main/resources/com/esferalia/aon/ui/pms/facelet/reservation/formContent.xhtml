@@ -291,30 +291,34 @@
 			<aon:outputText	value="#{reservation.to.total}"	styleClass="aon-bold">
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
-			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info"/>
-			<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto">
-				<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-120,aon-noborder aon-bold aon-text-right">
-					<aon:outputLabel value="#{bundle.aon_taxable_base}:" />
-					<aon:outputText	value="#{reservation.to.taxableBase}">
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-
-					<aon:outputLabel value="#{bundle.aon_vat}:" />
-					<aon:outputText	value="#{reservation.to.vatQuota}">
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-
-					<aon:outputLabel value="#{bundle.pms_other_tax}:" />
-					<aon:outputText	value="#{reservation.to.otherTaxQuota}">
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-
-					<aon:outputLabel value="#{bundle.aon_total}:" />
-					<aon:outputText	value="#{reservation.to.total}">
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-				</aon:panelGrid>
-			</rich:toolTip>
+			<aon:div style="display:inline;">
+				<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
+				<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto">
+					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-120,aon-noborder aon-bold aon-text-right">
+						<aon:outputLabel value="#{bundle.aon_taxable_base}:" />
+						<aon:outputText	value="#{reservation.to.taxableBase}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+	
+						<aon:outputLabel value="#{bundle.aon_vat}:" />
+						<aon:outputText	value="#{reservation.to.vatQuota}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+	
+						<aon:outputLabel value="#{bundle.pms_other_tax}:" />
+						<aon:outputText	value="#{reservation.to.otherTaxQuota}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+	
+						<aon:outputLabel value="#{bundle.aon_total}:" />
+						<aon:outputText	value="#{reservation.to.total}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+					</aon:panelGrid>
+				</rich:toolTip>
+			</aon:div>
+			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-card"
+				title="Token" rendered="#{!reservation.to.blankToken}" />
 		</aon:div>
 		<aon:div id="AdvanceDiv">
 			<aon:outputLabel for="ProjectReservation_advance"

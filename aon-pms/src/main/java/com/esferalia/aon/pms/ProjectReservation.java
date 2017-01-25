@@ -882,6 +882,10 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		return null;
 	}
 
+	@Transient
+	public boolean isBlankToken() {
+		return StringUtils.isBlank(getToken());
+	}
 
 	@Transient
 	public List<?> getDetailList() {
