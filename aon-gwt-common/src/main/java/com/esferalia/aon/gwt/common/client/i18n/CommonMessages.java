@@ -3213,4 +3213,14 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Tesorer\u00EDa")
 	String treasury();
+
+	@DefaultMessage("Cant. cercanas")
+	String nearbyNumbers();
+
+	@DefaultMessage("Selecci\u00F3n de cobros / pagos")
+	String financeSelection();
+
+	@DefaultMessage("Cobros / pagos seleccionados")
+	String financeSelected();
+
 }

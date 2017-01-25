@@ -77,6 +77,7 @@ public class FinanceDAO {
 			, int offset
 			, int numberOfRows) {
 		ctx.checkRead();
+		
 		return  ctx.getDslContext()
 			.select(FINANCE.fields())
 			.select(REGISTRY.fields())

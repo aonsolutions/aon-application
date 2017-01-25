@@ -34,7 +34,7 @@ public class FinanceRecorder {
 						
 						String prefix = (finance.getAmount() < 0) ? REFU: CHAR;
 						prefix = prefix + " " + INVO + ": ";
-						String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();								
+						String concept = (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();								
 						
 						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
 						String description = finance.getRegistryAccountDescription();
@@ -63,7 +63,7 @@ public class FinanceRecorder {
 					if (detail == null) {
 						String prefix = (finance.getAmount() < 0) ? RETU : PAYM;
 						prefix = prefix + " " + INVO + ": ";
-						String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();								
+						String concept = (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();								
 						String code = AonStringUtils.defaultIfBlank(finance.getRegistryAccountCode(),AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????");
 						String description = AonStringUtils.defaultIfBlank(finance.getRegistryAccountDescription(), finance.getRegistryName());
 						detail = new AccountEntryDetail()

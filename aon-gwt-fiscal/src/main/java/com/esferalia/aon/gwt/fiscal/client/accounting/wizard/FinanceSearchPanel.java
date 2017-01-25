@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -20,17 +21,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -59,6 +58,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	final private MutableInt searchEnabled = new MutableInt( 0 ); 
 
 	private SimpleLayoutPanel northPanel;
+	private SimpleLayoutPanel centerLayoutPanel;
 	private ScrollPanel centerPanel;
 	
 	private FlowPanel container;
@@ -70,20 +70,22 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private CheckBox confidential;
 	private AccountingRegistryBox registryBox;
 	private DoubleBox amount;
+	private CheckBox nearbyNumbers;
 	private TextBox concept;
-	private Button filter;
+	private IFinancePanelCallback callback;
 	
 	
 	private int lastScrollPos = 0;
 	
-	public FinanceSearchPanel(String domainName,int domainId) {
-		this(domainName,domainId,Integer.MAX_VALUE);
+	public static interface IFinancePanelCallback {
+		boolean isSelected( Finance finance);
 	}
 	
-	public FinanceSearchPanel(String domainName,int domainId, int tabIndex) {
+	public FinanceSearchPanel(String domainName,int domainId, IFinancePanelCallback callback, int tabIndex) {
 		super(Unit.PX);
 		this.domainName = domainName;
 		this.domainId = domainId;
+		this.callback = callback; 
 		
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
@@ -93,13 +95,16 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		
 		northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(tabIndex);
-		addNorth(northPanel, 90);
+		addNorth(northPanel, 105);
+		
+		centerLayoutPanel = new SimpleLayoutPanel();
 		centerPanel = new ScrollPanel();
 		centerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
 		centerPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
 		container = new FlowPanel();
 		centerPanel.setWidget(container);
-		add(centerPanel);
+		centerLayoutPanel.setWidget(centerPanel);
+		add(centerLayoutPanel);
 		
 		centerPanel.addScrollHandler(new ScrollHandler() {
 
@@ -150,56 +155,118 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 
 	private void fillNorthPanel(int tabIndex) {
 		amount = new DoubleBox();
+		amount.setVisibleLength(8);
+		amount.setValue(null,false);
 		amount.setTabIndex(++tabIndex);
-		fromDate = new DateBoxEx();
-		fromDate.setTabIndex(++tabIndex);
-		toDate = new DateBoxEx();
-		toDate.setTabIndex(++tabIndex);
-		confidential = new CheckBox(AON.MSG.confidential());
-		confidential.setTabIndex(++tabIndex);
-		concept = new TextBox();
-		concept.setTabIndex(++tabIndex);
-		concept.setStyleName(AON.AON_CSS.aonInputText());
-		registryBox = new AccountingRegistryBox(this.domainName,this.domainId);
-		registryBox.setRequired(false);
-		registryBox.setTabIndex(++tabIndex);
-		filter = new Button();
-		filter.setTabIndex(++tabIndex);
-		filter.setText(AON.MSG.searchAction());
-		filter.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		filter.addStyleName(AON.AON_CSS.aonIconSearch());
-		filter.addClickHandler(new ClickHandler() {
+		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
 			@Override
-			public void onClick(ClickEvent event) {
-				enableMoreData();
+			public void onValueChange(ValueChangeEvent<Double> arg0) {
 				search();
 			}
 		});
 		
+		nearbyNumbers = new CheckBox(AON.MSG.nearbyNumbers());
+		nearbyNumbers.setStyleName(AON.AON_CSS.aonPadding2Left());
+		nearbyNumbers.setTabIndex(++tabIndex);
+		nearbyNumbers.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				search();
+			}
+		});
+
+		fromDate = new DateBoxEx();
+		fromDate.setTabIndex(++tabIndex);
+		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> arg0) {
+				search();
+			}
+		});
+		
+		toDate = new DateBoxEx();
+		toDate.setTabIndex(++tabIndex);
+		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> arg0) {
+				search();
+			}
+		});
+		
+		confidential = new CheckBox(AON.MSG.confidential());
+		confidential.setTabIndex(++tabIndex);
+		confidential.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				search();
+			}
+		});
+		
+		concept = new TextBox();
+		concept.setTabIndex(++tabIndex);
+		concept.setStyleName(AON.AON_CSS.aonInputText());
+		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				search();
+			}
+		});
+		
+		registryBox = new AccountingRegistryBox(this.domainName,this.domainId, null, false);
+		registryBox.setRequired(false);
+		
+		registryBox.setTabIndex(++tabIndex);
+		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<AccountingRegistry> arg0) {
+				search();
+			}
+		});
+		
+		FlowPanel flowNorthPanel = new FlowPanel();
+		Label label = new Label(AON.MSG.financeSelection());
+		label.setStyleName(AON.AON_CSS.aonWidthAll());
+		label.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		label.addStyleName(AON.AON_CSS.aonBorderBottom());
+		label.addStyleName(AON.AON_CSS.aonBold());
+		label.addStyleName(AON.AON_CSS.aonTextCenter());
+		flowNorthPanel.add(label);
+
 		tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonBorderBottom());
 		tab.addStyleName(AON.AON_CSS.aonPadding());
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
 		
-		tab.getColumnFormatter().setWidth(0, "80px");
-		tab.getColumnFormatter().setWidth(1, "150px");
+		tab.getColumnFormatter().setWidth(0, "60px");
+		tab.getColumnFormatter().setWidth(1, "180px");
 		tab.getColumnFormatter().setWidth(2, "60px");
 		tab.getColumnFormatter().setWidth(3, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.amount()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, amount);
-		//tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel amountPanel = new FlowPanel();
+		amountPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		amountPanel.add(amount);
+		amountPanel.add(nearbyNumbers);
+		tab.setWidget(0, 1, amountPanel);
 
-		tab.setWidget(0, 2, new Label(AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonBold());
+
+		tab.setWidget(0, 3, new Label(AON.MSG.concept()));
+		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonBold());
+		tab.setWidget(0, 4, concept);
+		
+		tab.setWidget(1, 0, new Label(AON.MSG.date()));
+		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
 		
 		datePanel = new FlowPanel();
 		datePanel.setStyleName(AON.AON_CSS.aonNowrap());
-		InlineLabel from = new InlineLabel(AON.MSG.from());
-		from.setStyleName(AON.AON_CSS.aonItalic());
-		from.addStyleName(AON.AON_CSS.aonMarginRight());
-		datePanel.add(from);
 		datePanel.add(fromDate);
 		InlineLabel to = new InlineLabel(AON.MSG.to());
 		to.setStyleName(AON.AON_CSS.aonItalic());
@@ -207,41 +274,15 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		to.addStyleName(AON.AON_CSS.aonMarginLeft());
 		datePanel.add(to);
 		datePanel.add(toDate);
-		tab.setWidget(0, 3, datePanel);
-//		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(1, 1, datePanel);
+
+		tab.setWidget(1, 3, new Label(AON.MSG.titular()));
+		tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonBold());
+
+		tab.setWidget(1, 4, registryBox);
 		
-		tab.setWidget(1, 0, new Label(AON.MSG.concept()));
-		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
-		tab.setWidget(1, 1, concept);
-//		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
-
-		tab.setWidget(1, 2, new Label(AON.MSG.titular()));
-		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
-
-		tab.setWidget(1, 3, registryBox);
-//		tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonPanelGridEven());
-
-		tab.getFlexCellFormatter().setColSpan(2, 0, 4);
-//		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonTextCenter());
-		tab.setWidget(2,0, filter);
-
-		FocusPanel focusPanel = new FocusPanel();
-		focusPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		focusPanel.setTabIndex(tabIndex);
-		focusPanel.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					enableMoreData();
-					search();
-				}
-			}
-		});
-		focusPanel.setWidget(tab);
-		
-		northPanel.setWidget(focusPanel);
+		flowNorthPanel.add(tab);
+		northPanel.setWidget(flowNorthPanel);
 	}
 
 	@Override
@@ -251,19 +292,18 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 
 	@Override
 	public int getTabIndex() {
-		return fromDate.getTabIndex();
+		return amount.getTabIndex();
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-		fromDate.setAccessKey(key);;
+		amount.setAccessKey(key);;
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
-		fromDate.setFocus(true);
-		fromDate.hideDatePicker();
-		fromDate.getTextBox().selectAll();
+		amount.setFocus(true);
+		amount.selectAll();
 	}
 
 	@Override
@@ -272,6 +312,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	}
 	
 	private void search() {
+		enableMoreData();
 		container.clear();
 		offset.setValue(0);
 		search(offset.getValue());
@@ -285,7 +326,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			.setFrom(fromDate.getValue())
 			.setTo(toDate.getValue())
 			.setRegistry(registryBox.getId())
-			.setAmount(amount.getValue())
+			.setAmount((amount.getValue() != null && amount.getValue()!=0)?amount.getValue():null)
+			.setNearbyNumbers(nearbyNumbers.getValue())
 			.setConcept(concept.getValue())
 			.setConfidential(confidential.getValue())
 			.setHasConfidentialityRole(user != null && user.hasConfidentialityRole())
@@ -298,8 +340,11 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 					public void onSuccess(LinkedList<Finance> result) {
 						if (result != null && !result.isEmpty()) {
 							for (final Finance finance : result) {
+								finance.setChecked(callback.isSelected(finance));
 								final FocusPanel financePanel = FinancePrinter.print(finance);
-								financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
+								financePanel.addStyleName(finance.isChecked()
+									?AON.AON_CSS.aonIconChecked()
+									:AON.AON_CSS.aonIconCheck());
 								financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
 								container.add(financePanel);
 								financePanel.addClickHandler(new ClickHandler() {
@@ -346,7 +391,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		fromDate.setValue(null);
 		toDate.setValue(null);
 		confidential.setValue(false);
-		registryBox.setValue( (AccountingRegistry) null);
+		registryBox.setValue( (AccountingRegistry) null, false);
 		amount.setValue(null);
 		concept.setValue(null);
 	}

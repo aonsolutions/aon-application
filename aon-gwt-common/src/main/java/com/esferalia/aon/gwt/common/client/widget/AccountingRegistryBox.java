@@ -185,8 +185,7 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if ((event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3)
-				 || (event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS && AonStringUtils.PLUS.equals(accountingRegistryTextBox.getValue()))) {
+				if ( config != null &&	(isControlF3(event) || isPlusKeyAlone(event))) {
 					showDialog(domainName,domain,config);
 				}
 			}
@@ -206,6 +205,13 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		rooPanel.add(accountingRegistry);
 		rooPanel.add(descriptionLabel);
 		initWidget(rooPanel);
+	}
+	
+	private boolean isControlF3(KeyUpEvent event) {
+		return (event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3);
+	}
+	private boolean isPlusKeyAlone(KeyUpEvent event) {
+		return event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS && AonStringUtils.PLUS.equals(accountingRegistryTextBox.getValue());
 	}
 	
 	public void set(AccountingRegistry accountingRegistry) {
@@ -242,7 +248,9 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
 			id = null;
-			accountingRegistryTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+			if (isRequired()) {
+				accountingRegistryTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+			}
 			accountingRegistryTextBox.setValue(null,fireEvents);
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());

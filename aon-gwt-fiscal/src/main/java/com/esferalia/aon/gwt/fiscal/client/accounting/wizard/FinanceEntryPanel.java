@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceSearchPanel.IFinancePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -15,6 +16,9 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -35,6 +39,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 	
 	static final String BACKGROUND_COLOR = "#ccccff";
 	public final static int TAB_OFFSET = 1000;
+	public final static int SEARCH_PANEL_TAB_OFFSET = 10000;
 	
 	private DockLayoutPanel resultPanel;
 	private SessionLog workingLog;
@@ -46,6 +51,15 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 	private FinanceSearchPanel financeSearchPanel;
 	private FinanceEntry financeEntry;
 	
+	private final KeyUpHandler f9KeyHandler = new KeyUpHandler() {
+		@Override
+		public void onKeyUp(KeyUpEvent event) {
+			if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+				financeSearchPanel.setFocus(true);
+	        }
+		}
+	};
+	
 	public FinanceEntryPanel(final IAccountEntryModuleCallback callback) {
 		setCallback(callback);
 		
@@ -54,8 +68,20 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 		workingLog = new SessionLog();
 		rootPanel.addSouth(workingLog, 150);
 
-		financeSearchPanel = new FinanceSearchPanel(AccountEntryModule.getCurrentDomainName()
-				, AccountEntryModule.getCurrentDomain());
+		financeSearchPanel = new FinanceSearchPanel(
+			AccountEntryModule.getCurrentDomainName()
+			, AccountEntryModule.getCurrentDomain()
+			, new IFinancePanelCallback() {
+
+				@Override
+				public boolean isSelected(Finance finance) {
+					if (finance == null) return false;
+					return getWrapper().getFinances().containsKey(finance.getId());
+				}
+				
+			}
+			
+			,SEARCH_PANEL_TAB_OFFSET);
 		financeSearchPanel.setStyleName(AON.AON_CSS.aonInvoicePanelEast());
 		financeSearchPanel.addSelectionHandler( new SelectionHandler<Finance>() {
 			
@@ -72,7 +98,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 
 		});
 		financeSearchPanel.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);		
-		rootPanel.addEast(financeSearchPanel, 750);
+		rootPanel.addEast(financeSearchPanel, 600);
 		
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
@@ -82,7 +108,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 		
 		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(northPanel,tabindex);
-		resultPanel.addNorth(northPanel, 90);
+		resultPanel.addNorth(northPanel, 105);
 		
 		
 		ScrollPanel resultScrollPanel = new ScrollPanel();
@@ -119,6 +145,15 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 
 	
 	private void fillNorthPanel(SimpleLayoutPanel northPanel,int tabIndex) {
+		FlowPanel flowNorthPanel = new FlowPanel();
+		Label label = new Label(AON.MSG.financeSelected());
+		label.setStyleName(AON.AON_CSS.aonWidthAll());
+		label.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		label.addStyleName(AON.AON_CSS.aonBorderBottom());
+		label.addStyleName(AON.AON_CSS.aonTextCenter());
+		label.addStyleName(AON.AON_CSS.aonBold());
+		flowNorthPanel.add(label);
+		
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonBorderBottom());
 		tab.addStyleName(AON.AON_CSS.aonPadding());
@@ -130,6 +165,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 		tab.getColumnFormatter().setWidth(3, "auto");
 		
 		bankAccount = createAccountBox();
+		bankAccount.addKeyUpHandler(f9KeyHandler);
 		bankAccount.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
@@ -147,6 +183,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
 		
 		expenses = new DoubleBox();
+		expenses.addKeyUpHandler(f9KeyHandler);
 		expenses.setVisibleLength(6);
 		expenses.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
@@ -161,6 +198,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
 
 		expensesAccount = createAccountBox();
+		expensesAccount.setRequired(false);
+		expensesAccount.addKeyUpHandler(f9KeyHandler);
 		tab.setWidget(1, 3, expensesAccount);
 		expensesAccount.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
@@ -169,7 +208,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 				valueChanged();
 			}
 		});
-		northPanel.setWidget(tab);	
+		flowNorthPanel.add(tab);
+		northPanel.setWidget(flowNorthPanel);	
 	}
 	
 

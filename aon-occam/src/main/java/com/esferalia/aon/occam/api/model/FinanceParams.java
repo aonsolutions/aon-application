@@ -15,6 +15,8 @@ public class FinanceParams implements Serializable{
 	
 	private Integer registry;
 	private Double amount;
+	private boolean nearbyNumbers;
+	private double factor = 5;
 	private String concept;
 	
 	public int getDomain() {
@@ -50,6 +52,20 @@ public class FinanceParams implements Serializable{
 	}
 	public FinanceParams setAmount(Double amount) {
 		this.amount = amount;
+		return this;
+	}
+	public boolean isNearbyNumbers() {
+		return nearbyNumbers;
+	}
+	public FinanceParams setNearbyNumbers(boolean nearbyNumbers) {
+		this.nearbyNumbers = nearbyNumbers;
+		return this;
+	}
+	public double getFactor() {
+		return factor;
+	}
+	public FinanceParams setFactor(double factor) {
+		this.factor = factor;
 		return this;
 	}
 	public String getConcept() {
