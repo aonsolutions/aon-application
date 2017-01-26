@@ -55,7 +55,7 @@ public class WarehouseServlet extends HttpServlet{
 			if(pathInfo.length > 3){
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
-				if(CARRIER_PACKING.equals(pathInfo[3])){ // PRODUCT CATEGPRY
+				if(CARRIER_PACKING.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						if(SERIES.equals(pathInfo[4])){
 							object = getSeriesList();
@@ -66,11 +66,15 @@ public class WarehouseServlet extends HttpServlet{
 						} else if(CARRIER.equals(pathInfo[4])){
 							object = getCarrierList(domain, userName);
 						} 
-					} else {// LISTA DE PRODUCT CATEGPRY
+					} else {
 						object = getCarrierPackingList(domain, userName, req.getParameterMap());
 					}
 				} else if("purchase".equals(pathInfo[3])){
-					object = getPurchaseList(domain, userName, req.getParameterMap());
+					if(pathInfo.length > 4){
+						if(pathInfo.length > 5){
+							object = getPurchaseDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
+						} else object = getPurchase(domain, userName, Integer.parseInt(pathInfo[4]));
+					} else object = getPurchaseList(domain, userName, req.getParameterMap());
 				}
 
 				String js = req.getParameter("callback");
@@ -233,6 +237,17 @@ public class WarehouseServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getPurchaseStream(domain.getName(), domain.getId(), login, f -> purchaseFilter(domain, map, f))
     		.forEach(purchase -> array.put(ToJSON.purchaseToJSON(purchase)));
+    	return array;
+    }
+    
+    private JSONObject getPurchase(Domain domain,String login, Integer id){
+    	return ToJSON.purchaseToJSON(AON.getPurchase(domain.getName(), domain.getId(), login, id));
+    }
+    
+    private JSONArray getPurchaseDetailList(Domain domain,String login, Integer id){
+    	JSONArray array = new JSONArray();
+    	AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getPurchaseProperty().eq(id)))
+    		.forEach(purchaseDetail -> array.put(ToJSON.purchaseDetailToJSON(purchaseDetail)));
     	return array;
     }
     

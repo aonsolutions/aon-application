@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonTemplate implements EntryPoint {
@@ -18,6 +19,7 @@ public class AonTemplate implements EntryPoint {
 
 	@UiField DockLayoutPanel dockLayoutPanel;
 	@UiField DockLayoutPanel contentDockLayoutPanel;
+	@UiField SplitLayoutPanel contentSplitLayoutPanel;
 	@UiField SimpleLayoutPanel toolbar;
 	@UiField SimpleLayoutPanel westContent;
 	@UiField SimpleLayoutPanel northContent;
@@ -64,7 +66,7 @@ public class AonTemplate implements EntryPoint {
 	}
 	
 	protected void setSouthContent(Widget widget) {
-		content.setWidget(widget);
+		southContent.setWidget(widget);
 	}
 	
 	// ------------------- GETS 
@@ -75,6 +77,10 @@ public class AonTemplate implements EntryPoint {
 	
 	protected DockLayoutPanel getContentDockLayoutPanel() {
 		return contentDockLayoutPanel;
+	}
+	
+	protected SplitLayoutPanel getContentSplitLayoutPanel() {
+		return contentSplitLayoutPanel;
 	}
 	
 	protected SimpleLayoutPanel getToolbar() {

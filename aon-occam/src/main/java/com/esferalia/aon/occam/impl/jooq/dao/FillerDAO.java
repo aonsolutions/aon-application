@@ -1,17 +1,22 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import java.util.function.Function;
-
-import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
+import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
+import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+
+import java.util.function.Function;
 
 import org.jooq.Record;
 
+import com.esferalia.aon.jooq.tables.Product;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
+import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -94,6 +99,33 @@ public class FillerDAO {
 			carrier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
 			carrier.setType(r.getValue(REGISTRY.TYPE));
 			return carrier.setScope(r.getValue(CARRIER.SCOPE));				
+		}
+	}
+	
+	public static class PurchaseDetailFiller implements Function<Record, PurchaseDetail> {
+		
+		@Override
+		public PurchaseDetail apply(Record r) {
+			PurchaseDetail detail = new PurchaseDetail();
+			detail.setId(r.getValue(PURCHASE_DETAIL.ID));
+			detail.setDomain(r.getValue(PURCHASE_DETAIL.DOMAIN));
+			detail.setPurchaseId(r.getValue(PURCHASE_DETAIL.PURCHASE));
+			detail.setItem(r.getValue(PURCHASE_DETAIL.ITEM));
+			detail.setLine(r.getValue(PURCHASE_DETAIL.LINE).intValue());
+			detail.setDescription(r.getValue(PURCHASE_DETAIL.DESCRIPTION));
+			detail.setQuantity(r.getValue(PURCHASE_DETAIL.QUANTITY));
+			detail.setPrice(r.getValue(PURCHASE_DETAIL.PRICE));
+			detail.setDiscountExpression(r.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR));
+			detail.setTaxes(r.getValue(PURCHASE_DETAIL.TAXES));
+			detail.setStatus(PurchaseDetailStatus.values()[r.getValue(PURCHASE_DETAIL.STATUS)]);
+			detail.setProposalDetail(r.getValue(PURCHASE_DETAIL.PROPOSAL_DETAIL));
+			detail.setSource(PurchaseSourceType.values()[r.getValue(PURCHASE_DETAIL.SOURCE)]);
+			detail.setSourceId(r.getValue(PURCHASE_DETAIL.SOURCE_ID));
+			detail.setDelivered(r.getValue(PURCHASE_DETAIL.DELIVERED));
+			
+			detail.setProductCode(r.getValue(Product.PRODUCT.CODE));
+			detail.setProductName(r.getValue(Product.PRODUCT.NAME));
+			return detail;
 		}
 	}
 }

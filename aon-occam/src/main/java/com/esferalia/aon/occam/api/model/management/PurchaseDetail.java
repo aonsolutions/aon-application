@@ -29,107 +29,143 @@ public class PurchaseDetail implements Serializable {
 	private PurchaseSourceType source;
 	private Integer sourceId;
 	private double delivered;
+
+	private String productCode;
+	private String productName;
+	
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public PurchaseDetail setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public PurchaseDetail setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	public int getPurchaseId() {
 		return purchaseId;
 	}
-	public void setPurchaseId(int purchaseId) {
+	public PurchaseDetail setPurchaseId(int purchaseId) {
 		this.purchaseId = purchaseId;
+		return this;
 	}
 	public Purchase getPurchase() {
 		return purchase;
 	}
-	public void setPurchase(Purchase purchase) {
+	public PurchaseDetail setPurchase(Purchase purchase) {
 		this.purchase = purchase;
+		return this;
 	}
 	public Integer getProject() {
 		return project;
 	}
-	public void setProject(Integer project) {
+	public PurchaseDetail setProject(Integer project) {
 		this.project = project;
+		return this;
 	}
 	public int getItem() {
 		return item;
 	}
-	public void setItem(int item) {
+	public PurchaseDetail setItem(int item) {
 		this.item = item;
+		return this;
 	}
 	public Integer getLine() {
 		return line;
 	}
-	public void setLine(Integer integer) {
+	public PurchaseDetail setLine(Integer integer) {
 		this.line = integer;
+		return this;
 	}
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public PurchaseDetail setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	public double getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(double quantity) {
+	public PurchaseDetail setQuantity(double quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 	public double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public PurchaseDetail setPrice(double price) {
 		this.price = price;
+		return this;
 	}
 	public String getDiscountExpression() {
 		return discountExpression;
 	}
-	public void setDiscountExpression(String discountExpression) {
+	public PurchaseDetail setDiscountExpression(String discountExpression) {
 		this.discountExpression = discountExpression;
+		return this;
 	}
 	public double getTaxes() {
 		return taxes;
 	}
-	public void setTaxes(double taxes) {
+	public PurchaseDetail setTaxes(double taxes) {
 		this.taxes = taxes;
+		return this;
 	}
 	public PurchaseDetailStatus getStatus() {
 		return status;
 	}
-	public void setStatus(PurchaseDetailStatus status) {
+	public PurchaseDetail setStatus(PurchaseDetailStatus status) {
 		this.status = status;
+		return this;
 	}
 	public Integer getProposalDetail() {
 		return proposalDetail;
 	}
-	public void setProposalDetail(Integer proposalDetail) {
+	public PurchaseDetail setProposalDetail(Integer proposalDetail) {
 		this.proposalDetail = proposalDetail;
+		return this;
 	}
 	public double getDelivered() {
 		return delivered;
 	}
-	public void setDelivered(double delivered) {
+	public PurchaseDetail setDelivered(double delivered) {
 		this.delivered = delivered;
+		return this;
 	}
 	public PurchaseSourceType getSource() {
 		return source;
 	}
-	public void setSource(PurchaseSourceType source) {
+	public PurchaseDetail setSource(PurchaseSourceType source) {
 		this.source = source;
+		return this;
 	}
 	public Integer getSourceId() {
 		return sourceId;
 	}
-	public void setSourceId(Integer sourceId) {
+	public PurchaseDetail setSourceId(Integer sourceId) {
 		this.sourceId = sourceId;
+		return this;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+	public PurchaseDetail setProductCode(String productCode) {
+		this.productCode = productCode;
+		return this;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public PurchaseDetail setProductName(String productName) {
+		this.productName = productName;
+		return this;
 	}
 	
 }
