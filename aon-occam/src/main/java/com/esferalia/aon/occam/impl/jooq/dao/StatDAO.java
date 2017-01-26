@@ -62,6 +62,12 @@ public class StatDAO {
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yy");
 	protected static final String UNKNOWN = "Desconocido"; 
 
+	private static final String CATEGORY_STR = "category";
+	private static final String CUSTOMER_STR = "customer";
+	private static final String SELLER_STR = "seller";
+	private static final String WORKPLACE_STR = "workplace";
+	private static final String PERIOD_STR = "period";
+	
 	public static StatParams createStatParams(AONContext ctx) {
 		StatParams params = new StatParams();
 		params.setChartType(InvoiceChartType.INVOICE_TYPE_BY_MONTHS_COMBO_CHART.value());
@@ -535,29 +541,44 @@ public class StatDAO {
 			.and(f.getBillingDateProperty().lt(AonDateUtils.toSql(to)))
 			.and(f.getDomainProperty().eq(domainId));
 		
-		if(filterMap.containsKey("category")){
-			Integer category = Integer.parseInt(filterMap.get("category")[0]);
-			filter = filter.and(f.getCategoryProperty().eq(category));
+		if(filterMap.containsKey(CATEGORY_STR)){
+			Filter fcategory = f.getCategoryProperty().eq(Integer.parseInt(filterMap.get(CATEGORY_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(CATEGORY_STR).length ; i++){
+				fcategory = fcategory.or(f.getCategoryProperty().eq(Integer.parseInt(filterMap.get(CATEGORY_STR)[i])));
+			}
+			filter = filter.and(fcategory);
 		}
 		
-		if(filterMap.containsKey("customer")){
-			Integer customer = Integer.parseInt(filterMap.get("customer")[0]);
-			filter = filter.and(f.getCustomerProperty().eq(customer));
+		if(filterMap.containsKey(CUSTOMER_STR)){
+			Filter fcustomer = f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(CUSTOMER_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(CUSTOMER_STR).length ; i++){
+				fcustomer = fcustomer.or(f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(CUSTOMER_STR)[i])));
+			}
+			filter = filter.and(fcustomer);
 		}
 		
-		if(filterMap.containsKey("seller")){
-			Integer seller = Integer.parseInt(filterMap.get("seller")[0]);
-			filter = filter.and(f.getSellerProperty().eq(seller));
+		if(filterMap.containsKey(SELLER_STR)){
+			Filter fseller = f.getSellerProperty().eq(Integer.parseInt(filterMap.get(SELLER_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(SELLER_STR).length ; i++){
+				fseller = fseller.or(f.getSellerProperty().eq(Integer.parseInt(filterMap.get(SELLER_STR)[i])));
+			}
+			filter = filter.and(fseller);
 		}
 		
-		if(filterMap.containsKey("workplace")){
-			Integer workplace = Integer.parseInt(filterMap.get("workplace")[0]);
-			filter = filter.and(f.getWorkplaceProperty().eq(workplace));
+		if(filterMap.containsKey(WORKPLACE_STR)){
+			Filter fworkplace = f.getWorkplaceProperty().eq(Integer.parseInt(filterMap.get(WORKPLACE_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(WORKPLACE_STR).length ; i++){
+				fworkplace = fworkplace.or(f.getWorkplaceProperty().eq(Integer.parseInt(filterMap.get(WORKPLACE_STR)[i])));
+			}
+			filter = filter.and(fworkplace);
 		}
 		
-		if(filterMap.containsKey("period")){
-			Integer period = Integer.parseInt(filterMap.get("period")[0]);
-			filter = filter.and(f.getPeriodProperty().eq(period.shortValue()));
+		if(filterMap.containsKey(PERIOD_STR)){
+			Filter fperiod = f.getPeriodProperty().eq((short) Integer.parseInt(filterMap.get(PERIOD_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(PERIOD_STR).length ; i++){
+				fperiod = fperiod.or(f.getPeriodProperty().eq((short) Integer.parseInt(filterMap.get(PERIOD_STR)[i])));
+			}
+			filter = filter.and(fperiod);
 		}
 		return filter;
 	}

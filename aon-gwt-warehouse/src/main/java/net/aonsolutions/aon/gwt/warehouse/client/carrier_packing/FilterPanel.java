@@ -10,8 +10,10 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -236,10 +238,11 @@ public class FilterPanel extends Composite {
     	LinkedList<String> filterList = carrierPacking.getFilterMap().containsKey(key) ? 
     			carrierPacking.getFilterMap().get(key) : new LinkedList<>();
     	AonFilterDialog sw = new AonFilterDialog(pb, label, "",
-    			filterList, result.getData()){
+    			filterList, result.getData().cast()){
 
 			@Override
-			protected void onSelect(JsObject js, Boolean apply) {
+			protected void onSelect(JavaScriptObject o, Boolean apply) {
+				JsObject js = o.cast();
 				if(apply){
 					if(carrierPacking.getFilterMap().containsKey(key)){
 						carrierPacking.getFilterMap().get(key).add(js.getId()+"");
@@ -250,7 +253,7 @@ public class FilterPanel extends Composite {
 					}
 				} else {
 					if(carrierPacking.getFilterMap().containsKey(key)){
-						boolean a = carrierPacking.getFilterMap().get(key).remove(js.getId()+"");
+						carrierPacking.getFilterMap().get(key).remove(js.getId()+"");
 					}
 				}
 				carrierPacking.content();

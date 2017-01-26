@@ -279,19 +279,7 @@ public class Methods {
 		this.userName = userName;
 	}
 	
-	
-	protected String getFilter(HashMap<String, String[]> map) {
-		String str = "";
-		Integer cont = 0;
-		for (String key : map.keySet()) {
-			if(cont > 0) str = str + "&";
-			str = str + key + "=" + map.get(key)[0];
-			cont++;
-		}
-		return str;
-	}
-	
-	protected String getFilter2(HashMap<String, LinkedList<String>> map) {	
+	protected String getFilter(HashMap<String, LinkedList<String>> map) {	
 		StringBuilder bld = new StringBuilder();
 		for (String key : map.keySet()) {
 			map.get(key).stream().forEach(s -> bld.append(key + "=" + s + "&"));

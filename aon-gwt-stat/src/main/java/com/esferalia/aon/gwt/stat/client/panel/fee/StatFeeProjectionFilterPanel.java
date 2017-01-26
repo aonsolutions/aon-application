@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.stat.client.panel.fee;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -9,8 +10,10 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -18,19 +21,15 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
-
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class StatFeeProjectionFilterPanel extends Composite {
 	
@@ -73,7 +72,9 @@ public class StatFeeProjectionFilterPanel extends Composite {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				stat.getParams().setFrom(from.getValue());
-				stat.getParams().getFilterMap().put("from", new String[]{Long.toString(from.getValue().getTime())});
+				LinkedList<String> fromList = new LinkedList<>();
+				fromList.add(Long.toString(from.getValue().getTime()));
+				stat.getFilterMap().put("from", fromList);
 				stat.content();
 			}
 		});
@@ -95,7 +96,7 @@ public class StatFeeProjectionFilterPanel extends Composite {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
-						ButtonClick(categoryButton, result, AON.MSG.category());
+						buttonClick(categoryButton, result, "category", AON.MSG.category());
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -114,7 +115,7 @@ public class StatFeeProjectionFilterPanel extends Composite {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
-						ButtonClick(customerButton, result, AON.MSG.customer());
+						buttonClick(customerButton, result, "customer", AON.MSG.customer());
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -133,7 +134,7 @@ public class StatFeeProjectionFilterPanel extends Composite {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
-						ButtonClick(sellerButton, result, AON.MSG.seller());
+						buttonClick(sellerButton, result, "seller", AON.MSG.seller());
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -152,7 +153,7 @@ public class StatFeeProjectionFilterPanel extends Composite {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
-						ButtonClick(workplaceButton, result, AON.MSG.workplace());
+						buttonClick(workplaceButton, result, "workplace", AON.MSG.workplace());
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -171,7 +172,7 @@ public class StatFeeProjectionFilterPanel extends Composite {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
-						ButtonClick(periodButton, result, AON.MSG.period());
+						buttonClick(periodButton, result, "period", AON.MSG.period());
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -207,63 +208,39 @@ public class StatFeeProjectionFilterPanel extends Composite {
     	periodLabel.setText("");
     	
     	stat.getParams().setFrom(new Date());
-		HashMap<String, String[]> map = new HashMap<String, String[]>();
-		map.put("from", new String[]{Long.toString(new Date().getTime())});
-    	stat.getParams().setFilterMap(map);
+		HashMap<String, LinkedList<String>> map = new HashMap<>();
+		LinkedList<String> fromList = new LinkedList<>();
+		fromList.add(Long.toString(new Date().getTime()));
+		map.put("from", fromList);
+    	stat.setFilterMap(map);
     	stat.content();
 	}
     
-    private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label){
-		PopupPanel popup = new PopupPanel();
-		AonComboBox acb = new AonComboBox();
-		acb.setItems(result.getData());
-		acb.setItemLabelPath("name");
-		acb.setItemValuePath("name");
-		acb.setLabel(label);
-		
-		acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
-			
+    private void buttonClick(PaperButton pb, JSON<JsObject> result, String key, String label){
+    	LinkedList<String> filterList = stat.getFilterMap().containsKey(key) ? 
+    			stat.getFilterMap().get(key) : new LinkedList<>();
+    	AonFilterDialog sw = new AonFilterDialog(pb, label, "",
+    			filterList, result.getData().cast()){
+
 			@Override
-			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
-				JsObject js = acb.getSelectedItem().cast();
-				String id = js.getId() + "";
-				
-				if(label.equalsIgnoreCase(AON.MSG.category())){
-					categoryLabel.setText(AON.MSG.category() + ":" +js.getName() + "; ");
-					stat.getParams().getFilterMap().put("category",new String[]{id});
+			protected void onSelect(JavaScriptObject o, Boolean apply) {
+				JsObject js = o.cast();
+				if(apply){
+					if(stat.getFilterMap().containsKey(key)){
+						stat.getFilterMap().get(key).add(js.getId()+"");
+					} else {
+						LinkedList<String> list = new LinkedList<>();
+						list.add(js.getId()+"");
+						stat.getFilterMap().put(key, list);
+					}
+				} else {
+					if(stat.getFilterMap().containsKey(key)){
+						stat.getFilterMap().get(key).remove(js.getId()+"");
+					}
 				}
-				if(label.equalsIgnoreCase(AON.MSG.seller())){
-					sellerLabel.setText(AON.MSG.seller() + ":" +js.getName() + "; ");
-					stat.getParams().getFilterMap().put("seller",new String[]{id});
-				}
-				if(label.equalsIgnoreCase(AON.MSG.customer())){
-					customerLabel.setText(AON.MSG.customer() + ":" +js.getName() + "; ");
-					stat.getParams().getFilterMap().put("customer",new String[]{id});
-				}
-				if(label.equalsIgnoreCase(AON.MSG.period())){
-					periodLabel.setText(AON.MSG.period() + ":" +js.getName() + "; ");
-					stat.getParams().getFilterMap().put("period",new String[]{id});
-				}
-				if(label.equalsIgnoreCase(AON.MSG.workplace())){
-					workplaceLabel.setText(AON.MSG.workplace() + ":" +js.getName() + "; ");
-					stat.getParams().getFilterMap().put("workplace",new String[]{id});
-				}	
 				stat.content();
-				popup.hide();
 			}
-		});
-		popup.add(acb);
-		int left = pb.getAbsoluteLeft();
-		int top = pb.getAbsoluteTop()
-				+ pb.getOffsetHeight();
-		Integer width = Window.getClientWidth();
-		if(left > width - 200){
-			left = left - 200;
-		}
-		popup.setAutoHideEnabled(true);
-		popup.addAutoHidePartner(acb.getElementById("overlay"));
-		popup.setPopupPosition(left, top);
-		popup.show();
-		acb.open();
+    	};
+    	sw.show();
     }
 }

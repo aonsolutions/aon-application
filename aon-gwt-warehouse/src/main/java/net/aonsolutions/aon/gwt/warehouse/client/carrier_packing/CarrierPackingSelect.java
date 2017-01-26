@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -50,9 +51,13 @@ public class CarrierPackingSelect extends Composite{
 		westPanel.add(label);
 		westPanel.add(l);
 		
-		HashMap<String, String[]> map = new HashMap<>();
-		map.put("carrier", new String[]{jsCarrierPacking.getCarrier().getId() + ""});
-		map.put("not_carrier_packing", new String[]{""});
+		HashMap<String, LinkedList<String>> map = new HashMap<>();
+		LinkedList<String> carrierList = new LinkedList<>();
+		carrierList.add(jsCarrierPacking.getCarrier().getId() + "");
+		map.put("carrier", carrierList);
+		LinkedList<String> ncarrierList = new LinkedList<>();
+		ncarrierList.add("");
+		map.put("not_carrier_packing", ncarrierList);
 		API.getWarehouse().getPurchases(map,new AsyncCallback<JSON<JsPurchase>>() {
 			
 			@Override
@@ -76,8 +81,10 @@ public class CarrierPackingSelect extends Composite{
 		centerPanel.add(label2);
 		centerPanel.add(l2);
 		
-		HashMap<String, String[]> map2 = new HashMap<>();
-		map2.put("carrier_packing", new String[]{jsCarrierPacking.getId() + ""});
+		HashMap<String, LinkedList<String>> map2 = new HashMap<>();
+		LinkedList<String> list = new LinkedList<>();
+		list.add(jsCarrierPacking.getId() + "");
+		map2.put("carrier_packing", list);
 		API.getWarehouse().getPurchases(map2,new AsyncCallback<JSON<JsPurchase>>() {
 			
 			@Override

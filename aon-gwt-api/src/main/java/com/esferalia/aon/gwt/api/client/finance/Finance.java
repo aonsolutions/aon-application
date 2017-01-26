@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.api.client.finance;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
@@ -27,12 +28,12 @@ public class Finance extends Methods{
 		get(getUrl() + "finance/"+getDomainName()+"/"+getUserName()+"/billing_period/", callback);
 	}
 	
-	public void getStatDataFeeProjection(HashMap<String, String[]> filterMap, AsyncCallback<JSON<JsStatData>> callback){
+	public void getStatDataFeeProjection(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStatData>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "stat/"+getDomainName()+"/"+getUserName()+"/fee" + str, callback);
 	}
 	
-	public void downloadExcelFeeProjection(HashMap<String, String[]> filterMap){
+	public void downloadExcelFeeProjection(HashMap<String, LinkedList<String>> filterMap){
 		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName() + "&type=excel";
 		impl.base(str, new AsyncCallback<String>() {
 			
@@ -45,7 +46,7 @@ public class Finance extends Methods{
 		});
 	}
 	
-	public void downloadPdfFeeProjection(HashMap<String, String[]> filterMap){
+	public void downloadPdfFeeProjection(HashMap<String, LinkedList<String>> filterMap){
 		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName() + "&type=pdf";
 		impl.base(str, new AsyncCallback<String>() {
 			

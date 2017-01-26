@@ -23,7 +23,7 @@ public class Warehouse extends Methods{
 	}
 	
 	public void getCarrierPacking(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCarrierPacking>> callback){
-		String filter = filterMap.size() > 0 ? "?" + getFilter2(filterMap) : "";
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing" + filter, callback);
 	}
 	
@@ -55,7 +55,7 @@ public class Warehouse extends Methods{
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}");
 	}
 	
-	public void getPurchases(HashMap<String, String[]> filterMap, AsyncCallback<JSON<JsPurchase>> callback){
+	public void getPurchases(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsPurchase>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase" + filter, callback);
 	}
