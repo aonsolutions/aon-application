@@ -1112,6 +1112,8 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-dialog-box-shadow")
 	String aonDialogBoxShadow();
 	
+	@ClassName("aon-filter-dialog-box-shadow")
+	String aonFilterDialogBoxShadow();
 	
 	@ClassName("aon-configuration-panel")
 	String aonConfigurationPanel();

@@ -44,8 +44,7 @@ public class StatFeeProjectionPanel extends StatPanel {
 	}
 	
 	public void content() {
-		
-		API.getFinance().getStatDataFeeProjection(getParams().getFilterMap(), new AsyncCallback<JSON<JsStatData>>() {
+		API.getFinance().getStatDataFeeProjection(getFilterMap(), new AsyncCallback<JSON<JsStatData>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsStatData> result) {
@@ -61,11 +60,11 @@ public class StatFeeProjectionPanel extends StatPanel {
 
 	@Override
 	protected void excel() {
-		API.getFinance().downloadExcelFeeProjection(getParams().getFilterMap());		
+		API.getFinance().downloadExcelFeeProjection(getFilterMap());		
 	}
 	
 	@Override
 	protected void pdf() {
-		API.getFinance().downloadPdfFeeProjection(getParams().getFilterMap());		
+		API.getFinance().downloadPdfFeeProjection(getFilterMap());		
 	}
 }

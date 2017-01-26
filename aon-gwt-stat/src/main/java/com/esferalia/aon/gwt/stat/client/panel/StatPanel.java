@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.stat.client.panel;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.stat.JsStatData;
@@ -54,7 +55,8 @@ public abstract class StatPanel implements EntryPoint {
 	@UiField Button pdf;
 
 	StatParams params;
-
+	HashMap<String, LinkedList<String>> filterMap;
+	
 	protected abstract void excel();
 	protected abstract void pdf();
 	
@@ -76,10 +78,11 @@ public abstract class StatPanel implements EntryPoint {
 	}
 	
 	public StatPanel() {
-		HashMap<String, String[]> map = new HashMap<String, String[]>();
-		map.put("from", new String[]{Long.toString(new Date().getTime())});
-		this.params = new StatParams().setFrom(new Date())
-				.setFilterMap(map);
+		this.filterMap = new HashMap<String, LinkedList<String>>();
+		LinkedList<String> list = new LinkedList<>();
+		list.add(Long.toString(new Date().getTime()));
+		filterMap.put("from", list);
+		this.params = new StatParams().setFrom(new Date());
 	}
 
 	@Override
@@ -167,7 +170,15 @@ public abstract class StatPanel implements EntryPoint {
 	public void setParams(StatParams params) {
 		this.params = params;
 	}
-	
+
+	public HashMap<String, LinkedList<String>> getFilterMap() {
+		return filterMap;
+	}
+
+	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
+		this.filterMap = filterMap;
+	}
+
 	@UiHandler("excel")
 	void excel(ClickEvent event){
 		excel();
