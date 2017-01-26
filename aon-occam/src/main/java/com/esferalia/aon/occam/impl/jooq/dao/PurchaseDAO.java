@@ -6,6 +6,8 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -32,6 +34,7 @@ import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchaseDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PurchaseDetailFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -39,9 +42,6 @@ public class PurchaseDAO {
 	
 	private static final PurchaseDetailPropertiesDAO PURCHASE_DETAIL_PROPERTIES = new PurchaseDetailPropertiesDAO();
 	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
-
-	
-
 
 	public static Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter){
 		return ctx.getDslContext().select().from(PURCHASE)
@@ -54,6 +54,15 @@ public class PurchaseDAO {
 		return ctx.getDslContext().select().from(PURCHASE).where(PURCHASE.ID.eq(id)).limit(1).fetchInto(PURCHASE)
 			.stream().map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
 	}
+	
+	public static Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
+				.join(ITEM).on(PURCHASE_DETAIL.ITEM.eq(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new PurchaseDetailFiller());
+	}
+
 	
 	public static PurchaseDetail getPurchaseDetail(AONContext ctx, PurchaseDetailFilter filter){
 		return ctx.getDslContext().select().from(PURCHASE_DETAIL).where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))

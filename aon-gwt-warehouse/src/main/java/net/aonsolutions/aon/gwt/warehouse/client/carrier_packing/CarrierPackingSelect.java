@@ -7,8 +7,11 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsPurchase;
+import com.esferalia.aon.gwt.api.client.warehouse.JsPurchaseDetail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -30,12 +33,14 @@ public class CarrierPackingSelect extends Composite{
 	@UiField VerticalPanel westPanel;
 	@UiField VerticalPanel centerPanel;
 	
+	private CarrierPacking parent;
 	private API API;
 	private JsCarrierPacking jsCarrierPacking;
 	
-	public CarrierPackingSelect(API API, JsCarrierPacking js) {
+	public CarrierPackingSelect(CarrierPacking carrierPacking, JsCarrierPacking js) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = API;
+		this.API = carrierPacking.API;
+		this.parent = carrierPacking;
 		this.jsCarrierPacking = js;
 		load();
 	}
@@ -96,6 +101,32 @@ public class CarrierPackingSelect extends Composite{
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+		});
+		
+		l.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				String value = l.getSelectedValue();
+				API.getWarehouse().getPurchase(Integer.parseInt(value),new AsyncCallback<JSON<JsPurchase>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsPurchase> result) {
+						API.getWarehouse().getPurchaseDetails(result.getOneData().getId(), new AsyncCallback<JSON<JsPurchaseDetail>>() {
+							
+							@Override
+							public void onSuccess(JSON<JsPurchaseDetail> details) {
+								parent.southContent(result.getOneData(), details.getData());
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			}
 		});
 		
 		l.addDoubleClickHandler(new DoubleClickHandler() {

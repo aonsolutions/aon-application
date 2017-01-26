@@ -40,11 +40,15 @@
 				<g:SimpleLayoutPanel styleName="aon-margin-left10 aon-margin-right10" ui:field="northContent" />
 			</g:north>
 			<g:center>
-				<g:SimpleLayoutPanel styleName="aon-margin-left10 aon-margin-right10" ui:field="content" />	
+				<g:SplitLayoutPanel ui:field="contentSplitLayoutPanel">
+					<g:center>
+						<g:SimpleLayoutPanel styleName="aon-margin-left10 aon-margin-right10" ui:field="content" />	
+					</g:center>
+					<g:south size="0">
+						<g:SimpleLayoutPanel ui:field="southContent" />
+					</g:south>
+				</g:SplitLayoutPanel>
 			</g:center>
-			<g:south size="0">
-				<g:SimpleLayoutPanel ui:field="southContent" />
-			</g:south>
 		</g:DockLayoutPanel>
 	</g:center>
 </g:DockLayoutPanel>

@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
@@ -18,6 +20,8 @@ public class ManagementImpl implements IManagement {
 		return OfferDAO.getOfferDetails(ctx, filter);
 	}
 
+	// ------------------ PURCHASE
+	
 	@Override
 	public Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter) {
 		return ctx.getDslContext().transactionResult(
@@ -43,4 +47,11 @@ public class ManagementImpl implements IManagement {
 				configuration -> PurchaseDAO.deletePurchase(ctx, filter));		
 	}
 
+	// ------------------ PURCHASE DETAIL
+	
+	@Override
+	public Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> PurchaseDAO.getPurchaseDetailStream(ctx, filter));
+	}
 }

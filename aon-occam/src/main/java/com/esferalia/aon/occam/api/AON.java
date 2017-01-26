@@ -82,6 +82,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -1142,6 +1144,39 @@ public class AON {
 	public static void deletePurchase(String domainName, Integer domainId, String login, Integer id) {
 		deletePurchase(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
+	
+	// -------------------- PURCHASE DETAILS
+	
+	public static Stream<PurchaseDetail> getPurchaseDetailStream(String domainName,
+			Integer domainId, String login, PurchaseDetailFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getPurchaseDetailStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<PurchaseDetail> getPurchaseDetailList(String domainName,
+			Integer domainId, String login, PurchaseDetailFilter filter) {
+		return getPurchaseDetailStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static PurchaseDetail getPurchaseDetail(String domainName,
+			Integer domainId, String login, PurchaseDetailFilter filter) {
+		return getPurchaseDetailStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static PurchaseDetail getPurchaseDetail(String domainName,
+			Integer domainId, String login, Integer id) {
+		return getPurchaseDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
+	}
+	
+	
 	// ********************************************
 	// ********************************* PAYROLL **
 	// ********************************************

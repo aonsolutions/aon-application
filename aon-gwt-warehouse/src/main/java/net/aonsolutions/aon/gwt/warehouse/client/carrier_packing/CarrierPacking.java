@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
+import com.esferalia.aon.gwt.api.client.warehouse.JsPurchase;
+import com.esferalia.aon.gwt.api.client.warehouse.JsPurchaseDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate;
@@ -129,11 +132,11 @@ public class CarrierPacking extends AonTemplate{
 		toolbar.remove.setVisible(true);
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 		setNorthContent(new CarrierPackingPanel(me,js));
-		setContent(new CarrierPackingSelect(API, js));
+		setContent(new CarrierPackingSelect(me, js));
 	}
 	
 	public void setSelectContent(JsCarrierPacking js){
-		setContent(new CarrierPackingSelect(API, js));
+		setContent(new CarrierPackingSelect(me, js));
 	}
 	
 	public void content(){
@@ -149,8 +152,13 @@ public class CarrierPacking extends AonTemplate{
 		
 	}
 	
-	private void southContent(){
-		
+	public void southContent(){
+		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);
+	}
+	
+	public void southContent(JsPurchase p, AonJsArray<JsPurchaseDetail> details){
+		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
+		setSouthContent(new CarrierPackingSouth(p, details));
 	}
 	
 	private AonDialog createAddDialog(){

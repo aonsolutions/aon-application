@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.management.Purchase;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -186,6 +187,22 @@ public class ToJSON {
 				.put("id", purchase.getSupplier())
 				.put("name", purchase.getSupplierName())) 
 			.put("issue_date", purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "");
+	}
+	
+	public static JSONObject purchaseDetailToJSON(PurchaseDetail purchaseDetail) {
+		return new JSONObject()
+			.put("id", purchaseDetail.getId())
+			.put("domain", purchaseDetail.getDomain())
+			.put("price", purchaseDetail.getPrice())
+			.put("quantity", purchaseDetail.getQuantity())
+			.put("discount_expr", purchaseDetail.getDiscountExpression())
+			.put("line", purchaseDetail.getLine())
+			.put("item", purchaseDetail.getItem())
+			.put("delivered", purchaseDetail.getDelivered())
+			
+			.put("product_code", purchaseDetail.getProductCode())
+			.put("product_name", purchaseDetail.getProductName())
+			;
 	}
 	
 	public static JSONObject objectToJSON(Integer id, String name) {

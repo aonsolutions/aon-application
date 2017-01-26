@@ -60,6 +60,14 @@ public class Warehouse extends Methods{
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase" + filter, callback);
 	}
 	
+	public void getPurchase(Integer id, AsyncCallback<JSON<JsPurchase>> callback){
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id , callback);
+	}
+	
+	public void getPurchaseDetails(Integer id, AsyncCallback<JSON<JsPurchaseDetail>> callback){
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id + "/detail" , callback);
+	}
+	
 	public void updatePurchase(Integer id, String requestData, AsyncCallback<JsPurchase> callback){
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/purchase/update/" + id, requestData, callback);
 	}
