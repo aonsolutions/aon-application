@@ -88,6 +88,7 @@ public class OperationReportManager {
 			OperationReportTax opt  = null;
 			int id = -1;
 			int counter = 0;
+			LinkedList<OperationReportTax> l = new LinkedList<>();
 			while (rs.next()) {
 				op = new OperationReport();
 				op.setEntryDate(rs.getDate(2));;
@@ -102,6 +103,7 @@ public class OperationReportManager {
 						while (taxRs.next()) {
 							if (op.getTaxes() == null) {
 								op.setTaxes(new LinkedList<OperationReportTax>());
+								op.setIvaTypes(new LinkedList<>());
 							}
 							opt = new OperationReportTax();
 							String tax = taxRs.getString(1);
@@ -112,14 +114,28 @@ public class OperationReportManager {
 							double surchargePercent = taxRs.getDouble(5);
 							if (StringUtils.equals("IVA", tax) && surchargePercent != 0) {
 								opt.setSurchargePercentage(surchargePercent);
-								opt.setSurchargeQuota(taxRs.getDouble(6));								
+								opt.setSurchargeQuota(taxRs.getDouble(6));
 							}
 							
-							if(opt.getTaxType().equals("IVA"))
-								taxes = taxes + opt.getQuota();	
-							else if(opt.getTaxType().equals("IRPF")) 
+							if(opt.getTaxType().equals("IVA")){
+								taxes = taxes + opt.getQuota();
+								if(!contains(l, opt.getPercentage())){
+									OperationReportTax t = new OperationReportTax();
+									t.setPercentage(opt.getPercentage());
+									t.setQuota(opt.getQuota());
+									l.add(t);
+								} else {
+									for(Integer i = 0 ; i < l.size();i++){
+										if(l.get(i).getPercentage().equals(opt.getPercentage())){
+											Double q = l.get(i).getQuota() + (opt.getQuota()!= null ? opt.getQuota():0.0);
+											l.get(i).setQuota(q);
+										}
+									}
+								}
+							}
+							else if(opt.getTaxType().equals("IRPF")){ 
 								taxes = taxes - opt.getQuota();
-							
+							}
 							op.getTaxes().add(opt);
 						}
 						taxRs.close();
@@ -132,6 +148,7 @@ public class OperationReportManager {
 				op.setReferenceCode(rs.getString(7));
 				op.setRdocument(rs.getString(8));
 				op.setRname(rs.getString(9));
+				op.setIvaTypes(l);
 				list.add(op);
 			}
 		} catch (SQLException e) {
@@ -147,6 +164,15 @@ public class OperationReportManager {
 		}
 		return list;
 		
+	}
+	
+	private Boolean contains(LinkedList<OperationReportTax> l, Double p) {
+		for (OperationReportTax operationReportTax : l) {
+			if(p.equals(operationReportTax.getPercentage())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
