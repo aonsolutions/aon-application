@@ -40,6 +40,10 @@
 	<field name="ivaTypes" class="java.util.List"/>
 	<field name="totalIrpfQuota" class="java.lang.Double"/>
 
+	<variable name="totalBase" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalBase}]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{totalBase}]]></initialValueExpression>
+	</variable>
 	<variable name="totalTax" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalQuota}+$F{totalSurchargeQuota}]]></variableExpression>
 		<initialValueExpression><![CDATA[$F{totalQuota}+$F{totalSurchargeQuota}]]></initialValueExpression>
