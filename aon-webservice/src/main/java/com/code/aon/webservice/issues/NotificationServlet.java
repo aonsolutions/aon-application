@@ -1,7 +1,6 @@
 package com.code.aon.webservice.issues;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -47,7 +47,7 @@ public class NotificationServlet extends HttpServlet{
 	private static final DBConsults DB = DBConsults.getInstance();
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
 		System.out.println("GET METHOD");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
@@ -58,24 +58,12 @@ public class NotificationServlet extends HttpServlet{
 		if(accessToken.equals(md5)){
 			Domain domain = DB.getDomain(domainName, userName);			
 			Object object = new Object();
-						
 			NotificationInfo notificationInfo = DB.getNotificationInfo(domain, userName);
 			LinkedList<MailAccount> mailAccountList = DB.getMailAccountList(domain, userName);
 			LinkedList<Signature> signatureList = DB.getSignatureList(domain, userName);
 			object = notificationInfo2JSON(notificationInfo, mailAccountList, signatureList);
 				
-			String js = req.getParameter("callback");
-			if(js != null){
-				resp.setContentType("application/javascript; charset=utf-8");     
-				PrintWriter out = resp.getWriter();
-				out.print(js + "({" +"\"meta\":{}, \"data\":" + object +"});");
-				out.flush();
-			} else {
-				resp.setContentType("application/json");     
-				PrintWriter out = resp.getWriter();
-				out.print(object);
-				out.flush();
-			}
+			Utils.giveBack(req, resp, object, new JSONObject());
 		}
 	}
 	

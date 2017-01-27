@@ -6,6 +6,7 @@ import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -24,10 +25,6 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class ToJSON {
 	
-	public ToJSON() {
-	
-	}
-	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
 	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, String observation, JSONArray rmedia, String status){
@@ -43,12 +40,12 @@ public class ToJSON {
 	
 	public static JSONObject rmediaToJSON(RegistryMedia rmedia) {
 		JSONObject json = new JSONObject();
-		json.put("id", rmedia.getId());
-		json.put("domain", rmedia.getDomain());
-		json.put("registry", rmedia.getRegistry().getId());
+		json.put(MSG.ID, rmedia.getId());
+		json.put(MSG.DOMAIN, rmedia.getDomain());
+		json.put(MSG.REGISTRY, rmedia.getRegistry().getId());
 		json.put("media", rmedia.getMedia());
 		json.put("value", rmedia.getValue());
-		json.put("comment", rmedia.getComment());
+		json.put(MSG.COMMENT, rmedia.getComment());
 		json.put("administrative", rmedia.getAdministrative() == 1);
 		json.put("commercial", rmedia.getCommercial() == 1);
 		json.put("technical", rmedia.getTechnical() == 1);
@@ -59,10 +56,10 @@ public class ToJSON {
 	
 	public static JSONObject rnoteToJSON(RegistryNote rnote) {
 		JSONObject json = new JSONObject();
-		json.put("id", rnote.getId());
-		json.put("domain", rnote.getDomain());
-		json.put("registry", rnote.getRegistry());
-		json.put("description", rnote.getDescription());
+		json.put(MSG.ID, rnote.getId());
+		json.put(MSG.DOMAIN, rnote.getDomain());
+		json.put(MSG.REGISTRY, rnote.getRegistry());
+		json.put(MSG.DESCRIPTION, rnote.getDescription());
 		json.put("note_date", dateFormat.format(rnote.getNoteDate()));
 		json.put("comments", rnote.getComments());
 		json.put("note_type", rnote.getNoteType());
@@ -72,19 +69,19 @@ public class ToJSON {
 	
 	public static JSONObject invoiceToJSON(Invoice invoice) {
 		JSONObject json = new JSONObject();
-		json.put("id", invoice.getId());
-		json.put("domain", invoice.getDomain());
-		json.put("registry", invoice.getRegistry());
+		json.put(MSG.ID, invoice.getId());
+		json.put(MSG.DOMAIN, invoice.getDomain());
+		json.put(MSG.REGISTRY, invoice.getRegistry());
 		json.put("reference_code", invoice.getReferenceCode());
 		return json;
 	}
 	
 	public static JSONObject feeToJSON(Fee fee) {
 		JSONObject json = new JSONObject();
-		json.put("id", fee.getId());
-		json.put("domain", fee.getDomain());
+		json.put(MSG.ID, fee.getId());
+		json.put(MSG.DOMAIN, fee.getDomain());
 		json.put("customer", fee.getCustomer());
-		json.put("description", fee.getDescription());
+		json.put(MSG.DESCRIPTION, fee.getDescription());
 		json.put("start_date", fee.getStartDate() != null ?
 				dateFormat.format(fee.getStartDate()) : "");
 		json.put("end_date", fee.getEndDate() != null ?
@@ -97,10 +94,10 @@ public class ToJSON {
 
 	public static JSONObject boughtProductToJSON(InvoiceDetail id) {
 		JSONObject json = new JSONObject();
-		json.put("id", id.getId());
-		json.put("domain", id.getDomain());
-		json.put("description", id.getDescription());
-		json.put("name", id.getItem().getName());
+		json.put(MSG.ID, id.getId());
+		json.put(MSG.DOMAIN, id.getDomain());
+		json.put(MSG.DESCRIPTION, id.getDescription());
+		json.put(MSG.NAME, id.getItem().getName());
 		json.put("quantity", id.getQuantity());
 		json.put("price", id.getPrice());
 		json.put("discount", Double.parseDouble(id.getDiscountExpression()));
@@ -113,59 +110,59 @@ public class ToJSON {
 
 	public static JSONObject projectCommercialToJSON(ProjectCommercial project, Registry registry, Registry seller) {
 		JSONObject json = new JSONObject();
-		json.put("id", project.getId());
-		json.put("domain", project.getDomain());
-		json.put("name", project.getName());
+		json.put(MSG.ID, project.getId());
+		json.put(MSG.DOMAIN, project.getDomain());
+		json.put(MSG.NAME, project.getName());
 		json.put("alias", project.getAlias());
-		json.put("registry", registryToJSON(registry));
+		json.put(MSG.REGISTRY, registryToJSON(registry));
 		json.put("seller", registryToJSON(seller));
 		json.put("date", dateFormat.format(project.getDate()));
 		json.put("project_type", project.getProjectTypeId());
-		json.put("comment", project.getComments());
+		json.put(MSG.COMMENT, project.getComments());
 		return json;
 	}
 	
 	public static JSONObject commercialTrackingToJSON(CommercialTracking ct, Registry seller) {
 		JSONObject json = new JSONObject();
-		json.put("id", ct.getId());
-		json.put("domain", ct.getDomain());
+		json.put(MSG.ID, ct.getId());
+		json.put(MSG.DOMAIN, ct.getDomain());
 		json.put("date", dateFormat.format(ct.getDate()));
 		json.put("seller", registryToJSON(seller));
-		json.put("comment", ct.getComments());
+		json.put(MSG.COMMENT, ct.getComments());
 		return json;
 	}
 
 	public static JSONObject registryToJSON(Registry registry) {
 		JSONObject json = new JSONObject();
-		json.put("id", registry.getId());
-		json.put("name", registry.getName());
+		json.put(MSG.ID, registry.getId());
+		json.put(MSG.NAME, registry.getName());
 		return json;
 	}
 	
 	public static JSONObject productCategoryToJSON(ProductCategory pc) {
 		JSONObject json = new JSONObject();
-		json.put("id", pc.getId());
-		json.put("domain", pc.getDomain());
-		json.put("name", pc.getName());
+		json.put(MSG.ID, pc.getId());
+		json.put(MSG.DOMAIN, pc.getDomain());
+		json.put(MSG.NAME, pc.getName());
 		return json;
 	}
 	
 	public static JSONObject carrierPackingToJSON(CarrierPacking carrierPacking) {
 		return new JSONObject()
-			.put("id", carrierPacking.getId())
-			.put("domain", carrierPacking.getDomain())
+			.put(MSG.ID, carrierPacking.getId())
+			.put(MSG.DOMAIN, carrierPacking.getDomain())
 			.put("series", carrierPacking.getSeries())
 			.put("number", carrierPacking.getNumber())
 			.put("type", new JSONObject()
-				.put("id", carrierPacking.getType() != null ? carrierPacking.getType().value() : "")
-				.put("name", carrierPacking.getType() != null ? carrierPacking.getType().getName() : ""))
+				.put(MSG.ID, carrierPacking.getType() != null ? carrierPacking.getType().value() : "")
+				.put(MSG.NAME, carrierPacking.getType() != null ? carrierPacking.getType().getName() : ""))
 			.put("status", new JSONObject()
-				.put("id", carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : "")
-				.put("name", carrierPacking.getStatus() != null ? carrierPacking.getStatus().getName(): "")) 
-			.put("issue_date", carrierPacking.getIssueDate() != null ? dateFormat.format(carrierPacking.getIssueDate()) : "")
+				.put(MSG.ID, carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : "")
+				.put(MSG.NAME, carrierPacking.getStatus() != null ? carrierPacking.getStatus().getName(): "")) 
+			.put(MSG.ISSUE_DATE, carrierPacking.getIssueDate() != null ? dateFormat.format(carrierPacking.getIssueDate()) : "")
 			.put("carrier", new JSONObject()
-				.put("id", carrierPacking.getCarrier())
-				.put("name", carrierPacking.getCarrierName())) // TODO
+				.put(MSG.ID, carrierPacking.getCarrier())
+				.put(MSG.NAME, carrierPacking.getCarrierName()))
 			.put("delivery_date", carrierPacking.getDeliveryDate() != null ? dateFormat.format(carrierPacking.getDeliveryDate()) : "")
 			.put("carrier_reference", carrierPacking.getCarrierReference())
 			.put("number_plate", carrierPacking.getNumberPlate())
@@ -179,20 +176,20 @@ public class ToJSON {
 	
 	public static JSONObject purchaseToJSON(Purchase purchase) {
 		return new JSONObject()
-			.put("id", purchase.getId())
-			.put("domain", purchase.getDomain())
+			.put(MSG.ID, purchase.getId())
+			.put(MSG.DOMAIN, purchase.getDomain())
 			.put("series", purchase.getSeries())
 			.put("number", purchase.getNumber())
 			.put("supplier", new JSONObject()
-				.put("id", purchase.getSupplier())
-				.put("name", purchase.getSupplierName())) 
-			.put("issue_date", purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "");
+				.put(MSG.ID, purchase.getSupplier())
+				.put(MSG.NAME, purchase.getSupplierName())) 
+			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "");
 	}
 	
 	public static JSONObject purchaseDetailToJSON(PurchaseDetail purchaseDetail) {
 		return new JSONObject()
-			.put("id", purchaseDetail.getId())
-			.put("domain", purchaseDetail.getDomain())
+			.put(MSG.ID, purchaseDetail.getId())
+			.put(MSG.DOMAIN, purchaseDetail.getDomain())
 			.put("price", purchaseDetail.getPrice())
 			.put("quantity", purchaseDetail.getQuantity())
 			.put("discount_expr", purchaseDetail.getDiscountExpression())
@@ -207,8 +204,8 @@ public class ToJSON {
 	
 	public static JSONObject objectToJSON(Integer id, String name) {
 		return new JSONObject()
-			.put("id", id)
-			.put("name", name);
+			.put(MSG.ID, id)
+			.put(MSG.NAME, name);
 	}
 	
 	public static String getPeriod(BillingPeriod period){

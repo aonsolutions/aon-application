@@ -1,5 +1,7 @@
-package com.code.aon.webservice.issues;
+package com.code.aon.webservice.common;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,7 +13,10 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
@@ -26,7 +31,26 @@ public class Utils {
 	private Utils() {
 		throw new IllegalAccessError("Utility class");
 	}
-
+	
+	public static void giveBack(HttpServletRequest req, HttpServletResponse resp,
+			Object object, JSONObject meta) {
+		try {
+			String js = req.getParameter(MSG.CALLBACK);
+			if(js != null){
+				resp.setContentType("application/javascript; charset=utf-8");     
+				PrintWriter out = resp.getWriter();
+				out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
+				out.flush();
+			} else {
+				resp.setContentType("application/json");     
+				PrintWriter out = resp.getWriter();
+				out.print(object);
+				out.flush();
+			}
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+	}
 	public static String getMd5(String str){
 		MessageDigest md = null;
 		try {
@@ -65,7 +89,6 @@ public class Utils {
 	}
 	
 	public static String getStatusColor(Task task){
-		
 		TaskStatus taskStatus = TaskStatus.values()[task.getStatus()];
 		if(taskStatus.equals(TaskStatus.DELETED))
 			return "gray";

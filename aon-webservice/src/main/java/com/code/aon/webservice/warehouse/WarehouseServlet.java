@@ -1,7 +1,6 @@
 package com.code.aon.webservice.warehouse;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -15,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.code.aon.webservice.issues.Utils;
+import com.code.aon.webservice.common.MSG;
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -33,18 +33,12 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 public class WarehouseServlet extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(WarehouseServlet.class.getName());
-	private static final String CARRIER_PACKING = "carrier_packing";
-	private static final String SERIES = "series";
-	private static final String TYPE = "type";
-	private static final String STATUS = "status";
-	private static final String CARRIER = "carrier";
-	private static final String EMPTY = "";
 	
 	
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("Warehouse Servlet - GET METHOD");
-		String accessToken = req.getParameter("access_token");
+		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[2];
 		String domainName = pathInfo[1]; 
@@ -54,41 +48,29 @@ public class WarehouseServlet extends HttpServlet{
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				Object object = new Object();
-				JSONObject meta = new JSONObject();
-				if(CARRIER_PACKING.equals(pathInfo[3])){
+				if(MSG.CARRIER_PACKING.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if(SERIES.equals(pathInfo[4])){
+						if(MSG.SERIES.equals(pathInfo[4])){
 							object = getSeriesList();
-						} else if(TYPE.equals(pathInfo[4])){
+						} else if(MSG.TYPE.equals(pathInfo[4])){
 							object = getCarrierPackingTypeList();
-						} else if(STATUS.equals(pathInfo[4])){
+						} else if(MSG.STATUS.equals(pathInfo[4])){
 							object = getCarrierPackingStatusList();
-						} else if(CARRIER.equals(pathInfo[4])){
+						} else if(MSG.CARRIER.equals(pathInfo[4])){
 							object = getCarrierList(domain, userName);
 						} 
 					} else {
 						object = getCarrierPackingList(domain, userName, req.getParameterMap());
 					}
-				} else if("purchase".equals(pathInfo[3])){
+				} else if(MSG.PURCHASE.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						if(pathInfo.length > 5){
 							object = getPurchaseDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
 						} else object = getPurchase(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else object = getPurchaseList(domain, userName, req.getParameterMap());
 				}
-
-				String js = req.getParameter("callback");
-				if(js != null){
-					resp.setContentType("application/javascript; charset=utf-8");     
-					PrintWriter out = resp.getWriter();
-					out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
-					out.flush();
-				} else {
-					resp.setContentType("application/json");     
-					PrintWriter out = resp.getWriter();
-					out.print(object);
-					out.flush();
-				}
+				
+				Utils.giveBack(req, resp, object, new JSONObject());
 			}
 		}
 	}
@@ -102,7 +84,7 @@ public class WarehouseServlet extends HttpServlet{
 			bld.append(" " + line);
 		}
 		String s = Utils.checkString(bld.toString());
-		if(s == null || EMPTY.equals(s)){
+		if(s == null || MSG.EMPTY.equals(s)){
 			s = "{}";
 		}
 		JSONObject json = new JSONObject(s);
@@ -112,20 +94,20 @@ public class WarehouseServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		if(pathInfo.length > 3){				
 			Object object = new Object();
-			if(CARRIER_PACKING.equals(pathInfo[3])){
+			if(MSG.CARRIER_PACKING.equals(pathInfo[3])){
 				if(pathInfo.length > 4){ 
-					if("update".equals(pathInfo[4])){
+					if(MSG.UPDATE.equals(pathInfo[4])){
 						object = updateCarrierPacking(domain, userName, Integer.parseInt(pathInfo[5]), json);
-					} else if("delete".equals(pathInfo[4])){
+					} else if(MSG.DELETE.equals(pathInfo[4])){
 						AON.deleteCarrierPacking(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[5]));
 					} 
 				} else {
 					object = insertCarrierPacking(domain, userName, json);
 				}	
 			}
-			else if("purchase".equals(pathInfo[3])){
+			else if(MSG.PURCHASE.equals(pathInfo[3])){
 				if(pathInfo.length > 4){ 
-					if("update".equals(pathInfo[4])){
+					if(MSG.UPDATE.equals(pathInfo[4])){
 						object = updatePurchase(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} 
 				} 
@@ -171,48 +153,48 @@ public class WarehouseServlet extends HttpServlet{
 	}
 	
 	private CarrierPacking getCarrierPacking(Domain domain, String login, JSONObject json, CarrierPacking carrierPacking) {
-		if(json.opt(SERIES) != null){
-			carrierPacking.setSeries(json.getString(SERIES));
+		if(json.opt(MSG.SERIES) != null){
+			carrierPacking.setSeries(json.getString(MSG.SERIES));
 		}
-		if(json.opt("number") != null && !EMPTY.equals(json.opt("number"))){
-			carrierPacking.setNumber(json.getInt("number"));
+		if(json.opt(MSG.NUMBER) != null && !MSG.EMPTY.equals(json.opt(MSG.NUMBER))){
+			carrierPacking.setNumber(json.getInt(MSG.NUMBER));
 		}
-		if(json.opt(TYPE) != null && !EMPTY.equals(json.opt(TYPE))){
-			carrierPacking.setType(CarrierPackingType.values()[json.getInt(TYPE)]);
+		if(json.opt(MSG.TYPE) != null && !MSG.EMPTY.equals(json.opt(MSG.TYPE))){
+			carrierPacking.setType(CarrierPackingType.values()[json.getInt(MSG.TYPE)]);
 		}
-		if(json.opt(STATUS) != null && !EMPTY.equals(json.opt(STATUS))){
-			carrierPacking.setStatus(CarrierPackingStatus.values()[json.getInt(STATUS)]);
+		if(json.opt(MSG.STATUS) != null && !MSG.EMPTY.equals(json.opt(MSG.STATUS))){
+			carrierPacking.setStatus(CarrierPackingStatus.values()[json.getInt(MSG.STATUS)]);
 		}
-		if(json.opt("issue_date") != null && !EMPTY.equals(json.opt("issue_date"))){
-			carrierPacking.setIssueDate(new Date(json.getLong("issue_date")));
+		if(json.opt(MSG.ISSUE_DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.ISSUE_DATE))){
+			carrierPacking.setIssueDate(new Date(json.getLong(MSG.ISSUE_DATE)));
 		}
-		if(json.opt(CARRIER) != null && !EMPTY.equals(json.opt("carrier"))){
-			carrierPacking.setCarrier(json.getInt("carrier"));
+		if(json.opt(MSG.CARRIER) != null && !MSG.EMPTY.equals(json.opt(MSG.CARRIER))){
+			carrierPacking.setCarrier(json.getInt(MSG.CARRIER));
 		}
-		if(json.opt("delivery_date") != null && !EMPTY.equals(json.opt("delivery_date"))){
-			carrierPacking.setDeliveryDate(new Date(json.getLong("delivery_date")));
+		if(json.opt(MSG.DELIVERY_DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.DELIVERY_DATE))){
+			carrierPacking.setDeliveryDate(new Date(json.getLong(MSG.DELIVERY_DATE)));
 		}
-		if(json.opt("carrier_reference") != null){
-			carrierPacking.setCarrierReference(json.getString("carrier_reference"));
+		if(json.opt(MSG.CARRIER_REFERENCE) != null){
+			carrierPacking.setCarrierReference(json.getString(MSG.CARRIER_REFERENCE));
 		}
-		if(json.opt("number_plate") != null){
-			carrierPacking.setNumberPlate(json.getString("number_plate"));
+		if(json.opt(MSG.NUMBER_PLATE) != null){
+			carrierPacking.setNumberPlate(json.getString(MSG.NUMBER_PLATE));
 		}
-		if(json.opt("driver_document") != null){
-			carrierPacking.setDriverDocument(json.getString("driver_document"));
+		if(json.opt(MSG.DRIVER_DOCUMENT) != null){
+			carrierPacking.setDriverDocument(json.getString(MSG.DRIVER_DOCUMENT));
 		}
-		if(json.opt("driver_name") != null){
-			carrierPacking.setDriverName(json.getString("driver_name"));
+		if(json.opt(MSG.DRIVER_NAME) != null){
+			carrierPacking.setDriverName(json.getString(MSG.DRIVER_NAME));
 		}
 	
 		return carrierPacking;
 	}
 	
 	private Purchase getPurchase(Domain domain, String login, JSONObject json, Purchase purchase) {
-		if(json.opt(CARRIER_PACKING) != null){
-			if(EMPTY.equals(json.opt(CARRIER_PACKING))){
+		if(json.opt(MSG.CARRIER_PACKING) != null){
+			if(MSG.EMPTY.equals(json.opt(MSG.CARRIER_PACKING))){
 				 purchase.setCarrierPacking(null);
-			}else purchase.setCarrierPacking(json.getInt(CARRIER_PACKING));
+			}else purchase.setCarrierPacking(json.getInt(MSG.CARRIER_PACKING));
 		}
 		return purchase;
 	}
@@ -254,34 +236,34 @@ public class WarehouseServlet extends HttpServlet{
     private Filter carrierPackingFilter(Domain domain, Map<String, String[]> filterMap, CarrierPackingProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 
-		if(filterMap.containsKey(SERIES)){
-			Filter fseries = f.getSeriesProperty().eq(filterMap.get(SERIES)[0]); 
-			for(Integer i = 1; i < filterMap.get(SERIES).length ; i++){
-				fseries = fseries.or(f.getSeriesProperty().eq(filterMap.get(SERIES)[i]));
+		if(filterMap.containsKey(MSG.SERIES)){
+			Filter fseries = f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[0]); 
+			for(Integer i = 1; i < filterMap.get(MSG.SERIES).length ; i++){
+				fseries = fseries.or(f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[i]));
 			}
 			filter = filter.and(fseries);
 		}
 		
-		if(filterMap.containsKey(CARRIER)){
-			Filter fcarrier = f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(CARRIER)[0])); 
-			for(Integer i = 1; i < filterMap.get(CARRIER).length ; i++){
-				fcarrier = fcarrier.or(f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(CARRIER)[i])));
+		if(filterMap.containsKey(MSG.CARRIER)){
+			Filter fcarrier = f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.CARRIER).length ; i++){
+				fcarrier = fcarrier.or(f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER)[i])));
 			}
 			filter = filter.and(fcarrier);
 		}
 		
-		if(filterMap.containsKey(TYPE)){
-			Filter ftype = f.getTypeProperty().eq((byte) Integer.parseInt(filterMap.get(TYPE)[0])); 
-			for(Integer i = 1; i < filterMap.get(TYPE).length ; i++){
-				ftype = ftype.or(f.getTypeProperty().eq((byte) Integer.parseInt(filterMap.get(TYPE)[i])));
+		if(filterMap.containsKey(MSG.TYPE)){
+			Filter ftype = f.getTypeProperty().eq((byte) Integer.parseInt(filterMap.get(MSG.TYPE)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.TYPE).length ; i++){
+				ftype = ftype.or(f.getTypeProperty().eq((byte) Integer.parseInt(filterMap.get(MSG.TYPE)[i])));
 			}
 			filter = filter.and(ftype);
 		}
 		
-		if(filterMap.containsKey(STATUS)){
-			Filter fstatus = f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(STATUS)[0])); 
-			for(Integer i = 1; i < filterMap.get(STATUS).length ; i++){
-				fstatus = fstatus.or(f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(STATUS)[i])));
+		if(filterMap.containsKey(MSG.STATUS)){
+			Filter fstatus = f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(MSG.STATUS)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.STATUS).length ; i++){
+				fstatus = fstatus.or(f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(MSG.STATUS)[i])));
 			}
 			filter = filter.and(fstatus);
 		}
@@ -292,14 +274,14 @@ public class WarehouseServlet extends HttpServlet{
     private Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
     		Filter filter = f.getDomainProperty().eq(domain.getId());
     			
-    		if(filterMap.containsKey(CARRIER)){
-    			Integer carrier = Integer.parseInt(filterMap.get(CARRIER)[0]);
+    		if(filterMap.containsKey(MSG.CARRIER)){
+    			Integer carrier = Integer.parseInt(filterMap.get(MSG.CARRIER)[0]);
     			filter = filter.and(f.getCarrierProperty().eq(carrier)
     					.or(f.getCarrierProperty().isNull()));
     		}
     		
-    		if(filterMap.containsKey(CARRIER_PACKING)){
-    			Integer carrierPacking = Integer.parseInt(filterMap.get(CARRIER_PACKING)[0]);
+    		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
+    			Integer carrierPacking = Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0]);
     			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
     		}
     		
