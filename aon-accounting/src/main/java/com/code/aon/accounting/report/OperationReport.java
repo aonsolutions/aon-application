@@ -21,6 +21,7 @@ public class OperationReport implements Serializable {
 	private String referenceCode;
 	private String rdocument;
 	private String rname;
+	private List<OperationReportTax> ivaTypes;
 	private List<OperationReportTax> taxes;
 	
 	public Integer getId() {
@@ -76,6 +77,12 @@ public class OperationReport implements Serializable {
 	}
 	public void setRname(String rname) {
 		this.rname = rname;
+	}
+	public List<OperationReportTax> getIvaTypes() {
+		return ivaTypes;
+	}
+	public void setIvaTypes(List<OperationReportTax> ivaTypes) {
+		this.ivaTypes = ivaTypes;
 	}
 	public String getInvoiceRegistry() {
 		return StringUtils.trimToEmpty(getRdocument()) 
