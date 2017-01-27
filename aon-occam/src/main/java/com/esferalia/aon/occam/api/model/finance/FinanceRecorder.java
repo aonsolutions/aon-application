@@ -45,9 +45,9 @@ public class FinanceRecorder {
 							.setAccountDescription(description)
 							.setConcept(concept)
 							.setDocumentNumber(document)
-							.setBalancingAccount(financeEntry.getBankAccount().getId())
-							.setBalancingAccountCode(financeEntry.getBankAccount().getCode())
-							.setBalancingAccountDescription(financeEntry.getBankAccount().getDescription())
+							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
+							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription())
 							;
 						map.put(finance.getId(),detail);
 					}
@@ -72,9 +72,9 @@ public class FinanceRecorder {
 							.setAccountDescription(description)
 							.setConcept(concept)
 							.setDocumentNumber(finance.getInvoice()!=null?finance.getInvoice().getDocumentNumber():"")
-							.setBalancingAccount(financeEntry.getBankAccount().getId())
-							.setBalancingAccountCode(financeEntry.getBankAccount().getCode())
-							.setBalancingAccountDescription(financeEntry.getBankAccount().getDescription());
+							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
+							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription());
 						map.put(finance.getId(),detail);
 					}
 					detail.setDebit(finance.getAmount());
@@ -100,7 +100,9 @@ public class FinanceRecorder {
 		
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
 		for (Finance finance: financeEntry.getFinances().values()) {
-			FinanceEntryDetailType.visit(financeEntry,finance,map);	
+			if (!finance.isDeleted()) {
+				FinanceEntryDetailType.visit(financeEntry,finance,map);	
+			}
 		}
 		ae.setDetails(new LinkedList<AccountEntryDetail>());
 		ae.getDetails().addAll(map.values());

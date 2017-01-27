@@ -67,7 +67,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
 	
-	static final String BACKGROUND_COLOR = "#dfecdf";
+	static final String BACKGROUND_COLOR = "#DDDDDD";
 
 	
 	public final static int TAB_OFFSET = 1000;

@@ -125,7 +125,6 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 				}
 			}
 		});
-		
 	}
 	public void setUser(User user) {
 		this.user = user;
@@ -341,27 +340,28 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 						if (result != null && !result.isEmpty()) {
 							for (final Finance finance : result) {
 								finance.setChecked(callback.isSelected(finance));
-								final FocusPanel financePanel = FinancePrinter.print(finance);
-								financePanel.addStyleName(finance.isChecked()
-									?AON.AON_CSS.aonIconChecked()
-									:AON.AON_CSS.aonIconCheck());
-								financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-								container.add(financePanel);
-								financePanel.addClickHandler(new ClickHandler() {
-									@Override
-									public void onClick(ClickEvent event) {
-										finance.setChecked(!finance.isChecked());
-										if (finance.isChecked()) {
-											financePanel.removeStyleName(AON.AON_CSS.aonIconCheck());
-											financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
-										} else {
-											financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
-											financePanel.removeStyleName(AON.AON_CSS.aonIconChecked());
+//								if (!finance.isChecked()) {
+									final FocusPanel financePanel = FinancePrinter.print(finance);
+									financePanel.addStyleName(finance.isChecked()
+											?AON.AON_CSS.aonIconChecked()
+											:AON.AON_CSS.aonIconCheck());
+									financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+									container.add(financePanel);
+									financePanel.addClickHandler(new ClickHandler() {
+										@Override
+										public void onClick(ClickEvent event) {
+											finance.setChecked(!finance.isChecked());
+											if (finance.isChecked()) {
+												financePanel.removeStyleName(AON.AON_CSS.aonIconCheck());
+												financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
+											} else {
+												financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
+												financePanel.removeStyleName(AON.AON_CSS.aonIconChecked());
+											}
+											SelectionEvent.<Finance>fire( FinanceSearchPanel.this, finance);
 										}
-										SelectionEvent.<Finance>fire( FinanceSearchPanel.this, finance);
-									}
-								});
-		
+									});
+//								}
 							}
 							offset.setValue(ofs + result.size());
 							enableMoreData();
@@ -394,6 +394,11 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		registryBox.setValue( (AccountingRegistry) null, false);
 		amount.setValue(null);
 		concept.setValue(null);
+		search();
+	}
+	
+	public void uncheck(Finance finance) {
+		search();		
 	}
 	
 }

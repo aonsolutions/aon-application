@@ -45,7 +45,7 @@ import com.google.gwt.user.client.ui.TextBox;
 public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 	private static DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-	static final String BACKGROUND_COLOR = "#efdcc3";
+	static final String BACKGROUND_COLOR = "#EEEEEE";
 	
 	private FlexTable flexTable;
 	private SessionLog workingLog;

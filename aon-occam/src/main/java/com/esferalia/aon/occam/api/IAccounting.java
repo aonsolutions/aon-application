@@ -87,6 +87,7 @@ public interface IAccounting {
 	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params,
 			int offset, int limit);
 	public FinanceEntry save(AONContext ctx, FinanceEntry financeEntry);
+	public FinanceEntry getFinanceEntry(AONContext ctx, Integer accountEntry);
 	
 	
 }

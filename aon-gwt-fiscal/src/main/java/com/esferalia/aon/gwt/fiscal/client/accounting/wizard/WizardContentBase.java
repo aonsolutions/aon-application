@@ -101,24 +101,10 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 		}
 	}
 
-//	@Override
-//	public void get(Integer id, final AsyncCallback<AccountEntry> callback) {
-//		getFiscalService().getAccountEntry(getDomainName(), getDomain(), id,
-//				new AsyncCallbackWrapper<AccountEntry>(callback) {
-//
-//					@Override
-//					public void onSuccess(AccountEntry result) {
-//						getWrapper().setAccountEntry(result);
-//						callback.onSuccess(result);
-//					}
-//
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						callback.onFailure(caught);
-//					}
-//				});
-//	}
-
+	@Override
+	public boolean isNew() {
+		return getMainEntry() == null || getMainEntry().getId() == null;
+	}
 
 	@Override
 	public boolean isUpdatable() {

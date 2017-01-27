@@ -396,5 +396,9 @@ public class AccountingImpl implements IAccounting {
 			configuration -> FinanceDAO.save(ctx, financeEntry)
 		 );		
 	}
+	@Override
+	public FinanceEntry getFinanceEntry(AONContext ctx, Integer accountEntry) {
+		return FinanceDAO.getFinanceEntry(ctx, accountEntry);
+	}
 
 }

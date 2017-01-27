@@ -915,7 +915,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				entryType.setSelectedIndex(EntryType.MANUAL.ordinal());
 				new Manual(moduleCallback).attach(wizardCbk);
 			}
-			@Override public void visitFinance(AccountEntry entry) {visitManual();}
+			
 			@Override public void visitManual(AccountEntry entry) {visitManual();}
 			@Override public void visitOpening(AccountEntry entry) {visitManual();}
 			@Override public void visitClosing(AccountEntry entry) {visitManual();}
@@ -925,18 +925,25 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override public void visitSalary(AccountEntry entry) {visitManual();}
 			@Override public void visitTax(AccountEntry entry) {visitManual();}
 			@Override public void visitLoan(AccountEntry entry) {visitManual();}
-			@Override public void visitPayment(AccountEntry entry) {visitManual();}
-			@Override public void visitCollection(AccountEntry entry) {visitManual();}
 			@Override public void visitStockVariation(AccountEntry entry) {visitManual();}
 			@Override public void visitAmortization(AccountEntry entry) {visitManual();}
 			@Override public void visitSocialInsurance(AccountEntry entry) {visitManual();}
 			@Override public void visitLoanFee(AccountEntry entry) {visitManual();}
-			@Override public void visitReturnedPayment(AccountEntry entry) {visitManual();}
-			@Override public void visitReturnedCollection(AccountEntry entry) {visitManual();}
 			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) {visitManual();}
 			@Override public void visitLeasing(AccountEntry entry) {visitManual();}
 			@Override public void visitLeasingFee(AccountEntry entry) {visitManual();}
 			
+			private void visitFinance() {
+				entryType.setSelectedIndex(EntryType.FINANCE.ordinal());
+				FinanceEntryPanel panel = new FinanceEntryPanel(moduleCallback);
+				panel.attach(wizardCbk);
+			}
+			
+			@Override public void visitFinance(AccountEntry entry) {visitFinance();}
+			@Override public void visitPayment(AccountEntry entry) {visitFinance();}
+			@Override public void visitCollection(AccountEntry entry) {visitFinance();}
+			@Override public void visitReturnedPayment(AccountEntry entry) {visitFinance();}
+			@Override public void visitReturnedCollection(AccountEntry entry) {visitFinance();}
 		});
 			
 	}

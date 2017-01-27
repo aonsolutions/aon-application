@@ -186,7 +186,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		suggestionDisplay =  new AccountSuggestionDisplay();
 		account = new SuggestBox(oracle,accountTextBox,suggestionDisplay);
 		accountTextBox.setStyleName(AON.AON_CSS.aonInputText());
-		accountTextBox.setVisibleLength(8);
+		accountTextBox.setVisibleLength(9);
 		accountTextBox.setMaxLength(9);
 		
 		descriptionLabel = new InlineLabel();

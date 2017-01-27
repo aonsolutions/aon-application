@@ -15,6 +15,7 @@ public class Finance implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = -1224312562688230254L;
 
+	private boolean deleted;
 	private boolean checked;
 	
 	private Integer id;
@@ -421,6 +422,13 @@ public class Finance implements Serializable, HasAudit {
 	}
 	public Finance setChecked(boolean checked) {
 		this.checked = checked;
+		return this;
+	}
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public Finance setDeleted(boolean deleted) {
+		this.deleted = deleted;
 		return this;
 	}
 	

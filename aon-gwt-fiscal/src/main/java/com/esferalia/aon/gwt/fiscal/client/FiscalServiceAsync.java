@@ -293,8 +293,11 @@ public interface FiscalServiceAsync {
 	void getAccountFinances(String domainName, int domain,
 			FinanceParams params,int offset, int limit,
 			AsyncCallback<LinkedList<Finance>> callback);
+	void getFinanceEntry(String domainName, int domain, Integer accountEntry,
+			AsyncCallback<FinanceEntry> asyncCallback);
 	void save(String currentDomainName, int currentDomain, FinanceEntry financeEntry,
 			AsyncCallback<FinanceEntry> asyncCallback);
+
 
 	
 }

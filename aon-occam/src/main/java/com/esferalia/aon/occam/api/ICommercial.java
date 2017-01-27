@@ -7,7 +7,6 @@ import com.esferalia.aon.occam.api.model.CommercialActivity;
 import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 
 public interface ICommercial {
 	public CommercialTracking getCommercialTracking(AONContext ctx, CommercialTrackingFilter filter);

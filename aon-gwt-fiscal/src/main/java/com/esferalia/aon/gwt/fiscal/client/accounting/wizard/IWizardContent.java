@@ -13,6 +13,7 @@ public interface IWizardContent extends IsWidget,Focusable {
 	public void attach(IContentAttachCallback contentCbk);
 	public AccountEntry getMainEntry(); 
 	public boolean isUpdatable();
+	public boolean isNew();
 	
 	public IAccountEntryWrapper getEntryWrapper();
 	

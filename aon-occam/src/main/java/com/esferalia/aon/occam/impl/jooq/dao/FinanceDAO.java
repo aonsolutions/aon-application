@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
+import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
+import static com.esferalia.aon.jooq.tables.FbatchDetail.FBATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
-import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -40,8 +42,12 @@ import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceDAO {
 	
@@ -411,5 +417,80 @@ public class FinanceDAO {
 			}
 		}
 		return financeEntry;
+	}
+	
+	public static FinanceEntry getFinanceEntry(AONContext ctx, Integer accountEntryId) {
+		AccountEntry accountEntry = AccountEntryDAO.getAccountEntry(ctx, accountEntryId);
+		if (accountEntry == null) {
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage());
+		}
+		final FinanceEntry entry = new FinanceEntry();
+		entry.setFinanceBatch(ctx.getDslContext()
+				.select(ACCOUNT_ENTRY_FBATCH.FBATCH)
+				.from(ACCOUNT_ENTRY_FBATCH)
+				.where(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY.eq(accountEntryId))
+				.fetch()
+				.stream()
+				.findFirst()
+				.map( rec -> rec.getValue(ACCOUNT_ENTRY_FBATCH.FBATCH))
+				.orElse(null)
+				);
+		
+		entry.setAccountEntry(accountEntry);
+		accountEntry.getDetails()
+			.stream()
+			.forEach(detail -> {
+				if (AonStringUtils.startsWith(detail.getAccountCode(), "5")) {
+					entry.setBankAccount(AccountDAO.get(ctx, detail.getAccount()));
+				} else if (AonStringUtils.startsWith(detail.getAccountCode(), "6")) {
+						entry.setExpensesAccount(AccountDAO.get(ctx, detail.getAccount()));
+						entry.setExpenses( AonMathUtils.round(detail.getDebit() - detail.getCredit() ));
+				}
+			});
+		if (entry.isFromfinanceBatch()) {
+			ctx.getDslContext()
+			.select(FINANCE.fields())
+			.select(REGISTRY.fields())
+			.select(PAY_METHOD.fields())
+			.select(SCOPE.fields())
+			.select(INVOICE.fields())
+				.from(FBATCH_DETAIL)
+				.join(FINANCE).on(FINANCE.ID.equal(FBATCH_DETAIL.FINANCE))
+				.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+				.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+				.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+				.where(FBATCH_DETAIL.FBATCH.eq(entry.getFinanceBatch()))
+				.fetch()
+				.stream()
+			.map( new FullFinanceFiller() )
+			.peek(finance -> fillCustomerAcccount(ctx,finance))
+			.peek(finance -> fillSupplierAcccount(ctx,finance))
+			.peek(finance -> fillCreditorAcccount(ctx,finance))
+			.forEach( finance -> entry.getFinances().put(finance.getId(), finance));
+		} else {
+			ctx.getDslContext()
+				.select(FINANCE.fields())
+				.select(REGISTRY.fields())
+				.select(PAY_METHOD.fields())
+				.select(SCOPE.fields())
+				.select(INVOICE.fields())
+					.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
+					.join(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
+					.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
+					.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+					.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+					.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+					.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+					.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
+					.fetch()
+					.stream()
+				.map( new FullFinanceFiller() )
+				.peek(finance -> fillCustomerAcccount(ctx,finance))
+				.peek(finance -> fillSupplierAcccount(ctx,finance))
+				.peek(finance -> fillCreditorAcccount(ctx,finance))
+				.forEach( finance -> entry.getFinances().put(finance.getId(), finance));
+		}
+		return entry;
 	}
 }

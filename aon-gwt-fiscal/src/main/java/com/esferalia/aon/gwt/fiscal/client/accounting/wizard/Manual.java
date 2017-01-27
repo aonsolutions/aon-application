@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	
-	private static final String BACKGROUND_COLOR = "#fff7cc";
+	private static final String BACKGROUND_COLOR = "#EEEEEE";
 	private ScrollPanel tableContainer;
 	private VerticalPanel tableInnerContainer;
 	private AccountEntryTable table;

@@ -455,4 +455,16 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
+
+	public static FinanceEntry getFinanceEntry(String domainName, int domain, String user, Integer accountEntry) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getFinanceEntry(ctx, accountEntry);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }

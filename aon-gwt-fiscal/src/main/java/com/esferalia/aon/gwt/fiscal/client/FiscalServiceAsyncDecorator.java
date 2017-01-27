@@ -1386,12 +1386,21 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
+	public void getFinanceEntry(String domainName, int domain, Integer accountEntry,
+			AsyncCallback<FinanceEntry> callback) {
+		AON.start();
+		fsa.getFinanceEntry(domainName, domain, accountEntry,
+				new AsyncCallbackWrapper<FinanceEntry>(callback));
+	}
+
+	@Override
 	public void save(String domainName, int domain, FinanceEntry financeEntry,
 			AsyncCallback<FinanceEntry> asyncCallback) {
 		AON.start();
 		fsa.save(domainName, domain, financeEntry,
 				new AsyncCallbackWrapper<FinanceEntry>(asyncCallback));
 	}
+
 
 
 

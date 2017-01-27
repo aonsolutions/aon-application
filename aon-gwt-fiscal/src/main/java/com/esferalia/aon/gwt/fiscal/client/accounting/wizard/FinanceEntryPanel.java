@@ -16,14 +16,17 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -35,9 +38,9 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 
-public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
+public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implements HasSelectionHandlers<Finance>{
 	
-	static final String BACKGROUND_COLOR = "#ccccff";
+	static final String BACKGROUND_COLOR = "#EEEEEE";
 	public final static int TAB_OFFSET = 1000;
 	public final static int SEARCH_PANEL_TAB_OFFSET = 10000;
 	
@@ -76,7 +79,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 				@Override
 				public boolean isSelected(Finance finance) {
 					if (finance == null) return false;
-					return getWrapper().getFinances().containsKey(finance.getId());
+					return getWrapper().getFinances().containsKey(finance.getId())
+						&& getWrapper().getFinances().get(finance.getId()).isChecked();
 				}
 				
 			}
@@ -96,6 +100,13 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 				_paintEntry();
 			}
 
+		});
+		addSelectionHandler( new SelectionHandler<Finance>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Finance> event) {
+				financeSearchPanel.uncheck(event.getSelectedItem());		
+			}
 		});
 		financeSearchPanel.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);		
 		rootPanel.addEast(financeSearchPanel, 600);
@@ -129,6 +140,32 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 		container.clear();
 		for (final Finance finance : financeEntry.getFinances().values()) {
 			final FocusPanel financePanel = FinancePrinter.print(finance);
+			financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+			if (isUpdatable()) {
+				if (finance.isDeleted()) {
+					financePanel.addStyleName(AON.AON_CSS.aonTextLineThrough());
+					financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
+				} else {
+					financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
+				}
+				financePanel.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!isNew()) {
+							finance.setDeleted(!finance.isDeleted());
+							finance.setChecked(!finance.isDeleted());
+						} else {
+							getWrapper().getFinances().remove(finance.getId());
+						}
+						refreshTable();
+						_paintEntry();
+						SelectionEvent.<Finance>fire( FinanceEntryPanel.this, finance);
+					}
+				});
+			} else {
+				financePanel.addStyleName(AON.AON_CSS.aonIconWarn());
+				financePanel.setTitle( " No se puede modificar " );
+			}
 			container.add(financePanel);
 		}
 	}
@@ -258,22 +295,39 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		workingLog.clear();
 		if (id != null) {
-			Window.alert("No se puede modificar");
+			getFiscalService().getFinanceEntry(AccountEntryModule.getCurrentDomainName()
+					,AccountEntryModule.getCurrentDomain(),id
+					,new AsyncCallback<FinanceEntry>() {
+							@Override
+							public void onSuccess(FinanceEntry result) {
+								select(result,cbk);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().getModule().onError(caught.getMessage());
+							}
+						});
 		} else {
 			if (wrp != null) {
-				setWrapper( (FinanceEntry) wrp);
-				getCallback().getModule().onBalance(getWrapper().getAccountEntry());
-				populate();
-				refreshTable();
-				financeSearchPanel.initialize();
-				if (cbk != null) {
-					cbk.onSuccess();
-				}
+				select((FinanceEntry) wrp, cbk);
 			} else {
 				getCallback().getModule().onError("Asiento no encontrado");
 			}
 		}
-	}		
+	}
+	public void select(FinanceEntry fe,final ISelectionCallback cbk) {
+		setWrapper( fe );
+		getCallback().getModule().onBalance(getWrapper().getAccountEntry());
+		populate();
+		refreshTable();
+		financeSearchPanel.initialize();
+		if (cbk != null) {
+			cbk.onSuccess();
+		}
+	}
+
+		
 
 	private AccountBox createAccountBox() {
 		AccountBox ab = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain());
@@ -289,8 +343,11 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 	
 	private void populate() {
 		setAccount(bankAccount,getWrapper().getBankAccount());
+		bankAccount.setEnabled( isUpdatable() );
 		expenses.setValue(getWrapper().getExpenses());
+		expenses.setEnabled( isUpdatable() );
 		setAccount(expensesAccount,getWrapper().getExpensesAccount());
+		expensesAccount.setEnabled( isUpdatable() );
 	}
 
 	private void setAccount(AccountBox accountBox, Account account) {
@@ -319,7 +376,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 	}
 	@Override
 	public boolean isUpdatable() {
-		return (true);
+		return super.isUpdatable() && !getWrapper().isFromfinanceBatch();
 	}
 	
 	@Override
@@ -346,4 +403,10 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> {
 	public void setFocus(boolean b) {
 		bankAccount.setFocus(b);
 	}
+	
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Finance> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
+	}
+	
 }

@@ -12,6 +12,7 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	private AccountEntry accountEntry;
 	
 	private boolean multipleGeneration;
+	private Integer financeBatch;
 	
 	private Account bankAccount;
 	private double expenses;
@@ -34,6 +35,16 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	public FinanceEntry setMultipleGeneration(boolean multipleGeneration) {
 		this.multipleGeneration = multipleGeneration;
 		return this;
+	}
+	public Integer getFinanceBatch() {
+		return financeBatch;
+	}
+	public FinanceEntry setFinanceBatch(Integer financeBatch) {
+		this.financeBatch = financeBatch;
+		return this;
+	}
+	public boolean isFromfinanceBatch() {
+		return getFinanceBatch() != null;
 	}
 	public Account getBankAccount() {
 		return bankAccount;

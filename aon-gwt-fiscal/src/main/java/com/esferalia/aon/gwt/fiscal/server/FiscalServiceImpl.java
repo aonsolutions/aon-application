@@ -1112,5 +1112,9 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public FinanceEntry save(String domainName, int domain, FinanceEntry financeEntry)
 			throws AonCoreException {
 		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), financeEntry);		
+	}
+	@Override
+	public FinanceEntry getFinanceEntry(String domainName, int domain, Integer accountEntry) {
+		return ACCOUNTING.getFinanceEntry(domainName, domain, this.getUserLogin(), accountEntry);		
 	};
 }
