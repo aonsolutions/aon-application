@@ -30,6 +30,7 @@
 						<f:selectItem itemValue="#{true}" itemLabel="Compras y Gastos" />
 						<f:selectItem itemValue="#{false}" itemLabel="Ventas e Ingresos" />
 					</aon:selectOneRadio>
+					
 
 					<aon:outputLabel for="reportDate"
 						value="#{bundle.finance_report_date}" />
@@ -79,6 +80,20 @@
 							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all} " />
 						</aon:selectOneRadio>
 					</aon:if>
+					
+					<aon:outputLabel for="Tax_type"
+						value="Tipo de Impuesto" />
+					<aon:div id="Tax_type">
+						<aon:selectBooleanCheckbox id="Tax_type_iva"
+							value="#{operationReport.params.iva}"/>
+						<aon:outputLabel for="Tax_type_iva"
+							value="IVA" />
+						<aon:selectBooleanCheckbox id="Tax_type_irpf"
+							value="#{operationReport.params.irpf}" 
+							itemLabel="IRPF"/>
+						<aon:outputLabel for="Tax_type_irpf"
+							value="IRPF" />
+					</aon:div> 
 					
 					<aon:outputText value="&#160;" />
 					<aon:div>
