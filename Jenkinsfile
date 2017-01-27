@@ -77,7 +77,7 @@ node {
       stage 'Build'
    
       // Run the maven build
-      sh "echo yes | ${mvnHome}/bin/mvn  -T 4 -Drpm.release=true -Dmaven.test.failure.ignore=true -Dgwt.working=true clean deploy"
+      sh "echo yes | ${mvnHome}/bin/mvn  -T 4 -Drpm.release=true -Dmaven.test.failure.ignore=true -Dgwt.working=true -DSNAPSHOT clean deploy"
 
       // Mark the RPMs deploy 'stage'....
       stage 'Deploy RPMs'
