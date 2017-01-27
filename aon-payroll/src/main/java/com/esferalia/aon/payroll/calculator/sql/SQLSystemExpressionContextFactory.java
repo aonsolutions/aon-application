@@ -53,7 +53,8 @@ public class SQLSystemExpressionContextFactory implements
 	private static final String SYSTEM_DATA_SQL = "SELECT * "
 			+ " FROM `system_data`" + " WHERE start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )"
-			+ " AND domain IN (0,?,?) " + " ORDER BY domain DESC ";
+			+ " AND domain IN (0,?,?) " 
+			+ " ORDER BY domain DESC, start_date ASC";
 
 	private static Long getYearDays(Date startDate, Date endDate) {
 		Date startDay = CommonUtil.getYearFirstDay(startDate);
