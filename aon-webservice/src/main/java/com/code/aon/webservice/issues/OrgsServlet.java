@@ -1,7 +1,6 @@
 package com.code.aon.webservice.issues;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -12,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
+import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -52,18 +53,7 @@ public class OrgsServlet extends HttpServlet{
 				default:
 					break;
 				}
-				String js = req.getParameter("callback");
-				if(js != null){
-					resp.setContentType("application/javascript; charset=utf-8");     
-					PrintWriter out = resp.getWriter();
-					out.print(js + "({" +"\"meta\":{}, \"data\":" + object +"});");
-					out.flush();
-				} else {
-					resp.setContentType("application/json");     
-					PrintWriter out = resp.getWriter();
-					out.print(object);
-					out.flush();
-				}				
+				Utils.giveBack(req, resp, object, new JSONObject());		
 			}
 		}
 	}

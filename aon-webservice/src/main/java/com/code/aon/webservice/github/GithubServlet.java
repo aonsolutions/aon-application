@@ -1,6 +1,7 @@
 package com.code.aon.webservice.github;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.issues.DBConsults;
-import com.code.aon.webservice.issues.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
@@ -28,63 +30,66 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 @WebServlet(name = "GithubServlet", urlPatterns = { "/github/*" })
 public class GithubServlet extends HttpServlet{
 	
+	private static final Logger LOGGER  = Logger.getLogger(GithubServlet.class.getName());
 	private static final DBConsults DB = DBConsults.getInstance();
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("GET METHOD");
+		LOGGER.info("Github Servlet - GET METHOD");
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("POST METHOD");
+		LOGGER.info("Github Servlet - POST METHOD");
 		
-		String line = "";
-		String s = "";
+		String line = MSG.EMPTY;
+		String s = MSG.EMPTY;
 		while((line = req.getReader().readLine()) != null)
 			s = s + " " + line;
 		s = Utils.checkString(s);
-		if(s == null || s.equals("")) s = "{}";
+		if(s == null || MSG.EMPTY.equals(s)){
+			s = "{}";
+		}
 		JSONObject json = new JSONObject(s);
-		JSONObject sender = new JSONObject(json.get("sender"));
-		JSONObject issue = new JSONObject(json.get("issue"));
+		JSONObject sender = new JSONObject(json.get(MSG.SENDER));
+		JSONObject issue = new JSONObject(json.get(MSG.ISSUE));
 		
-		String login = sender.getString("sender");
+		String login = sender.getString(MSG.SENDER);
 		String domainName = req.getServerName();
 		
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
-		if(GithubAction.ASSIGNED.getName().equals(json.get("action"))){
-			JSONObject assignee = new JSONObject(json.get("assignee"));
+		if(GithubAction.ASSIGNED.getName().equals(json.get(MSG.ACTION))){
+			JSONObject assignee = new JSONObject(json.get(MSG.ASSIGNEE));
 			assigned(domain, login, issue, assignee);
 		}
-		else if(GithubAction.UNASSIGNED.getName().equals(json.get("action"))){
-			JSONObject assignee = new JSONObject(json.get("assignee"));
+		else if(GithubAction.UNASSIGNED.getName().equals(json.get(MSG.ACTION))){
+			JSONObject assignee = new JSONObject(json.get(MSG.ASSIGNEE));
 			unassigned(domain, login, issue, assignee);
 		}
-		else if(GithubAction.OPENED.getName().equals(json.get("action")))
+		else if(GithubAction.OPENED.getName().equals(json.get(MSG.ACTION)))
 			opened(domain, login, issue);
-		else if(GithubAction.REOPENED.getName().equals(json.get("action")))
+		else if(GithubAction.REOPENED.getName().equals(json.get(MSG.ACTION)))
 			reopened(domain, login, issue);
-		else if(GithubAction.CLOSED.getName().equals(json.get("action")))
+		else if(GithubAction.CLOSED.getName().equals(json.get(MSG.ACTION)))
 			closed(domain, login, issue);
-		else if(GithubAction.COMMENT_CREATED.getName().equals(json.get("action"))){
-			JSONObject comment = new JSONObject(json.get("comment"));
+		else if(GithubAction.COMMENT_CREATED.getName().equals(json.get(MSG.ACTION))){
+			JSONObject comment = new JSONObject(json.get(MSG.COMMENT));
 			created(domain, login, issue, comment);
 		}
-		else if(GithubAction.COMMENT_DELETED.getName().equals(json.get("action"))){
-			JSONObject comment = new JSONObject(json.get("comment"));
+		else if(GithubAction.COMMENT_DELETED.getName().equals(json.get(MSG.ACTION))){
+			JSONObject comment = new JSONObject(json.get(MSG.COMMENT));
 			deleted(domain, login, issue, comment);
 		}
-		else if(GithubAction.COMMENT_EDITED.getName().equals(json.get("action"))){
-			JSONObject comment = new JSONObject(json.get("comment"));
+		else if(GithubAction.COMMENT_EDITED.getName().equals(json.get(MSG.ACTION))){
+			JSONObject comment = new JSONObject(json.get(MSG.COMMENT));
 			edited(domain, login, issue, comment);
 		}
-		else if(GithubAction.LABELED.getName().equals(json.get("action"))){
-			JSONObject label = new JSONObject(json.get("label"));
+		else if(GithubAction.LABELED.getName().equals(json.get(MSG.ACTION))){
+			JSONObject label = new JSONObject(json.get(MSG.COMMENT));
 			labeled(domain, login, issue, label);
 		}
-		else if(GithubAction.UNLABELED.getName().equals(json.get("action"))){
-			JSONObject label = new JSONObject(json.get("label"));
+		else if(GithubAction.UNLABELED.getName().equals(json.get(MSG.ACTION))){
+			JSONObject label = new JSONObject(json.get(MSG.COMMENT));
 			unlabeled(domain, login, issue, label);
 		}
 	}
@@ -92,7 +97,7 @@ public class GithubServlet extends HttpServlet{
 	private void assigned(Domain domain, String login, JSONObject issue, JSONObject assignee) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())))
 			.setModificationUser(login).setModificationDate(Calendar.getInstance().getTime());
 		Registry user = AON.getTaskMember(domain.getName(), domain.getId(), login, assignee.getString("login"));
@@ -103,7 +108,7 @@ public class GithubServlet extends HttpServlet{
 	private void unassigned(Domain domain, String login, JSONObject issue, JSONObject assignee) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())))
 			.setModificationUser(login).setModificationDate(Calendar.getInstance().getTime());
 		Registry user = AON.getTaskMember(domain.getName(), domain.getId(), login, assignee.getString("login"));
@@ -116,8 +121,8 @@ public class GithubServlet extends HttpServlet{
 				AON.getLastTaskNumber(domain.getName(), domain.getId(),login) : 0;
 		
 		Task task = new Task()
-			.setDescription(issue.getString("title"))
-			.setComments(issue.getString("body"))
+			.setDescription(issue.getString(MSG.TITLE))
+			.setComments(issue.getString(MSG.BODY))
 			.setDomain(domain.getId())
 			.setNumber(num + 1)
 			.setStartDate(Calendar.getInstance().getTime())
@@ -127,7 +132,7 @@ public class GithubServlet extends HttpServlet{
 			.setPercent((byte) 0) 
 			.setPriority((byte) 0)
 			.setSource(TaskSource.GITHUB.value())
-			.setSourceId(issue.getInt("number"))
+			.setSourceId(issue.getInt(MSG.NUMBER))
 			.setCreationUser(login)
 			.setCreationDate(Calendar.getInstance().getTime())
 			.setModificationUser(login)
@@ -140,7 +145,7 @@ public class GithubServlet extends HttpServlet{
 	private void reopened(Domain domain, String login, JSONObject issue) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
 		task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId())
 				.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(login);
@@ -149,7 +154,7 @@ public class GithubServlet extends HttpServlet{
 		else task.setParent(task.getId());
 		AON.updateTaskParent(domain.getName(), domain.getId(), login, task);
 		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
-			.setEvent("reopened").setTask(task.getId()).setCreationUser(login);
+			.setEvent(MSG.REOPENED).setTask(task.getId()).setCreationUser(login);
 		AON.createTaskEvent(domain.getName(), domain.getId(), login, taskEvent, task.getId());
 
 	}
@@ -157,22 +162,22 @@ public class GithubServlet extends HttpServlet{
 	private void closed(Domain domain, String login, JSONObject issue) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
 		task = task.setStatus(TaskStatus.FINISHED.value()).setEndDate(Calendar.getInstance().getTime()).setId(task.getId())
 				.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(login);
 		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
-				.setEvent("closed").setTask(task.getId()).setCreationUser(login);
+				.setEvent(MSG.CLOSED).setTask(task.getId()).setCreationUser(login);
 		AON.createTaskEvent(domain.getName(), domain.getId(), login, taskEvent, task.getId());
 	}
 	
 	private void created(Domain domain, String login, JSONObject issue, JSONObject comment) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
 		
-		TaskComment tc = new TaskComment().setComment(comment.getString("body"))
+		TaskComment tc = new TaskComment().setComment(comment.getString(MSG.BODY))
 				.setModificationDate(Calendar.getInstance().getTime())
 				.setCreationDate(Calendar.getInstance().getTime())
 				.setDomain(domain.getId())
@@ -185,16 +190,16 @@ public class GithubServlet extends HttpServlet{
 	private void deleted(Domain domain, String login, JSONObject issue, JSONObject comment) {
 		AON.deleteTaskComment(domain.getName(), domain.getId(), login, 
 			f -> f.getSourceProperty().eq(TaskSource.GITHUB.ordinal())
-			.and(f.getSourceIdProperty().eq(comment.getInt("id")))
+			.and(f.getSourceIdProperty().eq(comment.getInt(MSG.ID)))
 			.and(f.getDomainProperty().eq(domain.getId())));
 	}
 	
 	private void edited(Domain domain, String login, JSONObject issue, JSONObject comment) {
 		TaskComment tc = AON.getTaskComment(domain.getName(), domain.getId(), login,
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.ordinal())
-				.and(f.getSourceIdProperty().eq(comment.getInt("id")))
+				.and(f.getSourceIdProperty().eq(comment.getInt(MSG.ID)))
 				.and(f.getDomainProperty().eq(domain.getId())))
-			.setComment(comment.getString("body")).setModificationDate(Calendar.getInstance().getTime())
+			.setComment(comment.getString(MSG.BODY)).setModificationDate(Calendar.getInstance().getTime())
 			.setModificationUser(login);
 		AON.updateTaskComment(domain.getName(), domain.getId(), login, tc);
 	}
@@ -202,16 +207,16 @@ public class GithubServlet extends HttpServlet{
 	private void labeled(Domain domain, String login, JSONObject issue, JSONObject label) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
 		Tag tag = AON.getTag(domain.getName(), domain.getId(), login, 
 				f -> f.getTypeProperty().eq(TagType.TASK_LABEL.value())
 				.and(f.getDomainProperty().eq(domain.getId()))
-				.and(f.getNameProperty().eq(label.getString("name"))));
+				.and(f.getNameProperty().eq(label.getString(MSG.NAME))));
 		if(tag.getId() == null){
-			Tag t = new Tag().setColor(label.getString("color"))
+			Tag t = new Tag().setColor(label.getString(MSG.COLOR))
 					.setDomain(domain.getId())
-					.setName(label.getString("name"))
+					.setName(label.getString(MSG.NAME))
 					.setType(TagType.TASK_LABEL.value());
 			tag = AON.insertTag(domain.getName(), domain.getId(), login, t);
 		}
@@ -222,12 +227,12 @@ public class GithubServlet extends HttpServlet{
 	private void unlabeled(Domain domain, String login, JSONObject issue, JSONObject label) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
 		Tag tag = AON.getTag(domain.getName(), domain.getId(), login, 
 				f -> f.getTypeProperty().eq(TagType.TASK_LABEL.value())
 				.and(f.getDomainProperty().eq(domain.getId()))
-				.and(f.getNameProperty().eq(label.getString("name"))));
+				.and(f.getNameProperty().eq(label.getString(MSG.NAME))));
 		AON.deleteTaskTag(domain.getName(), domain.getId(), login, 
 				f -> f.getTagProperty().eq(tag.getId()).and(f.getTaskProperty().eq(task.getId())));
 	}

@@ -1,7 +1,5 @@
 package com.code.aon.webservice.stat;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,7 +8,6 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.code.aon.webservice.issues.Utils;
+import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -39,7 +36,7 @@ public class StatServlet extends HttpServlet{
 	private static final String EMPTY = "";
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("Stat Servlet - GET METHOD");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
@@ -62,18 +59,8 @@ public class StatServlet extends HttpServlet{
 				default:
 					break;
 				}
-				String js = req.getParameter("callback");
-				if(js != null){
-					resp.setContentType("application/javascript; charset=utf-8");     
-					PrintWriter out = resp.getWriter();
-					out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
-					out.flush();
-				} else {
-					resp.setContentType("application/json");     
-					PrintWriter out = resp.getWriter();
-					out.print(object);
-					out.flush();
-				}
+				
+				Utils.giveBack(req, resp, object, meta);
 			}
 		}
 	}

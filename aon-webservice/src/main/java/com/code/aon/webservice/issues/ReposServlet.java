@@ -2,7 +2,6 @@ package com.code.aon.webservice.issues;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -21,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
+import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -50,7 +51,7 @@ public class ReposServlet extends HttpServlet{
 	private static final Logger LOGGER  = Logger.getLogger(ReposServlet.class.getName());
 	private static final DBConsults DB = DBConsults.getInstance();
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Repos Servlet - GET METHOD");
 		String scheme = req.getParameter("scheme");
 		String accessToken = req.getParameter("access_token");
@@ -60,7 +61,7 @@ public class ReposServlet extends HttpServlet{
 		String md5 = Utils.getMd5(userName+domainName);
 		String url = Utils.getUrl(scheme, domainName, req.getRequestURL().toString().contains("aon-aio"));
 		if(accessToken.equals(md5)){
-			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
+			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : MSG.EMPTY;
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				Object object = new Object();
@@ -123,7 +124,7 @@ public class ReposServlet extends HttpServlet{
 					object = getAllStatusesJSON(domain, userName);
 					break;
 				case "registries": // ALL REGISTRIES
-					if(!filter.equals("")) object = getFilterRegistriesJSON(domain, userName, filter);
+					if(!filter.equals(MSG.EMPTY)) object = getFilterRegistriesJSON(domain, userName, filter);
 					else object = getAllRegistriesJSON(domain, userName);
 					break;
 				case "order_options": // ORDER OPTIONS
@@ -135,18 +136,8 @@ public class ReposServlet extends HttpServlet{
 				default:
 					break;
 				}
-				String js = req.getParameter("callback");
-				if(js != null){
-					resp.setContentType("application/javascript; charset=utf-8");     
-					PrintWriter out = resp.getWriter();
-					out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
-					out.flush();
-				} else {
-					resp.setContentType("application/json");     
-					PrintWriter out = resp.getWriter();
-					out.print(object);
-					out.flush();
-				}
+				
+				Utils.giveBack(req, resp, object, meta);
 			}
 		}
 	}
@@ -154,14 +145,14 @@ public class ReposServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Repos Servlet - POST METHOD");
-		String line = "";
-		String s = "";
+		String line = MSG.EMPTY;
+		String s = MSG.EMPTY;
 		while((line = req.getReader().readLine()) != null)
 			s = s + " " + line;
 		System.out.println(s);
 		s = Utils.checkString(s);
 		System.out.println(s);
-		if(s == null || s.equals("")) s = "{}";
+		if(s == null || s.equals(MSG.EMPTY)) s = "{}";
 		JSONObject json = new JSONObject(s);
 		String scheme = req.getParameter("scheme");
 		String[] pathInfo = req.getPathInfo().split("/");
@@ -626,9 +617,9 @@ public class ReposServlet extends HttpServlet{
 		json.put("assignee", assignee != null && assignee.equalsIgnoreCase("true"));
 		json.put("without_group", withoutGroup != null && withoutGroup.equalsIgnoreCase("true"));
 		json.put("without_operator", withoutOperator != null && withoutOperator.equalsIgnoreCase("true"));
-		json.put("type", type != null ? type : "");
-		json.put("priority", priority != null ? priority : "");
-		json.put("types", getAllLabelsJSON(domain, userName, TagType.TASK_TYPE, ""));
+		json.put("type", type != null ? type : MSG.EMPTY);
+		json.put("priority", priority != null ? priority : MSG.EMPTY);
+		json.put("types", getAllLabelsJSON(domain, userName, TagType.TASK_TYPE, MSG.EMPTY));
 		json.put("priorities", getAllPrioritiesJSON(domain, userName));
 		return json;
 	}
@@ -648,9 +639,9 @@ public class ReposServlet extends HttpServlet{
 		String username = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_USERNAME).getValue();
 		String repository = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_REPOSITORY).getValue();
 		String token= AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_TOKEN).getValue();
-		json.put("username", username != null ? username : "");
-		json.put("repository", repository != null ? repository : "");
-		json.put("token", token != null && !token.equals("") ? "**********" : "");
+		json.put("username", username != null ? username : MSG.EMPTY);
+		json.put("repository", repository != null ? repository : MSG.EMPTY);
+		json.put("token", token != null && !token.equals(MSG.EMPTY) ? "**********" : MSG.EMPTY);
 		return json;
 	}
 	
@@ -768,7 +759,7 @@ public class ReposServlet extends HttpServlet{
 	private void sendAssigneeNotification(Domain domain, String login, Task task, Integer taskHolderId) {
 		// get taskHolder email!!!
 		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, taskHolderId);
-		String thName =  r.getAlias() != null && !r.getAlias().equals("") ? r.getAlias() : r.getName();
+		String thName =  r.getAlias() != null && !r.getAlias().equals(MSG.EMPTY) ? r.getAlias() : r.getName();
 		NotificationServlet NS = new NotificationServlet();
 		NotificationInfo ni = NS.buildNotificationInfo(domain, login, task, NotificationType.ASSIGNEE);
 		ni.setNotifyAssignee(true);

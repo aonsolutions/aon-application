@@ -1,7 +1,6 @@
 package com.code.aon.webservice.project;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.code.aon.webservice.issues.Utils;
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -25,7 +24,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class ProjectServlet extends HttpServlet{
 			
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		System.out.println("GET METHOD");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
@@ -52,18 +51,8 @@ public class ProjectServlet extends HttpServlet{
 				default:
 					break;
 				}
-				String js = req.getParameter("callback");
-				if(js != null){
-					resp.setContentType("application/javascript; charset=utf-8");     
-					PrintWriter out = resp.getWriter();
-					out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
-					out.flush();
-				} else {
-					resp.setContentType("application/json");     
-					PrintWriter out = resp.getWriter();
-					out.print(object);
-					out.flush();
-				}
+				
+				Utils.giveBack(req, resp, object, meta);
 			}
 		}
 	}
