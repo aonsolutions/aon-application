@@ -365,10 +365,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("base,_maxima_(_grupo_01_)");
 
 		draft("BASE, MÁXIMA ( GRUPO 01 )");
+		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", 3642.00);
+		assertValue("cgpBaseLabel", 3642.00);
+		calculate(Calendar.JANUARY,2017);
+		assertValue("cgcBaseLabel", 3751.26);
 		assertValue("cgpBaseLabel", 3642.00);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
+		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 764.40);
 
@@ -458,7 +463,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		// TODO: EXTRA
 
 		draft("GARANTIZADO ENFERMEDAD COMÚN, Y PROFESIONAL");
-		calculate(Calendar.JUNE);
+		calculate(Calendar.JUNE, 2016);
 		assertValue("cgcBaseLabel", 764.40);
 		assertValue("cgpBaseLabel", 764.40);
 		assertValue("totalPaymentsLabel", 764.40);
