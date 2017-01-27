@@ -19,6 +19,8 @@ public class OperationReportParams implements Serializable {
 	private Date toDate;
 	private Date date;
 	private boolean expenses;
+	private boolean iva = true;
+	private boolean irpf = true;
 
 	private boolean coverVisible = false;
 	private boolean counterVisible = false;
@@ -89,7 +91,18 @@ public class OperationReportParams implements Serializable {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
-
+	public boolean isIva() {
+		return iva;
+	}
+	public void setIva(boolean iva) {
+		this.iva = iva;
+	}
+	public boolean isIrpf() {
+		return irpf;
+	}
+	public void setIrpf(boolean irpf) {
+		this.irpf = irpf;
+	}
 	public void initialize(Period period,SecurityLevel securityLevel) {
 		setPeriod(period);
 		setFromDate(null);

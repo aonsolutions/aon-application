@@ -48,9 +48,16 @@ public class OperationReportManager {
 				+", SUM(IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) )) surcharge_quota "
 				+" FROM invoice_detail id "
 				+" INNER JOIN invoice_tax it on it.invoice_detail = id.id "
-				+" WHERE id.invoice = ?"
-				+" GROUP BY it.tax_type,it.percentage,it.surcharge"
+				+" WHERE id.invoice = ?";
+		if(!params.isIva()){
+			taxSelect = taxSelect + " AND it.tax_type <> 1";
+		}
+		if(!params.isIrpf()){
+			taxSelect = taxSelect + " AND it.tax_type <> 2";
+		}
+		taxSelect = taxSelect +" GROUP BY it.tax_type,it.percentage,it.surcharge"
 				+" ORDER BY it.tax_type,it.percentage,it.surcharge";
+		
 		List<OperationReport> list = new LinkedList<OperationReport>();
 		Connection conn = null;
 		PreparedStatement ps = null;
