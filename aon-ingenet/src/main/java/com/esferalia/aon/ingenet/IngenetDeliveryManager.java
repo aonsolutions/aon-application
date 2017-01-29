@@ -87,14 +87,17 @@ public class IngenetDeliveryManager {
 				user, ingenetSalesDetailId);
 		Sales ingenetSales = obtainIngenetSales(domainName, user,
 				ingenetSalesDetail.getSales());
-		Sales aonSales = SalesDAO.getSales(ctx, ingenetSales.getSeries(),
-				ingenetSales.getNumber());
+		
+		String ingenetSalesSeries = ingenetSales.getSeries() == null ? ""
+				: ingenetSales.getSeries();
+		Integer ingenetSalesNumber = ingenetSales.getNumber();
+		Sales aonSales = SalesDAO.getSales(ctx, ingenetSalesSeries,
+				ingenetSalesNumber);
 		
 		if (aonSales == null | aonSales.getId() == null) {
 			throw new SourceSalesNotFoundException(
 					"Imposible realizar el traspaso. No existe el pedido "
-							+ ingenetSales.getSeries() + "/"
-							+ ingenetSales.getNumber());
+							+ ingenetSalesSeries + "/" + ingenetSalesNumber);
 		}
 		
 		try {
