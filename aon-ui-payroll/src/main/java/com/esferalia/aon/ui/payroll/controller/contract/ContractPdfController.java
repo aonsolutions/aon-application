@@ -412,7 +412,7 @@ public class ContractPdfController implements Serializable {
 			contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize(getContract());
 			contrataController.onContrataDataShow(null);
-			if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
+			if(contrataController.getGeneratedFile()!=null){
 				newParams = contrataController.getHandler().getParams();
 			} else {
 				newParams = new ContrataContratoParams();
