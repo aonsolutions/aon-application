@@ -5,6 +5,9 @@ import java.util.Date;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.model.Filter;
 
@@ -79,9 +82,6 @@ public class FilterDAO implements Filter {
 		
 	}
 	public static class DateBetweenPropertyDAO implements Property<Date> {
-
-		private Field<java.sql.Date> fromDate;
-		private Field<java.sql.Date> toDate;
 
 		@Override
 		public Filter eq(Date t) {
@@ -347,7 +347,9 @@ public class FilterDAO implements Filter {
 	}
 
 	private Condition condition;
-	
+	private Integer perPage;
+	private Integer page;
+
 	public FilterDAO(Condition condition) {
 		this.condition = condition;
 	}
@@ -370,7 +372,27 @@ public class FilterDAO implements Filter {
 	public Filter not(Filter filter) {
 		return (filter == null)?this:new FilterDAO(condition.not());
 	}
-	
-	
 
+	@Override
+	public Filter page(Integer page) {
+		this.page = page;
+		return this;
+	}
+
+	@Override
+	public Filter perPage(Integer perPage) {
+		this.perPage = perPage;
+		return this;
+	}
+	
+	public Select<Record> build(SelectJoinStep<Record> select) {
+		if(perPage != null && page != null) {
+			return select.where(getCondition()).limit(perPage)
+				.offset(perPage * (page -1));
+		} else if(perPage != null ){
+			return select.where(getCondition()).limit(perPage);
+		}
+		return select.where(getCondition());
+	}
+	
 }

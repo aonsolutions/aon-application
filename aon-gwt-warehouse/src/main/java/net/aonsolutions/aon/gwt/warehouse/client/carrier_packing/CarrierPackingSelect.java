@@ -6,8 +6,9 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
-import com.esferalia.aon.gwt.api.client.warehouse.JsPurchase;
-import com.esferalia.aon.gwt.api.client.warehouse.JsPurchaseDetail;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -63,19 +64,35 @@ public class CarrierPackingSelect extends Composite{
 		LinkedList<String> ncarrierList = new LinkedList<>();
 		ncarrierList.add("");
 		map.put("not_carrier_packing", ncarrierList);
-		API.getWarehouse().getPurchases(map,new AsyncCallback<JSON<JsPurchase>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsPurchase> result) {
-				result.getData().stream().forEach(js -> 
-					l.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
-						+ "-" + js.getSupplier().getName(),js.getId()+""));
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
-		
+		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+			API.getWarehouse().getPurchases(map,new AsyncCallback<JSON<JsOrder>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsOrder> result) {
+					result.getData().stream().forEach(js -> 
+						l.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
+							+ "-" + js.getRegistry().getName(),js.getId()+""));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		} else {
+			API.getWarehouse().getDeliveries(map,new AsyncCallback<JSON<JsOrder>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsOrder> result) {
+					result.getData().stream().forEach(js -> 
+						l.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
+							+ "-" + js.getRegistry().getName(),js.getId()+""));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
+				
 		ListBox l2 = new ListBox();
 		l2.setVisibleItemCount(20);
 		l2.getElement().getStyle().setBackgroundColor("#f6f5e3");
@@ -90,42 +107,77 @@ public class CarrierPackingSelect extends Composite{
 		LinkedList<String> list = new LinkedList<>();
 		list.add(jsCarrierPacking.getId() + "");
 		map2.put("carrier_packing", list);
-		API.getWarehouse().getPurchases(map2,new AsyncCallback<JSON<JsPurchase>>() {
+		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+			API.getWarehouse().getPurchases(map2,new AsyncCallback<JSON<JsOrder>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsPurchase> result) {
-				result.getData().stream().forEach(js -> 
-					l2.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
-						+ "-" + js.getSupplier().getName(),js.getId()+""));
-			}
+				@Override
+				public void onSuccess(JSON<JsOrder> result) {
+					result.getData().stream().forEach(js -> 
+						l2.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
+							+ "-" + js.getRegistry().getName(),js.getId()+""));
+				}
 			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
-		
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		} else {
+			API.getWarehouse().getDeliveries(map2,new AsyncCallback<JSON<JsOrder>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsOrder> result) {
+					result.getData().stream().forEach(js -> 
+						l2.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
+							+ "-" + js.getRegistry().getName(),js.getId()+""));
+				}
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 		l.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				String value = l.getSelectedValue();
-				API.getWarehouse().getPurchase(Integer.parseInt(value),new AsyncCallback<JSON<JsPurchase>>() {
+				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+					API.getWarehouse().getPurchase(Integer.parseInt(value),new AsyncCallback<JSON<JsOrder>>() {
 					
-					@Override
-					public void onSuccess(JSON<JsPurchase> result) {
-						API.getWarehouse().getPurchaseDetails(result.getOneData().getId(), new AsyncCallback<JSON<JsPurchaseDetail>>() {
+						@Override
+						public void onSuccess(JSON<JsOrder> result) {
+							API.getWarehouse().getPurchaseDetails(result.getOneData().getId(), new AsyncCallback<JSON<JsOrderDetail>>() {
 							
-							@Override
-							public void onSuccess(JSON<JsPurchaseDetail> details) {
-								parent.southContent(result.getOneData(), details.getData());
-							}
-							
-							@Override public void onFailure(Throwable caught) {}
-						});
-					}
+								@Override
+								public void onSuccess(JSON<JsOrderDetail> details) {
+									parent.southContent(result.getOneData(), details.getData());
+								}
+								
+								@Override public void onFailure(Throwable caught) {}
+							});
+						}
 					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				} else {
+					API.getWarehouse().getDelivery(Integer.parseInt(value),new AsyncCallback<JSON<JsOrder>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsOrder> result) {
+							API.getWarehouse().getDeliveryDetails(result.getOneData().getId(), new AsyncCallback<JSON<JsOrderDetail>>() {
+							
+								@Override
+								public void onSuccess(JSON<JsOrderDetail> details) {
+									parent.southContent(result.getOneData(), details.getData());
+								}
+								
+								@Override public void onFailure(Throwable caught) {}
+							});
+						}
+					
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
 			}
 		});
 		
@@ -140,13 +192,17 @@ public class CarrierPackingSelect extends Composite{
 				l2.addItem(label, value);
 				
 				String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\"}";
-				API.getWarehouse().updatePurchase(Integer.parseInt(value), requestData, new AsyncCallback<JsPurchase>() {
-
-					@Override public void onFailure(Throwable caught) {}
-
-					@Override public void onSuccess(JsPurchase result) {}
-					
-				});
+				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+					API.getWarehouse().updatePurchase(Integer.parseInt(value), requestData, new AsyncCallback<JsOrder>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(JsOrder result) {}
+					});
+				} else {
+					API.getWarehouse().updateDelivery(Integer.parseInt(value), requestData, new AsyncCallback<JsOrder>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(JsOrder result) {}
+					});
+				}
 			}
 		});
 		
@@ -161,13 +217,19 @@ public class CarrierPackingSelect extends Composite{
 				l.addItem(label, value);
 				
 				String requestData = "{\"carrier_packing\":\"\"}";
-				API.getWarehouse().updatePurchase(Integer.parseInt(value), requestData, new AsyncCallback<JsPurchase>() {
-
-					@Override public void onFailure(Throwable caught) {}
-
-					@Override public void onSuccess(JsPurchase result) {}
-					
-				});			}
+				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+					API.getWarehouse().updatePurchase(Integer.parseInt(value), requestData, new AsyncCallback<JsOrder>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(JsOrder result) {}
+					});			
+				} else {
+					API.getWarehouse().updateDelivery(Integer.parseInt(value), requestData, new AsyncCallback<JsOrder>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(JsOrder result) {}
+					});		
+				}
+				
+			}
 		});
 	
 	}

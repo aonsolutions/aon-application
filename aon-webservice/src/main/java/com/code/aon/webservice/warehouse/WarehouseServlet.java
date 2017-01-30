@@ -21,11 +21,14 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
+import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "WarehouseServlet", urlPatterns = { "/warehouse/*",
@@ -68,6 +71,12 @@ public class WarehouseServlet extends HttpServlet{
 							object = getPurchaseDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
 						} else object = getPurchase(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else object = getPurchaseList(domain, userName, req.getParameterMap());
+				} else if(MSG.DELIVERY.equals(pathInfo[3])){
+					if(pathInfo.length > 4){
+						if(pathInfo.length > 5){
+							object = getDeliveryDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
+						} else object = getDelivery(domain, userName, Integer.parseInt(pathInfo[4]));
+					} else object = getDeliveryList(domain, userName, req.getParameterMap());
 				}
 				
 				Utils.giveBack(req, resp, object, new JSONObject());
@@ -112,6 +121,13 @@ public class WarehouseServlet extends HttpServlet{
 					} 
 				} 
 			}
+			else if(MSG.DELIVERY.equals(pathInfo[3])){
+				if(pathInfo.length > 4){ 
+					if(MSG.UPDATE.equals(pathInfo[4])){
+						object = updateDelivery(domain, userName, Integer.parseInt(pathInfo[5]), json);
+					} 
+				} 
+			}
 				
 			resp.setContentType("application/json;charset=UTF-8");
 			Utils.addCorsHeader(resp);
@@ -138,9 +154,16 @@ public class WarehouseServlet extends HttpServlet{
 	
 	private JSONObject updatePurchase(Domain domain, String login, Integer id, JSONObject json) {
 		Purchase purchase = AON.getPurchase(domain.getName(), domain.getId(), login, id);
-		purchase = getPurchase(domain, login, json, purchase);
+		purchase.setCarrierPacking(getOrderCarrierPacking(json));
 		AON.updatePurchase(domain.getName(), domain.getId(), login, purchase);
 		return ToJSON.purchaseToJSON(purchase);
+	}
+	
+	private JSONObject updateDelivery(Domain domain, String login, Integer id, JSONObject json) {
+		Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), login, id);
+		delivery.setCarrierPacking(getOrderCarrierPacking(json));
+		AON.updateDelivery(domain.getName(), domain.getId(), login, delivery);
+		return ToJSON.deliveryToJSON(delivery);
 	}
 	
 	private JSONArray getCarrierList(Domain domain, String login) {
@@ -190,13 +213,12 @@ public class WarehouseServlet extends HttpServlet{
 		return carrierPacking;
 	}
 	
-	private Purchase getPurchase(Domain domain, String login, JSONObject json, Purchase purchase) {
-		if(json.opt(MSG.CARRIER_PACKING) != null){
-			if(MSG.EMPTY.equals(json.opt(MSG.CARRIER_PACKING))){
-				 purchase.setCarrierPacking(null);
-			}else purchase.setCarrierPacking(json.getInt(MSG.CARRIER_PACKING));
+	private Integer getOrderCarrierPacking(JSONObject json){
+		if(json.opt(MSG.CARRIER_PACKING) != null && 
+			!MSG.EMPTY.equals(json.opt(MSG.CARRIER_PACKING))){
+			return json.getInt(MSG.CARRIER_PACKING);
 		}
-		return purchase;
+		return null;
 	}
 	
     private JSONArray getCarrierPackingList(Domain domain, String login, Map<String, String[]> filterMap){
@@ -230,6 +252,24 @@ public class WarehouseServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getPurchaseProperty().eq(id)))
     		.forEach(purchaseDetail -> array.put(ToJSON.purchaseDetailToJSON(purchaseDetail)));
+    	return array;
+    }
+    
+    private JSONArray getDeliveryList(Domain domain,String login, Map<String, String[]> map){
+    	JSONArray array = new JSONArray();
+    	AON.getDeliveryStream(domain.getName(), domain.getId(), login, f -> deliveryFilter(domain, map, f))
+    		.forEach(delivery -> array.put(ToJSON.deliveryToJSON(delivery)));
+    	return array;
+    }
+    
+    private JSONObject getDelivery(Domain domain,String login, Integer id){
+    	return ToJSON.deliveryToJSON(AON.getDelivery(domain.getName(), domain.getId(), login, id));
+    }
+    
+    private JSONArray getDeliveryDetailList(Domain domain,String login, Integer id){
+    	JSONArray array = new JSONArray();
+    	AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getDelivery().eq(id)))
+    		.forEach(deliveryDetail -> array.put(ToJSON.deliveryDetailToJSON(deliveryDetail)));
     	return array;
     }
     
@@ -269,10 +309,11 @@ public class WarehouseServlet extends HttpServlet{
 		}
 
 		return filter;
-}
+    }
     
     private Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
-    		Filter filter = f.getDomainProperty().eq(domain.getId());
+    		Filter filter = f.getDomainProperty().eq(domain.getId())
+    				.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(new Date())));
     			
     		if(filterMap.containsKey(MSG.CARRIER)){
     			Integer carrier = Integer.parseInt(filterMap.get(MSG.CARRIER)[0]);
@@ -292,6 +333,27 @@ public class WarehouseServlet extends HttpServlet{
     		return filter;
 	}
     
+    private Filter deliveryFilter(Domain domain, Map<String, String[]> filterMap, DeliveryProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId())
+				.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(new Date())));
+			
+		if(filterMap.containsKey(MSG.CARRIER)){
+			Integer carrier = Integer.parseInt(filterMap.get(MSG.CARRIER)[0]);
+			filter = filter.and(f.getCarrierProperty().eq(carrier)
+					.or(f.getCarrierProperty().isNull()));
+		}
+		
+		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
+			Integer carrierPacking = Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0]);
+			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
+		}
+		
+		if(filterMap.containsKey("not_carrier_packing")){
+			filter = filter.and(f.getCarrierPackingProperty().isNull());
+		}
+		return filter;
+    }
+    
     private JSONArray getCarrierPackingStatusList() {
     	JSONArray array = new JSONArray();
     	for(CarrierPackingStatus cps :CarrierPackingStatus.values()){
@@ -302,6 +364,7 @@ public class WarehouseServlet extends HttpServlet{
     
     private JSONArray getSeriesList() {
     	JSONArray array = new JSONArray();
+    	array.put(ToJSON.objectToJSON(2017, "2017"));
     	array.put(ToJSON.objectToJSON(2016, "2016"));
     	array.put(ToJSON.objectToJSON(2015, "2015"));
     	return array;

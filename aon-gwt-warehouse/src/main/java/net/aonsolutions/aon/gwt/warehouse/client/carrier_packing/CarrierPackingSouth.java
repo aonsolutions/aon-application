@@ -1,10 +1,8 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
-import com.esferalia.aon.gwt.api.client.warehouse.JsDelivery;
-import com.esferalia.aon.gwt.api.client.warehouse.JsDeliveryDetail;
-import com.esferalia.aon.gwt.api.client.warehouse.JsPurchase;
-import com.esferalia.aon.gwt.api.client.warehouse.JsPurchaseDetail;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -16,17 +14,13 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class CarrierPackingSouth extends DockLayoutPanel{
 	
-	public CarrierPackingSouth(JsPurchase purchase, AonJsArray<JsPurchaseDetail> purchaseDetails) {
+	public CarrierPackingSouth(JsOrder purchase, AonJsArray<JsOrderDetail> purchaseDetails) {
 		super(Unit.PX);
 		build(purchase, purchaseDetails);
 	}
 	
-	public CarrierPackingSouth(JsDelivery delivery, AonJsArray<JsDeliveryDetail> deliveryDetail) {
-		super(Unit.PX);
-		//buildB(delivery, deliveryDetail);
-	}
 	
-	private void build(JsPurchase purchase, AonJsArray<JsPurchaseDetail> details) {
+	private void build(JsOrder purchase, AonJsArray<JsOrderDetail> details) {
 		final FlowPanel p = new FlowPanel("pre");
 		final FlowPanel headerPanel = new FlowPanel("pre");
 		headerPanel.setStyleName(AON.AON_CSS.aonFixedFont());
@@ -53,7 +47,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 						AonStringUtils.defaultString(purchase.getSeries() +"/" + purchase.getNumber()), 16), 17)
 
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-						AonStringUtils.defaultString(purchase.getSupplier().getName()), 32),33)
+						AonStringUtils.defaultString(purchase.getRegistry().getName()), 32),33)
 				+ AonStringUtils.rightPad("",17)		
 				);
 		acc.setTitle("");

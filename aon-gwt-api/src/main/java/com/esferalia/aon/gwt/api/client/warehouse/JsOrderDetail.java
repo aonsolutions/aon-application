@@ -4,11 +4,11 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
-public class JsPurchaseDetail extends JavaScriptObject {
+public class JsOrderDetail extends JavaScriptObject {
 
-	protected JsPurchaseDetail() {}	public static final ProvidesKey<JsPurchaseDetail> PROVIDES_KEY = new ProvidesKey<JsPurchaseDetail>() {
+	protected JsOrderDetail() {}	public static final ProvidesKey<JsOrderDetail> PROVIDES_KEY = new ProvidesKey<JsOrderDetail>() {
 		@Override
-		public Object getKey(JsPurchaseDetail carrierPacking) {
+		public Object getKey(JsOrderDetail carrierPacking) {
 			return carrierPacking == null ? null : carrierPacking.getId();
 		}
 	};

@@ -120,6 +120,7 @@ public class AONContext {
 			Statement sOpen = connection.createStatement();
 			sOpen.execute(SET_FOREIGN_KEY_CHECKS_0);
 			System.out.println("Claves referenciales desactivadas");	
+			sOpen.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -130,9 +131,10 @@ public class AONContext {
 			Statement sClose = connection.createStatement();
 			sClose.execute(SET_FOREIGN_KEY_CHECKS_1);
 			System.out.println("Claves referenciales activadas");		
+			sClose.close();
 		} catch(SQLException e){
 			e.printStackTrace();
-		}
+		} 
 	}
 	
 	@Override

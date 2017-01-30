@@ -16,6 +16,8 @@ public class DeliveryDetail implements Serializable {
 	private Delivery delivery;
 	private short line;
 	private Item item;
+	private String productCode;
+	private String productName;
 	private String description;
 	private Integer warehouse;
 	private double quantity;
@@ -136,7 +138,19 @@ public class DeliveryDetail implements Serializable {
 		this.warehouse = warehouse;
 		return this;
 	}
-	
-	
+	public String getProductCode() {
+		return productCode;
+	}
+	public DeliveryDetail setProductCode(String productCode) {
+		this.productCode = productCode;
+		return this;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public DeliveryDetail setProductName(String productName) {
+		this.productName = productName;
+		return this;
+	}	
 
 }

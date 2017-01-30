@@ -33,6 +33,8 @@ import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -120,6 +122,8 @@ import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -1078,6 +1082,8 @@ public class AON {
 		}
 	}
 	
+	// ------------------ PURCHASE
+	
 	public static Stream<Purchase> getPurchaseStream(String domainName,
 			Integer domainId, String login, PurchaseFilter filter) {
 		AONContext ctx = null;
@@ -1176,6 +1182,106 @@ public class AON {
 		return getPurchaseDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
 	}
 	
+	// ------------------ DELIVERY
+	
+	public static Stream<Delivery> getDeliveryStream(String domainName,
+			Integer domainId, String login, DeliveryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getDeliveryStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Delivery> getDeliveryList(String domainName,
+			Integer domainId, String login, DeliveryFilter filter) {
+		return getDeliveryStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Delivery getDelivery(String domainName,
+			Integer domainId, String login, DeliveryFilter filter) {
+		return getDeliveryStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Delivery());
+	}
+	
+	public static Delivery getDelivery(String domainName,
+			Integer domainId, String login, Integer id) {
+		return getDelivery(domainName, domainId, login,
+				f -> f.getIdProperty().eq(id).perPage(1));	
+	}
+	
+	public static Delivery insertDelivery(String domainName, Integer domainId, String login, Delivery delivery) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().insertDelivery(ctx, delivery);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Delivery updateDelivery(String domainName, Integer domainId, String login, Delivery delivery, DeliveryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().updateDelivery(ctx, delivery, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Delivery updateDelivery(String domainName, Integer domainId, String login, Delivery delivery) {
+		return updateDelivery(domainName, domainId, login, delivery, f -> f.getIdProperty().eq(delivery.getId()));
+	}
+	
+	public static void deleteDelivery(String domainName, Integer domainId, String login, DeliveryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getManagement().deleteDelivery(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteDelivery(String domainName, Integer domainId, String login, Integer id) {
+		deleteDelivery(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
+	// -------------------- DELIVERY DETAILS
+	
+	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName,
+			Integer domainId, String login, DeliveryDetailFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getDeliveryDetailStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
+	public static LinkedList<DeliveryDetail> getDeliveryDetailList(String domainName,
+			Integer domainId, String login, DeliveryDetailFilter filter) {
+		return getDeliveryDetailStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+		
+	public static DeliveryDetail getDeliveryDetail(String domainName,
+			Integer domainId, String login, DeliveryDetailFilter filter) {
+		return getDeliveryDetailStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new DeliveryDetail());
+	}
+		
+	public static DeliveryDetail getDeliveryDetail(String domainName,
+			Integer domainId, String login, Integer id) {
+		return getDeliveryDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
+	}
 	
 	// ********************************************
 	// ********************************* PAYROLL **

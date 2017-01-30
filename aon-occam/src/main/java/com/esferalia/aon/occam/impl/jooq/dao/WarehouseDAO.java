@@ -26,8 +26,6 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.DeliveryDetailRecord;
-import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
@@ -41,8 +39,6 @@ import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
@@ -50,8 +46,6 @@ import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailPrope
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
-import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -62,8 +56,12 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 
 
 public class WarehouseDAO {
@@ -144,62 +142,7 @@ public class WarehouseDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(DEPARTMENT.NAME);}
 	}
 	
-	protected static class DeliveryPropertiesDAO implements DeliveryProperties {
-		protected Condition[] getConditions(DeliveryFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.DOMAIN);}
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.PROJECT);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.SERIES);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.NUMBER);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.CUSTOMER);}
-		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.ADDRESS);}
-		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DELIVERY.ISSUE_TIME);}
-		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.PAY_METHOD);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(DELIVERY.SECURITY_LEVEL);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(DELIVERY.STATUS);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.COMMENTS);}
-		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.REMARKS);}
-		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.WORKPLACE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY.SCOPE);}
-		@Override public Property<Short> getNumberOfPymntsProperty() {return new FilterDAO.PropertyDAO<Short>(DELIVERY.NUMBER_OF_PYMNTS);}
-		@Override public Property<Short> getDaysToFirstPymntProperty() {return new FilterDAO.PropertyDAO<Short>(DELIVERY.DAYS_TO_FIRST_PYMNT);}
-		@Override public Property<Short> getDaysBetweenPymntProperty() {return new FilterDAO.PropertyDAO<Short>(DELIVERY.DAYS_BETWEEN_PYMNTS);}
-		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.PYMNT_DAYS);}
-		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.BANK_ACCOUNT);}
-		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.BANK_ALIAS);}
-		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.BIC);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DELIVERY.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DELIVERY.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY.MODIFICATION_USER);}
-	}
 	
-	protected static class DeliveryDetailPropertiesDAO implements DeliveryDetailProperties {
-		protected Condition[] getConditions(DeliveryDetailFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY_DETAIL.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getDelivery() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY_DETAIL.DELIVERY);}
-		@Override public Property<Short> getLine() {return new FilterDAO.PropertyDAO<Short>(DELIVERY_DETAIL.LINE);}
-		@Override public Property<Integer> getItem() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY_DETAIL.ITEM);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY_DETAIL.DESCRIPTION);}
-		@Override public Property<Integer> getWarehouse() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY_DETAIL.WAREHOUSE);}
-		@Override public Property<Double> getQuantity() {return new FilterDAO.PropertyDAO<Double>(DELIVERY_DETAIL.QUANTITY);}
-		@Override public Property<Double> getPrice() {return new FilterDAO.PropertyDAO<Double>(DELIVERY_DETAIL.PRICE);}
-		@Override public Property<String> getDiscountExpressionProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY_DETAIL.DISCOUNT_EXPR);}
-		@Override public Property<Integer> getSalesDetail() {return new FilterDAO.PropertyDAO<Integer>(DELIVERY_DETAIL.SALES_DETAIL);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DELIVERY_DETAIL.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY_DETAIL.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DELIVERY_DETAIL.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(DELIVERY_DETAIL.MODIFICATION_USER);}
-	}
 	
 	public static Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter){
 		return ctx.getDslContext().select()
@@ -408,14 +351,14 @@ public class WarehouseDAO {
 	public static Delivery getDelivery(AONContext ctx, Integer deliveryId) {
 		return ctx.getDslContext().select().from(DELIVERY)
 				.where(DELIVERY.ID.eq(deliveryId)).limit(1).fetchInto(DELIVERY)
-				.stream().map(new FullDeliveryFiller()).findFirst()
+				.stream().map(new DeliveryFiller()).findFirst()
 				.orElse(new Delivery());
 	}
 
 	public static Delivery getDelivery(AONContext ctx, DeliveryFilter filter) {
 		return ctx.getDslContext().select().from(DELIVERY)
 				.where(DELIVERY_PROPERTIES.getConditions(filter)).limit(1)
-				.fetchInto(DELIVERY).stream().map(new FullDeliveryFiller())
+				.fetchInto(DELIVERY).stream().map(new DeliveryFiller())
 				.findFirst().orElse(new Delivery());
 	}
 
@@ -423,7 +366,7 @@ public class WarehouseDAO {
 			DeliveryFilter filter) {
 		return ctx.getDslContext().select().from(DELIVERY)
 				.where(DELIVERY_PROPERTIES.getConditions(filter))
-				.fetchInto(DELIVERY).stream().map(new FullDeliveryFiller())
+				.fetchInto(DELIVERY).stream().map(new DeliveryFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -432,7 +375,7 @@ public class WarehouseDAO {
 		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
 				.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(DELIVERY_DETAIL).stream()
-				.map(new FullDeliveryDetailFiller()).findFirst()
+				.map(new DeliveryDetailFiller()).findFirst()
 				.orElse(new DeliveryDetail());
 	}
 	
@@ -442,7 +385,7 @@ public class WarehouseDAO {
 				.where(DELIVERY_DETAIL.DELIVERY.eq(deliveryId))
 				.orderBy(DELIVERY_DETAIL.SALES_DETAIL.desc(), DELIVERY_DETAIL.ITEM.asc())
 				.fetchInto(DELIVERY_DETAIL).stream()
-				.map(new FullDeliveryDetailFiller())
+				.map(new DeliveryDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -452,7 +395,7 @@ public class WarehouseDAO {
 				.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
 				.orderBy(DELIVERY_DETAIL.SALES_DETAIL.desc(), DELIVERY_DETAIL.ITEM.asc())
 				.fetchInto(DELIVERY_DETAIL).stream()
-				.map(new FullDeliveryDetailFiller())
+				.map(new DeliveryDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -713,61 +656,6 @@ public class WarehouseDAO {
 		}
 	}
 	
-	private static class FullDeliveryFiller implements Function<DeliveryRecord, Delivery> {
-		@Override
-		public Delivery apply(DeliveryRecord r) {
-			return new Delivery()
-			.setId(r.getId())
-			.setDomain(r.getDomain())
-			.setProject(new Project().setId(r.getProject()))
-			.setSeries(r.getSeries())
-			.setNumber(r.getNumber())
-			.setCustomer(r.getCustomer())
-			.setAddress(r.getAddress())
-			.setIssueTime(r.getIssueTime())
-			.setPayMethod(r.getPayMethod())
-			.setSecurityLevel(r.getSecurityLevel())
-			.setStatus(DeliveryStatus.values()[r.getStatus()])
-			.setComments(r.getComments())
-			.setRemarks(r.getRemarks())
-			.setWorkplace(r.getWorkplace())
-			.setScope(r.getScope())
-			.setNumberOfPymnts(r.getNumberOfPymnts())
-			.setDaysToFirstPymnt(r.getDaysToFirstPymnt())
-			.setDaysBetweenPymnt(r.getDaysBetweenPymnts())
-			.setPymntDays(r.getPymntDays())
-			.setBankAccount(r.getBankAccount())
-			.setBankAlias(r.getBankAlias())
-			.setBic(r.getBic())
-			.setCreationDate(r.getCreationDate())
-			.setCreationUser(r.getCreationUser())
-			.setModificationDate(r.getModificationDate())
-			.setModificationUser(r.getModificationUser())
-			;
-		}		
-	}
 	
-	private static class FullDeliveryDetailFiller implements Function<DeliveryDetailRecord, DeliveryDetail> {
-		@Override
-		public DeliveryDetail apply(DeliveryDetailRecord r) {
-			return new DeliveryDetail()
-			.setId(r.getId())
-			.setDomain(r.getDomain())
-			.setDelivery(new Delivery().setId(r.getDelivery()))
-			.setLine(r.getLine())
-			.setItem(new Item().setId(r.getItem()))
-			.setDescription(r.getDescription())
-			.setWarehouse(r.getWarehouse())
-			.setQuantity(r.getQuantity())
-			.setPrice(r.getPrice())
-			.setDiscountExpression(r.getDiscountExpr())
-			.setSalesDetail(r.getSalesDetail())
-			.setCreationDate(r.getCreationDate())
-			.setCreationUser(r.getCreationUser())
-			.setModificationDate(r.getModificationDate())
-			.setModificationUser(r.getModificationUser())
-			;
-		}		
-	}
 	
 }

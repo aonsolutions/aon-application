@@ -55,20 +55,38 @@ public class Warehouse extends Methods{
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}");
 	}
 	
-	public void getPurchases(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsPurchase>> callback){
+	public void getPurchases(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase" + filter, callback);
 	}
 	
-	public void getPurchase(Integer id, AsyncCallback<JSON<JsPurchase>> callback){
+	public void getPurchase(Integer id, AsyncCallback<JSON<JsOrder>> callback){
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id , callback);
 	}
 	
-	public void getPurchaseDetails(Integer id, AsyncCallback<JSON<JsPurchaseDetail>> callback){
+	public void getPurchaseDetails(Integer id, AsyncCallback<JSON<JsOrderDetail>> callback){
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id + "/detail" , callback);
 	}
 	
-	public void updatePurchase(Integer id, String requestData, AsyncCallback<JsPurchase> callback){
+	public void updatePurchase(Integer id, String requestData, AsyncCallback<JsOrder> callback){
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/purchase/update/" + id, requestData, callback);
 	}
+	
+	public void getDeliveries(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery" + filter, callback);
+	}
+	
+	public void getDelivery(Integer id, AsyncCallback<JSON<JsOrder>> callback){
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/"+id , callback);
+	}
+	
+	public void getDeliveryDetails(Integer id, AsyncCallback<JSON<JsOrderDetail>> callback){
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/"+id + "/detail" , callback);
+	}
+	
+	public void updateDelivery(Integer id, String requestData, AsyncCallback<JsOrder> callback){
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData, callback);
+	}
+
 }

@@ -13,7 +13,9 @@ public class MSG {
 	public static final String COMMENT = "comment";
 	public static final String CLOSED = "closed";
 	public static final String COLOR = "color";	
+	public static final String CUSTOMER = "customer";	
 	public static final String DELETE = "delete";
+	public static final String DELIVERY = "delivery";
 	public static final String DELIVERY_DATE = "delivery_date";
 	public static final String DESCRIPTION = "description";
 	public static final String DOMAIN = "domain";

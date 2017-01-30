@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
-import com.esferalia.aon.gwt.api.client.warehouse.JsPurchase;
-import com.esferalia.aon.gwt.api.client.warehouse.JsPurchaseDetail;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate;
@@ -156,7 +156,7 @@ public class CarrierPacking extends AonTemplate{
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);
 	}
 	
-	public void southContent(JsPurchase p, AonJsArray<JsPurchaseDetail> details){
+	public void southContent(JsOrder p, AonJsArray<JsOrderDetail> details){
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
 		setSouthContent(new CarrierPackingSouth(p, details));
 	}

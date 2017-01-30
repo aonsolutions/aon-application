@@ -19,6 +19,7 @@ import com.code.aon.conexflow.jooq.DBConsults;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -125,7 +126,14 @@ public class ConexFlowUtils {
 			AonFileUtils.writeStringToFile(htmlFile, htmlString);
 			InputStream is = new FileInputStream(htmlFile);
 			byte[] b = AonIOUtils.toByteArray(is);
-			Attach attach = Attach.projectAttach(project, domain, MimeType.HTML, VOUCHER, b, false, new Date(), null);
+			Attach attach = new Attach(AttachType.PROJECT)
+					.setAttachModule(project)
+					.setDomain(domain)
+					.setMimeType(MimeType.HTML)
+					.setDescription(VOUCHER)
+					.setData(b)
+					.setConfidential(false)
+					.setDate(new Date());
 			AON.insert(domain.getName(), domain.getId(), "",attach);
 		} catch (IOException e) {
 			e.printStackTrace();

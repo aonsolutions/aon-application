@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -178,12 +180,24 @@ public class ToJSON {
 		return new JSONObject()
 			.put(MSG.ID, purchase.getId())
 			.put(MSG.DOMAIN, purchase.getDomain())
-			.put("series", purchase.getSeries())
-			.put("number", purchase.getNumber())
-			.put("supplier", new JSONObject()
+			.put(MSG.SERIES, purchase.getSeries())
+			.put(MSG.NUMBER, purchase.getNumber())
+			.put(MSG.REGISTRY, new JSONObject()
 				.put(MSG.ID, purchase.getSupplier())
 				.put(MSG.NAME, purchase.getSupplierName())) 
 			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "");
+	}
+	
+	public static JSONObject deliveryToJSON(Delivery delivery) {
+		return new JSONObject()
+			.put(MSG.ID, delivery.getId())
+			.put(MSG.DOMAIN, delivery.getDomain())
+			.put(MSG.SERIES, delivery.getSeries())
+			.put(MSG.NUMBER, delivery.getNumber())
+			.put(MSG.REGISTRY, new JSONObject()
+				.put(MSG.ID, delivery.getCustomer())
+				.put(MSG.NAME, delivery.getCustomerName())) 
+			.put(MSG.ISSUE_DATE, delivery.getIssueTime() != null ? dateFormat.format(delivery.getIssueTime()) : "");
 	}
 	
 	public static JSONObject purchaseDetailToJSON(PurchaseDetail purchaseDetail) {
@@ -199,6 +213,21 @@ public class ToJSON {
 			
 			.put("product_code", purchaseDetail.getProductCode())
 			.put("product_name", purchaseDetail.getProductName())
+			;
+	}
+	
+	public static JSONObject deliveryDetailToJSON(DeliveryDetail deliveryDetail) {
+		return new JSONObject()
+			.put(MSG.ID, deliveryDetail.getId())
+			.put(MSG.DOMAIN, deliveryDetail.getDomain())
+			.put("price", deliveryDetail.getPrice())
+			.put("quantity", deliveryDetail.getQuantity())
+			.put("discount_expr", deliveryDetail.getDiscountExpression())
+			.put("line", deliveryDetail.getLine())
+			.put("item", deliveryDetail.getItem())
+			
+			.put("product_code", deliveryDetail.getProductCode())
+			.put("product_name", deliveryDetail.getProductName())
 			;
 	}
 	

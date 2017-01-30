@@ -62,6 +62,7 @@ public class Attach implements Serializable {
 	public Attach() {
 
 	}
+	
 	public Attach(AttachType attachType){
 		this.attachType = attachType;
 	}
@@ -290,21 +291,6 @@ public class Attach implements Serializable {
 	}
 	public void setTagList(LinkedList<Tag> tagList) {
 		this.tagList = tagList;
-	}
-	
-	public static Attach projectAttach(Integer project, Domain domain, com.esferalia.aon.occam.api.model.type.MimeType mimetype, String description,
-			byte[] data, Boolean confidential, Date date, String driveId){
-		Attach attach = new Attach(AttachType.PROJECT);
-		attach.setAttachModule(project);
-		attach.setDomain(domain);
-		attach.setMimeType(mimetype);
-		attach.setDescription(description);
-		attach.setData(data);
-		attach.setConfidential(confidential);
-		attach.setDate(date);
-		attach.setDriveId(driveId);
-
-		return attach;
 	}
 	
 	public String getTagListString(){

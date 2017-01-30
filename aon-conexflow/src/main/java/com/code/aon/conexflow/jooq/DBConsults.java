@@ -235,7 +235,15 @@ public class DBConsults {
 	public static void insertConexFlowOperation(Domain domain, byte[] xmlFile, Integer project, String op){
 		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());
 		Integer id = getConexFlowLastOperationId(domain, project,op);
-		Attach attach = Attach.projectAttach(project, domain, MimeType.XML, "CONEXFLOW-"+op, xmlFile, true, currentDate, null);
+		Attach attach = new Attach(AttachType.PROJECT)
+				.setAttachModule(project)
+				.setDomain(domain)
+				.setMimeType(MimeType.XML)
+				.setDescription("CONEXFLOW-"+op)
+				.setData(xmlFile)
+				.setConfidential(true)
+				.setDate(currentDate);
+		
 		if(id != null ){
 			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
 			if(op.equals(ConexFlowConstant.CREATE_TOKEN_OP)){
@@ -251,7 +259,15 @@ public class DBConsults {
 				.and(f.getDescriptionProperty().eq("CONEXFLOW-CHECK-"+op).or(f.getDescriptionProperty().eq("CONEXFLOW-CHECK-NO-"+op)))
 				, AttachType.PROJECT).getId();
 		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());	
-		Attach attach = Attach.projectAttach(project, domain, MimeType.XML, desc + op, xmlFile, true, currentDate, null);
+		Attach attach = new Attach(AttachType.PROJECT)
+				.setAttachModule(project)
+				.setDomain(domain)
+				.setMimeType(MimeType.XML)
+				.setDescription(desc + op)
+				.setData(xmlFile)
+				.setConfidential(true)
+				.setDate(currentDate);
+
 		if(id != null ){
 			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
 			if(op.equals(ConexFlowConstant.CREATE_TOKEN_OP)){

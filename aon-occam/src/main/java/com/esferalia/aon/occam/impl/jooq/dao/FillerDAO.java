@@ -2,8 +2,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
+import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
+import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.util.function.Function;
 
@@ -12,8 +15,11 @@ import org.jooq.Record;
 import com.esferalia.aon.jooq.tables.Product;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
@@ -21,6 +27,8 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class FillerDAO {
@@ -126,6 +134,87 @@ public class FillerDAO {
 			detail.setProductCode(r.getValue(Product.PRODUCT.CODE));
 			detail.setProductName(r.getValue(Product.PRODUCT.NAME));
 			return detail;
+		}
+	}
+	
+	public static class DeliveryFiller implements Function<Record, Delivery> {
+		@Override
+		public Delivery apply(Record r) {
+			return new Delivery().setId(r.getValue(DELIVERY.ID)).setDomain(r.getValue(DELIVERY.DOMAIN))
+					.setProject(new Project()
+							.setId(r.getValue(DELIVERY.PROJECT)))
+					.setSeries(r.getValue(DELIVERY.SERIES)).setNumber(r.getValue(DELIVERY.NUMBER))
+					.setCustomer(r.getValue(DELIVERY.CUSTOMER)).setAddress(r.getValue(DELIVERY.ADDRESS))
+					.setIssueTime(r.getValue(DELIVERY.ISSUE_TIME)).setPayMethod(r.getValue(DELIVERY.PAY_METHOD))
+					.setSecurityLevel(r.getValue(DELIVERY.SECURITY_LEVEL))
+					.setStatus(DeliveryStatus.values()[r.getValue(DELIVERY.STATUS)])
+					.setComments(r.getValue(DELIVERY.COMMENTS)).setRemarks(r.getValue(DELIVERY.REMARKS))
+					.setWorkplace(r.getValue(DELIVERY.WORKPLACE)).setScope(r.getValue(DELIVERY.SCOPE))
+					.setNumberOfPymnts(r.getValue(DELIVERY.NUMBER_OF_PYMNTS))
+					.setDaysToFirstPymnt(r.getValue(DELIVERY.DAYS_TO_FIRST_PYMNT))
+					.setDaysBetweenPymnt(r.getValue(DELIVERY.DAYS_BETWEEN_PYMNTS))
+					.setPymntDays(r.getValue(DELIVERY.PYMNT_DAYS)).setBankAccount(r.getValue(DELIVERY.BANK_ACCOUNT))
+					.setBankAlias(r.getValue(DELIVERY.BANK_ALIAS)).setBic(r.getValue(DELIVERY.BIC))
+					.setCarrier(r.getValue(DELIVERY.CARRIER))
+					.setCarrierPacking(r.getValue(DELIVERY.CARRIER_PACKING))
+					.setNumberPlate(r.getValue(DELIVERY.NUMBER_PLATE))
+					.setDriver(r.getValue(DELIVERY.DRIVER))
+					.setDriverDocument(r.getValue(DELIVERY.DRIVER_DOCUMENT))
+					.setTotalPackages(r.getValue(DELIVERY.TOTAL_PACKAGES))
+					.setTotalWeight(r.getValue(DELIVERY.TOTAL_WEIGHT))
+					.setShippingAlternativeAddress(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_ADDRESS))
+					.setShippingAlternativeAddress2(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_ADDRESS2))
+					.setShippingAlternativeZip(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_ZIP))
+					.setShippingAlternativeCity(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_CITY))
+					.setShippingAlternativePhone(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_PHONE))
+					.setShippingAlternativeRecipient(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_RECIPIENT))
+					.setShippingContact(r.getValue(DELIVERY.SHIPPING_CONTACT))
+					.setShippingPeriod(r.getValue(DELIVERY.SHIPPING_PERIOD))
+					.setTrackingNumber(r.getValue(DELIVERY.TRACKING_NUMBER))
+					.setShippingStatus(r.getValue(DELIVERY.SHIPPING_STATUS))
+					.setStatusModificationDate(r.getValue(DELIVERY.STATUS_MODIFICATION_DATE))
+					.setCreationDate(r.getValue(DELIVERY.CREATION_DATE))
+					.setCreationUser(r.getValue(DELIVERY.CREATION_USER))
+					.setModificationDate(r.getValue(DELIVERY.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(DELIVERY.MODIFICATION_USER));
+		}
+	}
+	
+	public static class RDeliveryFiller extends DeliveryFiller{
+		@Override
+		public Delivery apply(Record r) {
+			return super.apply(r).setCustomerName(r.getValue(REGISTRY.NAME));
+		}
+	}
+	
+	public static class DeliveryDetailFiller implements Function<Record, DeliveryDetail> {
+		@Override
+		public DeliveryDetail apply(Record r) {
+			return new DeliveryDetail().setId(r.getValue(DELIVERY_DETAIL.ID))
+					.setDomain(r.getValue(DELIVERY_DETAIL.DOMAIN))
+					.setDelivery(new Delivery().setId(r.getValue(DELIVERY_DETAIL.DELIVERY)))
+					.setLine(r.getValue(DELIVERY_DETAIL.LINE))
+					.setItem(new Item()
+							.setId(r.getValue(DELIVERY_DETAIL.ITEM)))
+					.setDescription(r.getValue(DELIVERY_DETAIL.DESCRIPTION))
+					.setWarehouse(r.getValue(DELIVERY_DETAIL.WAREHOUSE))
+					.setQuantity(r.getValue(DELIVERY_DETAIL.QUANTITY))
+					.setPrice(r.getValue(DELIVERY_DETAIL.PRICE))
+					.setDiscountExpression(r.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
+					.setSalesDetail(r.getValue(DELIVERY_DETAIL.SALES_DETAIL))
+					.setCreationDate(r.getValue(DELIVERY_DETAIL.CREATION_DATE))
+					.setCreationUser(r.getValue(DELIVERY_DETAIL.CREATION_USER))
+					.setModificationDate(r.getValue(DELIVERY_DETAIL.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(DELIVERY_DETAIL.MODIFICATION_USER));
+		}
+	}
+	
+	public static class PDeliveryDetailFiller extends DeliveryDetailFiller {
+		@Override
+		public DeliveryDetail apply(Record r) {
+			return super.apply(r)
+					.setProductCode(r.getValue(PRODUCT.CODE))
+					.setProductName(r.getValue(PRODUCT.NAME));
 		}
 	}
 }

@@ -4,11 +4,11 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
-public class JsDeliveryDetail extends JavaScriptObject {
+public class JsOrder extends JavaScriptObject {
 
-	protected JsDeliveryDetail() {}	public static final ProvidesKey<JsDeliveryDetail> PROVIDES_KEY = new ProvidesKey<JsDeliveryDetail>() {
+	protected JsOrder() {}	public static final ProvidesKey<JsOrder> PROVIDES_KEY = new ProvidesKey<JsOrder>() {
 		@Override
-		public Object getKey(JsDeliveryDetail carrierPacking) {
+		public Object getKey(JsOrder carrierPacking) {
 			return carrierPacking == null ? null : carrierPacking.getId();
 		}
 	};
@@ -25,8 +25,8 @@ public class JsDeliveryDetail extends JavaScriptObject {
 		return this.project;
 	}-*/;
 	
-	public final native JsObject getSupplier() /*-{
-		return this.supplier;
+	public final native JsObject getRegistry() /*-{
+		return this.registry;
 	}-*/;
 
 	public final native String getSeries() /*-{

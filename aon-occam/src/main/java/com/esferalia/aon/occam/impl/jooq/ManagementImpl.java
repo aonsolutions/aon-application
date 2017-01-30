@@ -4,12 +4,17 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IManagement;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
@@ -53,5 +58,39 @@ public class ManagementImpl implements IManagement {
 	public Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> PurchaseDAO.getPurchaseDetailStream(ctx, filter));
+	}
+	
+	// ------------------ DELIVERY
+	
+	@Override
+	public Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.getDeliveryStream(ctx, filter));
+	}
+
+	@Override
+	public Delivery insertDelivery(AONContext ctx, Delivery delivery) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.insertDelivery(ctx, delivery));
+	}
+
+	@Override
+	public Delivery updateDelivery(AONContext ctx, Delivery delivery, DeliveryFilter filter) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.updateDelivery(ctx, delivery, filter));
+	}
+
+	@Override
+	public void deleteDelivery(AONContext ctx, DeliveryFilter filter) {
+		 ctx.getDslContext().transaction(
+			configuration -> DeliveryDAO.deleteDelivery(ctx, filter));		
+	}
+	
+	// ------------------ DELIVERY DETAIL
+	
+	@Override
+	public Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryDetailFilter filter) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.getDeliveryDetailStream(ctx, filter));
 	}
 }

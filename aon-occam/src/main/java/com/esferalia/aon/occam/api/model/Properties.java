@@ -307,6 +307,8 @@ public interface Properties {
 		Property<String> getCreationUserProperty();
 		Property<Timestamp> getModificationDateProperty();
 		Property<String> getModificationUserProperty();
+		Property<Integer> getCarrierProperty();
+		Property<Integer> getCarrierPackingProperty();
 	}
 	
 	public interface DeliveryDetailProperties{

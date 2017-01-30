@@ -18,6 +18,7 @@ public class Delivery implements Serializable {
 	private String series;
 	private int number;
 	private Integer customer;
+	private String customerName;
 	private Integer address;
 	private Date issueTime;
 	private Integer payMethod;
@@ -34,6 +35,26 @@ public class Delivery implements Serializable {
 	private String bankAccount;
 	private String bankAlias;
 	private String bic;
+	
+	private Integer carrier;
+	private Integer carrierPacking;
+	private String numberPlate;
+	private String driver;
+	private String driverDocument;
+	private Double totalPackages;
+	private Double totalWeight;
+	private String shippingAlternativeAddress;
+	private String shippingAlternativeAddress2;
+	private String shippingAlternativeZip;
+	private String shippingAlternativeCity;
+	private String shippingAlternativePhone;
+	private String shippingAlternativeRecipient;
+	private String shippingContact;
+	private Byte shippingPeriod;
+	private String trackingNumber;	
+	private Byte shippingStatus;
+	private Date statusModificationDate;	
+	
 	// shippingAlternative
 	private Date creationDate;
 	private String creationUser;
@@ -225,8 +246,140 @@ public class Delivery implements Serializable {
 		this.workplace = workplace;
 		return this;
 	}
-
+	public Integer getCarrier() {
+		return carrier;
+	}
+	public Delivery setCarrier(Integer carrier) {
+		this.carrier = carrier;
+		return this;
+	}
+	public Integer getCarrierPacking() {
+		return carrierPacking;
+	}
+	public Delivery setCarrierPacking(Integer carrierPacking) {
+		this.carrierPacking = carrierPacking;
+		return this;
+	}
+	public String getDriver() {
+		return driver;
+	}
+	public Delivery setDriver(String driver) {
+		this.driver = driver;
+		return this;
+	}
+	public String getDriverDocument() {
+		return driverDocument;
+	}
+	public Delivery setDriverDocument(String driverDocument) {
+		this.driverDocument = driverDocument;
+		return this;
+	}
+	public Double getTotalPackages() {
+		return totalPackages;
+	}
+	public Delivery setTotalPackages(Double totalPackages) {
+		this.totalPackages = totalPackages;
+		return this;
+	}
+	public Double getTotalWeight() {
+		return totalWeight;
+	}
+	public Delivery setTotalWeight(Double totalWeight) {
+		this.totalWeight = totalWeight;
+		return this;
+	}
+	public String getShippingAlternativeAddress() {
+		return shippingAlternativeAddress;
+	}
+	public Delivery setShippingAlternativeAddress(String shippingAlternativeAddress) {
+		this.shippingAlternativeAddress = shippingAlternativeAddress;
+		return this;
+	}
+	public String getShippingAlternativeAddress2() {
+		return shippingAlternativeAddress2;
+	}
+	public Delivery setShippingAlternativeAddress2(String shippingAlternativeAddress2) {
+		this.shippingAlternativeAddress2 = shippingAlternativeAddress2;
+		return this;
+	}
+	public String getShippingAlternativeZip() {
+		return shippingAlternativeZip;
+	}
+	public Delivery setShippingAlternativeZip(String shippingAlternativeZip) {
+		this.shippingAlternativeZip = shippingAlternativeZip;
+		return this;
+	}
+	public String getShippingAlternativeCity() {
+		return shippingAlternativeCity;
+	}
+	public Delivery setShippingAlternativeCity(String shippingAlternativeCity) {
+		this.shippingAlternativeCity = shippingAlternativeCity;
+		return this;
+	}
+	public String getShippingAlternativePhone() {
+		return shippingAlternativePhone;
+	}
+	public Delivery setShippingAlternativePhone(String shippingAlternativePhone) {
+		this.shippingAlternativePhone = shippingAlternativePhone;
+		return this;
+	}
+	public String getShippingAlternativeRecipient() {
+		return shippingAlternativeRecipient;
+	}
+	public Delivery setShippingAlternativeRecipient(String shippingAlternativeRecipient) {
+		this.shippingAlternativeRecipient = shippingAlternativeRecipient;
+		return this;
+	}
+	public String getShippingContact() {
+		return shippingContact;
+	}
+	public Delivery setShippingContact(String shippingContact) {
+		this.shippingContact = shippingContact;
+		return this;
+	}
+	public Byte getShippingPeriod() {
+		return shippingPeriod;
+	}
+	public Delivery setShippingPeriod(Byte shippingPeriod) {
+		this.shippingPeriod = shippingPeriod;
+		return this;
+	}
+	public String getTrackingNumber() {
+		return trackingNumber;
+	}
+	public Delivery setTrackingNumber(String trackingNumber) {
+		this.trackingNumber = trackingNumber;
+		return this;
+	}
+	public Byte getShippingStatus() {
+		return shippingStatus;
+	}
+	public Delivery setShippingStatus(Byte shippingStatus) {
+		this.shippingStatus = shippingStatus;
+		return this;
+	}
+	public Date getStatusModificationDate() {
+		return statusModificationDate;
+	}
+	public Delivery setStatusModificationDate(Date statusModificationDate) {
+		this.statusModificationDate = statusModificationDate;
+		return this;
+	}
+	public String getNumberPlate() {
+		return numberPlate;
+	}
+	public Delivery setNumberPlate(String numberPlate) {
+		this.numberPlate = numberPlate;
+		return this;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public Delivery setCustomerName(String customerName) {
+		this.customerName = customerName;
+		return this;
+	}
 	
 	
-
+	
 }

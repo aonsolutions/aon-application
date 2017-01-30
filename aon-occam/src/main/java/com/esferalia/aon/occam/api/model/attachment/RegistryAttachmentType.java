@@ -29,4 +29,8 @@ public enum RegistryAttachmentType {
 	public byte value() {
 		return (byte) this.ordinal();
 	}
+	
+	public String getName(){
+		return this.toString();
+	}
 }

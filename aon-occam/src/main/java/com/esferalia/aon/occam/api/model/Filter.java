@@ -59,6 +59,9 @@ public interface Filter {
 	public Filter and(Filter filter);
 	public Filter not(Filter filter);
 	
+	public Filter page(Integer page);
+	public Filter perPage(Integer perPage);
+	
 	@FunctionalInterface
 	public interface WarehouseFilter{
 		Filter filter(WarehouseProperties properties);
