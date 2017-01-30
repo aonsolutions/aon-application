@@ -145,6 +145,10 @@
 			margin-top: 8px;
 		}
 		
+		.expandButtonStyle{
+			margin-top: 0px;
+		}
+		
 		.iconEraseStyle {
 			border: none;
 			margin-left: 255px;
@@ -177,15 +181,41 @@
 		}
 
 		.dialogBoxStyle{
-			z-index: 103;
-    		position: absolute;
-    		top: 10%;
-    		left: 10%;
-    		box-sizing: border-box;
-    		max-height: 394px;
-    		max-width: 728px;
-    		outline: none;
+			outline: none;
+		    position: absolute;
+		    box-sizing: border-box;
+		    left: 283px;
+		    top: 122.406px;
+		    max-width: 100%;
+		    max-height: 100%;
+		    padding: 0px;
+		    margin-top: 0px;
 		}
+		
+		.suggestBoxStyle{
+			margin-top: 0px;
+		    font-size: 1em;
+		}
+		
+		.labelHourStyle{
+			margin-top: 0px;
+		}
+		
+		.ocultarDivStyle{
+			display: none;
+		}
+		
+		.divWidthStyle{
+			width: 85%;
+			margin-top: 1px;
+		}
+		
+		.gwt-SuggestBoxPopup{
+			z-index: 107;
+		
+		}
+		
+		@external .gwt-SuggestBoxPopup
 
 	</ui:style>
 
@@ -215,78 +245,62 @@
 		<g:center>
 			<g:HTMLPanel>
 			    
-			    <style is="custom-style">
-				    iron-overlay-backdrop {
-				    	--iron-overlay-backdrop-opened: {
-				    		opacity: 0.6;
-	    					pointer-events: auto;
-				    	};
-				    }
-				</style>
-			    <p:PaperDialog ui:field="confirm" styleName="{style.dialogBoxStyle}" addStyleNames="dialog" 
-			         modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation">
+			    <p:PaperDialog ui:field="dialogHoras" styleName="{style.dialogBoxStyle}" 
+			         modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation" withBackdrop="true">
 		            <h2>Horas</h2>
 		            <g:HTMLPanel ui:field="confirmContent"></g:HTMLPanel>
-		            <p:PaperDropdownMenu  label="Lunes">
-			            <p:PaperMenu ui:field="lunesOpt" class="dropdown-content">
-			                <p:PaperItem>2</p:PaperItem>
-			                <p:PaperItem>4</p:PaperItem>
-			                <p:PaperItem>6</p:PaperItem>
-			                <p:PaperItem>8</p:PaperItem>
-			            </p:PaperMenu>
-		            </p:PaperDropdownMenu>
-		            <p:PaperDropdownMenu label="Martes">
-			            <p:PaperMenu ui:field="martesOpt" class="dropdown-content">
-			                <p:PaperItem>2</p:PaperItem>
-			                <p:PaperItem>4</p:PaperItem>
-			                <p:PaperItem>6</p:PaperItem>
-			                <p:PaperItem>8</p:PaperItem>
-			            </p:PaperMenu>
-		            </p:PaperDropdownMenu>
-		            <p:PaperDropdownMenu label="Miércoles">
-			            <p:PaperMenu ui:field="miercolesOpt" class="dropdown-content">
-			                <p:PaperItem>2</p:PaperItem>
-			                <p:PaperItem>4</p:PaperItem>
-			                <p:PaperItem>6</p:PaperItem>
-			                <p:PaperItem>8</p:PaperItem>
-			            </p:PaperMenu>
-		            </p:PaperDropdownMenu>
-		            <p:PaperDropdownMenu label="Jueves">
-			            <p:PaperMenu ui:field="juevesOpt" class="dropdown-content">
-			                <p:PaperItem>2</p:PaperItem>
-			                <p:PaperItem>4</p:PaperItem>
-			                <p:PaperItem>6</p:PaperItem>
-			                <p:PaperItem>8</p:PaperItem>
-			            </p:PaperMenu>
-		            </p:PaperDropdownMenu>
-		            <p:PaperDropdownMenu label="Viernes">
-			            <p:PaperMenu ui:field="viernesOpt" class="dropdown-content">
-			                <p:PaperItem>2</p:PaperItem>
-			                <p:PaperItem>4</p:PaperItem>
-			                <p:PaperItem>6</p:PaperItem>
-			                <p:PaperItem>8</p:PaperItem>
-			            </p:PaperMenu>
-		            </p:PaperDropdownMenu>
-		            <p:PaperDropdownMenu label="Sábado">
-			            <p:PaperMenu ui:field="sabadoOpt" class="dropdown-content">
-			                <p:PaperItem>2</p:PaperItem>
-			                <p:PaperItem>4</p:PaperItem>
-			                <p:PaperItem>6</p:PaperItem>
-			                <p:PaperItem>8</p:PaperItem>
-			            </p:PaperMenu>
-		            </p:PaperDropdownMenu>
-		            <p:PaperDropdownMenu label="Domingo">
-			            <p:PaperMenu ui:field="domingoOpt" class="dropdown-content">
-			                <p:PaperItem>2</p:PaperItem>
-			                <p:PaperItem>4</p:PaperItem>
-			                <p:PaperItem>6</p:PaperItem>
-			                <p:PaperItem>8</p:PaperItem>
-			            </p:PaperMenu>
-		            </p:PaperDropdownMenu>
-		            <div class="buttons">
+		            <g:HTMLPanel ui:field="bloqueLunes" styleName="{style.divWidthStyle}">
+		            	<i:IronLabel styleName="{style.labelHourStyle}">Lunes</i:IronLabel>
+			            <br></br>
+			            <g:SuggestBox ui:field="lunesOpt" styleName="{style.suggestBoxStyle}"/>
+			            <g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnL"/>
+		            </g:HTMLPanel>
+		            <br></br>
+		            <g:HTMLPanel ui:field="bloqueMartes" styleName="{style.divWidthStyle}">
+		            	<i:IronLabel styleName="{style.labelHourStyle}">Martes</i:IronLabel>
+		            	<br></br>
+		            	<g:SuggestBox ui:field="martesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnM"/>
+		            </g:HTMLPanel>
+		            <br></br>
+		            <g:HTMLPanel ui:field="bloqueMiercoles" styleName="{style.divWidthStyle}">
+			            <i:IronLabel styleName="{style.labelHourStyle}">Miercoles</i:IronLabel>
+			            <br></br>
+			            <g:SuggestBox ui:field="miercolesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnX"/>
+		            </g:HTMLPanel>
+		            <br></br>
+		            <g:HTMLPanel ui:field="bloqueJueves" styleName="{style.divWidthStyle}">
+			            <i:IronLabel styleName="{style.labelHourStyle}">Jueves</i:IronLabel>
+			            <br></br>
+			            <g:SuggestBox ui:field="juevesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+			            <g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnJ"/>
+		            </g:HTMLPanel>
+		            <br></br>
+		            <g:HTMLPanel ui:field="bloqueViernes" styleName="{style.divWidthStyle}">
+			            <i:IronLabel styleName="{style.labelHourStyle}">Viernes</i:IronLabel>
+			            <br></br>
+			            <g:SuggestBox ui:field="viernesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+			            <g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnV"/>
+		            </g:HTMLPanel>
+		            <br></br>
+		            <g:HTMLPanel ui:field="bloqueSabado" styleName="{style.suggestBoxStyle}">
+			            <i:IronLabel styleName="{style.labelHourStyle}">Sabado</i:IronLabel>
+			            <br></br>
+			            <g:SuggestBox ui:field="sabadoOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnS"/>
+		            </g:HTMLPanel>
+		            <br></br>
+		            <g:HTMLPanel ui:field="bloqueDomingo" styleName="{style.suggestBoxStyle}">
+			            <i:IronLabel styleName="{style.labelHourStyle}">Domingo</i:IronLabel>
+			            <br></br>
+			            <g:SuggestBox ui:field="domingoOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnD"/>
+		            </g:HTMLPanel>
+		            <HTMLPanel class="buttons">
 		              <p:PaperButton ui:field="confirmCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
 		              <p:PaperButton ui:field="confirmOk" attributes="dialog-confirm">OK</p:PaperButton>
-		            </div>
+		            </HTMLPanel>
 		        </p:PaperDialog>
 		        
 			    

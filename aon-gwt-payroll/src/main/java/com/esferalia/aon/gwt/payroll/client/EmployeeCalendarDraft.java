@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,7 +8,11 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -18,8 +23,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
@@ -44,6 +52,7 @@ public class EmployeeCalendarDraft extends Composite {
 		void setAsReduction(int row, int col);
 		void setAsSuspension(int row, int col);
 		void setHour(int row, int col, double newHour);
+		double getHour(int row, int col);
 	}
 	
 	public class DayCell implements CalendarTypeCell{
@@ -88,6 +97,10 @@ public class EmployeeCalendarDraft extends Composite {
 		@Override
 		public void setHour(int row, int col, double newHour) {
 		}
+		@Override
+		public double getHour(int row, int col) {
+			return 0;
+		}
 	}
 	
 	public class HourCell implements CalendarTypeCell{
@@ -128,8 +141,12 @@ public class EmployeeCalendarDraft extends Composite {
 		@Override
 		public void setHour(int row, int col, double newHour) {
 			DoubleBox widget = (DoubleBox)calendarGrid.getWidget(row, col);
-			widget.setValue(newHour);
-			
+			widget.setValue(newHour);	
+		}
+		@Override
+		public double getHour(int row, int col) {
+			DoubleBox widget = (DoubleBox)calendarGrid.getWidget(row, col);
+			return widget.getValue();
 		}
 	}
 	
@@ -170,6 +187,10 @@ public class EmployeeCalendarDraft extends Composite {
 		@Override
 		public void setHour(int row, int col, double newHour) {
 		}
+		@Override
+		public double getHour(int row, int col) {
+			return 0;
+		}
 	} 
 
 	//--------------------------------------------------------UiFields--------------------------------------------------------------------
@@ -202,6 +223,8 @@ public class EmployeeCalendarDraft extends Composite {
 		String doubleBoxDisableStyle2();
 
 		String ocultarHorasStyle();
+		
+		String ocultarDivStyle();
 	}
 
 	@UiField
@@ -244,7 +267,49 @@ public class EmployeeCalendarDraft extends Composite {
 	PaperButton confirmOk;
 	
 	@UiField
-	PaperDialog confirm;
+	Button expandHourBtnL;
+	
+	@UiField
+	Button expandHourBtnM;
+	
+	@UiField
+	Button expandHourBtnX;
+	
+	@UiField
+	Button expandHourBtnJ;
+	
+	@UiField
+	Button expandHourBtnV;
+	
+	@UiField
+	Button expandHourBtnS;
+	
+	@UiField
+	Button expandHourBtnD;
+	
+	@UiField
+	HTMLPanel bloqueLunes;
+	
+	@UiField
+	HTMLPanel bloqueMartes;
+	
+	@UiField
+	HTMLPanel bloqueMiercoles;
+	
+	@UiField
+	HTMLPanel bloqueJueves;
+	
+	@UiField
+	HTMLPanel bloqueViernes;
+	
+	@UiField
+	HTMLPanel bloqueSabado;
+	
+	@UiField
+	HTMLPanel bloqueDomingo;
+	
+	@UiField
+	PaperDialog dialogHoras;
 
 	@UiField
 	MenuItem horasMenuItem;
@@ -252,26 +317,26 @@ public class EmployeeCalendarDraft extends Composite {
 	@UiField
 	MenuItem horasButton;
 	
-	@UiField
-	PaperMenu lunesOpt;
+	@UiField(provided = true)
+	SuggestBox lunesOpt;
 	
 	@UiField
-	PaperMenu martesOpt;
+	SuggestBox martesOpt;
 	
 	@UiField
-	PaperMenu miercolesOpt;
+	SuggestBox miercolesOpt;
 	
 	@UiField
-	PaperMenu juevesOpt;
+	SuggestBox juevesOpt;
 	
 	@UiField
-	PaperMenu viernesOpt;
+	SuggestBox viernesOpt;
 	
 	@UiField
-	PaperMenu sabadoOpt;
+	SuggestBox sabadoOpt;
 	
 	@UiField
-	PaperMenu domingoOpt;
+	SuggestBox domingoOpt;
 
 	private List<Integer> posicionesSeleccionas = new ArrayList<Integer>();
 	private int oldHourSelected = 0;
@@ -279,9 +344,21 @@ public class EmployeeCalendarDraft extends Composite {
 	boolean mostrarHoras = true;
 	CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
 	
-	
 	public EmployeeCalendarDraft() {
+		
+		ArrayList<String> tipoHoras = new ArrayList<String>();
+		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+		tipoHoras.add("22222");
+		tipoHoras.add("44444");
+		tipoHoras.add("66666");
+		tipoHoras.add("88888");
+		oracle.setDefaultSuggestionsFromText(tipoHoras);
+		this.lunesOpt = new SuggestBox(oracle);
+		
 		initWidget(uiBinder.createAndBindUi(this));
+
+		
+		horasButton.setEnabled(false);
 		
 		//Inicializar CalendarTypeCell -> Cells
 		for (int row = 0; row < 25; row++)
@@ -327,28 +404,82 @@ public class EmployeeCalendarDraft extends Composite {
 			
 			@Override
 			public void execute() {
-				confirm.setWithBackdrop(true);
-				confirm.setHorizontalAlign("auto");
-				confirm.setHorizontalOffset(5);
-				confirm.setVerticalAlign("auto");
-				confirm.setVerticalOffset(5);
-				confirm.setVisible(true);
+				dialogHoras.open();
+				comprobarDiasAMostrar();
+			}
+
+			private void comprobarDiasAMostrar() {
+				bloqueLunes.addStyleName(style.ocultarDivStyle());
+				bloqueMartes.addStyleName(style.ocultarDivStyle());
+				bloqueMiercoles.addStyleName(style.ocultarDivStyle());
+				bloqueJueves.addStyleName(style.ocultarDivStyle());
+				bloqueViernes.addStyleName(style.ocultarDivStyle());
+				bloqueSabado.addStyleName(style.ocultarDivStyle());
+				bloqueDomingo.addStyleName(style.ocultarDivStyle());
+				
+				for (Integer pos : posicionesSeleccionas) {
+					int col = calcularColumna(pos.intValue());
+					int row = calcularFila(pos.intValue());
+					if (esDomingo(col))
+						bloqueDomingo.removeStyleName(style.ocultarDivStyle());
+					else if (esSabado(col))
+						bloqueSabado.removeStyleName(style.ocultarDivStyle());
+					else if (esViernes(col))
+						bloqueViernes.removeStyleName(style.ocultarDivStyle());
+					else if (esJueves(col))
+						bloqueJueves.removeStyleName(style.ocultarDivStyle());
+					else if (esMiercoles(col))
+						bloqueMiercoles.removeStyleName(style.ocultarDivStyle());
+					else if (esMartes(col))
+						bloqueMartes.removeStyleName(style.ocultarDivStyle());
+					else 
+						bloqueLunes.removeStyleName(style.ocultarDivStyle());
+				}
+				
 			}
 		});
+		
+		expandHourBtnL.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.alert("Hola");
+				lunesOpt.showSuggestionList();
+				
+			}
+		});
+		
+		this.lunesOpt.addKeyUpHandler(new KeyUpHandler() {		
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if ((event.getNativeKeyCode() == KeyEvent.CTRL_MASK) && 
+						(event.getNativeKeyCode() == KeyEvent.VK_SPACE))
+					lunesOpt.showSuggestionList();
+			}
+		});
+		
+		this.lunesOpt.addDomHandler(new DoubleClickHandler() {
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				lunesOpt.showSuggestionList();
+			}
+		}, DoubleClickEvent.getType());
 		
 		confirmOk.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				double horasLunes = (((double)lunesOpt.getSelected())+1)*2;
-				double horasMartes = (((double)martesOpt.getSelected())+1)*2;
-				double horasMiercoles = (((double)miercolesOpt.getSelected())+1)*2;
-				double horasJueves = (((double)juevesOpt.getSelected())+1)*2;
-				double horasViernes = (((double)viernesOpt.getSelected())+1)*2;
-				double horasSabado = (((double)sabadoOpt.getSelected())+1)*2;
-				double horasDomingo = (((double)domingoOpt.getSelected())+1)*2;
+				double horasLunes = Double.parseDouble(lunesOpt.getValue());
+				double horasMartes = Double.parseDouble(martesOpt.getValue());
+				double horasMiercoles = Double.parseDouble(miercolesOpt.getValue());
+				double horasJueves = Double.parseDouble(juevesOpt.getValue());
+				double horasViernes = Double.parseDouble(viernesOpt.getValue());
+				double horasSabado = Double.parseDouble(sabadoOpt.getValue());
+				double horasDomingo = Double.parseDouble(domingoOpt.getValue());
+				Window.alert("L :"+horasLunes+", M: "+horasMartes+", X: "+horasMiercoles+", J: "+horasJueves
+						+", V: "+horasViernes+", S: "+horasSabado+", D: "+horasDomingo);
 				actualizarHoras(horasLunes, horasMartes, horasMiercoles, horasJueves, horasViernes, horasSabado, horasDomingo);
-				confirm.setVisible(false);
+				dialogHoras.close();
 				horasButton.setEnabled(false);
 				
 			}
