@@ -38,6 +38,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.common.util.CryptoUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffAddInfo;
 import com.code.aon.config.util.AppParamUtil;
@@ -674,6 +675,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 						seller.setRegistry(rAddInfo.getRegistry());
 						seller.setDomain(domain);
 						seller.setStatus(SellerStatus.ACTIVE);
+						seller.setScope(obtainDefaultScope());
 						seller = (Seller)sellerBean.insert(seller);
 					}
 				} else {
@@ -682,6 +684,17 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			}
 		}
 		return seller;
+	}
+
+	public Scope obtainDefaultScope() throws ManagerBeanException {
+		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(scopeBean.getFieldName(IEntityAlias.SCOPE_DOMAIN), domain);
+		criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
+		for (ITransferObject ito : scopeBean.getList(criteria)) {
+			return (Scope)ito;
+		}
+		return null;
 	}
 
 	public Customer obtainAgency(ProfileInfo agencyInfo) throws ManagerBeanException {
