@@ -99,9 +99,9 @@ public class FinanceRecorder {
 		AccountEntry ae = AccountEntry.clone(financeEntry.getAccountEntry());
 		
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
-		for (Finance finance: financeEntry.getFinances().values()) {
-			if (!finance.isDeleted()) {
-				FinanceEntryDetailType.visit(financeEntry,finance,map);	
+		for (FinanceTracking tracking : financeEntry.getTrackings().values()) {
+			if (!tracking.isDeleted()) {
+				FinanceEntryDetailType.visit(financeEntry,tracking.getFinance(),map);	
 			}
 		}
 		ae.setDetails(new LinkedList<AccountEntryDetail>());

@@ -3223,4 +3223,13 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cobros / pagos seleccionados")
 	String financeSelected();
 
+	@DefaultMessage("El Vencimiento tiene movimientos posteriores")
+	String noLastTracking();
+	
+	@DefaultMessage("El Vencimiento est\u00E1 vinculado a una remesa")
+	String fromFBatch();
+
+	@DefaultMessage("No se puede modificar")
+	String unableToUpdate();
+
 }

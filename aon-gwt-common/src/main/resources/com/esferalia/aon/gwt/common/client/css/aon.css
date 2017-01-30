@@ -490,6 +490,9 @@ input[type="checkbox"]:focus + label {
 .aon-padding-left {
 	padding-left: 1em;
 }
+.aon-padding-left-important {
+	padding-left: 1em !important;
+}
 
 .aon-padding-right {
 	padding-right: 1em;

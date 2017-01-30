@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -79,8 +80,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				@Override
 				public boolean isSelected(Finance finance) {
 					if (finance == null) return false;
-					return getWrapper().getFinances().containsKey(finance.getId())
-						&& getWrapper().getFinances().get(finance.getId()).isChecked();
+					return getWrapper().getTrackings().containsKey(finance.getId())
+						&& getWrapper().getTrackings().get(finance.getId()).isChecked();
 				}
 				
 			}
@@ -91,7 +92,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 			
 			@Override
 			public void onSelection(SelectionEvent<Finance> event) {
-				if (event.getSelectedItem().isChecked()) {
+				if (event.getSelectedItem().isSelected()) {
 					financeEntry.add(event.getSelectedItem());	
 				} else {
 					financeEntry.remove(event.getSelectedItem());	
@@ -138,11 +139,12 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	
 	private void refreshTable() {
 		container.clear();
-		for (final Finance finance : financeEntry.getFinances().values()) {
-			final FocusPanel financePanel = FinancePrinter.print(finance);
+		for (final FinanceTracking ft : financeEntry.getTrackings().values()) {
+			final FocusPanel financePanel = FinancePrinter.print(ft.getFinance());
 			financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-			if (isUpdatable()) {
-				if (finance.isDeleted()) {
+			boolean updatable = isUpdatable() && ft.isLastTracking();
+			if (updatable) {
+				if (ft.isDeleted()) {
 					financePanel.addStyleName(AON.AON_CSS.aonTextLineThrough());
 					financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
 				} else {
@@ -152,19 +154,28 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 					@Override
 					public void onClick(ClickEvent event) {
 						if (!isNew()) {
-							finance.setDeleted(!finance.isDeleted());
-							finance.setChecked(!finance.isDeleted());
+							ft.setDeleted(!ft.isDeleted());
+							ft.setChecked(!ft.isDeleted());
 						} else {
-							getWrapper().getFinances().remove(finance.getId());
+							getWrapper().getTrackings().remove(ft.getFinance().getId());
 						}
 						refreshTable();
 						_paintEntry();
-						SelectionEvent.<Finance>fire( FinanceEntryPanel.this, finance);
+						SelectionEvent.<Finance>fire( FinanceEntryPanel.this, ft.getFinance());
 					}
 				});
 			} else {
+				if (getWrapper().isFromfinanceBatch()) {
+					financePanel.setTitle( AON.MSG.fromFBatch() );
+				} else if (!ft.isLastTracking()) {
+					financePanel.setTitle( AON.MSG.noLastTracking() );
+				} else {
+					financePanel.setTitle( AON.MSG.unableToUpdate() );
+				}
+				
+				
 				financePanel.addStyleName(AON.AON_CSS.aonIconWarn());
-				financePanel.setTitle( " No se puede modificar " );
+				
 			}
 			container.add(financePanel);
 		}
@@ -321,7 +332,12 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		getCallback().getModule().onBalance(getWrapper().getAccountEntry());
 		populate();
 		refreshTable();
-		financeSearchPanel.initialize();
+		if (isUpdatable()) {
+			financeSearchPanel.enable();
+			financeSearchPanel.initialize();
+		} else{
+			financeSearchPanel.disable();
+		}
 		if (cbk != null) {
 			cbk.onSuccess();
 		}

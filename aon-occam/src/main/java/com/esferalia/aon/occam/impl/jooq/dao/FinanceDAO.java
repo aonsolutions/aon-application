@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.FinanceTrackingRecord;
@@ -193,6 +194,7 @@ public class FinanceDAO {
 				.set(FINANCE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FINANCE.ID)
 				.fetchOne();
+		ctx.log().info("INSERT FINANCE id: " + record.getValue(FINANCE.ID));		
 		return record.getValue(FINANCE.ID); 
 	}
 	
@@ -231,25 +233,28 @@ public class FinanceDAO {
 			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FINANCE.ID.equal( finance.getId()))
 			.execute();
+		ctx.log().info("UPDATE FINANCE id: " + finance.getId());
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		Finance finance = getFinance(ctx,id);
 		FinanceValidation.validateDelete(ctx, finance);
-		removeFractionTracking(ctx,finance);
+		removeFinanceTracking(ctx,finance);
 		ctx.getDslContext()
 			.delete(FINANCE)
 			.where(FINANCE.ID.equal(id))
 			.execute();
+		ctx.log().info("DELETE FINANCE id: " + finance.getId());
 	}
 	
-	private static void removeFractionTracking(AONContext ctx, Finance finance) {
+	private static void removeFinanceTracking(AONContext ctx, Finance finance) {
 		if (finance.isPending()) {
 			ctx.getDslContext()
 			.delete(FINANCE_TRACKING)
 				.where(FINANCE_TRACKING.FINANCE.eq(finance.getId()))
 				.execute();
+			ctx.log().info("DELETE FINANCE_TRACKING Finance id: " + finance.getId());
 		}
 	}
 	
@@ -349,7 +354,7 @@ public class FinanceDAO {
 			,FinanceStatus financeStatus,FinanceTrackingType type, String description, boolean recorded) {
 		
 		FinanceTracking ft = new FinanceTracking()
-			.setFinance(financeId)
+			.setFinance(new Finance().setId(financeId))
 			.setDomain(ctx.getDomainId())
         	.setTrackingDate(date)
         	.setType(type)
@@ -365,6 +370,7 @@ public class FinanceDAO {
 			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FINANCE.ID.equal( financeId))
 			.execute();
+		ctx.log().info("UPDATE FINANCE id: " + financeId + " status: " + financeStatus.getDescription());
 		return insert(ctx,ft);
 	}
 	
@@ -373,7 +379,7 @@ public class FinanceDAO {
 		FinanceTrackingRecord record = ctx.getDslContext()
 			.insertInto(FINANCE_TRACKING)
 				.set(FINANCE_TRACKING.DOMAIN,ft.getDomain())
-				.set(FINANCE_TRACKING.FINANCE,ft.getFinance())
+				.set(FINANCE_TRACKING.FINANCE,ft.getFinance().getId())
 				.set(FINANCE_TRACKING.TRACKING_DATE,AonDateUtils.toSql(ft.getTrackingDate()))
 				.set(FINANCE_TRACKING.TYPE,ft.getType().value())
 				.set(FINANCE_TRACKING.DESCRIPTION,ft.getDescription())
@@ -386,10 +392,14 @@ public class FinanceDAO {
 				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FINANCE_TRACKING.ID)
 				.fetchOne();
+		ctx.log().info("INSERT FINANCE_TRACKING id: " + record.getValue(FINANCE_TRACKING.ID));
 		return record.getValue(FINANCE_TRACKING.ID); 
 	}
 	
 	public static FinanceEntry save(AONContext ctx, FinanceEntry financeEntry) {
+		if (financeEntry.getAccountEntry().getId() != null) {
+			throw new AonCoreException("No es posible modificar el apunte. [fallo interno]");
+		}
 		if (!financeEntry.isMultipleGeneration()) {
 			AccountEntry[] entries = FinanceRecorder.recordFinanceEntry(financeEntry);
 			if (entries != null && entries.length == 1) {
@@ -398,12 +408,12 @@ public class FinanceDAO {
 				entry.setId(entryId);
 				financeEntry.setAccountEntry(entry);
 				
-				for (Finance finance : financeEntry.getFinances().values()) {
-					finance.setFinanceStatus(FinanceStatus.PAID);
+				for (FinanceTracking finance : financeEntry.getTrackings().values()) {
+					finance.getFinance().setFinanceStatus(FinanceStatus.PAID);
 					Integer trackingId = addTracking(ctx
-							, finance.getId()
+							, finance.getFinance().getId()
 							, entry.getEntryDate()
-							, finance.getAmount()
+							, finance.getFinance().getAmount()
 							, FinanceStatus.PAID
 							, FinanceTrackingType.PAID
 							, "CONTABILIZADO"
@@ -412,14 +422,16 @@ public class FinanceDAO {
 						.insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
 						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
 						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY,entryId)
-						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING,trackingId);
+						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING,trackingId)
+						.execute();
+					ctx.log().info("ACCOUNT_ENTRY_FINANCE_TRACKING account_entry: " + entryId + " tracking: " + trackingId);
 				}
 			}
 		}
 		return financeEntry;
 	}
 	
-	public static FinanceEntry getFinanceEntry(AONContext ctx, Integer accountEntryId) {
+	public static FinanceEntry getFinanceEntry(final AONContext ctx, Integer accountEntryId) {
 		AccountEntry accountEntry = AccountEntryDAO.getAccountEntry(ctx, accountEntryId);
 		if (accountEntry == null) {
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage());
@@ -467,9 +479,29 @@ public class FinanceDAO {
 			.peek(finance -> fillCustomerAcccount(ctx,finance))
 			.peek(finance -> fillSupplierAcccount(ctx,finance))
 			.peek(finance -> fillCreditorAcccount(ctx,finance))
-			.forEach( finance -> entry.getFinances().put(finance.getId(), finance));
+			.forEach( finance -> entry.getTrackings().put(finance.getId(), new FinanceTracking().setFinance(finance)));
 		} else {
+			System.out.println(
+					ctx.getDslContext()
+					.select(FINANCE_TRACKING.fields())
+					.select(FINANCE.fields())
+					.select(REGISTRY.fields())
+					.select(PAY_METHOD.fields())
+					.select(SCOPE.fields())
+					.select(INVOICE.fields())
+						.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
+						.join(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
+						.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
+						.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+						.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+						.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+						.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+						.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
+					.getSQL(ParamType.INLINED)
+					);
+			
 			ctx.getDslContext()
+				.select(FINANCE_TRACKING.fields())
 				.select(FINANCE.fields())
 				.select(REGISTRY.fields())
 				.select(PAY_METHOD.fields())
@@ -485,12 +517,48 @@ public class FinanceDAO {
 					.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
 					.fetch()
 					.stream()
-				.map( new FullFinanceFiller() )
-				.peek(finance -> fillCustomerAcccount(ctx,finance))
-				.peek(finance -> fillSupplierAcccount(ctx,finance))
-				.peek(finance -> fillCreditorAcccount(ctx,finance))
-				.forEach( finance -> entry.getFinances().put(finance.getId(), finance));
+				.map( new FullFinanceTrackingFiller() )
+				.peek(ft -> ft.setLastTracking(isLastTracking(ctx, ft)))
+				.peek(ft -> fillCustomerAcccount(ctx,ft.getFinance()))
+				.peek(ft -> fillSupplierAcccount(ctx,ft.getFinance()))
+				.peek(ft -> fillCreditorAcccount(ctx,ft.getFinance()))
+				.forEach( ft -> entry.getTrackings().put(ft.getId(), ft));
 		}
 		return entry;
+	}
+	
+	public static class FullFinanceTrackingFiller  implements Function<Record,FinanceTracking> {
+		@Override
+		public FinanceTracking apply(Record record) {
+			return new FinanceTracking()
+				.setId(record.getValue(FINANCE_TRACKING.ID))
+				.setDomain(record.getValue(FINANCE_TRACKING.DOMAIN))
+				.setRegistryBank(record.getValue(FINANCE_TRACKING.RBANK))
+				.setBankStatementLink(record.getValue(FINANCE_TRACKING.BANK_STATEMENT_LINK))
+				.setFinance(new FullFinanceFiller().apply(record))
+				.setPayMethodTypeDetail(record.getValue(FINANCE_TRACKING.PM_TYPE_DETAIL))
+				.setTrackingDate(record.getValue(FINANCE_TRACKING.TRACKING_DATE))
+				.setType( FinanceTrackingType.safeValueOf(record.getValue(FINANCE_TRACKING.TYPE)))
+				.setDescription(record.getValue(FINANCE_TRACKING.DESCRIPTION))
+				.setAmount(record.getValue(FINANCE_TRACKING.AMOUNT))
+				.setRecorded(AonEnumUtils.getBoolean( record.getValue(FINANCE_TRACKING.RECORDED)))
+				.setCreationUser(record.getValue(FINANCE_TRACKING.CREATION_USER))
+				.setCreationDate(record.getValue(FINANCE_TRACKING.CREATION_DATE))
+				.setModificationUser(record.getValue(FINANCE_TRACKING.MODIFICATION_USER))
+				.setModificationDate(record.getValue(FINANCE_TRACKING.MODIFICATION_DATE))
+				;
+		}
+	}
+	
+	private static boolean isLastTracking(AONContext ctx, FinanceTracking ft) {
+		return !ctx.getDslContext()
+			.select()
+			.from(FINANCE_TRACKING)
+			.where(FINANCE_TRACKING.FINANCE.eq(ft.getFinance().getId()))
+			.and(FINANCE_TRACKING.ID.gt(ft.getId()))
+			.fetch()
+			.stream()
+			.findAny()
+			.isPresent();
 	}
 }

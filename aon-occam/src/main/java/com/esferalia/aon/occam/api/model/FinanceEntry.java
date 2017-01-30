@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.TreeMap;
 
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 
 public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	
@@ -18,7 +19,7 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	private double expenses;
 	private Account expensesAccount;
 	
-	private TreeMap<Integer,Finance> finances;
+	private TreeMap<Integer,FinanceTracking> trackings;
 	
 	@Override
 	public AccountEntry getAccountEntry() {
@@ -67,21 +68,24 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 		this.expensesAccount = expensesAccount;
 		return this;
 	}
-	public TreeMap<Integer,Finance> getFinances() {
-		if (finances == null) {
-			finances = new TreeMap<Integer,Finance>();
+	public TreeMap<Integer,FinanceTracking> getTrackings() {
+		if (trackings == null) {
+			trackings = new TreeMap<Integer,FinanceTracking>();
 		}
-		return finances;
+		return trackings;
 	}
-	public FinanceEntry setFinances(TreeMap<Integer,Finance> finances) {
-		this.finances = finances;
+	public FinanceEntry setTrackings(TreeMap<Integer,FinanceTracking> trackings) {
+		this.trackings = trackings;
 		return this;
 	}
 	public void add(Finance finance) {
-		getFinances().put(finance.getId(), finance);
+		getTrackings().put(finance.getId(), new FinanceTracking()
+				.setFinance(finance)
+				.setLastTracking(true)
+				);
 	}
 	public void remove(Finance finance) {
-		getFinances().remove(finance.getId());
+		getTrackings().remove(finance.getId());
 	}
 
 	public static FinanceEntry clone(FinanceEntry ori) {

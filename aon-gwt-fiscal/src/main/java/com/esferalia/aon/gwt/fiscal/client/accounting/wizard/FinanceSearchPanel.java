@@ -78,7 +78,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private int lastScrollPos = 0;
 	
 	public static interface IFinancePanelCallback {
-		boolean isSelected( Finance finance);
+		boolean isSelected( Finance ft);
 	}
 	
 	public FinanceSearchPanel(String domainName,int domainId, IFinancePanelCallback callback, int tabIndex) {
@@ -339,10 +339,10 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 					public void onSuccess(LinkedList<Finance> result) {
 						if (result != null && !result.isEmpty()) {
 							for (final Finance finance : result) {
-								finance.setChecked(callback.isSelected(finance));
+								finance.setSelected(callback.isSelected(finance));
 //								if (!finance.isChecked()) {
 									final FocusPanel financePanel = FinancePrinter.print(finance);
-									financePanel.addStyleName(finance.isChecked()
+									financePanel.addStyleName(finance.isSelected()
 											?AON.AON_CSS.aonIconChecked()
 											:AON.AON_CSS.aonIconCheck());
 									financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
@@ -350,8 +350,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 									financePanel.addClickHandler(new ClickHandler() {
 										@Override
 										public void onClick(ClickEvent event) {
-											finance.setChecked(!finance.isChecked());
-											if (finance.isChecked()) {
+											finance.setSelected(!finance.isSelected());
+											if (finance.isSelected()) {
 												financePanel.removeStyleName(AON.AON_CSS.aonIconCheck());
 												financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
 											} else {
@@ -399,6 +399,14 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	
 	public void uncheck(Finance finance) {
 		search();		
+	}
+	public void enable() {
+		northPanel.setVisible(true);
+		centerLayoutPanel.setVisible(true);
+	}
+	public void disable() {
+		northPanel.setVisible(false);
+		centerLayoutPanel.setVisible(false);
 	}
 	
 }

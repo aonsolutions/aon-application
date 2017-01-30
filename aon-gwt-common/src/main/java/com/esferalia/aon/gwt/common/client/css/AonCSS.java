@@ -374,6 +374,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-padding-left")
 	String aonPaddingLeft();
+	
+	@ClassName("aon-padding-left-important")
+	String aonPaddingLeftImportant();
 
 	@ClassName("aon-padding-right")
 	String aonPaddingRight();

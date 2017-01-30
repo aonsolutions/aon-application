@@ -11,10 +11,15 @@ public class FinanceTracking implements Serializable, HasAudit  {
 
 	private static final long serialVersionUID = -5057462585779434987L;
 	
+	private boolean deleted;
+	private boolean checked;
+	
+	private boolean lastTracking;
+	
 	private Integer id;
 	private Integer registryBank;
 	private Integer bankStatementLink;
-	private Integer finance;
+	private Finance finance;
 	private Integer payMethodTypeDetail;
 	private Integer domain;
 	private Date trackingDate;
@@ -52,10 +57,10 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		return this;
 	}
 
-	public Integer getFinance() {
+	public Finance getFinance() {
 		return this.finance;
 	}
-	public FinanceTracking setFinance(Integer finance) {
+	public FinanceTracking setFinance(Finance finance) {
 		this.finance = finance;
 		return this;
 	}
@@ -148,6 +153,27 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		return this;
 	}
 
+	public boolean isLastTracking() {
+		return lastTracking;
+	}
+	public FinanceTracking setLastTracking(boolean lastTracking) {
+		this.lastTracking = lastTracking;
+		return this;
+	}
 
+	public boolean isChecked() {
+		return checked;
+	}
+	public FinanceTracking setChecked(boolean checked) {
+		this.checked = checked;
+		return this;
+	}
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public FinanceTracking setDeleted(boolean deleted) {
+		this.deleted = deleted;
+		return this;
+	}
 }
 
