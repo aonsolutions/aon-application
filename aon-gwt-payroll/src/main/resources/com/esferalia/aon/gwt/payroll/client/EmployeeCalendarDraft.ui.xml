@@ -9,6 +9,7 @@
 		.tableStyle {
 			border-collapse: collapse;
 			margin-left: 0.8em;
+			width: 100%;
 		}
 		
 		.labelDayStyle {
@@ -171,6 +172,21 @@
 		                                  supported by Chrome and Opera */
 		}
 		
+		.scrollBody{
+			overflow-y: scroll;
+		}
+
+		.dialogBoxStyle{
+			z-index: 103;
+    		position: absolute;
+    		top: 10%;
+    		left: 10%;
+    		box-sizing: border-box;
+    		max-height: 394px;
+    		max-width: 728px;
+    		outline: none;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -186,6 +202,8 @@
 							<g:MenuItem ui:field="eraseEventMenuItem" text="Borrar evento" />
 						</g:MenuBar>
 					</g:MenuItem>
+					<g:MenuItem ui:field="horasButton" text="Horas">
+					</g:MenuItem>
 					<g:MenuItem text="Ver">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="horasMenuItem" text="Ocultar horas" />
@@ -196,6 +214,82 @@
 		</g:north>
 		<g:center>
 			<g:HTMLPanel>
+			    
+			    <style is="custom-style">
+				    iron-overlay-backdrop {
+				    	--iron-overlay-backdrop-opened: {
+				    		opacity: 0.6;
+	    					pointer-events: auto;
+				    	};
+				    }
+				</style>
+			    <p:PaperDialog ui:field="confirm" styleName="{style.dialogBoxStyle}" addStyleNames="dialog" 
+			         modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation">
+		            <h2>Horas</h2>
+		            <g:HTMLPanel ui:field="confirmContent"></g:HTMLPanel>
+		            <p:PaperDropdownMenu  label="Lunes">
+			            <p:PaperMenu ui:field="lunesOpt" class="dropdown-content">
+			                <p:PaperItem>2</p:PaperItem>
+			                <p:PaperItem>4</p:PaperItem>
+			                <p:PaperItem>6</p:PaperItem>
+			                <p:PaperItem>8</p:PaperItem>
+			            </p:PaperMenu>
+		            </p:PaperDropdownMenu>
+		            <p:PaperDropdownMenu label="Martes">
+			            <p:PaperMenu ui:field="martesOpt" class="dropdown-content">
+			                <p:PaperItem>2</p:PaperItem>
+			                <p:PaperItem>4</p:PaperItem>
+			                <p:PaperItem>6</p:PaperItem>
+			                <p:PaperItem>8</p:PaperItem>
+			            </p:PaperMenu>
+		            </p:PaperDropdownMenu>
+		            <p:PaperDropdownMenu label="Miércoles">
+			            <p:PaperMenu ui:field="miercolesOpt" class="dropdown-content">
+			                <p:PaperItem>2</p:PaperItem>
+			                <p:PaperItem>4</p:PaperItem>
+			                <p:PaperItem>6</p:PaperItem>
+			                <p:PaperItem>8</p:PaperItem>
+			            </p:PaperMenu>
+		            </p:PaperDropdownMenu>
+		            <p:PaperDropdownMenu label="Jueves">
+			            <p:PaperMenu ui:field="juevesOpt" class="dropdown-content">
+			                <p:PaperItem>2</p:PaperItem>
+			                <p:PaperItem>4</p:PaperItem>
+			                <p:PaperItem>6</p:PaperItem>
+			                <p:PaperItem>8</p:PaperItem>
+			            </p:PaperMenu>
+		            </p:PaperDropdownMenu>
+		            <p:PaperDropdownMenu label="Viernes">
+			            <p:PaperMenu ui:field="viernesOpt" class="dropdown-content">
+			                <p:PaperItem>2</p:PaperItem>
+			                <p:PaperItem>4</p:PaperItem>
+			                <p:PaperItem>6</p:PaperItem>
+			                <p:PaperItem>8</p:PaperItem>
+			            </p:PaperMenu>
+		            </p:PaperDropdownMenu>
+		            <p:PaperDropdownMenu label="Sábado">
+			            <p:PaperMenu ui:field="sabadoOpt" class="dropdown-content">
+			                <p:PaperItem>2</p:PaperItem>
+			                <p:PaperItem>4</p:PaperItem>
+			                <p:PaperItem>6</p:PaperItem>
+			                <p:PaperItem>8</p:PaperItem>
+			            </p:PaperMenu>
+		            </p:PaperDropdownMenu>
+		            <p:PaperDropdownMenu label="Domingo">
+			            <p:PaperMenu ui:field="domingoOpt" class="dropdown-content">
+			                <p:PaperItem>2</p:PaperItem>
+			                <p:PaperItem>4</p:PaperItem>
+			                <p:PaperItem>6</p:PaperItem>
+			                <p:PaperItem>8</p:PaperItem>
+			            </p:PaperMenu>
+		            </p:PaperDropdownMenu>
+		            <div class="buttons">
+		              <p:PaperButton ui:field="confirmCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
+		              <p:PaperButton ui:field="confirmOk" attributes="dialog-confirm">OK</p:PaperButton>
+		            </div>
+		        </p:PaperDialog>
+		        
+			    
 				<g:HorizontalPanel>
 					<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
 					<g:Button
@@ -264,245 +358,246 @@
 						Borrar
 					</i:IronLabel>
 				</g:HorizontalPanel>
-
-				<g:Grid ui:field="calendarGrid" styleName="{style.tableStyle} {style.noselect}">
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle} {style.fondoBlanco}">
-							<g:Label>&nbsp;</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>L</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>M</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>X</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>J</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>V</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>S</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>D</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>L</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>M</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>X</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>J</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>V</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>S</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>D</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>L</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>M</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>X</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>J</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>V</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>S</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>D</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>L</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>M</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>X</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>J</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>V</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>S</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>D</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>L</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>M</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>X</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>J</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>V</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>S</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>D</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>L</g:Label>
-						</g:customCell>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>M</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Enero</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Febrero</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Marzo</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Abril</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Mayo</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Junio</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Julio</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Agosto</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Septiembre</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Octubre</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Noviembre</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row styleName="{style.mesesImparesStyle}">
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label>Diciembre</g:Label>
-						</g:customCell>
-					</g:row>
-					<g:row>
-						<g:customCell styleName="{style.cabeceraStyle}">
-							<g:Label></g:Label>
-						</g:customCell>
-					</g:row>
-				</g:Grid>
+				<g:ScrollPanel ui:field="scrollInfo" height="412px">
+					<g:Grid ui:field="calendarGrid" width="90%" styleName="{style.tableStyle} {style.noselect}">
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle} {style.fondoBlanco}">
+								<g:Label>&nbsp;</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>L</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>M</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>X</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>J</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>V</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>S</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>D</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>L</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>M</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>X</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>J</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>V</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>S</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>D</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>L</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>M</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>X</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>J</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>V</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>S</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>D</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>L</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>M</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>X</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>J</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>V</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>S</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>D</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>L</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>M</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>X</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>J</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>V</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>S</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>D</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>L</g:Label>
+							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>M</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Enero</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Febrero</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Marzo</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Abril</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Mayo</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Junio</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Julio</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Agosto</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Septiembre</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Octubre</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Noviembre</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Diciembre</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
+					</g:Grid>
+				</g:ScrollPanel>
 			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>

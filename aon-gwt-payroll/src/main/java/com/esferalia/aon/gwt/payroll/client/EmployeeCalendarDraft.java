@@ -6,12 +6,14 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -20,6 +22,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperButton;
+import com.vaadin.polymer.paper.widget.PaperDialog;
+import com.vaadin.polymer.paper.widget.PaperMenu;
 
 public class EmployeeCalendarDraft extends Composite {
 
@@ -32,6 +36,14 @@ public class EmployeeCalendarDraft extends Composite {
 	public static interface CalendarTypeCell{
 		void select(int row, int col);
 		void unSelect(int row, int col);
+		void setAsSunday(int row, int col);
+		void setAsHoliday(int row, int col);
+		void setAsDrop(int row, int col);
+		void setAsStrike(int row, int col);
+		void setAsEre(int row, int col);
+		void setAsReduction(int row, int col);
+		void setAsSuspension(int row, int col);
+		void setHour(int row, int col, double newHour);
 	}
 	
 	public class DayCell implements CalendarTypeCell{
@@ -39,15 +51,45 @@ public class EmployeeCalendarDraft extends Composite {
 		public void select(int row, int col) {
 			calendarGrid.getWidget(row, col).addStyleName(style.isSelectedStyle());
 			int pos = (row * 38) + col;
-			posicionesSeleccionas.add(pos);
-			
+			posicionesSeleccionas.add(pos);	
 		}
 		@Override
 		public void unSelect(int row, int col) {
-			calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());
-			
+			calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());	
+		}
+		@Override
+		public void setAsSunday(int row, int col) {
+			calendarGrid.getWidget(row, col).addStyleName(style.sundayStyle());
+		}
+		@Override
+		public void setAsHoliday(int row, int col) {
+			calendarGrid.getWidget(row, col).addStyleName(style.holidayStyle());
+		}
+		@Override
+		public void setAsDrop(int row, int col) {
+			calendarGrid.getWidget(row, col).addStyleName(style.dropStyle());
+		}
+		@Override
+		public void setAsStrike(int row, int col) {
+			calendarGrid.getWidget(row, col).addStyleName(style.strikeStyle());
+		}
+		@Override
+		public void setAsEre(int row, int col) {
+			calendarGrid.getWidget(row, col).addStyleName(style.ereStyle());
+		}
+		@Override
+		public void setAsReduction(int row, int col) {
+			calendarGrid.getWidget(row, col).addStyleName(style.reductionStyle());
+		}
+		@Override
+		public void setAsSuspension(int row, int col) {
+			calendarGrid.getWidget(row, col).addStyleName(style.suspensionStyle());	
+		}
+		@Override
+		public void setHour(int row, int col, double newHour) {
 		}
 	}
+	
 	public class HourCell implements CalendarTypeCell{
 		@Override
 		public void select(int row, int col) {
@@ -57,11 +99,40 @@ public class EmployeeCalendarDraft extends Composite {
 		}
 		@Override
 		public void unSelect(int row, int col) {
-			calendarGrid.getWidget(row, col).setStyleName(style.doubleBoxDisableStyle());
-			//calendarGrid.getWidget(row, col).setStyleName(style.doubleBoxDisableStyle2());
+			if (row%4 == 0)
+				calendarGrid.getWidget(row, col).setStyleName(style.doubleBoxDisableStyle2());
+			else
+				calendarGrid.getWidget(row, col).setStyleName(style.doubleBoxDisableStyle());
+		}
+		@Override
+		public void setAsSunday(int row, int col) {
+		}
+		@Override
+		public void setAsHoliday(int row, int col) {
+		}
+		@Override
+		public void setAsDrop(int row, int col) {
+		}
+		@Override
+		public void setAsStrike(int row, int col) {
+		}
+		@Override
+		public void setAsEre(int row, int col) {
+		}
+		@Override
+		public void setAsReduction(int row, int col) {
+		}
+		@Override
+		public void setAsSuspension(int row, int col) {
+		}
+		@Override
+		public void setHour(int row, int col, double newHour) {
+			DoubleBox widget = (DoubleBox)calendarGrid.getWidget(row, col);
+			widget.setValue(newHour);
 			
 		}
 	}
+	
 	public static class NoneCell implements CalendarTypeCell{
 		
 		public static NoneCell NONE_CELL = new NoneCell(); 
@@ -74,6 +145,30 @@ public class EmployeeCalendarDraft extends Composite {
 		}
 		@Override
 		public void unSelect(int row, int col) {
+		}
+		@Override
+		public void setAsSunday(int row, int col) {	
+		}
+		@Override
+		public void setAsHoliday(int row, int col) {
+		}
+		@Override
+		public void setAsDrop(int row, int col) {
+		}
+		@Override
+		public void setAsStrike(int row, int col) {
+		}
+		@Override
+		public void setAsEre(int row, int col) {
+		}
+		@Override
+		public void setAsReduction(int row, int col) {
+		}
+		@Override
+		public void setAsSuspension(int row, int col) {
+		}
+		@Override
+		public void setHour(int row, int col, double newHour) {
 		}
 	} 
 
@@ -144,9 +239,39 @@ public class EmployeeCalendarDraft extends Composite {
 
 	@UiField
 	PaperButton eraseButton;
+	
+	@UiField
+	PaperButton confirmOk;
+	
+	@UiField
+	PaperDialog confirm;
 
 	@UiField
 	MenuItem horasMenuItem;
+	
+	@UiField
+	MenuItem horasButton;
+	
+	@UiField
+	PaperMenu lunesOpt;
+	
+	@UiField
+	PaperMenu martesOpt;
+	
+	@UiField
+	PaperMenu miercolesOpt;
+	
+	@UiField
+	PaperMenu juevesOpt;
+	
+	@UiField
+	PaperMenu viernesOpt;
+	
+	@UiField
+	PaperMenu sabadoOpt;
+	
+	@UiField
+	PaperMenu domingoOpt;
 
 	private List<Integer> posicionesSeleccionas = new ArrayList<Integer>();
 	private int oldHourSelected = 0;
@@ -197,13 +322,66 @@ public class EmployeeCalendarDraft extends Composite {
 
 			}
 		});
+		
+		horasButton.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				confirm.setWithBackdrop(true);
+				confirm.setHorizontalAlign("auto");
+				confirm.setHorizontalOffset(5);
+				confirm.setVerticalAlign("auto");
+				confirm.setVerticalOffset(5);
+				confirm.setVisible(true);
+			}
+		});
+		
+		confirmOk.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				double horasLunes = (((double)lunesOpt.getSelected())+1)*2;
+				double horasMartes = (((double)martesOpt.getSelected())+1)*2;
+				double horasMiercoles = (((double)miercolesOpt.getSelected())+1)*2;
+				double horasJueves = (((double)juevesOpt.getSelected())+1)*2;
+				double horasViernes = (((double)viernesOpt.getSelected())+1)*2;
+				double horasSabado = (((double)sabadoOpt.getSelected())+1)*2;
+				double horasDomingo = (((double)domingoOpt.getSelected())+1)*2;
+				actualizarHoras(horasLunes, horasMartes, horasMiercoles, horasJueves, horasViernes, horasSabado, horasDomingo);
+				confirm.setVisible(false);
+				horasButton.setEnabled(false);
+				
+			}
+
+			private void actualizarHoras(double horasLunes, double horasMartes, double horasMiercoles, double horasJueves, double horasViernes, double horasSabado, double horasDomingo) {
+				for (Integer pos : posicionesSeleccionas) {
+					int col = calcularColumna(pos.intValue());
+					int row = calcularFila(pos.intValue());
+					if (esDomingo(col))
+						cells[row+1][col].setHour(row+1, col, horasDomingo);
+					else if (esSabado(col))
+						cells[row+1][col].setHour(row+1, col, horasSabado);
+					else if (esViernes(col))
+						cells[row+1][col].setHour(row+1, col, horasViernes);
+					else if (esJueves(col))
+						cells[row+1][col].setHour(row+1, col, horasJueves);
+					else if (esMiercoles(col))
+						cells[row+1][col].setHour(row+1, col, horasMiercoles);
+					else if (esMartes(col))
+						cells[row+1][col].setHour(row+1, col, horasMartes);
+					else 
+						cells[row+1][col].setHour(row+1, col, horasLunes);
+				}
+				limpiarSeleccion(posicionesSeleccionas);
+			}
+		});
 	}
 
 	// ----------------------------------------------------------------- UiHandlers ----------------------------------------------------
 	@UiHandler("calendarGrid")
 	public void onCalendarClick(ClickEvent event) {
 		event.preventDefault();
-		
+		horasButton.setEnabled(true);
 		int row = calendarGrid.getCellForEvent(event).getRowIndex();
 		int col = calendarGrid.getCellForEvent(event).getCellIndex();
 		int pos = (row * 38) + col;
@@ -252,118 +430,96 @@ public class EmployeeCalendarDraft extends Composite {
 	@UiHandler("eraseButton")
 	public void onEraseClick(ClickEvent event) {
 		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.sundayStyle());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.holidayStyle());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.dropStyle());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.strikeStyle());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.ereStyle());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.reductionStyle());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.suspensionStyle());
-			}
+			limpiarEstilos(posicionesSeleccionas);
 		}
 		posicionesSeleccionas.clear();
 	}
+
+	
 
 	@UiHandler("diaNoLaborableButton")
 	public void onDiaNoLaborableClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).addStyleName(style.sundayStyle());
-			}
-		}
+		limpiarEstilos(posicionesSeleccionas);
+		for (Integer pos : posicionesSeleccionas) {
+			int column = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			cells[row][column].unSelect(row, column);
+			cells[row][column].setAsSunday(row, column);
+		}	
 		posicionesSeleccionas.clear();
-
-	}
-
-	@UiHandler("diaAusenciaButton")
-	public void onDiaAusenciaClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).addStyleName(style.dropStyle());
-			}
-		}
-		posicionesSeleccionas.clear();
-
-	}
-
-	@UiHandler("diaHuelgaButton")
-	public void onHuelgaClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).addStyleName(style.strikeStyle());
-			}
-		}
-		posicionesSeleccionas.clear();
-
-	}
-
-	@UiHandler("diaEreButton")
-	public void onEreClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).addStyleName(style.ereStyle());
-			}
-		}
-		posicionesSeleccionas.clear();
-
-	}
-
-	@UiHandler("diaReduccionButton")
-	public void onReduccionClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).addStyleName(style.reductionStyle());
-			}
-		}
-		posicionesSeleccionas.clear();
-
 	}
 
 	@UiHandler("diaVacacionesButton")
 	public void onVacacionesClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).addStyleName(style.holidayStyle());
-			}
+		limpiarEstilos(posicionesSeleccionas);
+		for (Integer pos : posicionesSeleccionas) {
+			int column = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			cells[row][column].unSelect(row, column);
+			cells[row][column].setAsHoliday(row, column);
 		}
 		posicionesSeleccionas.clear();
-
 	}
+	
+	@UiHandler("diaAusenciaButton")
+	public void onDiaAusenciaClick(ClickEvent event) {
+		limpiarEstilos(posicionesSeleccionas);
+		for (Integer pos : posicionesSeleccionas) {
+			int column = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			cells[row][column].unSelect(row, column);
+			cells[row][column].setAsDrop(row, column);
+		}
+		posicionesSeleccionas.clear();
+	}
+
+	@UiHandler("diaHuelgaButton")
+	public void onHuelgaClick(ClickEvent event) {
+		limpiarEstilos(posicionesSeleccionas);
+		for (Integer pos : posicionesSeleccionas) {
+			int column = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			cells[row][column].unSelect(row, column);
+			cells[row][column].setAsStrike(row, column);
+		}
+		posicionesSeleccionas.clear();
+	}
+
+	@UiHandler("diaEreButton")
+	public void onEreClick(ClickEvent event) {
+		limpiarEstilos(posicionesSeleccionas);
+		for (Integer pos : posicionesSeleccionas) {
+			int column = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			cells[row][column].unSelect(row, column);
+			cells[row][column].setAsEre(row, column);
+		}
+		posicionesSeleccionas.clear();
+	}
+
+	@UiHandler("diaReduccionButton")
+	public void onReduccionClick(ClickEvent event) {
+		limpiarEstilos(posicionesSeleccionas);
+		for (Integer pos : posicionesSeleccionas) {
+			int column = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			cells[row][column].unSelect(row, column);
+			cells[row][column].setAsReduction(row, column);
+		}
+		posicionesSeleccionas.clear();
+	}
+
 
 	@UiHandler("diaSuspensionButton")
 	public void onSuspensionClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			for (Integer pos : posicionesSeleccionas) {
-				int col = calcularColumna(pos.intValue());
-				int fil = calcularFila(pos.intValue());
-				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
-				calendarGrid.getWidget(fil, col).addStyleName(style.suspensionStyle());
-			}
+		limpiarEstilos(posicionesSeleccionas);
+		for (Integer pos : posicionesSeleccionas) {
+			int column = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			cells[row][column].unSelect(row, column);
+			cells[row][column].setAsSuspension(row, column);
 		}
 		posicionesSeleccionas.clear();
-
 	}
 
 	@UiHandler("lastYearButton")
@@ -501,6 +657,29 @@ public class EmployeeCalendarDraft extends Composite {
 
 		mes++;
 	}
+	
+	private void limpiarEstilos(List<Integer> posicionesSeleccionas) {
+		for (Integer pos : posicionesSeleccionas) {
+			int col = calcularColumna(pos.intValue());
+			int fil = calcularFila(pos.intValue());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.sundayStyle());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.holidayStyle());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.dropStyle());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.strikeStyle());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.ereStyle());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.reductionStyle());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.suspensionStyle());
+		}
+	}
+	
+	private void limpiarSeleccion(List<Integer> posicionesSeleccionas) {
+		for (Integer pos : posicionesSeleccionas) {
+			int col = calcularColumna(pos.intValue());
+			int fil = calcularFila(pos.intValue());
+			calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
+		}
+	}
 
 	private void limpiarCalendario() {
 		for (int i = 1; i < 25; i++)
@@ -509,7 +688,31 @@ public class EmployeeCalendarDraft extends Composite {
 	}
 
 	private boolean esDomingo(int col) {
-		return col % 7 == 0 || col % 14 == 0 || col % 21 == 0 || col % 28 == 0 || col % 35 == 0;
+		return col==7 || col==14 || col==21 || col==28 || col==35;
+	}
+	
+	private boolean esSabado(int col) {
+		return col==6 || col==13 || col==20 || col==27 || col==34;
+	}
+	
+	private boolean esViernes(int col) {
+		return col==5 || col==12 || col==19 || col==26 || col==33;
+	}
+	
+	private boolean esJueves(int col) {
+		return col==4 || col==11 || col==18 || col==25 || col==32;
+	}
+	
+	private boolean esMiercoles(int col) {
+		return col==3 || col==10 || col==17 || col==24 || col==31;
+	}
+	
+	private boolean esMartes(int col) {
+		return col==2 || col==9 || col==16 || col==23 || col==30 || col==37;
+	}
+	
+	private boolean esLunes(int col) {
+		return col==1 || col==8 || col==15 || col==22 || col==29 || col==36;
 	}
 
 	private int calcularColumna(int pos) {
