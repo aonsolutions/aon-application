@@ -47,6 +47,7 @@ import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sales.controller.SalesDetailController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1L;
+import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1P;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1T;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
 import com.esferalia.aon.file.seres.util.reader.connect.ConnectSalesReader;
@@ -131,20 +132,25 @@ public class EdiSalesImporterHandler implements Serializable {
 //		System.out.println(ere1c.ere1lList.get(0).toString());
 		Sales sales = (Sales) controller.getTo();
 		try {
-			if(rectl.getCodigoEmisor()==null){
+			String customerCode = rectl.ere1pList.stream()
+					.filter(o -> ERE1P.ERE1P_2.EMISOR_DEL_MENSAJE_MS.getValue().equals(o.getCalificadorDelInterlocutor()))
+					.map(ERE1P::getCodigoInterlocutor)
+					.findFirst()
+					.orElse(rectl.getCodigoEmisor().trim());
+			if(customerCode==null){
 				getLogPanel().error("Imposible continuar, el fichero no contiene CodigoEmisor.");
-				getLogPanel().error("CodigoEmisor: " + rectl.getCodigoEmisor());
+				getLogPanel().error("CodigoEmisor: " + customerCode);
 				getLogPanel().info("PROCESO ABORTADO");
 			} else {
-				RegistryNote customerRegistryNote = searchCustomerNote(rectl.getCodigoEmisor().trim());
+				RegistryNote customerRegistryNote = searchCustomerNote(customerCode);
 				if(customerRegistryNote==null 
 						|| customerRegistryNote.getRegistry()==null 
 						|| customerRegistryNote.getRegistry().getId()==null){
-					getLogPanel().error("No existe el cliente con CodigoEmisor " + rectl.getCodigoEmisor());
+					getLogPanel().error("No existe el cliente con CodigoEmisor " + customerCode);
 					getLogPanel().info("PROCESO ABORTADO");
 				} else {
 					Customer customer = obtainCustomer(customerRegistryNote.getRegistry().getId());
-					getLogPanel().info("Cliente detectado con el codigo de punto de entrega " + rectl.getCodigoEmisor());
+					getLogPanel().info("Cliente detectado con el codigo de punto de entrega " + customerCode);
 					RegistryAddress address = obtainAddress(Integer.valueOf(customerRegistryNote.getDescription()));
 					getLogPanel().info("Dirección localizada: " + address.getFullAddress());
 					
