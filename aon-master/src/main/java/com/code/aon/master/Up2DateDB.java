@@ -3,6 +3,10 @@ package com.code.aon.master;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
+
+import com.code.aon.dbutils.AonSQLException;
 
 public class Up2DateDB {
 
@@ -25,25 +29,59 @@ public class Up2DateDB {
 	 */
 	public static void main(String[] args) {
 		Connection connection = null;
+		Arguments arguments = parseArgs(args);
+		VersionManager manager = new VersionManager();
 		try {
-			Arguments arguments = parseArgs(args);
-			VersionManager manager = new VersionManager();
 			Class.forName(arguments.driver);
 			connection = DriverManager.getConnection(arguments.url,
 					arguments.user, arguments.password);
+			
 			manager.uptodateDatabase(connection);
+			
 		} catch ( IllegalArgumentsException e ){
 			printUsage(args);
 			System.exit(1);
-		} catch ( Throwable th ) {
+		}  catch ( AonSQLException e ){
+			Collection<String> schemas = Collections.emptyList();
+			try {
+				schemas = manager.getSchemas(connection);
+			} catch ( Throwable th ){
+				//System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
+				System.exit(-1);
+			}
+			int exit = 0; // OK
+			for ( String schema : schemas ) {
+				try {
+					connection = DriverManager.getConnection(
+							String.format("%s/%s",arguments.url,schema),
+							arguments.user, arguments.password);
+					System.out.printf("Actualizando '%s'...", schema);
+					manager.uptodateDatabase(connection);
+					System.out.printf("OK\r\n");
+					connection.close();
+				} catch ( Throwable th) {
+					System.out.printf("ERROR (%s)\r\n", th.getMessage());
+					if (connection != null) {
+						try {
+							connection.close();
+						} catch (SQLException _e) {
+						}
+					}
+					exit = -1;
+				} 
+			}
+			System.exit(exit);
+		}
+		catch ( Throwable th ) {
+			//System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
+			System.exit(-1);
+		} finally {
 			if (connection != null) {
 				try {
 					connection.close();
 				} catch (SQLException e) {
 				}
 			}
-			System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
-			System.exit(-1);
 		}
 	}
 

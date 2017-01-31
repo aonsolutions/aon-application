@@ -27,25 +27,10 @@ CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/jcl.jar:/usr/share/java/slf4j/api.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/commons-dbutils.jar:/usr/share/java/commons-logging.jar:/usr/share/java/commons-lang.jar
 
 
-ERR=1
-
-
-function getDBs() {
-	mysql -h $1 -u $2 --password=$3 -sNe "SHOW DATABASES" | \
-	while read DB; do
-		mysql -h $1 -u $2 --password=$3 $DB -e "SELECT 1 FROM registry" &>/dev/null && echo -n ' '$DB;
-	done
-}
-
 function getOption() {
 	local OPTION=$1;
 	grep -E "^[[:space:]]*$OPTION[[:space:]]*=" /etc/aon-aio/connection | cut -d"=" -f2
 }
-
-#driverClass=org.gjt.mm.mysql.Driver
-#jdbcUrl=jdbc:mysql://sig.cdhc46h3yjvt.eu-west-1.rds.amazonaws.com:3306
-#user=dbuser
-#password=dbpassword
 
 
 URL=`getOption 'jdbcUrl'`
@@ -54,11 +39,5 @@ PASSWORD=`getOption 'password'`
 
 HOST=`echo $URL | sed -e 's/.*\/\/\([^:^,^\/]*\).*/\1/'`
 
-DBS=`getDBs $HOST $USERNAME $PASSWORD`
+java -classpath $CLASSPATH com.code.aon.master.Up2DateDB $URL $USERNAME $PASSWORD com.mysql.jdbc.Driver;
 
-
-for DB in $DBS; do
-        echo -n "Actualizando '$DB'..." ;
-        ERR=$(java -classpath $CLASSPATH com.code.aon.master.Up2DateDB $URL/$DB  $USERNAME  $PASSWORD com.mysql.jdbc.Driver 2>&1);
-        [ $? -eq 0 ] && echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR $ERR\\033[0;39m";
-done

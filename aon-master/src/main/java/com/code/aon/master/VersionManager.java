@@ -6,7 +6,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.CharEncoding;
@@ -20,6 +24,8 @@ import com.code.aon.dbutils.AonSQLScript;
 public class VersionManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonSQLScript.class.getName());
+	private static final String MYSQL_SCHEMA = "mysql";
+	private static final String SELECT_SCHEMAS = "SELECT t.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as t WHERE t.TABLE_NAME = 'domain'";
 	
 	public String[] getVersions() {
 		return IConstants.VERSIONS;
@@ -113,6 +119,43 @@ public class VersionManager {
 		}
 	}
 	
+	public List<String> getSchemas(Connection c) throws AonSQLException{
+		ResultSet rs = null;
+		Statement stmt = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			stmt  = c.createStatement();
+			pstmt = c.prepareStatement(SELECT_SCHEMAS);
+			rs = pstmt.executeQuery();
+			List<String> list = new ArrayList<String>();
+			while (rs.next()) {
+				try {
+					String schema = rs.getString(1);
+					stmt.executeQuery("SELECT name FROM `" + schema + "`.domain");
+					list.add(schema);
+				} catch ( SQLException e ) {
+					// No aon database...
+				}
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new AonSQLException(e.getMessage(),e);
+		} finally {
+			try {
+				rs.close();
+			} catch ( SQLException e ){
+			}
+			try {
+				stmt.close();
+			} catch ( SQLException e ){
+			}
+			try {
+				pstmt.close();
+			} catch ( SQLException e ){
+			}
+		}	
+	}	
 	private void execute( Connection c, URL url, String dbName ) throws IOException, AonSQLException {
 		LOGGER.info("sql script: {}", url.getFile());
 		AonSQLFile file = new AonSQLFile(url.openStream(), CharEncoding.ISO_8859_1);
