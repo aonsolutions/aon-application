@@ -348,12 +348,18 @@ public class EmployeeCalendarDraft extends Composite {
 		
 		ArrayList<String> tipoHoras = new ArrayList<String>();
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-		tipoHoras.add("22222");
-		tipoHoras.add("44444");
-		tipoHoras.add("66666");
-		tipoHoras.add("88888");
+		tipoHoras.add("2");
+		tipoHoras.add("4");
+		tipoHoras.add("6");
+		tipoHoras.add("8");
 		oracle.setDefaultSuggestionsFromText(tipoHoras);
 		this.lunesOpt = new SuggestBox(oracle);
+		this.martesOpt = new SuggestBox(oracle);
+		this.miercolesOpt = new SuggestBox(oracle);
+		this.juevesOpt = new SuggestBox(oracle);
+		this.viernesOpt = new SuggestBox(oracle);
+		this.sabadoOpt = new SuggestBox(oracle);
+		this.domingoOpt = new SuggestBox(oracle);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -419,7 +425,6 @@ public class EmployeeCalendarDraft extends Composite {
 				
 				for (Integer pos : posicionesSeleccionas) {
 					int col = calcularColumna(pos.intValue());
-					int row = calcularFila(pos.intValue());
 					if (esDomingo(col))
 						bloqueDomingo.removeStyleName(style.ocultarDivStyle());
 					else if (esSabado(col))
@@ -438,32 +443,6 @@ public class EmployeeCalendarDraft extends Composite {
 				
 			}
 		});
-		
-		expandHourBtnL.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.alert("Hola");
-				lunesOpt.showSuggestionList();
-				
-			}
-		});
-		
-		this.lunesOpt.addKeyUpHandler(new KeyUpHandler() {		
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if ((event.getNativeKeyCode() == KeyEvent.CTRL_MASK) && 
-						(event.getNativeKeyCode() == KeyEvent.VK_SPACE))
-					lunesOpt.showSuggestionList();
-			}
-		});
-		
-		this.lunesOpt.addDomHandler(new DoubleClickHandler() {
-			@Override
-			public void onDoubleClick(DoubleClickEvent event) {
-				lunesOpt.showSuggestionList();
-			}
-		}, DoubleClickEvent.getType());
 		
 		confirmOk.addClickHandler(new ClickHandler() {
 			
@@ -553,6 +532,41 @@ public class EmployeeCalendarDraft extends Composite {
 		
 	}
 
+	@UiHandler("expandHourBtnL")
+	public void onExpandHourLClick(ClickEvent event) {
+		lunesOpt.showSuggestionList();	
+	}
+	
+	@UiHandler("expandHourBtnM")
+	public void onExpandHourMClick(ClickEvent event) {
+		martesOpt.showSuggestionList();	
+	}
+	
+	@UiHandler("expandHourBtnX")
+	public void onExpandHourXClick(ClickEvent event) {
+		miercolesOpt.showSuggestionList();	
+	}
+	
+	@UiHandler("expandHourBtnJ")
+	public void onExpandHourJClick(ClickEvent event) {
+		juevesOpt.showSuggestionList();	
+	}
+	
+	@UiHandler("expandHourBtnV")
+	public void onExpandHourVClick(ClickEvent event) {
+		viernesOpt.showSuggestionList();	
+	}
+	
+	@UiHandler("expandHourBtnS")
+	public void onExpandHourSClick(ClickEvent event) {
+		sabadoOpt.showSuggestionList();	
+	}
+	
+	@UiHandler("expandHourBtnD")
+	public void onExpandHourDClick(ClickEvent event) {
+		domingoOpt.showSuggestionList();	
+	}
+	
 	@UiHandler("calendarGrid")
 	public void onDragStart(DragStartEvent event) {
 		//TODO: ver como hacer el drag con el raton en vez de con shift

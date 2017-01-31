@@ -210,12 +210,17 @@
 			margin-top: 1px;
 		}
 		
+		@external gwt-Selector;
+		@external gwt-SuggestBoxPopup;
+		
 		.gwt-SuggestBoxPopup{
-			z-index: 107;
-		
+			z-index: 105;
+		}		
+
+		.gwt-Selector .gwt-SuggestBoxPopup{
+			z-index: 105;
+			height: inherit;
 		}
-		
-		@external .gwt-SuggestBoxPopup
 
 	</ui:style>
 
