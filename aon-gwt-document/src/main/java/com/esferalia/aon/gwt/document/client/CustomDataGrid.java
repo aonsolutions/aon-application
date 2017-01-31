@@ -29,7 +29,8 @@ public class CustomDataGrid<T> extends DataGrid<T> {
 	static interface MyResources extends Resources {
 
 		@Override
-		@Source("com/esferalia/aon/gwt/document/client/datagrid.css")
+		@Source("com/esferalia/aon/gwt/common/client/css/data-grid.css")
+				
 		public Style dataGridStyle();
 
 	}

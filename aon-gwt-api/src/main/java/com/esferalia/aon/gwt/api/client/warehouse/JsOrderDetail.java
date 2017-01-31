@@ -106,4 +106,8 @@ public class JsOrderDetail extends JavaScriptObject {
 		return this.product_name;
 	}-*/;
 	
+	public final native Integer getCarrierPacking() /*-{
+		return this.carrier_packing;
+	}-*/;
+	
 }

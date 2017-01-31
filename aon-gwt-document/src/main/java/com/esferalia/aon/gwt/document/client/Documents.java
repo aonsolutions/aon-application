@@ -586,7 +586,7 @@ public class Documents implements EntryPoint {
 	DataGridResources resources = GWT.create(DataGridResources.class);
 
 	public interface DataGridResources extends DataGrid.Resources {
-		@Source("com/esferalia/aon/gwt/document/client/datagrid.css")
+		@Source("com/esferalia/aon/gwt/common/client/css/data-grid.css")
 		Style dataGridStyle();
 	}
 	
@@ -1039,8 +1039,7 @@ public class Documents implements EntryPoint {
 			isServiconvenios = true;
 			newFile.setVisible(false); 
 			sConvenios.setVisible(true);
-		} 		
-
+		}
 	}
 	
 	private ListHandler<FileInfo> getSortHandler() {

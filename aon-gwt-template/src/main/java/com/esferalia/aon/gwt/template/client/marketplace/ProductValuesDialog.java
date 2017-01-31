@@ -55,7 +55,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	DataGridResources resources = GWT.create(DataGridResources.class);
 
 	public interface DataGridResources extends DataGrid.Resources {
-		@Source("com/esferalia/aon/gwt/template/client/datagrid.css")
+		@Source("com/esferalia/aon/gwt/common/client/css/data-grid.css")
 		Style dataGridStyle();
 	}
 	

@@ -149,16 +149,15 @@ public class CarrierPacking extends AonTemplate{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
-		
 	}
-	
+
 	public void southContent(){
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);
 	}
 	
-	public void southContent(JsOrder p, AonJsArray<JsOrderDetail> details){
+	public void southContent(JsCarrierPacking js, JsOrder p, AonJsArray<JsOrderDetail> details){
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
-		setSouthContent(new CarrierPackingSouth(p, details));
+		setSouthContent(new CarrierPackingSouth2(me, js, p, details));
 	}
 	
 	private AonDialog createAddDialog(){

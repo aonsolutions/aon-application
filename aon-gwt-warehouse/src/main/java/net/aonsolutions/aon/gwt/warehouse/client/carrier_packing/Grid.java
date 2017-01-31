@@ -57,10 +57,8 @@ public class Grid extends Composite {
 				JsCarrierPacking.PROVIDES_KEY);
 	
 		initWidget(binder.createAndBindUi(this));
-		
-		load(list);				
 
-		
+		load(list);				
 	}	
 	
 	private void load(LinkedList<JsCarrierPacking> list) {
@@ -83,7 +81,7 @@ public class Grid extends Composite {
 		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
-		dataGrid.setEmptyTableWidget(new Label("NO HAY CARRIER PACKINGS!"));
+		dataGrid.setEmptyTableWidget(new Label("NO HAY DATOS DISPONIBLES"));
 		addDataDisplay(dataGrid, list);
 		ListHandler<JsCarrierPacking> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);

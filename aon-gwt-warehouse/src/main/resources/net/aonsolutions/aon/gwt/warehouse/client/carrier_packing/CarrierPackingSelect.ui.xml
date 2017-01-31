@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
@@ -16,9 +17,10 @@
 			</g:VerticalPanel>
 		</g:west>
 		<g:center>
-			<g:VerticalPanel ui:field="centerPanel">
+			<c:DataGrid ui:field='dataGrid' visible="true">
+							    
+			</c:DataGrid>	
 			
-			</g:VerticalPanel>		
 		</g:center>
 	</g:DockLayoutPanel>
 

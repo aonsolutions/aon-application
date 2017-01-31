@@ -11,7 +11,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 
-	<c:DataGrid ui:field='dataGrid' visible="true" styleName="aon_dataGrid-template">
+	<c:DataGrid ui:field='dataGrid' visible="true">
 							    
 	</c:DataGrid>	
 
