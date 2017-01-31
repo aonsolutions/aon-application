@@ -200,7 +200,7 @@ public class AccountEntryDAO {
 	public static void update(AONContext ctx, AccountEntry ae) {
 		ctx.checkWrite();
 		AccountEntryValidation.validateEntry(ctx, ae);
-		ctx.getDslContext().update(ACCOUNT_ENTRY)
+		int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
 			.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
 			.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getPeriod())
 			.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
@@ -213,7 +213,7 @@ public class AccountEntryDAO {
 			.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 			.execute();
-		ctx.log().info("UPDATE ACCOUNT_ENTRY asiento: " + ae.getId());
+		ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: " + ae.getId());
 		updateDetails(ctx, ae);
 	}
 
@@ -228,7 +228,7 @@ public class AccountEntryDAO {
 						detail.setLine(line);	
 					}
 					if (detail.isDirty()) {
-						ctx.getDslContext().update(ACCOUNT_ENTRY_DETAIL)
+						int i = ctx.getDslContext().update(ACCOUNT_ENTRY_DETAIL)
 							.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
 							.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
 							.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount())
@@ -242,7 +242,7 @@ public class AccountEntryDAO {
 							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 							.execute();
-						ctx.log().info("UPDATE ACCOUNT_ENTRY_DETAIL ("+line+") " + detail.getId());
+						ctx.log().info("UPDATE ACCOUNT_ENTRY_DETAIL  ("+i+" rows) ("+line+") " + detail.getId());
 					}
 				} else {
 					ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL)
@@ -262,11 +262,11 @@ public class AccountEntryDAO {
 				}
 			} else {
 				Integer id = detail.getId() * -1;
-				ctx.getDslContext()
+				int i = ctx.getDslContext()
 					.delete(ACCOUNT_ENTRY_DETAIL)
 					.where(ACCOUNT_ENTRY_DETAIL.ID.equal(id))
 					.execute();
-				ctx.log().info("DELETE ACCOUNT_ENTRY_DETAIL ("+line+") " + id);
+				ctx.log().info("DELETE ACCOUNT_ENTRY_DETAIL  ("+i+" rows ) ("+line+") " + id);
 			}
 		}
 	}
@@ -333,11 +333,11 @@ public class AccountEntryDAO {
 			.execute();
 		ctx.log().info("DELETE ACCOUNT_ENTRY detalles del asiento: " + id + " ("+count+" filas)");
 		// Se borra la cabecera
-		ctx.getDslContext()
+		count = ctx.getDslContext()
 			.delete(ACCOUNT_ENTRY)
 			.where(ACCOUNT_ENTRY.ID.equal(id))
 			.execute();
-		ctx.log().info("DELETE ACCOUNT_ENTRY asiento: " + id);
+		ctx.log().info("DELETE ACCOUNT_ENTRY asiento: " + id + " ("+count+" filas)");
 		afterRemove(ctx, entry);
 	}
 
@@ -346,19 +346,28 @@ public class AccountEntryDAO {
 			
 			@Override
 			public void visitReturnedPayment(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+				removeFinance(entry);
 			}
 			
 			@Override
 			public void visitReturnedCollection(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+				removeFinance(entry);
+			}
+			
+			@Override
+			public void visitCollection(AccountEntry entry) {
+				removeFinance(entry);
 			}
 			
 			@Override
 			public void visitPayment(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+				removeFinance(entry);
 			}
-			
+			@Override
+			public void visitFinance(AccountEntry entry) {
+				removeFinance(entry);
+			}
+
 			@Override
 			public void visitLeasingFee(AccountEntry entry) {
 				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
@@ -374,10 +383,6 @@ public class AccountEntryDAO {
 				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
 			}
 			
-			@Override
-			public void visitCollection(AccountEntry entry) {
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-			}
 			
 			@Override
 			public void visitAmortization(AccountEntry entry) {
@@ -396,6 +401,11 @@ public class AccountEntryDAO {
 				removeInvoice(entry);
 			}
 
+			private void removeFinance(AccountEntry entry) {
+				FinanceDAO.deleteAccountEntryTrackings(ctx, entry.getId());
+			}
+
+			
 			private void removeInvoice(AccountEntry entry) {
 				Integer invoiceId = ctx.getDslContext()
 						.select( ACCOUNT_ENTRY_INVOICE.INVOICE )

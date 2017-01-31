@@ -141,7 +141,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		container.clear();
 		for (final FinanceTracking ft : financeEntry.getTrackings().values()) {
 			final FocusPanel financePanel = FinancePrinter.print(ft.getFinance());
-			financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+			financePanel.addStyleName(AON.AON_CSS.aonPaddingLeftImportant());
 			boolean updatable = isUpdatable() && ft.isLastTracking();
 			if (updatable) {
 				if (ft.isDeleted()) {
@@ -165,7 +165,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 					}
 				});
 			} else {
-				if (getWrapper().isFromfinanceBatch()) {
+				if (getWrapper().isFromFinanceBatch()) {
 					financePanel.setTitle( AON.MSG.fromFBatch() );
 				} else if (!ft.isLastTracking()) {
 					financePanel.setTitle( AON.MSG.noLastTracking() );
@@ -392,7 +392,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	}
 	@Override
 	public boolean isUpdatable() {
-		return super.isUpdatable() && !getWrapper().isFromfinanceBatch();
+		return super.isUpdatable() && !getWrapper().isFromFinanceBatch();
 	}
 	
 	@Override

@@ -44,7 +44,7 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 		this.financeBatch = financeBatch;
 		return this;
 	}
-	public boolean isFromfinanceBatch() {
+	public boolean isFromFinanceBatch() {
 		return getFinanceBatch() != null;
 	}
 	public Account getBankAccount() {
@@ -81,6 +81,7 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	public void add(Finance finance) {
 		getTrackings().put(finance.getId(), new FinanceTracking()
 				.setFinance(finance)
+				.setChecked(true)
 				.setLastTracking(true)
 				);
 	}

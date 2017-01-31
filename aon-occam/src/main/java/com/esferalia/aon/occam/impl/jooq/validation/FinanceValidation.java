@@ -1,9 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
+import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
+
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -145,10 +149,42 @@ public class FinanceValidation {
 			throw new AonCoreException(AonError.DELETE_STATUS_WRONG.getMessage());
 	};
 	
+
 	public static void validateDelete(AONContext ctx, Finance finance) throws AonCoreException {
 		CHECK_DELETE_STATUS
-		.accept(finance, ctx);
+			.accept(finance, ctx);
 		
+	}
+
+	/**
+	 * Para borrar el asiento, este no puede venir de remesa
+	 */
+	public static BiConsumer<FinanceEntry,AONContext> CHECK_IF_IS_FROM_FBATCH = (entry,ctx) -> {
+		if (ctx.getDslContext()
+			.select(ACCOUNT_ENTRY_FBATCH.FBATCH)
+			.from(ACCOUNT_ENTRY_FBATCH)
+			.where(ACCOUNT_ENTRY_FBATCH.ACCOUNT_ENTRY.eq(entry.getAccountEntry().getId()))
+			.fetch()
+			.stream()
+			.findAny()
+			.isPresent())
+			throw new AonCoreException(AonError.FINANCE_ENTRY_FROM_FBATCH.getMessage());
+	};
+	
+	/**
+	 * Para borrar, no purde haber movimientos posteriores
+	 */
+	public static BiConsumer<FinanceEntry,AONContext> CHECK_TRACKINGS_STATUS = (entry,ctx) -> {
+		for (FinanceTracking ft : entry.getTrackings().values()) {
+			if (!ft.isLastTracking())
+				throw new AonCoreException(AonError.FINANCE_ENTRY_LATER_TRACKINGS.getMessage());
+		}
+	};
+
+	public static void validateDelete(AONContext ctx, FinanceEntry entry) {
+		CHECK_IF_IS_FROM_FBATCH
+		.andThen(CHECK_TRACKINGS_STATUS)
+			.accept(entry, ctx);
 	}
 
 }

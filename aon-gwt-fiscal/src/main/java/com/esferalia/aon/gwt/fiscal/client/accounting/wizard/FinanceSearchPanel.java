@@ -78,7 +78,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private int lastScrollPos = 0;
 	
 	public static interface IFinancePanelCallback {
-		boolean isSelected( Finance ft);
+		boolean isSelected( Finance finance);
 	}
 	
 	public FinanceSearchPanel(String domainName,int domainId, IFinancePanelCallback callback, int tabIndex) {
@@ -340,28 +340,26 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 						if (result != null && !result.isEmpty()) {
 							for (final Finance finance : result) {
 								finance.setSelected(callback.isSelected(finance));
-//								if (!finance.isChecked()) {
-									final FocusPanel financePanel = FinancePrinter.print(finance);
-									financePanel.addStyleName(finance.isSelected()
-											?AON.AON_CSS.aonIconChecked()
-											:AON.AON_CSS.aonIconCheck());
-									financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-									container.add(financePanel);
-									financePanel.addClickHandler(new ClickHandler() {
-										@Override
-										public void onClick(ClickEvent event) {
-											finance.setSelected(!finance.isSelected());
-											if (finance.isSelected()) {
-												financePanel.removeStyleName(AON.AON_CSS.aonIconCheck());
-												financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
-											} else {
-												financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
-												financePanel.removeStyleName(AON.AON_CSS.aonIconChecked());
-											}
-											SelectionEvent.<Finance>fire( FinanceSearchPanel.this, finance);
+								final FocusPanel financePanel = FinancePrinter.print(finance);
+								financePanel.addStyleName(finance.isSelected()
+										?AON.AON_CSS.aonIconChecked()
+										:AON.AON_CSS.aonIconCheck());
+								financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+								container.add(financePanel);
+								financePanel.addClickHandler(new ClickHandler() {
+									@Override
+									public void onClick(ClickEvent event) {
+										finance.setSelected(!finance.isSelected());
+										if (finance.isSelected()) {
+											financePanel.removeStyleName(AON.AON_CSS.aonIconCheck());
+											financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
+										} else {
+											financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
+											financePanel.removeStyleName(AON.AON_CSS.aonIconChecked());
 										}
-									});
-//								}
+										SelectionEvent.<Finance>fire( FinanceSearchPanel.this, finance);
+									}
+								});
 							}
 							offset.setValue(ofs + result.size());
 							enableMoreData();

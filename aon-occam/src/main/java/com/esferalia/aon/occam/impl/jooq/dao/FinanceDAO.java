@@ -19,13 +19,13 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.FinanceTrackingRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -201,7 +201,7 @@ public class FinanceDAO {
 	private static void update(AONContext ctx, Finance finance) {
 		ctx.checkWrite();
 		FinanceValidation.validateSave(ctx, finance);
-		ctx.getDslContext().update(FINANCE)
+		int i = ctx.getDslContext().update(FINANCE)
 			.set(FINANCE.DOMAIN,finance.getDomain())
 			.set(FINANCE.PAYMENT,AonEnumUtils.getByte(finance.isPayment()))
 			.set(FINANCE.REGISTRY,finance.getRegistry().getId())
@@ -233,28 +233,29 @@ public class FinanceDAO {
 			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FINANCE.ID.equal( finance.getId()))
 			.execute();
-		ctx.log().info("UPDATE FINANCE id: " + finance.getId());
+		ctx.log().info("UPDATE FINANCE  ("+i+") id: " + finance.getId());
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		Finance finance = getFinance(ctx,id);
 		FinanceValidation.validateDelete(ctx, finance);
-		removeFinanceTracking(ctx,finance);
-		ctx.getDslContext()
+		removeFinanceTrackingFractions(ctx,finance);
+		int i = ctx.getDslContext()
 			.delete(FINANCE)
 			.where(FINANCE.ID.equal(id))
 			.execute();
-		ctx.log().info("DELETE FINANCE id: " + finance.getId());
+		ctx.log().info("DELETE FINANCE ("+i+") id: " + finance.getId());
 	}
 	
-	private static void removeFinanceTracking(AONContext ctx, Finance finance) {
+	private static void removeFinanceTrackingFractions(AONContext ctx, Finance finance) {
 		if (finance.isPending()) {
-			ctx.getDslContext()
-			.delete(FINANCE_TRACKING)
+			int i = ctx.getDslContext()
+				.delete(FINANCE_TRACKING)
 				.where(FINANCE_TRACKING.FINANCE.eq(finance.getId()))
+				.and(FINANCE_TRACKING.TYPE.eq(FinanceTrackingType.FRACTIONED.value()))
 				.execute();
-			ctx.log().info("DELETE FINANCE_TRACKING Finance id: " + finance.getId());
+			ctx.log().info("DELETE FINANCE_TRACKING Fractions ("+i+") Finance id: " + finance.getId());
 		}
 	}
 	
@@ -364,13 +365,13 @@ public class FinanceDAO {
         	.setBankStatementLink(null)
         	.setAmount(amount)
         	.setRecorded(recorded);
-		ctx.getDslContext().update(FINANCE)
+		int i = ctx.getDslContext().update(FINANCE)
 			.set(FINANCE.STATUS,financeStatus.value())
 			.set(FINANCE.MODIFICATION_USER,ctx.getUser())
 			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FINANCE.ID.equal( financeId))
 			.execute();
-		ctx.log().info("UPDATE FINANCE id: " + financeId + " status: " + financeStatus.getDescription());
+		ctx.log().info("UPDATE FINANCE  ("+i+") id: " + financeId + " status: " + financeStatus.getDescription());
 		return insert(ctx,ft);
 	}
 	
@@ -397,9 +398,43 @@ public class FinanceDAO {
 	}
 	
 	public static FinanceEntry save(AONContext ctx, FinanceEntry financeEntry) {
-		if (financeEntry.getAccountEntry().getId() != null) {
-			throw new AonCoreException("No es posible modificar el apunte. [fallo interno]");
+		ctx.checkWrite();
+		if (financeEntry.getAccountEntry().getId() == null) {
+			return insert(ctx,financeEntry);
+		} else {
+			return update(ctx,financeEntry);
 		}
+	}
+	
+	private static FinanceEntry update(AONContext ctx, FinanceEntry financeEntry) {
+		if (!financeEntry.isMultipleGeneration()) {
+			AccountEntry[] entries = FinanceRecorder.recordFinanceEntry(financeEntry);
+			AccountEntry entry = entries[0];
+			
+			// Se borran (id negativo) las líneas del apunte original, se 
+			// suman al nuevo apunte (que tiene el mismo id) De tal forma, 
+			// la cabecera se modifica y las línea con id negativo se borran. 
+			// Las línea sin id, se añaden.
+			for (AccountEntryDetail original : financeEntry.getAccountEntry().getDetails()) {
+				original.setId( original.getId() * -1);
+				entry.addDetail(original);
+			}
+			Integer entryId = AccountEntryDAO.save(ctx, entry);
+			entry.setId(entryId);
+			for (FinanceTracking ft : financeEntry.getTrackings().values()) {
+				if (ft.isDeleted()) {
+					deleteFinanceTracking(ctx, ft);
+				} else {
+					if (ft.getAccountEntry() == null) {
+						pay(ctx,ft,entry);	
+					}
+				}
+			}
+		}
+		return financeEntry;
+	}
+	
+	private static FinanceEntry insert(AONContext ctx, FinanceEntry financeEntry) {
 		if (!financeEntry.isMultipleGeneration()) {
 			AccountEntry[] entries = FinanceRecorder.recordFinanceEntry(financeEntry);
 			if (entries != null && entries.length == 1) {
@@ -407,28 +442,42 @@ public class FinanceDAO {
 				Integer entryId = AccountEntryDAO.save(ctx, entry);
 				entry.setId(entryId);
 				financeEntry.setAccountEntry(entry);
-				
 				for (FinanceTracking finance : financeEntry.getTrackings().values()) {
-					finance.getFinance().setFinanceStatus(FinanceStatus.PAID);
-					Integer trackingId = addTracking(ctx
-							, finance.getFinance().getId()
-							, entry.getEntryDate()
-							, finance.getFinance().getAmount()
-							, FinanceStatus.PAID
-							, FinanceTrackingType.PAID
-							, "CONTABILIZADO"
-							, true);
-					ctx.getDslContext()
-						.insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
-						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
-						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY,entryId)
-						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING,trackingId)
-						.execute();
-					ctx.log().info("ACCOUNT_ENTRY_FINANCE_TRACKING account_entry: " + entryId + " tracking: " + trackingId);
+					pay(ctx,finance,entry);
 				}
 			}
 		}
 		return financeEntry;
+	}
+	
+	private static void pay(AONContext ctx,FinanceTracking finance,AccountEntry entry) {
+		finance.getFinance().setFinanceStatus(FinanceStatus.PAID);
+		Integer trackingId = addTracking(ctx
+				, finance.getFinance().getId()
+				, entry.getEntryDate()
+				, finance.getFinance().getAmount()
+				, FinanceStatus.PAID
+				, FinanceTrackingType.PAID
+				, "CONTABILIZADO"
+				, true);
+		ctx.getDslContext()
+			.insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
+			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY,entry.getId())
+			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING,trackingId)
+			.execute();
+		ctx.log().info("ACCOUNT_ENTRY_FINANCE_TRACKING account_entry: " + entry.getId() + " tracking: " + trackingId);
+	}
+	
+	public static void deleteAccountEntryTrackings(AONContext ctx, Integer accountEntryId) {
+		ctx.checkWrite();
+		FinanceEntry entry = getFinanceEntry(ctx, accountEntryId);
+		FinanceValidation.validateDelete(ctx, entry);
+		for (FinanceTracking ft : entry.getTrackings().values()) {
+			if (ft.getAccountEntry() != null) {
+				deleteFinanceTracking(ctx, ft);
+			}
+		}
 	}
 	
 	public static FinanceEntry getFinanceEntry(final AONContext ctx, Integer accountEntryId) {
@@ -459,7 +508,7 @@ public class FinanceDAO {
 						entry.setExpenses( AonMathUtils.round(detail.getDebit() - detail.getCredit() ));
 				}
 			});
-		if (entry.isFromfinanceBatch()) {
+		if (entry.isFromFinanceBatch()) {
 			ctx.getDslContext()
 			.select(FINANCE.fields())
 			.select(REGISTRY.fields())
@@ -481,26 +530,8 @@ public class FinanceDAO {
 			.peek(finance -> fillCreditorAcccount(ctx,finance))
 			.forEach( finance -> entry.getTrackings().put(finance.getId(), new FinanceTracking().setFinance(finance)));
 		} else {
-			System.out.println(
-					ctx.getDslContext()
-					.select(FINANCE_TRACKING.fields())
-					.select(FINANCE.fields())
-					.select(REGISTRY.fields())
-					.select(PAY_METHOD.fields())
-					.select(SCOPE.fields())
-					.select(INVOICE.fields())
-						.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
-						.join(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
-						.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
-						.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
-						.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
-						.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-						.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
-						.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
-					.getSQL(ParamType.INLINED)
-					);
-			
 			ctx.getDslContext()
+				.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
 				.select(FINANCE_TRACKING.fields())
 				.select(FINANCE.fields())
 				.select(REGISTRY.fields())
@@ -522,7 +553,7 @@ public class FinanceDAO {
 				.peek(ft -> fillCustomerAcccount(ctx,ft.getFinance()))
 				.peek(ft -> fillSupplierAcccount(ctx,ft.getFinance()))
 				.peek(ft -> fillCreditorAcccount(ctx,ft.getFinance()))
-				.forEach( ft -> entry.getTrackings().put(ft.getId(), ft));
+				.forEach( ft -> entry.getTrackings().put(ft.getFinance().getId(), ft));
 		}
 		return entry;
 	}
@@ -542,6 +573,7 @@ public class FinanceDAO {
 				.setDescription(record.getValue(FINANCE_TRACKING.DESCRIPTION))
 				.setAmount(record.getValue(FINANCE_TRACKING.AMOUNT))
 				.setRecorded(AonEnumUtils.getBoolean( record.getValue(FINANCE_TRACKING.RECORDED)))
+				.setAccountEntry(record.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
 				.setCreationUser(record.getValue(FINANCE_TRACKING.CREATION_USER))
 				.setCreationDate(record.getValue(FINANCE_TRACKING.CREATION_DATE))
 				.setModificationUser(record.getValue(FINANCE_TRACKING.MODIFICATION_USER))
@@ -560,5 +592,46 @@ public class FinanceDAO {
 			.stream()
 			.findAny()
 			.isPresent();
+	}
+	
+	private static void deleteAccountEntryFinanceTracking(AONContext ctx, FinanceTracking ft) {
+		int i = ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY_FINANCE_TRACKING)
+			.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.equal(ft.getId()))
+			.execute();
+		ctx.log().info("DELETE ACCOUNT_ENTRY_FINANCE_TRACKING ("+i+") Tracking: " + ft.getId());
+	}
+		
+
+	private static void deleteFinanceTracking(AONContext ctx, FinanceTracking ft) {
+		deleteAccountEntryFinanceTracking(ctx,ft);
+		if (ft.getBankStatementLink() == null && isLastTracking(ctx,ft)) {
+			int i = ctx.getDslContext()
+				.delete(FINANCE_TRACKING)
+				.where(FINANCE_TRACKING.ID.equal(ft.getId()))
+				.execute();
+			ctx.log().info("DELETE FINANCE_TRACKING  ("+i+") id: " + ft.getId());
+			FinanceStatus newStatus = wasFinanceReturned(ctx,ft.getFinance().getId())
+					?FinanceStatus.RETURNED
+					:FinanceStatus.PENDING;
+			i = ctx.getDslContext().update(FINANCE)
+				.set(FINANCE.STATUS,newStatus.value())
+				.set(FINANCE.MODIFICATION_USER,ctx.getUser())
+				.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.where(FINANCE.ID.equal( ft.getFinance().getId() ))
+				.execute();
+			ctx.log().info("UPDATE FINANCE  ("+i+") id: " + ft.getFinance().getId() + " status: " + newStatus.getDescription());
+		} else {
+		}
+	}
+
+	private static boolean wasFinanceReturned(AONContext ctx,Integer financeId)  {
+		return (getReturnedTimes(ctx,financeId) > 0);
+	}
+
+	private static int getReturnedTimes(AONContext ctx, Integer financeId)  {
+		return ctx.getDslContext().fetchCount(FINANCE_TRACKING
+			,FINANCE_TRACKING.FINANCE.eq(financeId)
+			.and(FINANCE_TRACKING.TYPE.eq(FinanceTrackingType.RETURNED.value())));
 	}
 }

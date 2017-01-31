@@ -13,7 +13,10 @@ public class FinanceUtils {
 	public static Filter getPendingFilter(FinanceProperties p,
 			FinanceParams params) {
 		Filter prop = getFilter(p, params);
-		prop = prop.and(p.getStatusProperty().eq(FinanceStatus.PENDING.value()));
+		prop = prop.and(
+				p.getStatusProperty().eq(FinanceStatus.PENDING.value())
+				.or(p.getStatusProperty().eq(FinanceStatus.RETURNED.value()))
+				);
 		return prop;
 	}
 	

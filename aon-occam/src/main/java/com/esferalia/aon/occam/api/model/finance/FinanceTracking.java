@@ -4,6 +4,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 
@@ -27,6 +28,7 @@ public class FinanceTracking implements Serializable, HasAudit  {
 	private String description;
 	private double amount;
 	private boolean recorded;
+	private Integer accountEntry;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -120,6 +122,14 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		this.recorded = recorded;
 		return this;
 	}
+	public Integer getAccountEntry() {
+		return accountEntry;
+	}
+	public FinanceTracking setAccountEntry(Integer accountEntry) {
+		this.accountEntry = accountEntry;
+		return this;
+	}
+
 
 	public String getCreationUser() {
 		return this.creationUser;
@@ -175,5 +185,6 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		this.deleted = deleted;
 		return this;
 	}
+
 }
 

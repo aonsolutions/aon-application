@@ -37,6 +37,7 @@ public class FinancePrinter {
 		buf.append(AON.DATE_FORMAT.format(finance.getDueDate()));
 		buf.append(AonStringUtils.leftPad(AON.FMT.format(finance.getAmount()),15));		
 		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(finance.getFinanceStatus().getDescription(),7),8));
 		return buf.toString();
 	}
 }

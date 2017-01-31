@@ -932,6 +932,8 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) {visitManual();}
 			@Override public void visitLeasing(AccountEntry entry) {visitManual();}
 			@Override public void visitLeasingFee(AccountEntry entry) {visitManual();}
+			@Override public void visitReturnedPayment(AccountEntry entry) {visitManual();}
+			@Override public void visitReturnedCollection(AccountEntry entry) {visitManual();}
 			
 			private void visitFinance() {
 				entryType.setSelectedIndex(EntryType.FINANCE.ordinal());
@@ -942,8 +944,6 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override public void visitFinance(AccountEntry entry) {visitFinance();}
 			@Override public void visitPayment(AccountEntry entry) {visitFinance();}
 			@Override public void visitCollection(AccountEntry entry) {visitFinance();}
-			@Override public void visitReturnedPayment(AccountEntry entry) {visitFinance();}
-			@Override public void visitReturnedCollection(AccountEntry entry) {visitFinance();}
 		});
 			
 	}

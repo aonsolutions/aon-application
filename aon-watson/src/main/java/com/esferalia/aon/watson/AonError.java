@@ -132,6 +132,9 @@ public enum AonError implements Serializable{
 	,FINANCE_WRONG_ACCOUNT_BANK("Cuenta Bancaria incorrecta.")
 	,FINANCE_WRONG_IBAN("IBAN incorrecto.")
 	,DELETE_STATUS_WRONG("No se permite el borrado de vencimientos que no est\u00E9n pendientes.")
+	
+	,FINANCE_ENTRY_LATER_TRACKINGS("No se puede borrar el asiento, alguno de los vencimientos tiene movimientos posteriores.")
+	,FINANCE_ENTRY_FROM_FBATCH("No se puede borrar el asiento. Procede de remesa, deshaga el apunte desde la pantalla de remesas.")
 	;
 	
 	
