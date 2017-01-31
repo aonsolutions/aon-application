@@ -38,11 +38,10 @@
 									<aon:commandButton id="entryDetailTable-reset"
 										title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new_line})" 
 										actionListener="#{accountEntryDetail.onReset}" 
-										rendered="#{!accountEntryDetail.nevv}"
+										rendered="#{!accountEntryDetail.nevv and (!accountEntry.to.invoiceEntry or !exporter.configuration.configured)}"
 										styleClass="aon-editDataTable-button aon-icon-reset"
 										accesskey="#{bundle.aon_key_new_line}"
 										focus="Account_Id-NEW" />
-	
 								</aon:div>
 							</f:facet>
 						</aon:column>

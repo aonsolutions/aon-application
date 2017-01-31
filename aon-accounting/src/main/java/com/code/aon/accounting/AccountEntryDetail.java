@@ -16,6 +16,16 @@ public class AccountEntryDetail extends AccountEntryDetailDB implements IAccount
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private Integer savedAccountId;
+
+	@Transient
+	public Integer getSavedAccountId() {
+		return savedAccountId;
+	}
+	public void setSavedAccountId(Integer savedAccountId) {
+		this.savedAccountId = savedAccountId;
+	}
+
 	public void setDebit(double debit) {
 		if (debit != 0) {
 			if (debit < 0) {

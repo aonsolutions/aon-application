@@ -7,8 +7,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.audit.IAuditable;
 import com.esferalia.aon.entity.master.AccountEntryDB;
 
@@ -26,6 +28,11 @@ public class AccountEntry extends AccountEntryDB implements IAuditable {
 	}
 	public void setDetail(Set<AccountEntryDetail> detail) {
 		this.detail = detail;
+	}
+
+	@Transient
+	public boolean isInvoiceEntry() {
+        return getType() == AccountEntryType.SALES_INVOICE || getType() == AccountEntryType.PURCHASE_INVOICE || getType() == AccountEntryType.EXPENSE_INVOICE;
 	}
 
 }
