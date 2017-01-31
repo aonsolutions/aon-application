@@ -16,7 +16,6 @@
 	<bean description="Listener para escribir los acumulados por cuenta">
 		<pojo>com.code.aon.accounting.AccountEntryDetail</pojo>
 		<listeners>
-	        <listener>com.code.aon.accounting.event.AccountEntryDetailBeanListener</listener>
 	        <listener>com.code.aon.accounting.event.AccountHelperBeanListener</listener>
 		</listeners>
 		<vetoListeners>

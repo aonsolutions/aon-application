@@ -1,4 +1,4 @@
-package com.code.aon.accounting.event;
+package com.code.aon.account.bridge.event;
 
 import java.util.List;
 

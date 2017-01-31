@@ -34,6 +34,13 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="Actualizar las cuentas de las lineas de factura">
+		<pojo>com.code.aon.accounting.AccountEntryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.AccountEntryDetailBeanListener</listener>
+		</listeners>
+	</bean>
+	
 	<bean description="Borrado de la tabla de enlace entre facturas y apuntes">
 		<pojo>com.code.aon.account.bridge.AccountEntryInvoice</pojo>
 		<listeners>
