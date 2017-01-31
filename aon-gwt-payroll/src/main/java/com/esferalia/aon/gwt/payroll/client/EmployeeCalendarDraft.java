@@ -1,18 +1,14 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -31,7 +27,6 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
-import com.vaadin.polymer.paper.widget.PaperMenu;
 
 public class EmployeeCalendarDraft extends Composite {
 
@@ -40,7 +35,7 @@ public class EmployeeCalendarDraft extends Composite {
 	interface EmployeeCalendarDraftUiBinder extends UiBinder<Widget, EmployeeCalendarDraft> {
 	}
 	
-	// -------------------------------------------------- INTERFAZ MULTISELECCION CELDAS -----------------------------------------------
+	// --------------------------------------- INTERFAZ MULTISELECCION CELDAS -----------------------------------------------
 	public static interface CalendarTypeCell{
 		void select(int row, int col);
 		void unSelect(int row, int col);
@@ -193,7 +188,7 @@ public class EmployeeCalendarDraft extends Composite {
 		}
 	} 
 
-	//--------------------------------------------------------UiFields--------------------------------------------------------------------
+	//----------------------------------------------------UiFields--------------------------------------------------------------------
 	@UiField
 	MyStyle style;
 
@@ -320,49 +315,87 @@ public class EmployeeCalendarDraft extends Composite {
 	@UiField(provided = true)
 	SuggestBox lunesOpt;
 	
-	@UiField
+	@UiField(provided = true)
 	SuggestBox martesOpt;
 	
-	@UiField
+	@UiField(provided = true)
 	SuggestBox miercolesOpt;
 	
-	@UiField
+	@UiField(provided = true)
 	SuggestBox juevesOpt;
 	
-	@UiField
+	@UiField(provided = true)
 	SuggestBox viernesOpt;
 	
-	@UiField
+	@UiField(provided = true)
 	SuggestBox sabadoOpt;
 	
-	@UiField
+	@UiField(provided = true)
 	SuggestBox domingoOpt;
 
+	private final static int MONDAY = 0;
+	private final static int TUESDAY = 1;
+	private final static int WEDNESDAY = 2;
+	private final static int THURSDAY = 3;
+	private final static int FRIDAY = 4;
+	private final static int SATURDAY = 5;
+	private final static int SUNDAY = 6;
 	private List<Integer> posicionesSeleccionas = new ArrayList<Integer>();
 	private int oldHourSelected = 0;
-	int mes = 0;
-	boolean mostrarHoras = true;
-	CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
+	private int mes = 0;
+	private boolean mostrarHoras = true;
+	private final CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
+	private final SuggestBox suggestOpts[] = new SuggestBox[7];
+	private final HTMLPanel divDays[] = new HTMLPanel[7];
 	
 	public EmployeeCalendarDraft() {
 		
+		
 		ArrayList<String> tipoHoras = new ArrayList<String>();
-		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+		MultiWordSuggestOracle oracleL = new MultiWordSuggestOracle();
+		MultiWordSuggestOracle oracleM = new MultiWordSuggestOracle();
+		MultiWordSuggestOracle oracleX = new MultiWordSuggestOracle();
+		MultiWordSuggestOracle oracleJ = new MultiWordSuggestOracle();
+		MultiWordSuggestOracle oracleV = new MultiWordSuggestOracle();
+		MultiWordSuggestOracle oracleS = new MultiWordSuggestOracle();
+		MultiWordSuggestOracle oracleD = new MultiWordSuggestOracle();
 		tipoHoras.add("2");
 		tipoHoras.add("4");
 		tipoHoras.add("6");
 		tipoHoras.add("8");
-		oracle.setDefaultSuggestionsFromText(tipoHoras);
-		this.lunesOpt = new SuggestBox(oracle);
-		this.martesOpt = new SuggestBox(oracle);
-		this.miercolesOpt = new SuggestBox(oracle);
-		this.juevesOpt = new SuggestBox(oracle);
-		this.viernesOpt = new SuggestBox(oracle);
-		this.sabadoOpt = new SuggestBox(oracle);
-		this.domingoOpt = new SuggestBox(oracle);
+		oracleL.setDefaultSuggestionsFromText(tipoHoras);
+		oracleM.setDefaultSuggestionsFromText(tipoHoras);
+		oracleX.setDefaultSuggestionsFromText(tipoHoras);
+		oracleJ.setDefaultSuggestionsFromText(tipoHoras);
+		oracleV.setDefaultSuggestionsFromText(tipoHoras);
+		oracleS.setDefaultSuggestionsFromText(tipoHoras);
+		oracleD.setDefaultSuggestionsFromText(tipoHoras);
+		
+		suggestOpts[MONDAY] = new SuggestBox(oracleL);
+		suggestOpts[TUESDAY] = new SuggestBox(oracleM);
+		suggestOpts[WEDNESDAY] = new SuggestBox(oracleX);
+		suggestOpts[THURSDAY] = new SuggestBox(oracleJ);
+		suggestOpts[FRIDAY] = new SuggestBox(oracleV);
+		suggestOpts[SATURDAY] = new SuggestBox(oracleS);
+		suggestOpts[SUNDAY] = new SuggestBox(oracleD);
+		
+		this.lunesOpt = suggestOpts[MONDAY];
+		this.martesOpt = suggestOpts[TUESDAY];
+		this.miercolesOpt = suggestOpts[WEDNESDAY];
+		this.juevesOpt = suggestOpts[THURSDAY];
+		this.viernesOpt = suggestOpts[FRIDAY];
+		this.sabadoOpt = suggestOpts[SATURDAY];
+		this.domingoOpt = suggestOpts[SUNDAY];
 		
 		initWidget(uiBinder.createAndBindUi(this));
 
+		divDays[0] = bloqueLunes;
+		divDays[1] = bloqueMartes;
+		divDays[2] = bloqueMiercoles;
+		divDays[3] = bloqueJueves;
+		divDays[4] = bloqueViernes;
+		divDays[5] = bloqueSabado;
+		divDays[6] = bloqueDomingo;
 		
 		horasButton.setEnabled(false);
 		
@@ -374,10 +407,6 @@ public class EmployeeCalendarDraft extends Composite {
 		//Crear calendario
 		for (int row = 1; row < 25; row += 2)
 			mostrarCalendario(row, 117);
-		
-		// HandlerRegistration hr =
-		// calendarGrid.addClickHandler(this::onCalendarClick);
-		// hr.removeHandler();
 		
 		horasMenuItem.setScheduledCommand(new Command() {
 
@@ -415,76 +444,35 @@ public class EmployeeCalendarDraft extends Composite {
 			}
 
 			private void comprobarDiasAMostrar() {
-				bloqueLunes.addStyleName(style.ocultarDivStyle());
-				bloqueMartes.addStyleName(style.ocultarDivStyle());
-				bloqueMiercoles.addStyleName(style.ocultarDivStyle());
-				bloqueJueves.addStyleName(style.ocultarDivStyle());
-				bloqueViernes.addStyleName(style.ocultarDivStyle());
-				bloqueSabado.addStyleName(style.ocultarDivStyle());
-				bloqueDomingo.addStyleName(style.ocultarDivStyle());
 				
-				for (Integer pos : posicionesSeleccionas) {
-					int col = calcularColumna(pos.intValue());
-					if (esDomingo(col))
-						bloqueDomingo.removeStyleName(style.ocultarDivStyle());
-					else if (esSabado(col))
-						bloqueSabado.removeStyleName(style.ocultarDivStyle());
-					else if (esViernes(col))
-						bloqueViernes.removeStyleName(style.ocultarDivStyle());
-					else if (esJueves(col))
-						bloqueJueves.removeStyleName(style.ocultarDivStyle());
-					else if (esMiercoles(col))
-						bloqueMiercoles.removeStyleName(style.ocultarDivStyle());
-					else if (esMartes(col))
-						bloqueMartes.removeStyleName(style.ocultarDivStyle());
-					else 
-						bloqueLunes.removeStyleName(style.ocultarDivStyle());
+				for (int i=0; i<7; i++)
+					divDays[i].addStyleName(style.ocultarDivStyle());
+				
+				for(Integer p: posicionesSeleccionas){
+					int fil = calcularFila(p.intValue());
+					int col = calcularColumna(p.intValue());
+					Window.alert("Horas acutales: "+cells[fil+1][col].getHour(fil+1,col));
 				}
 				
+				for (int i = 0; i < 7; i++){
+					final int c =i; 
+					Double value = posicionesSeleccionas.stream()
+							.filter(p -> es(c, calcularColumna(p.intValue())))
+							.map( p-> new Integer[]{calcularFila(p.intValue())+1, calcularColumna(p.intValue())})
+							.map(p->cells[p[0]][p[1]].getHour(p[0], p[1]))
+							.peek(p -> divDays[c].removeStyleName(style.ocultarDivStyle()))
+							.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> Double.MIN_VALUE == h1 || h2.equals(h1) ? h2: null ))
+							;
+					
+					if(value != null)
+						suggestOpts[c].setValue(value+"");
+					else
+						suggestOpts[c].setValue("");
+				}
+	
 			}
 		});
 		
-		confirmOk.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				double horasLunes = Double.parseDouble(lunesOpt.getValue());
-				double horasMartes = Double.parseDouble(martesOpt.getValue());
-				double horasMiercoles = Double.parseDouble(miercolesOpt.getValue());
-				double horasJueves = Double.parseDouble(juevesOpt.getValue());
-				double horasViernes = Double.parseDouble(viernesOpt.getValue());
-				double horasSabado = Double.parseDouble(sabadoOpt.getValue());
-				double horasDomingo = Double.parseDouble(domingoOpt.getValue());
-				Window.alert("L :"+horasLunes+", M: "+horasMartes+", X: "+horasMiercoles+", J: "+horasJueves
-						+", V: "+horasViernes+", S: "+horasSabado+", D: "+horasDomingo);
-				actualizarHoras(horasLunes, horasMartes, horasMiercoles, horasJueves, horasViernes, horasSabado, horasDomingo);
-				dialogHoras.close();
-				horasButton.setEnabled(false);
-				
-			}
-
-			private void actualizarHoras(double horasLunes, double horasMartes, double horasMiercoles, double horasJueves, double horasViernes, double horasSabado, double horasDomingo) {
-				for (Integer pos : posicionesSeleccionas) {
-					int col = calcularColumna(pos.intValue());
-					int row = calcularFila(pos.intValue());
-					if (esDomingo(col))
-						cells[row+1][col].setHour(row+1, col, horasDomingo);
-					else if (esSabado(col))
-						cells[row+1][col].setHour(row+1, col, horasSabado);
-					else if (esViernes(col))
-						cells[row+1][col].setHour(row+1, col, horasViernes);
-					else if (esJueves(col))
-						cells[row+1][col].setHour(row+1, col, horasJueves);
-					else if (esMiercoles(col))
-						cells[row+1][col].setHour(row+1, col, horasMiercoles);
-					else if (esMartes(col))
-						cells[row+1][col].setHour(row+1, col, horasMartes);
-					else 
-						cells[row+1][col].setHour(row+1, col, horasLunes);
-				}
-				limpiarSeleccion(posicionesSeleccionas);
-			}
-		});
 	}
 
 	// ----------------------------------------------------------------- UiHandlers ----------------------------------------------------
@@ -534,37 +522,37 @@ public class EmployeeCalendarDraft extends Composite {
 
 	@UiHandler("expandHourBtnL")
 	public void onExpandHourLClick(ClickEvent event) {
-		lunesOpt.showSuggestionList();	
+		suggestOpts[MONDAY].showSuggestionList();	
 	}
 	
 	@UiHandler("expandHourBtnM")
 	public void onExpandHourMClick(ClickEvent event) {
-		martesOpt.showSuggestionList();	
+		suggestOpts[TUESDAY].showSuggestionList();	
 	}
 	
 	@UiHandler("expandHourBtnX")
 	public void onExpandHourXClick(ClickEvent event) {
-		miercolesOpt.showSuggestionList();	
+		suggestOpts[WEDNESDAY].showSuggestionList();	
 	}
 	
 	@UiHandler("expandHourBtnJ")
 	public void onExpandHourJClick(ClickEvent event) {
-		juevesOpt.showSuggestionList();	
+		suggestOpts[THURSDAY].showSuggestionList();	
 	}
 	
 	@UiHandler("expandHourBtnV")
 	public void onExpandHourVClick(ClickEvent event) {
-		viernesOpt.showSuggestionList();	
+		suggestOpts[FRIDAY].showSuggestionList();	
 	}
 	
 	@UiHandler("expandHourBtnS")
 	public void onExpandHourSClick(ClickEvent event) {
-		sabadoOpt.showSuggestionList();	
+		suggestOpts[SATURDAY].showSuggestionList();	
 	}
 	
 	@UiHandler("expandHourBtnD")
 	public void onExpandHourDClick(ClickEvent event) {
-		domingoOpt.showSuggestionList();	
+		suggestOpts[SUNDAY].showSuggestionList();	
 	}
 	
 	@UiHandler("calendarGrid")
@@ -578,6 +566,20 @@ public class EmployeeCalendarDraft extends Composite {
 			limpiarEstilos(posicionesSeleccionas);
 		}
 		posicionesSeleccionas.clear();
+	}
+	
+	@UiHandler("confirmOk")
+	public void onConfirmDialogClick(ClickEvent event) {
+		double horasLunes = Double.parseDouble(suggestOpts[MONDAY].getValue());
+		double horasMartes = Double.parseDouble(suggestOpts[TUESDAY].getValue());
+		double horasMiercoles = Double.parseDouble(suggestOpts[WEDNESDAY].getValue());
+		double horasJueves = Double.parseDouble(suggestOpts[THURSDAY].getValue());
+		double horasViernes = Double.parseDouble(suggestOpts[FRIDAY].getValue());
+		double horasSabado = Double.parseDouble(suggestOpts[SATURDAY].getValue());
+		double horasDomingo = Double.parseDouble(suggestOpts[SUNDAY].getValue());
+		actualizarHoras(horasLunes, horasMartes, horasMiercoles, horasJueves, horasViernes, horasSabado, horasDomingo);
+		dialogHoras.close();
+		horasButton.setEnabled(false);
 	}
 
 	
@@ -741,7 +743,7 @@ public class EmployeeCalendarDraft extends Composite {
 			Label diaInfo = new Label();
 			diaInfo.setStyleName(style.cellStyle());
 
-			if (esDomingo(i))
+			if (es(SUNDAY, i))
 				diaInfo.setStyleName(style.sundayStyle());
 
 			if (i < primerDiaMes) {
@@ -781,7 +783,7 @@ public class EmployeeCalendarDraft extends Composite {
 			else
 				horas.setStyleName(style.doubleBoxDisableStyle());
 
-			if (esDomingo(diaActualSemana))
+			if (es(SUNDAY, diaActualSemana))
 				diaInfo.setStyleName(style.sundayStyle());
 
 			calendarGrid.setWidget(row, 7 + diaActualSemana, diaInfo);
@@ -832,33 +834,37 @@ public class EmployeeCalendarDraft extends Composite {
 				calendarGrid.clearCell(i, j);
 	}
 
-	private boolean esDomingo(int col) {
-		return col==7 || col==14 || col==21 || col==28 || col==35;
+	private boolean es(int day,int col) {
+		return col==day+1 || col==day+8 || col==day+15 || col==day+22 || col==day+29 || col==day+36;
 	}
-	
-	private boolean esSabado(int col) {
-		return col==6 || col==13 || col==20 || col==27 || col==34;
-	}
-	
-	private boolean esViernes(int col) {
-		return col==5 || col==12 || col==19 || col==26 || col==33;
-	}
-	
-	private boolean esJueves(int col) {
-		return col==4 || col==11 || col==18 || col==25 || col==32;
-	}
-	
-	private boolean esMiercoles(int col) {
-		return col==3 || col==10 || col==17 || col==24 || col==31;
-	}
-	
-	private boolean esMartes(int col) {
-		return col==2 || col==9 || col==16 || col==23 || col==30 || col==37;
-	}
-	
-	private boolean esLunes(int col) {
-		return col==1 || col==8 || col==15 || col==22 || col==29 || col==36;
-	}
+
+//	private boolean esDomingo(int col) {
+//		return col==7 || col==14 || col==21 || col==28 || col==35;
+//	}
+//	
+//	private boolean esSabado(int col) {
+//		return col==6 || col==13 || col==20 || col==27 || col==34;
+//	}
+//	
+//	private boolean esViernes(int col) {
+//		return col==5 || col==12 || col==19 || col==26 || col==33;
+//	}
+//	
+//	private boolean esJueves(int col) {
+//		return col==4 || col==11 || col==18 || col==25 || col==32;
+//	}
+//	
+//	private boolean esMiercoles(int col) {
+//		return col==3 || col==10 || col==17 || col==24 || col==31;
+//	}
+//	
+//	private boolean esMartes(int col) {
+//		return col==2 || col==9 || col==16 || col==23 || col==30 || col==37;
+//	}
+//	
+//	private boolean esLunes(int col) {
+//		return col==1 || col==8 || col==15 || col==22 || col==29 || col==36;
+//	}
 
 	private int calcularColumna(int pos) {
 		return pos % 38;
@@ -866,6 +872,28 @@ public class EmployeeCalendarDraft extends Composite {
 
 	private int calcularFila(int pos) {
 		return pos / 38;
+	}
+	
+	private void actualizarHoras(double horasLunes, double horasMartes, double horasMiercoles, double horasJueves, double horasViernes, double horasSabado, double horasDomingo) {
+		for (Integer pos : posicionesSeleccionas) {
+			int col = calcularColumna(pos.intValue());
+			int row = calcularFila(pos.intValue());
+			if (es(SUNDAY, col))
+				cells[row+1][col].setHour(row+1, col, horasDomingo);
+			else if (es(SATURDAY, col))
+				cells[row+1][col].setHour(row+1, col, horasSabado);
+			else if (es(FRIDAY, col))
+				cells[row+1][col].setHour(row+1, col, horasViernes);
+			else if (es(THURSDAY, col))
+				cells[row+1][col].setHour(row+1, col, horasJueves);
+			else if (es(WEDNESDAY, col))
+				cells[row+1][col].setHour(row+1, col, horasMiercoles);
+			else if (es(TUESDAY, col))
+				cells[row+1][col].setHour(row+1, col, horasMartes);
+			else 
+				cells[row+1][col].setHour(row+1, col, horasLunes);
+		}
+		limpiarSeleccion(posicionesSeleccionas);
 	}
 
 }

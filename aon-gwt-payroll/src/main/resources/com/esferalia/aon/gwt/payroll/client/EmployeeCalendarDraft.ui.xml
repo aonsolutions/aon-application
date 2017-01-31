@@ -65,8 +65,9 @@
 		}
 		
 		.isSelectedStyle {
-			background-color: #166ef3;
-			color: #ffffff;
+			background-color: #166ef3 !important;
+			color: #ffffff !important;
+			border-radius: 0px !important;
 		}
 		
 		.sundayStyle {
@@ -289,14 +290,14 @@
 			            <g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnV"/>
 		            </g:HTMLPanel>
 		            <br></br>
-		            <g:HTMLPanel ui:field="bloqueSabado" styleName="{style.suggestBoxStyle}">
+		            <g:HTMLPanel ui:field="bloqueSabado" styleName="{style.divWidthStyle}">
 			            <i:IronLabel styleName="{style.labelHourStyle}">Sabado</i:IronLabel>
 			            <br></br>
 			            <g:SuggestBox ui:field="sabadoOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
 		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnS"/>
 		            </g:HTMLPanel>
 		            <br></br>
-		            <g:HTMLPanel ui:field="bloqueDomingo" styleName="{style.suggestBoxStyle}">
+		            <g:HTMLPanel ui:field="bloqueDomingo" styleName="{style.divWidthStyle}">
 			            <i:IronLabel styleName="{style.labelHourStyle}">Domingo</i:IronLabel>
 			            <br></br>
 			            <g:SuggestBox ui:field="domingoOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
