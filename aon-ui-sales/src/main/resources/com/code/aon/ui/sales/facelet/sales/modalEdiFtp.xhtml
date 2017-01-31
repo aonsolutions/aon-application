@@ -35,34 +35,73 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="ediFtp-accept"
-										value="Actualizar"
-										actionListener="#{sales.ftpEdiDownloader.onRetrieveFtpEdi}"
-										reRender="showEdiFtpWindow"
-										styleClass="aon-finding-toolbar-item aon-icon-sincronize"
-										onclick="Richfaces.showModalPanel('waitProccess')" 
-										oncomplete="Richfaces.hideModalPanel('waitProccess')">
-									</aon:commandButton>
-									<aon:commandButton id="ediFtp-showSettings"
-										value="&#160;" ajaxSingle="#{true}"
-										title="Mostrar opciones de configuracion"
-										rendered="#{!sales.ftpEdiDownloader.showFtpServerConnectionData}"
-										actionListener="#{sales.ftpEdiDownloader.onShowFtpServerConnectionData}"
-										reRender="showEdiFtpWindow"
-										styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
-										style="font-size:1em;font-weight:bold;float:right;">
-									</aon:commandButton>
-									<aon:commandButton id="ediFtp-hideSettings"
-										value="&#160;" ajaxSingle="#{true}"
-										title="Ocultar opciones de configuracion"
-										rendered="#{sales.ftpEdiDownloader.showFtpServerConnectionData}"
-										actionListener="#{sales.ftpEdiDownloader.onShowFtpServerConnectionData}"
-										reRender="showEdiFtpWindow"
-										styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
-										style="font-size:1em;font-weight:bold;float:right;">
-									</aon:commandButton>
-								</aon:div>
+								<ui:decorate
+									template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+									<ui:param name="toolbarTitle" value="Seresnet" />
+									<ui:param name="toolbarDescription" value="FTP" />
+									<ui:param name="innerToolbar" value="true" />
+									<ui:define name="toolbarContent">
+										<aon:commandButton id="ediFtp-accept"
+											value="Actualizar"
+											actionListener="#{sales.ftpEdiDownloader.onRetrieveFtpEdi}"
+											reRender="showEdiFtpWindow"
+											styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										</aon:commandButton>
+										<aon:dropDownMenu value="#{bundle.aon_import}"
+											style="display:inline-block;font-size:0.8em;margin-right:4px;">
+											<f:facet name="label">
+												<aon:panelGroup>
+													<aon:outputText value="#{bundle.aon_import}" />
+													<aon:graphicImage style="vertical-align:middle;"
+														value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+												</aon:panelGroup>
+											</f:facet>
+											<aon:menuItem id="import-Popup"
+												value="#{bundle.aon_import} #{bundle.aon_edi}"
+												iconClass="aon-icon-file-entrance"
+												actionListener="#{sales.udapaImporter.onImportFileShow}"
+												reRender="salesForm, showEdiFtpWindow, showUdapaImportFileWindow"
+												ajaxSingle="#{true}">
+												<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
+													value="#{true}" />
+												<f:setPropertyActionListener target="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
+													value="#{false}" />
+											</aon:menuItem >
+											<aon:menuItem id="ediImport-Popup"
+												value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
+												iconClass="aon-icon-new-text"
+												actionListener="#{sales.ediImporter.onImportFileShow}"
+												reRender="salesForm, showEdiFtpWindow, showImportFileWindow"
+												ajaxSingle="#{true}">
+												<f:setPropertyActionListener target="#{sales.ediImporter.showImportFileWindow}"
+													value="#{true}" />
+												<f:setPropertyActionListener target="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
+													value="#{false}" />
+											</aon:menuItem>
+										</aon:dropDownMenu>
+										<aon:commandButton id="ediFtp-showSettings"
+											value="&#160;" ajaxSingle="#{true}"
+											title="Mostrar opciones de configuracion"
+											rendered="#{!sales.ftpEdiDownloader.showFtpServerConnectionData}"
+											actionListener="#{sales.ftpEdiDownloader.onShowFtpServerConnectionData}"
+											reRender="showEdiFtpWindow"
+											styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
+											style="font-size:1em;font-weight:bold;float:right;">
+										</aon:commandButton>
+										<aon:commandButton id="ediFtp-hideSettings"
+											value="&#160;" ajaxSingle="#{true}"
+											title="Ocultar opciones de configuracion"
+											rendered="#{sales.ftpEdiDownloader.showFtpServerConnectionData}"
+											actionListener="#{sales.ftpEdiDownloader.onShowFtpServerConnectionData}"
+											reRender="showEdiFtpWindow"
+											styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
+											style="font-size:1em;font-weight:bold;float:right;">
+										</aon:commandButton>
+									</ui:define>
+								</ui:decorate>
+								
 								<aon:div styleClass="aon-scroll-area">
 									<aon:if test="#{sales.ftpEdiDownloader.showFtpServerConnectionData}">
 										<aon:panelGrid columns="2" dir="true" style="width: 100%;">

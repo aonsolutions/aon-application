@@ -125,10 +125,10 @@
 							<aon:menuItem id="ediImport-Popup"
 								value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
 								iconClass="aon-icon-new-text"
-								actionListener="#{controller.ediImporter.onImportFileShow}"
+								actionListener="#{sales.ediImporter.onImportFileShow}"
 								ajaxSingle="#{true}"
 								action="sales_form">
-								<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
+								<f:setPropertyActionListener target="#{sales.ediImporter.showImportFileWindow}"
 									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>

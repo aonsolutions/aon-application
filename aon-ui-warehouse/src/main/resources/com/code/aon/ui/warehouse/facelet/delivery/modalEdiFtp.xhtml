@@ -35,28 +35,57 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
-									<aon:outputText value="&#160;"
-										styleClass="aon-finding-toolbar-item" />
-									<aon:commandButton id="ediFtp-showSettings"
-										value="&#160;" ajaxSingle="#{true}"
-										title="Mostrar opciones de configuracion"
-										rendered="#{!delivery.ftpEdiUploader.showFtpServerConnectionData}"
-										actionListener="#{delivery.ftpEdiUploader.onShowFtpServerConnectionData}"
-										reRender="showEdiFtpWindow"
-										styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
-										style="font-size:1em;font-weight:bold;float:right;">
-									</aon:commandButton>
-									<aon:commandButton id="ediFtp-hideSettings"
-										value="&#160;" ajaxSingle="#{true}"
-										title="Ocultar opciones de configuracion"
-										rendered="#{delivery.ftpEdiUploader.showFtpServerConnectionData}"
-										actionListener="#{delivery.ftpEdiUploader.onShowFtpServerConnectionData}"
-										reRender="showEdiFtpWindow"
-										styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
-										style="font-size:1em;font-weight:bold;float:right;">
-									</aon:commandButton>
-								</aon:div>
+								<ui:decorate
+									template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+									<ui:param name="toolbarTitle" value="Seresnet" />
+									<ui:param name="toolbarDescription" value="FTP" />
+									<ui:param name="innerToolbar" value="true" />
+									<ui:define name="toolbarContent">
+										<aon:dropDownMenu value="#{bundle.webmail_download}"
+											style="display:inline-block;font-size:0.8em;margin-right:4px;">
+											<f:facet name="label">
+												<aon:panelGroup>
+													<aon:outputText value="#{bundle.webmail_download}" />
+													<aon:graphicImage style="vertical-align:middle;"
+														value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+												</aon:panelGroup>
+											</f:facet>
+											<aon:menuItem iconClass="aon-icon-file-download">
+												<aon:htmlCommandLink id="delivery-udapaEdi" 
+													value="#{bundle.aon_edi}" target="_blank"
+													title="#{bundle.webmail_download}"
+													actionListener="#{delivery.onExportUdapaEdiFile}">
+												</aon:htmlCommandLink>
+											</aon:menuItem>
+											<aon:menuItem iconClass="aon-icon-file-download">
+												<aon:htmlCommandLink id="delivery-edi" 
+													value="#{bundle.aon_edi} (CONNECT)" target="_blank"
+													title="#{bundle.webmail_download}"
+													actionListener="#{delivery.onExportEdiFile}" >
+												</aon:htmlCommandLink>
+											</aon:menuItem>
+										</aon:dropDownMenu>
+										<aon:commandButton id="ediFtp-showSettings"
+											value="&#160;" ajaxSingle="#{true}"
+											title="Mostrar opciones de configuracion"
+											rendered="#{!delivery.ftpEdiUploader.showFtpServerConnectionData}"
+											actionListener="#{delivery.ftpEdiUploader.onShowFtpServerConnectionData}"
+											reRender="showEdiFtpWindow"
+											styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
+											style="font-size:1em;font-weight:bold;float:right;">
+										</aon:commandButton>
+										<aon:commandButton id="ediFtp-hideSettings"
+											value="&#160;" ajaxSingle="#{true}"
+											title="Ocultar opciones de configuracion"
+											rendered="#{delivery.ftpEdiUploader.showFtpServerConnectionData}"
+											actionListener="#{delivery.ftpEdiUploader.onShowFtpServerConnectionData}"
+											reRender="showEdiFtpWindow"
+											styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config"
+											style="font-size:1em;font-weight:bold;float:right;">
+										</aon:commandButton>
+									</ui:define>
+								</ui:decorate>
+								
 								<aon:div styleClass="aon-scroll-area">
 									
 									<aon:if test="#{delivery.ftpEdiUploader.showFtpServerConnectionData}">
@@ -98,7 +127,7 @@
 									</aon:if>
 									
 									<aon:commandButton id="ediFtp-accept"
-										value="Enviar"
+										value="Generar EDI y Enviar"
 										actionListener="#{delivery.ftpEdiUploader.onEdiFtpTransfer}"
 										styleClass="aon-commandButton aon-padding aon-width-all aon-border"
 										onclick="Richfaces.showModalPanel('waitProccess')" 

@@ -136,11 +136,13 @@ public class EdiSalesImporterHandler implements Serializable {
 					.filter(o -> ERE1P.ERE1P_2.EMISOR_DEL_MENSAJE_MS.getValue().equals(o.getCalificadorDelInterlocutor()))
 					.map(ERE1P::getCodigoInterlocutor)
 					.findFirst()
-					.orElse(rectl.getCodigoEmisor().trim());
+					.orElse(rectl.getCodigoEmisor());
 			if(customerCode==null){
 				getLogPanel().error("Imposible continuar, el fichero no contiene CodigoEmisor.");
 				getLogPanel().error("CodigoEmisor: " + customerCode);
 				getLogPanel().info("PROCESO ABORTADO");
+				LOGGER.error("Imposible continuar, el fichero no contiene CodigoEmisor.");
+				LOGGER.error("CodigoEmisor: " + customerCode);
 			} else {
 				RegistryNote customerRegistryNote = searchCustomerNote(customerCode);
 				if(customerRegistryNote==null 
@@ -148,6 +150,7 @@ public class EdiSalesImporterHandler implements Serializable {
 						|| customerRegistryNote.getRegistry().getId()==null){
 					getLogPanel().error("No existe el cliente con CodigoEmisor " + customerCode);
 					getLogPanel().info("PROCESO ABORTADO");
+					LOGGER.error("No existe el cliente con CodigoEmisor " + customerCode);
 				} else {
 					Customer customer = obtainCustomer(customerRegistryNote.getRegistry().getId());
 					getLogPanel().info("Cliente detectado con el codigo de punto de entrega " + customerCode);
@@ -180,6 +183,7 @@ public class EdiSalesImporterHandler implements Serializable {
 									+ " no existe para el cliente " + customer.getRegistry().getFullName());
 						});
 						getLogPanel().info("PROCESO ABORTADO");
+						LOGGER.error("Se han encontrado items que no existen: " + undefinedItems.size());
 					} else {
 						SalesController salesController = (SalesController) controller;
 						sales.setCustomer(customer);

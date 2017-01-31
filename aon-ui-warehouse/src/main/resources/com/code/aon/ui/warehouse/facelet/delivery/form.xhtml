@@ -39,18 +39,6 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:htmlCommandLink id="delivery-udapaEdi" 
-								value="#{bundle.aon_edi}" target="_blank"
-								title="#{bundle.webmail_download}"
-								actionListener="#{delivery.onExportUdapaEdiFile}" 
-								styleClass="aon-finding-toolbar-item aon-icon-file-download">
-							</aon:htmlCommandLink>
-							<aon:htmlCommandLink id="delivery-edi" 
-								value="#{bundle.aon_edi} (CONNECT)" target="_blank"
-								title="#{bundle.webmail_download}"
-								actionListener="#{delivery.onExportEdiFile}" 
-								styleClass="aon-finding-toolbar-item aon-icon-file-download">
-							</aon:htmlCommandLink>
 							<aon:commandButton id="delivery-ediFtp"
 								value="SERESNET"
 								title="Enviar al servidor FTP de Seresnet"
@@ -105,6 +93,20 @@
 									iconClass="aon-icon-sincronize"
 									actionListener="#{delivery.udapaDeliveryHandler.onSincronizeIngenet}" />
 							</aon:if>
+							<aon:menuItem iconClass="aon-icon-file-download">
+								<aon:htmlCommandLink id="delivery-udapaEdi" 
+									value="#{bundle.aon_edi}" target="_blank"
+									title="#{bundle.webmail_download}"
+									actionListener="#{delivery.onExportUdapaEdiFile}">
+								</aon:htmlCommandLink>
+							</aon:menuItem>
+							<aon:menuItem iconClass="aon-icon-file-download">
+								<aon:htmlCommandLink id="delivery-edi" 
+									value="#{bundle.aon_edi} (CONNECT)" target="_blank"
+									title="#{bundle.webmail_download}"
+									actionListener="#{delivery.onExportEdiFile}" >
+								</aon:htmlCommandLink>
+							</aon:menuItem>
 						</aon:if>
 						
 						<ui:include
