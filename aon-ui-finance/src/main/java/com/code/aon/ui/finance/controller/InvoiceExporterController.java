@@ -28,7 +28,7 @@ public class InvoiceExporterController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceExporterController.class.getName());
 	
-	private boolean scored = true;
+	private boolean scored = false;
 	
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	

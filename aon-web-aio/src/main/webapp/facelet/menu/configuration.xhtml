@@ -312,7 +312,7 @@
 										</aon:div>
 
  
- 										<aon:if test="#{aonRole.accountingOperator}">
+ 										<aon:if test="#{aonRole.accountingOperator and exporter.configuration.configured}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="invoiceExporter"
 													action="#{exporter.initialAction}"

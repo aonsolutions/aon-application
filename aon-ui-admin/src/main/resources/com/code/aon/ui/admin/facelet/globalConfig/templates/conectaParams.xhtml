@@ -31,7 +31,7 @@
 				<aon:outputLabel for="Exporter_type"
 					value="#{bundle.aon_type}" />
 				<aon:selectOneMenu id="Exporter_type"
-					value="#{exporter.configuration.type}" required="true"
+					value="#{exporter.configuration.type}"
 					actionListener="#{exporter.onTypeChanged}"
 					reRender="globalConfigConectaParamsForm">
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />

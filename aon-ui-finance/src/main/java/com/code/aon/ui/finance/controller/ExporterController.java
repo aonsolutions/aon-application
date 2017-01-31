@@ -71,6 +71,9 @@ public class ExporterController implements Serializable {
 	private String fileName;
 	
 	public InvoiceExportConfiguration getConfiguration() {
+		if (configuration == null) {
+			configuration = new InvoiceExportConfiguration();
+		}
 		return configuration;
 	}
 	

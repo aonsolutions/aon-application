@@ -162,7 +162,7 @@ public class InvoiceExportConfiguration implements Serializable {
 	}
 	
 	public void save() {
-		String value = String.valueOf(getType().ordinal()); 
+		String value = (getType() != null) ? String.valueOf(getType().ordinal()) : null; 
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_TYPE, value);
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_ENTERPRISE_ID, this.enterpriseCode);
 		if ( (type == InvoiceExportType.GEYCE) || (type == InvoiceExportType.DSI_GESTION) ) {
@@ -290,7 +290,7 @@ public class InvoiceExportConfiguration implements Serializable {
 	}
 	
 	public InvoiceExportType obtainType() {
-		InvoiceExportType type = InvoiceExportType.EXCEL;
+		InvoiceExportType type = null;
 		Integer ordinal = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_TYPE);
 		if ( ordinal!=null && ordinal<InvoiceExportType.values().length ) {
 			type = InvoiceExportType.values()[ordinal];
@@ -327,24 +327,30 @@ public class InvoiceExportConfiguration implements Serializable {
 	}
 	
 	public boolean isShowEnterpriseCode() {
-		switch ( getType() ) {		
-			case GEYCE:
-			case A3:
-			case DSI_GESTION:
-				return true;
-			default:
-				return false;
+		if ( getType() != null ) {
+			switch ( getType() ) {		
+				case GEYCE:
+				case A3:
+				case DSI_GESTION:
+					return true;
+				default:
+					return false;
+			}
 		}
+		return false;
 	}
 
 	public boolean isShowAccountSize() {
-		switch ( getType() ) {		
-			case A3:
-			case EXCEL:
-				return true;
-			default:
-				return false;
+		if ( getType() != null ) {
+			switch ( getType() ) {		
+				case A3:
+				case EXCEL:
+					return true;
+				default:
+					return false;
+			}
 		}
+		return false;
 	}
 	
 }
