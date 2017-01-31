@@ -992,9 +992,11 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	public void onBalance(Account account) {
-		openFootPanelIfNeeded();
-		Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-		balancePanel.add(account, from, entryDate.getValue());			
+		if (account != null && account.getId() != null) {
+			openFootPanelIfNeeded();
+			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
+			balancePanel.add(account, from, entryDate.getValue());			
+		}
 	}
 	public void onBalance(AccountEntry entry) {
 		if (entry.getDetails() != null 

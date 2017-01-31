@@ -116,21 +116,22 @@ public class FinanceDAO {
 	
 	
 	private static Finance fillCustomerAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null && finance.isFromSalesInvoice()) {
+		if (finance.getRegistry() != null && (finance.isFromSalesInvoice() || !finance.isPayment())) {
 			Account account = RegistryDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
 		return finance;
 	}
 	private static Finance fillSupplierAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null && finance.isFromPurchaseInvoice()) {
+		if (finance.getRegistry() != null && (finance.isFromPurchaseInvoice() || finance.isPayment())) {
 			Account account = RegistryDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
 		return finance;
 	}
 	private static Finance fillCreditorAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null && (finance.isFromExpensesInvoice() || finance.isFromUndeductibleInvoice())) {
+		if (finance.getRegistry() != null && 
+			(finance.isFromExpensesInvoice() || finance.isFromUndeductibleInvoice() || finance.isPayment())) {
 			Account account = RegistryDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
