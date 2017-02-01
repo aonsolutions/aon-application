@@ -335,7 +335,7 @@ public class EdiSalesImporterHandler implements Serializable {
 			criteria.addEqualExpression(rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.CABECERA + "="
+					"%" + CustomerEdiSupportController.PEDIDOS + "="
 							+ customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
 			rNote = list != null && !list.isEmpty() ? ((RegistryNote) list
