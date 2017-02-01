@@ -314,7 +314,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						invalidateModule(AON.MSG.noActiveAccountPeriod());
+						invalidateModule(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]");
 					}
 				});
 	}

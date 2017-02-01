@@ -21,8 +21,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface CommonService extends RemoteService {
 
 	// --------------------------------------------------------- CONFIGURATION
-	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain);
-	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, Date atDate);
+	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain) throws AonCoreException;
+	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, Date atDate) throws AonCoreException;
 	
 	// -------------------------------------------------------------- SECURITY
 	User getCurrentUser(String domainName, int domain) throws AonCoreException;

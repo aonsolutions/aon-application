@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -274,6 +275,9 @@ public class SecurityDAO {
 					.fetch()
 				.stream()
 				.forEach(rec -> list.add( rec.getValue(USER_SCOPE.SCOPE) ) );
+			if (list.size() == 0) {
+				throw new AonCoreException("Usuario sin \u00E1mbitos definidos.");
+			}
 			Integer[] scopes = new Integer[list.size()];
 			list.toArray(scopes);
 			return scopes;
