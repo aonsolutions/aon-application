@@ -139,7 +139,7 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 						String msg =  "Unable to rollback transaction!";
 						LOGGER.error(msg, e);
 					}
-					String msg =  "Error deleting invoice:  " + invoice.getReferenceCode();
+					String msg =  "Error deleting invoice: " + invoice.getReferenceCode() + " " + e.getMessage();
 					LOGGER.error(msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
