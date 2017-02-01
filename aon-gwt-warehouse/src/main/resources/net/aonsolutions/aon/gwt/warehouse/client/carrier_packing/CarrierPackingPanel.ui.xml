@@ -31,7 +31,7 @@
 			</tr>
 			<tr>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="{msg.fiscalYear}"/>
+					<g:InlineLabel text="{msg.series}/{msg.number}"/>
 				</td>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
 					<g:HorizontalPanel>

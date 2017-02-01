@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -156,8 +157,13 @@ public class CarrierPacking extends AonTemplate{
 	}
 	
 	public void southContent(JsCarrierPacking js, JsOrder p, AonJsArray<JsOrderDetail> details){
-		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
-		setSouthContent(new CarrierPackingSouth2(me, js, p, details));
+		if(js.getType().getName().equalsIgnoreCase(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+			getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
+			setSouthContent(new CarrierPackingSouth2(me, js, p, details));
+		} else {
+			getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
+			setSouthContent(new CarrierPackingSouth(p, details));
+		}
 	}
 	
 	private AonDialog createAddDialog(){
@@ -220,5 +226,10 @@ public class CarrierPacking extends AonTemplate{
 	
 	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
 		this.filterMap = filterMap;
+	}
+	
+	public void setEnableType(Boolean enable){
+		CarrierPackingPanel cpp = (CarrierPackingPanel) getNorthContent().getWidget();
+		cpp.type.setEnabled(enable);
 	}
 }

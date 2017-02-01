@@ -312,8 +312,7 @@ public class WarehouseServlet extends HttpServlet{
     }
     
     private Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
-    		Filter filter = f.getDomainProperty().eq(domain.getId())
-    				.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(new Date())));
+    		Filter filter = f.getDomainProperty().eq(domain.getId());
     			
     		if(filterMap.containsKey(MSG.CARRIER)){
     			Integer carrier = Integer.parseInt(filterMap.get(MSG.CARRIER)[0]);
@@ -324,6 +323,11 @@ public class WarehouseServlet extends HttpServlet{
     		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
     			Integer carrierPacking = Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0]);
     			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
+    		} 
+    		
+    		if(filterMap.containsKey("issue_date")){
+    			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get("issue_date")[0])));
+    			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
     		}
     		
     		if(filterMap.containsKey("not_carrier_packing")){
@@ -334,8 +338,7 @@ public class WarehouseServlet extends HttpServlet{
 	}
     
     private Filter deliveryFilter(Domain domain, Map<String, String[]> filterMap, DeliveryProperties f) {
-		Filter filter = f.getDomainProperty().eq(domain.getId())
-				.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(new Date())));
+		Filter filter = f.getDomainProperty().eq(domain.getId());
 			
 		if(filterMap.containsKey(MSG.CARRIER)){
 			Integer carrier = Integer.parseInt(filterMap.get(MSG.CARRIER)[0]);
@@ -346,6 +349,11 @@ public class WarehouseServlet extends HttpServlet{
 		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
 			Integer carrierPacking = Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0]);
 			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
+		}
+
+		if(filterMap.containsKey("issue_date")){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get("issue_date")[0])));
+			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
 		
 		if(filterMap.containsKey("not_carrier_packing")){
