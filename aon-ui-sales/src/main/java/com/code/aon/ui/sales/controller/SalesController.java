@@ -812,6 +812,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		if(sales!=null){
 			if( StringUtils.isNotBlank(sales.getShippingContact())
 					|| sales.getShippingPeriod()!=null
+					|| (sales.getCarrier()!=null && sales.getCarrier().getId()!=null)
 					|| isShippingAlternativeAddressDefined() ){
 				return true;
 			}
