@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -340,11 +341,16 @@ public class EmployeeCalendarDraft extends Composite {
 	private final static int SUNDAY = 6;
 	private List<Integer> posicionesSeleccionas = new ArrayList<Integer>();
 	private int oldHourSelected = 0;
-	private int mes = 0;
+	private int mes;
+	private int annio;
 	private boolean mostrarHoras = true;
 	private final CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
+	private final Date cellsDates[][] = new Date[25][38];
 	private final SuggestBox suggestOpts[] = new SuggestBox[7];
 	private final HTMLPanel divDays[] = new HTMLPanel[7];
+	private EmployeeCalendarDraftObjectData calendarEmployeeInfo;
+	private Integer startEmployeeContract;
+	private Integer endEmployeeContract;
 	
 	public EmployeeCalendarDraft() {
 		
@@ -385,7 +391,7 @@ public class EmployeeCalendarDraft extends Composite {
 		this.domingoOpt = suggestOpts[SUNDAY];
 		
 		initWidget(uiBinder.createAndBindUi(this));
-
+		
 		divDays[0] = bloqueLunes;
 		divDays[1] = bloqueMartes;
 		divDays[2] = bloqueMiercoles;
@@ -394,12 +400,10 @@ public class EmployeeCalendarDraft extends Composite {
 		divDays[5] = bloqueSabado;
 		divDays[6] = bloqueDomingo;
 		
-		//Bloquear boton horas hasta seleccion
-		horasButton.setEnabled(false);
-		
 		inicializarCellsCalendar();
 		
-		mostrarCalendarioWidget(117);
+		//Bloquear boton horas hasta seleccion
+		horasButton.setEnabled(false);		
 		
 		horasMenuItem.setScheduledCommand(new Command() {
 
@@ -658,11 +662,12 @@ public class EmployeeCalendarDraft extends Composite {
 		int newYear = actualYear - 1;
 		yearLabel.setText(Integer.toString(newYear));
 		int parseNewYear = newYear - 1900;
+		this.annio = parseNewYear;
 		limpiarCalendario();
 		mes = 0;
 		
 		inicializarCellsCalendar();
-		mostrarCalendarioWidget(parseNewYear);
+		mostrarCalendarioWidget(this.annio);
 
 	}
 
@@ -672,16 +677,42 @@ public class EmployeeCalendarDraft extends Composite {
 		int newYear = actualYear + 1;
 		yearLabel.setText(Integer.toString(newYear));
 		int parseNewYear = newYear - 1900;
+		this.annio = parseNewYear;
 		limpiarCalendario();
 		mes = 0;
 		
 		inicializarCellsCalendar();
-		mostrarCalendarioWidget(parseNewYear);
+		mostrarCalendarioWidget(this.annio);
 		
 	}
 
 	// ---------------------------------------------------------------- Metodos Auxiliares -------------------------------------------
+	public void setEmployeeCalendarDraftObject(EmployeeCalendarDraftObjectData calendar) {
+		this.calendarEmployeeInfo = calendar;
+		this.annio = 117;
+		this.mes = 0;
+		initCalendar();
+	}
+
+	private void initCalendar() {
+		this.startEmployeeContract = getStartYearContract(calendarEmployeeInfo.getStartDateContract());
+		this.endEmployeeContract = getEndYearContract(calendarEmployeeInfo.getEndDateContract());
+		int actualYear = this.annio+1900;
+		this.yearLabel.setText(Integer.toString(actualYear));
+		mostrarCalendarioWidget(this.annio);
+		
+	}
+	
 	private void mostrarCalendarioWidget(int annio) {
+		this.nextYearButton.setEnabled(true);
+		this.lastYearButton.setEnabled(true);
+		
+		if (annio == startEmployeeContract)
+			this.lastYearButton.setEnabled(false);
+		if (annio == endEmployeeContract)
+			this.nextYearButton.setEnabled(false);
+			
+			
 		//Crear calendario
 		for (int row = 1; row < 25; row += 2)
 			mostrarCalendario(row, annio);
@@ -705,6 +736,19 @@ public class EmployeeCalendarDraft extends Composite {
 			numDia = 7;
 
 		return numDia;
+	}
+	
+	@SuppressWarnings("deprecation")
+	private Integer getStartYearContract(Date startDateContract) {
+		return startDateContract.getYear();
+	}
+	
+	@SuppressWarnings("deprecation")
+	private Integer getEndYearContract(Date endDateContract) {
+		if(endDateContract != null)
+			return endDateContract.getYear();
+		else
+			return Integer.MAX_VALUE;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -742,8 +786,10 @@ public class EmployeeCalendarDraft extends Composite {
 				calendarGrid.setWidget(row, i, diaInfo);
 				
 			} else {
+				@SuppressWarnings("deprecation")
+				Date actualDay = new Date(anio, mes, i);
 				DoubleBox horas = new DoubleBox();
-				horas.setValue(8.00);
+				horas.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
 				int filaHoras = row + 1;
 				if (filaHoras % 4 == 0)
 					horas.setStyleName(style.doubleBoxDisableStyle2());
@@ -753,6 +799,7 @@ public class EmployeeCalendarDraft extends Composite {
 				diaInfo.setText(contadorDias + "");
 				calendarGrid.setWidget(row, i, diaInfo);
 				calendarGrid.setWidget(row + 1, i, horas);
+				cellsDates[row][i] = actualDay;
 				cells[row][i] = new DayCell();
 				cells[row + 1][i] = new HourCell();
 				contadorDias++;
@@ -761,12 +808,15 @@ public class EmployeeCalendarDraft extends Composite {
 
 		int diaActualSemana = 1;
 		while (contadorDias <= ultimoDiaMes) {
+			// Dia Acutal
+			@SuppressWarnings("deprecation")
+			Date actualDay = new Date(anio, mes, 7 + diaActualSemana);
 			// Label insetar
 			Label diaInfo = new Label(contadorDias + "");
 			diaInfo.setStyleName(style.cellStyle());
 			//CeldaHora
 			DoubleBox horas = new DoubleBox();
-			horas.setValue(8.00);
+			horas.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
 			int filaHoras = row + 1;
 			
 			if (filaHoras % 4 == 0)
@@ -779,6 +829,7 @@ public class EmployeeCalendarDraft extends Composite {
 
 			calendarGrid.setWidget(row, 7 + diaActualSemana, diaInfo);
 			calendarGrid.setWidget(row + 1, 7 + diaActualSemana, horas);
+			cellsDates[row][7 + diaActualSemana] = actualDay;
 			cells[row][7 + diaActualSemana] = new DayCell();
 			cells[row + 1][7 + diaActualSemana] = new HourCell();
 			contadorDias++;
@@ -819,44 +870,58 @@ public class EmployeeCalendarDraft extends Composite {
 		}
 	}
 
+	
 	private void limpiarCalendario() {
 		for (int i = 1; i < 25; i++)
 			for (int j = 1; j < 38; j++)
 				calendarGrid.clearCell(i, j);
 	}
 
+	
 	private boolean es(int day,int col) {
 		return col==day+1 || col==day+8 || col==day+15 || col==day+22 || col==day+29 || col==day+36;
 	}
 
+	
 	private int calcularColumna(int pos) {
 		return pos % 38;
 	}
 
+	
 	private int calcularFila(int pos) {
 		return pos / 38;
 	}
+	
 	
 	private void actualizarHoras(double horasLunes, double horasMartes, double horasMiercoles, double horasJueves, double horasViernes, double horasSabado, double horasDomingo) {
 		for (Integer pos : posicionesSeleccionas) {
 			int col = calcularColumna(pos.intValue());
 			int row = calcularFila(pos.intValue());
-			if (es(SUNDAY, col))
+			if (es(SUNDAY, col)){
+				calendarEmployeeInfo.setHourByDay(cellsDates[row][col], horasDomingo);
 				cells[row+1][col].setHour(row+1, col, horasDomingo);
-			else if (es(SATURDAY, col))
+			}else if (es(SATURDAY, col)){
+				calendarEmployeeInfo.setHourByDay(cellsDates[row][col], horasSabado);
 				cells[row+1][col].setHour(row+1, col, horasSabado);
-			else if (es(FRIDAY, col))
+			}else if (es(FRIDAY, col)){
+				calendarEmployeeInfo.setHourByDay(cellsDates[row][col], horasViernes);
 				cells[row+1][col].setHour(row+1, col, horasViernes);
-			else if (es(THURSDAY, col))
+			}else if (es(THURSDAY, col)){
+				calendarEmployeeInfo.setHourByDay(cellsDates[row][col], horasJueves);
 				cells[row+1][col].setHour(row+1, col, horasJueves);
-			else if (es(WEDNESDAY, col))
+			}else if (es(WEDNESDAY, col)){
+				calendarEmployeeInfo.setHourByDay(cellsDates[row][col], horasMiercoles);
 				cells[row+1][col].setHour(row+1, col, horasMiercoles);
-			else if (es(TUESDAY, col))
+			}else if (es(TUESDAY, col)){
+				calendarEmployeeInfo.setHourByDay(cellsDates[row][col], horasMartes);
 				cells[row+1][col].setHour(row+1, col, horasMartes);
-			else 
+			}else{ 
+				calendarEmployeeInfo.setHourByDay(cellsDates[row][col], horasLunes);
 				cells[row+1][col].setHour(row+1, col, horasLunes);
+			}
 		}
 		limpiarSeleccion(posicionesSeleccionas);
 	}
 
+	
 }

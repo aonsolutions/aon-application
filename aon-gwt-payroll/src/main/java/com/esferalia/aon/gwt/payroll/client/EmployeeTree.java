@@ -1730,6 +1730,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@Override
 	public void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar) {
 		employeeDetail.setWidget(getEmployeeCalendarDraft());
+		getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(calendar);
 	}
 	
 	@Override
