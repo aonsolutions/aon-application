@@ -29,6 +29,7 @@ import javax.xml.bind.ValidationEventLocator;
 
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
+import com.esferalia.aon.ingenet.api.albaranes.DATOSAGENCIATRANSPORTETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSCLIENTETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSDIRECCIONTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAALBARANTYPE;
@@ -41,11 +42,14 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
@@ -148,12 +152,14 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					.filter(linea -> !isPackageItem(linea))
 					.forEach(
 							linea -> {
+								Item item = createItem(ctx,
+										linea.getPRODUCTO());
+								Elaboration elaboration = obtainElaboration(
+										ctx, linea.getDATOSELABORACIONORIGEN());
 								DeliveryDetail detail = new DeliveryDetail();
 								detail.setDomain(ctx.getDomainId());
 								detail.setDelivery(delivery);
 								detail.setLine(Short.valueOf(linea.getLINEA()));
-								Item item = createItem(ctx, linea
-										.getPRODUCTOELABORADO());
 								detail.setItem(item);
 								detail.setDescription(linea.getDESCRIPCION());
 								detail.setWarehouse(null);
@@ -161,8 +167,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 										.getCANTIDAD()));
 								detail.setPrice(item.getPrice());
 								detail.setDiscountExpression("");
-								detail.setSalesDetail(obtainElaboration(ctx, linea
-										.getDATOSELABORACIONORIGEN()).getSourceId());
+								detail.setSalesDetail(elaboration.getSourceId());
 								detailList.add(detail);
 								manageElaboration(ctx, linea);
 							});
@@ -172,12 +177,13 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							.compareTo(linea2.getDESCRIPCION()))
 					.forEach(
 							linea -> {
+								Item item = obtainItem(ctx,
+										linea.getPRODUCTO());
 								DeliveryDetail detail = new DeliveryDetail();
 								detail.setDomain(ctx.getDomainId());
 								detail.setDelivery(delivery);
 								detail.setLine(Short.valueOf(linea.getLINEA()));
-								detail.setItem(obtainItem(ctx, linea
-										.getPRODUCTOELABORADO()));
+								detail.setItem(item);
 								detail.setQuantity(Double.valueOf(linea
 										.getCANTIDAD()));
 								detailList.add(detail);
@@ -190,8 +196,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	private void manageElaboration(AONContext ctx,
 			DATOSLINEAALBARANTYPE lineaAlbaran) {
 
-		Elaboration elaboration = obtainElaboration(ctx, lineaAlbaran
-				.getDATOSELABORACIONORIGEN());
+		Elaboration elaboration = obtainElaboration(ctx,
+				lineaAlbaran.getDATOSELABORACIONORIGEN());
 		elaboration.setStatus(ElaborationStatus.CLOSED.value());
 		ElaborationDAO.updateElaboration(ctx, elaboration);
 
@@ -199,8 +205,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		elaborationDetail.setDomain(ctx.getDomainId());
 		elaborationDetail.setElaboration(elaboration);
 		elaborationDetail.setDate(new Date());
-		elaborationDetail.setItem(obtainItem(ctx, lineaAlbaran
-				.getPRODUCTOELABORADO()));
+		elaborationDetail.setItem(obtainItem(ctx,
+				lineaAlbaran.getPRODUCTO()));
 		elaborationDetail
 				.setQuantity(Double.valueOf(lineaAlbaran.getCANTIDAD()));
 		elaborationDetail.setWarehouse(null);
@@ -212,14 +218,15 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				.getDATOSCOMPOSICIONPRODUCTO()
 				.forEach(
 						lineaComposicion -> {
+							Item compositionItem = createItem(ctx,
+									lineaComposicion.getPRODUCTO());
 							ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
 							elaborationDetailComposition.setDomain(ctx
 									.getDomainId());
 							elaborationDetailComposition
 									.setElaborationDetail(elaborationDetail);
 							elaborationDetailComposition
-									.setItem(createItem(ctx, lineaComposicion
-											.getPRODUCTO()));
+									.setItem(compositionItem);
 							elaborationDetailComposition.setQuantity(Double
 									.valueOf(lineaComposicion.getCANTIDAD()));
 							elaborationDetailComposition.setWarehouse(null);
@@ -230,33 +237,51 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 	
 	
-	// TODO: create carrier_packing
 	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran) {
-		CarrierPacking cp = new CarrierPacking();
-		cp.setDomain(ctx.getDomainId());
-		cp.setSeries(null);
-		cp.setNumber(null);
-		cp.setType(null);
-		cp.setStatus(null);
-		Date issueDate;
+		CarrierPacking carrierPacking = new CarrierPacking();
+		carrierPacking.setDomain(ctx.getDomainId());
+		carrierPacking.setSeries("IGN"
+				+ new SimpleDateFormat("yy").format(new Date()));
+		carrierPacking.setNumber(null);
+		carrierPacking.setType(CarrierPackingType.WAYBILL);
+		carrierPacking.setStatus(CarrierPackingStatus.PENDING);
+		Date issueDate = null;
 		try {
-			issueDate = dateFormatter.parse(albaran.getDATOSHOJARUTA().getFECHAEMISION());
+			issueDate = dateFormatter.parse(albaran.getDATOSHOJARUTA()
+					.getFECHAEMISION());
 		} catch (ParseException e) {
 			issueDate = new Date();
 		}
-		cp.setIssueDate(issueDate);
-//		Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA().getDATOSAGENCIATRANSPORTE());
-		cp.setCarrier(null);
-		cp.setDeliveryDate(null);
-		cp.setCarrierReference(albaran.getDATOSHOJARUTA().getREFERNCIAAGENCIATRANSPORTE());
-		cp.setNumberPlate(albaran.getDATOSHOJARUTA().getNUMEROMATRICULA());
-		cp.setDriverName(albaran.getDATOSHOJARUTA().getNOMBRECONDUCTOR());
-		cp.setDriverDocument(albaran.getDATOSHOJARUTA().getDOCUMENTOCONDUCTOR());
+		carrierPacking.setIssueDate(issueDate);
+		Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA()
+				.getDATOSAGENCIATRANSPORTE());
+		carrierPacking.setCarrier(carrier.getId());
+		carrierPacking.setDeliveryDate(null);
+		carrierPacking.setCarrierReference(albaran.getDATOSHOJARUTA()
+				.getREFERNCIAAGENCIATRANSPORTE());
+		carrierPacking.setNumberPlate(albaran.getDATOSHOJARUTA()
+				.getNUMEROMATRICULA());
+		carrierPacking.setDriverName(albaran.getDATOSHOJARUTA()
+				.getNOMBRECONDUCTOR());
+		carrierPacking.setDriverDocument(albaran.getDATOSHOJARUTA()
+				.getDOCUMENTOCONDUCTOR());
+		WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
 	}
 	
 
-	
-	
+	private Carrier obtainCarrier(AONContext ctx,
+			DATOSAGENCIATRANSPORTETYPE datosagenciatransportetype) {
+		Byte type = Byte.valueOf(datosagenciatransportetype.getDATOSREGISTRO()
+				.getDATOSDOCUMENTO().getTIPODOCUMENTO());
+		String document = datosagenciatransportetype.getDATOSREGISTRO()
+				.getDATOSDOCUMENTO().getDOCUMENTO();
+		RegistryDAO.getCarrierStream(
+				ctx,
+				f -> f.getDomainProperty().eq(ctx.getDomainId())
+						.and(f.getDocumentTypeProperty().eq(type))
+						.and(f.getDocumentProperty().eq(document)));
+		return null;
+	}
 	
 	private boolean isPackageItem(DATOSLINEAALBARANTYPE linea) {
 		return "S".equals(linea.getENVASE());

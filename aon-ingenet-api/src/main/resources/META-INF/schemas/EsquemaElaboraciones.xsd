@@ -4,7 +4,7 @@
 <!-- Created by aonSolutions v1.0 20/01/2017 -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
-	jaxb:version="2.1" jaxb:extensionBindingPrefixes="inheritance">
+	jaxb:version="2.1">
 	<xsd:annotation>
 		<xsd:documentation xml:lang="es">XML SCHEMA -
 			Comunicación de elaboraciones pendientes.
@@ -51,57 +51,6 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="SERIE_PEDIDO">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Serie de la
-						elaboracion.
-					</xsd:documentation>
-				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:maxLength value="5" />
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:element>
-			<xsd:element name="NUMERO_PEDIDO">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Numero de la
-						elaboracion.
-					</xsd:documentation>
-				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="\d{0,5}" />
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:element>
-			<xsd:element name="REFERENCIA_COMPRA">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Referencia de compra
-						del pedido origen.
-					</xsd:documentation>
-				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:maxLength value="64" />
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:element>
-			<xsd:element name="DATOS_CLIENTE" type="DATOS_CLIENTE_TYPE">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Datos del cliente del
-						la elaboracion.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="DATOS_DIRECCION_ENTREGA" type="DATOS_DIRECCION_TYPE"
-				minOccurs="0">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Datos de la direccion
-						de entrega de la elaboracion.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
 			<xsd:element name="FECHA_EMISION" type="FECHA_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Fecha de emision de
@@ -109,10 +58,16 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="DATOS_PEDIDO_ORIGEN" type="DATOS_PEDIDO_ORIGEN_TYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Datos del pedido
+						origen del que procede la elaboracion.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="COMENTARIOS" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Comentarios de
-						la
+					<xsd:documentation xml:lang="es">Comentarios de la
 						elaboracion.
 					</xsd:documentation>
 				</xsd:annotation>
@@ -141,10 +96,76 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
+			<xsd:element name="UNIDAD_MEDIDA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Descripcion de la
+						unidad de medida
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string" />
+				</xsd:simpleType>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 
 	<!-- ********************************************************************** -->
+
+	<xsd:complexType name="DATOS_PEDIDO_ORIGEN_TYPE">
+		<xsd:sequence>
+			<xsd:element name="SERIE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Serie del
+						pedido.
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="5" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NUMERO">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Numero del
+						pedido.
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{0,5}" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="REFERENCIA_COMPRA">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Referencia de compra
+						del pedido.
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="64" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="DATOS_CLIENTE" type="DATOS_CLIENTE_TYPE">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Datos del cliente del
+						la elaboracion.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="DATOS_DIRECCION_ENTREGA" type="DATOS_DIRECCION_TYPE"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Datos de la direccion
+						de entrega de la elaboracion.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
 
 	<xsd:complexType name="DATOS_CLIENTE_TYPE">
 		<xsd:sequence>
