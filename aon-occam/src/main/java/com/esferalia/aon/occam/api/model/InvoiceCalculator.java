@@ -56,7 +56,7 @@ public class InvoiceCalculator {
 		if (ai.isWithholding()) {
 			withholdingPerc = ai.getWithholdingData().getPercentage();
 		}
-		double tb = (ai.isVatEnabled()) 
+		double tb = (ai.isVatEnabled() || ai.isWithholding()) 
 				? reverseCalculate(vatPerc, surchargePerc, withholdingPerc, total)
 				: total;
 		vat.setBase(tb);
