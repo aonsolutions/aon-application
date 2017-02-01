@@ -11,13 +11,15 @@ public class FinanceParams implements Serializable{
 	private Date from;
 	private Date to;
 	private boolean confidential; 
-	private boolean hasConfidentialityRole; 
+	private boolean hasConfidentialityRole;
+	private Boolean payment;
 	
 	private Integer registry;
 	private Double amount;
 	private boolean nearbyNumbers;
 	private double factor = 5;
 	private String concept;
+	private String referenceCode;
 	
 	public int getDomain() {
 		return domain;
@@ -73,6 +75,20 @@ public class FinanceParams implements Serializable{
 	}
 	public FinanceParams setConcept(String concept) {
 		this.concept = concept;
+		return this;
+	}
+	public Boolean getPayment() {
+		return payment;
+	}
+	public FinanceParams setPayment(Boolean payment) {
+		this.payment = payment;
+		return this;
+	}
+	public String getReferenceCode() {
+		return referenceCode;
+	}
+	public FinanceParams setReferenceCode(String referenceCode) {
+		this.referenceCode = referenceCode;
 		return this;
 	}
 	public boolean isConfidential() {

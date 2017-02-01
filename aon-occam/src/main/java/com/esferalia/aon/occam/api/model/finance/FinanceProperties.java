@@ -8,6 +8,7 @@ public interface FinanceProperties {
 	
 	Property<Integer> getIdProperty();
 	Property<Integer> getDomainProperty();
+	Property<Byte> getPaymentProperty();
 	Property<Integer> getRegistryProperty();
 	Property<Date> getDueDateProperty();
 	Property<Integer> getInvoiceProperty();
@@ -15,5 +16,6 @@ public interface FinanceProperties {
 	Property<String> getConceptProperty();
 	Property<Byte> getStatusProperty();
 	Property<Byte> getConfidentialProperty();
+	Property<String> getInvoiceReferenceCode();
 
 }

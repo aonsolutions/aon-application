@@ -26,6 +26,8 @@ public class FinancePrinter {
 	public static String toString(Finance finance, int lineSize) {
 		StringBuffer buf = new StringBuffer();
 		buf.append(AonStringUtils.SPACE);
+		buf.append(finance.isPayment()?"P":"C");
+		buf.append(AonStringUtils.SPACE);
 		if (AonStringUtils.isNotBlank( finance.getRegistryAccountCode())) {
 			buf.append(AonStringUtils.rightPad(finance.getRegistryAccountCode(),10));
 		} else {
@@ -33,7 +35,13 @@ public class FinancePrinter {
 		}
 		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(finance.getRegistryName(),19),20));
 		buf.append(AonStringUtils.SPACE);
-		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(finance.getConcept(),19),20));
+		String concept = finance.getConcept(); 
+		if (finance.getInvoice() != null) {
+			if ( !finance.getInvoice().isSales() ) {
+				concept = finance.getInvoice().getReferenceCode();
+			}
+		} 
+		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(concept,19),20));
 		buf.append(AON.DATE_FORMAT.format(finance.getDueDate()));
 		buf.append(AonStringUtils.leftPad(AON.FMT.format(finance.getAmount()),15));		
 		buf.append(AonStringUtils.SPACE);

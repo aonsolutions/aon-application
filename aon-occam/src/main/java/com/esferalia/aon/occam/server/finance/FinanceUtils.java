@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -23,6 +24,9 @@ public class FinanceUtils {
 	public static Filter getFilter(FinanceProperties p,
 			FinanceParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
+		if (params.getPayment() != null) {
+			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()) ));
+		}
 		if (params.getFrom() != null) {
 			prop = prop.and(p.getDueDateProperty().ge(params.getFrom()));
 		}
@@ -35,6 +39,9 @@ public class FinanceUtils {
 		if (AonStringUtils.isNotEmpty(params.getConcept())) {
 			prop = prop.and(p.getConceptProperty().like(
 					AonStringUtils.SQLlike(params.getConcept())));
+		}
+		if (AonStringUtils.isNotEmpty(params.getReferenceCode())) {
+			prop = prop.and(p.getInvoiceReferenceCode().like(AonStringUtils.SQLlike(params.getReferenceCode())));
 		}
 		if (params.getAmount() != null && AonMathUtils.isNotZero(params.getAmount())) {
 			if (params.isNearbyNumbers()) {

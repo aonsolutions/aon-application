@@ -19,6 +19,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
@@ -38,6 +40,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -68,10 +71,13 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private DateBoxEx toDate;
 	
 	private CheckBox confidential;
+	private ListBox payment;
 	private AccountingRegistryBox registryBox;
 	private DoubleBox amount;
 	private CheckBox nearbyNumbers;
 	private TextBox concept;
+	private TextBox referenceCode;
+	
 	private IFinancePanelCallback callback;
 	
 	
@@ -95,7 +101,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		
 		northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(tabIndex);
-		addNorth(northPanel, 105);
+		addNorth(northPanel, 125);
 		
 		centerLayoutPanel = new SimpleLayoutPanel();
 		centerPanel = new ScrollPanel();
@@ -216,7 +222,29 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 				search();
 			}
 		});
+		payment = new ListBox();
+		payment.addItem(" --- "," --- ");
+		payment.addItem("Pago" ,"Pago");
+		payment.addItem("Cobro", "Cobro");
+		payment.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				search();
+			}
+		});
 		
+		referenceCode = new TextBox();
+		referenceCode.setTabIndex(++tabIndex);
+		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
+		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				search();
+			}
+		});
+
 		registryBox = new AccountingRegistryBox(this.domainName,this.domainId, null, false);
 		registryBox.setRequired(false);
 		
@@ -245,7 +273,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		
 		tab.getColumnFormatter().setWidth(0, "60px");
 		tab.getColumnFormatter().setWidth(1, "180px");
-		tab.getColumnFormatter().setWidth(2, "60px");
+		tab.getColumnFormatter().setWidth(2, "85px");
 		tab.getColumnFormatter().setWidth(3, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.amount()));
@@ -257,9 +285,9 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		tab.setWidget(0, 1, amountPanel);
 
 
-		tab.setWidget(0, 3, new Label(AON.MSG.concept()));
-		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonBold());
-		tab.setWidget(0, 4, concept);
+		tab.setWidget(0, 2, new Label(AON.MSG.concept()));
+		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonBold());
+		tab.setWidget(0, 3, concept);
 		
 		tab.setWidget(1, 0, new Label(AON.MSG.date()));
 		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
@@ -275,11 +303,18 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		datePanel.add(toDate);
 		tab.setWidget(1, 1, datePanel);
 
-		tab.setWidget(1, 3, new Label(AON.MSG.titular()));
-		tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonBold());
+		tab.setWidget(1, 2, new Label(AON.MSG.invoiceNumber()));
+		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
+		tab.setWidget(1, 3, referenceCode);
 
-		tab.setWidget(1, 4, registryBox);
+		tab.setWidget(2, 0, new Label(AON.MSG.titular()));
+		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonBold());
+		tab.setWidget(2, 1, registryBox);
 		
+		tab.setWidget(2, 2, new Label(AON.MSG.type()));
+		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonBold());
+		tab.setWidget(2, 3, payment);
+
 		flowNorthPanel.add(tab);
 		northPanel.setWidget(flowNorthPanel);
 	}
@@ -328,6 +363,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			.setAmount((amount.getValue() != null && amount.getValue()!=0)?amount.getValue():null)
 			.setNearbyNumbers(nearbyNumbers.getValue())
 			.setConcept(concept.getValue())
+			.setReferenceCode(referenceCode.getValue())
+			.setPayment((payment.getSelectedIndex() == 0)?null:(payment.getSelectedIndex() == 1))
 			.setConfidential(confidential.getValue())
 			.setHasConfidentialityRole(user != null && user.hasConfidentialityRole())
 			;
