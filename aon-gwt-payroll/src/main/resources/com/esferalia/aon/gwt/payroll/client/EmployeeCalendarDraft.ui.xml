@@ -304,8 +304,8 @@
 		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnD"/>
 		            </g:HTMLPanel>
 		            <HTMLPanel class="buttons">
-		              <p:PaperButton ui:field="confirmCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-		              <p:PaperButton ui:field="confirmOk" attributes="dialog-confirm">OK</p:PaperButton>
+		              <p:PaperButton ui:field="dialogCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
+		              <p:PaperButton ui:field="dialogOk" attributes="dialog-confirm">OK</p:PaperButton>
 		            </HTMLPanel>
 		        </p:PaperDialog>
 		        

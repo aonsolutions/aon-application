@@ -7,14 +7,12 @@ import java.util.stream.Collectors;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -259,7 +257,7 @@ public class EmployeeCalendarDraft extends Composite {
 	PaperButton eraseButton;
 	
 	@UiField
-	PaperButton confirmOk;
+	PaperButton dialogOk;
 	
 	@UiField
 	Button expandHourBtnL;
@@ -350,7 +348,6 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	public EmployeeCalendarDraft() {
 		
-		
 		ArrayList<String> tipoHoras = new ArrayList<String>();
 		MultiWordSuggestOracle oracleL = new MultiWordSuggestOracle();
 		MultiWordSuggestOracle oracleM = new MultiWordSuggestOracle();
@@ -397,16 +394,12 @@ public class EmployeeCalendarDraft extends Composite {
 		divDays[5] = bloqueSabado;
 		divDays[6] = bloqueDomingo;
 		
+		//Bloquear boton horas hasta seleccion
 		horasButton.setEnabled(false);
 		
-		//Inicializar CalendarTypeCell -> Cells
-		for (int row = 0; row < 25; row++)
-			for (int column = 0; column < 38; column++)
-				cells[row][column] = NoneCell.NONE_CELL;
+		inicializarCellsCalendar();
 		
-		//Crear calendario
-		for (int row = 1; row < 25; row += 2)
-			mostrarCalendario(row, 117);
+		mostrarCalendarioWidget(117);
 		
 		horasMenuItem.setScheduledCommand(new Command() {
 
@@ -424,14 +417,12 @@ public class EmployeeCalendarDraft extends Composite {
 				for (int i = 2; i < 25; i += 2) {
 					calendarGrid.getRowFormatter().addStyleName(i, style.ocultarHorasStyle());
 				}
-
 			}
 
 			private void visualizarHoras() {
 				for (int i = 2; i < 25; i += 2) {
 					calendarGrid.getRowFormatter().removeStyleName(i, style.ocultarHorasStyle());
 				}
-
 			}
 		});
 		
@@ -444,16 +435,11 @@ public class EmployeeCalendarDraft extends Composite {
 			}
 
 			private void comprobarDiasAMostrar() {
-				
+				//Ocultar todos los dias
 				for (int i=0; i<7; i++)
 					divDays[i].addStyleName(style.ocultarDivStyle());
 				
-				for(Integer p: posicionesSeleccionas){
-					int fil = calcularFila(p.intValue());
-					int col = calcularColumna(p.intValue());
-					Window.alert("Horas acutales: "+cells[fil+1][col].getHour(fil+1,col));
-				}
-				
+				//Gestionar los dias seleccionados (mostrar y actualizar valor)
 				for (int i = 0; i < 7; i++){
 					final int c =i; 
 					Double value = posicionesSeleccionas.stream()
@@ -487,7 +473,7 @@ public class EmployeeCalendarDraft extends Composite {
 		if (event.isControlKeyDown()) { //Pulsa celda con CTRL
 			cells[row][col].select(row, col);
 			
-		} else if (event.isShiftKeyDown()){
+		} else if (event.isShiftKeyDown()){ //Pulsa celda con SHIFT
 			int posicionActual = posicionesSeleccionas.get(0);
 			int posicionFin = pos;
 			
@@ -559,16 +545,8 @@ public class EmployeeCalendarDraft extends Composite {
 	public void onDragStart(DragStartEvent event) {
 		//TODO: ver como hacer el drag con el raton en vez de con shift
 	}
-
-	@UiHandler("eraseButton")
-	public void onEraseClick(ClickEvent event) {
-		if (!posicionesSeleccionas.isEmpty()) {
-			limpiarEstilos(posicionesSeleccionas);
-		}
-		posicionesSeleccionas.clear();
-	}
 	
-	@UiHandler("confirmOk")
+	@UiHandler("dialogOk")
 	public void onConfirmDialogClick(ClickEvent event) {
 		double horasLunes = Double.parseDouble(suggestOpts[MONDAY].getValue());
 		double horasMartes = Double.parseDouble(suggestOpts[TUESDAY].getValue());
@@ -582,8 +560,14 @@ public class EmployeeCalendarDraft extends Composite {
 		horasButton.setEnabled(false);
 	}
 
+	@UiHandler("eraseButton")
+	public void onEraseClick(ClickEvent event) {
+		if (!posicionesSeleccionas.isEmpty()) {
+			limpiarEstilos(posicionesSeleccionas);
+		}
+		posicionesSeleccionas.clear();
+	}
 	
-
 	@UiHandler("diaNoLaborableButton")
 	public void onDiaNoLaborableClick(ClickEvent event) {
 		limpiarEstilos(posicionesSeleccionas);
@@ -656,7 +640,6 @@ public class EmployeeCalendarDraft extends Composite {
 		posicionesSeleccionas.clear();
 	}
 
-
 	@UiHandler("diaSuspensionButton")
 	public void onSuspensionClick(ClickEvent event) {
 		limpiarEstilos(posicionesSeleccionas);
@@ -677,12 +660,10 @@ public class EmployeeCalendarDraft extends Composite {
 		int parseNewYear = newYear - 1900;
 		limpiarCalendario();
 		mes = 0;
-		//Inicializar CalendarTypeCell -> Cells
-		for (int row = 0; row < 25; row++)
-			for (int column = 0; column < 38; column++)
-				cells[row][column] = NoneCell.NONE_CELL;
-		for (int row = 1; row < 25; row += 2)
-			mostrarCalendario(row, parseNewYear);
+		
+		inicializarCellsCalendar();
+		mostrarCalendarioWidget(parseNewYear);
+
 	}
 
 	@UiHandler("nextYearButton")
@@ -693,16 +674,26 @@ public class EmployeeCalendarDraft extends Composite {
 		int parseNewYear = newYear - 1900;
 		limpiarCalendario();
 		mes = 0;
+		
+		inicializarCellsCalendar();
+		mostrarCalendarioWidget(parseNewYear);
+		
+	}
+
+	// ---------------------------------------------------------------- Metodos Auxiliares -------------------------------------------
+	private void mostrarCalendarioWidget(int annio) {
+		//Crear calendario
+		for (int row = 1; row < 25; row += 2)
+			mostrarCalendario(row, annio);
+	}
+
+	private void inicializarCellsCalendar() {
 		//Inicializar CalendarTypeCell -> Cells
 		for (int row = 0; row < 25; row++)
 			for (int column = 0; column < 38; column++)
 				cells[row][column] = NoneCell.NONE_CELL;
-
-		for (int row = 1; row < 25; row += 2)
-			mostrarCalendario(row, parseNewYear);
 	}
-
-	// ---------------------------------------------------------------- Metodos Auxiliares -------------------------------------------
+	
 	private int calcularNumeroDiaSemana(int dia, int mes, int anio) {
 		@SuppressWarnings("deprecation")
 		Date fecha = new Date(anio, mes, dia);
@@ -837,34 +828,6 @@ public class EmployeeCalendarDraft extends Composite {
 	private boolean es(int day,int col) {
 		return col==day+1 || col==day+8 || col==day+15 || col==day+22 || col==day+29 || col==day+36;
 	}
-
-//	private boolean esDomingo(int col) {
-//		return col==7 || col==14 || col==21 || col==28 || col==35;
-//	}
-//	
-//	private boolean esSabado(int col) {
-//		return col==6 || col==13 || col==20 || col==27 || col==34;
-//	}
-//	
-//	private boolean esViernes(int col) {
-//		return col==5 || col==12 || col==19 || col==26 || col==33;
-//	}
-//	
-//	private boolean esJueves(int col) {
-//		return col==4 || col==11 || col==18 || col==25 || col==32;
-//	}
-//	
-//	private boolean esMiercoles(int col) {
-//		return col==3 || col==10 || col==17 || col==24 || col==31;
-//	}
-//	
-//	private boolean esMartes(int col) {
-//		return col==2 || col==9 || col==16 || col==23 || col==30 || col==37;
-//	}
-//	
-//	private boolean esLunes(int col) {
-//		return col==1 || col==8 || col==15 || col==22 || col==29 || col==36;
-//	}
 
 	private int calcularColumna(int pos) {
 		return pos % 38;
