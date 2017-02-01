@@ -741,6 +741,7 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		if(purchase!=null){
 			if( StringUtils.isNotBlank(purchase.getShippingContact())
 					|| purchase.getShippingPeriod()!=null
+					|| (purchase.getCarrier()!=null && purchase.getCarrier().getId()!=null)
 					|| isShippingAlternativeAddressDefined() ){
 				return true;
 			}
