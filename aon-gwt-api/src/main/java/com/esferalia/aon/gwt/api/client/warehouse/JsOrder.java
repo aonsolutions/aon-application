@@ -192,5 +192,9 @@ public class JsOrder extends JavaScriptObject {
 	public final native Integer getCarrierPacking() /*-{
 		return this.carrier_packing;
 	}-*/;
+	
+	public final native String getOrderType()/*-{
+		return this.order_type;
+	}-*/;
 
 }

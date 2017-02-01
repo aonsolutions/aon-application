@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class CarrierPackingSouth2 extends DockLayoutPanel{
 	CarrierPacking parent;
@@ -103,17 +104,25 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 			InlineLabel d = new InlineLabel(AonStringUtils.SPACE
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getLine() + ""),11)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-							AonStringUtils.defaultString(detail.getProductCode() + "-" + detail.getProductName()), 39), 44)
-					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getQuantity() + ""), 16)
-					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDelivered() + ""), 17)
+							AonStringUtils.defaultString(detail.getProductCode() + "-" + detail.getProductName()), 39), 44));
+			d.setTitle("");
+			d.setStyleName(AON.AON_CSS.aonBold());
+			line.add(d);
+			
+			TextBox tb = new TextBox();
+			tb.setWidth("50px");
+			tb.setStyleName(AON.AON_CSS.aonTextBox());
+			//AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getQuantity() + ""), 16)
+			line.add(tb);
+			InlineLabel d2 = new InlineLabel("        "
+					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDelivered() + ""), 17)// PENDIENTE
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getPrice() + ""), 16)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDiscountExpr()), 16)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
 					);
-			d.setTitle("");
-			d.setStyleName(AON.AON_CSS.aonBold());
-			
-			line.add(d);
+			d2.setTitle("");
+			d2.setStyleName(AON.AON_CSS.aonBold());
+			line.add(d2);
 			center.add(line);
 		});
 		

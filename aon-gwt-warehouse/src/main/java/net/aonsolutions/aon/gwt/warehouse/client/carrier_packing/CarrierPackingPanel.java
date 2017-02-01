@@ -54,6 +54,7 @@ public class CarrierPackingPanel extends Composite{
 	public CarrierPackingPanel(CarrierPacking carrierPacking, JsCarrierPacking js) {
 		initWidget(binder.createAndBindUi(this));
 		this.API = carrierPacking.API;
+		this.parent = carrierPacking;
 		this.jsCarrierPacking = js;
 		load();
 	}
@@ -99,7 +100,7 @@ public class CarrierPackingPanel extends Composite{
 			public void onSuccess(JSON<JsObject> result) {
 				result.getData().stream().forEach(s -> 
 					type.addItem(s.getName(), s.getId()+""));
-				
+				type.setSelectedIndex(1);
 				if(jsCarrierPacking != null &&  jsCarrierPacking.getType() != null){
 					for(Integer i = 0; i < type.getItemCount(); i++){
 						if(jsCarrierPacking.getType() != null & jsCarrierPacking.getType().getName().equals(type.getItemText(i))){
@@ -127,7 +128,7 @@ public class CarrierPackingPanel extends Composite{
 			public void onSuccess(JSON<JsObject> result) {
 				result.getData().stream().forEach(s -> 
 					status.addItem(s.getName(), s.getId()+""));
-
+				
 				if(jsCarrierPacking != null &&  jsCarrierPacking.getStatus() != null){
 					for(Integer i = 0; i < status.getItemCount(); i++){
 						if(jsCarrierPacking.getStatus() != null & jsCarrierPacking.getStatus().getName().equals(status.getItemText(i))){
@@ -251,8 +252,8 @@ public class CarrierPackingPanel extends Composite{
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
-					number.setValue(jsCarrierPacking.getNumber() + "");
-					parent.setSelectContent(jsCarrierPacking);
+					number.setValue(result.getNumber() + "");
+					parent.setSelectContent(result);
 				}
 			
 				@Override public void onFailure(Throwable caught) { }
@@ -263,8 +264,8 @@ public class CarrierPackingPanel extends Composite{
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
-					number.setValue(jsCarrierPacking.getNumber() + "");
-					parent.setSelectContent(jsCarrierPacking);
+					number.setValue(result.getNumber() + "");
+					parent.setSelectContent(result);
 				}
 				
 				@Override public void onFailure(Throwable caught) { }

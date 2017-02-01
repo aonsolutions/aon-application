@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +12,11 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ActionCell.Delegate;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -21,6 +26,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -34,6 +42,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -63,6 +72,8 @@ public class CarrierPackingSelect extends Composite{
 		Style dataGridStyle();
 	}
 	
+	ListBox selectable;
+	DateBoxEx datebox;
 	private CarrierPacking parent;
 	private API API;
 	private JsCarrierPacking jsCarrierPacking;
@@ -78,16 +89,43 @@ public class CarrierPackingSelect extends Composite{
 	}
 	
 	private void load() {
-		ListBox l = new ListBox();
-		l.getElement().getStyle().setBackgroundColor("#f6f5e3");
-		l.setWidth("300px");
-		l.setVisibleItemCount(20);
-		
-		Label label = new Label("Pedidos sin seleccionar");
+		HorizontalPanel p = new HorizontalPanel();
+		Label label = new Label("Fecha ");
 		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		westPanel.add(label);
-		westPanel.add(l);
-		
+		label.getElement().getStyle().setPadding(3, Unit.PX);
+		p.add(label);
+		datebox = new DateBoxEx();
+		datebox.setStyleName(AON.AON_CSS.aonTextBox());
+		datebox.setValue(new Date());
+		datebox.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				loadSelectable();
+				westPanel.remove(1);
+				westPanel.add(selectable);
+			}
+		});
+		p.add(datebox);
+		loadSelectable();
+		loadSelected(true);
+		westPanel.add(p);
+		westPanel.add(selectable);
+	}
+	
+	private void refresh(){
+		loadSelectable();
+		westPanel.remove(1);
+		westPanel.add(selectable);
+		loadSelected(false);
+	};
+	
+	private void loadSelectable() {
+		selectable = new ListBox();
+		selectable.getElement().getStyle().setBackgroundColor("#f6f5e3");
+		selectable.setWidth("300px");
+		selectable.setVisibleItemCount(20);
+	
 		HashMap<String, LinkedList<String>> map = new HashMap<>();
 		LinkedList<String> carrierList = new LinkedList<>();
 		carrierList.add(jsCarrierPacking.getCarrier().getId() + "");
@@ -95,14 +133,66 @@ public class CarrierPackingSelect extends Composite{
 		LinkedList<String> ncarrierList = new LinkedList<>();
 		ncarrierList.add("");
 		map.put("not_carrier_packing", ncarrierList);
+		LinkedList<String> nDate = new LinkedList<>();
+		nDate.add(Long.toString(datebox.getValue().getTime()));
+		map.put("issue_date", nDate);	
+		selectableItems(map);
+		selectable.addClickHandler(selectableClickHandler());
+		selectable.addDoubleClickHandler(selectableDoubleClickHandler());
+	}
+	
+	private void loadSelected(Boolean isCreate) {
+		HashMap<String, LinkedList<String>> map2 = new HashMap<>();
+		LinkedList<String> list = new LinkedList<>();
+		list.add(jsCarrierPacking.getId() + "");
+		map2.put("carrier_packing", list);
+		selectedItems(map2, isCreate);
+	}
+	
+	private void selectedItems(HashMap<String, LinkedList<String>> map, Boolean isCreate){
+		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+			API.getWarehouse().getPurchases(map,new AsyncCallback<JSON<JsOrder>>() {
 			
+				@Override
+				public void onSuccess(JSON<JsOrder> result) {
+					parent.setEnableType(result.getData().length() <= 0);
+					if(isCreate){
+						loadDatagrid(result.getData().toLinkedList());
+					} else {
+						addDataDisplay(dataGrid, result.getData().toLinkedList());
+					}
+				}
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		} else {
+			API.getWarehouse().getDeliveries(map,new AsyncCallback<JSON<JsOrder>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsOrder> result) {
+					parent.setEnableType(result.getData().length() <= 0);
+					if(isCreate){
+						loadDatagrid(result.getData().toLinkedList());
+					} else {
+						addDataDisplay(dataGrid, result.getData().toLinkedList());
+					}
+				}
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
+	}
+	
+	private void selectableItems(HashMap<String, LinkedList<String>> map){
 		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
 			API.getWarehouse().getPurchases(map,new AsyncCallback<JSON<JsOrder>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsOrder> result) {
 					result.getData().stream().forEach(js -> 
-						l.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
+						selectable.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
 							+ "-" + js.getRegistry().getName(),js.getId()+""));
 				}
 				
@@ -115,7 +205,7 @@ public class CarrierPackingSelect extends Composite{
 				@Override
 				public void onSuccess(JSON<JsOrder> result) {
 					result.getData().stream().forEach(js -> 
-						l.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
+						selectable.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
 							+ "-" + js.getRegistry().getName(),js.getId()+""));
 				}
 				
@@ -123,40 +213,14 @@ public class CarrierPackingSelect extends Composite{
 				public void onFailure(Throwable caught) {}
 			});
 		}
-
-		
-		HashMap<String, LinkedList<String>> map2 = new HashMap<>();
-		LinkedList<String> list = new LinkedList<>();
-		list.add(jsCarrierPacking.getId() + "");
-		map2.put("carrier_packing", list);
-		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
-			API.getWarehouse().getPurchases(map2,new AsyncCallback<JSON<JsOrder>>() {
-			
-				@Override
-				public void onSuccess(JSON<JsOrder> result) {
-					loadDatagrid(result.getData().toLinkedList());
-				}
-			
-				@Override
-				public void onFailure(Throwable caught) {}
-			});
-		} else {
-			API.getWarehouse().getDeliveries(map2,new AsyncCallback<JSON<JsOrder>>() {
-				
-				@Override
-				public void onSuccess(JSON<JsOrder> result) {
-					loadDatagrid(result.getData().toLinkedList());
-				}
-			
-				@Override
-				public void onFailure(Throwable caught) {}
-			});
-		}
-		l.addClickHandler(new ClickHandler() {
+	}
+	
+	private ClickHandler selectableClickHandler(){
+		return new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				String value = l.getSelectedValue();
+				String value = selectable.getSelectedValue();
 				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
 					API.getWarehouse().getPurchase(Integer.parseInt(value),new AsyncCallback<JSON<JsOrder>>() {
 					
@@ -197,16 +261,17 @@ public class CarrierPackingSelect extends Composite{
 					});
 				}
 			}
-		});
-		
-		l.addDoubleClickHandler(new DoubleClickHandler() {
+		};
+	}
+	
+	private DoubleClickHandler selectableDoubleClickHandler(){
+		return new DoubleClickHandler() {
 			
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				String label = l.getSelectedItemText();
-				String value = l.getSelectedValue();
+				String value = selectable.getSelectedValue();
 				
-				l.removeItem(l.getSelectedIndex());
+				selectable.removeItem(selectable.getSelectedIndex());
 				
 				String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\"}";
 				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
@@ -225,14 +290,35 @@ public class CarrierPackingSelect extends Composite{
 					});
 				}
 			}
-		});	
+		};
 	}
-
+	
 	
 	public JsCarrierPacking getJsCarrierPacking() {
 		return jsCarrierPacking;
 	}
 	
+	// -------------------- Actions
+	private void deleteOrder(JsOrder js){
+		String requestData = "{\"carrier_packing\":\"\"}";
+		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+			API.getWarehouse().updatePurchase(js.getId(), requestData, new AsyncCallback<JsOrder>() {
+				@Override public void onFailure(Throwable caught) {}
+				@Override public void onSuccess(JsOrder result) {
+					refresh();
+				}
+			});			
+		} else {
+			API.getWarehouse().updateDelivery(js.getId(), requestData, new AsyncCallback<JsOrder>() {
+				@Override public void onFailure(Throwable caught) {}
+				@Override public void onSuccess(JsOrder result) {
+					refresh();
+				}
+			});		
+		}
+	}
+	
+	// -------------------- DataGrid Utils
 	
 	private void loadDatagrid(LinkedList<JsOrder> list) {
 		DefaultKeyboardSelectionHandler<JsOrder> selHandler = new DefaultKeyboardSelectionHandler<JsOrder>(dataGrid){
@@ -243,7 +329,17 @@ public class CarrierPackingSelect extends Composite{
 				    Integer subrow = event.getContext().getSubIndex();
 				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
 				    JsOrder object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				    
+				    object.getOrderType();
+
+				    API.getWarehouse().getDetails(object.getId(), object.getOrderType(), new AsyncCallback<JSON<JsOrderDetail>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsOrderDetail> result) {
+							parent.southContent(jsCarrierPacking, object, result.getData());							
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
 				    // TODO MOSTRAR DETAILS EN EL SOUTH!				  
 				}		
 			}
@@ -265,11 +361,10 @@ public class CarrierPackingSelect extends Composite{
 		initTableColumns(selectionModel, sortHandler);
 	}
 	
-	//------------------------------ DataGrid Utils
-	
 	public void addItem(JsOrder js){
 		dataProvider.getList().add(js);
 		dataGrid.redraw();
+		parent.setEnableType(false);
 	}
 	
 	private ListDataProvider<JsOrder> dataProvider = new ListDataProvider<JsOrder>();
@@ -386,5 +481,29 @@ public class CarrierPackingSelect extends Composite{
 		dataGrid.getColumnSortList().push(priceColumn);
 		dataGrid.addColumn(priceColumn, "Importe");
 		dataGrid.setColumnWidth(priceColumn, 10, Unit.PCT);
+
+		/** Delete Column **/
+		ActionCell<JsOrder> cell = new ActionCell<JsOrder>("delete", new Delegate<JsOrder>() {
+			 @Override
+		        public void execute(JsOrder object) {
+		        	deleteOrder(object);
+		        }
+		});
+		
+		Column<JsOrder, JsOrder> deleteColumn = new Column<JsOrder, JsOrder>(cell){
+				@Override
+				public void render(Context context, JsOrder object, SafeHtmlBuilder sb) {
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
+					sb.appendHtmlConstant("</button>");
+				}
+				
+				@Override
+				public JsOrder getValue(JsOrder object) {
+					return object;
+				}
+			};
+			deleteColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+			dataGrid.addColumn(deleteColumn, "");
+			dataGrid.setColumnWidth(deleteColumn, 10, Unit.PCT);
 	}
 }

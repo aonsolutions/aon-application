@@ -62,7 +62,6 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		Label header2 = new Label(" LINEA     " //10
 				+ "PRODUCTO                                " //40
 				+ "CANTIDAD       " //15
-				+ "PENDIENTE      " //15
 				+ "PRECIO         " //15
 				+ "DESCUENTO      " //15
 				+ "IMPORTE        "); //15 
@@ -91,7 +90,6 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
 							AonStringUtils.defaultString(detail.getProductCode() + "-" + detail.getProductName()), 39), 44)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getQuantity() + ""), 16)
-					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDelivered() + ""), 17)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getPrice() + ""), 16)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDiscountExpr()), 16)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
