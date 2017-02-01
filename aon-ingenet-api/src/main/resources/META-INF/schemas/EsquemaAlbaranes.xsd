@@ -4,7 +4,7 @@
 <!-- Created by aonSolutions v1.0 20/01/2017 -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
-	jaxb:version="2.1" jaxb:extensionBindingPrefixes="inheritance">
+	jaxb:version="2.1" >
 	<xsd:annotation>
 		<xsd:documentation xml:lang="es">XML SCHEMA -
 			Comunicación de albaranes y productos terminados.</xsd:documentation>
@@ -200,10 +200,10 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="PRODUCTO_ELABORADO" type="PRODUCTO_TYPE">
+			<xsd:element name="PRODUCTO" type="PRODUCTO_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos del producto
-						elaborado</xsd:documentation>
+						elaborado o del envase</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="DESCRIPCION" minOccurs="0">
@@ -232,7 +232,8 @@
 						elaborar el producto de la linea del albaran</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element name="DATOS_ELABORACION_ORIGEN" type="ELABORACION_ORIGEN_TYPE">
+			<xsd:element name="DATOS_ELABORACION_ORIGEN" type="ELABORACION_ORIGEN_TYPE"
+				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos de la elaboracion
 						origen del que procede la linea del albaran</xsd:documentation>
@@ -294,7 +295,7 @@
 					<xsd:restriction base="xsd:string" />
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="NUMERO_LOTE_SERIE">
+			<xsd:element name="NUMERO_LOTE_SERIE" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Numero de lote o de
 						serie</xsd:documentation>
@@ -305,7 +306,7 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="FECHA_LOTE_SERIE" type="FECHA_TYPE">
+			<xsd:element name="FECHA_LOTE_SERIE" type="FECHA_TYPE" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Fecha de lote o de
 						serie</xsd:documentation>
@@ -430,8 +431,7 @@
 		<xsd:sequence>
 			<xsd:element name="FECHA_EMISION" type="FECHA_TYPE">
 			</xsd:element>
-			<xsd:element name="DATOS_AGENCIA_TRANSPORTE" type="DATOS_AGENCIA_TRANSPORTE_TYPE"
-				minOccurs="0">
+			<xsd:element name="DATOS_AGENCIA_TRANSPORTE" type="DATOS_AGENCIA_TRANSPORTE_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos de la agencia
 						de transporte.</xsd:documentation>
@@ -445,21 +445,21 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="NUMERO_MATRICULA">
+			<xsd:element name="NUMERO_MATRICULA" minOccurs="0">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:maxLength value="32" />
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="NOMBRE_CONDUCTOR">
+			<xsd:element name="NOMBRE_CONDUCTOR" minOccurs="0">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:maxLength value="64" />
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="DOCUMENTO_CONDUCTOR">
+			<xsd:element name="DOCUMENTO_CONDUCTOR" minOccurs="0">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:maxLength value="16" />

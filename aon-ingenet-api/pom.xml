@@ -77,6 +77,22 @@
 							</sources>
 						</configuration>
 					</execution>
+					<!--  
+					<execution>
+						<id>add-source-respuestaElaboraciones</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					-->
 				</executions>
 			</plugin>
 			
@@ -104,22 +120,11 @@
 							<schemaIncludes>
 								<include>EsquemaElaboraciones.xsd</include>
 							</schemaIncludes>
-<!--  
-							<bindingIncludes>
-	                            <include>../binding.xjb</include>
-	                        </bindingIncludes>
--->  
 							<forceRegenerate>false</forceRegenerate>
-							<!-- whether old output should be removed, this field should generally be set to "true" -->  
 							<removeOldOutput>true</removeOldOutput>  
-							<!-- generate lots of output -->  
 							<verbose>true</verbose>
 							<extension>true</extension>
-							<args>
-								<param>-npa</param>
-								<arg>-Xinheritance</arg>
-							</args>
-	                        <plugins>
+							<plugins>
 								<plugin>
 									<groupId>org.jvnet.jaxb2_commons</groupId>
 									<artifactId>jaxb2-basics</artifactId>
@@ -144,11 +149,7 @@
 							<removeOldOutput>true</removeOldOutput>
 							<verbose>true</verbose>
 							<extension>true</extension>
-							<args>
-								<param>-npa</param>
-								<arg>-Xinheritance</arg>
-							</args>
-	                        <plugins>
+							<plugins>
 								<plugin>
 									<groupId>org.jvnet.jaxb2_commons</groupId>
 									<artifactId>jaxb2-basics</artifactId>
@@ -157,6 +158,33 @@
 							</plugins>
 						</configuration>
 					</execution>
+					<!--  
+					<execution>
+						<id>generate-respuestaElaboraciones</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/respuestaElaboraciones</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.respuestaElaboraciones</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaRespuestaElaboraciones.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+					-->
 				</executions>
 			</plugin>
 			<plugin>

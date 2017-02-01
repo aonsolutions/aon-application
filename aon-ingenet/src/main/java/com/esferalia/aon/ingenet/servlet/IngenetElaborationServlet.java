@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import com.esferalia.aon.ingenet.api.elaboraciones.CIFNIFTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSCENTROTRABAJOTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSCLIENTETYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSDIRECCIONTYPE;
+import com.esferalia.aon.ingenet.api.elaboraciones.DATOSPEDIDOORIGENTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSPRODUCTOTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.DATOSREGISTROTYPE;
 import com.esferalia.aon.ingenet.api.elaboraciones.ELABORACIONES;
@@ -64,13 +66,20 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 
 	private static final String PARAM_DATE = "date";
+	private static final String PARAM_ACTION = "action";
+	private static final String PARAM_IDS = "ids";
 	
+	private static final String PARAM_ACTION_VIEW = "CONSULTAR";
+	private static final String PARAM_ACTION_PROCCESS = "PROCESAR";
 	
 	
 	protected void processRequest(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws ServletException, IOException {
 		
 		String _date = httpRequest.getParameter(PARAM_DATE);
+		String _action = httpRequest.getParameter(PARAM_ACTION);
+		String _ids = httpRequest.getParameter(PARAM_IDS);
+		
 		Date date = null;
 		if(_date!=null){
 			try {
@@ -84,31 +93,80 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		
 		List<Elaboration> pendingList = getPendingList(ctx, date);
 		
-		manageElaborationList(ctx, pendingList);
+		if(PARAM_ACTION_VIEW.equals(_action)){
+			flushElaborations(httpResponse, ctx, pendingList);
+		} else if(PARAM_ACTION_PROCCESS.equals(_action)){
+			if(!"".equals(_ids)){
+				String[] ids = _ids.replace(" ", "").split(",");
+				if(ids.length>0){
+					int[] idArray = Arrays.asList(ids).stream().mapToInt(id -> Integer.valueOf(id)).toArray();
+					initElaborationProccess(ctx, idArray);
+					httpResponse.setStatus(HttpServletResponse.SC_CREATED);
+				}
+			}
+		} else {
+			// TODO return helpMessage
+			flushErrors(httpResponse,
+					ctx);
+			httpResponse.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+		}
 
+	}
+
+	// TODO flushErrors
+	private void flushErrors(HttpServletResponse httpResponse,
+			AONContext ctx) throws IOException {
+//		RESPUESTAELABORACIONES respuesta = new RESPUESTAELABORACIONES();	
+//		respuesta.setDATOSRESPUESTAELABORACIONES(new RESPUESTAELABORACIONESTYPE());	
+//		respuesta.getDATOSRESPUESTAELABORACIONES().setPARAMETROSADMITIDOS(new PARAMETROSADMITIDOS());	
+//		respuesta.getDATOSRESPUESTAELABORACIONES().getPARAMETROSADMITIDOS().setAction(new Action());	
+//		respuesta.getDATOSRESPUESTAELABORACIONES().getPARAMETROSADMITIDOS().getAction();	
+////		respuesta.getDATOSRESPUESTAELABORACIONES().getPARAMETROSADMITIDOS().getDate().DESCRIPTION;	
+//		respuesta.setERRORES(new ERRORESTYPE());	
+//		respuesta.getERRORES().getERRORES().add("error1");	
+//		respuesta.getERRORES().getERRORES().add("error2");
+//		
+//		String xml = convertToXml(respuesta, RESPUESTAELABORACIONES.class);
+//		
+//		// httpResponse.setHeader("", "");
+//		// httpResponse.setContentType("application/json");
+//		httpResponse.setContentType("application/xml");
+//		// httpResponse.setContentType("text/xml;charset=UTF-8");
+//		httpResponse.setContentLength(xml.length());
+//		
+//		PrintWriter out = httpResponse.getWriter();
+//		out.print(xml);
+//		out.flush();
+	}
+	
+	private void flushElaborations(HttpServletResponse httpResponse,
+			AONContext ctx, List<Elaboration> pendingList) throws IOException {
+		
 		ELABORACIONES elaboraciones = fillElaborationData(ctx, pendingList);
 		String xml = convertToXml(elaboraciones, ELABORACIONES.class);
-        
-		
-//		httpResponse.setHeader("", "");
-//		httpResponse.setContentType("application/json");
+
+		// httpResponse.setHeader("", "");
+		// httpResponse.setContentType("application/json");
 		httpResponse.setContentType("application/xml");
-//		httpResponse.setContentType("text/xml;charset=UTF-8");
+		// httpResponse.setContentType("text/xml;charset=UTF-8");
 		httpResponse.setContentLength(xml.length());
-		
+
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();
 	}
 	
-	private void manageElaborationList(AONContext ctx,
-			List<Elaboration> list) {
-		ctx.transaction(t -> {
-			list.forEach(elaboration -> {
-				elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
-				ElaborationDAO.updateElaboration(ctx, elaboration);
-			});
-		});
+	// TODO initElaborationProccess
+	private void initElaborationProccess(AONContext ctx, int[] ids) {
+//		ctx.transaction(t -> {
+//			for (int i = 0; i < ids.length; i++) {
+//				Integer id = ids[i];
+//				Elaboration elaboration = ElaborationDAO
+//						.getElaboration(ctx, id);
+//				elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
+//				ElaborationDAO.updateElaboration(ctx, elaboration);
+//			}
+//		});
 	}
 	
 	private ELABORACIONES fillElaborationData(AONContext ctx, List<Elaboration> pendingList) {
@@ -120,14 +178,15 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			Sales sales = obtainSales(ctx, salesDetail.getSales());
 			Customer customer = obtainCustomer(ctx, salesDetail.getSales());
 			ELABORACIONTYPE elaboracion = new ELABORACIONTYPE();
-			elaboracion.setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
 			elaboracion.setSERIE(elaboration.getSeries());
 			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
-			elaboracion.setSERIEPEDIDO(sales.getSeries());
-			elaboracion.setNUMEROPEDIDO(String.valueOf(sales.getNumber()));
-			elaboracion.setREFERENCIACOMPRA(sales.getPurchaseReference());
-			elaboracion.setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
 			elaboracion.setFECHAEMISION(dateFormatter.format(elaboration.getDate()));
+			elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
+			elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
+			elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
+			elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
+			elaboracion.getDATOSPEDIDOORIGEN().setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
+			elaboracion.getDATOSPEDIDOORIGEN().setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
 			elaboracion.setCOMENTARIOS(elaboration.getComments());
 			elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
 			elaboracion.setDATOSPRODUCTO(new DATOSPRODUCTOTYPE());
@@ -143,6 +202,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
 			elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
 			elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
+			elaboracion.setUNIDADMEDIDA(elaboration.getItem().getStockUnitTag().getName());
 			elaboraciones.getDATOSELABORACIONES().add(elaboracion);
 		});
 		return elaboraciones;
