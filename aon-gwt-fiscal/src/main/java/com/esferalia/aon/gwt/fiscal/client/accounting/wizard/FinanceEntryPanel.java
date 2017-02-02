@@ -88,7 +88,13 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 			@Override
 			public void onSelection(SelectionEvent<Finance> event) {
 				if (event.getSelectedItem().isSelected()) {
-					financeEntry.add(event.getSelectedItem());	
+					Finance finance = event.getSelectedItem(); 
+					financeEntry.add(finance);
+					Account acc = new Account()
+						.setId(finance.getRegistryAccountId())
+						.setCode(finance.getRegistryAccountCode())
+						.setDescription(finance.getRegistryAccountDescription());
+					getCallback().getModule().onBalance(acc);
 				} else {
 					financeEntry.remove(event.getSelectedItem());	
 				}
@@ -167,10 +173,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				} else {
 					financePanel.setTitle( AON.MSG.unableToUpdate() );
 				}
-				
-				
 				financePanel.addStyleName(AON.AON_CSS.aonIconWarn());
-				
 			}
 			container.add(financePanel);
 		}
