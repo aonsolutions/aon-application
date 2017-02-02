@@ -151,8 +151,7 @@
 		}
 		
 		.iconEraseStyle {
-			border: none;
-			margin-left: 255px;
+			margin-left: 220px;
 		}
 		
 		.mesesImparesStyle {
@@ -182,12 +181,12 @@
 		}
 
 		.dialogBoxStyle{
-			width: 220px;
+			width: 230px;
 			outline: none;
 		    position: absolute;
 		    box-sizing: border-box;
 		    left: 283px;
-		    top: 122.406px;
+		    top: 80px;
 		    max-width: 100%;
 		    max-height: 100%;
 		    padding: 0px;
@@ -317,43 +316,50 @@
 		            <g:HTMLPanel ui:field="bloqueLunes" styleName="{style.divWidthStyle}">
 		            	<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleL}">Lunes:</i:IronLabel>
 			            <g:SuggestBox ui:field="lunesOpt" styleName="{style.suggestBoxStyle}"/>
-			            <g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnL"/>
+			            <p:PaperIconButton icon="icons:expand-more" styleName="{style.optionButtons} {style.expandButtonStyle}" ui:field="expandHourBtnL"/>
+			            <!-- g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnL" -->
 		            </g:HTMLPanel>
 		            <br></br>
 		            <g:HTMLPanel ui:field="bloqueMartes" styleName="{style.divWidthStyle}">
 		            	<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleM}">Martes:</i:IronLabel>
 		            	<g:SuggestBox ui:field="martesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnM"/>
+		            	<p:PaperIconButton icon="icons:expand-more" styleName="{style.optionButtons} {style.expandButtonStyle}" ui:field="expandHourBtnM"/>
+		            	<!-- g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnM" -->
 		            </g:HTMLPanel>
 		            <br></br>
 		            <g:HTMLPanel ui:field="bloqueMiercoles" styleName="{style.divWidthStyle}">
 			            <i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleX}">Miércoles:</i:IronLabel>
 			            <g:SuggestBox ui:field="miercolesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnX"/>
+		            	<p:PaperIconButton icon="icons:expand-more" styleName="{style.optionButtons} {style.expandButtonStyle}" ui:field="expandHourBtnX"/>
+		            	<!-- g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnX" -->
 		            </g:HTMLPanel>
 		            <br></br>
 		            <g:HTMLPanel ui:field="bloqueJueves" styleName="{style.divWidthStyle}">
 			            <i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleJ}">Jueves:</i:IronLabel>
 			            <g:SuggestBox ui:field="juevesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-			            <g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnJ"/>
+			            <p:PaperIconButton icon="icons:expand-more" styleName="{style.optionButtons} {style.expandButtonStyle}" ui:field="expandHourBtnJ"/>
+			            <!-- g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnJ"-->
 		            </g:HTMLPanel>
 		            <br></br>
 		            <g:HTMLPanel ui:field="bloqueViernes" styleName="{style.divWidthStyle}">
 			            <i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleV}">Viernes:</i:IronLabel>
 			            <g:SuggestBox ui:field="viernesOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-			            <g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnV"/>
+			            <p:PaperIconButton icon="icons:expand-more" styleName="{style.optionButtons} {style.expandButtonStyle}" ui:field="expandHourBtnV"/>
+			            <!-- g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnV"-->
 		            </g:HTMLPanel>
 		            <br></br>
 		            <g:HTMLPanel ui:field="bloqueSabado" styleName="{style.divWidthStyle}">
 			            <i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleS}">Sábado:</i:IronLabel>
 			            <g:SuggestBox ui:field="sabadoOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnS"/>
+		            	<p:PaperIconButton icon="icons:expand-more" styleName="{style.optionButtons} {style.expandButtonStyle}" ui:field="expandHourBtnS"/>
+		            	<!-- g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnS"-->
 		            </g:HTMLPanel>
 		            <br></br>
 		            <g:HTMLPanel ui:field="bloqueDomingo" styleName="{style.divWidthStyle}">
 			            <i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleD}">Domingo:</i:IronLabel>
 			            <g:SuggestBox ui:field="domingoOpt"  styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-		            	<g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnD"/>
+		            	<p:PaperIconButton icon="icons:clear" styleName="{style.optionButtons} {style.expandButtonStyle}" ui:field="expandHourBtnD"/>
+		            	<!-- g:Button styleName="{style.optionButtons} {style.expandButtonStyle} aon-icon-view" ui:field="expandHourBtnD"-->
 		            </g:HTMLPanel>
 		            <HTMLPanel class="buttons">
 		              <p:PaperButton ui:field="dialogCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
@@ -424,10 +430,9 @@
 						Suspensión
 					</i:IronLabel>
 					<i:IronLabel>
-						<p:PaperButton
-							styleName="aon-icon-delete {style.cellStyle} {style.iconEraseStyle}"
-							ui:field="eraseButton"></p:PaperButton>
-						Borrar
+						<p:PaperIconButton icon="icons:remove-circle-outline" ui:field="eraseButton"
+											styleName="{style.iconEraseStyle}"/>
+						Limpiar
 					</i:IronLabel>
 				</g:HorizontalPanel>
 				<g:ScrollPanel ui:field="scrollInfo" height="85%">

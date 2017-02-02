@@ -1,8 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.esferalia.aon.gwt.common.client.Undoable;
 
 public class EmployeeCalendarDraftObjectData {
 
@@ -14,11 +19,87 @@ public class EmployeeCalendarDraftObjectData {
 	
 	private Date startContract;
 	private Date endContract;
+	
+	public UndoManager<Undoable> undoManager;
+	
 	private enum DayType{FREEDAY, HOLIDAY, DROPDAY, STRIKEDAY, EREDAY, REDUCTIONDAY, SUSPENSIONDAY, NOTYPEDAY};
 	
+	// --------------------------------------------- INTERFAZ REDO/UNDO -----------------------------------------------
+	
+	private class CompositeUndoable<T extends Undoable > implements Undoable {
+
+		private Collection<T> undos;
+
+		public CompositeUndoable(Collection<T> undos) {
+			this.undos = undos;
+		}
+
+		@Override
+		public void redo() {
+			for (T undo : undos)
+				undo.redo();
+		}
+
+		@Override
+		public void undo() {
+			for (T undo : undos){
+				undo.undo();
+			}
+		}
+
+	}
+	
+	class SetHourEdit implements Undoable {
+
+		private Double oldHour;
+		private Double newHour;
+		private Date day;
+		
+		public SetHourEdit(Double oldH, Double newH, Date actualDay) {
+			this.oldHour = oldH;
+			this.newHour = newH;
+			this.day = actualDay;
+		}
+		
+		@Override
+		public void undo() {
+			draftMapaDiasHoras.put(day, oldHour);
+		}
+		
+		@Override
+		public void redo() {
+			draftMapaDiasHoras.put(day, newHour);
+		}
+	}
+	
+	class SetTypeEdit implements Undoable {
+
+		private DayType oldType;
+		private DayType newType;
+		private Date day;
+		
+		public SetTypeEdit(DayType oldT, DayType newT, Date actualDay) {
+			this.oldType = oldT;
+			this.newType = newT;
+			this.day = actualDay;
+		}
+		
+		@Override
+		public void undo() {
+			draftMapaDiasTipo.put(day, oldType);
+		}
+		
+		@Override
+		public void redo() {
+			draftMapaDiasTipo.put(day, newType);
+		}
+	}
+	
+	// ---------------------------------------------- METODOS DE LA CLASE ---------------------------------------------	
 	public EmployeeCalendarDraftObjectData(Integer employeeId,
 			Date startContract, Date endContract, EmployeesServiceAsync employeesService) {
-		// TODO Auto-generated constructor stub
+		this.undoManager = new UndoManager<>();
+		
 		this.mapaDiasHoras = new HashMap<Date,Double>();
 		this.mapaDiasTipo = new HashMap<Date,DayType>();
 		
@@ -39,9 +120,20 @@ public class EmployeeCalendarDraftObjectData {
 	}
 	
 	public void setTypeByDay (Date dia, DayType typeDay){
-		draftMapaDiasTipo.put(dia, typeDay); 
+		DayType old = draftMapaDiasTipo.put(dia, typeDay);
+		undoManager.add(new SetTypeEdit(old, typeDay, dia));
 	} 
 	
+	public void setTypeByDay (Map<Date, DayType> types){
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Map.Entry<Date, DayType> entry : types.entrySet()) {
+			DayType old = draftMapaDiasTipo.put(entry.getKey(), entry.getValue());
+			undos.add(new SetTypeEdit(old, entry.getValue(), entry.getKey()));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
+
 	public double getHourByDay (Date dia){
 		Double hourDayDraft = draftMapaDiasHoras.get(dia);
 		
@@ -52,9 +144,19 @@ public class EmployeeCalendarDraftObjectData {
 	}
 	
 	public void setHourByDay (Date dia, Double hour){
-		draftMapaDiasHoras.put(dia, hour); 
+		Double old = draftMapaDiasHoras.put(dia, hour);
+		undoManager.add(new SetHourEdit(old, hour, dia));
 	} 
 	
+	public void setHourByDay (Map<Date, Double> hours){
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Map.Entry<Date, Double> entry : hours.entrySet()) {
+			Double old = draftMapaDiasHoras.put(entry.getKey(), entry.getValue());
+			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	} 
+
 	public Date getStartDateContract(){
 		return startContract;
 	}

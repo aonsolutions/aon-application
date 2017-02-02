@@ -13,7 +13,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -26,6 +25,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 public class EmployeeCalendarDraft extends Composite {
 
@@ -255,31 +255,31 @@ public class EmployeeCalendarDraft extends Composite {
 	PaperButton diaSuspensionButton;
 
 	@UiField
-	PaperButton eraseButton;
+	PaperIconButton eraseButton;
 	
 	@UiField
 	PaperButton dialogOk;
 	
 	@UiField
-	Button expandHourBtnL;
+	PaperIconButton expandHourBtnL;
 	
 	@UiField
-	Button expandHourBtnM;
+	PaperIconButton expandHourBtnM;
 	
 	@UiField
-	Button expandHourBtnX;
+	PaperIconButton expandHourBtnX;
 	
 	@UiField
-	Button expandHourBtnJ;
+	PaperIconButton expandHourBtnJ;
 	
 	@UiField
-	Button expandHourBtnV;
+	PaperIconButton expandHourBtnV;
 	
 	@UiField
-	Button expandHourBtnS;
+	PaperIconButton expandHourBtnS;
 	
 	@UiField
-	Button expandHourBtnD;
+	PaperIconButton expandHourBtnD;
 	
 	@UiField
 	HTMLPanel bloqueLunes;
@@ -331,6 +331,12 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	@UiField(provided = true)
 	SuggestBox domingoOpt;
+	
+	@UiField
+	Button undoButton;
+	
+	@UiField
+	Button redoButton;
 
 	private final static int MONDAY = 0;
 	private final static int TUESDAY = 1;
@@ -685,22 +691,40 @@ public class EmployeeCalendarDraft extends Composite {
 		mostrarCalendarioWidget(this.annio);
 		
 	}
+	
+	@UiHandler("undoButton")
+	void onUndoButtonClick(ClickEvent event) {
+		calendarEmployeeInfo.undoManager.undo();
+		initCalendar();
+	}
+
+	@UiHandler("redoButton")
+	void onRedoButtonClick(ClickEvent event) {
+		calendarEmployeeInfo.undoManager.redo();
+		initCalendar();
+	}
 
 	// ---------------------------------------------------------------- Metodos Auxiliares -------------------------------------------
 	public void setEmployeeCalendarDraftObject(EmployeeCalendarDraftObjectData calendar) {
 		this.calendarEmployeeInfo = calendar;
-		this.annio = 117;
-		this.mes = 0;
+		this.calendarEmployeeInfo.undoManager.addListener(new UndoManager.Listener() {
+			@Override
+			public void onChange(UndoManager undoManager) {
+				// TODO Auto-generated method stub
+				undoButton.setEnabled(undoManager.canUndo());
+			}
+		});
 		initCalendar();
 	}
-
+	
 	private void initCalendar() {
+		this.annio = 117;
+		this.mes = 0;
 		this.startEmployeeContract = getStartYearContract(calendarEmployeeInfo.getStartDateContract());
 		this.endEmployeeContract = getEndYearContract(calendarEmployeeInfo.getEndDateContract());
 		int actualYear = this.annio+1900;
 		this.yearLabel.setText(Integer.toString(actualYear));
 		limpiarCalendario();
-		//inicializarCellsCalendar();
 		mostrarCalendarioWidget(this.annio);
 		
 	}
