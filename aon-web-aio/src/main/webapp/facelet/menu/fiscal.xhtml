@@ -14,7 +14,8 @@
 
 			<aon:div styleClass="aon-scroll-area">		
 
-				<h:panelGrid columns="1" styleClass="aon-width-all" cellspacing="15"
+				<h:panelGrid columns="1" styleClass="aon-width-all aon-margin-bottom" cellspacing=""
+					
 					columnClasses="aon-vertical-align-top aon-width-half, aon-vertical-align-top aon-width-half">
 					<aon:panelGroup>
 						<aon:panelGrid id="group_fiscal_vat_tax_statement_new"
@@ -318,330 +319,295 @@
 						</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					<aon:div styleClass="aon-direct-access-list aon-width-all">
+					    <h:panelGrid columns="3" styleClass="aon-width-all"
+						columnClasses="aon-vertical-align-top aon-width-200
+							,aon-vertical-align-top aon-width-200
+							,aon-vertical-align-top aon-width-200">
+					    	
+									<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+										<aon:commandLink id="vatTax" 
+											action="vatTax_search"
+											styleClass="aon-fiscal-link" 
+											actionListener="#{vatTax.onEditSearch}"
+											title="#{bundle.fiscal_model_303_module}">
+											<aon:outputText styleClass="aon-fiscal-link-box" value="303"/>
+											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_303_module}" />
+										</aon:commandLink>
+						    	
+										<aon:commandLink id="mod303" 
+											action="mod303_search"
+											actionListener="#{mod303.onEditSearch}"
+											title="#{bundle.fiscal_model_310_module}">
+											<aon:outputText styleClass="aon-fiscal-link-box" value="303"/>
+											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module}" />
+										</aon:commandLink>
+
+										<aon:commandLink id="mod_340_report" 
+											action="mod340_search"
+											actionListener="#{mod340.onReset}"
+											title="#{bundle.fiscal_model_340_module}">
+											<aon:outputText styleClass="aon-fiscal-link-box" value="340" />
+											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_340_module}" />
+										</aon:commandLink>
+										
+
+										<aon:commandLink id="mod347_report" 
+											action="mod347_list"
+											actionListener="#{mod347.onEditSearch}"
+											title="#{bundle.fiscal_model_347_module}">
+											<aon:outputText styleClass="aon-fiscal-link-box" value="347" />
+											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_347_module}" />
+										</aon:commandLink>
+										
+										<aon:commandLink id="mod349_report" 
+											action="mod349_list"
+											actionListener="#{mod349.onEditSearch}" 
+											title="#{bundle.fiscal_model_349_module}">
+											<aon:outputText styleClass="aon-fiscal-link-box" value="349" />
+											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_349_module}" />
+										</aon:commandLink>
+										
+										<aon:outputText value="&#160;" />
+									</aon:if>
+					    </h:panelGrid>
+					</aon:div>
 				</h:panelGrid>
-<!-- --> 								
-				<h:panelGrid columns="1" styleClass="aon-width-all" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				
+				<h:panelGrid columns="3" styleClass="aon-width-all" cellspacing=""
+						columnClasses="aon-vertical-align-top aon-width-200,
+							aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:panelGroup>
+							<aon:panelGrid id="group_fiscal_modules_module"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-tree-root aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.fiscal_modules_module}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="fiscalActivity" 
+												action="fiscalActivity_list"
+												actionListener="#{fiscalActivity.onSearch}"
+												title="#{bundle.fiscal_activities_modules}"
+												value="#{bundle.fiscal_activities_modules}">
+											</aon:commandLink>
+										</aon:div>
+ 									</aon:div>
+							</aon:panelGrid>
+						</aon:panelGroup>
+					</aon:if>
+
+					<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+						<aon:panelGroup>
+							<aon:panelGrid id="group_fiscal_modules_module_matrix"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-tree-root aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="Matriz de empresas y modelos fiscales"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="fiscalMatrix" 
+											action="fiscalMatrix_list"
+											actionListener="#{fiscalMatrix.onSearch}"
+											title="Matriz de empresas y modelos fiscales"
+											value="Matriz de empresas y modelos fiscales" />
+									</aon:div> 
+								</aon:div> 
+							</aon:panelGrid>
+						</aon:panelGroup>
+					</aon:if>
+
+
 					<aon:panelGroup>
-						<aon:panelGrid id="group_fiscal_vat_tax_statement"
+						<aon:panelGrid id="group_fiscal_mercantile_registry"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-fiscal-header">
+							headerClass="aon-icon-registradores aon-direct-access-panel">
 							<f:facet name="header">
-								<h:panelGrid columns="6" style="width: 100%;height: 100%;"
-									columnClasses="aon-width-20, aon-width-20, aon-width-20, aon-width-20, aon-width-20, aon-width-auto">
-									<h:outputLink target="_blank" value="http://www.aeat.es"
-										title="#{bundle.aon_navigate_to_official_website}">
-										<h:graphicImage styleClass="aon-vertical-align-middle"
-											title="Agencia Tributaria"
-											url="#{aonResource.resolve['/images/aon-icon/aon-aeat.png']}" />
-									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.alava.net"
-										title="#{bundle.aon_navigate_to_official_website}">
-										<h:graphicImage styleClass="aon-vertical-align-middle"
-											title="Diputación Foral de Alava / Arabako Foru Aldundia"
-											url="#{aonResource.resolve['/images/aon-icon/aon-icon-araba.png']}" />
-									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.bizkaia.net"
-										title="#{bundle.aon_navigate_to_official_website}">
-										<h:graphicImage styleClass="aon-vertical-align-middle"
-											title="Diputación Foral de Bizkaia / Bizkaiako Foru Aldundia"
-											url="#{aonResource.resolve['/images/aon-icon/aon-icon-bizkaia.png']}" />
-									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.gipuzkoa.net"
-										title="#{bundle.aon_navigate_to_official_website}">
-										<h:graphicImage styleClass="aon-vertical-align-middle"
-											title="Diputación Foral de Gipuzkoa / Gipuzkoako Foru Aldundia"
-											url="#{aonResource.resolve['/images/aon-icon/aon-icon-gipuzkoa.png']}" />
-									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.navarra.es"
-										title="#{bundle.aon_navigate_to_official_website}">
-										<h:graphicImage styleClass="aon-vertical-align-middle"
-											title="Gobierno de Navarra / Nafarroako Gobernua"
-											url="#{aonResource.resolve['/images/aon-icon/aon-icon-navarra.png']}" />
-									</h:outputLink>
-									<aon:outputText value="Modelos tributarios" styleClass="aon-padding-left"/>
-								</h:panelGrid>
+								<aon:outputText value="#{bundle.fiscal_mercantile_registry}"/>
 							</f:facet>
-							<aon:div styleClass="aon-direct-access-list aon-width-all">
-							    <h:panelGrid columns="2" styleClass="aon-width-all"
-							    	columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
-							    	
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="vatTax" 
-													action="vatTax_search"
-													styleClass="aon-fiscal-link" 
-													actionListener="#{vatTax.onEditSearch}"
-													title="#{bundle.fiscal_model_303_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="303"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_303_module}" />
-												</aon:commandLink>
-								    	
-												<aon:commandLink id="mod_340_report" 
-													action="mod340_search"
-													actionListener="#{mod340.onReset}"
-													title="#{bundle.fiscal_model_340_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="340" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_340_module}" />
-												</aon:commandLink>
-												
-												<aon:commandLink id="mod303" 
-													action="mod303_search"
-													actionListener="#{mod303.onEditSearch}"
-													title="#{bundle.fiscal_model_310_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="303"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module}" />
-												</aon:commandLink>
-	
-												<aon:commandLink id="mod347_report" 
-													action="mod347_list"
-													actionListener="#{mod347.onEditSearch}"
-													title="#{bundle.fiscal_model_347_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="347" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_347_module}" />
-												</aon:commandLink>
-	
-												<aon:commandLink id="mod111-fiscal" 
-													action="mod111_search-fiscal"
-													actionListener="#{mod111.onEditSearch}"
-													title="#{bundle.fiscal_model_111_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="111" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_111_module}" />
-												</aon:commandLink>
-
-												<aon:commandLink id="mod349_report" 
-													action="mod349_list"
-													actionListener="#{mod349.onEditSearch}" 
-													title="#{bundle.fiscal_model_349_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="349" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_349_module}" />
-												</aon:commandLink>
-	
-												<aon:commandLink id="mod115" 
-													action="mod115_search"
-													actionListener="#{mod115.onEditSearch}"
-													title="#{bundle.fiscal_model_115_module}" >
-													<aon:outputText styleClass="aon-fiscal-link-box" value="115" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_115_module}" />
-												</aon:commandLink>
-												<aon:commandLink id="gwt_mod390"
-													action="gwt_mod390"
-													title="#{bundle.fiscal_model_390_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="390" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_390_module}" />
-												</aon:commandLink>
-												<aon:commandLink id="mod123" 
-													action="mod123_search"
-													actionListener="#{mod123.onEditSearch}"
-													title="#{bundle.fiscal_model_123_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="123" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_123_module}" />
-												</aon:commandLink>
-											</aon:if>
-
-											<aon:commandLink id="gwt_mod180"
-												action="gwt_mod180"
-												title="#{bundle.fiscal_model_180_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="180"/>
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_180_module}"/>
-											</aon:commandLink>
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="mod130" 
-													action="mod130_search"
-													actionListener="#{mod130.onEditSearch}"
-													title="#{bundle.fiscal_model_130_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="130" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_130_module}" />
-												</aon:commandLink>
-											</aon:if>
-
-											<aon:commandLink id="gwt_mod184"
-												action="gwt_mod184"
-												title="#{bundle.fiscal_model_184_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="184"/>
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_184_module}" />
-											</aon:commandLink>
-
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="mod131" 
-													action="mod131_search"
-													actionListener="#{mod131.onEditSearch}"
-													title="#{bundle.fiscal_model_131_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="131" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_131_module}" />
-												</aon:commandLink>
-											</aon:if>
-
-											<aon:commandLink id="gwt_mod190"
-												action="gwt_mod190"
-												title="#{bundle.fiscal_model_190_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="190"/>
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_190_module}" />
-											</aon:commandLink>
-
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="gwt_mod140"
-													action="gwt_mod140"
-													title="#{bundle.fiscal_model_140_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box"  value="140" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_140_module} [BIZKAIA]" />
-												</aon:commandLink>
-											</aon:if>
-												
-											<aon:commandLink id="gwt_mod193"
-												action="gwt_mod193"
-												title="#{bundle.fiscal_model_193_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="193"/>
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_193_module}" />
-											</aon:commandLink>
-
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="mod310-OLD" 
-													action="mod310_search-OLD"
-													actionListener="#{mod310.onEditSearch}"
-													title="#{bundle.fiscal_model_310_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="310" style="text-decoration: line-through;"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="(Antes de 2014) #{bundle.fiscal_model_310_module}"/>
-												</aon:commandLink>
-											</aon:if>
-											
-											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
-												<aon:outputText value="&#160;"/>
-											</aon:if>
-
-											<aon:commandLink id="gwt_mod200"
-												action="gwt_fiscalPanel-mod200"
-												title="#{bundle.fiscal_model_200_module}">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="200"/>
-												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_200_module}" />
-											</aon:commandLink>
-
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="mod311" 
-													action="mod311_search"
-													actionListener="#{mod311.onEditSearch}"
-													style="text-decoration: line-through;"
-													title="#{bundle.fiscal_model_311_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="311" style="text-decoration: line-through;"/>
-													<aon:outputText styleClass="aon-fiscal-link-label" value="(Antes de 2014) #{bundle.fiscal_model_311_module}"/>
-												</aon:commandLink>
-											</aon:if>
-
-											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
-												<aon:div styleClass="aon-direct-access-list-element">
-													<aon:commandLink id="fiscalMatrix" 
-														action="fiscalMatrix_list"
-														actionListener="#{fiscalMatrix.onSearch}"
-														title="Matriz de empresas y modelos fiscales"
-														value="Matriz de empresas y modelos fiscales" />
-												</aon:div> 
-											</aon:if>
-											
-											<aon:commandLink id="gwt_mod202"
-												action="gwt_fiscalPanel-mod202"
-												title="Impuesto Sociedades. Pago fraccionado.">
-												<aon:outputText styleClass="aon-fiscal-link-box" value="202"/>
-												<aon:outputText styleClass="aon-fiscal-link-label" value="Impuesto Sociedades. Pago fraccionado." />
-											</aon:commandLink>
-<!-- 
-											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:div styleClass="aon-direct-access-list-element">
-													<aon:commandLink id="invoice_series_breakdown-old"
-														action="gwt_invoiceSeriesBreakdown-old"
-													value="Desglose de series de facturas" />
-												</aon:div>
-												
-												<aon:outputText value="&#160;"/>
-											</aon:if>
- -->
-							    </h:panelGrid>
-<!-- -->							     
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accountingBook_report"
+											action="accountingBook_search"
+											actionListener="#{accountingBook.onReset}"
+											value="#{bundle.accounting_book_module}" />
+									</aon:div>
+								</aon:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_deposit"
+										action="gwt_deposit"
+										title="#{bundle.accounting_annual_financial_statements_module}"
+										value="#{bundle.accounting_annual_financial_statements_module}" >												
+									</aon:commandLink>
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
-				</h:panelGrid>
-				
-				<h:panelGrid columns="2" styleClass="aon-width-all" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
-						<aon:panelGroup>
-								<aon:panelGrid id="group_fiscal_modules_module"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-icon-tree-root aon-direct-access-panel">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.fiscal_modules_module}"/>
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="fiscalActivity" 
-													action="fiscalActivity_list"
-													actionListener="#{fiscalActivity.onSearch}"
-													title="#{bundle.fiscal_activities_modules}"
-													value="#{bundle.fiscal_activities_modules}">
-												</aon:commandLink>
-											</aon:div>
-										</aon:if>
-  									</aon:div>
-								</aon:panelGrid>
-						</aon:panelGroup>
-
-						<aon:panelGroup>
-								<aon:panelGrid id="group_fiscal_mercantile_registry"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-icon-registradores aon-direct-access-panel">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.fiscal_mercantile_registry}"/>
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="accountingBook_report"
-													action="accountingBook_search"
-													actionListener="#{accountingBook.onReset}"
-													value="#{bundle.accounting_book_module}" />
-											</aon:div>
-										</aon:if>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_deposit"
-												action="gwt_deposit"
-												title="#{bundle.accounting_annual_financial_statements_module}"
-												value="#{bundle.accounting_annual_financial_statements_module}" >												
-											</aon:commandLink>
-										</aon:div>
-									</aon:div>
-								</aon:panelGrid>
-						</aon:panelGroup>
 
 					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
-								<aon:panelGrid id="group_fiscal_reports"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-icon-balance aon-direct-access-panel">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.menu_reports_annual}"/>
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="report_template"
-												action="reportAttach_form"
-												actionListener="#{reportAttach.onSearch}"
-												value="#{bundle.accounting_reports_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="report_launcher"
-												action="reports_launcher"
-												actionListener="#{reportsLauncher.onReset}"
-												value="#{bundle.accounting_reports_launcher_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="invoice_series_breakdown"
-												action="gwt_invoiceSeriesBreakdown"
-											value="Desglose de series de facturas" />
-										</aon:div>
+							<aon:panelGrid id="group_fiscal_reports"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-balance aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.menu_reports_annual}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="report_template"
+											action="reportAttach_form"
+											actionListener="#{reportAttach.onSearch}"
+											value="#{bundle.accounting_reports_module}" />
 									</aon:div>
-								</aon:panelGrid>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="report_launcher"
+											action="reports_launcher"
+											actionListener="#{reportsLauncher.onReset}"
+											value="#{bundle.accounting_reports_launcher_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoice_series_breakdown"
+											action="gwt_invoiceSeriesBreakdown"
+										value="Desglose de series de facturas" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
 						</aon:panelGroup>
 					</aon:if>
 				</h:panelGrid>
+
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing=""
+						columnClasses="aon-vertical-align-top aon-width-200,
+							aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
+						<aon:panelGroup>
+							<aon:panelGrid id="eos" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="MENU ESTIMACIONES OBJETIVAS Y SIMPLIFICADAS" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountEntry-eos"
+											action="gwt_accountEntry-eos"
+											title="Nueva entrada">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="Nueva entrada" />												
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="vat_report-eos"
+											action="vat_report_search-eos"
+											actionListener="#{vatReport.onReset}"
+											value="#{bundle.finance_vat_report_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="retention_report-eos"
+											action="retention_report_search-eos"
+											actionListener="#{retentionReport.onReset}"
+											value="#{bundle.fiscal_retention_report_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="operation_report-eos"
+											action="operationReport_search-eos"
+											actionListener="#{operationReport.onReset}"
+											value="#{bundle.account_expenses_incomes_report}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="profitAndLossReport-eos"
+											action="profit_and_loss_search-eos"
+											actionListener="#{profitAndLossReport.onEditSearch}"
+											value="#{bundle.accounting_profit_and_loss_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:panelGroup>
+	
+						<aon:panelGroup>
+							<aon:panelGrid id="eos2" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accountStatement-eos"
+											action="accountStatement_search-eos"
+											actionListener="#{trialBalance.onReset}"
+											value="#{bundle.accounting_statement_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortization-eos"
+											action="amortization_list-eos"
+											value="#{bundle.accounting_amortization_form_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="periodAmortization-eos"
+											action="periodAmortization_search-eos"
+											value="#{bundle.accounting_period_amortization_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType-eos"
+											action="amortizationType_list-eos"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="investAsset-eos"
+											action="investAsset_search-eos"
+											value="#{bundle.accounting_invest_asset_form_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:panelGroup>
+	
+						<aon:panelGroup>
+							<aon:panelGrid id="eos3" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="account-eos"
+											action="account_list-eos"
+											value="#{bundle.account_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="endPeriodEntries-eos"
+											action="endPeriodEntries_form-eos"
+											actionListener="#{endPeriodEntries.onInit}"
+											value="#{bundle.accounting_en_period_entries_management}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accPeriod-eos" 
+											action="accPeriod-eos"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{bundle.accounting_period_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoiceIntegrity-eos"
+											action="invoiceIntegrity_search-eos"
+											actionListener="#{invoiceIntegrity.onStart}"
+											value="#{bundle.finance_invoice_integrity_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="regenerateVat-eos"
+											action="regenerateVat-eos" actionListener="#{vatRegenerator.onEditSearch}"
+											value="#{bundle.accounting_regenerate_vat_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:panelGroup>
+				</h:panelGrid>
+			</aon:if>
 			</aon:div>
 		</aon:form>
 	</ui:define>
