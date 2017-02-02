@@ -46,6 +46,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 
 	@Override
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
+		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
 			getFiscalService().getAccountEntry(AccountEntryModule.getCurrentDomainName(),
 					AccountEntryModule.getCurrentDomain(), id ,
@@ -83,7 +84,9 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		table.paintTable();
 		tableInnerContainer.add(table);
 		tableContainer.setWidget(tableInnerContainer);
+		getCallback().getModule().refreshIdLabel();
 		getCallback().getModule().onBalance(getWrapper());
+		getCallback().getModule().onPreview(getWrapper());
 		if (cbk != null) cbk.onSuccess();
 	}
 
@@ -105,7 +108,8 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 				.setDomain(AccountEntryModule.getCurrentDomain())
 				.setConfidential(false)
 				.setEntryDate(base.getEntryDate())
-				.setActivity(base.getActivity()));
+				.setActivity(base.getActivity())
+				.setJournal(null));
 	}
 	
 	private void paint() {
@@ -135,6 +139,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 			@Override
 			public void onValueChange(ValueChangeEvent<AccountEntryDetail> event) {
 				getCallback().getModule().refreshIdLabel();
+				getCallback().getModule().onPreview(getWrapper());
 			}
 		});
 	}

@@ -5,7 +5,6 @@ import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceSearchPanel.IFinancePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
 import com.esferalia.aon.occam.api.model.Account;
@@ -46,7 +45,6 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	public final static int SEARCH_PANEL_TAB_OFFSET = 10000;
 	
 	private DockLayoutPanel resultPanel;
-	private SessionLog workingLog;
 	
 	private AccountBox bankAccount;
 	private DoubleBox  expenses;
@@ -69,9 +67,6 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		
 		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
 		
-		workingLog = new SessionLog();
-		rootPanel.addSouth(workingLog, 150);
-
 		financeSearchPanel = new FinanceSearchPanel(
 			AccountEntryModule.getCurrentDomainName()
 			, AccountEntryModule.getCurrentDomain()
@@ -298,13 +293,14 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 			.setDomain(AccountEntryModule.getCurrentDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
-			.setActivity(base.getActivity()));
+			.setActivity(base.getActivity())
+			.setJournal(null));
 		select(null, ai, cbk);
 	}
 	
 	@Override
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
-		workingLog.clear();
+		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
 			getFiscalService().getFinanceEntry(AccountEntryModule.getCurrentDomainName()
 					,AccountEntryModule.getCurrentDomain(),id
@@ -329,7 +325,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	}
 	public void select(FinanceEntry fe,final ISelectionCallback cbk) {
 		setWrapper( fe );
-		getCallback().getModule().onBalance(getWrapper().getAccountEntry());
+		getCallback().getModule().onBalance(getWrapper());
+		getCallback().getModule().onPreview(getWrapper());
 		populate();
 		refreshTable();
 		if (isUpdatable()) {
@@ -364,6 +361,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		expenses.setEnabled( isUpdatable() );
 		setAccount(expensesAccount,getWrapper().getExpensesAccount());
 		expensesAccount.setEnabled( isUpdatable() );
+		getCallback().getModule().refreshIdLabel();
 	}
 
 	private void setAccount(AccountBox accountBox, Account account) {
@@ -376,20 +374,9 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 
 	private void _paintEntry() {
 		AccountEntry[] entries = FinanceRecorder.recordFinanceEntry(getWrapper());
-		onLog(AccountEntryModule.getWrapperArray (entries));
+		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries));
 	}
 	
-	public void onLog(IAccountEntryWrapper wrapper) {
-		workingLog.clear();
-		workingLog.addPreview(wrapper);			
-	}
-	
-	public void onLog(IAccountEntryWrapper[] wrappers) {
-		workingLog.clear();
-		for (int i = (wrappers.length - 1); i>=0; i--) {
-			workingLog.addPreview(wrappers[i]);
-		}
-	}
 	@Override
 	public boolean isUpdatable() {
 		return super.isUpdatable() && !getWrapper().isFromFinanceBatch();

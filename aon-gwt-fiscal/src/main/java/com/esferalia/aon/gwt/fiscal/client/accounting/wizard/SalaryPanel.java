@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -48,7 +47,6 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 	static final String BACKGROUND_COLOR = "#EEEEEE";
 	
 	private FlexTable flexTable;
-	private SessionLog workingLog;
 	
 	private TextBox concept;
 	private DoubleBox  moneySalary;
@@ -89,9 +87,6 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 		
 		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
 		
-		workingLog = new SessionLog();
-		rootPanel.addSouth(workingLog, 150);
-
 		rootPanel.addEast(createExtraPanel(callback), 380);
 		
 		ScrollPanel centerPanel = new ScrollPanel();
@@ -598,7 +593,8 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 			.setDomain(AccountEntryModule.getCurrentDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
-			.setActivity(base.getActivity()));
+			.setActivity(base.getActivity())
+			.setJournal(null));
 		initializeMonthList();
 		select(null, ai, cbk);
 	}
@@ -631,13 +627,14 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 	
 	@Override
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
-		workingLog.clear();
+		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
 			Window.alert("No se puede modificar");
 		} else {
 			if (wrp != null) {
 				setWrapper( (SalaryEntry) wrp);
-				getCallback().getModule().onBalance(getWrapper().getAccountEntry());
+				getCallback().getModule().onBalance(getWrapper());
+				getCallback().getModule().onPreview(getWrapper());
 				populate();
 				if (cbk != null) {
 					cbk.onSuccess();
@@ -675,6 +672,7 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 		setAccount(companySocialInsuranceAccount,getWrapper().getCompanySocialInsuranceAccount());
 		netSalary.setValue(getWrapper().getNetSalary());
 		setAccount(netSalaryAccount,getWrapper().getNetSalaryAccount());
+		getCallback().getModule().refreshIdLabel();
 	}
 
 	private void setAccount(AccountBox accountBox, Account account) {
@@ -686,20 +684,9 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 	}
 
 	private void _paintEntry() {
-		onLog( getWrapper() );
+		getCallback().getModule().onPreview(getWrapper() );
 	}
 	
-	public void onLog(IAccountEntryWrapper wrapper) {
-		workingLog.clear();
-		workingLog.addPreview(wrapper);			
-	}
-	
-	public void onLog(IAccountEntryWrapper[] wrappers) {
-		workingLog.clear();
-		for (int i = (wrappers.length - 1); i>=0; i--) {
-			workingLog.addPreview(wrappers[i]);
-		}
-	}
 	@Override
 	public boolean isUpdatable() {
 		return (true);
@@ -1071,7 +1058,7 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 						viewButton.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
-								workingLog.addPreview(entry);
+								getCallback().getModule().onPreview( entry );
 							}
 						});
 						buttonsPanel.add(viewButton);

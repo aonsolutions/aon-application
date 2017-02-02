@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -27,33 +28,45 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class AccountBalancePanel extends DockLayoutPanel implements HasSelectionHandlers<Integer>{
-
+public class AccountBalancePanel extends SplitLayoutPanel implements HasSelectionHandlers<Integer>{
+	private static final int DEFAULT_SPLITTER_SIZE = 8;
+	  
+	private static final String SESSION_LOG_BACKGROUND_COLOR = "lightyellow";
+	
 	static FiscalServiceAsync fiscalService;
 	
+	private SessionLog entryPanel;
+	private FlowPanel headerPanel;
 	private ScrollPanel scrollCenter; 
 	private FlowPanel center;
 	private HashSet<Integer> accounts;
 	
-	
 	public AccountBalancePanel() {
-		this(Unit.PX);
+		this(DEFAULT_SPLITTER_SIZE);
 	}
 	public AccountBalancePanel(Unit unit) {
-		super(unit);
+		this(DEFAULT_SPLITTER_SIZE);
+	}
+	public AccountBalancePanel(int splitterSize) {
+		super(splitterSize);
 		accounts = new HashSet<Integer>();
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
-		final FlowPanel headerPanel = new FlowPanel("pre");
+		entryPanel = new SessionLog();
+		entryPanel.getElement().getStyle().setBackgroundColor(SESSION_LOG_BACKGROUND_COLOR);
+		
+		addNorth(entryPanel, 150);
+		
+		headerPanel = new FlowPanel("pre");
 		headerPanel.setStyleName(AON.AON_CSS.aonFixedFont());
 		headerPanel.addStyleName(AON.AON_CSS.aonFontMedium());
 		Label header = new Label(" CUENTA CONTABLE                         "
@@ -63,18 +76,27 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 				+ "     SALDO DEUDOR"
 				+ "   SALDO ACREEDOR");
 		header.setStyleName(AON.AON_CSS.aonBold());
-		header.addStyleName(AON.AON_CSS.aonMarginTop());
 		header.addStyleName(AON.AON_CSS.aonBorderTop());
 		header.addStyleName(AON.AON_CSS.aonBorderBottom());
 		headerPanel.add(header);
-		addNorth(headerPanel, 40);
 		
 		center = new FlowPanel();
+		center.add(headerPanel);
 		scrollCenter = new ScrollPanel();
 		scrollCenter.addStyleName(AON.AON_CSS.aonMarginBottom());
 		scrollCenter.setWidget(center);
 		add(scrollCenter);
 	}
+	
+	public void preview( final IAccountEntryWrapper entry) {
+		entryPanel.clear();
+		entryPanel.addPreview(entry);
+	}
+	public void preview( final IAccountEntryWrapper[] entries) {
+		entryPanel.clear();
+		entryPanel.addPreview(entries);
+	}
+	
 	public void add( final AccountEntry entry) {
 		clearBalances();
 		for (AccountEntryDetail detail : entry.getDetails()) {
@@ -188,7 +210,7 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 				w.removeStyleName(AON.AON_CSS.aonValueChanged());
 			}
 		}.schedule(400);
-		center.insert(w,0);
+		center.insert(w,1);
 	}
 	
 	@Override
@@ -198,5 +220,7 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 	public void clearBalances() {
 		accounts.clear();
 		center.clear();
+		center.add(headerPanel);
+		entryPanel.clear();
 	}
 }

@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -98,7 +97,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private FlexTable payTable;
 	private InvoiceExtraPanel extraPanel;
-	private SessionLog workingLog;
 	
 	private AccountingRegistryBox registryBox;
 	private ListBox series;
@@ -137,8 +135,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
 		
 		//  -------------------------- WORKING LOG ------------------------------
-		workingLog = new SessionLog();
-		rootPanel.addSouth(workingLog, 150);
 
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
@@ -618,13 +614,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			.setDomain(AccountEntryModule.getCurrentDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
-			.setActivity(base.getActivity()));
+			.setActivity(base.getActivity())
+			.setJournal(null));
 		select(null, ai, cbk);
 	}
 	
 	@Override
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
-		workingLog.clear();
+		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
 			getFiscalService().getAccountingInvoice(AccountEntryModule.getCurrentDomainName()
 				,AccountEntryModule.getCurrentDomain(),id
@@ -663,7 +660,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	public void select(AccountingInvoice result,final ISelectionCallback cbk) {
 		populate(result);
-		getCallback().getModule().onBalance(getWrapper().getAccountEntry());
+		getCallback().getModule().onBalance(getWrapper());
+		getCallback().getModule().onPreview(getWrapper());
 		if (cbk != null) {
 			cbk.onSuccess();
 		}
@@ -747,6 +745,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		invoiceTotal.setValue(invoice.getInvoice().getTotal());
 		withholdingPanel.setVisible(invoice.isWithholding());
 		withholdingPanel.setValue( invoice.getWithholdingData() );
+		getCallback().getModule().refreshIdLabel();
 		populatePayment(invoice);
 	}
 	private void populatePurchaseInvoice(AccountingInvoice invoice) {
@@ -761,6 +760,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		invoiceTotal.setValue(invoice.getTotalInvoice());
 		withholdingPanel.setVisible(invoice.isWithholding());
 		withholdingPanel.setValue( invoice.getWithholdingData() );
+		getCallback().getModule().refreshIdLabel();
 		populatePayment(invoice);
 	}
 	private void populateExpensesInvoice(AccountingInvoice invoice) {
@@ -775,6 +775,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		invoiceTotal.setValue(invoice.getTotalInvoice());
 		withholdingPanel.setVisible(invoice.isWithholding());		
 		withholdingPanel.setValue( invoice.getWithholdingData() );
+		getCallback().getModule().refreshIdLabel();
 		populatePayment(invoice);
 	}
 
@@ -834,20 +835,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private void _paintEntry() {
 		AccountEntry[] entries = InvoiceRecorder.recordInvoice(getWrapper());
-		onLog(AccountEntryModule.getWrapperArray (entries));
+		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries) );		
 	}
 	
-	public void onLog(IAccountEntryWrapper wrapper) {
-		workingLog.clear();
-		workingLog.addPreview(wrapper);			
-	}
-	
-	public void onLog(IAccountEntryWrapper[] wrappers) {
-		workingLog.clear();
-		for (int i = (wrappers.length - 1); i>=0; i--) {
-			workingLog.addPreview(wrappers[i]);
-		}
-	}
 	@Override
 	public boolean isUpdatable() {
 		return (super.isUpdatable() 

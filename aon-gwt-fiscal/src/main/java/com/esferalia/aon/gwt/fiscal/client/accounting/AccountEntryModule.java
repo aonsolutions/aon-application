@@ -183,8 +183,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	InlineLabel journal;
 	@UiField
 	CheckBox confidential;
-//	@UiField
-//	CheckBox invoice;
 	@UiField
 	ListBox entryType;
 	@UiField
@@ -351,8 +349,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("footPanel")
 	void onFootMaximize(MaximizeEvent event) {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
-		splitLayoutPanel.animate(500);
+		openFootPanel();
 	}
 
 	private void closeFootPanel() {
@@ -367,7 +364,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 3);
 		splitLayoutPanel.animate(500);
 	}
 
@@ -453,9 +450,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		entryDate.setValue(wizardContent.getMainEntry().getEntryDate());
 		checkDate();
 		confidential.setValue(wizardContent.getMainEntry().isConfidential());
-		journal.setText(AonMathUtils.toInt(wizardContent.getMainEntry()
-				.getJournal()) == 0 ? AonStringUtils.EMPTY : AON.MSG.journal()
-				+ AonStringUtils.SPACE + wizardContent.getMainEntry().getJournal());
 		if (configuration.hasActivities()) {
 			activity.setEnabled(canEdit);
 			int i = 0;
@@ -499,7 +493,10 @@ public class AccountEntryModule extends MainEntryPoint {
 		errorsContainer.setWidget(errors);
 	}
 
-	public void refreshIdLabel() { 
+	public void refreshIdLabel() {
+		journal.setText(AonMathUtils.toInt(wizardContent.getMainEntry()
+				.getJournal()) == 0 ? AonStringUtils.EMPTY : AON.MSG.journal()
+				+ AonStringUtils.SPACE + wizardContent.getMainEntry().getJournal());
 		id.setText(
 			(isNew()? "[NUEVO]": ("(" + wizardContent.getMainEntry().getId() + ") "))
 			+ (!isNew() && wizardContent.getMainEntry().isDirty()?AonStringUtils.ASTERISK:AonStringUtils.EMPTY));
@@ -995,7 +992,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (account != null && account.getId() != null) {
 			openFootPanelIfNeeded();
 			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-			balancePanel.add(account, from, entryDate.getValue());			
+			balancePanel.add(account, from, entryDate.getValue());
 		}
 	}
 	public void onBalance(AccountEntry entry) {
@@ -1003,12 +1000,23 @@ public class AccountEntryModule extends MainEntryPoint {
 			&& !entry.getDetails().isEmpty() 
 			&& entry.getDetails().get(0).getAccount() != null) {
 			openFootPanelIfNeeded();
-			balancePanel.add(entry);			
+			balancePanel.add(entry);
 		}
 	}
 	public void onBalance(IAccountEntryWrapper wrp) {
 		onBalance(wrp.getAccountEntry());
 	}
+	
+	public void onPreview(IAccountEntryWrapper wrp) {
+		balancePanel.preview( wrp );
+	}
+	public void onPreview(IAccountEntryWrapper[] wrapperArray) {
+		balancePanel.preview( wrapperArray );
+	}
+	public void onClearSessionLog() {
+		balancePanel.clearBalances();
+	}
+	
 	public void onStatement(Integer accountId) {
 		showFullStatement(accountId);
 	};

@@ -79,7 +79,7 @@ public class SessionLog extends ScrollPanel
 	private void add( final IAccountEntryWrapper wrapper, String status) {
 		final AccountEntry entry = wrapper.getAccountEntry();
 		final FocusPanel entryPanel = new FocusPanel();
-		//entryPanel.setTabIndex(Integer.MAX_VALUE);
+
 		FlowPanel panel = new FlowPanel("pre");
 		panel.setStyleName(AON.AON_CSS.aonClickableBlock());		
 		panel.addStyleName(AON.AON_CSS.aonFixedFont());
@@ -103,6 +103,10 @@ public class SessionLog extends ScrollPanel
 		// ------------------------------------------------- TOTALES		
 		Label totals = new Label(toString(sumD,sumC));
 		totals.setStyleName(AON.AON_CSS.aonBold());
+		if (!AonMathUtils.equals(sumD, sumD)) {
+			totals.addStyleName(AON.AON_CSS.aonColorRed());
+		}
+
 		panel.add(totals);
 		// -----------------------------------------------------------
 		

@@ -2947,7 +2947,7 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Extracto de cuenta")
 	String accountStatetement();
 
- 	@DefaultMessage("Saldos de cuentas del asiento")
+ 	@DefaultMessage("Prev. y saldos del asiento")
 	String accountBalances();
  	
  	@DefaultMessage("No ha sido posible encontrar el asiento. Puede que el asiento haya sido borrado.\n \u00BFDesea recurperarlo de todas formas?")
