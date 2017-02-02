@@ -699,6 +699,8 @@ public class EmployeeCalendarDraft extends Composite {
 		this.endEmployeeContract = getEndYearContract(calendarEmployeeInfo.getEndDateContract());
 		int actualYear = this.annio+1900;
 		this.yearLabel.setText(Integer.toString(actualYear));
+		limpiarCalendario();
+		//inicializarCellsCalendar();
 		mostrarCalendarioWidget(this.annio);
 		
 	}
