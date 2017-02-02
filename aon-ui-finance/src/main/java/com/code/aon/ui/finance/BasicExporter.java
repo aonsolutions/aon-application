@@ -575,6 +575,10 @@ public abstract class BasicExporter implements Serializable {
 		return details;
 	}
 	
+	protected List<TaxBreakDown> getInvoiceTotalTaxes() throws ManagerBeanException {
+		return obtainTaxBreakDowns(invoice, invoice);
+	}
+	
 	protected List<TaxBreakDown> getInvoiceTaxes( AccountEntryDetail aed ) throws ManagerBeanException {
 		List<InvoiceDetail> details = getInvoiceDetail(aed);
 		if (! details.isEmpty() ) {

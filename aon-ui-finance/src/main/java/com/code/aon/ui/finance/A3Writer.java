@@ -52,6 +52,8 @@ public class A3Writer extends BasicExporter {
 			StreetType.UR};
 
 	private static final int REGISTRY_SIZE = 256;
+
+	private List<TaxBreakDown> totalTaxList;
 	
 	public A3Writer(InvoiceExportConfiguration configuration) {
 		super(configuration);
@@ -257,6 +259,7 @@ public class A3Writer extends BasicExporter {
 	}
 	
 	private void addTaxes( List<TaxBreakDown> taxList ) {
+		double base = 0;
 		double taxPercent = 0;
 		double retentionPercent = 0;
 		double surchargePercent = 0;
@@ -268,6 +271,7 @@ public class A3Writer extends BasicExporter {
 
 		resetTaxInfo();		
 		for( TaxBreakDown tbd : taxList ) {
+			base = tbd.getBase();
 			if ( tbd.getTaxType() == TaxType.VAT ) {
 				taxQuota = tbd.getTaxQuota();
 				taxPercent = tbd.getTaxPercent();
@@ -300,6 +304,25 @@ public class A3Writer extends BasicExporter {
 		}
 		// Operacion sujeta a IVA
 		setString( vatIncluded ? "S" : "N", 174, 1);				
+
+		// Descontamos los impuestos de la lista total de impuestos 
+		for (TaxBreakDown totalTbd : totalTaxList) {
+			if (totalTbd.isVat() && totalTbd.getTaxPercent() == taxPercent) {
+				totalTbd.setBase(CommonUtil.round(totalTbd.getBase() - base));
+				totalTbd.setTaxQuota(CommonUtil.round(totalTbd.getTaxQuota() - taxQuota));
+				if (totalTbd.getSurchargePercent() == surchargePercent) {
+					totalTbd.setSurchargeQuota(CommonUtil.round(totalTbd.getSurchargeQuota() - surchargeQuota));
+				}
+			}
+			if (totalTbd.isRetention() && totalTbd.getTaxPercent() == retentionPercent) {
+				totalTbd.setBase(CommonUtil.round(totalTbd.getBase() - base));
+				totalTbd.setTaxQuota(CommonUtil.round(totalTbd.getTaxQuota() - retentionQuota));
+			}
+
+			if (totalTbd.getBase() == 0 && totalTbd.getTaxQuota() == 0) {
+				totalTaxList.remove(totalTbd);
+			}
+		}
 	}
 	
 	private void resetTaxInfo() {
@@ -308,7 +331,7 @@ public class A3Writer extends BasicExporter {
 	
 	private void writeDetailWithTaxes( AccountEntryDetail aed, boolean last ) throws IOException, ManagerBeanException {
 		boolean lineWritten = false;
-		List<TaxBreakDown> taxList = getInvoiceTaxes(aed);
+		List<TaxBreakDown> taxList = last ? totalTaxList : getInvoiceTaxes(aed);
 		while (! taxList.isEmpty() ) {
 			List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
 			TaxBreakDown tbd = getNextTax(taxList);
@@ -610,6 +633,7 @@ public class A3Writer extends BasicExporter {
 			writeLine();
 			first = false;
 		}
+		totalTaxList = getInvoiceTotalTaxes();
 		while (! getDetails().isEmpty() ) {
 			AccountEntryDetail aed = getNextDetail();
 			if (! isInvoiceExport() ) {
