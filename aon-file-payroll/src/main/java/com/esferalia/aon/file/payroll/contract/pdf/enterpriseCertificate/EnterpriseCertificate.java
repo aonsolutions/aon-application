@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -45,7 +46,9 @@ public class EnterpriseCertificate extends AbstractEnterpriseCertificate {
 				
 				if(ccc.getDatosRepresentante()!=null){
 					String dirStaffName = ccc.getDatosRepresentante().getApellido1() + " ";
-					dirStaffName += ccc.getDatosRepresentante().getApellido2() + ", ";
+					if(ccc.getDatosRepresentante().getApellido2()!=null){
+						dirStaffName += ccc.getDatosRepresentante().getApellido2() + ", ";
+					}
 					dirStaffName += ccc.getDatosRepresentante().getNombre();
 					setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_DIR_STAFF_NAME.getValue(),dirStaffName);
 					setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_DIR_STAFF_CHARGE.getValue(),ccc.getDatosRepresentante().getCargo());
@@ -264,14 +267,35 @@ public class EnterpriseCertificate extends AbstractEnterpriseCertificate {
 				}
 				
 				
-				if(trabajador.getDatosCotizacion().size()>7){
+				if(trabajador.getDatosCotizacion()==null || trabajador.getDatosCotizacion().isEmpty()){
 					setPdfFieldValue(EnterpriseCertificateField.TOTAL_DAYS.getValue(),"N/D");
 					setPdfFieldValue(EnterpriseCertificateField.TOTAL_BASE_COMMON_CONTINGENCIES.getValue(),"N/D");
 					setPdfFieldValue(EnterpriseCertificateField.TOTAL_BASE_UNEMPLOYMENT.getValue(),"N/D");
 				} else {
-					setPdfFieldValue(EnterpriseCertificateField.TOTAL_DAYS.getValue(),"");
-					setPdfFieldValue(EnterpriseCertificateField.TOTAL_BASE_COMMON_CONTINGENCIES.getValue(),"");
-					setPdfFieldValue(EnterpriseCertificateField.TOTAL_BASE_UNEMPLOYMENT.getValue(),"");
+					Integer totalDays = trabajador.getDatosCotizacion()
+							.stream().map(COTIZACIONTYPE::getNumDiasCotizados)
+							.mapToInt(Integer::parseInt).sum();
+					Double totalCommonCont = trabajador.getDatosCotizacion()
+							.stream().map(COTIZACIONTYPE::getBaseCotizacionContingenciasComunes)
+							.mapToDouble(Double::parseDouble)
+							.map(value -> CommonUtil.round(value/100))
+							.sum();
+					Double totalUnemployment = trabajador.getDatosCotizacion()
+							.stream().map(COTIZACIONTYPE::getBaseCotizacionDesempleo)
+							.mapToDouble(Double::parseDouble)
+							.map(value -> CommonUtil.round(value/100))
+							.sum();
+					
+					totalDays += Integer.parseInt(trabajador.getDatosVacacionesCotizadas().getNumDiasCotizados());
+					totalCommonCont += Double.parseDouble(trabajador.getDatosVacacionesCotizadas().getBaseCotizacionContingenciasComunes());
+					totalUnemployment +=Double.parseDouble(trabajador.getDatosVacacionesCotizadas().getBaseCotizacionDesempleo());
+					
+					setPdfFieldValue(EnterpriseCertificateField.TOTAL_DAYS.getValue(),
+							String.valueOf(totalDays));
+					setPdfFieldValue(EnterpriseCertificateField.TOTAL_BASE_COMMON_CONTINGENCIES.getValue(),
+							String.valueOf(totalCommonCont));
+					setPdfFieldValue(EnterpriseCertificateField.TOTAL_BASE_UNEMPLOYMENT.getValue(),
+							String.valueOf(totalUnemployment));
 				}
 			}
 			
