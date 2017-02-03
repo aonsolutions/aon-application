@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.86.0
+# Version: 8.88.0
 # Created by: girazu
-# Creation Date: 25/01/2017 10:40
+# Creation Date: 03/02/2017 13:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4006,6 +4006,8 @@ CREATE TABLE `sales_detail` (
   `offer_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle del Presupuesto Origen',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
   `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
+  `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -4015,6 +4017,10 @@ CREATE TABLE `sales_detail` (
   KEY `IDX_SALES_DETAIL_SALES` (`sales`),
   KEY `IDX_SALES_DETAIL_ITEM` (`item`),
   KEY `IDX_SALES_DETAIL_DOMAIN` (`domain`),
+  KEY `IDX_SALES_DETAIL_CARRIER` (`carrier`),
+  KEY `IDX_SALES_DETAIL_CARRIER_PACKING` (`carrier_packing`),
+  CONSTRAINT `FK_SALES_DETAIL_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
+  CONSTRAINT `FK_SALES_DETAIL_CARRIER_PACKING` FOREIGN KEY (`carrier_packing`) REFERENCES `carrier_packing` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_OFFER_DETAIL` FOREIGN KEY (`offer_detail`) REFERENCES `offer_detail` (`id`),
@@ -5450,6 +5456,8 @@ CREATE TABLE `purchase_detail` (
   `proposal_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle de Solicitud',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
   `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
+  `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -5460,6 +5468,10 @@ CREATE TABLE `purchase_detail` (
   KEY `IDX_PURCHASE_DETAIL_ITEM` (`item`),
   KEY `IDX_PURCHASE_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_PURCHASE_DETAIL_PROPOSAL_DETAIL` (`proposal_detail`),
+  KEY `IDX_PURCHASE_DETAIL_CARRIER` (`carrier`),
+  KEY `IDX_PURCHASE_DETAIL_CARRIER_PACKING` (`carrier_packing`),
+  CONSTRAINT `FK_PURCHASE_DETAIL_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
+  CONSTRAINT `FK_PURCHASE_DETAIL_CARRIER_PACKING` FOREIGN KEY (`carrier_packing`) REFERENCES `carrier_packing` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -8329,7 +8341,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.86.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.88.0');
 
 COMMIT;
 
