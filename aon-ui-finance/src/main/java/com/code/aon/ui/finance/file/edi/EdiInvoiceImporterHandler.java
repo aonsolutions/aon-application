@@ -126,23 +126,25 @@ public class EdiInvoiceImporterHandler implements Serializable {
 		getLogPanel().info("Proceso finalizado correctamente");
 		setAonFile(null);
 	}
+	
+	public String obtainCustomerCode(RECTL rectl) {
+		return rectl.sincpList.stream()
+				.filter(o -> SINCP.SINCP_2.COMPRADOR_BY.getValue().equals(o.getCalificadorDelInterlocutor()))
+				.map(SINCP::getCodigoInterlocutor)
+				.findFirst()
+				.orElse(rectl.getCodigoEmisor());
+	}
 
 	public void createInvoice(ActionEvent event, RECTL rectl, boolean testing) {
 		Invoice invoice = (Invoice) controller.getTo();
 
-//		String customerInvoiceCode = rectl.getCodigoEmisor();
-		String customerCode = rectl.sincpList.stream()
-				.filter(o -> SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.getValue().equals(o.getCalificadorDelInterlocutor()))
-				.map(SINCP::getCodigoInterlocutor)
-				.findFirst()
-				.orElse(rectl.getCodigoEmisor());
-		
+		String customerCode = obtainCustomerCode(rectl);
 		if (customerCode == null) {
 			getLogPanel()
 					.error("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
 			getLogPanel().error("Comprador: " + customerCode);
 		} else {
-			RegistryNote customerRegistryNote = searchCustomerNote(customerCode);
+			RegistryNote customerRegistryNote = searchCustomerRNote(customerCode);
 			if(customerRegistryNote==null 
 					|| customerRegistryNote.getRegistry()==null 
 					|| customerRegistryNote.getRegistry().getId()==null){
@@ -162,8 +164,14 @@ public class EdiInvoiceImporterHandler implements Serializable {
 						serie = rectl.sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$1");
 						number = rectl.sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$2");
 					}
-					invoice.setSeries(serie);
-					invoice.setNumber(Integer.parseInt(number));
+					if(serie!=null && serie.length()>5){
+						invoice.setSeries("SERES");
+						invoice.setNumber(0);
+						invoice.setComments("Nº Factura original " + rectl.sincc.getNumeroDeFactura());
+					} else {
+						invoice.setSeries(serie);
+						invoice.setNumber(Integer.parseInt(number));
+					}
 				}
 				invoice.setType(InvoiceType.SALES);
 				invoice.setRegistry(customer.getRegistry());
@@ -198,7 +206,9 @@ public class EdiInvoiceImporterHandler implements Serializable {
 							+ System.getProperty("line.separator");
 				}
 				invoice.setRemarks(remarks);
-				invoice.setComments("");
+				if(rectl.sincc.getDocumentoRectificado_Sustituido()!=null){
+					invoice.setComments(invoice.getComments() + "\nFactura rectificativa de " + rectl.sincc.getDocumentoRectificado_Sustituido());
+				}
 
 				List<InvoiceDetail> detailList = new LinkedList<InvoiceDetail>();
 				for (SINCL line : rectl.sinclList) {
@@ -210,7 +220,7 @@ public class EdiInvoiceImporterHandler implements Serializable {
 										+ " omitida: La referencia de producto: "
 										+ line.getDescripcionDelArticulo()
 										+ " (Cod. referencia: "
-										+ line.getCodigoUnidadDeExpedicion_EN_()
+										+ obtainItemCustomerCode(line)
 										+ ")" + " no existe para el cliente "
 										+ customer.getRegistry().getFullName());
 					} else {
@@ -282,16 +292,22 @@ public class EdiInvoiceImporterHandler implements Serializable {
 
 	}
 
-	protected RegistryNote searchCustomerNote(String customerCode) {
+	protected RegistryNote searchCustomerRNote(String customerCode) {
+		return searchCustomerRNote(customerCode, CustomerEdiSupportController.PTO_ENTREGA);
+	}
+	
+	private RegistryNote searchCustomerRNote(String customerCode, String type) {
 		RegistryNote rNote = null;
 		try {
-			IManagerBean rnoteBean = BeanManager.getManagerBean(RegistryNote.class);
+			IManagerBean rnoteBean = BeanManager
+					.getManagerBean(RegistryNote.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
+			criteria.addEqualExpression(
+					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE),
+					NoteType.FACTURAE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.FACTURA + "="
-							+ customerCode + ";%"));
+					"%" + type + "=" + customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
 			rNote = list != null && !list.isEmpty() ? ((RegistryNote) list
 					.get(0)) : null;
@@ -328,22 +344,30 @@ public class EdiInvoiceImporterHandler implements Serializable {
 		return null;
 	}
 
+	private String obtainItemCustomerCode(SINCL sincl) {
+		String itemCustomerCode = StringUtils.trimToNull(sincl
+				.getCodigoInternoArticuloCliente_IN_());
+		if (itemCustomerCode == null) {
+			itemCustomerCode = StringUtils.trimToNull(sincl
+					.getCodigoUnidadDeExpedicion_EN_());
+		}
+		if (itemCustomerCode == null) {
+			itemCustomerCode = StringUtils.trimToNull(sincl
+					.getCodigoArticulo());
+		}
+		return itemCustomerCode;
+	}
+	
 	private RegistryItem searchRegistryItem(SINCL sincl, Customer customer) {
 		try {
-			String itemCustomerCode = StringUtils.trimToNull(sincl
-					.getCodigoInternoArticuloCliente_IN_());
-			if (itemCustomerCode == null) {
-				itemCustomerCode = StringUtils.trimToNull(sincl
-						.getCodigoUnidadDeExpedicion_EN_());
-			}
-			if (itemCustomerCode == null) {
-				itemCustomerCode = StringUtils.trimToNull(sincl
-						.getCodigoArticulo());
-			}
+			String itemCustomerCode = obtainItemCustomerCode(sincl);
 			if (itemCustomerCode != null) {
 				IManagerBean itemBean = BeanManager
 						.getManagerBean(RegistryItem.class);
 				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(
+						itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID),
+						customer.getId());
 				criteria.addEqualExpression(
 						itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE),
 						itemCustomerCode);

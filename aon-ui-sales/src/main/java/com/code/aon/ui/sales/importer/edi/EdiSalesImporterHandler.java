@@ -127,16 +127,21 @@ public class EdiSalesImporterHandler implements Serializable {
 		setShowImportFileWindow(false);
 	}
 	
+	public String obtainCustomerCodeSales(RECTL rectl) {
+		return rectl.ere1pList.stream()
+				.filter(o -> ERE1P.ERE1P_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.getValue().equals(o.getCalificadorDelInterlocutor()))
+//				.filter(o -> ERE1P.ERE1P_2.COMPRADOR_BY.getValue().equals(o.getCalificadorDelInterlocutor()))
+				.map(ERE1P::getCodigoInterlocutor)
+				.findFirst()
+				.orElse(rectl.getCodigoEmisor());	
+	}
+	
 	public void createSales(ActionEvent event, RECTL rectl, boolean testing) {
 //		System.out.println(ere1c.toString());
 //		System.out.println(ere1c.ere1lList.get(0).toString());
 		Sales sales = (Sales) controller.getTo();
 		try {
-			String customerCode = rectl.ere1pList.stream()
-					.filter(o -> ERE1P.ERE1P_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.getValue().equals(o.getCalificadorDelInterlocutor()))
-					.map(ERE1P::getCodigoInterlocutor)
-					.findFirst()
-					.orElse(rectl.getCodigoEmisor());
+			String customerCode = obtainCustomerCodeSales(rectl);
 			if(customerCode==null){
 				getLogPanel().error("Imposible continuar, el fichero no contiene CodigoEmisor.");
 				getLogPanel().error("CodigoEmisor: " + customerCode);
@@ -144,7 +149,7 @@ public class EdiSalesImporterHandler implements Serializable {
 				LOGGER.error("Imposible continuar, el fichero no contiene CodigoEmisor.");
 				LOGGER.error("CodigoEmisor: " + customerCode);
 			} else {
-				RegistryNote customerRegistryNote = searchCustomerNote(customerCode);
+				RegistryNote customerRegistryNote = searchCustomerRNote(customerCode);
 				if(customerRegistryNote==null 
 						|| customerRegistryNote.getRegistry()==null 
 						|| customerRegistryNote.getRegistry().getId()==null){
@@ -327,7 +332,11 @@ public class EdiSalesImporterHandler implements Serializable {
 		return quantity;
 	}
 
-	protected RegistryNote searchCustomerNote(String customerCode) {
+	protected RegistryNote searchCustomerRNote(String customerCode) {
+		return searchCustomerNote(customerCode, CustomerEdiSupportController.PEDIDOS);
+	}
+	
+	private RegistryNote searchCustomerNote(String customerCode, String type) {
 		RegistryNote rNote = null;
 		try {
 			IManagerBean rnoteBean = BeanManager.getManagerBean(RegistryNote.class);
@@ -335,8 +344,7 @@ public class EdiSalesImporterHandler implements Serializable {
 			criteria.addEqualExpression(rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.PEDIDOS + "="
-							+ customerCode + ";%"));
+					"%" + type + "=" + customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
 			rNote = list != null && !list.isEmpty() ? ((RegistryNote) list
 					.get(0)) : null;

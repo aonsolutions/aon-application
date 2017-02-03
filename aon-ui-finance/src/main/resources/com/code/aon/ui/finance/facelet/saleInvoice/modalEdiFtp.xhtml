@@ -208,10 +208,11 @@
 													<aon:outputText value="&#160;" />
 												</f:facet>
 												<aon:commandButton id="ftpSales-import"
-													value="&#160;" styleClass="aon-icon-file-entrance aon-noborder"
+													value="&#160;" 
 													title="#{bundle.aon_import}"
 													actionListener="#{saleInvoice.ftpEdiDownloader.onImportFile}"
-													reRender="showEdiFtpWindow, saleInvoiceForm" >
+													reRender="showEdiFtpWindow, saleInvoiceForm"
+													styleClass="aon-finding-toolbar-item aon-noborder aon-icon-file-entrance">
 													<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 												</aon:commandButton>
 											</aon:column>

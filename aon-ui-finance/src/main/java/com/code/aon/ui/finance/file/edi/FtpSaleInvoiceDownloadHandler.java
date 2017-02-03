@@ -34,7 +34,6 @@ import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
-import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCP;
 import com.esferalia.aon.file.seres.util.ftp.FtpException;
 import com.esferalia.aon.file.seres.util.ftp.FtpFile;
 import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
@@ -297,13 +296,8 @@ public class FtpSaleInvoiceDownloadHandler implements Serializable {
 			aonFile.setData(byteFile);
 			rectl = reader.readFile(aonFile.openStream());
 			
-			String customerCode = rectl.sincpList.stream()
-					.filter(o -> SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS.getValue().equals(o.getCalificadorDelInterlocutor()))
-					.map(SINCP::getCodigoInterlocutor)
-					.findFirst()
-					.orElse(rectl.getCodigoEmisor().trim());
-			
-			RegistryNote customerRegistryNote = handler.searchCustomerNote(customerCode);
+			String customerCode = handler.obtainCustomerCode(rectl);
+			RegistryNote customerRegistryNote = handler.searchCustomerRNote(customerCode);
 			order.setCustomerCode(customerCode);
 			if(customerRegistryNote!=null && customerRegistryNote.getId()!=null){
 				Customer customer = handler.obtainCustomer(customerRegistryNote.getRegistry().getId());
