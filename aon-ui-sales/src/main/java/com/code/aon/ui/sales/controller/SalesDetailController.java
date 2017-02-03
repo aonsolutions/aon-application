@@ -246,15 +246,6 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		}
 	}
 	
-	public void loadManufacturingDetailMap(){
-		manufactureDetailMap = new HashMap<>();
-		if(this.getMasterController().getTo()!=null){
-			Sales sales = (Sales) this.getMasterController().getTo();
-			SalesUtils utils = new SalesUtils();
-			manufactureDetailMap = utils.getTargetManufactureDetailMap(sales);
-		}
-	}
-	
 	public void onItemChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
