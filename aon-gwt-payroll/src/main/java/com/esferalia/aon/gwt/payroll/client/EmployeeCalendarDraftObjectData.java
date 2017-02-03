@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 
@@ -157,6 +159,14 @@ public class EmployeeCalendarDraftObjectData {
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	} 
 
+	public Set<Entry<Date, Double>> getHourChanges(){
+		return draftMapaDiasHoras.entrySet();
+	}
+	
+	public Set<Entry<Date, DayType>> getTypeChanges(){
+		return draftMapaDiasTipo.entrySet();
+	}
+	
 	public Date getStartDateContract(){
 		return startContract;
 	}

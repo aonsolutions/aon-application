@@ -153,7 +153,7 @@
 		}
 		
 		.iconEraseStyle {
-			margin-left: 200px;
+			margin-left: 145px;
 		}
 		
 		.mesesImparesStyle {
@@ -241,6 +241,10 @@
 		.divWidthStyle{
 			margin-top: 1px;
 			padding-bottom: 5px;
+		}
+		
+		.onChange{
+			background-color: yellow;
 		}
 		
 		@external gwt-Selector;
