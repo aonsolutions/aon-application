@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.management;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
@@ -29,9 +30,17 @@ public class PurchaseDetail implements Serializable {
 	private PurchaseSourceType source;
 	private Integer sourceId;
 	private double delivered;
-
+	private Date deliveryDate; 
+	
+	private Date creationDate; 
+	private String creationUser;
+	private Date modificationDate;
+	private String modificationUser;
+	
 	private String productCode;
 	private String productName;
+	
+	private Integer carrierPacking;
 	
 	public Integer getId() {
 		return id;
@@ -152,7 +161,6 @@ public class PurchaseDetail implements Serializable {
 		this.sourceId = sourceId;
 		return this;
 	}
-
 	public String getProductCode() {
 		return productCode;
 	}
@@ -166,6 +174,43 @@ public class PurchaseDetail implements Serializable {
 	public PurchaseDetail setProductName(String productName) {
 		this.productName = productName;
 		return this;
+	}
+	public Integer getCarrierPacking(){
+		return carrierPacking;
+	}
+	public PurchaseDetail setCarrierPacking(Integer carrierPacking){
+		this.carrierPacking = carrierPacking;
+		return this;
+	}
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public void setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public void setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
 	}
 	
 }

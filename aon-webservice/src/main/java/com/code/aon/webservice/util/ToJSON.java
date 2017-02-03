@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
@@ -28,6 +29,17 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public class ToJSON {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
+	public static JSONObject raddressToJSON(RAddress address){	
+		return new JSONObject()
+			.put("name",address.getRegistryName())
+			.put("address", address.getStreet_type() + " " + address.getAddress() + " " 
+					+ address.getNumber() +" " + address.getAddress2() +  " " + address.getAddress3())
+			.put("zip", address.getZip())
+			.put("city", address.getCity())
+			.put("province", "")
+			.put("country", address.getGeozoneName());
+	}
 	
 	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, String observation, JSONArray rmedia, String status){
 		JSONObject json = new JSONObject();
@@ -215,6 +227,8 @@ public class ToJSON {
 			
 			.put("product_code", purchaseDetail.getProductCode())
 			.put("product_name", purchaseDetail.getProductName())
+			
+			.put("carrier_packing", purchaseDetail.getCarrierPacking())
 			;
 	}
 	

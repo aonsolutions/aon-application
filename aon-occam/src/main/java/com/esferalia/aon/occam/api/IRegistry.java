@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -42,7 +43,7 @@ public interface IRegistry {
 
 	public Stream<Seller> getRSellerStream(AONContext ctx, Integer registryId);
 
-	public Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId);
+	public Stream<RAddress> getRAddressStream(AONContext ctx, RegistryAddressFilter filter);
 	
 	
 	public Registry insertRegistry(AONContext ctx, Registry registry);

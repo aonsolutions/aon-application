@@ -54,7 +54,7 @@ public class ReposServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Repos Servlet - GET METHOD");
 		String scheme = req.getParameter("scheme");
-		String accessToken = req.getParameter("access_token");
+		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
@@ -67,42 +67,42 @@ public class ReposServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
-				case "github":
+				case MSG.GITHUB:
 					object = getGithubJSON(domain, userName);
 					break;
-				case "fast_filter":
+				case MSG.FAST_FILTER:
 					object = getFastFilterJSON(domain, userName);
 					break;
-				case "faqs":
+				case MSG.FAQS:
 					object = getFaqIssuesJSON(domain, userName, getFilter(domain, userName, req), url);
 					break;
-				case "duplicates":
+				case MSG.DUPLICATES:
 					if(pathInfo.length > 4){
 						object = getDuplicateIssuesJSON(domain, userName, pathInfo[4], url);
 					}
 					break;
-				case "enterprise":
+				case MSG.ENTERPRISE:
 					if(pathInfo.length > 4){
 						object = getEnterpriseIssuesJSON(domain, userName, pathInfo[4], url);
 					}
 					break;
-				case "issues_light":
+				case MSG.ISSUES_LIGHT:
 					if(pathInfo.length > 4){
 						object = getLightIssuesJSON(domain, userName,getFilter(domain, userName, req), pathInfo[4]);				
 					}
 					break;
-				case "issues":
+				case MSG.ISSUES:
 					if(pathInfo.length > 4){
 						if(pathInfo.length > 5){
-							if(pathInfo[5].equalsIgnoreCase("labels")) // LABELS
+							if(pathInfo[5].equalsIgnoreCase(MSG.LABELS)) // LABELS
 								object = getLabelsJSON(domain, userName, pathInfo[4]);
-							else if(pathInfo[5].equalsIgnoreCase("comments")) // COMMENTS
+							else if(pathInfo[5].equalsIgnoreCase(MSG.COMMENTS)) // COMMENTS
 								object = getCommentsJSON(domain, userName, pathInfo[4]);
-							else if(pathInfo[5].equalsIgnoreCase("events")) // EVENTS
+							else if(pathInfo[5].equalsIgnoreCase(MSG.EVENTS)) // EVENTS
 								object = getEventsJSON(domain, userName, pathInfo[4]);
-							else if(pathInfo[5].equalsIgnoreCase("type")) // TYPE
+							else if(pathInfo[5].equalsIgnoreCase(MSG.TYPE)) // TYPE
 								object = getTypeJSON(domain, userName, pathInfo[4]);
-							else if(pathInfo[5].equalsIgnoreCase("priority")) // PRIORITY
+							else if(pathInfo[5].equalsIgnoreCase(MSG.PRIORITY)) // PRIORITY
 								object = getPriorityJSON(domain, userName, pathInfo[4]);	
 						} else // TASK / ISSUE
 							object = getIssueJSON(domain, userName, DB.getTask(domain, userName, Integer.parseInt(pathInfo[4])), url);
@@ -111,26 +111,26 @@ public class ReposServlet extends HttpServlet{
 						meta = getSizeJSON(domain, userName, getFilter(domain, userName, req));
 					}
 					break;
-				case "labels": // ALL LABELS
+				case MSG.LABELS: // ALL LABELS
 					object = getAllLabelsJSON(domain, userName, TagType.TASK_LABEL, filter);
 					break;
-				case "types": // ALL TYPES
+				case MSG.TYPES: // ALL TYPES
 					object = getAllLabelsJSON(domain, userName, TagType.TASK_TYPE, filter);
 					break;
-				case "priorities": // ALL PRIORITIES
+				case MSG.PRIORITY: // ALL PRIORITIES
 					object = getAllPrioritiesJSON(domain, userName);
 					break;
-				case "statuses": // ALL PRIORITIES
+				case MSG.STATUSES: // ALL PRIORITIES
 					object = getAllStatusesJSON(domain, userName);
 					break;
-				case "registries": // ALL REGISTRIES
+				case MSG.REGISTRIES: // ALL REGISTRIES
 					if(!filter.equals(MSG.EMPTY)) object = getFilterRegistriesJSON(domain, userName, filter);
 					else object = getAllRegistriesJSON(domain, userName);
 					break;
-				case "order_options": // ORDER OPTIONS
+				case MSG.ORDER_OPTIONS: // ORDER OPTIONS
 					object = getOrderOptionsJSON();
 					break;
-				case "date_options": // DATE OPTIONS
+				case MSG.DATE_OPTIONS: // DATE OPTIONS
 					object = getDateOptionsJSON();
 					break;
 				default:

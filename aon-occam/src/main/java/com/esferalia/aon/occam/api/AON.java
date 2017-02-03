@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -1180,6 +1181,44 @@ public class AON {
 	public static PurchaseDetail getPurchaseDetail(String domainName,
 			Integer domainId, String login, Integer id) {
 		return getPurchaseDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
+	}
+	
+	public static Integer insertPurchaseDetail(String domainName, Integer domainId, String login, PurchaseDetail purchaseDetail) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().insertPurchaseDetail(ctx, purchaseDetail);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static PurchaseDetail updatePurchaseDetail(String domainName, Integer domainId, String login, PurchaseDetail purchaseDetail, PurchaseDetailFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().updatePurchaseDetail(ctx, purchaseDetail, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static PurchaseDetail updatePurchaseDetail(String domainName, Integer domainId, String login, PurchaseDetail purchaseDetail) {
+		return updatePurchaseDetail(domainName, domainId, login, purchaseDetail, f -> f.getIdProperty().eq(purchaseDetail.getId()));
+	}
+	
+	public static void deletePurchaseDetail(String domainName, Integer domainId, String login, PurchaseDetailFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getManagement().deletePurchaseDetail(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deletePurchaseDetail(String domainName, Integer domainId, String login, Integer id) {
+		deletePurchaseDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
 	// ------------------ DELIVERY
@@ -2622,21 +2661,25 @@ public class AON {
 		}		
 	}
 	
-	public static Stream<RAddress> getRAddressStream(String domainName, Integer domainId, String login,
-			Integer registryId){
+	public static Stream<RAddress> getRAddressStream(String domainName, Integer domainId, String login, RegistryAddressFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRAddressStream(ctx, registryId);
+			return getRegistry().getRAddressStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}		
 	}
+
+	public static RAddress getRAddress(String domainName, Integer domainId, String login, RegistryAddressFilter filter){
+		return getRAddressStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new RAddress());
+	}
 	
 	public static RAddress getRAddres(String domainName, Integer domainId, String login,
 			Integer registryId){
-		return getRAddressStream(domainName, domainId, login, registryId)
+		return getRAddressStream(domainName, domainId, login, f -> f.getRegistryProperty().eq(registryId))
 				.findFirst().orElse(new RAddress());
 	}
 	

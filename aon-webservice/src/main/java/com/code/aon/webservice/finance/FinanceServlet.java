@@ -1,5 +1,6 @@
 package com.code.aon.webservice.finance;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
@@ -21,14 +23,12 @@ import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 													 "/aon_gwt_aio/finance/*"})
 public class FinanceServlet extends HttpServlet{
 		
-	String h = "http://";
+	private static final Logger LOGGER  = Logger.getLogger(FinanceServlet.class.getName());
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		System.out.println("GET METHOD");
-		if(req.getServerPort() == 80) h = "http://";
-		else if(req.getServerPort() == 443) h = "https://";
-		String accessToken = req.getParameter("access_token");
+		LOGGER.info("Finance Servlet - GET METHOD");
+		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[2];
 		String domainName = pathInfo[1]; 
@@ -40,9 +40,9 @@ public class FinanceServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
-				case "invoice": // INVOICE
+				case MSG.INVOICE: // INVOICE
 					if(pathInfo.length > 4){
-						if (pathInfo[4].equals("registry")) {
+						if (MSG.REGISTRY.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE INVOICE CON REGISTRY X
 								object = getInvoiceList(domain, userName, Integer.parseInt(pathInfo[5]));
 						} else if(pathInfo[4].equals("id")) {
@@ -53,12 +53,12 @@ public class FinanceServlet extends HttpServlet{
 						getInvoiceList(domain, userName);
 					}
 					break;
-				case "fee": // FEE
+				case MSG.FEE: // FEE
 					if(pathInfo.length > 4){
-						if (pathInfo[4].equals("customer")) {
+						if (MSG.CUSTOMER.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE FEE CON CUSTOMER X
 								object = getFeeList(domain, userName, Integer.parseInt(pathInfo[5]));
-						} else if(pathInfo[4].equals("id")) {
+						} else if(MSG.ID.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // FEE CON ID X
 								object = getFee(domain, userName, Integer.parseInt(pathInfo[5])); 
 						}
@@ -66,16 +66,16 @@ public class FinanceServlet extends HttpServlet{
 						getFeeList(domain, userName);
 					}
 					break;
-				case "bought_product": // INVOICE
+				case MSG.BOUGHT_PRODUCT: // INVOICE
 					if(pathInfo.length > 4){
-						if (pathInfo[4].equals("registry")) {
+						if (MSG.REGISTRY.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE INVOICE CON REGISTRY X
 								object = getBoughtProductList(domain, userName, Integer.parseInt(pathInfo[5]));
 						}
 					}
 					break;
 					
-				case "billing_period": // FEE
+				case MSG.BILLING_PERIOD: // FEE
 					object = getBillingPeriodList();
 					break;
 				default:
@@ -89,7 +89,7 @@ public class FinanceServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("POST METHOD");
+		LOGGER.info("Finance Servlet - POST METHOD");	
 	}
 
     private JSONArray getInvoiceList(Domain domain, String login){
@@ -160,10 +160,7 @@ public class FinanceServlet extends HttpServlet{
     private JSONArray getBillingPeriodList(){
     	JSONArray array = new JSONArray();
     	for (BillingPeriod period : BillingPeriod.values()) {
-			JSONObject json = new JSONObject();
-			json.put("id", period.value());
-			json.put("name", ToJSON.getPeriod(period));
-			array.put(json);
+			array.put(ToJSON.objectToJSON(period.ordinal(), ToJSON.getPeriod(period)));
 		}
     	return array;
     }

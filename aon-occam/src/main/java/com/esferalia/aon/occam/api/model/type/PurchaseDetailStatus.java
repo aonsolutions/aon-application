@@ -7,5 +7,9 @@ public enum PurchaseDetailStatus implements Serializable {
 	PENDING,
 	PARTIAL_SETTLED,
 	SETTLED;
+	
+	public Byte value(){
+		return (byte) this.ordinal();
+	}
 
 }

@@ -20,5 +20,6 @@ public interface PurchaseDetailProperties{
 	Property<Byte> getSourceProperty();
 	Property<Integer> getSourceIdProperty();
 	Property<Double> getDeliveredProperty();
+	Property<Integer> getCarrierPackingProperty();
 	
 }

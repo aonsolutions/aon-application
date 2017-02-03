@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -100,9 +101,9 @@ public class RegistryImpl implements IRegistry{
 	}
 
 	@Override
-	public Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId) {
+	public Stream<RAddress> getRAddressStream(AONContext ctx, RegistryAddressFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.getRAddressStream(ctx, registryId));
+				configuration -> RegistryDAO.getRAddressStream(ctx, filter));
 	}
 
 	@Override

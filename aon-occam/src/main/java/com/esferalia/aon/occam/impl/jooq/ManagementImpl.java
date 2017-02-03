@@ -43,7 +43,6 @@ public class ManagementImpl implements IManagement {
 	public Purchase updatePurchase(AONContext ctx, Purchase purchase, PurchaseFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> PurchaseDAO.updatePurchase(ctx, purchase, filter));
-
 	}
 
 	@Override
@@ -58,6 +57,25 @@ public class ManagementImpl implements IManagement {
 	public Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> PurchaseDAO.getPurchaseDetailStream(ctx, filter));
+	}
+	
+	@Override
+	public Integer insertPurchaseDetail(AONContext ctx, PurchaseDetail purchaseDetail) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PurchaseDAO.insertPurchaseDetail(ctx, purchaseDetail));
+	}
+
+	@Override
+	public PurchaseDetail updatePurchaseDetail(AONContext ctx, PurchaseDetail purchaseDetail,
+			PurchaseDetailFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PurchaseDAO.updatePurchaseDetail(ctx, purchaseDetail, filter));
+	}
+
+	@Override
+	public void deletePurchaseDetail(AONContext ctx, PurchaseDetailFilter filter) {
+		ctx.getDslContext().transaction(
+					configuration -> PurchaseDAO.deletePurchaseDetail(ctx, filter));		
 	}
 	
 	// ------------------ DELIVERY

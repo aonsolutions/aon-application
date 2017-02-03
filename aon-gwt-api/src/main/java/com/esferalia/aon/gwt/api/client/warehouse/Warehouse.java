@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Warehouse extends Methods{
@@ -91,6 +92,23 @@ public class Warehouse extends Methods{
 
 	public void getDetails(Integer id, String orderType, AsyncCallback<JSON<JsOrderDetail>> callback){
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/" +id + "/detail" , callback);
+	}
+	
+	public void addCarrierPacking(String orderType, String requestData, AsyncCallback<JSON<JsOrderDetail>> callback){
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/carrier_packing" , callback);
+	}
+	
+	public void downloadPackingList(Integer id){
+		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id;
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_packing_list/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 }

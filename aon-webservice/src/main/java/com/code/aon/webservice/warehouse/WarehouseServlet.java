@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -36,7 +37,6 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class WarehouseServlet extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(WarehouseServlet.class.getName());
-	
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp){
@@ -119,6 +119,9 @@ public class WarehouseServlet extends HttpServlet{
 					if(MSG.UPDATE.equals(pathInfo[4])){
 						object = updatePurchase(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} 
+					else if(MSG.CARRIER_PACKING.equals(pathInfo[4])){
+						object = updatePurhcaseCarrierPacking(domain, userName, json);
+					} 
 				} 
 			}
 			else if(MSG.DELIVERY.equals(pathInfo[3])){
@@ -158,6 +161,37 @@ public class WarehouseServlet extends HttpServlet{
 		AON.updatePurchase(domain.getName(), domain.getId(), login, purchase);
 		return ToJSON.purchaseToJSON(purchase);
 	}
+	
+	private JSONObject updatePurhcaseCarrierPacking(Domain domain, String login, JSONObject json) {
+		String action =json.getString("action");
+		Integer detail = json.getInt("id");
+		PurchaseDetail purchaseDetail = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, detail);
+		if (action.equals("add")) {
+			Double quantity =json.getDouble("quantity");
+			Integer carrierPacking = json.getInt("carrier_packing");
+			if(purchaseDetail.getQuantity() > quantity){
+				Double q = purchaseDetail.getQuantity() - quantity;
+				AON.insertPurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail.setQuantity(q));
+			} 
+			AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail.setQuantity(quantity)
+					.setCarrierPacking(carrierPacking));
+		} else if(action.equals("delete")) {
+			AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
+					f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getPurchaseProperty().eq(purchaseDetail.getPurchase().getId()))
+					.and(f.getItemProperty().eq(purchaseDetail.getItem()))
+					.and(f.getCarrierPackingProperty().isNull())
+					.and(f.getPriceProperty().eq(purchaseDetail.getPrice()))
+					.and(f.getDiscountExpressionProperty().eq(purchaseDetail.getDiscountExpression())))
+			.forEach(pd -> {
+				purchaseDetail.setQuantity(purchaseDetail.getQuantity() + pd.getQuantity());
+				AON.deletePurchaseDetail(domain.getName(), domain.getId(), login, pd.getId());
+			});
+			AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail.setCarrierPacking(null));
+		}
+		return ToJSON.purchaseDetailToJSON(purchaseDetail);
+	}
+	
 	
 	private JSONObject updateDelivery(Domain domain, String login, Integer id, JSONObject json) {
 		Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), login, id);

@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -31,6 +32,7 @@ import org.artofsolving.jodconverter.document.DocumentFormatRegistry;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
+import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -50,31 +52,30 @@ public class FeeProjectionDownload extends HttpServlet{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER  = Logger.getLogger(FeeProjectionDownload.class.getName());
 
-	private static final String PDF = "pdf";
-	private static final String EXCEL = "excel";
 	private static final int DEFAULT_OFFICE_PORT = 2002;
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("GET METHOD");
+		LOGGER.info("Fee projection download - GET METHOD");
 		
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
 		HashMap<String, String[]> filterMap = SecurityUtils.getInstance().getParametersMap(req.getPathInfo().substring(1));
 
-		String domainName = parameters.get("domain");
+		String domainName = parameters.get(MSG.DOMAIN);
 		String userName = parameters.get("login");
-		String type = parameters.get("type");
+		String type = parameters.get(MSG.TYPE);
 		
 		Date date = new Date();
-		if(parameters.get("date") != null && !parameters.get("date").equals(""))
-			date = new Date(Long.parseLong(parameters.get("date")));
+		if(parameters.get(MSG.DATE) != null && !MSG.EMPTY.equals(parameters.get(MSG.DATE)))
+			date = new Date(Long.parseLong(parameters.get(MSG.DATE)));
 		
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		
-		if(type.equalsIgnoreCase(PDF)){
+		if(type.equalsIgnoreCase(MSG.PDF)){
 			pdf(req, resp, domain, userName, date, filterMap);
-		} else if(type.equalsIgnoreCase(EXCEL)){
+		} else if(type.equalsIgnoreCase(MSG.EXCEL)){
 			excel(req, resp, domain, userName, date, filterMap);
 		}
 	}
@@ -122,22 +123,19 @@ public class FeeProjectionDownload extends HttpServlet{
 		archivo.close();
 		workbook.close();
 
-		File inputFile = null;
-		File outputFile = null;
-		OfficeManager officeManager = null;
 		
-		String fileName = "fee_projection";
+		String fileName = MSG.FEE_PROJECTION;
 		
-		inputFile = File.createTempFile("tmp", fileName + "." + MimeType.MS_EXCEL.getExtension());
+		File inputFile = File.createTempFile("tmp", fileName + "." + MimeType.MS_EXCEL.getExtension());
 		FileOutputStream inputFileOs = new FileOutputStream(inputFile);
 		AonIOUtils.write(archivo.toByteArray(), inputFileOs);
 		inputFileOs.flush();
 		inputFileOs.close();
 			
-		outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
+		File outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
 		DocumentFormatRegistry formatRegistry = new DefaultDocumentFormatRegistry();
 		
-		officeManager = new DefaultOfficeManagerConfiguration()
+		OfficeManager officeManager = new DefaultOfficeManagerConfiguration()
 			.setPortNumber(DEFAULT_OFFICE_PORT)
 			.buildOfficeManager();
 		officeManager.start();
@@ -151,10 +149,9 @@ public class FeeProjectionDownload extends HttpServlet{
 		inputFileOs.close();
 		resp.flushBuffer();
 
-		// TODO REMOVE AND CLOSE EVERYTHING
-		if (inputFile != null && inputFile.canWrite()) inputFile.delete();
-		if (outputFile != null && outputFile.canWrite()) outputFile.delete();
-		if (officeManager != null) officeManager.stop();
+		if (inputFile != null && inputFile.canWrite()) {inputFile.delete();}
+		if (outputFile != null && outputFile.canWrite()) {outputFile.delete();}
+		if (officeManager != null) {officeManager.stop();}
 	}
 	
 	Integer rowIndex;

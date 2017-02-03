@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -667,15 +668,19 @@ public class RegistryDAO {
 	
 	public static Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId){
 		return ctx.getDslContext().select().from(RADDRESS)
+					.join(REGISTRY).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
+					.join(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
 				.where(RADDRESS.REGISTRY.eq(registryId))
-				.fetchInto(RADDRESS).stream().map(new RAddressFiller());
+				.fetch().stream().map(new RAddressFiller());
 	}
 
 	public static Stream<RAddress> getRAddressStream(AONContext ctx,
 			RegistryAddressFilter filter) {
 		return ctx.getDslContext().select().from(RADDRESS)
+					.join(REGISTRY).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
+					.join(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
 				.where(RADDRESS_PROPERTIES.getConditions(filter))
-				.fetchInto(RADDRESS).stream().map(new RAddressFiller());
+				.fetch().stream().map(new RAddressFiller());
 	}
 	
 	
@@ -722,26 +727,28 @@ public class RegistryDAO {
 	}
 	
 
-	public static class RAddressFiller  implements Function<RaddressRecord, RAddress> {
+	public static class RAddressFiller  implements Function<Record, RAddress> {
 
 		@Override
-		public RAddress apply(RaddressRecord r) {
+		public RAddress apply(Record r) {
 			return new RAddress()
-					.setId(r.getId())
-					.setDomain(r.getDomain())
-					.setAddress(r.getAddress())
-					.setAddress2(r.getAddress2())
-					.setAddress3(r.getAddress3())
-					.setAlias(r.getAlias())
-					.setCity(r.getCity())
-					.setGeozone(r.getGeozone())
-					.setMunicipality_code(r.getMunicipalityCode())
-					.setNumber(r.getNumber())
-					.setRecipient(r.getRecipient())
-					.setRegistry(r.getRegistry())
-					.setStreet_type(r.getStreetType())
-					.setType(r.getType())
-					.setZip(r.getZip());
+					.setId(r.getValue(RADDRESS.ID))
+					.setDomain(r.getValue(RADDRESS.DOMAIN))
+					.setAddress(r.getValue(RADDRESS.ADDRESS))
+					.setAddress2(r.getValue(RADDRESS.ADDRESS2))
+					.setAddress3(r.getValue(RADDRESS.ADDRESS3))
+					.setAlias(r.getValue(RADDRESS.ALIAS))
+					.setCity(r.getValue(RADDRESS.CITY))
+					.setGeozone(r.getValue(RADDRESS.GEOZONE))
+					.setGeozoneName(r.getValue(GEOZONE.NAME))
+					.setMunicipality_code(r.getValue(RADDRESS.MUNICIPALITY_CODE))
+					.setNumber(r.getValue(RADDRESS.NUMBER))
+					.setRecipient(r.getValue(RADDRESS.RECIPIENT))
+					.setRegistry(r.getValue(RADDRESS.REGISTRY))
+					.setRegistryName(r.getValue(REGISTRY.NAME))
+					.setStreet_type(r.getValue(RADDRESS.STREET_TYPE))
+					.setType(r.getValue(RADDRESS.TYPE))
+					.setZip(r.getValue(RADDRESS.ZIP));
 		}
 	}
 	

@@ -1,19 +1,23 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 public class CarrierPackingSouth2 extends DockLayoutPanel{
 	CarrierPacking parent;
@@ -66,7 +70,7 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 		final FlowPanel headerPanel2 = new FlowPanel("pre");
 		headerPanel2.setStyleName(AON.AON_CSS.aonFixedFont());
 		headerPanel2.addStyleName(AON.AON_CSS.aonFontMedium());
-		Label header2 = new Label("    "//4
+		Label header2 = new Label("      "//6
 				+ "LINEA     " //10
 				+ "PRODUCTO                                " //40
 				+ "CANTIDAD       " //15
@@ -83,6 +87,10 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 
 		addNorth(p, 100);
 	
+
+	}
+	
+	public void refresh(JsOrder purchase, AonJsArray<JsOrderDetail> details){
 		FlowPanel center = new FlowPanel();
 		
 		details.stream().forEach(detail ->{
@@ -92,13 +100,46 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 			line.addStyleName(AON.AON_CSS.aonFontMedium());
 			line.addStyleName(AON.AON_CSS.aonMarginBottom());
 			
-			CheckBox checkBox = new CheckBox();
-			checkBox.setValue(detail.getCarrierPacking() != null &&
-					carrierPacking.getId().equals(detail.getCarrierPacking()));
-			checkBox.setEnabled(detail.getCarrierPacking() == null || 
-					carrierPacking.getId().equals(detail.getCarrierPacking()));
+			DoubleBox  db = new DoubleBox();
+			db.setWidth("50px");
+			db.setStyleName(AON.AON_CSS.aonTextBox());
+			db.setValue(detail.getQuantity());
+			
+			PaperIconButton pib = new PaperIconButton();
+			pib.setDisabled(detail.getCarrierPacking() != null && !detail.getCarrierPacking().equals(carrierPacking.getId()));
+			pib.setIcon(detail.getCarrierPacking() != null ? "remove" : "add" );
+			pib.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					String requestData = "{\"id\":\""+ detail.getId() +"\","
+							+"\"action\":\""+ (detail.getCarrierPacking() != null ? "delete" : "add") + "\","
+							+"\"carrier_packing\":\""+ carrierPacking.getId() + "\","
+							+"\"quantity\":\""+ db.getValue() + "\""
+							+ "}";
 
-			line.add(checkBox);
+					parent.API.getWarehouse().addCarrierPacking("purchase", requestData , new AsyncCallback<JSON<JsOrderDetail>>() {
+							
+						@Override
+						public void onSuccess(JSON<JsOrderDetail> result) {
+							parent.API.getWarehouse().getDetails(purchase.getId(), "purchase", new AsyncCallback<JSON<JsOrderDetail>>() {
+									
+								@Override
+								public void onSuccess(JSON<JsOrderDetail> result) {
+									refresh(purchase, result.getData());
+								}
+								
+								@Override public void onFailure(Throwable caught) {}
+							});
+						}
+							
+						@Override public void onFailure(Throwable caught) {}
+					});
+				}
+				
+			});
+			
+			
 			Double discount = detail.getDiscountExpr() != null ? Double.parseDouble(detail.getDiscountExpr()) : 1.0;
 			Double importe = detail.getPrice() * detail.getQuantity() * (1 - (discount/100));
 			InlineLabel d = new InlineLabel(AonStringUtils.SPACE
@@ -107,21 +148,19 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 							AonStringUtils.defaultString(detail.getProductCode() + "-" + detail.getProductName()), 39), 44));
 			d.setTitle("");
 			d.setStyleName(AON.AON_CSS.aonBold());
-			line.add(d);
 			
-			TextBox tb = new TextBox();
-			tb.setWidth("50px");
-			tb.setStyleName(AON.AON_CSS.aonTextBox());
-			//AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getQuantity() + ""), 16)
-			line.add(tb);
 			InlineLabel d2 = new InlineLabel("        "
-					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDelivered() + ""), 17)// PENDIENTE
+					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getCarrierPacking() != null? "0" : detail.getQuantity() + ""), 17)// PENDIENTE
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getPrice() + ""), 16)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDiscountExpr()), 16)
 					+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
 					);
 			d2.setTitle("");
 			d2.setStyleName(AON.AON_CSS.aonBold());
+			
+			line.add(pib);
+			line.add(d);
+			line.add(db);
 			line.add(d2);
 			center.add(line);
 		});
@@ -129,7 +168,6 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 		ScrollPanel scrollCenter = new ScrollPanel();
 		scrollCenter.addStyleName(AON.AON_CSS.aonMarginBottom());
 		scrollCenter.setWidget(center);
-		
 		add(scrollCenter);
 	}
 	

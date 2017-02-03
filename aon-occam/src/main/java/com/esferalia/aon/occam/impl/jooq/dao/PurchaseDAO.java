@@ -43,6 +43,8 @@ public class PurchaseDAO {
 	private static final PurchaseDetailPropertiesDAO PURCHASE_DETAIL_PROPERTIES = new PurchaseDetailPropertiesDAO();
 	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
 
+	// ------------------- PURCHASE
+	
 	public static Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter){
 		return ctx.getDslContext().select().from(PURCHASE)
 				.join(REGISTRY).on(REGISTRY.ID.eq(PURCHASE.SUPPLIER))
@@ -50,63 +52,17 @@ public class PurchaseDAO {
 			.fetch().stream().map(new FullPurchaseFiller());
 	}
 	
+	public static Stream<Purchase> getPurchaseStream2(AONContext ctx, PurchaseFilter filter){
+		return ctx.getDslContext().select().from(PURCHASE)
+				.join(REGISTRY).on(REGISTRY.ID.eq(PURCHASE.SUPPLIER))
+				.join(PURCHASE_DETAIL).on(PURCHASE_DETAIL.PURCHASE.eq(PURCHASE.ID))
+				.where(PURCHASE_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new FullPurchaseFiller()).distinct();
+	}
+	
 	public static Purchase getPurchase(AONContext ctx, Integer id){
 		return ctx.getDslContext().select().from(PURCHASE).where(PURCHASE.ID.eq(id)).limit(1).fetchInto(PURCHASE)
 			.stream().map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
-	}
-	
-	public static Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter){
-		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
-				.join(ITEM).on(PURCHASE_DETAIL.ITEM.eq(ITEM.ID))
-				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new PurchaseDetailFiller());
-	}
-
-	
-	public static PurchaseDetail getPurchaseDetail(AONContext ctx, PurchaseDetailFilter filter){
-		return ctx.getDslContext().select().from(PURCHASE_DETAIL).where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
-	}
-	
-	public static PurchaseDetail getTargetManufactureDetail(AONContext ctx, Integer salesDetailId){
-		return ctx.getDslContext().select().from(PURCHASE_DETAIL).leftOuterJoin(PURCHASE).onKey()
-				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
-				.and(PURCHASE_DETAIL.SOURCE_ID.eq(salesDetailId))
-				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.MANUFACTURE.value()))
-				.orderBy(PURCHASE_DETAIL.ID.desc())
-				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
-	}
-	
-	public static PurchaseDetail getTargetPurchaseDetail(AONContext ctx, Integer salesDetailId){
-		return ctx.getDslContext().select().from(PURCHASE_DETAIL).leftOuterJoin(PURCHASE).onKey()
-				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
-				.and(PURCHASE_DETAIL.SOURCE_ID.eq(salesDetailId))
-				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.NORMAL.value()))
-				.orderBy(PURCHASE_DETAIL.ID.desc())
-				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
-	}
-	
-	public static List<PurchaseDetail> getTargetManufactureDetails(AONContext ctx, Integer salesId){
-		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
-					.leftOuterJoin(PURCHASE).onKey()
-					.leftOuterJoin(SALES_DETAIL).on(PURCHASE_DETAIL.SOURCE_ID.eq(SALES_DETAIL.ID))
-				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
-					.and(SALES_DETAIL.SALES.eq(salesId))
-					.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.MANUFACTURE.value()))
-				.fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx))
-				.collect(Collectors.toList());
-	}
-	
-	public static List<PurchaseDetail> getTargetPurchaseDetails(AONContext ctx, Integer salesId){
-		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
-				.leftOuterJoin(PURCHASE).onKey()
-				.leftOuterJoin(SALES_DETAIL).on(PURCHASE_DETAIL.SOURCE_ID.eq(SALES_DETAIL.ID))
-				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
-				.and(SALES_DETAIL.ID.eq(salesId))
-				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.NORMAL.value()))
-				.fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx))
-				.collect(Collectors.toList());
 	}
 
 	public static int insertManufacturePurchase(AONContext ctx, Purchase purchase){
@@ -184,7 +140,6 @@ public class PurchaseDAO {
 						creationDate, ctx.getUser(), modificationDate);
 	}
 
-	
 	public static int insertPurchase(AONContext ctx, Purchase purchase) {
 		return insertPurchase2(ctx, purchase).returning(PURCHASE.ID).fetchOne().getId();
 	}
@@ -192,16 +147,6 @@ public class PurchaseDAO {
 	public static Purchase insertPurchase3(AONContext ctx, Purchase purchase) {
 		return insertPurchase2(ctx, purchase).returning().fetch().stream()
 				.map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
-	}
-	
-	public static void deletePurchase(AONContext ctx, PurchaseFilter filter) {
-		Integer[] ids = getPurchaseStream(ctx, filter).map(r -> r.getId()).toArray(Integer[]::new);
-		deletePurchaseDetail(ctx, f -> f.getPurchaseProperty().in(ids));
-		ctx.getDslContext().delete(PURCHASE).where(PURCHASE_PROPERTIES.getConditions(filter));
-	}
-	
-	public static void deletePurchaseDetail(AONContext ctx, PurchaseDetailFilter filter) {
-		ctx.getDslContext().delete(PURCHASE_DETAIL).where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter));
 	}
 	
 	public static Purchase updatePurchase(AONContext ctx, Purchase purchase, PurchaseFilter filter) {
@@ -258,38 +203,130 @@ public class PurchaseDAO {
 			.returning().fetch().stream().map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
 	}
 	
+	public static void deletePurchase(AONContext ctx, PurchaseFilter filter) {
+		Integer[] ids = getPurchaseStream(ctx, filter).map(r -> r.getId()).toArray(Integer[]::new);
+		deletePurchaseDetail(ctx, f -> f.getPurchaseProperty().in(ids));
+		ctx.getDslContext().delete(PURCHASE).where(PURCHASE_PROPERTIES.getConditions(filter));
+	}
+	
+	// ------------------- PURCHASE DETAIL
+	
+	public static Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
+				.join(ITEM).on(PURCHASE_DETAIL.ITEM.eq(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new PurchaseDetailFiller());
+	}
+	
 	public static int insertPurchaseDetail(AONContext ctx, PurchaseDetail detail) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
-		return ctx
-				.getDslContext()
-				.insertInto(PURCHASE_DETAIL, PURCHASE_DETAIL.DOMAIN,
-						PURCHASE_DETAIL.PURCHASE, PURCHASE_DETAIL.PROJECT,
-						PURCHASE_DETAIL.LINE, PURCHASE_DETAIL.ITEM,
-						PURCHASE_DETAIL.DESCRIPTION, PURCHASE_DETAIL.QUANTITY,
-						PURCHASE_DETAIL.PRICE, PURCHASE_DETAIL.DISCOUNT_EXPR,
-						PURCHASE_DETAIL.TAXES, PURCHASE_DETAIL.STATUS,
-						PURCHASE_DETAIL.PROPOSAL_DETAIL,
-						PURCHASE_DETAIL.DELIVERED, PURCHASE_DETAIL.SOURCE,
-						PURCHASE_DETAIL.SOURCE_ID,
-						PURCHASE_DETAIL.CREATION_USER,
-						PURCHASE_DETAIL.CREATION_DATE,
-						PURCHASE_DETAIL.MODIFICATION_USER,
-						PURCHASE_DETAIL.MODIFICATION_DATE)
-				.values(detail.getDomain(), detail.getPurchaseId(),
-						detail.getProject(), detail.getLine().shortValue(),
-						detail.getItem(), detail.getDescription(),
-						detail.getQuantity(), detail.getPrice(),
-						detail.getDiscountExpression(), detail.getTaxes(),
-						(byte) detail.getStatus().ordinal(),
-						detail.getProposalDetail(), detail.getDelivered(),
-						detail.getSource().value(), detail.getSourceId(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate).execute();
+		return ctx.getDslContext()
+			.insertInto(PURCHASE_DETAIL, 
+					PURCHASE_DETAIL.DOMAIN, PURCHASE_DETAIL.PURCHASE, 
+					PURCHASE_DETAIL.PROJECT,PURCHASE_DETAIL.LINE,
+					PURCHASE_DETAIL.ITEM, PURCHASE_DETAIL.DESCRIPTION, 
+					PURCHASE_DETAIL.QUANTITY, PURCHASE_DETAIL.PRICE,
+					PURCHASE_DETAIL.DISCOUNT_EXPR, PURCHASE_DETAIL.TAXES, 
+					PURCHASE_DETAIL.STATUS, PURCHASE_DETAIL.PROPOSAL_DETAIL,
+					PURCHASE_DETAIL.DELIVERED, PURCHASE_DETAIL.DELIVERY_DATE, 
+					PURCHASE_DETAIL.SOURCE, PURCHASE_DETAIL.SOURCE_ID,
+					PURCHASE_DETAIL.CREATION_USER, PURCHASE_DETAIL.CREATION_DATE,
+					PURCHASE_DETAIL.MODIFICATION_USER, PURCHASE_DETAIL.MODIFICATION_DATE)
+			.values(detail.getDomain(), detail.getPurchaseId(),
+					detail.getProject(), detail.getLine().shortValue(),
+					detail.getItem(), detail.getDescription(),
+					detail.getQuantity(), detail.getPrice(),
+					detail.getDiscountExpression(), detail.getTaxes(),
+					detail.getStatus().value(), detail.getProposalDetail(), 
+					detail.getDelivered(), AonDateUtils.toTimestamp(detail.getDeliveryDate()),
+					detail.getSource().value(), detail.getSourceId(),
+					ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
+					ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
+			.execute();
 	}
+	
+	public static PurchaseDetail updatePurchaseDetail(AONContext ctx, PurchaseDetail purchaseDetail, PurchaseDetailFilter filter) {
+		ctx.checkWrite();
+		purchaseDetail.setModificationDate(new Date());
+		purchaseDetail.setModificationUser(ctx.getUser());
+		
+		return ctx.getDslContext()
+				.update(PURCHASE_DETAIL)
+				.set(PURCHASE_DETAIL.DOMAIN,purchaseDetail.getDomain())
+				.set(PURCHASE_DETAIL.PURCHASE, purchaseDetail.getPurchase().getId())
+				.set(PURCHASE_DETAIL.PROJECT, purchaseDetail.getProject())
+				.set(PURCHASE_DETAIL.LINE, purchaseDetail.getLine().shortValue())
+				.set(PURCHASE_DETAIL.ITEM, purchaseDetail.getItem())
+				.set(PURCHASE_DETAIL.DESCRIPTION, purchaseDetail.getDescription())
+				.set(PURCHASE_DETAIL.QUANTITY, purchaseDetail.getQuantity())
+				.set(PURCHASE_DETAIL.PRICE, purchaseDetail.getPrice())
+				.set(PURCHASE_DETAIL.DISCOUNT_EXPR, purchaseDetail.getDiscountExpression())
+				.set(PURCHASE_DETAIL.TAXES, purchaseDetail.getTaxes())
+				.set(PURCHASE_DETAIL.STATUS, purchaseDetail.getStatus().value())
+				.set(PURCHASE_DETAIL.SOURCE, purchaseDetail.getSource().value())
+				.set(PURCHASE_DETAIL.SOURCE_ID, purchaseDetail.getSourceId())
+				.set(PURCHASE_DETAIL.PROPOSAL_DETAIL, purchaseDetail.getProposalDetail())
+				.set(PURCHASE_DETAIL.DELIVERED, purchaseDetail.getDelivered())
+				.set(PURCHASE_DETAIL.DELIVERY_DATE, AonDateUtils.toTimestamp(purchaseDetail.getDeliveryDate()))
+				.set(PURCHASE_DETAIL.CREATION_USER, purchaseDetail.getCreationUser())
+				.set(PURCHASE_DETAIL.CREATION_DATE, AonDateUtils.toTimestamp(purchaseDetail.getCreationDate()))
+				.set(PURCHASE_DETAIL.MODIFICATION_USER, purchaseDetail.getModificationUser())
+				.set(PURCHASE_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(purchaseDetail.getModificationDate()))
+			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
+			.returning().fetch().stream().map(new PurchaseDetailFiller()).findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static void deletePurchaseDetail(AONContext ctx, PurchaseDetailFilter filter) {
+		ctx.getDslContext().delete(PURCHASE_DETAIL).where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter));
+	}
+	
+	public static PurchaseDetail getPurchaseDetail(AONContext ctx, PurchaseDetailFilter filter){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL).where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static PurchaseDetail getTargetManufactureDetail(AONContext ctx, Integer salesDetailId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL).leftOuterJoin(PURCHASE).onKey()
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+				.and(PURCHASE_DETAIL.SOURCE_ID.eq(salesDetailId))
+				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.MANUFACTURE.value()))
+				.orderBy(PURCHASE_DETAIL.ID.desc())
+				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static PurchaseDetail getTargetPurchaseDetail(AONContext ctx, Integer salesDetailId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL).leftOuterJoin(PURCHASE).onKey()
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+				.and(PURCHASE_DETAIL.SOURCE_ID.eq(salesDetailId))
+				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.NORMAL.value()))
+				.orderBy(PURCHASE_DETAIL.ID.desc())
+				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static List<PurchaseDetail> getTargetManufactureDetails(AONContext ctx, Integer salesId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
+					.leftOuterJoin(PURCHASE).onKey()
+					.leftOuterJoin(SALES_DETAIL).on(PURCHASE_DETAIL.SOURCE_ID.eq(SALES_DETAIL.ID))
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+					.and(SALES_DETAIL.SALES.eq(salesId))
+					.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.MANUFACTURE.value()))
+				.fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx))
+				.collect(Collectors.toList());
+	}
+	
+	public static List<PurchaseDetail> getTargetPurchaseDetails(AONContext ctx, Integer salesId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
+				.leftOuterJoin(PURCHASE).onKey()
+				.leftOuterJoin(SALES_DETAIL).on(PURCHASE_DETAIL.SOURCE_ID.eq(SALES_DETAIL.ID))
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+				.and(SALES_DETAIL.ID.eq(salesId))
+				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.NORMAL.value()))
+				.fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx))
+				.collect(Collectors.toList());
+	}
+
+	// -------------------- SUPPLIER
 	
 	private static Integer createCompanySupplier(AONContext ctx, int domain,
 			int registry, int scope) {
@@ -306,7 +343,6 @@ public class PurchaseDAO {
 						new java.sql.Timestamp(new Date().getTime()),
 						new java.sql.Timestamp(new Date().getTime())).execute();
 	}
-
 	
 	private static Integer obtainSupplier(AONContext ctx, Integer registryId) {
 		Record1<Integer> result = ctx.getDslContext().select(SUPPLIER.REGISTRY).from(SUPPLIER)
@@ -330,8 +366,6 @@ public class PurchaseDAO {
 				.and(PURCHASE.SERIES.eq(series))
 				.fetchAny().value1();
 	}
-	
-
 	
 	private static class FullPurchaseFiller implements Function<Record, Purchase> {
 		@Override

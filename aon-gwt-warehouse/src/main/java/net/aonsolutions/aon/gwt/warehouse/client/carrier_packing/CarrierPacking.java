@@ -113,6 +113,11 @@ public class CarrierPacking extends AonTemplate{
 				@Override protected void back() {
 					startApplication();
 				}
+				@Override
+				protected void packingList() {
+					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
+					API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
+				}
 			};
 			setToolbar(toolbar);
 		}
@@ -131,6 +136,7 @@ public class CarrierPacking extends AonTemplate{
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
+		toolbar.packingList.setVisible(true);
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 		setNorthContent(new CarrierPackingPanel(me,js));
 		setContent(new CarrierPackingSelect(me, js));

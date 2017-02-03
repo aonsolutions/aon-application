@@ -29,6 +29,9 @@ public interface IManagement {
 	
 	// -------------------- PURCHASE DETAIL
 	Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter);
+	Integer insertPurchaseDetail(AONContext ctx, PurchaseDetail purchaseDetail);
+	PurchaseDetail updatePurchaseDetail(AONContext ctx, PurchaseDetail purchaseDetail, PurchaseDetailFilter filter);
+	void deletePurchaseDetail(AONContext ctx, PurchaseDetailFilter filter);
 	
 	// -------------------- DELIVERY 
 	Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter);

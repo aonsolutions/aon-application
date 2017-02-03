@@ -12,6 +12,7 @@ public class RAddress implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Integer registry;
+	private String registryName;
 	private Byte type;	
 	private String recipient;
 	private String street_type;
@@ -22,6 +23,7 @@ public class RAddress implements Serializable {
 	private String zip;	
 	private String city;
 	private Integer geozone;
+	private String geozoneName;
 	private String alias;	
 	private String municipality_code;
 	
@@ -161,6 +163,24 @@ public class RAddress implements Serializable {
 
 	public RAddress setMunicipality_code(String municipality_code) {
 		this.municipality_code = municipality_code;
+		return this;
+	}
+
+	public String getRegistryName() {
+		return registryName;
+	}
+
+	public RAddress setRegistryName(String registryName) {
+		this.registryName = registryName;
+		return this;
+	}
+
+	public String getGeozoneName() {
+		return geozoneName;
+	}
+
+	public RAddress setGeozoneName(String geozoneName) {
+		this.geozoneName = geozoneName;
 		return this;
 	}
 

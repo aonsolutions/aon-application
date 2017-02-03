@@ -200,6 +200,9 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.SOURCE);}
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.SOURCE_ID);}
 		@Override public Property<Double> getDeliveredProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.DELIVERED);}
+
+		@Override public Property<Integer> getCarrierPackingProperty() {return null;} // TODO new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
+		
 	}
 	
 	protected static class PurchasePropertiesDAO implements PurchaseProperties {
@@ -256,6 +259,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
 		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CARRIER_PACKING);}
+		// TODO @Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
 	}
 	
 	protected static class DeliveryPropertiesDAO implements DeliveryProperties {
