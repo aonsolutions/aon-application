@@ -104,8 +104,8 @@ public class Preauthorization {
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getTokenProperty().isNotNull())); 
 		stream.forEach(r -> {
 			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), "");
-			ConexFlowConnection connection = DBConsults.getConection(d);
 			if(!DBConsults.hasCheckOp(d, login, r.getProject(), ConexFlowConstant.PREAUTHORIZATION_OP)){
+				ConexFlowConnection connection = DBConsults.getConection(d);
 				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
 					, r.getHotelReservation().toString(), r.getToken(), 0.01);
 				ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query
@@ -113,7 +113,18 @@ public class Preauthorization {
 				String msg = "";
 				if (!conexFlow.getRespuesta().getResultado().equals("000"))
 					msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-				else msg = "PREAUTHORIZATION OK";
+				else {
+					msg = "PREAUTHORIZATION OK";
+					
+					// CANCELAR PREAUTHORIZACION 001
+					Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
+							, conexFlow.getRespuesta().getOperacion(), Double.parseDouble(conexFlow.getRespuesta().getImporte())
+							, Double.parseDouble(conexFlow.getRespuesta().getImporte()) 
+							, conexFlow.getRespuesta().getAutorizacion(), r.getHotelReservation().toString()
+							, conexFlow.getRespuesta().getIdOperacion(), conexFlow.getRespuesta().getFecha());
+					ConexFlowPost.execute(connection,ConexFlowConstant.	CANCELATION_OP, cancelQuery
+							,r.getProject(), d, true);
+				}
 				String projectName = DBConsults.getProjectName(d, login, r.getProject());
 				View.preauthorized(projectName, r.getProject(), msg, 0.01);
 			}
@@ -131,18 +142,21 @@ public class Preauthorization {
 					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value())))); 
 		stream.forEach(r -> {
 			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), "");
-			ConexFlowConnection connection = DBConsults.getConection(d);
-			Double amount = r.getPenaltyAmount();
-			Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-				, r.getHotelReservation().toString(), r.getToken(), amount);
-			ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query
-				, r.getProject(), d, true);
-			String msg = "";
-			if (!conexFlow.getRespuesta().getResultado().equals("000"))
-				msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-			else msg = "PREAUTHORIZATION OK";
-			String projectName = DBConsults.getProjectName(d, login, r.getProject());
-			View.preauthorized(projectName, r.getProject(), msg, amount);
+			ConexFlow cf = DBConsults.getConexFlowLastOperation(d, login, r.getProject(), "CHECK-" + ConexFlowConstant.PREAUTHORIZATION_OP);
+			if(cf == null || Long.parseLong(cf.getRespuesta().getImporte()) <= 0.01){
+				ConexFlowConnection connection = DBConsults.getConection(d);
+				Double amount = r.getPenaltyAmount();
+				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
+					, r.getHotelReservation().toString(), r.getToken(), amount);
+				ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query
+					, r.getProject(), d, true);
+				String msg = "";
+				if (!conexFlow.getRespuesta().getResultado().equals("000"))
+					msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+				else msg = "PREAUTHORIZATION OK";
+				String projectName = DBConsults.getProjectName(d, login, r.getProject());
+				View.preauthorized(projectName, r.getProject(), msg, amount);
+			}
 		});
 
 	}
