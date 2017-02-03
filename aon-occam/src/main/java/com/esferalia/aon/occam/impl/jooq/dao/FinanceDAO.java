@@ -110,20 +110,32 @@ public class FinanceDAO {
 		return fetch(ctx, filter, offset, numberOfRows)
 				.peek(finance -> fillCustomerAcccount(ctx,finance))
 				.peek(finance -> fillSupplierAcccount(ctx,finance))
+				.filter(finance -> 
+						finance.hasInvoice()						// Si viene de factura debe pasar
+																	// o
+						|| (!finance.hasInvoice()					// Si no viene de factura, 
+						&& finance.isPayment()			 			// y es un pago 
+						&& finance.getRegistryAccountId() == null))	// y no hay cuenta (el paso anterior no ha rellenado la cuenta)
 				.peek(finance -> fillCreditorAcccount(ctx,finance))
 			;
 	}
 	
 	
 	private static Finance fillCustomerAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null && (finance.isFromSalesInvoice() || !finance.isPayment())) {
+		if (finance.getRegistry() != null	 
+			&& (finance.isFromSalesInvoice()					// Es factura de Venta 
+			|| (!finance.hasInvoice() && !finance.isPayment())) // Cobro sin factura
+			) {
 			Account account = RegistryDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
 		return finance;
 	}
 	private static Finance fillSupplierAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null && (finance.isFromPurchaseInvoice() || finance.isPayment())) {
+		if (finance.getRegistry() != null 
+			&& (finance.isFromPurchaseInvoice()					// Es factura de Compra 
+			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura
+			) {
 			Account account = RegistryDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
@@ -131,7 +143,10 @@ public class FinanceDAO {
 	}
 	private static Finance fillCreditorAcccount(AONContext ctx,Finance finance) {
 		if (finance.getRegistry() != null && 
-			(finance.isFromExpensesInvoice() || finance.isFromUndeductibleInvoice() || finance.isPayment())) {
+			(finance.isFromExpensesInvoice()					// Es factura de Gastos 
+			|| finance.isFromUndeductibleInvoice() 				// Es factura de Gastos No Ded.
+			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura 
+			) {
 			Account account = RegistryDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}

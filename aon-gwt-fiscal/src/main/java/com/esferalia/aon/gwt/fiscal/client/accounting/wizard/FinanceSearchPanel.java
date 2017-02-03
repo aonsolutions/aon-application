@@ -54,7 +54,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private int domainId;
 	private User user;
 	
-	final private int limit = 20;
+	final private int limit = 40;
 	
 	final private MutableInt offset = new MutableInt(0);
 	final private MutableInt moreData = new MutableInt(0);
@@ -407,7 +407,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 							container.add(line);
 							disableMoreData();
 						}
-//						enableSearch();
+						enableSearch();
 					}
 					
 					@Override
@@ -416,7 +416,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 						InlineLabel label = new InlineLabel(AON.MSG.noData());
 						line.add(label);
 						container.add(line);
-//						enableSearch();
+						enableSearch();
 					}
 				});
 	}

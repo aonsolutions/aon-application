@@ -75,17 +75,20 @@ public class Finance implements Serializable, HasAudit {
 		this.invoice = invoice;
 		return this;
 	}
+	public boolean hasInvoice(){
+		return getInvoice() != null;
+	}
 	public boolean isFromSalesInvoice(){
-		return getInvoice() != null && getInvoice().isSales();
+		return hasInvoice() && getInvoice().isSales();
 	}
 	public boolean isFromExpensesInvoice(){
-		return getInvoice() != null && getInvoice().isExpenses();
+		return hasInvoice() && getInvoice().isExpenses();
 	}
 	public boolean isFromPurchaseInvoice(){
-		return getInvoice() != null && getInvoice().isPurchase();
+		return hasInvoice() && getInvoice().isPurchase();
 	}
 	public boolean isFromUndeductibleInvoice(){
-		return getInvoice() != null && getInvoice().isUndeductible();
+		return hasInvoice() && getInvoice().isUndeductible();
 	}
 	
 	public Integer getPayMethod() {
