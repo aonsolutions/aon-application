@@ -99,7 +99,7 @@ public class RegistryDocument implements Serializable {
 	}
 
 	public boolean isValidNIE() {
-		if (doc == null || doc.length == 0) {
+		if (doc == null || doc.length != 9) {
 			return false;
 		}
 		if (country != Country.ES || type != DocumentType.NIE) {
@@ -116,7 +116,7 @@ public class RegistryDocument implements Serializable {
 	}
 
 	public boolean isValidNIF() {
-		if (doc == null || doc.length == 0) {
+		if (doc == null || doc.length != 9) {
 			return false;
 		}
 		if (country != Country.ES || type != DocumentType.NIF) {
@@ -131,7 +131,7 @@ public class RegistryDocument implements Serializable {
 	}
 
 	public boolean isValidCIF() {
-		if (doc == null || doc.length == 0) {
+		if (doc == null || doc.length != 9) {
 			return false;
 		}
 		if (country != Country.ES || type != DocumentType.CIF) {

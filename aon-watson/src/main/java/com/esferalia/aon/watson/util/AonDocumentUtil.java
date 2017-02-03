@@ -25,6 +25,9 @@ public class AonDocumentUtil {
 	}
 	
 	public static boolean isValidNIE(char[] doc) {
+		if (doc.length != 9) {
+			return false;
+		}
 		doc[0] = (doc[0] == 'X') ? '0' : doc[0];
 		doc[0] = (doc[0] == 'Y') ? '1' : doc[0];
 		doc[0] = (doc[0] == 'Z') ? '2' : doc[0];
@@ -36,6 +39,9 @@ public class AonDocumentUtil {
 	}
 
 	public static boolean isValidNIF(char[] doc) {
+		if (doc.length != 9) {
+			return false;
+		}
 		doc[0] = (doc[0] == 'K' || doc[0] == 'L' || doc[0] == 'M') ? '0' : doc[0];
 		String numbers = new String(doc, 0, 8);
 		if (!isNumeric(numbers)) {
@@ -45,6 +51,9 @@ public class AonDocumentUtil {
 	}
 
 	public static boolean isValidCIF(char[] doc) {
+		if (doc.length != 9) {
+			return false;
+		}
 		int lInDC = 0;
 		for (int i = 1; i < 8; ++i) {
 			String strDigit = new String(doc, i, 1);
@@ -91,14 +100,14 @@ public class AonDocumentUtil {
     }
 
     public static boolean isEntity(String doc) {
-		if (doc == null || doc.length() == 0) {
+		if (doc == null || doc.length() != 9) {
 			return false;
 		}
     	return (doc.matches("^(A|B|C|D|E|F|G|H|J|P|Q|R|S|U|V|N|W).{8}"));
     }
 
     public static boolean isCulturalAssociation(String doc) {
-		if (doc == null || doc.length() == 0) {
+		if (doc == null || doc.length() != 9) {
 			return false;
 		}
     	return (doc.matches("^(G).{8}"));
