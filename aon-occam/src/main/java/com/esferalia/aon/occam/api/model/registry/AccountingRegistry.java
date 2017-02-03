@@ -370,10 +370,14 @@ public class AccountingRegistry implements Serializable {
 				+ AonStringUtils.defaultIfEmpty(accRegistry.getAccountCode(),"NO CTA CTB")
 				+ AonStringUtils.CLOSE_BRACKET
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.defaultIfEmpty(accRegistry.getDocumentType().getDescription()
+				+ AonStringUtils.defaultIfEmpty((accRegistry.getDocumentType() != null
+						?accRegistry.getDocumentType().getDescription()
+						:null)
 					, AonStringUtils.repeat(AonStringUtils.QUESTION, 3))
 				+ AonStringUtils.HYPHEN
-				+ AonStringUtils.defaultIfEmpty(accRegistry.getDocumentCountry().getIso2()
+				+ AonStringUtils.defaultIfEmpty((accRegistry.getDocumentCountry()!=null
+						?accRegistry.getDocumentCountry().getIso2()
+						:null)
 					, AonStringUtils.repeat(AonStringUtils.QUESTION, 2)) 
 				+ AonStringUtils.SLASH
 				+ AonStringUtils.defaultIfEmpty(accRegistry.getDocument()
