@@ -282,6 +282,9 @@ public class EmployeeCalendarDraft extends Composite {
 	PaperIconButton expandHourBtnD;
 	
 	@UiField
+	PaperIconButton hourButton;
+	
+	@UiField
 	HTMLPanel bloqueLunes;
 	
 	@UiField
@@ -412,7 +415,8 @@ public class EmployeeCalendarDraft extends Composite {
 		inicializarCellsCalendar();
 		
 		//Bloquear boton horas hasta seleccion
-		horasButton.setEnabled(false);		
+		horasButton.setEnabled(false);
+		hourButton.setDisabled(true);
 		
 		horasMenuItem.setScheduledCommand(new Command() {
 
@@ -446,30 +450,6 @@ public class EmployeeCalendarDraft extends Composite {
 				dialogHoras.open();
 				comprobarDiasAMostrar();
 			}
-
-			private void comprobarDiasAMostrar() {
-				//Ocultar todos los dias
-				for (int i=0; i<7; i++)
-					divDays[i].addStyleName(style.ocultarDivStyle());
-				
-				//Gestionar los dias seleccionados (mostrar y actualizar valor)
-				for (int i = 0; i < 7; i++){
-					final int c =i; 
-					Double value = posicionesSeleccionas.stream()
-							.filter(p -> es(c, calcularColumna(p.intValue())))
-							.map( p-> new Integer[]{calcularFila(p.intValue())+1, calcularColumna(p.intValue())})
-							.map(p->cells[p[0]][p[1]].getHour(p[0], p[1]))
-							.peek(p -> divDays[c].removeStyleName(style.ocultarDivStyle()))
-							.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> Double.MIN_VALUE == h1 || h2.equals(h1) ? h2: null ))
-							;
-					
-					if(value != null)
-						suggestOpts[c].setValue(value+"");
-					else
-						suggestOpts[c].setValue("");
-				}
-	
-			}
 		});
 		
 	}
@@ -479,6 +459,7 @@ public class EmployeeCalendarDraft extends Composite {
 	public void onCalendarClick(ClickEvent event) {
 		event.preventDefault();
 		horasButton.setEnabled(true);
+		hourButton.setDisabled(false);
 		int row = calendarGrid.getCellForEvent(event).getRowIndex();
 		int col = calendarGrid.getCellForEvent(event).getCellIndex();
 		int pos = (row * 38) + col;
@@ -571,6 +552,7 @@ public class EmployeeCalendarDraft extends Composite {
 		actualizarHoras(horasLunes, horasMartes, horasMiercoles, horasJueves, horasViernes, horasSabado, horasDomingo);
 		dialogHoras.close();
 		horasButton.setEnabled(false);
+		hourButton.setDisabled(true);
 	}
 
 	@UiHandler("eraseButton")
@@ -663,6 +645,12 @@ public class EmployeeCalendarDraft extends Composite {
 			cells[row][column].setAsSuspension(row, column);
 		}
 		posicionesSeleccionas.clear();
+	}
+	
+	@UiHandler("hourButton")
+	public void onHourClick(ClickEvent event) {
+		dialogHoras.open();
+		comprobarDiasAMostrar();
 	}
 
 	@UiHandler("lastYearButton")
@@ -966,6 +954,30 @@ public class EmployeeCalendarDraft extends Composite {
 			}
 		}
 		limpiarSeleccion(posicionesSeleccionas);
+	}
+	
+	private void comprobarDiasAMostrar() {
+		//Ocultar todos los dias
+		for (int i=0; i<7; i++)
+			divDays[i].addStyleName(style.ocultarDivStyle());
+		
+		//Gestionar los dias seleccionados (mostrar y actualizar valor)
+		for (int i = 0; i < 7; i++){
+			final int c =i; 
+			Double value = posicionesSeleccionas.stream()
+					.filter(p -> es(c, calcularColumna(p.intValue())))
+					.map( p-> new Integer[]{calcularFila(p.intValue())+1, calcularColumna(p.intValue())})
+					.map(p->cells[p[0]][p[1]].getHour(p[0], p[1]))
+					.peek(p -> divDays[c].removeStyleName(style.ocultarDivStyle()))
+					.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> Double.MIN_VALUE == h1 || h2.equals(h1) ? h2: null ))
+					;
+			
+			if(value != null)
+				suggestOpts[c].setValue(value+"");
+			else
+				suggestOpts[c].setValue("");
+		}
+
 	}
 
 	

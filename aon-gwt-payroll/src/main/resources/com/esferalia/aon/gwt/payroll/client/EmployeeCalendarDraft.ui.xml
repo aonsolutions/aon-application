@@ -153,7 +153,7 @@
 		}
 		
 		.iconEraseStyle {
-			margin-left: 220px;
+			margin-left: 200px;
 		}
 		
 		.mesesImparesStyle {
@@ -419,6 +419,10 @@
 						<p:PaperButton styleName="{style.cellStyle} {style.suspensionStyle}"
 							ui:field="diaSuspensionButton"></p:PaperButton>
 						Suspensión
+					</i:IronLabel>
+					<i:IronLabel>
+						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton"/>
+						Horas
 					</i:IronLabel>
 					<i:IronLabel>
 						<p:PaperIconButton icon="icons:clear" ui:field="eraseButton"
