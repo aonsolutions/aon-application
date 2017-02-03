@@ -133,7 +133,7 @@ public class EdiSalesImporterHandler implements Serializable {
 		Sales sales = (Sales) controller.getTo();
 		try {
 			String customerCode = rectl.ere1pList.stream()
-					.filter(o -> ERE1P.ERE1P_2.EMISOR_DEL_MENSAJE_MS.getValue().equals(o.getCalificadorDelInterlocutor()))
+					.filter(o -> ERE1P.ERE1P_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.getValue().equals(o.getCalificadorDelInterlocutor()))
 					.map(ERE1P::getCodigoInterlocutor)
 					.findFirst()
 					.orElse(rectl.getCodigoEmisor());
