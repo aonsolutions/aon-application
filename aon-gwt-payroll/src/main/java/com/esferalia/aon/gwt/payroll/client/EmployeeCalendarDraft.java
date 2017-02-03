@@ -337,6 +337,9 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	@UiField
 	Button redoButton;
+	
+	@UiField
+	Button undoAllButton;
 
 	private final static int MONDAY = 0;
 	private final static int TUESDAY = 1;
@@ -695,14 +698,29 @@ public class EmployeeCalendarDraft extends Composite {
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		calendarEmployeeInfo.undoManager.undo();
-		initCalendar();
+		limpiarCalendario();
+		this.mes = 0;
+		mostrarCalendarioWidget(Integer.parseInt(yearLabel.getText())- 1900);
 	}
 
 	@UiHandler("redoButton")
 	void onRedoButtonClick(ClickEvent event) {
 		calendarEmployeeInfo.undoManager.redo();
-		initCalendar();
+		limpiarCalendario();
+		this.mes = 0;
+		mostrarCalendarioWidget(Integer.parseInt(yearLabel.getText())- 1900);
 	}
+	
+	@UiHandler("undoAllButton")
+	void onUndoAllButtonClick(ClickEvent event) {
+		while (calendarEmployeeInfo.undoManager.canUndo())
+			calendarEmployeeInfo.undoManager.undo();
+		
+		limpiarCalendario();
+		this.mes = 0;
+		mostrarCalendarioWidget(Integer.parseInt(yearLabel.getText())- 1900);
+	}
+	
 
 	// ---------------------------------------------------------------- Metodos Auxiliares -------------------------------------------
 	public void setEmployeeCalendarDraftObject(EmployeeCalendarDraftObjectData calendar) {
@@ -710,8 +728,9 @@ public class EmployeeCalendarDraft extends Composite {
 		this.calendarEmployeeInfo.undoManager.addListener(new UndoManager.Listener() {
 			@Override
 			public void onChange(UndoManager undoManager) {
-				// TODO Auto-generated method stub
+				redoButton.setEnabled(undoManager.canRedo());
 				undoButton.setEnabled(undoManager.canUndo());
+				undoAllButton.setEnabled(undoManager.canUndo());
 			}
 		});
 		initCalendar();
