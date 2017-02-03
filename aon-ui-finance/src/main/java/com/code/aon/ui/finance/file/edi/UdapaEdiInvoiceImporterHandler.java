@@ -95,6 +95,10 @@ public class UdapaEdiInvoiceImporterHandler implements Serializable {
 	}
 
 	public void onImportFile(ActionEvent event) {
+		importFile(event, false);
+	}
+	
+	public void importFile(ActionEvent event, boolean testing) {
 		setShowImportFileWindow(false);
 		UdapaInvoiceReader reader = new UdapaInvoiceReader();
 		SINCC sincc = null;
@@ -106,12 +110,12 @@ public class UdapaEdiInvoiceImporterHandler implements Serializable {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		getLogPanel().info("Inicio del proceso de importacion");
-		createInvoice(event, sincc);
+		createInvoice(event, sincc, testing);
 		getLogPanel().info("Proceso finalizado correctamente");
 		setAonFile(null);
 	}
 
-	public void createInvoice(ActionEvent event, SINCC sincc) {
+	public void createInvoice(ActionEvent event, SINCC sincc, boolean testing) {
 		Invoice invoice = (Invoice) controller.getTo();
 
 		String customerInvoiceCode = sincc.getCodigoComprador_QuienPide__BY_();
@@ -227,25 +231,29 @@ public class UdapaEdiInvoiceImporterHandler implements Serializable {
 				}
 
 				SaleInvoiceController saleInvoiceController = (SaleInvoiceController) controller;
-				saleInvoiceController.accept(event);
+				if (!testing) {
+					saleInvoiceController.accept(event);
+				}
 				getLogPanel().info("Factura creada: " + invoice.getReferenceCode());
 				SaleInvoiceDetailController detailController = (SaleInvoiceDetailController) FormUtil
 						.getController(IFinanceConstants.SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 				for (InvoiceDetail _detail : detailList) {
-					detailController.onReset(event);
-					InvoiceDetail detail = (InvoiceDetail) detailController.getTo();
-					detail.setInvoice(invoice);
-					detail.setItem(_detail.getItem());
-					detail.setLine(_detail.getLine());
-					detail.setDescription(_detail.getDescription());
-					detail.setQuantity(_detail.getQuantity());
-					detail.setPrice(_detail.getPrice());
-					detailController.onAccept(event);
+					if (!testing) {
+						detailController.onReset(event);
+						InvoiceDetail detail = (InvoiceDetail) detailController.getTo();
+						detail.setInvoice(invoice);
+						detail.setItem(_detail.getItem());
+						detail.setLine(_detail.getLine());
+						detail.setDescription(_detail.getDescription());
+						detail.setQuantity(_detail.getQuantity());
+						detail.setPrice(_detail.getPrice());
+						detailController.onAccept(event);
+					}
 
 					getLogPanel()
-							.info("Linea de factura " + detail.getLine()
-									+ " creada: " + detail.getQuantity()
-									+ " unidades de " + detail.getDescription());
+							.info("Linea de factura " + _detail.getLine()
+									+ " creada: " + _detail.getQuantity()
+									+ " unidades de " + _detail.getDescription());
 				}
 
 			}

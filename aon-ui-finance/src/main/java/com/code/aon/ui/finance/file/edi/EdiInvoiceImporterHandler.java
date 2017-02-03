@@ -31,8 +31,10 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryNote;
+import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -42,6 +44,7 @@ import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCL;
+import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCP;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCT;
 import com.esferalia.aon.file.seres.util.reader.connect.ConnectInvoiceReader;
 
@@ -53,6 +56,7 @@ public class EdiInvoiceImporterHandler implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EdiInvoiceImporterHandler.class);
+	private SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyyMMddhhmm");
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	
 	private final String SERIE_NUMBER_PATTERN = "^(\\w*)[\\W]?(\\d+)$";
@@ -63,6 +67,13 @@ public class EdiInvoiceImporterHandler implements Serializable {
 
 	public EdiInvoiceImporterHandler(IController controller) {
 		this.controller = controller;
+	}
+	
+	public SimpleDateFormat getDateTimeFormatter() {
+		return dateTimeFormatter;
+	}
+	public SimpleDateFormat getDateFormatter() {
+		return dateFormatter;
 	}
 
 	public AonFile getAonFile() {
@@ -96,6 +107,10 @@ public class EdiInvoiceImporterHandler implements Serializable {
 	}
 
 	public void onImportFile(ActionEvent event) {
+		importFile(event, false);
+	}
+	
+	public void importFile(ActionEvent event, boolean testing) {
 		setShowImportFileWindow(false);
 		ConnectInvoiceReader reader = new ConnectInvoiceReader();
 		RECTL rectl = null;
@@ -107,29 +122,38 @@ public class EdiInvoiceImporterHandler implements Serializable {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		getLogPanel().info("Inicio del proceso de importacion");
-		createInvoice(event, rectl);
+		createInvoice(event, rectl, testing);
 		getLogPanel().info("Proceso finalizado correctamente");
 		setAonFile(null);
 	}
 
-	public void createInvoice(ActionEvent event, RECTL rectl) {
+	public void createInvoice(ActionEvent event, RECTL rectl, boolean testing) {
 		Invoice invoice = (Invoice) controller.getTo();
 
-		String customerInvoiceCode = rectl.getCodigoEmisor();
-		if (customerInvoiceCode == null) {
+//		String customerInvoiceCode = rectl.getCodigoEmisor();
+		String customerCode = rectl.sincpList.stream()
+				.filter(o -> SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.getValue().equals(o.getCalificadorDelInterlocutor()))
+				.map(SINCP::getCodigoInterlocutor)
+				.findFirst()
+				.orElse(rectl.getCodigoEmisor());
+		
+		if (customerCode == null) {
 			getLogPanel()
 					.error("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
-			getLogPanel().error("Comprador: " + customerInvoiceCode);
+			getLogPanel().error("Comprador: " + customerCode);
 		} else {
-			Customer customer = searchCustomer(customerInvoiceCode.trim());
-			if (customer == null) {
-				getLogPanel().error(
-						"No existe el cliente con el codigo de punto de entrega "
-								+ customerInvoiceCode);
+			RegistryNote customerRegistryNote = searchCustomerNote(customerCode);
+			if(customerRegistryNote==null 
+					|| customerRegistryNote.getRegistry()==null 
+					|| customerRegistryNote.getRegistry().getId()==null){
+				getLogPanel().error("No existe el cliente con CodigoEmisor " + customerCode);
+				getLogPanel().info("PROCESO ABORTADO");
+				LOGGER.error("No existe el cliente con CodigoEmisor " + customerCode);
 			} else {
+				Customer customer = obtainCustomer(customerRegistryNote.getRegistry().getId());
 				getLogPanel().info(
 						"Cliente detectado con el codigo de punto de entrega "
-								+ customerInvoiceCode);
+								+ customerCode);
 
 				if(rectl.sincc.getNumeroDeFactura()!=null){
 					String serie = null;
@@ -228,25 +252,29 @@ public class EdiInvoiceImporterHandler implements Serializable {
 				}
 
 				SaleInvoiceController saleInvoiceController = (SaleInvoiceController) controller;
-				saleInvoiceController.accept(event);
+				if (!testing) {
+					saleInvoiceController.accept(event);
+				}
 				getLogPanel().info("Factura creada: " + invoice.getReferenceCode());
 				SaleInvoiceDetailController detailController = (SaleInvoiceDetailController) FormUtil
 						.getController(IFinanceConstants.SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 				for (InvoiceDetail _detail : detailList) {
-					detailController.onReset(event);
-					InvoiceDetail detail = (InvoiceDetail) detailController.getTo();
-					detail.setInvoice(invoice);
-					detail.setItem(_detail.getItem());
-					detail.setLine(_detail.getLine());
-					detail.setDescription(_detail.getDescription());
-					detail.setQuantity(_detail.getQuantity());
-					detail.setPrice(_detail.getPrice());
-					detailController.onAccept(event);
+					if (!testing) {
+						detailController.onReset(event);
+						InvoiceDetail detail = (InvoiceDetail) detailController.getTo();
+						detail.setInvoice(invoice);
+						detail.setItem(_detail.getItem());
+						detail.setLine(_detail.getLine());
+						detail.setDescription(_detail.getDescription());
+						detail.setQuantity(_detail.getQuantity());
+						detail.setPrice(_detail.getPrice());
+						detailController.onAccept(event);
+					}
 
 					getLogPanel()
-							.info("Linea de factura " + detail.getLine()
-									+ " creada: " + detail.getQuantity()
-									+ " unidades de " + detail.getDescription());
+							.info("Linea de factura " + _detail.getLine()
+									+ " creada: " + _detail.getQuantity()
+									+ " unidades de " + _detail.getDescription());
 				}
 
 			}
@@ -254,29 +282,44 @@ public class EdiInvoiceImporterHandler implements Serializable {
 
 	}
 
-	private Customer searchCustomer(String customerCode) {
-		Integer registryId = null;
+	protected RegistryNote searchCustomerNote(String customerCode) {
+		RegistryNote rNote = null;
 		try {
-			IManagerBean rnoteBean = BeanManager
-					.getManagerBean(RegistryNote.class);
+			IManagerBean rnoteBean = BeanManager.getManagerBean(RegistryNote.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.PTO_ENTREGA + "="
+					"%" + CustomerEdiSupportController.FACTURA + "="
 							+ customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
-			registryId = list != null && !list.isEmpty() ? ((RegistryNote) list
-					.get(0)).getRegistry().getId() : null;
+			rNote = list != null && !list.isEmpty() ? ((RegistryNote) list
+					.get(0)) : null;
 		} catch (ManagerBeanException ex) {
 			getLogPanel().error(ex.getMessage());
 			LOGGER.error(ex.getMessage());
 		}
-
-		if (registryId != null) {
+		return rNote;
+	}
+	
+	protected Customer obtainCustomer(Integer registryId) {		
+		if(registryId!=null){
 			try {
-				IManagerBean customerBean = BeanManager
-						.getManagerBean(Customer.class);
+				IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 				return (Customer) customerBean.get(registryId);
+			} catch (ManagerBeanException ex) {
+				getLogPanel().error(ex.getMessage());
+				LOGGER.error(ex.getMessage());
+			}
+		}
+		return null;
+	}
+	
+	protected RegistryAddress obtainAddress(Integer addressId) {		
+		if(addressId!=null){
+			try {
+				IManagerBean addressBean = BeanManager.getManagerBean(RegistryAddress.class);
+				return (RegistryAddress) addressBean.get(addressId);
 			} catch (ManagerBeanException ex) {
 				getLogPanel().error(ex.getMessage());
 				LOGGER.error(ex.getMessage());

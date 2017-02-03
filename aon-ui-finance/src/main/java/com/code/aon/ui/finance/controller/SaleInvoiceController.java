@@ -51,6 +51,7 @@ import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.file.edi.EdiInvoiceImporterHandler;
+import com.code.aon.ui.finance.file.edi.FtpSaleInvoiceDownloadHandler;
 import com.code.aon.ui.finance.file.edi.UdapaEdiInvoiceImporterHandler;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -76,6 +77,8 @@ public class SaleInvoiceController extends InvoiceController {
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
 	private UdapaEdiInvoiceImporterHandler udapaImporter;
+	
+	private FtpSaleInvoiceDownloadHandler ftpEdiDownloader;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -130,6 +133,13 @@ public class SaleInvoiceController extends InvoiceController {
 			udapaImporter = new UdapaEdiInvoiceImporterHandler(this);
 		}
 		return udapaImporter;
+	}
+
+	public FtpSaleInvoiceDownloadHandler getFtpEdiDownloader() {
+		if(ftpEdiDownloader==null){
+			ftpEdiDownloader = new FtpSaleInvoiceDownloadHandler(this);
+		}
+		return ftpEdiDownloader;
 	}
 
 	@Override

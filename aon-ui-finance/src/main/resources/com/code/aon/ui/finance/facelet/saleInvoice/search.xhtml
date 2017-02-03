@@ -12,25 +12,23 @@
 		
 		<ui:define name="additionalToolbarContent">
 			<aon:if test="#{company.ediSupportEnabled}">
-				<aon:commandButton id="import-Popup"
-					value="#{bundle.aon_import} #{bundle.aon_edi}"
-					title="#{bundle.aon_import}"
-					styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-					actionListener="#{controller.udapaImporter.onImportFileShow}"
-					action="saleInvoice_form">
-					<f:setPropertyActionListener target="#{controller.udapaImporter.showImportFileWindow}"
-						value="#{true}" />
-				</aon:commandButton>
-				<aon:commandButton id="ediImport-Popup"
-					value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
-					title="#{bundle.aon_import}"
-					styleClass="aon-finding-toolbar-item aon-icon-new-text"
-					actionListener="#{controller.ediImporter.onImportFileShow}"
-					action="saleInvoice_form">
-					<f:setPropertyActionListener target="#{controller.ediImporter.showImportFileWindow}"
+				<aon:commandButton id="saleInvoice-ediFtp"
+					value="SERESNET"
+					title="Recuperar del servidor FTP de Seresnet"
+					styleClass="aon-finding-toolbar-item aon-icon-seresnet"
+					actionListener="#{controller.ftpEdiDownloader.onShowFtpEdi}"
+					action="saleInvoice_form"
+					onclick="Richfaces.showModalPanel('waitProccess')" 
+					oncomplete="Richfaces.hideModalPanel('waitProccess')">
+					<f:setPropertyActionListener target="#{controller.ftpEdiDownloader.showEdiFtpWindow}"
 						value="#{true}" />
 				</aon:commandButton>
 			</aon:if>
+		</ui:define>
+		<ui:define name="afterFormContent">
+			<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+				<ui:param name="addWaitProcessPoll" value="#{true}" />
+			</ui:include>
 		</ui:define>
 		
 	</ui:decorate>

@@ -1,4 +1,4 @@
-package com.code.aon.ui.sales.importer.edi;
+package com.code.aon.ui.finance.file.edi;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -33,21 +33,21 @@ import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1P;
-import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
+import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
+import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCP;
 import com.esferalia.aon.file.seres.util.ftp.FtpException;
 import com.esferalia.aon.file.seres.util.ftp.FtpFile;
 import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
 import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
-import com.esferalia.aon.file.seres.util.reader.connect.ConnectSalesReader;
+import com.esferalia.aon.file.seres.util.reader.connect.ConnectInvoiceReader;
 
-public class FtpSalesDownloadHandler implements Serializable {
+public class FtpSaleInvoiceDownloadHandler implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	private static final Logger LOGGER = LoggerFactory.getLogger(FtpSalesDownloadHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FtpSaleInvoiceDownloadHandler.class);
 	
 	private IController controller;
 	private boolean showEdiFtpWindow;
@@ -72,7 +72,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 	
 	private SerializableListDataModel remoteDirectoryModel;
 	
-	public FtpSalesDownloadHandler(IController controller) {
+	public FtpSaleInvoiceDownloadHandler(IController controller) {
 		this.controller = controller;
 	}
 
@@ -165,7 +165,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 		ApplicationParameter pPort = AppParamUtil.getParameter("SERES_FTP_SERVER_PORT");
 		ApplicationParameter pUser = AppParamUtil.getParameter("SERES_FTP_USER");
 		ApplicationParameter pPasswd = AppParamUtil.getParameter("SERES_FTP_PASSWORD");
-		ApplicationParameter pPath = AppParamUtil.getParameter("SERES_FTP_PATH_ORDER");
+		ApplicationParameter pPath = AppParamUtil.getParameter("SERES_FTP_PATH_INVOICE");
 		
 		if (pServer != null)
 			server = pServer.getValue();
@@ -202,7 +202,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			AppParamUtil.insertParameter("SERES_FTP_SERVER_PORT", String.valueOf(port));
 		AppParamUtil.insertParameter("SERES_FTP_USER", user);
 		AppParamUtil.insertParameter("SERES_FTP_PASSWORD", password);
-		AppParamUtil.insertParameter("SERES_FTP_PATH_ORDER", remotePath);
+		AppParamUtil.insertParameter("SERES_FTP_PATH_INVOICE", remotePath);
 	}
 	
 	public void onShowFtpEdi(ActionEvent event) {
@@ -259,13 +259,12 @@ public class FtpSalesDownloadHandler implements Serializable {
 			List<FtpFile> list = SeresFtpConnectionProvider.retrieveFileList(
 					remotePath, date, date, server, port, user,
 					password);
-			ConnectSalesReader reader = new ConnectSalesReader();
-			com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler connectHandler = new com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler(
-					controller);
+			ConnectInvoiceReader reader = new ConnectInvoiceReader();
+			EdiInvoiceImporterHandler handler = new EdiInvoiceImporterHandler(controller);
 			unreadSalesList = new LinkedList<>();
 			if(list!=null && !list.isEmpty()){
 				list.forEach(ftpFile -> {
-					unreadSalesList.add(obtainStrippedOrder(reader, connectHandler, ftpFile));
+					unreadSalesList.add(obtainStrippedOrder(reader, handler, ftpFile));
 				});
 			}
 		} catch (FtpLoginException e) {
@@ -287,7 +286,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 		unreadSalesModel = null;
 	}
 	
-	private FtpFileOrder obtainStrippedOrder(ConnectSalesReader reader, EdiSalesImporterHandler connectHandler, FtpFile ftpFile) {
+	private FtpFileOrder obtainStrippedOrder(ConnectInvoiceReader reader, EdiInvoiceImporterHandler handler, FtpFile ftpFile) {
 		FtpFileOrder order = new FtpFileOrder();
 		order.setFtpFile(ftpFile);
 		
@@ -298,17 +297,17 @@ public class FtpSalesDownloadHandler implements Serializable {
 			aonFile.setData(byteFile);
 			rectl = reader.readFile(aonFile.openStream());
 			
-			String customerCode = rectl.ere1pList.stream()
-					.filter(o -> ERE1P.ERE1P_2.EMISOR_DEL_MENSAJE_MS.getValue().equals(o.getCalificadorDelInterlocutor()))
-					.map(ERE1P::getCodigoInterlocutor)
+			String customerCode = rectl.sincpList.stream()
+					.filter(o -> SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS.getValue().equals(o.getCalificadorDelInterlocutor()))
+					.map(SINCP::getCodigoInterlocutor)
 					.findFirst()
 					.orElse(rectl.getCodigoEmisor().trim());
 			
-			RegistryNote customerRegistryNote = connectHandler.searchCustomerNote(customerCode);
+			RegistryNote customerRegistryNote = handler.searchCustomerNote(customerCode);
 			order.setCustomerCode(customerCode);
 			if(customerRegistryNote!=null && customerRegistryNote.getId()!=null){
-				Customer customer = connectHandler.obtainCustomer(customerRegistryNote.getRegistry().getId());
-				RegistryAddress address = connectHandler.obtainAddress(Integer.valueOf(customerRegistryNote.getDescription()));
+				Customer customer = handler.obtainCustomer(customerRegistryNote.getRegistry().getId());
+				RegistryAddress address = handler.obtainAddress(Integer.valueOf(customerRegistryNote.getDescription()));
 				if(customer!=null && customer.getId()!=null){
 					order.setCustomerName(customer.getRegistry().getName());
 				}
@@ -318,7 +317,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			} else {
 				order.setCustomerName("***no registrado***");
 			}
-			order.setChargeDate(connectHandler.getDateTimeFormatter().parse(rectl.getFecha_horaDelMensaje()));
+			order.setChargeDate(handler.getDateTimeFormatter().parse(rectl.getFecha_horaDelMensaje()));
 			
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
@@ -394,8 +393,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			
 			getLogPanel()
 					.info("Iniciando importacion de fichero EDI (CONNECT)");
-			com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler connectHandler = new com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler(
-					controller);
+			EdiInvoiceImporterHandler connectHandler = new EdiInvoiceImporterHandler(controller);
 			connectHandler.setAonFile(new AonFile());
 			connectHandler.getAonFile().setData(byteFile);
 			try {
@@ -408,8 +406,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 						.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
 				getLogPanel().info(
 						"Iniciando importacion de fichero EDI (UDAPA)");
-				com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaHandler = new com.code.aon.ui.sales.udapa.EdiSalesImporterHandler(
-						controller);
+				UdapaEdiInvoiceImporterHandler udapaHandler = new UdapaEdiInvoiceImporterHandler(controller);
 				udapaHandler.setAonFile(new AonFile());
 				udapaHandler.getAonFile().setData(byteFile);
 				try {
