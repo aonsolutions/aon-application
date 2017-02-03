@@ -112,7 +112,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			if (config.getInvoiceRectificationSalesSeries() != null) {
 				for (String series : config.getInvoiceRectificationSalesSeries()) {
 					seriesBox.addItem(series,series);
-					if (i == 1) {
+					if (i == 0) {
 						seriesBox.setSelectedIndex(1);
 						data.setSeries(series);
 					}

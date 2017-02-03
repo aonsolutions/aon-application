@@ -569,6 +569,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 					data.setIssueDate(callback.getInvoice().getInvoice().getIssueDate());
 					data.setType(callback.getInvoice().getInvoice().getType());
 					data.setRectificationtype(RectificationType.NORMAL_RECTIFIER);
+					data.setSettleFinances(true);
 					final CustomDialog dialog = new CustomDialog();
 					dialog.setCaption(AON.MSG.rectifyInvoice());
 
