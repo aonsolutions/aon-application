@@ -396,7 +396,14 @@ public class Model184 extends MainEntryPoint {
 	}
 
 	private void showDetail(Mod184 currentMod1842) {
-		if ( currentMod184.getYear() == 2015 || currentMod184.getYear() == 2016) {
+		if ( currentMod184.getYear() == 2016) {
+			Model184Income2016 income = new Model184Income2016();
+			income.setMod184(currentMod184);	
+			incomesPanel.setWidget(income);
+			Model184Partner2016 partner = new Model184Partner2016();
+			partner.setMod184(currentMod184);	
+			partnersPanel.setWidget(partner);
+		} else if ( currentMod184.getYear() == 2015) {
 			Model184Income2015 income = new Model184Income2015();
 			income.setMod184(currentMod184);	
 			incomesPanel.setWidget(income);

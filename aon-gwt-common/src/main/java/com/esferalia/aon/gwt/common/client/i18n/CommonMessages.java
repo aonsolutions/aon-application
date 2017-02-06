@@ -3231,5 +3231,16 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("No se puede modificar")
 	String unableToUpdate();
+	
+	@DefaultMessage("Criterio de cobros y pagos")
+	String vatAccrualPayment184();
 
+	@DefaultMessage("Prov. ded. y gastos de dif. jus.")
+	String expenses184();
+
+	@DefaultMessage("Clave del declarado")
+	String declaredKey();
+	
+	@DefaultMessage("Porc. Titularidad del inmueble")
+	String assetPercent();
 }

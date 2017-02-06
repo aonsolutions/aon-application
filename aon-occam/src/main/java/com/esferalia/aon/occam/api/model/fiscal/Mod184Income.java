@@ -35,8 +35,7 @@ public class Mod184Income implements Serializable {
 	private double assetAcquisition;
 	private double taxDeduction;
 	private double otherTaxDeduction;
-	
-	
+	private boolean vatAccrualPayment; 
 
 	private boolean dirty;
 	private boolean deleted;
@@ -292,7 +291,13 @@ public class Mod184Income implements Serializable {
 		this.otherTaxDeduction = otherTaxDeduction;
 		return this;
 	}
-
+	public boolean isVatAccrualPayment() {
+		return vatAccrualPayment;
+	}
+	public Mod184Income setVatAccrualPayment(boolean vatAccrualPayment) {
+		this.vatAccrualPayment = vatAccrualPayment;
+		return this;
+	}
 	public boolean isDirty() {
 		return dirty;
 	}

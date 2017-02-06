@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod184DAO {
@@ -208,6 +209,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.ASSET_ACQUISITION,income.getAssetAcquisition())
 			.set(FS_MODEL184_DETAIL.TAX_DEDUCTION,income.getTaxDeduction())
 			.set(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION,income.getOtherTaxDeduction())
+			.set(FS_MODEL184_DETAIL.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte( income.isVatAccrualPayment()))
 			.execute();
 	}
 
@@ -238,6 +240,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.ASSET_ACQUISITION,income.getAssetAcquisition())
 			.set(FS_MODEL184_DETAIL.TAX_DEDUCTION,income.getTaxDeduction())
 			.set(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION,income.getOtherTaxDeduction())
+			.set(FS_MODEL184_DETAIL.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte( income.isVatAccrualPayment()))
 			.where(FS_MODEL184_DETAIL.ID.equal(income.getId()))
 			.execute();
 	}
@@ -284,6 +287,11 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.AMOUNT,partner.getAmount())
 			.set(FS_MODEL184_DETAIL.REDUCTION,partner.getReduction())
 			.set(FS_MODEL184_DETAIL.ADDRESS,partner.getAddress())
+			.set(FS_MODEL184_DETAIL.NATURE,partner.getNature())
+			.set(FS_MODEL184_DETAIL.LOCATION,partner.getLocation())
+			.set(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE,partner.getCadasdralReference())
+			.set(FS_MODEL184_DETAIL.DECLARED_KEY,partner.getDeclaredKey())
+			.set(FS_MODEL184_DETAIL.ASSET_PERCENT,partner.getAssetPercent())
 			.execute();
 	}
 
@@ -303,6 +311,11 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.AMOUNT,partner.getAmount())
 			.set(FS_MODEL184_DETAIL.REDUCTION,partner.getReduction())
 			.set(FS_MODEL184_DETAIL.ADDRESS,partner.getAddress())
+			.set(FS_MODEL184_DETAIL.NATURE,partner.getNature())
+			.set(FS_MODEL184_DETAIL.LOCATION,partner.getLocation())
+			.set(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE,partner.getCadasdralReference())
+			.set(FS_MODEL184_DETAIL.DECLARED_KEY,partner.getDeclaredKey())
+			.set(FS_MODEL184_DETAIL.ASSET_PERCENT,partner.getAssetPercent())
 			.where(FS_MODEL184_DETAIL.ID.equal(partner.getId()))
 			.execute();
 	}
@@ -392,6 +405,7 @@ public class Mod184DAO {
 				.setAssetAcquisition(record.getValue(FS_MODEL184_DETAIL.ASSET_ACQUISITION))
 				.setTaxDeduction(record.getValue(FS_MODEL184_DETAIL.TAX_DEDUCTION))
 				.setOtherTaxDeduction(record.getValue(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION))
+				.setVatAccrualPayment(AonEnumUtils.getBoolean(record.getValue(FS_MODEL184_DETAIL.VAT_ACCRUAL_PAYMENT)))
 				;
 		}
 	}
@@ -416,7 +430,15 @@ public class Mod184DAO {
 				.setSubKey(record.getValue(FS_MODEL184_DETAIL.SUBKEY))
 				.setAmount(record.getValue(FS_MODEL184_DETAIL.AMOUNT))
 				.setReduction(record.getValue(FS_MODEL184_DETAIL.REDUCTION))
-				.setAddress(record.getValue(FS_MODEL184_DETAIL.ADDRESS));
+				.setAddress(record.getValue(FS_MODEL184_DETAIL.ADDRESS))
+				.setExpenses(AonNumberUtils.zeroIfNull(record.getValue(FS_MODEL184_DETAIL.EXPENSES)))
+				.setNature(record.getValue(FS_MODEL184_DETAIL.NATURE))
+				.setLocation(record.getValue(FS_MODEL184_DETAIL.LOCATION))
+				.setCadasdralReference(record.getValue(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE))
+				.setDeclaredKey(record.getValue(FS_MODEL184_DETAIL.DECLARED_KEY))
+				.setAssetPercent(record.getValue(FS_MODEL184_DETAIL.ASSET_PERCENT))
+				;
+			
 		}
 	}
 

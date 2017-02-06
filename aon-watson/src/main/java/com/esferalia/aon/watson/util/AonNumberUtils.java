@@ -1,7 +1,5 @@
 package com.esferalia.aon.watson.util;
 
-
-
 public class AonNumberUtils {
 
 	public static final Integer INTEGER_ZERO = new Integer(0);
@@ -111,6 +109,10 @@ public class AonNumberUtils {
 		if (Double.compare(value.doubleValue(), limit1.doubleValue()) < 0) return false;
 		if (Double.compare(value.doubleValue(), limit2.doubleValue()) > 0) return false;
 		return true;
+	}
+
+	public static double zeroIfNull(Double value) {
+		return (value==null?0:value);
 	}
 
 }

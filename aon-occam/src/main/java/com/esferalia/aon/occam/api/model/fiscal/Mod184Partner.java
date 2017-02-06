@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonNumberUtils;
+
 public class Mod184Partner implements Serializable {
 
 	private static final long serialVersionUID = -7095816615909233361L;
@@ -23,6 +25,14 @@ public class Mod184Partner implements Serializable {
 	private double amount;
 	private double reduction;
 	private String address;
+	
+	private double expenses;
+	private String nature;
+	private String location;
+	private String cadasdralReference;
+	private String declaredKey;
+	private double assetPercent;
+	
 
 	private boolean dirty;
 	private boolean deleted;
@@ -181,6 +191,58 @@ public class Mod184Partner implements Serializable {
 		return this;
 	}
 
+	public double getExpenses() {
+		return expenses;
+	}
+	public Mod184Partner setExpenses(double expenses) {
+		this.expenses = expenses;
+		return this;
+	}
+	public String getNature() {
+		return nature;
+	}
+	public int getNatureIndex() {
+		try {
+			return nature==null?0:AonNumberUtils.toint(nature);
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+	public Mod184Partner setNature(String nature) {
+		this.nature = nature;
+		return this;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public Mod184Partner setLocation(String location) {
+		this.location = location;
+		return this;
+	}
+	public String getCadasdralReference() {
+		return cadasdralReference;
+	}
+
+	public Mod184Partner setCadasdralReference(String cadasdralReference) {
+		this.cadasdralReference = cadasdralReference;
+		return this;
+	}
+	
+	public String getDeclaredKey() {
+		return declaredKey;
+	}
+	public Mod184Partner setDeclaredKey(String declaredKey) {
+		this.declaredKey = declaredKey;
+		return this;
+	}
+	public double getAssetPercent() {
+		return assetPercent;
+	}
+	public Mod184Partner setAssetPercent(double assetPercent) {
+		this.assetPercent = assetPercent;
+		return this;
+	}
+	
 	public boolean isDirty() {
 		return dirty;
 	}

@@ -86,16 +86,19 @@ public class Mod184Print extends HttpServlet {
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
 		String urlParameters = 
-				"HID=INV5184A" + 
+				"HID=INF6184A" + 
 				"&IDI=ES" + 
+				"&LEV=000000000000" +
 				"&FIC="	+ encodedFile + 
 				"&RUT=" + 
-				"&PRG=" + 
+				"&PRG=PTLINKG2" + 
 				"&FIN=" + 
 				"&EJF=" + year +
 				"&MOD=184";
 		
-		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+//		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+		
 
 		URL url = new URL(request);
 
