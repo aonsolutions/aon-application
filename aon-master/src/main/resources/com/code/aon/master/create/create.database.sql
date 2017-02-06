@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.88.0
+# Version: 8.88.1
 # Created by: girazu
-# Creation Date: 03/02/2017 13:10
+# Creation Date: 06/02/2017 14:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4737,7 +4737,7 @@ CREATE TABLE `fs_model184_detail` (
   `vat_accrual_payment` tinyint(1) DEFAULT '0' COMMENT 'Regimen Especial de Criterio de Caja',
   `declared_key` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Clave del declarado',
   `nature` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Naturaleza del inmueble',
-  `asset_percent` double(15,3) DEFAULT 0 COMMENT 'Porc. titularidad inmueble',
+  `asset_percent` double(15,3) DEFAULT '0.000' COMMENT 'Porc. titularidad inmueble',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_DETAIL_FS_MODEL184` (`fs_model184`),
