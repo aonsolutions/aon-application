@@ -88,11 +88,13 @@ public class IngenetDeliveryManager {
 		Sales ingenetSales = obtainIngenetSales(domainName, user,
 				ingenetSalesDetail.getSales());
 		
-		String ingenetSalesSeries = ingenetSales.getSeries() == null ? ""
-				: ingenetSales.getSeries();
+		String ingenetSalesSeries = ingenetSales.getSeries();
 		Integer ingenetSalesNumber = ingenetSales.getNumber();
-		Sales aonSales = SalesDAO.getSales(ctx, ingenetSalesSeries,
-				ingenetSalesNumber);
+		Sales aonSales = SalesDAO.getSales(
+				ctx,
+				f -> (ingenetSalesSeries != null ? f.getSeriesProperty().eq(
+						ingenetSalesSeries) : f.getSeriesProperty().isNull())
+						.and(f.getNumberProperty().eq(ingenetSalesNumber)));
 		
 		if (aonSales == null | aonSales.getId() == null) {
 			throw new SourceSalesNotFoundException(
