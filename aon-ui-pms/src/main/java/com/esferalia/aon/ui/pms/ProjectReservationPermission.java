@@ -319,7 +319,7 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isCreditCardOperable() throws ManagerBeanException {
 		boolean roleAllowed = isRoleFinance();
-		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isNotEmpty(reservation.getCreditCardNumber());
+		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isNotEmpty(reservation.getToken());
 	}
 
 	public boolean isTouristTaxFreeAllowed() throws ManagerBeanException {

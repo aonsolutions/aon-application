@@ -1852,14 +1852,15 @@ public class ProjectReservationController extends BasicController implements IPm
 			ConexFlow conexFlow = null;
 			String errorMsg = null;
 			Query query = null;
-			
-			ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
-			if(cf == null || cf.getRespuesta() == null){
-				AonUtil.addErrorMessage("Error al realizar la operación");
-				throw new AbortProcessingException("Error al realizar la operación");
-			}
-			String token = cf.getRespuesta().getToken();
-			
+			String token = "";
+			if(reservation.getToken() == null){
+				ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+				if(cf == null || cf.getRespuesta() == null){
+					AonUtil.addErrorMessage("Error al realizar la operación");
+					throw new AbortProcessingException("Error al realizar la operación");
+				}
+				token = cf.getRespuesta().getToken();
+			} else token = reservation.getToken();
 			switch (getReservationConexFlow().getConexflowOperation()) {
 			case ConexFlowConstant.PREAUTHORIZATION_OP:	
 				query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
