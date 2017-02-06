@@ -4734,6 +4734,10 @@ CREATE TABLE `fs_model184_detail` (
   `asset_acquisition` double(15,3) DEFAULT '0.000' COMMENT 'Adquisicion a terceros de bienes y servicios',
   `tax_deduction` double(15,3) DEFAULT '0.000' COMMENT 'Tributos fiscalmente deducibles y gastos financieros',
   `other_tax_deduction` double(15,3) DEFAULT '0.000' COMMENT 'Otros gastos fiscalmente deducibles',
+  `vat_accrual_payment` tinyint(1) DEFAULT '0' COMMENT 'Regimen Especial de Criterio de Caja',
+  `declared_key` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Clave del declarado',
+  `nature` varchar(1) NOT NULL DEFAULT '0' COMMENT 'Naturaleza del inmueble',
+  `asset_percent` double(15,3) DEFAULT 0 COMMENT 'Porc. titularidad inmueble',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_DETAIL_FS_MODEL184` (`fs_model184`),
@@ -8341,7 +8345,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.88.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.88.1');
 
 COMMIT;
 
