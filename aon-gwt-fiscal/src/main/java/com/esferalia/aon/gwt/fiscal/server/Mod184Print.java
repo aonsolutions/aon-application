@@ -98,7 +98,7 @@ public class Mod184Print extends HttpServlet {
 		
 //		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
 		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
-		
+System.out.println(request);		
 
 		URL url = new URL(request);
 
