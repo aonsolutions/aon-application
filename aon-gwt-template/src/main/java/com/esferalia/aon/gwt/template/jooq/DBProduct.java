@@ -83,7 +83,7 @@ public class DBProduct {
 			if((item2.getBarcode() != null && item2.getBarcode().equals(item.getBarcode()))
 					|| details.equals(details2) && pack.equals(pack2)){
 				item2.setPurchasePrice(item.getPurchasePrice());
-				item2.setPrice(item.getPurchasePrice());
+				item2.setPrice(item.getPrice());
 				return item2;
 			}
 		}
