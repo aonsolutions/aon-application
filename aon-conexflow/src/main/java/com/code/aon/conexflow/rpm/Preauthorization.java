@@ -143,7 +143,7 @@ public class Preauthorization {
 		stream.forEach(r -> {
 			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), "");
 			ConexFlow cf = DBConsults.getConexFlowLastOperation(d, login, r.getProject(), "CHECK-" + ConexFlowConstant.PREAUTHORIZATION_OP);
-			if(cf == null || Long.parseLong(cf.getRespuesta().getImporte()) <= 0.01){
+			if(cf == null || Double.parseDouble(cf.getRespuesta().getImporte()) <= 0.01){
 				ConexFlowConnection connection = DBConsults.getConection(d);
 				Double amount = r.getPenaltyAmount();
 				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
