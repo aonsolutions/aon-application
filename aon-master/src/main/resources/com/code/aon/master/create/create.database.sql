@@ -4736,7 +4736,7 @@ CREATE TABLE `fs_model184_detail` (
   `other_tax_deduction` double(15,3) DEFAULT '0.000' COMMENT 'Otros gastos fiscalmente deducibles',
   `vat_accrual_payment` tinyint(1) DEFAULT '0' COMMENT 'Regimen Especial de Criterio de Caja',
   `declared_key` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Clave del declarado',
-  `nature` varchar(1) NOT NULL DEFAULT '0' COMMENT 'Naturaleza del inmueble',
+  `nature` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Naturaleza del inmueble',
   `asset_percent` double(15,3) DEFAULT 0 COMMENT 'Porc. titularidad inmueble',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
