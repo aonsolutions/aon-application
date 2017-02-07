@@ -3880,7 +3880,7 @@ CREATE TABLE `db_version` (
 
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
-INSERT INTO `db_version` VALUES ('8.86.0');
+INSERT INTO `db_version` VALUES ('8.88.1');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4115,7 +4115,7 @@ CREATE TABLE `domain` (
 
 LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
-INSERT INTO `domain` VALUES (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2016-11-24 08:27:31'),(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2016-02-18 10:47:09',NULL,'admin','2017-02-06 17:08:39'),(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2017-02-02 08:42:20'),(8778,'trainning-payroll-test.aonsolutions.org','FORMACIÓN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2016-10-03 11:49:57'),(8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2016-07-15 14:27:27'),(8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2016-04-21 10:40:05'),(8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2016-06-07 11:07:43'),(8784,'hosteleria-baleares-payroll-test.aonsolutions.org','HOSTELERÍA ISLAS BALEARES',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-18 15:06:04',NULL,NULL,NULL,'admin','2016-05-18 15:06:13'),(8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),(8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2016-10-27 16:08:55'),(8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÓN DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2017-02-01 15:57:07');
+INSERT INTO `domain` VALUES (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2016-11-24 08:27:31'),(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2016-02-18 10:47:09',NULL,'admin','2017-02-07 16:09:30'),(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2017-02-07 16:09:54'),(8778,'trainning-payroll-test.aonsolutions.org','FORMACIÓN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2016-10-03 11:49:57'),(8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2016-07-15 14:27:27'),(8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2016-04-21 10:40:05'),(8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2016-06-07 11:07:43'),(8784,'hosteleria-baleares-payroll-test.aonsolutions.org','HOSTELERÍA ISLAS BALEARES',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-18 15:06:04',NULL,NULL,NULL,'admin','2016-05-18 15:06:13'),(8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),(8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2016-10-27 16:08:55'),(8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÓN DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2017-02-01 15:57:07');
 /*!40000 ALTER TABLE `domain` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5405,6 +5405,10 @@ CREATE TABLE `fs_model184_detail` (
   `asset_acquisition` double(15,3) DEFAULT '0.000' COMMENT 'Adquisicion a terceros de bienes y servicios',
   `tax_deduction` double(15,3) DEFAULT '0.000' COMMENT 'Tributos fiscalmente deducibles y gastos financieros',
   `other_tax_deduction` double(15,3) DEFAULT '0.000' COMMENT 'Otros gastos fiscalmente deducibles',
+  `vat_accrual_payment` tinyint(1) DEFAULT '0' COMMENT 'Regimen Especial de Criterio de Caja',
+  `declared_key` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Clave del declarado',
+  `nature` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Naturaleza del inmueble',
+  `asset_percent` double(15,3) DEFAULT '0.000' COMMENT 'Porc. titularidad inmueble',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_DETAIL_FS_MODEL184` (`fs_model184`),
@@ -9762,6 +9766,8 @@ CREATE TABLE `purchase_detail` (
   `proposal_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle de Solicitud',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
   `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
+  `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -9772,6 +9778,10 @@ CREATE TABLE `purchase_detail` (
   KEY `IDX_PURCHASE_DETAIL_ITEM` (`item`),
   KEY `IDX_PURCHASE_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_PURCHASE_DETAIL_PROPOSAL_DETAIL` (`proposal_detail`),
+  KEY `IDX_PURCHASE_DETAIL_CARRIER` (`carrier`),
+  KEY `IDX_PURCHASE_DETAIL_CARRIER_PACKING` (`carrier_packing`),
+  CONSTRAINT `FK_PURCHASE_DETAIL_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
+  CONSTRAINT `FK_PURCHASE_DETAIL_CARRIER_PACKING` FOREIGN KEY (`carrier_packing`) REFERENCES `carrier_packing` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -11170,6 +11180,8 @@ CREATE TABLE `sales_detail` (
   `offer_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle del Presupuesto Origen',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
   `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
+  `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
+  `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -11179,6 +11191,10 @@ CREATE TABLE `sales_detail` (
   KEY `IDX_SALES_DETAIL_SALES` (`sales`),
   KEY `IDX_SALES_DETAIL_ITEM` (`item`),
   KEY `IDX_SALES_DETAIL_DOMAIN` (`domain`),
+  KEY `IDX_SALES_DETAIL_CARRIER` (`carrier`),
+  KEY `IDX_SALES_DETAIL_CARRIER_PACKING` (`carrier_packing`),
+  CONSTRAINT `FK_SALES_DETAIL_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
+  CONSTRAINT `FK_SALES_DETAIL_CARRIER_PACKING` FOREIGN KEY (`carrier_packing`) REFERENCES `carrier_packing` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_OFFER_DETAIL` FOREIGN KEY (`offer_detail`) REFERENCES `offer_detail` (`id`),
@@ -12520,7 +12536,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (2862,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09'),(10248,8776,'ADMIN','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,0,'es',NULL,NULL,'','2017-02-06 17:08:27');
+INSERT INTO `user` VALUES (2862,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09'),(10248,8776,'ADMIN','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,0,'es',NULL,NULL,'','2017-02-07 16:09:52');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -12971,4 +12987,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-02-07 15:55:45
+-- Dump completed on 2017-02-07 16:10:23
