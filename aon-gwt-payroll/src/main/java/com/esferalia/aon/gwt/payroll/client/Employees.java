@@ -1331,8 +1331,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		//#ifdef env.SNAPSHOT
 		//#echo Employee's calendar only visible at SNAPSHOT version
 		TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
-		calendarDraftItem.setUserObject(new EmployeeCalendarDraftObjectData(employee.getId(), 
-										employee.getStartDate(), employee.getEndDate(), employeesService));
+		EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 
+				employee.getStartDate(), employee.getEndDate(), employeesService);
+		calendarDraftItem.setUserObject(employeeCalendarDraftobjectData);
 		//#endif
 		
 
@@ -1354,6 +1355,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			salaryDraft.setEndDate(endDate);
 			salaryDraft.setIssueDate(issueDate);
 			salaryDraft.setType(Type.SALARY);
+			
+			//Pasar SalaryDraft al Calendario para la gestion de horas
+			employeeCalendarDraftobjectData.setSalaryDraft(salaryDraft);
+			
 			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, dataObject, employeesService);
 			salaryDraftItem.setUserObject(draftObject);
 

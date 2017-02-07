@@ -244,7 +244,7 @@
 		}
 		
 		.onChange{
-			background-color: yellow;
+			background-color: rgba(255, 255, 0, 0.38);
 		}
 		
 		@external gwt-Selector;
@@ -257,6 +257,10 @@
 		.gwt-Selector .gwt-SuggestBoxPopup{
 			z-index: 105;
 			height: inherit;
+		}
+		
+		.setOutOfContractStyle{
+			color: #aaa;
 		}
 
 	</ui:style>

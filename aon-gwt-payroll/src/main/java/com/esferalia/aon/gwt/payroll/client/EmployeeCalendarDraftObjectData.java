@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
 public class EmployeeCalendarDraftObjectData {
 
@@ -22,9 +25,75 @@ public class EmployeeCalendarDraftObjectData {
 	private Date startContract;
 	private Date endContract;
 	
+	private com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft;
+	
 	public UndoManager<Undoable> undoManager;
 	
-	private enum DayType{FREEDAY, HOLIDAY, DROPDAY, STRIKEDAY, EREDAY, REDUCTIONDAY, SUSPENSIONDAY, NOTYPEDAY};
+	
+	public static interface DayTypeVisitor{
+		void visitFreeDay(DayType dayType);
+		void visitHolyDay(DayType dayType);
+		void visitDropDay(DayType dayType);
+		void visitEreDay(DayType dayType);
+		void visitStrikeDay(DayType dayType);
+		void visitReductionDay(DayType dayType);
+		void visitSuspensionDay(DayType dayType);
+		void visitNoTypeDay(DayType dayType);
+	}
+	
+	public static enum DayType{
+		FREEDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitFreeDay(this);
+			}
+		}, 
+		HOLIDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitHolyDay(this);
+			}
+		}, 
+		DROPDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitDropDay(this);
+			}
+		}, 
+		STRIKEDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitStrikeDay(this);
+			}
+		}, 
+		EREDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitEreDay(this);
+			}
+		}, 
+		REDUCTIONDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitReductionDay(this);
+			}
+		}, 
+		SUSPENSIONDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitSuspensionDay(this);
+			}
+		}, 
+		NOTYPEDAY {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitNoTypeDay(this);
+			}
+		};
+		
+		public abstract void visit(DayTypeVisitor visitor); 
+		
+	};
 	
 	// --------------------------------------------- INTERFAZ REDO/UNDO -----------------------------------------------
 	
@@ -56,21 +125,29 @@ public class EmployeeCalendarDraftObjectData {
 		private Double oldHour;
 		private Double newHour;
 		private Date day;
+		private StringVariable variable;
 		
-		public SetHourEdit(Double oldH, Double newH, Date actualDay) {
+		public SetHourEdit(Double oldH, Double newH, Date actualDay, StringVariable var) {
 			this.oldHour = oldH;
 			this.newHour = newH;
 			this.day = actualDay;
+			this.variable = var;
 		}
 		
 		@Override
 		public void undo() {
-			draftMapaDiasHoras.put(day, oldHour);
+			if (oldHour == null)
+				draftMapaDiasHoras.remove(day);
+			else
+				draftMapaDiasHoras.put(day, oldHour);
+			
+			salaryDraft.removeDraftVariable(this.variable);
 		}
 		
 		@Override
 		public void redo() {
 			draftMapaDiasHoras.put(day, newHour);
+			salaryDraft.addDraftVariable(this.variable);
 		}
 	}
 	
@@ -88,7 +165,10 @@ public class EmployeeCalendarDraftObjectData {
 		
 		@Override
 		public void undo() {
-			draftMapaDiasTipo.put(day, oldType);
+			if (oldType == null)
+				draftMapaDiasTipo.remove(day);
+			else
+				draftMapaDiasTipo.put(day, oldType);
 		}
 		
 		@Override
@@ -147,16 +227,47 @@ public class EmployeeCalendarDraftObjectData {
 	
 	public void setHourByDay (Date dia, Double hour){
 		Double old = draftMapaDiasHoras.put(dia, hour);
-		undoManager.add(new SetHourEdit(old, hour, dia));
+		
+		@SuppressWarnings("deprecation")
+		String name = calcularDiaSemana (dia.getDay()-1);
+		
+		StringVariable var = new StringVariable();
+		var.setImplicit(false);
+		var.setScope(Scope.SALARY); // DRAFT
+		var.setName(name);
+		var.setEndDate(dia);
+		var.setStartDate(dia);
+		var.setExpression(Double.toString(hour));
+		
+		this.salaryDraft.addDraftVariable(var);
+		
+		Window.alert("Horas: "+Double.toString(hour)+"Name: "+name+", Dia: "+dia.toGMTString());
+		
+		undoManager.add(new SetHourEdit(old, hour, dia, var));
 	} 
-	
+
 	public void setHourByDay (Map<Date, Double> hours){
 		List<Undoable> undos = new ArrayList<Undoable>();
 		for (Map.Entry<Date, Double> entry : hours.entrySet()) {
 			Double old = draftMapaDiasHoras.put(entry.getKey(), entry.getValue());
-			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
+			
+			@SuppressWarnings("deprecation")
+			String name = calcularDiaSemana (entry.getKey().getDay());
+			
+			StringVariable var = new StringVariable();
+			var.setImplicit(false);
+			var.setScope(Scope.SALARY); // DRAFT
+			var.setName(name);
+			var.setEndDate(entry.getKey());
+			var.setStartDate(entry.getKey());
+			var.setExpression(Double.toString(entry.getValue()));
+			
+			this.salaryDraft.addDraftVariable(var);
+			
+			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey(), var));
 		}
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
+		
 	} 
 
 	public Set<Entry<Date, Double>> getHourChanges(){
@@ -174,4 +285,38 @@ public class EmployeeCalendarDraftObjectData {
 	public Date getEndDateContract(){
 		return endContract;
 	}
+
+	public void setSalaryDraft(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft2) {
+		this.salaryDraft = salaryDraft2;
+	}
+	
+	private String calcularDiaSemana(int day) {
+		String result = "";
+		switch (day) {
+		case 0:
+			result = "HORAS_DOMINGO";
+			break;
+		case 1:
+			result = "HORAS_LUNES";
+			break;
+		case 2:
+			result = "HORAS_MARTES";
+			break;
+		case 3:
+			result = "HORAS_MIERCOLES";
+			break;
+		case 4:
+			result = "HORAS_JUEVES";
+			break;
+		case 5:
+			result = "HORAS_VIERNES";
+			break;
+		default:
+			result = "HORAS_SABADO";
+			break;
+		}
+		
+		return result;
+	}
+	
 }
