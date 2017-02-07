@@ -176,6 +176,11 @@
 											<aon:outputText value="Opciones adicionales" />
 										</f:facet>
 										<aon:panelGrid columns="2" dir="true" style="width: 100%;">
+											<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+												<ui:param name="controller" value="#{sales}" />
+												<ui:param name="skipSeriesLabel" value="#{false}" />
+											</ui:include>
+											
 											<aon:outputLabel for="EdiFtp_date"
 												value="#{bundle.aon_date}" />
 											<aon:selectInputDate id="EdiFtp_date"
@@ -200,6 +205,7 @@
 													value="Modo TEST (se comprueba la integridad pero no se guarda)" />
 											</aon:div>
 										</aon:panelGrid>
+										
 									</aon:panel>
 									
 									<aon:div styleClass="aon-margin-top">
