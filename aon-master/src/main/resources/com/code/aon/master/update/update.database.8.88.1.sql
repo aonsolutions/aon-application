@@ -684,6 +684,16 @@ INSERT INTO `system_cost`
 VALUES ("-105","2017-01-01",NULL,NULL,"1.88","1","IMS_E");
 
 
+DELETE FROM `system_data` WHERE `domain`=-101 AND `name` = 'BASE_CGP_MIN' AND `start_date` = '2017-01-01';
+INSERT INTO `system_data` ( `domain`, `name`, `expression`, `start_date` ) 
+VALUES ( -101, 'BASE_CGP_MIN', '825.60', '2017-01-01' ); 
+
+DELETE FROM `system_data` WHERE `domain`=-105 AND `name` = 'BASE_CGP_MIN' AND `start_date` = '2017-01-01';
+INSERT INTO `system_data` ( `domain`, `name`, `expression`, `start_date` ) 
+VALUES ( -105, 'BASE_CGP_MIN', '825.60', '2017-01-01' ); 
+
+
+
 UPDATE `db_version` SET `version_number` = '8.89.0';
 
 COMMIT;
