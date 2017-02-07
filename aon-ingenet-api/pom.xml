@@ -50,7 +50,21 @@
 				<version>1.7</version>
 				<executions>
 					<execution>
-						<id>add-source-elaboraciones</id>
+						<id>add-source-consultaElaboraciones</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-source-respuestaElaboraciones</id>
 						<phase>process-sources</phase>
 						<goals>
 							<goal>add-source</goal>
@@ -77,22 +91,6 @@
 							</sources>
 						</configuration>
 					</execution>
-					<!--  
-					<execution>
-						<id>add-source-respuestaElaboraciones</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>
-									${project.build.directory}/generated-sources
-								</source>
-							</sources>
-						</configuration>
-					</execution>
-					-->
 				</executions>
 			</plugin>
 			
@@ -105,20 +103,42 @@
 				<artifactId>maven-jaxb2-plugin</artifactId>
 				<version>0.8.2</version>
 				<executions>
-					<!-- ================================ -->
-					<!-- Esquemas de ficheros a comunicar -->
-					<!-- ================================ -->
 					<execution>
-						<id>generate-elaboraciones</id>
+						<id>generate-consultaElaboraciones</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<generateDirectory>${project.build.directory}/generated-sources/elaboraciones</generateDirectory>
-							<generatePackage>com.esferalia.aon.ingenet.api.elaboraciones</generatePackage>
+							<generateDirectory>${project.build.directory}/generated-sources/consultaElaboraciones</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.consultaElaboraciones</generatePackage>
 							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
 							<schemaIncludes>
-								<include>EsquemaElaboraciones.xsd</include>
+								<include>EsquemaConsultaElaboraciones.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-respuestaElaboraciones</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/respuestaElaboraciones</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.respuestaElaboraciones</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaRespuestaElaboraciones.xsd</include>
 							</schemaIncludes>
 							<forceRegenerate>false</forceRegenerate>
 							<removeOldOutput>true</removeOldOutput>  
@@ -158,33 +178,6 @@
 							</plugins>
 						</configuration>
 					</execution>
-					<!--  
-					<execution>
-						<id>generate-respuestaElaboraciones</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<generateDirectory>${project.build.directory}/generated-sources/respuestaElaboraciones</generateDirectory>
-							<generatePackage>com.esferalia.aon.ingenet.api.respuestaElaboraciones</generatePackage>
-							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
-							<schemaIncludes>
-								<include>EsquemaRespuestaElaboraciones.xsd</include>
-							</schemaIncludes>
-							<forceRegenerate>false</forceRegenerate>
-							<removeOldOutput>true</removeOldOutput>
-							<verbose>true</verbose>
-							<extension>true</extension>
-							<plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.4</version>
-								</plugin>
-							</plugins>
-						</configuration>
-					</execution>
-					-->
 				</executions>
 			</plugin>
 			<plugin>

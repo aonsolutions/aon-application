@@ -123,6 +123,17 @@ public class ElaborationDAO {
 				.orElse(new Elaboration());
 	}
 	
+	public static Elaboration getElaboration(AONContext ctx,
+			String series, Integer number) {
+		return ctx.getDslContext().select().from(ELABORATION)
+				.where(ELABORATION.SERIES.eq(series)
+						.and(ELABORATION.NUMBER.eq(number)))
+						.limit(1)
+				.fetchInto(ELABORATION).stream()
+				.map(new FullElaborationFiller()).findFirst()
+				.orElse(new Elaboration());
+	}
+	
 	public static int insertElaboration(AONContext ctx, Elaboration elaboration) {
 		ctx.checkWrite();
 		Timestamp creationDate = null, modificationDate = null;
