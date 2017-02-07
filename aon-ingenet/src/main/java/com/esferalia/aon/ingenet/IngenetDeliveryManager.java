@@ -94,7 +94,8 @@ public class IngenetDeliveryManager {
 				ctx,
 				f -> (ingenetSalesSeries != null ? f.getSeriesProperty().eq(
 						ingenetSalesSeries) : f.getSeriesProperty().isNull())
-						.and(f.getNumberProperty().eq(ingenetSalesNumber)));
+						.and(f.getNumberProperty().eq(ingenetSalesNumber))
+						.and(f.getDomainProperty().eq(ctx.getDomainId())));
 		
 		if (aonSales == null | aonSales.getId() == null) {
 			throw new SourceSalesNotFoundException(
