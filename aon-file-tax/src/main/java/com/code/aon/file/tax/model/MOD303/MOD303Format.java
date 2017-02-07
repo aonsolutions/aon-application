@@ -21,6 +21,10 @@ public enum MOD303Format {
 			,Administration.GIPUZKOA
 			,MimeType.MIME_TXT
 			,Gipuzkoa2010MOD303Factory.class)
+	,AEAT_2017(2017
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,Aeat2017MOD303Factory.class)
 	,AEAT_2015(2015
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT

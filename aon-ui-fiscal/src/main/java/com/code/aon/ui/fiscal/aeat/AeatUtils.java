@@ -338,8 +338,23 @@ public class AeatUtils {
 			String fileString = new String(o);
 			fileString = fileString.replace("\n", "");
 			fileString = fileString.replace("\r", "");
-			String hid = year>=2015?"INV5303A":"INV4303A";
-			String prg = year>=2015?"PTLINK6F":"PTLINK1T";
+			String hid = "";
+			if (year == 2017) {
+				hid = "IE73030A"; 	
+			} else if (year == 2016){
+				hid = "INV5303A";
+			} else if (year < 2016) {
+				hid = "INV4303A";
+			}
+			
+			String prg = "";
+			if (year == 2017) {
+				hid = ""; 	
+			} else if (year == 2016){
+				prg = "PTLINK6F";
+			} else if (year < 2016) {
+				prg = "PTLINK1T";
+			}
 			
 			String urlParameters =
 					"HID="+hid
@@ -351,8 +366,12 @@ public class AeatUtils {
 					+ "&FIN="
 					+ "&EJF="+year
 					+ "&MOD=303";
-			String location= "https://www6.aeat.es/es13/l/zi22zilk0022";
-
+			String location= "";
+			if (year == 2017) {
+				location= "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
+			} else {
+				location= "https://www6.aeat.es/es13/l/zi22zilk0022";
+			}
 			URL url = new URL(location);
 
 			SSLContext ctx = SSLContext.getInstance("TLS");
