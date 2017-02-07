@@ -491,6 +491,40 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			System.out.println(e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testActualDays() throws ExpressionException, SQLException {
+
+		int actualDays = 0;
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+//		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+//		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		while(calendar.get(Calendar.MONTH) ==  month ) {
+			
+			int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+			if ( dayOfWeek != Calendar.SATURDAY 
+					&& dayOfWeek != Calendar.SUNDAY)
+				actualDays++;
+			
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		final double annualRemuneration = actualDays * (12 - month) ;
+		Consumer<IrpfResult> asserts = result -> assertAnnualRemuneration(
+				annualRemuneration,
+				result.getAnnualRemuneration());
+		
+		test(asserts,
+			new String[] { 
+				"1.00 * DIAS_EFECTIVOS",
+				"TRACE('DIAS_EFECTIVOS=%f\r\n', DIAS_EFECTIVOS);0.00",
+				}, 
+				new String[] {
+				});
+	}
+	
 
 	// ------------------------------------------------------------------------
 

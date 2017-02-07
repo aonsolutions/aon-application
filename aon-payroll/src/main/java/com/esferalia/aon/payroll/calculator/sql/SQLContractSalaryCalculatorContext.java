@@ -2680,18 +2680,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return false;
 		}
 
-		return type == DayType.WORKING_DAY || type == DayType.CONTINUOUS_TIME || type == DayType.OTHER; // TODO:
-																										// Estos
-																										// tipos
-																										// de
-																										// dias
-																										// son
-																										// un
-																										// cachondeo
-																										// \BF
-																										// OTHER,
-																										// CONTINUOUS_TIME
-																										// ?
+		return type == DayType.WORKING_DAY || type == DayType.CONTINUOUS_TIME || type == DayType.OTHER; 
 	}
 
 	private boolean isHoliday(Calendar day) {
@@ -3316,16 +3305,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
 
-		if (!containsVariable(ACTUAL_DAYS)) {
-			// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de
-			// querys adicionales...)
-			this.contractExpressionContext.putVariable(ACTUAL_DAYS, new LazyTimedVariable<Double>() {
-				@Override
-				public Double create() {
-					return getActualDays();
-				}
-			});
-		}
+//		if (!containsVariable(ACTUAL_DAYS)) {
+//			this.contractExpressionContext.putVariable(ACTUAL_DAYS, new LazyTimedVariable<Double>() {
+//				@Override
+//				public Double create() {
+//					return getActualDays();
+//				}
+//			});
+//		}
 
 		hook.beforeLoadDaysContextVariables(contractExpressionContext);
 		// --------------------------------------------------------------------
@@ -3637,6 +3624,29 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(QUOTE_DAYS, quoteDays);
 			} else {
 				onRedefinedImplicit(QUOTE_DAYS.getName(), userQuoteDays, quoteDays);
+			}
+			
+			
+			ITimedVariable<Double> actualDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return getActualDays(p.getStart(), p.getEnd());
+				}
+
+			};
+
+			ITimedVariable<?> userActualDays = getExpressionContext().getVariable(ACTUAL_DAYS, period.getStart(),
+					period.getEnd());
+			
+			if (userActualDays == null) {
+				ctx.putVariable(ACTUAL_DAYS, actualDays);
+			} else {
+				onRedefinedImplicit(QUOTE_DAYS.getName(), userActualDays, actualDays);
 			}
 		}
 
