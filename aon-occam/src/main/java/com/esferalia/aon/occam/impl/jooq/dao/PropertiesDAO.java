@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
+import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
@@ -33,6 +35,7 @@ import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
+import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
@@ -201,7 +204,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.SOURCE_ID);}
 		@Override public Property<Double> getDeliveredProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.DELIVERED);}
 
-		@Override public Property<Integer> getCarrierPackingProperty() {return null;} // TODO new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
+		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
 		
 	}
 	
@@ -258,8 +261,7 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
-		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CARRIER_PACKING);}
-		// TODO @Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
+		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
 	}
 	
 	protected static class DeliveryPropertiesDAO implements DeliveryProperties {
@@ -333,5 +335,34 @@ public class PropertiesDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_USER);}
+	}
+	
+	protected static class RecordDataPropertiesDAO implements RecordDataProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select,RecordDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(RecordDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.REGISTRY);}
+		@Override public Property<Date> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.CREATION_DATE);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.DESCRIPTION);}
+		@Override public Property<String> getNotaryProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.NOTARY);}
+		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.NUMBER);}
+		@Override public Property<Date> getRecordDateProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.RECORD_DATE);}
+		@Override public Property<String> getVolumeProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.VOLUME);}
+		@Override public Property<String> getSectionProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.SECTION);}
+ 		@Override public Property<String> getPageProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.PAGE);}
+		@Override public Property<String> getSheetProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.SHEET);}
+		@Override public Property<String> getRegistrationProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.REGISTRATION);}
+		@Override public Property<Integer> getAttachProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.ATTACH);}
 	}
 }

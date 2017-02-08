@@ -1,9 +1,12 @@
 package com.code.aon.webservice.warehouse;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,6 +14,7 @@ import org.json.JSONObject;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -21,8 +25,8 @@ import com.lowagie.text.pdf.draw.LineSeparator;
 
 public class PackingList {
 	
-	public static File createPdf(JSONObject json) {
-		File archivoPDF = new File("aaa" + ".pdf");
+	public static File createPdf(JSONObject json, byte [] image) {
+		File archivoPDF = new File("packingList" + ".pdf");
 		if(archivoPDF.exists()) archivoPDF.delete();
 		try {
 			archivoPDF.createNewFile();
@@ -40,11 +44,28 @@ public class PackingList {
 	        line.setOffset(-2);
 	        separator.add(line);
 	        
+	        Image i1 = Image.getInstance(image);
+	        float percentage = 100 /i1.getHeight();
+	        Float width = i1.getWidth() * percentage;
+	        Float height = i1.getHeight() * percentage;
+	      
+	        BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
+
+	        Image logo = Image.getInstance(img, null);
+	        logo.scaleAbsolute(width, height);
+	        PdfPCell c = new PdfPCell(logo, false);
+	        c.setBorder(PdfPCell.NO_BORDER);
+	        PdfPTable header = new PdfPTable(2);
+	        header.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+	        header.setWidthPercentage(100);
+	        header.addCell(c);
 			Paragraph title = new Paragraph("Packing List",getTitleFont());
 			title.add(separator);
-			document.add(title);
+			header.addCell(title);
+			
+			document.add(header);
 			document.add(new Paragraph(" "));
-				
+		
 			document.add(carrierPacking(json.getJSONObject("carrier_packing")));
 			document.add(new Paragraph(" "));
 
@@ -57,7 +78,7 @@ public class PackingList {
 			Paragraph order = new Paragraph(" ");
 			order.add(separator);
 			document.add(order);
-		} catch (FileNotFoundException | DocumentException e) {
+		} catch (DocumentException | IOException e) {
 			e.printStackTrace();
 		}
 		document.close();

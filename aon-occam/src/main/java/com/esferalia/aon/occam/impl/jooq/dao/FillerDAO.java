@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 
 import java.util.function.Function;
 
@@ -18,6 +19,7 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -127,12 +129,16 @@ public class FillerDAO {
 			detail.setTaxes(r.getValue(PURCHASE_DETAIL.TAXES));
 			detail.setStatus(PurchaseDetailStatus.values()[r.getValue(PURCHASE_DETAIL.STATUS)]);
 			detail.setProposalDetail(r.getValue(PURCHASE_DETAIL.PROPOSAL_DETAIL));
-			detail.setSource(PurchaseSourceType.values()[r.getValue(PURCHASE_DETAIL.SOURCE)]);
+			if(r.getValue(PURCHASE_DETAIL.SOURCE) != null)
+				detail.setSource(PurchaseSourceType.values()[r.getValue(PURCHASE_DETAIL.SOURCE)]);
 			detail.setSourceId(r.getValue(PURCHASE_DETAIL.SOURCE_ID));
 			detail.setDelivered(r.getValue(PURCHASE_DETAIL.DELIVERED));
+			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
+			detail.setCarrierPacking(r.getValue(PURCHASE_DETAIL.CARRIER_PACKING));
 			
 			detail.setProductCode(r.getValue(Product.PRODUCT.CODE));
 			detail.setProductName(r.getValue(Product.PRODUCT.NAME));
+	
 			return detail;
 		}
 	}
@@ -215,6 +221,27 @@ public class FillerDAO {
 			return super.apply(r)
 					.setProductCode(r.getValue(PRODUCT.CODE))
 					.setProductName(r.getValue(PRODUCT.NAME));
+		}
+	}
+	
+	public static class RecordDataFiller implements Function<Record, RecordData> {
+		@Override
+		public RecordData apply(Record r) {
+			return new RecordData()
+					.setAttach(r.getValue(RECORD_DATA.ATTACH))
+					.setCreationDate(r.getValue(RECORD_DATA.CREATION_DATE))
+					.setDescription(r.getValue(RECORD_DATA.DESCRIPTION))
+					.setDomain(r.getValue(RECORD_DATA.DOMAIN))
+					.setId(r.getValue(RECORD_DATA.ID))
+					.setNotary(r.getValue(RECORD_DATA.NOTARY))
+					.setNumber(r.getValue(RECORD_DATA.NUMBER))
+					.setPage(r.getValue(RECORD_DATA.PAGE))
+					.setRecordDate(r.getValue(RECORD_DATA.RECORD_DATE))
+					.setRegistration(r.getValue(RECORD_DATA.REGISTRATION))
+					.setRegistry(r.getValue(RECORD_DATA.REGISTRY))
+					.setSection(r.getValue(RECORD_DATA.SECTION))
+					.setSheet(r.getValue(RECORD_DATA.SHEET))
+					.setVolume(r.getValue(RECORD_DATA.VOLUME));
 		}
 	}
 }

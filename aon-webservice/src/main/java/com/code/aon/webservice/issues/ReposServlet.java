@@ -117,7 +117,7 @@ public class ReposServlet extends HttpServlet{
 				case MSG.TYPES: // ALL TYPES
 					object = getAllLabelsJSON(domain, userName, TagType.TASK_TYPE, filter);
 					break;
-				case MSG.PRIORITY: // ALL PRIORITIES
+				case MSG.PRIORITIES: // ALL PRIORITIES
 					object = getAllPrioritiesJSON(domain, userName);
 					break;
 				case MSG.STATUSES: // ALL PRIORITIES

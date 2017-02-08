@@ -6,8 +6,10 @@ import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
@@ -18,7 +20,6 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -34,7 +35,6 @@ import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
-import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RnoteRecord;
@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -62,6 +63,7 @@ import com.esferalia.aon.occam.api.model.registry.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
@@ -76,10 +78,12 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RecordDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -112,6 +116,7 @@ public class RegistryDAO {
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
 	private static final CarrierPropertiesDAO CARRIER_PROPERTIES = new CarrierPropertiesDAO();
+	private static final RecordDataPropertiesDAO RECORD_DATA_PROPERTIES = new RecordDataPropertiesDAO();
 
 	
 	private static final AccountingRegistryPropertiesDAO ACCOUNTING_REGISTRY_PROPERTIES = new AccountingRegistryPropertiesDAO();
@@ -846,6 +851,15 @@ public class RegistryDAO {
 				.fetch().stream().map(new CarrierFiller());
 	}
 	
+	// ------------------- RECORD DATA
+
+	public static Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter){
+		return ctx.getDslContext().select()
+				.from(RECORD_DATA)
+				.where(RECORD_DATA_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new RecordDataFiller());
+	}
+		
 	// ------------------- REGISTRY PROFILE
 	
 	public static Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry){

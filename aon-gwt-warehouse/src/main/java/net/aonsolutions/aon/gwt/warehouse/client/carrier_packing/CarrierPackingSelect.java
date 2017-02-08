@@ -113,12 +113,12 @@ public class CarrierPackingSelect extends Composite{
 		westPanel.add(selectable);
 	}
 	
-	private void refresh(){
+	public void refresh(){
 		loadSelectable();
 		westPanel.remove(1);
 		westPanel.add(selectable);
 		loadSelected(false);
-	};
+	}
 	
 	private void loadSelectable() {
 		selectable = new ListBox();
@@ -273,13 +273,21 @@ public class CarrierPackingSelect extends Composite{
 				
 				selectable.removeItem(selectable.getSelectedIndex());
 				
-				String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\"}";
+				String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
+						+ "\"purchase\":\""+ Integer.parseInt(value) +"\","
+						+ "\"action\":\"add\"" + "}";
 				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
-					API.getWarehouse().updatePurchase(Integer.parseInt(value), requestData, new AsyncCallback<JsOrder>() {
-						@Override public void onFailure(Throwable caught) {}
-						@Override public void onSuccess(JsOrder result) {
-							addItem(result);
+					API.getWarehouse().addAllCarrierPacking("purchase", requestData, new AsyncCallback<JSON<JsOrderDetail>>() {
+						@Override public void onSuccess(JSON<JsOrderDetail> result) {
+							API.getWarehouse().getPurchase(Integer.parseInt(value), new AsyncCallback<JSON<JsOrder>>() {
+								@Override public void onFailure(Throwable caught) {}
+								@Override public void onSuccess(JSON<JsOrder> result) {
+									addItem(result.getOneData());
+									parent.refreshSouth2(result.getOneData());
+								}
+							});
 						}
+						@Override public void onFailure(Throwable caught) {}
 					});
 				} else {
 					API.getWarehouse().updateDelivery(Integer.parseInt(value), requestData, new AsyncCallback<JsOrder>() {
@@ -302,12 +310,17 @@ public class CarrierPackingSelect extends Composite{
 	private void deleteOrder(JsOrder js){
 		String requestData = "{\"carrier_packing\":\"\"}";
 		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
-			API.getWarehouse().updatePurchase(js.getId(), requestData, new AsyncCallback<JsOrder>() {
-				@Override public void onFailure(Throwable caught) {}
-				@Override public void onSuccess(JsOrder result) {
+			requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
+					+ "\"purchase\":\""+ js.getId() +"\"," 
+					+ "\"action\":\"delete\""+ "}";
+
+			API.getWarehouse().addAllCarrierPacking("purchase", requestData, new AsyncCallback<JSON<JsOrderDetail>>() {
+				@Override public void onSuccess(JSON<JsOrderDetail> result) {
 					refresh();
+					parent.refreshSouth2(js);
 				}
-			});			
+				@Override public void onFailure(Throwable caught) {}
+			});
 		} else {
 			API.getWarehouse().updateDelivery(js.getId(), requestData, new AsyncCallback<JsOrder>() {
 				@Override public void onFailure(Throwable caught) {}

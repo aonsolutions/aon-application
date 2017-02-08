@@ -20,7 +20,9 @@ import com.code.aon.webservice.util.SecurityUtils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 
 @WebServlet(name = "packinglistProjection", urlPatterns = {"/aon_gwt_aio/download_packing_list/*"})
 public class PackingListDownload extends HttpServlet{
@@ -63,7 +65,12 @@ public class PackingListDownload extends HttpServlet{
 		json.put("orders", array);
 		// --------------- //
 		
-		File file = PackingList.createPdf(json);
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, 
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+					.and(f.getDomainProperty().eq(domain.getId())),
+				AttachType.REGISTRY);
+		
+		File file = PackingList.createPdf(json, attach.getData());
 		
         long length = file.length();
         FileInputStream fis = new FileInputStream(file);

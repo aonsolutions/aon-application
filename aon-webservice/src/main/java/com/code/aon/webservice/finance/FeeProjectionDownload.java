@@ -111,7 +111,6 @@ public class FeeProjectionDownload extends HttpServlet{
         bais.close();
         out.flush();
         out.close();
-        out.close();
 	}
 	
 	private void pdf(HttpServletRequest req, HttpServletResponse resp,

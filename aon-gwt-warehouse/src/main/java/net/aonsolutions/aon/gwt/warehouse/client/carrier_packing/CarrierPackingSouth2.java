@@ -87,11 +87,26 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 
 		addNorth(p, 100);
 	
-
+		refresh(purchase, details);
+	}
+	
+	public void refresh(JsOrder purchase){
+		getCenter().removeFromParent();
+		parent.API.getWarehouse().getPurchaseDetails(purchase.getId(), new AsyncCallback<JSON<JsOrderDetail>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsOrderDetail> result) {
+				refresh(purchase, result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	public void refresh(JsOrder purchase, AonJsArray<JsOrderDetail> details){
 		FlowPanel center = new FlowPanel();
+		ScrollPanel scrollCenter = new ScrollPanel();
+		scrollCenter.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		details.stream().forEach(detail ->{
 			FlowPanel line = new FlowPanel("pre");
@@ -104,9 +119,8 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 			db.setWidth("50px");
 			db.setStyleName(AON.AON_CSS.aonTextBox());
 			db.setValue(detail.getQuantity());
-			
 			PaperIconButton pib = new PaperIconButton();
-			pib.setDisabled(detail.getCarrierPacking() != null && !detail.getCarrierPacking().equals(carrierPacking.getId()));
+			pib.setDisabled(detail.getCarrierPacking() != null && detail.getCarrierPacking() != carrierPacking.getId());
 			pib.setIcon(detail.getCarrierPacking() != null ? "remove" : "add" );
 			pib.addClickHandler(new ClickHandler() {
 				
@@ -126,7 +140,9 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 									
 								@Override
 								public void onSuccess(JSON<JsOrderDetail> result) {
+									scrollCenter.removeFromParent();
 									refresh(purchase, result.getData());
+									parent.refreshSelect();
 								}
 								
 								@Override public void onFailure(Throwable caught) {}
@@ -138,7 +154,6 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 				}
 				
 			});
-			
 			
 			Double discount = detail.getDiscountExpr() != null ? Double.parseDouble(detail.getDiscountExpr()) : 1.0;
 			Double importe = detail.getPrice() * detail.getQuantity() * (1 - (discount/100));
@@ -165,8 +180,6 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 			center.add(line);
 		});
 		
-		ScrollPanel scrollCenter = new ScrollPanel();
-		scrollCenter.addStyleName(AON.AON_CSS.aonMarginBottom());
 		scrollCenter.setWidget(center);
 		add(scrollCenter);
 	}

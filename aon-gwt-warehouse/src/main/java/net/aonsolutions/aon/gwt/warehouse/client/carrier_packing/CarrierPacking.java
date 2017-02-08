@@ -238,4 +238,14 @@ public class CarrierPacking extends AonTemplate{
 		CarrierPackingPanel cpp = (CarrierPackingPanel) getNorthContent().getWidget();
 		cpp.type.setEnabled(enable);
 	}
+	
+	public void refreshSelect(){
+		CarrierPackingSelect cps = (CarrierPackingSelect) getContent().getWidget();
+		cps.refresh();
+	}
+	
+	public void refreshSouth2(JsOrder order){
+		CarrierPackingSouth2 cps = (CarrierPackingSouth2) getSouthContent().getWidget();
+		cps.refresh(order);
+	}
 }

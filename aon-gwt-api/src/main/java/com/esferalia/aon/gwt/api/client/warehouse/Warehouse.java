@@ -95,7 +95,11 @@ public class Warehouse extends Methods{
 	}
 	
 	public void addCarrierPacking(String orderType, String requestData, AsyncCallback<JSON<JsOrderDetail>> callback){
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/carrier_packing" , callback);
+		post(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/carrier_packing" , requestData, callback);
+	}
+	
+	public void addAllCarrierPacking(String orderType, String requestData, AsyncCallback<JSON<JsOrderDetail>> callback){
+		post(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/all_carrier_packing" , requestData, callback);
 	}
 	
 	public void downloadPackingList(Integer id){

@@ -40,6 +40,7 @@ public class PurchaseDetail implements Serializable {
 	private String productCode;
 	private String productName;
 	
+	private Integer carrier;
 	private Integer carrierPacking;
 	
 	public Integer getId() {
@@ -211,6 +212,12 @@ public class PurchaseDetail implements Serializable {
 	}
 	public void setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+	}
+	public Integer getCarrier() {
+		return carrier;
+	}
+	public void setCarrier(Integer carrier) {
+		this.carrier = carrier;
 	}
 	
 }

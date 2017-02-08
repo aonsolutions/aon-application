@@ -118,9 +118,10 @@ public class WarehouseServlet extends HttpServlet{
 				if(pathInfo.length > 4){ 
 					if(MSG.UPDATE.equals(pathInfo[4])){
 						object = updatePurchase(domain, userName, Integer.parseInt(pathInfo[5]), json);
-					} 
-					else if(MSG.CARRIER_PACKING.equals(pathInfo[4])){
+					} else if(MSG.CARRIER_PACKING.equals(pathInfo[4])){
 						object = updatePurhcaseCarrierPacking(domain, userName, json);
+					} else if("all_carrier_packing".equals(pathInfo[4])){
+						object = updateAllPurhcaseCarrierPacking(domain, userName, json);
 					} 
 				} 
 			}
@@ -162,10 +163,33 @@ public class WarehouseServlet extends HttpServlet{
 		return ToJSON.purchaseToJSON(purchase);
 	}
 	
-	private JSONObject updatePurhcaseCarrierPacking(Domain domain, String login, JSONObject json) {
+	private JSONObject updateAllPurhcaseCarrierPacking(Domain domain, String login, JSONObject json) {
 		String action =json.getString("action");
+		if(action.equals("add")){
+			AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
+				f -> f.getCarrierPackingProperty().isNull()
+				.and(f.getPurchaseProperty().eq(json.optInt("purchase")))).forEach(
+					purchaseDetail ->{
+						json.put("quantity", purchaseDetail.getQuantity());
+						updatePurchaseCarrierPacking(domain, login, json, purchaseDetail);	
+					});
+		} else if(action.equals("delete")) {
+			AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
+				f -> f.getCarrierPackingProperty().eq(json.optInt("carrier_packing"))
+				.and(f.getPurchaseProperty().eq(json.optInt("purchase")))).forEach(
+					purchaseDetail -> updatePurchaseCarrierPacking(domain, login, json, purchaseDetail));
+		}
+		return new JSONObject();
+	}
+	
+	private JSONObject updatePurhcaseCarrierPacking(Domain domain, String login, JSONObject json) {
 		Integer detail = json.getInt("id");
 		PurchaseDetail purchaseDetail = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, detail);
+		return updatePurchaseCarrierPacking(domain, login, json, purchaseDetail);
+	}
+	
+	private JSONObject updatePurchaseCarrierPacking(Domain domain, String login, JSONObject json, PurchaseDetail purchaseDetail){
+		String action =json.getString("action");
 		if (action.equals("add")) {
 			Double quantity =json.getDouble("quantity");
 			Integer carrierPacking = json.getInt("carrier_packing");
@@ -178,7 +202,7 @@ public class WarehouseServlet extends HttpServlet{
 		} else if(action.equals("delete")) {
 			AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
 					f -> f.getDomainProperty().eq(domain.getId())
-					.and(f.getPurchaseProperty().eq(purchaseDetail.getPurchase().getId()))
+					.and(f.getPurchaseProperty().eq(purchaseDetail.getPurchaseId()))
 					.and(f.getItemProperty().eq(purchaseDetail.getItem()))
 					.and(f.getCarrierPackingProperty().isNull())
 					.and(f.getPriceProperty().eq(purchaseDetail.getPrice()))

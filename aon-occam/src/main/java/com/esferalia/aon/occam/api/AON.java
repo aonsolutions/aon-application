@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
+import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -73,7 +74,6 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -105,6 +105,7 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
@@ -1544,7 +1545,6 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-	 // TODO 
 	
 	
 	// ********************************************
@@ -2683,6 +2683,29 @@ public class AON {
 				.findFirst().orElse(new RAddress());
 	}
 	
+	// ------------------- RECORD DATA
+	
+	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRecordDataStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
+	public static RecordData getRecordData(String domainName, Integer domainId, String login, RecordDataFilter filter) {
+		return getRecordDataStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new RecordData());
+	}
+		
+	public static LinkedList<RecordData> getRecordDataList(String domainName, Integer domainId, String login, RecordDataFilter filter) {
+		return getRecordDataStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
 	
 	// ********************************************
 	// ******************************** CREDITOR **

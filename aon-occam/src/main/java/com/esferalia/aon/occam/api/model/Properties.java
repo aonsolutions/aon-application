@@ -715,5 +715,22 @@ public interface Properties {
 		Property<Timestamp> getModificationDateProperty();
 		Property<Integer> getCarrierPackingProperty();
 	}
+	
+	public interface RecordDataProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Date> getCreationDateProperty();
+		Property<String> getDescriptionProperty();
+		Property<String> getNotaryProperty();
+		Property<String> getNumberProperty();
+		Property<Date> getRecordDateProperty();
+		Property<String> getVolumeProperty();
+		Property<String> getSectionProperty();
+		Property<String> getPageProperty();
+		Property<String> getSheetProperty();
+		Property<String> getRegistrationProperty();
+		Property<Integer> getAttachProperty();
+	}
 
 }

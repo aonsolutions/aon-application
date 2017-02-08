@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
@@ -65,5 +67,8 @@ public interface IRegistry {
 	
 	// ------------------- CARRIER
 	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter);
+
+	// ------------------- RECORD DATA
+	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);
 
 }
