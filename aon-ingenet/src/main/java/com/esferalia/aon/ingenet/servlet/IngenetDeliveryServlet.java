@@ -1,12 +1,9 @@
 package com.esferalia.aon.ingenet.servlet;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -20,12 +17,6 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEventLocator;
 
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
@@ -64,7 +55,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
+	private List<String> errorList;
 	
 	private final static String PARAM_VALUE = "value";
 	
@@ -72,22 +63,50 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	protected void processRequest(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws ServletException, IOException {
 		
+		errorList = new LinkedList<>();
+		
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
 		if(_xml!=null){
-			ALBARANES deliveryList = extractValue(_xml);
+			ALBARANES deliveryList = null;
+			try {
+				deliveryList = (ALBARANES) extractValue(_xml, ALBARANES.class);
+			} catch (Exception e) {
+				errorList.add(e.getMessage());
+			}
 			if(deliveryList!=null && deliveryList.getDATOSALBARANES()!=null 
 					&& deliveryList.getDATOSALBARANES().size()>0){
 				processData(deliveryList.getDATOSALBARANES());
-				httpResponse.sendError(HttpServletResponse.SC_CREATED);
+				httpResponse.setStatus(HttpServletResponse.SC_OK);
 			} else {
-				// TODO: deliveries file is empty
 				httpResponse.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
 		} else {
-			httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			httpResponse.sendError(HttpServletResponse.SC_NO_CONTENT);
+		}
+		
+		if(errorList!=null && errorList.size()>0){
+			flushErrors(httpResponse, errorList);
 		}
 		
 	}
+	
+	// TODO flushErrors
+	private void flushErrors(HttpServletResponse httpResponse,
+			List<String> errorList) throws IOException {
+//		RESPUESTAELABORACIONES respuesta = new RESPUESTAELABORACIONES();
+//		respuesta.setERRORES(new ERRORESTYPE());
+//		errorList.forEach(error -> {
+//			respuesta.getERRORES().getERRORES().add(error);
+//		});
+//		String xml = convertToXml(respuesta, RESPUESTAELABORACIONES.class);
+//		httpResponse.setContentType("application/xml");
+//		httpResponse.setContentLength(xml.length());
+//		
+//		PrintWriter out = httpResponse.getWriter();
+//		out.print(xml);
+//		out.flush();
+	}
+	
 	
 	private void processData(List<ALBARANTYPE> list){
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
@@ -120,9 +139,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		// if address == null, fill shippingAlternative
 		
 		try {
-			delivery.setIssueTime(dateFormatter.parse(albaran.getFECHAEMISION()));
+			delivery.setIssueTime(getDateFormatter().parse(albaran.getFECHAEMISION()));
 		} catch (ParseException e) {
-			// TODO log me
+			System.err.println("Cannot parse date value. Reason: "+ e.getMessage());
 			delivery.setIssueTime(new Date());
 		}
 		delivery.setSecurityLevel((byte) 0);
@@ -247,7 +266,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		carrierPacking.setStatus(CarrierPackingStatus.PENDING);
 		Date issueDate = null;
 		try {
-			issueDate = dateFormatter.parse(albaran.getDATOSHOJARUTA()
+			issueDate = getDateFormatter().parse(albaran.getDATOSHOJARUTA()
 					.getFECHAEMISION());
 		} catch (ParseException e) {
 			issueDate = new Date();
@@ -393,7 +412,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			item.setDetail3(productoelaborado.getDETALLE3());
 			Date serialDate = null;
 			try {
-				serialDate = dateFormatter.parse(
+				serialDate = getDateFormatter().parse(
 						productoelaborado.getFECHALOTESERIE());
 			} catch (ParseException e) {
 				serialDate = new Date();
@@ -416,48 +435,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 	
 	
-	/*
-	 * JAXB
-	 */
-	private ALBARANES extractValue(String xml) throws IOException {
-    	InputStream inputStream = null;
-    	try {
-			byte[] bytes = xml.getBytes("UTF-8");
-			inputStream = new ByteArrayInputStream(bytes);
-			String contextPath = ALBARANES.class.getPackage().getName();
-			JAXBContext context = JAXBContext.newInstance(contextPath);
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			unmarshaller.setEventHandler(new AlbaranesValidationEventHandler());
-			ALBARANES albaranes = (ALBARANES) unmarshaller.unmarshal(inputStream);
-			return albaranes;
-		} catch (JAXBException e) {
-			throw new RuntimeException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if(inputStream!=null){
-				inputStream.close();
-			}
-		}
-    }
-    
-    public class AlbaranesValidationEventHandler implements ValidationEventHandler {
-		public boolean handleEvent(ValidationEvent ve) {
-			if (ve.getSeverity() == ValidationEvent.FATAL_ERROR || ve.getSeverity() == ValidationEvent.ERROR) {
-				ValidationEventLocator locator = ve.getLocator();
-				// Print message from valdation event
-				System.out.println("Invalid value: " + locator.getURL());
-				System.out.println("Error: " + ve.getMessage());
-				// Output line and column number
-				System.out.println("Error at column "
-						+ locator.getColumnNumber() + ", line "
-						+ locator.getLineNumber());
-			}
-			return true;
-		}
-	}
-    
-    
+	
 	
 
 	public static void main(String[] args) throws Exception {
