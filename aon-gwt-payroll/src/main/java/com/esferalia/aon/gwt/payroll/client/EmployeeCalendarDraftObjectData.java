@@ -10,8 +10,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
 public class EmployeeCalendarDraftObjectData {
@@ -25,9 +27,13 @@ public class EmployeeCalendarDraftObjectData {
 	private Date startContract;
 	private Date endContract;
 	
+	private Integer employeeId;
+	private EmployeesServiceAsync employeesService;
+
 	private com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft;
 	
 	public UndoManager<Undoable> undoManager;
+	
 	
 	
 	public static interface DayTypeVisitor{
@@ -190,6 +196,9 @@ public class EmployeeCalendarDraftObjectData {
 		
 		this.startContract = startContract;
 		this.endContract = endContract;
+
+		this.employeeId = employeeId;
+		this.employeesService = employeesService;
 	}
 	
 	public DayType getTypeByDay (Date dia){
@@ -319,4 +328,21 @@ public class EmployeeCalendarDraftObjectData {
 		return result;
 	}
 	
+	private void init() {
+		employeesService.getEmployeeCalendar(employeeId, 
+			new AsyncCallback<EmployeeCalendarData>() {
+			
+			@Override
+			public void onSuccess(EmployeeCalendarData result) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
 }

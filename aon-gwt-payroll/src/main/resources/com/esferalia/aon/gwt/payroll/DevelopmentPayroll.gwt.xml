@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='aon_gwt_payroll' >
+
+	
+	<inherits name="com.google.gwt.user.Debug"/>
+
+	<inherits name='com.esferalia.aon.gwt.payroll.Payroll' />
+
+	<set-property name="locale" value="es_ES"/> 
+
+	<set-property name="user.agent" value="safari" />	
+
+
+</module>

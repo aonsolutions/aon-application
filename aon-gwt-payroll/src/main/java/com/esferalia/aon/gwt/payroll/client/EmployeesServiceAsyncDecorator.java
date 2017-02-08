@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -502,7 +503,16 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 		employeesServiceAsync.getFTEReport(start, end, workplaces,
 				new AsyncCallbackWrapper<ReportData>(callback));
 	}
-
+	
+	// --------------------------------------------------- CalendarServiceAsync
+	
+	@Override
+	public void getEmployeeCalendar(int contract, AsyncCallback<EmployeeCalendarData> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeCalendar(contract,
+				new AsyncCallbackWrapper<EmployeeCalendarData>(callback));
+	}
+	
 	@Override
 	public void getHolidayReport(Date start, Date end, int[] workplaces,
 			AsyncCallback<ReportData> callback) throws IllegalArgumentException {

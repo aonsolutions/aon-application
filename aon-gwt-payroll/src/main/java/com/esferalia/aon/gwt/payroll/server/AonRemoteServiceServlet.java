@@ -76,7 +76,7 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return request.getSession(false);
 	}
 
-	void initFacesContext() {
+	protected void initFacesContext() {
 		ServletContext context = getServletContext();
 		HttpServletRequest request = getThreadLocalRequest();
 		HttpServletResponse response = getThreadLocalResponse();

@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -37,7 +38,14 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		EmployeesService {
-
+	
+	@Override
+	public EmployeeCalendarData getEmployeeCalendar(int contract) {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+	
 	@Override
 	public CalendarDraft getCalendar(int workplaceId, Integer pattern,
 			Integer calendar) throws IllegalArgumentException {

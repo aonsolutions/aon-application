@@ -1,11 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
-import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 
 public interface CalendarService {
 
@@ -19,5 +18,9 @@ public interface CalendarService {
 			throws IllegalArgumentException;
 	
 	void deletePropertyHoliday(Integer id, Date date) throws IllegalArgumentException;
+	
+	
+	EmployeeCalendarData getEmployeeCalendar(int contract); 
+	
 	
 }
