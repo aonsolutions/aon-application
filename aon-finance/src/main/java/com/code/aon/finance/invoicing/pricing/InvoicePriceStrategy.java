@@ -73,7 +73,7 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 											mapBreakDown.setDeductiblePercent(breakDown.getDeductiblePercent());
 										}
 									} else {
-										mapBreakDown.setDeductibleBase(CommonUtil.round(mapBreakDown.getDeductibleBase() + breakDown.getDeductibleBase()));
+										mapBreakDown.setDeductibleBase(CommonUtil.round(mapBreakDown.getDeductibleBase() + breakDown.getDeductibleBase(), 4));
 									}
 								}
 							}

@@ -32,6 +32,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
@@ -526,6 +527,7 @@ public abstract class BasicExporter implements Serializable {
 		List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
 		for( TaxBreakDown tbd : getPriceStrategy().getTaxBreakDowns(icc, iti) ) {
 			if ( tbd.getBase() != 0 ) {
+				tbd.setBase(CommonUtil.round(tbd.getBase()));
 				list.add(tbd);
 			}
 		}		
