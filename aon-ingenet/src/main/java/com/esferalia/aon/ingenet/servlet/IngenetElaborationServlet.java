@@ -1,20 +1,16 @@
 package com.esferalia.aon.ingenet.servlet;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,18 +19,14 @@ import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEventLocator;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import com.esferalia.aon.ingenet.api.consultaElaboraciones.ACCIONTYPE;
 import com.esferalia.aon.ingenet.api.consultaElaboraciones.CONSULTAELABORACIONES;
 import com.esferalia.aon.ingenet.api.consultaElaboraciones.ESTADOTYPE;
 import com.esferalia.aon.ingenet.api.consultaElaboraciones.PARAMETROSBUSQUEDATYPE;
+import com.esferalia.aon.ingenet.api.consultaElaboraciones.REFERENCIATYPE;
 import com.esferalia.aon.ingenet.api.respuestaElaboraciones.CIFNIFTYPE;
 import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSCENTROTRABAJOTYPE;
 import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSCLIENTETYPE;
@@ -76,8 +68,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-	private final SimpleDateFormat timeFormatter = new SimpleDateFormat("hhmm");
+	private List<String> errorList;
 	
 	private final static String PARAM_VALUE = "value";
 	
@@ -85,19 +76,26 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	protected void processRequest(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws ServletException, IOException {
 		
-		PARAMETROSBUSQUEDATYPE params = null;
+		errorList = new LinkedList<>();
 		
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
+		PARAMETROSBUSQUEDATYPE params = null;
 		if(_xml!=null){
-			CONSULTAELABORACIONES consulta = extractValue(_xml);
-			if(consulta!=null && consulta.getDATOSCONSULTAELABORACIONES()!=null
-					&& consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA()!=null){
-				params = consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA();
+			CONSULTAELABORACIONES consulta;
+			try {
+				consulta = (CONSULTAELABORACIONES) extractValue(_xml, CONSULTAELABORACIONES.class);
+				if(consulta!=null && consulta.getDATOSCONSULTAELABORACIONES()!=null
+						&& consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA()!=null){
+					params = consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA();
+				}
+			} catch (Exception e) {
+				errorList.add(e.getMessage());
 			}
 		}
 		
 		if(params==null) {
 			params = new PARAMETROSBUSQUEDATYPE();
+			params.setFECHA(getDateFormatter().format(new Date()));
 		}
 		if(params.getACCION()==null) {
 			params.setACCION(ACCIONTYPE.RECUPERAR);
@@ -125,39 +123,55 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			}
 		}
 		
-		List<Elaboration> elaborationList = getElaborationList(ctx, date, statusList);
-		
-		List<String> errorList = null;
-		if(ACCIONTYPE.RECUPERAR==params.getACCION()){
-			flushElaborations(httpResponse, ctx, elaborationList);
-			elaborationList.forEach(elaboration -> {
-				elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
-				ElaborationDAO.updateElaboration(ctx, elaboration);
-			});
-		} else if(ACCIONTYPE.CANCELAR==params.getACCION()){
-			if(params.getELABORACIONES()!=null 
-					&& params.getELABORACIONES().getREFERENCIAS()!=null 
-					&& params.getELABORACIONES().getREFERENCIAS().size()>0){
-				params.getELABORACIONES().getREFERENCIAS().forEach(ref -> {
-					String series = ref.getSERIE();
-					Integer number = Integer.parseInt(ref.getNUMERO());
-					Elaboration elaboration = ElaborationDAO
-							.getElaboration(ctx, series, number);
-					elaboration.setStatus(ElaborationStatus.PENDING.value());
+		List<Elaboration> elaborationList = null;
+		try {
+			if(ACCIONTYPE.RECUPERAR==params.getACCION()) {
+				elaborationList = getElaborationList(ctx, date, statusList);
+				flushElaborations(httpResponse, ctx, elaborationList);
+				elaborationList.forEach(elaboration -> {
+					elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
 					ElaborationDAO.updateElaboration(ctx, elaboration);
 				});
-				flushElaborations(httpResponse, ctx, elaborationList);
+			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
+				if(params.getELABORACIONES()!=null 
+						&& params.getELABORACIONES().getREFERENCIAS()!=null 
+						&& params.getELABORACIONES().getREFERENCIAS().size()>0){
+					elaborationList = new ArrayList<>();
+					fillElaborationList(ctx, elaborationList, params.getELABORACIONES().getREFERENCIAS());
+					elaborationList.forEach(elaboration -> {
+						ElaborationDAO.updateElaboration(ctx, elaboration);
+					});
+					httpResponse.setStatus(HttpServletResponse.SC_OK);
+				}
+			} else {
+				errorList.add("No se ha indicado la accion a realizar");
 			}
-		} else {
-			errorList = new LinkedList<>();
-			errorList.add("No se ha indicado la accion a realizar");
-			flushErrors(httpResponse, ctx, errorList);
+		} catch (Exception e) {
+			errorList.add(e.getMessage());
+		}
+		
+		if(errorList!=null && errorList.size()>0){
+			flushErrors(httpResponse, errorList);
 		}
 		
 	}
 
+	private void fillElaborationList(AONContext ctx,
+			List<Elaboration> elaborationList, List<REFERENCIATYPE> referencias) {
+		referencias.forEach(ref -> {
+			String series = ref.getSERIE();
+			Integer number = Integer.parseInt(ref.getNUMERO());
+			Elaboration elaboration = ElaborationDAO.getElaboration(ctx,
+					series, number);
+			if(elaboration.getStatus()==ElaborationStatus.IN_PROGRESS.value()){
+				elaboration.setStatus(ElaborationStatus.PENDING.value());
+				elaborationList.add(elaboration);
+			}
+		});
+	}
+
 	private void flushErrors(HttpServletResponse httpResponse,
-			AONContext ctx, List<String> errorList) throws IOException {
+			List<String> errorList) throws IOException {
 		RESPUESTAELABORACIONES respuesta = new RESPUESTAELABORACIONES();
 		respuesta.setERRORES(new ERRORESTYPE());
 		errorList.forEach(error -> {
@@ -194,14 +208,14 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			RESPUESTAELABORACIONTYPE elaboracion = new RESPUESTAELABORACIONTYPE();
 			elaboracion.setSERIE(elaboration.getSeries());
 			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
-			elaboracion.setFECHAEMISION(dateFormatter.format(elaboration.getDate()));
+			elaboracion.setFECHAEMISION(getDateFormatter().format(elaboration.getDate()));
+			elaboracion.setCOMENTARIOS(elaboration.getComments());
 			elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
 			elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
 			elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
 			elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
 			elaboracion.getDATOSPEDIDOORIGEN().setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
 			elaboracion.getDATOSPEDIDOORIGEN().setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
-			elaboracion.setCOMENTARIOS(elaboration.getComments());
 			elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
 			elaboracion.setDATOSPRODUCTO(new DATOSPRODUCTOTYPE());
 			elaboracion.getDATOSPRODUCTO().setCODIGO(product.getCode());
@@ -223,8 +237,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			} else if(elaborationStatus==ElaborationStatus.IN_PROGRESS){
 				elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PROCESANDO);
 			}
-			elaboracion.setFECHACONSULTA(dateFormatter.format(elaboration.getModificationDate()));
-			elaboracion.setHORACONSULTA(timeFormatter.format(elaboration.getModificationDate()));
+			elaboracion.setFECHACONSULTA(getDateFormatter().format(elaboration.getModificationDate()));
+			elaboracion.setHORACONSULTA(getTimeFormatter().format(elaboration.getModificationDate()));
 			elaboraciones.getDATOSRESPUESTAELABORACIONES().add(elaboracion);
 		});
 		elaboraciones.setTOTAL(String.valueOf(pendingList.size()));
@@ -294,15 +308,17 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		datos.setDATOSREGISTRO(new DATOSREGISTROTYPE());
 		datos.getDATOSREGISTRO().setDATOSDOCUMENTO(new CIFNIFTYPE());
 		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setPAISDOCUMENTO(new PAISTYPE());
-		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setCODIGO(String.valueOf(registry.getDocumentCountry().getIsoCode()));
-		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setDESCRIPCION(registry.getDocumentCountry().getName());
-		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setTIPODOCUMENTO(registry.getDocumentType().name());
-		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setDOCUMENTO(registry.getDocument());
-		datos.getDATOSREGISTRO().setNOMBRE(registry.getName());
-		datos.getDATOSREGISTRO().setALIAS(registry.getAlias());
-		datos.getDATOSREGISTRO().setNACIONALIDAD(new PAISTYPE());
-		datos.getDATOSREGISTRO().getNACIONALIDAD().setCODIGO(String.valueOf(registry.getNationality().getIsoCode()));
-		datos.getDATOSREGISTRO().getNACIONALIDAD().setDESCRIPCION(registry.getNationality().getName());
+		if(registry!=null){
+			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setCODIGO(String.valueOf(registry.getDocumentCountry().getIsoCode()));
+			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setDESCRIPCION(registry.getDocumentCountry().getName());
+			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setTIPODOCUMENTO(registry.getDocumentType().name());
+			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setDOCUMENTO(registry.getDocument());
+			datos.getDATOSREGISTRO().setNOMBRE(registry.getName());
+			datos.getDATOSREGISTRO().setALIAS(registry.getAlias());
+			datos.getDATOSREGISTRO().setNACIONALIDAD(new PAISTYPE());
+			datos.getDATOSREGISTRO().getNACIONALIDAD().setCODIGO(String.valueOf(registry.getNationality().getIsoCode()));
+			datos.getDATOSREGISTRO().getNACIONALIDAD().setDESCRIPCION(registry.getNationality().getName());
+		}
 		datos.getDATOSREGISTRO().setTELEFONOFIJO(obtainCustomerPhone(ctx, customer));
 		datos.getDATOSREGISTRO().setTELEFONOMOVIL(obtainCustomerCellular(ctx, customer));
 		return datos;
@@ -391,84 +407,38 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		List<Elaboration> elaborationList = ElaborationDAO.getElaborationList(
 				ctx,
 				p -> {
-					Byte[] statuses = {null, null};
-					if(statusList!=null && statusList.size()>0){
-						for(int i=0; i<statusList.size(); i++){
+					Byte[] statuses = { null, null };
+					if (statusList != null && statusList.size() > 0) {
+						for (int i = 0; i < statusList.size(); i++) {
 							statuses[i] = statusList.get(i).value();
 						}
 					} else {
 						statuses[0] = ElaborationStatus.PENDING.value();
 						statuses[1] = ElaborationStatus.IN_PROGRESS.value();
 					}
-				return p.getStatusProperty()
-						.in(statuses)
-						.and(date != null ? p.getDateProperty().eq(
-								new java.sql.Timestamp(date.getTime())) : p
-								.getDateProperty().isNotNull())
-								;
+					java.sql.Timestamp start = new java.sql.Timestamp(DateUtils
+							.setSeconds(
+									DateUtils.setMinutes(
+											DateUtils.setHours(date, 0), 0), 0)
+							.getTime());
+					java.sql.Timestamp end = new java.sql.Timestamp(DateUtils
+							.setSeconds(
+									DateUtils.setMinutes(
+											DateUtils.setHours(date, 23), 59),
+									59).getTime());
+					return p.getStatusProperty()
+							.in(statuses)
+							.and(date != null ? p.getDateProperty().between(
+									start, end) : p.getDateProperty()
+									.isNotNull());
 				});
 		return elaborationList;
 	}
 	
-	
-	/*
-	 * JAXB
-	 */
-	private CONSULTAELABORACIONES extractValue(String xml) throws IOException {
-    	InputStream inputStream = null;
-    	try {
-			byte[] bytes = xml.getBytes("UTF-8");
-			inputStream = new ByteArrayInputStream(bytes);
-			String contextPath = CONSULTAELABORACIONES.class.getPackage().getName();
-			JAXBContext context = JAXBContext.newInstance(contextPath);
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			unmarshaller.setEventHandler(new ConsultaValidationEventHandler());
-			CONSULTAELABORACIONES consulta = (CONSULTAELABORACIONES) unmarshaller.unmarshal(inputStream);
-			return consulta;
-		} catch (JAXBException e) {
-			throw new RuntimeException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if(inputStream!=null){
-				inputStream.close();
-			}
-		}
-    }
-	
-	private String convertToXml(Object source, Class<?>... type) {
-        String result;
-        StringWriter sw = new StringWriter();
-        try {
-            JAXBContext context = JAXBContext.newInstance(type);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(source, sw);
-            result = sw.toString();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
-
-    public class ConsultaValidationEventHandler implements ValidationEventHandler {
-		public boolean handleEvent(ValidationEvent ve) {
-			if (ve.getSeverity() == ValidationEvent.FATAL_ERROR || ve.getSeverity() == ValidationEvent.ERROR) {
-				ValidationEventLocator locator = ve.getLocator();
-				// Print message from valdation event
-				System.out.println("Invalid value: " + locator.getURL());
-				System.out.println("Error: " + ve.getMessage());
-				// Output line and column number
-				System.out.println("Error at column "
-						+ locator.getColumnNumber() + ", line "
-						+ locator.getLineNumber());
-			}
-			return true;
-		}
-	}
-	
-
     
+	
+	
+	
 	public static void main(String[] args) throws Exception {
 		String path = "http://";
 		path += "udapa.esferalia.net";
@@ -491,18 +461,22 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			e.printStackTrace();
 		}
 		
+//		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
+//				+ "<ACCION>RECUPERAR</ACCION>"
+//				+ "<FECHA>20170125</FECHA>"
+//				+ "<ESTADO>PENDIENTE</ESTADO>"
+////				+ "<ESTADO>PROCESANDO</ESTADO>"
+//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
+
 		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<CONSULTA_ELABORACIONES>"
-				+ "<DATOS_CONSULTA_ELABORACIONES>"
-				+ "<PARAMETROS_BUSQUEDA>"
-				+ "<ACCION>CONSULTAR</ACCION>"
-				+ "<!--FECHA>20170201</FECHA-->"
-				+ "<ESTADO>PENDIENTE</ESTADO>"
-				+ "<ESTADO>PROCESANDO</ESTADO>"
-				+ "<!--ELABORACIONES></ELABORACIONES-->"
-				+ "</PARAMETROS_BUSQUEDA>"
-				+ "</DATOS_CONSULTA_ELABORACIONES>"
-				+ "</CONSULTA_ELABORACIONES>";
+				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
+				+ "<ACCION>CANCELAR</ACCION>"
+				+ "<ELABORACIONES>"
+				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>25</NUMERO></REFERENCIAS>"
+				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>24</NUMERO></REFERENCIAS>"
+				+ "</ELABORACIONES>"
+				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
         
         StringBuilder postData = new StringBuilder();
         postData.append('&');
