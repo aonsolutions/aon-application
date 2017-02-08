@@ -6,6 +6,8 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -369,15 +371,45 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 3642.00);
 		assertValue("cgpBaseLabel", 3642.00);
 		calculate(Calendar.JANUARY,2017);
-		assertValue("cgcBaseLabel", 3751.26);
-		assertValue("cgpBaseLabel", 3751.26);
+		assertValue("cgcBaseLabel", 3751.20);
+		assertValue("cgpBaseLabel", 3751.20);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 764.40);
-
+		calculate(Calendar.JANUARY,2017);
+		assertValue("cgcBaseLabel", 1152.90);
+		assertValue("cgpBaseLabel",  825.60);
+		
+		// M : 2
+		// T : 4
+		// W : 2
+		// J : 4
+		// V : 2
+		// S : 0
+		// D : 0
+		Map<Integer, Double> weekHours = new HashMap<Integer, Double>();
+		weekHours.put(Calendar.MONDAY, 2.00);
+		weekHours.put(Calendar.TUESDAY, 4.00);
+		weekHours.put(Calendar.WEDNESDAY, 2.00);
+		weekHours.put(Calendar.THURSDAY, 4.00);
+		weekHours.put(Calendar.FRIDAY, 2.00);
+		weekHours.put(Calendar.SATURDAY, 0.00);
+		weekHours.put(Calendar.SUNDAY, 0.00);
+		
+		double hours = 0.00;
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DATE, 1);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.YEAR, 2017);
+		for ( ; calendar.get(Calendar.MONTH) == Calendar.JANUARY; calendar.add(calendar.DATE, 1))
+			hours += weekHours.get(calendar.get(Calendar.DAY_OF_WEEK));
+			
 		draft("BASE, MÍNIMA ( GRUPO 07 )");
+		calculate(Calendar.JANUARY,2017);
+//		assertValue("cgcBaseLabel", 825.60);
+//		assertValue("cgpBaseLabel", 825.60);
 
 		draft("BASE, MÍNIMA IT ( GRUPO 01 )");
 		calculate(Calendar.JUNE,2016);
@@ -387,6 +419,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 13 * 1067.40 / 30 + 764.40 * 17 / 30);
+
+		calculate(Calendar.JANUARY,2017);
+		assertValue("cgcBaseLabel", 1152.90);
+		assertValue("cgpBaseLabel", 825.60);
 
 	}
 
@@ -588,7 +624,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("i.r.p.f_araba_tiempo_completo_ordinario,_indefinido");
 
 		draft("I.R.P.F ARABA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.JANUARY, 2016);
+		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
 		assertValue("irpfPercentTexTBox", "2,00 %");
 
 	}
@@ -601,7 +637,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("i.r.p.f_bizkaia_tiempo_completo_ordinario,_indefinido");
 
 		draft("I.R.P.F BIZKAIA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.JANUARY, 2016);
+		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
 		assertValue("irpfPercentTexTBox", "39,00 %");
 
 	}

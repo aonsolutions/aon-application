@@ -39,29 +39,27 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		wait4Id("finiquito_formacion,_aprendizaje");
 
 		draft("FINIQUITO FORMACIÓN, APRENDIZAJE");
-		calculate(Calendar.MARCH);
+		calculate(Calendar.MARCH, 2016);
 		assertText("common_contingency", "6,18");
-		calculate(Calendar.APRIL);
-		assertText("common_contingency", "6,18");
-		calculate(Calendar.MAY);
-		assertText("common_contingency", "6,18");
-		calculate(Calendar.DECEMBER);
-		assertText("common_contingency", "6,18");
+		calculate(Calendar.APRIL, 2017);
+		assertText("common_contingency", "6,67");
+		calculate(Calendar.DECEMBER, 2017);
+		assertText("common_contingency", "6,67");
 
 
 		draft("FORMACIÓN Y EL, APRENDIZAJE");
-		calculate(Calendar.FEBRUARY);
+		calculate(Calendar.FEBRUARY, 2016);
 		assertText("common_contingency", "6,18");
-		calculate(Calendar.MAY);
+		calculate(Calendar.MAY, 2016);
 		assertText("common_contingency", "6,18");
-		calculate(Calendar.DECEMBER);
-		assertText("common_contingency", "6,18");
+		calculate(Calendar.DECEMBER, 2017);
+		assertText("common_contingency", "6,67");
 
 		draft("BECARIO, EL");
-		calculate(Calendar.MARCH);
+		calculate(Calendar.MARCH, 2016);
 		assertText("common_contingency", "6,18");
-		calculate(Calendar.DECEMBER);
-		assertText("common_contingency", "6,18");
+		calculate(Calendar.DECEMBER, 2017);
+		assertText("common_contingency", "6,67");
 	
 	}
 
