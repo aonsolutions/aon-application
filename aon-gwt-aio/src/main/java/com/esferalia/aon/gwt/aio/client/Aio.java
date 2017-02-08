@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import net.aonsolutions.aon.gwt.warehouse.client.Warehouse;
@@ -60,25 +62,69 @@ public class Aio implements EntryPoint {
 		case Modules.ISSUES:
 			JsAio.addOnBeforeUnloadHandler(this);
 			JsAio.addOnReloadHandler(this);
-			issues = new Issues(aonData);
-			issues.onModuleLoad();
+			GWT.runAsync(Issues.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					issues = new Issues(aonData);
+					issues.onModuleLoad();
+				}
+			});
 			break;
 		case Modules.DOCUMENT:
 			JsAio.addOnBeforeUnloadHandler(this);
 			JsAio.addOnReloadHandler(this);
-			documents = new Documents();
-			documents.onModuleLoad();
-			// NUEVO DOCUMENTAL CON POLYMEROS
-			//documental = new Documental(aonData);
-			//documental.onModuleLoad();
+			GWT.runAsync(Documents.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					documents = new Documents();
+					documents.onModuleLoad();
+					// NUEVO DOCUMENTAL CON POLYMEROS
+					//documental = new Documental(aonData);
+					//documental.onModuleLoad();
+				}
+			});		
 			break;
 		case Modules.STAT:
-			MainEntryPoint stat = new MainEntryPoint(aonData);
-			stat.onModuleLoad(getSubEntryPoint());
+			GWT.runAsync(MainEntryPoint.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					MainEntryPoint stat = new MainEntryPoint(aonData);
+					stat.onModuleLoad(getSubEntryPoint());
+				}
+			});		
 			break;
 		case Modules.WAREHOUSE:
-			Warehouse warehouse = new Warehouse(aonData);
-			warehouse.onModuleLoad(getSubEntryPoint());
+			GWT.runAsync(Warehouse.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Warehouse warehouse = new Warehouse(aonData);
+					warehouse.onModuleLoad(getSubEntryPoint());
+				}
+			});		
 			break;
 		default:
 			break;

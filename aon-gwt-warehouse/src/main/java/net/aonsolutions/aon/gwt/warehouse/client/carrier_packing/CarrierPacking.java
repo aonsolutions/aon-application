@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
-import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -52,8 +51,7 @@ public class CarrierPacking extends AonTemplate{
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC,
-				PaperItemElement.SRC
+				IronIconsElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {

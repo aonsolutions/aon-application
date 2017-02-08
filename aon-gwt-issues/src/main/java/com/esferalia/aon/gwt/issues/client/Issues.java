@@ -93,18 +93,7 @@ public class Issues implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC,
-				PaperInputElement.SRC,
-				PaperTextareaElement.SRC,
-				PaperDialogElement.SRC,
-				VaadinComboBoxElement.SRC,
-				AonComboBoxElement.SRC,
-				PaperIconButtonElement.SRC,
-				IronListElement.SRC,
-				PaperToggleButtonElement.SRC,
-				PaperSliderElement.SRC,
-				IronCollapseElement.SRC,
-				IronSelectorElement.SRC
+				IronIconsElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
