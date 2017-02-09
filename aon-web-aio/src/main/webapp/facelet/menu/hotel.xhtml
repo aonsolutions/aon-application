@@ -44,14 +44,12 @@
 										value="#{bundle.pms_reservation_search_module}" />
 								</aon:div>
 								
-								<aon:if test="#{aonRole.financeOperator or aonRole.commercialOperator}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="failPreauthorization" 
-											action="reservation_list"
-											actionListener="#{reservation.onFailPreauthorizationLoad}"
-											value="Pre-Autorizaciones Fallidas"/>
-									</aon:div>
-								</aon:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="failPreauthorization" 
+										action="reservation_list"
+										actionListener="#{reservation.onFailPreauthorizationLoad}"
+										value="Pre-Autorizaciones Fallidas"/>
+								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservationIO" 
