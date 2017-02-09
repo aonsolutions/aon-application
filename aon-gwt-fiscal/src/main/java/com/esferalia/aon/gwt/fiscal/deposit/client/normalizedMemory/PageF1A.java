@@ -175,17 +175,11 @@ public class PageF1A extends PageAbs {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				Date d = text.getValue();
-				Integer day = d.getDate();
-				Integer month = d.getMonth()+1;
-				Integer year = d.getYear()+1900;
-				String value = day+"."+month+"."+year;
-					
 				text.addStyleName(AON.AON_CSS.aonChanged());
 				text.setTitle(code);
 				normalizedMemory.saveButton.setEnabled(true);
 				normalizedMemory.cancelButton.setVisible(true);
-				onEdit(code, value);	
+				onEdit(code, DATE_FORMAT.format(text.getValue()));	
 			}
 		});
 		
@@ -205,7 +199,7 @@ public class PageF1A extends PageAbs {
 
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		panel.add(text);
@@ -249,7 +243,7 @@ public class PageF1A extends PageAbs {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		panel.add(text);
@@ -293,7 +287,7 @@ public class PageF1A extends PageAbs {
 		else text.setSelectedIndex(0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		panel.add(text);
@@ -312,7 +306,7 @@ public class PageF1A extends PageAbs {
 				Double d = Double.parseDouble(mapDraft.get(key2));
 				dl.setValue(d);
 				dl.setEnabled(enable);
-				if(!map.get(key2).equals(mapDraft.get(key2))){
+				if(isChanged(key2)){
 					dl.addStyleName(AON.AON_CSS.aonChanged());
 				}
 				else dl.removeStyleName(AON.AON_CSS.aonChanged());

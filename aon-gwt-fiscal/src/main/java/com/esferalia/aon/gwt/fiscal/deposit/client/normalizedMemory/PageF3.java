@@ -96,7 +96,7 @@ public class PageF3 extends PageAbs {
 		else text.setValue("");
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		panel.add(text);

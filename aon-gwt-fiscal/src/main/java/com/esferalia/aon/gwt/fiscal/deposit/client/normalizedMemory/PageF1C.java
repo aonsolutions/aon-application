@@ -129,7 +129,7 @@ public class PageF1C extends PageAbs {
 		else text.setValue("");
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		//text.setEnabled(!disabled);
@@ -154,21 +154,11 @@ public class PageF1C extends PageAbs {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				
-					
-					Date d = text.getValue();
-					Integer day = d.getDate();
-					Integer month = d.getMonth()+1;
-					Integer year = d.getYear()+1900;
-					String value = day+"."+month+"."+year;
-					
-					text.addStyleName(AON.AON_CSS.aonChanged());
-					text.setTitle(code);
-					normalizedMemory.saveButton.setEnabled(true);
-					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, value);
-					
-								
+				text.addStyleName(AON.AON_CSS.aonChanged());
+				text.setTitle(code);
+				normalizedMemory.saveButton.setEnabled(true);
+				normalizedMemory.cancelButton.setVisible(true);
+				onEdit(code, DATE_FORMAT.format(text.getValue()));				
 			}
 		});
 		
@@ -191,7 +181,7 @@ public class PageF1C extends PageAbs {
 
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		//text.setEnabled(!disabled);

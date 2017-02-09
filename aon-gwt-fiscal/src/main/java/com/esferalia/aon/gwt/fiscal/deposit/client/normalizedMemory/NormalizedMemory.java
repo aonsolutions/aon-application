@@ -858,7 +858,9 @@ public class NormalizedMemory extends ResizeComposite {
 			PageAbs w = (PageAbs) widget;
 			w.dump(d2Deposit2014);
 		}
-		if(pagesPanel.getWidgetCount() > 0)pagesPanel.remove(0);
+		if(pagesPanel.getWidgetCount() > 0){
+			pagesPanel.remove(0);
+		}
 		pagesPanel.add(widget);
 	}
 

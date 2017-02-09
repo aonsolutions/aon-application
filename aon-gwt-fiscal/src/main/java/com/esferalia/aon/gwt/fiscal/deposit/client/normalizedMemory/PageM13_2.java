@@ -13,18 +13,9 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PageM13_2 extends PageAbs {
-
-	private static final String[] PERIODS2014 = new String[] {
-		AON.MSG.year2014() , AON.MSG.year2013() 
-	};
-
-
-	private static final String[] PERIODS2015 = new String[] {
-		AON.MSG.year2015() , AON.MSG.year2014() 
-	};
-
 	
 	interface PageBinder extends UiBinder<Widget, PageM13_2> {
+		
 	}
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
@@ -52,21 +43,14 @@ public class PageM13_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
+		String[] PERIODS = new String[] {
+			AON.MSG.fiscalYear() + " " + year,
+			AON.MSG.fiscalYear() + " " + (year - 1)
+		};
+		
 		tabPanel.selectTab(0);
 	
-		switch (year) {
-		case 2014:
-			defineMRNTable(table, PERIODS2014, D2DepositConstants.MRN13_ABREVIATE_KEYS);
-			break;
-		case 2015:
-			defineMRNTable(table, PERIODS2015, D2DepositConstants.MRN13_ABREVIATE_KEYS);
-			break;
-		default:
-			defineMRNTable(table, PERIODS2014, D2DepositConstants.MRN13_ABREVIATE_KEYS);
-			break;
-		}
-		
-		
+		defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS);
 	}
 	
 	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){

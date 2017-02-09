@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
-import java.util.Map;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
@@ -16,12 +14,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PageM15 extends PageAbs {
-
-	private static final String[] PERIODS2014 = new String[] { AON.MSG.year2014(),
-			AON.MSG.year2013() };
-	
-	private static final String[] PERIODS2015 = new String[] { AON.MSG.year2015(),
-		AON.MSG.year2014() };
 
 	private static final String[] MRN_FOOTERS = new String[] {
 			AON.MSG.amount(), AON.MSG.memory15_2Header1() };
@@ -52,16 +44,16 @@ public class PageM15 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
+		String[] PERIODS = new String[] {
+			AON.MSG.fiscalYear() + " " + year,
+			AON.MSG.fiscalYear() + " " + (year - 1)
+		};
 		tabPanel.selectTab(0);
-		switch (year) {
-		case 2014:
-			defineMRNTable(table, PERIODS2014, MRN_FOOTERS, D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS, 2);
-			break;
-		case 2015:
-			defineMRNTable2(table, PERIODS2015, D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS_2015);
-			break;
-		default:
-			break;
+		
+		if(year.equals(2014)){
+			defineMRNTable(table, PERIODS, MRN_FOOTERS, D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS, 2);
+		} else {
+			defineMRNTable2(table, PERIODS, D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS_2015);
 		}
 	}
 

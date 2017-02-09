@@ -60,16 +60,6 @@ public class PageM6_2 extends PageAbs {
 		,"P\u00e9rdida por deteriodo al final del ejercicio @ (2)"
 	};
 
-	
-	private static final String[][] AUXILIARES = new String[][] {
-		new String[] {AON.MSG.year2014(), AON.MSG.year2013()}
-		, new String[] {"Largo plazo", "Corto plazo"}
-		,new String[] {AON.MSG.year2015(), AON.MSG.year2014()}
-	};
-
-
-
-
 	interface PageBinder extends UiBinder<Widget, PageM6_2> {
 	}
 
@@ -124,54 +114,33 @@ public class PageM6_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
+		String[][] AUXILIARES = new String[][] {
+			new String[] {AON.MSG.fiscalYear() + " " + year, AON.MSG.fiscalYear() + " " + (year-1)}
+			, new String[] {"Largo plazo", "Corto plazo"}
+		};
+		
 		if(tabPanel.getTabBar().getSelectedTab() != 0)
 			tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
 		else tabPanel.selectTab(0);
-		switch (year) {
-		case 2014:
-			if (isPymes()) {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_2, 2);
-				//NO HAY table2
-				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2PDepositConstants.MRN6_PYMES_KEYS_4, 2);
-				defineMRNTable(table4, MRN_HEADER_4, null, D2PDepositConstants.MRN6_PYMES_KEYS_5, 1);
-				defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
-				abreviateCLabel.setText("");
-			}
-			else {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_2, 2);
-				defineMRNTable(table2, AUXILIARES[0], MRN_HEADER_2, D2DepositConstants.MRN6_ABREVIATE_KEYS_3, 3);
-				
-				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2DepositConstants.MRN6_ABREVIATE_KEYS_4, 2);
-				defineMRNTable(table4, MRN_HEADER_4, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_5, 1);
-				defineMRNTable(table5, MRN_ABREVIATE_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
-			}
-			break;
-		case 2015:
-			if (isPymes()) {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[2], D2PDepositConstants.MRN6_PYMES_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[2], D2PDepositConstants.MRN6_PYMES_KEYS_2, 2);
-				//NO HAY table2
-				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2PDepositConstants.MRN6_PYMES_KEYS_4, 2);
-				defineMRNTable(table4, MRN_HEADER_4, null, D2PDepositConstants.MRN6_PYMES_KEYS_5, 1);
-				defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
-				abreviateCLabel.setText("");
-			}
-			else {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES[2], D2DepositConstants.MRN6_ABREVIATE_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[2], D2DepositConstants.MRN6_ABREVIATE_KEYS_2, 2);
-				defineMRNTable(table2, AUXILIARES[2], MRN_HEADER_2, D2DepositConstants.MRN6_ABREVIATE_KEYS_3, 3);
-				
-				defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2DepositConstants.MRN6_ABREVIATE_KEYS_4, 2);
-				defineMRNTable(table4, MRN_HEADER_4, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_5, 1);
-				defineMRNTable(table5, MRN_ABREVIATE_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
-			}
-			break;
-		default:
-			break;
+		
+		if (isPymes()) {
+			defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_1, 2);
+			defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_2, 2);
+			//NO HAY table2
+			defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2PDepositConstants.MRN6_PYMES_KEYS_4, 2);
+			defineMRNTable(table4, MRN_HEADER_4, null, D2PDepositConstants.MRN6_PYMES_KEYS_5, 1);
+			defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
+			abreviateCLabel.setText("");
 		}
-	
+		else {
+			defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_1, 2);
+			defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2DepositConstants.MRN6_ABREVIATE_KEYS_2, 2);
+			defineMRNTable(table2, AUXILIARES[0], MRN_HEADER_2, D2DepositConstants.MRN6_ABREVIATE_KEYS_3, 3);
+			
+			defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2DepositConstants.MRN6_ABREVIATE_KEYS_4, 2);
+			defineMRNTable(table4, MRN_HEADER_4, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_5, 1);
+			defineMRNTable(table5, MRN_ABREVIATE_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
+		}	
 	}
 	
 	protected void defineMRNTable (FlexTable tab, String[] headers, String[] footers, D2DepositKey[][] keys, int colSpan) {

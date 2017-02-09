@@ -15,26 +15,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PageM3_2 extends PageAbs {
 	
-	private static final String[] MRN_HEADER_1_2014 = new String[] {
-		AON.MSG.distributionBases().toUpperCase(), 
-		AON.MSG.year2014() , AON.MSG.year2013()
-	};
-	
-	private static final String[] MRN_HEADER_2_2014 = new String[] {
-		AON.MSG.aplicationTo().toUpperCase(), 
-		AON.MSG.year2014() , AON.MSG.year2013()
-	};
-
-	private static final String[] MRN_HEADER_1_2015 = new String[] {
-		AON.MSG.distributionBases().toUpperCase(), 
-		AON.MSG.year2015() , AON.MSG.year2014()
-	};
-	
-	private static final String[] MRN_HEADER_2_2015 = new String[] {
-		AON.MSG.aplicationTo().toUpperCase(), 
-		AON.MSG.year2015() , AON.MSG.year2014()
-	};
-	
 	interface PageBinder extends UiBinder<Widget, PageM3_2> {
 	}
 
@@ -60,31 +40,26 @@ public class PageM3_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
+		String[] MRN_HEADER_1 = new String[] {
+			AON.MSG.distributionBases().toUpperCase(), 
+			AON.MSG.fiscalYear() + " " + year ,
+			AON.MSG.fiscalYear() + " " + (year -1)
+		};
+		
+		String[] MRN_HEADER_2 = new String[] {
+			AON.MSG.aplicationTo().toUpperCase(), 
+			AON.MSG.fiscalYear() + " " + year ,
+			AON.MSG.fiscalYear() + " " + (year -1)
+		};
 		tabPanel.selectTab(0);
-		switch (year) {
-		case 2014:
-			if (isPymes()) {
-				defineMRNTable(table, MRN_HEADER_1_2014, D2PDepositConstants.MRN_PYMES_KEYS_1);
-				defineMRNTable(table1, MRN_HEADER_2_2014, D2PDepositConstants.MRN_PYMES_KEYS_2);
-			}
-			else {
-				defineMRNTable(table, MRN_HEADER_1_2014, D2DepositConstants.MRN_ABREVIATE_KEYS_1);
-				defineMRNTable(table1, MRN_HEADER_2_2014, D2DepositConstants.MRN_ABREVIATE_KEYS_2);
-			}
-			break;
-		case 2015:
-			if (isPymes()) {
-				defineMRNTable(table, MRN_HEADER_1_2015, D2PDepositConstants.MRN_PYMES_KEYS_1);
-				defineMRNTable(table1, MRN_HEADER_2_2015, D2PDepositConstants.MRN_PYMES_KEYS_2);
-			}
-			else {
-				defineMRNTable(table, MRN_HEADER_1_2015, D2DepositConstants.MRN_ABREVIATE_KEYS_1);
-				defineMRNTable(table1, MRN_HEADER_2_2015, D2DepositConstants.MRN_ABREVIATE_KEYS_2);
-			}
-			break;
-		default:
-			break;
-		}
+		
+		if (isPymes()) {
+			defineMRNTable(table, MRN_HEADER_1, D2PDepositConstants.MRN_PYMES_KEYS_1);
+			defineMRNTable(table1, MRN_HEADER_2, D2PDepositConstants.MRN_PYMES_KEYS_2);
+		} else {
+			defineMRNTable(table, MRN_HEADER_1, D2DepositConstants.MRN_ABREVIATE_KEYS_1);
+			defineMRNTable(table1, MRN_HEADER_2, D2DepositConstants.MRN_ABREVIATE_KEYS_2);
+		}		
 	}
 	
 	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){

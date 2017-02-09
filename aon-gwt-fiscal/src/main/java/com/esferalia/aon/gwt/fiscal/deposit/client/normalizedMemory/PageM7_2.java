@@ -39,15 +39,6 @@ public class PageM7_2 extends PageAbs {
 		, AON.MSG.memory7_2Header5()
 		, AON.MSG.memory7_2Header6()
 	};
-	
-	private static final String[] AUXILIARES2014 = new String[] {
-		AON.MSG.year2014() , AON.MSG.year2013()
-	};
-	
-	private static final String[] AUXILIARES2015 = new String[] {
-		AON.MSG.year2015() , AON.MSG.year2014()
-	};
- 
 
 	interface PageBinder extends UiBinder<Widget, PageM7_2> {
 	}
@@ -93,43 +84,24 @@ public class PageM7_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		/*if(tabPanel.getTabBar().getSelectedTab() != 0)
-			tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
-		else*/
-		tabPanel.selectTab(0);
-		switch (year) {
-		case 2014:
-			if (isPymes()) {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES2014, D2PDepositConstants.MRN7_PYMES_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES2014, D2PDepositConstants.MRN7_PYMES_KEYS_2, 2);
-				defineMRNTable(table2, MRN_HEADER_2, null, D2PDepositConstants.MRN7_PYMES_KEYS_3, 1);
-				table4Label.setText("");
-			
-			} else {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES2014, D2DepositConstants.MRN7_ABREVIATE_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES2014, D2DepositConstants.MRN7_ABREVIATE_KEYS_2, 2);
-				defineMRNTable(table2, MRN_HEADER_2, null, D2DepositConstants.MRN7_ABREVIATE_KEYS_3, 1);
-				defineMRNTable(table3, MRN_HEADER_3, null, D2DepositConstants.MRN7_ABREVIATE_KEYS_4, 1);
-			}
-			break;
-		case 2015:
-			if (isPymes()) {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES2015, D2PDepositConstants.MRN7_PYMES_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES2015, D2PDepositConstants.MRN7_PYMES_KEYS_2, 2);
-				defineMRNTable(table2, MRN_HEADER_2, null, D2PDepositConstants.MRN7_PYMES_KEYS_3, 1);
-				table4Label.setText("");
-			
-			} else {
-				defineMRNTable(table, MRN_HEADER_1, AUXILIARES2015, D2DepositConstants.MRN7_ABREVIATE_KEYS_1, 2);
-				defineMRNTable(table1, MRN_HEADER_1, AUXILIARES2015, D2DepositConstants.MRN7_ABREVIATE_KEYS_2, 2);
-				defineMRNTable(table2, MRN_HEADER_2, null, D2DepositConstants.MRN7_ABREVIATE_KEYS_3, 1);
-				defineMRNTable(table3, MRN_HEADER_3, null, D2DepositConstants.MRN7_ABREVIATE_KEYS_4, 1);
-			}
-			break;
-		default:
-			break;
-		}
+		String[] AUXILIARES = new String[] {
+			AON.MSG.fiscalYear() + " " + year , AON.MSG.fiscalYear() + " " + (year - 1)
+		};
 		
+		tabPanel.selectTab(0);
+		
+		if (isPymes()) {
+			defineMRNTable(table, MRN_HEADER_1, AUXILIARES, D2PDepositConstants.MRN7_PYMES_KEYS_1, 2);
+			defineMRNTable(table1, MRN_HEADER_1, AUXILIARES, D2PDepositConstants.MRN7_PYMES_KEYS_2, 2);
+			defineMRNTable(table2, MRN_HEADER_2, null, D2PDepositConstants.MRN7_PYMES_KEYS_3, 1);
+			table4Label.setText("");
+		
+		} else {
+			defineMRNTable(table, MRN_HEADER_1, AUXILIARES, D2DepositConstants.MRN7_ABREVIATE_KEYS_1, 2);
+			defineMRNTable(table1, MRN_HEADER_1, AUXILIARES, D2DepositConstants.MRN7_ABREVIATE_KEYS_2, 2);
+			defineMRNTable(table2, MRN_HEADER_2, null, D2DepositConstants.MRN7_ABREVIATE_KEYS_3, 1);
+			defineMRNTable(table3, MRN_HEADER_3, null, D2DepositConstants.MRN7_ABREVIATE_KEYS_4, 1);
+		}
 	}
 	
 	protected void defineMRNTable (FlexTable tab, String[] headers, String[] footers, D2DepositKey[][] keys, int colSpan) {

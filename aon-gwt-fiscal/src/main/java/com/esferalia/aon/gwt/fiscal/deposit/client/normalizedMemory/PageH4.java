@@ -115,21 +115,8 @@ public class PageH4 extends PageAbs {
 	}
 	@Override
 	protected void defineBalanceTable( FlexTable tab, String title, D2DepositHeaderKey[][] keys){
-		String current_ej, ant_ej;
-		switch (year) {
-		case 2014:
-			current_ej = AON.MSG.year2014();
-			ant_ej = AON.MSG.year2013();
-			break;
-		case 2015:
-			current_ej = AON.MSG.year2015();
-			ant_ej = AON.MSG.year2014();
-			break;
-		default:
-			current_ej = AON.MSG.year2014();
-			ant_ej = AON.MSG.year2013();
-			break;
-		}
+		String current_ej = AON.MSG.fiscalYear() + " " + year; 
+		String ant_ej = AON.MSG.fiscalYear() + " " + (year -1);
 		
 		tab.setWidth("100%");
 		tab.setCellSpacing(0);

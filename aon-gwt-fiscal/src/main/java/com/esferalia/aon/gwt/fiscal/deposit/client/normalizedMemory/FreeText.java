@@ -148,7 +148,7 @@ public class FreeText extends PageAbs {
 				text.setValue(mapDraft.get(key.getCode()));
 			}
 			else text.setValue("");
-			if(!map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+			if(isChanged(key.getCode())){
 				text.addStyleName(AON.AON_CSS.aonChanged());
 			}
 		}

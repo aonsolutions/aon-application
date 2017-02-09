@@ -14,14 +14,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PageM11_2 extends PageAbs {
-	
-	private static final String[] PERIODS2014 = new String[] {
-		AON.MSG.year2014() , AON.MSG.year2013()
-	};
-	
-	private static final String[] PERIODS2015 = new String[] {
-		AON.MSG.year2015() , AON.MSG.year2014()
-	};
 
 	interface PageBinder extends UiBinder<Widget, PageM11_2> {
 	}
@@ -54,30 +46,19 @@ public class PageM11_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
+		String[] PERIODS = new String[] {
+			AON.MSG.fiscalYear() + " " + year,
+			AON.MSG.fiscalYear() + " " + (year - 1)
+		};
 		tabPanel.selectTab(0);
-		switch (year) {
-		case 2014:
-			if (isPymes()) {
-				defineMRNTable(table, PERIODS2014, D2PDepositConstants.MRN11_PYMES_KEYS_1);
-				defineMRNTable(table1, PERIODS2014, D2PDepositConstants.MRN11_PYMES_KEYS_2);
-			} else {
-				defineMRNTable(table, PERIODS2014, D2DepositConstants.MRN11_ABREVIATE_KEYS_1);
-				defineMRNTable(table1, PERIODS2014, D2DepositConstants.MRN11_ABREVIATE_KEYS_2);
-			}
-			break;
-		case 2015:
-			if (isPymes()) {
-				defineMRNTable(table, PERIODS2015, D2PDepositConstants.MRN11_PYMES_KEYS_1);
-				defineMRNTable(table1, PERIODS2015, D2PDepositConstants.MRN11_PYMES_KEYS_2);
-			} else {
-				defineMRNTable(table, PERIODS2015, D2DepositConstants.MRN11_ABREVIATE_KEYS_1);
-				defineMRNTable(table1, PERIODS2015, D2DepositConstants.MRN11_ABREVIATE_KEYS_2);
-			}
-			break;
-		default:
-			break;
-		}
 		
+		if (isPymes()) {
+			defineMRNTable(table, PERIODS, D2PDepositConstants.MRN11_PYMES_KEYS_1);
+			defineMRNTable(table1, PERIODS, D2PDepositConstants.MRN11_PYMES_KEYS_2);
+		} else {
+			defineMRNTable(table, PERIODS, D2DepositConstants.MRN11_ABREVIATE_KEYS_1);
+			defineMRNTable(table1, PERIODS, D2DepositConstants.MRN11_ABREVIATE_KEYS_2);
+		}
 	}
 
 	

@@ -27,6 +27,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
@@ -40,6 +41,8 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class PageAbs extends ResizeComposite {
+	
+	protected static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd.MM.yyyy");
 	
 	protected static final int MEMORY_NOTE_VISIBLE_LENGTH = 8;
 	protected static final int NUMERIC_VISIBLE_LENGTH = 10;
@@ -96,10 +99,8 @@ public abstract class PageAbs extends ResizeComposite {
 	public void dump(D2Deposit2014 d2Deposit2014) {
 		map = new HashMap<String, String>();
 		mapDraft = new HashMap<String, String>();
-		
 		map.putAll(d2Deposit2014.getMap());
 		mapDraft.putAll(d2Deposit2014.getMapDraft());
-	
 		depositType = DepositType.valueOfLabel(map.get(D2DepositConstants.DEPOSIT_TYPE));
 		initializeTable();
 	}
@@ -249,7 +250,7 @@ public abstract class PageAbs extends ResizeComposite {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		
@@ -309,8 +310,8 @@ public abstract class PageAbs extends ResizeComposite {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		
-		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+
+		if(!disabled && isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -356,7 +357,7 @@ public abstract class PageAbs extends ResizeComposite {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -412,7 +413,7 @@ public abstract class PageAbs extends ResizeComposite {
 		else text.setValue(0.0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -552,7 +553,8 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		
+		if(!disabled && isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -560,7 +562,6 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextLeft());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		
 	}
 	
 	protected void paintKeyFieldTextBox(FlexTable tab,final String codeId, final D2DepositKey key,int row, int col) {
@@ -599,7 +600,7 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		if(!disabled && !map.get(key.getCode()).equals(mapDraft.get(key.getCode()))){
+		if(!disabled && isChanged(key.getCode())){
 			text.addStyleName(AON.AON_CSS.aonChanged());
 		}
 		text.setEnabled(!disabled);
@@ -629,21 +630,8 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void defineBalanceTable( FlexTable tab, String title, D2DepositHeaderKey[][] keys){
-		String current_ej, ant_ej;
-		switch (year) {
-		case 2014:
-			current_ej = AON.MSG.year2014();
-			ant_ej = AON.MSG.year2013();
-			break;
-		case 2015:
-			current_ej = AON.MSG.year2015();
-			ant_ej = AON.MSG.year2014();
-			break;
-		default:
-			current_ej = AON.MSG.year2014();
-			ant_ej = AON.MSG.year2013();
-			break;
-		}
+		String current_ej = AON.MSG.fiscalYear() + " " + year; 
+		String ant_ej = AON.MSG.fiscalYear() + " " + (year -1);
 		
 		tab.setWidth("100%");
 		tab.setCellSpacing(0);
@@ -703,6 +691,13 @@ public abstract class PageAbs extends ResizeComposite {
 	    value = value * factor;
 	    long tmp = Math.round(value);
 	    return (double) tmp / factor;
+	}
+	
+	public Boolean isChanged(String key){
+		return (!map.containsKey(key) && mapDraft.containsKey(key))  ||
+				map.containsKey(key) && mapDraft.containsKey(key) &&
+				!map.get(key).equals(mapDraft.get(key));
+
 	}
 	
 	protected abstract void initializeTable();

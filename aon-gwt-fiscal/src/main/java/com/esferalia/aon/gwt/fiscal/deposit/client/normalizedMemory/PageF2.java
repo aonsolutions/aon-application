@@ -257,7 +257,7 @@ public class PageF2 extends PageAbs {
 			if(mapDraft.containsKey(key2)){
 				t.setValue(mapDraft.get(key2));
 				t.setEnabled(enable);
-				if(!map.get(key2).equals(mapDraft.get(key2))){
+				if(isChanged(key2)){
 					t.addStyleName(AON.AON_CSS.aonChanged());
 				}
 				else t.removeStyleName(AON.AON_CSS.aonChanged());
@@ -312,7 +312,7 @@ public class PageF2 extends PageAbs {
 						
 					}
 				} );
-				if(!map.get(key2).equals(mapDraft.get(key2))){
+				if(isChanged(key2)){
 					d.addStyleName(AON.AON_CSS.aonChanged());
 				}
 				else d.removeStyleName(AON.AON_CSS.aonChanged());
@@ -399,7 +399,7 @@ public class PageF2 extends PageAbs {
 					
 				}
 				lb.setEnabled(enable);
-				if(!map.get(key2).equals(mapDraft.get(key2))){
+				if(isChanged(key2)){
 					lb.addStyleName(AON.AON_CSS.aonChanged());
 				}
 				else lb.removeStyleName(AON.AON_CSS.aonChanged());
@@ -440,7 +440,7 @@ public class PageF2 extends PageAbs {
 				Double d = Double.parseDouble(mapDraft.get(key2));
 				dl.setValue(d);
 				dl.setEnabled(enable);
-				if(!map.get(key2).equals(mapDraft.get(key2))){
+				if(isChanged(key2)){
 					dl.addStyleName(AON.AON_CSS.aonChanged());
 				}
 				else dl.removeStyleName(AON.AON_CSS.aonChanged());
