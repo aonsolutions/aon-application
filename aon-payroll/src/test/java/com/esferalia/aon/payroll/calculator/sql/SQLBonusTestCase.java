@@ -251,7 +251,8 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(add(getToday(), YEAR, 3)),
 				getLastDayOfMonth(add(getToday(), YEAR, 3)), contract));
 		bonusIIDays = get(add(getToday(), YEAR, 3), DAY_OF_MONTH) - 1;
-
+		monthDays = getMax(add(getToday(), YEAR, 3), Calendar.DAY_OF_MONTH);
+		
 		Assert.assertEquals(
 				(1500.00 - 250.00 * bonusIIDays / monthDays) * 23.60 / 100,
 				salary.getTotalEnterprise(), DELTA);
@@ -424,7 +425,9 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 			new String[] { 
 					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
 					"500.00*DIAS_TRABAJADOS/DIAS_MES",
-					"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00"}, 
+					"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00",
+					"TRACE('DIAS_COTIZADOS=%f\r\n',DIAS_COTIZADOS);0.00"
+					}, 
 			new String[] {
 					"TRACE('BASE_CGC = %f\r\n', BASE_CGC );BASE_CGC * 0.10", 
 					"BASE_CGP * 0.05",
@@ -583,6 +586,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), YEAR, 3)),
 				getLastDayOfMonth(add(getToday(), YEAR, 3)),
 				getLastDayOfMonth(add(getToday(), YEAR, 3)), contract));
+		monthDays = getMax(add(getToday(), YEAR, 3), DAY_OF_MONTH);
 		bonusIIDays = get(add(getToday(), YEAR, 3), DAY_OF_MONTH) - 1;
 		Assert.assertEquals(1500.00 * 23.60 / 100  -  750.00 * 23.60 / 100 * bonusIIDays / monthDays,
 				salary.getTotalEnterprise(), DELTA);
