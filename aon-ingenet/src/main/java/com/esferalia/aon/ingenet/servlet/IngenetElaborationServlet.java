@@ -416,21 +416,28 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 						statuses[0] = ElaborationStatus.PENDING.value();
 						statuses[1] = ElaborationStatus.IN_PROGRESS.value();
 					}
-					java.sql.Timestamp start = new java.sql.Timestamp(DateUtils
-							.setSeconds(
-									DateUtils.setMinutes(
-											DateUtils.setHours(date, 0), 0), 0)
-							.getTime());
-					java.sql.Timestamp end = new java.sql.Timestamp(DateUtils
-							.setSeconds(
-									DateUtils.setMinutes(
-											DateUtils.setHours(date, 23), 59),
-									59).getTime());
-					return p.getStatusProperty()
-							.in(statuses)
-							.and(date != null ? p.getDateProperty().between(
-									start, end) : p.getDateProperty()
-									.isNotNull());
+					java.sql.Timestamp start = null;
+					java.sql.Timestamp end = null;
+					if (date != null) {
+						start = new java.sql.Timestamp(DateUtils
+								.setSeconds(
+										DateUtils.setMinutes(
+												DateUtils.setHours(date, 0), 0), 0)
+												.getTime());
+						end = new java.sql.Timestamp(DateUtils
+								.setSeconds(
+										DateUtils.setMinutes(
+												DateUtils.setHours(date, 23), 59),
+												59).getTime());
+						return p.getStatusProperty()
+								.in(statuses)
+								.and(date != null ? p.getDateProperty().between(
+										start, end) : p.getDateProperty()
+										.isNotNull());
+					} else {
+						return p.getStatusProperty()
+								.in(statuses);
+					}
 				});
 		return elaborationList;
 	}
@@ -461,22 +468,22 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			e.printStackTrace();
 		}
 		
-//		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
-//				+ "<ACCION>RECUPERAR</ACCION>"
-//				+ "<FECHA>20170125</FECHA>"
-//				+ "<ESTADO>PENDIENTE</ESTADO>"
-////				+ "<ESTADO>PROCESANDO</ESTADO>"
-//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
-
 		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
-				+ "<ACCION>CANCELAR</ACCION>"
-				+ "<ELABORACIONES>"
-				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>25</NUMERO></REFERENCIAS>"
-				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>24</NUMERO></REFERENCIAS>"
-				+ "</ELABORACIONES>"
+				+ "<ACCION>RECUPERAR</ACCION>"
+				+ "<FECHA>20170125</FECHA>"
+//				+ "<ESTADO>PENDIENTE</ESTADO>"
+				+ "<ESTADO>PROCESANDO</ESTADO>"
 				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
+
+//		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
+//				+ "<ACCION>CANCELAR</ACCION>"
+//				+ "<ELABORACIONES>"
+//				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>25</NUMERO></REFERENCIAS>"
+//				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>24</NUMERO></REFERENCIAS>"
+//				+ "</ELABORACIONES>"
+//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
         
         StringBuilder postData = new StringBuilder();
         postData.append('&');
