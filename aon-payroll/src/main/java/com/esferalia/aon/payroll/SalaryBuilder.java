@@ -295,7 +295,12 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 
-		SalaryPayment sPayment = new SalaryPayment();
+		SalaryPayment sPayment = new SalaryPayment(){
+			@Override
+			public boolean equals(Object obj) {
+				return this == obj;
+			}
+		};
 
 		sPayment.setSalary(salary);
 		sPayment.setQuote(quote);
