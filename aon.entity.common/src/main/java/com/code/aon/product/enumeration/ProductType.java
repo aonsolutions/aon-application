@@ -21,7 +21,8 @@ public enum ProductType implements IResourceable {
 	EXTERNAL_WORK,
 	EXPENSE,
 	PREPAYMENT,
-	INCREASE;
+	INCREASE,
+	AUXILIAR;
 
 	/**
      * Message key prefix. 
