@@ -442,7 +442,7 @@ public class Model184Partner2016 extends ResizeComposite {
 	}
 	@UiHandler("assetPercent")
 	void onChangeAssetPercent(ChangeEvent event) {
-		getDetail().setPartPercent( assetPercent.getValue());
+		getDetail().setAssetPercent( assetPercent.getValue());
 		markAsDirty();
 	}
 	@UiHandler("amount")
