@@ -22,7 +22,7 @@ public enum ProductType implements IResourceable {
 	EXPENSE,
 	PREPAYMENT,
 	INCREASE,
-	AUXILIAR;
+	AUXILIARY;
 
 	/**
      * Message key prefix. 
