@@ -23,6 +23,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 
 @WebServlet(name = "packinglistProjection", urlPatterns = {"/aon_gwt_aio/download_packing_list/*"})
 public class PackingListDownload extends HttpServlet{
@@ -42,26 +44,47 @@ public class PackingListDownload extends HttpServlet{
 		Integer carrierPackingId = Integer.parseInt(carrierPackingIdStr);
 		
 		// GENERATE JSON //
+		
+		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, carrierPackingId);
 		JSONObject json = new JSONObject();
-		json.put("carrier_packing", ToJSON.carrierPackingToJSON(
-				AON.getCarrierPacking(domain.getName(), domain.getId(), login, carrierPackingId)
-		));
+		json.put("carrier_packing", ToJSON.carrierPackingToJSON(carrierPacking));
 		
 		JSONArray array = new JSONArray();
-		AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
-		.forEach(delivery -> {
-			JSONObject deliveryJSON = ToJSON.deliveryToJSON(delivery);
-			deliveryJSON.put("address", ToJSON.raddressToJSON(
+		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
+			AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
+					f -> f.getCarrierPackingProperty().eq(carrierPackingId)
+					.and(f.getDomainProperty().eq(domain.getId())))
+			.forEach(purchase ->{
+				JSONObject purchaseJSON = ToJSON.purchaseToJSON(purchase);
+				purchaseJSON.put("address", ToJSON.raddressToJSON(
+					AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()))
+				));
+				
+				JSONArray details = new JSONArray();
+				AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login,
+						f -> f.getPurchaseProperty().eq(purchase.getId())
+						.and(f.getCarrierPackingProperty().eq(carrierPackingId)))
+				.forEach(detail -> details.put(ToJSON.purchaseDetailToJSON(detail)));
+				
+				purchaseJSON.put("details", details);
+				array.put(purchaseJSON);
+			});
+		} else  if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
+			AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
+			.forEach(delivery -> {
+				JSONObject deliveryJSON = ToJSON.deliveryToJSON(delivery);
+				deliveryJSON.put("address", ToJSON.raddressToJSON(
 					AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()))
-			));
+				));
 			
-			JSONArray details = new JSONArray();
-			AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
-			.forEach(detail -> details.put(ToJSON.deliveryDetailToJSON(detail)));
-
-			deliveryJSON.put("details", details);
-			array.put(deliveryJSON);
-		});
+				JSONArray details = new JSONArray();
+				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
+				.forEach(detail -> details.put(ToJSON.deliveryDetailToJSON(detail)));
+				
+				deliveryJSON.put("details", details);
+				array.put(deliveryJSON);
+			});
+		}
 		json.put("orders", array);
 		// --------------- //
 		

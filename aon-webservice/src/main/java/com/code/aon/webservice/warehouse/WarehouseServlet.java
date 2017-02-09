@@ -1,6 +1,7 @@
 package com.code.aon.webservice.warehouse;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -334,6 +335,16 @@ public class WarehouseServlet extends HttpServlet{
     private Filter carrierPackingFilter(Domain domain, Map<String, String[]> filterMap, CarrierPackingProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 
+		if(filterMap.containsKey(MSG.ISSUE_DATE)){
+			filter = filter.and(f.getIssueDateProperty().ge(new Timestamp(Long.parseLong(filterMap.get(MSG.ISSUE_DATE)[0])))
+					.or(f.getIssueDateProperty().isNull()));
+		}
+		
+		if(filterMap.containsKey(MSG.DELIVERY_DATE)){
+			filter = filter.and(f.getDeliveryDateProperty().ge(new Timestamp(Long.parseLong(filterMap.get(MSG.DELIVERY_DATE)[0])))
+					.or(f.getDeliveryDateProperty().isNull()));	
+		}
+		
 		if(filterMap.containsKey(MSG.SERIES)){
 			Filter fseries = f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[0]); 
 			for(Integer i = 1; i < filterMap.get(MSG.SERIES).length ; i++){

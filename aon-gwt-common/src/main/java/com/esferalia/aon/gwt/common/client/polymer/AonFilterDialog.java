@@ -34,13 +34,10 @@ public abstract class AonFilterDialog extends PopupPanel {
 		LinkedList<String> filterList, JsArray<JavaScriptObject> data) {
 		addStyleName(AON.AON_CSS.aonFilterDialogBoxShadow());
 		selectedMap = new HashMap<>();
-		
 		filterList.stream().forEach(f -> selectedMap.put(f, true));
-		
 		VerticalPanel verticalPanel = new VerticalPanel();
 		PaperInput textBox = new PaperInput();
 		textBox.setLabel(label);
-
 		textBox.addDomHandler(new KeyUpHandler() {
 			
 			@Override
@@ -49,19 +46,15 @@ public abstract class AonFilterDialog extends PopupPanel {
 				verticalPanel.add(buildItems(data, textBox.getValue(), icon));
 			}
 		}, KeyUpEvent.getType());
-
 		verticalPanel.add(textBox);
 		verticalPanel.add(buildItems(data, textBox.getValue(), icon));
-			
 		add(verticalPanel);
-		
 		int left = w.getAbsoluteLeft();
 		int top = w.getAbsoluteTop() + w.getOffsetHeight();
 		Integer width = Window.getClientWidth();
 		if(left > width - 200){
 			left = left - 200;
 		}
-		
 		setPopupPosition(left, top);
 		setAutoHideEnabled(true);
 	}
@@ -72,14 +65,12 @@ public abstract class AonFilterDialog extends PopupPanel {
 	private ScrollPanel buildItems(JsArray<JavaScriptObject> data, String filter, String icon){
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.setStyleName(AON.AON_CSS.aonStatMenuStyle());
-			
 		VerticalPanel vp = new VerticalPanel();
 		vp.addStyleName(AON.AON_CSS.aonWidthAll());
 		vp.addStyleName(AON.AON_CSS.aonCursorPointer());
-		
 		stream(data).filter(js ->{	
 			JsObject o = js.cast();
-			return o.getName().toLowerCase().contains(filter.toLowerCase());	
+			return o.getName().toLowerCase().contains(filter != null ? filter.toLowerCase() : "");	
 		}).forEach(js -> vp.add(buildItem(js, icon)));
 		scrollPanel.add(vp);
 		return scrollPanel;

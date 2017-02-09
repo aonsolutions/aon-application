@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
+import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
@@ -595,6 +596,16 @@ public class WarehouseDAO {
 		ctx.getDslContext().update(PURCHASE)
 			.set(PURCHASE.CARRIER_PACKING, nullInt)
 			.where(PURCHASE.CARRIER_PACKING.in(list))
+			.execute();
+		
+		ctx.getDslContext().update(PURCHASE_DETAIL)
+			.set(PURCHASE_DETAIL.CARRIER_PACKING, nullInt)
+			.where(PURCHASE_DETAIL.CARRIER_PACKING.in(list))
+			.execute();
+		
+		ctx.getDslContext().update(DELIVERY)
+			.set(DELIVERY.CARRIER_PACKING, nullInt)
+			.where(DELIVERY.CARRIER_PACKING.in(list))
 			.execute();
 			
 		ctx.getDslContext().delete(CARRIER_PACKING)
