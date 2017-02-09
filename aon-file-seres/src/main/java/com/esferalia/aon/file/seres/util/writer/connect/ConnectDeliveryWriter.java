@@ -158,7 +158,7 @@ public class ConnectDeliveryWriter {
 				to -> {
 					DeliveryDetail detail = (DeliveryDetail) to;
 					if(isPackageItem(detail.getItem())){
-						list.add(createSEH1PRecord(detail));
+						list.add(createSEH1PRecord(detail, list.size()+1));
 					}
 				});
 		return list;
@@ -238,10 +238,10 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	private SEH1P createSEH1PRecord(DeliveryDetail detail) {
-		// TODO Auto-generated method stub
+	// TODO createSEH1PRecord
+	private SEH1P createSEH1PRecord(DeliveryDetail detail, int lineNumber) {
 		SEH1P record = new SEH1P();
-		record.setNumeroDeJerarquiaDeEmbalaje(null);
+		record.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
 		record.setNumeroDeJerarquiaPadreDeEmbalaje(null);
 		record.setNumeroDePaquetes(null);
 		record.setInformacionSobreElEmbalaje_Codificado(null);
@@ -299,7 +299,7 @@ public class ConnectDeliveryWriter {
 		record.setNumeroDeLineaDelArticulo(detail.getLine());
 		record.setCodigoEANDelArticulo(item.getBarcode());
 		record.setDescripcionDelArticulo(item.getProduct().getName());
-		record.setTipoDeIdentificacionDelArticulo_CU_DU_(null);
+		record.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
 		record.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
 		record.setNumeroVariablePromocional_PV_(null);
 		record.setCodigoDUN_14_ADU_(null);
@@ -390,7 +390,7 @@ public class ConnectDeliveryWriter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(
 					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID),
-					item.getId());
+					item.getProduct().getBaseItem().getId());
 			criteria.addEqualExpression(
 					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID),
 					customer.getId());
