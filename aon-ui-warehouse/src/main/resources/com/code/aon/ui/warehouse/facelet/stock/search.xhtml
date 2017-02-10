@@ -93,9 +93,17 @@
 									<f:selectItems value="#{productCollections.categories}" />
 								</aon:selectOneMenu>
 								
-								<ui:include 
-									src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
-								
+								<aon:if test="#{aonConfiguration.bean.product.showType}">
+									<aon:outputLabel for="Stock_item_product_type"
+										value="#{bundle.aon_type}" />
+									<aon:selectOneMenu id="Stock_item_product_type"
+										converter="aon.EnumConverter"
+										valueChangeListener="#{controller.addExpression}">
+										<f:selectItem itemLabel="-" value="#{null}" />
+										<f:selectItems value="#{productCollections.commonProductTypes}" />
+									</aon:selectOneMenu>
+								</aon:if>	
+
 								<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 									<aon:outputLabel for="Stock_item_product_brand_id"
 										value="#{bundle.tas_make}" />
@@ -107,22 +115,15 @@
 									</aon:selectOneMenu>
 								</aon:if>
 														
+								<ui:include 
+									src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
+								
 								<aon:outputText for="Stock_item_product_status"
 									value="#{bundle.aon_status}"/>
 								<aon:selectManyCheckbox id="Stock_item_product_status"
 									value="#{searchController.statuses}">
 									<f:selectItems value="#{productCollections.productStatuses}"/>
 								</aon:selectManyCheckbox>				
-							
-								<aon:if test="#{aonConfiguration.bean.product.showType}">
-									<aon:outputLabel for="Stock_item_product_type"
-										value="#{bundle.aon_type}" />
-									<aon:selectManyCheckbox id="Stock_item_product_type"
-										value="#{searchController.types}">
-										<f:selectItems value="#{productCollections.commonProductTypes}" />
-									</aon:selectManyCheckbox>
-								</aon:if>	
-
 
 							</aon:panelGrid>
 						</aon:panelCollapsible>
