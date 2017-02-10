@@ -76,20 +76,9 @@ public class EnterpriseCCCController extends LinesController {
 			if(cccType==CCCType.LEARNING){
 				item.setDisabled(Boolean.TRUE);
 			}
-			if(isTypeSaved(cccType)){ 
-				item.setDisabled(Boolean.TRUE);
-			}
 			cccTypes.add(item);			
 		}
 		return cccTypes;
-	}
-	
-	private boolean isTypeSaved(CCCType type){
-		long count = this.getWrappedList().stream()
-			.map(to -> (EnterpriseCCC) to)
-			.filter(ccc -> (ccc.getType()==type))
-			.count();
-		return count > 0;
 	}
 	
 	public String getQuoteRegimeCode() throws ManagerBeanException{
