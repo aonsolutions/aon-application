@@ -64,10 +64,12 @@
 	
 	<aon:if test="#{aonConfiguration.bean.product.showType}">
 		<aon:outputLabel for="Product_type" value="#{bundle.aon_type}" />
-		<aon:selectManyCheckbox id="Product_type"
-			value="#{searchController.types}">
+		<aon:selectOneMenu id="Product_type"
+			converter="aon.EnumConverter"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{productCollections.commonProductTypes}" />
-		</aon:selectManyCheckbox>
+		</aon:selectOneMenu>
 
 		<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
 			<aon:outputLabel for="Product_kind" value="#{bundle.aon_kind}" />
