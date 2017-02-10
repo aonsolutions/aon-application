@@ -124,7 +124,6 @@ public class ContrataContratosWriter implements IContrataWriter{
 	}
 	
 	public IContratoType createFile(IContratoType contratoType, ContrataContratoParams params) throws ManagerBeanException{
-		writeContratosMainData(contratoType, params);
 		SEPEUtils utils = SEPEUtils.getInstance();
 		String code = "";
 		try {
@@ -133,10 +132,16 @@ public class ContrataContratosWriter implements IContrataWriter{
 					.filter(cd -> cd.getExpression().matches(".\\d\\d[^9]."))
 					.sorted((cd1, cd2) -> cd1.getStartDate().compareTo(cd2.getStartDate()))
 					.collect(Collectors.toList());
-			code = ((ContractData)list.get(list.size()-1)).getExpression();
-			code = code.replaceAll("\"", "");
+			if(list!=null && list.size()>0){
+				code = ((ContractData)list.get(list.size()-1)).getExpression();
+				code = code.replaceAll("\"", "");
+			}
 		} catch (ManagerBeanException e) {
 			// do nothing ...
+		}
+		
+		if(contratoType!=null){
+			writeContratosMainData(contratoType, params);
 		}
 		
 		if (code.equals(ContractCode.C100.getValue())) {
