@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayTypeVisitor;
 import com.google.gwt.core.client.GWT;
@@ -102,6 +103,12 @@ public class EmployeeCalendarDraft extends Composite {
 				@Override
 				public void visitDropDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.dropStyle());
+					
+				}
+
+				@Override
+				public void visitITDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.itStyle());
 					
 				}
 			});
@@ -246,6 +253,8 @@ public class EmployeeCalendarDraft extends Composite {
 		String onChange();
 		
 		String setOutOfContractStyle();
+		
+		String itStyle();
 	}
 
 	@UiField
@@ -716,6 +725,9 @@ public class EmployeeCalendarDraft extends Composite {
 		inicializarCellsCalendar();
 		inicializarCellsTypeCalendar();
 		mostrarCalendarioWidget(this.annio);
+		
+		pintarCambiosHorasRealizados(calendarEmployeeInfo.getHourChanges());
+		pintarCambiosTiposRealizados(calendarEmployeeInfo.getTypeChanges());
 
 	}
 
@@ -734,6 +746,9 @@ public class EmployeeCalendarDraft extends Composite {
 		inicializarCellsCalendar();
 		inicializarCellsTypeCalendar();
 		mostrarCalendarioWidget(this.annio);
+		
+		pintarCambiosHorasRealizados(calendarEmployeeInfo.getHourChanges());
+		pintarCambiosTiposRealizados(calendarEmployeeInfo.getTypeChanges());
 		
 	}
 	
@@ -796,8 +811,7 @@ public class EmployeeCalendarDraft extends Composite {
 				undoAllButton.setEnabled(undoManager.canUndo());
 			}
 		});
-		
-		initCalendar();
+		calendar.inicialiazarCalendarioBD(r -> initCalendar(), t -> {});
 	}
 	
 	private void initCalendar() {
@@ -924,8 +938,10 @@ public class EmployeeCalendarDraft extends Composite {
 			} else {
 				@SuppressWarnings("deprecation")
 				Date actualDay = new Date(anio, mes, contadorDias+1);
+				DateUtils.resetTime(actualDay);
 				DoubleBox horas = new DoubleBox();
 				horas.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+				//Window.alert("Dia: "+actualDay.toGMTString()+"Horas: "+ calendarEmployeeInfo.getHourByDay(actualDay));
 				DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
 				
 				int filaHoras = row + 1;
@@ -949,17 +965,20 @@ public class EmployeeCalendarDraft extends Composite {
 			}
 		}
 
+		
 		int diaActualSemana = 1;
 		while (contadorDias <= ultimoDiaMes) {
 			// Dia Acutal
 			@SuppressWarnings("deprecation")
 			Date actualDay = new Date(anio, mes, contadorDias+1);
+			DateUtils.resetTime(actualDay);
 			// Label insetar
 			Label diaInfo = new Label(contadorDias + "");
 			diaInfo.setStyleName(style.cellStyle());
 			//CeldaHora
 			DoubleBox horas = new DoubleBox();
 			horas.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+			//Window.alert("Dia: "+actualDay.toGMTString()+"Horas: "+ calendarEmployeeInfo.getHourByDay(actualDay));
 			DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
 			int filaHoras = row + 1;
 			
@@ -975,6 +994,7 @@ public class EmployeeCalendarDraft extends Composite {
 			cells[row + 1][7 + diaActualSemana] = new HourCell();
 			cellsType[row][7 + diaActualSemana].setAsType(dayType, row, (7 + diaActualSemana));
 			
+			//TODO: esto tiene que venis de la BD
 			if (es(SUNDAY, diaActualSemana)){
 				cellsType[row][7 + diaActualSemana].setAsType(DayType.FREEDAY, row, (7 + diaActualSemana));
 			}

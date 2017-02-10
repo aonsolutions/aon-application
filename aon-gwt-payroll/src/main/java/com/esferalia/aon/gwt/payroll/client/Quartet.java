@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-public class Quartet<A, B, C, D> {
+import java.io.Serializable;
+
+public class Quartet<A, B, C, D> implements Serializable{
 	private A start_date;
 	private B end_date;
 	private C name;

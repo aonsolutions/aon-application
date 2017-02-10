@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.Bonus.Type;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
 public class EmployeeCalendarDraftObjectData {
 
@@ -34,7 +37,32 @@ public class EmployeeCalendarDraftObjectData {
 	
 	public UndoManager<Undoable> undoManager;
 	
+	private static final Map<String, Integer> DAY_OF_WEEKS  = new HashMap<String, Integer>(){
+		
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("HORAS_DOMINGO", 1);
+			put("HORAS_LUNES", 2);
+			put("HORAS_MARTES", 3);
+			put("HORAS_MIERCOLES", 4);
+			put("HORAS_JUEVES", 5);
+			put("HORAS_VIERNES", 6);
+			put("HORAS_SABADO", 7);
+		}
+	};
 	
+private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, DayType>(){
+		
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("DIAS_IT", DayType.BAJAIT);
+			put("DIAS_VACACIONES", DayType.HOLIDAY);
+			put("DIAS_HUELGA", DayType.STRIKEDAY);
+			put("DIAS_ERE", DayType.EREDAY);
+		}
+	};
 	
 	public static interface DayTypeVisitor{
 		void visitFreeDay(DayType dayType);
@@ -44,6 +72,7 @@ public class EmployeeCalendarDraftObjectData {
 		void visitStrikeDay(DayType dayType);
 		void visitReductionDay(DayType dayType);
 		void visitSuspensionDay(DayType dayType);
+		void visitITDay(DayType dayType);
 		void visitNoTypeDay(DayType dayType);
 	}
 	
@@ -89,12 +118,19 @@ public class EmployeeCalendarDraftObjectData {
 			public void visit(DayTypeVisitor visitor) {
 				visitor.visitSuspensionDay(this);
 			}
-		}, 
+		},
+		BAJAIT {
+			@Override
+			public void visit(DayTypeVisitor visitor) {
+				visitor.visitITDay(this);
+			}
+		},
 		NOTYPEDAY {
 			@Override
 			public void visit(DayTypeVisitor visitor) {
 				visitor.visitNoTypeDay(this);
 			}
+		
 		};
 		
 		public abstract void visit(DayTypeVisitor visitor); 
@@ -230,8 +266,9 @@ public class EmployeeCalendarDraftObjectData {
 		
 		if (hourDayDraft != null)
 			return hourDayDraft;
-		else
+		else{
 			return mapaDiasHoras.getOrDefault(dia, (double) 0);
+		}
 	}
 	
 	public void setHourByDay (Date dia, Double hour){
@@ -249,8 +286,6 @@ public class EmployeeCalendarDraftObjectData {
 		var.setExpression(Double.toString(hour));
 		
 		this.salaryDraft.addDraftVariable(var);
-		
-		Window.alert("Horas: "+Double.toString(hour)+"Name: "+name+", Dia: "+dia.toGMTString());
 		
 		undoManager.add(new SetHourEdit(old, hour, dia, var));
 	} 
@@ -328,20 +363,194 @@ public class EmployeeCalendarDraftObjectData {
 		return result;
 	}
 	
-	private void init() {
+	private String calcularDiaSemanaNoLaboral(int day) {
+		String result = "";
+		switch (day) {
+		case 0:
+			result = "HORAS_LUNES";
+			break;
+		case 1:
+			result = "HORAS_MARTES";
+			break;
+		case 2:
+			result = "HORAS_MIERCOLES";
+			break;
+		case 3:
+			result = "HORAS_JUEVES";
+			break;
+		case 4:
+			result = "HORAS_VIERNES";
+			break;
+		case 5:
+			result = "HORAS_SABADO";
+			break;
+		default:
+			result = "HORAS_DOMINGO";
+			break;
+		}
+		
+		return result;
+	}
+	
+	
+	void inicialiazarCalendarioBD(Consumer<EmployeeCalendarData> success, Consumer<Throwable> failure) {
+		Window.alert("ID Cliente: "+employeeId);
 		employeesService.getEmployeeCalendar(employeeId, 
 			new AsyncCallback<EmployeeCalendarData>() {
 			
 			@Override
 			public void onSuccess(EmployeeCalendarData result) {
-				// TODO Auto-generated method stub
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaHoras = result.getListaHorasContrato();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaTipos = result.getListaTipoDiasContrato();
+				ArrayList<Byte> listaNoLaborables = result.getListaNoLaborablesContrato();
+				ArrayList<java.util.Date> listaFestivos = result.getListaFestivosContrato();
+				inicializarMapaHoras(listaHoras);
+				inicializarMapaTipos(listaTipos);
+				inicializarMapaTiposNL(listaNoLaborables);
+				inicializarMapaTiposF(listaFestivos);
+				
+				
+				success.accept(result);
 				
 			}
 			
+			private void inicializarMapaTiposF(ArrayList<java.util.Date> listaFestivos) {
+				for(java.util.Date d : listaFestivos){
+					Date date = DateUtils.copyDateOnly(d);
+					Window.alert("DiaLista :"+d.toGMTString()+", DiaCopia :"+date.toGMTString());
+					//DateUtils.resetTime(date);
+					mapaDiasTipo.put(d, DayType.FREEDAY);
+				}
+				
+			}
+
+			private void inicializarMapaTiposNL(ArrayList<Byte> listaNoLaborables) {
+				int cont = 0;
+				
+				for (Byte noLabroles : listaNoLaborables) {
+					Date fechaInicio = DateUtils.copyDateOnly(startContract);
+					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
+					Date fechaFin;
+					if (endContract == null)
+						fechaFin = DateUtils.addYears2Date(endDateAux, 1);
+					else
+						fechaFin = DateUtils.copyDateOnly(endContract);
+					
+					//Window.alert("Fecha Incio: "+fechaInicio+", Fecha Fin: "+fechaFin);
+					
+					DayType tipoDia;
+					
+					if (0 == noLabroles.byteValue())
+						tipoDia = DayType.NOTYPEDAY;
+					else
+						tipoDia = DayType.FREEDAY;
+					
+					String horasDias = calcularDiaSemanaNoLaboral(cont);
+					
+					@SuppressWarnings("deprecation")
+					int initialDay = fechaInicio.getDay();
+					int findingDay = DAY_OF_WEEKS.get(horasDias);
+					
+					int auxDay = findingDay - initialDay;
+					
+					//Window.alert("Dia: "+horasDias+"DiaBuscado: "+findingDay+", DiaInicio: "+initialDay+", Dif: "+auxDay);
+					
+					if (auxDay == 7)
+						auxDay = 0;
+					
+					if (auxDay < 0)
+						auxDay = 7 + auxDay;
+					
+					Date auxDate = DateUtils.addDays2Date(fechaInicio, auxDay);
+					
+					while (auxDate.before(fechaFin) || auxDate.equals(fechaFin)){
+						Date date = DateUtils.copyDateOnly(auxDate);
+						DateUtils.resetTime(date);
+						//Window.alert("Dia: " + date.toGMTString() + ", Tipo: "+tipoDia);
+						mapaDiasTipo.put(date, tipoDia);
+						DateUtils.addDays2Date(auxDate, 7);
+					}
+					cont++;
+				}	
+			}
+
+			private void inicializarMapaTipos(List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaTipos) {
+				for (Quartet<java.sql.Date, java.sql.Date, String, String> quartetTipos : listaTipos) {
+					
+					Date startDate = DateUtils.copyDateOnly(quartetTipos.getStartDate());
+					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
+					Date endDate;
+					if (quartetTipos.getEndDate() == null){
+						endDate = DateUtils.addYears2Date(endDateAux, 1);
+					}else
+						endDate = DateUtils.copyDateOnly(quartetTipos.getEndDate());;
+					
+					DateUtils.addDays2Date(endDate, 1);
+					
+					DayType TipoDia = TYPE_OF_DAY.get(quartetTipos.getName());
+					
+					Date auxDate = DateUtils.copyDateOnly(startDate);
+					
+					while (auxDate.before(endDate) || auxDate.equals(endDate)){
+						Date date = DateUtils.copyDateOnly(auxDate);
+						DateUtils.resetTime(date);
+						mapaDiasTipo.put(date, TipoDia);
+						DateUtils.addDays2Date(auxDate, 1);
+					}
+				}
+				
+			}
+
+			private void inicializarMapaHoras(List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaHoras) {
+				for (Quartet<java.sql.Date, java.sql.Date, String, String> quartetHoras : listaHoras) {
+					
+					Date startDate = DateUtils.copyDateOnly(quartetHoras.getStartDate());
+					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
+					Date endDate;
+					if (quartetHoras.getEndDate() == null){
+						endDate = DateUtils.addYears2Date(endDateAux, 1);
+					}else
+						endDate = DateUtils.copyDateOnly(quartetHoras.getEndDate());;
+					
+					DateUtils.addDays2Date(endDate, 1);
+					
+					Double horas = Double.parseDouble(quartetHoras.getExpression());
+					String horasDias = quartetHoras.getName();
+					
+					//Window.alert("StartDate: " +startDate.toGMTString()+", EndDate: "+endDate.toGMTString()+", TipoDia: "+horasDias+", Horas: "+horas);
+					
+					@SuppressWarnings("deprecation")
+					int initialDay = startDate.getDay();
+					int findingDay = DAY_OF_WEEKS.get(horasDias);
+					
+					int auxDay = findingDay - initialDay;
+					
+					//Window.alert("Miercoles :"+initialDay+" "+horasDias+" :"+findingDay+", Dif :"+auxDay);
+					
+					if (auxDay == 7)
+						auxDay = 0;
+					
+					if (auxDay < 0)
+						auxDay = 7 + auxDay;
+					
+					
+					//Window.alert("initialDay: "+initialDay+" findingDay: "+findingDay+" auxDay: "+auxDay);
+					Date auxDate = DateUtils.addDays2Date(startDate, auxDay);
+					
+					while (auxDate.before(endDate) || auxDate.equals(endDate)){
+						Date date = DateUtils.copyDateOnly(auxDate);
+						DateUtils.resetTime(date);
+						mapaDiasHoras.put(date, horas);
+						//Window.alert("AuxDate: "+auxDate.toGMTString()+", Tipo: "+horasDias+", Horas: "+horas);
+						DateUtils.addDays2Date(auxDate, 7);
+					}
+				}
+				
+			}
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				failure.accept(caught);
 			}
 		});
 	}

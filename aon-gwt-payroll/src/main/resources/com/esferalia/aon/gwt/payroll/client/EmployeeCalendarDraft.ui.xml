@@ -72,6 +72,13 @@
 			border-radius: 0px !important;
 		}
 		
+		.itStyle {
+			background-color: rgba(255, 0, 0, 0.72);
+			border-radius: 15px;
+			padding: 3px;
+			color: #ffffff;
+		}
+		
 		.sundayStyle {
 			background-color: salmon;
 			border-radius: 15px;
@@ -153,7 +160,7 @@
 		}
 		
 		.iconEraseStyle {
-			margin-left: 145px;
+			margin-left: 40px;
 		}
 		
 		.mesesImparesStyle {
@@ -396,7 +403,7 @@
 					<i:IronLabel>
 						<p:PaperButton styleName="{style.cellStyle} {style.sundayStyle}"
 							ui:field="diaNoLaborableButton"></p:PaperButton>
-						No Laborables
+						No Laborables/Festivos
 					</i:IronLabel>
 					<i:IronLabel>
 						<p:PaperButton styleName="{style.cellStyle} {style.holidayStyle}"
@@ -429,7 +436,12 @@
 						Suspensión
 					</i:IronLabel>
 					<i:IronLabel>
-						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton"/>
+						<p:PaperButton styleName="{style.cellStyle} {style.itStyle}"
+							ui:field="diaBajaITButton"></p:PaperButton>
+						Baja IT
+					</i:IronLabel>
+					<i:IronLabel>
+						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton" disabled="true"/>
 						Horas
 					</i:IronLabel>
 					<i:IronLabel>

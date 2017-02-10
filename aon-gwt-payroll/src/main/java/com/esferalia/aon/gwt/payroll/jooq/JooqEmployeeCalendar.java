@@ -2,6 +2,10 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
+import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
+import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -10,6 +14,7 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -41,6 +46,10 @@ public class JooqEmployeeCalendar {
 		
 		ArrayList<Quartet<Date, Date, String, String>> listaHorasContrato = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<java.util.Date> listaFestivosContrato = new ArrayList<java.util.Date>();
+		ArrayList<Byte> listaNoLaborablesContrato = new ArrayList<Byte>();
+		
+		// ---------------------------------------------- HORAS SEMANALES ---------------------------------------------------------
 		
 		Result<Record> contratoInfoEmpleado = dslContext
 				  .select()
@@ -67,6 +76,8 @@ public class JooqEmployeeCalendar {
 			listaHorasContrato.add(infoEmployee);
 		}
 		
+		// ---------------------------------------------- TIPOS DIAS ---------------------------------------------------------
+		
 		Result<Record> tipoDiasContratoEmpleado = dslContext
 					.select()
 					.from(CONTRACT_DATA)
@@ -79,7 +90,7 @@ public class JooqEmployeeCalendar {
 		Result<Record> tipoDiasITContratoEmpleado = dslContext
 				.select()
 				.from(CONTRACT_LEAVE)
-				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.where(CONTRACT_LEAVE.CONTRACT.eq(contract))
 				.fetch();
 		
 		for(Record r: tipoDiasContratoEmpleado){
@@ -104,7 +115,56 @@ public class JooqEmployeeCalendar {
 			listaTipoDiasContrato.add(infoEmployee);
 		}
 		
-		employeeInfoCalendar = new EmployeeCalendarData(listaHorasContrato, listaTipoDiasContrato);
+		// -------------------------------------- DIAS NO LABRABLES / FESTIVOS ---------------------------------------------------------
+		
+		 Integer calendar = dslContext.select(CONTRACT.CALENDAR)
+							 		  .from(CONTRACT)
+							 		  .where(CONTRACT.ID.eq(contract))
+							 		  .fetchOne()
+							 		  .get(CONTRACT.CALENDAR);
+		 
+		Result<Record> diasNoLaborables = dslContext.select()
+													.from(CALENDAR)
+													.where(CALENDAR.ID.eq(calendar))
+													.fetch();
+		
+		for(Record r: diasNoLaborables){
+			listaNoLaborablesContrato.add(r.get(CALENDAR.MONDAY));
+			listaNoLaborablesContrato.add(r.get(CALENDAR.TUESDAY));
+			listaNoLaborablesContrato.add(r.get(CALENDAR.WEDNESDAY));
+			listaNoLaborablesContrato.add(r.get(CALENDAR.THURSDAY));
+			listaNoLaborablesContrato.add(r.get(CALENDAR.FRIDAY));
+			listaNoLaborablesContrato.add(r.get(CALENDAR.SATURDAY));
+			listaNoLaborablesContrato.add(r.get(CALENDAR.SUNDAY));
+		}
+		
+		Integer holiday = dslContext.select(CALENDAR.HOLIDAY)
+									.from(CALENDAR)
+									.where(CALENDAR.ID.eq(calendar))
+									.fetchOne()
+									.get(CALENDAR.HOLIDAY);
+		
+		ArrayList<Integer> holidays = new ArrayList<Integer>();
+		
+		while ( holiday != null ) {
+			holidays.add(holiday);
+			
+			holiday = dslContext.select(HOLIDAY.HOLIDAY_)
+								.from(HOLIDAY)
+								.where(HOLIDAY.ID.eq(holiday))
+								.fetchOne()
+								.get(HOLIDAY.HOLIDAY_);
+		}
+		
+		Result<Record> countryHolidays = dslContext.select()
+													.from(HOLIDAY_DETAIL)
+													.where(HOLIDAY_DETAIL.HOLIDAY.in(holidays))
+													.fetch();
+		
+		for(Record r : countryHolidays)
+			listaFestivosContrato.add(r.get(HOLIDAY_DETAIL.DATE));
+		
+		employeeInfoCalendar = new EmployeeCalendarData(listaHorasContrato, listaTipoDiasContrato, listaFestivosContrato, listaNoLaborablesContrato);
 		
 		return employeeInfoCalendar;
 	}
