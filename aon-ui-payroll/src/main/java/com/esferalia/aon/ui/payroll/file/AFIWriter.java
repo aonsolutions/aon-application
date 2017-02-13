@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -41,11 +43,14 @@ import com.esferalia.aon.file.payroll.afi.data.EMP;
 import com.esferalia.aon.file.payroll.afi.data.ETF;
 import com.esferalia.aon.file.payroll.afi.data.ETI;
 import com.esferalia.aon.file.payroll.afi.data.FAB;
+import com.esferalia.aon.file.payroll.afi.data.FCT;
 import com.esferalia.aon.file.payroll.afi.data.RZS;
 import com.esferalia.aon.file.payroll.afi.data.TRA;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.AfiActionType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -53,6 +58,8 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T21;
 import com.esferalia.aon.payroll.util.PayrollUtils;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class AFIWriter implements Serializable {
@@ -223,6 +230,7 @@ public class AFIWriter implements Serializable {
 		FAB fab = createFABRecord(detail);
 		tra.setAyn(createAYNRecord(detail.getContract()));
 		tra.setFab(fab);
+		tra.setFct(createFCTRecord(detail));
 		return tra;
 	}
 	
@@ -318,6 +326,73 @@ public class AFIWriter implements Serializable {
 		fab.setCostratadasPostAlumbramiento(null);
 		
 		return fab;
+	}
+	
+
+	private FCT createFCTRecord(ContractBatchDetail detail) {
+		FCT fct = null;
+		if(detail.getActionType()==AfiActionType.MB){
+			SEPEUtils utils = SEPEUtils.getInstance();
+			Double noHolidays = 0.0;
+			try {
+				List<ISalary> settleList = getSalaries(detail.getContract(), null, null, SalaryType.SETTLE);
+				for(ISalary settle: settleList){
+					if(settle!=null){
+						List<SalaryData> noHolidaysData = utils.getSalaryDataList(settle, settle.getStartDate(), settle.getEndDate(), ContextVariable.NO_HOLIDAYS.getName());
+						if(noHolidaysData!=null && noHolidaysData.size()>0){
+							for(SalaryData data: noHolidaysData){
+								if(data.getExpression()!=null && NumberUtils.isNumber(data.getExpression())){
+									noHolidays += CommonUtil.ceil(Double.valueOf(data.getExpression()), 0);
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if(noHolidays!=null && noHolidays>0){
+				fct = new FCT();
+				Date finalEndDate = DateUtils.addDays(detail.getContract().getEndDate(), noHolidays.intValue());
+				fct.setFechaFinVacaciones(dateFormatter.format(finalEndDate));
+			}
+		}
+		return fct;
+	}
+	
+	public List<ISalary> getSalaries(Contract contract, Date startDate, Date endDate) throws ManagerBeanException {
+		return getSalaries(contract, startDate, endDate, SalaryType.SALARY);
+	}
+	
+	public List<ISalary> getSalaries(Contract contract, Date startDate, Date endDate, SalaryType type) throws ManagerBeanException {
+		SEPEUtils utils = SEPEUtils.getInstance();
+		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+		if(type!=null){
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
+		} else {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+		}
+		if(startDate != null){
+			Calendar startCal = Calendar.getInstance();
+			startCal.setTime(startDate);
+			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
+		}
+		if(endDate != null){
+			Calendar endCal = Calendar.getInstance();
+			endCal.setTime(endDate);
+			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
+		}
+		utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
+		List<ISalary> list = new LinkedList<ISalary>();
+		for(ITransferObject to: bean.getList(criteria)){
+			list.add((ISalary) to);
+		}
+		return list;
 	}
 	
 	private Double obtainWeekHours(Contract contract) {
