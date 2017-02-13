@@ -288,8 +288,8 @@ public class EnterpriseCertificate extends AbstractEnterpriseCertificate {
 					
 					if(trabajador.getDatosVacacionesCotizadas()!=null){
 						totalDays += Integer.parseInt(trabajador.getDatosVacacionesCotizadas().getNumDiasCotizados());
-						totalCommonCont += Double.parseDouble(trabajador.getDatosVacacionesCotizadas().getBaseCotizacionContingenciasComunes());
-						totalUnemployment +=Double.parseDouble(trabajador.getDatosVacacionesCotizadas().getBaseCotizacionDesempleo());
+						totalCommonCont += Double.parseDouble(trabajador.getDatosVacacionesCotizadas().getBaseCotizacionContingenciasComunes())/100;
+						totalUnemployment += Double.parseDouble(trabajador.getDatosVacacionesCotizadas().getBaseCotizacionDesempleo())/100;
 					}
 					
 					setPdfFieldValue(EnterpriseCertificateField.TOTAL_DAYS.getValue(),
