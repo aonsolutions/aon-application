@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>8.90</version>
+		<version>8.90.1</version>
 	</parent>
 	<artifactId>aon.python</artifactId>
 	<packaging>pom</packaging>
