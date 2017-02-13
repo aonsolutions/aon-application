@@ -13,7 +13,6 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -26,46 +25,37 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 
-public class AccountStatementPanel extends DockLayoutPanel implements HasSelectionHandlers<Integer>{
+public class AccountStatementPanel extends ScrollPanel implements HasSelectionHandlers<Integer>{
 
-	private SimpleLayoutPanel northPanel;
-	private ScrollPanel centerPanel;
+	FlowPanel root;
 	
 	static FiscalServiceAsync fiscalService;
 	
-	public AccountStatementPanel(Unit unit) {
-		super(unit);
+	public AccountStatementPanel() {
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-		
-		northPanel = new SimpleLayoutPanel();
-		addNorth(northPanel, 80);
-		centerPanel = new ScrollPanel();
-		centerPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
-		add(centerPanel);
+		root = new FlowPanel();
+		setWidget(root);
+		addStyleName(AON.AON_CSS.aonScrollArea());
+		addStyleName(AON.AON_CSS.aonMarginBottom());		
 	}
 
-	public AccountStatementPanel() {
-		this(Unit.PX);
-	}
-	
 	public void show( AccountStatementParams params) {
+		root.clear();
 		final FlowPanel header = new FlowPanel("pre");
 		header.setStyleName(AON.AON_CSS.aonFixedFont());
 		header.addStyleName(AON.AON_CSS.aonFontMedium());
-		northPanel.setWidget(header);
+		root.add(header);
 		
 		final FlowPanel panel = new FlowPanel("pre");
-		centerPanel.setWidget(panel);		
+		root.add(panel);		
 		panel.setStyleName(AON.AON_CSS.aonFixedFont());
 		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		panel.addStyleName(AON.AON_CSS.aonBorderBottom());
@@ -136,8 +126,8 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 
 						header.add(headerTab);
 						
-						int height = 70 + (14 * result.getSummary().size());
-						setWidgetSize(northPanel, height); 
+//						int height = 70 + (14 * result.getSummary().size());
+//						setWidgetSize(northPanel, height); 
 						for (AccountStatement as : result.getSummary()) {
 							Label label = new Label(
 									AonStringUtils.repeat(' ', 10)
@@ -219,7 +209,7 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 					}
 					
 				});
-		centerPanel.scrollToTop();
+		scrollToTop();
 	}
 
 	@Override
