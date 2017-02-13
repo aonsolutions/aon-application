@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
 			
-	<!-- =================== Dump Domain ======================== -->
+	<!-- =================== Dump Domain ======================== 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>aon_dump_form</from-outcome>
@@ -13,7 +13,7 @@
 	</navigation-rule>
 
 
-
+	-->
 
 
 </faces-config>

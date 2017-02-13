@@ -126,6 +126,21 @@ public class Aio implements EntryPoint {
 				}
 			});		
 			break;
+		case Modules.DUMP_FORM:
+			GWT.runAsync(com.esferalia.aon.gwt.dump.client.MainEntryPoint.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					com.esferalia.aon.gwt.dump.client.MainEntryPoint dump = new com.esferalia.aon.gwt.dump.client.MainEntryPoint();
+					dump.onModuleLoad();
+				}
+			});		
+			break;
 		default:
 			break;
 		}

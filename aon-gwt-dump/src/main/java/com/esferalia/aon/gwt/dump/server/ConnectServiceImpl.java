@@ -1,11 +1,11 @@
 package com.esferalia.aon.gwt.dump.server;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,12 +26,10 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.annotation.WebServlet;
 
 import org.jooq.DSLContext;
-import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
-import org.jooq.SelectConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -47,12 +45,10 @@ import com.esferalia.aon.gwt.dump.shared.Domain;
 import com.esferalia.aon.gwt.dump.shared.Parameters;
 import com.esferalia.aon.gwt.dump.shared.Progress;
 import com.esferalia.aon.gwt.dump.shared.Task;
-import com.esferalia.aon.jooq.tables.AppParam;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import net.aonsolutions.dump.AonDump;
-import net.aonsolutions.dump.DuplicateCallBackDump;
 import net.aonsolutions.dump.CallbackDump;
 import net.aonsolutions.dump.CallbackDumpExecute;
 import net.aonsolutions.dump.CallbackDumpPrint;
@@ -62,6 +58,7 @@ import net.aonsolutions.dump.DomainParentCallBackDump;
 import net.aonsolutions.dump.DomainSiblingCallBackDump;
 import net.aonsolutions.dump.DomainZeroCallbackDump;
 import net.aonsolutions.dump.DownloadCallBackDump;
+import net.aonsolutions.dump.DuplicateCallBackDump;
 import net.aonsolutions.dump.EraseUser;
 import net.aonsolutions.dump.ErrorReferenceCallBackDump;
 import net.aonsolutions.dump.IndexUniqueCallBackDump;
@@ -75,7 +72,8 @@ import net.aonsolutions.dump.UpdateCallBack;
  * The server side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
-@WebServlet(name = "Dump Servlet", urlPatterns = { "/aon_gwt_dump/dump" })
+@WebServlet(name = "Dump Servlet", urlPatterns = { "/aon_gwt_dump/dump",
+												   "/aon_gwt_aio/dump"})
 
 public class ConnectServiceImpl extends AonRemoteServiceServlet implements ConnectService {
 

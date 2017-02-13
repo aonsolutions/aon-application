@@ -3,6 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
+	<!-- AON GWT DUMP -->
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>aon_dump_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/dump_form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- AON GWT DOCUMENTS -->
 
 	<navigation-rule>
