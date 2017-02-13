@@ -129,8 +129,8 @@ public class EdiSalesImporterHandler implements Serializable {
 	
 	public String obtainCustomerCodeSales(RECTL rectl) {
 		return rectl.ere1pList.stream()
-				.filter(o -> ERE1P.ERE1P_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.getValue().equals(o.getCalificadorDelInterlocutor()))
 //				.filter(o -> ERE1P.ERE1P_2.COMPRADOR_BY.getValue().equals(o.getCalificadorDelInterlocutor()))
+				.filter(o -> ERE1P.ERE1P_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.getValue().equals(o.getCalificadorDelInterlocutor()))
 				.map(ERE1P::getCodigoInterlocutor)
 				.findFirst()
 				.orElse(rectl.getCodigoEmisor());	
@@ -333,7 +333,8 @@ public class EdiSalesImporterHandler implements Serializable {
 	}
 
 	protected RegistryNote searchCustomerRNote(String customerCode) {
-		return searchCustomerNote(customerCode, CustomerEdiSupportController.PEDIDOS);
+//		return searchCustomerNote(customerCode, CustomerEdiSupportController.PEDIDOS);
+		return searchCustomerNote(customerCode, CustomerEdiSupportController.PTO_ENTREGA);
 	}
 	
 	private RegistryNote searchCustomerNote(String customerCode, String type) {
