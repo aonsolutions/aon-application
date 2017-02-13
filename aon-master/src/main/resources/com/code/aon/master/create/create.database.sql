@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.90.0
+# Version: 8.91.0
 # Created by: girazu
-# Creation Date: 09/02/2017 14:55
+# Creation Date: 13/02/2017 18:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2144,7 +2144,7 @@ CREATE TABLE `project_reservation` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel de Produccion',
   `hotel_reservation` int(4) NOT NULL COMMENT 'Identificador del Hotel de la Reserva',
-  `code` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Localizador de la Reserva',
+  `code` varchar(48) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Localizador de la Reserva',
   `start_date` date NOT NULL COMMENT 'Fecha de entrada',
   `start_time` datetime NOT NULL COMMENT 'Hora de entrada',
   `end_date` date NOT NULL COMMENT 'Fecha de salida',
@@ -7159,7 +7159,7 @@ CREATE TABLE `reservation_request` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
-  `code` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Localizador',
+  `code` varchar(48) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Localizador',
   `start_date` date NOT NULL COMMENT 'Fecha de entrada',
   `end_date` date NOT NULL COMMENT 'Fecha de salida',
   `agency` int(4) DEFAULT NULL COMMENT 'Identificador de la agencia de viajes',
@@ -8345,7 +8345,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.90.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.91.0');
 
 COMMIT;
 

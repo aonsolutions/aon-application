@@ -126,7 +126,7 @@
 		<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
 			rendered="#{!reservation.nevv and !reservation.reservationPermission.reservationCodeEditable}" />
 		<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
-			size="30" maxlength="32" required="true"
+			size="64" maxlength="48" required="true"
 			rendered="#{reservation.nevv or reservation.reservationPermission.reservationCodeEditable}" />
 		<aon:div style="display:inline; cursor:pointer;" styleClass="aon-margin-left"
 			rendered="#{reservation.multipleReservationSize > 0}">
