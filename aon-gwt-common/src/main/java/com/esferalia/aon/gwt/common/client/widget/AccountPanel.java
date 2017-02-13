@@ -103,7 +103,10 @@ public class AccountPanel extends SimplePanel implements Focusable {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == 222) {
+				if (event.isShiftKeyDown() &&  
+					  (event.getNativeKeyCode() == 222 //FIREFOX
+					|| event.getNativeKeyCode() == 219 //CHROME
+						)) {
 					String prefix = codeBox.getValue();
 					prefix = AonStringUtils.remove(prefix, '?');
 					commonService.getAccountNextCode(domainName, domain, prefix, new AsyncCallback<String>() {
