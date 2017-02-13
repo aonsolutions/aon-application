@@ -478,7 +478,7 @@ public class Model184Partner2016 extends ResizeComposite {
 	}
 	@UiHandler("declaredKey")
 	void onChangedeclaredKey(ChangeEvent event) {
-		getDetail().setLocation(location.getSelectedValue());
+		getDetail().setDeclaredKey(declaredKey.getSelectedValue());
 		enableWidgets();
 		markAsDirty();
 	}
@@ -499,7 +499,7 @@ public class Model184Partner2016 extends ResizeComposite {
 				 || location.getSelectedIndex() == 2
 				 || location.getSelectedIndex() == 3)
 				);
-		declaredKey.setEnabled(location.getSelectedIndex() == 2);
+		declaredKey.setEnabled(location.getSelectedIndex() != 0);
 	}
 	
 	private void markAsDirty() {
