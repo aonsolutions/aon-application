@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
@@ -72,6 +73,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 			accountingRegistry = new AccountingRegistry()
 					.setDomain(domain)
 					.setType(AccountingRegistryType.CREDITOR)
+					.setDocumentType(DocumentType.CIF)
 					.setDocumentCountry(Country.ES)
 					.setNationality(Country.ES)
 					.setTransaction(InvoiceTransactionType.NATIONAL)
