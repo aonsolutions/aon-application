@@ -150,11 +150,13 @@ public class FilterPanel extends Composite {
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsLabel jsLabel = acb.getSelectedItem().cast();
-						priorityButton.setTitle(jsLabel.getName());
-						priorityLabel.setText("Prioridad:"+jsLabel.getName()+"; ");
-						getIssues().issueFilter.setPriority(jsLabel.getName());
-						getIssues().updateIssueList(issues.issueFilter, false);
-						popup.hide();						
+						if(jsLabel != null){
+							priorityButton.setTitle(jsLabel.getName());
+							priorityLabel.setText("Prioridad:"+jsLabel.getName()+"; ");
+							getIssues().issueFilter.setPriority(jsLabel.getName());
+							getIssues().updateIssueList(issues.issueFilter, false);
+							popup.hide();		
+						}
 					}
 				});
 				popup.add(acb);
@@ -188,17 +190,18 @@ public class FilterPanel extends Composite {
 				acb.setItemLabelPath("name");
 				acb.setItemValuePath("name");
 				acb.setItems(labels);
-				
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsLabel jsLabel = acb.getSelectedItem().cast();
-						typeButton.setTitle(jsLabel.getName());
-						typeLabel.setText("Tipo:"+jsLabel.getName()+"; ");
-						getIssues().issueFilter.setType(jsLabel.getId());
-						getIssues().updateIssueList(issues.issueFilter, false);
-						popup.hide();											
+						if(jsLabel != null){
+							typeButton.setTitle(jsLabel.getName());
+							typeLabel.setText("Tipo:"+jsLabel.getName()+"; ");
+							getIssues().issueFilter.setType(jsLabel.getId());
+							getIssues().updateIssueList(issues.issueFilter, false);
+							popup.hide();											
+						}
 					}
 				});
 				popup.add(acb);
@@ -237,11 +240,13 @@ public class FilterPanel extends Composite {
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsLabel jsLabel = acb.getSelectedItem().cast();
-						tagButton.setTitle(jsLabel.getName());
-						tagLabel.setText("Etiqueta:"+jsLabel.getName()+"; ");
-						getIssues().issueFilter.setLabels(jsLabel.getId());
-						getIssues().updateIssueList(issues.issueFilter, false);	
-						popup.hide();
+						if(jsLabel != null){
+							tagButton.setTitle(jsLabel.getName());
+							tagLabel.setText("Etiqueta:"+jsLabel.getName()+"; ");
+							getIssues().issueFilter.setLabels(jsLabel.getId());
+							getIssues().updateIssueList(issues.issueFilter, false);	
+							popup.hide();
+						}
 					}
 				});
 				popup.add(acb);
@@ -280,11 +285,13 @@ public class FilterPanel extends Composite {
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsUser jsLabel = acb.getSelectedItem().cast();
-						assignedButton.setTitle(jsLabel.getLogin());
-						assignedLabel.setText("Asignado:"+jsLabel.getLogin()+"; ");
-						getIssues().issueFilter.setAssignee(jsLabel.getId().toString());
-						getIssues().updateIssueList(issues.issueFilter, false);
-						popup.hide();
+						if(jsLabel != null){
+							assignedButton.setTitle(jsLabel.getLogin());
+							assignedLabel.setText("Asignado:"+jsLabel.getLogin()+"; ");
+							getIssues().issueFilter.setAssignee(jsLabel.getId().toString());
+							getIssues().updateIssueList(issues.issueFilter, false);
+							popup.hide();
+						}
 					}
 				});
 				popup.add(acb);
@@ -323,11 +330,13 @@ public class FilterPanel extends Composite {
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsUser jsLabel = acb.getSelectedItem().cast();
-						workgroupButton.setTitle(jsLabel.getLogin());
-						workgroupLabel.setText("Grupo de Trabajo:"+jsLabel.getLogin()+"; ");
-						getIssues().issueFilter.setWorkgroup(jsLabel.getId());
-						getIssues().updateIssueList(issues.issueFilter, false);
-						popup.hide();
+						if(jsLabel != null){
+							workgroupButton.setTitle(jsLabel.getLogin());
+							workgroupLabel.setText("Grupo de Trabajo:"+jsLabel.getLogin()+"; ");
+							getIssues().issueFilter.setWorkgroup(jsLabel.getId());
+							getIssues().updateIssueList(issues.issueFilter, false);
+							popup.hide();
+						}
 					}
 				});
 				popup.add(acb);
@@ -366,11 +375,13 @@ public class FilterPanel extends Composite {
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsUser jsUser = acb.getSelectedItem().cast();
-						creatorButton.setTitle(jsUser.getLogin());
-						creatorLabel.setText("Creador:"+jsUser.getLogin()+"; ");
-						getIssues().issueFilter.setCreator(jsUser.getLogin());
-						getIssues().updateIssueList(issues.issueFilter, false);	
-						popup.hide();
+						if(jsUser != null){
+							creatorButton.setTitle(jsUser.getLogin());
+							creatorLabel.setText("Creador:"+jsUser.getLogin()+"; ");
+							getIssues().issueFilter.setCreator(jsUser.getLogin());
+							getIssues().updateIssueList(issues.issueFilter, false);	
+							popup.hide();
+						}
 					}
 				});
 				popup.add(acb);
@@ -409,11 +420,13 @@ public class FilterPanel extends Composite {
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsUser jsUser = acb.getSelectedItem().cast();
-						enterpriseButton.setTitle(jsUser.getLogin());
-						enterpriseLabel.setText("Empresa:"+jsUser.getLogin()+"; ");
-						getIssues().issueFilter.setEnterprise(jsUser.getId());
-						getIssues().updateIssueList(issues.issueFilter, false);
-						popup.hide();
+						if(jsUser != null){
+							enterpriseButton.setTitle(jsUser.getLogin());
+							enterpriseLabel.setText("Empresa:"+jsUser.getLogin()+"; ");
+							getIssues().issueFilter.setEnterprise(jsUser.getId());
+							getIssues().updateIssueList(issues.issueFilter, false);
+							popup.hide();
+						}
 					}
 				});
 				popup.add(acb);
@@ -452,19 +465,21 @@ public class FilterPanel extends Composite {
 					
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
-						JsObject jsObject = acb.getSelectedItem().cast();								
-						if(jsObject.getName().contains("Antiguos")) 
-							getIssues().issueFilter.setDirection("asc");
-						else getIssues().issueFilter.setDirection("desc");
+						JsObject jsObject = acb.getSelectedItem().cast();			
+						if(jsObject != null){
+							if(jsObject.getName().contains("Antiguos")) 
+								getIssues().issueFilter.setDirection("asc");
+							else getIssues().issueFilter.setDirection("desc");
 						
-						if(jsObject.getName().contains("Modificados")) 
-							getIssues().issueFilter.setSort("updated");
-						else getIssues().issueFilter.setSort("created");
+							if(jsObject.getName().contains("Modificados")) 
+								getIssues().issueFilter.setSort("updated");
+							else getIssues().issueFilter.setSort("created");
 						
-						orderButton.setTitle(jsObject.getName());
-						orderLabel.setText("Orden:"+jsObject.getName()+"; ");
-						getIssues().updateIssueList(issues.issueFilter, false);	
-						popup.hide();					
+							orderButton.setTitle(jsObject.getName());
+							orderLabel.setText("Orden:"+jsObject.getName()+"; ");
+							getIssues().updateIssueList(issues.issueFilter, false);	
+							popup.hide();					
+						}
 					}
 				});
 				popup.add(acb);
@@ -504,20 +519,22 @@ public class FilterPanel extends Composite {
 					@Override
 					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 						JsObject jsObject = acb.getSelectedItem().cast();								
-						if(jsObject.getName().contains("Hoy")) 
-							getIssues().issueFilter.setDateDiff(1);
-						else if(jsObject.getName().contains("Ayer")) 
-							getIssues().issueFilter.setDateDiff(2);
-						else if(jsObject.getName().contains("Hace 1 semana")) 
-							getIssues().issueFilter.setDateDiff(7);
-						else if(jsObject.getName().contains("Hace 1 mes"))
-							getIssues().issueFilter.setDateDiff(30);
-						else getIssues().issueFilter.setDateDiff(365);
+						if(jsObject != null){
+							if(jsObject.getName().contains("Hoy")) 
+								getIssues().issueFilter.setDateDiff(1);
+							else if(jsObject.getName().contains("Ayer")) 
+								getIssues().issueFilter.setDateDiff(2);
+							else if(jsObject.getName().contains("Hace 1 semana")) 
+								getIssues().issueFilter.setDateDiff(7);
+							else if(jsObject.getName().contains("Hace 1 mes"))
+								getIssues().issueFilter.setDateDiff(30);
+							else getIssues().issueFilter.setDateDiff(365);
 
-						dateButton.setTitle(jsObject.getName());
-						dateLabel.setText("Fecha:"+jsObject.getName()+"; ");
-						getIssues().updateIssueList(issues.issueFilter, false);	
-						popup.hide();					
+							dateButton.setTitle(jsObject.getName());
+							dateLabel.setText("Fecha:"+jsObject.getName()+"; ");
+							getIssues().updateIssueList(issues.issueFilter, false);	
+							popup.hide();					
+						}
 					}
 				});
 				popup.add(acb);

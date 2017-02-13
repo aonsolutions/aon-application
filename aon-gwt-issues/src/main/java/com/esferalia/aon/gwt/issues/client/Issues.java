@@ -30,21 +30,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
-import com.vaadin.polymer.iron.IronCollapseElement;
 import com.vaadin.polymer.iron.IronIconsElement;
-import com.vaadin.polymer.iron.IronListElement;
-import com.vaadin.polymer.iron.IronSelectorElement;
 import com.vaadin.polymer.iron.widget.IronIcon;
-import com.vaadin.polymer.paper.PaperDialogElement;
-import com.vaadin.polymer.paper.PaperIconButtonElement;
-import com.vaadin.polymer.paper.PaperInputElement;
-import com.vaadin.polymer.paper.PaperSliderElement;
-import com.vaadin.polymer.paper.PaperTextareaElement;
-import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
-import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -93,6 +83,7 @@ public class Issues implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
+				AonComboBoxElement.SRC,
 				IronIconsElement.SRC
 		));
 		
