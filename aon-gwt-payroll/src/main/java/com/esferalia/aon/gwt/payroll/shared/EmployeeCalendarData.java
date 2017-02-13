@@ -8,6 +8,8 @@ import java.util.List;
 import com.esferalia.aon.gwt.payroll.client.Quartet;
 
 public class EmployeeCalendarData implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	private ArrayList<Quartet<Date, Date, String, String>> listaHorasContrato;
 	private ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato;
 	private ArrayList<java.util.Date> listaFestivosContrato;

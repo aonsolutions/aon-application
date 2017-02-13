@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 
 public interface CalendarService {
 
@@ -20,7 +21,9 @@ public interface CalendarService {
 	void deletePropertyHoliday(Integer id, Date date) throws IllegalArgumentException;
 	
 	
-	EmployeeCalendarData getEmployeeCalendar(int contract); 
+	EmployeeCalendarData getEmployeeCalendar(int contract);
+	
+	void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo);
 	
 	
 }

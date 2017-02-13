@@ -107,6 +107,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -454,6 +455,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+	
+	@Override
+	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			JooqEmployeeCalendar.setEmployeeHour(connection, contract, updateInfo);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+		
 	}
 
 	@Override
@@ -4357,4 +4371,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 		return target;
 	}
+
+	
 }

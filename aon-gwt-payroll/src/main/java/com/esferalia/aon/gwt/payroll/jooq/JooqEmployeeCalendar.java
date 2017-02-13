@@ -10,7 +10,9 @@ import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -21,6 +23,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 public class JooqEmployeeCalendar {
@@ -32,6 +35,10 @@ public class JooqEmployeeCalendar {
 		return getHoursByDay(DSL.using(conn, getDefaultSettings()), contract);
 	}
 	
+	public static void setEmployeeHour(Connection conn, Integer contract, EmployeeCalendarUpdate updateInfo){
+		setHoursByDay(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
+	}
+
 	protected static Settings getDefaultSettings() {
 		if (SETTINGS == null) {
 			SETTINGS = new Settings();
@@ -83,8 +90,8 @@ public class JooqEmployeeCalendar {
 					.from(CONTRACT_DATA)
 					.where(CONTRACT_DATA.CONTRACT.eq(contract))
 					.and(CONTRACT_DATA.NAME.in(
-							ContextVariable.ERE_DAYS.getName()
-							,ContextVariable.STRIKE_DAYS.getName()))
+					ContextVariable.ERE_DAYS.getName()
+					,ContextVariable.STRIKE_DAYS.getName()))
 					.fetch();
 		
 		Result<Record> tipoDiasITContratoEmpleado = dslContext
@@ -167,6 +174,31 @@ public class JooqEmployeeCalendar {
 		employeeInfoCalendar = new EmployeeCalendarData(listaHorasContrato, listaTipoDiasContrato, listaFestivosContrato, listaNoLaborablesContrato);
 		
 		return employeeInfoCalendar;
+	}
+	
+	private static void setHoursByDay(DSLContext dslContext, Integer contract, EmployeeCalendarUpdate updateInfo) {
+		 
+		dslContext.delete(CONTRACT_DATA)
+				   .where(CONTRACT_DATA.CONTRACT.eq(contract))
+				   .and(CONTRACT_DATA.NAME.in(
+						  ContextVariable.MONDAY_HOURS.getName()
+						  ,ContextVariable.TUESDAY_HOURS.getName()
+						  ,ContextVariable.WEDNESDAY_HOURS.getName()
+						  ,ContextVariable.THURSDAY_HOURS.getName()
+						  ,ContextVariable.FRIDAY_HOURS.getName()
+						  ,ContextVariable.SATURDAY_HOURS.getName()
+						  ,ContextVariable.SUNDAY_HOURS.getName()))
+				   .execute();
+		
+		HashMap<Date, Double> mapaHorasUpdate = updateInfo.getMapaHorasDias();
+		
+		for (Entry<Date, Double> e : mapaHorasUpdate.entrySet()) {
+			
+		}
+		
+		 
+		 
+		
 	}
 
 }

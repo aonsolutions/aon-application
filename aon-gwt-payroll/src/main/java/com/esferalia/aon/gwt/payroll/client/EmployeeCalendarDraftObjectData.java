@@ -13,9 +13,9 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.esferalia.aon.gwt.payroll.shared.Bonus.Type;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -246,6 +246,13 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 			return mapaDiasTipo.getOrDefault(dia, DayType.NOTYPEDAY);
 	}
 	
+	public Date getDateByDay (Date dia){
+		for ( Date key: mapaDiasTipo.keySet() )
+			if ( key.equals(dia ))
+				return dia;
+		return null;
+	}
+
 	public void setTypeByDay (Date dia, DayType typeDay){
 		DayType old = draftMapaDiasTipo.put(dia, typeDay);
 		undoManager.add(new SetTypeEdit(old, typeDay, dia));
@@ -367,25 +374,28 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		String result = "";
 		switch (day) {
 		case 0:
-			result = "HORAS_LUNES";
+			result = "HORAS_DOMINGO";
 			break;
 		case 1:
-			result = "HORAS_MARTES";
+			result = "HORAS_LUNES";
 			break;
 		case 2:
-			result = "HORAS_MIERCOLES";
+			result = "HORAS_MARTES";
 			break;
 		case 3:
-			result = "HORAS_JUEVES";
+			result = "HORAS_MIERCOLES";
 			break;
 		case 4:
-			result = "HORAS_VIERNES";
+			result = "HORAS_JUEVES";
 			break;
 		case 5:
+			result = "HORAS_VIERNES";
+			break;
+		case 6:
 			result = "HORAS_SABADO";
 			break;
 		default:
-			result = "HORAS_DOMINGO";
+			result = "";
 			break;
 		}
 		
@@ -393,8 +403,9 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 	}
 	
 	
-	void inicialiazarCalendarioBD(Consumer<EmployeeCalendarData> success, Consumer<Throwable> failure) {
+	public void inicialiazarCalendarioBD(Consumer<EmployeeCalendarData> success, Consumer<Throwable> failure) {
 		Window.alert("ID Cliente: "+employeeId);
+		
 		employeesService.getEmployeeCalendar(employeeId, 
 			new AsyncCallback<EmployeeCalendarData>() {
 			
@@ -406,37 +417,32 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 				ArrayList<java.util.Date> listaFestivos = result.getListaFestivosContrato();
 				inicializarMapaHoras(listaHoras);
 				inicializarMapaTipos(listaTipos);
-				inicializarMapaTiposNL(listaNoLaborables);
-				inicializarMapaTiposF(listaFestivos);
-				
+				inicializarMapaTiposNoLaborables(listaNoLaborables);
+				inicializarMapaTiposFestivos(listaFestivos);
 				
 				success.accept(result);
 				
 			}
 			
-			private void inicializarMapaTiposF(ArrayList<java.util.Date> listaFestivos) {
+			private void inicializarMapaTiposFestivos(ArrayList<java.util.Date> listaFestivos) {
 				for(java.util.Date d : listaFestivos){
-					Date date = DateUtils.copyDateOnly(d);
-					Window.alert("DiaLista :"+d.toGMTString()+", DiaCopia :"+date.toGMTString());
-					//DateUtils.resetTime(date);
 					mapaDiasTipo.put(d, DayType.FREEDAY);
 				}
-				
 			}
 
-			private void inicializarMapaTiposNL(ArrayList<Byte> listaNoLaborables) {
+			private void inicializarMapaTiposNoLaborables(ArrayList<Byte> listaNoLaborables) {
 				int cont = 0;
 				
 				for (Byte noLabroles : listaNoLaborables) {
+					
 					Date fechaInicio = DateUtils.copyDateOnly(startContract);
 					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
 					Date fechaFin;
+					
 					if (endContract == null)
 						fechaFin = DateUtils.addYears2Date(endDateAux, 1);
 					else
 						fechaFin = DateUtils.copyDateOnly(endContract);
-					
-					//Window.alert("Fecha Incio: "+fechaInicio+", Fecha Fin: "+fechaFin);
 					
 					DayType tipoDia;
 					
@@ -453,8 +459,6 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 					
 					int auxDay = findingDay - initialDay;
 					
-					//Window.alert("Dia: "+horasDias+"DiaBuscado: "+findingDay+", DiaInicio: "+initialDay+", Dif: "+auxDay);
-					
 					if (auxDay == 7)
 						auxDay = 0;
 					
@@ -466,7 +470,6 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 					while (auxDate.before(fechaFin) || auxDate.equals(fechaFin)){
 						Date date = DateUtils.copyDateOnly(auxDate);
 						DateUtils.resetTime(date);
-						//Window.alert("Dia: " + date.toGMTString() + ", Tipo: "+tipoDia);
 						mapaDiasTipo.put(date, tipoDia);
 						DateUtils.addDays2Date(auxDate, 7);
 					}
@@ -475,6 +478,7 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 			}
 
 			private void inicializarMapaTipos(List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaTipos) {
+				
 				for (Quartet<java.sql.Date, java.sql.Date, String, String> quartetTipos : listaTipos) {
 					
 					Date startDate = DateUtils.copyDateOnly(quartetTipos.getStartDate());
@@ -497,11 +501,11 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 						mapaDiasTipo.put(date, TipoDia);
 						DateUtils.addDays2Date(auxDate, 1);
 					}
-				}
-				
+				}	
 			}
 
 			private void inicializarMapaHoras(List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaHoras) {
+				
 				for (Quartet<java.sql.Date, java.sql.Date, String, String> quartetHoras : listaHoras) {
 					
 					Date startDate = DateUtils.copyDateOnly(quartetHoras.getStartDate());
@@ -517,15 +521,11 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 					Double horas = Double.parseDouble(quartetHoras.getExpression());
 					String horasDias = quartetHoras.getName();
 					
-					//Window.alert("StartDate: " +startDate.toGMTString()+", EndDate: "+endDate.toGMTString()+", TipoDia: "+horasDias+", Horas: "+horas);
-					
 					@SuppressWarnings("deprecation")
 					int initialDay = startDate.getDay();
 					int findingDay = DAY_OF_WEEKS.get(horasDias);
 					
 					int auxDay = findingDay - initialDay;
-					
-					//Window.alert("Miercoles :"+initialDay+" "+horasDias+" :"+findingDay+", Dif :"+auxDay);
 					
 					if (auxDay == 7)
 						auxDay = 0;
@@ -533,15 +533,12 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 					if (auxDay < 0)
 						auxDay = 7 + auxDay;
 					
-					
-					//Window.alert("initialDay: "+initialDay+" findingDay: "+findingDay+" auxDay: "+auxDay);
 					Date auxDate = DateUtils.addDays2Date(startDate, auxDay);
 					
 					while (auxDate.before(endDate) || auxDate.equals(endDate)){
 						Date date = DateUtils.copyDateOnly(auxDate);
 						DateUtils.resetTime(date);
 						mapaDiasHoras.put(date, horas);
-						//Window.alert("AuxDate: "+auxDate.toGMTString()+", Tipo: "+horasDias+", Horas: "+horas);
 						DateUtils.addDays2Date(auxDate, 7);
 					}
 				}
@@ -553,5 +550,62 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 				failure.accept(caught);
 			}
 		});
+	}
+	
+	public void actualizarCalendarioBD(){
+		EmployeeCalendarUpdate updateInfo = new EmployeeCalendarUpdate();
+		
+		updateInfo.setMapaHorasDias(crearMapaHorasUpdate(mapaDiasHoras, draftMapaDiasHoras));
+		updateInfo.setMapaTipoDias(crearMapaTiposUpdate(mapaDiasTipo, draftMapaDiasTipo));
+		
+		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(EmployeeCalendarUpdate result) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+	}
+
+	private HashMap<java.sql.Date, DayType> crearMapaTiposUpdate(Map<Date, DayType> mapaDiasTipo,
+			Map<Date, DayType> draftMapaDiasTipo) {
+		
+		HashMap<java.sql.Date, DayType> mapaUpdate = new HashMap<java.sql.Date, DayType>();
+		
+		for ( Entry<Date,DayType> e : mapaDiasTipo.entrySet()){
+			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+		}
+		
+		for (Entry<Date,DayType> e : draftMapaDiasTipo.entrySet()){
+			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+		}
+		
+		return mapaUpdate;
+		
+		
+	}
+
+	private HashMap<java.sql.Date, Double> crearMapaHorasUpdate(Map<Date, Double> mapaDiasHoras,
+			Map<Date, Double> draftMapaDiasHoras) {
+		
+		HashMap<java.sql.Date, Double> mapaUpdate = new HashMap<java.sql.Date, Double>();
+		
+		for ( Entry<Date,Double> e : mapaDiasHoras.entrySet()){
+			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+		}
+		
+		for (Entry<Date,Double> e : draftMapaDiasHoras.entrySet()){
+			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+		}
+		
+		return mapaUpdate;
 	}
 }

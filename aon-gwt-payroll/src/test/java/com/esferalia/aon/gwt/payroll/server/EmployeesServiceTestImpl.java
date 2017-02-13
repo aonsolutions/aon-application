@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -44,6 +45,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
+	}
+	
+	@Override
+	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo) {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 	}
 	
 	@Override
@@ -512,5 +519,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
+
+	
 
 }

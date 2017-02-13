@@ -5,11 +5,14 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CalendarServiceAsync {
 
 	void getEmployeeCalendar(int contract, AsyncCallback<EmployeeCalendarData> callback); 
+	
+	void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo, AsyncCallback<EmployeeCalendarUpdate> callback);
 
 	void getCalendar(int workplaceId, Integer pattern, Integer calendar, AsyncCallback<CalendarDraft> callback)
 			throws IllegalArgumentException;

@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -43,6 +44,11 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 
 	@Override
 	public void getEmployeeCalendar(int contract, AsyncCallback<EmployeeCalendarData> callback) {
+		failure(callback);
+	}
+	
+	@Override
+	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo, AsyncCallback<EmployeeCalendarUpdate> callback) {
 		failure(callback);
 	}
 
