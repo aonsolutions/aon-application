@@ -582,6 +582,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 							
 							@Override
 							public void onCancel() {
+								dialog.hide();
 							}
 							
 							@Override
