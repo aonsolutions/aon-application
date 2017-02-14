@@ -988,18 +988,24 @@ public class AccountEntryModule extends MainEntryPoint {
 		return list.toArray(new AccountEntryWrapper[list.size()]);
 	}
 	
+	private void ensureBalanceTab() {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(BALANCES_TAB);
+	}
+
 	public void onBalance(Account account) {
 		if (account != null && account.getId() != null) {
-			openFootPanelIfNeeded();
+			ensureBalanceTab();
 			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
 			balancePanel.add(account, from, entryDate.getValue());
 		}
 	}
+
 	public void onBalance(AccountEntry entry) {
 		if (entry.getDetails() != null 
 			&& !entry.getDetails().isEmpty() 
 			&& entry.getDetails().get(0).getAccount() != null) {
-			openFootPanelIfNeeded();
+			ensureBalanceTab();
 			balancePanel.add(entry);
 		}
 	}
@@ -1008,10 +1014,24 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	public void onPreview(IAccountEntryWrapper wrp) {
-		balancePanel.preview( wrp );
+		if (wrp.getAccountEntry() != null 
+			&& wrp.getAccountEntry().getDetails() != null 
+			&& !wrp.getAccountEntry().getDetails().isEmpty() 
+			&& wrp.getAccountEntry().getDetails().get(0).getAccount() != null) {
+			ensureBalanceTab();
+			balancePanel.preview( wrp );
+		}
 	}
 	public void onPreview(IAccountEntryWrapper[] wrapperArray) {
-		balancePanel.preview( wrapperArray );
+		if (wrapperArray != null 
+			&& wrapperArray.length > 0
+			&& wrapperArray[0].getAccountEntry() != null 
+			&& wrapperArray[0].getAccountEntry().getDetails() != null 
+			&& !wrapperArray[0].getAccountEntry().getDetails().isEmpty() 
+			&& wrapperArray[0].getAccountEntry().getDetails().get(0).getAccount() != null) {
+			ensureBalanceTab();
+			balancePanel.preview( wrapperArray );
+		}
 	}
 	public void onClearSessionLog() {
 		balancePanel.clearBalances();

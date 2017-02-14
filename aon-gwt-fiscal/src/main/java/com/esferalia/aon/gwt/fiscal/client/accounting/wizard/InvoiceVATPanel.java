@@ -320,7 +320,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(currentRow);
 			int col = 0;
 			expAccount.setTabIndex(++tabindex);
-			expAccount.setValue(vat.getExpAccountId(),vat.getExpAccountCode(),vat.getExpAccountDescription(),true);
+			expAccount.setValue(vat.getExpAccountId(),vat.getExpAccountCode(),vat.getExpAccountDescription(),
+					(callback.getInvoice().getRegistry() != null && callback.getInvoice().getRegistry().getId() != null));
 			expAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				@Override
 				public void onSelection(SelectionEvent<Account> event) {
