@@ -14,6 +14,7 @@ public class EmployeeCalendarData implements Serializable {
 	private ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato;
 	private ArrayList<java.util.Date> listaFestivosContrato;
 	private ArrayList<Byte> listaNoLaborablesContrato;
+	private boolean jornadaCompleta;
 	
 	public EmployeeCalendarData() {
 		super();
@@ -22,12 +23,13 @@ public class EmployeeCalendarData implements Serializable {
 	public EmployeeCalendarData(ArrayList<Quartet<Date, Date, String, String>> listaHorasContrato,
 			ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato,
 			ArrayList<java.util.Date> listaFestivosContrato,
-			ArrayList<Byte> listaNoLaborablesContrato) {
+			ArrayList<Byte> listaNoLaborablesContrato, boolean jornadaCompleta) {
 		super();
 		this.listaHorasContrato = listaHorasContrato;
 		this.listaTipoDiasContrato = listaTipoDiasContrato;
 		this.listaFestivosContrato = listaFestivosContrato;
 		this.listaNoLaborablesContrato = listaNoLaborablesContrato;
+		this.jornadaCompleta = jornadaCompleta;
 	}
 
 	public List<Quartet<Date, Date, String, String>> getListaHorasContrato() {
@@ -65,6 +67,17 @@ public class EmployeeCalendarData implements Serializable {
 		this.listaNoLaborablesContrato = listaNoLaborablesContrato;
 		return this;
 	}
+
+	public boolean isJornadaCompleta() {
+		return jornadaCompleta;
+	}
+
+	public EmployeeCalendarData setJornadaCompleta(boolean jornadaCompleta) {
+		this.jornadaCompleta = jornadaCompleta;
+		return this;
+	}
+	
+	
 	
 	
 }

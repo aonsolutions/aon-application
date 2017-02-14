@@ -10,33 +10,33 @@ public class EmployeeCalendarUpdate implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private HashMap<Date, DayType> mapaTipoDias;
-	private HashMap<Date, Double> mapaHorasDias;
+	private HashMap<java.util.Date, DayType> mapaTipoDias;
+	private HashMap<java.util.Date, Double> mapaHorasDias;
 	
 	public EmployeeCalendarUpdate() {
 		super();
 	}
 
-	public EmployeeCalendarUpdate(HashMap<Date, DayType> mapaTipoDias, HashMap<Date, Double> mapaHorasDias) {
+	public EmployeeCalendarUpdate(HashMap<java.util.Date, DayType> mapaTipoDias, HashMap<java.util.Date, Double> mapaHorasDias) {
 		super();
 		this.mapaTipoDias = mapaTipoDias;
 		this.mapaHorasDias = mapaHorasDias;
 	}
 
-	public HashMap<Date, DayType> getMapaTipoDias() {
+	public HashMap<java.util.Date, DayType> getMapaTipoDias() {
 		return mapaTipoDias;
 	}
 
-	public EmployeeCalendarUpdate setMapaTipoDias(HashMap<Date, DayType> mapaTipoDias) {
+	public EmployeeCalendarUpdate setMapaTipoDias(HashMap<java.util.Date, DayType> mapaTipoDias) {
 		this.mapaTipoDias = mapaTipoDias;
 		return this;
 	}
 
-	public HashMap<Date, Double> getMapaHorasDias() {
+	public HashMap<java.util.Date, Double> getMapaHorasDias() {
 		return mapaHorasDias;
 	}
 
-	public EmployeeCalendarUpdate setMapaHorasDias(HashMap<Date, Double> mapaHorasDias) {
+	public EmployeeCalendarUpdate setMapaHorasDias(HashMap<java.util.Date, Double> mapaHorasDias) {
 		this.mapaHorasDias = mapaHorasDias;
 		return this;
 	}

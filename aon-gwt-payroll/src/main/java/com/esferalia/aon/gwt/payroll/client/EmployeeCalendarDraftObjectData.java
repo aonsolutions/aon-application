@@ -32,6 +32,8 @@ public class EmployeeCalendarDraftObjectData {
 	
 	private Integer employeeId;
 	private EmployeesServiceAsync employeesService;
+	
+	private boolean jornadaEmpleado;
 
 	private com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft;
 	
@@ -42,13 +44,13 @@ public class EmployeeCalendarDraftObjectData {
 		private static final long serialVersionUID = 1L;
 
 		{
-			put("HORAS_DOMINGO", 1);
-			put("HORAS_LUNES", 2);
-			put("HORAS_MARTES", 3);
-			put("HORAS_MIERCOLES", 4);
-			put("HORAS_JUEVES", 5);
-			put("HORAS_VIERNES", 6);
-			put("HORAS_SABADO", 7);
+			put("HORAS_DOMINGO", 0);
+			put("HORAS_LUNES", 1);
+			put("HORAS_MARTES", 2);
+			put("HORAS_MIERCOLES", 3);
+			put("HORAS_JUEVES", 4);
+			put("HORAS_VIERNES", 5);
+			put("HORAS_SABADO", 6);
 		}
 	};
 	
@@ -235,6 +237,7 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 
 		this.employeeId = employeeId;
 		this.employeesService = employeesService;
+		
 	}
 	
 	public DayType getTypeByDay (Date dia){
@@ -336,9 +339,13 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 	public Date getEndDateContract(){
 		return endContract;
 	}
+	
+	public boolean getJornadaEmpleado(){
+		return jornadaEmpleado;
+	}
 
-	public void setSalaryDraft(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft2) {
-		this.salaryDraft = salaryDraft2;
+	public void setSalaryDraft(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft) {
+		this.salaryDraft = salaryDraft;
 	}
 	
 	private String calcularDiaSemana(int day) {
@@ -416,9 +423,11 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 				ArrayList<Byte> listaNoLaborables = result.getListaNoLaborablesContrato();
 				ArrayList<java.util.Date> listaFestivos = result.getListaFestivosContrato();
 				inicializarMapaHoras(listaHoras);
-				inicializarMapaTipos(listaTipos);
 				inicializarMapaTiposNoLaborables(listaNoLaborables);
+				inicializarMapaTipos(listaTipos);
 				inicializarMapaTiposFestivos(listaFestivos);
+				jornadaEmpleado = result.isJornadaCompleta();
+				Window.alert("Jornada Empleado :"+jornadaEmpleado);
 				
 				success.accept(result);
 				
@@ -455,7 +464,7 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 					
 					@SuppressWarnings("deprecation")
 					int initialDay = fechaInicio.getDay();
-					int findingDay = DAY_OF_WEEKS.get(horasDias);
+					int findingDay = DAY_OF_WEEKS.get(horasDias)+1;
 					
 					int auxDay = findingDay - initialDay;
 					
@@ -568,24 +577,26 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 
 			@Override
 			public void onSuccess(EmployeeCalendarUpdate result) {
-				// TODO Auto-generated method stub
+				//TODO: reiniciar todo
+				draftMapaDiasHoras.clear();
+				draftMapaDiasTipo.clear();
 				
 			}
 			
 		});
 	}
 
-	private HashMap<java.sql.Date, DayType> crearMapaTiposUpdate(Map<Date, DayType> mapaDiasTipo,
+	private HashMap<Date, DayType> crearMapaTiposUpdate(Map<Date, DayType> mapaDiasTipo,
 			Map<Date, DayType> draftMapaDiasTipo) {
 		
-		HashMap<java.sql.Date, DayType> mapaUpdate = new HashMap<java.sql.Date, DayType>();
+		HashMap<Date, DayType> mapaUpdate = new HashMap<Date, DayType>();
 		
 		for ( Entry<Date,DayType> e : mapaDiasTipo.entrySet()){
-			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+			mapaUpdate.put(e.getKey(), e.getValue());
 		}
 		
 		for (Entry<Date,DayType> e : draftMapaDiasTipo.entrySet()){
-			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+			mapaUpdate.put(e.getKey(), e.getValue());
 		}
 		
 		return mapaUpdate;
@@ -593,17 +604,17 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		
 	}
 
-	private HashMap<java.sql.Date, Double> crearMapaHorasUpdate(Map<Date, Double> mapaDiasHoras,
+	private HashMap<Date, Double> crearMapaHorasUpdate(Map<Date, Double> mapaDiasHoras,
 			Map<Date, Double> draftMapaDiasHoras) {
 		
-		HashMap<java.sql.Date, Double> mapaUpdate = new HashMap<java.sql.Date, Double>();
+		HashMap<Date, Double> mapaUpdate = new HashMap<Date, Double>();
 		
 		for ( Entry<Date,Double> e : mapaDiasHoras.entrySet()){
-			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+			mapaUpdate.put(e.getKey(), e.getValue());
 		}
 		
 		for (Entry<Date,Double> e : draftMapaDiasHoras.entrySet()){
-			mapaUpdate.put((java.sql.Date) e.getKey(), e.getValue());
+			mapaUpdate.put(e.getKey(), e.getValue());
 		}
 		
 		return mapaUpdate;

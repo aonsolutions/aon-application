@@ -13,8 +13,6 @@ import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayT
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -382,6 +380,9 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	@UiField
 	Button undoAllButton;
+	
+	@UiField
+	Button saveButton;
 
 	private final static int MONDAY = 0;
 	private final static int TUESDAY = 1;
@@ -394,7 +395,7 @@ public class EmployeeCalendarDraft extends Composite {
 	private int oldHourSelected = 0;
 	private int mes;
 	private int annio;
-	private boolean mostrarHoras = true;
+	private boolean mostrarHoras;
 	private final CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
 	private final CalendarTypeDayCell cellsType[][] = new CalendarTypeDayCell[25][38];
 	private final Date cellsDates[][] = new Date[25][38];
@@ -481,18 +482,6 @@ public class EmployeeCalendarDraft extends Composite {
 					visualizarHoras();
 				else
 					ocultarHoras();
-			}
-
-			private void ocultarHoras() {
-				for (int i = 2; i < 25; i += 2) {
-					calendarGrid.getRowFormatter().addStyleName(i, style.ocultarHorasStyle());
-				}
-			}
-
-			private void visualizarHoras() {
-				for (int i = 2; i < 25; i += 2) {
-					calendarGrid.getRowFormatter().removeStyleName(i, style.ocultarHorasStyle());
-				}
 			}
 		});
 			
@@ -801,6 +790,18 @@ public class EmployeeCalendarDraft extends Composite {
 		
 	}
 	
+	@UiHandler("saveButton")
+	void onSaveButtonClick(ClickEvent event) {
+		calendarEmployeeInfo.actualizarCalendarioBD();
+		calendarEmployeeInfo.undoManager.discardAll();
+		
+		this.mes = 0;
+		
+		limpiarEstiloCambios();
+		limpiarCalendario();
+		mostrarCalendarioWidget(Integer.parseInt(yearLabel.getText())- 1900);
+	}
+	
 
 	// ---------------------------------------------------------------- Metodos Auxiliares -------------------------------------------
 	public void setEmployeeCalendarDraftObject(EmployeeCalendarDraftObjectData calendar) {
@@ -811,10 +812,15 @@ public class EmployeeCalendarDraft extends Composite {
 			public void onChange(UndoManager undoManager) {
 				redoButton.setEnabled(undoManager.canRedo());
 				undoButton.setEnabled(undoManager.canUndo());
+				saveButton.setEnabled(undoManager.canUndo());
 				undoAllButton.setEnabled(undoManager.canUndo());
 			}
 		});
-		calendar.inicialiazarCalendarioBD(r -> initCalendar(), t -> {});
+		
+		calendar.inicialiazarCalendarioBD(r -> {this.mostrarHoras = r.isJornadaCompleta();
+												initCalendar();}, 
+										  t -> {});
+		
 	}
 	
 	private void initCalendar() {
@@ -834,6 +840,14 @@ public class EmployeeCalendarDraft extends Composite {
 		inicializarCellsCalendar();
 		inicializarCellsTypeCalendar();
 		mostrarCalendarioWidget(this.annio);
+		
+		if (this.mostrarHoras){
+			horasMenuItem.setStyleName("aon-MenuItemCheckYes", mostrarHoras);
+			ocultarHoras();
+		}else{
+			horasMenuItem.setStyleName("aon-MenuItemCheckYes", !mostrarHoras);
+			visualizarHoras();
+		}
 		
 		pintarCambiosHorasRealizados(calendarEmployeeInfo.getHourChanges());
 		pintarCambiosTiposRealizados(calendarEmployeeInfo.getTypeChanges());
@@ -960,10 +974,6 @@ public class EmployeeCalendarDraft extends Composite {
 				cells[row + 1][i] = new HourCell();
 				cellsType[row][i].setAsType(dayType, row, i);
 				contadorDias++;
-				
-				if (es(SUNDAY, i)){
-					cellsType[row][i].setAsType(DayType.FREEDAY, row, i);
-				}
 			}
 		}
 
@@ -1165,6 +1175,18 @@ public class EmployeeCalendarDraft extends Composite {
 				suggestOpts[c].setValue("");
 		}
 
+	}
+	
+	private void ocultarHoras() {
+		for (int i = 2; i < 25; i += 2) {
+			calendarGrid.getRowFormatter().addStyleName(i, style.ocultarHorasStyle());
+		}
+	}
+
+	private void visualizarHoras() {
+		for (int i = 2; i < 25; i += 2) {
+			calendarGrid.getRowFormatter().removeStyleName(i, style.ocultarHorasStyle());
+		}
 	}
 	
 }
