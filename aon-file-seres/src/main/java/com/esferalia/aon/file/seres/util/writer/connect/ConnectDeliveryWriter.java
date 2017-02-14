@@ -240,13 +240,48 @@ public class ConnectDeliveryWriter {
 
 	// TODO createSEH1PRecord
 	private SEH1P createSEH1PRecord(DeliveryDetail detail, int lineNumber) {
+		
+		String format = "";
+//		CT - Caja de cartón
+//		CS - Caja rígida
+//		PK - Paquete
+//		SL - Placa de Plástico
+//		SW - Retractilado
+//		RO - Enrollado
+//		09 - Pallet retornable
+//		08 - Pallet no retornable
+//		201 - Pallet ISO 1 - 1/1 EURO Pallet
+		try {
+			if(detail.getItem().getProduct().getBaseItem().getPackFormatTag()!=null){
+				format = detail.getItem().getProduct().getBaseItem().getPackFormatTag().getName();
+			}
+		} catch (ManagerBeanException e) {
+			// nada
+		}
+		
+		if(format.toLowerCase().contains("bolsa")){
+			format = "CT";
+		} else if(format.toLowerCase().contains("box")){
+			format = "CT";
+		} else if(format.toLowerCase().contains("caja")){
+			format = "CT";
+		} else if(format.toLowerCase().contains("kg")){
+			format = "CT";
+		} else if(format.toLowerCase().contains("palet")){
+			format = "201";
+		} else if(format.toLowerCase().contains("saco")){
+			format = "CT";
+		} else {
+			format = "CT";
+		}
+		
 		SEH1P record = new SEH1P();
 		record.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
 		record.setNumeroDeJerarquiaPadreDeEmbalaje(null);
-		record.setNumeroDePaquetes(null);
+		record.setNumeroDePaquetes((int)detail.getQuantity());
 		record.setInformacionSobreElEmbalaje_Codificado(null);
 		record.setTerminosYCondicionesDelEmbalaje_Codificado(null);
-		record.setTipoDeEmbalaje_Codificado(null);
+		record.setTipoDeEmbalaje_Codificado(format);
 		record.setTipoDeEmbalaje_TextoLibre(null);
 		record.setResponsabilidadPagoTransporteDeEmbalaje(null);
 		record.setPesoNeto1_AAC_(null);
