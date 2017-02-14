@@ -12,7 +12,8 @@ public enum MealPlan implements IResourceable, IStringEnum {
 	AD("AD","H/D"),
 	MP("MP","M/P"),
 	PC("PC","P/C"),
-	TI("TI","TI");
+	TI("TI","TI"),
+	TIP("TIP","TIB");
 
 	private String value;
 	private String crsValue;
