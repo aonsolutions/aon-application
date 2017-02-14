@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -21,10 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
-import com.code.aon.customer.Customer;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.format.output.FileOutput;
@@ -298,19 +301,13 @@ public class FtpSalesDownloadHandler implements Serializable {
 			rectl = reader.readFile(aonFile.openStream());
 			
 			String customerCode = connectHandler.obtainCustomerCodeSales(rectl);
-			RegistryNote customerRegistryNote = connectHandler.searchCustomerRNote(customerCode);
+			List<RegistryNote> customerEdiRNoteList = connectHandler.searchCustomerRNote(customerCode);
 			order.setCustomerCode(customerCode);
-			if(customerRegistryNote!=null && customerRegistryNote.getId()!=null){
-				Customer customer = connectHandler.obtainCustomer(customerRegistryNote.getRegistry().getId());
-				RegistryAddress address = connectHandler.obtainAddress(Integer.valueOf(customerRegistryNote.getDescription()));
-				if(customer!=null && customer.getId()!=null){
-					order.setCustomerName(customer.getRegistry().getName());
+			if(customerEdiRNoteList!=null && customerEdiRNoteList.size()>0){
+				order.setRegistryNoteList(customerEdiRNoteList);
+				if(customerEdiRNoteList!=null && customerEdiRNoteList.size()==1){
+					order.setRegistryNote(customerEdiRNoteList.get(0));
 				}
-				if(address!=null && address.getId()!=null){
-					order.setDeliveryAddress(address.getFullAddress());
-				}
-			} else {
-				order.setCustomerName("***no registrado***");
 			}
 			order.setChargeDate(connectHandler.getDateTimeFormatter().parse(rectl.getFecha_horaDelMensaje()));
 			
@@ -385,6 +382,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
 			
 			byte[] byteFile = obtainFtpFile(ftpFileOrder.getFtpFile().getName());
+			RegistryNote ediRNote = ftpFileOrder.getRegistryNote();
 			
 			getLogPanel()
 					.info("Iniciando importacion de fichero EDI (CONNECT)");
@@ -393,7 +391,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			connectHandler.setAonFile(new AonFile());
 			connectHandler.getAonFile().setData(byteFile);
 			try {
-				connectHandler.importFile(event, isTesting());
+				connectHandler.importFile(event, ediRNote, isTesting());
 				if(isDeleteOnComplete()){
 					deleteFile(ftpFileOrder.getFtpFile());
 				}
@@ -460,21 +458,16 @@ public class FtpSalesDownloadHandler implements Serializable {
 	public class FtpFileOrder implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private FtpFile ftpFile;
-		private String customerName;
 		private String customerCode;
-		private String deliveryAddress;
+		private List<RegistryNote> registryNoteList;
+		private RegistryNote registryNote;
 		private Date chargeDate;
+		
 		public FtpFile getFtpFile() {
 			return ftpFile;
 		}
 		public void setFtpFile(FtpFile ftpFile) {
 			this.ftpFile = ftpFile;
-		}
-		public String getCustomerName() {
-			return customerName;
-		}
-		public void setCustomerName(String customerName) {
-			this.customerName = customerName;
 		}
 		public String getCustomerCode() {
 			return customerCode;
@@ -482,17 +475,50 @@ public class FtpSalesDownloadHandler implements Serializable {
 		public void setCustomerCode(String customerCode) {
 			this.customerCode = customerCode;
 		}
-		public String getDeliveryAddress() {
-			return deliveryAddress;
+		public int getRegistryNoteListCount() {
+			return registryNoteList!=null?registryNoteList.size():0;
 		}
-		public void setDeliveryAddress(String deliveryAddress) {
-			this.deliveryAddress = deliveryAddress;
+		public List<RegistryNote> getRegistryNoteList() {
+			return registryNoteList;
+		}
+		public void setRegistryNoteList(List<RegistryNote> registryNoteList) {
+			this.registryNoteList = registryNoteList;
+		}
+		public RegistryNote getRegistryNote() {
+			return registryNote;
+		}
+		public void setRegistryNote(RegistryNote registryNote) {
+			this.registryNote = registryNote;
 		}
 		public Date getChargeDate() {
 			return chargeDate;
 		}
 		public void setChargeDate(Date chargeDate) {
 			this.chargeDate = chargeDate;
+		}
+		public List<SelectItem> getRegistryNotes() {
+			List<SelectItem> list = new LinkedList<>();
+			if(registryNoteList!=null){
+				registryNoteList.forEach(rNote -> {
+					list.add(new SelectItem(rNote, getAddress(Integer.parseInt(rNote.getDescription())).getFullAddress()));
+				});
+			}
+			return list;
+		}
+		public RegistryAddress getAddress() {
+			return getAddress(Integer.parseInt(registryNote.getDescription()));		
+		}
+		public RegistryAddress getAddress(Integer addressId) {
+			if(addressId!=null){
+				try {
+					IManagerBean addressBean = BeanManager.getManagerBean(RegistryAddress.class);
+					return (RegistryAddress) addressBean.get(addressId);
+				} catch (ManagerBeanException ex) {
+					getLogPanel().error(ex.getMessage());
+					LOGGER.error(ex.getMessage());
+				}
+			}
+			return null;
 		}
 	}
 	
