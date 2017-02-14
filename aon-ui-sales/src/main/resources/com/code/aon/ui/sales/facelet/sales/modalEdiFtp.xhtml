@@ -217,21 +217,17 @@
 												<f:facet name="header">
 													<aon:outputText value="&#160;" />
 												</f:facet>
-												<aon:commandButton id="ftpSales-import"
-													value="&#160;"
-													title="#{bundle.aon_import}"
-													actionListener="#{sales.ftpEdiDownloader.onImportFile}"
-													reRender="showEdiFtpWindow, salesForm"
-													styleClass=" aon-finding-toolbar-item aon-noborder aon-icon-file-entrance" >
-													<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
-												</aon:commandButton>
-											</aon:column>
-										
-											<aon:column styleClass="aon-editDataTable-textColumn">
-												<f:facet name="header">
-													<aon:outputText value="#{bundle.aon_name}" />
-												</f:facet>
-												<aon:outputText value="#{to.customerName}" />
+												<aon:div id="ftpSales-import">
+													<aon:commandButton id="ftpSales-importButton"
+														value="&#160;"
+														title="#{bundle.aon_import}"
+														rendered="#{not empty to.registryNote}"
+														actionListener="#{sales.ftpEdiDownloader.onImportFile}"
+														reRender="showEdiFtpWindow, salesForm"
+														styleClass=" aon-finding-toolbar-item aon-noborder aon-icon-file-entrance" >
+														<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+													</aon:commandButton>
+												</aon:div>
 											</aon:column>
 											
 											<aon:column styleClass="aon-editDataTable-textColumn">
@@ -243,11 +239,32 @@
 											
 											<aon:column styleClass="aon-editDataTable-textColumn">
 												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_name}" />
+												</f:facet>
+												<aon:div id="customerName">
+													<aon:outputText value="***no registrado***"
+														rendered="#{empty to.registryNote}" />
+													<aon:outputText value="#{to.registryNote.registry.fullName}"
+														rendered="#{not empty to.registryNote}" />
+												</aon:div>
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
 													<aon:outputText value="#{bundle.aon_address}" />
 												</f:facet>
-												<aon:outputText value="#{to.deliveryAddress}" />
+												<aon:div>
+													<aon:outputText value="#{to.address.fullAddress}"
+														rendered="#{to.registryNoteListCount == 1}" />
+													<aon:selectOneMenu value="#{to.registryNote}"
+														rendered="#{to.registryNoteListCount != 1}"
+														reRender="customerName, ftpSales-import" >
+														<f:selectItem itemLabel="-" itemValue="#{null}" />
+														<f:selectItems value="#{to.registryNotes}" />
+													</aon:selectOneMenu>
+												</aon:div>
 											</aon:column>
-		
+											
 											<aon:column styleClass="aon-editDataTable-buttonsColumn">
 												<f:facet name="header">
 													<aon:outputText value="#{bundle.aon_date}" />
