@@ -61,23 +61,35 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
-											<ui:param name="sfc_seriesCodes" value="#{configCollections.rectificationSeriesIds}" />
-											<ui:param name="sfc_seriesCodesLength" value="#{fn:length(sfc_seriesCodes)}" />										
-											<ui:param name="sfc_aliasPreffix" value="Invoice_rectification" />
-											<ui:param name="sfc_editable" value="#{true}" />
-											<ui:param name="sfc_seriesProperty" value="#{invoiceController.rectificationSeries}" />
-											<ui:param name="sfc_numberProperty" value="#{invoiceController.rectificationNumber}" />
-											<ui:param name="sfc_numberEditable" value="#{invoiceController.rectificationNumberEditable}" />
-											<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
-												value="#{invoiceController.onRectificationSeriesChanged}" />	
-											<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
-												value="#{invoiceController.onRectificationNumberEditable}" />
-										</ui:include>
+										<aon:if test="#{invoiceController.to.sales}">
+											<aon:outputLabel for="Invoice_rectification_number"
+												value="#{bundle.aon_invoice_number}" />
+											<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+												<ui:param name="sfc_seriesCodes" value="#{configCollections.rectificationSeriesIds}" />
+												<ui:param name="sfc_seriesCodesLength" value="#{fn:length(sfc_seriesCodes)}" />										
+												<ui:param name="sfc_aliasPreffix" value="Invoice_rectification" />
+												<ui:param name="sfc_editable" value="#{true}" />
+												<ui:param name="skipSeriesLabel" value="#{true}" />
+												<ui:param name="sfc_seriesProperty" value="#{invoiceController.rectificationSeries}" />
+												<ui:param name="sfc_numberProperty" value="#{invoiceController.rectificationNumber}" />
+												<ui:param name="sfc_numberEditable" value="#{invoiceController.rectificationNumberEditable}" />
+												<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+													value="#{invoiceController.onRectificationSeriesChanged}" />	
+												<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
+													value="#{invoiceController.onRectificationNumberEditable}" />
+											</ui:include>
+										</aon:if>
+										<aon:if test="#{!invoiceController.to.sales}">
+											<aon:outputLabel for="Invoice_rectification_referenceCode"
+												value="#{bundle.aon_invoice_number}" />
+											<aon:inputText id="Invoice_rectification_referenceCode" 
+												value="#{invoiceController.rectificationReferenceCode}" 
+												required="true" size="25" maxlength="32" />
+										</aon:if>
 
-										<aon:outputLabel for="Invoice_rectificationDate"
+										<aon:outputLabel for="Invoice_rectification_date"
 											value="#{bundle.aon_date}" />
-										<aon:selectInputDate id="Invoice_rectificationDate" 
+										<aon:selectInputDate id="Invoice_rectification_date" 
 											value="#{invoiceController.rectificationDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"
@@ -85,21 +97,20 @@
 											direction="top-right"
 											verticalOffset="-60" />
 
-										<aon:outputLabel for="Invoice_rectificationCause"
+										<aon:outputLabel for="Invoice_rectification_cause"
 											value="#{bundle.finance_cause}" />
-										<aon:inputTextarea id="Invoice_rectificationCause" cols="70" rows="4"
+										<aon:inputTextarea id="Invoice_rectification_cause" cols="70" rows="4"
 											value="#{invoiceController.rectificationCause}" />
 
 										<aon:if test="#{financeController.onePending}">
-											<aon:outputLabel for="Invoice_rectificationSettleFinance"
-												value="#{bundle.finance_charges}" />
+											<aon:outputLabel for="Invoice_rectification_settleFinance"
+												value="#{invoiceController.to.sales ? bundle.finance_charges : bundle.finance_payments}" />
 											<aon:div>
 												<aon:outputText styleClass="aon-italic aon-margin-right"
 													value="#{bundle.finance_invoice_settle_pending_finances}" />
-												<aon:selectBooleanCheckbox id="Invoice_rectificationSettleFinance"
+												<aon:selectBooleanCheckbox id="Invoice_rectification_settleFinance"
 													value="#{invoiceController.rectificationSettleFinance}" />
 											</aon:div>
-
 										</aon:if>
 
 									</aon:panelGrid>

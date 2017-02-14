@@ -44,6 +44,15 @@
 							<f:setPropertyActionListener target="#{expenseInvoice.backAction}"
 								value="#{null}" />
 						</aon:menuItem>
+						<aon:menuItem id="rectify"
+							value="#{bundle.finance_rectify}"
+							rendered="#{!expenseInvoice.rectifier and !expenseInvoice.accountSource and expenseInvoiceDetail.model.rowCount > 0}"
+							iconClass="aon-icon-version"
+							actionListener="#{expenseInvoice.onRectificationShow}"
+							reRender="showRectificationWindow">
+							<f:setPropertyActionListener target="#{expenseInvoice.showRectificationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
 						<aon:if test="#{aonRole.accountingOperator}">
 							<aon:menuItem id="record"
 								value="#{bundle.finance_record}"
@@ -239,6 +248,10 @@
 			<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
 			</aon:if>
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
+			<ui:param name="financeController" value="#{expenseInvoiceFinance}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">
 			<ui:param name="invoiceController" value="#{expenseInvoice}" />

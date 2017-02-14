@@ -220,6 +220,10 @@ public class PurchaseInvoiceController extends InvoiceController {
 		}
 	}
 
+	public String rectificationRedirect() {
+		return PURCHASE_INVOICE_FORM_NAME;
+	}
+
 	@Override
 	public IAttachment generateReportAttachment( ITransferObject to ) {
 		IManagerBean bean = getAttachmentBean();

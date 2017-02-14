@@ -141,6 +141,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private boolean rectificationNumberEditable;
+	private String rectificationReferenceCode;
 	private Date rectificationDate;
 	private String rectificationCause;
 	private boolean rectificationSettleFinance;
@@ -642,6 +643,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.rectificationNumberEditable = rectificationNumberEditable;
 	}
 
+	public String getRectificationReferenceCode() {
+		return rectificationReferenceCode;
+	}
+
+	public void setRectificationReferenceCode(String rectificationReferenceCode) {
+		this.rectificationReferenceCode = rectificationReferenceCode;
+	}
+	
 	public Date getRectificationDate() {
 		return rectificationDate;
 	}
@@ -673,16 +682,19 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			throw new AbortProcessingException(message);
 		}
 
+		if (invoice.isSales()) {
+			setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
+		}
 		setRectificationNumberEditable(false);
-		setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
 		setRectificationNumber(0);
+		setRectificationReferenceCode(null);
 		setRectificationDate(new Date());
 		setRectificationCause(null);
 		setRectificationSettleFinance(true);
 	}
 
 	public void onRectificationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		if ( isRectificationNumberEditable() ) {
+		if (isRectificationNumberEditable()) {
 			updateRectificationNumber((String)event.getNewValue());
 		}
 	}
@@ -696,22 +708,24 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}	
 
 	public void onRectify(ActionEvent event) throws ManagerBeanException {
-		RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
-		if ( getRectificationNumber() == 0 ) {
-			updateRectificationNumber(getRectificationSeries());
+		RectificationInvoicingManager manager = new RectificationInvoicingManager();
+		Invoice rectifier = null;
+		if (getInvoice().isSales()) {
+			if (getRectificationNumber() == 0) {
+				updateRectificationNumber(getRectificationSeries());
+			}
+			rectifier = manager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
+													getRectificationCause(), getRectificationSettleFinance());
+		} else {
+			rectifier = manager.rectifyReceivedInvoice(getInvoice(), getRectificationReferenceCode(), getRectificationDate(), getRectificationCause(), 
+															getRectificationSettleFinance());
 		}
-		Invoice rectifier = rectificationManager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
-																	getRectificationCause(), getRectificationSettleFinance());
 
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());
 		onSearch(event);
 		getModel().setRowIndex(0);
 		onSelect(event);
-	}
-
-	public String rectificationRedirect() {
-		return SALE_INVOICE_FORM_NAME;
 	}
 
 	public boolean isShowDiscountsWindow() {

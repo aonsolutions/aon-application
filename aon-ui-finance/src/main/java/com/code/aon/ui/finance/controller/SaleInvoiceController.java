@@ -338,6 +338,10 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 
+	public String rectificationRedirect() {
+		return SALE_INVOICE_FORM_NAME;
+	}
+
 	public List<SelectItem> getInvoiceAttachmentTypes() {
 		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
 		InvoiceAttachmentType type = InvoiceAttachmentType.RECEIPT;

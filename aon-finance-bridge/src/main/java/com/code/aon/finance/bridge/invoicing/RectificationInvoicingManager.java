@@ -31,7 +31,7 @@ public class RectificationInvoicingManager {
 
 	public Invoice specialRectifyInvoice(Invoice invoice, String series, int number, Date issueDate, String cause, double percent) 
 			throws ManagerBeanException {
-		Invoice rectifier = createRectifierInvoice(invoice, series, number, issueDate, cause, RectificationType.SPECIAL_RECTIFIER);
+		Invoice rectifier = createRectifierInvoice(invoice, series, number, null, issueDate, cause, RectificationType.SPECIAL_RECTIFIER);
 		createInvoiceAddress(rectifier, invoice);
 		createRectifierInvoiceDetails(rectifier, invoice, percent);
 		// No se duplican los vencimientos, puesto que lo único que cambia es la cuota de IVA.
@@ -40,7 +40,7 @@ public class RectificationInvoicingManager {
 	}
 	
 	public Invoice rectifyInvoice(Invoice invoice, String series, int number, Date issueDate, String cause, boolean settleFinance) throws ManagerBeanException {
-		Invoice rectifier = createRectifierInvoice(invoice, series, number, issueDate, cause, RectificationType.NORMAL_RECTIFIER);
+		Invoice rectifier = createRectifierInvoice(invoice, series, number, null, issueDate, cause, RectificationType.NORMAL_RECTIFIER);
 		createInvoiceAddress(rectifier, invoice);
 		createRectifierInvoiceDetails(rectifier, invoice, 0.0);
 		createRectifierInvoiceFinances(rectifier, invoice, settleFinance);
@@ -48,12 +48,25 @@ public class RectificationInvoicingManager {
 		return rectifier;
 	}
 
-	private Invoice createRectifierInvoice(Invoice invoice, String series, int number, Date issueDate, String cause, 
+	public Invoice rectifyReceivedInvoice(Invoice invoice, String referenceCode, Date issueDate, String cause, boolean settleFinance) throws ManagerBeanException {
+		Invoice rectifier = createRectifierInvoice(invoice, null, 0, referenceCode, issueDate, cause, RectificationType.NORMAL_RECTIFIER);
+		createInvoiceAddress(rectifier, invoice);
+		createRectifierInvoiceDetails(rectifier, invoice, 0.0);
+		createRectifierInvoiceFinances(rectifier, invoice, settleFinance);
+		updateRectifiedInvoice(rectifier, invoice);
+		return rectifier;
+	}
+
+	private Invoice createRectifierInvoice(Invoice invoice, String series, int number, String referenceCode, Date issueDate, String cause, 
 			RectificationType rectificationtype) throws ManagerBeanException {
 		Invoice rectifier = new Invoice();
 		rectifier.setProject(invoice.getProject());
-		rectifier.setSeries(series);
-		rectifier.setNumber((number > 0) ? number : obtainMaxNumber(series));
+		if (invoice.isSales()) {
+			rectifier.setSeries(series);
+			rectifier.setNumber((number > 0) ? number : obtainMaxNumber(series));
+		} else {
+			rectifier.setReferenceCode(referenceCode);
+		}
 		rectifier.setRegistry(invoice.getRegistry());
 		rectifier.setRegistryDocument(invoice.getRegistryDocument());
 		rectifier.setRegistryDocumentType(invoice.getRegistryDocumentType());

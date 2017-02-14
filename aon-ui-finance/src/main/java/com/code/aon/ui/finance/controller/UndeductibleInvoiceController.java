@@ -119,6 +119,10 @@ public class UndeductibleInvoiceController extends InvoiceController {
 		return null;
 	}
 
+	public String rectificationRedirect() {
+		return UNDEDUCTIBLE_INVOICE_FORM_NAME;
+	}
+
 	@Override
 	public IAttachment generateReportAttachment( ITransferObject to ) {
 		IManagerBean bean = getAttachmentBean();
