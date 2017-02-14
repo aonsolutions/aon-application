@@ -208,9 +208,13 @@ public class AccountEntryValidation {
 			if (entry.getPeriodStatus() == AccountPeriodStatus.INACTIVE)
 				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(entry.getPeriodName()));
 			if (entry.getPeriodStatus() == AccountPeriodStatus.OPERATING)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(entry.getPeriodName()));
+				if (entry.getEntryType() != AccountEntryType.OPERATING) {
+					throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(entry.getPeriodName()));
+				}
 			if (entry.getPeriodStatus() == AccountPeriodStatus.CLOSED)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(entry.getPeriodName()));
+				if (entry.getEntryType() != AccountEntryType.CLOSING) {
+					throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(entry.getPeriodName()));
+				}
 		}
 	};
 

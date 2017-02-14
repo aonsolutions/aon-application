@@ -442,8 +442,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	private void syncCurrent() {
-		boolean canRemove = (!isNew() && wizardContent.isUpdatable());
-		boolean canEdit = isNew() || canRemove;
+		boolean canRemove = (!isNew() && (wizardContent.isUpdatable() || wizardContent.isRemovable()));
+		boolean canEdit = isNew() || (!isNew() && wizardContent.isUpdatable());
 		
 		// Populate header values
 		period.select(wizardContent.getMainEntry().getPeriod());
@@ -468,9 +468,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (!canEdit) {
 			statusMsg.addStyleName(AON.AON_CSS.aonInfoMessage());
 			if (!wizardContent.getMainEntry().isPeriodActive()) {
-				statusMsg.setText(
-						AON.MSG.periodStatusWarning(
-								AON.MSG.accountPeriodStatus(wizardContent.getMainEntry().getPeriodStatus())));
+				if (!canRemove) {
+					statusMsg.setText(
+							AON.MSG.periodStatusWarning(
+									AON.MSG.accountPeriodStatus(wizardContent.getMainEntry().getPeriodStatus())));
+				} else {
+					statusMsg.setText(AON.MSG.automaticEntryNoUpdateWarning());
+				}
 			} else {
 				statusMsg.setText(AON.MSG.automaticEntryWarning());
 				
@@ -658,6 +662,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		final AccountEntry entry = event.getSelectedItem();
 		selectEntry(entry.getId());
 	}
+	
 	@UiHandler("statementPanel")
 	public void onSelectStatement(SelectionEvent<Integer> event) {
 		selectEntry(event.getSelectedItem());

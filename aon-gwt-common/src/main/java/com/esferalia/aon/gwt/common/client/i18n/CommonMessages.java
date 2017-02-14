@@ -261,6 +261,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se permite la modificaci\u00F3n/borrado de asientos autom\u00E1ticos.")
 	String automaticEntryWarning();
 
+	@DefaultMessage("No se permite la modificaci\u00F3n de asientos autom\u00E1ticos.")
+	String automaticEntryNoUpdateWarning();
+
 	@DefaultMessage("No ha sido posible recuperar los bancos de la empresa ({0}) ")
 	String unableToShowCompanyBanks(String message);
 

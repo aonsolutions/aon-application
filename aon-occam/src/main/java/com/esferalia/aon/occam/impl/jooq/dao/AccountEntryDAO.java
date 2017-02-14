@@ -452,7 +452,7 @@ public class AccountEntryDAO {
 			
 			@Override
 			public void visitOpening(AccountEntry entry) {
-				if (!AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
+				if (AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
 					// Si después de borrar apertura, existe otro apertura, se mantiene 
 					// el estado (o se modifica si era errroneo).
 					AccountPeriodDAO.open(ctx,entry.getPeriod());

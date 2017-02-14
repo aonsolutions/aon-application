@@ -110,7 +110,11 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	public boolean isUpdatable() {
 		return (getAccountEntry() == null || (getAccountEntry().isPeriodActive()));
 	}
-
+	
+	@Override
+	public boolean isRemovable() {
+		return (!isNew() && isUpdatable());
+	}
 	
 	@Override
 	public AccountEntry getMainEntry() {

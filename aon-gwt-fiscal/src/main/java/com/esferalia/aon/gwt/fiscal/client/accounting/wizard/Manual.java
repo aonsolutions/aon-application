@@ -92,8 +92,27 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 
 	@Override
 	public boolean isUpdatable() {
-		return super.isUpdatable() && getAccountEntry().isManual();
+		AccountEntryType type = getAccountEntry().getEntryType();
+		return super.isUpdatable() && (
+				type == AccountEntryType.MANUAL
+			 || type == AccountEntryType.EXPENSES
+			 || type == AccountEntryType.SALARY
+			 || type == AccountEntryType.SOCIAL_INSURANCE
+			 || type == AccountEntryType.SOCIAL_INSURANCE_ADJUST
+			 || type == AccountEntryType.LOAN
+			 || type == AccountEntryType.LOAN_FEE );
 	}
+	
+	@Override
+	public boolean isRemovable() {
+		AccountEntryType type = getAccountEntry().getEntryType();
+		return super.isRemovable() || (
+				type == AccountEntryType.OPERATING
+			 || type == AccountEntryType.CLOSING
+			 || type == AccountEntryType.OPENING);
+	}
+	
+	
 	
 	@Override
 	public void reset(AccountEntry base, ISelectionCallback cbk) {
