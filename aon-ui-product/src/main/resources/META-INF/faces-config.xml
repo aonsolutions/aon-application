@@ -345,7 +345,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Item_product_type</key>
-					<value>0|1|2|3|5</value>
+					<value>0|1|2|3|5|7</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
