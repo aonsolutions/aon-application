@@ -427,7 +427,6 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 				inicializarMapaTipos(listaTipos);
 				inicializarMapaTiposFestivos(listaFestivos);
 				jornadaEmpleado = result.isJornadaCompleta();
-				Window.alert("Jornada Empleado :"+jornadaEmpleado);
 				
 				success.accept(result);
 				
@@ -504,7 +503,7 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 					
 					Date auxDate = DateUtils.copyDateOnly(startDate);
 					
-					while (auxDate.before(endDate) || auxDate.equals(endDate)){
+					while (auxDate.before(endDate)){
 						Date date = DateUtils.copyDateOnly(auxDate);
 						DateUtils.resetTime(date);
 						mapaDiasTipo.put(date, TipoDia);
@@ -565,6 +564,7 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		EmployeeCalendarUpdate updateInfo = new EmployeeCalendarUpdate();
 		
 		updateInfo.setMapaHorasDias(crearMapaHorasUpdate(mapaDiasHoras, draftMapaDiasHoras));
+		//updateInfo.setMapaTipoDias((HashMap<Date, DayType>) draftMapaDiasTipo);
 		updateInfo.setMapaTipoDias(crearMapaTiposUpdate(mapaDiasTipo, draftMapaDiasTipo));
 		
 		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){

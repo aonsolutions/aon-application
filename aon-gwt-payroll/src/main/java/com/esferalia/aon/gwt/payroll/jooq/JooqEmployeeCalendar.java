@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -91,8 +92,9 @@ public class JooqEmployeeCalendar {
 					.from(CONTRACT_DATA)
 					.where(CONTRACT_DATA.CONTRACT.eq(contract))
 					.and(CONTRACT_DATA.NAME.in(
-					ContextVariable.ERE_DAYS.getName()
-					,ContextVariable.STRIKE_DAYS.getName()))
+							ContextVariable.ERE_DAYS.getName()
+							,ContextVariable.STRIKE_DAYS.getName()
+							,ContextVariable.HOLIDAYS.getName()))
 					.fetch();
 		
 		Result<Record> tipoDiasITContratoEmpleado = dslContext
@@ -125,11 +127,14 @@ public class JooqEmployeeCalendar {
 		
 		// -------------------------------------- DIAS NO LABRABLES / FESTIVOS ---------------------------------------------------------
 		
-		Integer calendar = dslContext.select(CONTRACT.CALENDAR)
-							 		  .from(CONTRACT)
-							 		  .where(CONTRACT.ID.eq(contract))
-							 		  .fetchOne()
-							 		  .get(CONTRACT.CALENDAR);
+		Integer calendar = dslContext.select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
+							  .from(CONTRACT)
+							  .innerJoin(PAYROLL_WORKPLACE)
+							  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
+							  .where(CONTRACT.ID.eq(contract))
+							  .fetchOne()
+							  .get(CONTRACT.CALENDAR);
+		
 		if (calendar != null){
 		 
 			Result<Record> diasNoLaborables = dslContext.select()
@@ -271,9 +276,89 @@ public class JooqEmployeeCalendar {
 		// ----------------------------------------------- ACTUALIZACION TIPO DIAS -------------------------------------------------------
 		HashMap<java.util.Date, DayType> mapaTiposUpdate = updateInfo.getMapaTipoDias();
 		
+		dslContext.delete(CONTRACT_DATA)
+		   .where(CONTRACT_DATA.CONTRACT.eq(contract))
+		   .and(CONTRACT_DATA.NAME.in(
+				  ContextVariable.ERE_DAYS.getName()
+				  ,ContextVariable.STRIKE_DAYS.getName()
+				  ,ContextVariable.HOLIDAYS.getName()))
+		   .execute();
+		
+		java.util.Date startDateTipo = new java.util.Date();
+		java.util.Date endDateTipo = new java.util.Date();
+		
+		for (Entry<java.util.Date, DayType> entry : mapaTiposUpdate.entrySet()) {
+			if (entry.getKey().before(startDateTipo))
+				startDateTipo = DateUtils.copyDateOnly(entry.getKey());
+			
+			if (entry.getKey().after(endDateTipo))
+				endDateTipo = DateUtils.copyDateOnly(entry.getKey());
+		}
+		
+		
+		java.util.Date  dateTipo = DateUtils.copyDateOnly(startDateTipo);
+		java.util.Date auxStartDateTipo = DateUtils.copyDateOnly(dateTipo);
+		String tipoDia = "";
+		DayType tipoStart = DayType.NOTYPEDAY;
+		
+		if (mapaTiposUpdate.get(dateTipo) != null){
+			tipoDia = calcularDiaTipo(mapaTiposUpdate.get(dateTipo));
+			tipoStart = mapaTiposUpdate.get(auxStartDateTipo);
+		}
+		
+		while (dateTipo.before(endDateTipo)){
+			if (mapaTiposUpdate.get(dateTipo) != null){
+				if(!tipoStart.equals(mapaTiposUpdate.get(dateTipo))){
+					if(tipoDiaValido(tipoDia)){
+						Date sqlStartDate = new Date(auxStartDateTipo.getTime());
+						java.util.Date javaEndDate = DateUtils.copyDateOnly(dateTipo);
+						DateUtils.addDays2Date(javaEndDate, -1);
+						Date sqlEndDate = new Date(javaEndDate.getTime());
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+								CONTRACT_DATA.END_DATE)
+								.values(domain, tipoDia, contract, "", 
+										sqlStartDate, sqlEndDate).execute();
+					}
+					tipoDia = calcularDiaTipo(mapaTiposUpdate.get(dateTipo));
+					tipoStart = mapaTiposUpdate.get(dateTipo);
+					auxStartDateTipo = DateUtils.copyDateOnly(dateTipo);
+				}
+			}
+			
+			DateUtils.addDays2Date(dateTipo, 1);
+		}
 		
 	}
 	
+	private static boolean tipoDiaValido(String dayType) {
+		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") 
+				|| dayType.equals("DIAS_VACACIONES");
+	}
+
+	private static String calcularDiaTipo(DayType dayType) {
+		String result = "";
+		switch (dayType) {
+		case EREDAY:
+			result = "DIAS_ERE";
+			break;
+		case STRIKEDAY:
+			result = "DIAS_HUELGA";
+			break;
+		case HOLIDAY:
+			result = "DIAS_VACACIONES";
+			break;
+		case FREEDAY:
+			result = "";
+			break;
+		default:
+			result = "";
+			break;
+		}
+		
+		return result;
+	}
+
 	private static String calcularDiaSemana(int day) {
 		String result = "";
 		switch (day) {

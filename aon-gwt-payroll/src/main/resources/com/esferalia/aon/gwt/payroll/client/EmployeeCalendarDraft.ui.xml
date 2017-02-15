@@ -40,6 +40,14 @@
 		    padding-top: 15px;
 		}
 		
+		.labelDiasStyle2{
+			padding-left: 15px;
+		    padding-bottom: 3px;
+		    padding-top: 10px;
+    		padding-right: 85px;
+		}
+		
+		
 		.doubleBoxStyle {
 			width: 10px;
 			text-align: center;
@@ -75,7 +83,7 @@
 		.itStyle {
 			background-color: rgba(255, 0, 0, 0.72);
 			border-radius: 15px;
-			padding: 3px;
+			min-height: 1px;
 			color: #ffffff;
 		}
 		
@@ -110,26 +118,30 @@
 		.reductionStyle {
 			background-color: #065b69;
 			border-radius: 15px;
-			padding: 3px;
+			min-height: 1px;
 			color: #ffffff;
 		}
 		
 		.dropStyle {
 			background-color: #733969;
 			border-radius: 15px;
-			padding: 3px;
+			min-height: 1px;
 			color: #ffffff;
 		}
 		
 		.suspensionStyle {
 			background-color: #b74b17;
 			border-radius: 15px;
-			padding: 3px;
+			min-height: 1px;
 			color: #ffffff;
 		}
 		
 		.cellStyle {
 			padding: 3px;
+		}
+		
+		.cellStyle1 {
+			padding: 1px;
 		}
 		
 		.year {
@@ -273,7 +285,7 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="70">
+		<g:north size="55">
 			<g:FlowPanel>
 				<g:MenuBar>
 					<g:MenuItem text="Archivo">
@@ -398,7 +410,7 @@
 
 				<g:HorizontalPanel>
 					<g:Label styleName="{style.labelDiasStyle}">
-						Dias:
+						Dias seleccionables:
 					</g:Label>
 					<i:IronLabel>
 						<p:PaperButton styleName="{style.cellStyle} {style.sundayStyle}"
@@ -411,11 +423,6 @@
 						Vacaciones
 					</i:IronLabel>
 					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.dropStyle}"
-							ui:field="diaAusenciaButton"></p:PaperButton>
-						Ausencia
-					</i:IronLabel>
-					<i:IronLabel>
 						<p:PaperButton styleName="{style.cellStyle} {style.strikeStyle}"
 							ui:field="diaHuelgaButton"></p:PaperButton>
 						Huelga
@@ -426,21 +433,6 @@
 						ERE
 					</i:IronLabel>
 					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.reductionStyle}"
-							ui:field="diaReduccionButton"></p:PaperButton>
-						Reducción
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.suspensionStyle}"
-							ui:field="diaSuspensionButton"></p:PaperButton>
-						Suspensión
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.itStyle}"
-							ui:field="diaBajaITButton"></p:PaperButton>
-						Baja IT
-					</i:IronLabel>
-					<i:IronLabel>
 						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton" disabled="true"/>
 						Horas
 					</i:IronLabel>
@@ -448,6 +440,31 @@
 						<p:PaperIconButton icon="icons:clear" ui:field="eraseButton"
 											styleName="{style.iconEraseStyle}"/>
 						Limpiar
+					</i:IronLabel>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel>
+					<g:Label styleName="{style.labelDiasStyle2}">
+						Dias:
+					</g:Label>
+					<i:IronLabel>
+						<p:PaperButton styleName="{style.cellStyle1} {style.dropStyle}"
+							ui:field="diaAusenciaButton"></p:PaperButton>
+						Ausencia
+					</i:IronLabel>
+					<i:IronLabel>
+						<p:PaperButton styleName="{style.cellStyle1} {style.reductionStyle}"
+							ui:field="diaReduccionButton"></p:PaperButton>
+						Reducción
+					</i:IronLabel>
+					<i:IronLabel>
+						<p:PaperButton styleName="{style.cellStyle1} {style.suspensionStyle}"
+							ui:field="diaSuspensionButton"></p:PaperButton>
+						Suspensión
+					</i:IronLabel>
+					<i:IronLabel>
+						<p:PaperButton styleName="{style.cellStyle1} {style.itStyle}"
+							ui:field="diaBajaITButton"></p:PaperButton>
+						Baja IT
 					</i:IronLabel>
 				</g:HorizontalPanel>
 				<g:ScrollPanel ui:field="scrollInfo" height="85%">

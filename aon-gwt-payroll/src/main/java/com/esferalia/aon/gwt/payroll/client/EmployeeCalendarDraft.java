@@ -18,7 +18,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -633,15 +632,15 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	@UiHandler("diaAusenciaButton")
 	public void onDiaAusenciaClick(ClickEvent event) {
-		limpiarEstilos(posicionesSeleccionas);
-		for (Integer pos : posicionesSeleccionas) {
-			int column = calcularColumna(pos.intValue());
-			int row = calcularFila(pos.intValue());
-			cells[row][column].unSelect(row, column);
-			cellsType[row][column].setAsType(DayType.DROPDAY, row, column);
-			calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], DayType.DROPDAY);
-		}
-		posicionesSeleccionas.clear();
+//		limpiarEstilos(posicionesSeleccionas);
+//		for (Integer pos : posicionesSeleccionas) {
+//			int column = calcularColumna(pos.intValue());
+//			int row = calcularFila(pos.intValue());
+//			cells[row][column].unSelect(row, column);
+//			cellsType[row][column].setAsType(DayType.DROPDAY, row, column);
+//			calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], DayType.DROPDAY);
+//		}
+//		posicionesSeleccionas.clear();
 	}
 
 	@UiHandler("diaHuelgaButton")
@@ -672,28 +671,28 @@ public class EmployeeCalendarDraft extends Composite {
 
 	@UiHandler("diaReduccionButton")
 	public void onReduccionClick(ClickEvent event) {
-		limpiarEstilos(posicionesSeleccionas);
-		for (Integer pos : posicionesSeleccionas) {
-			int column = calcularColumna(pos.intValue());
-			int row = calcularFila(pos.intValue());
-			cells[row][column].unSelect(row, column);
-			cellsType[row][column].setAsType(DayType.REDUCTIONDAY, row, column);
-			calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], DayType.REDUCTIONDAY);
-		}
-		posicionesSeleccionas.clear();
+//		limpiarEstilos(posicionesSeleccionas);
+//		for (Integer pos : posicionesSeleccionas) {
+//			int column = calcularColumna(pos.intValue());
+//			int row = calcularFila(pos.intValue());
+//			cells[row][column].unSelect(row, column);
+//			cellsType[row][column].setAsType(DayType.REDUCTIONDAY, row, column);
+//			calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], DayType.REDUCTIONDAY);
+//		}
+//		posicionesSeleccionas.clear();
 	}
 
 	@UiHandler("diaSuspensionButton")
 	public void onSuspensionClick(ClickEvent event) {
-		limpiarEstilos(posicionesSeleccionas);
-		for (Integer pos : posicionesSeleccionas) {
-			int column = calcularColumna(pos.intValue());
-			int row = calcularFila(pos.intValue());
-			cells[row][column].unSelect(row, column);
-			cellsType[row][column].setAsType(DayType.SUSPENSIONDAY, row, column);
-			calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], DayType.SUSPENSIONDAY);
-		}
-		posicionesSeleccionas.clear();
+//		limpiarEstilos(posicionesSeleccionas);
+//		for (Integer pos : posicionesSeleccionas) {
+//			int column = calcularColumna(pos.intValue());
+//			int row = calcularFila(pos.intValue());
+//			cells[row][column].unSelect(row, column);
+//			cellsType[row][column].setAsType(DayType.SUSPENSIONDAY, row, column);
+//			calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], DayType.SUSPENSIONDAY);
+//		}
+//		posicionesSeleccionas.clear();
 	}
 	
 	@UiHandler("hourButton")
@@ -1037,6 +1036,7 @@ public class EmployeeCalendarDraft extends Composite {
 			calendarGrid.getWidget(row, col).removeStyleName(style.reductionStyle());
 			calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
 			cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
+			calendarEmployeeInfo.setTypeByDay(cellsDates[row][col], DayType.NOTYPEDAY);
 		}
 	}
 	
