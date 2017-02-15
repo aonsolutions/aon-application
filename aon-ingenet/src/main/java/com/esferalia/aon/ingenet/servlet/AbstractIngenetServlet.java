@@ -1,24 +1,17 @@
 package com.esferalia.aon.ingenet.servlet;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEventLocator;
 
+import org.xml.sax.SAXException;
+
+import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -36,6 +29,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 
 	protected static final String PARAM_USERNAME = "username";
 	protected static final String PARAM_PASSWORD = "password";
+	protected static final String PARAM_VALUE = "value";
 	
 	private SimpleDateFormat dateFormatter;
 	private SimpleDateFormat timeFormatter;
@@ -117,10 +111,14 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		return domain.getId();
 	}
 
-	protected boolean doLogin(String domainName, String username, String password) {
-		System.out.println("INGENET LOGIN: " + domainName + "@" + username + " (using password "
-				+ (password != null ? "YES" : "NO") + ")");
-		if (domainName != null && username != null && password != null && domainName.matches("^udapa\\..*")) {
+	protected boolean doLogin(String domainName, String username,
+			String password) {
+		System.out
+				.println("INGENET LOGIN: " + domainName + "@" + username
+						+ " (using password "
+						+ (password != null ? "YES" : "NO") + ")");
+		if (domainName != null && username != null && password != null
+				&& domainName.matches("^udapa\\..*")) {
 			return "ingenet".equals(username) && "1ng3n3t".equals(password);
 		}
 		return false;
@@ -131,59 +129,24 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	/*
 	 * JAXB
 	 */
-	protected Object extractValue(String xml, Class<?> clazz) throws IOException {
-		InputStream inputStream = null;
-		try {
-			byte[] bytes = xml.getBytes("UTF-8");
-			inputStream = new ByteArrayInputStream(bytes);
-			String contextPath = clazz.getPackage().getName();
-			JAXBContext context = JAXBContext.newInstance(contextPath);
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			unmarshaller.setEventHandler(new ElaborationValidationEventHandler());
-			return unmarshaller.unmarshal(inputStream);
-		} catch (JAXBException e) {
-			throw new RuntimeException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if(inputStream!=null){
-				inputStream.close();
-			}
-		}
+	
+	protected void validateRespuestaElaboracionesXmlPattern(
+			InputStream xmlStream) throws IOException, SAXException {
+		IngenetXmlValidator.validateXmlPattern(xmlStream,
+				IngenetXmlValidator.SCHEMA_FILE_NAME_RESPUESTA_ELABORACIONES);
+	}
+
+	protected void validateConsultaElaboracionesXmlPattern(InputStream xmlStream)
+			throws IOException, SAXException {
+		IngenetXmlValidator.validateXmlPattern(xmlStream,
+				IngenetXmlValidator.SCHEMA_FILE_NAME_CONSULTA_ELABORACIONES);
+	}
+
+	protected void validateAlbaranesXmlPattern(InputStream xmlStream)
+			throws IOException, SAXException {
+		IngenetXmlValidator.validateXmlPattern(xmlStream,
+				IngenetXmlValidator.SCHEMA_FILE_NAME_ALBARANES);
 	}
 	
-	protected String convertToXml(Object source, Class<?>... type) {
-        String result;
-        StringWriter sw = new StringWriter();
-        try {
-            JAXBContext context = JAXBContext.newInstance(type);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(source, sw);
-            result = sw.toString();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
-	
-	
-	public class ElaborationValidationEventHandler implements
-			ValidationEventHandler {
-		public boolean handleEvent(ValidationEvent ve) {
-			if (ve.getSeverity() == ValidationEvent.FATAL_ERROR
-					|| ve.getSeverity() == ValidationEvent.ERROR) {
-				ValidationEventLocator locator = ve.getLocator();
-				// Print message from valdation event
-				System.out.println("Invalid value: " + locator.getURL());
-				System.out.println("Error: " + ve.getMessage());
-				// Output line and column number
-				System.out.println("Error at column "
-						+ locator.getColumnNumber() + ", line "
-						+ locator.getLineNumber());
-			}
-			return true;
-		}
-	}
 
 }

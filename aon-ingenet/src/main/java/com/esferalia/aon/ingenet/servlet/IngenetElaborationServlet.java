@@ -1,14 +1,8 @@
 package com.esferalia.aon.ingenet.servlet;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.xml.sax.SAXException;
 
 import com.esferalia.aon.ingenet.api.consultaElaboraciones.ACCIONTYPE;
 import com.esferalia.aon.ingenet.api.consultaElaboraciones.CONSULTAELABORACIONES;
@@ -38,6 +33,7 @@ import com.esferalia.aon.ingenet.api.respuestaElaboraciones.ERRORESTYPE;
 import com.esferalia.aon.ingenet.api.respuestaElaboraciones.PAISTYPE;
 import com.esferalia.aon.ingenet.api.respuestaElaboraciones.RESPUESTAELABORACIONES;
 import com.esferalia.aon.ingenet.api.respuestaElaboraciones.RESPUESTAELABORACIONTYPE;
+import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -70,8 +66,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	
 	private List<String> errorList;
 	
-	private final static String PARAM_VALUE = "value";
-	
 	
 	protected void processRequest(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws ServletException, IOException {
@@ -81,13 +75,17 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
 		PARAMETROSBUSQUEDATYPE params = null;
 		if(_xml!=null){
-			CONSULTAELABORACIONES consulta;
+			CONSULTAELABORACIONES consulta = null;
 			try {
-				consulta = (CONSULTAELABORACIONES) extractValue(_xml, CONSULTAELABORACIONES.class);
+				super.validateConsultaElaboracionesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
+				consulta = (CONSULTAELABORACIONES) IngenetXmlValidator.extractValue(_xml, CONSULTAELABORACIONES.class);
 				if(consulta!=null && consulta.getDATOSCONSULTAELABORACIONES()!=null
 						&& consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA()!=null){
 					params = consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA();
 				}
+			} catch (SAXException e) {
+				errorList.add("El fichero no ha pasado el proceso de validacion");
+				errorList.add(e.getMessage());
 			} catch (Exception e) {
 				errorList.add(e.getMessage());
 			}
@@ -177,7 +175,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		errorList.forEach(error -> {
 			respuesta.getERRORES().getERRORES().add(error);
 		});
-		String xml = convertToXml(respuesta, RESPUESTAELABORACIONES.class);
+		String xml = IngenetXmlValidator.convertToXml(respuesta, RESPUESTAELABORACIONES.class);
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
 		
@@ -189,7 +187,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private void flushElaborations(HttpServletResponse httpResponse,
 			AONContext ctx, List<Elaboration> pendingList) throws IOException {
 		RESPUESTAELABORACIONES elaboraciones = fillElaborationData(ctx, pendingList);
-		String xml = convertToXml(elaboraciones, RESPUESTAELABORACIONES.class);
+		String xml = IngenetXmlValidator.convertToXml(elaboraciones, RESPUESTAELABORACIONES.class);
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
@@ -442,82 +440,5 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		return elaborationList;
 	}
 	
-    
-	
-	
-	
-	public static void main(String[] args) throws Exception {
-		String path = "http://";
-		path += "udapa.esferalia.net";
-		path += ":8080";
-		path += "/aon-aio";
-		path += "/ingenet/elaboration";
-		
-		String user = "ingenet";
-		String passwd = "1ng3n3t";
-		
-		String FILENAME = "C:\\TEMP\\consultaElaboraciones_example.xml";
-		String xml = "";
-		try (
-			BufferedReader xml_br = new BufferedReader(new FileReader(FILENAME))) {
-			String sCurrentLine;
-			while ((sCurrentLine = xml_br.readLine()) != null) {
-				xml += sCurrentLine;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
-				+ "<ACCION>RECUPERAR</ACCION>"
-				+ "<FECHA>20170125</FECHA>"
-//				+ "<ESTADO>PENDIENTE</ESTADO>"
-				+ "<ESTADO>PROCESANDO</ESTADO>"
-				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
-
-//		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
-//				+ "<ACCION>CANCELAR</ACCION>"
-//				+ "<ELABORACIONES>"
-//				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>25</NUMERO></REFERENCIAS>"
-//				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>24</NUMERO></REFERENCIAS>"
-//				+ "</ELABORACIONES>"
-//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
-        
-        StringBuilder postData = new StringBuilder();
-        postData.append('&');
-        postData.append(URLEncoder.encode(PARAM_USERNAME, "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(user, "UTF-8"));
-        postData.append('&');
-        postData.append(URLEncoder.encode(PARAM_PASSWORD, "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(passwd, "UTF-8"));
-        postData.append('&');
-        postData.append(URLEncoder.encode(PARAM_VALUE, "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(xml, "UTF-8"));
-        
-        byte[] postDataBytes = postData.toString().getBytes(StandardCharsets.UTF_8.name());
-
-        URL url = new URL(path);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
-        conn.connect();
-        conn.getOutputStream().write(postDataBytes);
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8.name()));
-        StringBuffer sb = new StringBuffer();
-        for(String in; (in = br.readLine()) != null;) {
-            sb.append(in + "\n");
-        }
-        System.out.println(sb);
-        br.close();
-	}
 
 }
