@@ -31,6 +31,7 @@
 					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<extraJvmArgs>-Xmx3072M</extraJvmArgs>
+					<localWorkers>4</localWorkers>
 				</configuration>
 				<executions>
 					<execution>
