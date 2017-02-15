@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
@@ -25,13 +27,21 @@ import com.lowagie.text.pdf.draw.LineSeparator;
 
 public class PackingList {
 	
+	private static final Logger LOGGER  = Logger.getLogger(PackingList.class.getName());
+
+	private PackingList() {
+	    throw new IllegalAccessError("Utility class");
+	}
+	
 	public static File createPdf(JSONObject json, byte [] image) {
 		File archivoPDF = new File("packingList" + ".pdf");
-		if(archivoPDF.exists()) archivoPDF.delete();
+		if(archivoPDF.exists()) {
+			archivoPDF.delete();
+		}
 		try {
 			archivoPDF.createNewFile();
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LOGGER.log(Level.SEVERE, e1.getMessage());
 		}		
 		Document document = new Document(PageSize.A4);
 		try {
@@ -79,7 +89,7 @@ public class PackingList {
 			order.add(separator);
 			document.add(order);
 		} catch (DocumentException | IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		document.close();
 		return archivoPDF;
@@ -182,7 +192,7 @@ public class PackingList {
 		try {
 			destinatario.setWidths(medidaCeldas);
 		} catch (DocumentException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	
 		PdfPCell c = new PdfPCell(new Phrase("Destinatario",getFont1()));

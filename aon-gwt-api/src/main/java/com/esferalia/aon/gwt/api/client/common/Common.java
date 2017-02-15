@@ -23,4 +23,12 @@ public class Common extends Methods{
 		get(getUrl() + "common/"+getDomainName()+"/"+getUserName()+"/workplace/", callback);
 	}
 	
+	public void getMailAccounts(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "common/"+getDomainName()+"/"+getUserName()+"/mail_account/", callback);
+	}
+	
+	public void getSignatures(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "common/"+getDomainName()+"/"+getUserName()+"/signature/", callback);
+	}
+	
 }

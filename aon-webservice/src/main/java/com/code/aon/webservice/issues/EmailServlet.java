@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
@@ -30,7 +31,7 @@ public class EmailServlet extends HttpServlet{
 		String domainName = pathInfo[2]; 
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		if(pathInfo.length > 3){
-			if(pathInfo.length > 4 && pathInfo[3].equals("close")){
+			if(pathInfo.length > 4 && MSG.CLOSE.equals(pathInfo[3])){
 				closeTask(domain, userName, Integer.parseInt(pathInfo[4]));
 				RequestDispatcher dispatcher = getServletContext()
 					.getRequestDispatcher("/login/popupclose.jsp");

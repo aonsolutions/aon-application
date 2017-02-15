@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
@@ -24,8 +25,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
+import com.vaadin.polymer.paper.PaperButtonElement;
+import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
+import com.vaadin.polymer.paper.widget.PaperRadioButton;
+import com.vaadin.polymer.paper.widget.event.ChangeEvent;
+import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class CarrierPacking extends AonTemplate{
@@ -51,7 +58,10 @@ public class CarrierPacking extends AonTemplate{
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC
+				IronIconsElement.SRC,
+				AonComboBoxElement.SRC,
+				PaperButtonElement.SRC,
+				PaperRadioButtonElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
@@ -116,6 +126,94 @@ public class CarrierPacking extends AonTemplate{
 					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
 					API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
 				}
+				@Override
+				protected void sendPackingList() {
+					VerticalPanel panel = new VerticalPanel();
+					panel.setStyleName(AON.AON_CSS.aonWidthAll());
+					AonComboBox emailComboBox = new AonComboBox();
+			    	emailComboBox.setLabel("Cuenta de Correo");
+			    	emailComboBox.setItemLabelPath("name");
+			    	emailComboBox.setItemValuePath("name");
+					API.getCommon().getMailAccounts(new AsyncCallback<JSON<JsObject>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsObject> result) {
+					    	emailComboBox.setItems(result.getData());
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+					panel.add(emailComboBox);
+					
+					AonComboBox signComboBox = new AonComboBox();
+			    	signComboBox.setLabel("Firma de Correo");
+			    	signComboBox.setItemLabelPath("name");
+			    	signComboBox.setItemValuePath("name");
+			    	API.getCommon().getSignatures(new AsyncCallback<JSON<JsObject>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsObject> result) {
+							signComboBox.setItems(result.getData());
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+			    	panel.add(signComboBox);
+			    	HorizontalPanel hp = new HorizontalPanel();
+			    	PaperRadioButton prb1 = new PaperRadioButton();
+			    	prb1.setChecked(true);			    	
+			    	
+			    	PaperRadioButton prb2 = new PaperRadioButton();
+					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
+
+			    	prb1.addChangeHandler(new ChangeEventHandler() {
+						
+						@Override
+						public void onChange(ChangeEvent event) {
+							prb2.setChecked(!prb1.getChecked());
+						}
+					});
+			    	
+			    	prb2.addChangeHandler(new ChangeEventHandler() {
+						
+						@Override
+						public void onChange(ChangeEvent event) {
+							prb1.setChecked(!prb2.getChecked());
+						}
+					});
+			    	hp.add(prb1);
+			    	Label carrierLabel = new Label("Empresa de Transporte ");
+			    	carrierLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
+			    	hp.add(carrierLabel);
+			    	hp.add(prb2);
+			    	if(w.getJsCarrierPacking().getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
+						hp.add(new Label("Proveedor"));
+					} else hp.add(new Label("Cliente"));
+
+			    	panel.add(hp);
+			    	AonDialog dialog = new AonDialog("Enviar Packing List", panel) {
+						
+						@Override protected void onCancel() {hide();}
+						
+						@Override 
+						protected void onAccept() {
+							JsObject jsEmail = (JsObject) emailComboBox.getSelectedItem();
+							JsObject jsSign = (JsObject) signComboBox.getSelectedItem();
+							String requestData = "{\"carrier_packing\":\""+ w.getJsCarrierPacking().getId() +"\","
+									+ "\"mail_account\":\""+ jsEmail.getId() +"\","
+									+ "\"signature\":\""+ jsSign.getId() +"\"," 
+									+ "\"type\":\"" + (prb1.getChecked() ? "carrier" : "registry") + "\"" + "}";
+
+							API.getWarehouse().sendPackingList(requestData);
+							hide();
+						}
+					};
+					dialog.addAutoHidePartner(emailComboBox.getElementById("overlay"));
+					dialog.addAutoHidePartner(signComboBox.getElementById("overlay"));
+					dialog.setAutoHideEnabled(true);
+					dialog.getElement().getStyle().setWidth(310, Unit.PX);
+					dialog.center();
+				}
 			};
 			setToolbar(toolbar);
 		}
@@ -135,6 +233,7 @@ public class CarrierPacking extends AonTemplate{
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
 		toolbar.packingList.setVisible(true);
+		toolbar.sendPackingList.setVisible(true);
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 		setNorthContent(new CarrierPackingPanel(me,js));
 		setContent(new CarrierPackingSelect(me, js));

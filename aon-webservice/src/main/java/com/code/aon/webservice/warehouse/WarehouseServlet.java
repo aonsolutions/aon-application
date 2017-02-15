@@ -165,42 +165,42 @@ public class WarehouseServlet extends HttpServlet{
 	}
 	
 	private JSONObject updateAllPurhcaseCarrierPacking(Domain domain, String login, JSONObject json) {
-		String action =json.getString("action");
-		if(action.equals("add")){
+		String action =json.getString(MSG.ACTION);
+		if(MSG.ADD.equals(action)){
 			AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
 				f -> f.getCarrierPackingProperty().isNull()
-				.and(f.getPurchaseProperty().eq(json.optInt("purchase")))).forEach(
+				.and(f.getPurchaseProperty().eq(json.optInt(MSG.PURCHASE)))).forEach(
 					purchaseDetail ->{
-						json.put("quantity", purchaseDetail.getQuantity());
+						json.put(MSG.QUANTITY, purchaseDetail.getQuantity());
 						updatePurchaseCarrierPacking(domain, login, json, purchaseDetail);	
 					});
-		} else if(action.equals("delete")) {
+		} else if(MSG.DELETE.equals(action)) {
 			AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
-				f -> f.getCarrierPackingProperty().eq(json.optInt("carrier_packing"))
-				.and(f.getPurchaseProperty().eq(json.optInt("purchase")))).forEach(
+				f -> f.getCarrierPackingProperty().eq(json.optInt(MSG.CARRIER_PACKING))
+				.and(f.getPurchaseProperty().eq(json.optInt(MSG.PURCHASE)))).forEach(
 					purchaseDetail -> updatePurchaseCarrierPacking(domain, login, json, purchaseDetail));
 		}
 		return new JSONObject();
 	}
 	
 	private JSONObject updatePurhcaseCarrierPacking(Domain domain, String login, JSONObject json) {
-		Integer detail = json.getInt("id");
+		Integer detail = json.getInt(MSG.ID);
 		PurchaseDetail purchaseDetail = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, detail);
 		return updatePurchaseCarrierPacking(domain, login, json, purchaseDetail);
 	}
 	
 	private JSONObject updatePurchaseCarrierPacking(Domain domain, String login, JSONObject json, PurchaseDetail purchaseDetail){
-		String action =json.getString("action");
-		if (action.equals("add")) {
-			Double quantity =json.getDouble("quantity");
-			Integer carrierPacking = json.getInt("carrier_packing");
+		String action =json.getString(MSG.ACTION);
+		if (MSG.ADD.equals(action)) {
+			Double quantity =json.getDouble(MSG.QUANTITY);
+			Integer carrierPacking = json.getInt(MSG.CARRIER_PACKING);
 			if(purchaseDetail.getQuantity() > quantity){
 				Double q = purchaseDetail.getQuantity() - quantity;
 				AON.insertPurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail.setQuantity(q));
 			} 
 			AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail.setQuantity(quantity)
 					.setCarrierPacking(carrierPacking));
-		} else if(action.equals("delete")) {
+		} else if(MSG.DELETE.equals(action)) {
 			AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
 					f -> f.getDomainProperty().eq(domain.getId())
 					.and(f.getPurchaseProperty().eq(purchaseDetail.getPurchaseId()))
@@ -394,12 +394,12 @@ public class WarehouseServlet extends HttpServlet{
     			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
     		} 
     		
-    		if(filterMap.containsKey("issue_date")){
-    			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get("issue_date")[0])));
+    		if(filterMap.containsKey(MSG.ISSUE_DATE)){
+    			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.ISSUE_DATE)[0])));
     			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
     		}
     		
-    		if(filterMap.containsKey("not_carrier_packing")){
+    		if(filterMap.containsKey(MSG.NOT_CARRIER_PACKING)){
     			filter = filter.and(f.getCarrierPackingProperty().isNull());
     		}
     		
@@ -420,12 +420,12 @@ public class WarehouseServlet extends HttpServlet{
 			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
 		}
 
-		if(filterMap.containsKey("issue_date")){
-			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get("issue_date")[0])));
+		if(filterMap.containsKey(MSG.ISSUE_DATE)){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.ISSUE_DATE)[0])));
 			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
 		
-		if(filterMap.containsKey("not_carrier_packing")){
+		if(filterMap.containsKey(MSG.NOT_CARRIER_PACKING)){
 			filter = filter.and(f.getCarrierPackingProperty().isNull());
 		}
 		return filter;

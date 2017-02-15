@@ -101,8 +101,9 @@ public class PackingListDownload extends HttpServlet{
         resp.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
     	resp.setContentType("application/msexcel");
 
-        if (length > 0 && length <= Integer.MAX_VALUE);
+        if (length > 0 && length <= Integer.MAX_VALUE){
             resp.setContentLength((int)length);
+        }
         ServletOutputStream out = resp.getOutputStream();
         resp.setBufferSize(32768);
         int bufSize = resp.getBufferSize();

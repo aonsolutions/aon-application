@@ -1,7 +1,5 @@
 package com.code.aon.webservice.finance;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +10,6 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +30,7 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.webservice.common.MSG;
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -90,27 +88,7 @@ public class FeeProjectionDownload extends HttpServlet{
 		archivo.close();
 		workbook.close();
 
-		Integer length = data.length;
-		ByteArrayInputStream bais = new ByteArrayInputStream(data);
-	        
-		resp.addHeader("Content-Disposition","attachment; filename=\"fee_projection.xls" +"\"");
-		resp.setContentType("application/msexcel");
-		
-		if (length > 0 && length <= Integer.MAX_VALUE)
-        	resp.setContentLength((int)length);
-        ServletOutputStream out = resp.getOutputStream();
-        resp.setBufferSize(32768);
-        int bufSize = resp.getBufferSize();
-        byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
-        int bytes;
-        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
-        	out.write(buffer, 0, bytes);
-    
-        bis.close();
-        bais.close();
-        out.flush();
-        out.close();
+		Utils.giveBackData(resp, data, "fee_projection.xls");
 	}
 	
 	private void pdf(HttpServletRequest req, HttpServletResponse resp,
@@ -169,9 +147,7 @@ public class FeeProjectionDownload extends HttpServlet{
 		AON.getFeeStream(domain.getName(), domain.getId(), login, 
 				f -> StatDAO.getFeeFilter(from, to, domain.getId(), filterMap, f))
 		.sorted((c1,c2) -> c1.getCustomerName().compareTo(c2.getCustomerName()))
-		.forEach(fee -> {
-			rowIndex = printValues(workbook, sheet, domain, fee, from, rowIndex, isPdf);
-		});			
+		.forEach(fee -> rowIndex = printValues(workbook, sheet, domain, fee, from, rowIndex, isPdf));			
 		
 		printTotal(workbook, sheet, rowIndex, isPdf);
     	for(Integer i = 0; i < 14; i++)
@@ -194,7 +170,9 @@ public class FeeProjectionDownload extends HttpServlet{
     		Integer month = AonDateUtils.getMonth(date);
     		Integer year = AonDateUtils.getYear(date);
     		String monthName = AonMonth.values()[month].getName();
-    		if(isPdf) monthName = monthName.substring(0,3);
+    		if(isPdf){
+    			monthName = monthName.substring(0,3);
+    		}
     		createCell(row, titleStyle, monthName + " " + year, i+2);
     	}
     	
@@ -203,7 +181,9 @@ public class FeeProjectionDownload extends HttpServlet{
 	}
 	
 	private Boolean month(int bMonth, int bYear, int month, int year, int period){
-		if(period == 0) return month == bMonth && year == bYear;
+		if(period == 0){
+			return month == bMonth && year == bYear;
+		}
 		return (month % period) == (bMonth % period);		
 	}
 	
@@ -290,7 +270,9 @@ public class FeeProjectionDownload extends HttpServlet{
 	}
 	
 	private void createCell(Row row, CellStyle style, String value, Integer columnIndex){
-		if(value.length()>24) value = value.substring(0,21) + "...";
+		if(value.length()>24) {
+			value = value.substring(0,21) + "...";
+		}
 		Cell c = row.createCell(columnIndex);
     	c.setCellValue(value);
     	c.setCellStyle(style);
@@ -310,19 +292,20 @@ public class FeeProjectionDownload extends HttpServlet{
 	}
 	
 	public static Double round(Double value, Integer places) {
-	    if (places < 0) throw new IllegalArgumentException();
-
+	    if (places < 0){
+	    	throw new IllegalArgumentException();
+	    }
 	    Long factor = (long) Math.pow(10, places);
-	    value = value * factor;
-	    Long tmp = Math.round(value);
+	    Long tmp = Math.round(value * factor);
 	    return (double) tmp / factor;
 	}
 	
 	private CellStyle getTitleStyle(HSSFWorkbook libro, Boolean isPdf){
 		 CellStyle style = libro.createCellStyle();
 		 Font font = libro.createFont();
-		 if(isPdf) font.setFontHeightInPoints((short)7);
-	     else font.setFontHeightInPoints((short)9);
+		 if(isPdf){
+			 font.setFontHeightInPoints((short)7);
+		 } else font.setFontHeightInPoints((short)9);
 		 font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		 style.setFont(font);
 		 style.setAlignment(CellStyle.ALIGN_CENTER);
@@ -333,8 +316,9 @@ public class FeeProjectionDownload extends HttpServlet{
 	private CellStyle getValueStyle(HSSFWorkbook libro, Boolean isPdf){
 		CellStyle style3 = libro.createCellStyle();
         Font font2 = libro.createFont();
-        if(isPdf) font2.setFontHeightInPoints((short)7);
-        else font2.setFontHeightInPoints((short)9);
+        if(isPdf){
+        	font2.setFontHeightInPoints((short)7);
+        } else font2.setFontHeightInPoints((short)9);
 		style3.setFont(font2);
 		style3.setAlignment(CellStyle.ALIGN_LEFT);
 		style3.setBorderBottom(CellStyle.BORDER_THIN);
@@ -344,8 +328,9 @@ public class FeeProjectionDownload extends HttpServlet{
 	private CellStyle getDoubleStyle(HSSFWorkbook libro, Boolean isPdf){
 		CellStyle style3 = libro.createCellStyle();
         Font font2 = libro.createFont();
-        if(isPdf) font2.setFontHeightInPoints((short)7);
-        else font2.setFontHeightInPoints((short)9);
+        if(isPdf){
+        	font2.setFontHeightInPoints((short)7);
+        } else font2.setFontHeightInPoints((short)9);
 		style3.setFont(font2);
 		style3.setAlignment(CellStyle.ALIGN_RIGHT);
 		style3.setBorderBottom(CellStyle.BORDER_THIN);

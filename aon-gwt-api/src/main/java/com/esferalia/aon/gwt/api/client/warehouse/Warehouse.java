@@ -114,5 +114,8 @@ public class Warehouse extends Methods{
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
-	
+
+	public void sendPackingList(String requestData){
+		post(getUrl() + "packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);
+	}
 }

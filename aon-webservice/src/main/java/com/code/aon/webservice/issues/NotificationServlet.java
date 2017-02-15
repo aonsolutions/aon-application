@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -44,11 +45,12 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 															  "/aon_gwt_aio/notification/*"})
 public class NotificationServlet extends HttpServlet{
 	
+	private static final Logger LOGGER  = Logger.getLogger(NotificationServlet.class.getName());
 	private static final DBConsults DB = DBConsults.getInstance();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
-		System.out.println("GET METHOD");
+		LOGGER.info("Notification Servlet - GET METHOD");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
@@ -69,7 +71,7 @@ public class NotificationServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("POST METHOD");
+		LOGGER.info("Notification Servlet - POST METHOD");
 		
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
@@ -80,9 +82,7 @@ public class NotificationServlet extends HttpServlet{
 		String s = "";
 		while((line = req.getReader().readLine()) != null)
 			s = s + " " + line;
-		System.out.println(s);
 		s = Utils.checkString(s);
-		System.out.println(s);
 		if(s == null || s.equals("")) s = "{}";
 		JSONObject json = new JSONObject(s);
 		

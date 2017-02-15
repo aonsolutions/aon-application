@@ -4,6 +4,7 @@ public class MSG {
 	
 	public static final String ACCESS_TOKEN = "access_token";
 	public static final String ACTION = "action";
+	public static final String ADD = "add";
 	public static final String ASSIGNEE = "assignee";
 	public static final String BODY = "body";	
 	public static final String BILLING_PERIOD = "billing_period";
@@ -14,6 +15,7 @@ public class MSG {
 	public static final String CARRIER_REFERENCE = "carrier_reference";
 	public static final String COMMENT = "comment";
 	public static final String COMMENTS = "comments";
+	public static final String CLOSE = "close";
 	public static final String CLOSED = "closed";
 	public static final String COLOR = "color";	
 	public static final String CUSTOMER = "customer";	
@@ -43,7 +45,9 @@ public class MSG {
 	public static final String ISSUE_DATE = "issue_date";
 	public static final String ISSUES_LIGHT = "issues_light";
 	public static final String LABELS = "labels";
+	public static final String MAIL_ACCOUNT = "mail_account";
 	public static final String NAME = "name";
+	public static final String NOT_CARRIER_PACKING = "not_carrier_packing";	
 	public static final String NUMBER = "number";
 	public static final String NUMBER_PLATE = "number_plate";
 	public static final String ORDER_OPTIONS = "order_options"; 
@@ -51,17 +55,23 @@ public class MSG {
 	public static final String PRIORITY = "priority"; 
 	public static final String PRIORITIES = "priorities"; 
 	public static final String PURCHASE = "purchase";
+	public static final String QUANTITY = "quantity";
 	public static final String REGISTRY = "registry";
 	public static final String REGISTRIES = "registries";
 	public static final String REOPENED = "reopened";
 	public static final String SELLER = "seller";
 	public static final String SENDER = "sender";
 	public static final String SERIES = "series";
+	public static final String SIGNATURE = "signature";
 	public static final String STATUS = "status";
 	public static final String STATUSES  = "statuses"; 
 	public static final String TITLE = "title";
 	public static final String TYPE = "type";
 	public static final String TYPES = "types";
 	public static final String UPDATE = "update";
+	public static final String USER = "user";
+	public static final String WAREHOUSE = "warehouse";
+	public static final String WORKGROUP = "workgroup";
+	public static final String WORKPLACE = "workplace";
 
 }

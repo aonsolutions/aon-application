@@ -37,13 +37,18 @@ public class CommonServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
-				case "workplace": // PRODUCT CATEGPRY
+				case MSG.WORKPLACE: // PRODUCT CATEGPRY
 					object = getWorkplaceList(domain, userName);
+					break;
+				case MSG.MAIL_ACCOUNT: // PRODUCT CATEGPRY
+					object = getMailAccountList(domain, userName);
+					break;
+				case MSG.SIGNATURE: // PRODUCT CATEGPRY
+					object = getSignatureList(domain, userName);
 					break;
 				default:
 					break;
 				}
-				
 				Utils.giveBack(req, resp, object, meta);
 			}
 		}
@@ -62,5 +67,25 @@ public class CommonServlet extends HttpServlet{
     		array.put(ToJSON.objectToJSON(wp.getId(), wp.getDescription())));
     	return array;
     }
+    
+    private JSONArray getMailAccountList(Domain domain, String login) {		
+    	JSONArray array = new JSONArray();
+    	if(domain.isEnableHeredity())
+			AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> (f.getUserIdProperty().isNull())
+				.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))))
+			.stream().forEach(ma -> array.put(ToJSON.objectToJSON(ma.getId(), ma.getName())));
+		else AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> (f.getUserIdProperty().isNull())
+				.and(f.getDomainProperty().eq(domain.getId())))
+			.stream().forEach(ma -> array.put(ToJSON.objectToJSON(ma.getId(), ma.getName())));
+    	return array;
+	}
+    
+	public  JSONArray getSignatureList(Domain domain, String login){
+		JSONArray array = new JSONArray();
+		AON.getSignatureList(domain.getName(), domain.getId(), login,
+				f -> f.getUserIdProperty().isNull().and(f.getDomainProperty().eq(domain.getId())))
+		.stream().forEach(s -> array.put(ToJSON.objectToJSON(s.getId(), s.getName())));
+		return array;
+	}
   
 }
