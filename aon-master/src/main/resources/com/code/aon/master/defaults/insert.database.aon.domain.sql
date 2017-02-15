@@ -1514,14 +1514,21 @@ INSERT INTO `tax` (`domain`,`name`,`tax_type`,`percentage`,`surcharge`,`start_da
   (@Domain,'REDUCIDO',1,10.000,1.400,'2012-09-01',0,0),
   (@Domain,'SUPERREDUCIDO',1,4.000,0.500,'2000-01-01',0,0),
   (@Domain,'SIN IVA',1,0.000,0.000,'2000-01-01',0,0),
-  (@Domain,'IRPF',2,19.000,0.000,'2015-01-01',0,0);
+  (@Domain,'IRPF ALQUILERES',2,19.000,0.000,'2016-01-01',0,0),
+  (@Domain,'IRPF PROFESIONALES',2,15.000,0.000,'2015-07-12',0,0);
 
 INSERT INTO `tax_detail` (`domain`,`tax`,`start_date`,`end_date`,`value`,`surcharge`) VALUES 
   (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='GENERAL'),'2000-01-01','2010-06-30',16.000,4.000),
   (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='REDUCIDO'),'2000-01-01','2010-06-30',7.000,1.000),
   (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='GENERAL'),'2010-07-01','2012-08-31',18.000,4.000),
   (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='REDUCIDO'),'2010-07-01','2012-08-31',8.000,1.000),
-  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF'),'2010-01-01','2014-12-31',21.000,0.000);
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF ALQUILERES'),'2010-01-01','2011-12-31',19.000,0.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF ALQUILERES'),'2012-01-01','2014-12-31',21.000,0.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF ALQUILERES'),'2015-01-01','2015-07-11',20.000,0.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF ALQUILERES'),'2015-07-12','2015-12-31',19.500,0.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF PROFESIONALES'),'2010-01-01','2012-08-31',15.000,0.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF PROFESIONALES'),'2012-09-01','2014-12-31',21.000,0.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='IRPF PROFESIONALES'),'2015-01-01','2015-07-11',19.000,0.000);
 
 INSERT INTO `warehouse` (`domain`,`name`,`workplace`) VALUES 
   (@Domain,'PRINCIPAL',NULL);
