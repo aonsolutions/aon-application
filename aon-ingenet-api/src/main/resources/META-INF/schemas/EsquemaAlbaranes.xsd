@@ -4,16 +4,19 @@
 <!-- Created by aonSolutions v1.0 20/01/2017 -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
-	jaxb:version="2.1" >
+	jaxb:version="2.1">
 	<xsd:annotation>
 		<xsd:documentation xml:lang="es">XML SCHEMA -
-			Comunicación de albaranes y productos terminados.</xsd:documentation>
+			Comunicación de albaranes y productos terminados.
+		</xsd:documentation>
 	</xsd:annotation>
 	<xsd:element name="ALBARANES">
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="DATOS_ALBARANES" type="ALBARAN_TYPE"
 					maxOccurs="unbounded" />
+				<xsd:element name="ERRORES" type="ERRORES_TYPE"
+					minOccurs="0" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -22,7 +25,8 @@
 	<xsd:complexType name="ALBARAN_TYPE">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="es">Albaran de productos
-				terminados</xsd:documentation>
+				terminados
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="NUMERO">
@@ -39,26 +43,30 @@
 			<xsd:element name="DATOS_CLIENTE" type="DATOS_CLIENTE_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos del cliente del
-						albaran.</xsd:documentation>
+						albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="DATOS_DIRECCION_ENTREGA" type="DATOS_DIRECCION_TYPE"
 				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos de la direccion
-						de entrega del albaran.</xsd:documentation>
+						de entrega del albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="FECHA_EMISION" type="FECHA_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Fecha de emision del
-						albaran</xsd:documentation>
+						albaran
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="COMENTARIOS" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Comentarios del
-						albaran.</xsd:documentation>
+						albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string" />
@@ -68,22 +76,27 @@
 				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Centro de trabajo del
-						albaran.</xsd:documentation>
+						albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="LINEAS_ALBARAN" type="LINEAS_ALBARAN_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos de las lineas
-						del albaran.</xsd:documentation>
+						del albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="DATOS_HOJA_RUTA" type="DATOS_HOJA_RUTA_TYPE"
 				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos de la hoja de
-						ruta correspondiente al albaran.</xsd:documentation>
+						ruta correspondiente al albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="ERRORES" type="ERRORES_TYPE"
+				minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -170,7 +183,8 @@
 				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos de la direccion
-						del centro de trabajo.</xsd:documentation>
+						del centro de trabajo.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:sequence>
@@ -186,13 +200,15 @@
 	<xsd:complexType name="DATOS_LINEA_ALBARAN_TYPE">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="es">Datos de las lineas del
-				albaran</xsd:documentation>
+				albaran
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="LINEA">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Numero de linea
-						dentro del albaran.</xsd:documentation>
+						dentro del albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -203,13 +219,15 @@
 			<xsd:element name="PRODUCTO" type="PRODUCTO_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos del producto
-						elaborado o del envase</xsd:documentation>
+						elaborado o del envase
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="DESCRIPCION" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Descripcion de la
-						linea del albaran.</xsd:documentation>
+						linea del albaran.
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -229,20 +247,24 @@
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Composicion del
 						producto elaborado. Datos de los productos utilizados para
-						elaborar el producto de la linea del albaran</xsd:documentation>
+						elaborar el producto de la linea del albaran
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="DATOS_ELABORACION_ORIGEN" type="ELABORACION_ORIGEN_TYPE"
 				minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Datos de la elaboracion
-						origen del que procede la linea del albaran</xsd:documentation>
+					<xsd:documentation xml:lang="es">Datos de la
+						elaboracion
+						origen del que procede la linea del albaran
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="ENVASE" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Indica si la linea de
-						albaran corresponde a un envase</xsd:documentation>
+						albaran corresponde a un envase
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -298,7 +320,8 @@
 			<xsd:element name="NUMERO_LOTE_SERIE" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Numero de lote o de
-						serie</xsd:documentation>
+						serie
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -306,10 +329,12 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="FECHA_LOTE_SERIE" type="FECHA_TYPE" minOccurs="0">
+			<xsd:element name="FECHA_LOTE_SERIE" type="FECHA_TYPE"
+				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Fecha de lote o de
-						serie</xsd:documentation>
+						serie
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="CODIGO_BARRAS" minOccurs="0">
@@ -322,7 +347,8 @@
 			<xsd:element name="REFERENCIA_CLIENTE" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Codigo de referencia
-						del cliente para el producto.</xsd:documentation>
+						del cliente para el producto.
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -339,7 +365,7 @@
 				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="DATOS_COMPOSICION_PRODUCTO_TYPE">
 		<xsd:sequence>
 			<xsd:element name="PRODUCTO" type="PRODUCTO_TYPE" />
@@ -352,7 +378,7 @@
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 
 	<xsd:complexType name="DATOS_REGISTRO_TYPE">
 		<xsd:sequence>
@@ -380,7 +406,8 @@
 				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Código de
-						nacionalidad del registro.</xsd:documentation>
+						nacionalidad del registro.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="TELEFONO_FIJO" minOccurs="0">
@@ -404,8 +431,10 @@
 		<xsd:sequence>
 			<xsd:element name="SERIE">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Serie de la elaboracion
-						origen.</xsd:documentation>
+					<xsd:documentation xml:lang="es">Serie de la
+						elaboracion
+						origen.
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -415,8 +444,10 @@
 			</xsd:element>
 			<xsd:element name="NUMERO">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Numero de la elaboracion
-						origen.</xsd:documentation>
+					<xsd:documentation xml:lang="es">Numero de la
+						elaboracion
+						origen.
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -434,7 +465,8 @@
 			<xsd:element name="DATOS_AGENCIA_TRANSPORTE" type="DATOS_AGENCIA_TRANSPORTE_TYPE">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Datos de la agencia
-						de transporte.</xsd:documentation>
+						de transporte.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="REFERNCIA_AGENCIA_TRANSPORTE"
@@ -505,17 +537,20 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="PAIS_DOCUMENTO" type="PAIS_TYPE" minOccurs="0">
+			<xsd:element name="PAIS_DOCUMENTO" type="PAIS_TYPE"
+				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Código de
-						nacionalidad del registro.</xsd:documentation>
+						nacionalidad del registro.
+					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="TIPO_DOCUMENTO">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Valores adminidos:
 						{0=NIF, 1=CIF, 2=NIE, 3=PASSPORT, 4=WORK_PERMIT, 5=COMMUNITY_CARD,
-						6=OTHER}</xsd:documentation>
+						6=OTHER}
+					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -535,7 +570,8 @@
 	<xsd:simpleType name="FECHA_TYPE">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="es">Formato : AAAAMMDD (Año
-				Mes Día)</xsd:documentation>
+				Mes Día)
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
 			<xsd:pattern value="\d{8}" />
@@ -559,6 +595,12 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ERRORES_TYPE">
+		<xsd:sequence>
+			<xsd:element name="ERRORES" maxOccurs="unbounded" type="xsd:string" />
 		</xsd:sequence>
 	</xsd:complexType>
 </xsd:schema>
