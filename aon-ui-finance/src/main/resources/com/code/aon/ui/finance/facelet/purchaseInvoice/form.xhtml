@@ -120,6 +120,16 @@
 							<ui:param name="skipCancelSignButton" value="#{!purchaseInvoice.signed or !purchaseInvoice.attachmentAvailable}" />
 							<ui:param name="signButtonReRender" value="purchaseInvoiceForm" />
 						</ui:include>
+						<aon:menuItem id="duplicate"
+							value="#{bundle.aon_to_duplicate}"
+							rendered="#{!purchaseInvoice.rectifier and !purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0}"
+							immediate="#{true}"
+							iconClass="aon-icon-copy"
+							actionListener="#{purchaseInvoice.onDuplicationShow}"
+							reRender="showDuplicationWindow">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showDuplicationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
 
 						<rich:menuSeparator id="actionMenuSeparator" />
 
@@ -293,6 +303,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 			<ui:param name="financeController" value="#{purchaseInvoiceFinance}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDuplication.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />

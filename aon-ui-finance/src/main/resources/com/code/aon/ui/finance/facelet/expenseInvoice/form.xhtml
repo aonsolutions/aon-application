@@ -79,6 +79,16 @@
 							<ui:param name="skipCancelSignButton" value="#{!expenseInvoice.signed or !expenseInvoice.attachmentAvailable}" />
 							<ui:param name="signButtonReRender" value="expenseInvoiceForm" />
 						</ui:include>
+						<aon:menuItem id="duplicate"
+							value="#{bundle.aon_to_duplicate}"
+							rendered="#{!expenseInvoice.rectifier and !expenseInvoice.accountSource and expenseInvoiceDetail.model.rowCount > 0}"
+							immediate="#{true}"
+							iconClass="aon-icon-copy"
+							actionListener="#{expenseInvoice.onDuplicationShow}"
+							reRender="showDuplicationWindow">
+							<f:setPropertyActionListener target="#{expenseInvoice.showDuplicationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
 
 						<rich:menuSeparator id="actionMenuSeparator" />
 
@@ -252,6 +262,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{expenseInvoice}" />
 			<ui:param name="financeController" value="#{expenseInvoiceFinance}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDuplication.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">
 			<ui:param name="invoiceController" value="#{expenseInvoice}" />

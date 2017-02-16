@@ -70,9 +70,19 @@
 							<ui:param name="skipCancelSignButton" value="#{!undeductibleInvoice.signed or !undeductibleInvoice.attachmentAvailable}" />
 							<ui:param name="signButtonReRender" value="undeductibleInvoiceForm" />
 						</ui:include>
-						
+						<aon:menuItem id="duplicate"
+							value="#{bundle.aon_to_duplicate}"
+							rendered="#{!undeductibleInvoice.rectifier and !undeductibleInvoice.accountSource and undeductibleInvoiceDetail.model.rowCount > 0}"
+							immediate="#{true}"
+							iconClass="aon-icon-copy"
+							actionListener="#{undeductibleInvoice.onDuplicationShow}"
+							reRender="showDuplicationWindow">
+							<f:setPropertyActionListener target="#{undeductibleInvoice.showDuplicationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+
 						<rich:menuSeparator id="actionMenuSeparator" />
-						
+
 						<aon:if test="#{companyCollections.activeCompanyActivitiesCount > 1}">
 							<aon:menuItem id="activities"
 								value="#{bundle.aon_activity}"
@@ -220,6 +230,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{undeductibleInvoice}" />
 			<ui:param name="financeController" value="#{undeductibleInvoiceFinance}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDuplication.xhtml">
+			<ui:param name="invoiceController" value="#{undeductibleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">
 			<ui:param name="invoiceController" value="#{undeductibleInvoice}" />

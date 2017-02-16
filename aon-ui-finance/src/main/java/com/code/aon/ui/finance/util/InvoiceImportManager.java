@@ -26,12 +26,9 @@ public class InvoiceImportManager {
 		Integer sourceId = source.getId();
 		Invoice invoice = source;
 		invoice.setId(null);
-		if (invoice.isSales()) {
-			invoice.setSeries(series);
-			invoice.setNumber(number);
-		} else {
-			invoice.setReferenceCode(referenceCode);
-		}
+		invoice.setSeries(series);
+		invoice.setNumber(number);
+		invoice.setReferenceCode(referenceCode);
 		invoice.setRegistry(registry);
 		invoice.setRegistryName(registryName);
 		if (registryChanged) {
