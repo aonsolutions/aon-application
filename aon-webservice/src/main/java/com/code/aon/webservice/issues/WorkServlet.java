@@ -72,15 +72,8 @@ public class WorkServlet extends HttpServlet{
 			
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		if(pathInfo.length > 3){
-			String line = "";
-			String s = "";
-			while((line = req.getReader().readLine()) != null)
-				s = s + " " + line;
-			System.out.println(s);
-			s = Utils.checkString(s);
-			System.out.println(s);
-			if(s == null || s.equals("")) s = "{}";
-			JSONObject json = new JSONObject(s);
+	
+			JSONObject json = Utils.getRequestJSON(req);
 							
 			Object object = new Object();
 			switch (pathInfo[3]) {

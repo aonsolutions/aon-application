@@ -109,6 +109,8 @@ public class CarrierPacking extends AonTemplate{
 					Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 					toolbar.back.setVisible(true);
 					toolbar.remove.setVisible(true);
+					toolbar.packingList.setVisible(true);
+					toolbar.sendPackingList.setVisible(true);
 					getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 					setNorthContent(new CarrierPackingPanel(me));
 					setContent(new Label(""));

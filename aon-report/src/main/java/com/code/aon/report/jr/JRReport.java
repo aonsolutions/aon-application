@@ -74,6 +74,7 @@ public class JRReport {
 	private Map<String, Object> dynParams = null;
 	private Map<String, Object> customParams = null;
 	private int generatedPages;
+	private Integer currentDomain;
 
 	/**
 	 * Constructs a report based on this report configuration.
@@ -143,7 +144,9 @@ public class JRReport {
 			String name = "REPORT_" + reportKey;
 	        String select = "SELECT app_param.value " 
 			        		+" FROM ApplicationParameter as app_param " 
-			        		+" WHERE "+ DomainManager.getSQLWhereClause("app_param.domain")
+			        		+" WHERE "+ (currentDomain != null 
+			        					? "app_param.domain = " + currentDomain 
+			        					: DomainManager.getSQLWhereClause("app_param.domain"))
 			        		+" AND app_param.name = '" + name + "'";
 			Query query = session.createQuery(select);
 			List<String> list = (List<String>) query.list();
@@ -500,4 +503,14 @@ public class JRReport {
 	public void setGeneratedPages(int generatedPages) {
 		this.generatedPages = generatedPages;
 	}
+
+	public Integer getCurrentDomain() {
+		return currentDomain;
+	}
+
+	public JRReport setCurrentDomain(Integer currentDomain) {
+		this.currentDomain = currentDomain;
+		return this;
+	}
+	
 }

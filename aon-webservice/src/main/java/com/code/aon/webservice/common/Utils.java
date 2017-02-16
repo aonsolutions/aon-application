@@ -116,6 +116,23 @@ public class Utils {
 		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
 	}
 	
+	public static JSONObject getRequestJSON(HttpServletRequest req){
+		String line = MSG.EMPTY;
+		StringBuilder bld = new StringBuilder();
+		try {
+			while((line = req.getReader().readLine()) != null){
+				bld.append(" " + line);
+			}
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+		String s = checkString(bld.toString());
+		if(s == null || MSG.EMPTY.equals(s)){
+			s = "{}";
+		}
+		return new JSONObject(s);
+	}
+	
 	public static String getStatusColor(Task task){
 		TaskStatus taskStatus = TaskStatus.values()[task.getStatus()];
 		if(taskStatus.equals(TaskStatus.DELETED))

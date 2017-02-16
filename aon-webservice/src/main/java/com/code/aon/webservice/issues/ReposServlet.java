@@ -145,15 +145,9 @@ public class ReposServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Repos Servlet - POST METHOD");
-		String line = MSG.EMPTY;
-		String s = MSG.EMPTY;
-		while((line = req.getReader().readLine()) != null)
-			s = s + " " + line;
-		System.out.println(s);
-		s = Utils.checkString(s);
-		System.out.println(s);
-		if(s == null || s.equals(MSG.EMPTY)) s = "{}";
-		JSONObject json = new JSONObject(s);
+		
+		JSONObject json = Utils.getRequestJSON(req);
+		
 		String scheme = req.getParameter("scheme");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];

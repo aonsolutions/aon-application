@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
-public class Company implements Serializable {
+import com.esferalia.aon.occam.api.model.registry.Registry;
+
+public class Company extends Registry implements Serializable {
 
 	private static final long serialVersionUID = -4970548127101817530L;
 

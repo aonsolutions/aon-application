@@ -78,13 +78,7 @@ public class NotificationServlet extends HttpServlet{
 		String domainName = pathInfo[2]; 
 		Domain domain = DB.getDomain(domainName, userName);
 
-		String line = "";
-		String s = "";
-		while((line = req.getReader().readLine()) != null)
-			s = s + " " + line;
-		s = Utils.checkString(s);
-		if(s == null || s.equals("")) s = "{}";
-		JSONObject json = new JSONObject(s);
+		JSONObject json = Utils.getRequestJSON(req);
 		
 		if(pathInfo.length > 3){
 			if(pathInfo[3].equals("configuration")){

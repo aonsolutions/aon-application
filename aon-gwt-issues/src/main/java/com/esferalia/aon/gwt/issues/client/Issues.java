@@ -32,6 +32,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.widget.IronIcon;
+import com.vaadin.polymer.paper.PaperButtonElement;
+import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
@@ -84,6 +86,8 @@ public class Issues implements EntryPoint {
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
 				AonComboBoxElement.SRC,
+				PaperButtonElement.SRC,
+				PaperInputElement.SRC,
 				IronIconsElement.SRC
 		));
 		

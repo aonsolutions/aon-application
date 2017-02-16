@@ -42,15 +42,7 @@ public class GithubServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Github Servlet - POST METHOD");
 		
-		String line = MSG.EMPTY;
-		String s = MSG.EMPTY;
-		while((line = req.getReader().readLine()) != null)
-			s = s + " " + line;
-		s = Utils.checkString(s);
-		if(s == null || MSG.EMPTY.equals(s)){
-			s = "{}";
-		}
-		JSONObject json = new JSONObject(s);
+		JSONObject json = Utils.getRequestJSON(req);
 		JSONObject sender = new JSONObject(json.get(MSG.SENDER));
 		JSONObject issue = new JSONObject(json.get(MSG.ISSUE));
 		

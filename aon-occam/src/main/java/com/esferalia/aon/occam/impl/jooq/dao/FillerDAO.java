@@ -250,6 +250,14 @@ public class FillerDAO {
 	public static class CompanyFiller implements Function<Record, Company> {
 		@Override
 		public Company apply(Record r) {
+			Company company = new Company();
+			company.setAlias(r.getValue(REGISTRY.ALIAS));
+			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
+			company.setDocumentCountry(null); // TODO
+			company.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			company.setNationality(null); // TODO
+			company.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			company.setType(r.getValue(REGISTRY.TYPE));	
 			return new Company()
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)

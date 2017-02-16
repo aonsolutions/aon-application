@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -36,9 +37,11 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 @WebServlet(name = "PackingListNotification", urlPatterns = { "/packing_list_notification/*",
 															  "/aon_gwt_aio/packing_list_notification/*"})
 public class PackingListMailServlet extends HttpServlet{
-	
-	private static final Logger LOGGER  = Logger.getLogger(PackingListMailServlet.class.getName());
+	private static final long serialVersionUID = 7426471939221433842L;
 
+	private static final Logger LOGGER  = Logger.getLogger(PackingListMailServlet.class.getName());
+	private String msg; 
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
 		LOGGER.info("Notification Servlet - GET METHOD");
@@ -53,13 +56,7 @@ public class PackingListMailServlet extends HttpServlet{
 		String domainName = pathInfo[1]; 
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
 
-		String line = "";
-		String s = "";
-		while((line = req.getReader().readLine()) != null)
-			s = s + " " + line;
-		s = Utils.checkString(s);
-		if(s == null || s.equals("")) s = "{}";
-		JSONObject json = new JSONObject(s);
+		JSONObject json = Utils.getRequestJSON(req);
 		
 		Integer carrier_packing = json.getInt(MSG.CARRIER_PACKING);
 		Integer mail_account = json.getInt(MSG.MAIL_ACCOUNT);
@@ -69,10 +66,7 @@ public class PackingListMailServlet extends HttpServlet{
 		Signature signature = AON.getSignature(domain.getName(), domain.getId(), login, signature_id);
 		sendNotification(domain, login, carrierPacking, signature, mail_account, type);		
 	}
-	
-	private static final long serialVersionUID = 7426471939221433842L;
-	
-	private String msg; 
+		
 	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type){
 		if(MSG.CARRIER.equalsIgnoreCase(type)){
 			printCarrierPacking(carrierPacking);
@@ -288,7 +282,7 @@ public class PackingListMailServlet extends HttpServlet{
 			
 			sendPostHttpClient(domain.getName(),json);			
 		} catch (JSONException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
 	
@@ -305,7 +299,7 @@ public class PackingListMailServlet extends HttpServlet{
 			HttpResponse resp = client.execute(post);
 			System.out.println(resp);
 		} catch (IOException e){
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
 	

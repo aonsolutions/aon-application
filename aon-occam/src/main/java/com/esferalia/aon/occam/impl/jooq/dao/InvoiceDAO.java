@@ -370,6 +370,7 @@ public class InvoiceDAO {
 				.setVatQuota(record.getValue(INVOICE.VAT_QUOTA))	
 				.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(record.getValue(INVOICE.TOTAL))	
+				.setComments(record.getValue(INVOICE.COMMENTS))
 				;
 		}
 		

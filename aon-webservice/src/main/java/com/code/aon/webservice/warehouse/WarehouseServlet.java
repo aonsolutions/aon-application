@@ -88,16 +88,9 @@ public class WarehouseServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Warehouse Servlet - POST METHOD");
-		String line = "";
-		StringBuilder bld = new StringBuilder();
-		while((line = req.getReader().readLine()) != null){
-			bld.append(" " + line);
-		}
-		String s = Utils.checkString(bld.toString());
-		if(s == null || MSG.EMPTY.equals(s)){
-			s = "{}";
-		}
-		JSONObject json = new JSONObject(s);
+		
+		JSONObject json = Utils.getRequestJSON(req);
+
 		String[] pathInfo = req.getPathInfo().split("/");
 		String domainName = pathInfo[1]; 
 		String userName = pathInfo[2];
