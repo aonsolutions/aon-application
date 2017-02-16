@@ -65,7 +65,7 @@ public class FinanceValidation {
 	 * Se rellena el concepto si no existe. 
 	 */
 	public static BiConsumer<Finance,AONContext> FILL_CONCEPT_IF_EMPTY = (finance,ctx) -> {
-		if (!finance.isEmptyInvoice()) {
+		if (!finance.isEmptyInvoice() && AonStringUtils.isBlank( finance.getConcept() )) {
 	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
 		}
 	};

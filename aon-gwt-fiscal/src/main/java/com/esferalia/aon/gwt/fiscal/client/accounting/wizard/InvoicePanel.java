@@ -34,7 +34,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -50,9 +49,9 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -137,26 +136,56 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		//  -------------------------- WORKING LOG ------------------------------
 
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
+		centerPanel.setStyleName(AON.AON_CSS.aonFlexContainer());
+		centerPanel.addStyleName(AON.AON_CSS.aonPadding2Top());
 		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
 		centerPanel.getElement().getStyle().setBackgroundColor(InvoicePanel.BACKGROUND_COLOR);
-		DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
-		dockPanel.setStyleName(AON.AON_CSS.aonFlexContainer());
-		dockPanel.addStyleName(AON.AON_CSS.aonPadding2Top());
-		FlowPanel tablesPanel = new FlowPanel();
-		createRegistryTable();
-		tablesPanel.add(regTable);
-		createFlexTable();
-		tablesPanel.add(flexTable);
-		dockPanel.addNorth(tablesPanel, 50);
+//		DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
+//		dockPanel.setStyleName(AON.AON_CSS.aonFlexContainer());
+//		dockPanel.addStyleName(AON.AON_CSS.aonPadding2Top());
+		
+//		FlowPanel tablesPanel = new FlowPanel();
+//		createRegistryTable();
+//		tablesPanel.add(regTable);
+//		createFlexTable();
+//		tablesPanel.add(flexTable);
+//		dockPanel.addNorth(tablesPanel, 50);
 
-		createPayTable();
-		dockPanel.addSouth(payTable, 28);
-		SimpleLayoutPanel withholdingContainer = new SimpleLayoutPanel();
-		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
-		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
+//		createPayTable();
+//		dockPanel.addSouth(payTable, 28);
+		
+//		SimpleLayoutPanel withholdingContainer = new SimpleLayoutPanel();
+//		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
+//		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
+//			@Override
+//			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
+//				InvoiceCalculator.calculate(getWrapper());
+//				withholdingPanel.setValue(getWrapper().getWithholdingData());
+//				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
+//				_paintEntry();
+//				getWrapper().getAccountEntry().setDirty(true);
+//				getCallback().getModule().refreshIdLabel();
+//			}
+//		});
+//		withholdingPanel.addSelectionHandler(new SelectionHandler<Account>() {
+//			@Override
+//			public void onSelection(SelectionEvent<Account> event) {
+//				getCallback().getModule().onBalance(event.getSelectedItem());
+//				_paintEntry();
+//				getWrapper().getAccountEntry().setDirty(true);
+//				getCallback().getModule().refreshIdLabel();
+//			}
+//		});
+//		withholdingContainer.setWidget( withholdingPanel );
+//		dockPanel.addSouth(withholdingContainer, 28);
+
+		//  -------------------------- EXTRA PANEL ------------------------------
+		extraPanel = new InvoiceExtraPanel(  );
+		extraPanel.addValueChangeHandler(new ValueChangeHandler<Void>() {
 			@Override
-			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
-				InvoiceCalculator.calculate(getWrapper());
+			public void onValueChange(ValueChangeEvent<Void> event) {
+				vatPanel.extraInfoChanged();
+				withholdingPanel.setVisible(getWrapper().getInvoice().isWithholding());
 				withholdingPanel.setValue(getWrapper().getWithholdingData());
 				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
 				_paintEntry();
@@ -164,20 +193,26 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				getCallback().getModule().refreshIdLabel();
 			}
 		});
-		withholdingPanel.addSelectionHandler(new SelectionHandler<Account>() {
+		extraPanel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
+			
 			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getCallback().getModule().onBalance(event.getSelectedItem());
-				_paintEntry();
-				getWrapper().getAccountEntry().setDirty(true);
-				getCallback().getModule().refreshIdLabel();
+			public void onSelection(SelectionEvent<AccountingInvoice> event) {
+				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
 			}
 		});
-		withholdingContainer.setWidget( withholdingPanel );
-		dockPanel.addSouth(withholdingContainer, 28);
+		rootPanel.addEast(extraPanel, 380);
 
-		SimpleLayoutPanel vatContainerPanel = new SimpleLayoutPanel();
-		ScrollPanel vatContainer = new ScrollPanel();
+		SimpleLayoutPanel centerContainerPanel = new SimpleLayoutPanel();
+		ScrollPanel scrollCenterContainer = new ScrollPanel();
+		FlowPanel centerContainer = new FlowPanel();
+		
+		FlowPanel tablesPanel = new FlowPanel();
+		createRegistryTable();
+		tablesPanel.add(regTable);
+		createFlexTable();
+		tablesPanel.add(flexTable);
+		centerContainer.add(tablesPanel);
+		
 		vatPanel = new InvoiceVATPanel( invoiceCallback );
 		vatPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceVAT>() {
 			@Override
@@ -199,36 +234,42 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				getCallback().getModule().refreshIdLabel();
 			}
 		});
-		vatContainer.setWidget(vatPanel);
-		vatContainerPanel.setWidget(vatContainer);
-		dockPanel.add(vatContainerPanel);
+		centerContainer.add(vatPanel);
 		
-		centerPanel.setWidget(dockPanel);
-		rootPanel.add(centerPanel);
-
-		//  -------------------------- EXTRA PANEL ------------------------------
-		extraPanel = new InvoiceExtraPanel(  );
-		extraPanel.addValueChangeHandler(new ValueChangeHandler<Void>() {
+		// WITHHOLDING PANEL
+		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
+		withholdingPanel.setStyleName(AON.AON_CSS.aonMarginTop());
+		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
 			@Override
-			public void onValueChange(ValueChangeEvent<Void> event) {
-				vatPanel.extraInfoChanged();
-				withholdingPanel.setVisible(getWrapper().getInvoice().isWithholding());
+			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
+				InvoiceCalculator.calculate(getWrapper());
 				withholdingPanel.setValue(getWrapper().getWithholdingData());
-				//if (getWrapper().isWithholding()) populateWithholding();
 				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
 				_paintEntry();
 				getWrapper().getAccountEntry().setDirty(true);
 				getCallback().getModule().refreshIdLabel();
 			}
 		});
-		extraPanel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
-			
+		withholdingPanel.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
-			public void onSelection(SelectionEvent<AccountingInvoice> event) {
-				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
+			public void onSelection(SelectionEvent<Account> event) {
+				getCallback().getModule().onBalance(event.getSelectedItem());
+				_paintEntry();
+				getWrapper().getAccountEntry().setDirty(true);
+				getCallback().getModule().refreshIdLabel();
 			}
 		});
-		rootPanel.addEast(extraPanel, 380);
+		centerContainer.add( withholdingPanel );
+		
+		// PAY TABLE
+		createPayTable();
+		centerContainer.add(payTable);
+		
+		scrollCenterContainer.setWidget(centerContainer);
+		centerContainerPanel.setWidget(scrollCenterContainer);
+//		dockPanel.add(centerContainerPanel);
+		centerPanel.setWidget(centerContainerPanel);
+		rootPanel.add(centerPanel);
 
 		initWidget(rootPanel);
 	}
@@ -331,13 +372,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				getWrapper().getInvoice().setSeries(series.getSelectedValue());
+				getWrapper().getInvoice().setSeries(series.getSelectedIndex()==0?null:series.getSelectedValue());
+				Window.alert(getWrapper().getInvoice().getSeries() == null?"[NULL]":"(" + getWrapper().getInvoice().getSeries() + ")");
 				financeService.getInvoiceNextNumber(
 						 AccountEntryModule.getCurrentDomainName()
 						,AccountEntryModule.getCurrentDomain()
 						,new Byte[]{getWrapper().getInvoice().getType().value()}
-						 , series.getSelectedValue()
-						, new AsyncCallback<Integer>() {
+						,getWrapper().getInvoice().getSeries()
+						,new AsyncCallback<Integer>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -479,6 +521,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		payTable.setVisible(false);
 		payTable.setStyleName(AON.AON_CSS.aonBorderTop());
 		payTable.addStyleName(AON.AON_CSS.aonWidthAll());
+		payTable.addStyleName(AON.AON_CSS.aonMarginTop());
 		
 		int row = 0;
 		int col = 0;
@@ -690,7 +733,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private void fillSalesSeries() {
 		series.clear();
-		series.addItem(" --- ", (String) null);
+		series.addItem(" --- ","");
 		if (getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
 			&& getCallback().getModule().getConfiguration().getInvoiceSalesSeries().size() > 0) {
 			LinkedList<String> rectificationSeries = getCallback().getModule().getConfiguration().getInvoiceRectificationSalesSeries();
@@ -731,8 +774,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private void populateSalesInvoice(AccountingInvoice invoice) {
 		invoice.getAccountEntry().setEntryType(AccountEntryType.SALES_INVOICE);
 		for (int i = 0; i < series.getItemCount(); i++) {
-			if (AonStringUtils.equals(invoice.getInvoice().getSeries(), series.getValue(i))) {
+			if (AonStringUtils.isBlank(invoice.getInvoice().getSeries()) && AonStringUtils.isBlank(series.getValue(i)) 
+				||  (AonStringUtils.equals(invoice.getInvoice().getSeries(), series.getValue(i)))) {
 				series.setSelectedIndex(i);
+				break;
 			}
 		}
 		number.setValue(invoice.getInvoice().getNumber());
@@ -855,6 +900,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				|| finance.getFinanceStatus() == FinanceStatus.SETTLED;
 		}
 		return paidFinances;
+	}
+	
+	@Override
+	public String getNoUpdatableCause() {
+		if (hasPaidFinances()) {
+			return AON.MSG.hasPaidFinances();
+		}
+		return null;
 	}
 
 	@Override

@@ -106,39 +106,14 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			
 			FlowPanel panel = new FlowPanel();
 			final ListBox seriesBox = new ListBox();
-			seriesBox.addKeyUpHandler(keyUpHandler);
-			seriesBox.addItem(" ---- ", (String) null);
-			int i = 0;
-			if (config.getInvoiceRectificationSalesSeries() != null) {
-				for (String series : config.getInvoiceRectificationSalesSeries()) {
-					seriesBox.addItem(series,series);
-					if (i == 0) {
-						seriesBox.setSelectedIndex(1);
-						data.setSeries(series);
-					}
-					i++;
-				}
-			}
-			panel.add(seriesBox);
 			final IntegerBox number = new IntegerBox();
-			number.setStyleName(AON.AON_CSS.aonMarginLeft5());
-			number.addStyleName(AON.AON_CSS.aonInputText());
-			number.addKeyUpHandler(keyUpHandler);
-			number.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Integer> event) {
-					data.setNumber(event.getValue());
-				}
-			});
-			number.setVisibleLength(8);
-			number.setMaxLength(8);
-			panel.add(number);
-
+			
+			seriesBox.addKeyUpHandler(keyUpHandler);
+			seriesBox.addItem(" ---- ", "");
 			seriesBox.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					data.setSeries(seriesBox.getSelectedValue());
+					data.setSeries(seriesBox.getSelectedIndex() == 0 ? null : seriesBox.getSelectedValue());
 					initializeFinanceService();
 					financeService.getInvoiceNextNumber(
 							 domainName
@@ -160,6 +135,53 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 							});
 				}
 			});
+
+			int i = 0;
+			if (config.getInvoiceRectificationSalesSeries() != null) {
+				for (String series : config.getInvoiceRectificationSalesSeries()) {
+					seriesBox.addItem(series,series);
+					if (i == 0) {
+						seriesBox.setSelectedIndex(1);
+						data.setSeries(series);
+						initializeFinanceService();
+						financeService.getInvoiceNextNumber(
+								 domainName
+								,domain
+								,new Byte[]{data.getType().value()}
+								 , data.getSeries()
+								, new AsyncCallback<Integer>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										errorPanel.showError(caught.getMessage());
+									}
+
+									@Override
+									public void onSuccess(Integer result) {
+										number.setValue(result,false,true);
+										data.setNumber(result);
+									}
+								});
+					}
+					i++;
+				}
+			}
+			panel.add(seriesBox);
+			
+			number.setStyleName(AON.AON_CSS.aonMarginLeft5());
+			number.addStyleName(AON.AON_CSS.aonInputText());
+			number.addKeyUpHandler(keyUpHandler);
+			number.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Integer> event) {
+					data.setNumber(event.getValue());
+				}
+			});
+			number.setVisibleLength(8);
+			number.setMaxLength(8);
+			panel.add(number);
+
 			table.setWidget(row,1,panel);
 			table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			row++;

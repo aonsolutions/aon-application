@@ -463,21 +463,25 @@ public class AccountEntryModule extends MainEntryPoint {
 				activity.setSelectedIndex(0);
 			}
 		}
+		
 		statusMsg.setText(AonStringUtils.EMPTY);
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
+		
 		if (!canEdit) {
 			statusMsg.addStyleName(AON.AON_CSS.aonInfoMessage());
 			if (!wizardContent.getMainEntry().isPeriodActive()) {
 				if (!canRemove) {
-					statusMsg.setText(
-							AON.MSG.periodStatusWarning(
-									AON.MSG.accountPeriodStatus(wizardContent.getMainEntry().getPeriodStatus())));
+					statusMsg.setText(AON.MSG.periodStatusWarning(AON.MSG.accountPeriodStatus(wizardContent.getMainEntry().getPeriodStatus())));
 				} else {
 					statusMsg.setText(AON.MSG.automaticEntryNoUpdateWarning());
 				}
 			} else {
-				statusMsg.setText(AON.MSG.automaticEntryWarning());
 				
+				if (AonStringUtils.isEmpty(wizardContent.getNoUpdatableCause())) {
+					statusMsg.setText(AON.MSG.entryNoUpdatable());	
+				} else {
+					statusMsg.setText(AON.MSG.entryNoUpdatable() + " ["+ wizardContent.getNoUpdatableCause() +"]");
+				}
 			}
 		}
 		refreshIdLabel();

@@ -7,7 +7,9 @@ import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -62,6 +64,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -689,7 +692,7 @@ public class InvoiceDAO {
 			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 			.and(INVOICE.TYPE.in(types))
 			.and( AonStringUtils.isBlank(series)
-					?INVOICE.SERIES.isNull()
+					?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
 					:INVOICE.SERIES.eq(series))
 			.fetch()
 			.stream()
@@ -761,38 +764,42 @@ public class InvoiceDAO {
 	
 	private static void insertDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			InvoiceValidation.validateDetail(ctx, config, detail);
-			InvoiceDetailRecord record = ctx.getDslContext()
-				.insertInto(INVOICE_DETAIL)
-				.set(INVOICE_DETAIL.DOMAIN,invoice.getDomain())
-				.set(INVOICE_DETAIL.INVOICE,invoice.getId())
-				.set(INVOICE_DETAIL.INVEST_ASSET,detail.getInvestAsset())
-				.set(INVOICE_DETAIL.PROJECT,detail.getProject())
-				.set(INVOICE_DETAIL.LINE,detail.getLine())
-				.set(INVOICE_DETAIL.ITEM,detail.getItem()==null?null : detail.getItem().getId())
-				.set(INVOICE_DETAIL.DESCRIPTION,
-						(AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT)
-							?MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate())
-							:detail.getDescription())
-				.set(INVOICE_DETAIL.QUANTITY,detail.getQuantity())
-				.set(INVOICE_DETAIL.PRICE,detail.getPrice())
-				.set(INVOICE_DETAIL.DISCOUNT_EXPR,detail.getDiscountExpression())
-				.set(INVOICE_DETAIL.SOURCE,detail.getSource().value() )
-				.set(INVOICE_DETAIL.SOURCE_ID,detail.getSourceId())
-				.set(INVOICE_DETAIL.TAXABLE_BASE,detail.getTaxableBase())
-				.set(INVOICE_DETAIL.TAXES,detail.getTaxes())
-				.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte( detail.isPrepayment() )) 
-				.set(INVOICE_DETAIL.SELLER,detail.getSeller() == null ? null : detail.getSeller().getId() )
-				.set(INVOICE_DETAIL.WORKPLACE,detail.getWorkPlace() )
-				.set(INVOICE_DETAIL.WAREHOUSE,detail.getWarehouse())
-				.set(INVOICE_DETAIL.CREATION_USER,ctx.getUser())
-				.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-				.returning(INVOICE_DETAIL.ID)
-				.fetchOne();
-			detail.setId(record.getValue(INVOICE_DETAIL.ID));
-			ctx.log().info("\tINSERT INVOICE_DETAIL detalles invoice: " + detail.getId());
-			insertInvoiceTaxes(ctx,detail);
+			insertDetail(ctx, config, invoice, detail);
 		}
+	}
+	private static void insertDetail(AONContext ctx, AonConfiguration config, Invoice invoice,InvoiceDetail detail) {
+		InvoiceValidation.validateDetail(ctx, config, detail);
+		beforeInsertDetail(ctx, config, invoice, detail);
+		InvoiceDetailRecord record = ctx.getDslContext()
+			.insertInto(INVOICE_DETAIL)
+			.set(INVOICE_DETAIL.DOMAIN,invoice.getDomain())
+			.set(INVOICE_DETAIL.INVOICE,invoice.getId())
+			.set(INVOICE_DETAIL.INVEST_ASSET,detail.getInvestAsset())
+			.set(INVOICE_DETAIL.PROJECT,detail.getProject())
+			.set(INVOICE_DETAIL.LINE,detail.getLine())
+			.set(INVOICE_DETAIL.ITEM,detail.getItem()==null?null : detail.getItem().getId())
+			.set(INVOICE_DETAIL.DESCRIPTION,
+					(AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT)
+						?MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate())
+						:detail.getDescription())
+			.set(INVOICE_DETAIL.QUANTITY,detail.getQuantity())
+			.set(INVOICE_DETAIL.PRICE,detail.getPrice())
+			.set(INVOICE_DETAIL.DISCOUNT_EXPR,detail.getDiscountExpression())
+			.set(INVOICE_DETAIL.SOURCE,detail.getSource().value() )
+			.set(INVOICE_DETAIL.SOURCE_ID,detail.getSourceId())
+			.set(INVOICE_DETAIL.TAXABLE_BASE,detail.getTaxableBase())
+			.set(INVOICE_DETAIL.TAXES,detail.getTaxes())
+			.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte( detail.isPrepayment() )) 
+			.set(INVOICE_DETAIL.SELLER,detail.getSeller() == null ? null : detail.getSeller().getId() )
+			.set(INVOICE_DETAIL.WORKPLACE,detail.getWorkPlace() )
+			.set(INVOICE_DETAIL.WAREHOUSE,detail.getWarehouse())
+			.set(INVOICE_DETAIL.CREATION_USER,ctx.getUser())
+			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.returning(INVOICE_DETAIL.ID)
+			.fetchOne();
+		detail.setId(record.getValue(INVOICE_DETAIL.ID));
+		ctx.log().info("\tINSERT INVOICE_DETAIL detalles invoice: " + detail.getId());
+		afterInsertDetail(ctx, config, invoice, detail);
 	}
 	
 	private static void insertInvoiceTaxes(AONContext ctx, InvoiceDetail detail) {
@@ -822,21 +829,105 @@ public class InvoiceDAO {
 		}
 	}
 	
-	
-	public static void delete(AONContext ctx, Integer id) {
+	public static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.checkWrite();
+		InvoiceValidation.validateInvoice(ctx, config, invoice);
+		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
+		int i = ctx.getDslContext()
+			.update(INVOICE)
+			.set(INVOICE.DOMAIN, invoice.getDomain() )
+			.set(INVOICE.ACTIVITY, invoice.getActivity() )
+			.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
+			.set(INVOICE.PROJECT, invoice.getProject() )
+			.set(INVOICE.SERIES, invoice.getSeries() )
+			.set(INVOICE.NUMBER, invoice.getNumber() )
+			.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
+			.set(INVOICE.REGISTRY, invoice.getRegistry() )
+			.set(INVOICE.RDOCUMENT, invoice.getRegistryDocument() )
+			.set(INVOICE.RDOCUMENT_TYPE, AonEnumUtils.getByte( invoice.getRegistryDocumentType()) )
+			.set(INVOICE.RDOCUMENT_COUNTRY, Country.safeIso2( invoice.getRegistryDocumentCountry()))
+			.set(INVOICE.RNAME, invoice.getRegistryName() )
+			.set(INVOICE.RADDRESS, invoice.getRegistryAddress() )
+			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( invoice.getIssueDate()) )
+			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(invoice.getTaxDate()) )
+			.set(INVOICE.SECURITY_LEVEL, AonEnumUtils.getByte( invoice.isConfidential() ) )
+			.set(INVOICE.STATUS, AonEnumUtils.getByte( invoice.isRecorded() ) )
+			.set(INVOICE.TYPE, AonEnumUtils.getByte( invoice.getType() ) )
+			.set(INVOICE.SURCHARGE, AonEnumUtils.getByte( invoice.isSurcharge() ))
+			.set(INVOICE.WITHHOLDING, AonEnumUtils.getByte( invoice.isWithholding() ))
+			.set(INVOICE.WITHHOLDING_FARMER, AonEnumUtils.getByte( invoice.isWithholdingFarmer() ))
+			.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( invoice.isVatAccrualPayment() ))
+			.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( invoice.isInvestment() ) )
+			.set(INVOICE.TRANSACTION, AonEnumUtils.getByte( invoice.getTransaction() ) )
+			.set(INVOICE.SCOPE, invoice.getScope().getId() )
+			.set(INVOICE.SERVICE, AonEnumUtils.getByte(  invoice.isService() ) )
+			.set(INVOICE.RECTIFICATION_TYPE, AonEnumUtils.getByte( invoice.getRectificationType()) )
+			.set(INVOICE.RECTIFICATION_INVOICE, invoice.getRectificationInvoice() )
+			.set(INVOICE.ADVANCE, AonEnumUtils.getByte( invoice.isAdvance()) )
+			.set(INVOICE.SIGNED, AonEnumUtils.getByte( invoice.isSigned()) )
+			.set(INVOICE.TAXABLE_BASE, invoice.getTaxableBase() )
+			.set(INVOICE.VAT_QUOTA, invoice.getVatQuota() )
+			.set(INVOICE.RETENTION_QUOTA, invoice.getRetentionQuota() )
+			.set(INVOICE.TOTAL, invoice.getTotal() )
+			.set(INVOICE.POS_SHIFT, invoice.getPosShift() )
+			.set(INVOICE.SELLER, invoice.getSeller() )
+			.set(INVOICE.COMMENTS, invoice.getComments() )
+			.set(INVOICE.REMARKS, invoice.getRemarks() )
+			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(INVOICE.ID.equal( invoice.getId()))
+			.execute();
+		ctx.log().info("UPDATE INVOICE invoice: " + invoice.getId() + "("+i+" rows)");
+		updateDetails(ctx, config, invoice);
+		return invoice; 
+	}
+	
+	private static void updateDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		for (InvoiceDetail detail : invoice.getDetails()) {
+			if (detail.isDeleted()) {
+				Integer id = detail.getId() * -1;
+				detail.setId(id);
+				deleteDetail(ctx,config,invoice,detail);
+			} else {
+				insertDetail(ctx, config, invoice, detail);
+			}
+		}
+	}
 
+	private static void deleteDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
+		beforeDeleteDetail(ctx, config, invoice, detail);
+		
+		int count = ctx.getDslContext()
+			.delete(INVOICE_TAX)
+			.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
+			.execute();
+		ctx.log().info("DELETE INVOICE_TAX detalles de la factura: " + detail.getId() + " ("+count+" filas)");
+		
+		// Se borran la linea
+		count = ctx.getDslContext()
+			.delete(INVOICE_DETAIL)
+			.where(INVOICE_DETAIL.ID.equal(detail.getId()))
+			.execute();
+		ctx.log().info("DELETE INVOICE_DETAIL detalle de la factura: " + detail.getId() + " ("+count+" filas)");
+	}
+
+	public static void delete(AONContext ctx, Integer id) {
+		delete(ctx, ConfigurationDAO.getConfiguration(ctx),id);
+	}
+	
+	public static void delete(AONContext ctx, AonConfiguration config, Integer id) {
+		ctx.checkWrite();
+		
 		Invoice inv = getInvoice(ctx, id);
 		if (inv == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
-		
-		InvoiceValidation.validateInvoiceDeletion(ctx, null, inv);
+		InvoiceValidation.validateInvoiceDeletion(ctx, config, inv);
 		
 		if (inv.isRectifier()) {
 			if (inv.getRectificationInvoice() != null) {
 				final Invoice rectified = getInvoice(ctx, inv.getRectificationInvoice());
 				if (rectified == null) throw new AonCoreException(AonError.INVOICE_RECTIFIED_NOT_FOUND.getMessage());
 				if (rectified.getRectificationInvoice() != null &&
-						AonNumberUtils.equals(inv.getId(), rectified.getRectificationInvoice())) {
+					AonNumberUtils.equals(inv.getId(), rectified.getRectificationInvoice())) {
 					// La factura rectificada, solo lo esta una vez, y es por la factura que estamos borrando.
 					// Luego marcamos la factura rectificada como "NO RECTIFICADA".
 					ctx.getDslContext().update(INVOICE)
@@ -880,22 +971,22 @@ public class InvoiceDAO {
 				}
 			}
 		}
+		inv.setDetails(
+			ctx.getDslContext()
+				.select(INVOICE_DETAIL.ID,INVOICE_DETAIL.DOMAIN,INVOICE_DETAIL.SOURCE) 
+				.from( INVOICE_DETAIL )
+				.where(INVOICE_DETAIL.INVOICE.eq(inv.getId()))
+				.fetch()
+				.stream()
+				.map( rec -> new InvoiceDetail()
+					.setId(rec.getValue(INVOICE_DETAIL.ID))
+					.setDomain(rec.getValue(INVOICE_DETAIL.DOMAIN))
+					.setSource(AonEnumUtils.enumValue(InvoiceSource.class,rec.getValue(INVOICE_DETAIL.SOURCE))))
+				.collect(Collectors.toCollection(LinkedList::new))
+				);
 		
-		int count = ctx.getDslContext()
-			.delete(INVOICE_TAX)
-			.where(INVOICE_TAX.INVOICE_DETAIL.in( 
-				ctx.getDslContext().select(INVOICE_DETAIL.ID)
-					.from(INVOICE_DETAIL)
-					.where(INVOICE_DETAIL.INVOICE.equal(id)) ))
-			.execute();
-		ctx.log().info("DELETE INVOICE_DETAIL detalles de la factura: " + id + " ("+count+" filas)");
-		// Se borran las lineas
-		count = ctx.getDslContext()
-			.delete(INVOICE_DETAIL)
-			.where(INVOICE_DETAIL.INVOICE.equal(id))
-			.execute();
-		ctx.log().info("DELETE INVOICE_DETAIL detalles de la factura: " + id + " ("+count+" filas)");
-		// Se borra la cabecera
+		deleteDetails(ctx, config, inv);
+		
 		ctx.getDslContext()
 			.delete(INVOICE)
 			.where(INVOICE.ID.equal(id))
@@ -903,6 +994,13 @@ public class InvoiceDAO {
 		ctx.log().info("DELETE INVOICE factura: " + id);
 	}
 
+	private static void deleteDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		if (invoice.getDetails() != null ) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				deleteDetail(ctx,config,invoice,detail);
+			}
+		}
+	}
 	
 	public static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
 		Invoice inv = getInvoice(ctx, invoiceId);
@@ -933,8 +1031,14 @@ public class InvoiceDAO {
 	public static void mergeRecitificationData(Invoice inv, InvoiceRectificationData data) {
 		Integer invoiceId = inv.getId();
 		inv.setId(null);
-		inv.setSeries(data.getSeries());
-		inv.setNumber(data.getNumber());
+		if (inv.isSales()) {
+			inv.setSeries(data.getSeries());
+			inv.setNumber(data.getNumber());
+		} else {
+			inv.setSeries(null);
+			inv.setNumber(0);
+			inv.setReferenceCode(data.getReferenceCode());
+		}
 		inv.setComments((AonStringUtils.isBlank(inv.getComments())
 			?""
 			:(inv.getComments() + " "))
@@ -998,4 +1102,83 @@ public class InvoiceDAO {
 			
 		}
 	}
+	
+	private static void beforeInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
+		
+	}
+	private static void afterInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
+		insertInvoiceTaxes(ctx,detail);
+		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
+			
+			private static final long serialVersionUID = -9008741708561768671L;
+
+			@Override public void visitSales(InvoiceDetail detail) {}
+			@Override public void visitReservation(InvoiceDetail detail) {}
+			@Override public void visitPurchase(InvoiceDetail detail) {}
+			@Override public void visitOffer(InvoiceDetail detail) {}
+			@Override public void visitIncome(InvoiceDetail detail) {}
+			@Override public void visitFee(InvoiceDetail detail) {}
+			@Override public void visitDirectInvoice(InvoiceDetail detail) {}
+			@Override public void visitDirectExpense(InvoiceDetail detail) {}
+			@Override public void visitDelivery(InvoiceDetail detail) {}
+			
+			@Override public void visitAccount(InvoiceDetail detail) {
+				if (detail.getAccount() == null) 
+					throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_EXP_ACCOUNT.getMessage());
+				ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
+					.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
+					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
+					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
+					.execute();
+				ctx.log().info("INSERT INVOICE_DETAIL_ACCOUNT");
+				for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
+					if (tax.getAccount() == null) 
+						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
+					ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
+						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
+						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount())
+						.execute();
+					ctx.log().info("INSERT INVOICE_TAX_ACCOUNT");
+				}
+			}
+		});
+	}
+	
+	private static void beforeDeleteDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
+		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
+			
+			private static final long serialVersionUID = -715576035920671791L;
+			
+			@Override public void visitSales(InvoiceDetail detail) {}
+			@Override public void visitReservation(InvoiceDetail detail) {}
+			@Override public void visitPurchase(InvoiceDetail detail) {}
+			@Override public void visitOffer(InvoiceDetail detail) {}
+			@Override public void visitIncome(InvoiceDetail detail) {}
+			@Override public void visitFee(InvoiceDetail detail) {}
+			@Override public void visitDirectInvoice(InvoiceDetail detail) {}
+			@Override public void visitDirectExpense(InvoiceDetail detail) {}
+			@Override public void visitDelivery(InvoiceDetail detail) {}
+			@Override public void visitAccount(InvoiceDetail detail) {
+				int count = ctx.getDslContext()
+					.delete(INVOICE_DETAIL_ACCOUNT)
+					.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
+					.execute();
+				ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
+				
+				count = ctx.getDslContext()
+					.delete(INVOICE_TAX_ACCOUNT)
+					.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.in( 
+						ctx.getDslContext().select(INVOICE_TAX.ID)
+								.from(INVOICE_TAX)
+								.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))))
+					.execute();
+				ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+count+" filas.)");
+			}
+		});
+		
+	}
+	
+	
+	
 }

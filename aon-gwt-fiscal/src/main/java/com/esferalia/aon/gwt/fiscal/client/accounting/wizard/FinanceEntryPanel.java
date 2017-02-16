@@ -386,6 +386,14 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	}
 	
 	@Override
+	public String getNoUpdatableCause() {
+		if (getWrapper().isFromFinanceBatch()) {
+			return AON.MSG.fromFBatch();
+		}
+		return null;
+	}
+	
+	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
 	}
 

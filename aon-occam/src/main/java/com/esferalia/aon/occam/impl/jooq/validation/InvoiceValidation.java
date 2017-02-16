@@ -5,6 +5,8 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import java.util.Date;
 import java.util.function.BiConsumer;
 
+import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -104,6 +106,7 @@ public class InvoiceValidation {
 					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
 					.and(INVOICE.SERIES.eq(inv.getSeries()))
 					.and(INVOICE.NUMBER.eq(inv.getNumber()))
+					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
 					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
 			throw new AonCoreException(AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage());
 		}
@@ -120,7 +123,10 @@ public class InvoiceValidation {
 					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
 					.and(INVOICE.REGISTRY.eq(inv.getRegistry()))
 					.and(INVOICE.REFERENCE_CODE.eq(inv.getReferenceCode()))
-					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
+					.and(INVOICE.TYPE.eq(inv.getType().value()))
+					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))					
+					.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( inv.getIssueDate())))
+				)) {
 				throw new AonCoreException(AonError.INVOICE_DUPLICATED_REFERENCE_CODE.getMessage());
 			}
 		}

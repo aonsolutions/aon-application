@@ -7,10 +7,6 @@ import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_IN
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
-import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
-import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -424,23 +420,6 @@ public class AccountEntryDAO {
 						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
 						.execute();
 					ctx.log().info("DELETE ACCOUNT_ENTRY_INVOICE ("+count+" filas.)");
-					count = ctx.getDslContext()
-							.delete(INVOICE_DETAIL_ACCOUNT)
-							.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.in( 
-								ctx.getDslContext().select(INVOICE_DETAIL.ID)
-										.from(INVOICE_DETAIL)
-										.where(INVOICE_DETAIL.INVOICE.equal(invoiceId))))
-							.execute();
-					ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
-					count = ctx.getDslContext()
-						.delete(INVOICE_TAX_ACCOUNT)
-						.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.in( 
-							ctx.getDslContext().select(INVOICE_TAX.ID)
-									.from(INVOICE_TAX)
-									.join(INVOICE_DETAIL).on(INVOICE_DETAIL.ID.eq(INVOICE_TAX.INVOICE_DETAIL))
-									.where(INVOICE_DETAIL.INVOICE.eq(invoiceId))))
-						.execute();
-					ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+count+" filas.)");
 					InvoiceDAO.delete(ctx, invoiceId);
 				}
 			}

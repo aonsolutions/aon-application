@@ -92,15 +92,24 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 
 	@Override
 	public boolean isUpdatable() {
-		AccountEntryType type = getAccountEntry().getEntryType();
-		return super.isUpdatable() && (
-				type == AccountEntryType.MANUAL
+		return super.isUpdatable() && isManual(getAccountEntry().getEntryType());
+	}
+	
+	private boolean isManual(AccountEntryType type) {
+		return ( type == AccountEntryType.MANUAL
 			 || type == AccountEntryType.EXPENSES
 			 || type == AccountEntryType.SALARY
 			 || type == AccountEntryType.SOCIAL_INSURANCE
 			 || type == AccountEntryType.SOCIAL_INSURANCE_ADJUST
 			 || type == AccountEntryType.LOAN
 			 || type == AccountEntryType.LOAN_FEE );
+	}
+	@Override
+	public String getNoUpdatableCause() {
+		if (!isManual(getAccountEntry().getEntryType())) {
+			return AON.MSG.automaticEntryWarning();
+		}
+		return null;
 	}
 	
 	@Override

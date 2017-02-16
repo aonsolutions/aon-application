@@ -693,6 +693,12 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 	}
 	
 	@Override
+	public String getNoUpdatableCause() {
+		return null;
+	}
+	
+	
+	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
 	}
 

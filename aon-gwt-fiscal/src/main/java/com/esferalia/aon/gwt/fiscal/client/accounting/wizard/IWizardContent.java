@@ -13,6 +13,7 @@ public interface IWizardContent extends IsWidget,Focusable {
 	public void attach(IContentAttachCallback contentCbk);
 	public AccountEntry getMainEntry(); 
 	public boolean isUpdatable();
+	public String getNoUpdatableCause();
 	public boolean isRemovable();
 	public boolean isNew();
 	
@@ -24,6 +25,7 @@ public interface IWizardContent extends IsWidget,Focusable {
 	public void remove( final AsyncCallback<Void> callback);
 
 	public void manageWidgets(boolean canRemove, boolean canEdit);
+	
 
 	
 //	public IAccountEntryWrapper create(AccountEntry base);

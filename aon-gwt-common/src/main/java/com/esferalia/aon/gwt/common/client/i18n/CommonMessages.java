@@ -258,7 +258,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("El ejericio contable se encuentra en estado \"{0}\". No se permite la modificaci\u00F3n/borrado del asiento.")
 	String periodStatusWarning(String periotStatus);
 
-	@DefaultMessage("No se permite la modificaci\u00F3n/borrado de asientos autom\u00E1ticos.")
+	@DefaultMessage("No se permite la modificaci\u00F3n/borrado del asiento..")
+	String entryNoUpdatable();
+
+	@DefaultMessage("Asiento autom\u00E1tico")
 	String automaticEntryWarning();
 
 	@DefaultMessage("No se permite la modificaci\u00F3n de asientos autom\u00E1ticos.")
@@ -3237,4 +3240,7 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Porc. Titularidad del inmueble")
 	String assetPercent();
+
+	@DefaultMessage("Existen vencimientos pagados/remesados/saldados.")
+	String hasPaidFinances();
 }

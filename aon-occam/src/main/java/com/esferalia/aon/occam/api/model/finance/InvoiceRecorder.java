@@ -12,6 +12,10 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorder {
+
+	private static final String N_FRA = "N/Fra";
+	private static final String S_FRA = "S/Fra";
+	private static final String ABONO = "ABONO";
 	
 	private static interface IVisitor {
 		void visit( AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map);
@@ -322,60 +326,65 @@ public class InvoiceRecorder {
 		}
 	}
 	
-
+	private static String obtainConcept(Invoice invoice) {
+		String prefix = (invoice.isSales()) ? N_FRA : S_FRA;
+		if (invoice.getTotal() < 0) {
+			prefix += " " + ABONO;
+		}
+		prefix += ": ";
+		return AonStringUtils.abbreviate(prefix + AonStringUtils.defaultIfBlank(invoice.getReferenceCode(),"????????"), 32);
+	}
 	
-	public static AccountEntry[] recordInvoice(AccountingInvoice invoice) {
+	public static AccountEntry getInvoiceEntry(AccountingInvoice invoice) {
 		AccountEntry ae = AccountEntry.clone(invoice.getAccountEntry());
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
 		InvoiceEntryDetailType.visit(invoice,map);	
 		ae.setDetails(new LinkedList<AccountEntryDetail>());
 		ae.getDetails().addAll(map.values());
-		
-		
-		// TODO 
-		// ------- MEJORAR!!
-		String document = FinanceUtil.getDocumentNumber(invoice.getInvoice().getType()
-				, invoice.getInvoice().getSeries()
-				, invoice.getInvoice().getNumber());
-		String concept = invoice.isSales()
-				?"N/Fra: "+document
-				:"S/Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
-					?"????????"
-					:invoice.getInvoice().getReferenceCode());
+		String concept = obtainConcept(invoice.getInvoice());
 		for (AccountEntryDetail detail : ae.getDetails()) {
 			detail.setConcept(concept)
 				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))
-				.setDocumentNumber(document);
+				.setDocumentNumber(invoice.getInvoice().getDocumentNumber());
 		}
+		return ae;
+	}
+	
+	public static AccountEntry getFinanceEntry(AccountingInvoice invoice, Finance finance) {
+		AccountEntry ae = AccountEntry.clone(invoice.getAccountEntry());
+		AccountEntry payEntry = AccountEntry
+				.clone(ae)
+				.setEntryDate(finance.getDueDate())
+				.setEntryType(AccountEntryType.PAYMENT);
+		LinkedHashMap<Integer,AccountEntryDetail> payMap = new LinkedHashMap<Integer, AccountEntryDetail>();
+		FinanceEntryDetailType.visit(invoice,finance,payMap);	
+		payEntry.setDetails(new LinkedList<AccountEntryDetail>());
+		payEntry.getDetails().addAll(payMap.values());
+		
+		String payConcept = invoice.isSales()
+				?"Cobro Fra: "+ invoice.getInvoice().getDocumentNumber()
+				:"Pago Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
+				?"????????"
+				:invoice.getInvoice().getReferenceCode());
+		for (AccountEntryDetail detail : payEntry.getDetails()) {
+			detail.setConcept(payConcept)
+				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))
+				.setDocumentNumber(invoice.getInvoice().getDocumentNumber());
+		}
+		return payEntry;
+	}
+	
+	public static AccountEntry[] recordInvoice(AccountingInvoice invoice) {
+		AccountEntry ae = getInvoiceEntry(invoice);
 		if (invoice.hasFinances() && invoice.isFinanceRecordable()) {
 			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
 			entries.add(ae);
 			for (Finance finance : invoice.getFinances()) {
-				AccountEntry payEntry = AccountEntry
-						.clone(ae)
-						.setEntryDate(finance.getDueDate())
-						.setEntryType(AccountEntryType.PAYMENT);
-				LinkedHashMap<Integer,AccountEntryDetail> payMap = new LinkedHashMap<Integer, AccountEntryDetail>();
-				FinanceEntryDetailType.visit(invoice,finance,payMap);	
-				payEntry.setDetails(new LinkedList<AccountEntryDetail>());
-				payEntry.getDetails().addAll(payMap.values());
-				
-				String payConcept = invoice.isSales()
-						?"Cobro Fra: "+document
-								:"Pago Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
-										?"????????"
-												:invoice.getInvoice().getReferenceCode());
-				for (AccountEntryDetail detail : payEntry.getDetails()) {
-					detail.setConcept(payConcept)
-						.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))
-						.setDocumentNumber(document);
-				}
+				AccountEntry payEntry = getFinanceEntry(invoice,finance);
 				entries.add(payEntry);
 			}
 			return entries.toArray(new AccountEntry[entries.size()]);
 		}
 		return new AccountEntry[]{ae};
 	}
-	
-
 }

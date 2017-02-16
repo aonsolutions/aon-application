@@ -41,6 +41,9 @@ public class InvoiceAutoComplete {
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SALES_SERIES = (inv,ctx) -> {
 		if (inv.isSales()) {
+			if (AonStringUtils.isBlank(inv.getSeries())) {
+				inv.setSeries(null);
+			}
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.SALES.value()};
 				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
@@ -119,10 +122,10 @@ public class InvoiceAutoComplete {
 	 * Aseguramos el nombre del titular de la factura.
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> ENSURE_REGISTRY_DATA = (inv,ctx) -> {
-		if (AonStringUtils.isEmpty(inv.getRegistryName()) || AonStringUtils.isEmpty(inv.getRegistryDocument())) {
+		if (AonStringUtils.isBlank(inv.getRegistryName()) || AonStringUtils.isBlank(inv.getRegistryDocument())) {
 			Registry registry = RegistryDAO.getRegistry(ctx.getContext(), inv.getRegistry());
-			if (AonStringUtils.isEmpty(inv.getRegistryName())) inv.setRegistryName(registry.getName());
-			if (AonStringUtils.isEmpty(inv.getRegistryDocument())) {
+			if (AonStringUtils.isBlank(inv.getRegistryName())) inv.setRegistryName(registry.getName());
+			if (AonStringUtils.isBlank(inv.getRegistryDocument())) {
 				inv.setRegistryDocumentType(registry.getDocumentType());
 				inv.setRegistryDocumentCountry(registry.getDocumentCountry());
 				inv.setRegistryDocument(registry.getDocument());
@@ -130,18 +133,12 @@ public class InvoiceAutoComplete {
 		}
 	};
 
-//	if (invoice.isDefaultTaxInfo()) {
-//		fillDefaultTaxInfo(invoice, company);
-//	}
-	
-
 	public static void completeInvoice(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
 		
 		COMPLETE_SALES_SERIES
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
 		.andThen(COMPLETE_TAX_DATE)
-//		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_ACTIVITY)
