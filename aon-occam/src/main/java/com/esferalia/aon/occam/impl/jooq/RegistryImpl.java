@@ -5,8 +5,10 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRegistry;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
+import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
@@ -26,6 +28,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 
@@ -187,5 +190,13 @@ public class RegistryImpl implements IRegistry{
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getRecordDataStream(ctx, filter));
+	}
+	
+	// -------------------- Company
+	
+	@Override
+	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CompanyDAO.getCompanyStream(ctx, filter));
 	}
 }

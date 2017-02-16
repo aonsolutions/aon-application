@@ -183,6 +183,13 @@ public class ProductImpl implements IProduct{
 	}
 	
 	// ------------------------------------- BRAND
+	
+	@Override
+	public Stream<Brand> getBrandStream(AONContext ctx, BrandFilter filter){
+		return ctx.getDslContext().transactionResult(configuration -> 
+			ProductDAO.getBrandStream(ctx, filter));
+	}
+	
 	@Override
 	public Brand getBrand(AONContext ctx, BrandFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 

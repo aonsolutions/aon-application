@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.EnterpriseProperties;
+import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -37,12 +38,16 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CompanyFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CompanyPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CompanyDAO {
 
 	private static final EnterprisePropertiesDAO ENTERPRISE_PROPERTIES = new EnterprisePropertiesDAO();
+	private static final CompanyPropertiesDAO COMPANY_PROPERTIES = new CompanyPropertiesDAO();
+	
 	private static class EnterprisePropertiesDAO implements EnterpriseProperties {
 
 		private Condition[] getConditions(EnterpriseFilter filter) {
@@ -185,6 +190,12 @@ public class CompanyDAO {
 				.setEmail(record.getValue(EMAIL.VALUE))
 				.setWeb(record.getValue(WEB.VALUE))
 				);
+	}
+	
+	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){
+		return COMPANY_PROPERTIES.build(ctx.getDslContext().select()
+				.from(COMPANY).join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID)), filter)
+			.fetch().stream().map(new CompanyFiller());
 	}
 
 	public static Company getCompany(AONContext ctx,int domain) {

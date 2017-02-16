@@ -22,6 +22,7 @@ import org.jooq.Condition;
 import org.jooq.InsertValuesStep21;
 import org.jooq.InsertValuesStep3;
 import org.jooq.InsertValuesStepN;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record20;
 import org.jooq.Record21;
@@ -37,11 +38,13 @@ import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductTagProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -58,6 +61,7 @@ public class ProductDAO {
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 	private static final BrandPropertiesDAO BRAND_PROPERTIES = new BrandPropertiesDAO();
 	private static final ProductCategoryPropertiesDAO PRODUCT_CATEGORY_PROPERTIES = new ProductCategoryPropertiesDAO();
+	private static final ProductTagPropertiesDAO PRODUCT_TAG_PROPERTIES = new ProductTagPropertiesDAO();
 
 	protected static class ProductPropertiesDAO implements ProductProperties {
 		protected Condition[] getConditions(ProductFilter filter) {
@@ -153,6 +157,19 @@ public class ProductDAO {
 		@Override public Property<String> getDetail3Property() {return new FilterDAO.PropertyDAO<String>(PCATEGORY.DETAIL3);}
 	}
 	
+	protected static class ProductTagPropertiesDAO implements ProductTagProperties {
+		protected Condition[] getConditions(ProductTagFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT_TAG.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT_TAG.DOMAIN);}
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT_TAG.PRODUCT);}
+		@Override public Property<Integer> getTagProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT_TAG.TAG);}		
+	}
+	
 	public static LinkedList<ProductCategory> getProductCategories(AONContext ctx) {
 		ctx.checkRead();
 		return ctx.getDslContext()
@@ -170,16 +187,22 @@ public class ProductDAO {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static LinkedList<String> getProductTags(AONContext ctx) {
+	public static Stream<ProductTag> getProductTagStream(AONContext ctx, ProductTagFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext().select()
+			.from(PRODUCT_TAG)
+			.where(PRODUCT_TAG_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new ProductTagFiller());
+	}
+	
+	public static LinkedList<String> getProductTags(AONContext ctx){
 		ctx.checkRead();
 		return ctx.getDslContext()
 			.select(TAG.NAME)
 			.from(TAG)
 			.where(TAG.DOMAIN.equal(ctx.getDomainId()))
 			.and(TAG.TYPE.eq( (byte) 1 ))
-			.fetch()
-			.stream()
-			.map( record -> record.getValue(TAG.NAME) )
+			.fetch().stream().map( record -> record.getValue(TAG.NAME) )
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -744,6 +767,11 @@ public class ProductDAO {
 				.fetchInto(BRAND).stream().map(new FullBrandFiller()).findFirst().orElse(new Brand());
 	}
 	
+	public static Stream<Brand> getBrandStream(AONContext ctx, BrandFilter filter){
+		return ctx.getDslContext().select().from(BRAND).where(BRAND_PROPERTIES.getConditions(filter))
+				.fetchInto(BRAND).stream().map(new FullBrandFiller());
+	}
+	
 	public static Brand insertBrand(AONContext ctx, Brand brand){
 		return ctx.getDslContext().insertInto(BRAND, BRAND.DOMAIN, BRAND.NAME)
 		.values(brand.getDomain(), brand.getName()).returning().fetch().stream()
@@ -855,6 +883,17 @@ public class ProductDAO {
 					.setSerialNumber(r.getSerialNumber())
 					.setSerialDate(r.getSerialDate())
 					.setStatus(r.getStatus());
+		}
+	}
+	
+	private static class ProductTagFiller implements Function<Record, ProductTag> {
+		@Override
+		public ProductTag apply(Record r) {
+			return new ProductTag()
+					.setId(r.getValue(PRODUCT_TAG.ID))
+					.setDomain(r.getValue(PRODUCT_TAG.DOMAIN))
+					.setProduct(r.getValue(PRODUCT_TAG.PRODUCT))
+					.setTag(new Tag().setId(r.getValue(PRODUCT_TAG.TAG)));
 		}
 	}
 }

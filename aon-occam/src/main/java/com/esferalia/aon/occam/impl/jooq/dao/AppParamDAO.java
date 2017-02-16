@@ -108,6 +108,15 @@ public class AppParamDAO {
 		return null;
 	}
 	
+	public static ApplicationParameter getApplicationParameter(AONContext ctx, String id) {
+		return ctx.getDslContext().select().from(APP_PARAM).where(APP_PARAM.NAME.eq(id)).and(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.fetch().stream().map(r -> new ApplicationParameter()
+						.setDomain(r.getValue(APP_PARAM.DOMAIN))
+						.setId(r.getValue(APP_PARAM.ID))
+						.setName(r.getValue(APP_PARAM.NAME))
+						.setValue(r.getValue(APP_PARAM.VALUE))).findFirst().orElse(new ApplicationParameter());
+	}	
+	
 	public static ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		ctx.checkRead();
 		final ApplicationParameter ap = new ApplicationParameter();

@@ -16,12 +16,14 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
@@ -35,6 +37,7 @@ public interface ICommon {
 	// --------------------------------------------
 	// APPLICATION PARATEMER
 	// --------------------------------------------
+	public ApplicationParameter getApplicationParameter(AONContext ctx, String id);
 
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param);
 	public FiscalParameters getFiscalParameters(AONContext ctx);	
@@ -59,6 +62,7 @@ public interface ICommon {
 	// --------------------------------------------
 	// PRODUCT
 	// --------------------------------------------
+	public Stream<ProductTag> getProductTagStream(AONContext ctx, ProductTagFilter filter);
 	public List<String> getProductTags(AONContext ctx);
 
 	public Map<Integer, String[]> getProductTagMap(AONContext ctx);
@@ -96,6 +100,6 @@ public interface ICommon {
 	public void deleteTag(AONContext ctx, Tag tag);
 	
 	//TAX
-	public Tax getTax(AONContext ctx, TaxFilter filter);
+	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);
 
 }

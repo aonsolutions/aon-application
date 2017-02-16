@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -34,6 +35,11 @@ public class InvoiceDetail implements Serializable {
 	private double taxableBase;
 	private double taxes;
 	private boolean prepayment;
+
+	private Date creationDate;
+	private String creationUser;
+	private Date modificationDate;
+	private String modificationUser;
 	
 	private Integer account;
 	
@@ -216,4 +222,33 @@ public class InvoiceDetail implements Serializable {
 		this.account = account;
 		return this;
 	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public InvoiceDetail setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public InvoiceDetail setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public InvoiceDetail setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public InvoiceDetail setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	
 }

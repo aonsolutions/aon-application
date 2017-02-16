@@ -69,7 +69,6 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
-import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -1186,13 +1185,22 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return cell.getStringCellValue().equalsIgnoreCase("inventoriable") 
 			&& ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase("inventariable");
 	}
+
 	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error) {
+		long startcheck= System.currentTimeMillis();
+
 		Vector<ProductInfo> products = new Vector<ProductInfo>();
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		map = new HashMap<String, ProductInfo>();
 		productBool = true;
+		
+		LinkedList<ProductCategory> productCategoryList = AON.getProductCategoryList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		LinkedList<Brand> brandList = AON.getBrandStream(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		LinkedList<Tax> taxList = AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		
 		rowStream.forEach(row ->{
 			if(row.getRowNum() !=0){
 				Iterator<Cell> cellIterator = row.cellIterator();
@@ -1230,10 +1238,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							}
 
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-								long startcheck= System.currentTimeMillis();
-								pi = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellType());
-								long timecheck = System.currentTimeMillis() - startcheck;
-								System.out.println("timecheck: " + (timecheck/1000d));
+								pi = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellType()
+										, productCategoryList, brandList, tagList, taxList);
 								if(pi == null){
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -1275,15 +1281,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
             		else{
             			map.get(pi.getProduct().getCode()).setProduct(pi.getProduct());
             			map.get(pi.getProduct().getCode()).getItem().add(pi.getItem().get(0));
-            			Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
-            			if(pi.getProductTag() != null && pi.getProductTag().size() > 0){
-            				for (com.esferalia.aon.occam.api.model.product.ProductTag pt : pi.getProductTag()) {
-            					if(!esta(pt,map.get(pi.getProduct().getCode()).getProductTag())){
-            						pts.add(pt);
-            					}	
+
+            			pi.getTagList().stream().forEach(tag -> {
+            				if(!map.get(pi.getProduct().getCode()).getTagList().contains(tag)){
+                    			map.get(pi.getProduct().getCode()).getTagList().add(tag);
             				}
-            				map.get(pi.getProduct().getCode()).getProductTag().addAll(pts);
-            			}
+            			});
+            			
             		}
             	}
 			}
@@ -1299,6 +1303,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		if(rowCount != -1) rowCount = products.size();
 		setOut(null);setMimetype(null);
+		long timecheck = System.currentTimeMillis() - startcheck;
+		System.out.println("timecheck: " + (timecheck/1000d));
+		System.out.println(rowCount);
 	}
 	
 	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
@@ -1340,7 +1347,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return error;
 	}
 
-	private ProductInfo check(Domain domain, Integer row, String column, String template, Object value,ProductInfo product, Integer type) {
+	private ProductInfo check(Domain domain, Integer row, String column, String template, Object value,ProductInfo product, Integer type
+			, LinkedList<ProductCategory> productCategoryList, LinkedList<Brand> brandList, LinkedList<Tag> tagList, LinkedList<Tax> taxList) {
 		switch (template) {
 		case "Nombre": 
 			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
@@ -1385,15 +1393,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
 				} else {
-					Vector<ProductCategory> v = DBProduct.getCategories(domain.getName(), domain.getId(), getUser().getLogin());
-					Boolean b = true;
-					for(ProductCategory pc : v){
-						if(strAux.equalsIgnoreCase(pc.getName())){
-							product.getProduct().setCategory(pc.getId());
-							b= false;
-						}
-					}
-					if(b){
+					ProductCategory pc = productCategoryList.stream().filter(c -> strAux.equalsIgnoreCase(c.getName())).findFirst().orElse(new ProductCategory());
+					if(pc.getId() == null){
 						Long c = ti.getColumns().stream().filter(f -> f.contains("Detalle")).count();
 						ProductCategory productCategory = AON.insertProductCategory(domain.getName(), domain.getId(), getUser().getLogin(),
 							new ProductCategory().setDomain(domain.getId()).setName(strAux)
@@ -1401,7 +1402,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							.setDetail2(c==2 || c==3 ? " " : null)
 							.setDetail3(c==3 ? " " : null));
 						product.getProduct().setCategory(productCategory.getId());
-					}
+					} else product.getProduct().setCategory(pc.getId());
 				}
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
@@ -1413,147 +1414,83 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
 				} else {
-					Vector<Brand> v =  DBProduct.getBrands(domain.getName(), domain.getId(), getUser().getLogin());
-					Boolean b = true;
-					for(Brand brand : v){
-						if(strAux.equalsIgnoreCase(brand.getName())){
-							product.getProduct().setBrand(brand.getId());
-							b= false;
-						}
-					}
-					if(b) {
-						Brand brand = AON.insertBrand(domain.getName(), domain.getId(), getUser().getLogin(),
-							new Brand().setDomain(domain.getId()).setName(strAux));
+					Brand brand = brandList.stream().filter(b -> strAux.equalsIgnoreCase(b.getName())).findFirst().orElse(new Brand());
+					if(brand.getId() == null){
+						brand = AON.insertBrand(domain.getName(), domain.getId(), getUser().getLogin(),
+								new Brand().setDomain(domain.getId()).setName(strAux));
 						product.getProduct().setBrand(brand.getId());
-					}
+					} else product.getProduct().setBrand(brand.getId());
 				}
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Etiqueta" : 
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				Vector<ProductTag> tags =  DBProduct.getTags(domain.getName(), domain.getId(), getUser().getLogin());
-				
 				Vector<String> strings = tags(toString(value));
-				Vector<ProductTag> pts = new Vector<ProductTag>();
+				LinkedList<Tag> pts = new LinkedList<>();
 				for(String s : strings){
-					ProductTag pt = tags.stream().filter(t -> t.getTag().getName().equals(s)).findFirst().orElse(null);
-					if(pt == null){
-						Tag tag = AON.insertTag(domain.getName(), domain.getId(), getUser().getLogin(),
-							new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));
-						pt = new ProductTag().setTag(tag);
+					Tag tag = tagList.stream().filter(t -> t.getType() == TagType.PRODUCT.value() && t.getName().equals(s)).findFirst().orElse(new Tag());
+					if(tag.getId() == null){
+						tag = AON.insertTag(domain.getName(), domain.getId(), getUser().getLogin(),
+							new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));	
 					}
-					pts.add(pt);
+					pts.add(tag);
 				}
-				if(!strings.isEmpty()) product.setProductTag(pts);
+				if(!strings.isEmpty()) product.setTagList(pts);
 			}
-			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "Tipo":
 			String t;
 			if(type.equals(Cell.CELL_TYPE_STRING)){
 				t = (String) value;
-				if (t.equalsIgnoreCase(COMMERCIAL_PRODUCT)){
-					product.getProduct().setType((byte) ProductType.COMMERCIAL_PRODUCT.ordinal());	
+				for(ProductType productType : ProductType.values()){
+					if (t.equalsIgnoreCase(productType.getName())){
+						product.getProduct().setType(productType.value());
+					}
 				}
-				else if(t.equalsIgnoreCase(SERVICE)){
-					product.getProduct().setType((byte) ProductType.SERVICE.ordinal());
-				}
-				else if(t.equalsIgnoreCase(EXTERNAL_WORK)){
-					product.getProduct().setType((byte) ProductType.EXTERNAL_WORK.ordinal());
-				}
-				else if(t.equalsIgnoreCase(LABOUR)){
-					product.getProduct().setType((byte) ProductType.LABOUR.ordinal());
-				}
-				else if(t.equalsIgnoreCase(EXPENSE)){
-					product.getProduct().setType((byte) ProductType.EXPENSE.ordinal());
-				}	
-				else if(t.equalsIgnoreCase(INCREASE)){
-					product.getProduct().setType((byte) ProductType.INCREASE.ordinal());
-				}	
-				else if(t.equalsIgnoreCase(PREPAYMENT)){
-					product.getProduct().setType((byte) ProductType.PREPAYMENT.ordinal());
-				}
-				else return null;
 			}
-			//else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break; 
 		case "IVA" : 
-			Tax vat = new Tax();
-			Vector<Tax> vats = DBProduct.getIVA(domain.getName(), domain.getId(), getUser().getLogin());
-
+			Tax vat = new Tax();			
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String s = (String) value;
-				Boolean b = true;
-				for(Tax tax : vats){
-					if(s.equalsIgnoreCase((tax.getName()))){
-						vat = tax;
-						b = false;
-					}
-				}
-				if(b) {
-					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
-					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
-				}
+				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.VAT) && tax.getName().equalsIgnoreCase(s)).findFirst().orElse(new Tax());
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				Double f = (Double) value;
-				Boolean b2 = true;
-				for(Tax tax : vats){
-					if(f.equals(tax.getPercentage())){
-						vat = tax;
-						b2 = false;
-					}
-				}
-				if(b2) {
-					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
-					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
-				}
+				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.VAT) && f.equals(tax.getPercentage())).findFirst().orElse(new Tax());
 				break;
 			case Cell.CELL_TYPE_BLANK:
 				return product;
 			default:
 				return null;
+			}
+			if(vat.getId() == null){
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
 			}
 			product.getProduct().setVat(vat.getId());
 			break; 
 		case "IRPF" :
 			Tax retention = new Tax();
-			Vector<Tax> retentions =  DBProduct.getRetentions(domain.getName(), domain.getId(), getUser().getLogin());
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String s = (String) value;
-				Boolean b3 = true;
-				for(Tax tax : retentions){
-					if(s.equalsIgnoreCase((tax.getName()))){
-						retention = tax;
-						b3 = false;
-					}
-				}
-				if(b3){
-					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
-					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
-				}
+				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.RETENTION) && tax.getName().equalsIgnoreCase(s)).findFirst().orElse(new Tax());
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				Double f = (Double) value;
-				Boolean b4 = true;
-				for(Tax tax : retentions){
-					if(f.equals(tax.getPercentage())){
-						retention = tax;
-						b4 = false;
-					}
-				}
-				if(b4){
-					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
-					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
-				}
+				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.RETENTION) && f.equals(tax.getPercentage())).findFirst().orElse(new Tax());
 				break;
 			case Cell.CELL_TYPE_BLANK:
 				return product;
 			default:
 				return null;
+			}
+			if(vat.getId() == null){
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAX_NOT_EXIST.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
 			}
 			product.getProduct().setRetention(retention.getId());
 			break; 
@@ -1563,7 +1500,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			switch (type) {
 			case Cell.CELL_TYPE_STRING:
 				String string = (String) value;
-				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
+ 				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
 					bool = true;
 				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
 					bool = false;
@@ -1819,7 +1756,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break;
 		case "Formato":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null)product.getItem().get(0).setPackFormatTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1838,7 +1775,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 
 		case "Formato Unidades":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null)product.getItem().get(0).setPackUnitsTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1856,7 +1793,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break; 
 		case "Formato Medida":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null) product.getItem().get(0).setPackMeasurementTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1916,6 +1853,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		is.add(0, i2);
 		pi.setProduct(p2);
 		pi.setItem(is);
+		pi.setTagList(new LinkedList<>());
 		return pi;
 	}
 	

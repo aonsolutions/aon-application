@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
+import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductTagProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectCommercialProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
@@ -266,5 +268,15 @@ public interface Filter {
 	@FunctionalInterface
 	public interface RecordDataFilter{
 		Filter filter(RecordDataProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface CompanyFilter{
+		Filter filter(CompanyProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ProductTagFilter{
+		Filter filter(ProductTagProperties properties);
 	}
 }

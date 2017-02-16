@@ -18,12 +18,14 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -44,6 +46,11 @@ public class CommonImpl implements ICommon {
 	}
 	
 	// ------------------ APPLICATION PARAMETERS
+	@Override
+	public ApplicationParameter getApplicationParameter(AONContext ctx, String id) {
+		return AppParamDAO.getApplicationParameter(ctx, id);
+	}
+	
 	@Override
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		return AppParamDAO.fetchOne(ctx, param);
@@ -110,6 +117,12 @@ public class CommonImpl implements ICommon {
 		return ProductDAO.getProductTags(ctx);
 	}
 
+	@Override
+	public Stream<ProductTag> getProductTagStream(AONContext ctx, ProductTagFilter filter) {
+		return ProductDAO.getProductTagStream(ctx, filter);
+	}
+
+	
 	@Override
 	public Map<Integer, String[]> getProductTagMap(AONContext ctx) {
 		return ProductDAO.getProductTagMap(ctx);
@@ -235,9 +248,9 @@ public class CommonImpl implements ICommon {
 	// ------------------ TAX
 	
 	@Override
-	public Tax getTax(AONContext ctx, TaxFilter filter){
+	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaxDAO.getTax(ctx, filter));
+				configuration -> TaxDAO.getTaxs(ctx, filter));
 	}
 
 }

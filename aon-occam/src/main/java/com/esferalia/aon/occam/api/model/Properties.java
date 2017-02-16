@@ -732,5 +732,22 @@ public interface Properties {
 		Property<String> getRegistrationProperty();
 		Property<Integer> getAttachProperty();
 	}
+	
+	public interface CompanyProperties extends RegistryProperties{
+		Property<Integer> getDomainProperty();
+		Property<Byte> getActiveProperty();
+		Property<Byte> getSurchargeProperty();
+		Property<Byte> getWithholdingProperty();
+		Property<Byte> getVatAccrualPaymentProperty();
+		Property<Byte> getEInvoiceProperty();
+		
+	}
+	
+	public interface ProductTagProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProductProperty();
+		Property<Integer> getTagProperty();		
+	}
 
 }

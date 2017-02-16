@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.template.server;
 
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.Vector;
 
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -10,7 +12,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ProductInfo implements IsSerializable{
 	Product product;
-	Vector<ProductTag> productTag;
+	LinkedList<Tag> tagList;
 	Vector<Item> item;
 	Integer row;
 	Boolean isProduct;
@@ -35,11 +37,11 @@ public class ProductInfo implements IsSerializable{
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-	public Vector<ProductTag> getProductTag() {
-		return productTag;
+	public LinkedList<Tag> getTagList() {
+		return tagList;
 	}
-	public void setProductTag(Vector<ProductTag> productTag) {
-		this.productTag = productTag;
+	public void setTagList(LinkedList<Tag> tagList) {
+		this.tagList = tagList;
 	}
 	public Vector<Item> getItem() {
 		return item;

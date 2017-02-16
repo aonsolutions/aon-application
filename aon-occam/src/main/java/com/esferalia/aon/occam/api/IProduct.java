@@ -45,6 +45,7 @@ public interface IProduct {
 	public void deleteItem(AONContext ctx, Stream<Item> is);
 	
 	// BRAND
+	public Stream<Brand> getBrandStream(AONContext ctx, BrandFilter filter);
 	public Brand getBrand(AONContext ctx, BrandFilter filter);
 	public Brand insertBrand(AONContext ctx, Brand brand); 
 	

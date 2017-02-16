@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 
 import java.util.function.Function;
 
@@ -15,6 +16,7 @@ import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.Product;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -242,6 +244,22 @@ public class FillerDAO {
 					.setSection(r.getValue(RECORD_DATA.SECTION))
 					.setSheet(r.getValue(RECORD_DATA.SHEET))
 					.setVolume(r.getValue(RECORD_DATA.VOLUME));
+		}
+	}
+	
+	public static class CompanyFiller implements Function<Record, Company> {
+		@Override
+		public Company apply(Record r) {
+			return new Company()
+				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
+				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
+				.setDomain(r.getValue(COMPANY.DOMAIN))
+				.setDocument(r.getValue(REGISTRY.DOCUMENT))
+				.setId(r.getValue(REGISTRY.ID))
+				.setName(r.getValue(REGISTRY.NAME))
+				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
+				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
+				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
 		}
 	}
 }

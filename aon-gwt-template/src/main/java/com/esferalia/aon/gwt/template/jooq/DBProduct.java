@@ -172,18 +172,19 @@ public class DBProduct {
 						error.setTextError(verror);
 					}
 					else{
-						if(r.getProductTag() != null){	
-							r.getProductTag().stream().forEach(pt->{
-								Result<Record1<Integer>> tag = sctx.getDslContext().select(PRODUCT_TAG.ID)
-										.from(PRODUCT_TAG).where(PRODUCT_TAG.ID.eq(pt.getId()))
-										.fetch();	
-								pt.setDomain(r.getProduct().getDomain());
-								pt.setProduct(product.getId());
-								if(tag != null && tag.isNotEmpty())
-									uproductsTag.add(pt);
-								else iproductsTag.add(pt);
-							});
-						}
+						r.getTagList().stream().forEach(tag->{
+							ProductTag pt = AON.getProductTag(domain.getName(), domain.getId(), login, 
+									f-> f.getProductProperty().eq(product.getId())
+									.and(f.getTagProperty().eq(tag.getId())));
+
+							pt.setDomain(r.getProduct().getDomain());
+							pt.setProduct(product.getId());
+							pt.setTag(tag);
+							if(pt.getId() != null){
+								uproductsTag.add(pt);
+							} else iproductsTag.add(pt);
+						});
+						
 						if(r.getItem() != null){	
 							r.getItem().stream().forEach(i ->{
 								com.esferalia.aon.occam.api.model.product.Item item = getItem(domain, login, i, product);
@@ -218,18 +219,18 @@ public class DBProduct {
 					}
 				}
 				else{
-					if(r.getProductTag() != null){
-						r.getProductTag().stream().forEach(pt->{
-							String code = r.getProduct().getCode();
-							if(iNewProductsTag.containsKey(code)){
-								LinkedList<ProductTag> list = iNewProductsTag.get(code);list.add(pt);
-								iNewProductsTag.put(code, list);
-							} else {
-								LinkedList<ProductTag> list = new LinkedList<ProductTag>();list.add(pt);
-								iNewProductsTag.put(code, list);
-							}
-						});
-					}
+					r.getTagList().stream().forEach(tag ->{
+						String code = r.getProduct().getCode();
+						if(iNewProductsTag.containsKey(code)){
+							iNewProductsTag.get(code).add(new ProductTag().setTag(tag));
+						} else {
+							LinkedList<ProductTag> list = new LinkedList<ProductTag>();
+							list.add(new ProductTag().setTag(tag));
+							iNewProductsTag.put(code, list);
+						}
+					});
+					
+					
 					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
 					product2.setKind(Byte.parseByte(kind));
 					product2.setCreationUser(ai.getUsername());product2.setModificationUser(ai.getUsername());
@@ -267,13 +268,6 @@ public class DBProduct {
 				
 				products.stream().filter(p -> p.getProduct().getId() == null).forEach(r->{	
 					Integer productId = sctx.getDslContext().select(PRODUCT.ID).from(PRODUCT).where(PRODUCT.DOMAIN.eq(domain.getId())).and(PRODUCT.CODE.eq(r.getProduct().getCode())).fetchOne().value1();
-					System.out.println(r.getProduct().getId());
-					if(r.getProductTag() != null){	
-						r.getProductTag().stream().forEach(pt ->{
-							pt.setProduct(productId);
-							iproductsTag.add(pt);	
-						});
-					}
 					if(r.getItem() != null){	
 						r.getItem().stream().forEach(i ->{
 							i.setProductId(productId);

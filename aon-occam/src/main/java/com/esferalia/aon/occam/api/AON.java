@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
@@ -517,8 +519,25 @@ public class AON {
 		}
 	}
 	
+	public static ApplicationParameter getApplicationParameter(String domainName, Integer domainId, String login,
+			String id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getApplicationParameter(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static ApplicationParameter getApplicationParamenter(String domainName, Integer domainId, String login, AppParam param){
 		ApplicationParameter ap = fetchApplicationParameter(domainName, domainId, login, param);
+		return ap != null ? ap : new ApplicationParameter();
+	}
+	
+	public static ApplicationParameter getApplicationParamenter(String domainName, Integer domainId, String login, String id){
+		ApplicationParameter ap = getApplicationParameter(domainName, domainId, login, id);
 		return ap != null ? ap : new ApplicationParameter();
 	}
 	
@@ -556,21 +575,28 @@ public class AON {
 				ctx.close();
 		}
 	}
-
-	public static Company getCompanyForDomain(String domainName, int domainId,
-			String login) {
+	
+	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getCompany(ctx, domainId);
+			return getRegistry().getCompanyStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
+	
+	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){
+		return getCompanyStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Company());
+	}
 
-	public static LinkedList<CompanyBank> getCompanyBanks(String domainName,
-			int domain, String login, int enterprise) {
+	public static Company getCompanyForDomain(String domainName, int domainId, String login) {
+		return getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
+	}
+
+	public static LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain, String login, int enterprise) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, login);
@@ -715,6 +741,21 @@ public class AON {
 	}
 
 	// ------------------------------------ PRODUCT_TAG
+	
+	public static Stream<ProductTag> getProductTagStream(String domainName, Integer domainId, String login, ProductTagFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getProductTagStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static ProductTag getProductTag(String domainName, Integer domainId, String login, ProductTagFilter filter){
+		return getProductTagStream(domainName, domainId, login, filter).findFirst().orElse(new ProductTag());
+	}
 
 	public static List<String> getProductTags(String domainName, int domainId,
 			String login) {
@@ -838,6 +879,18 @@ public class AON {
 		return getBrand(domainName, domainId, login, f -> f.getNameProperty().eq(name)
 				.and(f.getDomainProperty().eq(domainId)));
 	}
+	
+	public static Stream<Brand> getBrandStream(String domainName, Integer domainId, String login,
+			BrandFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().getBrandStream(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	
 	public static Brand getBrand(String domainName, Integer domainId, String login,
 			BrandFilter filter){
@@ -2901,6 +2954,20 @@ public class AON {
 	// ************************************* TAX **
 	// ********************************************
 
+	public static Stream<Tax> getTaxStream(String domainName, Integer domainId, String login, TaxFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getTaxStream(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Tax> getTaxList(String domainName, Integer domainId, String login, TaxFilter filter){
+		return getTaxStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static Tax getTax(String domainName, Integer domainId, String login, Integer id){
 		return getTax(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
@@ -2911,13 +2978,7 @@ public class AON {
 	}
 	
 	public static Tax getTax(String domainName, Integer domainId, String login, TaxFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getTax(ctx, filter);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
+		return getTaxStream(domainName, domainId, login, filter).findFirst().orElse(new Tax());
 	}
 	
 	// ********************************************
