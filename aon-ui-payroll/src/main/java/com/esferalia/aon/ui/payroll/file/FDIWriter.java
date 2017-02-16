@@ -296,7 +296,7 @@ public class FDIWriter implements Serializable {
 			String prov = dit.getNumeroColegiado().substring(0, 2);
 			dit.setNumeroColegiado(prov + dit.getNumeroColegiado());
 		}
-		if (detail.getType() != LeaveReportType.LEAVE) {
+		if (detail.getType() != LeaveReportType.CONFIRM) {
 			if(detail.getContractLeave().getParent()!=null && detail.getContractLeave().getParent().getId()!=null){
 				dit.setRecaida("S");
 			} else {
