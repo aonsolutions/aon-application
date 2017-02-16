@@ -43,7 +43,7 @@
 		.labelDiasStyle2{
 			padding-left: 15px;
 		    padding-bottom: 3px;
-		    padding-top: 10px;
+		    padding-top: 15px;
     		padding-right: 85px;
 		}
 		
@@ -82,8 +82,6 @@
 		
 		.itStyle {
 			background-color: rgba(255, 0, 0, 0.72);
-			border-radius: 15px;
-			min-height: 1px;
 			color: #ffffff;
 		}
 		
@@ -117,22 +115,16 @@
 		
 		.reductionStyle {
 			background-color: #065b69;
-			border-radius: 15px;
-			min-height: 1px;
 			color: #ffffff;
 		}
 		
 		.dropStyle {
 			background-color: #733969;
-			border-radius: 15px;
-			min-height: 1px;
 			color: #ffffff;
 		}
 		
 		.suspensionStyle {
 			background-color: #b74b17;
-			border-radius: 15px;
-			min-height: 1px;
 			color: #ffffff;
 		}
 		
@@ -172,7 +164,7 @@
 		}
 		
 		.iconEraseStyle {
-			margin-left: 40px;
+			margin-left: 285px;
 		}
 		
 		.mesesImparesStyle {
