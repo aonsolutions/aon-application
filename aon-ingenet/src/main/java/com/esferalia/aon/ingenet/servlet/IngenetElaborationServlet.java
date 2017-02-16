@@ -149,6 +149,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		}
 		
 		if(errorList!=null && errorList.size()>0){
+			errorList.add(0, "Se han producido errores al procesar el fichero");
 			flushErrors(httpResponse, errorList);
 		}
 		

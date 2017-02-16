@@ -13,7 +13,7 @@ public class TestIngenetElaborationServlet {
 	private static String getValue(){
 		String xml = "";
 		
-//		String filePath = "//tmp//consultaElaboraciones_example.xml";
+//		String filePath = "/temp/consultaElaboraciones_example.xml";
 //		try (
 //			BufferedReader xml_br = new BufferedReader(new FileReader(filePath))) {
 //			String sCurrentLine;
