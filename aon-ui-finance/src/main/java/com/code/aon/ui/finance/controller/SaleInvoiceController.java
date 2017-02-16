@@ -338,7 +338,7 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 
-	public String rectificationRedirect() {
+	public String navigationRedirect() {
 		return SALE_INVOICE_FORM_NAME;
 	}
 

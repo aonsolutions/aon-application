@@ -119,7 +119,7 @@ public class ExpenseInvoiceController extends InvoiceController {
 		return null;
 	}
 
-	public String rectificationRedirect() {
+	public String navigationRedirect() {
 		return EXPENSE_INVOICE_FORM_NAME;
 	}
 

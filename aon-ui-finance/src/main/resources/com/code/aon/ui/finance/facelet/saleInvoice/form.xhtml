@@ -131,9 +131,19 @@
 							<ui:param name="skipCancelSignButton" value="#{!saleInvoice.signed}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm" />
 						</ui:include>
-						
+						<aon:menuItem id="duplicate"
+							value="#{bundle.aon_to_duplicate}"
+							rendered="#{!saleInvoice.rectifier and !saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0}"
+							immediate="#{true}"
+							iconClass="aon-icon-copy"
+							actionListener="#{saleInvoice.onDuplicationShow}"
+							reRender="showDuplicationWindow">
+							<f:setPropertyActionListener target="#{saleInvoice.showDuplicationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+
 						<rich:menuSeparator id="actionMenuSeparator" />
-						
+
 						<aon:if test="#{companyCollections.activeCompanyActivitiesCount > 1}">
 							<aon:menuItem id="activities"
 								value="#{bundle.aon_activity}"
@@ -196,14 +206,14 @@
 						<aon:if test="#{company.ediSupportEnabled}">
 							<rich:menuSeparator />
 							<aon:menuItem iconClass="aon-icon-file-download">
-								<aon:htmlCommandLink id="saleInvoice-udapaEdi" 
+								<aon:htmlCommandLink id="saleInvoice-udapaEdi" style="font-size:1em"
 									value="#{bundle.aon_edi}" target="_blank"
 									title="#{bundle.webmail_download}"
 									actionListener="#{saleInvoice.onExportUdapaEdiFile}">
 								</aon:htmlCommandLink>
 							</aon:menuItem>
 							<aon:menuItem iconClass="aon-icon-file-download">
-								<aon:htmlCommandLink id="saleInvoice-edi" 
+								<aon:htmlCommandLink id="saleInvoice-edi" style="font-size:1em"
 									value="#{bundle.aon_edi} (CONNECT)" target="_blank"
 									title="#{bundle.webmail_download}"
 									actionListener="#{saleInvoice.onExportEdiFile}">
@@ -339,6 +349,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 			<ui:param name="financeController" value="#{saleInvoiceFinance}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDuplication.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />

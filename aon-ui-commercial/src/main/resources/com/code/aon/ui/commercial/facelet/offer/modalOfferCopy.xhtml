@@ -15,7 +15,7 @@
 				showWhenRendered="#{offer.showOfferCopyWindow}">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{bundle.commercial_offer_copy}" />
+						<aon:outputText value="#{bundle.commercial_offer_duplicate}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="offerCopy-accept"
-										value="#{bundle.aon_copy}"
+										value="#{bundle.aon_to_duplicate}"
 										actionListener="#{offer.onCopy}"
 										action="offer_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">

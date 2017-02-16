@@ -315,7 +315,7 @@ public class RectifierInvoiceController implements IFinanceConstants, Serializab
 		}
 	}
 
-	public String rectificationRedirect() {
+	public String navigationRedirect() {
 		return SALE_INVOICE_LIST_NAME;
 	}
 

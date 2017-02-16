@@ -98,6 +98,15 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>
+						<aon:menuItem id="duplicate"
+							value="#{bundle.aon_to_duplicate}"
+							immediate="#{true}"
+							iconClass="aon-icon-copy"
+							actionListener="#{offer.onOfferCopyShow}"
+							reRender="showOfferCopyWindow">
+							<f:setPropertyActionListener target="#{offer.showOfferCopyWindow}"
+								value="#{true}" />
+						</aon:menuItem>
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>
@@ -128,15 +137,6 @@
 										confirmTitle="#{bundle.aon_confirm_title}"
 										confirmMessage="#{bundle.commercial_offer_confirm_new_version}"
 										confirmActionListener="#{offer.onVersion}" />
-									<aon:commandButton id="copy" value="&#160;"
-										title="#{bundle.commercial_offer_copy}"
-										immediate="#{true}" rendered="#{!offer.nevv}"
-										styleClass="aon-icon-commandButton aon-icon-copy" 
-										actionListener="#{offer.onOfferCopyShow}"
-										reRender="showOfferCopyWindow">
-										<f:setPropertyActionListener target="#{offer.showOfferCopyWindow}"
-											value="#{true}" />
-									</aon:commandButton>								
 								</ui:define>
 							</ui:decorate>
 							<aon:div>

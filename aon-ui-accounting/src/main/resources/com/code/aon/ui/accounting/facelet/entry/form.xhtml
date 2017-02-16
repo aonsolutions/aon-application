@@ -105,8 +105,8 @@
 								immediate="true"
 								onclick="if (!confirm('#{bundle.accounting_change_security}')) return false;" />
 						</aon:if>
-						<aon:commandButton id="duplicate" value="#{bundle.accounting_duplicate}"
-							title="#{bundle.accounting_duplicate}"
+						<aon:commandButton id="duplicate" value="#{bundle.aon_to_duplicate}"
+							title="#{bundle.aon_to_duplicate}"
 							actionListener="#{accountEntry.showDuplicateEntryPanel}"
 							rendered="#{!accountEntry.nevv and accountEntry.manual}"
 							reRender="duplicateEntryContainer"
@@ -361,7 +361,7 @@
 					showWhenRendered="true" zindex="90">
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
-							<aon:outputText value="#{bundle.accounting_duplicate}" />
+							<aon:outputText value="#{bundle.aon_to_duplicate}" />
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
@@ -383,7 +383,7 @@
 									<aon:div style="width:99%">
 										<aon:div styleClass="aon-toolbar">
 											<aon:commandButton id="duplicateEntryAccept"
-												value="#{bundle.accounting_duplicate}"
+												value="#{bundle.aon_to_duplicate}"
 												actionListener="#{accountEntry.onDuplicate}"
 												onclick="if (!confirm('#{bundle.accounting_duplicate_confirm}')) return false;"
 												styleClass="aon-finding-toolbar-item aon-icon-accept">

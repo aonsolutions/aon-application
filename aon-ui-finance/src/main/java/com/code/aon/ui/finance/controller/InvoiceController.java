@@ -80,9 +80,12 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -91,6 +94,7 @@ import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
+import com.code.aon.ui.finance.util.InvoiceImportManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -147,6 +151,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean rectificationSettleFinance;
 	private boolean showDiscountsWindow;
 	private String discountExpression;
+	private boolean showDuplicationWindow;
+	private String duplicationSeries;
+	private int duplicationNumber;
+	private boolean duplicationNumberEditable;
+	private String duplicationReferenceCode;
+	private Registry duplicationRegistry;
+	private String duplicationRegistryName;
+	private Date duplicationDate;
 	private boolean showPaymentDataInListView;
 	private boolean showTotalBreakdownInListView;
 	private Double listTaxableBase;
@@ -683,10 +695,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 
 		if (invoice.isSales()) {
-			setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
+			setRectificationSeries(SeriesUtil.ensureRectificationSeries(invoice.getSeries()));
 		}
-		setRectificationNumberEditable(false);
 		setRectificationNumber(0);
+		setRectificationNumberEditable(false);
 		setRectificationReferenceCode(null);
 		setRectificationDate(new Date());
 		setRectificationCause(null);
@@ -742,6 +754,132 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 	public void setDiscountExpression(String discountExpression) {
 		this.discountExpression = StringUtils.trimToNull(discountExpression);
+	}
+
+	public boolean isShowDuplicationWindow() {
+		return showDuplicationWindow;
+	}
+
+	public void setShowDuplicationWindow(boolean value) {
+		this.showDuplicationWindow = value;
+	}
+	
+	public String getDuplicationSeries() {
+		return duplicationSeries;
+	}
+
+	public void setDuplicationSeries(String duplicationSeries) {
+		this.duplicationSeries = duplicationSeries;
+	}
+
+	public int getDuplicationNumber() {
+		return duplicationNumber;
+	}
+
+	public void setDuplicationNumber(int duplicationNumber) {
+		this.duplicationNumber = duplicationNumber;
+	}
+	
+	public boolean isDuplicationNumberEditable() {
+		return duplicationNumberEditable;
+	}
+
+	public void setDuplicationNumberEditable(boolean duplicationNumberEditable) {
+		this.duplicationNumberEditable = duplicationNumberEditable;
+	}
+
+	public String getDuplicationReferenceCode() {
+		return duplicationReferenceCode;
+	}
+
+	public void setDuplicationReferenceCode(String duplicationReferenceCode) {
+		this.duplicationReferenceCode = duplicationReferenceCode;
+	}
+	
+	public Registry getDuplicationRegistry() {
+		return duplicationRegistry;
+	}
+
+	public void setDuplicationRegistry(Registry duplicationRegistry) {
+		this.duplicationRegistry = duplicationRegistry;
+	}
+	
+	public String getDuplicationRegistryName() {
+		return duplicationRegistryName;
+	}
+
+	public void setDuplicationRegistryName(String duplicationRegistryName) {
+		this.duplicationRegistryName = duplicationRegistryName;
+	}
+	
+	public Date getDuplicationDate() {
+		return duplicationDate;
+	}
+
+	public void setDuplicationDate(Date duplicationDate) {
+		this.duplicationDate = duplicationDate;
+	}
+	
+	public void onDuplicationShow(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (!FinanceUtil.isValidLimitDate(invoice)) {
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
+
+		if (invoice.isSales()) {
+			setDuplicationSeries(SeriesUtil.ensureInvoiceSeries(invoice.getSeries()));
+		}
+		setDuplicationNumber(0);
+		setDuplicationNumberEditable(false);
+		setDuplicationReferenceCode(null);
+		setDuplicationRegistry(invoice.getRegistry());
+		setDuplicationRegistryName(invoice.getRegistryName());
+		setDuplicationDate(new Date());
+	}
+
+	public void onDuplicationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (isDuplicationNumberEditable()) {
+			updateDuplicationNumber((String)event.getNewValue());
+		}
+	}
+	
+	public void onDuplicationNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateDuplicationNumber(getDuplicationSeries());		
+	}			
+	
+	private void updateDuplicationNumber(String seriesId) {
+		setDuplicationNumber(obtainMaxNumber(seriesId));
+	}	
+
+	public void onDuplicationRegistryChanged(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			IRegistry iRegistry = (IRegistry)event.getNewValue();
+			setDuplicationRegistry(iRegistry.getRegistry());
+			setDuplicationRegistryName(iRegistry.getRegistry().getName());
+		}
+	}
+
+	public void onDuplicate(ActionEvent event) throws ManagerBeanException {
+		Invoice to = getInvoice();
+		if (to.isSales()) {
+			if (StringUtils.isBlank(getDuplicationSeries())) {
+	        	setDuplicationSeries(null);
+	        }		
+	        if (getDuplicationNumber() == 0) {
+	        	updateDuplicationNumber(getDuplicationSeries());
+			}		
+		}
+		this.getManagerBean().restoreNullSubPOJOs(to);
+		InvoiceImportManager manager = new InvoiceImportManager();
+		Invoice invoice = manager.copyInvoice(to, getDuplicationSeries(), getDuplicationNumber(), getDuplicationReferenceCode(), getDuplicationRegistry(), 
+												getDuplicationRegistryName(), getDuplicationDate(), !to.getRegistry().equals(getDuplicationRegistry()));
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
 	}
 
 	public boolean isShowPaymentDataInListView() {

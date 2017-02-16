@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showDuplicationWindow">
+		<aon:if test="#{invoiceController.showDuplicationWindow}">
+			<rich:modalPanel id="duplicationModalPanel"
+				minHeight="260" minWidth="680" zindex="90"
+				showWhenRendered="#{invoiceController.showDuplicationWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.finance_invoice_duplicate}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showDuplicationWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{invoiceController.showDuplicationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="duplicationForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="duplication-accept"
+										value="#{bundle.aon_to_duplicate}"
+										actionListener="#{invoiceController.onDuplicate}"
+										action="#{invoiceController.navigationRedirect}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="duplicationModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{invoiceController.showDuplicationWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="duplication-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showDuplicationWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{invoiceController.showDuplicationWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
+
+										<aon:if test="#{invoiceController.to.sales}">
+											<aon:outputLabel for="Invoice_duplication_number"
+												value="#{bundle.aon_invoice_number}" />
+											<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+												<ui:param name="sfc_seriesCodes" value="#{configCollections.invoiceSeriesIds}" />
+												<ui:param name="sfc_seriesCodesLength" value="#{fn:length(sfc_seriesCodes)}" />										
+												<ui:param name="sfc_aliasPreffix" value="Invoice_duplication" />
+												<ui:param name="sfc_editable" value="#{true}" />
+												<ui:param name="skipSeriesLabel" value="#{true}" />
+												<ui:param name="sfc_seriesProperty" value="#{invoiceController.duplicationSeries}" />
+												<ui:param name="sfc_numberProperty" value="#{invoiceController.duplicationNumber}" />
+												<ui:param name="sfc_numberEditable" value="#{invoiceController.duplicationNumberEditable}" />
+												<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+													value="#{invoiceController.onDuplicationSeriesChanged}" />	
+												<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
+													value="#{invoiceController.onDuplicationNumberEditable}" />
+											</ui:include>
+										</aon:if>
+										<aon:if test="#{!invoiceController.to.sales}">
+											<aon:outputLabel for="Invoice_duplication_referenceCode"
+												value="#{bundle.aon_invoice_number}" />
+											<aon:inputText id="Invoice_duplication_referenceCode" 
+												value="#{invoiceController.duplicationReferenceCode}" 
+												required="true" size="25" maxlength="32" />
+										</aon:if>
+
+										<aon:if test="#{invoiceController.to.sales}">
+											<aon:outputLabel for="Customer_id"
+												value="#{bundle.aon_customer}" />
+											<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+												<ui:param name="lookupTo" value="#{invoiceController.duplicationRegistry}" />
+												<ui:param name="lookupForRegistry" value="#{true}" />
+												<ui:param name="lookupInputNameValue" value="#{invoiceController.duplicationRegistryName}" />
+												<ui:param name="lookupInputNameDisabled" value="#{false}" />
+												<ui:param name="skipNewButton" value="#{true}" />
+												<ui:param name="skipLabel" value="#{true}" />
+												<ui:param name="idRequired" value="#{true}" />
+												<ui:param name="lookupSuffix" value="-Duplicate" />
+												<ui:param name="skipSuggestText" 
+													value="#{invoiceController.duplicationRegistry != null and invoiceController.duplicationRegistry.id != null}" />
+												<aon:methodParam name="lookupChangeListener"
+													value="#{invoiceController.onDuplicationRegistryChanged}" type="lookupChangeListener" />
+											</ui:include>
+										</aon:if>
+										<aon:if test="#{invoiceController.to.purchase}">
+											<aon:outputLabel for="Supplier_id"
+												value="#{bundle.aon_supplier}" />
+											<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+												<ui:param name="lookupTo" value="#{invoiceController.duplicationRegistry}" />
+												<ui:param name="lookupForRegistry" value="#{true}" />
+												<ui:param name="lookupInputNameValue" value="#{invoiceController.duplicationRegistryName}" />
+												<ui:param name="lookupInputNameDisabled" value="#{false}" />
+												<ui:param name="skipNewButton" value="#{true}" />
+												<ui:param name="skipLabel" value="#{true}" />
+												<ui:param name="idRequired" value="#{true}" />
+												<ui:param name="lookupSuffix" value="-Duplicate" />
+												<ui:param name="skipSuggestText" 
+													value="#{invoiceController.duplicationRegistry != null and invoiceController.duplicationRegistry.id != null}" />
+												<aon:methodParam name="lookupChangeListener"
+													value="#{invoiceController.onDuplicationRegistryChanged}" type="lookupChangeListener" />
+											</ui:include>
+										</aon:if>
+										<aon:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
+											<aon:outputLabel for="Creditor_id"
+												value="#{bundle.aon_creditor}" />
+											<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+												<ui:param name="lookupTo" value="#{invoiceController.duplicationRegistry}" />
+												<ui:param name="lookupForRegistry" value="#{true}" />
+												<ui:param name="lookupInputNameValue" value="#{invoiceController.duplicationRegistryName}" />
+												<ui:param name="lookupInputNameDisabled" value="#{false}" />
+												<ui:param name="skipNewButton" value="#{true}" />
+												<ui:param name="skipLabel" value="#{true}" />
+												<ui:param name="idRequired" value="#{true}" />
+												<ui:param name="lookupSuffix" value="-Duplicate" />
+												<ui:param name="skipSuggestText" 
+													value="#{invoiceController.duplicationRegistry != null and invoiceController.duplicationRegistry.id != null}" />
+												<aon:methodParam name="lookupChangeListener"
+													value="#{invoiceController.onDuplicationRegistryChanged}" type="lookupChangeListener" />
+											</ui:include>
+										</aon:if>
+
+										<aon:outputLabel for="Invoice_duplication_date"
+											value="#{bundle.aon_date}" />
+										<aon:selectInputDate id="Invoice_duplication_date" 
+											value="#{invoiceController.duplicationDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-60" />
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

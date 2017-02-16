@@ -220,7 +220,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 		}
 	}
 
-	public String rectificationRedirect() {
+	public String navigationRedirect() {
 		return PURCHASE_INVOICE_FORM_NAME;
 	}
 

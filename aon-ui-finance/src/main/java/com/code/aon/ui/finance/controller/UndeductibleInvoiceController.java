@@ -119,7 +119,7 @@ public class UndeductibleInvoiceController extends InvoiceController {
 		return null;
 	}
 
-	public String rectificationRedirect() {
+	public String navigationRedirect() {
 		return UNDEDUCTIBLE_INVOICE_FORM_NAME;
 	}
 
