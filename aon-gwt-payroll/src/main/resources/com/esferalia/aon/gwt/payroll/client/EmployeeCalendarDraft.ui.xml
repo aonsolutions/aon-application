@@ -14,10 +14,6 @@
 			width: 100%;
 		}
 		
-		.labelDayStyle {
-    		padding-left: 15px;
-		}
-		
 		.tableStyle td {
 			text-align: center;
 			border-bottom: 1px solid #ddd;
@@ -43,7 +39,7 @@
 		.labelDiasStyle2{
 			padding-left: 15px;
 		    padding-bottom: 3px;
-		    padding-top: 15px;
+		    padding-top: 5px;
     		padding-right: 85px;
 		}
 		
@@ -80,11 +76,6 @@
 			border-radius: 0px !important;
 		}
 		
-		.itStyle {
-			background-color: rgba(255, 0, 0, 0.72);
-			color: #ffffff;
-		}
-		
 		.sundayStyle {
 			background-color: salmon;
 			border-radius: 15px;
@@ -116,16 +107,25 @@
 		.reductionStyle {
 			background-color: #065b69;
 			color: #ffffff;
+			margin-top: 0px;
 		}
 		
 		.dropStyle {
 			background-color: #733969;
 			color: #ffffff;
+			margin-top: 0px;
 		}
 		
 		.suspensionStyle {
 			background-color: #b74b17;
 			color: #ffffff;
+			margin-top: 0px;
+		}
+		
+		.itStyle {
+			background-color: rgba(255, 0, 0, 0.72);
+			color: #ffffff;
+			margin-top: 0px;
 		}
 		
 		.cellStyle {
@@ -133,7 +133,7 @@
 		}
 		
 		.cellStyle1 {
-			padding: 1px;
+			padding: 0.1px;
 		}
 		
 		.year {
@@ -273,6 +273,10 @@
 		.setOutOfContractStyle{
 			color: #aaa;
 		}
+		
+		hr{
+			margin-top: 0px;
+		}
 
 	</ui:style>
 
@@ -280,7 +284,7 @@
 		<g:north size="55">
 			<g:FlowPanel>
 				<g:MenuBar>
-					<g:MenuItem text="Archivo">
+					<g:MenuItem text="Archivo" enabled="false">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="addEventMenuItem" text="Añadir evento" />
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
@@ -387,7 +391,8 @@
 						styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next"
 						ui:field="nextYearButton" />
 				</g:HorizontalPanel>
-
+				<hr/>
+				
 				<style is="custom-style">
 					paper-button {
 						--paper-button: {
@@ -459,6 +464,7 @@
 						Baja IT
 					</i:IronLabel>
 				</g:HorizontalPanel>
+				<hr/>
 				<g:ScrollPanel ui:field="scrollInfo" height="85%">
 					<g:Grid ui:field="calendarGrid" width="90%" styleName="{style.tableStyle} {style.noselect}">
 						<g:row>

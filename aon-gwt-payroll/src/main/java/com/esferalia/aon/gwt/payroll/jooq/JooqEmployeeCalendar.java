@@ -177,6 +177,14 @@ public class JooqEmployeeCalendar {
 			
 			for(Record r : countryHolidays)
 				listaFestivosContrato.add(r.get(HOLIDAY_DETAIL.DATE));
+		}else{
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 1);
+			listaNoLaborablesContrato.add((byte) 1);
 		}
 		
 		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
@@ -224,53 +232,56 @@ public class JooqEmployeeCalendar {
 		
 		HashMap<java.util.Date, Double> mapaHorasUpdate = updateInfo.getMapaHorasDias();
 		
-		java.util.Date startDate = new java.util.Date();
-		java.util.Date endDate = new java.util.Date();
-		
-		for (Entry<java.util.Date, Double> entry : mapaHorasUpdate.entrySet()) {
-			if (entry.getKey().before(startDate))
-				startDate = DateUtils.copyDateOnly(entry.getKey());
+		if (!mapaHorasUpdate.isEmpty()){
 			
-			if (entry.getKey().after(endDate))
-				endDate = DateUtils.copyDateOnly(entry.getKey());
-		}
-		
-		
-		for (int i=0; i<7; i++){
-			java.util.Date  date = DateUtils.copyDateOnly(startDate);
-			DateUtils.addDays2Date(date, i);
-
-			@SuppressWarnings("deprecation")
-			String diaSemana = calcularDiaSemana(date.getDay());
+			java.util.Date startDate = new java.util.Date();
+			java.util.Date endDate = new java.util.Date();
 			
-			java.util.Date auxStartDate = DateUtils.copyDateOnly(date);
-			Double horasStart = mapaHorasUpdate.get(auxStartDate);
-			
-			while (date.before(endDate)){
-				if(!horasStart.equals(mapaHorasUpdate.get(date))){
-					Date sqlStartDate = new Date(auxStartDate.getTime());
-					Date sqlEndDate = new Date(date.getTime());
-					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-							CONTRACT_DATA.END_DATE)
-							.values(domain, diaSemana, contract, Double.toString(horasStart), 
-									sqlStartDate, sqlEndDate).execute();
+			for (Entry<java.util.Date, Double> entry : mapaHorasUpdate.entrySet()) {
+				if (entry.getKey().before(startDate))
+					startDate = DateUtils.copyDateOnly(entry.getKey());
 				
-					horasStart = mapaHorasUpdate.get(date);
-					auxStartDate = DateUtils.copyDateOnly(date);
-				}
-				
-				DateUtils.addDays2Date(date, 7);
+				if (entry.getKey().after(endDate))
+					endDate = DateUtils.copyDateOnly(entry.getKey());
 			}
 			
-			Date sqlStartDate = new Date(auxStartDate.getTime());
-			Date sqlEndDate = new Date(endDate.getTime());
-			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-					CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-					CONTRACT_DATA.END_DATE)
-					.values(domain, diaSemana, contract, Double.toString(horasStart), 
-							sqlStartDate, sqlEndDate).execute();
 			
+			for (int i=0; i<7; i++){
+				java.util.Date  date = DateUtils.copyDateOnly(startDate);
+				DateUtils.addDays2Date(date, i);
+	
+				@SuppressWarnings("deprecation")
+				String diaSemana = calcularDiaSemana(date.getDay());
+				
+				java.util.Date auxStartDate = DateUtils.copyDateOnly(date);
+				Double horasStart = mapaHorasUpdate.get(auxStartDate);
+				
+				while (date.before(endDate)){
+					if(!horasStart.equals(mapaHorasUpdate.get(date))){
+						Date sqlStartDate = new Date(auxStartDate.getTime());
+						Date sqlEndDate = new Date(date.getTime());
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+								CONTRACT_DATA.END_DATE)
+								.values(domain, diaSemana, contract, Double.toString(horasStart), 
+										sqlStartDate, sqlEndDate).execute();
+					
+						horasStart = mapaHorasUpdate.get(date);
+						auxStartDate = DateUtils.copyDateOnly(date);
+					}
+					
+					DateUtils.addDays2Date(date, 7);
+				}
+				
+				Date sqlStartDate = new Date(auxStartDate.getTime());
+				Date sqlEndDate = new Date(endDate.getTime());
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, diaSemana, contract, Double.toString(horasStart), 
+								sqlStartDate, sqlEndDate).execute();
+			
+			}
 		}
 		
 		// ----------------------------------------------- ACTUALIZACION TIPO DIAS -------------------------------------------------------

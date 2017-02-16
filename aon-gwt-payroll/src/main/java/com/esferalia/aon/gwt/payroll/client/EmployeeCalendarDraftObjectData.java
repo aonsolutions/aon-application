@@ -297,6 +297,7 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		
 		this.salaryDraft.addDraftVariable(var);
 		
+		
 		undoManager.add(new SetHourEdit(old, hour, dia, var));
 	} 
 
@@ -411,7 +412,6 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 	
 	
 	public void inicialiazarCalendarioBD(Consumer<EmployeeCalendarData> success, Consumer<Throwable> failure) {
-		Window.alert("ID Cliente: "+employeeId);
 		
 		employeesService.getEmployeeCalendar(employeeId, 
 			new AsyncCallback<EmployeeCalendarData>() {
@@ -560,11 +560,10 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		});
 	}
 	
-	public void actualizarCalendarioBD(){
+	public void actualizarCalendarioBD(Consumer<EmployeeCalendarUpdate> success, Consumer<Throwable> failure){
 		EmployeeCalendarUpdate updateInfo = new EmployeeCalendarUpdate();
 		
 		updateInfo.setMapaHorasDias(crearMapaHorasUpdate(mapaDiasHoras, draftMapaDiasHoras));
-		//updateInfo.setMapaTipoDias((HashMap<Date, DayType>) draftMapaDiasTipo);
 		updateInfo.setMapaTipoDias(crearMapaTiposUpdate(mapaDiasTipo, draftMapaDiasTipo));
 		
 		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
@@ -572,15 +571,14 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+				failure.accept(caught);
 			}
 
 			@Override
 			public void onSuccess(EmployeeCalendarUpdate result) {
-				//TODO: reiniciar todo
 				draftMapaDiasHoras.clear();
 				draftMapaDiasTipo.clear();
-				
+				success.accept(result);
 			}
 			
 		});
