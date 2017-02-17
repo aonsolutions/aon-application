@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -29,22 +30,15 @@ public class FinanceRecorder {
 				if (!finance.isPayment()) {
 					AccountEntryDetail detail = map.get(finance.getId());
 					if (detail == null) {
-						String document = finance.getInvoice()!=null?finance.getInvoice().getDocumentNumber():"";
-						String code = finance.getRegistryAccountCode();
-						
-						String prefix = (finance.getAmount() < 0) ? REFU: CHAR;
-						prefix = prefix + " " + INVO + ": ";
-						String concept = (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();								
-						
-						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
-						String description = finance.getRegistryAccountDescription();
-						if (AonStringUtils.isBlank(description)) description = finance.getRegistryName();
+						String concept = obtainConcept(finance);
+						String code = obtainAccountCode(finance);
+						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
 							.setAccount(finance.getRegistryAccountId())
 							.setAccountCode(code)
 							.setAccountDescription(description)
 							.setConcept(concept)
-							.setDocumentNumber(document)
+							.setDocumentNumber(obtainDocumentNumber(finance))
 							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
 							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
 							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription())
@@ -54,6 +48,7 @@ public class FinanceRecorder {
 					detail.setCredit(finance.getAmount());
 				}
 			}
+
 	 	})
 		,PAYMENT( new IFinanceVisitor() {
 			@Override
@@ -61,17 +56,15 @@ public class FinanceRecorder {
 				if (finance.isPayment()) {
 					AccountEntryDetail detail = map.get(finance.getId());
 					if (detail == null) {
-						String prefix = (finance.getAmount() < 0) ? RETU : PAYM;
-						prefix = prefix + " " + INVO + ": ";
-						String concept = (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();								
-						String code = AonStringUtils.defaultIfBlank(finance.getRegistryAccountCode(),AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????");
-						String description = AonStringUtils.defaultIfBlank(finance.getRegistryAccountDescription(), finance.getRegistryName());
+						String concept = obtainConcept(finance);
+						String code = obtainAccountCode(finance); 
+						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
 							.setAccount(finance.getRegistryAccountId())
 							.setAccountCode(code)
 							.setAccountDescription(description)
 							.setConcept(concept)
-							.setDocumentNumber(finance.getInvoice()!=null?finance.getInvoice().getDocumentNumber():"")
+							.setDocumentNumber(obtainDocumentNumber(finance))
 							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
 							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
 							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription());
@@ -95,13 +88,55 @@ public class FinanceRecorder {
 		}
 	}
 
+	private static String obtainDocumentNumber(Finance finance) {
+		return finance.getInvoice()!=null?finance.getInvoice().getDocumentNumber():"";
+	}
+	private static String obtainConcept(Finance finance) {
+		String prefix = null;
+		if (!finance.isPayment()) {
+			prefix = (finance.getAmount() < 0) ? REFU: CHAR;
+		} else {
+			prefix = (finance.getAmount() < 0) ? RETU : PAYM;
+		}
+		prefix = prefix + " " + INVO + ": ";
+		return (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();
+		
+	}
+	private static String obtainAccountCode(Finance finance) {
+		String code = finance.getRegistryAccountCode();
+		if (AonStringUtils.isBlank(code)) {
+			if (!finance.isPayment()) {
+				code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
+			} else {
+				if (!finance.isEmptyInvoice() && finance.getInvoice().getType() != null) {
+					if (finance.getInvoice().getType() == InvoiceType.PURCHASE) {
+						code = AccountingRegistryType.SUPPLIER.getAccountPrefix() + "?????";	
+					} else {
+						code = AccountingRegistryType.CREDITOR.getAccountPrefix() + "?????";
+					}
+				} else {
+					code = AccountingRegistryType.CREDITOR.getAccountPrefix() + "?????";	
+				}
+			}
+		}		
+		return code;
+	}
+	private static String obtainAccountDescription(Finance finance) {
+		String description = finance.getRegistryAccountDescription();
+		if (AonStringUtils.isBlank(description)) description = finance.getRegistryName();
+		return description;
+	}
+
 	public static AccountEntry[] recordFinanceEntry(FinanceEntry financeEntry) {
 		AccountEntry ae = AccountEntry.clone(financeEntry.getAccountEntry());
-		
+		Finance uniqueFinance = null;
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
+		int validFinances = 0;
 		for (FinanceTracking tracking : financeEntry.getTrackings().values()) {
 			if (!tracking.isDeleted()) {
-				FinanceEntryDetailType.visit(financeEntry,tracking.getFinance(),map);	
+				FinanceEntryDetailType.visit(financeEntry,tracking.getFinance(),map);
+				++validFinances;
+				uniqueFinance = (validFinances == 1)?tracking.getFinance():null;
 			}
 		}
 		ae.setDetails(new LinkedList<AccountEntryDetail>());
@@ -121,11 +156,28 @@ public class FinanceRecorder {
 			ae.getDetails().add(detail);
 		}
 		if ( financeEntry.getBankAccount() != null && financeEntry.getBankAccount().getId() != null) {
+			String concept = "Apunte Tesorer\u00EDa";
+			Integer balancingAccount = null;
+			String balancingAccountCode = null;
+			String balancingAccountDescription = null;
+			String documentNumber = null;
+			if (uniqueFinance != null) {
+				documentNumber = obtainDocumentNumber(uniqueFinance);
+				concept = obtainConcept(uniqueFinance);
+				balancingAccount = uniqueFinance.getRegistryAccountId();
+				balancingAccountCode = obtainAccountCode(uniqueFinance); 
+				balancingAccountDescription = obtainAccountDescription(uniqueFinance);
+			}
 			AccountEntryDetail detail = new AccountEntryDetail()
 				.setAccount(financeEntry.getBankAccount().getId())
 				.setAccountCode(financeEntry.getBankAccount().getCode())
-				.setConcept("Apunte Tesorer\u00EDa") // TODO
-				.setAccountDescription(financeEntry.getBankAccount().getDescription());
+				.setAccountDescription(financeEntry.getBankAccount().getDescription())
+				.setConcept(concept) // TODO
+				.setBalancingAccount(balancingAccount)
+				.setBalancingAccountCode(balancingAccountCode)
+				.setBalancingAccountDescription(balancingAccountDescription)
+				.setDocumentNumber(documentNumber)
+				;
 			double debit = 0.0;
 			double credit = 0.0;
 			for ( AccountEntryDetail d : ae.getDetails() ) {
