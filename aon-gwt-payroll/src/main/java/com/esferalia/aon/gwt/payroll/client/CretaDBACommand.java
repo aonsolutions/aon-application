@@ -113,7 +113,7 @@ public class CretaDBACommand implements ScheduledCommand, CretaService {
 		
 		List<String> cccs = new LinkedList<String>();
 		for ( CCC ccc : dialog.getSelectedData()) 
-			cccs.add("0111" + ccc.getCode() );
+			cccs.add(ccc.getRegime() + ccc.getCode() );
 		params.put(Parameter.CCC, cccs );
 
 		MainCreta.send(File.COMUNICACION_DATOS_BANCARIOS, 

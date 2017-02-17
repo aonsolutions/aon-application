@@ -38,10 +38,11 @@ import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.CompanyColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
@@ -55,10 +56,8 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 /**
@@ -1008,6 +1007,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					ccc.setId( cccId );
 					ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
 					ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
+					ccc.setRegime(getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE)).getCode());
+					
 					activity.addCcc(ccc);
 				}
 			}
@@ -1297,6 +1298,21 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return getParentDomainID();
 		} finally {
 			releaseFacesContext();
+		}
+	}
+	
+	
+	public static SSRegimeType getSSRegime( int cccType ) {
+		Map<CCCType, SSRegimeType> regimes = new HashMap<CCCType, SSRegimeType>(){
+			{
+				put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
+			}
+		};
+		
+		try {
+			return regimes.getOrDefault(CCCType.values()[cccType], SSRegimeType.GENERAL);
+		} catch ( Throwable t){
+			return SSRegimeType.GENERAL;
 		}
 	}
 	
