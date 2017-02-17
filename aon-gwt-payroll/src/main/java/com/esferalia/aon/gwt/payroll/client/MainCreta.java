@@ -1459,7 +1459,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		for (Enterprise enterprise : enterprises)
 			for (Activity activity : enterprise.getActivities())
 				for (CCC ccc : activity.getCccs())
-					cccs.add("0111" + ccc.getGeozone() + ccc.getCode());
+					cccs.add(ccc.getRegime() + ccc.getGeozone() + ccc.getCode());
 		return cccs;
 	}
 

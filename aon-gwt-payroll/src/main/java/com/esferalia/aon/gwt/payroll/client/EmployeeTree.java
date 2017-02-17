@@ -574,7 +574,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			for (CCC ccc : cccs)
 				requestDataBuffer
-						.append("&" + Parameter.CCC + "=0111" + ccc.getCode());
+						.append("&" + Parameter.CCC + "=" + ccc.getRegime() + ccc.getCode());
 
 			if (basesMesAnterior)
 				requestDataBuffer.append(
@@ -638,7 +638,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			
 			for (CCC ccc : cccs) {
 				buffer.append('-');
-				buffer.append("0111");
+				buffer.append(ccc.getRegime());
 				buffer.append(ccc.getCode());
 			}
 			buffer.append('-');
