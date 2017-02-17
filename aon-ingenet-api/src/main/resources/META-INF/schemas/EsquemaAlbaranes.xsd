@@ -17,6 +17,13 @@
 					maxOccurs="unbounded" />
 				<xsd:element name="ERRORES" type="ERRORES_TYPE"
 					minOccurs="0" />
+				<xsd:element name="PRUEBA" minOccurs="0">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="[SN\s]" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
