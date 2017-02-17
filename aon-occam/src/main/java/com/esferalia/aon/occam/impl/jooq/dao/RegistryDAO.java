@@ -295,7 +295,7 @@ public class RegistryDAO {
 			.where(ACCOUNTING_REGISTRY_PROPERTIES.getConditions(filter))
 			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), REGISTRY.SECURITY_LEVEL))
 			.orderBy(REGISTRY.NAME)
-			.limit(10)
+			.limit(30)
 			.fetch()
 			.stream()
 			.map(rec -> new AccountingRegistry()
