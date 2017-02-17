@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorder {
@@ -28,28 +29,39 @@ public class InvoiceRecorder {
 			@Override
 			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
 				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
+					Integer registryAccount = invoice.getRegistry().getAccountId();
+					String registryAccountCode = invoice.getRegistry().getAccountCode();
+					if (AonStringUtils.isBlank(registryAccountCode)) registryAccountCode = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
+					String registryAccountDescription = invoice.getRegistry().getAccountDescription();
+					if (AonStringUtils.isBlank(registryAccountDescription)) registryAccountDescription = invoice.getRegistry().getName();
+					
+					Integer payAccount = finance.getPayAccountId();
+					String payAccountCode = finance.getPayAccountCode();
+					String payAccountDescription = finance.getPayAccountDescription();
+					if (AonStringUtils.isBlank(payAccountDescription)) payAccountDescription = "COBRO FACTURA";
+					
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
-						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
-						String description = invoice.getRegistry().getAccountDescription();
-						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
 						detail = new AccountEntryDetail()
-							.setAccount(invoice.getRegistry().getAccountId())
-							.setAccountCode(code)
-							.setAccountDescription(description);
+							.setAccount(registryAccount)
+							.setAccountCode(registryAccountCode)
+							.setAccountDescription(registryAccountDescription)
+							.setBalancingAccount(payAccount)
+							.setBalancingAccountCode(payAccountCode)
+							.setBalancingAccountDescription(payAccountDescription);
 						map.put(invoice.getRegistry().getAccountId(),detail);
 					}
 					detail.setCredit(invoice.getTotalInvoice());
 					
 					AccountEntryDetail payDetail = map.get(finance.getPayAccountId());
 					if (payDetail == null) {
-						String description = finance.getPayAccountDescription();
-						if (AonStringUtils.isBlank(description)) description = "COBRO FACTURA";
 						payDetail = new AccountEntryDetail()
-							.setAccount(finance.getPayAccountId())
-							.setAccountCode(finance.getPayAccountCode())
-							.setAccountDescription(description);
+							.setAccount(payAccount)
+							.setAccountCode(payAccountCode)
+							.setAccountDescription(payAccountDescription)
+							.setBalancingAccount(registryAccount)
+							.setBalancingAccountCode(registryAccountCode)
+							.setBalancingAccountDescription(registryAccountDescription);
 						map.put(finance.getPayAccountId(),payDetail);
 					}
 					payDetail.setDebit(invoice.getTotalInvoice());
@@ -62,28 +74,41 @@ public class InvoiceRecorder {
 				if (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
 					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR) {
 					
+					Integer registryAccount = invoice.getRegistry().getAccountId();
+					String registryAccountCode = invoice.getRegistry().getAccountCode();
+					if (AonStringUtils.isBlank(registryAccountCode)) registryAccountCode 
+						= invoice.getRegistry().getType().getAccountPrefix() + "?????";
+					String registryAccountDescription = invoice.getRegistry().getAccountDescription();
+					if (AonStringUtils.isBlank(registryAccountDescription)) registryAccountDescription = invoice.getRegistry().getName();
+					
+					Integer payAccount = finance.getPayAccountId();
+					String payAccountCode = finance.getPayAccountCode();
+					String payAccountDescription = finance.getPayAccountDescription();
+					if (AonStringUtils.isBlank(payAccountDescription)) payAccountDescription = "PAGO FACTURA";
+					
+					
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
-						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "?????";
-						String description = invoice.getRegistry().getAccountDescription();
-						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
 						detail = new AccountEntryDetail()
-							.setAccount(invoice.getRegistry().getAccountId())
-							.setAccountCode(code)
-							.setAccountDescription(description);
+							.setAccount(registryAccount)
+							.setAccountCode(registryAccountCode)
+							.setAccountDescription(registryAccountDescription)
+							.setBalancingAccount(payAccount)
+							.setBalancingAccountCode(payAccountCode)
+							.setBalancingAccountDescription(payAccountDescription);
 						map.put(invoice.getRegistry().getAccountId(),detail);
 					}
 					detail.setDebit(invoice.getTotalInvoice());
 					
 					AccountEntryDetail payDetail = map.get(finance.getPayAccountId());
 					if (payDetail == null) {
-						String description = finance.getPayAccountDescription();
-						if (AonStringUtils.isBlank(description)) description = "PAGO FACTURA";
 						payDetail = new AccountEntryDetail()
-							.setAccount(finance.getPayAccountId())
-							.setAccountCode(finance.getPayAccountCode())
-							.setAccountDescription(description);
+							.setAccount(payAccount)
+							.setAccountCode(payAccountCode)
+							.setAccountDescription(payAccountDescription)
+							.setBalancingAccount(registryAccount)
+							.setBalancingAccountCode(registryAccountCode)
+							.setBalancingAccountDescription(registryAccountDescription);
 						map.put(finance.getPayAccountId(),payDetail);
 					}
 					payDetail.setCredit(invoice.getTotalInvoice());
@@ -104,6 +129,41 @@ public class InvoiceRecorder {
 			}
 		}
 	}
+	
+	private static Integer obtainRegistryAccount(AccountingInvoice invoice) {
+		return invoice.getRegistry().getAccountId();
+	}
+	private static String obtainRegistryAccountCode(AccountingInvoice invoice) {
+		String code = invoice.getRegistry().getAccountCode();
+		if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "?????";
+		return code;
+	}
+	private static String obtainRegistryAccountDescription(AccountingInvoice invoice) {
+		String description = invoice.getRegistry().getAccountDescription();
+		if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
+		return description;
+	}
+	private static void fillBalancingAccount(AccountEntryDetail detail, AccountingInvoice invoice) {
+		Integer account = null;
+		String code = null;
+		String description = null;
+		for (InvoiceVAT vat : invoice.getVats()) {
+			if (account == null) {
+				account = vat.getExpAccountId();
+				code = vat.getExpAccountCode();
+				description = vat.getExpAccountDescription();
+			}
+			if (!AonNumberUtils.equals(account,vat.getExpAccountId())) {
+				account = null;
+				code = null;
+				description = null;
+				break;
+			}
+		}
+		detail.setBalancingAccount(account)
+			.setBalancingAccountCode(code)
+			.setBalancingAccountDescription(description);
+	}
 
 	private static enum InvoiceEntryDetailType implements Serializable {
 		 CUSTOMER( new IVisitor() {
@@ -113,19 +173,18 @@ public class InvoiceRecorder {
 				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
-						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
-						String description = invoice.getRegistry().getAccountDescription();
-						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
+						Integer account = obtainRegistryAccount(invoice); 
 						detail = new AccountEntryDetail()
-							.setAccount(invoice.getRegistry().getAccountId())
-							.setAccountCode(code)
-							.setAccountDescription(description);
-						map.put(invoice.getRegistry().getAccountId(),detail);
+							.setAccount(account)
+							.setAccountCode(obtainRegistryAccountCode(invoice))
+							.setAccountDescription(obtainRegistryAccountDescription(invoice));
+						fillBalancingAccount(detail,invoice);
+						map.put(account,detail);
 					}
 					detail.setDebit(invoice.getTotalInvoice());
 				}
 			}
+
 	 	})
 		,SUPPLIER_CREDITOR( new IVisitor() {
 
@@ -133,17 +192,14 @@ public class InvoiceRecorder {
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
 				if (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
 					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR) {
-					
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
-						String code = invoice.getRegistry().getAccountCode();
-						if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "?????";
-						String description = invoice.getRegistry().getAccountDescription();
-						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
+						Integer account = obtainRegistryAccount(invoice);
 						detail = new AccountEntryDetail()
-							.setAccount(invoice.getRegistry().getAccountId())
-							.setAccountCode(code)
-							.setAccountDescription(description);
+							.setAccount(account)
+							.setAccountCode(obtainRegistryAccountCode(invoice))
+							.setAccountDescription(obtainRegistryAccountDescription(invoice));
+						fillBalancingAccount(detail,invoice);
 						map.put(invoice.getRegistry().getAccountId(),detail);
 					}
 					detail.setCredit(invoice.getTotalInvoice());
@@ -162,7 +218,11 @@ public class InvoiceRecorder {
 								detail = new AccountEntryDetail()
 									.setAccount(vat.getInputAccountId())
 									.setAccountCode(vat.getInputAccountCode())
-									.setAccountDescription(vat.getInputAccountDescription());
+									.setAccountDescription(vat.getInputAccountDescription())
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+									;
 								map.put(vat.getInputAccountId(),detail);
 							}
 							detail.addDebit( vat.getDeductibleQuota() + vat.getSurchargeQuota() );
@@ -183,7 +243,11 @@ public class InvoiceRecorder {
 								detail = new AccountEntryDetail()
 										.setAccount(vat.getOutputAccountId())
 										.setAccountCode(vat.getOutputAccountCode())
-										.setAccountDescription(vat.getOutputAccountDescription());
+										.setAccountDescription(vat.getOutputAccountDescription())
+										.setBalancingAccount(obtainRegistryAccount(invoice))
+										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+										;
 								map.put(vat.getOutputAccountId(),detail);
 							}
 							detail.addCredit( vat.getDeductibleQuota() + vat.getSurchargeQuota() );
@@ -207,7 +271,10 @@ public class InvoiceRecorder {
 								detail = new AccountEntryDetail()
 										.setAccount(vat.getAdjAccountId())
 										.setAccountCode(vat.getAdjAccountCode())
-										.setAccountDescription(vat.getAdjAccountDescription());
+										.setAccountDescription(vat.getAdjAccountDescription())
+										.setBalancingAccount(obtainRegistryAccount(invoice))
+										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 								map.put(vat.getAdjAccountId(),detail);
 							}
 							double amount = vat.getQuota() - vat.getDeductibleQuota();
@@ -238,7 +305,10 @@ public class InvoiceRecorder {
 						detail = new AccountEntryDetail()
 								.setAccount(invoice.getWithholdingData().getAccountId())
 								.setAccountCode(invoice.getWithholdingData().getAccountCode())
-								.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
+								.setAccountDescription(invoice.getWithholdingData().getAccountDescription())
+								.setBalancingAccount(obtainRegistryAccount(invoice))
+								.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 						map.put(invoice.getWithholdingData().getAccountId(),detail);
 					}
 					detail.addDebit( invoice.getWithholdingData().getQuota() );
@@ -261,7 +331,10 @@ public class InvoiceRecorder {
 						detail = new AccountEntryDetail()
 								.setAccount(invoice.getWithholdingData().getAccountId())
 								.setAccountCode(invoice.getWithholdingData().getAccountCode())
-								.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
+								.setAccountDescription(invoice.getWithholdingData().getAccountDescription())
+								.setBalancingAccount(obtainRegistryAccount(invoice))
+								.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 						map.put(invoice.getWithholdingData().getAccountId(),detail);
 					}
 					detail.addCredit( invoice.getWithholdingData().getQuota() );
@@ -280,7 +353,10 @@ public class InvoiceRecorder {
 								detail = new AccountEntryDetail()
 									.setAccount(vat.getExpAccountId())
 									.setAccountCode(vat.getExpAccountCode())
-									.setAccountDescription(vat.getExpAccountDescription());
+									.setAccountDescription(vat.getExpAccountDescription())
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 								map.put(vat.getExpAccountId(), detail);
 							}
 							detail.addCredit( vat.getBase() );		
@@ -302,7 +378,10 @@ public class InvoiceRecorder {
 								detail = new AccountEntryDetail()
 									.setAccount(vat.getExpAccountId())
 									.setAccountCode(vat.getExpAccountCode())
-									.setAccountDescription(vat.getExpAccountDescription());
+									.setAccountDescription(vat.getExpAccountDescription())
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 								map.put(vat.getExpAccountId(),detail);
 							}
 							detail.addDebit( vat.getBase() );
@@ -378,11 +457,11 @@ public class InvoiceRecorder {
 		AccountEntry ae = getInvoiceEntry(invoice);
 		if (invoice.hasFinances() && invoice.isFinanceRecordable()) {
 			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
-			entries.add(ae);
 			for (Finance finance : invoice.getFinances()) {
 				AccountEntry payEntry = getFinanceEntry(invoice,finance);
 				entries.add(payEntry);
 			}
+			entries.add(ae);
 			return entries.toArray(new AccountEntry[entries.size()]);
 		}
 		return new AccountEntry[]{ae};
