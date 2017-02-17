@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.lang.instrument.UnmodifiableClassException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +20,8 @@ import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import bsh.Variable;
+
 public class EmployeeCalendarDraftObjectData {
 
 	private Map<Date,Double> mapaDiasHoras;
@@ -34,8 +37,6 @@ public class EmployeeCalendarDraftObjectData {
 	private EmployeesServiceAsync employeesService;
 	
 	private boolean jornadaEmpleado;
-
-	private com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft;
 	
 	public UndoManager<Undoable> undoManager;
 	
@@ -169,13 +170,11 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		private Double oldHour;
 		private Double newHour;
 		private Date day;
-		private StringVariable variable;
 		
-		public SetHourEdit(Double oldH, Double newH, Date actualDay, StringVariable var) {
+		public SetHourEdit(Double oldH, Double newH, Date actualDay) {
 			this.oldHour = oldH;
 			this.newHour = newH;
 			this.day = actualDay;
-			this.variable = var;
 		}
 		
 		@Override
@@ -185,13 +184,11 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 			else
 				draftMapaDiasHoras.put(day, oldHour);
 			
-			salaryDraft.removeDraftVariable(this.variable);
 		}
 		
 		@Override
 		public void redo() {
 			draftMapaDiasHoras.put(day, newHour);
-			salaryDraft.addDraftVariable(this.variable);
 		}
 	}
 	
@@ -284,42 +281,39 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 	public void setHourByDay (Date dia, Double hour){
 		Double old = draftMapaDiasHoras.put(dia, hour);
 		
-		@SuppressWarnings("deprecation")
-		String name = calcularDiaSemana (dia.getDay()-1);
+//		@SuppressWarnings("deprecation")
+//		String name = calcularDiaSemana (dia.getDay()-1);
+//		
+//		StringVariable var = new StringVariable();
+//		var.setImplicit(false);
+//		var.setScope(Scope.SALARY); // DRAFT
+//		var.setName(name);
+//		var.setEndDate(dia);
+//		var.setStartDate(dia);
+//		var.setExpression(Double.toString(hour));
+//		
+//		this.variablesList.add(var);
 		
-		StringVariable var = new StringVariable();
-		var.setImplicit(false);
-		var.setScope(Scope.SALARY); // DRAFT
-		var.setName(name);
-		var.setEndDate(dia);
-		var.setStartDate(dia);
-		var.setExpression(Double.toString(hour));
-		
-		this.salaryDraft.addDraftVariable(var);
 		
 		
-		undoManager.add(new SetHourEdit(old, hour, dia, var));
+		undoManager.add(new SetHourEdit(old, hour, dia));
 	} 
+	
+	public static class CalendarVariable extends StringVariable{
 
+		private static final long serialVersionUID = 1L;
+		
+	}
+	
+	public boolean isMine(com.esferalia.aon.gwt.payroll.shared.Variable v ){
+		return v instanceof CalendarVariable ;
+	}
+	
 	public void setHourByDay (Map<Date, Double> hours){
 		List<Undoable> undos = new ArrayList<Undoable>();
 		for (Map.Entry<Date, Double> entry : hours.entrySet()) {
 			Double old = draftMapaDiasHoras.put(entry.getKey(), entry.getValue());
-			
-			@SuppressWarnings("deprecation")
-			String name = calcularDiaSemana (entry.getKey().getDay());
-			
-			StringVariable var = new StringVariable();
-			var.setImplicit(false);
-			var.setScope(Scope.SALARY); // DRAFT
-			var.setName(name);
-			var.setEndDate(entry.getKey());
-			var.setStartDate(entry.getKey());
-			var.setExpression(Double.toString(entry.getValue()));
-			
-			this.salaryDraft.addDraftVariable(var);
-			
-			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey(), var));
+			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
 		}
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 		
@@ -345,10 +339,34 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		return jornadaEmpleado;
 	}
 
-	public void setSalaryDraft(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft) {
-		this.salaryDraft = salaryDraft;
+	//TODO: MIRAR ESTO!
+	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
+
+		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		
+		for (Entry<Date,Double> entry : draftMapaDiasHoras.entrySet()) {		
+			if (startDate.compareTo(entry.getKey())<=0 
+					&& endDate.compareTo(entry.getKey())>=0 ){
+				
+				@SuppressWarnings("deprecation")
+				String name = calcularDiaSemana (entry.getKey().getDay());
+				
+				CalendarVariable var = new CalendarVariable();
+				
+				var.setImplicit(false);
+				var.setScope(Scope.SALARY); // DRAFT
+				var.setName(name);
+				var.setEndDate(entry.getKey());
+				var.setStartDate(entry.getKey());
+				var.setExpression(Double.toString(entry.getValue()));
+				
+				variablesList.add(var);	
+			}
+		}
+		
+		return variablesList;
 	}
-	
+
 	private String calcularDiaSemana(int day) {
 		String result = "";
 		switch (day) {
@@ -616,5 +634,11 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		}
 		
 		return mapaUpdate;
+	}
+
+	public void clearDraftHours() {
+		draftMapaDiasHoras.clear();
+		undoManager.discardAll();
+		
 	}
 }

@@ -261,6 +261,8 @@ public class SalaryDraftObject implements IContextProvider {
 	private ITDataObject dataObject;
 	private SalaryDraft salaryDraft;
 	private UndoManager<Undoable> undoManager;
+	
+	private EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData;
 
 	private EmployeesServiceAsync employeesServiceAsync;
 
@@ -302,9 +304,12 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public void save(final CalculateCallback callback) {
 
+		removeCalendarDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
-
+		employeeCalendarDraftObjectData.clearDraftHours();
+		
 		employeesServiceAsync.saveSalaryDraft(salaryDraft,
 				new AsyncCallback<Void>() {
 
@@ -349,7 +354,9 @@ public class SalaryDraftObject implements IContextProvider {
 	public void calculate(final CalculateCallback callback) {
 
 		setDraftType(salaryDraft);
+		removeCalendarDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
 
 		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
@@ -385,6 +392,8 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	
+	
+
 	public void emitSalary(final CalculateCallback callback) {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
@@ -1044,6 +1053,19 @@ public class SalaryDraftObject implements IContextProvider {
 			setDeductionType(d, draft.getType());
 	}
 
+	private void removeCalendarDraft() {
+		Window.alert("Inicio: "+salaryDraft.getDraftContext().size());
+		List<Variable> draftContext = salaryDraft.getDraftContext();
+		for ( int i = draftContext.size()-1; i >= 0; i--) {
+			Variable var = draftContext.get(i);
+			if (employeeCalendarDraftObjectData.isMine(var)){
+				draftContext.remove(i);
+			}
+		}
+		
+		Window.alert("Inicio: "+salaryDraft.getDraftContext().size());
+	}
+	
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
 			SalaryDraft draft) {
 		setStartAndEndDates(draftStartDate, draftEndDate,
@@ -1056,6 +1078,12 @@ public class SalaryDraftObject implements IContextProvider {
 				draft.getDraftEmbargos());
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftBonuses());
+	}
+	
+	//TODO: MIRAR ESTO!
+	private void addCalendarDraft(ArrayList<StringVariable> variablesList) {
+		for (StringVariable stringVariable : variablesList)
+				salaryDraft.addDraftVariable(stringVariable);	
 	}
 
 	private static void setDeductionType(Deduction d,
@@ -1100,5 +1128,11 @@ public class SalaryDraftObject implements IContextProvider {
 				return var;
 		return null;
 	}
+
+	public void setEmployeeCalendarDraftObjectData(EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData) {
+		this.employeeCalendarDraftObjectData = employeeCalendarDraftObjectData;
+	}
+	
+	
 
 }

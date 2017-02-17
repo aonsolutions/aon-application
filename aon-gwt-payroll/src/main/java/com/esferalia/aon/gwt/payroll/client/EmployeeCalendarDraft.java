@@ -649,7 +649,7 @@ public class EmployeeCalendarDraft extends Composite {
 
 	@UiHandler("diaSuspensionButton")
 	public void onSuspensionClick(ClickEvent event) {
-		aplicarEstilosDiasSeleccionadios(DayType.SUSPENSIONDAY);
+		//aplicarEstilosDiasSeleccionadios(DayType.SUSPENSIONDAY);
 	}
 	
 	@UiHandler("hourButton")
@@ -825,10 +825,11 @@ public class EmployeeCalendarDraft extends Composite {
 		
 		if (annio == startEmployeeContract || annio == (new Date().getYear()-1)){
 			this.lastYearButton.setEnabled(false);
-			bloquearDiasFueraDeContrato(calendarEmployeeInfo.getStartDateContract());
 		}
 		if (annio == endEmployeeContract || annio == (new Date().getYear()+1))
 			this.nextYearButton.setEnabled(false);
+		
+		bloquearDiasFueraDeContrato(calendarEmployeeInfo.getStartDateContract(), calendarEmployeeInfo.getEndDateContract());
 	}
 
 	private int calcularNumeroDiaSemana(int dia, int mes, int anio) {
@@ -1154,15 +1155,16 @@ public class EmployeeCalendarDraft extends Composite {
 		
 	}
 	
-	private void bloquearDiasFueraDeContrato(Date startDateContract) {
+	private void bloquearDiasFueraDeContrato(Date startDateContract, Date endDateContract) {
 		for (int row = 1; row < 25; row+=2)
 			for (int column = 1; column < 38; column++){
-				if (null != cellsDates[row][column] && startDateContract.after(cellsDates[row][column])){
+				if (null != cellsDates[row][column] && 
+						(startDateContract.after(cellsDates[row][column]) || endDateContract.before(cellsDates[row][column]))){
+					limpiarEstilo(row, column);
 					calendarGrid.getCellFormatter().addStyleName(row, column, style.setOutOfContractStyle());
 					calendarGrid.getCellFormatter().addStyleName(row+1, column, style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).addStyleName(style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).setVisible(false);
-					limpiarEstilo(row, column);
 				}
 			}	
 	}

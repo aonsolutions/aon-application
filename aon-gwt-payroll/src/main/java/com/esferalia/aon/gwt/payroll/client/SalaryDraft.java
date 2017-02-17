@@ -227,6 +227,8 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_ERE", "DIAS_PATERNIDAD", // internals
 
 			"CONTEXT", "SELF", "THIS", // context
+			
+			"HORAS_LUNES", "HORAS_MARTES", "HORAS_MIERCOLES", "HORAS_JUEVES", "HORAS_VIERNES", "HORAS_SABADO", "HORAS_DOMINGO", //Calendario 
 
 			"OCUPACION_IT", "OCUPACION_IMS", "PREST_IT" };
 
