@@ -85,7 +85,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			}
 			if(deliveryList!=null && deliveryList.getDATOSALBARANES()!=null 
 					&& deliveryList.getDATOSALBARANES().size()>0){
-				processData(deliveryList.getDATOSALBARANES());
+				boolean test = deliveryList.getPRUEBA().matches("S");
+				processData(deliveryList.getDATOSALBARANES(), test);
 			} else {
 				errorList.add("No se han encontrado datos de albaranes");
 			}
@@ -134,12 +135,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 	
 	
-	private void processData(List<ALBARANTYPE> list){
+	private void processData(List<ALBARANTYPE> list, boolean test){
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		ctx.getDslContext().transaction(configuration -> {
 			list.forEach(albaran -> {
-				createDelivery(ctx, albaran);
-				createCarrierPacking(ctx, albaran);
+				createDelivery(ctx, albaran, test);
+				createCarrierPacking(ctx, albaran, test);
 			});
 		});
 	}
@@ -151,7 +152,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		albaran.getERRORES().getERRORES().add(msg);
 	}
 
-	private void createDelivery(AONContext ctx, ALBARANTYPE albaran) {
+	private void createDelivery(AONContext ctx, ALBARANTYPE albaran, boolean test) {
 		Delivery delivery = new Delivery(); 
 		try {
 			fillDelivery(ctx, albaran, delivery);
@@ -160,16 +161,20 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		Integer deliveryId = null;
 		try {
-			deliveryId = WarehouseDAO.insertDelivery(ctx, delivery);
+			if(!test){
+				deliveryId = WarehouseDAO.insertDelivery(ctx, delivery);
+			}
 		} catch (Throwable th) {
 			addError(albaran, th.getLocalizedMessage());
 		}
 		if(deliveryId!=null){
 			delivery.setId(deliveryId);
 			List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
-			fillDeliveryDetailList(ctx, albaran, delivery, detailList);
+			fillDeliveryDetailList(ctx, albaran, delivery, detailList, test);
 			try {
-				WarehouseDAO.insertDeliveryDetails(ctx, detailList);
+				if(!test){
+					WarehouseDAO.insertDeliveryDetails(ctx, detailList);
+				}
 			} catch (Throwable th) {
 				addError(albaran, th.getLocalizedMessage());
 			}
@@ -245,7 +250,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
 
 	private List<DeliveryDetail> fillDeliveryDetailList(AONContext ctx,
-			ALBARANTYPE albaran, Delivery delivery, List<DeliveryDetail> detailList) {
+			ALBARANTYPE albaran, Delivery delivery, List<DeliveryDetail> detailList, boolean test) {
 		List<DATOSLINEAALBARANTYPE> list = albaran.getLINEASALBARAN().getDATOSLINEAALBARAN();
 		if (list != null && list.size() > 0) {
 			Warehouse warehouse = WarehouseDAO.getWarehouse(
@@ -261,7 +266,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					.forEach(
 							linea -> {
 								Item item = obtainItem(ctx,
-										linea.getPRODUCTO());
+										linea.getPRODUCTO(), test);
 								Elaboration elaboration = obtainElaboration(
 										ctx, linea.getDATOSELABORACIONORIGEN());
 								DeliveryDetail detail = new DeliveryDetail();
@@ -277,7 +282,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 								detail.setDiscountExpression("0");
 //								detail.setSalesDetail(elaboration.getSourceId());
 								detailList.add(detail);
-								manageElaboration(ctx, linea);
+								manageElaboration(ctx, linea, test);
 							});
 			list.stream()
 					.filter(linea -> isPackageItem(linea))
@@ -286,7 +291,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					.forEach(
 							linea -> {
 								Item item = obtainItem(ctx,
-										linea.getPRODUCTO());
+										linea.getPRODUCTO(), test);
 								DeliveryDetail detail = new DeliveryDetail();
 								detail.setDomain(ctx.getDomainId());
 								detail.setDelivery(delivery);
@@ -305,7 +310,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
 	
 	private void manageElaboration(AONContext ctx,
-			DATOSLINEAALBARANTYPE lineaAlbaran) {
+			DATOSLINEAALBARANTYPE lineaAlbaran, boolean test) {
 
 		Elaboration elaboration = obtainElaboration(ctx,
 				lineaAlbaran.getDATOSELABORACIONORIGEN());
@@ -318,12 +323,14 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			elaborationDetail.setElaboration(elaboration);
 			elaborationDetail.setDate(new Date());
 			elaborationDetail.setItem(obtainItem(ctx,
-					lineaAlbaran.getPRODUCTO()));
+					lineaAlbaran.getPRODUCTO(), test));
 			elaborationDetail
 			.setQuantity(Double.valueOf(lineaAlbaran.getCANTIDAD()));
 			elaborationDetail.setWarehouse(null);
 			elaborationDetail.setAddInfo("");
-			ElaborationDAO.insertElaborationDetail(ctx, elaborationDetail);
+			if(!test){
+				ElaborationDAO.insertElaborationDetail(ctx, elaborationDetail);
+			}
 			
 			lineaAlbaran
 			.getCOMPOSICIONPRODUCTOELABORADO()
@@ -331,7 +338,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			.forEach(
 					lineaComposicion -> {
 						Item compositionItem = createItem(ctx,
-								lineaComposicion.getPRODUCTO());
+								lineaComposicion.getPRODUCTO(), test);
 						ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
 						elaborationDetailComposition.setDomain(ctx
 								.getDomainId());
@@ -343,14 +350,16 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 								.valueOf(lineaComposicion.getCANTIDAD()));
 						elaborationDetailComposition.setWarehouse(null);
 						elaborationDetailComposition.setAddInfo(null);
-						ElaborationDAO.insertElaborationDetailComposition(
-								ctx, elaborationDetailComposition);
+						if(!test){
+							ElaborationDAO.insertElaborationDetailComposition(
+									ctx, elaborationDetailComposition);
+						}
 					});
 		}
 	}
 	
 	
-	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran) {
+	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran, boolean test) {
 		CarrierPacking carrierPacking = null;
 		try {
 			carrierPacking = new CarrierPacking();
@@ -384,7 +393,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			addError(albaran, th.getLocalizedMessage());
 		}
 		try {
-			if(carrierPacking!=null){
+			if(!test){
 				WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
 			}
 		} catch (Throwable th) {
@@ -465,7 +474,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return null;
 	}
 	
-	private Item obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado) {
+	private Item obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) {
 		Product product = ProductDAO
 				.getProductStream(
 						ctx,
@@ -493,14 +502,14 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			Item item = itemList == null || itemList.isEmpty() ? null
 					: itemList.get(0);
 			if (item == null || item.getId() == null) {
-				item = createItem(ctx, productoelaborado);
+				item = createItem(ctx, productoelaborado, test);
 			}
 			return item;
 		}
 		return null;
 	}
 	
-	private Item createItem(AONContext ctx, PRODUCTOTYPE productoelaborado) {
+	private Item createItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) {
 		Product product = ProductDAO
 				.getProductStream(
 						ctx,
@@ -551,7 +560,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					item.setSerialNumber(productoelaborado.getNUMEROLOTESERIE());
 				}
 				try {
-					ProductDAO.insertItem(ctx, item);
+					if(!test){
+						ProductDAO.insertItem(ctx, item);
+					}
 				} catch (AonCoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
