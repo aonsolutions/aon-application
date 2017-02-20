@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
@@ -130,10 +131,12 @@ public class CarrierPacking extends AonTemplate{
 				}
 				@Override
 				protected void sendPackingList() {
+					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
+
 					VerticalPanel panel = new VerticalPanel();
 					panel.setStyleName(AON.AON_CSS.aonWidthAll());
 					AonComboBox emailComboBox = new AonComboBox();
-			    	emailComboBox.setLabel("Cuenta de Correo");
+			    	emailComboBox.setLabel("De");
 			    	emailComboBox.setItemLabelPath("name");
 			    	emailComboBox.setItemValuePath("name");
 					API.getCommon().getMailAccounts(new AsyncCallback<JSON<JsObject>>() {
@@ -147,6 +150,24 @@ public class CarrierPacking extends AonTemplate{
 					});
 					panel.add(emailComboBox);
 					
+					PaperInput toText = new PaperInput();
+					toText.setLabel("Para");
+					API.getIncidence().getEnterpriseRmediaList(w.getJsCarrierPacking().getCarrier().getId(), new AsyncCallback<JSON<JsRmedia>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsRmedia> result) {
+							result.getData().stream().forEach(rmedia -> {
+								String media = rmedia.getMedia() + "";
+								if(media.equals("4")){	
+									toText.setValue(rmedia.getValue());
+								}
+							});
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+					panel.add(toText);
+
 					AonComboBox signComboBox = new AonComboBox();
 			    	signComboBox.setLabel("Firma de Correo");
 			    	signComboBox.setItemLabelPath("name");
@@ -166,13 +187,28 @@ public class CarrierPacking extends AonTemplate{
 			    	prb1.setChecked(true);			    	
 			    	
 			    	PaperRadioButton prb2 = new PaperRadioButton();
-					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
 
 			    	prb1.addChangeHandler(new ChangeEventHandler() {
 						
 						@Override
 						public void onChange(ChangeEvent event) {
 							prb2.setChecked(!prb1.getChecked());
+							if(prb1.getChecked()){
+								toText.setVisible(true);
+								API.getIncidence().getEnterpriseRmediaList(w.getJsCarrierPacking().getCarrier().getId(), new AsyncCallback<JSON<JsRmedia>>() {
+									
+									@Override
+									public void onSuccess(JSON<JsRmedia> result) {
+										result.getData().stream().forEach(rmedia -> {
+											if(rmedia.getMedia().equals(4)){
+												toText.setValue(rmedia.getValue());
+											}
+										});
+									}
+									
+									@Override public void onFailure(Throwable caught) {}
+								});
+							}
 						}
 					});
 			    	
@@ -181,6 +217,9 @@ public class CarrierPacking extends AonTemplate{
 						@Override
 						public void onChange(ChangeEvent event) {
 							prb1.setChecked(!prb2.getChecked());
+							if(prb2.getChecked()){
+								toText.setVisible(false);
+							}
 						}
 					});
 			    	hp.add(prb1);
@@ -203,7 +242,9 @@ public class CarrierPacking extends AonTemplate{
 							JsObject jsSign = (JsObject) signComboBox.getSelectedItem();
 							String requestData = "{\"carrier_packing\":\""+ w.getJsCarrierPacking().getId() +"\","
 									+ "\"mail_account\":\""+ jsEmail.getId() +"\","
-									+ "\"signature\":\""+ jsSign.getId() +"\"," 
+									+ "\"signature\":\""+ ((jsSign != null) ? jsSign.getId() : "-1" )+"\"," 
+									+ "\"to\":\""+ toText.getValue() + "\","
+									+ "\"order\":\""+ -1 + "\","
 									+ "\"type\":\"" + (prb1.getChecked() ? "carrier" : "registry") + "\"" + "}";
 
 							API.getWarehouse().sendPackingList(requestData);

@@ -34,10 +34,13 @@ public class PackingList {
 	}
 	
 	public static File createPdf(JSONObject json, byte [] image) {
-		File archivoPDF = new File("packingList" + ".pdf");
-		if(archivoPDF.exists()) {
-			archivoPDF.delete();
+		File archivoPDF = null;
+		try {
+			archivoPDF = File.createTempFile("packingList", "pdf");
+		} catch (IOException e2) {
+			e2.printStackTrace();
 		}
+
 		try {
 			archivoPDF.createNewFile();
 		} catch (IOException e1) {

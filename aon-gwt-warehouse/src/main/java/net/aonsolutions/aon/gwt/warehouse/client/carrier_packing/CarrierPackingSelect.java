@@ -8,15 +8,21 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
-import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -53,6 +59,9 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.vaadin.polymer.paper.widget.PaperInput;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class CarrierPackingSelect extends Composite{
 	
@@ -403,7 +412,145 @@ public class CarrierPackingSelect extends Composite{
 		};
 	}
 	
+	private class ActionHasCell implements HasCell<JsOrder, JsOrder> {
+	    private ActionCell<JsOrder> cell;
+	    String s;
+	    
+	    public ActionHasCell(String text, Delegate<JsOrder> delegate) {
+	    	s = text;
+	        cell = new ActionCell<JsOrder>(text, delegate){
+	        	String text = s;
+	        	@Override
+	        	public void render(com.google.gwt.cell.client.Cell.Context context,
+	        			JsOrder value, SafeHtmlBuilder sb) {
+	        		if(text.equals("send")){ 	
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-mail\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");
+	        		}
+	        		
+	        		if(text.equals("delete")){
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");
+	        		}
+	        	}
+	        };
+	        
+	    }
+
+	    @Override
+	    public Cell<JsOrder> getCell() {
+	        return cell;
+	    }
+
+	    @Override
+	    public FieldUpdater<JsOrder, JsOrder> getFieldUpdater() {
+	        return null;
+	    }
+
+	    @Override
+	    public JsOrder getValue(JsOrder object) {
+	        return object;
+	    }
+	}
+	
+	private void send(JsOrder js) {
+		VerticalPanel panel = new VerticalPanel();
+		panel.setStyleName(AON.AON_CSS.aonWidthAll());
+		AonComboBox emailComboBox = new AonComboBox();
+    	emailComboBox.setLabel("De");
+    	emailComboBox.setItemLabelPath("name");
+    	emailComboBox.setItemValuePath("name");
+		API.getCommon().getMailAccounts(new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+		    	emailComboBox.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		panel.add(emailComboBox);
+		
+		PaperInput toText = new PaperInput();
+		toText.setLabel("Para");
+		API.getIncidence().getEnterpriseRmediaList(js.getRegistry().getId(), new AsyncCallback<JSON<JsRmedia>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsRmedia> result) {
+				result.getData().stream().forEach(rmedia -> {
+					String media = rmedia.getMedia() + "";
+					if(media.equals("4")){	
+						toText.setValue(rmedia.getValue());
+					}
+				});
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		panel.add(toText);
+
+		AonComboBox signComboBox = new AonComboBox();
+    	signComboBox.setLabel("Firma de Correo");
+    	signComboBox.setItemLabelPath("name");
+    	signComboBox.setItemValuePath("name");
+    	API.getCommon().getSignatures(new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+				signComboBox.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+    	panel.add(signComboBox);
+    	
+      	AonDialog dialog = new AonDialog("Enviar Packing List", panel) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				JsObject jsEmail = (JsObject) emailComboBox.getSelectedItem();
+				JsObject jsSign = (JsObject) signComboBox.getSelectedItem();
+				String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
+						+ "\"mail_account\":\""+ jsEmail.getId() +"\","
+						+ "\"signature\":\""+ ((jsSign != null) ? jsSign.getId() : "-1" )+"\"," 
+						+ "\"to\":\""+ toText.getValue() + "\","
+						+ "\"order\":\""+ js.getId() + "\","
+						+ "\"type\":\"registry\"" + "}";
+
+				API.getWarehouse().sendPackingList(requestData);
+				hide();
+			}
+		};
+		dialog.addAutoHidePartner(emailComboBox.getElementById("overlay"));
+		dialog.addAutoHidePartner(signComboBox.getElementById("overlay"));
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
+	}
+	
 	private void initTableColumns(final SelectionModel<JsOrder> selectionModel, ListHandler<JsOrder> sortHandler) {
+		List<HasCell<JsOrder, ?>> cells = new LinkedList<HasCell<JsOrder, ?>>();
+	    
+		cells.add(new ActionHasCell("delete", new Delegate<JsOrder>() {
+
+	        @Override
+	        public void execute(JsOrder object) {
+	        	deleteOrder(object);
+	        }
+	    }));
+		
+	    cells.add(new ActionHasCell("send", new Delegate<JsOrder>() {
+
+	        @Override
+	        public void execute(JsOrder object) {
+	        	send(object);
+	        }
+	    }));
+		
+		CompositeCell<JsOrder> cell = new CompositeCell<JsOrder>(cells);
+
 		/** Date Column **/
 		Column<JsOrder,String> dateColumn = new Column<JsOrder, String>(new TextCell()) {
 			
@@ -495,8 +642,19 @@ public class CarrierPackingSelect extends Composite{
 		dataGrid.addColumn(priceColumn, "Importe");
 		dataGrid.setColumnWidth(priceColumn, 10, Unit.PCT);
 
-		/** Delete Column **/
-		ActionCell<JsOrder> cell = new ActionCell<JsOrder>("delete", new Delegate<JsOrder>() {
+		/** Action Column **/
+		Column<JsOrder, JsOrder> actionColumn = new Column<JsOrder, JsOrder>(cell){
+
+			@Override
+			public JsOrder getValue(JsOrder object) {
+				return object;
+			}
+		};
+		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+		dataGrid.addColumn(actionColumn, "");
+		dataGrid.setColumnWidth(actionColumn, 10, Unit.PCT);
+		
+	/*	ActionCell<JsOrder> cell = new ActionCell<JsOrder>("delete", new Delegate<JsOrder>() {
 			 @Override
 		        public void execute(JsOrder object) {
 		        	deleteOrder(object);
@@ -517,6 +675,6 @@ public class CarrierPackingSelect extends Composite{
 			};
 			deleteColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
 			dataGrid.addColumn(deleteColumn, "");
-			dataGrid.setColumnWidth(deleteColumn, 10, Unit.PCT);
+			dataGrid.setColumnWidth(deleteColumn, 10, Unit.PCT);*/
 	}
 }
