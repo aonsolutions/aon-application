@@ -62,7 +62,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		private InvestAssetListBox() {
 			setWidth("90px");
 			addItem("------",(String) null);
-			if (callback.isInvestAssetsAvailable()) {
+			if (callback.getModule().getConfiguration().isInvestAssetsAvailable()) {
 				for (InvestAsset asset : callback.getModule().getConfiguration().getInvestAssets()) {
 					addItem(asset.getDescription(),AonNumberUtils.toString(asset.getId()));
 				}
