@@ -83,6 +83,7 @@ public class ContractSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		criteria.addGreaterThanExpression(getFieldName(IEntityAlias.CONTRACT_ID), 0);			
 		if ((getPerson() != null) && (getPerson().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());			
 		}
