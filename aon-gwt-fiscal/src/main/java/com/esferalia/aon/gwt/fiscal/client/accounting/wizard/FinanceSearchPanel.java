@@ -182,6 +182,17 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			}
 		});
 
+		concept = new TextBox();
+		concept.setTabIndex(++tabIndex);
+		concept.setStyleName(AON.AON_CSS.aonInputText());
+		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				search();
+			}
+		});
+
 		fromDate = new DateBoxEx();
 		fromDate.setTabIndex(++tabIndex);
 		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -212,28 +223,6 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			}
 		});
 		
-		concept = new TextBox();
-		concept.setTabIndex(++tabIndex);
-		concept.setStyleName(AON.AON_CSS.aonInputText());
-		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> arg0) {
-				search();
-			}
-		});
-		payment = new ListBox();
-		payment.addItem(" --- "," --- ");
-		payment.addItem("Pago" ,"Pago");
-		payment.addItem("Cobro", "Cobro");
-		payment.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				search();
-			}
-		});
-		
 		referenceCode = new TextBox();
 		referenceCode.setTabIndex(++tabIndex);
 		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
@@ -253,6 +242,19 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> arg0) {
+				search();
+			}
+		});
+
+		payment = new ListBox();
+		payment.addItem(" --- "," --- ");
+		payment.addItem("Pago" ,"Pago");
+		payment.addItem("Cobro", "Cobro");
+		payment.setTabIndex(++tabIndex);
+		payment.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
 				search();
 			}
 		});
