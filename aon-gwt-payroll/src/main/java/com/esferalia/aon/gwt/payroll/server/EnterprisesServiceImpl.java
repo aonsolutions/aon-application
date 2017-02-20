@@ -9,12 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
