@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttachCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.WizardContentBase.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -27,9 +29,7 @@ public interface IWizardContent extends IsWidget,Focusable {
 	public void manageWidgets(boolean canRemove, boolean canEdit);
 	
 
-	
-//	public IAccountEntryWrapper create(AccountEntry base);
-//	public boolean isNew();
-//	public boolean isDirty();
-//	public void get(Integer id , final AsyncCallback<AccountEntry> callback);
+	public void entryDateChanged(Date entryDate);
+	public void activityChanged(Integer activty);
+	public void confidentialChanged(boolean confidential);
 }

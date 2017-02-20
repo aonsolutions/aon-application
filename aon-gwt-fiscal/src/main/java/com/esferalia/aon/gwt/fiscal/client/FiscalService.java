@@ -255,7 +255,7 @@ public interface FiscalService extends RemoteService {
 	AccountingInvoice getAccountingInvoice(String domainName, int domain, Integer accountEntry) throws AonCoreException;
 	AccountingInvoice getAccountingInvoiceFromInvoice(String domainName, int domain, Integer invoiceId) throws AonCoreException;
 	AccountingInvoice save(String currentDomainName, int currentDomain, AccountingInvoice invoice) throws AonCoreException;
-	AccountingInvoice initializeInvoice(String domainName,int domain, AccountingRegistry registry, Date issueDate) throws AonCoreException; 
+	AccountingInvoice initializeInvoice(String domainName,int domain, AccountingRegistry registry, Integer activity, Date issueDate) throws AonCoreException; 
 	AccountingInvoice getRegistryLastAccountingInvoice(String currentDomainName, int currentDomain, Integer registryId) throws AonCoreException;
 	AccountingInvoice rectifyInvoice(String currentDomainName, int currentDomain, Integer id,
 		InvoiceRectificationData data) throws AonCoreException;

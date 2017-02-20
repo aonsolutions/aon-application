@@ -68,7 +68,7 @@ public interface IAccounting {
 	public AccountingInvoice getAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId);
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry);
-	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Date issueDate);
+	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Integer activity, Date issueDate);
 	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId);
 	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data);
 	public LinkedList<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to);

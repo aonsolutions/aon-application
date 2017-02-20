@@ -289,7 +289,7 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
-	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Date issueDate) {
+	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Integer activity, Date issueDate) {
 		if (issueDate == null) {
 			throw new AonCoreException("No se puede inicializar una factura sin fecha");
 		}
@@ -299,7 +299,7 @@ public class AccountingImpl implements IAccounting {
 		if (registry.getType() == null) {
 			throw new AonCoreException("No se puede inicializar una factura sin tipo");
 		}
-		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), issueDate);
+		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), activity, issueDate);
 	}
 	
 	

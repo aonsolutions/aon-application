@@ -1277,9 +1277,9 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void initializeInvoice(String domainName, int domain,AccountingRegistry registry
-		,Date issueDate,AsyncCallback<AccountingInvoice> callback) {
+		,Integer activity,Date issueDate,AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
-		fsa.initializeInvoice(domainName, domain, registry,issueDate,
+		fsa.initializeInvoice(domainName, domain, registry,activity,issueDate,
 				new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
 	

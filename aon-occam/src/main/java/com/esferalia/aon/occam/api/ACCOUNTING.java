@@ -311,11 +311,11 @@ public class ACCOUNTING {
 
 
 	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user,
-			AccountingRegistry registry,Date issueDate) {
+			AccountingRegistry registry,Integer activity, Date issueDate) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getAccounting().initializeInvoice(ctx, registry, issueDate);
+			return getAccounting().initializeInvoice(ctx, registry, activity, issueDate);
 		} finally {
 			if (ctx != null)
 				ctx.close();

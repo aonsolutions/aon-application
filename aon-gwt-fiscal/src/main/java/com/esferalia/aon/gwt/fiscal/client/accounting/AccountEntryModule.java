@@ -298,7 +298,10 @@ public class AccountEntryModule extends MainEntryPoint {
 							int i = 1;
 							for (EnterpriseActivity ea : configuration.getActivities()) {
 								activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
-								if (ea.isPrincipal()) activity.setSelectedIndex(i);
+								if (ea.isPrincipal()) {
+									activity.setSelectedIndex(i);
+									activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
+								}
 								i++;
 							}
 						} else {
@@ -374,6 +377,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		this.wizardContent.getMainEntry().setEntryDate(event.getValue());
 		checkDate();
 		refreshIdLabel();
+		this.wizardContent.entryDateChanged(event.getValue());
 	}
 
 	@UiHandler("period")
@@ -389,12 +393,14 @@ public class AccountEntryModule extends MainEntryPoint {
 		Integer act = AonNumberUtils.toInteger(activity.getSelectedValue());
 		this.wizardContent.getMainEntry().setActivity(act);
 		refreshIdLabel();
+		this.wizardContent.activityChanged(act);
 	}
 
 	@UiHandler("confidential")
 	void onChangeConfidential(ClickEvent event) {
 		this.wizardContent.getMainEntry().setConfidential(confidential.getValue());
 		refreshIdLabel();
+		this.wizardContent.confidentialChanged(confidential.getValue());
 	}
 
 	private void checkDate() {
@@ -1059,7 +1065,9 @@ public class AccountEntryModule extends MainEntryPoint {
 	public Date getEntryDate() {
 		return entryDate.getValue();
 	}
-
+	public Integer getActivity() {
+		return AonNumberUtils.toInteger(activity.getSelectedValue());
+	}
 	public void changeEntryDate(Date date) {
 		entryDate.setValue( date , true);
 	}

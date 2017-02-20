@@ -42,7 +42,7 @@ public class AccountingInvoiceTest {
 	@Test
 	public void test1() throws IOException {
 		Integer registryId = 609337;
-		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, InvoiceType.EXPENSES, registryId, new Date());
+		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, InvoiceType.EXPENSES, registryId, null, new Date());
 		print(ai);
 		for ( int i = 0 ; i < 100000 ; i++ ) {
 			double d = AonNumberUtils.todouble( AonRandomStringUtils.randomNumeric(7));

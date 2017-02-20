@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -423,4 +425,13 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	
+	public void entryDateChanged(Date entryDate) {
+		getWrapper().getAccountEntry().setEntryDate(entryDate);
+	}
+	public void activityChanged(Integer activty) {
+		getWrapper().getAccountEntry().setActivity(activty);
+	}
+	public void confidentialChanged(boolean confidential) {
+		getWrapper().getAccountEntry().setConfidential(confidential);
+	}
 }

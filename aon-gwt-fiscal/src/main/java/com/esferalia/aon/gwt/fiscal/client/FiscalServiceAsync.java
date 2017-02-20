@@ -259,7 +259,7 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void deleteAccountEntry(String domainName, int domain, Integer id,
 			AsyncCallback<Void> callback);
-	void initializeInvoice(String domainName, int domain,AccountingRegistry registry, Date issueDate,
+	void initializeInvoice(String domainName, int domain,AccountingRegistry registry, Integer activity, Date issueDate,
 			AsyncCallback<AccountingInvoice> callback);
 	void getAccountingInvoice(String domainName, int domain, Integer accountEntry,
 			AsyncCallback<AccountingInvoice> callback);

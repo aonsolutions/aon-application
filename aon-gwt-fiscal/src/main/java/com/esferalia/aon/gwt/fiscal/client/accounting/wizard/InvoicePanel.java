@@ -140,44 +140,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		centerPanel.addStyleName(AON.AON_CSS.aonPadding2Top());
 		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
 		centerPanel.getElement().getStyle().setBackgroundColor(InvoicePanel.BACKGROUND_COLOR);
-//		DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
-//		dockPanel.setStyleName(AON.AON_CSS.aonFlexContainer());
-//		dockPanel.addStyleName(AON.AON_CSS.aonPadding2Top());
-		
-//		FlowPanel tablesPanel = new FlowPanel();
-//		createRegistryTable();
-//		tablesPanel.add(regTable);
-//		createFlexTable();
-//		tablesPanel.add(flexTable);
-//		dockPanel.addNorth(tablesPanel, 50);
-
-//		createPayTable();
-//		dockPanel.addSouth(payTable, 28);
-		
-//		SimpleLayoutPanel withholdingContainer = new SimpleLayoutPanel();
-//		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
-//		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
-//			@Override
-//			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
-//				InvoiceCalculator.calculate(getWrapper());
-//				withholdingPanel.setValue(getWrapper().getWithholdingData());
-//				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
-//				_paintEntry();
-//				getWrapper().getAccountEntry().setDirty(true);
-//				getCallback().getModule().refreshIdLabel();
-//			}
-//		});
-//		withholdingPanel.addSelectionHandler(new SelectionHandler<Account>() {
-//			@Override
-//			public void onSelection(SelectionEvent<Account> event) {
-//				getCallback().getModule().onBalance(event.getSelectedItem());
-//				_paintEntry();
-//				getWrapper().getAccountEntry().setDirty(true);
-//				getCallback().getModule().refreshIdLabel();
-//			}
-//		});
-//		withholdingContainer.setWidget( withholdingPanel );
-//		dockPanel.addSouth(withholdingContainer, 28);
 
 		//  -------------------------- EXTRA PANEL ------------------------------
 		extraPanel = new InvoiceExtraPanel(  );
@@ -267,7 +229,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		
 		scrollCenterContainer.setWidget(centerContainer);
 		centerContainerPanel.setWidget(scrollCenterContainer);
-//		dockPanel.add(centerContainerPanel);
 		centerPanel.setWidget(centerContainerPanel);
 		rootPanel.add(centerPanel);
 
@@ -321,6 +282,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 						 AccountEntryModule.getCurrentDomainName()
 						,AccountEntryModule.getCurrentDomain()
 						,ar
+						,getCallback().getModule().getActivity()
 						,getCallback().getModule().getEntryDate()
 						,new AsyncCallback<AccountingInvoice>() {
 							
@@ -1036,6 +998,27 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	@Override
 	public void setFocus(boolean b) {
 		registryBox.setFocus(b);
+	}
+
+	public void entryDateChanged(Date entryDate) {
+		getWrapper().getAccountEntry().setEntryDate(entryDate);
+		if (getWrapper().getInvoice() != null) {
+			getWrapper().getInvoice().setIssueDate(entryDate);
+			getWrapper().getInvoice().setTaxDate(entryDate);
+			extraPanel.taxDate.setValue(entryDate);
+		}
+	}
+	public void activityChanged(Integer activty) {
+		getWrapper().getAccountEntry().setActivity(activty);
+		if (getWrapper().getInvoice() != null) {
+			getWrapper().getInvoice().setActivity(activty);
+		}
+	}
+	public void confidentialChanged(boolean confidential) {
+		getWrapper().getAccountEntry().setConfidential(confidential);
+		if (getWrapper().getInvoice() != null) {
+			getWrapper().getInvoice().setConfidential(confidential);
+		}
 	}
 
 }

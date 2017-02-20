@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
@@ -196,5 +198,15 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	@Override
 	public void setFocus(boolean b) {
 		if (table!=null) table.setFocus(b);
+	}
+
+	public void entryDateChanged(Date entryDate) {
+		getWrapper().getAccountEntry().setEntryDate(entryDate);
+	}
+	public void activityChanged(Integer activty) {
+		getWrapper().getAccountEntry().setActivity(activty);
+	}
+	public void confidentialChanged(boolean confidential) {
+		getWrapper().getAccountEntry().setConfidential(confidential);
 	}
 }

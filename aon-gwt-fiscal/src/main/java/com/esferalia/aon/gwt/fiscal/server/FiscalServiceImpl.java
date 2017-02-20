@@ -987,10 +987,10 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	@Override
 	public AccountingInvoice initializeInvoice(String domainName, int domain, 
-			AccountingRegistry registry, Date issueDate)
+			AccountingRegistry registry, Integer activity, Date issueDate)
 			throws AonCoreException {
 		return ACCOUNTING.initializeInvoice(domainName, domain, this.getUserLogin(), 
-				registry, issueDate);
+				registry, activity, issueDate);
 	}
 
 	@Override

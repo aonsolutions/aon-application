@@ -247,6 +247,7 @@ public class AccountEntry implements Serializable, HasAudit {
 			.setDomain(ori.domain)
 			.setEntryDate(ori.entryDate)
 			.setEntryType(ori.entryType)
+			.setActivity(ori.getActivity())
 			.setJournal(ori.journal)
 			.setSecurityLevel(ori.securityLevel)
 			.setComments(ori.comments)
@@ -255,6 +256,5 @@ public class AccountEntry implements Serializable, HasAudit {
 			.setModificationUser(ori.modificationUser)
 			.setModificationDate(ori.modificationDate)
 			.setDetails(details);
-		
 	}
 }

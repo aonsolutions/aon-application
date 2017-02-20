@@ -234,7 +234,7 @@ public class AccountingInvoiceDAO {
 			
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
-			final Date issueDate) {
+			final Integer activity, final Date issueDate) {
 		AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
 					, filter -> filter.getIdProperty().eq(registry))
 				.findFirst()
@@ -262,6 +262,7 @@ public class AccountingInvoiceDAO {
 					.setTaxDate(issueDate)
 					.setType(reg.getType().getInvoiceType())
 					.setTransaction(reg.getTransaction())
+					.setActivity(activity)
 					.setService( reg.getType().getInvoiceType() == InvoiceType.EXPENSES 
 							  || reg.getType().getInvoiceType() == InvoiceType.UNDEDUCTIBLE)
 					.setSeries(null)

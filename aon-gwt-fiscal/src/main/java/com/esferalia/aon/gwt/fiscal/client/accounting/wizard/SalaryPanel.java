@@ -1168,4 +1168,14 @@ public class SalaryPanel extends WizardContentBase<SalaryEntry> {
 	public void setFocus(boolean b) {
 		concept.setFocus(b);
 	}
+
+	public void entryDateChanged(Date entryDate) {
+		getWrapper().getAccountEntry().setEntryDate(entryDate);
+	}
+	public void activityChanged(Integer activty) {
+		getWrapper().getAccountEntry().setActivity(activty);
+	}
+	public void confidentialChanged(boolean confidential) {
+		getWrapper().getAccountEntry().setConfidential(confidential);
+	}
 }

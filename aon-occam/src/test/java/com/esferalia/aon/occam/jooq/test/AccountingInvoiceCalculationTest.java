@@ -77,7 +77,7 @@ public class AccountingInvoiceCalculationTest {
 	private void doTest1(Integer registry, InvoiceType type)  {
 		++registries;
 		System.out.println( "registry : " + registry + " " + type.getDescription());
-		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, type, registry, new Date());
+		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, type, registry, null, new Date());
 		ai.setAccountEntry(new AccountEntry()
 				.setDomain(DOMAIN_ID)
 				.setConfidential(false)
