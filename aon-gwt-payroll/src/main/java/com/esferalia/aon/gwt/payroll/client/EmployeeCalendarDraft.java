@@ -18,6 +18,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -824,12 +825,13 @@ public class EmployeeCalendarDraft extends Composite {
 		this.lastYearButton.setEnabled(true);
 		
 		if (annio == startEmployeeContract || annio == (new Date().getYear()-1)){
+			bloquearDiasFueraDeContrato(calendarEmployeeInfo.getStartDateContract());
 			this.lastYearButton.setEnabled(false);
 		}
 		if (annio == endEmployeeContract || annio == (new Date().getYear()+1))
 			this.nextYearButton.setEnabled(false);
 		
-		bloquearDiasFueraDeContrato(calendarEmployeeInfo.getStartDateContract(), calendarEmployeeInfo.getEndDateContract());
+		
 	}
 
 	private int calcularNumeroDiaSemana(int dia, int mes, int anio) {
@@ -1084,6 +1086,7 @@ public class EmployeeCalendarDraft extends Composite {
 			}
 		}
 		limpiarSeleccion(posicionesSeleccionas);
+		posicionesSeleccionas.clear();
 	}
 	
 	private void comprobarDiasAMostrar() {
@@ -1094,18 +1097,26 @@ public class EmployeeCalendarDraft extends Composite {
 		//Gestionar los dias seleccionados (mostrar y actualizar valor)
 		for (int i = 0; i < 7; i++){
 			final int c =i; 
-			Double value = posicionesSeleccionas.stream()
-					.filter(p -> es(c, calcularColumna(p.intValue())))
-					.map( p-> new Integer[]{calcularFila(p.intValue())+1, calcularColumna(p.intValue())})
-					.map(p->cells[p[0]][p[1]].getHour(p[0], p[1]))
-					.peek(p -> divDays[c].removeStyleName(style.ocultarDivStyle()))
-					.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> Double.MIN_VALUE == h1 || h2.equals(h1) ? h2: null ))
-					;
+			try{
+				
+				Double minValue = Double.MIN_VALUE;
+				Double value = posicionesSeleccionas.stream()
+						.filter(p -> es(c, calcularColumna(p.intValue())))
+						.map( p-> new Integer[]{calcularFila(p.intValue())+1, calcularColumna(p.intValue())})
+						.map(p->cells[p[0]][p[1]].getHour(p[0], p[1]))
+						.peek(p -> divDays[c].removeStyleName(style.ocultarDivStyle()))
+						.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> minValue.equals(h1) || h2.equals(h1) ? h2: null ))
+						;
+				if(value != null)
+					suggestOpts[c].setValue(value+"");
+				else
+					suggestOpts[c].setValue("");
 			
-			if(value != null)
-				suggestOpts[c].setValue(value+"");
-			else
-				suggestOpts[c].setValue("");
+			} catch (Exception e) {
+				Window.alert("Fallo!"+", "+c + "," + e.getMessage());
+			}
+			
+			
 		}
 
 	}
@@ -1155,16 +1166,16 @@ public class EmployeeCalendarDraft extends Composite {
 		
 	}
 	
-	private void bloquearDiasFueraDeContrato(Date startDateContract, Date endDateContract) {
+	private void bloquearDiasFueraDeContrato(Date startDateContract) {
 		for (int row = 1; row < 25; row+=2)
 			for (int column = 1; column < 38; column++){
 				if (null != cellsDates[row][column] && 
-						(startDateContract.after(cellsDates[row][column]) || endDateContract.before(cellsDates[row][column]))){
-					limpiarEstilo(row, column);
+						(startDateContract.after(cellsDates[row][column]))){
 					calendarGrid.getCellFormatter().addStyleName(row, column, style.setOutOfContractStyle());
 					calendarGrid.getCellFormatter().addStyleName(row+1, column, style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).addStyleName(style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).setVisible(false);
+					limpiarEstilo(row, column);
 				}
 			}	
 	}
