@@ -28,6 +28,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -272,20 +273,33 @@ public class CompanyController extends CompanyParentController {
 	}
 	
 	public String clearSaleInvoiceBackgroundUploadData() {
-		setSaleInvoiceBackgroundFile(null);
+		cleanBackground(getSaleInvoiceBackgroundFile(), ICompanyConstants.SALE_INVOICE_REPORT_KEY);
 		return null;
 	}
 	public String clearDeliveryBackgroundUploadData() {
-		setDeliveryBackgroundFile(null);
+		cleanBackground(getDeliveryBackgroundFile(), ICompanyConstants.DELIVERY_REPORT_KEY);
 		return null;
 	}
 	public String clearSalesBackgroundUploadData() {
-		setSalesBackgroundFile(null);
+		cleanBackground(getSalesBackgroundFile(), ICompanyConstants.SALES_REPORT_KEY);
 		return null;
 	}
 	public String clearOfferBackgroundUploadData() {
-		setOfferBackgroundFile(null);
+		cleanBackground(getOfferBackgroundFile(), ICompanyConstants.OFFER_REPORT_KEY);
 		return null;
+	}
+	private void cleanBackground(AonFile aonFile, String reportKey){
+		if ( aonFile != null ) {
+			aonFile.clean();	
+		}
+		try {
+			RegistryAttachment attach = obtainReportBackground(reportKey);
+			if(attach.getDriveId()!=null){
+				DriveUtils.getInstace().deleteBlobs(attach);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error when trying to delete background image from Drive", e);
+		}
 	}
 	
 	public RegistryAttachment obtainSaleInvoiceBackground()
