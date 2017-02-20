@@ -1,13 +1,11 @@
 package com.code.aon.webservice.warehouse;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
@@ -23,8 +22,10 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "packinglistProjection", urlPatterns = {"/aon_gwt_aio/download_packing_list/*"})
 public class PackingListDownload extends HttpServlet{
@@ -96,8 +97,19 @@ public class PackingListDownload extends HttpServlet{
 		File file = PackingList.createPdf(json, attach.getData());
 		
         long length = file.length();
+        Utils.addCorsHeader(resp);
+        resp.setContentType(MimeType.PDF.getName());
+		resp.setHeader("Content-disposition", "inline; filename=\"" + file.getName() + ".pdf\";");
+		FileInputStream fileInpurOs =  new FileInputStream(file);
+		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
+		resp.flushBuffer();
+
+		fileInpurOs.close();
+        
+	/*	
         FileInputStream fis = new FileInputStream(file);
         
+        Utils.addCorsHeader(resp);
         resp.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
     	resp.setContentType("application/msexcel");
 
@@ -116,7 +128,7 @@ public class PackingListDownload extends HttpServlet{
         bis.close();
         fis.close();
         out.flush();
-        out.close();
+        out.close();*/
 	}
 	
 

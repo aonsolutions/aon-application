@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,11 +28,13 @@ import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 
 @WebServlet(name = "PackingListNotification", urlPatterns = { "/packing_list_notification/*",
 															  "/aon_gwt_aio/packing_list_notification/*"})
@@ -65,15 +68,19 @@ public class PackingListMailServlet extends HttpServlet{
 		Integer mail_account = json.getInt(MSG.MAIL_ACCOUNT);
 		Integer signature_id = json.getInt(MSG.SIGNATURE);
 		String type = json.getString(MSG.TYPE);
+		String to = json.getString("to");
+		Integer order = json.getInt("order");
 		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, carrier_packing);
-		Signature signature = AON.getSignature(domain.getName(), domain.getId(), login, signature_id);
-		sendNotification(domain, login, carrierPacking, signature, mail_account, type);		
+		Signature signature = null;
+		if(!signature_id.equals(-1)){
+			signature = AON.getSignature(domain.getName(), domain.getId(), login, signature_id);
+		}
+		sendNotification(domain, login, carrierPacking, signature, mail_account, type, to, order);		
 	}
-	
-	private static final long serialVersionUID = 7426471939221433842L;
-	
+
 	private String msg; 
-	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type){
+
+	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type, String to, Integer order){
 		if(MSG.CARRIER.equalsIgnoreCase(type)){
 			printCarrierPacking(carrierPacking);
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
@@ -107,17 +114,29 @@ public class PackingListMailServlet extends HttpServlet{
 					msg = msg + "</tbody></table>";
 				});
 			}
+			printSignature(domain, login, signature);
 			msg = msg + "</div></div>";
-			RegistryMedia rmedia = AON.getRMedia(domain.getName(), domain.getId(), login, 
+			RegistryMedia rmedia = new RegistryMedia();
+			if(to == null){
+				rmedia = AON.getRMedia(domain.getName(), domain.getId(), login, 
 					f -> f.getRegistryProperty().eq(carrierPacking.getCarrier())
 					.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
-			sendEmail(domain, login, mailAccount,rmedia.getValue(), "", "packing List", msg);
+			}
+			sendEmail(domain, login, mailAccount,(to != null) ? to : rmedia.getValue(), "", "packing List", msg);
 		} else if(MSG.REGISTRY.equalsIgnoreCase(type)){
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
-				AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
-						f -> f.getCarrierPackingProperty().eq(carrierPacking.getId())
-						.and(f.getDomainProperty().eq(domain.getId())))
-				.forEach(purchase ->{
+				Stream<Purchase> stream = null;
+				if(!order.equals(-1)){
+					stream = AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
+							f -> f.getCarrierPackingProperty().eq(carrierPacking.getId())
+							.and(f.getDomainProperty().eq(domain.getId()))
+							.and(f.getIdProperty().eq(order)));
+				} else {
+					stream = AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
+							f -> f.getCarrierPackingProperty().eq(carrierPacking.getId())
+							.and(f.getDomainProperty().eq(domain.getId())));
+				}
+				stream.forEach(purchase ->{
 					printCarrierPacking(carrierPacking);
 					RAddress address = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()));
 					printAddress(address);
@@ -131,15 +150,25 @@ public class PackingListMailServlet extends HttpServlet{
 					msg = msg + "</tbody></table>";
 					printSignature(domain, login, signature);
 					msg = msg + "</div></div>";
-					RegistryMedia rmedia = AON.getRMedia(domain.getName(), domain.getId(), login, 
+					RegistryMedia rmedia = new RegistryMedia();
+					if(to == null){
+						rmedia = AON.getRMedia(domain.getName(), domain.getId(), login, 
 							f -> f.getRegistryProperty().eq(purchase.getSupplier())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
-					sendEmail(domain, login, mailAccount,rmedia.getValue(), "", "prueba packingList", msg);
+					}
+					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg);
 				});
 			} else if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
-				AON.getDeliveryStream(domain.getName(), domain.getId(), login, 
-						f-> f.getCarrierPackingProperty().eq(carrierPacking.getId()))
-				.forEach(delivery -> {
+				Stream<Delivery> stream = null;
+				if(!order.equals(-1)){
+					stream = AON.getDeliveryStream(domain.getName(), domain.getId(), login, 
+							f-> f.getCarrierPackingProperty().eq(carrierPacking.getId())
+							.and(f.getIdProperty().eq(order)));
+				} else {
+					stream = AON.getDeliveryStream(domain.getName(), domain.getId(), login, 
+							f-> f.getCarrierPackingProperty().eq(carrierPacking.getId()));
+				}
+				stream.forEach(delivery -> {
 					printCarrierPacking(carrierPacking);
 					RAddress address = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()));
 					printAddress(address);
@@ -151,10 +180,13 @@ public class PackingListMailServlet extends HttpServlet{
 					);
 					msg = msg + "</tbody></table>";
 					msg = msg + "</div></div>";
-					RegistryMedia rmedia = AON.getRMedia(domain.getName(), domain.getId(), login, 
+					RegistryMedia rmedia = new RegistryMedia();
+					if(to == null){
+						rmedia = AON.getRMedia(domain.getName(), domain.getId(), login, 
 							f -> f.getRegistryProperty().eq(delivery.getCustomer())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
-					sendEmail(domain, login, mailAccount,rmedia.getValue(), "", "prueba packingList", msg);
+					}
+					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg);
 				});
 			}
 		}
@@ -294,7 +326,7 @@ public class PackingListMailServlet extends HttpServlet{
 	
 	protected void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
-			String url = "http://"+domainName+ "/send_email/";
+			String url = "http://"+domainName+ "/aon-aio/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
