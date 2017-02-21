@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -603,6 +604,22 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 			table.setWidget(row,0,new InlineLabel(AON.MSG.province()));
 			table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 			final ListBox provinceBox = new ListBox();
+			addressZIP.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					if (!AonStringUtils.isBlank( addressZIP.getValue())) {
+						String code = AonStringUtils.substring(AonStringUtils.trim(addressZIP.getValue()), 0, 2);
+						int i = 1;
+						for (GeoZone geozone : config.getGeozones()) {
+							if (AonStringUtils.equals(geozone.getCode(),code)) {
+								provinceBox.setSelectedIndex(i);
+							}
+							i++;
+						}
+					}
+				}
+			});
+			
 			provinceBox.addItem("-----------",AonNumberUtils.toString(Integer.MIN_VALUE));
 			int i = 1;
 			for (GeoZone geozone : config.getGeozones()) {
@@ -726,5 +743,4 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 	public void setTabIndex(int index) {
 		type.setTabIndex(index);
 	}
-
 }
