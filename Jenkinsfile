@@ -22,14 +22,22 @@ node {
    def commitsParams = parameters(cherryOut);
 
    def commits = '';
-   def strategy = 'resolve';
+   def strategy = 'recursive';
+   def strategyOption = 'ours';
    if ( commitsParams.size() > 1 ) {
 
-      def cherryParams = [choice(
+      def cherryParams = [
+			choice(
 			name: 'strategy',
 			description: 'MERGE STRATEGIES', 
-			choices: 'resolve\nrecursive\noctopus\nours\nsubtree'
-			)]	
+			choices: 'recursive\nresolve\noctopus\nours\nsubtree'
+			),
+			choice(
+			name: 'strategy-option',
+			description: 'STRATEGIES OPTIONS', 
+			choices: 'ours\ntheirs\npatience\n'
+			)			
+			]	
 
       def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: ( commitsParams + cherryParams )
    
@@ -39,6 +47,7 @@ node {
          } 
       }
       strategy = commitsMap['strategy'] 
+      strategyOption = commitsMap['strategy-option'] 
    }   
    
    if ( commits ) {
@@ -46,7 +55,7 @@ node {
       stage "Perform HotFix ${hotfix} "
       
       // Apply the changes introduced by introduced commits
-      sh "git cherry-pick --strategy=${strategy} ${commits}"
+      sh "git cherry-pick --strategy=${strategy} --strategy-option=${strategyOption} ${commits}"
 
       // Prepare hotfix   
       sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
