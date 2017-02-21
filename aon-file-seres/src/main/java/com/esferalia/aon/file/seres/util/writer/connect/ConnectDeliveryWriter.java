@@ -154,13 +154,25 @@ public class ConnectDeliveryWriter {
 
 	private List<SEH1P> createSEH1PList(Delivery delivery) {
 		List<SEH1P> list = new ArrayList<>();
-		delivery.getDetailList().forEach(
+		
+		delivery.getDetailList().stream()
+		.map(to -> (DeliveryDetail)to)
+		.sorted((o1, o2) -> Double.compare(o1.getQuantity(),o2.getQuantity()))
+		.forEach(
 				to -> {
 					DeliveryDetail detail = (DeliveryDetail) to;
 					if(isPackageItem(detail.getItem())){
 						list.add(createSEH1PRecord(detail, list.size()+1));
 					}
 				});
+		SEH1P mainPackage = list.stream().filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201")).findFirst().orElse(null);
+		if(mainPackage!=null){
+			list.stream()
+			.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
+			.forEach(o -> {
+				o.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+			});
+		}
 		return list;
 	}
 
@@ -257,6 +269,10 @@ public class ConnectDeliveryWriter {
 			}
 		} catch (ManagerBeanException e) {
 			// nada
+		}
+		
+		if(detail.getQuantity()==1){
+			format = "palet";
 		}
 		
 		if(format.toLowerCase().contains("bolsa")){
