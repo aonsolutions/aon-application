@@ -471,14 +471,15 @@ public class VatCollection {
 			stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 		}
 		stmt.append(" GROUP BY ");
-		stmt.append(TYPE);
-		stmt.append("," + TRANSACTION);
-		stmt.append("," + INVESTMENT);
-		stmt.append("," + TAX_DATE);
-		stmt.append("," + ISSUE_DATE);
-		stmt.append("," + REFERENCE_CODE);
-		stmt.append("," + RDOCUMENT);
-		stmt.append("," + RNAME );
+		stmt.append(ID);
+//		stmt.append(TYPE);
+//		stmt.append("," + TRANSACTION);
+//		stmt.append("," + INVESTMENT);
+//		stmt.append("," + TAX_DATE);
+//		stmt.append("," + ISSUE_DATE);
+//		stmt.append("," + REFERENCE_CODE);
+//		stmt.append("," + RDOCUMENT);
+//		stmt.append("," + RNAME );
 		stmt.append("," + PERCENTAGE );
 		stmt.append("," + SURCHARGE_PERCENT);
 		stmt.append("," + VAT_TYPE);
@@ -583,14 +584,15 @@ public class VatCollection {
 			stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 		}
 		stmt.append(" GROUP BY ");
-		stmt.append(TYPE);
-		stmt.append("," + TRANSACTION);
-		stmt.append("," + INVESTMENT);
-		stmt.append("," + TAX_DATE);
-		stmt.append("," + ISSUE_DATE);
-		stmt.append("," + REFERENCE_CODE);
-		stmt.append("," + RDOCUMENT);
-		stmt.append("," + RNAME );
+		stmt.append(ID);
+//		stmt.append(TYPE);
+//		stmt.append("," + TRANSACTION);
+//		stmt.append("," + INVESTMENT);
+//		stmt.append("," + TAX_DATE);
+//		stmt.append("," + ISSUE_DATE);
+//		stmt.append("," + REFERENCE_CODE);
+//		stmt.append("," + RDOCUMENT);
+//		stmt.append("," + RNAME );
 		stmt.append("," + PERCENTAGE );
 		stmt.append("," + SURCHARGE_PERCENT);
 		stmt.append("," + VAT_TYPE);
