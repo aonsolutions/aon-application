@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperButton;
@@ -306,12 +307,18 @@ public class EmployeeCalendarDraft extends Composite {
 
 	@UiField
 	PaperButton diaSuspensionButton;
+	
+	@UiField
+	PaperIconButton infoButton;
 
 	@UiField
 	PaperIconButton eraseButton;
 	
 	@UiField
 	PaperButton dialogOk;
+	
+	@UiField
+	PaperButton dialogInfoOk;
 	
 	@UiField
 	PaperIconButton expandHourBtnL;
@@ -360,6 +367,9 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	@UiField
 	PaperDialog dialogHoras;
+	
+	@UiField
+	PaperDialog dialogInfo;
 
 	@UiField(provided = true)
 	SuggestBox lunesOpt;
@@ -381,6 +391,9 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	@UiField(provided = true)
 	SuggestBox domingoOpt;
+	
+	@UiField
+	ScrollPanel scrollInfo;
 	
 // ------------------------------------------------------------ VARIABLES DE LA CLASE ----------------------------------------------------
 	
@@ -570,6 +583,11 @@ public class EmployeeCalendarDraft extends Composite {
 		hourButton.setDisabled(true);
 	}
 	
+	@UiHandler("dialogInfoOk")
+	public void onConfirmInfoDialogClick(ClickEvent event) {
+		dialogHoras.close();
+	}
+	
 	@UiHandler("expandHourBtnL")
 	public void onExpandHourLClick(ClickEvent event) {
 		suggestOpts[MONDAY].showSuggestionList();	
@@ -658,6 +676,13 @@ public class EmployeeCalendarDraft extends Composite {
 		dialogHoras.open();
 		comprobarDiasAMostrar();
 	}
+	
+	@UiHandler("infoButton")
+	public void oninfoClick(ClickEvent event) {
+		dialogInfo.open();
+		dialogInfo.setPositionTarget("center");
+	}
+	
 
 	@UiHandler("lastYearButton")
 	public void onLastYearClick(ClickEvent event) {
@@ -828,8 +853,10 @@ public class EmployeeCalendarDraft extends Composite {
 			bloquearDiasFueraDeContrato(calendarEmployeeInfo.getStartDateContract());
 			this.lastYearButton.setEnabled(false);
 		}
-		if (annio == endEmployeeContract || annio == (new Date().getYear()+1))
+		if (annio == endEmployeeContract || annio == (new Date().getYear()+1)){
+			bloquearDiasFueraDeContratoPost(calendarEmployeeInfo.getEndDateContract());
 			this.nextYearButton.setEnabled(false);
+		}
 		
 		
 	}
@@ -966,6 +993,7 @@ public class EmployeeCalendarDraft extends Composite {
 			calendarGrid.getWidget(row, col).removeStyleName(style.ereStyle());
 			calendarGrid.getWidget(row, col).removeStyleName(style.reductionStyle());
 			calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
+			calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
 			cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 			calendarEmployeeInfo.setTypeByDay(cellsDates[row][col], DayType.NOTYPEDAY);
 		}
@@ -980,6 +1008,7 @@ public class EmployeeCalendarDraft extends Composite {
 		calendarGrid.getWidget(row, col).removeStyleName(style.ereStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.reductionStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
+		calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
 		cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 	}
 	
@@ -1179,4 +1208,19 @@ public class EmployeeCalendarDraft extends Composite {
 				}
 			}	
 	}
+	
+	private void bloquearDiasFueraDeContratoPost(Date endDateContract) {
+		for (int row = 1; row < 25; row+=2)
+			for (int column = 1; column < 38; column++){
+				if (null != cellsDates[row][column] && 
+						(endDateContract.before(cellsDates[row][column]))){
+					calendarGrid.getCellFormatter().addStyleName(row, column, style.setOutOfContractStyle());
+					calendarGrid.getCellFormatter().addStyleName(row+1, column, style.setOutOfContractStyle());
+					calendarGrid.getWidget(row+1, column).addStyleName(style.setOutOfContractStyle());
+					calendarGrid.getWidget(row+1, column).setVisible(false);
+					limpiarEstilo(row, column);
+				}
+			}	
+	}
+	
 }

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.lang.instrument.UnmodifiableClassException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -17,10 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import bsh.Variable;
 
 public class EmployeeCalendarDraftObjectData {
 

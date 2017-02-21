@@ -163,8 +163,14 @@
 			margin-top: 0px;
 		}
 		
+		.iconLeyendStyle{
+			position: absolute;
+    		right: 115px;
+		}
+		
 		.iconEraseStyle {
-			margin-left: 285px;
+			position: absolute;
+		    right: 25px;
 		}
 		
 		.mesesImparesStyle {
@@ -277,6 +283,15 @@
 		hr{
 			margin-top: 0px;
 		}
+		
+		.scrollStyle{
+			position: absolute !important;
+		    left: 5px;
+		    right: 5px;
+		    top: 100px;
+		    bottom: 0;
+		    width: 100%;
+		}
 
 	</ui:style>
 
@@ -336,7 +351,6 @@
 		</g:north>
 		<g:center>
 			<g:HTMLPanel>
-			    
 			    <p:PaperDialog ui:field="dialogHoras" styleName="{style.dialogBoxStyle}" 
 			         modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation" withBackdrop="true">
 		            <h2>Horas</h2>
@@ -382,6 +396,42 @@
 		            </HTMLPanel>
 		        </p:PaperDialog>
 		        
+		        <p:PaperDialog ui:field="dialogInfo" modal="true" entryAnimation="scale-up-animation" 
+		        				exitAnimation="fade-out-animation" withBackdrop="true">
+		            <h2>Informacion</h2>
+		            <g:HTMLPanel>
+			            <i:IronLabel>
+							<p:PaperButton styleName="{style.cellStyle1} {style.dropStyle}"
+								ui:field="diaAusenciaButton"></p:PaperButton>
+							Ausencia
+						</i:IronLabel>
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<i:IronLabel>
+							<p:PaperButton styleName="{style.cellStyle1} {style.reductionStyle}"
+								ui:field="diaReduccionButton"></p:PaperButton>
+							Reducción
+						</i:IronLabel>
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<i:IronLabel>
+							<p:PaperButton styleName="{style.cellStyle1} {style.suspensionStyle}"
+								ui:field="diaSuspensionButton"></p:PaperButton>
+							Suspensión
+						</i:IronLabel>
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<i:IronLabel>
+							<p:PaperButton styleName="{style.cellStyle1} {style.itStyle}"
+								ui:field="diaBajaITButton"></p:PaperButton>
+							Baja IT
+						</i:IronLabel>
+					</g:HTMLPanel>
+					<HTMLPanel class="buttons">
+		              <p:PaperButton ui:field="dialogInfoOk" attributes="dialog-confirm" focused="true">OK</p:PaperButton>
+		            </HTMLPanel>
+		        </p:PaperDialog>
+		        
 				<g:HorizontalPanel>
 					<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
 					<g:Button
@@ -391,7 +441,6 @@
 						styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next"
 						ui:field="nextYearButton" />
 				</g:HorizontalPanel>
-				<hr/>
 				
 				<style is="custom-style">
 					paper-button {
@@ -433,40 +482,17 @@
 						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton" disabled="true"/>
 						Horas
 					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperIconButton icon="icons:clear" ui:field="eraseButton"
-											styleName="{style.iconEraseStyle}"/>
+					<i:IronLabel styleName="{style.iconLeyendStyle}">
+						<p:PaperIconButton icon="icons:info-outline" ui:field="infoButton"/>
+						Leyenda
+					</i:IronLabel>
+					<i:IronLabel styleName="{style.iconEraseStyle}">
+						<p:PaperIconButton icon="icons:clear" ui:field="eraseButton"/>
 						Limpiar
 					</i:IronLabel>
 				</g:HorizontalPanel>
-				<g:HorizontalPanel>
-					<g:Label styleName="{style.labelDiasStyle2}">
-						Dias:
-					</g:Label>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle1} {style.dropStyle}"
-							ui:field="diaAusenciaButton"></p:PaperButton>
-						Ausencia
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle1} {style.reductionStyle}"
-							ui:field="diaReduccionButton"></p:PaperButton>
-						Reducción
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle1} {style.suspensionStyle}"
-							ui:field="diaSuspensionButton"></p:PaperButton>
-						Suspensión
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle1} {style.itStyle}"
-							ui:field="diaBajaITButton"></p:PaperButton>
-						Baja IT
-					</i:IronLabel>
-				</g:HorizontalPanel>
-				<hr/>
-				<g:ScrollPanel ui:field="scrollInfo" height="85%">
-					<g:Grid ui:field="calendarGrid" width="90%" styleName="{style.tableStyle} {style.noselect}">
+				<g:ScrollPanel ui:field="scrollInfo" styleName="{style.scrollStyle}">
+					<g:Grid ui:field="calendarGrid" width="95%" styleName="{style.tableStyle} {style.noselect}">
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.fondoBlanco}">
 								<g:Label>&nbsp;</g:Label>
