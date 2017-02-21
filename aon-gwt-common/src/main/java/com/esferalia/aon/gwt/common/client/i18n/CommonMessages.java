@@ -3243,4 +3243,7 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Existen vencimientos pagados/remesados/saldados.")
 	String hasPaidFinances();
+
+	@DefaultMessage("Factura creada desde \"gesti\u00F3n\"")
+	String managmentInvoice();
 }

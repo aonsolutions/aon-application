@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
@@ -29,6 +30,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -845,10 +847,25 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries) );		
 	}
 	
+	private boolean isAccountSource() {
+		boolean sourceAccount = true;
+		if (getWrapper().getInvoice() != null && getWrapper().getInvoice().getDetails() != null) {
+			for (InvoiceDetail detail : getWrapper().getInvoice().getDetails()) {
+				if (detail.getSource() != InvoiceSource.ACCOUNT) {
+					sourceAccount = false;
+					break;
+				}
+			}
+		}
+		return sourceAccount;
+	}
+	
 	@Override
 	public boolean isUpdatable() {
-		return (super.isUpdatable() 
+		
+		return (super.isUpdatable()
 				&& getAccountEntry().isInvoice()
+				&& isAccountSource()
 				&& !hasPaidFinances()
 				);
 	}
@@ -868,6 +885,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	public String getNoUpdatableCause() {
 		if (hasPaidFinances()) {
 			return AON.MSG.hasPaidFinances();
+		}
+		if (!isAccountSource()) {
+			return AON.MSG.managmentInvoice();
 		}
 		return null;
 	}
