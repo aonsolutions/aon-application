@@ -17,12 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
+import com.code.aon.common.AonException;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSAGENCIATRANSPORTETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSCLIENTETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSDIRECCIONTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAALBARANTYPE;
+import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAENVASETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ELABORACIONORIGENTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ERRORESTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.PRODUCTOTYPE;
@@ -54,7 +56,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
 
 public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
@@ -85,7 +86,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			}
 			if(deliveryList!=null && deliveryList.getDATOSALBARANES()!=null 
 					&& deliveryList.getDATOSALBARANES().size()>0){
-				boolean test = deliveryList.getPRUEBA().matches("S");
+				boolean test = "S".equals(deliveryList.getPRUEBA());
 				processData(deliveryList.getDATOSALBARANES(), test);
 			} else {
 				errorList.add("No se han encontrado datos de albaranes");
@@ -154,31 +155,47 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
 	private void createDelivery(AONContext ctx, ALBARANTYPE albaran, boolean test) {
 		Delivery delivery = new Delivery(); 
+		List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
 		try {
 			fillDelivery(ctx, albaran, delivery);
-		} catch (Throwable th) {
-			addError(albaran, th.getLocalizedMessage());
-		}
-		Integer deliveryId = null;
-		try {
-			if(!test){
-				deliveryId = WarehouseDAO.insertDelivery(ctx, delivery);
-			}
-		} catch (Throwable th) {
-			addError(albaran, th.getLocalizedMessage());
-		}
-		if(deliveryId!=null){
-			delivery.setId(deliveryId);
-			List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
 			fillDeliveryDetailList(ctx, albaran, delivery, detailList, test);
-			try {
-				if(!test){
-					WarehouseDAO.insertDeliveryDetails(ctx, detailList);
+		} catch (Throwable th) {
+			addError(albaran, th.getLocalizedMessage());
+		}
+		
+		if(!test){
+			if(albaran.getERRORES()==null
+				|| albaran.getERRORES().getERRORES()==null
+				|| albaran.getERRORES().getERRORES().isEmpty()){
+				
+				try {
+					Integer deliveryId = WarehouseDAO.insertDelivery(ctx, delivery);
+					if(deliveryId!=null){
+						try {
+							detailList.forEach(detail -> {detail.getDelivery().setId(deliveryId);});
+							WarehouseDAO.insertDeliveryDetails(ctx, detailList);
+						} catch (Throwable th) {
+							addError(albaran, th.getLocalizedMessage());
+						}
+						try {
+							try {
+								albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
+									manageElaborations(ctx, albaran, linea, test);
+								});
+							} catch (Throwable th) {
+								addError(albaran, th.getLocalizedMessage());
+							}
+						} catch (Throwable th) {
+							addError(albaran, th.getLocalizedMessage());
+						}
+					}
+				} catch (Throwable th) {
+					addError(albaran, th.getLocalizedMessage());
 				}
-			} catch (Throwable th) {
-				addError(albaran, th.getLocalizedMessage());
+				
 			}
 		}
+		
 	}
 
 	private Delivery fillDelivery(AONContext ctx, ALBARANTYPE albaran, Delivery delivery) {
@@ -251,153 +268,200 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
 	private List<DeliveryDetail> fillDeliveryDetailList(AONContext ctx,
 			ALBARANTYPE albaran, Delivery delivery, List<DeliveryDetail> detailList, boolean test) {
-		List<DATOSLINEAALBARANTYPE> list = albaran.getLINEASALBARAN().getDATOSLINEAALBARAN();
-		if (list != null && list.size() > 0) {
-			Warehouse warehouse = WarehouseDAO.getWarehouse(
-					ctx,
-					f -> f.getDomainProperty()
-							.eq(ctx.getDomainId())
-							.and(f.getActiveProperty().eq((byte) 1))
-							.and(f.getWorkplaceProperty().eq(
-									delivery.getWorkplace())));
-			
-			list.stream()
-					.filter(linea -> !isPackageItem(linea))
+		List<DATOSLINEAALBARANTYPE> lineasAlbaran = null;
+		if(albaran.getLINEASALBARAN()!=null){
+			lineasAlbaran = albaran.getLINEASALBARAN().getDATOSLINEAALBARAN();
+		}
+		List<DATOSLINEAENVASETYPE> lineasEnvase = null;
+		if(albaran.getLINEASENVASES()!=null){
+			lineasEnvase = albaran.getLINEASENVASES().getDATOSLINEAENVASE();
+		}
+		Warehouse warehouse = WarehouseDAO.getWarehouse(
+				ctx,
+				f -> f.getDomainProperty()
+				.eq(ctx.getDomainId())
+				.and(f.getActiveProperty().eq((byte) 1))
+				.and(f.getWorkplaceProperty().eq(
+						delivery.getWorkplace())));
+		
+		if (lineasAlbaran != null && lineasAlbaran.size() > 0) {
+			lineasAlbaran.stream()
+			.forEach(
+					linea -> {
+						Item item;
+						try {
+							item = obtainItem(ctx,
+									linea.getPRODUCTO(), test);
+							Elaboration elaboration = obtainElaboration(
+									ctx, linea.getDATOSELABORACIONORIGEN());
+							DeliveryDetail detail = new DeliveryDetail();
+							detail.setDomain(ctx.getDomainId());
+							detail.setDelivery(delivery);
+							detail.setLine(Short.valueOf(linea.getLINEA()));
+							detail.setItem(item);
+							detail.setDescription(linea.getDESCRIPCION());
+							detail.setWarehouse(warehouse.getId());
+							detail.setQuantity(Double.valueOf(linea
+									.getCANTIDAD()));
+							detail.setPrice(item.getPrice());
+							detail.setDiscountExpression("0");
+							if(elaboration==null || elaboration.getId()==null){
+								addError(albaran, "No hay ninguna elaboracion asociada a la linea " + linea.getLINEA());
+							} else if(elaboration.getSourceId()==null){
+								addError(albaran, "No hay ninguna pedido asociado a la linea " + linea.getLINEA());
+							} else if(elaboration!=null && elaboration.getSourceId()!=null){
+								detail.setSalesDetail(elaboration.getSourceId());
+							}
+							detailList.add(detail);
+						} catch (Exception e) {
+							addError(albaran, e.getMessage());
+						}
+					});
+		}
+		
+		// TODO packages 
+		if (lineasEnvase != null && lineasEnvase.size() > 0) {
+			lineasEnvase.stream()
+			.sorted((linea1, linea2) -> linea1.getDESCRIPCION()
+					.compareTo(linea2.getDESCRIPCION()))
 					.forEach(
 							linea -> {
-								Item item = obtainItem(ctx,
-										linea.getPRODUCTO(), test);
-								Elaboration elaboration = obtainElaboration(
-										ctx, linea.getDATOSELABORACIONORIGEN());
-								DeliveryDetail detail = new DeliveryDetail();
-								detail.setDomain(ctx.getDomainId());
-								detail.setDelivery(delivery);
-								detail.setLine(Short.valueOf(linea.getLINEA()));
-								detail.setItem(item);
-								detail.setDescription(linea.getDESCRIPCION());
-								detail.setWarehouse(warehouse.getId());
-								detail.setQuantity(Double.valueOf(linea
-										.getCANTIDAD()));
-								detail.setPrice(item.getPrice());
-								detail.setDiscountExpression("0");
-//								detail.setSalesDetail(elaboration.getSourceId());
-								detailList.add(detail);
-								manageElaboration(ctx, linea, test);
-							});
-			list.stream()
-					.filter(linea -> isPackageItem(linea))
-					.sorted((linea1, linea2) -> linea1.getDESCRIPCION()
-							.compareTo(linea2.getDESCRIPCION()))
-					.forEach(
-							linea -> {
-								Item item = obtainItem(ctx,
-										linea.getPRODUCTO(), test);
-								DeliveryDetail detail = new DeliveryDetail();
-								detail.setDomain(ctx.getDomainId());
-								detail.setDelivery(delivery);
-								detail.setLine(Short.valueOf(linea.getLINEA()));
-								detail.setItem(item);
-								detail.setDescription(linea.getDESCRIPCION());
-								detail.setWarehouse(warehouse.getId());
-								detail.setDiscountExpression("0");
-								detail.setQuantity(Double.valueOf(linea
-										.getCANTIDAD()));
-								detailList.add(detail);
+								Item item;
+								try {
+									item = obtainItem(ctx,
+											linea.getPRODUCTO(), test);
+									DeliveryDetail detail = new DeliveryDetail();
+									detail.setDomain(ctx.getDomainId());
+									detail.setDelivery(delivery);
+									detail.setLine(Short.valueOf(linea.getLINEA()));
+									detail.setItem(item);
+									detail.setDescription(linea.getDESCRIPCION());
+									detail.setWarehouse(warehouse.getId());
+									detail.setDiscountExpression("0");
+									detail.setQuantity(Double.valueOf(linea
+											.getCANTIDAD()));
+									detailList.add(detail);
+								} catch (Exception e) {
+									addError(albaran, e.getMessage());
+								}
 							});
 		}
+				
 		return detailList;
 	}
 
 	
-	private void manageElaboration(AONContext ctx,
-			DATOSLINEAALBARANTYPE lineaAlbaran, boolean test) {
+	private void manageElaborations(AONContext ctx, ALBARANTYPE albaran, DATOSLINEAALBARANTYPE linea,
+			boolean test) {
 
 		Elaboration elaboration = obtainElaboration(ctx,
-				lineaAlbaran.getDATOSELABORACIONORIGEN());
-		if(elaboration!=null && elaboration.getId()!=null){
-			elaboration.setStatus(ElaborationStatus.CLOSED.value());
-			ElaborationDAO.updateElaboration(ctx, elaboration);
-			
-			ElaborationDetail elaborationDetail = new ElaborationDetail();
-			elaborationDetail.setDomain(ctx.getDomainId());
-			elaborationDetail.setElaboration(elaboration);
-			elaborationDetail.setDate(new Date());
-			elaborationDetail.setItem(obtainItem(ctx,
-					lineaAlbaran.getPRODUCTO(), test));
-			elaborationDetail
-			.setQuantity(Double.valueOf(lineaAlbaran.getCANTIDAD()));
-			elaborationDetail.setWarehouse(null);
-			elaborationDetail.setAddInfo("");
-			if(!test){
-				ElaborationDAO.insertElaborationDetail(ctx, elaborationDetail);
+				linea.getDATOSELABORACIONORIGEN());
+		ElaborationDetail elaborationDetail = new ElaborationDetail();
+		List<ElaborationDetailComposition> compositionList = new LinkedList<>();
+
+		if (elaboration != null && elaboration.getId() != null) {
+
+			try {
+				elaborationDetail.setDomain(ctx.getDomainId());
+				elaborationDetail.setElaboration(elaboration);
+				elaborationDetail.setDate(new Date());
+				elaborationDetail
+						.setItem(obtainItem(ctx, linea.getPRODUCTO(), test));
+				elaborationDetail.setQuantity(Double.valueOf(linea.getCANTIDAD()));
+				elaborationDetail.setWarehouse(null);
+				elaborationDetail.setAddInfo("");
+			} catch (AonException e) {
+				addError(albaran, e.getMessage());
 			}
+
+			linea.getCOMPOSICIONPRODUCTOELABORADO()
+					.getDATOSCOMPOSICIONPRODUCTO()
+					.forEach(
+							lineaComposicion -> {
+								try {
+									Item compositionItem = createItem(ctx,
+											lineaComposicion.getPRODUCTO(), test);
+									ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
+									elaborationDetailComposition.setDomain(ctx
+											.getDomainId());
+									elaborationDetailComposition
+									.setElaborationDetail(elaborationDetail);
+									elaborationDetailComposition
+									.setItem(compositionItem);
+									elaborationDetailComposition.setQuantity(Double
+											.valueOf(lineaComposicion.getCANTIDAD()));
+									elaborationDetailComposition.setWarehouse(null);
+									elaborationDetailComposition.setAddInfo(null);
+									compositionList.add(elaborationDetailComposition);
+								} catch (Exception e) {
+									addError(albaran, e.getMessage());
+								}
+							});
 			
-			lineaAlbaran
-			.getCOMPOSICIONPRODUCTOELABORADO()
-			.getDATOSCOMPOSICIONPRODUCTO()
-			.forEach(
-					lineaComposicion -> {
-						Item compositionItem = createItem(ctx,
-								lineaComposicion.getPRODUCTO(), test);
-						ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
-						elaborationDetailComposition.setDomain(ctx
-								.getDomainId());
-						elaborationDetailComposition
-						.setElaborationDetail(elaborationDetail);
-						elaborationDetailComposition
-						.setItem(compositionItem);
-						elaborationDetailComposition.setQuantity(Double
-								.valueOf(lineaComposicion.getCANTIDAD()));
-						elaborationDetailComposition.setWarehouse(null);
-						elaborationDetailComposition.setAddInfo(null);
-						if(!test){
-							ElaborationDAO.insertElaborationDetailComposition(
-									ctx, elaborationDetailComposition);
-						}
-					});
+			if (!test) {
+				int elaborationDetailId = ElaborationDAO
+						.insertElaborationDetail(ctx, elaborationDetail);
+				elaborationDetail.setId(elaborationDetailId);
+
+				compositionList.forEach(c -> {
+					c.setElaborationDetail(elaborationDetail);
+					ElaborationDAO.insertElaborationDetailComposition(ctx, c);
+				});
+
+				elaboration.setStatus(ElaborationStatus.CLOSED.value());
+				ElaborationDAO.updateElaboration(ctx, elaboration);
+			}
 		}
 	}
 	
 	
 	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran, boolean test) {
-		CarrierPacking carrierPacking = null;
-		try {
-			carrierPacking = new CarrierPacking();
-			carrierPacking.setDomain(ctx.getDomainId());
-			carrierPacking.setSeries("IGN"
-					+ new SimpleDateFormat("yy").format(new Date()));
-			carrierPacking.setNumber(null);
-			carrierPacking.setType(CarrierPackingType.WAYBILL);
-			carrierPacking.setStatus(CarrierPackingStatus.PENDING);
-			Date issueDate = null;
+		Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA()
+				.getDATOSAGENCIATRANSPORTE());
+		if(carrier!=null && carrier.getId()!=null){
+			CarrierPacking carrierPacking = null;
 			try {
-				issueDate = getDateFormatter().parse(albaran.getDATOSHOJARUTA()
-						.getFECHAEMISION());
-			} catch (ParseException e) {
-				issueDate = new Date();
+				carrierPacking = new CarrierPacking();
+				carrierPacking.setDomain(ctx.getDomainId());
+				carrierPacking.setSeries("IGN"
+						+ new SimpleDateFormat("yy").format(new Date()));
+				carrierPacking.setNumber(null);
+				carrierPacking.setType(CarrierPackingType.WAYBILL);
+				carrierPacking.setStatus(CarrierPackingStatus.PENDING);
+				Date issueDate = null;
+				try {
+					issueDate = getDateFormatter().parse(albaran.getDATOSHOJARUTA()
+							.getFECHAEMISION());
+				} catch (ParseException e) {
+					issueDate = new Date();
+				}
+				carrierPacking.setIssueDate(issueDate);
+				carrierPacking.setCarrier(carrier.getId());
+				carrierPacking.setDeliveryDate(null);
+				carrierPacking.setCarrierReference(albaran.getDATOSHOJARUTA()
+						.getREFERNCIAAGENCIATRANSPORTE());
+				carrierPacking.setNumberPlate(albaran.getDATOSHOJARUTA()
+						.getNUMEROMATRICULA());
+				carrierPacking.setDriverName(albaran.getDATOSHOJARUTA()
+						.getNOMBRECONDUCTOR());
+				carrierPacking.setDriverDocument(albaran.getDATOSHOJARUTA()
+						.getDOCUMENTOCONDUCTOR());
+			} catch (Throwable th) {
+				addError(albaran, th.getLocalizedMessage());
 			}
-			carrierPacking.setIssueDate(issueDate);
-			Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA()
-					.getDATOSAGENCIATRANSPORTE());
-			carrierPacking.setCarrier(carrier.getId());
-			carrierPacking.setDeliveryDate(null);
-			carrierPacking.setCarrierReference(albaran.getDATOSHOJARUTA()
-					.getREFERNCIAAGENCIATRANSPORTE());
-			carrierPacking.setNumberPlate(albaran.getDATOSHOJARUTA()
-					.getNUMEROMATRICULA());
-			carrierPacking.setDriverName(albaran.getDATOSHOJARUTA()
-					.getNOMBRECONDUCTOR());
-			carrierPacking.setDriverDocument(albaran.getDATOSHOJARUTA()
-					.getDOCUMENTOCONDUCTOR());
-		} catch (Throwable th) {
-			addError(albaran, th.getLocalizedMessage());
-		}
-		try {
-			if(!test){
-				WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
+			try {
+				if(!test){
+					WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
+				}
+			} catch (Throwable th) {
+				addError(albaran, th.getLocalizedMessage());
 			}
-		} catch (Throwable th) {
-			addError(albaran, th.getLocalizedMessage());
+		} else {
+			String document = albaran.getDATOSHOJARUTA()
+					.getDATOSAGENCIATRANSPORTE().getDATOSREGISTRO()
+					.getDATOSDOCUMENTO().getDOCUMENTO();
+			addError(albaran, "Agencia de transporte no dada de alta: "
+					+ document);
 		}
 	}
 	
@@ -414,10 +478,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						.and(f.getDocumentTypeProperty().eq(type))
 						.and(f.getDocumentProperty().eq(document))).findFirst().orElse(new Carrier());
 		return carrier;
-	}
-	
-	private boolean isPackageItem(DATOSLINEAALBARANTYPE linea) {
-		return "S".equals(linea.getENVASE());
 	}
 	
 	private Elaboration obtainElaboration(AONContext ctx,
@@ -474,7 +534,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return null;
 	}
 	
-	private Item obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) {
+	private Item obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
 		Product product = ProductDAO
 				.getProductStream(
 						ctx,
@@ -505,11 +565,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				item = createItem(ctx, productoelaborado, test);
 			}
 			return item;
+		} else {
+			throw new AonException("Codigo de producto no encontrado " + productoelaborado.getCODIGO());
 		}
-		return null;
 	}
 	
-	private Item createItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) {
+	private Item createItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
 		Product product = ProductDAO
 				.getProductStream(
 						ctx,
@@ -559,13 +620,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				if(productoelaborado.getNUMEROLOTESERIE()!=null){
 					item.setSerialNumber(productoelaborado.getNUMEROLOTESERIE());
 				}
-				try {
-					if(!test){
-						ProductDAO.insertItem(ctx, item);
-					}
-				} catch (AonCoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(!test){
+					ProductDAO.insertItem(ctx, item);
 				}
 				item = ProductDAO.getItemList(
 						ctx,
@@ -579,8 +635,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 										.getFirst();
 			}
 			return item;
+		} else {
+			throw new AonException("Codigo de producto no encontrado " + productoelaborado.getCODIGO());
 		}
-		return null;
 	}
 	
 		
