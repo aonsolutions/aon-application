@@ -39,7 +39,7 @@ node {
 			)			
 			]	
 
-      def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: ( commitsParams + cherryParams )
+      def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: commitsParams
    
       for ( commitParam in commitsParams ) {
          if ( commitsMap[commitParam.name] ) {
@@ -55,7 +55,7 @@ node {
       stage "Perform HotFix ${hotfix} "
       
       // Apply the changes introduced by introduced commits
-      sh "git cherry-pick --strategy=${strategy} --strategy-option=${strategyOption} ${commits}"
+      sh "git cherry-pick ${commits}"
 
       // Prepare hotfix   
       sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
