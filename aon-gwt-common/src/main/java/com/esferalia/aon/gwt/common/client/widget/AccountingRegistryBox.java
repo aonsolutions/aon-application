@@ -59,7 +59,7 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 	protected static final String END_STRONG = "</strong>";
 	
 	private static final int MIN_CHARACTERS = 3;
-	private static final int MAX_CHARACTERS = 8;
+	private static final int MAX_CHARACTERS = 9;
 
 	private CommonServiceAsync commonService;
 
