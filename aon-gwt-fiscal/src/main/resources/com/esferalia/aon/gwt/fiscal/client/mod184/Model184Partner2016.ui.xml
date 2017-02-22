@@ -85,8 +85,10 @@
 								<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth100}">
 									<g:InlineLabel text="{msg.representativeDocument}" />
 								</td>
-								<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidthAuto}">
+								<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth250}">
 									<g:InlineLabel text="{msg.name}" />
+								</td>
+								<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidthAuto}">
 								</td>
 							</tr>
 							<tr>
@@ -99,6 +101,10 @@
 								<td>
 									<g:TextBox ui:field="name" maxLength="40" visibleLength="30"
 										styleName="{aonResources.css.aonInputText}"/>
+								</td>
+								<td>
+									<g:Button ui:field="newPartner" text="Duplicar registro" 
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDuplicate}"/>
 								</td>
 							</tr>
 						</table>
