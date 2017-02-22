@@ -670,7 +670,9 @@ public class ContrataContratosWriter implements IContrataWriter{
 			datos.setNUMEROSEGURIDADSOCIAL(person.getSocialSecurityNumber());
 		}
 		if(person.getRegistry().getDefaultAddress()!=null){
-			datos.setPAISRESIDENCIA(completeLength(Country.valueOf(person.getRegistry().getDefaultAddress().getGeozone().getGeoZoneCountry().getCode()).getIsoNum(),3,ZERO_VALUE,false));
+			if(person.getRegistry().getDefaultAddress().getGeozone()!=null){
+				datos.setPAISRESIDENCIA(completeLength(Country.valueOf(person.getRegistry().getDefaultAddress().getGeozone().getGeoZoneCountry().getCode()).getIsoNum(),3,ZERO_VALUE,false));
+			}
 			if(person.getRegistry().getDefaultAddress().getMunicipalityCode()!=null){
 				datos.setMUNICIPIORESIDENCIA(person.getRegistry().getDefaultAddress().getMunicipalityCode());
 			} else {
