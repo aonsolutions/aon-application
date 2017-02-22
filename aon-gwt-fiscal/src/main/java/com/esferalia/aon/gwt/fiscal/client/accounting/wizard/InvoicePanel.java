@@ -51,7 +51,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -337,7 +336,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			@Override
 			public void onChange(ChangeEvent event) {
 				getWrapper().getInvoice().setSeries(series.getSelectedIndex()==0?null:series.getSelectedValue());
-				Window.alert(getWrapper().getInvoice().getSeries() == null?"[NULL]":"(" + getWrapper().getInvoice().getSeries() + ")");
 				financeService.getInvoiceNextNumber(
 						 AccountEntryModule.getCurrentDomainName()
 						,AccountEntryModule.getCurrentDomain()
@@ -678,6 +676,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		setWrapper(result);
 		paint();
 		registryBox.setValue(getWrapper().getRegistry());
+		registryBox.setEnabled(getCallback().getModule().isNew());
 		extraPanel.invoiceChanged(getWrapper());
 		getWrapper().getInvoice().getType().visit(getWrapper(),new InvoicePanelVisitor());
 	}
