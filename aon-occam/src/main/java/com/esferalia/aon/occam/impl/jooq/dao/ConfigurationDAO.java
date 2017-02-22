@@ -98,7 +98,9 @@ public class ConfigurationDAO {
 	private static Account getAccount(AONContext ctx, AppParam param ) {
 		String value = AppParamDAO.fetchValue(ctx, param);
 		if (AonStringUtils.isNotBlank(value)) {
-			Integer id = AonNumberUtils.toInteger(value);
+			Integer id =AonStringUtils.equals("{null}", value)
+				?null
+				:AonNumberUtils.toInteger(value);
 			if (id != null) return AccountDAO.get(ctx, id);
 		}
 		return null;
