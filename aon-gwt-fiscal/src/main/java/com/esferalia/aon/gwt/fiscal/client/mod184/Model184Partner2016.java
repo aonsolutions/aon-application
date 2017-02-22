@@ -23,6 +23,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -215,6 +216,9 @@ public class Model184Partner2016 extends ResizeComposite {
 	ListBox declaredKey;
 	@UiField
 	DoubleBox assetPercent;
+	
+	@UiField
+	Button newPartner;
 	
 	public Model184Partner2016() {
 		key = new PartnerKeyListBox();
@@ -481,6 +485,31 @@ public class Model184Partner2016 extends ResizeComposite {
 		getDetail().setDeclaredKey(declaredKey.getSelectedValue());
 		enableWidgets();
 		markAsDirty();
+	}
+	
+	@UiHandler("newPartner")
+	void onClickNewPartner(ClickEvent event) {
+		if (Window.confirm("Crear un registro nuevo con los datos de este socio?")) {
+			currentMod184.getPartners().add(
+					new Mod184Partner()
+						.setDirty(true)
+						.setKey("A")
+						.setSubKey("01")				
+						.setTempId((currentMod184.getPartners().size() * (-1)))
+						
+						.setDocument(getDetail().getDocument())
+						.setRepresentativeDocument(getDetail().getRepresentativeDocument())
+						.setName(getDetail().getName())
+						.setProvince(getDetail().getProvince())
+						.setCountry(getDetail().getCountry())
+						.setPartType(getDetail().getPartType())
+				);
+				partnersList.setRowCount(partnersList.getRowCount() + 1);
+				partnersList.setPageSize(partnersList.getRowCount());
+				partnersList.redraw();
+				selectInList(currentMod184.getPartners().size() - 1);
+				selectDetail();		
+		}
 	}
 	
 	private void enableWidgets() {
