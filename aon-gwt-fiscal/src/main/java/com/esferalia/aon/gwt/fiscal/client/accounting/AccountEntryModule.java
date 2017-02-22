@@ -30,7 +30,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.Manual;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.SalaryPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.SalaryEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.WizardContentBase.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -800,7 +800,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 			@Override
 			public void visitSalary() {
-				SalaryPanel panel = new SalaryPanel(moduleCallback);
+				SalaryEntryPanel panel = new SalaryEntryPanel(moduleCallback);
 				panel.attach(cbk);
 			}
 			@Override
