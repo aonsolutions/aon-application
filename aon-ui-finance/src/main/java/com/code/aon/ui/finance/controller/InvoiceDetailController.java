@@ -109,16 +109,16 @@ public class InvoiceDetailController extends LinesController implements IFinance
 	}
 
 	public void onInvoiceDetailSave(ActionEvent event) throws ManagerBeanException {
-		invoiceDetail.setUpdateEnabled(false);
-		getManagerBean().restoreNullSubPOJOs(invoiceDetail);
-		getManagerBean().update(invoiceDetail);
+		getInvoiceDetail().setUpdateEnabled(false);
+		getManagerBean().restoreNullSubPOJOs(getInvoiceDetail());
+		getManagerBean().update(getInvoiceDetail());
 	}
 
 	public void onInvoiceDetailSaveAndUpdate(ActionEvent event) throws ManagerBeanException {
-		invoiceDetail.setInvoice(getInvoice());
-		invoiceDetail.setUpdateEnabled(true);
-		getManagerBean().restoreNullSubPOJOs(invoiceDetail);
-		getManagerBean().update(invoiceDetail);
+		getInvoiceDetail().setInvoice(getInvoice());
+		getInvoiceDetail().setUpdateEnabled(true);
+		getManagerBean().restoreNullSubPOJOs(getInvoiceDetail());
+		getManagerBean().update(getInvoiceDetail());
 	}
 
 	public String getSourceViewer() {

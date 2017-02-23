@@ -67,6 +67,8 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	private List<SelectItem> serialNumbers;
 	private String[] selectedBreakdown;
 	private boolean showItemPackageWindow;
+	private boolean showDeliveryDateWindow;
+	private boolean showCarrierWindow;
 	
 	private Map<Integer, PurchaseDetail> purchaseDetailMap = new HashMap<>();
 	private Map<Integer, PurchaseDetail> manufactureDetailMap = new HashMap<>();
@@ -182,6 +184,22 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		this.showItemPackageWindow = value;
 	}
 
+	public boolean isShowDeliveryDateWindow() {
+		return showDeliveryDateWindow;
+	}
+
+	public void setShowDeliveryDateWindow(boolean value) {
+		this.showDeliveryDateWindow = value;
+	}
+
+	public boolean isShowCarrierWindow() {
+		return showCarrierWindow;
+	}
+
+	public void setShowCarrierWindow(boolean value) {
+		this.showCarrierWindow = value;
+	}
+
 	public boolean isPending() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
@@ -270,6 +288,17 @@ public class SalesDetailController extends LinesController implements ISalesCons
 				salesDetail.setPrice(getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer()));
 			}
 		}
+	}
+
+	public void onSalesDetailSelect(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			setSalesDetail((SalesDetail)this.getModel().getRowData());
+		}
+	}
+
+	public void onSalesDetailSave(ActionEvent event) throws ManagerBeanException {
+		getManagerBean().restoreNullSubPOJOs(getSalesDetail());
+		getManagerBean().update(getSalesDetail());
 	}
 
 	public void onAssignSerialNumberShow(ActionEvent event) throws ManagerBeanException {
@@ -424,6 +453,9 @@ public class SalesDetailController extends LinesController implements ISalesCons
 					newSalesDetail.setStatus(SalesDetailStatus.PENDING);
 					newSalesDetail.setOfferDetail(salesDetail.getOfferDetail());
 					newSalesDetail.setDelivered(0);
+					newSalesDetail.setDeliveryDate(salesDetail.getDeliveryDate());
+					newSalesDetail.setCarrier(salesDetail.getCarrier());
+					newSalesDetail.setCarrierPacking(salesDetail.getCarrierPacking());
 					getManagerBean().restoreNullSubPOJOs(newSalesDetail);
 					getManagerBean().insert(newSalesDetail);
 				}

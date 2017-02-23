@@ -8,63 +8,68 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showShipmentWindow">
-		<aon:if test="#{purchase.showShipmentWindow}">
-			<rich:modalPanel id="shipmentModalPanel" minHeight="380"
-				minWidth="640" rendered="#{purchase.showShipmentWindow}"
+	<aon:panelGroup id="showCarrierWindow">
+		<aon:if test="#{controller.showCarrierWindow}">
+			<rich:modalPanel id="carrierModalPanel" minHeight="200"
+				minWidth="590" rendered="#{controller.showCarrierWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{bundle.carrier_shipment}" />
+						<aon:outputText value="#{bundle.warehouse_delivery_carrier}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showShipmentWindow" immediate="true">
+							reRender="showCarrierWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{purchase.showShipmentWindow}"
+								target="#{controller.showCarrierWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="shipmentForm">
+				<aon:form id="carrierForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="shipment-accept"
-										value="#{purchase.shippingDataDefined?bundle.aon_save:bundle.aon_accept}"
-										actionListener="#{purchase.accept}"
-										reRender="showShipmentWindow, purchasePanelTab"
+									<aon:commandButton id="carrier-save"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{bundle.aon_save}"
+										actionListener="#{carrierActionListener}"
+										reRender="showCarrierWindow,#{carrierReRender}"
 										accesskey="#{bundle.aon_key_save}">
-										<rich:componentControl for="shipmentModalPanel"
+										<rich:componentControl for="carrierModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
-											target="#{purchase.showShipmentWindow}"
+											target="#{controller.showCarrierWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:commandButton id="shipment-cancel"
+									<aon:commandButton id="carrier-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showShipmentWindow"
-										immediate="true"
-										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										reRender="showCarrierWindow">
 										<f:setPropertyActionListener
-											target="#{purchase.showShipmentWindow}"
+											target="#{controller.showCarrierWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" >
-										<ui:param name="displayVertically" value="#{true}" />
-									</ui:include>
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+
+										<aon:outputLabel for="Carrier_id"
+											value="#{bundle.warehouse_delivery_carrier}" />
+										<aon:selectOneMenu id="Carrier_id" 
+											value="#{carrierValue}">
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
+											<f:selectItems value="#{carrierCollections.carriers}" />
+										</aon:selectOneMenu>
+
+									</aon:panelGrid>
 								</aon:div>
-								
 							</aon:div>
 						</aon:div>
 					</aon:div>

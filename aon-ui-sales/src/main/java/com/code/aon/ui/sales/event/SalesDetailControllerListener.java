@@ -30,8 +30,10 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 
 		controller.setLongDescription(false);
 		try {
-			salesDetail.setLine(calculateNextLine((Sales)controller.getMasterController().getTo()));
+			salesDetail.setLine(calculateNextLine(sales));
 			salesDetail.setStatus(SalesDetailStatus.PENDING);
+			salesDetail.setDeliveryDate(sales.getDeliveryDate());
+			salesDetail.setCarrier((sales.getCarrier() != null && sales.getCarrier().getId() != null) ? sales.getCarrier() : null);
 			salesDetail.getSales().setWorkPlace(sales.getWorkPlace());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -40,12 +42,13 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		SalesController salesController = (SalesController) ((LinesController)event.getController()).getMasterController();
+		SalesController salesController = (SalesController)((LinesController)event.getController()).getMasterController();
 		Sales sales = (Sales) salesController.getTo();
 		SalesDetail salesDetail = (SalesDetail)event.getController().getTo();
+		salesDetail.setDeliveryDate(sales.getDeliveryDate());
+		salesDetail.setCarrier((sales.getCarrier() != null && sales.getCarrier().getId() != null) ? sales.getCarrier() : null);
 		checkQuantities(sales, salesDetail);
 		checkSerializable(salesDetail);
-		salesDetail.setDeliveryDate(salesController.getLinesDeliveryDate());
 	}
 	
 	@Override

@@ -41,6 +41,37 @@
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
 				<ui:param name="auditableTO" value="#{to}" />
 			</ui:include>
+			<aon:commandButton id="purchaseDetailDeliveryDate" value="&#160;"
+				styleClass="#{(to.deliveryDate != null and to.deliveryDate == purchase.to.deliveryDate) ? 
+								('aon-icon-commandButton aon-icon-calendar-green') : ('aon-icon-commandButton aon-icon-calendar-red')}"
+				rendered="#{to.deliveryDate != null}"
+				actionListener="#{controller.onPurchaseDetailSelect}" 
+				reRender="showDeliveryDateWindow">
+				<rich:toolTip>
+					<aon:outputText value="#{bundle.aon_delivery_date}:"
+						styleClass="aon-margin-right" />
+					<aon:outputText value="#{to.deliveryDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</rich:toolTip>
+				<f:setPropertyActionListener target="#{controller.showDeliveryDateWindow}"
+					value="#{true}" />								
+			</aon:commandButton>
+			<aon:commandButton id="purchaseDetailCarrier" value="&#160;"
+				styleClass="#{(to.carrier != null and to.carrier.id == purchase.to.carrier.id) ? 
+								('aon-icon-commandButton aon-icon-carrier') : ('aon-icon-commandButton aon-icon-carrier-error')}"
+				rendered="#{to.carrier.id != null}"
+				actionListener="#{controller.onPurchaseDetailSelect}" 
+				reRender="showCarrierWindow">
+				<rich:toolTip>
+					<aon:outputText value="#{bundle.warehouse_delivery_carrier}:"
+						styleClass="aon-margin-right" />
+					<aon:outputText value="#{to.carrier.registry.fullName}" />
+				</rich:toolTip>
+				<f:setPropertyActionListener target="#{controller.showCarrierWindow}"
+					value="#{true}" />								
+			</aon:commandButton>
 		</ui:define>		
 
 		<ui:define name="columns">

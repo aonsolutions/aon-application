@@ -32,8 +32,10 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		try {
 			PurchaseUtils utils = new PurchaseUtils();
 			purchaseDetail.setProject((purchase.getProject() != null && purchase.getProject().getId() != null) ? purchase.getProject() : null);
-			purchaseDetail.setLine(utils.calculateNextLine((Purchase)controller.getMasterController().getTo()));
+			purchaseDetail.setLine(utils.calculateNextLine(purchase));
 			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+			purchaseDetail.setDeliveryDate(purchase.getDeliveryDate());
+			purchaseDetail.setCarrier((purchase.getCarrier() != null && purchase.getCarrier().getId() != null) ? purchase.getCarrier() : null);
 			purchaseDetail.getPurchase().setWorkPlace(purchase.getWorkPlace());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -42,12 +44,13 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		PurchaseController purchaseController = (PurchaseController) ((LinesController)event.getController()).getMasterController();
+		PurchaseController purchaseController = (PurchaseController)((LinesController)event.getController()).getMasterController();
 		Purchase purchase = (Purchase) purchaseController.getTo();
 		PurchaseDetail purchaseDetail = (PurchaseDetail)event.getController().getTo();
+		purchaseDetail.setDeliveryDate(purchase.getDeliveryDate());
+		purchaseDetail.setCarrier((purchase.getCarrier() != null && purchase.getCarrier().getId() != null) ? purchase.getCarrier() : null);
 		checkQuantities(purchase, purchaseDetail);
 		checkSerializable(purchaseDetail);
-		purchaseDetail.setDeliveryDate(purchaseController.getLinesDeliveryDate());
 	}
 	
 	@Override

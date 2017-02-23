@@ -68,6 +68,8 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	private List<SelectItem> serialNumbers;
 	private String[] selectedBreakdown;
 	private boolean showItemPackageWindow;
+	private boolean showDeliveryDateWindow;
+	private boolean showCarrierWindow;
 
 	public IPriceStrategy getPriceStrategy() {
 		if(priceStrategy == null){
@@ -172,6 +174,22 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		this.showItemPackageWindow = value;
 	}
 	
+	public boolean isShowDeliveryDateWindow() {
+		return showDeliveryDateWindow;
+	}
+
+	public void setShowDeliveryDateWindow(boolean value) {
+		this.showDeliveryDateWindow = value;
+	}
+
+	public boolean isShowCarrierWindow() {
+		return showCarrierWindow;
+	}
+
+	public void setShowCarrierWindow(boolean value) {
+		this.showCarrierWindow = value;
+	}
+
 	protected String getLinkBackAction(){
 		return PURCHASE_FORM_NAME;
 	}
@@ -286,6 +304,17 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 			}
 			purchaseDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(purchaseDetail, purchase.getIssueDate(), purchase.getSupplier()));
 		}
+	}
+
+	public void onPurchaseDetailSelect(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			setPurchaseDetail((PurchaseDetail)this.getModel().getRowData());
+		}
+	}
+
+	public void onPurchaseDetailSave(ActionEvent event) throws ManagerBeanException {
+		getManagerBean().restoreNullSubPOJOs(getPurchaseDetail());
+		getManagerBean().update(getPurchaseDetail());
 	}
 
 	public void onAssignSerialNumberShow(ActionEvent event) throws ManagerBeanException {
@@ -445,6 +474,9 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 					newPurchaseDetail.setDelivered(0);
 					newPurchaseDetail.setSource(purchaseDetail.getSource());
 					newPurchaseDetail.setSourceId(purchaseDetail.getSourceId());
+					newPurchaseDetail.setDeliveryDate(purchaseDetail.getDeliveryDate());
+					newPurchaseDetail.setCarrier(purchaseDetail.getCarrier());
+					newPurchaseDetail.setCarrierPacking(purchaseDetail.getCarrierPacking());
 					getManagerBean().restoreNullSubPOJOs(newPurchaseDetail);
 					getManagerBean().insert(newPurchaseDetail);
 				}

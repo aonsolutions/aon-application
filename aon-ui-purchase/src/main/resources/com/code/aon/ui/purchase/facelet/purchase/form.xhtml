@@ -212,15 +212,23 @@
 							value="#{purchase.to.documentType}">
 							<f:selectItems value="#{purchaseCollections.documentTypes}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel for="Purchase_purchaseReference" 
-							styleClass="aon-margin-left aon-italic"
-							value="#{bundle.sales_purchase_reference}: " />
-						<aon:inputText id="Purchase_purchaseReference"
-							value="#{purchase.to.purchaseReference}"
-							disabled="#{!purchase.pending}"
-							size="30" maxlength="32" />
 					</aon:div>
 						
+					<aon:outputLabel for="Purchase_purchaseReference" 
+						value="#{bundle.sales_purchase_reference} " />
+					<aon:inputText id="Purchase_purchaseReference"
+						value="#{purchase.to.purchaseReference}"
+						disabled="#{!purchase.pending}"
+						size="35" maxlength="32" />
+
+					<aon:outputLabel for="Purchase_deliveryDate" 
+						value="#{bundle.aon_delivery_date}" />
+					<aon:selectInputDate id="Purchase_deliveryDate"
+						value="#{purchase.to.deliveryDate}" 
+						disabled="#{!purchase.pending}"						
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{purchase.to.supplier}" />
 						<ui:param name="lookupDisabled" value="#{!purchase.pending}" />
@@ -230,13 +238,11 @@
 							value="#{purchase.supplierData}" type="lookupChangeListener" />
 					</ui:include>
 					
-					<aon:outputLabel for="Purchase_deliveryDate" 
-						value="#{bundle.aon_delivery_date}" />
-					<aon:selectInputDate id="Purchase_deliveryDate"
-						value="#{purchase.linesDeliveryDate}" 
-						disabled="#{!purchase.pending}"						
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputLabel for="Customer_registry_document" 
+						value="#{bundle.aon_company_document}" />
+					<aon:inputText id="Customer_registry_document" 
+						value="#{purchase.to.supplier.registry.document}"
+						disabled="true" size="10" />
 
 					<aon:outputLabel for="Purchase_address"
 						value="#{bundle.aon_address}" />
@@ -507,6 +513,18 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
 			<ui:param name="controller" value="#{purchaseDetail}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/carrier/facelet/carrier/modalDeliveryDate.xhtml">
+			<ui:param name="controller" value="#{purchaseDetail}" />
+			<ui:param name="deliveryDateValue" value="#{purchaseDetail.purchaseDetail.deliveryDate}" />
+			<ui:param name="deliveryDateReRender" value="purchasePanelTab" />
+			<aon:methodParam name="deliveryDateActionListener" value="#{purchaseDetail.onPurchaseDetailSave}" type="actionListener" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/carrier/facelet/carrier/modalCarrier.xhtml">
+			<ui:param name="controller" value="#{purchaseDetail}" />
+			<ui:param name="carrierValue" value="#{purchaseDetail.purchaseDetail.carrier}" />
+			<ui:param name="carrierReRender" value="purchasePanelTab" />
+			<aon:methodParam name="carrierActionListener" value="#{purchaseDetail.onPurchaseDetailSave}" type="actionListener" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

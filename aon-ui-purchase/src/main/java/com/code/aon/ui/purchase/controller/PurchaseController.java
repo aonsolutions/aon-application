@@ -18,6 +18,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +77,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
+import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseController extends HeaderObjectController implements IPurchaseConstants, IEmailable, IAuditableController {
@@ -97,16 +99,17 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
-	private Date linesDeliveryDate;
 	private boolean showAuditInfoWindow;
 	private Double listTotal;
 	private PurchaseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
 	private boolean showShipmentWindow;
-	private Purchase returnSourcePurchase;
-	private BankAccountHelper accountHelper;
 	private boolean showCommentsWindow;
 	private boolean showRemarksWindow;
+	private Purchase returnSourcePurchase;
+	private BankAccountHelper accountHelper;
+	private Date savedDeliveryDate;
+	private Carrier savedCarrier;
 	
 	private List<String> moreRecipients;
 	private List<IEmailControllerListener> emailControllerListenerClasses;
@@ -221,14 +224,6 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		this.invoiceDate = invoiceDate;
 	}
 	
-	public Date getLinesDeliveryDate() {
-		return linesDeliveryDate;
-	}
-
-	public void setLinesDeliveryDate(Date linesDeliveryDate) {
-		this.linesDeliveryDate = linesDeliveryDate;
-	}
-
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
 	}
@@ -275,6 +270,26 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 
 	public void setShowRemarksWindow(boolean showRemarksWindow) {
 		this.showRemarksWindow = showRemarksWindow;
+	}
+
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
+	}
+
+	public Date getSavedDeliveryDate() {
+		return savedDeliveryDate;
+	}
+
+	public void setSavedDeliveryDate(Date savedDeliveryDate) {
+		this.savedDeliveryDate = savedDeliveryDate;
+	}
+
+	public Carrier getSavedCarrier() {
+		return savedCarrier;
+	}
+
+	public void setSavedCarrier(Carrier savedCarrier) {
+		this.savedCarrier = savedCarrier;
 	}
 
 	@Override
@@ -471,8 +486,53 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 		to.setBic(null);
 	}
 
-	public BankAccountHelper getAccountHelper() {
-		return accountHelper;
+	public void linkDeliveryDate(Purchase purchase) throws ManagerBeanException {
+		if ((purchase.getDeliveryDate() != null && getSavedDeliveryDate() == null) || (purchase.getDeliveryDate() == null && getSavedDeliveryDate() != null) ||
+				(!DateUtils.isSameDay(purchase.getDeliveryDate(), getSavedDeliveryDate()))) {
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			if (purchase.getDeliveryDate() == null) {
+				criteria.addNotNullExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_DELIVERY_DATE));
+			} else {
+				if (getSavedDeliveryDate() == null) {
+					criteria.addNullExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_DELIVERY_DATE));
+				} else {
+					criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_DELIVERY_DATE), getSavedDeliveryDate());
+				}
+			}
+			for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
+				PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
+				purchaseDetail.setDeliveryDate(purchase.getDeliveryDate());
+				purchaseDetailBean.update(purchaseDetail);
+			}
+		}
+		setSavedDeliveryDate(purchase.getDeliveryDate());
+	}
+
+	public void linkCarrier(Purchase purchase) throws ManagerBeanException {
+		Carrier carrier = (purchase.getCarrier() != null && purchase.getCarrier().getId() != null) ? purchase.getCarrier() : null;
+		setSavedCarrier((getSavedCarrier() != null && getSavedCarrier().getId() != null) ? getSavedCarrier() : null);
+		if ((carrier == null && getSavedCarrier() != null) || (carrier != null && !carrier.equals(getSavedCarrier()))) {
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			if (carrier == null) {
+				criteria.addNotNullExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_CARRIER));
+			} else {
+				if (getSavedCarrier() == null) {
+					criteria.addNullExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_CARRIER));
+				} else {
+					criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_CARRIER_ID), getSavedCarrier().getId());
+				}
+			}
+			for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
+				PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
+				purchaseDetail.setCarrier(carrier);
+				purchaseDetailBean.update(purchaseDetail);
+			}
+		}
+		setSavedCarrier(purchase.getCarrier());
 	}
 
 	public double getTaxableBase(){

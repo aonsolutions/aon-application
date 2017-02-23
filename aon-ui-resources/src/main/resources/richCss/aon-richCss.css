@@ -625,11 +625,23 @@ color:#000;
  .aon-icon-project-warn{
 	background:transparent url(images/aon-icon/aon-icon-project-warn.png) scroll left center no-repeat;	
  }
-.aon-icon-commercial-ok{
+ .aon-icon-commercial-ok{
 	background:transparent url(images/aon-icon/aon-icon-commercial-ok.png) scroll left center no-repeat;	
  }
  .aon-icon-commercial-warn{
 	background:transparent url(images/aon-icon/aon-icon-commercial-warn.png) scroll left center no-repeat;	
+ }
+ .aon-icon-carrier{
+	background:transparent url(images/aon-icon/aon-icon-carrier.png) scroll left center no-repeat;	
+ }
+ .aon-icon-carrier-edit{
+	background:transparent url(images/aon-icon/aon-icon-carrier-edit.png) scroll left center no-repeat;	
+ }
+ .aon-icon-carrier-warn{
+	background:transparent url(images/aon-icon/aon-icon-carrier-warn.png) scroll left center no-repeat;	
+ }
+ .aon-icon-carrier-error{
+	background:transparent url(images/aon-icon/aon-icon-carrier-error.png) scroll left center no-repeat;	
  }
  .aon-icon-check-in{
 	background:transparent url(images/aon-icon/aon-icon-check-in.png) scroll left center no-repeat;	
@@ -647,6 +659,15 @@ color:#000;
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
+ }
+.aon-icon-calendar-grey{
+	background:transparent url(images/aon-icon/aon-icon-calendar-grey.png) scroll left center no-repeat;	
+ }
+.aon-icon-calendar-green{
+	background:transparent url(images/aon-icon/aon-icon-calendar-green.png) scroll left center no-repeat;	
+ }
+.aon-icon-calendar-red{
+	background:transparent url(images/aon-icon/aon-icon-calendar-red.png) scroll left center no-repeat;	
  }
 .aon-icon-contact{
 	background:transparent url(images/aon-icon/aon-icon-contact.png) scroll left center no-repeat;

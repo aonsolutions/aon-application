@@ -1,18 +1,15 @@
 package com.code.aon.ui.sales.event;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.DocumentType;
@@ -29,7 +26,6 @@ import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesControllerListener extends ControllerAdapter implements ISalesConstants {
 	
@@ -37,7 +33,7 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 
 	@Override
 	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
-		SalesController controller = (SalesController) event.getController();
+		SalesController controller = (SalesController)event.getController();
 		controller.setListTotal(null);
 	}
 	
@@ -45,7 +41,7 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		SalesController controller = (SalesController)event.getController();
-		Sales sales = (Sales) controller.getTo();
+		Sales sales = (Sales)controller.getTo();
 		try {
 			List<SelectItem> workPlaces = companyColls.getCurrentUserWorkPlaces();
 			if (workPlaces.size() > 0) {
@@ -60,9 +56,10 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 			controller.setAddresses(null);
 			controller.setProjects(null);
 			controller.setDefaultPayMethod(null);
-			controller.setLinesDeliveryDate(null);
 			controller.resetSalesPayMethod();
 			controller.initSeries();
+			controller.setSavedDeliveryDate(null);
+			controller.setSavedCarrier(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -71,18 +68,20 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		SalesController controller = (SalesController)event.getController();
+		Sales sales = (Sales)controller.getTo();
 		try {
 			controller.loadAddresses(((Sales)controller.getTo()).getCustomer().getRegistry().getId());
 			controller.loadProjects(((Sales)controller.getTo()).getCustomer().getRegistry().getId());
 			controller.loadDefaultPayMethod(((Sales)controller.getTo()).getCustomer().getRegistry(), false);
-			if(((Sales)controller.getTo()).getCarrier()==null){
-				((Sales)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
-			}
 			controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
+			if (sales.getCarrier() == null) {
+				sales.setCarrier((Carrier)BeanManager.getManagerBean(Carrier.class).createNewTo());
+			}
 			
 			controller.setShowPurchaseWindow(false);
 			controller.setPurchaseGenerator(null);
-			controller.setLinesDeliveryDate(obtainLinesDeliveryDate());
+			controller.setSavedDeliveryDate(sales.getDeliveryDate());
+			controller.setSavedCarrier(sales.getCarrier());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -90,74 +89,49 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		IController salesDetailController = FormUtil.getController(SALES_DETAIL_CONTROLLER_NAME);
-		salesDetailController.onReset(null);
+		SalesController controller = (SalesController)event.getController();
+		Sales sales = (Sales)controller.getTo();
+		controller.setSavedDeliveryDate(sales.getDeliveryDate());
+		controller.setSavedCarrier(sales.getCarrier());
+
+		IController detailController = FormUtil.getController(SALES_DETAIL_CONTROLLER_NAME);
+		detailController.onReset(null);
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		SalesController controller = (SalesController)event.getController();
-		if(!controller.isShippingAlternativeAddress()){
+		if (!controller.isShippingAlternativeAddress()) {
 			emptyShippingAlternativeAddress((Sales)controller.getTo());
 		}
 		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
 	}
 	
 	@Override
-	public void beforeBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		SalesController controller = (SalesController) event.getController();
-		Sales sales = (Sales) controller.getTo();
-		SalesUtils utils = new SalesUtils();
-		for(ITransferObject to: sales.getDetailList()){
-			SalesDetail detail = (SalesDetail) to;
-			if (utils.isManufactureDone(detail)) {
-				throw new ControllerListenerException(
-						detail.getDescription() + ": " +
-						"No se puede borrar, el producto está en elaboración.");
-			}
-		}
-	}
-
-	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		SalesController controller = (SalesController) event.getController();
-		controller.setListTotal(null);
+		SalesController controller = (SalesController)event.getController();
 		try {
-			updateLinesDeliveryDate();
+			controller.linkDeliveryDate((Sales)controller.getTo());
+			controller.linkCarrier((Sales)controller.getTo());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
-	}
-	
-	private Date obtainLinesDeliveryDate() throws ManagerBeanException {
-		SalesController controller = (SalesController)this.getController();
-		Sales sales = (Sales)controller.getTo();
-		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
-		criteria.addNotNullExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_DELIVERY_DATE));
-		List<ITransferObject> list = salesDetailBean.getList(criteria);
-		if(!list.isEmpty()){
-			return ((SalesDetail)list.get(0)).getDeliveryDate();
-		}
-		return null;
-	}
-	
-	private void updateLinesDeliveryDate() throws ManagerBeanException {
-		SalesController controller = (SalesController)this.getController();
-		Sales sales = (Sales)controller.getTo();
-		Date deliveryDate = controller.getLinesDeliveryDate();
-		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
-		for (ITransferObject ito : salesDetailBean.getList(criteria)) {
-			SalesDetail salesDetail = (SalesDetail)ito;
-			salesDetail.setDeliveryDate(deliveryDate);
-			salesDetailBean.update(salesDetail);
-		}
-		IController salesDetailController = FormUtil.getController(SALES_DETAIL_CONTROLLER_NAME);
+
+		IController salesDetailController = FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
 		salesDetailController.onSearch(null);
+	}
+
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		SalesController controller = (SalesController)event.getController();
+		Sales sales = (Sales)controller.getTo();
+		SalesUtils utils = new SalesUtils();
+		for (ITransferObject to : sales.getDetailList()) {
+			SalesDetail detail = (SalesDetail) to;
+			if (utils.isManufactureDone(detail)) {
+				throw new ControllerListenerException(detail.getDescription() + ": No se puede borrar, el producto está en elaboración.");
+			}
+		}
 	}
 
 	private void emptyShippingAlternativeAddress(Sales sales) {

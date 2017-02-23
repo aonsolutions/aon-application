@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.91.0
+# Version: 8.92.0
 # Created by: girazu
-# Creation Date: 13/02/2017 18:45
+# Creation Date: 16/02/2017 16:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -463,6 +463,35 @@ CREATE TABLE `account_period` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ejercicios Contables';
 
 #
+# Structure for the `tax` table : 
+#
+
+CREATE TABLE `tax` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Impuesto',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(30) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
+  `tax_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Impuesto',
+  `percentage` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Porcentaje de recargo actual',
+  `surcharge` double(15,3) DEFAULT '0.000' COMMENT 'Porcentaje de recargo de equivalencia actual',
+  `start_date` date DEFAULT NULL COMMENT 'Fecha de inicio de vigencia',
+  `vat_deduction_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de deduccion del IVA',
+  `withholding_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de retencion',
+  `sales_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
+  `purchase_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TAX_DOMAIN` (`domain`),
+  KEY `IDX_TAX_ACCOUNT_SALES` (`sales_account`),
+  KEY `IDX_TAX_ACCOUNT_PURCHASE` (`purchase_account`),
+  CONSTRAINT `FK_TAX_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_TAX_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
+
+#
 # Structure for the `cnae` table : 
 #
 
@@ -510,6 +539,8 @@ CREATE TABLE `enterprise_activity` (
   `type` tinyint(2) NOT NULL COMMENT 'Tipo de Actividad de la Empresa',
   `cnae2009` int(4) DEFAULT NULL COMMENT 'Identificador del CNAE 2009',
   `surcharge` tinyint(1) DEFAULT '0' COMMENT 'Indica si la Actividad tiene de recargo de equivalencia',
+  `vat_tax` int(4) DEFAULT NULL COMMENT 'Identificador del IVA por defecto',
+  `retention_tax` int(4) DEFAULT NULL COMMENT 'Identificador del IRPF por defecto',
   `vat_regime` tinyint(2) DEFAULT NULL COMMENT 'Regimen de IVA',
   `retention_regime` tinyint(2) DEFAULT NULL COMMENT 'Regimen de IRPF',
   `start_date` date DEFAULT NULL COMMENT 'Fecha de inicio',
@@ -523,11 +554,15 @@ CREATE TABLE `enterprise_activity` (
   KEY `IDX_ENTERPRISE_ACTIVITY_CNAE2009` (`cnae2009`),
   KEY `IDX_ENTERPRISE_ACTIVITY_DOMAIN` (`domain`),
   KEY `IDX_ENTERPRISE_ACTIVITY_IAE` (`iae`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_TAX_VAT` (`vat_tax`),
+  KEY `IDX_ENTERPRISE_ACTIVITY_TAX_RETENTION` (`retention_tax`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE2009` FOREIGN KEY (`cnae2009`) REFERENCES `cnae2009` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_IAE` FOREIGN KEY (`iae`) REFERENCES `iae` (`id`)
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_IAE` FOREIGN KEY (`iae`) REFERENCES `iae` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_TAX_RETENTION` FOREIGN KEY (`retention_tax`) REFERENCES `tax` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_TAX_VAT` FOREIGN KEY (`vat_tax`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
 
 #
@@ -790,35 +825,6 @@ CREATE TABLE `pcategory` (
   KEY `IDX_PCATEGORY_DOMAIN` (`domain`),
   CONSTRAINT `FK_PCATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Productos';
-
-#
-# Structure for the `tax` table : 
-#
-
-CREATE TABLE `tax` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Impuesto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(30) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
-  `tax_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Impuesto',
-  `percentage` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Porcentaje de recargo actual',
-  `surcharge` double(15,3) DEFAULT '0.000' COMMENT 'Porcentaje de recargo de equivalencia actual',
-  `start_date` date DEFAULT NULL COMMENT 'Fecha de inicio de vigencia',
-  `vat_deduction_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de deduccion del IVA',
-  `withholding_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de retencion',
-  `sales_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
-  `purchase_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
-  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
-  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
-  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
-  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
-  PRIMARY KEY (`id`),
-  KEY `IDX_TAX_DOMAIN` (`domain`),
-  KEY `IDX_TAX_ACCOUNT_SALES` (`sales_account`),
-  KEY `IDX_TAX_ACCOUNT_PURCHASE` (`purchase_account`),
-  CONSTRAINT `FK_TAX_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_TAX_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
 
 #
 # Structure for the `product` table : 
@@ -3950,6 +3956,7 @@ CREATE TABLE `sales` (
   `bank_alias` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Alias del Banco',
   `bic` varchar(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `purchase_generated` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se han generado los Pedidos de Compra derivados',
+  `delivery_date` date DEFAULT NULL COMMENT 'Fecha de entrega',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
   `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
@@ -4005,7 +4012,7 @@ CREATE TABLE `sales_detail` (
   `status` tinyint(2) DEFAULT '0' COMMENT 'Estado del Detalle de Pedido',
   `offer_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle del Presupuesto Origen',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
-  `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
+  `delivery_date` date DEFAULT NULL COMMENT 'Fecha de entrega',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
   `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
@@ -5402,6 +5409,7 @@ CREATE TABLE `purchase` (
   `bank_alias` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Alias del Banco',
   `bic` varchar(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `email_communication` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se ha comunicado a traves de email',
+  `delivery_date` date DEFAULT NULL COMMENT 'Fecha de entrega',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
   `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
@@ -5459,7 +5467,7 @@ CREATE TABLE `purchase_detail` (
   `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del Origen del Detalle de la Compra',
   `proposal_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle de Solicitud',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
-  `delivery_date` datetime DEFAULT NULL COMMENT 'Fecha de entrega',
+  `delivery_date` date DEFAULT NULL COMMENT 'Fecha de entrega',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
   `carrier_packing` int(4) DEFAULT NULL COMMENT 'Identificador de la Hoja de ruta',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
@@ -8345,7 +8353,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.91.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.92.0');
 
 COMMIT;
 

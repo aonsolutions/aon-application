@@ -15,6 +15,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +81,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
+import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ingenet.IngenetSalesManager;
 
@@ -114,8 +116,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private ProgressionState progressionState;
 	private Integer invoiceId;
 	private BankAccountHelper accountHelper;
-	private Date linesDeliveryDate;
-	
+	private Date savedDeliveryDate;
+	private Carrier savedCarrier;
+
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
 	private com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaImporter;
@@ -304,19 +307,35 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.progressionState = progressionState;
 	}
 	
+	public Integer getInvoiceId() {
+		return invoiceId;
+	}
+
+	public BankAccountHelper getAccountHelper() {
+		return accountHelper;
+	}
+
+	public Date getSavedDeliveryDate() {
+		return savedDeliveryDate;
+	}
+
+	public void setSavedDeliveryDate(Date savedDeliveryDate) {
+		this.savedDeliveryDate = savedDeliveryDate;
+	}
+
+	public Carrier getSavedCarrier() {
+		return savedCarrier;
+	}
+
+	public void setSavedCarrier(Carrier savedCarrier) {
+		this.savedCarrier = savedCarrier;
+	}
+
 	public EdiSalesImporterHandler getEdiImporter() {
 		if(ediImporter==null){
 			ediImporter = new EdiSalesImporterHandler(this);
 		}
 		return ediImporter;
-	}
-
-	public Date getLinesDeliveryDate() {
-		return linesDeliveryDate;
-	}
-
-	public void setLinesDeliveryDate(Date linesDeliveryDate) {
-		this.linesDeliveryDate = linesDeliveryDate;
 	}
 
 	@Deprecated
@@ -332,10 +351,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			ftpEdiDownloader = new FtpSalesDownloadHandler(this);
 		}
 		return ftpEdiDownloader;
-	}
-
-	public Integer getInvoiceId() {
-		return invoiceId;
 	}
 
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
@@ -364,8 +379,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
-			// TODO alias for: SalesDetail.item.product.manufactured
-			criteria.addEqualExpression("SalesDetail.item.product.manufactured", Boolean.TRUE);
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_PRODUCT_MANUFACTURED), Boolean.TRUE);
 			return salesDetailBean.getCount(criteria) > 0;
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -379,8 +393,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
-			// TODO alias for: SalesDetail.item.product.manufactured
-			criteria.addEqualExpression("SalesDetail.item.product.manufactured", Boolean.TRUE);
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_PRODUCT_MANUFACTURED), Boolean.TRUE);
 			long pending = salesDetailBean.getList(criteria).stream()
 				.map(to -> (SalesDetail)to)
 				.filter(detail -> (detail.getQuantity() > detail.getDelivered()))
@@ -585,8 +598,53 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		to.setBic(null);
 	}
 
-	public BankAccountHelper getAccountHelper() {
-		return accountHelper;
+	public void linkDeliveryDate(Sales sales) throws ManagerBeanException {
+		if ((sales.getDeliveryDate() != null && getSavedDeliveryDate() == null) || (sales.getDeliveryDate() == null && getSavedDeliveryDate() != null) ||
+				(!DateUtils.isSameDay(sales.getDeliveryDate(), getSavedDeliveryDate()))) {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			if (sales.getDeliveryDate() == null) {
+				criteria.addNotNullExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_DELIVERY_DATE));
+			} else {
+				if (getSavedDeliveryDate() == null) {
+					criteria.addNullExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_DELIVERY_DATE));
+				} else {
+					criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_DELIVERY_DATE), getSavedDeliveryDate());
+				}
+			}
+			for (ITransferObject ito : salesDetailBean.getList(criteria)) {
+				SalesDetail salesDetail = (SalesDetail)ito;
+				salesDetail.setDeliveryDate(sales.getDeliveryDate());
+				salesDetailBean.update(salesDetail);
+			}
+		}
+		setSavedDeliveryDate(sales.getDeliveryDate());
+	}
+
+	public void linkCarrier(Sales sales) throws ManagerBeanException {
+		Carrier carrier = (sales.getCarrier() != null && sales.getCarrier().getId() != null) ? sales.getCarrier() : null;
+		setSavedCarrier((getSavedCarrier() != null && getSavedCarrier().getId() != null) ? getSavedCarrier() : null);
+		if ((carrier == null && getSavedCarrier() != null) || (carrier != null && !carrier.equals(getSavedCarrier()))) {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			if (carrier == null) {
+				criteria.addNotNullExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_CARRIER));
+			} else {
+				if (getSavedCarrier() == null) {
+					criteria.addNullExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_CARRIER));
+				} else {
+					criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_CARRIER_ID), getSavedCarrier().getId());
+				}
+			}
+			for (ITransferObject ito : salesDetailBean.getList(criteria)) {
+				SalesDetail salesDetail = (SalesDetail)ito;
+				salesDetail.setCarrier(carrier);
+				salesDetailBean.update(salesDetail);
+			}
+		}
+		setSavedCarrier(sales.getCarrier());
 	}
 
 	public void sellerData(LookupChangeEvent event) {

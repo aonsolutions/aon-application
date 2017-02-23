@@ -240,22 +240,32 @@
 							value="#{sales.to.documentType}">
 							<f:selectItems value="#{salesCollections.basicSalesTypes}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel for="Sales_purchaseReference" 
-							styleClass="aon-margin-left aon-italic"
-							value="#{bundle.sales_purchase_reference}: " />
-						<aon:div id="purchaseReference-div" style="display:inline;">
-							<aon:inputText id="Sales_purchaseReference"
-								value="#{sales.to.purchaseReference}" size="30" maxlength="32" >
-								<a4j:support event="onchange" ajaxSingle="#{true}"
-									reRender="purchaseReference-div" />
-							</aon:inputText>
-							<aon:outputText id="sales-existPurchaseReference"
-								rendered="#{sales.existPurchaseReference}"
-								title="#{bundle.sales_purchase_reference_previously_used}"
-								value="&#160;&#160;&#160;"
-								styleClass="aon-icon-warning aon-margin-left aon-padding-left" />
-						</aon:div>
 					</aon:div>
+
+					<aon:outputLabel for="Sales_purchaseReference" 
+						value="#{bundle.sales_purchase_reference} " />
+					<aon:div id="purchaseReference-div" style="display:inline;">
+						<aon:inputText id="Sales_purchaseReference"
+							value="#{sales.to.purchaseReference}"
+							disabled="#{!sales.pending}"
+							size="35" maxlength="32" >
+							<a4j:support event="onchange" ajaxSingle="#{true}"
+								reRender="purchaseReference-div" />
+						</aon:inputText>
+						<aon:outputText id="sales-existPurchaseReference"
+							rendered="#{sales.existPurchaseReference}"
+							title="#{bundle.sales_purchase_reference_previously_used}"
+							value="&#160;&#160;&#160;"
+							styleClass="aon-icon-warning aon-margin-left aon-padding-left" />
+					</aon:div>
+
+					<aon:outputLabel for="Sales_deliveryDate" 
+						value="#{bundle.aon_delivery_date}" />
+					<aon:selectInputDate id="Sales_deliveryDate"
+						value="#{sales.to.deliveryDate}" 
+						disabled="#{!sales.pending}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{sales.to.customer}" />
@@ -267,13 +277,11 @@
 							value="#{sales.customerData}" type="lookupChangeListener" />
 					</ui:include>
 
-					<aon:outputLabel for="Sales_deliveryDate" 
-						value="#{bundle.aon_delivery_date}" />
-					<aon:selectInputDate id="Sales_deliveryDate"
-						value="#{sales.linesDeliveryDate}" 
-						disabled="#{!sales.pending}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputLabel for="Customer_registry_document" 
+						value="#{bundle.aon_company_document}" />
+					<aon:inputText id="Customer_registry_document" 
+						value="#{sales.to.customer.registry.document}"
+						disabled="true" size="10" />
 
 					<aon:outputLabel for="Sales_address"
 						value="#{bundle.aon_address}" />
@@ -542,6 +550,18 @@
 		</aon:if>
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
 			<ui:param name="controller" value="#{salesDetail}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/carrier/facelet/carrier/modalDeliveryDate.xhtml">
+			<ui:param name="controller" value="#{salesDetail}" />
+			<ui:param name="deliveryDateValue" value="#{salesDetail.salesDetail.deliveryDate}" />
+			<ui:param name="deliveryDateReRender" value="salesPanelTab" />
+			<aon:methodParam name="deliveryDateActionListener" value="#{salesDetail.onSalesDetailSave}" type="actionListener" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/carrier/facelet/carrier/modalCarrier.xhtml">
+			<ui:param name="controller" value="#{salesDetail}" />
+			<ui:param name="carrierValue" value="#{salesDetail.salesDetail.carrier}" />
+			<ui:param name="carrierReRender" value="salesPanelTab" />
+			<aon:methodParam name="carrierActionListener" value="#{salesDetail.onSalesDetailSave}" type="actionListener" />
 		</ui:include>
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
 			<ui:param name="addWaitProcessPoll" value="#{true}" />
