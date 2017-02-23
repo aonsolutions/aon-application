@@ -335,7 +335,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 									detail.setDelivery(delivery);
 									detail.setLine(Short.valueOf(linea.getLINEA()));
 									detail.setItem(item);
-									detail.setDescription(linea.getDESCRIPCION());
+									String description = linea.getDESCRIPCION();
+									if(linea.getLINEAENVASECONTENEDOR()!=null)
+										description = "/*PACKAGE="+linea.getLINEAENVASECONTENEDOR() + "*/" + linea.getDESCRIPCION();
+									if(linea.getLINEAALBARANCONTENIDA()!=null)
+										description = "/*DETAIL="+linea.getLINEAALBARANCONTENIDA() + "*/" + linea.getDESCRIPCION();
+									detail.setDescription(description);
 									detail.setWarehouse(warehouse.getId());
 									detail.setDiscountExpression("0");
 									detail.setQuantity(Double.valueOf(linea

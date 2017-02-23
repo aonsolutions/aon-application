@@ -267,18 +267,6 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element name="LINEA_ENVASE_CONTENEDOR">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Numero de linea del
-						envase que lo contiene
-					</xsd:documentation>
-				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="\d{1,3}" />
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -332,7 +320,20 @@
 			<xsd:element name="LINEA_ENVASE_CONTENEDOR" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Numero de linea del
-						envase que lo contiene
+						envase que lo contiene. Nada si directamente se deposita sobre el
+						medio de transporte.
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{1,3}" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LINEA_ALBARAN_CONTENIDA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Numero de la linea de
+						albaran que esta contenida en este envase
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
