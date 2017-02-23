@@ -198,7 +198,8 @@ public class ToJSON {
 				.put(MSG.ID, purchase.getSupplier())
 				.put(MSG.NAME, purchase.getSupplierName())) 
 			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "")
-			.put("order_type", "purchase");
+			.put("order_type", "purchase")
+			.put("reference", purchase.getPurchaseReference());
 	}
 	
 	public static JSONObject deliveryToJSON(Delivery delivery) {
@@ -211,7 +212,12 @@ public class ToJSON {
 				.put(MSG.ID, delivery.getCustomer())
 				.put(MSG.NAME, delivery.getCustomerName())) 
 			.put(MSG.ISSUE_DATE, delivery.getIssueTime() != null ? dateFormat.format(delivery.getIssueTime()) : "")
-			.put("order_type", "delivery");
+			.put("order_type", "delivery")
+			.put("reference", delivery.getTrackingNumber())
+			.put("total_packages", delivery.getTotalPackages())
+			.put("total_weight", delivery.getTotalWeight());
+			
+			
 	}
 	
 	public static JSONObject purchaseDetailToJSON(PurchaseDetail purchaseDetail) {

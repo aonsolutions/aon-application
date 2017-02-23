@@ -5,6 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,17 +16,20 @@ import javax.imageio.ImageIO;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.draw.LineSeparator;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 
 public class PackingList {
 	
@@ -38,59 +44,35 @@ public class PackingList {
 		try {
 			archivoPDF = File.createTempFile("packingList", "pdf");
 		} catch (IOException e2) {
-			e2.printStackTrace();
+			LOGGER.log(Level.SEVERE, e2.getMessage());
 		}
-
-		try {
-			archivoPDF.createNewFile();
-		} catch (IOException e1) {
-			LOGGER.log(Level.SEVERE, e1.getMessage());
-		}		
+		
 		Document document = new Document(PageSize.A4);
 		try {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
-		
-			document.open();
-		
-			Paragraph separator = new Paragraph();
-			LineSeparator line = new LineSeparator();
-	        line.setOffset(-2);
-	        separator.add(line);
-	        
-	        Image i1 = Image.getInstance(image);
-	        float percentage = 100 /i1.getHeight();
-	        Float width = i1.getWidth() * percentage;
-	        Float height = i1.getHeight() * percentage;
-	      
-	        BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
-
-	        Image logo = Image.getInstance(img, null);
-	        logo.scaleAbsolute(width, height);
-	        PdfPCell c = new PdfPCell(logo, false);
-	        c.setBorder(PdfPCell.NO_BORDER);
-	        PdfPTable header = new PdfPTable(2);
-	        header.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-	        header.setWidthPercentage(100);
-	        header.addCell(c);
-			Paragraph title = new Paragraph("Packing List",getTitleFont());
-			title.add(separator);
-			header.addCell(title);
 			
-			document.add(header);
+			CarrierPackingType type = CarrierPackingType.values()[json.getJSONObject("carrier_packing").getJSONObject("type").getInt("id")];
+
+			document.open();			
+			document.add(getHeader(json, image));
 			document.add(new Paragraph(" "));
-		
-			document.add(carrierPacking(json.getJSONObject("carrier_packing")));
+			document.add(getSubHeader(json, type));
 			document.add(new Paragraph(" "));
 
 			JSONArray orders  = json.getJSONArray("orders");	
 			for(Integer i = 0 ; i < orders.length() ; i++){
-				document.add(order(orders.getJSONObject(i)));
+				document.add(order(orders.getJSONObject(i), type));
 				document.add(new Paragraph(" "));
 			}
 			
 			Paragraph order = new Paragraph(" ");
-			order.add(separator);
+			order.add(getSeparator());
 			document.add(order);
+
+			document.add(new Paragraph(new Phrase("Observaciones:", getFont1())));		
+			document.add(new Paragraph(" "));
+			document.add(new Paragraph(" "));
+			document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -98,88 +80,220 @@ public class PackingList {
 		return archivoPDF;
 	}
 	
-	private static Paragraph carrierPacking(JSONObject json){
-		Paragraph paragraph = new Paragraph();
-		PdfPTable tableM = new PdfPTable(1);
-		tableM.setWidthPercentage(100);
+	// ------------------- HEADER
+	
+	private static PdfPTable getHeader(JSONObject json, byte [] image) throws BadElementException, MalformedURLException, IOException{
+        PdfPTable header = new PdfPTable(3);
+        float[] medidaCeldas = {0.75f, 1.25f, 1f};
+		try {
+			header.setWidths(medidaCeldas);
+		} catch (DocumentException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+        header.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+        header.setWidthPercentage(100);
+      
+        header.addCell(getHeaderLogo(image));
+		header.addCell(getHeaderCompany(json));
+		header.addCell(getHeaderPackingList(json.getJSONObject("carrier_packing")));
+		return header;
+	}
+	
+	private static PdfPCell getHeaderLogo(byte [] image) throws BadElementException, MalformedURLException, IOException{
+		Image i1 = Image.getInstance(image);
 		
-		PdfPTable table = new PdfPTable(4);
-		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-		table.setWidthPercentage(100);
+		float percentage = 0;
+		if(i1.getWidth() > i1.getHeight()){
+			percentage = 100 / i1.getWidth();
+		} else percentage = 100 / i1.getHeight();
 		
-		PdfPCell c = new PdfPCell(new Phrase("Tipo",getFont1()));
-		c.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c);
+		Float width = i1.getWidth() * percentage;
+		Float height = i1.getHeight() * percentage;
 		
-		PdfPCell c1 = new PdfPCell(new Phrase(json.getJSONObject("type").getString("name"),getFont2()));
-		c1.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c1);
+		BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
 		
-		PdfPCell c2 = new PdfPCell(new Phrase("Fecha de emision",getFont1()));
+		Image logo = Image.getInstance(img, null);
+		logo.scaleAbsolute(width, height);
+		PdfPCell headerLogo = new PdfPCell(logo, false);
+		headerLogo.setBorder(PdfPCell.NO_BORDER);
+		return headerLogo;
+	}
+	
+	private static PdfPTable getHeaderCompany(JSONObject json){
+		PdfPTable table = new PdfPTable(1);
+		PdfPCell ca = new PdfPCell(new Phrase(json.getJSONObject("address").getString("name"),getFont2()));
+		ca.setBorder(PdfPCell.NO_BORDER);
+		table.addCell(ca);
+		
+		PdfPCell cb = new PdfPCell(new Phrase(json.getJSONObject("address").getString("address"),getFont2()));
+		cb.setBorder(PdfPCell.NO_BORDER);
+		table.addCell(cb);
+		
+		PdfPCell cc = new PdfPCell(new Phrase(json.getJSONObject("address").getString("zip") + " " 
+				   + json.getJSONObject("address").getString("city") + " "
+				   + json.getJSONObject("address").getString("province") + " "
+				   + json.getJSONObject("address").getString("country"),getFont2()));
+		cc.setBorder(PdfPCell.NO_BORDER);
+		table.addCell(cc);
+		return table;
+	}
+	
+	private static PdfPTable getHeaderPackingList(JSONObject json){
+		PdfPTable header3 = new PdfPTable(2);
+		PdfPCell c4 = new PdfPCell(new Phrase("Número:",getFont1()));
+		c4.setBorder(PdfPCell.NO_BORDER);
+		header3.addCell(c4);
+			
+		PdfPCell c5 = new PdfPCell(new Phrase(json.getString("series") 
+				+ "/" + json.getString("number"),getFont2()));
+		c5.setBorder(PdfPCell.NO_BORDER);
+		header3.addCell(c5);
+			
+		PdfPCell c2 = new PdfPCell(new Phrase("Fecha:",getFont1()));
 		c2.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c2);
-		
+		header3.addCell(c2);
+			
 		PdfPCell c3 = new PdfPCell(new Phrase(json.getString("issue_date"),getFont2()));
 		c3.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c3);
-		
-		PdfPCell c4 = new PdfPCell(new Phrase("Serie/Numero",getFont1()));
-		c4.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c4);
-		
-		PdfPCell c5 = new PdfPCell(new Phrase(json.getString("series") 
-									 + "/" + json.getString("number"),getFont2()));
-		c5.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c5);
-		
-		PdfPCell c6 = new PdfPCell(new Phrase("Referencia",getFont1()));
+		header3.addCell(c3);
+			
+		PdfPCell c6 = new PdfPCell(new Phrase("Su Referencia:",getFont1()));
 		c6.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c6);
-		
+		header3.addCell(c6);
+			
 		PdfPCell c7 = new PdfPCell(new Phrase(json.getString("carrier_reference"),getFont2()));
 		c7.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c7);
+		header3.addCell(c7);
+		return header3;
+	}	
+	
+	// ------------------- SUB-HEADER
+
+	private static PdfPTable getSubHeader(JSONObject json, CarrierPackingType type) throws BadElementException, MalformedURLException, IOException{
+		JSONObject carrierPackingJSON = json.getJSONObject("carrier_packing");
+		PdfPTable subHeader = new PdfPTable(1);
+        subHeader.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+        subHeader.setWidthPercentage(100);
+      
+        if(type.equals(CarrierPackingType.WAYBILL)){
+            subHeader.addCell(getSubHeaderBoeInfo());
+        }
+        subHeader.addCell(getSubHeaderPackingListType(carrierPackingJSON));
+        subHeader.addCell(getSubHeaderPackingListCarrier(carrierPackingJSON, type));
+		return subHeader;
+	}
+
+	private static PdfPCell getSubHeaderBoeInfo() {
+		String boeInfo = "DOCUMENTO DE CONTROL orden FOM/2861/13-12 2012(BOE nº 5 de 5/01/2013)";
+		Paragraph title = new Paragraph(boeInfo, getBoeInfoFont());
+		title.setAlignment(Element.ALIGN_CENTER);
+		title.add(getSeparator());
+		title.setIndentationRight(20);
+		PdfPCell cell = new PdfPCell();
+		cell.setBorder(PdfPCell.NO_BORDER);
+		cell.addElement(title);
+		return cell;
+	}
+	
+	private static PdfPCell getSubHeaderPackingListType(JSONObject json) {
+		String type = json.getJSONObject("type").getString("name").toUpperCase();
+		Paragraph title = new Paragraph(type, getTitleFont());
+		title.setAlignment(Element.ALIGN_CENTER);
+		PdfPCell cell = new PdfPCell();
+		cell.setBorder(PdfPCell.NO_BORDER);
+		cell.addElement(title);
+		return cell;
+	}
+	
+	private static PdfPTable getSubHeaderPackingListCarrier(JSONObject json, CarrierPackingType type) {
+		PdfPTable table = new PdfPTable(1);
+		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+
+		PdfPTable carrier = new PdfPTable(4);
 		
-		PdfPCell c8 = new PdfPCell(new Phrase("Empresa de Transporte",getFont1()));
+		float[] medidaCeldas = {1.5f, 2.5f, 1f, 1f};
+		try {
+			carrier.setWidths(medidaCeldas);
+		} catch (DocumentException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+		
+		PdfPCell c8 = new PdfPCell(new Phrase("Empresa de Transporte:",getFont1()));
 		c8.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c8);
+		carrier.addCell(c8);
 		
 		PdfPCell c9 = new PdfPCell(new Phrase(json.getJSONObject("carrier").getString("name"),getFont2()));
 		c9.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c9);
+		carrier.addCell(c9);
 		
-		PdfPCell c10 = new PdfPCell(new Phrase("Fecha de Entrega",getFont1()));
+		PdfPCell c10 = new PdfPCell(new Phrase("Entrega:",getFont1()));
 		c10.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c10);
+		carrier.addCell(c10);
 		
 		PdfPCell c11 = new PdfPCell(new Phrase(json.getString("delivery_date"),getFont2()));
 		c11.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c11);
+		carrier.addCell(c11);
 		
-		PdfPCell c12 = new PdfPCell(new Phrase("Matricula",getFont1()));
-		c12.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c12);
 		
-		PdfPCell c13 = new PdfPCell(new Phrase(json.getString("number_plate"),getFont2()));
-		c13.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c13);
-		
-		PdfPCell c14 = new PdfPCell(new Phrase("Conductor",getFont1()));
+		PdfPCell c14 = new PdfPCell(new Phrase("Conductor:",getFont1()));
 		c14.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c14);
+		carrier.addCell(c14);
 		
 		PdfPCell c15 = new PdfPCell(new Phrase(json.getString("driver_name") +" - "
 									+ json.getString("driver_document"),getFont2()));
 		c15.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c15);
+		carrier.addCell(c15);
 		
+		PdfPCell c12 = new PdfPCell(new Phrase("Matricula:",getFont1()));
+		c12.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(c12);
 		
-		tableM.addCell(table);
-		paragraph.add(tableM);
-		return paragraph;
+		PdfPCell c13 = new PdfPCell(new Phrase(json.getString("number_plate"),getFont2()));
+		c13.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(c13);
+
+		table.addCell(carrier);
+
+		if(type.equals(CarrierPackingType.WAYBILL)){
+			PdfPTable parameters = new PdfPTable(2);
+			PdfPCell cp1 = new PdfPCell(new Phrase("Parámetro",getFont1()));
+			cp1.setBorder(PdfPCell.NO_BORDER);
+			parameters.addCell(cp1);
+		
+			PdfPCell cr1 = new PdfPCell(new Phrase("Resultado",getFont1()));
+			cr1.setBorder(PdfPCell.NO_BORDER);
+			parameters.addCell(cr1);
+		
+			PdfPCell cp2 = new PdfPCell(new Phrase("LIMPIEZA CAMIÓN",getFont2()));
+			cp2.setBorder(PdfPCell.NO_BORDER);
+			parameters.addCell(cp2);
+		
+			PdfPCell cr2 = new PdfPCell(new Phrase("OK",getFont2()));
+			cr2.setBorder(PdfPCell.NO_BORDER);
+			parameters.addCell(cr2);
+		
+			PdfPCell cp3 = new PdfPCell(new Phrase("TEMPERATURA CAMIÓN",getFont2()));
+			cp3.setBorder(PdfPCell.NO_BORDER);
+			parameters.addCell(cp3);
+			
+			PdfPCell cr3 = new PdfPCell(new Phrase("OK",getFont2()));
+			cr3.setBorder(PdfPCell.NO_BORDER);
+			parameters.addCell(cr3);
+		
+			table.addCell(parameters);
+		}
+		return table;
 	}
 	
-	private static Paragraph order(JSONObject json){
+	private static Paragraph getSeparator(){
+		Paragraph separator = new Paragraph();
+		LineSeparator line = new LineSeparator();
+        line.setOffset(-2);
+        separator.add(line);
+        return separator;
+	}
+	
+	private static Paragraph order(JSONObject json, CarrierPackingType type){
 		Paragraph paragraph = new Paragraph();
 		
 		PdfPTable tableM = new PdfPTable(1);
@@ -189,9 +303,9 @@ public class PackingList {
 		table.setWidthPercentage(100);
 		
 		JSONObject address = json.getJSONObject("address");
-		PdfPTable destinatario = new PdfPTable(2);
+		PdfPTable destinatario = new PdfPTable(4);
 		destinatario.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-		float[] medidaCeldas = {1f, 5f};
+		float[] medidaCeldas = {1f, 3f, 1f, 1f};
 		try {
 			destinatario.setWidths(medidaCeldas);
 		} catch (DocumentException e) {
@@ -206,52 +320,194 @@ public class PackingList {
 		PdfPCell ca = new PdfPCell(new Phrase(address.getString("name"),getFont2()));
 		ca.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(ca);
-		destinatario.addCell("");
+		destinatario.addCell(new Phrase("Número:",getFont1()));
+		destinatario.addCell(new Phrase(json.getString("series") + "/" + json.getString("number"),getFont2()));
 		
+		destinatario.addCell("");
 		PdfPCell cb = new PdfPCell(new Phrase(address.getString("address"),getFont2()));
 		cb.setBorder(PdfPCell.NO_BORDER);
-		
 		destinatario.addCell(cb);
-		destinatario.addCell("");
+		destinatario.addCell(new Phrase("Fecha:",getFont1()));
+		destinatario.addCell(new Phrase(json.getString("issue_date"),getFont2()));
 		
+		destinatario.addCell("");
 		PdfPCell cc = new PdfPCell(new Phrase(address.getString("zip") + " " 
 				   + address.getString("city") + " "
 				   + address.getString("province") + " "
 				   + address.getString("country"),getFont2()));
 		cc.setBorder(PdfPCell.NO_BORDER);
-		
 		destinatario.addCell(cc);
-		
+		destinatario.addCell(new Phrase(""));//"Su Referencia:",getFont1()));
+		destinatario.addCell(new Phrase(""));//json.getString("reference"),getFont2()));
 		table.addCell(destinatario);
 
 		PdfPCell cell1 = new PdfPCell(new Phrase("Articulo",getFont1()));
 		cell1.setBorder(PdfPCell.NO_BORDER);
-		PdfPCell cell2 = new PdfPCell(new Phrase("Cantidad",getFont1()));
+		PdfPCell cell2 = new PdfPCell(new Phrase("Formato",getFont1()));
 		cell2.setBorder(PdfPCell.NO_BORDER);
+		PdfPCell cell3 = new PdfPCell(new Phrase("Cantidad",getFont1()));
+		cell3.setBorder(PdfPCell.NO_BORDER);
 		
-		PdfPTable detail = new PdfPTable(2);
+		PdfPTable detail = new PdfPTable(3);
+		float[] medidaCeldas2 = {4f, 1f, 1f};
+		try {
+			detail.setWidths(medidaCeldas2);
+		} catch (DocumentException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+		
 		detail.addCell(cell1);
 		detail.addCell(cell2);
+		detail.addCell(cell3);
 		detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		JSONArray details  = json.getJSONArray("details");	
+		
+		HashMap<String, Double> unitsMap = new HashMap<>();
+		HashMap<String, Double> formatMap = new HashMap<>();
+
 		for(Integer i = 0 ; i < details.length() ; i++){
 			PdfPCell c1 = new PdfPCell(new Phrase(details.getJSONObject(i).getString("product_code") + "-" +
 					details.getJSONObject(i).getString("product_name"),getFont2()));
 			c1.setBorder(PdfPCell.NO_BORDER);
-			PdfPCell c2 = new PdfPCell(new Phrase(details.getJSONObject(i).getString("quantity"),getFont2()));
+		
+			
+			Double measurements = details.getJSONObject(i).getDouble("measurements");
+			Double units = details.getJSONObject(i).getDouble("units");
+			Double quantity = details.getJSONObject(i).getDouble("quantity");
+			Double format = (quantity / (units != null && units != 0.0 ? units : 1))
+					/ (measurements != null && measurements != 0.0 ? measurements : 1);
+			
+			String formatTag = "";
+			if(details.getJSONObject(i).opt("format_tag") != null){
+				formatTag = details.getJSONObject(i).getString("format_tag");
+				if(formatMap.containsKey(formatTag)){
+					formatMap.put(formatTag, formatMap.get(formatTag) + format);
+				} else formatMap.put(formatTag, format);
+			}
+			String unitsTag = "";
+			if(details.getJSONObject(i).opt("units_tag") != null){
+				unitsTag = details.getJSONObject(i).getString("units_tag");
+				if(unitsMap.containsKey(unitsTag)){
+					unitsMap.put(unitsTag, unitsMap.get(unitsTag) + quantity);
+				} else unitsMap.put(unitsTag, quantity);
+			}
+			
+			PdfPCell c2 = new PdfPCell(new Phrase(format + " " + formatTag, getFont2()));
 			c2.setBorder(PdfPCell.NO_BORDER);
+			PdfPCell c3 = new PdfPCell(new Phrase(quantity + " " + unitsTag, getFont2()));
+			c3.setBorder(PdfPCell.NO_BORDER);
 			detail.addCell(c1);
 			detail.addCell(c2);
+			detail.addCell(c3);
 		}	
+		
+		if(type.equals(CarrierPackingType.WAYBILL)){
+			LinkedList<String> formatList = new LinkedList<>(formatMap.keySet());
+			Integer formatCont = 0;
+			LinkedList<String> unitsList = new LinkedList<>(unitsMap.keySet());
+			Integer unitsCont = 0;
+			Double totalPackages = json.getDouble("total_packages");
+			Double totalWeight = json.getDouble("total_weight");
+			
+			if(totalPackages!= null && totalPackages != 0){
+				PdfPCell cz1 = new PdfPCell(new Phrase("", getFont2()));
+				cz1.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cz1);
+
+				PdfPCell cy1 = new PdfPCell(new Phrase("Bultos: "+ totalPackages, getFont2()));
+				cy1.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cy1);
+			
+				String str1 = "";
+				if(formatList.size() > 0){
+					str1 = formatList.get(0) + " " +formatMap.get(formatList.get(0)); 
+				} else if(unitsList.size() > 0){
+					str1 = unitsList.get(0) + " " + unitsMap.get(unitsList.get(0)); 
+				}
+				PdfPCell cx1 = new PdfPCell(new Phrase(str1, getFont2()));
+				cx1.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cx1);
+			}
+			
+			if(totalWeight != null && totalWeight != 0.0){
+				PdfPCell cz2 = new PdfPCell(new Phrase("", getFont2()));
+				cz2.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cz2);
+				
+				PdfPCell cy2 = new PdfPCell(new Phrase("Peso: " + totalWeight, getFont2()));
+				cy2.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cy2);
+				
+				String str2 = "";
+				if(formatList.size() > 1){
+					str2 = formatList.get(1) + " " +formatMap.get(formatList.get(1)); 
+				} else if(unitsList.size() > 1){
+					str2 = unitsList.get(1) + " " + unitsMap.get(unitsList.get(1)); 
+				}
+				PdfPCell cx2 = new PdfPCell(new Phrase(str2, getFont2()));
+				cx2.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cx2);
+			}
+			
+			for(Integer i = formatCont; i < formatList.size(); i++){
+				PdfPCell czi = new PdfPCell(new Phrase("", getFont2()));
+				czi.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(czi);
+				
+				PdfPCell cyi = new PdfPCell(new Phrase("", getFont1()));
+				cyi.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cyi);
+
+				String stri = formatList.get(i) + " " +formatMap.get(formatList.get(i)); 
+				PdfPCell cxi = new PdfPCell(new Phrase(stri, getFont2()));
+				cxi.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cxi);
+			}
+			
+			for(Integer j = unitsCont; j < unitsList.size(); j++){
+				PdfPCell czj = new PdfPCell(new Phrase("", getFont2()));
+				czj.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(czj);
+				
+				PdfPCell cyj = new PdfPCell(new Phrase("", getFont1()));
+				cyj.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cyj);
+
+				String strj = formatList.get(j) + " " +formatMap.get(formatList.get(j)); 
+				PdfPCell cxj = new PdfPCell(new Phrase(strj, getFont2()));
+				cxj.setBorder(PdfPCell.NO_BORDER);
+				detail.addCell(cxj);
+			}		
+		}
+		
+		PdfPTable reception = new PdfPTable(2);
+		PdfPCell sign = new PdfPCell(new Phrase("Firma", getFont1()));
+		sign.setBorder(PdfPCell.NO_BORDER);
+		reception.addCell(sign);
+
+		PdfPCell date = new PdfPCell(new Phrase("Fecha", getFont1()));
+		date.setBorder(PdfPCell.NO_BORDER);
+		reception.addCell(date);
+		
 		table.addCell(detail);
+		table.addCell(reception);
+		
 		tableM.addCell(table);
 		paragraph.add(tableM);
 		return paragraph;
 	}
 
+	// ------------------- FONTS
 	private static Font getTitleFont(){
 		Font font = new Font();
 		font.setSize(16);
+		font.setStyle(Font.BOLD);
+		return font;
+	}
+	
+	private static Font getBoeInfoFont(){
+		Font font = new Font();
+		font.setSize(13);
 		font.setStyle(Font.BOLD);
 		return font;
 	}

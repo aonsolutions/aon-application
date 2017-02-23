@@ -18,10 +18,12 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -49,7 +51,10 @@ public class PackingListDownload extends HttpServlet{
 		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, carrierPackingId);
 		JSONObject json = new JSONObject();
 		json.put("carrier_packing", ToJSON.carrierPackingToJSON(carrierPacking));
-		
+		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
+		json.put("address", ToJSON.raddressToJSON(
+			AON.getRAddres(domain.getName(), domain.getId(), login, company.getId())
+		));
 		JSONArray array = new JSONArray();
 		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 			AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
@@ -65,7 +70,15 @@ public class PackingListDownload extends HttpServlet{
 				AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login,
 						f -> f.getPurchaseProperty().eq(purchase.getId())
 						.and(f.getCarrierPackingProperty().eq(carrierPackingId)))
-				.forEach(detail -> details.put(ToJSON.purchaseDetailToJSON(detail)));
+				.forEach(detail -> {
+					JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);
+					Item item = AON.getItem(domain.getName(), domain.getId(), login, detail.getItem());
+					detailJSON.put("format_tag", item.getPackFormatTag()!= null ? item.getPackFormatTag().getName() : "");
+					detailJSON.put("measurements", item.getPackMeasurement() != null ? item.getPackMeasurement() : "");
+					detailJSON.put("units_tag", item.getPackUnitsTag()!= null ? item.getPackUnitsTag().getName() : "");
+					detailJSON.put("units", item.getPackUnits() != null ? item.getPackUnits() : "");
+					details.put(detailJSON);	
+				});
 				
 				purchaseJSON.put("details", details);
 				array.put(purchaseJSON);
@@ -80,7 +93,15 @@ public class PackingListDownload extends HttpServlet{
 			
 				JSONArray details = new JSONArray();
 				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
-				.forEach(detail -> details.put(ToJSON.deliveryDetailToJSON(detail)));
+				.forEach(detail -> {
+					JSONObject detailJSON = ToJSON.deliveryDetailToJSON(detail);
+					Item item = AON.getItem(domain.getName(), domain.getId(), login, detail.getItem().getId());
+					detailJSON.put("format_tag", item.getPackFormatTag()!= null ? item.getPackFormatTag().getName() : "");
+					detailJSON.put("measurements", item.getPackMeasurement() != null ? item.getPackMeasurement() : "");
+					detailJSON.put("units_tag", item.getPackUnitsTag()!= null ? item.getPackUnitsTag().getName() : "");
+					detailJSON.put("units", item.getPackUnits() != null ? item.getPackUnits() : "");
+					details.put(detailJSON);	
+				});
 				
 				deliveryJSON.put("details", details);
 				array.put(deliveryJSON);
@@ -96,7 +117,6 @@ public class PackingListDownload extends HttpServlet{
 		
 		File file = PackingList.createPdf(json, attach.getData());
 		
-        long length = file.length();
         Utils.addCorsHeader(resp);
         resp.setContentType(MimeType.PDF.getName());
 		resp.setHeader("Content-disposition", "inline; filename=\"" + file.getName() + ".pdf\";");
@@ -105,30 +125,6 @@ public class PackingListDownload extends HttpServlet{
 		resp.flushBuffer();
 
 		fileInpurOs.close();
-        
-	/*	
-        FileInputStream fis = new FileInputStream(file);
-        
-        Utils.addCorsHeader(resp);
-        resp.addHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
-    	resp.setContentType("application/msexcel");
-
-        if (length > 0 && length <= Integer.MAX_VALUE){
-            resp.setContentLength((int)length);
-        }
-        ServletOutputStream out = resp.getOutputStream();
-        resp.setBufferSize(32768);
-        int bufSize = resp.getBufferSize();
-        byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(fis,bufSize);
-        int bytes;
-        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
-            out.write(buffer, 0, bytes);
-        
-        bis.close();
-        fis.close();
-        out.flush();
-        out.close();*/
 	}
 	
 
