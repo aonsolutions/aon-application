@@ -34,7 +34,7 @@
 				</aon:if>
 
 				<aon:outputLabel for="Income_lines_item_suppliers_code"
-					value="#{bundle.product_item_supplier_code}" />
+					value="#{bundle.product_item_supplier_code_abbr}" />
 				<aon:inputText id="Income_lines_item_suppliers_code" size="25"
 					valueChangeListener="#{controller.addExpression}" />
 
@@ -44,6 +44,15 @@
 					value="#{searchController.category}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="Income_lines_item_product_type"
+					value="#{bundle.aon_type}" />
+				<aon:selectOneMenu id="Income_lines_item_product_type"
+					converter="aon.EnumConverter"
+					valueChangeListener="#{controller.addEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{productCollections.commonProductTypes}" />
 				</aon:selectOneMenu>
 
 				<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">

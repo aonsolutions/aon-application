@@ -105,9 +105,27 @@
 				</aon:if>
 
 				<aon:outputLabel for="Invoice_lines_description"
-					value="#{bundle.aon_product_description}" />
+					value="#{bundle.aon_description}" />
 				<aon:inputText id="Invoice_lines_description"
 					valueChangeListener="#{controller.addExpression}" size="40" />
+
+				<aon:outputLabel for="Invoice_lines_item_product_category_id"
+					value="#{bundle.aon_category}" />
+				<aon:selectOneMenu id="Invoice_lines_item_product_category_id"
+					value="#{productCollections.category}"
+					valueChangeListener="#{controller.addIdEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="Invoice_lines_item_product_type"
+					value="#{bundle.aon_type}" />
+				<aon:selectOneMenu id="Invoice_lines_item_product_type"
+					converter="aon.EnumConverter"
+					valueChangeListener="#{controller.addEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{productCollections.commonProductTypes}" />
+				</aon:selectOneMenu>
 
 				<aon:outputLabel for="Invoice_lines_quantity"
 					value="#{bundle.aon_quantity}" />
