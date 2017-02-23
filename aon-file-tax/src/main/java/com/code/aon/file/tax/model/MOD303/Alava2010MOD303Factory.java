@@ -160,13 +160,16 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		GeneralRegime gr = declaration.getGeneralRegime();
 		Element mod = dec.addElement(MODELO);
 		if ( declaration.isWithoutActivity()) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,"90").addAttribute(VALOR, TRUE );	
-		}
+			mod.addElement(CLAVE).addAttribute(NUMERO,"90").addAttribute(VALOR, "1" );	
+		} 
 		if ( declaration.isReplacement() || declaration.isComplementary()) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,"91").addAttribute(VALOR, TRUE );
+			mod.addElement(CLAVE).addAttribute(NUMERO,"91").addAttribute(VALOR, "1" );
 		}
-		mod.addElement(CLAVE).addAttribute(NUMERO,"92").addAttribute(VALOR, declaration.isTaxRefundRegistry()?TRUE:FALSE );
-		mod.addElement(CLAVE).addAttribute(NUMERO,"93").addAttribute(VALOR, declaration.isTaxRefundRegistry()?FALSE:TRUE );
+		mod.addElement(CLAVE).addAttribute(NUMERO,"92").addAttribute(VALOR, declaration.isTaxRefundRegistry()?"1":"0");
+		
+		mod.addElement(CLAVE).addAttribute(NUMERO,"910").addAttribute(VALOR, declaration.isVatAccrualRegime()?TRUE:FALSE);
+		mod.addElement(CLAVE).addAttribute(NUMERO,"911").addAttribute(VALOR, declaration.isVatAccrualRegimeReceiver()?TRUE:FALSE );
+		
 		
 		String[] percents = new String[]{"4.0","10.0","21.0","8.0","18.0","7.0","16.0"};
 		int[] keys = new int[]{1,204,207,104,107,4,7};
@@ -180,6 +183,11 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 			}
 		}
 		
+		addClave(mod,370,gr.getBaseModifications());
+		addClave(mod,371,gr.getQuotaModifications());
+		addClave(mod,372,gr.getBaseInvPasive());
+		addClave(mod,373,gr.getQuotaInvPasive());
+		
 		percents = new String[]{"0.5","1.4","5.2","1.0","4.0"};
 		keys = new int[]{10,213,216,13,16};
 		for (int i = 0; i < percents.length; ++i ) {
@@ -191,6 +199,8 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 				addClave(mod,++k,bd.getQuota());
 			}
 		}
+		addClave(mod,374,gr.getBaseSurchrageModifications());
+		addClave(mod,375,gr.getQuotaSurchrageModifications());
 		
 		percents = new String[]{"4.0","10.0","21.0","8.0","18.0","7.0","16.0"};
 		keys = new int[]{19,222,225,122,125,22,25};
@@ -211,6 +221,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 			}
 			
 		}
+		// Añadir rectificacion de base y quotas intracomunitarias.
 		
 		addClave(mod,28,gr.getOutputTotal());
 		
@@ -222,6 +233,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		addClave(mod,35,gr.getIntracommunitaryInvestmentOperationsQuota());
 		addClave(mod,36,gr.getAgriculturalRegimeCompensation());
 		addClave(mod,37,gr.getInvestmentNormalization());
+		addClave(mod,46,gr.getDeductionRestificationQuota());
 		addClave(mod,38,gr.getDeductTotal());
 		
 		addClave(mod,39,declaration.getDifference());
@@ -242,6 +254,12 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		addClave(mod,62,declaration.getDelayInterest());
 		
 		//addClave(mod,"063", ??????????? ); // TODO
+
+		addClave(mod,180,declaration.getVatAccrualOutputBase());
+		addClave(mod,181,declaration.getVatAccrualOutputQuota());
+		addClave(mod,182,declaration.getVatAccrualInputBase());
+		addClave(mod,183,declaration.getVatAccrualInputQuota());
+		
 		
 		addClave(mod,80,declaration.getDeposit());
 		addClave(mod,81,declaration.getPayBack());
