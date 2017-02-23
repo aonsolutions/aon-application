@@ -308,7 +308,7 @@ public class CarrierPacking extends AonTemplate{
 			setSouthContent(new CarrierPackingSouth2(me, js, p, details));
 		} else {
 			getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
-			setSouthContent(new CarrierPackingSouth(p, details));
+			setSouthContent(new CarrierPackingSouth(me, p, details));
 		}
 	}
 	

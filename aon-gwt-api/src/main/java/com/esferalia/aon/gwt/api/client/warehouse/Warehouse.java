@@ -89,6 +89,10 @@ public class Warehouse extends Methods{
 	public void updateDelivery(Integer id, String requestData, AsyncCallback<JsOrder> callback){
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData, callback);
 	}
+	
+	public void updateDelivery(Integer id, String requestData){
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData);
+	}
 
 	public void getDetails(Integer id, String orderType, AsyncCallback<JSON<JsOrderDetail>> callback){
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/" +id + "/detail" , callback);

@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
@@ -253,12 +254,12 @@ public class FillerDAO {
 			Company company = new Company();
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setDocumentCountry(null); // TODO
+			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
 			company.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
-			company.setNationality(null); // TODO
+			company.setNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY))); // TODO
 			company.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
 			company.setType(r.getValue(REGISTRY.TYPE));	
-			return new Company()
+			return company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
 				.setDomain(r.getValue(COMPANY.DOMAIN))

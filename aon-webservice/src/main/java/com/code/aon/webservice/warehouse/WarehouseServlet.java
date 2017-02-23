@@ -213,7 +213,15 @@ public class WarehouseServlet extends HttpServlet{
 	
 	private JSONObject updateDelivery(Domain domain, String login, Integer id, JSONObject json) {
 		Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), login, id);
-		delivery.setCarrierPacking(getOrderCarrierPacking(json));
+		if(json.opt(MSG.CARRIER_PACKING) != null){
+			delivery.setCarrierPacking(getOrderCarrierPacking(json));
+		}
+		if(json.opt("total_packages") != null){
+			delivery.setTotalPackages(json.getDouble("total_packages"));
+		}
+		if(json.opt("total_weight") != null){
+			delivery.setTotalWeight(json.getDouble("total_weight"));
+		}
 		AON.updateDelivery(domain.getName(), domain.getId(), login, delivery);
 		return ToJSON.deliveryToJSON(delivery);
 	}

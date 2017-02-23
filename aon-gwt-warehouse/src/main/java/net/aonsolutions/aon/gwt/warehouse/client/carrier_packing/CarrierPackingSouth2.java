@@ -39,7 +39,7 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 		Label header = new Label(" FECHA        " //13
 				+ "SERIE/NUMERO     " //17
 				+ "PROVEEDOR                        " //33
-				+ "IMPORTE TOTAL    ");  //17
+				+ "IMPORTE TOTAL    ");  //10
 		header.setStyleName(AON.AON_CSS.aonBold());
 		header.addStyleName(AON.AON_CSS.aonMarginTop());
 		header.addStyleName(AON.AON_CSS.aonBorderTop());
@@ -119,6 +119,7 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 			db.setWidth("50px");
 			db.setStyleName(AON.AON_CSS.aonTextBox());
 			db.setValue(detail.getQuantity());
+			db.setEnabled(detail.getCarrierPacking() == null );
 			PaperIconButton pib = new PaperIconButton();
 			pib.setDisabled(detail.getCarrierPacking() != null && detail.getCarrierPacking() != carrierPacking.getId());
 			pib.setIcon(detail.getCarrierPacking() != null ? "remove" : "add" );
