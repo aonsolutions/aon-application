@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
@@ -23,9 +24,9 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.enumeration.ProductType;
-import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
 import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -48,23 +49,25 @@ public class ConnectSaleInvoiceWriter {
 			.getLogger(ConnectSaleInvoiceWriter.class);
 
 
-	public FileOutput createFile(Invoice invoice, IPriceStrategy priceStrategy,
+	public FileOutput createFile(Invoice invoice, Company company,
 			String companyEdiCode, String customerEdiMainCode,
 			String customerEdiOperationCode) throws FileNotFoundException,
 			UnsupportedEncodingException {
-		RECTL rectl = createRECTLRecord(invoice, priceStrategy, companyEdiCode,
+
+		RECTL rectl = createRECTLRecord(invoice, company, companyEdiCode,
 				customerEdiMainCode, customerEdiOperationCode);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new ConnectInvoice(rectl, writer);
 		FileOutput output = new FileOutput();
 		output.setErrors(filler.create());
-		output.setContent(outputStream.toString().getBytes(SeresUtils.DEFAULT_CHARSET_ENC));
+		output.setContent(outputStream.toString().getBytes(
+				SeresUtils.DEFAULT_CHARSET_ENC));
+
 		return output;
 	}
 
-	private RECTL createRECTLRecord(Invoice invoice,
-			IPriceStrategy priceStrategy, String companyEdiCode,
+	private RECTL createRECTLRecord(Invoice invoice, Company company, String companyEdiCode,
 			String customerEdiMainCode, String customerEdiOperationCode) {
 		
 		List<Finance> financeList = getFinances(invoice);
@@ -76,9 +79,9 @@ public class ConnectSaleInvoiceWriter {
 		rectl.setIdentificacionDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		
-		rectl.sincc = createSINCCRecord(invoice, priceStrategy, companyEdiCode,
+		rectl.sincc = createSINCCRecord(invoice, companyEdiCode,
 				customerEdiMainCode, customerEdiOperationCode);
-		rectl.sincpList = createSINCPList(invoice, companyEdiCode,
+		rectl.sincpList = createSINCPList(invoice, company, companyEdiCode,
 				customerEdiMainCode);
 		rectl.sinctList = createSINCTList(invoice, companyEdiCode,
 				customerEdiMainCode);
@@ -101,8 +104,7 @@ public class ConnectSaleInvoiceWriter {
 		return rectl;
 	}
 
-	private SINCC createSINCCRecord(Invoice invoice,
-			IPriceStrategy priceStrategy, String companyEdiCode,
+	private SINCC createSINCCRecord(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode, String customerEdiOperationCode) {
 		List<Finance> financeList = getFinances(invoice);
 		SINCC sincc = new SINCC();
@@ -141,11 +143,47 @@ public class ConnectSaleInvoiceWriter {
 		sincc.setNumeroConfirmacionDeEntrega(null);
 		return sincc;
 	}
-
-	private List<SINCP> createSINCPList(Invoice invoice, String companyEdiCode,
+	
+	/*
+		SU - PROVEEDOR
+		II - EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA
+		DP - PUNTO_DESTINO_DE_LA_MERCANCIA
+		UC - DESTINATARIO_FINAL
+		BY - COMPRADOR
+		IV - A_QUIEN_SE_FACTURA
+		PE - SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA
+		PR - PAGADOR__QUIEN_PAGA
+		MS - EMISOR_DEL_MENSAJE
+		MR - RECEPTOR_DEL_MENSAJE
+	*/
+	private List<SINCP> createSINCPList(Invoice invoice, Company company, String companyEdiCode,
 			String customerEdiMainCode) {
 		List<SINCP> list = new ArrayList<>();
-		list.add(createSINCPRecord(invoice, companyEdiCode, customerEdiMainCode));
+		
+//		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU, invoice,
+//				companyEdiCode, null));
+		list.add(createSINCPRecord(
+				SINCP.SINCP_2.EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA__II,
+				company.getRegistry(), companyEdiCode));
+		list.add(createSINCPRecord(
+				SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP, invoice.getRegistry(),
+				customerEdiMainCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
+				invoice.getRegistry(), customerEdiMainCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY, invoice.getRegistry(),
+				customerEdiMainCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
+				invoice.getRegistry(), customerEdiMainCode));
+		list.add(createSINCPRecord(
+				SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE, company.getRegistry(),
+				companyEdiCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,
+				invoice.getRegistry(), customerEdiMainCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS,
+				invoice.getRegistry(), companyEdiCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.RECEPTOR_DEL_MENSAJE_MR,
+				invoice.getRegistry(), customerEdiMainCode));
+		
 		return list;
 	}
 	
@@ -211,25 +249,30 @@ public class ConnectSaleInvoiceWriter {
 		return list;
 	}
 
-	private SINCP createSINCPRecord(Invoice invoice, String companyEdiCode,
-			String customerEdiMainCode) {
+	
+	private SINCP createSINCPRecord(SINCP.SINCP_2 type, Registry registry, String ediCode) {
 		SINCP sincp = new SINCP();
-		sincp.setCalificadorDelInterlocutor(SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS.getValue());
-		sincp.setCodigoInterlocutor(companyEdiCode);
+		sincp.setCalificadorDelInterlocutor(type.getValue());
+		sincp.setCodigoInterlocutor(ediCode);
 		sincp.setTipoInterlocutor_J_Persa_Juridica_F_Persa_Fisica_9_EDI_(SINCP.SINCP_41.CODIGO_ASIGNADO_POR_EL_EMISOR_DEL_MENSAJE_91.getValue());
 		sincp.setNombre1(null);
+		sincp.setNombre1(registry.getRegistry().getName());
 		sincp.setNombre2(null);
 		sincp.setNombre3(null);
 		sincp.setNombre4(null);
 		sincp.setNombre5(null);
-		sincp.setDireccion1_Calle_Numero_(null);
-		sincp.setDireccion2_Calle_Numero_(null);
-		sincp.setDireccion3_Calle_Numero_(null);
-		sincp.setDireccion4_Calle_Numero_(null);
-		sincp.setCiudad(null);
-		sincp.setProvincia(null);
-		sincp.setCodigoPostal(null);
-		sincp.setCodigoPais(null);
+		try {
+			sincp.setDireccion1_Calle_Numero_(registry.getRegistry().getDefaultAddress().getAddress());
+			sincp.setDireccion2_Calle_Numero_(registry.getRegistry().getDefaultAddress().getAddress2());
+			sincp.setDireccion3_Calle_Numero_(registry.getRegistry().getDefaultAddress().getAddress3());
+			sincp.setDireccion4_Calle_Numero_(registry.getRegistry().getDefaultAddress().getNumber());
+			sincp.setCiudad(registry.getRegistry().getDefaultAddress().getCity());
+			sincp.setProvincia(registry.getRegistry().getDefaultAddress().getGeozone().getName());
+			sincp.setCodigoPostal(registry.getRegistry().getDefaultAddress().getZip());
+			sincp.setCodigoPais(registry.getRegistry().getDefaultAddress().getGeozone().getGeoZoneCountry().getCode());
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
 		sincp.setNumeroDeIdentificacionFiscal(null);
 		sincp.setCodigoAdicional(null);
 		sincp.setFuncionDeContacto(null);

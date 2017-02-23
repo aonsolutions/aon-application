@@ -123,6 +123,17 @@ public class ConnectDeliveryWriter {
 		return seh1c;
 	}
 
+	/*
+	    MS - Emisor del mensaje
+	    MR - Receptor del mensaje
+	    SU - Proveedor.
+	    PW - Punto desde donde se envían las mercancías
+	    DP - Punto destino de la mercancía
+	    UC - Destinatario final
+	    BY - Comprador
+	    SH - Expedidor
+	    IV - A quien se factura	 
+	 */
 	private List<SEH1D> createSEH1DList(Delivery delivery,
 			String companyEdiCode, String customerEdiCode,
 			String deliveryPointEdiCode) {
@@ -204,20 +215,6 @@ public class ConnectDeliveryWriter {
 		return list;
 	}
 
-	/*
-	 La linea SEH1D hay que repetirla por cada uno de los siguientes conceptos, según lo requiera el receptor del mensaje. 
-	 
-	 En el fichero se está indicando solo el BY en todas las lineas, y no se están indicando los campos obligatorios.
-            MS - Emisor del mensaje
-            MR - Receptor del mensaje
-            SU - Proveedor.
-            PW - Punto desde donde se envían las mercancías
-            DP - Punto destino de la mercancía
-            UC - Destinatario final
-            BY - Comprador
-            SH - Expedidor
-            IV - A quien se factura	 
-	 */
 	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, IRegistry registry) {
 		SEH1D record = new SEH1D();
 		record.setCalificadorDelInterlocutor(type.getValue());
