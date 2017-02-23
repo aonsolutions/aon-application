@@ -1,4 +1,4 @@
-package com.code.aon.ui.warehouse.importer;
+package com.code.aon.ui.finance.file.edi;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -15,28 +15,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.finance.Invoice;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.file.seres.util.ftp.FtpException;
 import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
 import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
-import com.esferalia.aon.file.seres.util.writer.connect.ConnectDeliveryWriter;
+import com.esferalia.aon.file.seres.util.writer.connect.ConnectSaleInvoiceWriter;
+import com.esferalia.aon.watson.error.AonCoreException;
 
-public class FtpDeliveryUploadHandler implements Serializable {
+public class FtpSaleInvoiceUploaderHandler implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	private static final Logger LOGGER = LoggerFactory.getLogger(FtpDeliveryUploadHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FtpSaleInvoiceUploaderHandler.class);
 	
 	private IController controller;
 	private boolean showEdiFtpWindow;
@@ -49,12 +51,10 @@ public class FtpDeliveryUploadHandler implements Serializable {
 	
 	private boolean showFtpServerConnectionData;
 	
-	
-	public FtpDeliveryUploadHandler(IController controller) {
+	public FtpSaleInvoiceUploaderHandler(IController controller) {
 		this.controller = controller;
 	}
-	
-	
+
 	public boolean isShowEdiFtpWindow() {
 		return showEdiFtpWindow;
 	}
@@ -112,7 +112,8 @@ public class FtpDeliveryUploadHandler implements Serializable {
 		ApplicationParameter pPort = AppParamUtil.getParameter("SERES_FTP_SERVER_PORT");
 		ApplicationParameter pUser = AppParamUtil.getParameter("SERES_FTP_USER");
 		ApplicationParameter pPasswd = AppParamUtil.getParameter("SERES_FTP_PASSWORD");
-		ApplicationParameter pPath = AppParamUtil.getParameter("SERES_FTP_PATH_DELIVERY");
+		// FIXME remotePath 
+		ApplicationParameter pPath = AppParamUtil.getParameter("SERES_FTP_PATH_INVOICE");
 		
 		if (pServer != null)
 			server = pServer.getValue();
@@ -147,7 +148,8 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			AppParamUtil.insertParameter("SERES_FTP_SERVER_PORT", String.valueOf(port));
 		AppParamUtil.insertParameter("SERES_FTP_USER", user);
 		AppParamUtil.insertParameter("SERES_FTP_PASSWORD", password);
-		AppParamUtil.insertParameter("SERES_FTP_PATH_DELIVERY", remotePath);
+		// FIXME remotePath 
+		AppParamUtil.insertParameter("SERES_FTP_PATH_INVOICE", remotePath);
 	}
 	
 	public void onShowFtpEdi(ActionEvent event) {
@@ -183,29 +185,12 @@ public class FtpDeliveryUploadHandler implements Serializable {
 
 		FileOutput output = null;
 		try {
-			Delivery delivery = (Delivery) controller.getTo();
-			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
-					.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-			String customerEdiCode = ediSupport.getEdiCodes(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).get(
-					CustomerEdiSupportController.ALBARANES);
-			String deliveryPointEdiCode = ediSupport.getEdiCodes(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).get(
-							CustomerEdiSupportController.PTO_ENTREGA);
-			CompanyController company = (CompanyController) AonUtil
-					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
-
-			// writer file
-			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
-			output = writer.createFile(delivery, companyEdiCode,
-					customerEdiCode, deliveryPointEdiCode);
+			Invoice invoice = (Invoice) controller.getTo();
+			output = exportEdiFile(invoice);
 
 			// upload file
-			String name = "albaran";
-			String number = delivery.getReferenceCode();
+			String name = "factura";
+			String number = invoice.getReferenceCode();
 			byte[] data = output.getContent();
 			InputStream inputStream = new BufferedInputStream(
 					new ByteArrayInputStream(data));
@@ -213,22 +198,51 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			boolean success = storeFtpFile(name + "-" + number + ".edi",
 					inputStream);
 
-			// TODO: mark this delivery as sended 
+			// TODO: mark this invoice as sended 
 			if (success)
 				AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
 			else
 				AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
 
 			IOUtils.closeQuietly(inputStream);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (Throwable e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 
 	}
+	
+	public FileOutput exportEdiFile(Invoice invoice){
+		FileOutput output = null;
+		try {
+			if (invoice.getRegistryAddress() != null
+					&& invoice.getRegistryAddress().getId() != null) {
+				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
+						.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+				String customerEdiMainCode = ediSupport.getEdiCodes(
+						invoice.getRegistry(), invoice.getRegistryAddress())
+						.get(CustomerEdiSupportController.CABECERA);
+				String customerEdiOperationCode = ediSupport.getEdiCodes(
+						invoice.getRegistry(), invoice.getRegistryAddress())
+						.get(CustomerEdiSupportController.FACTURA);
 
+				CompanyController company = (CompanyController) AonUtil
+						.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+				String companyEdiCode = company.getEdiCompanyCode();
+				
+				// writer file
+				ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
+				output = writer.createFile(invoice, (Company)company.getTo(), companyEdiCode,
+						customerEdiMainCode, customerEdiOperationCode);
+
+				return output;
+			} else {
+				throw new AonCoreException("");
+			}
+		} catch (IOException e) {
+        	AonUtil.addErrorMessage(e.getMessage());
+        	throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
 	
 }

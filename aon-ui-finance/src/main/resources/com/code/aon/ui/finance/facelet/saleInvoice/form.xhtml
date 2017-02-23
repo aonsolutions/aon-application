@@ -58,9 +58,10 @@
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
 						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:commandButton id="saleInvoice-ediFtp"
+							<aon:commandButton id="saleInvoice-downloadEdiFtp"
 								value="SERESNET"
 								title="Recuperar del servidor FTP de Seresnet"
+								rendered="#{saleInvoice.nevv}"
 								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
 								actionListener="#{saleInvoice.ftpEdiDownloader.onShowFtpEdi}"
 								ajaxSingle="#{true}"
@@ -68,6 +69,15 @@
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 								oncomplete="Richfaces.hideModalPanel('waitProccess')">
 								<f:setPropertyActionListener target="#{saleInvoice.ftpEdiDownloader.showEdiFtpWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+							<aon:commandButton id="saleInvoice-uploadEdiFtp"
+								value="SERESNET"
+								title="Enviar al servidor FTP de Seresnet"
+								rendered="#{not saleInvoice.nevv}"
+								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
+								actionListener="#{saleInvoice.ftpEdiUploader.onShowFtpEdi}">
+								<f:setPropertyActionListener target="#{saleInvoice.ftpEdiUploader.showEdiFtpWindow}"
 									value="#{true}" />
 							</aon:commandButton>
 						</aon:if>

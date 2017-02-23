@@ -52,6 +52,7 @@ import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.file.edi.EdiInvoiceImporterHandler;
 import com.code.aon.ui.finance.file.edi.FtpSaleInvoiceDownloadHandler;
+import com.code.aon.ui.finance.file.edi.FtpSaleInvoiceUploaderHandler;
 import com.code.aon.ui.finance.file.edi.UdapaEdiInvoiceImporterHandler;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -62,7 +63,6 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.util.writer.connect.ConnectSaleInvoiceWriter;
 import com.esferalia.aon.file.seres.util.writer.udapa.UdapaSaleInvoiceWriter;
 
 public class SaleInvoiceController extends InvoiceController {
@@ -79,6 +79,8 @@ public class SaleInvoiceController extends InvoiceController {
 	private UdapaEdiInvoiceImporterHandler udapaImporter;
 	
 	private FtpSaleInvoiceDownloadHandler ftpEdiDownloader;
+	
+	private FtpSaleInvoiceUploaderHandler ftpEdiUploader;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -140,6 +142,13 @@ public class SaleInvoiceController extends InvoiceController {
 			ftpEdiDownloader = new FtpSaleInvoiceDownloadHandler(this);
 		}
 		return ftpEdiDownloader;
+	}
+	
+	public FtpSaleInvoiceUploaderHandler getFtpEdiUploader() {
+		if(ftpEdiUploader==null){
+			ftpEdiUploader = new FtpSaleInvoiceUploaderHandler(this);
+		}
+		return ftpEdiUploader;
 	}
 
 	@Override
@@ -363,33 +372,21 @@ public class SaleInvoiceController extends InvoiceController {
 		OutputStream out = null;
 		try {
 			Invoice invoice = (Invoice) this.getTo();
-			
-			String customerEdiMainCode = null;
-			String customerEdiOperationCode = null;
-			if(invoice.getRegistryAddress()!=null && invoice.getRegistryAddress().getId()!=null){
-				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-				customerEdiMainCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(CustomerEdiSupportController.CABECERA);
-				customerEdiOperationCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(CustomerEdiSupportController.FACTURA);
-			}
-			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
-			
-			// writer file
-			ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
-			output = writer.createFile(invoice, getPriceStrategy(), companyEdiCode, customerEdiMainCode, customerEdiOperationCode);
-			
+			output = getFtpEdiUploader().exportEdiFile(invoice);
+
 			// download file
 			String name = "factura";
 			String number = invoice.getReferenceCode();
 			byte[] data = output.getContent();
 			int size = data.length;
 			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, name+"."+number, null, size);
-			InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
-			IOUtils.copy( fileIn, out );
+			out = DownloadUtil.initDownload(response, name + "-" + number + ".edi",
+					null, size);
+			InputStream fileIn = new BufferedInputStream(
+					new ByteArrayInputStream(data));
+			IOUtils.copy(fileIn, out);
 			IOUtils.closeQuietly(fileIn);
-			
-        } catch (IOException e) {
+		} catch (IOException e) {
         	AonUtil.addErrorMessage(e.getMessage());
         	throw new AbortProcessingException(e.getMessage(), e);
         } catch (Throwable e) {

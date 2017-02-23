@@ -129,7 +129,8 @@
 									<aon:commandButton id="ediFtp-accept"
 										value="Generar EDI y Enviar"
 										actionListener="#{delivery.ftpEdiUploader.onEdiFtpTransfer}"
-										styleClass="aon-commandButton aon-padding aon-width-all aon-border"
+										style="width:100%; padding:1cm;"
+										styleClass="aon-commandButton"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 										oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<rich:componentControl for="ediFtpModalPanel"
