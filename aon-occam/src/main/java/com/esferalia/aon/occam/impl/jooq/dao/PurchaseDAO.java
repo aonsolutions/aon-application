@@ -247,7 +247,7 @@ public class PurchaseDAO {
 					detail.getQuantity(), detail.getPrice(),
 					detail.getDiscountExpression(), detail.getTaxes(),
 					detail.getStatus().value(), detail.getProposalDetail(), 
-					detail.getDelivered(), AonDateUtils.toTimestamp(detail.getDeliveryDate()),
+					detail.getDelivered(), AonDateUtils.toSql(detail.getDeliveryDate()),
 					detail.getSource() != null ? detail.getSource().value() : null, detail.getSourceId(),
 					ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 					ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
@@ -276,7 +276,7 @@ public class PurchaseDAO {
 				.set(PURCHASE_DETAIL.SOURCE_ID, purchaseDetail.getSourceId())
 				.set(PURCHASE_DETAIL.PROPOSAL_DETAIL, purchaseDetail.getProposalDetail())
 				.set(PURCHASE_DETAIL.DELIVERED, purchaseDetail.getDelivered())
-				.set(PURCHASE_DETAIL.DELIVERY_DATE, AonDateUtils.toTimestamp(purchaseDetail.getDeliveryDate()))
+				.set(PURCHASE_DETAIL.DELIVERY_DATE, AonDateUtils.toSql(purchaseDetail.getDeliveryDate()))
 				.set(PURCHASE_DETAIL.CREATION_USER, purchaseDetail.getCreationUser())
 				.set(PURCHASE_DETAIL.CREATION_DATE, AonDateUtils.toTimestamp(purchaseDetail.getCreationDate()))
 				.set(PURCHASE_DETAIL.MODIFICATION_USER, purchaseDetail.getModificationUser())
