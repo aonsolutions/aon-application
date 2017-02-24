@@ -233,9 +233,9 @@ public class AccountEntryModule extends MainEntryPoint {
 		        
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		activity.setTabIndex(Integer.MAX_VALUE - 2);
-		confidential.setTabIndex(Integer.MAX_VALUE  - 1);
-		commentsButton.setTabIndex(Integer.MAX_VALUE);
+		activity.setTabIndex(-1);
+		confidential.setTabIndex(-1);
+		commentsButton.setTabIndex(-1);
 		root.add(ui);
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(BALANCES_TAB);
