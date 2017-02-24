@@ -48,7 +48,7 @@ public class SeresFtpConnectionProvider implements Serializable {
 		boolean completed = false;
 		FtpConnector ftp = new FtpConnector() {
 			@Override
-			public void onSuccess() throws IOException {
+			public void onSuccess() throws IOException, FtpException {
 				this.storeFile(remotePath, fileName, localInputStream,
 						completed);
 				localInputStream.close();
@@ -366,14 +366,15 @@ abstract class FtpConnector {
 		return success;
 	}
 	
-	protected void storeFile(String remotePath, String fileName, InputStream localInputStream, boolean completed) throws IOException {
+	protected void storeFile(String remotePath, String fileName, InputStream localInputStream, boolean completed) throws IOException, FtpException {
 		boolean success = changeWorkingDirectory(remotePath);
 		if (success) {
 			ftp.setFileType(FTP.BINARY_FILE_TYPE);
 			success =  ftp.storeFile(fileName, localInputStream);
-			if (success) {
+			if (!success) {
 				// TODO log me
-//				System.out.println("The first file is uploaded successfully.");
+				System.out.println("ERROR: the file is not uploaded successfully.");
+				throw new FtpException("Ha ocurrido un error en la transmision del fichero");
 			}
 			completed = ftp.completePendingCommand();
 		}

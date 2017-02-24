@@ -865,12 +865,11 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 					customerEdiCode);
 
 			// download file
-			String name = "albaran";
-			String number = delivery.getReferenceCode();
+			String referenceCode = delivery.getSeries()+"_"+delivery.getNumber();
 			byte[] data = output.getContent();
 			int size = data.length;
 			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, name + "." + number,
+			out = DownloadUtil.initDownload(response, "albaran-" + referenceCode + ".edi",
 					null, size);
 			InputStream fileIn = new BufferedInputStream(
 					new ByteArrayInputStream(data));

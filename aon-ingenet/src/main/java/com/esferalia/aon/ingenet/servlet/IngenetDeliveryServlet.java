@@ -158,6 +158,10 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
 		try {
 			fillDelivery(ctx, albaran, delivery);
+		} catch (Throwable th) {
+			addError(albaran, th.getLocalizedMessage());
+		}
+		try {
 			fillDeliveryDetailList(ctx, albaran, delivery, detailList, test);
 		} catch (Throwable th) {
 			addError(albaran, th.getLocalizedMessage());

@@ -38,6 +38,12 @@ public class FtpDeliveryUploadHandler implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final Logger LOGGER = LoggerFactory.getLogger(FtpDeliveryUploadHandler.class);
 	
+	private final String PARAM_FTP_SERVER_NAME = "SERES_FTP_SERVER_NAME";
+	private final String PARAM_FTP_PORT = "SERES_FTP_SERVER_PORT";
+	private final String PARAM_FTP_USER = "SERES_FTP_USER";
+	private final String PARAM_FTP_PASSWORD = "SERES_FTP_PASSWORD";
+	private final String PARAM_FTP_REMOTE_PATH = "SERES_FTP_PATH_DELIVERY";
+	
 	private IController controller;
 	private boolean showEdiFtpWindow;
 	
@@ -108,11 +114,11 @@ public class FtpDeliveryUploadHandler implements Serializable {
 	}
 	
 	private void initContext() {
-		ApplicationParameter pServer = AppParamUtil.getParameter("SERES_FTP_SERVER_NAME");
-		ApplicationParameter pPort = AppParamUtil.getParameter("SERES_FTP_SERVER_PORT");
-		ApplicationParameter pUser = AppParamUtil.getParameter("SERES_FTP_USER");
-		ApplicationParameter pPasswd = AppParamUtil.getParameter("SERES_FTP_PASSWORD");
-		ApplicationParameter pPath = AppParamUtil.getParameter("SERES_FTP_PATH_DELIVERY");
+		ApplicationParameter pServer = AppParamUtil.getParameter(PARAM_FTP_SERVER_NAME);
+		ApplicationParameter pPort = AppParamUtil.getParameter(PARAM_FTP_PORT);
+		ApplicationParameter pUser = AppParamUtil.getParameter(PARAM_FTP_USER);
+		ApplicationParameter pPasswd = AppParamUtil.getParameter(PARAM_FTP_PASSWORD);
+		ApplicationParameter pPath = AppParamUtil.getParameter(PARAM_FTP_REMOTE_PATH);
 		
 		if (pServer != null)
 			server = pServer.getValue();
@@ -142,12 +148,12 @@ public class FtpDeliveryUploadHandler implements Serializable {
 	}
 
 	private void saveLoginInfo() {
-		AppParamUtil.insertParameter("SERES_FTP_SERVER_NAME", server);
+		AppParamUtil.insertParameter(PARAM_FTP_SERVER_NAME, server);
 		if (port != null && port!=21)
-			AppParamUtil.insertParameter("SERES_FTP_SERVER_PORT", String.valueOf(port));
-		AppParamUtil.insertParameter("SERES_FTP_USER", user);
-		AppParamUtil.insertParameter("SERES_FTP_PASSWORD", password);
-		AppParamUtil.insertParameter("SERES_FTP_PATH_DELIVERY", remotePath);
+			AppParamUtil.insertParameter(PARAM_FTP_PORT, String.valueOf(port));
+		AppParamUtil.insertParameter(PARAM_FTP_USER, user);
+		AppParamUtil.insertParameter(PARAM_FTP_PASSWORD, password);
+		AppParamUtil.insertParameter(PARAM_FTP_REMOTE_PATH, remotePath);
 	}
 	
 	public void onShowFtpEdi(ActionEvent event) {
@@ -204,13 +210,12 @@ public class FtpDeliveryUploadHandler implements Serializable {
 					customerEdiCode, deliveryPointEdiCode);
 
 			// upload file
-			String name = "albaran";
-			String number = delivery.getReferenceCode();
+			String referenceCode = delivery.getSeries()+"_"+delivery.getNumber();
 			byte[] data = output.getContent();
 			InputStream inputStream = new BufferedInputStream(
 					new ByteArrayInputStream(data));
 
-			boolean success = storeFtpFile(name + "-" + number + ".edi",
+			boolean success = storeFtpFile("albaran-" + referenceCode + ".edi",
 					inputStream);
 
 			// TODO: mark this delivery as sended 

@@ -420,12 +420,11 @@ public class SaleInvoiceController extends InvoiceController {
 			output = writer.createFile(invoice, getPriceStrategy(), companyEdiCode, customerEdiMainCode, customerEdiOperationCode);
 			
 			// download file
-			String name = "factura";
-			String number = invoice.getReferenceCode();
+			String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
 			byte[] data = output.getContent();
 			int size = data.length;
 			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, name+"."+number, null, size);
+			out = DownloadUtil.initDownload(response, "factura-" + referenceCode + ".edi", null, size);
 			InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
 			IOUtils.copy( fileIn, out );
 			IOUtils.closeQuietly(fileIn);

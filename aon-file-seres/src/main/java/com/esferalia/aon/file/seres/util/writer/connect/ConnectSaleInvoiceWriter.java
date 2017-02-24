@@ -79,27 +79,63 @@ public class ConnectSaleInvoiceWriter {
 		rectl.setIdentificacionDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		
-		rectl.sincc = createSINCCRecord(invoice, companyEdiCode,
-				customerEdiMainCode, customerEdiOperationCode);
-		rectl.sincpList = createSINCPList(invoice, company, companyEdiCode,
-				customerEdiMainCode);
-		rectl.sinctList = createSINCTList(invoice, companyEdiCode,
-				customerEdiMainCode);
-		rectl.sincvList = createSINCVList(financeList, companyEdiCode,
-				customerEdiMainCode);
-		rectl.sincdList = createSINCDList(invoice);
-		rectl.sinclList = createSINCLList(
-				invoice.getDetailList().stream()
-						.map(to -> ((InvoiceDetail) to))
-						.collect(Collectors.toList()), companyEdiCode,
-				customerEdiMainCode);
-		rectl.sincuList = createSINCUList(invoice);
-		rectl.sinceList = createSINCEList(invoice);
-		rectl.sinciList = createSINCIList(
-				invoice.getDetailList().stream()
-						.map(to -> ((InvoiceDetail) to))
-						.collect(Collectors.toList()), invoice, companyEdiCode,
-				customerEdiMainCode);
+		try {
+			rectl.sincc = createSINCCRecord(invoice, companyEdiCode,
+					customerEdiMainCode, customerEdiOperationCode);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sincpList = createSINCPList(invoice, company, companyEdiCode,
+					customerEdiMainCode);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sinctList = createSINCTList(invoice, companyEdiCode,
+					customerEdiMainCode);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sincvList = createSINCVList(financeList, companyEdiCode,
+					customerEdiMainCode);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sincdList = createSINCDList(invoice);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sinclList = createSINCLList(
+					invoice.getDetailList().stream()
+					.map(to -> ((InvoiceDetail) to))
+					.collect(Collectors.toList()), companyEdiCode,
+					customerEdiMainCode);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sincuList = createSINCUList(invoice);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sinceList = createSINCEList(invoice);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		try {
+			rectl.sinciList = createSINCIList(
+					invoice.getDetailList().stream()
+					.map(to -> ((InvoiceDetail) to))
+					.collect(Collectors.toList()), invoice, companyEdiCode,
+					customerEdiMainCode);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
 		
 		return rectl;
 	}
