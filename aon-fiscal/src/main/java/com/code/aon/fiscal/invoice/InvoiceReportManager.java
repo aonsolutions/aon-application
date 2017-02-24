@@ -142,7 +142,8 @@ public class InvoiceReportManager {
 		stmt.append(" ,it.vat_deduction_type " + VAT_DEDUCTION_TYPE);
 		stmt.append(" ,it.withholding_type " + WITHHOLDING_TYPE);
 		stmt.append(" ,it.deductible_percent " + DEDUCTIBLE_PERCENT);		
-		stmt.append("  ,SUM( (IF(it.deductible_quota!=0,it.deductible_quota,IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2)))) * it.deductible_percent / 100 ) " + DEDUCTIBLE_QUOTA);
+//		stmt.append("  ,SUM( (IF(it.deductible_quota!=0,it.deductible_quota,IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2)))) * it.deductible_percent / 100 ) " + DEDUCTIBLE_QUOTA);
+		stmt.append("  ,SUM(IF(it.deductible_quota!=0,it.deductible_quota,IF(it.quota != 0,it.quota,ROUND(it.base * (it.percentage / 100) * (it.deductible_percent / 100), 2)))) " + DEDUCTIBLE_QUOTA);
 	    stmt.append("  ,SUM(it.base) " + TAXABLE_BASE);
 		stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) " + TAX);
 		stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + SURCHARGE_QUOTA);
@@ -151,7 +152,7 @@ public class InvoiceReportManager {
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id) ");
 			stmt.append(" LEFT OUTER JOIN enterprise_activity ea ON (i.activity = ea.id) ");
-			stmt.append(" LEFT OUTER JOIN invest_asset ia ON (i.invest_asset = ia.id) ");
+			stmt.append(" LEFT OUTER JOIN invest_asset ia ON (id.invest_asset = ia.id) ");
 			stmt.append(" WHERE it.domain = ?");
 			stmt.append(" AND (i.vat_accrual_payment = 0 OR (vat_accrual_payment = 1 AND it.tax_type != 1)) " );  
 			if (params.getFromTaxDate() != null) {
@@ -175,7 +176,7 @@ public class InvoiceReportManager {
 			stmt.append("  INNER JOIN invoice_detail id ON (id.invoice = i.id) ");
 			stmt.append("  INNER JOIN invoice_tax it ON (it.invoice_detail = id.id) ");
 			stmt.append("  LEFT OUTER JOIN enterprise_activity ea ON (i.activity = ea.id) ");
-			stmt.append("  LEFT OUTER JOIN invest_asset ia ON (i.invest_asset = ia.id) ");
+			stmt.append("  LEFT OUTER JOIN invest_asset ia ON (id.invest_asset = ia.id) ");
 			stmt.append(" WHERE ft.domain = ?");
 			stmt.append("  AND ft.type IN (1,2) ");
 			stmt.append(" AND (vat_accrual_payment = 1 AND it.tax_type = 1) " );
@@ -237,7 +238,8 @@ public class InvoiceReportManager {
 		}
 		
 		stmt.append(" GROUP BY i.id,i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
-		stmt.append(" ,i.withholding_farmer,i.service,i.rectification_type,i.rectification_invoice,it.tax_type,it.percentage,it.surcharge");
+		stmt.append(" ,i.withholding_farmer,i.service,i.rectification_type,i.rectification_invoice");
+		stmt.append(" ,ea.description,ia.description,it.tax_type,it.percentage,it.surcharge");
 		stmt.append(" ,it.vat_deduction_type,it.withholding_type ");
 		if (vatAccrualPayment) {
 			stmt.append("," + FINANCE_TOTAL);
