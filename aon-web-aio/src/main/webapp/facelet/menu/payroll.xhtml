@@ -159,12 +159,6 @@
 										actionListener="#{payrollCodeTables.onInit}"
 										value="#{bundle.payroll_predefined_tables}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="serviconvenios"
-										action="corporateIdentityAttach_list"
-										actionListener="#{corporateIdentityAttach.onInitServiconvenios}"
-										value="#{bundle.aon_external_serviconvenios}" />
-								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -345,17 +339,6 @@
 											value="Listado de costes" />
 									</aon:div>
 								</aon:if>									
-								<aon:if test="#{desktop.state.accoutingEnabled}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_salaryAccounting-payroll"
-											action="gwt_salaryAccounting-payroll"
-											title="#{bundle.accounting_salary_module}">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="#{bundle.accounting_salary_module}" />												
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_calculator"
 										action="gwt_main_calculator"
@@ -375,6 +358,7 @@
 					<!--
 						HACIENDA 
 						 -->
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 					<aon:panelGroup>
 						<aon:panelGrid id="group_hacienda" styleClass="aon-width-all"
 							columnClasses="aon-padding"
@@ -434,7 +418,7 @@
 -->
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								
+							
 								<aon:div>
 									<aon:commandLink id="irpfData-payroll"
 										action="irpfData_search-payroll" style="white-space: nowrap;"
@@ -461,41 +445,19 @@
 								
 								<aon:div styleClass="aon-margin-top">
 									<aon:commandLink id="gwt_mod190-payroll"
-										action="gwt_mod190-payroll"
+										action="gwt_mod190-payroll" style="white-space: nowrap;"
 										title="#{bundle.fiscal_model_190_module}">
 										<aon:outputText styleClass="aon-fiscal-link-box" value="190"/>
 										<aon:outputText styleClass="aon-fiscal-link-label"
+											style="white-space: normal;" 
 											value="#{bundle.fiscal_model_190_module}" />
 									</aon:commandLink>
-								</aon:div>
-								
-								<aon:div styleClass="aon-margin-top">
-									<a4j:commandLink ajaxSingle="true" immediate="true" 
-										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										title="Retenciones de trabajo de No Residentes"
-										style="color:grey;font-style:oblique; white-space: nowrap;">
-										<aon:outputText styleClass="aon-fiscal-link-box" value="216"/>
-										<aon:outputText styleClass="aon-fiscal-link-label"
-											style="white-space: normal;" 
-											value="Retenciones de trabajo de No Residentes" />
-									</a4j:commandLink>
-								</aon:div>
-								
-								<aon:div styleClass="aon-margin-top">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										title="Resumen IRPF Anual de No Residentes"
-										style="color:grey;font-style:oblique;white-space: nowrap;">
-										<aon:outputText styleClass="aon-fiscal-link-box" value="296"/>
-										<aon:outputText styleClass="aon-fiscal-link-label"
-											style="white-space: normal;" 
-											value="Resumen IRPF Anual de No Residentes" />
-									</a4j:commandLink>
 								</aon:div>
 								
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					</aon:if>
 
 					<!--
 						EMPTY 
