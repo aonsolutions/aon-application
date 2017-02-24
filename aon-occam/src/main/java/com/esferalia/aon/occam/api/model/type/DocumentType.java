@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public enum DocumentType implements Serializable {
 	
-	NIF("NIF")
+	NIF("DNI")
 	,CIF("CIF")
 	,NIE("NIE")
 	,PASSPORT("Pasp.")
