@@ -28,7 +28,7 @@
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}" />
 					<g:Button ui:field="remove" text="{msg.deleteAction}"  visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-					<g:Button ui:field="packingList" text="{msg.download}"  visible="false"
+					<g:Button ui:field="packingList" text="Impresion"  visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
 					<g:Button ui:field="sendPackingList" text="Enviar"  visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-mail" />

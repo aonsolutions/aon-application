@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class RAddress implements Serializable {
 
 	/**
@@ -183,5 +185,20 @@ public class RAddress implements Serializable {
 		this.geozoneName = geozoneName;
 		return this;
 	}
+	
+	public String getFullAddress() {
+    	StringBuffer buf = new StringBuffer();
+    	buf.append((getStreet_type()!=null) ? getStreet_type() : "");
+    	buf.append((getStreet_type()!=null) ? ". " : "");
+    	buf.append(AonStringUtils.isEmpty(getAddress())? "":getAddress());
+    	buf.append(AonStringUtils.isEmpty(getNumber())?"":" ");
+    	buf.append(AonStringUtils.isEmpty(getNumber())?"":getNumber());
+    	buf.append(AonStringUtils.isEmpty(getAddress2())?"":", ");
+    	buf.append(AonStringUtils.isEmpty(getAddress2())?"":getAddress2());
+    	buf.append(AonStringUtils.isEmpty(getAddress3())?"":" (");
+    	buf.append(AonStringUtils.isEmpty(getAddress3())?"":getAddress3());
+    	buf.append(AonStringUtils.isEmpty(getAddress3())?"":")");
+    	return buf.toString();
+    }
 
 }

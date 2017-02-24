@@ -230,7 +230,7 @@ public class ToJSON {
 			.put("line", purchaseDetail.getLine())
 			.put("item", purchaseDetail.getItem())
 			.put("delivered", purchaseDetail.getDelivered())
-			
+			.put("description", purchaseDetail.getDescription())
 			.put("product_code", purchaseDetail.getProductCode())
 			.put("product_name", purchaseDetail.getProductName())
 			
@@ -247,7 +247,7 @@ public class ToJSON {
 			.put("discount_expr", deliveryDetail.getDiscountExpression())
 			.put("line", deliveryDetail.getLine())
 			.put("item", deliveryDetail.getItem())
-			
+			.put("description", deliveryDetail.getDescription())
 			.put("product_code", deliveryDetail.getProductCode())
 			.put("product_name", deliveryDetail.getProductName())
 			;

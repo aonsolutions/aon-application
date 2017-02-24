@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -50,11 +51,16 @@ public class PackingListDownload extends HttpServlet{
 		
 		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, carrierPackingId);
 		JSONObject json = new JSONObject();
-		json.put("carrier_packing", ToJSON.carrierPackingToJSON(carrierPacking));
+		JSONObject cpJSON = ToJSON.carrierPackingToJSON(carrierPacking);
+		cpJSON.put("address", AON.getRAddres(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getFullAddress());
+		cpJSON.put("document", AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument());
+		json.put("carrier_packing", cpJSON);
 		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
-		json.put("address", ToJSON.raddressToJSON(
-			AON.getRAddres(domain.getName(), domain.getId(), login, company.getId())
-		));
+		company.getDocument();
+		JSONObject addressJSON = ToJSON.raddressToJSON(
+			AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
+		addressJSON.put("document", company.getDocument());
+		json.put("address", addressJSON);
 		JSONArray array = new JSONArray();
 		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 			AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
@@ -62,9 +68,10 @@ public class PackingListDownload extends HttpServlet{
 					.and(f.getDomainProperty().eq(domain.getId())))
 			.forEach(purchase ->{
 				JSONObject purchaseJSON = ToJSON.purchaseToJSON(purchase);
-				purchaseJSON.put("address", ToJSON.raddressToJSON(
-					AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()))
-				));
+				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()));
+				JSONObject addressJSON2 = ToJSON.raddressToJSON(ra);
+				addressJSON2.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument());
+				purchaseJSON.put("address",addressJSON2);
 				
 				JSONArray details = new JSONArray();
 				AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login,
@@ -75,7 +82,7 @@ public class PackingListDownload extends HttpServlet{
 					Item item = AON.getItem(domain.getName(), domain.getId(), login, detail.getItem());
 					detailJSON.put("format_tag", item.getPackFormatTag()!= null ? item.getPackFormatTag().getName() : "");
 					detailJSON.put("measurements", item.getPackMeasurement() != null ? item.getPackMeasurement() : "");
-					detailJSON.put("units_tag", item.getPackUnitsTag()!= null ? item.getPackUnitsTag().getName() : "");
+					detailJSON.put("measurements_tag", item.getPackMeasurementTag()!= null ? item.getPackMeasurementTag().getName() : "");
 					detailJSON.put("units", item.getPackUnits() != null ? item.getPackUnits() : "");
 					details.put(detailJSON);	
 				});
@@ -87,9 +94,10 @@ public class PackingListDownload extends HttpServlet{
 			AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
 			.forEach(delivery -> {
 				JSONObject deliveryJSON = ToJSON.deliveryToJSON(delivery);
-				deliveryJSON.put("address", ToJSON.raddressToJSON(
-					AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()))
-				));
+				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()));
+				JSONObject addressJSON3= ToJSON.raddressToJSON(ra);
+				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument());
+				deliveryJSON.put("address", addressJSON3);
 			
 				JSONArray details = new JSONArray();
 				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
@@ -98,7 +106,7 @@ public class PackingListDownload extends HttpServlet{
 					Item item = AON.getItem(domain.getName(), domain.getId(), login, detail.getItem().getId());
 					detailJSON.put("format_tag", item.getPackFormatTag()!= null ? item.getPackFormatTag().getName() : "");
 					detailJSON.put("measurements", item.getPackMeasurement() != null ? item.getPackMeasurement() : "");
-					detailJSON.put("units_tag", item.getPackUnitsTag()!= null ? item.getPackUnitsTag().getName() : "");
+					detailJSON.put("measurements_tag", item.getPackMeasurementTag()!= null ? item.getPackMeasurementTag().getName() : "");
 					detailJSON.put("units", item.getPackUnits() != null ? item.getPackUnits() : "");
 					details.put(detailJSON);	
 				});
