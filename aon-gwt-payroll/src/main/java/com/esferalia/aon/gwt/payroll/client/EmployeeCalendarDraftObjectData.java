@@ -334,6 +334,15 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 	public boolean getJornadaEmpleado(){
 		return jornadaEmpleado;
 	}
+	
+	public Date getLastDateMap(){
+		Date finalDate = new Date();
+		for(Entry<Date, Double> date : mapaDiasHoras.entrySet()){
+			if(date.getKey().after(finalDate))
+				finalDate = DateUtils.copyDateOnly(date.getKey());
+		}
+		return finalDate;
+	}
 
 	//TODO: MIRAR ESTO!
 	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {

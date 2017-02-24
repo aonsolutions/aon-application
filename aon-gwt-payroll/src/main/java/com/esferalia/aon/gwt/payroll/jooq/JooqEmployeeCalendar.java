@@ -210,6 +210,7 @@ public class JooqEmployeeCalendar {
 			return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void setHoursByDay(DSLContext dslContext, Integer contract, EmployeeCalendarUpdate updateInfo) {
 		
 		// -------------------------------------------------- ACTUALIZACION HORAS ------------------------------------------------------
@@ -217,6 +218,7 @@ public class JooqEmployeeCalendar {
 						.from(CONTRACT)
 						.where(CONTRACT.ID.eq(contract))
 						.fetchOne().value1();
+		
 		
 		dslContext.delete(CONTRACT_DATA)
 				   .where(CONTRACT_DATA.CONTRACT.eq(contract))
@@ -229,6 +231,11 @@ public class JooqEmployeeCalendar {
 						  ,ContextVariable.SATURDAY_HOURS.getName()
 						  ,ContextVariable.SUNDAY_HOURS.getName()))
 				   .execute();
+		
+		Date realEndDate = dslContext.select(CONTRACT.END_DATE)
+						.from(CONTRACT)
+						.where(CONTRACT.ID.eq(contract))
+						.fetchOne().value1();
 		
 		HashMap<java.util.Date, Double> mapaHorasUpdate = updateInfo.getMapaHorasDias();
 		
@@ -245,18 +252,16 @@ public class JooqEmployeeCalendar {
 					endDate = DateUtils.copyDateOnly(entry.getKey());
 			}
 			
-			
 			for (int i=0; i<7; i++){
 				java.util.Date  date = DateUtils.copyDateOnly(startDate);
 				DateUtils.addDays2Date(date, i);
 	
-				@SuppressWarnings("deprecation")
 				String diaSemana = calcularDiaSemana(date.getDay());
 				
 				java.util.Date auxStartDate = DateUtils.copyDateOnly(date);
 				Double horasStart = mapaHorasUpdate.get(auxStartDate);
 				
-				while (date.before(endDate)){
+				while (date.before(endDate) && mapaHorasUpdate.containsKey(date)){
 					if(!horasStart.equals(mapaHorasUpdate.get(date))){
 						Date sqlStartDate = new Date(auxStartDate.getTime());
 						Date sqlEndDate = new Date(date.getTime());
@@ -274,7 +279,13 @@ public class JooqEmployeeCalendar {
 				}
 				
 				Date sqlStartDate = new Date(auxStartDate.getTime());
-				Date sqlEndDate = new Date(endDate.getTime());
+				Date sqlEndDate;
+				
+				if(realEndDate == null)
+					sqlEndDate = null;
+				else
+					sqlEndDate = new Date(realEndDate.getTime());
+				
 				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 						CONTRACT_DATA.END_DATE)
@@ -305,7 +316,6 @@ public class JooqEmployeeCalendar {
 			if (entry.getKey().after(endDateTipo))
 				endDateTipo = DateUtils.copyDateOnly(entry.getKey());
 		}
-		
 		
 		java.util.Date  dateTipo = DateUtils.copyDateOnly(startDateTipo);
 		java.util.Date auxStartDateTipo = DateUtils.copyDateOnly(dateTipo);
