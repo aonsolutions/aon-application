@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
@@ -29,6 +31,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -53,7 +56,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 	final AccountingRegistryTypeListBox type = new AccountingRegistryTypeListBox();
 	
 	public AccountingRegistryPanel(final String domainName,final int domain
-			, Integer id
+			, Integer id 
 			, AonConfiguration config
 			, final AccountingRegistryPanelCallback callback) {
 		
@@ -62,31 +65,47 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		
 		setWidth("700px");
 		setHeight("550px");
-		AccountingRegistry accountingRegistry = new AccountingRegistry();
+		if (id != null) {
+			commonService.getAccountingRegistries(domainName, domain,id
+					,new AsyncCallback<LinkedList<AccountingRegistry>>() {
+				
+				@Override
+				public void onSuccess(LinkedList<AccountingRegistry> result) {
+					if (result == null || result.size() == 0) {
+						show(domainName,domain, config, newAccountingRegistry(domain),callback);
+					} else if (result.size() == 1) {
+						show(domainName,domain, config, result.get(0),callback);
+					} else {
+						// MUY DIFICIL. Ej: proveedor + acreedor con el mismo registry.
+						Window.alert("Encontrado más de un registry para el mismo id");
+					}
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					show(domainName,domain, config, newAccountingRegistry(domain),callback);
+				}
+			});
+		} else {
+			show(domainName,domain, config, newAccountingRegistry(domain),callback);
+		}
+	}
 		
-		
-		//************************
-		id = null;
-		// TODO Modificar el Registry.
-		//************************
-		
-//		if (id == null) {
-			accountingRegistry = new AccountingRegistry()
-					.setDomain(domain)
-					.setType(AccountingRegistryType.CREDITOR)
-					.setDocumentType(DocumentType.CIF)
-					.setDocumentCountry(Country.ES)
-					.setNationality(Country.ES)
-					.setTransaction(InvoiceTransactionType.NATIONAL)
-					.cleanDirty();
-//		} else {
-			// TODO Modificar el Registry.
-//			accountingRegistry = new AccountingRegistry();
-			// --------------- borrar linea anterior y buscar el registry.
-//		}
-		
-		final AccountingRegistry reg = accountingRegistry;
-		 
+	protected AccountingRegistry newAccountingRegistry(int domain) {
+		return new AccountingRegistry()
+				.setDomain(domain)
+				.setType(AccountingRegistryType.CREDITOR)
+				.setDocumentType(DocumentType.CIF)
+				.setDocumentCountry(Country.ES)
+				.setNationality(Country.ES)
+				.setTransaction(InvoiceTransactionType.NATIONAL)
+				.cleanDirty();
+	}
+
+	public void show(final String domainName,final int domain
+			, final AonConfiguration config
+			, final AccountingRegistry reg
+			, final AccountingRegistryPanelCallback callback) {
 		final CheckBox vatAccualPayment = new CheckBox(AON.MSG.vatAccrualPayment());
 		final CheckBox surcharge = new CheckBox(AON.MSG.surcharge());
 		final CheckBox withholdingFarmer = new CheckBox(AON.MSG.withholdingFarmer());
@@ -137,7 +156,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		type.addKeyUpHandler( keyUpHandler);
 		type.setValue(AccountingRegistryType.CREDITOR);
-		type.setEnabled(id == null);
+		type.setEnabled(reg.getId() == null);
 		table.setWidget(row,1,type);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		type.addChangeHandler(new ChangeHandler() {
@@ -680,7 +699,8 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
     	
     	okButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
     	okButton.setText( AON.MSG.accept());
-    	okButton.setEnabled(false);
+    	okButton.setEnabled(reg.getId() == null);
+    	okButton.setVisible(reg.getId() == null);
     	okButton.addKeyUpHandler( keyUpHandler);
     	okButton.addClickHandler(new ClickHandler() {
 			

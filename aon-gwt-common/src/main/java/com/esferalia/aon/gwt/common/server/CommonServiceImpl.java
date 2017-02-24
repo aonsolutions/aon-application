@@ -113,6 +113,13 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 	@Override
+	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain,
+			Integer id) throws AonCoreException {
+		return ACCOUNTING.getAccountingRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+				p -> p.getIdProperty().eq(id))
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	@Override
 	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain, String query)
 			throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))

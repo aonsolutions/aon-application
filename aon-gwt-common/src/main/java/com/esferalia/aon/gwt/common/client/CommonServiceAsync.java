@@ -50,6 +50,8 @@ public interface CommonServiceAsync {
 			AsyncCallback<LinkedList<Creditor>> callback);
 
 	// -------------------------------------------------------------- REGISTRY
+	void getAccountingRegistries(String domainName, int domain, Integer id,
+			AsyncCallback<LinkedList<AccountingRegistry>> callback);
 	void getAccountingRegistries(String domainName, int domain, String query,
 			AsyncCallback<LinkedList<AccountingRegistry>> asyncCallback);
 	void insert(String domainName, int domain, AccountingRegistry reg, AsyncCallback<AccountingRegistry> callback);

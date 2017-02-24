@@ -45,6 +45,7 @@ public interface CommonService extends RemoteService {
 	LinkedList<Creditor> getBasicCreditors(String domainName,int domain,String query) throws AonCoreException;
 	
 	// -------------------------------------------------------------- REGISTRY
+	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,Integer id) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,String query) throws AonCoreException;
 	AccountingRegistry insert(String domainName,int domain,AccountingRegistry reg) throws AonCoreException;
 	
