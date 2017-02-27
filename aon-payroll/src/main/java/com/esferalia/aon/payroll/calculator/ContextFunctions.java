@@ -4,32 +4,33 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INPUT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SECTION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
-import com.esferalia.aon.salary.expression.Variables.PeriodMap;
-import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -37,12 +38,16 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
+import com.esferalia.aon.salary.expression.Variables.PeriodMap;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContextFunctions {
 
 	private static final String _OLD = "_OLD";
 	private static final String _GROSS = "_BRUTO";
 	private static final String _SECTION = "_SECTION";
+	private static final String _PRORATION = "_PRORATION";
 	private static final String MONTHS_IMPL = "MESESIMPL";
 
 	public static class UselessGuaranteeException extends CheckException {
@@ -403,6 +408,81 @@ public class ContextFunctions {
 	}
 
 	// ------------------------------------------------------------------------
+	// PRORATION
+	// ------------------------------------------------------------------------
+
+	public static Double proration() throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s, _P,", _PRORATION, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+	public static Double proration(Double amount) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s,", _PRORATION, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+	public static Double proration(ExpressionContext context, Double amount) {
+		
+		Object paymentValue = ExpressionContext.getCurrentBindings().get(PAYMENT_VARIABLE);
+
+		if ( paymentValue == null )
+			return amount / 12.00;
+		
+		
+		PaymentVariable paymentVariable = (PaymentVariable) paymentValue;
+		IContractPayment payment = paymentVariable.getPayment();
+		
+		if ( !( payment instanceof IExtraPayment) )
+			return amount / 12.00;
+		
+
+		IExtraPayment extraPayment = (IExtraPayment) payment;
+		Period currentPeriod = ExpressionContext.getCurrentBindings().getPeriod();
+		Date currentDate = currentPeriod.getEnd();
+		
+		Calendar extraEndCalendar = parseExtraDate(extraPayment.getExtraEndDate(), currentDate);
+		Calendar extraStartCalendar = parseExtraDate(extraPayment.getExtraStartDate(), currentDate);
+		
+		List<Integer> extraMonths = new ArrayList<Integer>();
+		extraStartCalendar.set(Calendar.DATE, 1);
+		extraEndCalendar.set(Calendar.DATE, 1);
+		while (extraStartCalendar.compareTo(extraEndCalendar)<=0 ) {
+			extraMonths.add(extraStartCalendar.get(Calendar.MONTH));
+			extraStartCalendar.add(Calendar.MONTH, 1);
+		}
+		
+		if ( !extraMonths.contains(AonDateUtils.get(currentDate, Calendar.MONTH))) 
+			return 0.00;
+		
+		return amount / extraMonths.size()  ;
+	}
+	
+	private static Calendar parseExtraDate(String str, Date date) {
+		Matcher matcher =  Pattern.compile("(?<date>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?").matcher(str);
+		matcher.matches();
+		
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DATE, Integer.parseInt(matcher.group("date")));
+		calendar.set(Calendar.MONTH, Integer.parseInt(matcher.group("month"))-1);
+		if ( matcher.group("year") != null )
+			calendar.add(Calendar.YEAR, Integer.parseInt(matcher.group("year")));
+		
+		return calendar;	
+	}
+
+	// ------------------------------------------------------------------------
 	// Private methods
 	// ------------------------------------------------------------------------
 
@@ -627,6 +707,24 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadProrationFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+
+		// WARNING function
+		try {
+			Method _proration = ContextFunctions.class.getMethod("proration", ExpressionContext.class, Double.class);
+			MethodStub _prorationStub = new MethodStub(_proration);
+			context.setVariable(_PRORATION, _prorationStub, startDate, endDate);
+
+			Method proration = ContextFunctions.class.getMethod("proration", Double.class);
+			MethodStub prorationStub = new MethodStub(proration);
+			context.setVariable(ContextVariable.PRORATION, prorationStub, startDate, endDate);
+
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	public static void loadFunctions(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 		loadInputFunction(context, startDate, endDate);
@@ -640,6 +738,21 @@ public class ContextFunctions {
 		loadExcessFunction(context, startDate, endDate);
 		loadSeniorityFunction(context, startDate, endDate);
 		loadSectionFunction(context, startDate, endDate);
+		loadProrationFunction(context, startDate, endDate);
 	}
-
+	
+	public static void main(String[] args) throws Throwable {
+		Pattern pattern = Pattern.compile("(?<day>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?");
+		Matcher matcher =  pattern.matcher("1/12");
+		if ( matcher.matches() ) {
+			int day = Integer.parseInt(matcher.group("day"));
+			int month = Integer.parseInt(matcher.group("month"));
+			int year = matcher.group("year") == null ? 0 : Integer.parseInt(matcher.group("year"));
+			
+		}
+		
+		
+		
+	}
+	
 }

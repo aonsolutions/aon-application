@@ -4,32 +4,81 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
+import com.esferalia.aon.payroll.calculator.SimpleSystemPayment;
+import com.esferalia.aon.payroll.sql.AbstractSQL.AgreementExtra;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 
 public class SQLAgreementPaymentsFactory 
 	implements LRUCacheFactory<AgreementKey, Collection<ISystemPayment>> {
 	
+	
+	public interface IExtraPayment extends ISystemPayment {
+		
+		String getExtraStartDate();
+		String getExtraEndDate();
+	}
+
+	public static class SimpleExtraPayment extends SimpleSystemPayment implements IExtraPayment  {
+		
+		
+		private String extraStartDate;
+		private String extraEndDate;
+
+		public SimpleExtraPayment(IContractPayment contractPayment, int domain) {
+			super(contractPayment, domain);
+		}
+		
+		@Override
+		public String getExtraStartDate() {
+			return extraStartDate;
+		}
+
+		@Override
+		public String getExtraEndDate() {
+			return extraEndDate;
+		}
+		
+		
+		public void setExtraStartDate(String extraStartDate) {
+			this.extraStartDate = extraStartDate;
+		}
+		
+		public void setExtraEndDate(String extraEndDate) {
+			this.extraEndDate = extraEndDate;
+		}
+		
+		
+		
+	}
+	
 	private static final String SQL = 
 		"SELECT * " 
 		+", " + ExpressionScope.AGREEMENT.ordinal() + " AS " + SQLContractPayment.SCOPE_ALIAS
 		+" FROM agreement_payment AS " + SQLContractPayment.PAYMENT_ALIAS
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
-		+"	ON payment_concept = payment_concept.id"
-		+" WHERE "+SQLContractPayment.PAYMENT_ALIAS+".domain = ?"
-		+" AND agreement = ?"
-		+" AND start_date <= ?"
-		+" AND ( end_date IS NULL"
-		+" OR end_date >= ? )"
+		+"	ON (payment_concept = payment_concept.id)"
+		+" LEFT JOIN agreement_extra" 							// LEFT JOIN: agreement_extra puede ser NULL
+		+"	ON ("+ SQLContractPayment.PAYMENT_ALIAS +".id = agreement_extra.agreement_payment)"
+		+" WHERE "+SQLContractPayment.PAYMENT_ALIAS +".domain = ?"
+		+" AND "+SQLContractPayment.PAYMENT_ALIAS + ".agreement = ?"
+		+" AND "+SQLContractPayment.PAYMENT_ALIAS + ".start_date <= ?"
+		+" AND ( "+SQLContractPayment.PAYMENT_ALIAS + ".end_date IS NULL"
+		+" OR "+SQLContractPayment.PAYMENT_ALIAS + ".end_date >= ? )"
 		;
 	
 	private PreparedStatement 		stmt;
@@ -63,7 +112,7 @@ public class SQLAgreementPaymentsFactory
 			stmt.setInt(1, agreementKey.getDomain());
 			stmt.setInt(2, agreementKey.getId());
 			rs = stmt.executeQuery();
-			return SQLCollections.systemPaymentsCollection(rs);
+			return extraPaymentsCollection(rs);
 		}catch (SQLException e) {
 			//TODO : ¿ Deberiamos crear una excepción espefícica como CreateException ? 
 			throw new RuntimeException(e);
@@ -93,6 +142,30 @@ public class SQLAgreementPaymentsFactory
 		this.stmt.setDate(3, new java.sql.Date(endDate.getTime()) );
 		this.stmt.setDate(4, new java.sql.Date(startDate.getTime()) );
 	}
+	
+	
+	
+	private static Collection<ISystemPayment> extraPaymentsCollection(ResultSet rs) 
+			throws SQLException {
+			
+			SQLContractPayment sqlContractPayments = 
+				new SQLContractPayment(rs);
+			List<ISystemPayment> systemPaymentList = 
+				new ArrayList<ISystemPayment>();
+			
+			for (IContractPayment sqlContractPayment : sqlContractPayments) {
+				
+				SimpleExtraPayment extraPayment = 
+					new SimpleExtraPayment(sqlContractPayment, rs.getInt(SystemPaymentColumns.DOMAIN));
+				
+				extraPayment.setExtraStartDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.START_DATE));
+				extraPayment.setExtraEndDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.END_DATE));
+				
+				systemPaymentList.add(extraPayment);
+			}
+			
+			return systemPaymentList;
+		}
 	
 	
 	

@@ -443,6 +443,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public Integer getMES() {
 			return payment.getMonth() != null ? payment.getMonth().getValue() + 1 : null;
 		}
+		
+		public IContractPayment getPayment() {
+			return payment;
+		}
 
 	}
 
