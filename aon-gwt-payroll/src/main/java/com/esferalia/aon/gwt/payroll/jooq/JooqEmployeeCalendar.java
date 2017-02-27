@@ -33,11 +33,11 @@ public class JooqEmployeeCalendar {
 
 	public static EmployeeCalendarData getEmployeeHour(Connection conn, Integer contract) throws IllegalArgumentException {
 
-		return getHoursByDay(DSL.using(conn, getDefaultSettings()), contract);
+		return getEmployeeInformation(DSL.using(conn, getDefaultSettings()), contract);
 	}
 	
 	public static void setEmployeeHour(Connection conn, Integer contract, EmployeeCalendarUpdate updateInfo){
-		setHoursByDay(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
+		setEmployeeInformation(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -48,7 +48,7 @@ public class JooqEmployeeCalendar {
 		return SETTINGS;
 	}
 
-	private static EmployeeCalendarData getHoursByDay(DSLContext dslContext, Integer contract) throws IllegalArgumentException {
+	private static EmployeeCalendarData getEmployeeInformation(DSLContext dslContext, Integer contract) throws IllegalArgumentException {
 
 		EmployeeCalendarData employeeInfoCalendar;
 		
@@ -193,6 +193,8 @@ public class JooqEmployeeCalendar {
 				  .from(CONTRACT_DATA)
 				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
 				  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+				  .orderBy(CONTRACT_DATA.START_DATE.desc())
+				  .limit(1)
 				  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
 		
 		jornadaCompleta = comprobarTipoJornada(tipoJornadaInfoEmpleado);
@@ -211,7 +213,7 @@ public class JooqEmployeeCalendar {
 	}
 
 	@SuppressWarnings("deprecation")
-	private static void setHoursByDay(DSLContext dslContext, Integer contract, EmployeeCalendarUpdate updateInfo) {
+	private static void setEmployeeInformation(DSLContext dslContext, Integer contract, EmployeeCalendarUpdate updateInfo) {
 		
 		// -------------------------------------------------- ACTUALIZACION HORAS ------------------------------------------------------
 		Integer domain = dslContext.select(CONTRACT.DOMAIN)

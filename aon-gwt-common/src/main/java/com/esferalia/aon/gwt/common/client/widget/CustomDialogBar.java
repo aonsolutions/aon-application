@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CustomDialogBar extends Composite {
 	
-	static interface Listener {
+	public static interface Listener {
 		void onClose();
 	}
 

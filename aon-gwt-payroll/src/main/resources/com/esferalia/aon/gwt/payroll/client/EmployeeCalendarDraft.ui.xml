@@ -317,6 +317,14 @@
 			margin-left: 15px;
 		}
 		
+		.marginTopCloseDialog{
+			margin-top: 0px !important;
+			padding-left: 0px !important;
+			padding-right: 0px !important;
+			padding-top: 0px !important;
+			padding-bottom: 5px !important;
+		}
+		
 		</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -386,7 +394,7 @@
 				<p:PaperDialog ui:field="dialogUntill" styleName="{style.dialogBoxStyle}"
 					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
 					withBackdrop="true">
-					<h2>Hasta:</h2>
+					<a:CustomDialogBar ui:field="customDialogBarUntill" styleName="{style.marginTopCloseDialog}" caption="Hasta:"/>
 					<g:HTMLPanel ui:field="confirmUntillContent"></g:HTMLPanel>
 					<g:HTMLPanel>
 						<i:IronLabel>
@@ -406,7 +414,7 @@
 				<p:PaperDialog ui:field="dialogHoras" styleName="{style.dialogBoxStyle}"
 					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
 					withBackdrop="true">
-					<h2>Horas</h2>
+					<a:CustomDialogBar ui:field="customDialogBarHour" styleName="{style.marginTopCloseDialog}" caption="Horas"/>
 					<g:HTMLPanel ui:field="confirmContent"></g:HTMLPanel>
 					<g:HTMLPanel ui:field="bloqueLunes" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleL}">Lunes:</i:IronLabel>
@@ -466,7 +474,7 @@
 				<p:PaperDialog ui:field="dialogInfo" modal="true"
 					entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
 					withBackdrop="true">
-					<h2>Informacion</h2>
+					<a:CustomDialogBar ui:field="customDialogBarInformation" styleName="{style.marginTopCloseDialog}" caption="Leyenda"/>
 					<g:HTMLPanel>
 						<i:IronLabel>
 							<p:PaperButton

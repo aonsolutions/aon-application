@@ -51,7 +51,7 @@ public class EmployeeCalendarDraftObjectData {
 		}
 	};
 	
-private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, DayType>(){
+	private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, DayType>(){
 		
 		private static final long serialVersionUID = 1L;
 
@@ -263,7 +263,6 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
 	
-
 	public double getHourByDay (Date dia){
 		Double hourDayDraft = draftMapaDiasHoras.get(dia);
 		
@@ -276,34 +275,9 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 	
 	public void setHourByDay (Date dia, Double hour){
 		Double old = draftMapaDiasHoras.put(dia, hour);
-		
-//		@SuppressWarnings("deprecation")
-//		String name = calcularDiaSemana (dia.getDay()-1);
-//		
-//		StringVariable var = new StringVariable();
-//		var.setImplicit(false);
-//		var.setScope(Scope.SALARY); // DRAFT
-//		var.setName(name);
-//		var.setEndDate(dia);
-//		var.setStartDate(dia);
-//		var.setExpression(Double.toString(hour));
-//		
-//		this.variablesList.add(var);
-		
-		
-		
 		undoManager.add(new SetHourEdit(old, hour, dia));
+		//undoManager.add(new CompositeUndoable<Undoable>(undos));
 	} 
-	
-	public static class CalendarVariable extends StringVariable{
-
-		private static final long serialVersionUID = 1L;
-		
-	}
-	
-	public boolean isMine(com.esferalia.aon.gwt.payroll.shared.Variable v ){
-		return v instanceof CalendarVariable ;
-	}
 	
 	public void setHourByDay (Map<Date, Double> hours){
 		List<Undoable> undos = new ArrayList<Undoable>();
@@ -315,6 +289,8 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		
 	} 
 
+	
+	// ---------------------------------------------- METODOS AUXILIARES ---------------------------------------------
 	public Set<Entry<Date, Double>> getHourChanges(){
 		return draftMapaDiasHoras.entrySet();
 	}
@@ -344,7 +320,15 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		return finalDate;
 	}
 
-	//TODO: MIRAR ESTO!
+	// ---------------------------------------------- METODOS VARIABLES SYNC BORRADOR ---------------------------------------------
+	public static class CalendarVariable extends StringVariable{
+		private static final long serialVersionUID = 1L;
+	}
+	
+	public boolean isMine(com.esferalia.aon.gwt.payroll.shared.Variable v ){
+		return v instanceof CalendarVariable ;
+	}
+	
 	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
@@ -372,6 +356,7 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		return variablesList;
 	}
 
+	// ---------------------------------------------- METODOS SYNC BD ---------------------------------------------
 	private String calcularDiaSemana(int day) {
 		String result = "";
 		switch (day) {
@@ -432,7 +417,6 @@ private static final Map<String, DayType> TYPE_OF_DAY  = new HashMap<String, Day
 		
 		return result;
 	}
-	
 	
 	public void inicialiazarCalendarioBD(Consumer<EmployeeCalendarData> success, Consumer<Throwable> failure) {
 		
