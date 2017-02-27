@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
@@ -19,6 +18,7 @@ import org.jooq.Condition;
 import com.esferalia.aon.jooq.tables.records.SalesDetailRecord;
 import com.esferalia.aon.jooq.tables.records.SalesRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.management.SalesFilter;
 import com.esferalia.aon.occam.api.model.management.SalesProperties;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.CustomerFiller;
 
 
 public class SalesDAO {
@@ -286,24 +287,12 @@ public class SalesDAO {
 		return getSalesDetail(ctx, o -> o.getSalesProperty().eq(salesId).and(o.getLineProperty().eq(line)));
 	}
 	
-	public static Integer obtainEnterpriseId(AONContext ctx, int domain) {
-		return ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
-				.where(ENTERPRISE.DOMAIN.eq(domain)).fetchAny().value1();
-	}
-	
-	public static boolean existRegistry(AONContext ctx, Integer id) {
-		return ctx.getDslContext().selectCount().from(REGISTRY)
-				.where(REGISTRY.ID.eq(id)).fetchOne().value1()>0;
-	}
-	
-	public static boolean existAddress(AONContext ctx, Integer id) {
-		return ctx.getDslContext().selectCount().from(RADDRESS)
-				.where(RADDRESS.ID.eq(id)).fetchOne().value1()>0;
-	}
-	
-	public static boolean existWorkplace(AONContext ctx, Integer id) {
-		return ctx.getDslContext().selectCount().from(WORKPLACE)
-				.where(WORKPLACE.ID.eq(id)).fetchOne().value1()>0;
+	public static Customer getCustomer(AONContext ctx, String document){
+		return ctx.getDslContext().select().from(CUSTOMER)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+				.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
+				.and(REGISTRY.DOCUMENT.eq(document))
+				.fetch().stream().map(new CustomerFiller()).findFirst().orElse(null);
 	}
 	
 	public static void createCustomer(AONContext ctx, int domain,
