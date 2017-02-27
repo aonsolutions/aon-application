@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,8 +226,11 @@ public class ConnectSaleInvoiceWriter {
 	
 	private List<SINCT> createSINCTList(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode) {
-		List<SINCT> list = new ArrayList<>();
-		list.add(createSINCTRecord(invoice, companyEdiCode, customerEdiMainCode));
+		List<SINCT> list = null;
+		if(StringUtils.isNotBlank(invoice.getComments())){
+			list = new ArrayList<>();
+			list.add(createSINCTRecord(invoice, companyEdiCode, customerEdiMainCode));
+		}
 		return list;
 	}
 
