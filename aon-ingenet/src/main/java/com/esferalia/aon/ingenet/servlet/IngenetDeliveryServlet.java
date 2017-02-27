@@ -35,12 +35,13 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -53,6 +54,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
@@ -203,7 +205,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 
 	private Delivery fillDelivery(AONContext ctx, ALBARANTYPE albaran, Delivery delivery) {
-//		Integer[] scopes = SecurityDAO.getUserScopes(ctx, ctx.getUser());
 		LinkedList<Scope> scopes = SecurityDAO.getDomainScopes(ctx);
 		
 		String series = "IGN"+new SimpleDateFormat("yy").format(new Date());
@@ -224,7 +225,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		delivery.setDomain(ctx.getDomainId());
 		delivery.setProject(new Project());
 		delivery.setSeries(series);
-//		delivery.setNumber(Integer.valueOf(albaran.getNUMERO()));
 		delivery.setNumber(++number);
 		Customer customer = obtainCustomer(ctx, albaran.getDATOSCLIENTE());
 		if (customer != null && customer.getId() != null) {
@@ -235,7 +235,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							.getDATOSDOCUMENTO().getDOCUMENTO());
 		}
 		delivery.setAddress(obtainAddress(ctx, customer, albaran.getDATOSDIRECCIONENTREGA()).getId());
-		// if address == null, fill shippingAlternative
 		
 		try {
 			delivery.setIssueTime(getDateFormatter().parse(albaran.getFECHAEMISION()));
@@ -296,8 +295,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						try {
 							item = obtainItem(ctx,
 									linea.getPRODUCTO(), test);
-							Elaboration elaboration = obtainElaboration(
-									ctx, linea.getDATOSELABORACIONORIGEN());
+							SalesDetail salesDetail = obtainSalesDetail(
+									ctx, linea);
 							DeliveryDetail detail = new DeliveryDetail();
 							detail.setDomain(ctx.getDomainId());
 							detail.setDelivery(delivery);
@@ -309,12 +308,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 									.getCANTIDAD()));
 							detail.setPrice(item.getPrice());
 							detail.setDiscountExpression("0");
-							if(elaboration==null || elaboration.getId()==null){
+							if(salesDetail==null || salesDetail.getId()==null){
 								addError(albaran, "No hay ninguna elaboracion asociada a la linea " + linea.getLINEA());
-							} else if(elaboration.getSourceId()==null){
-								addError(albaran, "No hay ninguna pedido asociado a la linea " + linea.getLINEA());
-							} else if(elaboration!=null && elaboration.getSourceId()!=null){
-								detail.setSalesDetail(elaboration.getSourceId());
+								detail.setSalesDetail(salesDetail.getId());
 							}
 							detailList.add(detail);
 						} catch (Exception e) {
@@ -505,6 +501,21 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		return null;
 	}
+	
+	private SalesDetail obtainSalesDetail(AONContext ctx,
+			DATOSLINEAALBARANTYPE linea) {
+		String series = linea.getDATOSELABORACIONORIGEN().getSERIE();
+		Integer number = Integer.valueOf(linea.getDATOSELABORACIONORIGEN()
+				.getNUMERO());
+		Sales sales = SalesDAO.getSales(ctx, series, number);
+		if (sales != null && sales.getId() != null) {
+			Short line = Short.valueOf(linea.getLINEA());
+			SalesDetail detail = SalesDAO.getSalesDetail(ctx, sales.getId(),
+					line);
+			return detail;
+		}
+		return null;
+	}
 
 	private RAddress obtainAddress(AONContext ctx, Customer customer,
 			DATOSDIRECCIONTYPE datosdireccionentrega) {
@@ -527,17 +538,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	
 	private Customer obtainCustomer(AONContext ctx,
 			DATOSCLIENTETYPE datoscliente) {
-		Registry registry = RegistryDAO.getRegistry2(ctx, datoscliente
+		Customer customer = SalesDAO.getCustomer(ctx, datoscliente
 				.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
-		if (registry != null && registry.getId() != null) {
-			Customer customer = RegistryDAO
-					.getCustomerStream(
-							ctx,
-							f -> f.getDomainProperty()
-									.eq(ctx.getDomainId())
-									.and(f.getRegistryProperty().eq(
-											registry.getId()))).findFirst()
-					.orElse(new Customer());
+		if (customer != null && customer.getId() != null) {
 			return customer;
 		}
 		return null;
@@ -610,7 +613,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				item.setProductId(product.getId());
 				item.setActive(true);
 				item.setCode(productoelaborado.getCODIGO());
-//				item.setBarcode(productoelaborado.getCODIGOBARRAS());
 				item.setName(productoelaborado.getNOMBRE());
 				item.setDescription(productoelaborado.getDESCRIPCION());
 				item.setDetail(productoelaborado.getDETALLE());

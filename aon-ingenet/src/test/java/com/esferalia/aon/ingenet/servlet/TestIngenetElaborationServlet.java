@@ -25,23 +25,23 @@ public class TestIngenetElaborationServlet {
 //		}
 		
 		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
-//				+ "<ACCION>RECUPERAR</ACCION>"
-//				+ "<FECHA>20170125</FECHA>"
+				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
+				
+				// RECUPERAR
+				+ "<ACCION>RECUPERAR</ACCION>"
+				+ "<FECHA>20170224</FECHA>"
 ////				+ "<ESTADO>PENDIENTE</ESTADO>"
-//				+ "<ESTADO>PROCESANDO</ESTADO>"
-//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>"
-				;
-		
-//		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
+				+ "<ESTADO>PROCESANDO</ESTADO>"
+
+				// CANCELAR
 //				+ "<ACCION>CANCELAR</ACCION>"
 //				+ "<ELABORACIONES>"
 //				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>25</NUMERO></REFERENCIAS>"
 //				+ "<REFERENCIAS><SERIE>PV17</SERIE><NUMERO>24</NUMERO></REFERENCIAS>"
 //				+ "</ELABORACIONES>"
-//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>"
-//				;
+
+				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>"
+				;
 
 		return xml;
 	}
@@ -51,6 +51,7 @@ public class TestIngenetElaborationServlet {
 		path += "udapa.esferalia.net";
 		path += ":8080";
 		path += "/aon-aio";
+//		path += "udapa.aonsolutions.net";
 		path += "/ingenet/elaboration";
 		
 		String user = "ingenet";

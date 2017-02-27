@@ -19,11 +19,16 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -57,43 +62,49 @@ public class IngenetSalesManager {
 		
 		ctx.getDslContext().transaction(
 				configuration -> {
+					Integer customerId = RegistryDAO.getRegistry(ctx, sales.getCustomer().getId()).getId();
 					if (sales.getCustomer() != null
-							&& !SalesDAO.existRegistry(ctx, sales.getCustomer()
-									.getId())) {
+							&& customerId==null) {
 						createRegistry(ctx, domainId, sales.getCustomer()
 								.getRegistry());
 						SalesDAO.createCustomer(ctx, domainId, sales
 								.getCustomer().getId(), scopeId);
 					}
+					Integer sellerId = RegistryDAO.getRegistry(ctx, sales.getSeller().getId()).getId();
 					if (sales.getSeller() != null
 							&& sales.getSeller().getId() != null
-							&& !SalesDAO.existRegistry(ctx, sales.getSeller()
-									.getId())) {
+							&& sellerId==null) {
 						createRegistry(ctx, domainId, sales.getSeller()
 								.getRegistry());
 						SalesDAO.createSeller(ctx, domainId, sales.getSeller()
 								.getId(), scopeId);
 					}
+					Integer carrierId = RegistryDAO.getRegistry(ctx, sales.getCarrier().getId()).getId();
 					if (sales.getCarrier() != null
 							&& sales.getCarrier().getId() != null
-							&& !SalesDAO.existRegistry(ctx, sales.getCarrier()
-									.getId())) {
+							&& carrierId==null) {
 						createRegistry(ctx, domainId, sales.getCarrier()
 								.getRegistry());
 						SalesDAO.createCarrier(ctx, domainId, sales
 								.getCarrier().getId(), scopeId);
 					}
+					long shippingCount = RegistryDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(sales.getShippingAddress().getId())).count();
 					if (sales.getShippingAddress() != null
 							&& sales.getShippingAddress().getId() != null
-							&& !SalesDAO.existAddress(ctx, sales
-									.getShippingAddress().getId())) {
+							&& shippingCount<=0) {
 						createRegistryAddress(ctx, domainId,
 								sales.getShippingAddress());
 					}
+					Workplace wp = WorkplaceDAO.getWorkplace(
+							ctx,
+							f -> f.getDomainProperty()
+									.eq(ctx.getDomainId())
+									.and(f.getIdProperty().eq(
+											sales
+							.getWorkPlace().getId())));
 					if (sales.getWorkPlace() != null
 							&& sales.getWorkPlace().getId() != null
-							&& !SalesDAO.existWorkplace(ctx, sales
-									.getWorkPlace().getId())) {
+							&& wp==null) {
 						createWorkplace(ctx, domainId, sales.getWorkPlace());
 					}
 					
@@ -210,21 +221,24 @@ public class IngenetSalesManager {
 		int scope = IngenetContext.getUdapaMainScopeId();
 
 		RegistryAddress raddress = wp.getAddress();
+		long addressCount = RegistryDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(raddress.getId())).count();
 		if (raddress != null && raddress.getId() != null
-				&& !SalesDAO.existAddress(ctx, raddress.getId())) {
-			if (!SalesDAO.existRegistry(ctx, raddress.getRegistry().getId())) {
+				&& addressCount<=0 ) {
+			Integer registryId = RegistryDAO.getRegistry(ctx, raddress.getRegistry().getId()).getId();
+			if (registryId==null) {
 				createRegistry(ctx, domain, raddress.getRegistry());	
 			}
 			createRegistryAddress(ctx, domain, raddress);
 		}
 		Customer customer = wp.getCustomer();
+		Integer customerId = RegistryDAO.getRegistry(ctx, customer.getRegistry().getId()).getId();
 		if (customer != null && customer.getId() != null
-				&& !SalesDAO.existRegistry(ctx, customer.getId())) {
+				&& customerId==null ) {
 			createRegistry(ctx, domain, customer.getRegistry());
 			SalesDAO.createCustomer(ctx, domain, customer.getId(), scope);
 		}
-		Integer enterprise = SalesDAO.obtainEnterpriseId(ctx, domain);
-		SalesDAO.createWorkplace(ctx, domain, wp.getId(), enterprise, (byte) 1,
+		Company company = CompanyDAO.getCompany(ctx, domain);
+		SalesDAO.createWorkplace(ctx, domain, wp.getId(), company.getId(), (byte) 1,
 				raddress != null && raddress.getId() != null ? raddress.getId() : null,
 				customer != null && customer.getId() != null ? customer.getId() : null, wp.getDescription(),
 				wp.getEconomicAgreement() != null ? (byte) wp.getEconomicAgreement().ordinal() : null, scope);
