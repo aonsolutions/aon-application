@@ -61,6 +61,11 @@ public class CommonImpl implements ICommon {
 		return AppParamDAO.insertApplicationParameter(ctx, param, value);
 	}
 
+	@Override
+	public void insertApplicationParameter(AONContext ctx, String param, String value) {
+		AppParamDAO.insertApplicationParameter(ctx, param, value);
+	}
+	
 	// ------------------ FISCAL PARAMETERS
 
 	@Override

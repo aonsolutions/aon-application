@@ -18,6 +18,7 @@ public class CarrierPacking {
 	private String numberPlate;
 	private String driverName;
 	private String driverDocument;
+	private String comments;
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -149,5 +150,11 @@ public class CarrierPacking {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-
+	public String getComments() {
+		return comments;
+	}
+	public CarrierPacking setComments(String comments) {
+		this.comments = comments;
+		return this;
+	}
 }

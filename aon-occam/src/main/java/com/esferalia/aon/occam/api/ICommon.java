@@ -42,6 +42,7 @@ public interface ICommon {
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param);
 	public FiscalParameters getFiscalParameters(AONContext ctx);	
 	public ApplicationParameter insertApplicationParameter(AONContext ctx, AppParam param, String value);
+	public void insertApplicationParameter(AONContext ctx, String param, String value);
 
 	// --------------------------------------------
 	// ENTERPRISE

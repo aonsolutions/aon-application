@@ -257,7 +257,70 @@ public class CarrierPacking extends AonTemplate{
 					dialog.getElement().getStyle().setWidth(310, Unit.PX);
 					dialog.center();
 				}
+				@Override
+				protected void parameterButton() {
+					VerticalPanel panel = new VerticalPanel();
+					PaperInput param = new PaperInput();
+					param.setLabel("Parametro");
+					panel.add(param);
+					
+					PaperInput value = new PaperInput();
+					value.setLabel("Valor por defecto");
+					panel.add(value);
+					
+					HorizontalPanel h1 = new HorizontalPanel();
+					PaperRadioButton hr = new PaperRadioButton();
+			    	hr.setChecked(true);	
+			    	h1.add(hr);
+			    	h1.add(new Label("Hoja de Ruta"));
+			    	
+			    	HorizontalPanel h2 =new HorizontalPanel();
+			    	PaperRadioButton sc = new PaperRadioButton();
+			    	sc.setChecked(false);	
+			    	h2.add(sc);
+			    	h2.add(new Label("Solicitud de Carga"));
+			    	
+			    	hr.addChangeHandler(new ChangeEventHandler() {
+						
+						@Override
+						public void onChange(ChangeEvent event) {
+							sc.setChecked(!hr.getChecked());
+						}
+					});
+			    	
+			    	sc.addChangeHandler(new ChangeEventHandler() {
+						
+						@Override
+						public void onChange(ChangeEvent event) {
+							hr.setChecked(!sc.getChecked());
+						}
+					});
+			    	panel.add(h1);
+			    	panel.add(h2);
+					
+			    	AonDialog dialog = new AonDialog("Nuevo Parametro", panel) {
+						
+						@Override protected void onCancel() {hide();}
+						
+						@Override 
+						protected void onAccept() {	
+							String parameter = "";
+							if(hr.getChecked()){
+								parameter = "AON_PACKING_LIST_HR_";
+							}else parameter = "AON_PACKING_LIST_SC_";
+
+							String requestData = "{\"parameter\":\""+ parameter + param.getValue() +"\","
+									+ "\"value\":\""+ value.getValue() +"\"}";
+							API.getCommon().insertAppParam(requestData);
+							hide();
+						}
+					};
+					dialog.setAutoHideEnabled(true);
+					dialog.getElement().getStyle().setWidth(310, Unit.PX);
+					dialog.center();
+				}
 			};
+			toolbar.parameterButton.setVisible(false);
 			setToolbar(toolbar);
 		}
 	}
@@ -300,14 +363,24 @@ public class CarrierPacking extends AonTemplate{
 
 	public void southContent(){
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);
+		//setSouthContent(new FootPanel(this));
 	}
 	
+	public void southContentSize(Double size){
+		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), size);	
+	}
 	public void southContent(JsCarrierPacking js, JsOrder p, AonJsArray<JsOrderDetail> details){
+	/*	FootPanel footPanel = (FootPanel) getSouthContent().getWidget();
+		footPanel.openFootPanel();
+		footPanel.getTabLayout().selectTab(0);	
+	*/	
 		if(js.getType().getName().equalsIgnoreCase(CarrierPackingType.SHIPMENT_REQUEST.getName())){
 			getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
+			//footPanel.getSelectionPanel().setWidget(new CarrierPackingSouth2(me, js, p, details));
 			setSouthContent(new CarrierPackingSouth2(me, js, p, details));
 		} else {
 			getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
+			//footPanel.getSelectionPanel().setWidget(new CarrierPackingSouth(me, p, details));
 			setSouthContent(new CarrierPackingSouth(me, p, details));
 		}
 	}

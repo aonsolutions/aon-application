@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -16,6 +18,11 @@ import com.esferalia.aon.occam.api.model.product.Item;
 
 public interface IFinance {
 	
+	// 	****************************************
+	// 	**************************** INVOICE ***
+	// 	****************************************
+	
+	Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter);
 	
 	// 	****************************************
 	// 	**************************** INVOICE ***

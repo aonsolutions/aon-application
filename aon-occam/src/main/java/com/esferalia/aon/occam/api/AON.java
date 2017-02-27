@@ -79,6 +79,8 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -546,6 +548,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().insertApplicationParameter(ctx, param, value);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void insertApplicationParameter(String domainName, Integer domainId, String login, String param, String value){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().insertApplicationParameter(ctx, param, value);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1123,6 +1136,23 @@ public class AON {
 		}
 	}
 
+	public static Stream<Finance> getFinanceStream(String domainName, Integer domainId, String login, FinanceFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getFinanceStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Finance> getFinanceList(String domainName,
+			Integer domainId, String login, FinanceFilter filter) {
+		return getFinanceStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************

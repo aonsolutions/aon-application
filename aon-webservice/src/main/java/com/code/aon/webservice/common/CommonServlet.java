@@ -1,5 +1,6 @@
 package com.code.aon.webservice.common;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -46,6 +47,9 @@ public class CommonServlet extends HttpServlet{
 				case MSG.SIGNATURE: // PRODUCT CATEGPRY
 					object = getSignatureList(domain, userName);
 					break;
+				case "app_param": // PRODUCT CATEGPRY
+					object = new JSONObject();
+					break;
 				default:
 					break;
 				}
@@ -57,6 +61,33 @@ public class CommonServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Common Servlet - POST METHOD");
+		JSONObject json = Utils.getRequestJSON(req);
+
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		if(pathInfo.length > 3){				
+			Object object = new Object();
+			if("app_param".equals(pathInfo[3])){
+				if(pathInfo.length > 4){ 
+					if(MSG.UPDATE.equals(pathInfo[4])){
+						object = new JSONObject();
+					} else if(MSG.DELETE.equals(pathInfo[4])){
+
+					} 
+				} else {
+					object = insertAppParam(domain, userName, json);
+				}	
+			}
+			
+			resp.setContentType("application/json;charset=UTF-8");
+			Utils.addCorsHeader(resp);
+			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+			os.println(object.toString());
+			os.flush();
+			os.close();
+		}
 	}
 
     private JSONArray getWorkplaceList(Domain domain, String login){
@@ -88,4 +119,10 @@ public class CommonServlet extends HttpServlet{
 		return array;
 	}
   
+	private JSONArray insertAppParam(Domain domain, String login, JSONObject json) {
+		String parameter = json.getString("parameter");
+		String value = json.getString("value");
+		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, parameter, value);
+		return new JSONArray();
+	}
 }

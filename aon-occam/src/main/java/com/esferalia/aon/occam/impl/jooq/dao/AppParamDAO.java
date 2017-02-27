@@ -198,5 +198,18 @@ public class AppParamDAO {
 		return fetchOne(ctx, param);
 	}
 	
+	public static void insertApplicationParameter(AONContext ctx, String param, String value){
+		if(ctx.getDslContext().select().from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(param)).fetch().isEmpty())
+			ctx.getDslContext()
+				.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+				.values(ctx.getDomainId(), param, value).execute();
+		else ctx.getDslContext()
+				.update(APP_PARAM)
+				.set(APP_PARAM.VALUE, value)
+				.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(param)).execute();
+	}
+	
 	
 }

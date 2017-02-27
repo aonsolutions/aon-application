@@ -548,7 +548,7 @@ public class WarehouseDAO {
 			carrierPacking.setNumber(num +1);
 		}
 		return ctx.getDslContext().insertInto(CARRIER_PACKING, CARRIER_PACKING.CARRIER,
-				CARRIER_PACKING.CARRIER_REFERENCE, CARRIER_PACKING.CREATION_DATE,
+				CARRIER_PACKING.CARRIER_REFERENCE, CARRIER_PACKING.COMMENTS, CARRIER_PACKING.CREATION_DATE,
 				CARRIER_PACKING.CREATION_USER, CARRIER_PACKING.DELIVERY_DATE,
 				CARRIER_PACKING.DOMAIN, CARRIER_PACKING.DRIVER_DOCUMENT, 
 				CARRIER_PACKING.DRIVER_NAME, CARRIER_PACKING.ISSUE_DATE,
@@ -556,7 +556,7 @@ public class WarehouseDAO {
 				CARRIER_PACKING.NUMBER, CARRIER_PACKING.NUMBER_PLATE,
 				CARRIER_PACKING.SERIES,	CARRIER_PACKING.STATUS, CARRIER_PACKING.TYPE)
 				.values(carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0,
-						carrierPacking.getCarrierReference(), carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null,
+						carrierPacking.getCarrierReference(), carrierPacking.getComments(), carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null,
 						carrierPacking.getCreationUser(), carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null,
 						carrierPacking.getDomain() != null ? carrierPacking.getDomain() : ctx.getDomainId(), carrierPacking.getDriverDocument(),
 						carrierPacking.getDriverName(), carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null,
@@ -570,6 +570,7 @@ public class WarehouseDAO {
 		return ctx.getDslContext().update(CARRIER_PACKING)
 				.set(CARRIER_PACKING.CARRIER, carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0)
 				.set(CARRIER_PACKING.CARRIER_REFERENCE, carrierPacking.getCarrierReference())
+				.set(CARRIER_PACKING.COMMENTS, carrierPacking.getComments())
 				.set(CARRIER_PACKING.CREATION_DATE, carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null)
 				.set(CARRIER_PACKING.CREATION_USER, carrierPacking.getCreationUser())
 				.set(CARRIER_PACKING.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null)
