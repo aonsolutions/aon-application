@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -16,6 +18,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 
 public class FinanceImpl implements IFinance {
@@ -131,6 +134,13 @@ public class FinanceImpl implements IFinance {
 	public Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> InvoiceDAO.getBoughtProductStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceDAO.getFinanceStream(ctx,filter));
+
 	}
 
 }

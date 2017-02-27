@@ -21,6 +21,7 @@ public abstract class Toolbar extends Composite {
 	@UiField Button remove;
 	@UiField Button packingList;
 	@UiField Button sendPackingList;
+	@UiField Button parameterButton;
 	
 	public Toolbar() {
 		initWidget(binder.createAndBindUi(this));
@@ -34,6 +35,7 @@ public abstract class Toolbar extends Composite {
 	protected abstract void remove();
 	protected abstract void packingList();
 	protected abstract void sendPackingList();
+	protected abstract void parameterButton();
 
 
 	@UiHandler("back")
@@ -59,6 +61,11 @@ public abstract class Toolbar extends Composite {
 	@UiHandler("sendPackingList")
 	public void onSendPackingList(ClickEvent event) {
 		sendPackingList();
+	}
+	
+	@UiHandler("parameterButton")
+	public void onParameterButton(ClickEvent event) {
+		parameterButton();
 	}
 	
 }

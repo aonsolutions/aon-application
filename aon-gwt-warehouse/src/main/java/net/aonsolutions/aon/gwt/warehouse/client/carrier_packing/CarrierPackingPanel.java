@@ -6,10 +6,14 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -17,7 +21,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -39,6 +45,8 @@ public class CarrierPackingPanel extends Composite{
 	@UiField TextBox numberPlate;
 	@UiField TextBox driverDocument;
 	@UiField TextBox driverName;
+	
+	@UiField InlineLabel addObservations;
 	
 	private CarrierPacking parent;
 	private API API;
@@ -241,6 +249,42 @@ public class CarrierPackingPanel extends Composite{
 			@Override
 			public void onChange(ChangeEvent event) {
 				updateCarrierPacking();
+			}
+		});
+		
+		addObservations.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				TextArea textArea = new TextArea();
+				textArea.setWidth("255px");
+				textArea.setHeight("100px");
+				textArea.setValue(jsCarrierPacking.getComments());
+		    	AonDialog dialog = new AonDialog("Enviar Packing List", textArea) {
+					
+					@Override protected void onCancel() {hide();}
+					
+					@Override 
+					protected void onAccept() {
+					
+						String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
+								+ "\"comments\":\""+  textArea.getValue() +"\"}";
+
+						API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+							
+							@Override
+							public void onSuccess(JsCarrierPacking result) {
+								jsCarrierPacking = result;
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+						hide();
+					}
+				};
+				dialog.setAutoHideEnabled(true);
+				dialog.getElement().getStyle().setWidth(310, Unit.PX);
+				dialog.center();
 			}
 		});
 	}

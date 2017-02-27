@@ -16,7 +16,9 @@ import javax.imageio.ImageIO;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -44,15 +46,15 @@ public class PackingList {
 		File archivoPDF = null;
 		try {
 			archivoPDF = File.createTempFile("packingList", "pdf");
-		} catch (IOException e2) {
-			LOGGER.log(Level.SEVERE, e2.getMessage());
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		
 		Document document = new Document(PageSize.A4);
 		try {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
 			
-			CarrierPackingType type = CarrierPackingType.values()[json.getJSONObject("carrier_packing").getJSONObject("type").getInt("id")];
+			CarrierPackingType type = CarrierPackingType.values()[json.getJSONObject(MSG.CARRIER_PACKING).getJSONObject(MSG.TYPE).getInt(MSG.ID)];
 
 			document.open();			
 			document.add(getHeader(json, image));
@@ -82,9 +84,15 @@ public class PackingList {
 					t.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 					t.setWidthPercentage(100);
 					t.addCell("");
-					t.addCell(new Phrase("Bultos: " + totalPackages, getFont1()));
+					
+					if(totalPackages != null && totalPackages != 0.0){
+						t.addCell(new Phrase("Bultos: " + AonMathUtils.round(totalPackages), getFont1()));
+					}else t.addCell("");
 					t.addCell("");
-					t.addCell(new Phrase("Peso: " +  totalWeight, getFont1()));
+					if(totalWeight != null && totalWeight != 0.0){
+						t.addCell(new Phrase("Peso: " +  AonMathUtils.round(totalWeight), getFont1()));
+					}else t.addCell("");
+					
 					document.add(t);
 				}
 				document.add(new Paragraph(" "));
@@ -95,8 +103,10 @@ public class PackingList {
 			order.add(getSeparator());
 			document.add(order);
 
+			String observation  = json.getJSONObject(MSG.CARRIER_PACKING).getString(MSG.COMMENTS) != null ?
+					json.getJSONObject(MSG.CARRIER_PACKING).getString(MSG.COMMENTS) : "";
 			document.add(new Paragraph(" "));
-			document.add(getObservations(type));		
+			document.add(getObservations(observation, type));		
 			document.add(new Paragraph(" "));
 			document.add(new Paragraph(" "));
 			document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
@@ -152,7 +162,7 @@ public class PackingList {
 		ca.setBorder(PdfPCell.NO_BORDER);
 		table.addCell(ca);
 		
-		PdfPCell cX = new PdfPCell(new Phrase(json.getJSONObject("address").getString("document"),getFont2()));
+		PdfPCell cX = new PdfPCell(new Phrase("NIF: " + json.getJSONObject("address").getString("document"),getFont2()));
 		cX.setBorder(PdfPCell.NO_BORDER);
 		table.addCell(cX);
 		
@@ -195,6 +205,15 @@ public class PackingList {
 		PdfPCell c7 = new PdfPCell(new Phrase(json.getString("carrier_reference"),getFont2()));
 		c7.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c7);
+		
+		PdfPCell c8 = new PdfPCell(new Phrase("Hoja:",getFont1()));
+		c8.setBorder(PdfPCell.NO_BORDER);
+		header3.addCell(c8);
+			
+		PdfPCell c9 = new PdfPCell(new Phrase("1",getFont2()));
+		c9.setBorder(PdfPCell.NO_BORDER);
+		header3.addCell(c9);
+		
 		return header3;
 	}	
 	
@@ -210,6 +229,11 @@ public class PackingList {
             subHeader.addCell(getSubHeaderBoeInfo());
         }
         subHeader.addCell(getSubHeaderPackingListType(carrierPackingJSON));
+
+		PdfPCell space = new PdfPCell(new Phrase("",getFont1()));
+		space.setBorder(PdfPCell.NO_BORDER);
+        subHeader.addCell(space);
+        
         subHeader.addCell(getSubHeaderPackingListCarrier(carrierPackingJSON, type));
 		return subHeader;
 	}
@@ -273,7 +297,7 @@ public class PackingList {
 		caddress2.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(caddress2);
 		
-		PdfPCell c10 = new PdfPCell(new Phrase("Entrega:",getFont1()));
+		PdfPCell c10 = new PdfPCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ? "Entrega:" : "Recogida:",getFont1()));
 		c10.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c10);
 		
@@ -346,11 +370,11 @@ public class PackingList {
 		PdfPCell ca = new PdfPCell(new Phrase(address.getString("name"),getFont1()));
 		ca.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(ca);
-		destinatario.addCell(new Phrase("Albarán:",getFont1()));
+		destinatario.addCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ?"Albarán:" : "Pedido:",getFont1()));
 		destinatario.addCell(new Phrase(json.getString("series") + "/" + json.getString("number"),getFont2()));
 		
 		destinatario.addCell("");
-		PdfPCell cbc = new PdfPCell(new Phrase(address.getString("document"),getFont2()));
+		PdfPCell cbc = new PdfPCell(new Phrase("NIF: " + address.getString("document"),getFont2()));
 		cbc.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(cbc);
 		destinatario.addCell(new Phrase("Fecha:",getFont1()));
@@ -425,9 +449,9 @@ public class PackingList {
 				} else measurementMap.put(measurementTag, quantity);
 			}
 			
-			PdfPCell c2 = new PdfPCell(new Phrase(format + " " + formatTag, getFont2()));
+			PdfPCell c2 = new PdfPCell(new Phrase(AonMathUtils.round(format) + " " + formatTag, getFont2()));
 			c2.setBorder(PdfPCell.NO_BORDER);
-			PdfPCell c3 = new PdfPCell(new Phrase(quantity + " " + measurementTag, getFont2()));
+			PdfPCell c3 = new PdfPCell(new Phrase(AonMathUtils.round(quantity) + " " + measurementTag, getFont2()));
 			c3.setBorder(PdfPCell.NO_BORDER);
 			detail.addCell(c1);
 			detail.addCell(c2);
@@ -447,16 +471,16 @@ public class PackingList {
 				cz1.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cz1);
 
-				PdfPCell cy1 = new PdfPCell(new Phrase("Bultos: "+ totalPackages, getFont1()));
+				PdfPCell cy1 = new PdfPCell(new Phrase("Bultos: "+ AonMathUtils.round(totalPackages), getFont1()));
 				cy1.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cy1);
 			
 				String str1 = "";
 				if(formatList.size() > 0){
-					str1 = formatList.get(0) + " " +formatMap.get(formatList.get(0)); 
+					str1 = formatList.get(0) + " " + AonMathUtils.round(formatMap.get(formatList.get(0))); 
 					formatCont++;
 				} else if(measurementList.size() > 0){
-					str1 = measurementList.get(0) + " " + measurementMap.get(measurementList.get(0)); 
+					str1 = measurementList.get(0) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(0))); 
 					measurementCont++;
 				}
 				PdfPCell cx1 = new PdfPCell(new Phrase(str1, getFont1()));
@@ -469,16 +493,16 @@ public class PackingList {
 				cz2.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cz2);
 				
-				PdfPCell cy2 = new PdfPCell(new Phrase("Peso: " + totalWeight, getFont1()));
+				PdfPCell cy2 = new PdfPCell(new Phrase("Peso: " + AonMathUtils.round(totalWeight), getFont1()));
 				cy2.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cy2);
 				
 				String str2 = "";
 				if(formatList.size() > 1){
-					str2 = formatList.get(1) + " " +formatMap.get(formatList.get(1)); 
+					str2 = formatList.get(1) + " " + AonMathUtils.round(formatMap.get(formatList.get(1))); 
 					formatCont++;
 				} else if(measurementList.size() > 1){
-					str2 = measurementList.get(1) + " " + measurementMap.get(measurementList.get(1)); 
+					str2 = measurementList.get(1) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(1))); 
 					measurementCont++;
 				}
 				PdfPCell cx2 = new PdfPCell(new Phrase(str2, getFont1()));
@@ -495,7 +519,7 @@ public class PackingList {
 				cyi.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cyi);
 
-				String stri = formatList.get(i) + " " +formatMap.get(formatList.get(i)); 
+				String stri = formatList.get(i) + " " + AonMathUtils.round(formatMap.get(formatList.get(i))); 
 				PdfPCell cxi = new PdfPCell(new Phrase(stri, getFont1()));
 				cxi.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cxi);
@@ -510,7 +534,7 @@ public class PackingList {
 				cyj.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cyj);
 
-				String strj = measurementList.get(j) + " " + measurementMap.get(measurementList.get(j)); 
+				String strj = measurementList.get(j) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(j))); 
 				PdfPCell cxj = new PdfPCell(new Phrase(strj, getFont1()));
 				cxj.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(cxj);
@@ -534,11 +558,12 @@ public class PackingList {
 		return paragraph;
 	}
 
-	public static PdfPTable getObservations(CarrierPackingType type){
+	public static PdfPTable getObservations(String observation, CarrierPackingType type){
 		PdfPTable table = new PdfPTable(1);
 		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		table.setWidthPercentage(100);
-		table.addCell(new Paragraph(new Phrase("Observaciones:", getFont1())));
+		table.addCell(new Paragraph(new Phrase("Observaciones: ", getFont1())));
+		table.addCell(new Paragraph(new Phrase(observation, getFont2())));
 		if(type.equals(CarrierPackingType.WAYBILL)){
 			PdfPTable parameters = new PdfPTable(2);
 			PdfPCell cp1 = new PdfPCell(new Phrase("Parámetro",getFont1()));

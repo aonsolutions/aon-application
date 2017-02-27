@@ -65,6 +65,10 @@ public class JsCarrierPacking extends JavaScriptObject {
 		return this.driver_document;
 	}-*/;
 	
+	public final native String getComments() /*-{
+		return this.comments;
+	}-*/;
+	
 	public final native String getCreationUser() /*-{
 		return this.creation_user;
 	}-*/;

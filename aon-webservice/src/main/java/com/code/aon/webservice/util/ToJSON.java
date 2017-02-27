@@ -31,9 +31,13 @@ public class ToJSON {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
 	public static JSONObject raddressToJSON(RAddress address){	
+		String streetType = address.getStreet_type();
+		if("XX".equals(streetType) || "ZZ".equals(streetType)){
+			streetType = "";
+		}
 		return new JSONObject()
 			.put("name",address.getRegistryName())
-			.put("address", address.getStreet_type() + " " + address.getAddress() + " " 
+			.put("address", streetType + " " + address.getAddress() + " " 
 					+ address.getNumber() +" " + address.getAddress2() +  " " + address.getAddress3())
 			.put("zip", address.getZip())
 			.put("city", address.getCity())
@@ -182,6 +186,7 @@ public class ToJSON {
 			.put("number_plate", carrierPacking.getNumberPlate())
 			.put("driver_name", carrierPacking.getDriverName())
 			.put("driver_document", carrierPacking.getDriverDocument())
+			.put("comments", carrierPacking.getComments() != null ? carrierPacking.getComments() : " ")
 			.put("creation_date", carrierPacking.getCreationDate() != null ? dateFormat.format(carrierPacking.getCreationDate()): "")
 			.put("creation_user", carrierPacking.getCreationUser())
 			.put("modification_date", carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")

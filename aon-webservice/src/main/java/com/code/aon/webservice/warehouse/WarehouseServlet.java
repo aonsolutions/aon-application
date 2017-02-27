@@ -269,6 +269,9 @@ public class WarehouseServlet extends HttpServlet{
 		if(json.opt(MSG.DRIVER_NAME) != null){
 			carrierPacking.setDriverName(json.getString(MSG.DRIVER_NAME));
 		}
+		if(json.opt(MSG.COMMENTS) != null){
+			carrierPacking.setComments(json.getString(MSG.COMMENTS));
+		}
 	
 		return carrierPacking;
 	}

@@ -6,7 +6,14 @@
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
-
+	<ui:style>
+		.observations {
+    		right: 5px;
+		    position: absolute;
+    		padding-top: 3px;
+    		cursor: pointer;
+		}
+	</ui:style>
 	<g:HTMLPanel ui:field="entryHeader" styleName="aon-margin-top10" >
 		<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
 			<tr>
@@ -79,6 +86,7 @@
 					<g:TextBox ui:field="driverDocument" styleName="{aonResources.css.aonTextBox}"/>
 					<g:InlineLabel text="{msg.name}:"/>	
 					<g:TextBox ui:field="driverName" styleName="{aonResources.css.aonTextBox}"/>
+					<g:InlineLabel ui:field="addObservations" text="Añadir Observaciones" styleName="{style.observations}"/>
 				</td>
 			</tr> 
 		</table>

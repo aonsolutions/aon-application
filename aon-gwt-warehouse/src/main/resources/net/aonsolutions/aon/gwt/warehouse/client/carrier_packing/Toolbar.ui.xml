@@ -32,6 +32,8 @@
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
 					<g:Button ui:field="sendPackingList" text="Enviar"  visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-mail" />
+					<g:Button ui:field="parameterButton" text="Parametros" 
+						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-tag" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HorizontalPanel>

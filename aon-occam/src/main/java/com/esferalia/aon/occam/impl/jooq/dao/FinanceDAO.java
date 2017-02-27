@@ -71,6 +71,16 @@ public class FinanceDAO {
 		.findFirst().orElse(null);
 	}
 	
+	public static Stream<Finance> getFinanceStream(AONContext ctx,FinanceFilter filter) {
+		return ctx.getDslContext().select().from(FINANCE)
+				.join(REGISTRY).on(REGISTRY.ID.eq(FINANCE.REGISTRY))
+				.join(INVOICE).on(INVOICE.ID.eq(FINANCE.INVOICE))
+				.join(SCOPE).on(SCOPE.ID.eq(FINANCE.SCOPE))
+				.join(PAY_METHOD).on(PAY_METHOD.ID.eq(FINANCE.PAY_METHOD))
+				.where(FINANCE_PROPERTIES.getConditions(filter))
+		.fetch().stream().map(new FullFinanceFiller());
+	}
+	
 	// ------------------------------------------------------------- FINANCE
 	public static LinkedList<Finance> getInvoiceFinances(AONContext ctx,Integer invoice) {
 		return fetch(ctx,p -> 
@@ -349,7 +359,7 @@ public class FinanceDAO {
 				.setCreationDate(record.getValue(FINANCE.CREATION_DATE))
 				.setModificationUser(record.getValue(FINANCE.MODIFICATION_USER))
 				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
-			;
+				.setPayMethodName(record.getValue(PAY_METHOD.NAME));
 		}
 
 			

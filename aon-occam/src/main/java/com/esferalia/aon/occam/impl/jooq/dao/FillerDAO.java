@@ -74,7 +74,7 @@ public class FillerDAO {
 					.setType(CarrierPackingType.values()[r.getValue(CARRIER_PACKING.TYPE)])
 					
 					.setCarrierName(r.getValue(REGISTRY.NAME))
-					;
+					.setComments(r.getValue(CARRIER_PACKING.COMMENTS));
 		}
 	}
 	
