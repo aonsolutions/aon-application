@@ -525,7 +525,7 @@ public class Payment extends ResizeComposite {
 			return "EXCESO_IPREM(_P)";
 		}
 		if (PRORATED.equals(listValue)) {
-			return "_P/12";
+			return "PRORRATEAR()";
 		}
 		// It must be CUSTOM
 		return src;
@@ -558,6 +558,10 @@ public class Payment extends ResizeComposite {
 		if (StringUtils.equals(getExpression(), expression))// TODO:
 			return ALL;
 		if ("_P/12".equals(expression))
+			return PRORATED;
+		if ("PRORRATEAR()".equals(expression))
+			return PRORATED;
+		if ("PRORRATEAR(_P)".equals(expression))
 			return PRORATED;
 
 		try {

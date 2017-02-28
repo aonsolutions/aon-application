@@ -53,6 +53,8 @@ import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -375,15 +377,18 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		}
 	}
 
-	private static class UndefPayment extends SimpleContractPayment {
+	private static class UndefPayment extends SimpleContractPayment implements IHasPayment<IContractPayment> {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+		private IContractPayment contractPayment;
+		
 		private UndefinedVariablesException exception;
 
 		public UndefPayment(IContractPayment contractPayment, UndefinedVariablesException exception) {
 			super(contractPayment);
 			this.exception = exception;
+			this.contractPayment = contractPayment;
 		}
 
 		boolean isSelfUndefined() {
@@ -419,7 +424,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		void onUndefinedData(ContractSalaryCalculator<?> calculator) {
 			calculator.onUndefinedData(this, exception.getMessage(), exception.getVariableNames());
 		}
-
+		
+		@Override
+		public IContractPayment getPayment() {
+			return contractPayment;
+		}
+		
 	}
 
 	private IListener listener;
@@ -1093,6 +1103,11 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		if (paymentEnd.before(paymentStart)) {
 			return; // TODO : must be done in context ?
 		}
+
+		expressionContext.setVariable(
+				ContextVariable.PAYMENT_VARIABLE, 
+				new PaymentVariable(contractPayment),
+				paymentStart, paymentEnd);
 
 		String name = contractPayment.getName();
 

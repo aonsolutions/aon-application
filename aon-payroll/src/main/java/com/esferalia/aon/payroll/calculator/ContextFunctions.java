@@ -39,6 +39,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -433,14 +434,14 @@ public class ContextFunctions {
 
 	public static Double proration(ExpressionContext context, Double amount) {
 		
-		Object paymentValue = ExpressionContext.getCurrentBindings().get(PAYMENT_VARIABLE);
+		Object payment = ExpressionContext.getCurrentBindings().get(PAYMENT_VARIABLE);
 
-		if ( paymentValue == null )
+		if ( payment == null )
 			return amount / 12.00;
 		
 		
-		PaymentVariable paymentVariable = (PaymentVariable) paymentValue;
-		IContractPayment payment = paymentVariable.getPayment();
+		while ( payment instanceof IHasPayment<?> )
+			payment = ((IHasPayment<?> )payment).getPayment();
 		
 		if ( !( payment instanceof IExtraPayment) )
 			return amount / 12.00;

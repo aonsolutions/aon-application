@@ -17,7 +17,7 @@ public class DomainPayments<T extends ISystemPayment> extends CompositePayments<
 		
 		@Override
 		public int getDomain() {
-			return ((ISystemPayment)getContractPayment()).getDomain();
+			return ((ISystemPayment)getPayment()).getDomain();
 		}
 		
 	}

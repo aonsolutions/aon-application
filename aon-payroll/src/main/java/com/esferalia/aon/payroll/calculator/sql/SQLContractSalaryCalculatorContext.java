@@ -158,6 +158,7 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IHasPayment;
 import com.esferalia.aon.payroll.calculator.ISystemCost;
 import com.esferalia.aon.payroll.calculator.ISystemDeduction;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
@@ -432,7 +433,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
-	public static class PaymentVariable {
+	public static class PaymentVariable implements IHasPayment<IContractPayment> {
 
 		private IContractPayment payment;
 
@@ -444,6 +445,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return payment.getMonth() != null ? payment.getMonth().getValue() + 1 : null;
 		}
 		
+		@Override
 		public IContractPayment getPayment() {
 			return payment;
 		}
@@ -1411,10 +1413,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						@Override
 						public IContractPayment next() {
 							IContractPayment nextPayment = iterator.next();
-							if (nextPayment != null)
-								SQLContractSalaryCalculatorContext.this.getExpressionContext().setVariable(
-										ContextVariable.PAYMENT_VARIABLE, new PaymentVariable(nextPayment),
-										nextPayment.getStartDate(), nextPayment.getEndDate());
 							return nextPayment;
 						}
 

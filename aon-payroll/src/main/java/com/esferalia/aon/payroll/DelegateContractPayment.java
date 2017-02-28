@@ -5,11 +5,12 @@ import java.util.Date;
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IHasPayment;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
-public class DelegateContractPayment implements IContractPayment {
+public class DelegateContractPayment implements IContractPayment , IHasPayment<IContractPayment>{
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -85,7 +86,9 @@ public class DelegateContractPayment implements IContractPayment {
 		return contractPayment.isDescriptionDecorable();
 	}
 	
-	public IContractPayment getContractPayment() {
+	
+	@Override
+	public IContractPayment getPayment() {
 		return contractPayment;
 	}
 	
