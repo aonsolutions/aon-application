@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -42,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.NoHolidaysVariable;
+import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -145,6 +147,7 @@ import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.events.OnMouseOverHandler;
+import com.vaadin.polymer.iron.widget.IronLabel;
 
 public class SalaryDraft extends ResizeComposite
 		implements CalculateCallback, SalarySelect.Listener, UndoManager.Listener{
@@ -423,7 +426,7 @@ public class SalaryDraft extends ResizeComposite
 
 		boolean accept(Variable variable);
 	}
-
+	
 	static interface VariableEditorFactory<T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled>
 			extends VariableFactory<T> {
 	}
@@ -474,7 +477,36 @@ public class SalaryDraft extends ResizeComposite
 
 		
 	}
-
+	
+	static class SalaryHoursEditorFactory implements VariableEditorFactory<MyEditor> {
+		
+		private String name;
+		
+		
+		public SalaryHoursEditorFactory(String name) {
+			this.name = name;
+		}
+		
+		@Override
+		public boolean accept(Variable variable) {
+			if (name.equals(variable.getName())){
+				return true;
+			}
+			return false;
+		}
+		
+		@Override
+		public MyEditor create(Variable variable) {
+			MyEditor myEditor = new MyEditor();
+			Number value = (Number) variable.getValue();
+			myEditor.setInnerText(Double.toString(value.doubleValue()));
+			myEditor.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			myEditor.setEnabled(false);
+			myEditor.addStyleName("aon-bold");
+			return myEditor;
+		}
+	}
+	
 	static class WorkHoursEditorFactory implements VariableEditorFactory<AllFocusSuggestBox> {
 		
 		private String names [];
@@ -2867,7 +2899,10 @@ public class SalaryDraft extends ResizeComposite
 
 		List<Variable> context = getContext(salaryDraftObject);// new
 																// ArrayList<Variable>(salaryDraftObject.getContext());
-
+		context = context.stream()
+				.filter( v -> !v.getName().equals("HORAS_NOMINA"))
+				.collect(Collectors.toList());
+		
 		Scope nextScope = null;
 		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
 
@@ -2878,6 +2913,9 @@ public class SalaryDraft extends ResizeComposite
 			if (step.compareTo(scope) <= 0)
 				break;
 		}
+		
+		List<Variable> constants = iniConstants(context);
+		dumpContext(constants, Scope.CONTRACT, true, null);
 
 		initDbSalaryCheck();		
 
@@ -2892,6 +2930,8 @@ public class SalaryDraft extends ResizeComposite
 		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
 	}
 	
+	
+
 	private void initDbSalaryCheck(){
 		dbSalaryCheck.setVisible(hasDbSalary());
 		Widget dbDiffWidget = getDiffsWithDbSalary();
@@ -3946,7 +3986,13 @@ public class SalaryDraft extends ResizeComposite
 				}
 			}
 
-			Widget variableWidget = getVariableWidget(variable, toScope, show);
+			Widget variableWidget ; 
+			try {
+				variableWidget  = getVariableWidget(variable, toScope, show);
+			} catch ( SkipVariableException e ){
+				continue;
+			}
+			
 			int row = count / cols;
 			int col = count % cols;
 			contextTable.setWidget(row, col, variableWidget);
@@ -4023,13 +4069,13 @@ public class SalaryDraft extends ResizeComposite
 
 		valuePanel.add(new InlineHTML("&nbsp;"));
 
-		boolean enabled = true ;
+		boolean enabled = editor.isEnabled() ;
 		
 
 		String debugName = variable.getName().toLowerCase();
 
 		if (!(variable instanceof UndefinedVariable)) {
-			enabled = wasUniqueDraftPeriod(variable);
+			enabled &= wasUniqueDraftPeriod(variable);
 			editor.setEnabled(enabled);
 			if (enabled && scope.compareTo(Scope.AGREEMENT) > 0 && variable.isDefinedAt(Scope.AGREEMENT)) {
 				Button agreementVarButton = getAgreementVarButton(variable);
@@ -5160,6 +5206,8 @@ public class SalaryDraft extends ResizeComposite
 										"HORAS_VIERNES",
 										"HORAS_SABADO",
 										"HORAS_DOMINGO"),
+			new SalaryHoursEditorFactory("HORAS_NOMINA"), 
+			//new WeekHoursEditorFactory("HORAS_SEMANA"), 
 			new BooleanEditorFactory(), 
 			new DefaultEditorFactory() };
 
@@ -5275,5 +5323,25 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 	
+	//TODO: mirar iniConstants
+	private List<Variable> iniConstants(List<Variable> context) {
+		List<Variable> constants = new ArrayList<>();
+		
+		Double salaryHours = context.stream()
+				.filter(v->v.getName().equals("HORAS_NOMINA"))
+				.peek(v -> Window.alert("Horas :"+v.getValue()))
+				.collect(Collectors.summingDouble(v -> Double.parseDouble(String.valueOf(v.getValue()))))
+				;
+		
+		NumberVariable var = new NumberVariable();
+		var.setName("HORAS_NOMINA");
+		var.setValue(salaryHours);
+		var.setScope(Scope.CONTRACT);
+		var.setStartDate(salaryDraftObject.getStartDate());
+		var.setEndDate(salaryDraftObject.getEndDate());
+		constants.add(var);
+		
+		return constants;
+	}
 	
 }

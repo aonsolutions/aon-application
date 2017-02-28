@@ -841,7 +841,6 @@ public class SalaryDraftObject implements IContextProvider {
 		payments.addAll(getBottomPayments(payment));
 		for( Payment p : payments ){
 			p.setExpression(payment.getExpression());
-			Window.alert(p.getName() + ":" + p.getDescription() + "(" + p.getExpression() +")");
 		}
 		addDraftPayments(payments);
 	}
@@ -1063,7 +1062,6 @@ public class SalaryDraftObject implements IContextProvider {
 	}
         //#ifdef env.SNAPSHOT
 	private void removeCalendarDraft() {
-		Window.alert("Inicio: "+salaryDraft.getDraftContext().size());
 		List<Variable> draftContext = salaryDraft.getDraftContext();
 		for ( int i = draftContext.size()-1; i >= 0; i--) {
 			Variable var = draftContext.get(i);
@@ -1071,8 +1069,6 @@ public class SalaryDraftObject implements IContextProvider {
 				draftContext.remove(i);
 			}
 		}
-		
-		Window.alert("Inicio: "+salaryDraft.getDraftContext().size());
 	}
 	//#endif
 	
@@ -1090,7 +1086,6 @@ public class SalaryDraftObject implements IContextProvider {
 				draft.getDraftBonuses());
 	}
 	
-	//TODO: MIRAR ESTO!
 	private void addCalendarDraft(ArrayList<StringVariable> variablesList) {
 		for (StringVariable stringVariable : variablesList)
 				salaryDraft.addDraftVariable(stringVariable);	

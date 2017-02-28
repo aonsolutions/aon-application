@@ -17,6 +17,11 @@ public class MyEditor implements IsWidget , HasValue<String> , HasAllFocusHandle
 
 	IronLabel ironLabel;
 	
+	public MyEditor() {
+		super();
+		ironLabel = new IronLabel();
+	}
+
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
 		// TODO Auto-generated method stub
@@ -59,15 +64,13 @@ public class MyEditor implements IsWidget , HasValue<String> , HasAllFocusHandle
 
 	@Override
 	public void setAccessKey(char key) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
 		if(focused)
-			ironLabel.getElement().focus();
-		
+			ironLabel.getElement().focus();	
 	}
 
 	@Override
@@ -84,19 +87,29 @@ public class MyEditor implements IsWidget , HasValue<String> , HasAllFocusHandle
 	@Override
 	public void setValue(String value) {
 		ironLabel.getElement().setInnerText(value);
-		
 	}
 
 	@Override
 	public void setValue(String value, boolean fireEvents) {
 		if(fireEvents)
 			ironLabel.getElement().setInnerText(value);
-		
 	}
 
 	@Override
 	public Widget asWidget() {
 		return ironLabel.asWidget();
+	}
+	
+	public void ensureDebugId(String id){
+		ironLabel.ensureDebugId(id);
+	}
+	
+	public void addStyleName(String style){
+		ironLabel.addStyleName(style);
+	}
+
+	public void setInnerText(String value) {
+		ironLabel.getElement().setInnerText(value);
 	}
 
 }

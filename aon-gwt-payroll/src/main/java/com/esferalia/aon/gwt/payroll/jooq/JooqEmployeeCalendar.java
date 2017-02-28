@@ -188,7 +188,9 @@ public class JooqEmployeeCalendar {
 		}
 		
 		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
-		String tipoJornadaInfoEmpleado = dslContext
+		String tipoJornadaInfoEmpleado;
+		
+		tipoJornadaInfoEmpleado = dslContext
 				  .select(CONTRACT_DATA.EXPRESSION)
 				  .from(CONTRACT_DATA)
 				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
@@ -196,6 +198,16 @@ public class JooqEmployeeCalendar {
 				  .orderBy(CONTRACT_DATA.START_DATE.desc())
 				  .limit(1)
 				  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+		
+		if(tipoJornadaInfoEmpleado == null)
+			tipoJornadaInfoEmpleado = dslContext
+			  .select(CONTRACT_DATA.EXPRESSION)
+			  .from(CONTRACT_DATA)
+			  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+			  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+			  .orderBy(CONTRACT_DATA.START_DATE.desc())
+			  .limit(1)
+			  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
 		
 		jornadaCompleta = comprobarTipoJornada(tipoJornadaInfoEmpleado);
 		
@@ -206,7 +218,8 @@ public class JooqEmployeeCalendar {
 	}
 	
 	private static Boolean comprobarTipoJornada(String tipoJornadaInfoEmpleado) {
-		if ('1' == tipoJornadaInfoEmpleado.charAt(1) || '4' == tipoJornadaInfoEmpleado.charAt(1))
+		if ('1' == tipoJornadaInfoEmpleado.charAt(1) || '4' == tipoJornadaInfoEmpleado.charAt(1)
+				|| "false" == tipoJornadaInfoEmpleado)
 			return true;
 		else
 			return false;
