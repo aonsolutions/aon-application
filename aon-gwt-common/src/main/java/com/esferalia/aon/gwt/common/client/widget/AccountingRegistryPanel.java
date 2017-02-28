@@ -206,47 +206,78 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.document()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		FlowPanel documentPanel = new  FlowPanel();
-		final DocumentTypeListBox documentType = new DocumentTypeListBox();
-		documentType.setValue(reg.getDocumentType());
-		documentType.setStyleName(AON.AON_CSS.aonMarginRight5());
-		documentType.addKeyUpHandler( keyUpHandler);
-		documentType.addChangeHandler(new ChangeHandler() {
+
+//		FlowPanel documentPanel = new  FlowPanel();
+//		final DocumentTypeListBox documentType = new DocumentTypeListBox();
+//		documentType.setValue(reg.getDocumentType());
+//		documentType.setStyleName(AON.AON_CSS.aonMarginRight5());
+//		documentType.addKeyUpHandler( keyUpHandler);
+//		documentType.addChangeHandler(new ChangeHandler() {
+//			
+//			@Override
+//			public void onChange(ChangeEvent event) {
+//				reg.setDocumentType(documentType.getValue());
+//				okButton.setEnabled(reg.isDirty());
+//			}
+//		});
+//		documentPanel.add(documentType);
+//		final Country2ListBox documentCountry = new Country2ListBox();
+//		documentCountry.setValue(reg.getDocumentCountry());
+//		documentCountry.setStyleName(AON.AON_CSS.aonMarginRight5());
+//		documentCountry.addKeyUpHandler( keyUpHandler);
+//		documentCountry.addChangeHandler(new ChangeHandler() {
+//			
+//			@Override
+//			public void onChange(ChangeEvent event) {
+//				reg.setDocumentCountry(documentCountry.getValue());
+//				okButton.setEnabled(reg.isDirty());
+//			}
+//		});
+//		documentPanel.add(documentCountry);
+//		final DocumentTextBox document = new DocumentTextBox();
+//		document.setValue(reg.getDocument());		
+//		document.addStyleName(AON.AON_CSS.aonMarginRight5());
+//		document.addKeyUpHandler( keyUpHandler);
+//		document.addValueChangeHandler(new ValueChangeHandler<String>() {
+//			
+//			@Override
+//			public void onValueChange(ValueChangeEvent<String> event) {
+//				reg.setDocument(document.getValue());
+//				okButton.setEnabled(reg.isDirty());
+//			}
+//		});
+//		documentPanel.add(document);
+		
+		FullDocument fulldocument = new FullDocument();
+		fulldocument.setValue(reg.getDocumentType(), reg.getDocumentCountry(), reg.getDocument());
+		fulldocument.getTypeWidget().addKeyUpHandler( keyUpHandler);
+		fulldocument.addTypeChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				reg.setDocumentType(fulldocument.getType());
+				okButton.setEnabled(reg.isDirty());
+				}
+		});
+		fulldocument.getCountryWidget().addKeyUpHandler( keyUpHandler);
+		fulldocument.addCountryChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				reg.setDocumentType(documentType.getValue());
+				reg.setDocumentCountry(fulldocument.getCountry());
 				okButton.setEnabled(reg.isDirty());
 			}
 		});
-		documentPanel.add(documentType);
-		final Country2ListBox documentCountry = new Country2ListBox();
-		documentCountry.setValue(reg.getDocumentCountry());
-		documentCountry.setStyleName(AON.AON_CSS.aonMarginRight5());
-		documentCountry.addKeyUpHandler( keyUpHandler);
-		documentCountry.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				reg.setDocumentCountry(documentCountry.getValue());
-				okButton.setEnabled(reg.isDirty());
-			}
-		});
-		documentPanel.add(documentCountry);
-		final DocumentTextBox document = new DocumentTextBox();
-		document.setValue(reg.getDocument());		
-		document.addStyleName(AON.AON_CSS.aonMarginRight5());
-		document.addKeyUpHandler( keyUpHandler);
-		document.addValueChangeHandler(new ValueChangeHandler<String>() {
+		fulldocument.getDocumentWidget().addKeyUpHandler( keyUpHandler);
+		fulldocument.addDocumentChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				reg.setDocument(document.getValue());
+				reg.setDocument(fulldocument.getDocument());
 				okButton.setEnabled(reg.isDirty());
 			}
 		});
-		documentPanel.add(document);
-		table.setWidget(row,1,documentPanel);
+		
+		table.setWidget(row,1,fulldocument);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		++row;
 

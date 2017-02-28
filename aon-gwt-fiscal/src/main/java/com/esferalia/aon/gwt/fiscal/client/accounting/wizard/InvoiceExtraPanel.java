@@ -4,11 +4,9 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.Country2ListBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
+import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
@@ -72,9 +70,10 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	FlowPanel eastPanelInner;
 	Label invoiceTypeLabel;
 	
-	DocumentTypeListBox rDocumentType;
-	Country2ListBox rDocumentCountry;
-	DocumentTextBox rDocument;
+//	DocumentTypeListBox rDocumentType;
+//	Country2ListBox rDocumentCountry;
+//	DocumentTextBox rDocument;
+	FullDocument fullDocument;
 	TextBox rName;
 	DateBoxEx taxDate;
 	InvoiceTransactionListBox transactionBox;
@@ -223,11 +222,11 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		label.addStyleName(AON.AON_CSS.aonWidth70());
 		panel.add(label);
 		
-		rDocumentType = new DocumentTypeListBox();
-		rDocumentType.setTabIndex(++tabindex);
-		rDocumentType.setStyleName(AON.AON_CSS.aonMarginRight5());
-		rDocumentType.addKeyUpHandler(new KeyUpHandler() {
-			
+		fullDocument = new FullDocument();
+		fullDocument.setTabIndex(++tabindex);
+		++tabindex;
+		++tabindex;
+		fullDocument.getTypeWidget().addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
@@ -235,20 +234,14 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		        }
 			}
 		});
-		rDocumentType.addChangeHandler(new ChangeHandler() {
+		fullDocument.addTypeChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent arg0) {
-				callback.getInvoice().getInvoice().setRegistryDocumentType(rDocumentType.getValue());
+				callback.getInvoice().getInvoice().setRegistryDocumentType(fullDocument.getType());
 			}
 		});
-		panel.add(rDocumentType);
-		
-		rDocumentCountry = new Country2ListBox();
-		rDocumentCountry.setTabIndex(++tabindex);
-		rDocumentCountry.setStyleName(AON.AON_CSS.aonMarginRight5());
-		rDocumentCountry.addKeyUpHandler(new KeyUpHandler() {
-			
+		fullDocument.getCountryWidget().addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
@@ -256,19 +249,14 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		        }
 			}
 		});
-		rDocumentCountry.addChangeHandler(new ChangeHandler() {
+		fullDocument.addCountryChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent arg0) {
-				callback.getInvoice().getInvoice().setRegistryDocumentCountry(rDocumentCountry.getValue());
+				callback.getInvoice().getInvoice().setRegistryDocumentCountry(fullDocument.getCountry());
 			}
 		});
-		panel.add(rDocumentCountry);
-		
-		rDocument = new DocumentTextBox();
-		rDocument.setTabIndex(++tabindex);
-		rDocument.addStyleName(AON.AON_CSS.aonMarginRight5());
-		rDocument.addKeyUpHandler(new KeyUpHandler() {
+		fullDocument.getDocumentWidget().addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
@@ -277,15 +265,14 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		        }
 			}
 		});
-		rDocument.addValueChangeHandler(new  ValueChangeHandler<String>() {
+		fullDocument.addDocumentChangeHandler(new  ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> arg0) {
-				callback.getInvoice().getInvoice().setRegistryDocument(rDocument.getValue());
+				callback.getInvoice().getInvoice().setRegistryDocument(fullDocument.getDocument());
 			}
 		});
-		panel.add(rDocument);
-		
+		panel.add(fullDocument);
 		flexContainer.add(panel);
 	}
 
@@ -642,9 +629,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		} else {
 			invoiceTypeLabel.setText( getInvoiceLabel(ar.getType().getInvoiceType(),invoice.getInvoice().getRectificationType()));
 			eastPanelInner.setVisible(true);
-			rDocumentType.setValue(ar.getDocumentType());
-			rDocumentCountry.setValue(ar.getDocumentCountry());
-			rDocument.setValue(ar.getDocument());
+			fullDocument.setValue(ar.getDocumentType(),ar.getDocumentCountry(),ar.getDocument());
 			rName.setValue(ar.getName());
 			surcharge.setValue(invoice.isSurcharge());
 			withholding.setValue(invoice.isWithholding());
@@ -694,7 +679,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	}
 
 	public void setFocus() {
-		rDocument.setFocus(true);		
+		fullDocument.getDocumentWidget().setFocus(true);		
 	}
 
 	@Override

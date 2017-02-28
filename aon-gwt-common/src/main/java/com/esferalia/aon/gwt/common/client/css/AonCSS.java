@@ -219,8 +219,14 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-trash")
 	String aonIconTrash();
 
+	@ClassName("aon-icon-incorrect")
+	String aonIconIncorrect();
+	
 	@ClassName("aon-icon-save")
 	String aonIconSave();
+
+	@ClassName("aon-icon-europe")
+	String aonIconEurope();
 
 	@ClassName("aon-icon-cancel")
 	String aonIconCancel();

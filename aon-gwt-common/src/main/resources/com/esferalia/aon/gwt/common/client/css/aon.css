@@ -671,6 +671,16 @@ input[type="checkbox"]:focus + label {
 	gwt-image: "aonIconSave";
 }
 
+@sprite .aon-icon-europe {
+	width: auto;
+	gwt-image: "aonIconEurope";
+}
+
+@sprite .aon-icon-incorrect {
+	width: auto;
+	gwt-image: "aonIconError";
+}
+
 @sprite .aon-icon-plus {
 	width: auto;
 	gwt-image: "aonIconPlus";

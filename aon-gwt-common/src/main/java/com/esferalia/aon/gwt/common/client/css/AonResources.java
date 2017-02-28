@@ -45,6 +45,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-save.png")
 	ImageResource aonIconSave();
 
+	@Source("images/aon-icon-europe.png")
+	ImageResource aonIconEurope();
+
 	@Source("images/aon-icon-plus.png")
 	ImageResource aonIconPlus();
 	
@@ -65,6 +68,9 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-icon-reset.png")
 	ImageResource aonIconReset();
+
+	@Source("images/aon-icon-error.png")
+	ImageResource aonIconError();
 
 	@Source("images/aon-icon-audit.png")
 	ImageResource aonIconAudit();

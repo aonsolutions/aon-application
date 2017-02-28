@@ -7,23 +7,29 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class DocumentTextBox extends TextBox {
-
+	
 	public DocumentTextBox() {
+		this(true);	
+	}
+
+	public DocumentTextBox(boolean validation) {
 		setVisibleLength(11);
 		setMaxLength(15);
 		setStyleName(AON.AON_CSS.aonInputText());
-		addValueChangeHandler( new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if (AonDocumentUtil.isValid(event.getValue())) {
-					removeStyleName(AON.AON_CSS.aonTextBoxError() );	
-				} else {
-					addStyleName(AON.AON_CSS.aonTextBoxError() );	
+		if (validation) {
+			addValueChangeHandler( new ValueChangeHandler<String>() {
+	
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					if (AonDocumentUtil.isValid(event.getValue())) {
+						removeStyleName(AON.AON_CSS.aonTextBoxError() );	
+					} else {
+						addStyleName(AON.AON_CSS.aonTextBoxError() );	
+					}
 				}
-			}
-			
-		});
+				
+			});
+		}
 	}
 	
 	@Override

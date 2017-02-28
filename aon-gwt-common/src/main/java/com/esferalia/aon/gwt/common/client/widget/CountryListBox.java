@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.ListBox;
 public class CountryListBox extends ListBox {
 
 	public CountryListBox() {
-		setWidth("120px");
+		setWidth("70px");
 		this.addItem( "-", "" );
 		for (Country p : Country.values()) {
 			this.addItem( p.getName(), p.getIso2() );	

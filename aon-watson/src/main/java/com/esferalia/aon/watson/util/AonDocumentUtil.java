@@ -6,6 +6,27 @@ public class AonDocumentUtil {
 		'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E' };
 	private static final char[] NIF_LETTERS = { 'J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
 	
+	public static boolean isValid(Byte documentType, String country, String document) {
+		// 0 --> DNI, 1 --> CIF, 2 --> NIE, > 3 --- ???
+		if (documentType == null || country == null || document == null) return false;
+		if (documentType < 0 || documentType > 2) return false;
+		if (!"ES".equals( country )) {
+			return isValidComunitaryCode(country,document);
+		} else {
+			char[] doc = document.toCharArray();
+			if (documentType == 0) return isValidNIF(doc);
+			if (documentType == 1) return isValidCIF(doc);
+			if (documentType == 2) return isValidNIE(doc);
+		}
+		return false;
+	}
+	
+	public static boolean isValidable(Byte documentType, String country, String document) {
+		if (documentType == null || country == null || document == null) return false;
+		return (isValidComunitaryCountry(country) 
+			|| ("ES".equals( country ) && documentType < 3));
+	}
+	
 	public static boolean isValid(String value) {
 		if (value == null || value.length() == 0) {
 			return false;
@@ -112,5 +133,90 @@ public class AonDocumentUtil {
 		}
     	return (doc.matches("^(G).{8}"));
     }
-}
+    
+	public static boolean isValidComunitaryCountry(String country){
+		return ("AT".equals(country) || "BE".equals(country) 
+			 || "BG".equals(country) || "CY".equals(country) 
+			 || "CZ".equals(country) || "DE".equals(country) 
+			 || "DK".equals(country) || "EE".equals(country)
+			 || "EL".equals(country) || "GR".equals(country) 
+			 || "FI".equals(country) || "FR".equals(country) 
+			 || "GB".equals(country) || "HR".equals(country) 
+			 || "HU".equals(country) || "IE".equals(country) 
+			 || "IT".equals(country) || "LT".equals(country) 
+			 || "LU".equals(country) || "LV".equals(country) 
+			 || "MT".equals(country) || "NL".equals(country) 
+			 || "PL".equals(country) || "PT".equals(country) 
+			 || "RO".equals(country) || "SE".equals(country)
+			 || "SI".equals(country) || "SK".equals(country));
+	}
 
+	public static boolean isValidComunitaryCode(String country , String doc){
+		if (!isValidComunitaryCountry(country)) return false;
+		int len = doc.length();
+		if (
+			// Fuente:  http://ec.europa.eu/taxation_customs/vies/faq.html
+				
+			//AT-Austria 	ATU99999999 	Un bloque de 9 caracteres
+			    ( "AT".equals(country) && len==9 ) 
+		    //BE-Bélgica 	BE0999999999 	Un bloque de 10 cifras
+			||  ( "BE".equals(country) && AonStringUtils.isNumeric(doc) && len==10) 
+			//BG-Bulgaria 	BG999999999 o BG9999999999 	Un bloque de 9 cifras o un bloque de 10 cifras
+			||  ( "BG".equals(country) && AonStringUtils.isNumeric(doc) && (len==9 || len==10)) 
+			//CY-Chipre 	CY99999999L 	Un bloque de 9 caracteres
+			||  ( "CY".equals(country) && len==9 ) 
+			//CZ-Chequia 	CZ99999999 o CZ999999999 o CZ9999999999 Un bloque de 8, 9 o 10 cifras
+			||  ( "CZ".equals(country) && AonStringUtils.isNumeric(doc) && (len==8 || len == 9 || len == 10 ))
+			//DE-Alemania 	DE999999999 	Un bloque de 9 cifras
+			||	( "DE".equals(country) && AonStringUtils.isNumeric(doc) && len==9 ) 
+			//DK-Dinamarca 	DK99 99 99 99 	Cuatro bloques de 2 cifras
+			||  ( "DK".equals(country) && AonStringUtils.isNumeric(doc) && len==8 )
+			//EE-Estonia 	EE999999999 	Un bloque de 9 cifras
+			||  ( "EE".equals(country) && AonStringUtils.isNumeric(doc) && len==9 )
+			// GRECIA EL y GR
+			//EL-Grecia 	EL999999999 	Un bloque de 9 cifras
+			||  ( "EL".equals(country) && AonStringUtils.isNumeric(doc) && len==9 ) 
+			||  ( "GR".equals(country) && AonStringUtils.isNumeric(doc) && len==9 ) 
+			// --------------
+			//FI-Finlandia 	FI99999999 	Un bloque de 8 cifras
+			||  ( "FI".equals(country) && AonStringUtils.isNumeric(doc) && len==8 ) 
+			//FR-Francia 	FRXX 999999999 	Un bloque de 2 caracteres y un bloque de 9 cifras
+			||  ( "FR".equals(country) && AonStringUtils.isAlphanumeric(doc) && len==11 ) 
+			//GB-Reino Unido 	GB999 9999 99 o GB999 9999 99 9995 o GBGD9996 o GBHA9997 	
+			// Un bloque de 3 cifras, un bloque de 4 cifras y un bloque de 2 cifras; o lo mismo 
+			// seguido de un bloque de 3 cifras; o un bloque de 5 caracteres
+			||  ( "GB".equals(country) && (len==5 || len == 9 || len == 12) ) 
+			//HR-Croacia 	HR99999999999 	Un bloque de 11 cifras
+			||  ( "HR".equals(country) && AonStringUtils.isNumeric(doc) && len==11 ) 
+			//HU-Hungría 	HU99999999 	Un bloque de 8 cifras
+			||  ( "HU".equals(country) && AonStringUtils.isNumeric(doc) && len==8 ) 
+			//IE-Irlanda 	IE9S99999L IE9999999WI 	Un bloque de 8 caracteres o un bloque de 9 caracteres
+			||  ( "IE".equals(country) && (len==8 || len==9) ) 
+			//IT-Italia 	IT99999999999 	Un bloque de 11 cifras
+			||  ( "IT".equals(country) && AonStringUtils.isNumeric(doc) && len==11 ) 
+			//LT-Lituania 	LT999999999 o LT999999999999 	Un bloque de 9 cifras o un bloque de 12 cifras
+			||  ( "LT".equals(country) && AonStringUtils.isNumeric(doc) && (len==9 || len == 12) ) 
+			//LU-Luxemburgo 	LU99999999 	Un bloque de 8 cifras
+			||  ( "LU".equals(country) && AonStringUtils.isNumeric(doc) && len==8 ) 
+			//LV-Letonia 	LV99999999999 	Un bloque de 11 cifras
+			||  ( "LV".equals(country) && AonStringUtils.isNumeric(doc) && len==11 ) 
+			//MT-Malta 	MT99999999 	Un bloque de 8 cifras
+			||  ( "MT".equals(country) && AonStringUtils.isNumeric(doc) && len==8 ) 
+			//NL-Países Bajos 	NL999999999B998 	Un bloque de 12 caracteres
+			||  ( "NL".equals(country) && len==12 ) 
+			//PL-Polonia 	PL9999999999 	Un bloque de 10 cifras
+			||  ( "PL".equals(country) && AonStringUtils.isNumeric(doc) && len==10 ) 
+			//PT-Portugal 	PT999999999 	Un bloque de 9 cifras
+			||  ( "PT".equals(country) && AonStringUtils.isNumeric(doc) && len==9 ) 
+			//RO-Rumania 	RO999999999 	Un bloque de mínimo 2 cifras y máximo 10 cifras
+			||  ( "RO".equals(country) && AonStringUtils.isNumeric(doc) && (len>=2 && len<=10)) 
+			//SE-Suecia 	SE999999999999 	Un bloque de 12 cifras
+			||  ( "SE".equals(country) && AonStringUtils.isNumeric(doc) && len==12)
+			//SI-Eslovenia 	SI99999999 	Un bloque de 8 cifras
+			||  ( "SI".equals(country) && AonStringUtils.isNumeric(doc) && len==8)
+			//SK-Eslovaquia 	SK9999999999 	Un bloque de 10 cifras
+			||  ( "SK".equals(country) && AonStringUtils.isNumeric(doc) && len == 10) 
+			) return true;
+		return false;
+	}
+}
