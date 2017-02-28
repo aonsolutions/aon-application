@@ -63,7 +63,7 @@ public class ConnectDelivery extends AbstractFileFiller {
 			createLine(RECTL, properties);
 			
 			if(rectl.seh1c==null) {
-				Fd0Exception e = new Fd0Exception( "SEH1C", "La entidad SEH1C es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SEH1C", "Cabecera. La entidad 'SEH1C' es obligatoria");
 				exceptions.add (e);
 			} else {
 				properties.put(SEH1C , rectl.seh1c);
@@ -71,7 +71,7 @@ public class ConnectDelivery extends AbstractFileFiller {
 			}
 			
 			if(rectl.seh1dList==null || rectl.seh1dList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SEH1D", "La entidad SEH1D es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SEH1D", "Información de partes. La entidad 'SEH1D' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (SEH1D value: rectl.seh1dList) {
@@ -80,7 +80,7 @@ public class ConnectDelivery extends AbstractFileFiller {
 				}
 			}
 			if(rectl.seh1pList==null || rectl.seh1pList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SEH1P", "La entidad SEH1P es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SEH1P", "Secuencia de embalajes. La entidad 'SEH1P' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (SEH1P value: rectl.seh1pList) {
@@ -88,7 +88,7 @@ public class ConnectDelivery extends AbstractFileFiller {
 					createLine(SEH1P, properties);
 				}
 			}if(rectl.seh1lList==null || rectl.seh1lList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SEH1L", "La entidad SEH1L es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SEH1L", "Línea de artículos. La entidad 'SEH1L' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (SEH1L value: rectl.seh1lList) {
@@ -115,7 +115,7 @@ public class ConnectDelivery extends AbstractFileFiller {
 			}
 		}
 		output.flush();
-		writeErrorsFile();
+//		writeErrorsFile();
 		return exceptions;
 	}
 	

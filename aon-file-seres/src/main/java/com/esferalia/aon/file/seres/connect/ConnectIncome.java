@@ -67,7 +67,7 @@ public class ConnectIncome extends AbstractFileFiller{
 			createLine(RECTL, properties);
 			
 			if(rectl.recac==null) {
-				Fd0Exception e = new Fd0Exception( "RECAC", "La entidad RECAC es obligatoria");
+				Fd0Exception e = new Fd0Exception( "RECAC", "Cabecera. La entidad 'RECAC' es obligatoria");
 				exceptions.add (e);
 			} else {
 				properties.put(RECAC, rectl.recac);
@@ -75,7 +75,7 @@ public class ConnectIncome extends AbstractFileFiller{
 			}
 			
 			if(rectl.recapList==null || rectl.recapList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "RECAP", "La entidad RECAP es obligatoria");
+				Fd0Exception e = new Fd0Exception( "RECAP", "Información partes cabecera. La entidad 'RECAP' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (RECAP value: rectl.recapList) {
@@ -84,7 +84,7 @@ public class ConnectIncome extends AbstractFileFiller{
 				}
 			}
 			if(rectl.recaeList==null || rectl.recaeList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "RECAE", "La entidad RECAEP es obligatoria");
+				Fd0Exception e = new Fd0Exception( "RECAE", "Embalajes confirmación de recepción. La entidad 'RECAEP' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (RECAE value: rectl.recaeList) {
@@ -93,7 +93,7 @@ public class ConnectIncome extends AbstractFileFiller{
 				}
 			}
 			if(rectl.recalList==null || rectl.recalList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "RECAL", "La entidad RECAL es obligatoria");
+				Fd0Exception e = new Fd0Exception( "RECAL", "Detalle confirmación de recepción. La entidad 'RECAL' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (RECAL value: rectl.recalList) {
@@ -120,7 +120,7 @@ public class ConnectIncome extends AbstractFileFiller{
 			}
 		}
 		output.flush();
-		writeErrorsFile();
+//		writeErrorsFile();
 		return exceptions;
 	}
 	

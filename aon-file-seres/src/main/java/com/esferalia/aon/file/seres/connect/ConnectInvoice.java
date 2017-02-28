@@ -76,7 +76,7 @@ public class ConnectInvoice extends AbstractFileFiller {
 			createLine(RECTL, properties);
 			
 			if(rectl.sincc==null) {
-				Fd0Exception e = new Fd0Exception( "SINCC", "La entidad SINCC es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SINCC", "Cabecera. La entidad 'SINCC' es obligatoria");
 				exceptions.add (e);
 			} else {				
 				properties.put(SINCC , rectl.sincc);
@@ -84,7 +84,7 @@ public class ConnectInvoice extends AbstractFileFiller {
 			}
 			
 			if(rectl.sincpList==null || rectl.sincpList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SINCP", "La entidad SINCP es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SINCP", "Información partes involucradas. La entidad 'SINCP' es obligatoria");
 				exceptions.add (e);
 			} else {				
 				for (SINCP value: rectl.sincpList) {
@@ -105,7 +105,7 @@ public class ConnectInvoice extends AbstractFileFiller {
 				createLine(SINCD, properties);
 			}
 			if(rectl.sinclList==null || rectl.sinclList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SINCL", "La entidad SINCL es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SINCL", "Línea detalle. La entidad 'SINCL' es obligatoria");
 				exceptions.add (e);
 			} else {				
 				for (SINCL value: rectl.sinclList) {
@@ -122,7 +122,7 @@ public class ConnectInvoice extends AbstractFileFiller {
 				createLine(SINCE, properties);
 			}
 			if(rectl.sinciList==null || rectl.sinciList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SINCI", "La entidad SINCI es obligatoria");
+				Fd0Exception e = new Fd0Exception( "SINCI", "Impuestos. La entidad 'SINCI' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (SINCI value: rectl.sinciList) {
@@ -141,7 +141,7 @@ public class ConnectInvoice extends AbstractFileFiller {
 			}
 		}
 		output.flush();
-		writeErrorsFile();
+//		writeErrorsFile();
 		return exceptions;
 	}
 	
