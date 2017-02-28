@@ -235,6 +235,9 @@ public class SalaryDraft extends ResizeComposite
 
 			"OCUPACION_IT", "OCUPACION_IMS", "PREST_IT" };
 
+	private static String[] CONSTANTS_VARIABLES = {
+			"HORAS_NOMINA"
+	};
 	// @formatter:on
 
 	static class VisibilityImpl implements HasVisibility {
@@ -2897,10 +2900,33 @@ public class SalaryDraft extends ResizeComposite
 		insertBlankPaymentRow();
 		insertBlankPaymentRow();
 
-		List<Variable> context = getContext(salaryDraftObject);// new
-																// ArrayList<Variable>(salaryDraftObject.getContext());
-		context = context.stream()
-				.filter( v -> !v.getName().equals("HORAS_NOMINA"))
+		List<Variable> context = getContext(salaryDraftObject);
+		
+		
+		List<Variable> constants = context.stream()
+				.filter(v->isConstant(v))
+				.collect(Collectors.groupingBy(
+						Variable::getName,
+						Collectors.summingDouble(v->Double.parseDouble(String.valueOf(v.getValue())))
+				))
+				.entrySet().stream()
+				.map(e -> {
+					NumberVariable v = new NumberVariable();
+					v.setName(e.getKey());
+					v.setValue(e.getValue());
+					v.setScope(Scope.CONTRACT);
+					v.setEndDate(salaryDraftObject.getEndDate());
+					v.setStartDate(salaryDraftObject.getStartDate());
+					return  v;
+					})
+				.collect(Collectors.toList());
+		
+		for ( Variable constant: constants  )
+			Window.alert(constant.getName() + " = " + constant.getValue() );
+		
+
+		List<Variable> variables = context.stream()
+				.filter(v->!skipVariable(v))
 				.collect(Collectors.toList());
 		
 		Scope nextScope = null;
@@ -2908,14 +2934,14 @@ public class SalaryDraft extends ResizeComposite
 
 		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
 
+		dumpContext(constants, Scope.CONTRACT, true, null);
+
 		for (Scope step : SCOPE_STEPS) {
-			nextScope = dumpContext(context, step, show, nextScope);
+			nextScope = dumpContext(variables, step, show, nextScope);
 			if (step.compareTo(scope) <= 0)
 				break;
 		}
 		
-		List<Variable> constants = iniConstants(context);
-		dumpContext(constants, Scope.CONTRACT, true, null);
 
 		initDbSalaryCheck();		
 
@@ -3974,10 +4000,6 @@ public class SalaryDraft extends ResizeComposite
 
 			Variable variable = iterator.next();
 
-			if (skipVariable(variable)) {
-				iterator.remove();
-				continue;
-			}
 
 			Scope scope = variable.getScope();
 			if (scope.compareTo(toScope) < 0) {
@@ -5073,6 +5095,15 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 
+	static boolean isConstant(Variable variable) {
+		String name = variable.getName();
+		for (String constant : CONSTANTS_VARIABLES)
+			if (constant.equals(name))
+				return true;
+		
+		return false;
+	}
+
 	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> T createEditor(
 			Variable variable) {
 		for (VariableEditorFactory<T> factory : VARIABLE_EDITOR_FACTORIES) {
@@ -5326,12 +5357,20 @@ public class SalaryDraft extends ResizeComposite
 	//TODO: mirar iniConstants
 	private List<Variable> iniConstants(List<Variable> context) {
 		List<Variable> constants = new ArrayList<>();
+		Double salaryHours = 0.0;
 		
-		Double salaryHours = context.stream()
-				.filter(v->v.getName().equals("HORAS_NOMINA"))
-				.peek(v -> Window.alert("Horas :"+v.getValue()))
-				.collect(Collectors.summingDouble(v -> Double.parseDouble(String.valueOf(v.getValue()))))
-				;
+		for(Variable var : context){
+			Window.alert(var.getName());
+			if(var.getName().equals("HORAS_NOMINA"))
+				Window.alert("Horas acumuladas :"+salaryHours);
+				salaryHours+= Double.parseDouble(String.valueOf(var.getValue()));
+		}
+		
+//		Double salaryHours = context.stream()
+//				.filter(v->v.getName().equals("HORAS_NOMINA"))
+//				.peek(v -> Window.alert("Horas :"+v.getValue()))
+//				.collect(Collectors.summingDouble(v -> Double.parseDouble(String.valueOf(v.getValue()))))
+//				;
 		
 		NumberVariable var = new NumberVariable();
 		var.setName("HORAS_NOMINA");
