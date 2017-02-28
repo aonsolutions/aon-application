@@ -599,8 +599,10 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	}
 
 	public void linkDeliveryDate(Sales sales) throws ManagerBeanException {
-		if ((sales.getDeliveryDate() != null && getSavedDeliveryDate() == null) || (sales.getDeliveryDate() == null && getSavedDeliveryDate() != null) ||
-				(!DateUtils.isSameDay(sales.getDeliveryDate(), getSavedDeliveryDate()))) {
+		if ((sales.getDeliveryDate() != null && getSavedDeliveryDate() == null) 
+				|| (sales.getDeliveryDate() == null && getSavedDeliveryDate() != null) 
+				|| (sales.getDeliveryDate() != null && getSavedDeliveryDate() != null 
+					&& !DateUtils.isSameDay(sales.getDeliveryDate(), getSavedDeliveryDate()))) {
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
