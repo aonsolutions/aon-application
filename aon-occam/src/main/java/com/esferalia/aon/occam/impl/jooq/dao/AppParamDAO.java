@@ -7,14 +7,17 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ApplicationParameterPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -23,7 +26,7 @@ public class AppParamDAO {
 	
 	private static final String DATE_PATTERN = "dd/MM/yyyy";
 	private static final String[] DATE_PATTERNS = new String[]{DATE_PATTERN}; 
-	
+	private static final ApplicationParameterPropertiesDAO APPLICATION_PARAMETER_PROPERTIES = new ApplicationParameterPropertiesDAO();
 	private static Logger LOGGER = Logger
 			.getLogger(AppParamDAO.class.getName());
 
@@ -85,19 +88,19 @@ public class AppParamDAO {
 		}
 	}
 	public static String fetchValue(AONContext ctx, AppParam param) {
-		ApplicationParameter ap = fetchOne(ctx, param);
+		ApplicationParameter ap = fetchOne(ctx, param.getValue());
 		return ap == null ? null : ap.getValue(); 
 	}
 	public static double fetchDoubleValue(AONContext ctx, AppParam param) {
-		ApplicationParameter ap = fetchOne(ctx, param);
+		ApplicationParameter ap = fetchOne(ctx, param.getValue());
 		return ap == null ? 0.0 : AonNumberUtils.todouble( ap.getValue()); 
 	}
 	public static int fetchIntValue(AONContext ctx, AppParam param) {
-		ApplicationParameter ap = fetchOne(ctx, param);
+		ApplicationParameter ap = fetchOne(ctx, param.getValue());
 		return ap == null ? 0 : AonNumberUtils.toint( ap.getValue()); 
 	}
 	public static Date fetchDateValue(AONContext ctx, AppParam param) {
-		ApplicationParameter ap = fetchOne(ctx, param);
+		ApplicationParameter ap = fetchOne(ctx, param.getValue());
 		if ( ap != null && AonStringUtils.isNotBlank(ap.getValue())) {
 			try {
 				return AonDateUtils.parseDateStrictly(ap.getValue(), DATE_PATTERNS);
@@ -108,23 +111,37 @@ public class AppParamDAO {
 		return null;
 	}
 	
-	public static ApplicationParameter getApplicationParameter(AONContext ctx, String id) {
-		return ctx.getDslContext().select().from(APP_PARAM).where(APP_PARAM.NAME.eq(id)).and(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+	public static Stream<ApplicationParameter> getApplicationParameterStream(AONContext ctx, ApplicationParameterFilter filter) {
+		return APPLICATION_PARAMETER_PROPERTIES.build(ctx.getDslContext()
+				.select()
+				.from(APP_PARAM), filter)
 				.fetch().stream().map(r -> new ApplicationParameter()
 						.setDomain(r.getValue(APP_PARAM.DOMAIN))
 						.setId(r.getValue(APP_PARAM.ID))
 						.setName(r.getValue(APP_PARAM.NAME))
-						.setValue(r.getValue(APP_PARAM.VALUE))).findFirst().orElse(new ApplicationParameter());
-	}	
+						.setValue(r.getValue(APP_PARAM.VALUE)));
+	}
+	
+	public static void deleteApplicationParameter(AONContext ctx, ApplicationParameterFilter filter) {
+		ctx.getDslContext()
+			.delete(APP_PARAM)
+			.where(APPLICATION_PARAMETER_PROPERTIES.getConditions(filter))
+			.execute();
+	}
+	
 	
 	public static ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
+		return fetchOne(ctx, param.getValue());
+	}
+	
+	public static ApplicationParameter fetchOne(AONContext ctx, String param) {
 		ctx.checkRead();
 		final ApplicationParameter ap = new ApplicationParameter();
 		ctx.getDslContext()
 			.select(APP_PARAM.ID,APP_PARAM.DOMAIN,APP_PARAM.NAME,APP_PARAM.VALUE)
 			.from(APP_PARAM)
 			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())
-				.and(APP_PARAM.NAME.eq(param.getValue())))
+				.and(APP_PARAM.NAME.eq(param)))
 			.fetch()
 			.stream()
 			.findFirst()
@@ -173,32 +190,18 @@ public class AppParamDAO {
 	}
 	
 	public static IRPFRegime getDefaultIRPFRegime(AONContext ctx) {
-		ApplicationParameter ap  = AppParamDAO.fetchOne(ctx, AppParam.FS_TAX_REGIME);
+		ApplicationParameter ap  = AppParamDAO.fetchOne(ctx, AppParam.FS_TAX_REGIME.getValue());
 		if (ap == null || AonStringUtils.isBlank(ap.getValue())) return null;
 		int i = AonNumberUtils.toInteger( ap.getValue() );
 		return IRPFRegime.safeValueOf(i);
 	}
 	public static boolean isPermAddressChanges(AONContext ctx) {
-		ApplicationParameter ap  = AppParamDAO.fetchOne(ctx, AppParam.FS_PERM_ADDRESS_CHANGES);
+		ApplicationParameter ap  = AppParamDAO.fetchOne(ctx, AppParam.FS_PERM_ADDRESS_CHANGES.getValue());
 		if (ap == null || AonStringUtils.isBlank(ap.getValue())) return false;
 		return (AonNumberUtils.toInteger( ap.getValue() )==1);
 	}
 	
-	public static ApplicationParameter insertApplicationParameter(AONContext ctx, AppParam param, String value){
-		if(ctx.getDslContext().select().from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
-			.and(APP_PARAM.NAME.eq(param.getValue())).fetch().isEmpty())
-			ctx.getDslContext()
-				.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
-				.values(ctx.getDomainId(), param.getValue(), value).execute();
-		else ctx.getDslContext()
-				.update(APP_PARAM)
-				.set(APP_PARAM.VALUE, value)
-				.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
-				.and(APP_PARAM.NAME.eq(param.getValue())).execute();
-		return fetchOne(ctx, param);
-	}
-	
-	public static void insertApplicationParameter(AONContext ctx, String param, String value){
+	public static ApplicationParameter insertApplicationParameter(AONContext ctx, String param, String value){
 		if(ctx.getDslContext().select().from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
 			.and(APP_PARAM.NAME.eq(param)).fetch().isEmpty())
 			ctx.getDslContext()
@@ -209,7 +212,6 @@ public class AppParamDAO {
 				.set(APP_PARAM.VALUE, value)
 				.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
 				.and(APP_PARAM.NAME.eq(param)).execute();
+		return fetchOne(ctx, param);
 	}
-	
-	
 }

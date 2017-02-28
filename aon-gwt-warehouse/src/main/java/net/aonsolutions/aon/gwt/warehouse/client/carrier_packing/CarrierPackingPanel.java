@@ -259,7 +259,7 @@ public class CarrierPackingPanel extends Composite{
 				TextArea textArea = new TextArea();
 				textArea.setWidth("255px");
 				textArea.setHeight("100px");
-				textArea.setValue(jsCarrierPacking.getComments());
+				textArea.setValue(jsCarrierPacking.getObservation());
 		    	AonDialog dialog = new AonDialog("Enviar Packing List", textArea) {
 					
 					@Override protected void onCancel() {hide();}
@@ -268,7 +268,7 @@ public class CarrierPackingPanel extends Composite{
 					protected void onAccept() {
 					
 						String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
-								+ "\"comments\":\""+  textArea.getValue() +"\"}";
+								+ "\"observation\":\""+  textArea.getValue() +"\"}";
 
 						API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
 							
@@ -310,6 +310,7 @@ public class CarrierPackingPanel extends Composite{
 					jsCarrierPacking = result;
 					number.setValue(result.getNumber() + "");
 					parent.setSelectContent(result);
+					parent.setParameterPanel(result.getParams());
 				}
 				
 				@Override public void onFailure(Throwable caught) { }

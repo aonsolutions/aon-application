@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
@@ -64,6 +65,11 @@ public interface Filter {
 	
 	public Filter page(Integer page);
 	public Filter perPage(Integer perPage);
+
+	@FunctionalInterface
+	public interface ApplicationParameterFilter{
+		Filter filter(ApplicationParameterProperties properties);
+	}
 	
 	@FunctionalInterface
 	public interface WarehouseFilter{

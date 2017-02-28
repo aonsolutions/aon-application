@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
@@ -47,23 +48,24 @@ public class CommonImpl implements ICommon {
 	
 	// ------------------ APPLICATION PARAMETERS
 	@Override
-	public ApplicationParameter getApplicationParameter(AONContext ctx, String id) {
-		return AppParamDAO.getApplicationParameter(ctx, id);
+	public Stream<ApplicationParameter> getApplicationParameterStream(AONContext ctx, ApplicationParameterFilter filter) {
+		return AppParamDAO.getApplicationParameterStream(ctx, filter);
+	}
+	
+	@Override
+	public void deleteApplicationParameter(AONContext ctx, ApplicationParameterFilter filter) {
+		ctx.getDslContext().transaction(configuration -> 
+				AppParamDAO.deleteApplicationParameter(ctx, filter));
 	}
 	
 	@Override
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
-		return AppParamDAO.fetchOne(ctx, param);
-	}
-	
-	@Override
-	public ApplicationParameter insertApplicationParameter(AONContext ctx, AppParam param, String value) {
-		return AppParamDAO.insertApplicationParameter(ctx, param, value);
+		return AppParamDAO.fetchOne(ctx, param.getValue());
 	}
 
 	@Override
-	public void insertApplicationParameter(AONContext ctx, String param, String value) {
-		AppParamDAO.insertApplicationParameter(ctx, param, value);
+	public ApplicationParameter insertApplicationParameter(AONContext ctx, String param, String value) {
+		return AppParamDAO.insertApplicationParameter(ctx, param, value);
 	}
 	
 	// ------------------ FISCAL PARAMETERS

@@ -13,7 +13,7 @@
 		    <g:tab >
 				<g:customHeader styleName="{style.jeje}">
 					<g:HTMLPanel>
-						<i:IronIcon icon="info" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<i:IronIcon icon="done" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Seleccion" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
@@ -24,7 +24,7 @@
  			<g:tab >
 				<g:customHeader styleName="{style.jeje}">
 					<g:HTMLPanel>
-						<i:IronIcon icon="info" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<i:IronIcon icon="receipt" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Parametros" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>

@@ -6,7 +6,14 @@ import java.sql.Timestamp;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 
 public interface Properties {
-
+	
+	public interface ApplicationParameterProperties {
+		Property<Integer> getIdProperty(); 
+		Property<Integer> getDomainProperty();	
+		Property<String> getNameProperty();
+		Property<String> getValueProperty();
+	}
+	
 	public interface SeriesProperties {
 		Property<Integer> getIdProperty(); 
 		Property<Integer> getDomainProperty();	

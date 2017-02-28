@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
@@ -20,6 +21,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -31,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
+import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
@@ -48,6 +51,25 @@ public class PropertiesDAO {
 	
 	private PropertiesDAO() {
 		throw new IllegalAccessError("DAO class");
+	}
+	
+	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, ApplicationParameterFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ApplicationParameterFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(APP_PARAM.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(APP_PARAM.ID);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(APP_PARAM.NAME);}
+		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(APP_PARAM.VALUE);}
 	}
 	
 	public static class CustomerPropertiesDAO implements CustomerProperties {

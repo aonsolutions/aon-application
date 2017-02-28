@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.common.JsAppParam;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
@@ -21,27 +22,35 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
+import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperRadioButton;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
+import net.aonsolutions.aon.gwt.warehouse.client.IWarehouse;
+import net.aonsolutions.aon.gwt.warehouse.client.IWarehouseAsync;
+import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams;
+import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams.Param;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class CarrierPacking extends AonTemplate{
 
+	final IWarehouseAsync impl = GWT.create(IWarehouse.class);
 	protected API API;
 	private HashMap<String, LinkedList<String>> filterMap;
 	private Boolean future = false;
 	private CarrierPacking me = this;
+	Boolean isMainScreem = true; 
 	
 	public CarrierPacking(AonData aonData, Boolean future) {
 		filterMap = new HashMap<>();
@@ -62,7 +71,8 @@ public class CarrierPacking extends AonTemplate{
 				IronIconsElement.SRC,
 				AonComboBoxElement.SRC,
 				PaperButtonElement.SRC,
-				PaperRadioButtonElement.SRC
+				PaperRadioButtonElement.SRC,
+				PaperItemElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
@@ -77,7 +87,10 @@ public class CarrierPacking extends AonTemplate{
 		westContent();
 		northContent();
 		content();
+		
+		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 30);
 		southContent();
+		isMainScreem = true;
 	}
 
 	private void toolbar() {
@@ -115,6 +128,7 @@ public class CarrierPacking extends AonTemplate{
 					getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 					setNorthContent(new CarrierPackingPanel(me));
 					setContent(new Label(""));
+					isMainScreem = false;
 				}
 				@Override protected void remove() {
 					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
@@ -268,50 +282,101 @@ public class CarrierPacking extends AonTemplate{
 					value.setLabel("Valor por defecto");
 					panel.add(value);
 					
-					HorizontalPanel h1 = new HorizontalPanel();
 					PaperRadioButton hr = new PaperRadioButton();
-			    	hr.setChecked(true);	
-			    	h1.add(hr);
-			    	h1.add(new Label("Hoja de Ruta"));
+		    		PaperRadioButton sc = new PaperRadioButton();
+
+					if(isMainScreem){
+						HorizontalPanel h1 = new HorizontalPanel();
+			    		hr.setChecked(true);	
+			    		h1.add(hr);
+			    		h1.add(new Label("Hoja de Ruta"));
 			    	
-			    	HorizontalPanel h2 =new HorizontalPanel();
-			    	PaperRadioButton sc = new PaperRadioButton();
-			    	sc.setChecked(false);	
-			    	h2.add(sc);
-			    	h2.add(new Label("Solicitud de Carga"));
-			    	
-			    	hr.addChangeHandler(new ChangeEventHandler() {
-						
-						@Override
-						public void onChange(ChangeEvent event) {
-							sc.setChecked(!hr.getChecked());
-						}
-					});
-			    	
-			    	sc.addChangeHandler(new ChangeEventHandler() {
-						
-						@Override
-						public void onChange(ChangeEvent event) {
-							hr.setChecked(!sc.getChecked());
-						}
-					});
-			    	panel.add(h1);
-			    	panel.add(h2);
+			    		HorizontalPanel h2 =new HorizontalPanel();
+			    		sc.setChecked(false);	
+			    		h2.add(sc);	
+			    		h2.add(new Label("Solicitud de Carga"));  	
 					
+			    		hr.addChangeHandler(new ChangeEventHandler() {
+						
+			    			@Override
+			    			public void onChange(ChangeEvent event) {
+			    				sc.setChecked(!hr.getChecked());
+			    			}
+			    		});
+			    	
+			    		sc.addChangeHandler(new ChangeEventHandler() {
+						
+			    			@Override
+			    			public void onChange(ChangeEvent event) {
+			    				hr.setChecked(!sc.getChecked());
+			    			}
+			    		});
+			    		panel.add(h1);
+			    		panel.add(h2);
+					}
 			    	AonDialog dialog = new AonDialog("Nuevo Parametro", panel) {
 						
 						@Override protected void onCancel() {hide();}
 						
 						@Override 
 						protected void onAccept() {	
-							String parameter = "";
-							if(hr.getChecked()){
-								parameter = "AON_PACKING_LIST_HR_";
-							}else parameter = "AON_PACKING_LIST_SC_";
-
-							String requestData = "{\"parameter\":\""+ parameter + param.getValue() +"\","
+							if(isMainScreem){
+								String parameter = "";
+								if(hr.getChecked()){
+									parameter = "AON_PACKING_LIST_HR_";
+								}else parameter = "AON_PACKING_LIST_SC_";
+							
+								String requestData = "{\"parameter\":\""+ parameter + param.getValue() +"\","
 									+ "\"value\":\""+ value.getValue() +"\"}";
-							API.getCommon().insertAppParam(requestData);
+								API.getCommon().insertAppParam(requestData, new AsyncCallback<JsAppParam>() {
+									
+									@Override public void onSuccess(JsAppParam result) {
+										southContent();
+									}
+									
+									@Override public void onFailure(Throwable caught) {}
+								});
+							} else {
+								CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
+								JsCarrierPacking js = w.getJsCarrierPacking();
+								impl.readXml(js.getParams(), new AsyncCallback<CarrierPackingParams>() {
+									
+									@Override
+									public void onSuccess(CarrierPackingParams result) {
+										Param param2 = new Param();
+										param2.setName(param.getValue());
+										param2.setValue(value.getValue());
+										if(result.getParam() == null) {
+											result.setParam(new LinkedList<>());
+										}
+										result.getParam().add(param2);
+										
+										impl.writeXml(result, new AsyncCallback<String>() {
+											
+											@Override
+											public void onSuccess(String result) {
+												String requestData = "{\"params\":\""+ result  +"\"}";
+												API.getWarehouse().updateCarrierPacking(js.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+													
+													@Override public void onSuccess(JsCarrierPacking result2) {
+														setParameterPanel(result2.getParams());
+													}
+													@Override public void onFailure(Throwable caught) {}
+												});
+												
+											}
+											
+											@Override
+											public void onFailure(Throwable caught) {}
+										});
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {}
+								});
+								
+
+							}
 							hide();
 						}
 					};
@@ -320,7 +385,6 @@ public class CarrierPacking extends AonTemplate{
 					dialog.center();
 				}
 			};
-			toolbar.parameterButton.setVisible(false);
 			setToolbar(toolbar);
 		}
 	}
@@ -343,6 +407,8 @@ public class CarrierPacking extends AonTemplate{
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 		setNorthContent(new CarrierPackingPanel(me,js));
 		setContent(new CarrierPackingSelect(me, js));
+		setParameterPanel(js);
+		isMainScreem = false;
 	}
 	
 	public void setSelectContent(JsCarrierPacking js){
@@ -362,29 +428,37 @@ public class CarrierPacking extends AonTemplate{
 	}
 
 	public void southContent(){
-		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);
-		//setSouthContent(new FootPanel(this));
+		FootPanel footPanel = new FootPanel(this);
+		
+		API.getCommon().getAppParam("AON_PACKING_LIST", new AsyncCallback<JSON<JsAppParam>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsAppParam> result) {
+				footPanel.getParameterPanel().setWidget(
+					new CarrierPackingSouth(me).getParameterPanel(result.getData()));
+				setSouthContent(footPanel);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	public void southContentSize(Double size){
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), size);	
 	}
 	public void southContent(JsCarrierPacking js, JsOrder p, AonJsArray<JsOrderDetail> details){
-	/*	FootPanel footPanel = (FootPanel) getSouthContent().getWidget();
+		FootPanel footPanel = (FootPanel) getSouthContent().getWidget();
 		footPanel.openFootPanel();
-		footPanel.getTabLayout().selectTab(0);	
-	*/	
+		footPanel.getTabLayout().selectTab(0);		
 		if(js.getType().getName().equalsIgnoreCase(CarrierPackingType.SHIPMENT_REQUEST.getName())){
-			getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
-			//footPanel.getSelectionPanel().setWidget(new CarrierPackingSouth2(me, js, p, details));
-			setSouthContent(new CarrierPackingSouth2(me, js, p, details));
+			FlowPanel fp = new CarrierPackingSouth2(me, js, p, details).getFlowPanel(p, details);
+			footPanel.getSelectionPanel().setWidget(fp);
 		} else {
-			getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
-			//footPanel.getSelectionPanel().setWidget(new CarrierPackingSouth(me, p, details));
-			setSouthContent(new CarrierPackingSouth(me, p, details));
+			FlowPanel fp = new CarrierPackingSouth(me, p, details).getFlowPanel(p, details);
+			footPanel.getSelectionPanel().setWidget(fp);
 		}
 	}
-	
+
 	private AonDialog createAddDialog(){
 		VerticalPanel v = new VerticalPanel();
 		
@@ -461,4 +535,38 @@ public class CarrierPacking extends AonTemplate{
 		CarrierPackingSouth2 cps = (CarrierPackingSouth2) getSouthContent().getWidget();
 		cps.refresh(order);
 	}
+	
+	public void setParameterPanel(String params){
+		impl.readXml(params, new AsyncCallback<CarrierPackingParams>() {
+			
+			@Override
+			public void onSuccess(CarrierPackingParams result) {
+				FootPanel footPanel = (FootPanel) getSouthContent().getWidget();
+				footPanel.getParameterPanel().setWidget(
+						new CarrierPackingSouth(me).getParameterPanel(result));				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+
+	};
+	
+	public void setParameterPanel(JsCarrierPacking js){
+		impl.readXml(js.getParams(), new AsyncCallback<CarrierPackingParams>() {
+			
+			@Override
+			public void onSuccess(CarrierPackingParams result) {
+				FootPanel footPanel = (FootPanel) getSouthContent().getWidget();
+				footPanel.getParameterPanel().setWidget(
+						new CarrierPackingSouth(me, js).getParameterPanel(result));				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+
+	};
+
+	
 }

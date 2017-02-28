@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
@@ -491,6 +492,25 @@ public class AON {
 	}
 
 	// --------------------- APPLICATION PARAMETERS
+	
+	public static Stream<ApplicationParameter> getApplicationParameterStream(String domainName, Integer domainId, String login, ApplicationParameterFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getApplicationParameterStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static ApplicationParameter getApplicationParameter(String domainName, Integer domainId, String login, String id) {
+		return getApplicationParameterStream(domainName, domainId, login, f -> 
+				f.getDomainProperty().eq(domainId)
+				.and(f.getNameProperty().eq(id))
+				.perPage(1))
+			.findFirst().orElse(new ApplicationParameter()); // TODO Devolver Optional
+	}
 
 	public static FiscalParameters getFiscalParameters(String domainName,
 			int domainId, String login) {
@@ -521,18 +541,6 @@ public class AON {
 		}
 	}
 	
-	public static ApplicationParameter getApplicationParameter(String domainName, Integer domainId, String login,
-			String id) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getApplicationParameter(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
 	public static ApplicationParameter getApplicationParamenter(String domainName, Integer domainId, String login, AppParam param){
 		ApplicationParameter ap = fetchApplicationParameter(domainName, domainId, login, param);
 		return ap != null ? ap : new ApplicationParameter();
@@ -544,6 +552,10 @@ public class AON {
 	}
 	
 	public static ApplicationParameter insertApplicationParameter(String domainName, Integer domainId, String login, AppParam param, String value){
+		return insertApplicationParameter(domainName, domainId, login, param.getValue(), value);
+	}
+	
+	public static ApplicationParameter insertApplicationParameter(String domainName, Integer domainId, String login, String param, String value){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -554,11 +566,11 @@ public class AON {
 		}
 	}
 	
-	public static void insertApplicationParameter(String domainName, Integer domainId, String login, String param, String value){
+	public static void deleteApplicationParameter(String domainName, Integer domainId, String login, ApplicationParameterFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getCommon().insertApplicationParameter(ctx, param, value);
+			getCommon().deleteApplicationParameter(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -3660,7 +3672,5 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
-	
-	
+
 }
