@@ -487,8 +487,10 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	}
 
 	public void linkDeliveryDate(Purchase purchase) throws ManagerBeanException {
-		if ((purchase.getDeliveryDate() != null && getSavedDeliveryDate() == null) || (purchase.getDeliveryDate() == null && getSavedDeliveryDate() != null) ||
-				(!DateUtils.isSameDay(purchase.getDeliveryDate(), getSavedDeliveryDate()))) {
+		if ((purchase.getDeliveryDate() != null && getSavedDeliveryDate() == null) 
+				|| (purchase.getDeliveryDate() == null && getSavedDeliveryDate() != null) 
+				|| (purchase.getDeliveryDate() != null && getSavedDeliveryDate() != null 
+						&& !DateUtils.isSameDay(purchase.getDeliveryDate(), getSavedDeliveryDate()))) {
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
