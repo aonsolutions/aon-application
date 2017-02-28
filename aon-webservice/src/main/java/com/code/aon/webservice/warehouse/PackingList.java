@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.occam.server.warehouse.XMLUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
@@ -103,10 +104,14 @@ public class PackingList {
 			order.add(getSeparator());
 			document.add(order);
 
-			String observation  = json.getJSONObject(MSG.CARRIER_PACKING).getString(MSG.COMMENTS) != null ?
-					json.getJSONObject(MSG.CARRIER_PACKING).getString(MSG.COMMENTS) : "";
+			String observation  = json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") != null ?
+					json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") : "";
+			com.esferalia.aon.occam.server.warehouse.CarrierPackingParams params = XMLUtils.readXml(json.getJSONObject(MSG.CARRIER_PACKING).getString("params"));
+			if(params.getParam() == null){
+				params.setParam(new LinkedList<>());
+			}
 			document.add(new Paragraph(" "));
-			document.add(getObservations(observation, type));		
+			document.add(getObservations(observation, type, params));		
 			document.add(new Paragraph(" "));
 			document.add(new Paragraph(" "));
 			document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
@@ -558,13 +563,14 @@ public class PackingList {
 		return paragraph;
 	}
 
-	public static PdfPTable getObservations(String observation, CarrierPackingType type){
+	public static PdfPTable getObservations(String observation, CarrierPackingType type, com.esferalia.aon.occam.server.warehouse.CarrierPackingParams params){
 		PdfPTable table = new PdfPTable(1);
 		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		table.setWidthPercentage(100);
 		table.addCell(new Paragraph(new Phrase("Observaciones: ", getFont1())));
 		table.addCell(new Paragraph(new Phrase(observation, getFont2())));
-		if(type.equals(CarrierPackingType.WAYBILL)){
+		
+		if(params.getParam().size() > 0){
 			PdfPTable parameters = new PdfPTable(2);
 			PdfPCell cp1 = new PdfPCell(new Phrase("Parámetro",getFont1()));
 			cp1.setBorder(PdfPCell.NO_BORDER);
@@ -573,34 +579,20 @@ public class PackingList {
 			PdfPCell cr1 = new PdfPCell(new Phrase("Resultado",getFont1()));
 			cr1.setBorder(PdfPCell.NO_BORDER);
 			parameters.addCell(cr1);
-		
-			PdfPCell cp2 = new PdfPCell(new Phrase("LIMPIEZA CAMIÓN",getFont2()));
-			cp2.setBorder(PdfPCell.NO_BORDER);
-			parameters.addCell(cp2);
-		
-			PdfPCell cr2 = new PdfPCell(new Phrase("OK",getFont2()));
-			cr2.setBorder(PdfPCell.NO_BORDER);
-			parameters.addCell(cr2);
-		
-			PdfPCell cp3 = new PdfPCell(new Phrase("TEMPERATURA CAMIÓN",getFont2()));
-			cp3.setBorder(PdfPCell.NO_BORDER);
-			parameters.addCell(cp3);
 			
-			PdfPCell cr3 = new PdfPCell(new Phrase("OK",getFont2()));
-			cr3.setBorder(PdfPCell.NO_BORDER);
-			parameters.addCell(cr3);
-		
-			PdfPCell cp4 = new PdfPCell(new Phrase("TEMPERATURA TRANSPORTE",getFont2()));
-			cp4.setBorder(PdfPCell.NO_BORDER);
-			parameters.addCell(cp4);
+			params.getParam().stream().forEach(p -> {
+				PdfPCell cp2 = new PdfPCell(new Phrase(p.getName(),getFont2()));
+				cp2.setBorder(PdfPCell.NO_BORDER);
+				parameters.addCell(cp2);
 			
-			PdfPCell cr4 = new PdfPCell(new Phrase("9ºC",getFont2()));
-			cr4.setBorder(PdfPCell.NO_BORDER);
-			parameters.addCell(cr4);
-		
+				PdfPCell cr2 = new PdfPCell(new Phrase(p.getValue(),getFont2()));
+				cr2.setBorder(PdfPCell.NO_BORDER);
+				parameters.addCell(cr2);
+			});
 			
 			table.addCell(parameters);
 		}
+	
 		return table;
 	}
 	

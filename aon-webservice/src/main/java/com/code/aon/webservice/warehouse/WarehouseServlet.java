@@ -138,6 +138,12 @@ public class WarehouseServlet extends HttpServlet{
 
 	private JSONObject insertCarrierPacking(Domain domain, String login, JSONObject json) {
 		CarrierPacking carrierPacking = getCarrierPacking(domain, login, json, new CarrierPacking());
+		String observation = carrierPacking.getObservation() != null ? carrierPacking.getObservation() : "";
+		if(carrierPacking.getType().equals(CarrierPackingType.SHIPMENT_REQUEST)){
+			carrierPacking.setComments(observation + params(domain, login, "AON_PACKING_LIST_SC%"));
+		} else {
+			carrierPacking.setComments(params(domain, login, "AON_PACKING_LIST_HR%"));	
+		}
 		Integer id = AON.insertCarrierPacking(domain.getName(), domain.getId(), login, carrierPacking);
 		carrierPacking.setId(id);
 		return ToJSON.carrierPackingToJSON(carrierPacking);
@@ -148,6 +154,21 @@ public class WarehouseServlet extends HttpServlet{
 		carrierPacking = getCarrierPacking(domain, login, json, carrierPacking);
 		AON.updateCarrierPacking(domain.getName(), domain.getId(), login, carrierPacking);
 		return ToJSON.carrierPackingToJSON(carrierPacking);
+	}
+	
+	private String params(Domain domain, String login, String name) {
+		StringBuilder params = new StringBuilder("<params>");
+		AON.getApplicationParameterStream(domain.getName(), domain.getId(), login, f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getNameProperty().like(name)))
+		.forEach(app -> {
+			String[] arr = app.getName().split("_");
+			String name2 = arr[arr.length -1]; 
+			params.append("<param><name>" + name2 + "</name>"
+					+ "<value>"+ app.getValue() + "</value></param>");
+		});
+		params.append("</params>");
+		return params.toString();
 	}
 	
 	private JSONObject updatePurchase(Domain domain, String login, Integer id, JSONObject json) {
@@ -271,6 +292,13 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		if(json.opt(MSG.COMMENTS) != null){
 			carrierPacking.setComments(json.getString(MSG.COMMENTS));
+		}
+		
+		if(json.opt("params") != null){
+			carrierPacking.setComments(carrierPacking.getObservation() + json.getString("params"));
+		}
+		if(json.opt("observation") != null){
+			carrierPacking.setComments(json.getString("observation") + carrierPacking.getParams());
 		}
 	
 		return carrierPacking;

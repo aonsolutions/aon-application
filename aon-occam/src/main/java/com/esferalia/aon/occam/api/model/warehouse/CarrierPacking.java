@@ -18,7 +18,11 @@ public class CarrierPacking {
 	private String numberPlate;
 	private String driverName;
 	private String driverDocument;
+	
 	private String comments;
+	private String params;
+	private String observation;
+	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -155,6 +159,36 @@ public class CarrierPacking {
 	}
 	public CarrierPacking setComments(String comments) {
 		this.comments = comments;
+		separateComments(comments);
 		return this;
 	}
+	public String getParams() {
+		return params;
+	}
+	public void setParams(String params) {
+		this.params = params;
+	}
+	public String getObservation() {
+		return observation;
+	}
+	public void setObservation(String observation) {
+		this.observation = observation;
+	}
+
+
+	public void separateComments(String comments) {
+		if(comments == null){
+			comments = "";
+		}
+		Integer a = comments.indexOf("<params>");
+		Integer z = comments.indexOf("</params>") + 9;
+		if(a.equals(-1) || z < 9){
+			setObservation(comments);
+			setParams("");
+		}else {
+			setObservation(comments.substring(0,a) + comments.substring(z));
+			setParams(comments.substring(a,z));
+		}
+	}
+	
 }

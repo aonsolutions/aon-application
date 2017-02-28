@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
@@ -37,12 +38,12 @@ public interface ICommon {
 	// --------------------------------------------
 	// APPLICATION PARATEMER
 	// --------------------------------------------
-	public ApplicationParameter getApplicationParameter(AONContext ctx, String id);
-
+	public Stream<ApplicationParameter> getApplicationParameterStream(AONContext ctx, ApplicationParameterFilter filter);
+	public void deleteApplicationParameter(AONContext ctx, ApplicationParameterFilter filter);
+	
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param);
 	public FiscalParameters getFiscalParameters(AONContext ctx);	
-	public ApplicationParameter insertApplicationParameter(AONContext ctx, AppParam param, String value);
-	public void insertApplicationParameter(AONContext ctx, String param, String value);
+	public ApplicationParameter insertApplicationParameter(AONContext ctx, String param, String value);
 
 	// --------------------------------------------
 	// ENTERPRISE

@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -29,6 +30,14 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public class ToJSON {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
+	public static JSONObject applicationParameterToJSON(ApplicationParameter appParam){	
+		return new JSONObject()
+			.put("id",appParam.getId())
+			.put("domain", appParam.getDomain())
+			.put("name", appParam.getName())
+			.put("value", appParam.getValue());
+	}
 	
 	public static JSONObject raddressToJSON(RAddress address){	
 		String streetType = address.getStreet_type();
@@ -187,6 +196,8 @@ public class ToJSON {
 			.put("driver_name", carrierPacking.getDriverName())
 			.put("driver_document", carrierPacking.getDriverDocument())
 			.put("comments", carrierPacking.getComments() != null ? carrierPacking.getComments() : " ")
+			.put("observation", carrierPacking.getObservation())
+			.put("params", carrierPacking.getParams())
 			.put("creation_date", carrierPacking.getCreationDate() != null ? dateFormat.format(carrierPacking.getCreationDate()): "")
 			.put("creation_user", carrierPacking.getCreationUser())
 			.put("modification_date", carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")

@@ -34,16 +34,24 @@ public class Common extends Methods{
 	
 	// ------------------- APPLICATION PARAMETER (app_param)
 	
-	public void getAppParam(String appParam, AsyncCallback<JSON<JsObject>> callback){
+	public void getAppParam(String appParam, AsyncCallback<JSON<JsAppParam>> callback){
 		get(getUrl() + "common/"+getDomainName()+"/"+getUserName()+"/app_param?param="+appParam, callback);		
 	}
 	
 	public void insertAppParam(String requestData){
 		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/app_param", requestData);
 	}
+	
+	public void insertAppParam(String requestData, AsyncCallback<JsAppParam> callback){
+		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/app_param", requestData, callback);
+	}
 		
 	public void deleteAppParam(String requestData){
-		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/app_param", requestData);
+		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/app_param/delete", requestData);
+	}
+	
+	public void deleteAppParam(String requestData, AsyncCallback<JsAppParam> callback){
+		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/app_param/delete", requestData, callback);
 	}
 	
 }

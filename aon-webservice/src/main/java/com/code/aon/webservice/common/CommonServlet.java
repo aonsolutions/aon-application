@@ -48,7 +48,12 @@ public class CommonServlet extends HttpServlet{
 					object = getSignatureList(domain, userName);
 					break;
 				case "app_param": // PRODUCT CATEGPRY
-					object = new JSONObject();
+					String param = req.getParameter("param");
+					JSONArray array = new JSONArray();
+					AON.getApplicationParameterStream(domain.getName(), domain.getId(), userName, f -> 
+						f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().like(param+"%")))
+					.forEach(app -> array.put(ToJSON.applicationParameterToJSON(app)));
+					object = array;
 					break;
 				default:
 					break;
@@ -74,7 +79,10 @@ public class CommonServlet extends HttpServlet{
 					if(MSG.UPDATE.equals(pathInfo[4])){
 						object = new JSONObject();
 					} else if(MSG.DELETE.equals(pathInfo[4])){
-
+						Integer id = json.getInt("id");
+						AON.deleteApplicationParameter(domain.getName(), domain.getId(), userName, f-> 
+							f.getIdProperty().eq(id).and(f.getDomainProperty().eq(domain.getId())));
+						object = new JSONObject();
 					} 
 				} else {
 					object = insertAppParam(domain, userName, json);
@@ -119,10 +127,10 @@ public class CommonServlet extends HttpServlet{
 		return array;
 	}
   
-	private JSONArray insertAppParam(Domain domain, String login, JSONObject json) {
+	private JSONObject insertAppParam(Domain domain, String login, JSONObject json) {
 		String parameter = json.getString("parameter");
 		String value = json.getString("value");
 		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, parameter, value);
-		return new JSONArray();
+		return new JSONObject();
 	}
 }
