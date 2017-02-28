@@ -43,8 +43,11 @@ import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -421,66 +424,82 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	
 	
 	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran, boolean test) {
-		Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA()
-				.getDATOSAGENCIATRANSPORTE());
-		if(carrier!=null && carrier.getId()!=null){
-			CarrierPacking carrierPacking = null;
-			try {
-				carrierPacking = new CarrierPacking();
-				carrierPacking.setDomain(ctx.getDomainId());
-				carrierPacking.setSeries("IGN"
-						+ new SimpleDateFormat("yy").format(new Date()));
-				carrierPacking.setNumber(null);
-				carrierPacking.setType(CarrierPackingType.WAYBILL);
-				carrierPacking.setStatus(CarrierPackingStatus.PENDING);
-				Date issueDate = null;
+		if(albaran.getDATOSHOJARUTA()!=null) {
+			Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA()
+					.getDATOSAGENCIATRANSPORTE());
+			if(carrier==null || carrier.getId()==null){				
+				DATOSAGENCIATRANSPORTETYPE at = albaran.getDATOSHOJARUTA().getDATOSAGENCIATRANSPORTE();
+				carrier = new Carrier();
+				carrier.setDomain(ctx.getDomainId());
+				carrier.setName(at.getDATOSREGISTRO().getNOMBRE());
+				carrier.setAlias(at.getDATOSREGISTRO().getALIAS());
+				carrier.setDocument(at.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
+				carrier.setDocumentCountry(Country.safeValueOf("ES"));
+				carrier.setDocumentType(DocumentType.NIF);
+				carrier.setNationality(Country.safeValueOf("ES"));
+				carrier.setSecurityLevel(SecurityLevel.OFFICIAL);
+				carrier.setType((byte)1);
+				WarehouseDAO.insertCarrier(ctx, carrier);
+			}
+			if(carrier!=null && carrier.getId()!=null){
+				CarrierPacking carrierPacking = null;
 				try {
-					issueDate = getDateFormatter().parse(albaran.getDATOSHOJARUTA()
-							.getFECHAEMISION());
-				} catch (ParseException e) {
-					issueDate = new Date();
+					carrierPacking = new CarrierPacking();
+					carrierPacking.setDomain(ctx.getDomainId());
+					carrierPacking.setSeries("IGN"
+							+ new SimpleDateFormat("yy").format(new Date()));
+					carrierPacking.setNumber(null);
+					carrierPacking.setType(CarrierPackingType.WAYBILL);
+					carrierPacking.setStatus(CarrierPackingStatus.PENDING);
+					Date issueDate = null;
+					try {
+						issueDate = getDateFormatter().parse(albaran.getDATOSHOJARUTA()
+								.getFECHAEMISION());
+					} catch (ParseException e) {
+						issueDate = new Date();
+					}
+					carrierPacking.setIssueDate(issueDate);
+					carrierPacking.setCarrier(carrier.getId());
+					carrierPacking.setDeliveryDate(null);
+					carrierPacking.setCarrierReference(albaran.getDATOSHOJARUTA()
+							.getREFERNCIAAGENCIATRANSPORTE());
+					carrierPacking.setNumberPlate(albaran.getDATOSHOJARUTA()
+							.getNUMEROMATRICULA());
+					carrierPacking.setDriverName(albaran.getDATOSHOJARUTA()
+							.getNOMBRECONDUCTOR());
+					carrierPacking.setDriverDocument(albaran.getDATOSHOJARUTA()
+							.getDOCUMENTOCONDUCTOR());
+				} catch (Throwable th) {
+					addError(albaran, th.getLocalizedMessage());
 				}
-				carrierPacking.setIssueDate(issueDate);
-				carrierPacking.setCarrier(carrier.getId());
-				carrierPacking.setDeliveryDate(null);
-				carrierPacking.setCarrierReference(albaran.getDATOSHOJARUTA()
-						.getREFERNCIAAGENCIATRANSPORTE());
-				carrierPacking.setNumberPlate(albaran.getDATOSHOJARUTA()
-						.getNUMEROMATRICULA());
-				carrierPacking.setDriverName(albaran.getDATOSHOJARUTA()
-						.getNOMBRECONDUCTOR());
-				carrierPacking.setDriverDocument(albaran.getDATOSHOJARUTA()
-						.getDOCUMENTOCONDUCTOR());
-			} catch (Throwable th) {
-				addError(albaran, th.getLocalizedMessage());
-			}
-			try {
-				if(!test){
-					WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
+				try {
+					if(!test){
+						WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
+					}
+				} catch (Throwable th) {
+					addError(albaran, th.getLocalizedMessage());
 				}
-			} catch (Throwable th) {
-				addError(albaran, th.getLocalizedMessage());
+			} else {
+				String document = albaran.getDATOSHOJARUTA()
+						.getDATOSAGENCIATRANSPORTE().getDATOSREGISTRO()
+						.getDATOSDOCUMENTO().getDOCUMENTO();
+				addError(albaran, "Agencia de transporte no dada de alta: "
+						+ document);
 			}
-		} else {
-			String document = albaran.getDATOSHOJARUTA()
-					.getDATOSAGENCIATRANSPORTE().getDATOSREGISTRO()
-					.getDATOSDOCUMENTO().getDOCUMENTO();
-			addError(albaran, "Agencia de transporte no dada de alta: "
-					+ document);
 		}
 	}
 	
 
 	private Carrier obtainCarrier(AONContext ctx,
 			DATOSAGENCIATRANSPORTETYPE datosagenciatransportetype) {
-		Byte type = Byte.valueOf(datosagenciatransportetype.getDATOSREGISTRO()
-				.getDATOSDOCUMENTO().getTIPODOCUMENTO());
+//		Byte type = Byte.valueOf(datosagenciatransportetype.getDATOSREGISTRO()
+//				.getDATOSDOCUMENTO().getTIPODOCUMENTO());
 		String document = datosagenciatransportetype.getDATOSREGISTRO()
 				.getDATOSDOCUMENTO().getDOCUMENTO();
 		Carrier carrier = RegistryDAO.getCarrierStream(
 				ctx,
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getDocumentTypeProperty().eq(type))
+//						.and(f.getDocumentTypeProperty().eq(type))
 						.and(f.getDocumentProperty().eq(document))).findFirst().orElse(new Carrier());
 		return carrier;
 	}
