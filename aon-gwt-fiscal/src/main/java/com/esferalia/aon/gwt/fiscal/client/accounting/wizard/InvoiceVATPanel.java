@@ -413,7 +413,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			surchargeQuota.setStyleName(AON.AON_CSS.aonInputText());
 			surchargeQuota.addStyleName(AON.AON_CSS.aonTextRight());
 			surchargeQuota.setValue(vat.getSurchargeQuota());
-			vatQuota.setEnabled(false);
+			surchargeQuota.setEnabled(false);
 			surchargeQuota.setVisible(callback.getInvoice().isSurcharge());
 			reQuotaLabel.setVisible(callback.getInvoice().isSurcharge());
 			surchargeQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
