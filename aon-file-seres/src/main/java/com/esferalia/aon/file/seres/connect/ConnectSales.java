@@ -80,7 +80,7 @@ public class ConnectSales extends AbstractFileFiller {
 			createLine(RECTL, properties);
 			
 			if(rectl.ere1c==null) {
-				Fd0Exception e = new Fd0Exception( "ERE1C", "La entidad ERE1C es obligatoria");
+				Fd0Exception e = new Fd0Exception( "ERE1C", "Cabecera. La entidad 'ERE1C' es obligatoria");
 				exceptions.add (e);
 			} else {				
 				properties.put(ERE1C, rectl.ere1c);
@@ -93,7 +93,7 @@ public class ConnectSales extends AbstractFileFiller {
 			}
 
 			if(rectl.ere1pList==null || rectl.ere1pList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "ERE1P", "La entidad ERE1P es obligatoria");
+				Fd0Exception e = new Fd0Exception( "ERE1P", "Información de partes. La entidad 'ERE1P' es obligatoria");
 				exceptions.add (e);
 			} else {					
 				for (ERE1P value: rectl.ere1pList) {
@@ -118,7 +118,7 @@ public class ConnectSales extends AbstractFileFiller {
 			}
 			
 			if(rectl.ere1lList==null || rectl.ere1lList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "ERE1L", "La entidad ERE1L es obligatoria");
+				Fd0Exception e = new Fd0Exception( "ERE1L", "Línea detalle. La entidad 'ERE1L' es obligatoria");
 				exceptions.add (e);
 			} else {
 				for (ERE1L value: rectl.ere1lList) {
@@ -152,7 +152,7 @@ public class ConnectSales extends AbstractFileFiller {
 			}
 		}
 		output.flush();
-		writeErrorsFile();
+//		writeErrorsFile();
 		return exceptions;
 	}
 		

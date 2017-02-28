@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -204,27 +205,35 @@ public class FtpDeliveryUploadHandler implements Serializable {
 					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
 
-			// writer file
+			// write file
 			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
 			output = writer.createFile(delivery, companyEdiCode,
 					customerEdiCode, deliveryPointEdiCode);
-
-			// upload file
-			String referenceCode = delivery.getSeries()+"_"+delivery.getNumber();
-			byte[] data = output.getContent();
-			InputStream inputStream = new BufferedInputStream(
-					new ByteArrayInputStream(data));
-
-			boolean success = storeFtpFile("albaran-" + referenceCode + ".edi",
-					inputStream);
-
-			// TODO: mark this delivery as sended 
-			if (success)
-				AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
-			else
-				AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
-
-			IOUtils.closeQuietly(inputStream);
+			
+			if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
+				for(Exception e: output.getErrors()){
+					Fd0Exception fd0 = (Fd0Exception) e;
+					AonUtil.addErrorMessage(fd0.getDetail());
+				}
+			} else {				
+				// upload file
+				String referenceCode = delivery.getSeries()+"_"+delivery.getNumber();
+				byte[] data = output.getContent();
+				InputStream inputStream = new BufferedInputStream(
+						new ByteArrayInputStream(data));
+				
+				boolean success = storeFtpFile("alb-" + referenceCode + ".edi",
+						inputStream);
+				
+				// TODO: mark this delivery as sended 
+				if (success)
+					AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
+				else
+					AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
+				
+				IOUtils.closeQuietly(inputStream);
+			}
+			
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);

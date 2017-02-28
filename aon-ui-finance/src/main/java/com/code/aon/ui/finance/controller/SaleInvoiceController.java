@@ -375,12 +375,12 @@ public class SaleInvoiceController extends InvoiceController {
 			output = getFtpEdiUploader().exportEdiFile(invoice);
 
 			// download file
-			String name = "factura";
-			String number = invoice.getReferenceCode();
+			String fileName = "inv_" + invoice.getSeries()+"_"+invoice.getNumber();
+			String fileExt = output.getErrors().size()>0?"err":"edi";
 			byte[] data = output.getContent();
 			int size = data.length;
 			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, name + "-" + number + ".edi",
+			out = DownloadUtil.initDownload(response, fileName + "." + fileExt,
 					null, size);
 			InputStream fileIn = new BufferedInputStream(
 					new ByteArrayInputStream(data));
@@ -420,11 +420,11 @@ public class SaleInvoiceController extends InvoiceController {
 			output = writer.createFile(invoice, getPriceStrategy(), companyEdiCode, customerEdiMainCode, customerEdiOperationCode);
 			
 			// download file
-			String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
+			String fileName = "inv_" + invoice.getSeries()+"_"+invoice.getNumber();
 			byte[] data = output.getContent();
 			int size = data.length;
 			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, "factura-" + referenceCode + ".edi", null, size);
+			out = DownloadUtil.initDownload(response, fileName + ".edi", null, size);
 			InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
 			IOUtils.copy( fileIn, out );
 			IOUtils.closeQuietly(fileIn);

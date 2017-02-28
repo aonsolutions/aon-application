@@ -18,6 +18,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -193,23 +194,30 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 		try {
 			Invoice invoice = (Invoice) controller.getTo();
 			output = exportEdiFile(invoice);
-
-			// upload file
-			String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
-			byte[] data = output.getContent();
-			InputStream inputStream = new BufferedInputStream(
-					new ByteArrayInputStream(data));
-
-			boolean success = storeFtpFile("factura-" + referenceCode + ".edi",
-					inputStream);
-
-			// TODO: mark this invoice as sended 
-			if (success)
-				AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
-			else
-				AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
-
-			IOUtils.closeQuietly(inputStream);
+			
+			if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
+				for(Exception e: output.getErrors()){
+					Fd0Exception fd0 = (Fd0Exception) e;
+					AonUtil.addErrorMessage(fd0.getDetail());
+				}
+			} else {
+				// upload file
+				String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
+				byte[] data = output.getContent();
+				InputStream inputStream = new BufferedInputStream(
+						new ByteArrayInputStream(data));
+				
+				boolean success = storeFtpFile("factura-" + referenceCode + ".edi",
+						inputStream);
+				
+				// TODO: mark this invoice as sended 
+				if (success)
+					AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
+				else
+					AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
+				
+				IOUtils.closeQuietly(inputStream);
+			}
 		} catch (Throwable e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -242,7 +250,7 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 
 				return output;
 			} else {
-				throw new AonCoreException("");
+				throw new AonCoreException("La factura no tiene direccion.");
 			}
 		} catch (IOException e) {
         	AonUtil.addErrorMessage(e.getMessage());
