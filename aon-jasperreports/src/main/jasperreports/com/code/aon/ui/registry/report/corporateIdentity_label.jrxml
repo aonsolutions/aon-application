@@ -147,7 +147,7 @@
 				<text><![CDATA[Destinatario:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="5978410a-a653-4937-831f-98d45f872b2a" key="textField-48" x="23" y="148" width="495" height="42"/>
+				<reportElement uuid="5978410a-a653-4937-831f-98d45f872b2a" key="textField-48" x="23" y="148" width="495" height="42" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
