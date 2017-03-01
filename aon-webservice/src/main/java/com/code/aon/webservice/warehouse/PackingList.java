@@ -66,39 +66,25 @@ public class PackingList {
 			JSONArray orders  = json.getJSONArray("orders");	
 			Double totalPackages = 0.0;
 			Double totalWeight = 0.0;
+			
 			for(Integer i = 0 ; i < orders.length() ; i++){				
 				document.add(order(orders.getJSONObject(i), type));
-				if(type.equals(CarrierPackingType.WAYBILL)){
+				if(type.equals(CarrierPackingType.WAYBILL)){				
 					if(orders.getJSONObject(i).opt("total_packages") != null){
 						totalPackages = totalPackages + orders.getJSONObject(i).getDouble("total_packages");
 					}
 					if(orders.getJSONObject(i).opt("total_weight") != null){
 						totalWeight = totalWeight + orders.getJSONObject(i).getDouble("total_weight");
 					}
-					PdfPTable t = new PdfPTable(2);
-					float[] medidaCeldas = {2f, 1f};
-					try {
-						t.setWidths(medidaCeldas);
-					} catch (DocumentException e) {
-						LOGGER.log(Level.SEVERE, e.getMessage());
-					}
-					t.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-					t.setWidthPercentage(100);
-					t.addCell("");
-					
-					if(totalPackages != null && totalPackages != 0.0){
-						t.addCell(new Phrase("Bultos: " + AonMathUtils.round(totalPackages), getFont1()));
-					}else t.addCell("");
-					t.addCell("");
-					if(totalWeight != null && totalWeight != 0.0){
-						t.addCell(new Phrase("Peso: " +  AonMathUtils.round(totalWeight), getFont1()));
-					}else t.addCell("");
-					
-					document.add(t);
 				}
 				document.add(new Paragraph(" "));
-
 			}
+			
+			
+			if(type.equals(CarrierPackingType.WAYBILL)){	
+				document.add(totalQuantity(orders, totalPackages, totalWeight));
+			}
+			
 			
 			Paragraph order = new Paragraph(" ");
 			order.add(getSeparator());
@@ -510,8 +496,8 @@ public class PackingList {
 				if(formatList.size() > 1){
 					str2 = formatList.get(1) + " " + AonMathUtils.round(formatMap.get(formatList.get(1))); 
 					formatCont++;
-				} else if(measurementList.size() > 1){
-					str2 = measurementList.get(1) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(1))); 
+				} else if(measurementList.size() > measurementCont){
+					str2 = measurementList.get(measurementCont) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(measurementCont))); 
 					measurementCont++;
 				}
 				PdfPCell cx2 = new PdfPCell(new Phrase(str2, getFont1()));
@@ -600,6 +586,117 @@ public class PackingList {
 		return table;
 	}
 	
+	private static HashMap<String, Double> getMeasurementMap(JSONArray orders) {
+		HashMap<String, Double> measurementMap = new HashMap<>();
+		for(Integer j = 0 ; j < orders.length() ; j++){
+			JSONArray details  = orders.getJSONObject(j).getJSONArray("details");	
+			for(Integer i = 0 ; i < details.length() ; i++){
+				Double quantity = details.getJSONObject(i).getDouble("quantity");
+				String measurementTag = "";
+				if(details.getJSONObject(i).opt("measurements_tag") != null){
+					measurementTag = details.getJSONObject(i).getString("measurements_tag");
+					if(measurementMap.containsKey(measurementTag)){
+						measurementMap.put(measurementTag, measurementMap.get(measurementTag) + quantity);
+					} else measurementMap.put(measurementTag, quantity);
+				}
+			}
+		}
+		return measurementMap;
+	}
+	 
+	private static HashMap<String, Double> getFormatMap(JSONArray orders) {
+		HashMap<String, Double> formatMap = new HashMap<>();
+		for(Integer j = 0 ; j < orders.length() ; j++){
+			JSONArray details  = orders.getJSONObject(j).getJSONArray("details");	
+			for(Integer i = 0 ; i < details.length() ; i++){
+				Double measurements = details.getJSONObject(i).getDouble("measurements");
+				Double units = details.getJSONObject(i).getDouble("units");
+				Double quantity = details.getJSONObject(i).getDouble("quantity");
+				Double format = (quantity / (units != null && units != 0.0 ? units : 1))
+					/ (measurements != null && measurements != 0.0 ? measurements : 1);
+			
+				String formatTag = "";
+				if(details.getJSONObject(i).opt("format_tag") != null){
+					formatTag = details.getJSONObject(i).getString("format_tag");
+					if(formatMap.containsKey(formatTag)){
+						formatMap.put(formatTag, formatMap.get(formatTag) + format);
+					} else formatMap.put(formatTag, format);
+				}
+			}
+		}
+		return formatMap;
+	}
+	
+	private static PdfPTable totalQuantity(JSONArray orders, Double totalPackages,Double totalWeight){
+		HashMap<String, Double> formatMap = getFormatMap(orders);
+		HashMap<String, Double> measurementMap = getMeasurementMap(orders);
+
+		LinkedList<String> formatList = new LinkedList<>(formatMap.keySet());
+		Integer formatCont = 0;
+		LinkedList<String> measurementList = new LinkedList<>(measurementMap.keySet());
+		Integer measurementCont = 0;
+
+		PdfPTable t = new PdfPTable(3);
+		float[] medidaCeldas = {4f, 1f, 1f};
+		try {
+			t.setWidths(medidaCeldas);
+		} catch (DocumentException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+		t.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		t.setWidthPercentage(100);
+		
+	
+		if(totalPackages != null && totalPackages != 0.0){
+			t.addCell("");
+			t.addCell(new Phrase("Bultos: " + AonMathUtils.round(totalPackages), getFont1()));
+			String str1 = "";
+			if(formatList.size() > 0){
+				str1 = formatList.get(0) + " " + AonMathUtils.round(formatMap.get(formatList.get(0))); 
+				formatCont++;
+			} else if(measurementList.size() > 0){
+				str1 = measurementList.get(0) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(0))); 
+				measurementCont++;
+			}
+			PdfPCell cx1 = new PdfPCell(new Phrase(str1, getFont1()));
+			cx1.setBorder(PdfPCell.NO_BORDER);
+			t.addCell(cx1);
+		}
+		if(totalWeight != null && totalWeight != 0.0){
+			t.addCell("");
+			t.addCell(new Phrase("Peso: " +  AonMathUtils.round(totalWeight), getFont1()));
+			String str2 = "";
+			if(formatList.size() > 1){
+				str2 = formatList.get(1) + " " + AonMathUtils.round(formatMap.get(formatList.get(1))); 
+				formatCont++;
+			} else if(measurementList.size() > measurementCont){
+				str2 = measurementList.get(measurementCont) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(measurementCont))); 
+				measurementCont++;
+			}
+			PdfPCell cx2 = new PdfPCell(new Phrase(str2, getFont1()));
+			cx2.setBorder(PdfPCell.NO_BORDER);
+			t.addCell(cx2);
+		}
+		for(Integer i = formatCont; i < formatList.size(); i++){
+			t.addCell("");
+			t.addCell("");
+			String stri = formatList.get(i) + " " + AonMathUtils.round(formatMap.get(formatList.get(i))); 
+			PdfPCell cxi = new PdfPCell(new Phrase(stri, getFont1()));
+			cxi.setBorder(PdfPCell.NO_BORDER);
+			t.addCell(cxi);
+		}
+		for(Integer j = measurementCont; j < measurementList.size(); j++){
+			t.addCell("");
+			t.addCell("");
+
+			String strj = measurementList.get(j) + " " + AonMathUtils.round(measurementMap.get(measurementList.get(j))); 
+			PdfPCell cxj = new PdfPCell(new Phrase(strj, getFont1()));
+			cxj.setBorder(PdfPCell.NO_BORDER);
+			t.addCell(cxj);
+		}	
+		return t;
+	}
+
 	// ------------------- FONTS
 	private static Font getTitleFont(){
 		Font font = new Font();
