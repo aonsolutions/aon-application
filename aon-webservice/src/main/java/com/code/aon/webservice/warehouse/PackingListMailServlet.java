@@ -1,8 +1,10 @@
 package com.code.aon.webservice.warehouse;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +62,7 @@ public class PackingListMailServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
 
 		JSONObject json = Utils.getRequestJSON(req);
-		
+
 		Integer carrier_packing = json.getInt(MSG.CARRIER_PACKING);
 		Integer mail_account = json.getInt(MSG.MAIL_ACCOUNT);
 		Integer signature_id = json.getInt(MSG.SIGNATURE);
@@ -76,7 +78,13 @@ public class PackingListMailServlet extends HttpServlet{
 	}
 		
 	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type, String to, Integer order){
+		msg = "";
 		if(MSG.CARRIER.equalsIgnoreCase(type)){
+			
+			String str = "domain="+ domain.getName() + "&login="+ login + "&id="+carrierPacking.getId();
+			String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+			String url = "http://" + domain.getName() + "/aon_gwt_aio/download_packing_list/"+base;
+			msg = msg + "<div><a href=\""+ url+"\"> PDF </a></div>";
 			printCarrierPacking(carrierPacking);
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 				AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
@@ -189,7 +197,7 @@ public class PackingListMailServlet extends HttpServlet{
 	
 	private void printCarrierPacking(CarrierPacking carrierPacking){
 		SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
-		msg = "<div style='margin-left: -30px;'>"
+		msg = msg + "<div style='margin-left: -30px;'>"
 				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>"
 				+"<p></p><table style='border: 1px solid #CCC;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
 				+"<tr>"
@@ -321,7 +329,7 @@ public class PackingListMailServlet extends HttpServlet{
 	
 	protected void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
-			String url = "http://"+domainName+ "/aon-aio/send_email/";
+			String url = "http://"+domainName+ "/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();

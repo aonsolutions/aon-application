@@ -56,6 +56,7 @@ public class CarrierPackingPanel extends Composite{
 		initWidget(binder.createAndBindUi(this));
 		this.API = carrierPacking.API;
 		this.parent = carrierPacking;
+		addObservations.setVisible(false);
 		load();
 	}
 	
@@ -64,6 +65,7 @@ public class CarrierPackingPanel extends Composite{
 		this.API = carrierPacking.API;
 		this.parent = carrierPacking;
 		this.jsCarrierPacking = js;
+		addObservations.setVisible(false);
 		load();
 	}
 	
@@ -335,5 +337,9 @@ public class CarrierPackingPanel extends Composite{
 
 	public JsCarrierPacking getJsCarrierPacking() {
 		return jsCarrierPacking;
+	}
+	
+	public void setJsCarrierPacking(JsCarrierPacking js) {
+		jsCarrierPacking = js;
 	}
 }

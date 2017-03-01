@@ -140,9 +140,9 @@ public class WarehouseServlet extends HttpServlet{
 		CarrierPacking carrierPacking = getCarrierPacking(domain, login, json, new CarrierPacking());
 		String observation = carrierPacking.getObservation() != null ? carrierPacking.getObservation() : "";
 		if(carrierPacking.getType().equals(CarrierPackingType.SHIPMENT_REQUEST)){
-			carrierPacking.setComments(observation + params(domain, login, "AON_PACKING_LIST_SC%"));
+			carrierPacking.setComments(observation + params(domain, login, "AON_PL_SC%"));
 		} else {
-			carrierPacking.setComments(params(domain, login, "AON_PACKING_LIST_HR%"));	
+			carrierPacking.setComments(params(domain, login, "AON_PL_HR%"));	
 		}
 		Integer id = AON.insertCarrierPacking(domain.getName(), domain.getId(), login, carrierPacking);
 		carrierPacking.setId(id);

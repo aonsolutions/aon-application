@@ -343,7 +343,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		VerticalPanel panel = new VerticalPanel();
 		PaperInput param = new PaperInput();
 		param.setDisabled(true);
-		param.setLabel("Parametro");
+		param.setLabel("Par\u00e1metro");
 		param.setValue(parameter);
 		panel.add(param);
 		
@@ -352,7 +352,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		value.setValue(js.getValue());
 		panel.add(value);
 		
-		AonDialog dialog = new AonDialog("Nuevo Parametro", panel) {
+		AonDialog dialog = new AonDialog("Nuevo Par\u00e1metro", panel) {
 			
 			@Override protected void onCancel() {hide();}
 			
@@ -379,9 +379,9 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 	private void deleteParameter(JsAppParam js) {
 		String[] arr = js.getName().split("_");
 		String parameter = arr[arr.length-1];
-		Label label = new Label("Esta seguro que quiere borrar el parametro "+ parameter);
+		Label label = new Label("Est\u00e1 seguro que quiere borrar el par\u00e1metro "+ parameter);
 		
-		AonDialog dialog = new AonDialog("Nuevo Parametro", label) {
+		AonDialog dialog = new AonDialog("Borrar Parametro", label) {
 			
 			@Override protected void onCancel() {hide();}
 			
@@ -457,7 +457,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		VerticalPanel panel = new VerticalPanel();
 		PaperInput param = new PaperInput();
 		param.setDisabled(true);
-		param.setLabel("Parametro");
+		param.setLabel("Par\u00e1metro");
 		param.setValue(parameter.getName());
 		panel.add(param);
 		
@@ -466,7 +466,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		value.setValue(parameter.getValue());
 		panel.add(value);
 		
-		AonDialog dialog = new AonDialog("Editar Parametro", panel) {
+		AonDialog dialog = new AonDialog("Editar Par\u00e1metro", panel) {
 			
 			@Override protected void onCancel() {hide();}
 			
@@ -507,9 +507,9 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 	}
 	
 	private void deleteParameter(CarrierPackingParams params, Param parameter) {
-		Label label = new Label("Esta seguro que quiere borrar el parametro "+ parameter.getName());
+		Label label = new Label("Est\u00e1 seguro que quiere borrar el par\u00e1metro "+ parameter.getName());
 		
-		AonDialog dialog = new AonDialog("Nuevo Parametro", label) {
+		AonDialog dialog = new AonDialog("Borrar Par\u00e1metro", label) {
 			
 			@Override protected void onCancel() {hide();}
 			
