@@ -182,7 +182,7 @@ public class ProductTest {
 	@Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateItem(){
-		Item item = ProductDAO.getItem(ctx, 1);
+		Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);
 		if(item != null){
 			item = new Item();
 			item.setDomain(ctx.getDomainId());
@@ -213,7 +213,7 @@ public class ProductTest {
 	@Test
 	@Ignore
 	public void testDeleteItem() {
-		Item item = ProductDAO.getItem(ctx, 1);
+		Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);
 		if(item != null){
 			AON.deleteItem(ctx,item);
 		}

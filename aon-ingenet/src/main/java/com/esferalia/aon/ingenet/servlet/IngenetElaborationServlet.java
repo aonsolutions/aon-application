@@ -199,7 +199,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private RESPUESTAELABORACIONES fillElaborationData(AONContext ctx, List<Elaboration> pendingList) {
 		RESPUESTAELABORACIONES elaboraciones = new RESPUESTAELABORACIONES();
 		pendingList.forEach(elaboration -> {
-			Item item = ProductDAO.getItem(ctx, elaboration.getItem().getId());
+			Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+					elaboration.getItem().getId());
 			Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
 			SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
 			Sales sales = obtainSales(ctx, salesDetail.getSales());

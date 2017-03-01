@@ -139,6 +139,7 @@ public class FillerDAO {
 			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
 			detail.setCarrierPacking(r.getValue(PURCHASE_DETAIL.CARRIER_PACKING));
 			
+			detail.setProductId(r.getValue(Product.PRODUCT.ID));
 			detail.setProductCode(r.getValue(Product.PRODUCT.CODE));
 			detail.setProductName(r.getValue(Product.PRODUCT.NAME));
 	
@@ -222,6 +223,7 @@ public class FillerDAO {
 		@Override
 		public DeliveryDetail apply(Record r) {
 			return super.apply(r)
+					.setProductId(r.getValue(PRODUCT.ID))
 					.setProductCode(r.getValue(PRODUCT.CODE))
 					.setProductName(r.getValue(PRODUCT.NAME));
 		}

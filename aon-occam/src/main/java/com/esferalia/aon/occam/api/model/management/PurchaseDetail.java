@@ -37,6 +37,7 @@ public class PurchaseDetail implements Serializable {
 	private Date modificationDate;
 	private String modificationUser;
 	
+	private Integer productId;
 	private String productCode;
 	private String productName;
 	
@@ -219,5 +220,12 @@ public class PurchaseDetail implements Serializable {
 	public void setCarrier(Integer carrier) {
 		this.carrier = carrier;
 	}
+	public Integer getProductId() {
+		return productId;
+	}
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+	
 	
 }

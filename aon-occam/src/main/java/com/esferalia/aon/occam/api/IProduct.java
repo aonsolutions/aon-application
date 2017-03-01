@@ -33,9 +33,7 @@ public interface IProduct {
 	public void deleteProductTag(AONContext ctx,Stream<ProductTag> pts);	
 		
 	// ITEM
-	public Item getItem(AONContext ctx, Integer itemId);
-	public Item getItem(AONContext ctx, ItemFilter filter);
-	public LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter);
+	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter);
 	public void insertItem(AONContext ctx, Item i);
 	public void insertItemWithId(AONContext ctx,Item i);
 	public void insertItem(AONContext ctx, Stream<Item> is);

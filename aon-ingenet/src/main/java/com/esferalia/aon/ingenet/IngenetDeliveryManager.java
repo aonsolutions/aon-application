@@ -11,6 +11,7 @@ import org.jooq.Configuration;
 import org.jooq.TransactionalRunnable;
 
 import com.esferalia.aon.ingenet.util.IngenetContext;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
@@ -222,7 +223,7 @@ public class IngenetDeliveryManager {
 	private Item createNewItem(AONContext ctx, int domainId, Integer itemId,
 			String serialNumber, Date serialDate) {
 		if (serialNumber != null && serialDate != null) {
-			Item newItem = ProductDAO.getItem(ctx, itemId);
+			Item newItem = AON.getItem(ctx.getDomainName(),ctx.getDomainId(), ctx.getUser(), itemId);
 			newItem.setId(null);
 			newItem.setBarcode(null);
 			newItem.setSerialNumber(serialNumber);
@@ -232,8 +233,8 @@ public class IngenetDeliveryManager {
 			newItem.setStatus(Integer.valueOf(
 					ProductStatus.DISCONTINUED.ordinal()).byteValue());
 			ProductDAO.insert(ctx, newItem);
-			return ProductDAO.getItem(
-					ctx,
+			return AON.getItem(
+					ctx.getDomainName(),ctx.getDomainId(), ctx.getUser(),
 					o -> o.getDomainProperty()
 							.eq(domainId)
 							.and(o.getSerialNumberProperty().eq(
@@ -276,7 +277,8 @@ public class IngenetDeliveryManager {
 			Integer itemId) {
 		AONContext ctx = IngenetContext.getAONContext(domainName,
 				IngenetContext.getUdapaDomainId(), user);
-		return ProductDAO.getItem(ctx, o -> o.getIdProperty().eq(itemId));
+		return AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+				o -> o.getIdProperty().eq(itemId));
 	}
 
 	private Item obtainAonItem(String domainName, String user,
@@ -290,8 +292,7 @@ public class IngenetDeliveryManager {
 								.and(o.getDomainProperty().eq(currentDomainId)))
 				.findFirst().orElse(null);
 		if(product!=null && product.getId()!=null){
-			return ProductDAO.getItem(
-					ctx,
+			return AON.getItem(domainName, currentDomainId, user,
 					o -> o.getProductProperty().eq(product.getId())
 					.and(o.getDomainProperty().eq(currentDomainId)));
 		}
