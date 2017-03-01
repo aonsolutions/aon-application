@@ -453,10 +453,14 @@ public class PackingList {
 					measurementMap.put(measurementTag, measurementMap.get(measurementTag) + quantity);
 				} else measurementMap.put(measurementTag, quantity);
 			}
-			
-			PdfPCell c2 = new PdfPCell(new Phrase(AonMathUtils.round(format) + " " + formatTag, getFont2()));
+			String formatStr = AonMathUtils.round(format) + " " + formatTag;
+			String quantityStr = AonMathUtils.round(quantity) + " " + measurementTag;
+			if(quantityStr.equals(formatStr)){
+				formatStr = "";
+			}
+			PdfPCell c2 = new PdfPCell(new Phrase(formatStr, getFont2()));
 			c2.setBorder(PdfPCell.NO_BORDER);
-			PdfPCell c3 = new PdfPCell(new Phrase(AonMathUtils.round(quantity) + " " + measurementTag, getFont2()));
+			PdfPCell c3 = new PdfPCell(new Phrase(quantityStr, getFont2()));
 			c3.setBorder(PdfPCell.NO_BORDER);
 			detail.addCell(c1);
 			detail.addCell(c2);
