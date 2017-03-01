@@ -501,7 +501,7 @@
 				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="b987e7c3-d652-48a1-b6bf-f78d59b8017c" key="textField-23" mode="Opaque" x="21" y="197" width="371" height="20" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="b987e7c3-d652-48a1-b6bf-f78d59b8017c" key="textField-23" positionType="Float" mode="Opaque" x="21" y="197" width="371" height="20" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -515,7 +515,7 @@
 				<textFieldExpression><![CDATA[$R{aon_description}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="3c403dcd-064a-4a7c-87ed-9783e1d4a412" key="textField-23" mode="Opaque" x="393" y="197" width="117" height="20" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="3c403dcd-064a-4a7c-87ed-9783e1d4a412" key="textField-23" positionType="Float" mode="Opaque" x="393" y="197" width="117" height="20" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
