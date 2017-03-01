@@ -460,7 +460,9 @@ public class AccountEntryModule extends MainEntryPoint {
 			activity.setEnabled(canEdit);
 			int i = 0;
 			for (; i < activity.getItemCount(); i++) {
-				if (AonNumberUtils.toInteger(activity.getValue(i)) == wizardContent.getMainEntry().getActivity()) {
+				Integer a = AonNumberUtils.toInteger(activity.getValue(i));
+				Integer b = wizardContent.getMainEntry().getActivity();
+				if (AonNumberUtils.equals(a,b)) {
 					activity.setSelectedIndex(i);
 					break;
 				}
