@@ -18,6 +18,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.esferalia.aon.ingenet.util.IngenetContext;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -166,11 +167,11 @@ public class IngenetSalesManager {
 	}
 	
 	private Integer obtainItemId(AONContext ctx, Integer domainId, Integer productId, Item item){
-		return ProductDAO.getItemId(ctx, 
+		return AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
 				p -> p.getDomainProperty().eq(domainId)
 				.and(p.getProductProperty().eq(productId))
 				.and(item.getDetail()!=null?p.getDetailProperty().eq(item.getDetail()):p.getDetailProperty().isNull())
-				);
+				).getId();
 	}
 	
 	private void createSalesLines(AONContext ctx, Integer salesId, List<ITransferObject> list) {

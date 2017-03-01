@@ -11,6 +11,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
@@ -18,7 +19,6 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 
 public class ElaborationViewController implements Serializable {
@@ -89,7 +89,7 @@ public class ElaborationViewController implements Serializable {
 	}
 	
 	private Item obtainItem(AONContext ctx,Integer itemId){
-		return ProductDAO.getItem(ctx, itemId);
+		return AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), itemId);
 	}
 	
 	public String getRowItemDescription(){
@@ -98,7 +98,7 @@ public class ElaborationViewController implements Serializable {
 			Integer itemId = elaboration.getItem().getId();
 			AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(),
 					DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
-			Item item = ProductDAO.getItem(ctx, itemId);
+			Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), itemId);
 			return item.getDescription();
 		}
 		return "...";

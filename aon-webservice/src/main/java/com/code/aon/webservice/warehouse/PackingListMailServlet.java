@@ -78,13 +78,17 @@ public class PackingListMailServlet extends HttpServlet{
 	}
 		
 	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type, String to, Integer order){
-		msg = "";
+		msg = "<div> Estimado Colaborador, </div><div><p></p></div>";
+		Boolean isSC = CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType());
+		String str = "domain="+ domain.getName() + "&login="+ login + "&id="+carrierPacking.getId();
+		String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+		String url = "http://" + domain.getName() + "/aon_gwt_aio/download_packing_list/"+base;
+		String pdf = "Le adjuntamos copia de la" + (isSC ? " solicitud de carga ": " hoja de ruta ")
+				+ carrierPacking.getSeries() +"/" + carrierPacking.getNumber()
+				+ " en formato pdf, pulse " + "<a href=\""+ url+"\"> AQUI </a>" + " para descargar.";
+
+		msg = msg + "<div>"+ pdf +"</div>";
 		if(MSG.CARRIER.equalsIgnoreCase(type)){
-			
-			String str = "domain="+ domain.getName() + "&login="+ login + "&id="+carrierPacking.getId();
-			String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-			String url = "http://" + domain.getName() + "/aon_gwt_aio/download_packing_list/"+base;
-			msg = msg + "<div><a href=\""+ url+"\"> PDF </a></div>";
 			printCarrierPacking(carrierPacking);
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 				AON.getPurchaseStream(domain.getName(), domain.getId(), login, 

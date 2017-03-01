@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
+import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.jooq.tables.records.InventoryDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InventoryRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 
@@ -118,7 +118,7 @@ public class InventoryDAO {
 					.setCreationDate(r.getCreationDate())
 					.setCreationUser(r.getCreationUser())
 					.setDomain(r.getDomain())
-					.setItem(ProductDAO.getItem(ctx, r.getItem()))
+					.setItem(AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getItem()))
 					.setModificationDate(r.getModificationDate())
 					.setModificationUser(r.getModificationUser())
 					.setRealQuantity(r.getRealQuantity());

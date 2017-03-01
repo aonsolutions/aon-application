@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -828,41 +829,35 @@ public class AON {
 	}
 
 	// ------------------------------------ ITEM
-
-	public static Item getItem(String domainName, Integer domainId,
-			String login, Integer itemId) {
+	public static Stream<Item> getItemStream(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getItem(ctx, itemId);
+			return getProduct().getItemStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 	
-	public static Item getItem(String domainName, Integer domainId, String login,
-			ItemFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getItem(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static LinkedList<Item> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
+		return getItemStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<Item> getItemList(String domainName, Integer domainId,
-			String login, ItemFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getItemList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static Item getItem(String domainName, Integer domainId, String login, Integer itemId) {
+		return getItemStream(domainName, domainId, login, f -> f.getIdProperty().eq(itemId)
+			.perPage(1)).findFirst().orElse(new Item());
+	}
+	
+	public static Item getItem(String domainName, Integer domainId, String login, ItemFilter filter) {
+		return getItemStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new Item());
+	}
+	
+	public static Optional<Item> getItemOptional(String domainName, Integer domainId, String login, ItemFilter filter) {
+		return getItemStream(domainName, domainId, login, filter)
+			.findFirst();
 	}
 
 	public static void insertItem(AONContext ctx, Item i) {

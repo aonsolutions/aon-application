@@ -29,6 +29,7 @@ import com.esferalia.aon.ingenet.api.albaranes.ELABORACIONORIGENTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ERRORESTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.PRODUCTOTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -573,9 +574,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 										productoelaborado.getCODIGO())))
 				.findFirst().orElse(null);
 		if (product != null && product.getId() != null) {
-			List<Item> itemList = ProductDAO
+			List<Item> itemList = AON
 					.getItemList(
-							ctx,
+							ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 							f -> f.getDomainProperty()
 									.eq(ctx.getDomainId())
 									.and(f.getProductProperty()
@@ -609,9 +610,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 										productoelaborado.getCODIGO())))
 				.findFirst().orElse(null);
 		if (product != null && product.getId() != null) {
-			Item item = ProductDAO
-					.getItem(
-							ctx,
+			Item item = AON
+					.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 							f -> f.getDomainProperty()
 									.eq(ctx.getDomainId())
 									.and(f.getProductProperty()
@@ -651,8 +651,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				if(!test){
 					ProductDAO.insertItem(ctx, item);
 				}
-				item = ProductDAO.getItemList(
-						ctx,
+				item = AON.getItemList(
+						ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 						f -> f.getDomainProperty()
 						.eq(ctx.getDomainId())
 						.and(f.getProductProperty()

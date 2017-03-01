@@ -31,6 +31,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
@@ -242,7 +243,7 @@ public class WarehouseDAO {
 	
 		if(quantity > 0 ){
 			Integer itemId = wtd.getItem().getId();
-			Item item = ProductDAO.getItem(ctx, itemId);
+			Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), itemId);
 			if(item.getProduct().isSerializable())
 				ProductDAO.updateItem(ctx, item.setStatus(ProductStatus.ACTIVE.value()));	
 		}

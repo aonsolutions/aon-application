@@ -23,10 +23,11 @@ import org.jooq.InsertValuesStep21;
 import org.jooq.InsertValuesStep3;
 import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.Record20;
 import org.jooq.Record21;
 import org.jooq.Record3;
+import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.jooq.tables.records.BrandRecord;
 import com.esferalia.aon.jooq.tables.records.ItemRecord;
@@ -95,6 +96,11 @@ public class ProductDAO {
 	}
 	
 	protected static class ItemPropertiesDAO implements ItemProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, ItemFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(ItemFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -533,28 +539,13 @@ public class ProductDAO {
 	}
 	
 	// ------------------------------------- ITEM
-	public static Item getItem(AONContext ctx, Integer itemId){
-		return ctx.getDslContext().select().from(ITEM).where(ITEM.ID.eq(itemId)).limit(1).fetchInto(ITEM)
-				.stream().map(new FullItemFiller(ctx)).findFirst().orElse(new Item());
-	}
-	
-	public static Item getItem(AONContext ctx, ItemFilter filter){
-		return ctx.getDslContext().select().from(ITEM).where(ITEM_PROPERTIES.getConditions(filter)).limit(1).fetchInto(ITEM)
-				.stream().map(new FullItemFiller(ctx)).findFirst().orElse(new Item());
+	public static Stream<Item> getItemStream(AONContext ctx, ItemFilter filter){
+		return ITEM_PROPERTIES.build(ctx.getDslContext()
+				.select()
+				.from(ITEM), filter)
+			.fetch().stream().map(new FullItemFiller(ctx));
 	}
 
-	public static Integer getItemId(AONContext ctx, ItemFilter filter) {
-		Record1<Integer> record = ctx.getDslContext().select(ITEM.ID).from(ITEM)
-				.where(ITEM_PROPERTIES.getConditions(filter)).limit(1)
-				.fetchOne();
-		return record!=null && record.size()>0?record.value1():null;
-	}
-	
-	public static LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter){
-		return ctx.getDslContext().select().from(ITEM).where(ITEM_PROPERTIES.getConditions(filter)).fetchInto(ITEM)
-				.stream().map(new FullItemFiller(ctx)).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
 	@Deprecated
 	public static Item getItemOld(AONContext ctx, Integer id){
 		ctx.checkRead();
@@ -847,42 +838,42 @@ public class ProductDAO {
 		}
 	}
 	
-	private static class FullItemFiller implements Function<ItemRecord, Item> {
+	private static class FullItemFiller implements Function<Record, Item> {
 		AONContext ctx;
 		public FullItemFiller(AONContext ctx) {
 			this.ctx = ctx;
 		}
 		
 		@Override
-		public Item apply(ItemRecord r) {
-			return new Item().setId(r.getId())
-					.setBarcode(r.getBarcode())
-					.setCreationDate(r.getCreationDate())
-					.setCreationUser(r.getCreationUser())
-					.setDescription(r.getDescription())
-					.setDetail(r.getDetail())
-					.setDetail2(r.getDetail2())
-					.setDetail3(r.getDetail3())
-					.setDomain(r.getDomain())
-					.setExpensesFixed(r.getExpensesFixed())
-					.setExpensesPercent(r.getExpensesPercent())
-					.setInternet(r.getInternet() == 1)
-					.setModificationDate(r.getModificationDate())
-					.setModificationUser(r.getModificationUser())
-					.setPackFormatTag(TagDAO.getTag(ctx, r.getPackFormatTag()))
-					.setPackMeasurement(r.getPackMeasurement())
-					.setPackMeasurementTag(TagDAO.getTag(ctx, r.getPackMeasurementTag()))
-					.setPackUnits(r.getPackUnits().doubleValue())
-					.setPackUnitsTag(TagDAO.getTag(ctx, r.getPackUnitsTag()))
-					.setStockUnitTag(TagDAO.getTag(ctx, r.getStockUnitTag()))
-					.setPrice(r.getPrice())
-					.setProduct(getProduct(ctx, r.getProduct()))
-					.setProductId(r.getProduct())
-					.setProfitPercent(r.getProfitPercent())
-					.setPurchasePrice(r.getPurchasePrice())
-					.setSerialNumber(r.getSerialNumber())
-					.setSerialDate(r.getSerialDate())
-					.setStatus(r.getStatus());
+		public Item apply(Record r) {
+			return new Item().setId(r.getValue(ITEM.ID))
+					.setBarcode(r.getValue(ITEM.BARCODE))
+					.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+					.setCreationUser(r.getValue(ITEM.CREATION_USER))
+					.setDescription(r.getValue(ITEM.DESCRIPTION))
+					.setDetail(r.getValue(ITEM.DETAIL))
+					.setDetail2(r.getValue(ITEM.DETAIL2))
+					.setDetail3(r.getValue(ITEM.DETAIL3))
+					.setDomain(r.getValue(ITEM.DOMAIN))
+					.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
+					.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
+					.setInternet(r.getValue(ITEM.INTERNET) == 1)
+					.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
+					.setPackFormatTag(TagDAO.getTag(ctx, r.getValue(ITEM.PACK_FORMAT_TAG)))
+					.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
+					.setPackMeasurementTag(TagDAO.getTag(ctx, r.getValue(ITEM.PACK_MEASUREMENT_TAG)))
+					.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
+					.setPackUnitsTag(TagDAO.getTag(ctx, r.getValue(ITEM.PACK_UNITS_TAG)))
+					.setStockUnitTag(TagDAO.getTag(ctx, r.getValue(ITEM.STOCK_UNIT_TAG)))
+					.setPrice(r.getValue(ITEM.PRICE))
+					.setProduct(getProduct(ctx, r.getValue(ITEM.PRODUCT)))
+					.setProductId(r.getValue(ITEM.PRODUCT))
+					.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
+					.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
+					.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
+					.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+					.setStatus(r.getValue(ITEM.STATUS));
 		}
 	}
 	

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -78,12 +79,13 @@ public class PackingListDownload extends HttpServlet{
 						f -> f.getPurchaseProperty().eq(purchase.getId())
 						.and(f.getCarrierPackingProperty().eq(carrierPackingId)))
 				.forEach(detail -> {
-					JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);
-					Item item = AON.getItem(domain.getName(), domain.getId(), login, detail.getItem());
-					detailJSON.put("format_tag", item.getPackFormatTag()!= null ? item.getPackFormatTag().getName() : "");
-					detailJSON.put("measurements", item.getPackMeasurement() != null ? item.getPackMeasurement() : "");
-					detailJSON.put("measurements_tag", item.getPackMeasurementTag()!= null ? item.getPackMeasurementTag().getName() : "");
-					detailJSON.put("units", item.getPackUnits() != null ? item.getPackUnits() : "");
+					JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);		
+					Optional<Item> item = getItem(domain, login, detail.getItem(), detail.getProductId());
+					
+					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
+					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
+					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
+					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
 					details.put(detailJSON);	
 				});
 				
@@ -103,11 +105,12 @@ public class PackingListDownload extends HttpServlet{
 				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
 				.forEach(detail -> {
 					JSONObject detailJSON = ToJSON.deliveryDetailToJSON(detail);
-					Item item = AON.getItem(domain.getName(), domain.getId(), login, detail.getItem().getId());
-					detailJSON.put("format_tag", item.getPackFormatTag()!= null ? item.getPackFormatTag().getName() : "");
-					detailJSON.put("measurements", item.getPackMeasurement() != null ? item.getPackMeasurement() : "");
-					detailJSON.put("measurements_tag", item.getPackMeasurementTag()!= null ? item.getPackMeasurementTag().getName() : "");
-					detailJSON.put("units", item.getPackUnits() != null ? item.getPackUnits() : "");
+					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
+					
+					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
+					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
+					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
+					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
 					details.put(detailJSON);	
 				});
 				
@@ -135,5 +138,20 @@ public class PackingListDownload extends HttpServlet{
 		fileInpurOs.close();
 	}
 	
+	
+	private Optional<Item> getItem(Domain domain, String login, Integer itemId, Integer productId) {
+		Optional<Item> optional = AON.getItemOptional(domain.getName(), domain.getId(), login, f -> 
+			f.getIdProperty().eq(itemId)
+			.and(f.getPackFormatTagProperty().isNotNull())
+			.and(f.getPackMeasurementTagProperty().isNotNull())
+			.and(f.getPackMeasurementProperty().isNotNull())
+			.and(f.getPackUnitsProperty().isNotNull()));
+		return optional.isPresent() ? optional :  AON.getItemOptional(domain.getName(), domain.getId(), login, f -> 
+			f.getProductProperty().eq(productId)
+			.and(f.getPackFormatTagProperty().isNotNull())
+			.and(f.getPackMeasurementTagProperty().isNotNull())
+			.and(f.getPackMeasurementProperty().isNotNull())
+			.and(f.getPackUnitsProperty().isNotNull()));
+	}
 
 }
