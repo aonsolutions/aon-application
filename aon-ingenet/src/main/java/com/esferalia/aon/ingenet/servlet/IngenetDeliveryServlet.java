@@ -35,8 +35,6 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -298,8 +296,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						try {
 							item = obtainItem(ctx,
 									linea.getPRODUCTO(), test);
-							SalesDetail salesDetail = obtainSalesDetail(
-									ctx, linea);
+							Elaboration elaboration = obtainElaboration(
+									ctx, linea.getDATOSELABORACIONORIGEN());
 							DeliveryDetail detail = new DeliveryDetail();
 							detail.setDomain(ctx.getDomainId());
 							detail.setDelivery(delivery);
@@ -311,9 +309,10 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 									.getCANTIDAD()));
 							detail.setPrice(item.getPrice());
 							detail.setDiscountExpression("0");
-							if(salesDetail==null || salesDetail.getId()==null){
+							if(elaboration==null || elaboration.getId()==null){
 								addError(albaran, "No hay ninguna elaboracion asociada a la linea " + linea.getLINEA());
-								detail.setSalesDetail(salesDetail.getId());
+							} else {
+								detail.setSalesDetail(elaboration.getSourceId());
 							}
 							detailList.add(detail);
 						} catch (Exception e) {
@@ -506,35 +505,34 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	
 	private Elaboration obtainElaboration(AONContext ctx,
 			ELABORACIONORIGENTYPE datoselaboracionorigen) {
+		String series = datoselaboracionorigen.getSERIE();
+		Integer number = Integer.valueOf(datoselaboracionorigen.getNUMERO());
 		List<Elaboration> list = ElaborationDAO.getElaborationList(
 				ctx,
 				f -> f.getDomainProperty()
 						.eq(ctx.getDomainId())
-						.and(f.getSeriesProperty()
-								.eq(datoselaboracionorigen.getSERIE())
-								.and(f.getNumberProperty().eq(
-										Integer.valueOf(datoselaboracionorigen
-												.getNUMERO())))));
+						.and(f.getSeriesProperty().eq(series)
+								.and(f.getNumberProperty().eq(number))));
 		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
 		return null;
 	}
 	
-	private SalesDetail obtainSalesDetail(AONContext ctx,
-			DATOSLINEAALBARANTYPE linea) {
-		String series = linea.getDATOSELABORACIONORIGEN().getSERIE();
-		Integer number = Integer.valueOf(linea.getDATOSELABORACIONORIGEN()
-				.getNUMERO());
-		Sales sales = SalesDAO.getSales(ctx, series, number);
-		if (sales != null && sales.getId() != null) {
-			Short line = Short.valueOf(linea.getLINEA());
-			SalesDetail detail = SalesDAO.getSalesDetail(ctx, sales.getId(),
-					line);
-			return detail;
-		}
-		return null;
-	}
+//	private SalesDetail obtainSalesDetail(AONContext ctx,
+//			DATOSLINEAALBARANTYPE linea) {
+//		String series = linea.getDATOSELABORACIONORIGEN().getSERIE();
+//		Integer number = Integer.valueOf(linea.getDATOSELABORACIONORIGEN()
+//				.getNUMERO());
+//		Sales sales = SalesDAO.getSales(ctx, series, number);
+//		if (sales != null && sales.getId() != null) {
+//			Short line = Short.valueOf(linea.getLINEA());
+//			SalesDetail detail = SalesDAO.getSalesDetail(ctx, sales.getId(),
+//					line);
+//			return detail;
+//		}
+//		return null;
+//	}
 
 	private RAddress obtainAddress(AONContext ctx, Customer customer,
 			DATOSDIRECCIONTYPE datosdireccionentrega) {
