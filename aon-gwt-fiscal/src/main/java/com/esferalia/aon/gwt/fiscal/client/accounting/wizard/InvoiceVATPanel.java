@@ -316,6 +316,9 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		private final AccountBox adjAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
 		
 		private InvoicePanelRow(final InvoiceVAT vat, FlexTable tab, boolean focus) {
+			inputVatAccount.setRequired(false);
+			outputVatAccount.setRequired(false);
+			adjAccount.setRequired(false);
 			int currentRow = tab.getRowCount();
 			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(currentRow);
 			int col = 0;

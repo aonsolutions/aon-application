@@ -1132,12 +1132,12 @@ public class InvoiceDAO {
 					.execute();
 				ctx.log().info("INSERT INVOICE_DETAIL_ACCOUNT");
 				for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
-					if (tax.getAccount() == null) 
-						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
+//					if (tax.getAccount() == null) 
+//						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
 					ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
 						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
 						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
-						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount())
+						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
 						.execute();
 					ctx.log().info("INSERT INVOICE_TAX_ACCOUNT");
 				}

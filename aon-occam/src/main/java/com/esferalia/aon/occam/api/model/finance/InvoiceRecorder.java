@@ -212,18 +212,30 @@ public class InvoiceRecorder {
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
 				if (invoice.getVats() != null && invoice.isInputVatEnabled()) {
 					for (InvoiceVAT vat : invoice.getVats()) {
-						if (vat.getInputAccountId() != null) {
-							AccountEntryDetail detail = map.get(vat.getInputAccountId());
+						Integer id = null;
+						String code = null;
+						String description = null;
+						if (vat.getInputAccountId() == null) {
+							id = vat.getExpAccountId();
+							code = vat.getExpAccountCode();
+							description = vat.getExpAccountDescription();
+						} else {
+							id = vat.getInputAccountId();
+							code = vat.getInputAccountCode();
+							description = vat.getInputAccountDescription();
+						}
+						if (id != null) {
+							AccountEntryDetail detail = map.get(id);
 							if (detail == null) {
 								detail = new AccountEntryDetail()
-									.setAccount(vat.getInputAccountId())
-									.setAccountCode(vat.getInputAccountCode())
-									.setAccountDescription(vat.getInputAccountDescription())
+									.setAccount(id)
+									.setAccountCode(code)
+									.setAccountDescription(description)
 									.setBalancingAccount(obtainRegistryAccount(invoice))
 									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 									;
-								map.put(vat.getInputAccountId(),detail);
+								map.put(id,detail);
 							}
 							detail.addDebit( vat.getDeductibleQuota() + vat.getSurchargeQuota() );
 						}
@@ -237,18 +249,30 @@ public class InvoiceRecorder {
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
 				if (invoice.getVats() != null && invoice.isOutputVatEnabled()) {
 					for (InvoiceVAT vat : invoice.getVats()) {
-						if (vat.getOutputAccountId() != null) {
-							AccountEntryDetail detail = map.get(vat.getOutputAccountId());
+						Integer id = null;
+						String code = null;
+						String description = null;
+						if (vat.getOutputAccountId() == null) {
+							id = vat.getExpAccountId();
+							code = vat.getExpAccountCode();
+							description = vat.getExpAccountDescription();
+						} else {
+							id = vat.getOutputAccountId();
+							code = vat.getOutputAccountCode();
+							description = vat.getOutputAccountDescription();
+						}
+						if (id != null) {
+							AccountEntryDetail detail = map.get(id);
 							if (detail == null) {
 								detail = new AccountEntryDetail()
-										.setAccount(vat.getOutputAccountId())
-										.setAccountCode(vat.getOutputAccountCode())
-										.setAccountDescription(vat.getOutputAccountDescription())
+										.setAccount(id)
+										.setAccountCode(code)
+										.setAccountDescription(description)
 										.setBalancingAccount(obtainRegistryAccount(invoice))
 										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 										;
-								map.put(vat.getOutputAccountId(),detail);
+								map.put(id,detail);
 							}
 							detail.addCredit( vat.getDeductibleQuota() + vat.getSurchargeQuota() );
 						}
@@ -265,17 +289,29 @@ public class InvoiceRecorder {
 					&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
 					&& invoice.getVats() != null) {
 					for (InvoiceVAT vat : invoice.getVats()) {
-						if (vat.getAdjAccountId() != null && vat.getDeductibleQuota() !=  vat.getQuota()) {
-							AccountEntryDetail detail = map.get(vat.getAdjAccountId());
+						if (vat.getDeductibleQuota() !=  vat.getQuota()) {
+							Integer id = null;
+							String code = null;
+							String description = null;
+							if (vat.getAdjAccountId() == null) {
+								id = vat.getExpAccountId();
+								code = vat.getExpAccountCode();
+								description = vat.getExpAccountDescription();
+							} else {
+								id = vat.getAdjAccountId();
+								code = vat.getAdjAccountCode();
+								description = vat.getAdjAccountDescription();
+							}
+							AccountEntryDetail detail = map.get(id);
 							if (detail == null) {
 								detail = new AccountEntryDetail()
-										.setAccount(vat.getAdjAccountId())
-										.setAccountCode(vat.getAdjAccountCode())
-										.setAccountDescription(vat.getAdjAccountDescription())
-										.setBalancingAccount(obtainRegistryAccount(invoice))
-										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-								map.put(vat.getAdjAccountId(),detail);
+									.setAccount(id)
+									.setAccountCode(code)
+									.setAccountDescription(description)
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+								map.put(id,detail);
 							}
 							double amount = vat.getQuota() - vat.getDeductibleQuota();
 							if (invoice.isOutputVatEnabled()) {

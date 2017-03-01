@@ -179,6 +179,9 @@ public class AccountEntryInvoiceWriter implements Serializable {
 				if (taxBreakDown.getDeductibleQuota() != quota) {
 					quota = taxBreakDown.getDeductibleQuota();
 				}
+				if (taxBreakDown.getAccount() == null) {
+					throw new ManagerBeanException("No se ha definido cuenta contable para el IVA");
+				}
 				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), quota);
 				insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
 				if (ignoreTaxFree) {
