@@ -236,6 +236,7 @@ public class ProductDAO {
 					int length = tags.length;
 					tags = Arrays.copyOf(tags, length + 1);
 					tags[length] = tag;
+					map.put(key, tags);
 				}
 			});
 		return map; 

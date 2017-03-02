@@ -15,7 +15,8 @@ public enum TagType implements Serializable{
 	PACKING,
 	TASK_TYPE,
 	TASK_PRIORITY,
-	TASK_LABEL
+	TASK_LABEL,
+	TASK_DOCUMENT
 	; // Tipo de Aviso
 
 	
