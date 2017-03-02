@@ -829,35 +829,48 @@ public class AON {
 	}
 
 	// ------------------------------------ ITEM
-	public static Stream<Item> getItemStream(String domainName, Integer domainId, String login, ItemFilter filter) {
+	
+	public static LinkedList<Item> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getItemStream(ctx, filter);
+			return getProduct().getItemStream(ctx, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 	
-	public static LinkedList<Item> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
-		return getItemStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
 	public static Item getItem(String domainName, Integer domainId, String login, Integer itemId) {
-		return getItemStream(domainName, domainId, login, f -> f.getIdProperty().eq(itemId)
-			.perPage(1)).findFirst().orElse(new Item());
+		AONContext ctx = null;
+		try {
+			return getProduct().getItemStream(ctx, f -> f.getIdProperty().eq(itemId)
+					.perPage(1)).findFirst().orElse(new Item());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	public static Item getItem(String domainName, Integer domainId, String login, ItemFilter filter) {
-		return getItemStream(domainName, domainId, login, filter)
-			.findFirst().orElse(new Item());
+		AONContext ctx = null;
+		try {
+			return getProduct().getItemStream(ctx, filter)
+					.findFirst().orElse(new Item());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	public static Optional<Item> getItemOptional(String domainName, Integer domainId, String login, ItemFilter filter) {
-		return getItemStream(domainName, domainId, login, filter)
-			.findFirst();
+		AONContext ctx = null;
+		try {
+			return getProduct().getItemStream(ctx, filter).findFirst();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 
 	public static void insertItem(AONContext ctx, Item i) {
