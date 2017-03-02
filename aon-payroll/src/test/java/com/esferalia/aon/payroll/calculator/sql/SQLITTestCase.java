@@ -2028,7 +2028,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			if ( d.getName().startsWith("BASE_CGC") )
 				System.out.println(d.getName() + " = " + d.getExpression() + ", " +  d.getStartDate() + "..." + d.getEndDate() );
 		
-		Assert.assertEquals(1310.40 + ( 1310.40 / 6 ), salary.getCommonBase());
+		Assert.assertEquals(1310.40 + ( 1310.40 / 6 ), salary.getCommonBase(), DELTA);
 		
 
 	}

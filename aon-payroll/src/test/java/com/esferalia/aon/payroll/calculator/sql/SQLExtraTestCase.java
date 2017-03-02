@@ -186,28 +186,28 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration());
+		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 		
 		// JUNE
 		startDate = add(startDate, MONTH, 5);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration());
+		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 		
 		// JULY
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration());
+		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 
 		// DECEMBER
 		startDate = add(startDate, MONTH, 5);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration());
+		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/12), salary.getExtraPayProration(), DELTA);
 	}
 
 	@Test
@@ -301,56 +301,56 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 		
 		// MARCH
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.6 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 		
 		// APRIL
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// JUNE
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.2 * 1000.00)/6 + (0.7 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// JULY
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// SEPTEMBER
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.8 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// OCTOBER
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 
 		// DECEMBER
 		startDate = add(startDate, MONTH, 2);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration());
+		Assert.assertEquals(((1.1 * 1000.00)/6 + (0.9 * 1000.00)/3), salary.getExtraPayProration(), DELTA);
 	}
 
 	@Test

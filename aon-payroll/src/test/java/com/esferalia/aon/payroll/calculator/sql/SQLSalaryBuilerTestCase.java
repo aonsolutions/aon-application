@@ -84,7 +84,7 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 					System.out.println("totalDeduction : " + salary.getTotalDeduction() );
 					System.out.println("totalLiquid  + totalDeduction: " + ( salary.getTotalLiquid() + salary.getTotalDeduction()) );
 
-					Assert.assertEquals(salary.getTotalPayment() , salary.getTotalLiquid() + salary.getTotalDeduction());
+					Assert.assertEquals(salary.getTotalPayment() , salary.getTotalLiquid() + salary.getTotalDeduction(), DELTA);
 
 				}
 		);
@@ -160,7 +160,7 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
-				d -> Math.round(d*1000.00)/1000.00);
+				d -> Math.round(d*100.00)/100.00);
 		
 		new ContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
