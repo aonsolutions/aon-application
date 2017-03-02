@@ -15,7 +15,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +83,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ingenet.IngenetSalesManager;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
 	
@@ -599,10 +599,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	}
 
 	public void linkDeliveryDate(Sales sales) throws ManagerBeanException {
-		if ((sales.getDeliveryDate() != null && getSavedDeliveryDate() == null) 
-				|| (sales.getDeliveryDate() == null && getSavedDeliveryDate() != null) 
-				|| (sales.getDeliveryDate() != null && getSavedDeliveryDate() != null 
-					&& !DateUtils.isSameDay(sales.getDeliveryDate(), getSavedDeliveryDate()))) {
+		Date deliveryDate = sales.getDeliveryDate();
+		if ((deliveryDate != null || getSavedDeliveryDate() != null) && !AonDateUtils.isSameDay(deliveryDate, getSavedDeliveryDate())) {
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());

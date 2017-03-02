@@ -18,7 +18,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +78,7 @@ import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class PurchaseController extends HeaderObjectController implements IPurchaseConstants, IEmailable, IAuditableController {
 	
@@ -487,10 +487,8 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	}
 
 	public void linkDeliveryDate(Purchase purchase) throws ManagerBeanException {
-		if ((purchase.getDeliveryDate() != null && getSavedDeliveryDate() == null) 
-				|| (purchase.getDeliveryDate() == null && getSavedDeliveryDate() != null) 
-				|| (purchase.getDeliveryDate() != null && getSavedDeliveryDate() != null 
-						&& !DateUtils.isSameDay(purchase.getDeliveryDate(), getSavedDeliveryDate()))) {
+		Date deliveryDate = purchase.getDeliveryDate();
+		if ((deliveryDate != null || getSavedDeliveryDate() != null) && !AonDateUtils.isSameDay(deliveryDate, getSavedDeliveryDate())) {
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
