@@ -2921,8 +2921,8 @@ public class SalaryDraft extends ResizeComposite
 					})
 				.collect(Collectors.toList());
 		
-		for ( Variable constant: constants  )
-			Window.alert(constant.getName() + " = " + constant.getValue() );
+//		for ( Variable constant: constants  )
+//			Window.alert(constant.getName() + " = " + constant.getValue() );
 		
 
 		List<Variable> variables = context.stream()
@@ -5352,35 +5352,6 @@ public class SalaryDraft extends ResizeComposite
 			if (v.getName().equals(name))
 				return true; // Already at context
 		return false;
-	}
-	
-	//TODO: mirar iniConstants
-	private List<Variable> iniConstants(List<Variable> context) {
-		List<Variable> constants = new ArrayList<>();
-		Double salaryHours = 0.0;
-		
-		for(Variable var : context){
-			Window.alert(var.getName());
-			if(var.getName().equals("HORAS_NOMINA"))
-				Window.alert("Horas acumuladas :"+salaryHours);
-				salaryHours+= Double.parseDouble(String.valueOf(var.getValue()));
-		}
-		
-//		Double salaryHours = context.stream()
-//				.filter(v->v.getName().equals("HORAS_NOMINA"))
-//				.peek(v -> Window.alert("Horas :"+v.getValue()))
-//				.collect(Collectors.summingDouble(v -> Double.parseDouble(String.valueOf(v.getValue()))))
-//				;
-		
-		NumberVariable var = new NumberVariable();
-		var.setName("HORAS_NOMINA");
-		var.setValue(salaryHours);
-		var.setScope(Scope.CONTRACT);
-		var.setStartDate(salaryDraftObject.getStartDate());
-		var.setEndDate(salaryDraftObject.getEndDate());
-		constants.add(var);
-		
-		return constants;
 	}
 	
 }

@@ -1205,25 +1205,18 @@ public class EmployeeCalendarDraft extends Composite {
 		for (Date date : fechasSelecciondas.getSelectedList()) {
 			if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
 				calendarEmployeeInfo.setHourByDay(date, horasDomingo);
-				//Window.alert("Domingo :"+horasDomingo);
 			}else if (es(6, date) && horas[5] != horasSabado){//SABADO
 				calendarEmployeeInfo.setHourByDay(date, horasSabado);
-				//Window.alert("Sabado :"+horasSabado);
 			}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
 				calendarEmployeeInfo.setHourByDay(date, horasViernes);
-				//Window.alert("Viernes :"+horasViernes);
 			}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
 				calendarEmployeeInfo.setHourByDay(date, horasJueves);
-				//Window.alert("Jueves :"+horasJueves);
 			}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
 				calendarEmployeeInfo.setHourByDay(date, horasMiercoles);
-				//Window.alert("Miercoles :"+horasMiercoles);
 			}else if (es(2, date) && horas[1] != horasMartes){//MARTES
 				calendarEmployeeInfo.setHourByDay(date, horasMartes);
-				//Window.alert("Martes :"+horasMartes);
-			}else if (es(2, date) && horas[0] != horasLunes){//LUNES 
+			}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
 				calendarEmployeeInfo.setHourByDay(date, horasLunes);
-				//Window.alert("Lunes :"+horasLunes);
 			}
 		}
 		limpiarSeleccion(fechasSelecciondas.getSelectedList());
