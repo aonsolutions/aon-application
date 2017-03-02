@@ -112,6 +112,7 @@ public class InvoiceDAO {
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.ITEM);}
 		@Override public Property<Integer> getProductCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.ID);}
 		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}	
+		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
 	}
 	
 	private static final InvoicingGroupPropertiesDAO INVOICING_GROUP_PROPERTIES = new InvoicingGroupPropertiesDAO();

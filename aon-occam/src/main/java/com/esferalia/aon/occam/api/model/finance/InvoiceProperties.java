@@ -22,5 +22,6 @@ public interface InvoiceProperties {
 	Property<Integer> getItemProperty();
 	Property<Integer> getProductCategoryProperty();
 	Property<String> getProductCodeProperty();
+	Property<Byte> getProductTypeProperty();
 
 }

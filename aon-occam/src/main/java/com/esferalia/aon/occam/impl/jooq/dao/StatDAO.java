@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.stat.task.TaskChartType;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.AonDayOfWeek;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -121,6 +122,9 @@ public class StatDAO {
 		if (params.getTo() != null) {
 			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql(params.getTo())));
 		}
+		// Se ignoran los suplidos.
+		c = c.and(PRODUCT.TYPE.ne(ProductType.PREPAYMENT.value()));
+		// -----------------------
 		StatDAOStatFilterItemVisitor visitor = new StatDAOStatFilterItemVisitor();		
 		for (StatFilterItem item : params.getFilterItems() ) {
 			item.getType().visit(visitor,item);
@@ -173,7 +177,7 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(year, INVOICE.TYPE)
 						.orderBy(year, DSL.decode()
@@ -205,7 +209,7 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(year,month, INVOICE.TYPE)
 						.orderBy(year,month, DSL.decode()
@@ -235,7 +239,7 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
 						.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
@@ -263,9 +267,9 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(INVOICE.REGISTRY).and(RADDRESS.TYPE.eq((byte) 0)))
-						.join(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
+						.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(GEOZONE.NAME)
 						.orderBy(sum.desc())
@@ -286,7 +290,7 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
 						.where( getCondition(ctx, params))
 						.groupBy(INVOICE_DETAIL.WORKPLACE, INVOICE.TYPE)
@@ -309,7 +313,7 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(INVOICE.REGISTRY, INVOICE.TYPE)
 						.orderBy(sum.desc())
@@ -333,7 +337,7 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.leftOuterJoin(REGISTRY).on(INVOICE_DETAIL.SELLER.eq(REGISTRY.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(INVOICE_DETAIL.SELLER, INVOICE.TYPE)
@@ -356,7 +360,7 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(PRODUCT.ID, INVOICE.TYPE)
 						.orderBy(sum.desc())
@@ -378,8 +382,8 @@ public class StatDAO {
 						.from(INVOICE)
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-						.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.join(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
 						.where( getCondition(ctx, params))
 						.groupBy(PCATEGORY.ID, INVOICE.TYPE)
 						.orderBy(sum.desc())
@@ -734,6 +738,7 @@ public class StatDAO {
 							.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
 							.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
 							.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
+							.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))
 					)
 					// TODO Implementar mecanismo offset limit. Se capa seguridad de memoria en el servidor.
 					.limit(1000)	// Modificar subtitulo 
