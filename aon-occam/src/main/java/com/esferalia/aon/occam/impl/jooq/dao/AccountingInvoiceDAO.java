@@ -644,11 +644,12 @@ public class AccountingInvoiceDAO {
 						// --------------------------------------
 					);
 					if (vat.isWithholding() && accInvoice.isWithholding()) {
+						double quota = AonMathUtils.round(vat.getBase() * accInvoice.getWithholdingData().getPercentage() / 100);
 						detail.addInvoiceTax(new InvoiceTax()
 							.setTaxType(TaxType.RETENTION)
 							.setBase(vat.getBase())
 							.setPercentage(accInvoice.getWithholdingData().getPercentage())
-							.setQuota(accInvoice.getWithholdingData().getQuota())
+							.setQuota(quota)
 							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
 							.setAccount(accInvoice.getWithholdingData().getAccountId()));
 					};
