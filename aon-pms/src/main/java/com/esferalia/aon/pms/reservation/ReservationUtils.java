@@ -1115,6 +1115,40 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return null;
 	}
 
+	public boolean isTariffPrepaid(List<String> tariffList) throws ManagerBeanException {
+		for (String tariffCode : tariffList) {
+			if (isTariffPrepaid(tariffCode)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isTariffPrepaid(String tariffCode) throws ManagerBeanException {
+		Tariff tariff = obtainTariff(tariffCode);
+		if (tariff != null) {
+			return obtainTariffAddInfo(tariff, PREPAID, YES) != null;
+		}
+		return false;
+	}
+
+	public boolean isTariffNoRefundable(List<String> tariffList) throws ManagerBeanException {
+		for (String tariffCode : tariffList) {
+			if (isTariffNoRefundable(tariffCode)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isTariffNoRefundable(String tariffCode) throws ManagerBeanException {
+		Tariff tariff = obtainTariff(tariffCode);
+		if (tariff != null) {
+			return obtainTariffAddInfo(tariff, NOT_REFUNDABLE, YES) != null;
+		}
+		return false;
+	}
+
 	public Map<Date, List<Double>> obtainPricesMap(ProjectReservation reservation, Service service, Date fromDate, Date toDate) throws ReservationException {
 		double serviceBase = 0;
 		Map<Date, List<Double>> pricesMap = new HashMap<Date, List<Double>>();

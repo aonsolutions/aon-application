@@ -29,6 +29,7 @@ import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
 import org.opentravel.ota.x2003.x05.RequiredPaymentsType.GuaranteePayment.GuaranteeType;
 import org.opentravel.ota.x2003.x05.ResGlobalInfoType;
 import org.opentravel.ota.x2003.x05.ResGuestsType.ResGuest;
+import org.opentravel.ota.x2003.x05.RoomStaysType;
 import org.opentravel.ota.x2003.x05.RoomStaysType.RoomStay;
 import org.opentravel.ota.x2003.x05.ServicesType;
 import org.opentravel.ota.x2003.x05.ServicesType.Service;
@@ -243,8 +244,14 @@ public class ReservationManager implements IReservationConstants {
 			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
 			String token = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), TOKEN_CONEX_FLOW, null);
 			String remarks =  findComments(reservationType.getResGlobalInfo());
-			String prepayTransaction = findPrepayInfo(reservationType.getResGlobalInfo(), BANK_TRANSACTION);
+			List<String> tariffList = getTariffList(reservationType.getRoomStays());
+			boolean prepay = isTariffPrepaid(reservationType.getResGlobalInfo(), tariffList);
+			String bankTransaction = findPrepayInfo(reservationType.getResGlobalInfo(), BANK_TRANSACTION);
+			if (bankTransaction == null && StringUtils.indexOf(remarks, BANK_TRANSACTION_COMMENT) >= 0) {
+				bankTransaction = StringUtils.substringBetween(remarks, BANK_TRANSACTION_COMMENT + "-", "_");
+			}
 			String prepayPayment = findPrepayInfo(reservationType.getResGlobalInfo(), PAYMENT_TRANSACTION);
+			boolean notRefundable = (!prepay) ? isTariffNotRefundable(reservationType.getResGlobalInfo(), tariffList) : false;
 			double taxableBase = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue());
 			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
 			double vatPercent = findTaxPercent(reservationType.getResGlobalInfo(), VAT_TAX);
@@ -283,9 +290,10 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setSource(isNewReservation ? ReservationSource.CRS : reservation.getSource());
 			reservation.setCrsCode(reservationCrsCode);
 			reservation.setAdvance((NumberUtils.isNumber(prepayPayment)) ? Double.parseDouble(prepayPayment) : 0);
-			reservation.setPrepay(prepayTransaction!=null);
-			reservation.setBankTransaction(prepayTransaction);
-			reservation.setToken(token);
+			reservation.setPrepay(prepay);
+			reservation.setBankTransaction(bankTransaction);
+			reservation.setNotRefundable(notRefundable);
+			reservation.setToken((!prepay) ? token : null);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 
@@ -555,6 +563,9 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private ProjectReservation finalizeReservation(ProjectReservation reservation) throws ManagerBeanException{
+		if (reservation.isPrepay() || reservation.isNotRefundable()) {
+			reservation.setAdvance((reservation.getAdvance() != 0) ? reservation.getAdvance() : reservation.getTotal());
+		}
 		reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
 		return (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
@@ -975,20 +986,48 @@ public class ReservationManager implements IReservationConstants {
 		return CommonUtil.round(taxPercent);
 	}
 
-	private String findPrepayInfo(ResGlobalInfoType resGlobalInfoType, String guaranteeDescription) {
-		String transaction = null;
+	private List<String> getTariffList(RoomStaysType roomStays) {
+		List<String> tariffList = new LinkedList<String>();
+		for (int i=0; i<roomStays.sizeOfRoomStayArray(); i++) {
+			RoomStay stay = roomStays.getRoomStayArray(i);
+			String tariffCode = stay.getRatePlans().getRatePlanArray(0).getRatePlanCode();
+			if (!tariffList.contains(tariffCode)) {
+				tariffList.add(tariffCode);
+			}
+		}
+		return tariffList;
+	}
+
+	private boolean isTariffNotRefundable(ResGlobalInfoType resGlobalInfoType, List<String> tariffList) throws ManagerBeanException {
+		return getReservationUtils().isTariffNoRefundable(tariffList);
+	}
+
+	private boolean isTariffPrepaid(ResGlobalInfoType resGlobalInfoType, List<String> tariffList) throws ManagerBeanException {
+		boolean prepaid = isGuaranteePrepay(resGlobalInfoType);
+		if (!prepaid) {
+			prepaid = getReservationUtils().isTariffPrepaid(tariffList);
+		}
+		return prepaid;
+	}
+
+	private boolean isGuaranteePrepay(ResGlobalInfoType resGlobalInfoType) {
 		if (resGlobalInfoType.getGuarantee() != null && resGlobalInfoType.getGuarantee().getGuaranteeType() != null) {
-			if (resGlobalInfoType.getGuarantee().getGuaranteeType().toString().equals(GuaranteeType.PRE_PAY.toString())) {
-				transaction = "";
-				for (int i=0; i<resGlobalInfoType.getGuarantee().sizeOfGuaranteeDescriptionArray(); i++) {
-					ParagraphType paragraphType = resGlobalInfoType.getGuarantee().getGuaranteeDescriptionArray(i);
-					if (paragraphType.getName().equals(guaranteeDescription)) {
-						transaction = paragraphType.getTextArray(0).getStringValue();
-					}
+			return (resGlobalInfoType.getGuarantee().getGuaranteeType().toString().equals(GuaranteeType.PRE_PAY.toString()));
+		}
+		return false;
+	}
+
+	private String findPrepayInfo(ResGlobalInfoType resGlobalInfoType, String guaranteeDescription) {
+		String value = null;
+		if (isGuaranteePrepay(resGlobalInfoType)) {
+			for (int i=0; i<resGlobalInfoType.getGuarantee().sizeOfGuaranteeDescriptionArray(); i++) {
+				ParagraphType paragraphType = resGlobalInfoType.getGuarantee().getGuaranteeDescriptionArray(i);
+				if (paragraphType.getName().equals(guaranteeDescription)) {
+					value = paragraphType.getTextArray(0).getStringValue();
 				}
 			}
 		}
-		return transaction;
+		return value;
 	}
 
 	private Node findNode(Node parent, String nodeName, boolean deep) {

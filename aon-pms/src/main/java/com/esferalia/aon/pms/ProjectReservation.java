@@ -66,6 +66,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private boolean forceInventoryControl;
 	private boolean refreshRooms;
 	private boolean skipDirtyControl;
+	private boolean notRefundable;
 	private double vatPercent;
 	private double realDiscountPercent;
 	private Double advancedAmount;
@@ -86,6 +87,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		setForceRefreshBooking(false);
 		setForceInventoryControl(false);
 		setSkipDirtyControl(false);
+		setNotRefundable(false);
 	}
 
 	@Transient
@@ -126,6 +128,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setSkipDirtyControl(boolean skipDirtyControl) {
 		this.skipDirtyControl = skipDirtyControl;
+	}
+
+	@Transient
+	public boolean isNotRefundable() {
+		return notRefundable;
+	}
+	public void setNotRefundable(boolean notRefundable) {
+		this.notRefundable = notRefundable;
 	}
 
 	@Transient

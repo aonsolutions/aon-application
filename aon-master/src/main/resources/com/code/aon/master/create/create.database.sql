@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.92.0
+# Version: 8.93.1
 # Created by: girazu
-# Creation Date: 16/02/2017 16:25
+# Creation Date: 03/03/2017 12:30
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -463,35 +463,6 @@ CREATE TABLE `account_period` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ejercicios Contables';
 
 #
-# Structure for the `tax` table : 
-#
-
-CREATE TABLE `tax` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Impuesto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(30) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
-  `tax_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Impuesto',
-  `percentage` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Porcentaje de recargo actual',
-  `surcharge` double(15,3) DEFAULT '0.000' COMMENT 'Porcentaje de recargo de equivalencia actual',
-  `start_date` date DEFAULT NULL COMMENT 'Fecha de inicio de vigencia',
-  `vat_deduction_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de deduccion del IVA',
-  `withholding_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de retencion',
-  `sales_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
-  `purchase_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
-  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
-  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
-  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
-  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
-  PRIMARY KEY (`id`),
-  KEY `IDX_TAX_DOMAIN` (`domain`),
-  KEY `IDX_TAX_ACCOUNT_SALES` (`sales_account`),
-  KEY `IDX_TAX_ACCOUNT_PURCHASE` (`purchase_account`),
-  CONSTRAINT `FK_TAX_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_TAX_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
-
-#
 # Structure for the `cnae` table : 
 #
 
@@ -524,6 +495,35 @@ CREATE TABLE `iae` (
   `title` varchar(255) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Titulo',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='IAE';
+
+#
+# Structure for the `tax` table : 
+#
+
+CREATE TABLE `tax` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Impuesto',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(30) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
+  `tax_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Impuesto',
+  `percentage` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Porcentaje de recargo actual',
+  `surcharge` double(15,3) DEFAULT '0.000' COMMENT 'Porcentaje de recargo de equivalencia actual',
+  `start_date` date DEFAULT NULL COMMENT 'Fecha de inicio de vigencia',
+  `vat_deduction_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de deduccion del IVA',
+  `withholding_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de retencion',
+  `sales_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
+  `purchase_account` int(4) DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TAX_DOMAIN` (`domain`),
+  KEY `IDX_TAX_ACCOUNT_SALES` (`sales_account`),
+  KEY `IDX_TAX_ACCOUNT_PURCHASE` (`purchase_account`),
+  CONSTRAINT `FK_TAX_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_TAX_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
 
 #
 # Structure for the `enterprise_activity` table : 
@@ -2447,6 +2447,7 @@ CREATE TABLE `carrier_packing` (
   `number_plate` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de matricula del vehiculo',
   `driver_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del conductor',
   `driver_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de documento del conductor',
+  `comments` text COLLATE latin1_spanish_ci COMMENT 'Observaciones carrier packing',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -2454,8 +2455,8 @@ CREATE TABLE `carrier_packing` (
   PRIMARY KEY (`id`),
   KEY `IDX_CARRIER_PACKING_DOMAIN` (`domain`),
   KEY `IDX_CARRIER_PACKING_CARRIER` (`carrier`),
-  CONSTRAINT `FK_CARRIER_PACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_CARRIER_PACKING_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`)
+  CONSTRAINT `FK_CARRIER_PACKING_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
+  CONSTRAINT `FK_CARRIER_PACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hojas de ruta';
 
 #
@@ -8353,7 +8354,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.92.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.93.1');
 
 COMMIT;
 

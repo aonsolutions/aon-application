@@ -17,6 +17,7 @@ public interface IReservationConstants {
 	String TOKEN_CONEX_FLOW = "TokenConexFlow";
 	String VAT_TAX = "IVA";
 	String OTHER_TAX = "Others";
+	String BANK_TRANSACTION_COMMENT = "bank transaction";
 	String BANK_TRANSACTION = "BankTransaction";
 	String PAYMENT_TRANSACTION = "PaymentTransaction";
 
@@ -64,6 +65,8 @@ public interface IReservationConstants {
 	String OUTOFDATE_CANCEL_PENALTY = "OUTOFDATE_CANCEL_PENALTY";
 	String NOSHOW_PENALTY = "NOSHOW_PENALTY";
 	String ALLOTMENT_RATE_CODE = "ALLOTMENT_RATE_CODE";
+	String PREPAID = "PREPAID";
+	String NOT_REFUNDABLE = "NOT_REFUNDABLE";
 
 	String SIRIUS = "SIRIUS";
 	String PLS = "PLS";
