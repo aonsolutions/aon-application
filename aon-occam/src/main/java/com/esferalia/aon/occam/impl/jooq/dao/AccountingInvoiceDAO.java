@@ -484,6 +484,7 @@ public class AccountingInvoiceDAO {
 			AccountEntryDAO.update(ctx, accInvoice.getAccountEntry());
 			Integer entryId = accInvoice.getAccountEntry().getId();
 			AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
+			accInvoice.setAccountEntry(newEntry);
 			entries.add(newEntry);
 			ctx.log().info("------ [END OK] UPDATE INVOICE");
 			return entries;
@@ -505,6 +506,7 @@ public class AccountingInvoiceDAO {
 			Integer entryId = AccountEntryDAO.save(ctx, ae);
 			insertAccountEntryInvoice( ctx, accInvoice.getInvoice().getDomain(), entryId, accInvoice.getInvoice().getId());
 			AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
+			accInvoice.setAccountEntry(newEntry);
 			entries.add(newEntry);
 			saveFinances(ctx, accInvoice);
 			if (accInvoice.hasFinances() && accInvoice.isFinanceRecordable()) {
