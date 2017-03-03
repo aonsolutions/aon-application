@@ -46,12 +46,11 @@ public class ToJSON {
 		}
 		return new JSONObject()
 			.put("name",address.getRegistryName())
-			.put("address", streetType + " " + address.getAddress() + " " 
-					+ address.getNumber() +" " + address.getAddress2() +  " " + address.getAddress3())
-			.put("zip", address.getZip())
-			.put("city", address.getCity())
-			.put("province", "")
-			.put("country", address.getGeozoneName());
+			.put("address",address.getFullAddress())
+			.put("zip", address.getZip() != null ? address.getZip() : " ")
+			.put("city", address.getCity() != null ? address.getCity() : " ")
+			.put("province", " ")
+			.put("country", address.getGeozoneName() != null ? address.getGeozone() : " ");
 	}
 	
 	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, String observation, JSONArray rmedia, String status){

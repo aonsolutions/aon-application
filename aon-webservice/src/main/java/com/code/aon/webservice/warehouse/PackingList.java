@@ -263,6 +263,9 @@ public class PackingList {
 		} catch (DocumentException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
+		JSONObject address = json.getJSONObject("address");
+		PdfPCell cEmpty = new PdfPCell(new Phrase("",getFont1()));
+		cEmpty.setBorder(PdfPCell.NO_BORDER);
 		
 		PdfPCell c8 = new PdfPCell(new Phrase("Empresa de Transporte:",getFont1()));
 		c8.setBorder(PdfPCell.NO_BORDER);
@@ -272,30 +275,19 @@ public class PackingList {
 		c9.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c9);
 		
-		PdfPCell c10X = new PdfPCell(new Phrase("Documento:",getFont1()));
-		c10X.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(c10X);
-		
-		PdfPCell c11X = new PdfPCell(new Phrase(json.getString("document"),getFont2()));
-		c11X.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(c11X);
-		
-		PdfPCell caddress = new PdfPCell(new Phrase("Dirección:",getFont1()));
-		caddress.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(caddress);
-		
-		PdfPCell caddress2 = new PdfPCell(new Phrase(json.getString("address"),getFont2()));
-		caddress2.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(caddress2);
-		
-		PdfPCell c10 = new PdfPCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ? "Entrega:" : "Recogida:",getFont1()));
+		PdfPCell c10 = new PdfPCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ? "Entrega:" : "Recogida:",getFont3()));
 		c10.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c10);
 		
-		PdfPCell c11 = new PdfPCell(new Phrase(json.getString("delivery_date"),getFont2()));
+		PdfPCell c11 = new PdfPCell(new Phrase(json.getString("delivery_date"),getFont3()));
 		c11.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c11);
 		
+		carrier.addCell(cEmpty);
+
+		PdfPCell cNif = new PdfPCell(new Phrase("NIF: " + json.getString("document"),getFont2()));
+		cNif.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(cNif);
 		
 		PdfPCell c14 = new PdfPCell(new Phrase("Conductor:",getFont1()));
 		c14.setBorder(PdfPCell.NO_BORDER);
@@ -306,6 +298,12 @@ public class PackingList {
 		c15.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c15);
 		
+		carrier.addCell(cEmpty);
+
+		PdfPCell caddress2 = new PdfPCell(new Phrase(address.getString("address"),getFont2()));
+		caddress2.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(caddress2);
+		
 		PdfPCell c12 = new PdfPCell(new Phrase("Matricula:",getFont1()));
 		c12.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c12);
@@ -313,6 +311,16 @@ public class PackingList {
 		PdfPCell c13 = new PdfPCell(new Phrase(json.getString("number_plate"),getFont2()));
 		c13.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c13);
+		
+		carrier.addCell(cEmpty);
+		
+		PdfPCell cc = new PdfPCell(new Phrase(address.getString("zip") + " " 
+				   + address.getString("city") + " "
+				   + address.getString("province") + " "
+				   + address.getString("country"),getFont2()));
+		cc.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(cc);
+		
 
 		table.addCell(carrier);
 
@@ -375,8 +383,8 @@ public class PackingList {
 		PdfPCell cb = new PdfPCell(new Phrase(address.getString("address"),getFont2()));
 		cb.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(cb);
-		destinatario.addCell("");
-		destinatario.addCell("");
+		destinatario.addCell(new Phrase("Su Referencia:",getFont1()));
+		destinatario.addCell(new Phrase(json.getString("reference"),getFont2()));
 		
 		destinatario.addCell("");
 		PdfPCell cc = new PdfPCell(new Phrase(address.getString("zip") + " " 
@@ -385,8 +393,8 @@ public class PackingList {
 				   + address.getString("country"),getFont2()));
 		cc.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(cc);
-		destinatario.addCell(new Phrase(""));//"Su Referencia:",getFont1()));
-		destinatario.addCell(new Phrase(""));//json.getString("reference"),getFont2()));
+		destinatario.addCell("");
+		destinatario.addCell("");
 		table.addCell(destinatario);
 
 		table.addCell(getDottedSeparator());
@@ -724,5 +732,11 @@ public class PackingList {
 		font2.setSize(8);
 		return font2;
 	}
-	
+
+	private static Font getFont3(){
+		Font font1 = new Font();
+		font1.setSize(10);
+		font1.setStyle(Font.BOLD);
+		return font1;
+	}
 }
