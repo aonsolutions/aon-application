@@ -90,8 +90,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			}
 			if(deliveryList!=null && deliveryList.getDATOSALBARANES()!=null 
 					&& deliveryList.getDATOSALBARANES().size()>0){
+				
+				processData(deliveryList.getDATOSALBARANES(), true);
 				boolean test = "S".equals(deliveryList.getPRUEBA());
-				processData(deliveryList.getDATOSALBARANES(), test);
+				if (!test && (errorList == null || errorList.size() <= 0)) {
+					processData(deliveryList.getDATOSALBARANES(), test);
+				}
 			} else {
 				errorList.add("No se han encontrado datos de albaranes");
 			}
@@ -427,10 +431,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		if(albaran.getDATOSHOJARUTA()!=null) {
 			Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA()
 					.getDATOSAGENCIATRANSPORTE());
-			if(carrier==null || carrier.getId()==null){				
+			if(carrier==null || carrier.getId()==null){
+				LinkedList<Scope> scopes = SecurityDAO.getDomainScopes(ctx);
 				DATOSAGENCIATRANSPORTETYPE at = albaran.getDATOSHOJARUTA().getDATOSAGENCIATRANSPORTE();
 				carrier = new Carrier();
 				carrier.setDomain(ctx.getDomainId());
+				carrier.setScope(scopes.get(0).getId());
 				carrier.setName(at.getDATOSREGISTRO().getNOMBRE());
 				carrier.setAlias(at.getDATOSREGISTRO().getALIAS());
 				carrier.setDocument(at.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
@@ -439,7 +445,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				carrier.setNationality(Country.safeValueOf("ES"));
 				carrier.setSecurityLevel(SecurityLevel.OFFICIAL);
 				carrier.setType((byte)1);
-				WarehouseDAO.insertCarrier(ctx, carrier);
+				int id = WarehouseDAO.insertCarrier(ctx, carrier);
+				carrier.setId(id);
 			}
 			if(carrier!=null && carrier.getId()!=null){
 				CarrierPacking carrierPacking = null;

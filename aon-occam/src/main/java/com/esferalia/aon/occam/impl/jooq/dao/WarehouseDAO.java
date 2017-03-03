@@ -550,12 +550,12 @@ public class WarehouseDAO {
 						carrier.getType()).returning().fetch().stream()
 				.map(new RegistryFiller()).findFirst().orElse(new Registry());
 
-		return ctx
+		ctx
 				.getDslContext()
 				.insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.SCOPE,
 						CARRIER.REGISTRY)
-				.values(carrier.getDomain(), null, registry.getId())
-				.returning(CARRIER.REGISTRY).fetchOne().getRegistry();
+				.values(carrier.getDomain(), carrier.getScope(), registry.getId()).execute();
+		return registry.getId();
 	}
 	
 	// ----------------- CARRIER PACKING
