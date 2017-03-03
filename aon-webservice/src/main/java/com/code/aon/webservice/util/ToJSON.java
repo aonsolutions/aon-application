@@ -174,9 +174,11 @@ public class ToJSON {
 	}
 	
 	public static JSONObject carrierPackingToJSON(CarrierPacking carrierPacking) {
+		String seriesNumber = (carrierPacking.getSeries() != null ? carrierPacking.getSeries() + "/" : "") + carrierPacking.getNumber();
 		return new JSONObject()
 			.put(MSG.ID, carrierPacking.getId())
 			.put(MSG.DOMAIN, carrierPacking.getDomain())
+			.put("series_number", seriesNumber)
 			.put("series", carrierPacking.getSeries())
 			.put("number", carrierPacking.getNumber())
 			.put("type", new JSONObject()
@@ -204,9 +206,11 @@ public class ToJSON {
 	}
 	
 	public static JSONObject purchaseToJSON(Purchase purchase) {
+		String seriesNumber = (purchase.getSeries() != null ? purchase.getSeries() + "/" : "") + purchase.getNumber();
 		return new JSONObject()
 			.put(MSG.ID, purchase.getId())
 			.put(MSG.DOMAIN, purchase.getDomain())
+			.put("series_number", seriesNumber)
 			.put(MSG.SERIES, purchase.getSeries())
 			.put(MSG.NUMBER, purchase.getNumber())
 			.put(MSG.REGISTRY, new JSONObject()
@@ -217,10 +221,12 @@ public class ToJSON {
 			.put("reference", purchase.getPurchaseReference());
 	}
 	
-	public static JSONObject deliveryToJSON(Delivery delivery) {
+	public static JSONObject deliveryToJSON(Delivery delivery) {		
+		String seriesNumber = (delivery.getSeries() != null ? delivery.getSeries() + "/" : "") + delivery.getNumber();
 		return new JSONObject()
 			.put(MSG.ID, delivery.getId())
 			.put(MSG.DOMAIN, delivery.getDomain())
+			.put("series_number", seriesNumber)
 			.put(MSG.SERIES, delivery.getSeries())
 			.put(MSG.NUMBER, delivery.getNumber())
 			.put(MSG.REGISTRY, new JSONObject()

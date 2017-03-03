@@ -176,8 +176,7 @@ public class PackingList {
 		c4.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c4);
 			
-		PdfPCell c5 = new PdfPCell(new Phrase(json.getString("series") 
-				+ "/" + json.getString("number"),getFont2()));
+		PdfPCell c5 = new PdfPCell(new Phrase(json.getString("series_number"),getFont2()));
 		c5.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c5);
 			
@@ -370,7 +369,7 @@ public class PackingList {
 		ca.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(ca);
 		destinatario.addCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ?"Albarán:" : "Pedido:",getFont1()));
-		destinatario.addCell(new Phrase(json.getString("series") + "/" + json.getString("number"),getFont2()));
+		destinatario.addCell(new Phrase(json.getString("series_number"),getFont2()));
 		
 		destinatario.addCell("");
 		PdfPCell cbc = new PdfPCell(new Phrase("NIF: " + address.getString("document"),getFont2()));

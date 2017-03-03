@@ -29,6 +29,10 @@ public class JsOrder extends JavaScriptObject {
 		return this.registry;
 	}-*/;
 
+	public final native String getSeriesNumber() /*-{
+		return this.series_number;
+	}-*/;
+	
 	public final native String getSeries() /*-{
 		return this.series;
 	}-*/;

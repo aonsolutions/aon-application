@@ -201,8 +201,8 @@ public class CarrierPackingSelect extends Composite{
 				@Override
 				public void onSuccess(JSON<JsOrder> result) {
 					result.getData().stream().forEach(js -> 
-						selectable.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
-							+ "-" + js.getRegistry().getName(),js.getId()+""));
+						selectable.addItem(js.getIssueDate() + " #(" + js.getSeriesNumber()
+							+ ") " + js.getRegistry().getName(),js.getId()+""));
 				}
 				
 				@Override
@@ -214,8 +214,8 @@ public class CarrierPackingSelect extends Composite{
 				@Override
 				public void onSuccess(JSON<JsOrder> result) {
 					result.getData().stream().forEach(js -> 
-						selectable.addItem(js.getIssueDate() + "-" + js.getSeries() + "/" + js.getNumber() 
-							+ "-" + js.getRegistry().getName(),js.getId()+""));
+						selectable.addItem(js.getIssueDate() + " #(" + js.getSeriesNumber() 
+							+ ") " + js.getRegistry().getName(),js.getId()+""));
 				}
 				
 				@Override
@@ -578,7 +578,7 @@ public class CarrierPackingSelect extends Composite{
 
 			@Override
 			public String getValue(JsOrder object) {
-				return object.getSeries() + "/" + object.getNumber();
+				return object.getSeriesNumber();
 			}
 		
 		};
@@ -588,8 +588,8 @@ public class CarrierPackingSelect extends Composite{
 			
 			@Override
 			public int compare(JsOrder o1, JsOrder o2) {
-				String a = o1.getSeries() + "/" + o1.getNumber(); 
-				String b = o2.getSeries() + "/" + o2.getNumber(); 
+				String a = o1.getSeriesNumber(); 
+				String b = o2.getSeriesNumber(); 
 				return a.compareTo(b);
 			}
 		});
