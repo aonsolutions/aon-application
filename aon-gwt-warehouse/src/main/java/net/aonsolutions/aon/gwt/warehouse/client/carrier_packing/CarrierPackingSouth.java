@@ -82,7 +82,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
 				+ AonStringUtils.rightPad(AonStringUtils.defaultString(order.getIssueDate()),13)
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-						AonStringUtils.defaultString(order.getSeries() +"/" + order.getNumber()), 16), 17)
+						AonStringUtils.defaultString(order.getSeriesNumber()), 16), 17)
 
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
 						AonStringUtils.defaultString(order.getRegistry().getName()), 32),33)
@@ -202,7 +202,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
 				+ AonStringUtils.rightPad(AonStringUtils.defaultString(order.getIssueDate()),13)
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-						AonStringUtils.defaultString(order.getSeries() +"/" + order.getNumber()), 16), 17)
+						AonStringUtils.defaultString(order.getSeriesNumber()), 16), 17)
 
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
 						AonStringUtils.defaultString(order.getRegistry().getName()), 32),33)
