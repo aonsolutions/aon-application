@@ -594,6 +594,11 @@ public class EmployeeCalendarDraft extends Composite {
 		customDialogBarHour.addCloseHandler(()->{dialogHoras.close();});
 		customDialogBarUntill.addCloseHandler(()->{dialogUntill.close();});
 		customDialogBarInformation.addCloseHandler(()->{dialogInfo.close();});
+		
+		//#ifndef env.SNAPSHOT
+		saveButton.setVisible(false);
+		//#endif
+		
 	}
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------

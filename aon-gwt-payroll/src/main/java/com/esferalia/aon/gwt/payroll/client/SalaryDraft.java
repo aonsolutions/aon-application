@@ -230,8 +230,16 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_ERE", "DIAS_PATERNIDAD", // internals
 
 			"CONTEXT", "SELF", "THIS", // context
-			
-			"HORAS_LUNES", "HORAS_MARTES", "HORAS_MIERCOLES", "HORAS_JUEVES", "HORAS_VIERNES", "HORAS_SABADO", "HORAS_DOMINGO", //Calendario 
+
+			"HORAS_LUNES", 
+			"HORAS_MARTES", 
+			"HORAS_MIERCOLES", 
+			"HORAS_JUEVES", 
+			"HORAS_VIERNES", 
+			"HORAS_SABADO", 
+			"HORAS_DOMINGO", 
+
+			"HORAS_NOMINA", 
 
 			"OCUPACION_IT", "OCUPACION_IMS", "PREST_IT" };
 
@@ -2899,45 +2907,26 @@ public class SalaryDraft extends ResizeComposite
 		newDeductionHandler = insertNewDeductionRow();
 		insertBlankPaymentRow();
 		insertBlankPaymentRow();
-
-		List<Variable> context = getContext(salaryDraftObject);
-		
-		
-		List<Variable> constants = context.stream()
-				.filter(v->isConstant(v))
-				.collect(Collectors.groupingBy(
-						Variable::getName,
-						Collectors.summingDouble(v->Double.parseDouble(String.valueOf(v.getValue())))
-				))
-				.entrySet().stream()
-				.map(e -> {
-					NumberVariable v = new NumberVariable();
-					v.setName(e.getKey());
-					v.setValue(e.getValue());
-					v.setScope(Scope.CONTRACT);
-					v.setEndDate(salaryDraftObject.getEndDate());
-					v.setStartDate(salaryDraftObject.getStartDate());
-					return  v;
-					})
-				.collect(Collectors.toList());
-		
-//		for ( Variable constant: constants  )
-//			Window.alert(constant.getName() + " = " + constant.getValue() );
-		
-
-		List<Variable> variables = context.stream()
-				.filter(v->!skipVariable(v))
-				.collect(Collectors.toList());
 		
 		Scope nextScope = null;
 		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
 
 		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
 
-		dumpContext(constants, Scope.CONTRACT, true, null);
+		List<Variable> context = getContext(salaryDraftObject);
+		List<Variable> variables = context.stream()
+				.filter(v->!skipVariable(v))
+				.collect(Collectors.toList());
+		List<Variable> constants = getConstants(context);
+		
+		List<Variable> visibleContext  = new ArrayList<Variable>();
+		visibleContext.addAll(constants);
+		visibleContext.addAll(variables);
+		
+		//dumpContext(constants, Scope.CONTRACT, true, null);
 
 		for (Scope step : SCOPE_STEPS) {
-			nextScope = dumpContext(variables, step, show, nextScope);
+			nextScope = dumpContext(visibleContext, step, show, nextScope);
 			if (step.compareTo(scope) <= 0)
 				break;
 		}
@@ -2955,7 +2944,7 @@ public class SalaryDraft extends ResizeComposite
 		dumpEvents(salaryDraftObject.getEvents());
 		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
 	}
-	
+
 	
 
 	private void initDbSalaryCheck(){
@@ -5054,6 +5043,26 @@ public class SalaryDraft extends ResizeComposite
 		return null;
 	}
 	
+	private List<Variable> getConstants(List<Variable> context) {
+		return context.stream()
+				.filter(v->isConstant(v))
+				.collect(Collectors.groupingBy(
+						Variable::getName,
+						Collectors.summingDouble(v->Double.parseDouble(String.valueOf(v.getValue())))
+				))
+				.entrySet().stream()
+				.map(e -> {
+					NumberVariable v = new NumberVariable();
+					v.setName(e.getKey());
+					v.setValue(e.getValue());
+					v.setScope(Scope.CONTRACT);
+					v.setEndDate(salaryDraftObject.getEndDate());
+					v.setStartDate(salaryDraftObject.getStartDate());
+					return  v;
+					})
+				.collect(Collectors.toList());
+	}
+
 	public void addDraftVariable(String name , String expression ) { 
 		StringVariable var = new StringVariable
 		.Builder()

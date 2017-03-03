@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -15,7 +17,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -329,7 +333,7 @@ public class EmployeeCalendarDraftObjectData {
 		return v instanceof CalendarVariable ;
 	}
 	
-	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
+	public ArrayList<StringVariable> __getVariablesList(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
 		
@@ -341,7 +345,6 @@ public class EmployeeCalendarDraftObjectData {
 				String name = calcularDiaSemana (entry.getKey().getDay());
 				
 				CalendarVariable var = new CalendarVariable();
-				
 				var.setImplicit(false);
 				var.setScope(Scope.SALARY); // DRAFT
 				var.setName(name);
@@ -352,6 +355,58 @@ public class EmployeeCalendarDraftObjectData {
 				variablesList.add(var);	
 			}
 		}
+		
+		return variablesList;
+	}
+
+	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
+
+		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		
+		for ( int day = 0; day < 6 ; day++ ){
+			
+			LinkedList<CalendarVariable> queue = 
+					new LinkedList<CalendarVariable>();
+			
+			Date date = DateUtils.copyDateOnly(startDate);
+			DateUtils.addDays2Date(date, day);
+			String name = calcularDiaSemana (date.getDay());
+			
+			CalendarVariable var = null ;
+			for(Date start = startDate ;
+				date.compareTo(endDate) <= 0 ;
+				start = DateUtils.addDays2Date(date, 7) ){
+				
+				if ( !draftMapaDiasHoras.containsKey(date) ){
+					var = null;
+					continue;
+				}
+				
+				Double hours = draftMapaDiasHoras.get(date);
+				if ( var != null && var.getValue().equals(Double.toString(hours))) {
+					var.setEndDate(DateUtils.copyDateOnly(date));
+					continue;
+				}
+				
+				var = new CalendarVariable();
+				var.setName(name);
+				var.setValue(hours);
+				var.setImplicit(false);
+				var.setScope(Scope.SALARY); // DRAFT
+				var.setExpression(Double.toString(hours));
+				var.setEndDate(DateUtils.copyDateOnly(date));
+				var.setStartDate(DateUtils.copyDateOnly(start));
+				queue.addLast(var);
+				
+			}
+			
+			if ( var != null )
+				var.setEndDate(endDate);
+			
+			variablesList.addAll(queue);
+			
+		}
+		
 		
 		return variablesList;
 	}

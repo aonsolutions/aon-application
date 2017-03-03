@@ -11,7 +11,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
-//#ifndef env.SNAPSHOT		
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronLabelElement;
@@ -24,7 +23,6 @@ import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
-//#endif
 
 public class MainEntryPoint implements EntryPoint {
 
@@ -36,7 +34,6 @@ public class MainEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		//#ifndef env.SNAPSHOT		
 		Polymer.importHref(Arrays.asList(
 				IronIconsElement.SRC,
 				PaperInputElement.SRC,
@@ -52,7 +49,6 @@ public class MainEntryPoint implements EntryPoint {
 		));
 		
 		Polymer.whenReady(o -> {
-		//#endif		
 			ensureGwtSelector();
 			String entryPoint = getParameter(GWT.getModuleName(),
 					Constants.ENTRY_POINT_PARAM);
@@ -92,10 +88,8 @@ public class MainEntryPoint implements EntryPoint {
 				activitySummary.onModuleLoad();
 			}
 
-		//#ifndef env.SNAPSHOT
 			return null;
 		});
-		//#endif
 				
 
 	}

@@ -261,9 +261,7 @@ public class SalaryDraftObject implements IContextProvider {
 	private ITDataObject dataObject;
 	private SalaryDraft salaryDraft;
 	private UndoManager<Undoable> undoManager;
-	//#ifdef env.SNAPSHOT
 	private EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData;
-	//#endif
 	private EmployeesServiceAsync employeesServiceAsync;
 
 	public SalaryDraftObject(SalaryDraft salaryDraft, ITDataObject dataObject,
@@ -303,17 +301,11 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	public void save(final CalculateCallback callback) {
-	        //#ifdef env.SNAPSHOT
 		removeCalendarDraft();
-		//#endif
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
-		//#ifdef env.SNAPSHOT
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
-		//#endif
 		removeSalaryPart(salaryDraft);
-		//#ifdef env.SNAPSHOT
 		employeeCalendarDraftObjectData.clearDraftHours();
-		//#endif
 		
 		employeesServiceAsync.saveSalaryDraft(salaryDraft,
 				new AsyncCallback<Void>() {
@@ -359,13 +351,9 @@ public class SalaryDraftObject implements IContextProvider {
 	public void calculate(final CalculateCallback callback) {
 
 		setDraftType(salaryDraft);
-        	//#ifdef env.SNAPSHOT
 		removeCalendarDraft();
-		//#endif
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
-        	//#ifdef env.SNAPSHOT
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
-		//#endif
 		removeSalaryPart(salaryDraft);
 
 		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
@@ -1060,7 +1048,6 @@ public class SalaryDraftObject implements IContextProvider {
 		for ( Deduction d : draft.getDraftEmbargos() )
 			setDeductionType(d, draft.getType());
 	}
-        //#ifdef env.SNAPSHOT
 	private void removeCalendarDraft() {
 		List<Variable> draftContext = salaryDraft.getDraftContext();
 		for ( int i = draftContext.size()-1; i >= 0; i--) {
@@ -1070,7 +1057,6 @@ public class SalaryDraftObject implements IContextProvider {
 			}
 		}
 	}
-	//#endif
 	
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
 			SalaryDraft draft) {
@@ -1133,11 +1119,9 @@ public class SalaryDraftObject implements IContextProvider {
 				return var;
 		return null;
 	}
-        //#ifdef env.SNAPSHOT
 	public void setEmployeeCalendarDraftObjectData(EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData) {
 		this.employeeCalendarDraftObjectData = employeeCalendarDraftObjectData;
 	}
-	//#endif
 	
 
 }
