@@ -535,8 +535,12 @@ public class AccountingInvoiceDAO {
 				.setFinanceStatus(accInvoice.isFinanceRecordable()?FinanceStatus.PAID:FinanceStatus.PENDING)
 				.setAmount(accInvoice.getInvoice().getTotal())
 				;
-			Integer financeId = FinanceDAO.insert(ctx, finance);
-			finance.setId(financeId);
+			if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
+				Integer financeId = FinanceDAO.insert(ctx, finance);
+				finance.setId(financeId);
+			} else {
+				ctx.log().info("------ FINANCE NOT SAVED [AMOUNT 0]");
+			}
 		}
 	}
 	
