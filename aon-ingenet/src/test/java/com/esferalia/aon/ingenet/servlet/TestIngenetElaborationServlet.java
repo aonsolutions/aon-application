@@ -47,11 +47,9 @@ public class TestIngenetElaborationServlet {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String path = "http://";
-		path += "udapa.esferalia.net";
-		path += ":8080";
-		path += "/aon-aio";
-//		path += "udapa.aonsolutions.net";
+		String path = "";
+		path += "http://udapa.esferalia.net:8080/aon-aio";
+//		path += "https://udapa.aonsolutions.net";
 		path += "/ingenet/elaboration";
 		
 		String user = "ingenet";
