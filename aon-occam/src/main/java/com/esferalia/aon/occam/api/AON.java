@@ -833,6 +833,7 @@ public class AON {
 	public static LinkedList<Item> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItemStream(ctx, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
@@ -844,6 +845,7 @@ public class AON {
 	public static Item getItem(String domainName, Integer domainId, String login, Integer itemId) {
 		AONContext ctx = null;
 		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItemStream(ctx, f -> f.getIdProperty().eq(itemId)
 					.perPage(1)).findFirst().orElse(new Item());
 		} finally {
@@ -855,6 +857,7 @@ public class AON {
 	public static Item getItem(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItemStream(ctx, filter)
 					.findFirst().orElse(new Item());
 		} finally {
@@ -866,6 +869,7 @@ public class AON {
 	public static Optional<Item> getItemOptional(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItemStream(ctx, filter).findFirst();
 		} finally {
 			if (ctx != null)
