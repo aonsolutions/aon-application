@@ -11,6 +11,7 @@ import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -52,6 +53,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		,COMPUTE_KEY ( (ctx, mod, script,keyDAO) -> getComputeKey(ctx,mod, script,keyDAO))
 		,INVOICE	 ( (ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO, keyDAO==Mod130KeyDAO.C10)))
 		,DIFF_INVOICE( (ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO, keyDAO==Mod130KeyDAO.C10)))
+		,ACT_ACCOUNT ( (ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccountInfoInfo(ctx, mod, script,keyDAO) ))
 		
 		;
 		private IModelInfoProvider provider;
@@ -149,7 +151,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			,null
 			,"<li>Desde contabilidad, saldo acreedor de las cuentas del grupo 7 desde el @{yearStartDate} al @{periodEndDate}</li>"
 			+"<li>Actividades agr\u00EDcolas (la actividad del apunte contable debe ser agr\u00EDcola)</li>"			
-			+"<li>Resultado: @{RAW_C08}</li>"
+			+"<li>Resultado: @{com.esferalia.aon.watson.util.AonMathUtils.round(RAW_C08)}</li>"
 			+"<li>Porcentaje de participaci\u00F3n: <b>@{P1}%</b></li>"
 			+"<li>Resultado: <b>@{C08}</b></li>")
 		,C09 (Mod130Key.C09 , (mod -> mod.isAEAT()),null
@@ -540,36 +542,78 @@ public class Mod130DAO extends FiscalModelDAO {
 	}
 
 	// --------------------------------------------------- KEY INTITIALIZATION
-	private static double getRawC01(AONContext ctx, final Mod130 mod) {
+	private static Stream<AccountingBreakdown> getInitialBaseC01(AONContext ctx, final Mod130 mod) {
 		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 					.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
 					.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
 					.and(p.getAccountCodeProperty().like("7%"))
 					)
-			.filter( br -> (!br.isFarmer() && !br.isObjectiveRegime()))
-			.mapToDouble(br -> br.getCreditBalance())
-			.sum();
+			.filter( br -> (!br.hasActivity() || (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime())) ));
 	}
-	
+	private static double getRawC01(AONContext ctx, final Mod130 mod) {
+		return getInitialBaseC01(ctx, mod)
+				.mapToDouble(br -> br.getCreditBalance())
+				.sum();  
+	}
 	private static double getInitialC01(AONContext ctx, final Mod130 mod) {
 		double c01 = getRawC01(ctx, mod);  
 		double percent = mod.getAmount(Mod130Key.P1);
 		c01 = AonMathUtils.round(c01 * percent / 100 );
 		return c01; 
 	}
+
+	private static String getAccountInfoInfo(AONContext ctx, Mod130 mod, IModelScript<Mod130Key> script,
+			Mod130KeyDAO keyDAO) {
+		String title = "SALDOS DE CUENTAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+				+ mod.getModelName() 
+				+ " DEL " + mod.getPeriod().getDescription()
+				+ " DE " + mod.getYear();
+		if (keyDAO == Mod130KeyDAO.C01) {
+			return getC01Info(ctx, mod, script,title);
+		} else if (keyDAO == Mod130KeyDAO.C02) {
+			return getC02Info(ctx, mod, script,title);
+		} else if (keyDAO == Mod130KeyDAO.C08) {
+			return getC08Info(ctx, mod, script,title);
+		}
+		return null;
+	}
 	
-	private static double getRawC02(AONContext ctx, final Mod130 mod) {
-		double c02 = AccountEntryDAO.getAccountingBreakdown(ctx,
+	
+	private static String getC01Info(AONContext ctx, final Mod130 mod130
+			, final IModelScript<Mod130Key> script,String title) {
+		return IRPFFormatter.formatAccountingBreakdown(title, script.getLabel() 
+			,getInitialBaseC01(ctx, mod130).collect(Collectors.toCollection(LinkedList::new))
+		);
+	}
+	
+	private static String getC02Info(AONContext ctx, final Mod130 mod130
+			, final IModelScript<Mod130Key> script,String title) {
+		return IRPFFormatter.formatAccountingBreakdown(title, script.getLabel() 
+			,getInitialBaseC02(ctx, mod130).collect(Collectors.toCollection(LinkedList::new))
+		);
+	}
+	
+	private static String getC08Info(AONContext ctx, final Mod130 mod130
+			, final IModelScript<Mod130Key> script,String title) {
+		return IRPFFormatter.formatAccountingBreakdown(title, script.getLabel() 
+			,getInitialBaseC08(ctx, mod130).collect(Collectors.toCollection(LinkedList::new))
+		);
+	}
+
+	private static Stream<AccountingBreakdown> getInitialBaseC02(AONContext ctx, final Mod130 mod) {
+		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 					.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
 					.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
 					.and(p.getAccountCodeProperty().like("6%"))
 					)
-			.filter( br -> (!br.isFarmer() && !br.isObjectiveRegime()))
-			.mapToDouble(br -> br.getDebitBalance())
-			.sum();
-		return c02;
+			.filter( br -> (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime()) ));
+	}
+	private static double getRawC02(AONContext ctx, final Mod130 mod) {
+		return getInitialBaseC02(ctx, mod)
+				.mapToDouble(br -> br.getDebitBalance())
+				.sum();
 	}
 	private static double getInitialC02(AONContext ctx, final Mod130 mod) {
 		double c02 = getRawC02(ctx, mod);
@@ -596,15 +640,17 @@ public class Mod130DAO extends FiscalModelDAO {
 		}
 		return c05;
 	}
-	
-	private static double getRawC08(AONContext ctx, final Mod130 mod) {
+	private static Stream<AccountingBreakdown> getInitialBaseC08(AONContext ctx, final Mod130 mod) {
 		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 				.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
 				.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
 				.and(p.getAccountCodeProperty().like("7%"))
 				)
-			.filter( br -> (br.isFarmer() && !br.isObjectiveRegime()))
+			.filter( br -> (br.isFarmer() && !br.isObjectiveRegime()));
+	}
+	private static double getRawC08(AONContext ctx, final Mod130 mod) {
+		return getInitialBaseC08(ctx, mod)
 			.mapToDouble(br -> br.getCreditBalance())
 			.sum();
 	}

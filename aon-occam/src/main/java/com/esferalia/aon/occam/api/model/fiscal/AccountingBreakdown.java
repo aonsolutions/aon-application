@@ -11,7 +11,11 @@ public class AccountingBreakdown implements Serializable {
 
 	private static final long serialVersionUID = 2639661458479524314L;
 
+	private Integer entryId;
+	private Integer journal;
 	private Date issueDate;
+	private Integer activity;
+	private String activityDescription;
 	private String epigraphSection;
 	private String epigraph;
 	private IRPFRegime regime;
@@ -22,6 +26,20 @@ public class AccountingBreakdown implements Serializable {
 	private double debit;
 	private double credit;
 
+	public Integer getEntryId() {
+		return entryId;
+	}
+	public AccountingBreakdown setEntryId(Integer entryId) {
+		this.entryId = entryId;
+		return this;
+	}
+	public Integer getJournal() {
+		return journal;
+	}
+	public AccountingBreakdown setJournal(Integer journal) {
+		this.journal = journal;
+		return this;
+	}
 	public Date getIssueDate() {
 		return issueDate;
 	}
@@ -31,6 +49,21 @@ public class AccountingBreakdown implements Serializable {
 		return this;
 	}
 
+	public Integer getActivity() {
+		return activity;
+	}
+
+	public AccountingBreakdown setActivity(Integer activity) {
+		this.activity = activity;
+		return this;
+	}
+	public String getActivityDescription() {
+		return activityDescription;
+	}
+	public AccountingBreakdown setActivityDescription(String activityDescription) {
+		this.activityDescription = activityDescription;
+		return this;
+	}
 	public String getEpigraph() {
 		return epigraph;
 	}
@@ -119,19 +152,24 @@ public class AccountingBreakdown implements Serializable {
 		return AonMathUtils.round(debit - credit);
 	}
 	
+	public boolean hasActivity() {
+		return (getActivity() != null);
+	}
+	
 	public boolean isFarmer() {
-		return AonStringUtils.isNotBlank(getEpigraphSection())
+		return (hasActivity() 
+			&& (AonStringUtils.isNotBlank(getEpigraphSection())
 			&& AonStringUtils.isNotBlank(getEpigraph())
 			&& AonStringUtils.equals(getEpigraphSection(), "1")
-			&& AonStringUtils.startsWith(getEpigraph(), "0");
+			&& AonStringUtils.startsWith(getEpigraph(), "0")));
 	}
 	public boolean isSimplifiedRegime() {
-		return  getRegime() == IRPFRegime.SIMPLIFIED; 
+		return (hasActivity() && getRegime() == IRPFRegime.SIMPLIFIED); 
 	}
 	public boolean isNormalRegime() {
-		return  getRegime() == IRPFRegime.NORMAL; 
+		return (hasActivity() && getRegime() == IRPFRegime.NORMAL); 
 	}
 	public boolean isObjectiveRegime() {
-		return  getRegime() == IRPFRegime.OBJECTIVE; 
+		return (hasActivity() && getRegime() == IRPFRegime.OBJECTIVE); 
 	}
 }

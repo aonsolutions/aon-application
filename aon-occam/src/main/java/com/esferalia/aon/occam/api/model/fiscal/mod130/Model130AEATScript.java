@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod130;
 
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.ACT_ACCOUNT;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
@@ -26,10 +27,10 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 	 		+ "rimestre)",null,TITLE)
 	,C01	("Ingresos computables correspondientes al conjunto de las act"
 			+ "ividades ejercidas"
-			,new Mod130Key[]{Mod130Key.C01},COMPUTE_KEY)
+			,new Mod130Key[]{Mod130Key.C01},COMPUTE_KEY,ACT_ACCOUNT)
 	,C02	("Gastos fiscalmente deducibles correspondientes al conjunto d"
 			+ "e actividades ejercidas"
-			,new Mod130Key[]{Mod130Key.C02},COMPUTE_KEY)
+			,new Mod130Key[]{Mod130Key.C02},COMPUTE_KEY,ACT_ACCOUNT)
 	,C03	("Rendimiento neto ([01]-[02]). Si se obtiene una cantidad neg"
 			+ "ativa, cons\u00EDgnela con signo menos (-)."
 			,new Mod130Key[]{Mod130Key.C03},COMPUTE)
@@ -52,7 +53,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			,null,TITLE)
 	,C08	("Volumen de ingresos del trimestre (excluidas las subvenciones"
 			+ " de capital y las indemnizaciones)"
-			,new Mod130Key[]{Mod130Key.C08},COMPUTE_KEY)
+			,new Mod130Key[]{Mod130Key.C08},COMPUTE_KEY,ACT_ACCOUNT)
 	,C09	("2 por 100 del importe de la casilla [08]"
 			,new Mod130Key[]{Mod130Key.C09},COMPUTE)
 	,C10	("A deducir: Retenciones e ingresos a cuenta soportados por las"

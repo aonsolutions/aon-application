@@ -5,21 +5,27 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
+import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IRPFFormatter {
 
 	public static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");
+	public static final DecimalFormat INT = new DecimalFormat("#,##0");
 	public static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
+	public static final DecimalFormat DEC2 = new DecimalFormat("#,###.##");
+	
 	private static final String NO_DATA = "<div>NO SE ENCONTRARON DATOS</div>";
+	static final String MAIN_DIV_MSG = "<div style=\"margin-bottom: 5px; font-size: 0.9em;text-align: center;\">{0}</div>";
 	static final String DIV_MSG = "<div>{0}</div>";
-	static final String DIV_MSG_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\">{0}</div>";
 	static final String LI_MSG = "<li>{0}</li>";
 	static final String DIV_MSG_BLUE= "<div style=\"color: blue;\">{0}</div>";
 	static final String DIV_MSG_BLUE_BORDER_BOTTOM = "<div style=\"color: blue; border-bottom:solid blue 1px;\">{0}</div>";
@@ -79,7 +85,8 @@ public class IRPFFormatter {
 				+ AonStringUtils.leftPad(DEC.format(sumQuota),15)
 				));
 			
-		return buf.toString();
+		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
+
 	}
 	
 	public static String formatInvoices(String title, String subtitle, LinkedList<IrpfBreakdown> list) {
@@ -145,7 +152,8 @@ public class IRPFFormatter {
 				));
 		docs =  null;
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", header.length())));
-		return buf.toString();
+		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
+
 	}
 
 	public static String formatDiffInvoices(String title
@@ -266,6 +274,84 @@ public class IRPFFormatter {
 				));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
 
-		return buf.toString();
+		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 	}
+	
+	public static String formatAccountingBreakdown(String title, String subtitle, LinkedList<AccountingBreakdown> list) {
+		StringBuilder buf = new StringBuilder();
+		String header = AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.rightPad("CUENTA",10)
+				+ AonStringUtils.repeat(" ", 21)
+				+ AonStringUtils.rightPad("EPIGR.",8)
+				+ AonStringUtils.rightPad("ACTIVIDAD",11)
+				+ AonStringUtils.leftPad("DEBE",15)		
+				+ AonStringUtils.leftPad("HABER",15)
+				+ AonStringUtils.leftPad("SAL. DEUDOR",15)		
+				+ AonStringUtils.leftPad("SAL. ACREED.",15)
+				;				
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(title, header.length())));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center("(" + subtitle + ")", header.length())));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", header.length()))); 
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,header));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", header.length())));
+
+		TreeMap<String, AccountingBreakdown> map = new TreeMap<String, AccountingBreakdown>();
+		for (AccountingBreakdown ab : list) {
+			String key = ab.getAccountCode() + "-" + ab.getEpigraph();
+			AccountingBreakdown mapped = map.get(key);
+			if (mapped == null) {
+				mapped = new AccountingBreakdown()
+					.setAccount(ab.getAccount())
+					.setAccountCode(ab.getAccountCode())
+					.setAccountDescription(ab.getAccountDescription())
+					.setActivity(ab.getActivity())
+					.setActivityDescription(ab.getActivityDescription())
+					.setEpigraphSection(ab.getEpigraphSection())
+					.setEpigraph(ab.getEpigraph())
+					.setRegime(ab.getRegime())
+					;
+				map.put(key, mapped);
+			}
+			mapped.setDebit(AonMathUtils.round(mapped.getDebit() + ab.getDebit()));
+			mapped.setCredit(AonMathUtils.round(mapped.getCredit() + ab.getCredit()));
+		}
+		double sumDebit = 0;
+		double sumCredit = 0;
+		for (AccountingBreakdown ab : map.values()) {
+			sumDebit += ab.getDebit();
+			sumCredit += ab.getCredit();
+			buf.append(MessageFormat.format(DIV_MSG
+					 ,AonStringUtils.repeat(" ", 2)
+					+ AonStringUtils.rightPad(ab.getAccountCode(),10)
+					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(ab.getAccountDescription(),20),21)
+					+ AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(ab.getEpigraph(), AonStringUtils.SPACE) ,8)
+					+ AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(AonStringUtils.abbreviate(ab.getActivityDescription(),10), AonStringUtils.SPACE),11)
+					+ AonStringUtils.leftPad(AonMathUtils.isZero(ab.getDebit())?AonStringUtils.SPACE:DEC2.format(ab.getDebit()),15)		
+					+ AonStringUtils.leftPad(AonMathUtils.isZero(ab.getCredit())?AonStringUtils.SPACE:DEC2.format(ab.getCredit()),15)
+					+ AonStringUtils.leftPad(AonMathUtils.isGreatherThanZero(ab.getDebitBalance())?DEC2.format(ab.getDebitBalance()):AonStringUtils.SPACE,15)		
+					+ AonStringUtils.leftPad(AonMathUtils.isGreatherThanZero(ab.getCreditBalance())?DEC2.format(ab.getCreditBalance()):AonStringUtils.SPACE,15)		
+					+ AonStringUtils.repeat(" ", 2)
+					));
+		}
+		double sumDebitBalance = (sumDebit >= sumCredit)?sumDebit - sumCredit:0;
+		double sumCreditBalance = (sumCredit >= sumDebit)?sumCredit - sumDebit:0;
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", header.length())));
+		buf.append(MessageFormat.format(DIV_MSG
+				 ,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.repeat(" ",10)
+				+ AonStringUtils.repeat(" ",21)
+				+ AonStringUtils.repeat(" ",8)
+				+ AonStringUtils.repeat(" ",11)
+				+ AonStringUtils.leftPad(AonMathUtils.isZero(sumDebit)?AonStringUtils.SPACE:DEC2.format(sumDebit),15)		
+				+ AonStringUtils.leftPad(AonMathUtils.isZero(sumCredit)?AonStringUtils.SPACE:DEC2.format(sumCredit),15)		
+				+ AonStringUtils.leftPad(AonMathUtils.isGreatherThanZero(sumDebitBalance)?DEC2.format(sumDebitBalance):AonStringUtils.SPACE,15)		
+				+ AonStringUtils.leftPad(AonMathUtils.isGreatherThanZero(sumCreditBalance)?DEC2.format(sumCreditBalance):AonStringUtils.SPACE,15)		
+				+ AonStringUtils.repeat(" ", 2)
+			));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
+		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
+	}
+	
 }

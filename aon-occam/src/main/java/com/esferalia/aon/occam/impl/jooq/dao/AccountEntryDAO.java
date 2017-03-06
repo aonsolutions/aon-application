@@ -495,10 +495,14 @@ public class AccountEntryDAO {
 	
 	public static Stream<AccountingBreakdown> getAccountingBreakdown(AONContext ctx, AccountEntryDetailFilter filter) {
 		return ctx.getDslContext().select(
-				ACCOUNT_ENTRY.ENTRY_DATE
+				ACCOUNT_ENTRY.ID
+				,ACCOUNT_ENTRY.JOURNAL
+				,ACCOUNT_ENTRY.ENTRY_DATE
 				,IAE.EPIGRAPH
 				,IAE.SECTION
 				,IAE.EPIGRAPH
+				,ENTERPRISE_ACTIVITY.ID
+				,ENTERPRISE_ACTIVITY.DESCRIPTION
 				,ENTERPRISE_ACTIVITY.RETENTION_REGIME
 				,ACCOUNT_ENTRY_DETAIL.ACCOUNT
 				,ACCOUNT.CODE
@@ -523,7 +527,11 @@ public class AccountEntryDAO {
 		@Override
 		public AccountingBreakdown apply(Record record) {
 			return new AccountingBreakdown()
+			.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
+			.setJournal(record.getValue(ACCOUNT_ENTRY.JOURNAL))
 			.setIssueDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+			.setActivity(record.getValue(ENTERPRISE_ACTIVITY.ID))
+			.setActivityDescription(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
 			.setEpigraph(record.getValue(IAE.EPIGRAPH))
 			.setEpigraphSection(record.getValue(IAE.SECTION))
 			.setRegime( IRPFRegime.safeValueOf(record.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME)))
