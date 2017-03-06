@@ -29,9 +29,10 @@ public class TestIngenetElaborationServlet {
 				
 				// RECUPERAR
 				+ "<ACCION>RECUPERAR</ACCION>"
-				+ "<FECHA>20170224</FECHA>"
-////				+ "<ESTADO>PENDIENTE</ESTADO>"
+				+ "<FECHA>20170306</FECHA>"
+				+ "<ESTADO>PENDIENTE</ESTADO>"
 				+ "<ESTADO>PROCESANDO</ESTADO>"
+				+ "<ESTADO>FINALIZADO</ESTADO>"
 
 				// CANCELAR
 //				+ "<ACCION>CANCELAR</ACCION>"

@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.AonException;
@@ -68,6 +70,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetDeliveryServlet.class.getName());
+	
 	private List<String> errorList;
 	
 		
@@ -115,9 +119,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							&& o.getERRORES().getERRORES() != null
 							&& !o.getERRORES().getERRORES().isEmpty())
 					.collect(Collectors.toList());
-			deliveryList.getDATOSALBARANES().clear();
-			deliveryList.getDATOSALBARANES().addAll(invalidDeliveries);
-			errorList.add("Albaranes con errores: " + invalidDeliveries.size());
+			if(invalidDeliveries!=null && invalidDeliveries.size()>0){				
+				deliveryList.getDATOSALBARANES().clear();
+				deliveryList.getDATOSALBARANES().addAll(invalidDeliveries);
+				errorList.add("Albaranes con errores: " + invalidDeliveries.size());
+			}
 		}
 		
 		if (errorList != null && errorList.size() > 0) {
@@ -155,6 +161,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 	
 	private void addError(ALBARANTYPE albaran, String msg){
+		LOGGER.error(msg);
 		if(albaran.getERRORES()==null){
 			albaran.setERRORES(new ERRORESTYPE());
 		}
@@ -328,35 +335,39 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		
 		// TODO packages 
 		if (lineasEnvase != null && lineasEnvase.size() > 0) {
-			lineasEnvase.stream()
-			.sorted((linea1, linea2) -> linea1.getDESCRIPCION()
-					.compareTo(linea2.getDESCRIPCION()))
-					.forEach(
-							linea -> {
-								Item item;
-								try {
-									item = obtainItem(ctx,
-											linea.getPRODUCTO(), test);
-									DeliveryDetail detail = new DeliveryDetail();
-									detail.setDomain(ctx.getDomainId());
-									detail.setDelivery(delivery);
-									detail.setLine(Short.valueOf(linea.getLINEA()));
-									detail.setItem(item);
-									String description = linea.getDESCRIPCION();
-									if(linea.getLINEAENVASECONTENEDOR()!=null)
-										description = "/*PACKAGE="+linea.getLINEAENVASECONTENEDOR() + "*/" + linea.getDESCRIPCION();
-									if(linea.getLINEAALBARANCONTENIDA()!=null)
-										description = "/*DETAIL="+linea.getLINEAALBARANCONTENIDA() + "*/" + linea.getDESCRIPCION();
-									detail.setDescription(description);
-									detail.setWarehouse(warehouse.getId());
-									detail.setDiscountExpression("0");
-									detail.setQuantity(Double.valueOf(linea
-											.getCANTIDAD()));
-									detailList.add(detail);
-								} catch (Exception e) {
-									addError(albaran, e.getMessage());
-								}
-							});
+			List<DATOSLINEAENVASETYPE> lineas = lineasEnvase
+					.stream()
+					.sorted((linea1, linea2) -> linea1.getLINEA().compareTo(
+							linea2.getLINEA())).collect(Collectors.toList());
+			Integer linesCount = detailList.size();
+			for(DATOSLINEAENVASETYPE linea: lineas){
+				Item item;
+				try {
+					item = obtainItem(ctx,
+							linea.getPRODUCTO(), test);
+					DeliveryDetail detail = new DeliveryDetail();
+					detail.setDomain(ctx.getDomainId());
+					detail.setDelivery(delivery);
+					detail.setLine(Integer.valueOf(linesCount+Integer.valueOf(linea.getLINEA())).shortValue());
+					detail.setItem(item);
+					String packages = "[ENV=" + (linesCount+Integer.valueOf(linea.getLINEA()));
+					if(linea.getLINEAENVASECONTENEDOR()!=null)
+						packages += ";CONT=" + (linesCount+Integer.valueOf(linea.getLINEAENVASECONTENEDOR()));
+					if(linea.getLINEAALBARANCONTENIDA()!=null)
+						packages += ";LIN=" + linea.getLINEAALBARANCONTENIDA();
+					packages += "]";
+					delivery.setRemarks(packages + delivery.getRemarks());
+					String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
+					detail.setDescription(description);
+					detail.setWarehouse(warehouse.getId());
+					detail.setDiscountExpression("0");
+					detail.setQuantity(Double.valueOf(linea
+							.getCANTIDAD()));
+					detailList.add(detail);
+				} catch (Exception e) {
+					addError(albaran, e.getMessage());
+				}
+			}
 		}
 				
 		return detailList;
@@ -655,9 +666,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				if(productoelaborado.getNUMEROLOTESERIE()!=null){
 					item.setSerialNumber(productoelaborado.getNUMEROLOTESERIE());
 				}
-				if(!test){
-					ProductDAO.insertItem(ctx, item);
-				}
+				ProductDAO.insertItem(ctx, item);
 				item = AON.getItemList(
 						ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 						f -> f.getDomainProperty()

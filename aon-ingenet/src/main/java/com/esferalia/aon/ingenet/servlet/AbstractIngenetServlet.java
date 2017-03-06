@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
@@ -22,6 +24,8 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIngenetServlet.class.getName());
 	
 	private String user;
 	private String domain;
@@ -113,10 +117,8 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 
 	protected boolean doLogin(String domainName, String username,
 			String password) {
-		System.out
-				.println("INGENET LOGIN: " + domainName + "@" + username
-						+ " (using password "
-						+ (password != null ? "YES" : "NO") + ")");
+		LOGGER.info("INGENET LOGIN: " + domainName + "@" + username
+				+ " (using password " + (password != null ? "YES" : "NO") + ")");
 		if (domainName != null && username != null && password != null
 				&& domainName.matches("^udapa\\..*")) {
 			return "ingenet".equals(username) && "1ng3n3t".equals(password);

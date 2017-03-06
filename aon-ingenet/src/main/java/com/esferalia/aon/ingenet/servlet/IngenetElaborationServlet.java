@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.ingenet.api.consultaElaboraciones.ACCIONTYPE;
@@ -64,6 +66,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetElaborationServlet.class.getName());
+	
 	private List<String> errorList;
 	
 	
@@ -105,7 +109,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			try {
 				date = getDateFormatter().parse(params.getFECHA());
 			} catch (ParseException e) {
-				System.err.println("Cannot parse date value. Reason: "+ e.getMessage());
+				LOGGER.error("Cannot parse date value. Reason: "+ e.getMessage());
 			}
 		}
 		List<ElaborationStatus> statusList = new LinkedList<>();
@@ -145,7 +149,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				errorList.add("No se ha indicado la accion a realizar");
 			}
 		} catch (Exception e) {
-			errorList.add(e.getMessage());
+			LOGGER.error(e.toString());
+			errorList.add(e.toString());
 		}
 		
 		if(errorList!=null && errorList.size()>0){
@@ -407,7 +412,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		List<Elaboration> elaborationList = ElaborationDAO.getElaborationList(
 				ctx,
 				p -> {
-					Byte[] statuses = { null, null };
+					Byte[] statuses = { null, null, null };
 					if (statusList != null && statusList.size() > 0) {
 						for (int i = 0; i < statusList.size(); i++) {
 							statuses[i] = statusList.get(i).value();
