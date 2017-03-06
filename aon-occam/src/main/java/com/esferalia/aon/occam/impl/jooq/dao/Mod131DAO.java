@@ -1917,7 +1917,9 @@ public class Mod131DAO extends FiscalModelDAO {
 				buf.append(AonStringUtils.CR_LF);
 				buf.append("<ul style=\"padding-left: 20px;\">");
 				if (AonStringUtils.isNotBlank( keyDAO.getExpression()) && keyDAO != Mod131KeyDAO.C12 ) {
-					buf.append("<li><b>F\u00F3rmula:</b> " + keyDAO.getExpression() + "</li>" );
+					String exp = keyDAO.getExpression();
+					if (keyDAO == Mod131KeyDAO.C10) exp =  "C07 - C08 - C09";
+					buf.append("<li><b>F\u00F3rmula:</b> " + exp + "</li>" );
 				}
 				String template = keyDAO.getTemplate();
 				if (AonStringUtils.isNotBlank( template )) {
