@@ -1530,16 +1530,15 @@ public class Mod131DAO extends FiscalModelDAO {
 			,null
 			, "ret = 0.0;"
 			+ "if (P2 > 0) {"
-			+ "		if (C05 != 0 ) {"
-			+ "	 		ret = C05 * 2 / 100;"
-			+ "		}"
-			+ "		if (C01 != 0 || C03 != 0) {"
-			+ "	 		ret = (C01 * 0.5 / 100) + (C03 * 2 / 100);"
-			+ "		}"
+				+ "if (C05 != 0 ) {"
+					+ "ret = C05 * 2 / 100;"
+				+ "}"
+				+ "if (C01 != 0 || C03 != 0) {"
+					+ "ret = (C01 * 0.5 / 100) + (C03 * 2 / 100);"
+				+ "}"
 			+ "}"
 			+ "ret = ret > (C10 - C11)?(C10 - C11):ret;"
 			+ "return round(ret);"
-			
 			, "@code{ret=0.0;}"
 			+ "@if{P2 > 0}"
 				+ "<li>SI se han destinado cantidades al pago de pr\u00E9stamos por adquisici\u00F3n o rehabilitaci\u00F3n de vivienda habitual.</li>"
@@ -1917,7 +1916,7 @@ public class Mod131DAO extends FiscalModelDAO {
 				buf.append(AonStringUtils.CR_LF);
 				buf.append(AonStringUtils.CR_LF);
 				buf.append("<ul style=\"padding-left: 20px;\">");
-				if (AonStringUtils.isNotBlank( keyDAO.getExpression())) {
+				if (AonStringUtils.isNotBlank( keyDAO.getExpression()) && keyDAO != Mod131KeyDAO.C12 ) {
 					buf.append("<li><b>F\u00F3rmula:</b> " + keyDAO.getExpression() + "</li>" );
 				}
 				String template = keyDAO.getTemplate();
