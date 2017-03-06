@@ -3034,7 +3034,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Actividad de temporada: n\u00BA de d\u00EDas de ejercicio en el a\u00F1o anterior")
 	String irpfActivityTem();
 
-	@DefaultMessage("Nuevas actividades iniciadas a partir del 1-1-2014: A\u00F1o de inicio")
+	@DefaultMessage("Nuevas actividades: A\u00F1o de inicio")
 	String irpfActivityNue();
 
 	@DefaultMessage("\u00BFDeducci\u00F3n por rentas obtenidas en Ceuta y Melilla?")
@@ -3058,10 +3058,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Municipio donde se ejerce la actividad:")
 	String irpfActivityMun();
 
-	@DefaultMessage("N\u00BA de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)")
+	@DefaultMessage("N\u00BA de empleados al inicio del ejercicio (o en la fecha de inicio de la actividad)")
 	String irpfActivityEmp();
 
-	@DefaultMessage("Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda")
+	@DefaultMessage("Si realiza la actividad en LORCA, seleccione lo que proceda")
 	String irpfActivityLor();
 
 	@DefaultMessage("N\u00BA de bateas y de barcos auxiliares de la empresa")
@@ -3106,7 +3106,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Rendimiento a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n")
 	String irpfActivityRdr();
 
-	@DefaultMessage("D\u00EDas de ejercicio en 2015")
+	@DefaultMessage("D\u00EDas de ejercicio")
 	String irpfActivityDia();
 
 	@DefaultMessage("Rendimiento neto de la actividad a efectos del pago fraccionado")

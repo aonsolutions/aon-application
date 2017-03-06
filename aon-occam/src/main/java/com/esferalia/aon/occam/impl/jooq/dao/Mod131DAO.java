@@ -1671,7 +1671,7 @@ public class Mod131DAO extends FiscalModelDAO {
 						.or(p.getAccountCodeProperty().like("78%"))
 						.or(p.getAccountCodeProperty().like("79%"))
 					))
-				.filter( br -> (br.isFarmer()))
+				.filter( br -> (br.isFarmer() && br.isObjectiveRegime()))
 				.mapToDouble(br -> br.getCreditBalance())
 				.sum();
 	}
