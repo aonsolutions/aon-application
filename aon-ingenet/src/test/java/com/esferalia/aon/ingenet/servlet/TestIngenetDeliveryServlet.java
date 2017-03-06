@@ -17,7 +17,8 @@ public class TestIngenetDeliveryServlet  {
 //		String filePath = "/temp/delivery_example.xml";
 //		String filePath = "/temp/albaranes20170216101946.xml";
 //		String filePath = "/temp/albaranes20170220110328.xml";
-		String filePath = "/temp/albaranes20170224085549.xml";
+//		String filePath = "/temp/albaranes20170224085549.xml";
+		String filePath = "/temp/albaranes-pv17-114-115.xml";
 		
 		try (
 			BufferedReader xml_br = new BufferedReader(new FileReader(filePath))) {
