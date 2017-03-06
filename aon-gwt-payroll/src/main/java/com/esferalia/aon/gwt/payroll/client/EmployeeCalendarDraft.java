@@ -15,7 +15,10 @@ import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayT
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
+import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,6 +32,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -37,8 +41,9 @@ import com.google.gwt.view.client.OrderedMultiSelectionModel;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
+import com.vaadin.polymer.paper.widget.PaperMenu;
 
-public class EmployeeCalendarDraft extends Composite {
+public class EmployeeCalendarDraft extends Composite implements ContextMenuHandler {
 
 	private static EmployeeCalendarDraftUiBinder uiBinder = GWT.create(EmployeeCalendarDraftUiBinder.class);
 
@@ -270,6 +275,21 @@ public class EmployeeCalendarDraft extends Composite {
 
 	@UiField
 	Grid calendarGrid;
+	
+	@UiField
+	MenuItem diaNoLaborable;
+	
+	@UiField
+	MenuItem diaVacaciones;
+	
+	@UiField
+	MenuItem diaHuelga;
+	
+	@UiField
+	MenuItem diaEre;
+	
+	@UiField
+	MenuItem borrarEvento;
 	
 	@UiField
 	MenuItem selectAlldays;
@@ -504,6 +524,8 @@ public class EmployeeCalendarDraft extends Composite {
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
+		
 		divDays[0] = bloqueLunes;
 		divDays[1] = bloqueMartes;
 		divDays[2] = bloqueMiercoles;
@@ -519,7 +541,49 @@ public class EmployeeCalendarDraft extends Composite {
 		horasButton.setEnabled(false);
 		hourButton.setDisabled(true);
 		
+		diaNoLaborable.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				addFreeDay();	
+			}
+		});
 		
+		diaVacaciones.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				addHolidays();	
+			}
+
+		});
+		
+		diaHuelga.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				addStrikeDay();	
+			}
+			
+		});
+		
+		diaEre.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				addEreDay();
+			}
+			
+		});
+		
+		borrarEvento.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				limpiarSeleccionados();
+			}
+			
+		});
 		
 		selectAlldays.setScheduledCommand(new Command() {
 			
@@ -747,31 +811,29 @@ public class EmployeeCalendarDraft extends Composite {
 	
 	@UiHandler("eraseButton")
 	public void onEraseClick(ClickEvent event) {
-		if(!fechasSelecciondas.getSelectedList().isEmpty())
-			limpiarEstilos(fechasSelecciondas.getSelectedList());
-		fechasSelecciondas.clear();
+		limpiarSeleccionados();
 	}
-	
+
 	@UiHandler("diaNoLaborableButton")
 	public void onDiaNoLaborableClick(ClickEvent event) {
-		aplicarEstilosDiasSeleccionadios(DayType.FREEDAY);	
+		addFreeDay();	
 	}
 
 	@UiHandler("diaVacacionesButton")
 	public void onVacacionesClick(ClickEvent event) {
-		aplicarEstilosDiasSeleccionadios(DayType.HOLIDAY);
-	}
-	
-	@UiHandler("diaEreButton")
-	public void onEreClick(ClickEvent event) {
-		aplicarEstilosDiasSeleccionadios(DayType.EREDAY);
+		addHolidays();
 	}
 	
 	@UiHandler("diaHuelgaButton")
 	public void onHuelgaClick(ClickEvent event) {
-		aplicarEstilosDiasSeleccionadios(DayType.STRIKEDAY);
+		addStrikeDay();
 	}
 	
+	@UiHandler("diaEreButton")
+	public void onEreClick(ClickEvent event) {
+		addEreDay();
+	}
+
 	@UiHandler("diaAusenciaButton")
 	public void onDiaAusenciaClick(ClickEvent event) {
 		//aplicarEstilosDiasSeleccionadios(DayType.DROPDAY);
@@ -791,7 +853,6 @@ public class EmployeeCalendarDraft extends Composite {
 	public void onHourClick(ClickEvent event) {
 		if(!fechasSelecciondas.getSelectedList().isEmpty()){	
 			dialogHoras.open();
-			anadirFechas();
 			comprobarDiasAMostrar();
 		}
 	}
@@ -1030,6 +1091,7 @@ public class EmployeeCalendarDraft extends Composite {
 				DateUtils.resetTime(actualDay);
 				DoubleBox horas = new DoubleBox();
 				horas.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+				horas.setEnabled(false);
 				DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
 				int filaHoras = row + 1;
 				if (filaHoras % 4 == 0)
@@ -1062,6 +1124,7 @@ public class EmployeeCalendarDraft extends Composite {
 			//CeldaHora
 			DoubleBox horas = new DoubleBox();
 			horas.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+			horas.setEnabled(false);
 			DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
 			
 			int filaHoras = row + 1;
@@ -1398,6 +1461,32 @@ public class EmployeeCalendarDraft extends Composite {
 			}
 		}
 		
+	}
+	
+	// ------------------------------------------------------------- GESTION EVENTOS ---------------------------------------------------------------------
+	
+	private void addHolidays() {
+		aplicarEstilosDiasSeleccionadios(DayType.HOLIDAY);
+	}
+	private void addFreeDay() {
+		aplicarEstilosDiasSeleccionadios(DayType.FREEDAY);
+	}
+	private void addStrikeDay() {
+		aplicarEstilosDiasSeleccionadios(DayType.STRIKEDAY);
+	}
+	private void addEreDay() {
+		aplicarEstilosDiasSeleccionadios(DayType.EREDAY);
+	}
+	private void limpiarSeleccionados() {
+		if(!fechasSelecciondas.getSelectedList().isEmpty())
+			limpiarEstilos(fechasSelecciondas.getSelectedList());
+		fechasSelecciondas.clear();
+	}
+
+	@Override
+	public void onContextMenu(ContextMenuEvent event) {
+		event.preventDefault();
+		event.stopPropagation();
 	}
 	
 }

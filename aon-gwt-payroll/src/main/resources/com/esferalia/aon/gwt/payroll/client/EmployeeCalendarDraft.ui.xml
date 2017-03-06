@@ -331,13 +331,16 @@
 		<g:north size="55">
 			<g:FlowPanel>
 				<g:MenuBar>
-					<g:MenuItem text="Archivo" enabled="false">
+					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="addEventMenuItem" text="Añadir evento" />
+							<g:MenuItem ui:field="diaNoLaborable" text="Añadir día(s) no laborable" />
+								<g:MenuItem ui:field="diaVacaciones" text="Añadir día(s) vacaciones" />
+								<g:MenuItem ui:field="diaHuelga" text="Añadir día(s) huelga" />
+								<g:MenuItem ui:field="diaEre" text="Añadir día(s) ERE" />			
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
-							<g:MenuItem ui:field="eraseEventMenuItem" text="Borrar evento" />
+							<g:MenuItem ui:field="borrarEvento" text="Borrar evento" />
 						</g:MenuBar>
 					</g:MenuItem>
 					<g:MenuItem text="Edicion">
@@ -390,7 +393,7 @@
 		</g:north>
 		<g:center>
 			<g:HTMLPanel>
-
+				
 				<p:PaperDialog ui:field="dialogUntill" styleName="{style.dialogBoxStyle}"
 					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
 					withBackdrop="true">
