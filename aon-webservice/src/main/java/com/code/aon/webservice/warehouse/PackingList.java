@@ -255,7 +255,8 @@ public class PackingList {
 		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 
 		PdfPTable carrier = new PdfPTable(4);
-		
+		carrier.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+
 		float[] medidaCeldas = {1.5f, 2.5f, 1f, 1f};
 		try {
 			carrier.setWidths(medidaCeldas);
@@ -320,6 +321,8 @@ public class PackingList {
 		cc.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(cc);
 		
+		carrier.addCell("");
+		carrier.addCell("");
 
 		table.addCell(carrier);
 

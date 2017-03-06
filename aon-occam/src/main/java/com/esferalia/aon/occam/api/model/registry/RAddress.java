@@ -187,8 +187,13 @@ public class RAddress implements Serializable {
 	}
 	
 	public String getFullAddress() {
+		String streetType = getStreet_type();
+		if("XX".equals(streetType) || "ZZ".equals(streetType)
+			|| "XX.".equals(streetType) || "ZZ.".equals(streetType)){
+			streetType = "";
+		}
     	StringBuffer buf = new StringBuffer();
-    	buf.append((getStreet_type()!=null) ? getStreet_type() : "");
+    	buf.append((streetType !=null) ? streetType : "");
     	buf.append((getStreet_type()!=null) ? ". " : "");
     	buf.append(AonStringUtils.isEmpty(getAddress())? "":getAddress());
     	buf.append(AonStringUtils.isEmpty(getNumber())?"":" ");

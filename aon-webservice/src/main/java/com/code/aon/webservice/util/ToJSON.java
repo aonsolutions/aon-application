@@ -40,17 +40,13 @@ public class ToJSON {
 	}
 	
 	public static JSONObject raddressToJSON(RAddress address){	
-		String streetType = address.getStreet_type();
-		if("XX".equals(streetType) || "ZZ".equals(streetType)){
-			streetType = "";
-		}
 		return new JSONObject()
 			.put("name",address.getRegistryName())
 			.put("address",address.getFullAddress())
 			.put("zip", address.getZip() != null ? address.getZip() : " ")
 			.put("city", address.getCity() != null ? address.getCity() : " ")
 			.put("province", " ")
-			.put("country", address.getGeozoneName() != null ? address.getGeozone() : " ");
+			.put("country", address.getGeozoneName() != null ? address.getGeozoneName() : " ");
 	}
 	
 	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, String observation, JSONArray rmedia, String status){
@@ -218,7 +214,7 @@ public class ToJSON {
 				.put(MSG.NAME, purchase.getSupplierName())) 
 			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "")
 			.put("order_type", "purchase")
-			.put("reference", purchase.getPurchaseReference());
+			.put("reference", purchase.getPurchaseReference() != null ? purchase.getPurchaseReference() : " ");
 	}
 	
 	public static JSONObject deliveryToJSON(Delivery delivery) {		
@@ -234,7 +230,7 @@ public class ToJSON {
 				.put(MSG.NAME, delivery.getCustomerName())) 
 			.put(MSG.ISSUE_DATE, delivery.getIssueTime() != null ? dateFormat.format(delivery.getIssueTime()) : "")
 			.put("order_type", "delivery")
-			.put("reference", delivery.getTrackingNumber())
+			.put("reference", delivery.getTrackingNumber() != null ? delivery.getTrackingNumber() : " ")
 			.put("total_packages", delivery.getTotalPackages())
 			.put("total_weight", delivery.getTotalWeight());
 			
