@@ -266,7 +266,8 @@
 													<h:outputText value="#{bundle.aon_transfer}" />
 												</f:facet>
 												<aon:inputText id="transfered"
-													value="#{to.transfered}" size="4" >	
+													value="#{to.transfered}" size="4"	
+													rendered="#{!to.item.wildCard}">
 													<a4j:support event="onchange" reRender="purchaseData,detailDataContainer" ajaxSingle="true" requestDelay="10"
 														actionListener="#{income.purchaseTransferManager.onTransferedChanged}" />
 												</aon:inputText>	
@@ -298,6 +299,10 @@
 														reRender="buttonColumn" ajaxSingle="true">
 													</aon:commandButton>
 													
+													<aon:outputText value="&#160;"
+														title="#{bundle.product_item_serializable_wildcard_error}"
+														rendered="#{to.item.wildCard}"
+														styleClass="aon-finding-toolbar-item aon-icon-errorwarning aon-finding-toolbar-item-no-border" />
 												</aon:div>
 											</aon:column>
 	

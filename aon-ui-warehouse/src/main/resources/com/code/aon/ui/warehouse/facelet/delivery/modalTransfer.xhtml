@@ -200,9 +200,10 @@
 												</f:facet>
 												<aon:inputText id="transfered"
 													value="#{to.transfered}" size="4"
-													rendered="#{!to.item.wildCard}"
-													reRender="salesData,detailDataContainer" ajaxSingle="true"
-													actionListener="#{delivery.salesTransferManager.onTransferedChanged}" />	
+													rendered="#{!to.item.wildCard}">	
+													<a4j:support event="onchange" reRender="salesData,detailDataContainer" ajaxSingle="true" requestDelay="10"
+														actionListener="#{delivery.salesTransferManager.onTransferedChanged}" />
+												</aon:inputText>
 											</aon:column>
 											
 											<aon:column id="buttonColumn">
@@ -227,7 +228,6 @@
 														title="#{bundle.product_item_serializable_wildcard_error}"
 														rendered="#{to.item.wildCard}"
 														styleClass="aon-finding-toolbar-item aon-icon-errorwarning aon-finding-toolbar-item-no-border" />
-													
 												</aon:div>
 											</aon:column>
 	
