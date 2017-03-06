@@ -161,7 +161,7 @@ public class ConnectSaleInvoiceWriter {
 		sincc.setDocumentoRectificado_Sustituido(null);
 		sincc.setNumeroDeContrato_acuerdo_CT_(null);
 		sincc.setNumeroDeRelacionDeEntrega_REN_(null);
-		sincc.setCodigoDeMoneda(null);
+		sincc.setCodigoDeMoneda("EUR");
 		if (financeList != null && financeList.size() == 1) {
 			sincc.setFechaDeVencimientoUnico(Integer.valueOf(SeresUtils.dateFormat()
 					.format(financeList.get(0).getDueDate())));
@@ -313,7 +313,7 @@ public class ConnectSaleInvoiceWriter {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
-		sincp.setNumeroDeIdentificacionFiscal(null);
+		sincp.setNumeroDeIdentificacionFiscal(registry.getDocument());
 		sincp.setCodigoAdicional(null);
 		sincp.setFuncionDeContacto(null);
 		sincp.setCodigoDepartamentoOEmpleado(null);
