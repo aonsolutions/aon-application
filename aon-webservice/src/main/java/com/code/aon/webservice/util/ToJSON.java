@@ -41,7 +41,7 @@ public class ToJSON {
 	
 	public static JSONObject raddressToJSON(RAddress address){	
 		return new JSONObject()
-			.put("name",address.getRegistryName())
+			.put("name",address.getRegistryName() != null ? address.getRegistryName() : "")
 			.put("address",address.getFullAddress())
 			.put("zip", address.getZip() != null ? address.getZip() : " ")
 			.put("city", address.getCity() != null ? address.getCity() : " ")

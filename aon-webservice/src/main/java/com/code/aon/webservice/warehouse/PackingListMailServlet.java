@@ -60,7 +60,6 @@ public class PackingListMailServlet extends HttpServlet{
 		String login = pathInfo[2];
 		String domainName = pathInfo[1]; 
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
-
 		JSONObject json = Utils.getRequestJSON(req);
 
 		Integer carrier_packing = json.getInt(MSG.CARRIER_PACKING);
@@ -74,15 +73,16 @@ public class PackingListMailServlet extends HttpServlet{
 		if(!signature_id.equals(-1)){
 			signature = AON.getSignature(domain.getName(), domain.getId(), login, signature_id);
 		}
-		sendNotification(domain, login, carrierPacking, signature, mail_account, type, to, order);		
+		String scheme = req.getParameter("scheme");
+		sendNotification(domain, login, carrierPacking, signature, mail_account, type, to, order, scheme);		
 	}
 		
-	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type, String to, Integer order){
+	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type, String to, Integer order, String scheme){
 		msg = "<div> Estimado Colaborador, </div><div><p></p></div>";
 		Boolean isSC = CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType());
 		String str = "domain="+ domain.getName() + "&login="+ login + "&id="+carrierPacking.getId();
 		String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-		String url = "http://" + domain.getName() + "/aon_gwt_aio/download_packing_list/"+base;
+		String url = scheme + "://" + domain.getName() + "/aon_gwt_aio/download_packing_list/"+base;
 		String pdf = "Le adjuntamos copia de la" + (isSC ? " solicitud de carga ": " hoja de ruta ")
 				+ carrierPacking.getSeries() +"/" + carrierPacking.getNumber()
 				+ " en formato pdf, pulse " + "<a href=\""+ url+"\"> AQUI </a>" + " para descargar.";
@@ -129,7 +129,7 @@ public class PackingListMailServlet extends HttpServlet{
 					f -> f.getRegistryProperty().eq(carrierPacking.getCarrier())
 					.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 			}
-			sendEmail(domain, login, mailAccount,(to != null) ? to : rmedia.getValue(), "", "packing List", msg);
+			sendEmail(domain, login, mailAccount,(to != null) ? to : rmedia.getValue(), "", "packing List", msg, scheme);
 		} else if(MSG.REGISTRY.equalsIgnoreCase(type)){
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 				Stream<Purchase> stream = null;
@@ -163,7 +163,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(purchase.getSupplier())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg);
+					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg, scheme);
 				});
 			} else if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
 				Stream<Delivery> stream = null;
@@ -193,7 +193,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(delivery.getCustomer())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg);
+					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg, scheme);
 				});
 			}
 		}
@@ -312,7 +312,7 @@ public class PackingListMailServlet extends HttpServlet{
 				+ "</div></div>";
 	}
 	
-	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String bcc, String issue, String message){
+	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String bcc, String issue, String message, String scheme){
 		try {
 			JSONObject json = new JSONObject();
 			json.put("mailAccountId", mailAccountId)
@@ -325,15 +325,15 @@ public class PackingListMailServlet extends HttpServlet{
 				.put("md5", "")
 				.put("bcc", bcc);
 			
-			sendPostHttpClient(domain.getName(),json);			
+			sendPostHttpClient(domain.getName(),json, scheme);			
 		} catch (JSONException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
 	
-	protected void sendPostHttpClient(String domainName, JSONObject json) {
+	protected void sendPostHttpClient(String domainName, JSONObject json, String scheme) {
 		try{
-			String url = "http://"+domainName+ "/send_email/";
+			String url = scheme + "://"+domainName+ "/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();

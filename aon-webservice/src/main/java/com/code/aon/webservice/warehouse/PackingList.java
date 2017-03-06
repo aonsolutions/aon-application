@@ -271,7 +271,7 @@ public class PackingList {
 		c8.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c8);
 		
-		PdfPCell c9 = new PdfPCell(new Phrase(json.getJSONObject("carrier").getString("name"),getFont1()));
+		PdfPCell c9 = new PdfPCell(new Phrase(json.getJSONObject("carrier").getString("name"),getFont3()));
 		c9.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c9);
 		
@@ -289,14 +289,8 @@ public class PackingList {
 		cNif.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(cNif);
 		
-		PdfPCell c14 = new PdfPCell(new Phrase("Conductor:",getFont1()));
-		c14.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(c14);
-		
-		PdfPCell c15 = new PdfPCell(new Phrase(json.getString("driver_name") +" - "
-									+ json.getString("driver_document"),getFont2()));
-		c15.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(c15);
+		carrier.addCell("");
+		carrier.addCell("");
 		
 		carrier.addCell(cEmpty);
 
@@ -304,13 +298,8 @@ public class PackingList {
 		caddress2.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(caddress2);
 		
-		PdfPCell c12 = new PdfPCell(new Phrase("Matricula:",getFont1()));
-		c12.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(c12);
-		
-		PdfPCell c13 = new PdfPCell(new Phrase(json.getString("number_plate"),getFont2()));
-		c13.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(c13);
+		carrier.addCell("");
+		carrier.addCell("");
 		
 		carrier.addCell(cEmpty);
 		
@@ -323,6 +312,23 @@ public class PackingList {
 		
 		carrier.addCell("");
 		carrier.addCell("");
+		
+		PdfPCell c14 = new PdfPCell(new Phrase("Conductor:",getFont3()));
+		c14.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(c14);
+		
+		PdfPCell c15 = new PdfPCell(new Phrase(json.getString("driver_name") +" - "
+									+ json.getString("driver_document"),getFont3()));
+		c15.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(c15);
+		
+		PdfPCell c12 = new PdfPCell(new Phrase("Matricula:",getFont3()));
+		c12.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(c12);
+		
+		PdfPCell c13 = new PdfPCell(new Phrase(json.getString("number_plate"),getFont3()));
+		c13.setBorder(PdfPCell.NO_BORDER);
+		carrier.addCell(c13);
 
 		table.addCell(carrier);
 
@@ -737,7 +743,7 @@ public class PackingList {
 
 	private static Font getFont3(){
 		Font font1 = new Font();
-		font1.setSize(10);
+		font1.setSize(12);
 		font1.setStyle(Font.BOLD);
 		return font1;
 	}

@@ -18,7 +18,8 @@ import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class Methods {
-	
+	protected final IApiAsync impl = GWT.create(IApi.class);
+
 	protected String url;
 	protected String domainName;
 	protected String userName;
