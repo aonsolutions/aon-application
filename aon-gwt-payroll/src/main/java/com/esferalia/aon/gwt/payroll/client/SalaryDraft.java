@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -228,6 +229,7 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_ENFERMEDAD_COMUN_366", // internals
 			"DIAS_ENFERMEDAD_PROFESIONAL_366", // internals
 			"DIAS_ERE", "DIAS_PATERNIDAD", // internals
+			"DIAS_TRABAJADOS", 
 
 			"CONTEXT", "SELF", "THIS", // context
 
@@ -238,13 +240,14 @@ public class SalaryDraft extends ResizeComposite
 			"HORAS_VIERNES", 
 			"HORAS_SABADO", 
 			"HORAS_DOMINGO", 
-
 			"HORAS_NOMINA", 
+			"HORAS_TRABAJADAS", 
 
 			"OCUPACION_IT", "OCUPACION_IMS", "PREST_IT" };
 
-	private static String[] CONSTANTS_VARIABLES = {
-			"HORAS_NOMINA"
+	private static String[] SUMMING_CONSTANTS = {
+			"DIAS_TRABAJADOS",
+			"HORAS_TRABAJADAS"
 	};
 	// @formatter:on
 
@@ -489,32 +492,30 @@ public class SalaryDraft extends ResizeComposite
 		
 	}
 	
-	static class SalaryHoursEditorFactory implements VariableEditorFactory<MyEditor> {
+	static class CalendarConstantEditorFactory implements VariableEditorFactory<CalendarConstantLabel> {
 		
-		private String name;
+		private String names [];
 		
 		
-		public SalaryHoursEditorFactory(String name) {
-			this.name = name;
+		public CalendarConstantEditorFactory(String... names ) {
+			this.names = names;
 		}
 		
 		@Override
 		public boolean accept(Variable variable) {
-			if (name.equals(variable.getName())){
-				return true;
-			}
+			for ( String name : names )
+				if ( name.equals(variable.getName()))
+					return true;
+			
 			return false;
 		}
 		
 		@Override
-		public MyEditor create(Variable variable) {
-			MyEditor myEditor = new MyEditor();
-			Number value = (Number) variable.getValue();
-			myEditor.setInnerText(Double.toString(value.doubleValue()));
-			myEditor.ensureDebugId("editor-" + variable.getName().toLowerCase());
-			myEditor.setEnabled(false);
-			myEditor.addStyleName("aon-bold");
-			return myEditor;
+		public CalendarConstantLabel create(Variable variable) {
+			CalendarConstantLabel constantLabel = new CalendarConstantLabel();
+			constantLabel.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+			return constantLabel;
 		}
 	}
 	
@@ -2255,6 +2256,10 @@ public class SalaryDraft extends ResizeComposite
 		showContextTable();
 		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject(salaryDraftObject);
+	}
+	
+	public SalaryDraftObject getSalaryDraftObject() {
+		return salaryDraftObject;
 	}
 
 	@Override
@@ -5044,13 +5049,15 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private List<Variable> getConstants(List<Variable> context) {
-		return context.stream()
-				.filter(v->isConstant(v))
+		List<Variable> summingConstants = 
+				context.stream()
+				.filter(v->isSummingConstant(v))
 				.collect(Collectors.groupingBy(
 						Variable::getName,
 						Collectors.summingDouble(v->Double.parseDouble(String.valueOf(v.getValue())))
 				))
 				.entrySet().stream()
+				.filter(e -> e.getValue() > 0.00 )
 				.map(e -> {
 					NumberVariable v = new NumberVariable();
 					v.setName(e.getKey());
@@ -5061,6 +5068,8 @@ public class SalaryDraft extends ResizeComposite
 					return  v;
 					})
 				.collect(Collectors.toList());
+		
+		return summingConstants; 
 	}
 
 	public void addDraftVariable(String name , String expression ) { 
@@ -5104,9 +5113,9 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 
-	static boolean isConstant(Variable variable) {
+	static boolean isSummingConstant(Variable variable) {
 		String name = variable.getName();
-		for (String constant : CONSTANTS_VARIABLES)
+		for (String constant : SUMMING_CONSTANTS)
 			if (constant.equals(name))
 				return true;
 		
@@ -5230,24 +5239,15 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	// @formatter:off
-	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = { new MonthDaysEditorFactory("DIAS_MES"),
-			new DaysEditorFactory("DIAS_PAGA"), 
-			new DaysEditorFactory("DIAS_NOMINA"),
+	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = { 
+			new MonthDaysEditorFactory("DIAS_MES"),
 			new DateEditorFactory("FECHA_PREAVISO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class),
 			new DismissalFactory("CAUSA_INDEMNIZACION"),
 			new StringsListBoxFactory("GRUPO_COTIZACION",
 					new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" }),
 			new StringsListBoxFactory("TC2", Employee.TC2.getCodes(), Employee.TC2.getDescriptions()),
-			new WorkHoursEditorFactory(	"HORAS_LUNES", 
-										"HORAS_MARTES", 
-										"HORAS_MIERCOLES", 
-										"HORAS_JUEVES", 
-										"HORAS_VIERNES",
-										"HORAS_SABADO",
-										"HORAS_DOMINGO"),
-			new SalaryHoursEditorFactory("HORAS_NOMINA"), 
-			//new WeekHoursEditorFactory("HORAS_SEMANA"), 
+			new CalendarConstantEditorFactory("HORAS_NOMINA", "HORAS_TRABAJADAS", "HORAS_SEMANA", "DIAS_NOMINA", "DIAS_TRABAJADOS", "DIAS_PAGA", "DIAS_COTIZADOS", "DIAS_HUELGA", "DIAS_NATURALES_MES", "COEFICIENTE_ERE" ), 
 			new BooleanEditorFactory(), 
 			new DefaultEditorFactory() };
 

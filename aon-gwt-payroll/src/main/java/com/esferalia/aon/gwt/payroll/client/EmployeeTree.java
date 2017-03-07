@@ -2131,6 +2131,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	// --------------------------------------------------------- Private methods
 
+	protected static void showEmployeeCalendar() {
+		EmployeeTree employeeTree = getEmployeeTree();
+		EmployeeCalendarDraftObjectData calendar = employeeTree.getSalaryDraft().getSalaryDraftObject().getEmployeeCalendarDraftObjectData();
+		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraft());
+		employeeTree.getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(calendar);
+	}
+
+
 	private static void showSalaryDraft(int employeeId, int workplaceId,
 			Date startDate, Date endDate) {
 		EmployeeTree employeeTree = getEmployeeTree();

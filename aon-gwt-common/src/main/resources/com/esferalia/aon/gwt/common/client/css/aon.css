@@ -2830,3 +2830,10 @@ right
 		background:#eee;
 		border-right: 1px solid #ddd;
 	}
+	
+	.aon-read-only {
+    	border: none !important;
+   		color: black !important;		
+		background: transparent !important;
+	}
+	

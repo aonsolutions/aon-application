@@ -1123,5 +1123,8 @@ public class SalaryDraftObject implements IContextProvider {
 		this.employeeCalendarDraftObjectData = employeeCalendarDraftObjectData;
 	}
 	
+	public EmployeeCalendarDraftObjectData getEmployeeCalendarDraftObjectData() {
+		return employeeCalendarDraftObjectData;
+	}
 
 }

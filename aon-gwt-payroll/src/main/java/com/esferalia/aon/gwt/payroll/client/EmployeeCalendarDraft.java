@@ -72,50 +72,59 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		@Override
 		public void setStyle(int row, int col){
-			dayType.visit(new DayTypeVisitor() {
+			dayType.visit(new DayTypeVisitor<Void>() {
 				
 				@Override
-				public void visitSuspensionDay(DayType dayType) {
+				public Void visitSuspensionDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.suspensionStyle());
+					return null;
 				}
 				
 				@Override
-				public void visitStrikeDay(DayType dayType) {
+				public Void visitStrikeDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.strikeStyle());	
+					return null;
 				}
 				
 				@Override
-				public void visitReductionDay(DayType dayType) {
+				public Void visitReductionDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.reductionStyle());	
+					return null;
 				}
 				
 				@Override
-				public void visitHolyDay(DayType dayType) {
+				public Void visitHolyDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.holidayStyle());	
+					return null;
 				}
 				
 				@Override
-				public void visitFreeDay(DayType dayType) {
+				public Void visitFreeDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.sundayStyle());	
+					return null;
 				}
 				
 				@Override
-				public void visitEreDay(DayType dayType) {
+				public Void visitEreDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.ereStyle());	
+					return null;
 				}
 				
 				@Override
-				public void visitDropDay(DayType dayType) {
+				public Void visitDropDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.dropStyle());
+					return null;
 				}
 
 				@Override
-				public void visitITDay(DayType dayType) {
+				public Void visitITDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.itStyle());
+					return null;
 				}
 				
 				@Override
-				public void visitNoTypeDay(DayType dayType) {
+				public Void visitNoTypeDay(DayType dayType) {
+					return null;
 				}
 			});
 			
@@ -1090,6 +1099,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				
 				DateUtils.resetTime(actualDay);
 				DoubleBox horas = new DoubleBox();
+				horas.setEnabled(false);
 				horas.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
 				horas.setEnabled(false);
 				DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);

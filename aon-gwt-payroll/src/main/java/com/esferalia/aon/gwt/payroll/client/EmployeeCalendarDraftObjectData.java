@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -67,76 +68,76 @@ public class EmployeeCalendarDraftObjectData {
 		}
 	};
 	
-	public static interface DayTypeVisitor{
-		void visitFreeDay(DayType dayType);
-		void visitHolyDay(DayType dayType);
-		void visitDropDay(DayType dayType);
-		void visitEreDay(DayType dayType);
-		void visitStrikeDay(DayType dayType);
-		void visitReductionDay(DayType dayType);
-		void visitSuspensionDay(DayType dayType);
-		void visitITDay(DayType dayType);
-		void visitNoTypeDay(DayType dayType);
+	public static interface DayTypeVisitor<T>{
+		T visitFreeDay(DayType dayType);
+		T visitHolyDay(DayType dayType);
+		T visitDropDay(DayType dayType);
+		T visitEreDay(DayType dayType);
+		T visitStrikeDay(DayType dayType);
+		T visitReductionDay(DayType dayType);
+		T visitSuspensionDay(DayType dayType);
+		T visitITDay(DayType dayType);
+		T visitNoTypeDay(DayType dayType);
 	}
 	
 	public static enum DayType{
 		FREEDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitFreeDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitFreeDay(this);
 			}
 		}, 
 		HOLIDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitHolyDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitHolyDay(this);
 			}
 		}, 
 		DROPDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitDropDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitDropDay(this);
 			}
 		}, 
 		STRIKEDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitStrikeDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitStrikeDay(this);
 			}
 		}, 
 		EREDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitEreDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitEreDay(this);
 			}
 		}, 
 		REDUCTIONDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitReductionDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitReductionDay(this);
 			}
 		}, 
 		SUSPENSIONDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitSuspensionDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitSuspensionDay(this);
 			}
 		},
 		BAJAIT {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitITDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitITDay(this);
 			}
 		},
 		NOTYPEDAY {
 			@Override
-			public void visit(DayTypeVisitor visitor) {
-				visitor.visitNoTypeDay(this);
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitNoTypeDay(this);
 			}
 		
 		};
 		
-		public abstract void visit(DayTypeVisitor visitor); 
+		public abstract <T> T visit(DayTypeVisitor<T> visitor); 
 		
 	};
 	

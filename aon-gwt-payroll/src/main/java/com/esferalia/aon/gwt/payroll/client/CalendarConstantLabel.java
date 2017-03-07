@@ -1,25 +1,51 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.polymer.iron.widget.IronLabel;
 
-public class MyEditor implements IsWidget , HasValue<String> , HasAllFocusHandlers , Focusable , HasEnabled{
+public class CalendarConstantLabel implements IsWidget , HasValue<String> , HasAllFocusHandlers , Focusable , HasEnabled{
 
-	IronLabel ironLabel;
+	private Button button;
+	private TextBox textBox;
+	private HorizontalPanel panel;
 	
-	public MyEditor() {
-		super();
-		ironLabel = new IronLabel();
+	public CalendarConstantLabel() {
+		
+		textBox = new TextBox();
+		textBox.setEnabled(false);
+		
+		textBox.addStyleName(AON.AON_BOLD);
+		textBox.addStyleName(AON.AON_READ_ONLY);
+		textBox.setMaxLength(EXPRESSION_MAX_LENGTH);
+
+		button = new Button();
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		button.addStyleName(AON.AON_ICON_CALENDAR);
+
+		panel = new HorizontalPanel();
+		panel.add(textBox);
+		panel.add(new InlineHTML("&nbsp;"));
+		panel.add(button);
+		
+		panel.addAttachHandler( e -> textBox.getElement().getStyle().setProperty("width",panel.getElement().getStyle().getWidth()));
+		
 	}
 
 	@Override
@@ -30,7 +56,7 @@ public class MyEditor implements IsWidget , HasValue<String> , HasAllFocusHandle
 
 	@Override
 	public void fireEvent(GwtEvent<?> event) {
-		ironLabel.fireEvent(event);
+		panel.fireEvent(event);
 	}
 
 	@Override
@@ -47,69 +73,61 @@ public class MyEditor implements IsWidget , HasValue<String> , HasAllFocusHandle
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		ironLabel.setDisabled(!enabled);
-		
 	}
 
 	@Override
 	public int getTabIndex() {
-		return ironLabel.getElement().getTabIndex();
+		return panel.getElement().getTabIndex();
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-		// TODO Auto-generated method stub	
+		button.setAccessKey(key);
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
-		if(focused)
-			ironLabel.getElement().focus();	
+		button.setFocus(focused);
 	}
 
 	@Override
 	public void setTabIndex(int index) {
-		ironLabel.setTabindex(index);
+		button.setTabIndex(index);
 		
 	}
 
 	@Override
 	public String getValue() {
-		return ironLabel.getElement().getInnerText();
+		return textBox.getValue();
 	}
 
 	@Override
 	public void setValue(String value) {
-		ironLabel.getElement().setInnerText(value);
+		textBox.setValue(value);
 	}
 
 	@Override
 	public void setValue(String value, boolean fireEvents) {
-		if(fireEvents)
-			ironLabel.getElement().setInnerText(value);
+		textBox.setValue(value, fireEvents);
 	}
 
 	@Override
 	public Widget asWidget() {
-		return ironLabel.asWidget();
+		return panel.asWidget();
 	}
 	
 	public void ensureDebugId(String id){
-		ironLabel.ensureDebugId(id);
-	}
-	
-	public void addStyleName(String style){
-		ironLabel.addStyleName(style);
+		textBox.ensureDebugId(id);
 	}
 
-	public void setInnerText(String value) {
-		ironLabel.getElement().setInnerText(value);
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		return button.addClickHandler(handler);
 	}
+	
 
 }
