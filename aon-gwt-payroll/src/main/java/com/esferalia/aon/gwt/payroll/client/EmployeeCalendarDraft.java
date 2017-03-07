@@ -31,16 +31,21 @@ import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
+import com.vaadin.polymer.paper.widget.PaperDropdownMenu;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
+import com.vaadin.polymer.paper.widget.PaperItem;
+import com.vaadin.polymer.paper.widget.PaperListbox;
 import com.vaadin.polymer.paper.widget.PaperMenu;
 
 public class EmployeeCalendarDraft extends Composite implements ContextMenuHandler {
@@ -298,6 +303,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	MenuItem diaEre;
 	
 	@UiField
+	MenuItem diaAusencia;
+	
+	@UiField
 	MenuItem borrarEvento;
 	
 	@UiField
@@ -338,7 +346,16 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	@UiField
 	PaperButton diaAusenciaButton;
+	
+	@UiField
+	PaperDialog dialogAusencia;
+	
+	@UiField
+	PaperButton dialogDropOk;
 
+	@UiField
+	ListBox dropMenu;
+	
 	@UiField
 	PaperButton diaHuelgaButton;
 
@@ -546,6 +563,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		inicializarCellsCalendar();
 		inicializarCellsTypeCalendar();
 		
+		//Gestion tipo de ausencia
+		dropMenu.addItem("No remunerado");
+		dropMenu.addItem("Remunerado");
+		
 		//Gestion boton horas
 		horasButton.setEnabled(false);
 		hourButton.setDisabled(true);
@@ -581,6 +602,15 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			@Override
 			public void execute() {
 				addEreDay();
+			}
+			
+		});
+		
+		diaAusencia.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				dialogAusencia.open();
 			}
 			
 		});
@@ -845,9 +875,17 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	@UiHandler("diaAusenciaButton")
 	public void onDiaAusenciaClick(ClickEvent event) {
-		//aplicarEstilosDiasSeleccionadios(DayType.DROPDAY);
+		dialogAusencia.open();
 	}
 
+	@UiHandler("dialogDropOk")
+	public void onDialogAusenciaClick(ClickEvent event) {
+		//TODO: mirar que hacer con el tipo de ausencia
+		dialogAusencia.close();	
+		addDropDay();
+	}
+	
+	
 	@UiHandler("diaReduccionButton")
 	public void onReduccionClick(ClickEvent event) {
 		//aplicarEstilosDiasSeleccionadios(DayType.REDUCTIONDAY);
@@ -1487,6 +1525,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void addEreDay() {
 		aplicarEstilosDiasSeleccionadios(DayType.EREDAY);
 	}
+	private void addDropDay() {
+		aplicarEstilosDiasSeleccionadios(DayType.DROPDAY);
+	}
+	
 	private void limpiarSeleccionados() {
 		if(!fechasSelecciondas.getSelectedList().isEmpty())
 			limpiarEstilos(fechasSelecciondas.getSelectedList());
@@ -1497,6 +1539,49 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	public void onContextMenu(ContextMenuEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
+		if(!fechasSelecciondas.getSelectedList().isEmpty()){
+			ContextMenu menu = new  ContextMenu();
+			menu.addItem("Convertir dia(s) no laborables", new Command() {
+				@Override
+				public void execute() {
+					addFreeDay();
+				}
+			});
+			menu.addItem("Convertir dia(s) vacaciones", new Command() {
+				@Override
+				public void execute() {
+					addHolidays();
+				}
+			});
+			menu.addItem("Convertir dia(s) huelga", new Command() {
+				@Override
+				public void execute() {
+					addStrikeDay();
+				}
+			});
+			menu.addItem("Convertir dia(s) ERE", new Command() {
+				@Override
+				public void execute() {
+					addEreDay();
+				}
+			});
+			menu.addItem("Convertir dia(s) Ausencia", new Command() {
+				@Override
+				public void execute() {
+					addDropDay();
+				}
+			});
+			menu.addSeparator();
+			menu.addItem("Borrar evento(s)", new Command() {
+				@Override
+				public void execute() {
+					limpiarSeleccionados();
+				}
+			});
+			
+			menu.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
+		    menu.show();
+		}
 	}
 	
 }

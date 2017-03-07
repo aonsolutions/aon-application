@@ -111,8 +111,10 @@
 		
 		.dropStyle {
 			background-color: #733969;
+			border-radius: 15px;
+			padding: 3px;
 			color: #ffffff;
-			margin-top: 0px;
+			
 		}
 		
 		.suspensionStyle {
@@ -333,14 +335,15 @@
 				<g:MenuBar>
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="diaNoLaborable" text="Añadir día(s) no laborable" />
+							<g:MenuItem ui:field="diaNoLaborable" text="Añadir día(s) no laborables" />
 								<g:MenuItem ui:field="diaVacaciones" text="Añadir día(s) vacaciones" />
 								<g:MenuItem ui:field="diaHuelga" text="Añadir día(s) huelga" />
-								<g:MenuItem ui:field="diaEre" text="Añadir día(s) ERE" />			
+								<g:MenuItem ui:field="diaEre" text="Añadir día(s) ERE" />
+								<g:MenuItem ui:field="diaAusencia" text="Añadir día(s) Ausencia" />			
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
-							<g:MenuItem ui:field="borrarEvento" text="Borrar evento" />
+							<g:MenuItem ui:field="borrarEvento" text="Borrar evento(s)" />
 						</g:MenuBar>
 					</g:MenuItem>
 					<g:MenuItem text="Edicion">
@@ -394,6 +397,23 @@
 		<g:center>
 			<g:HTMLPanel>
 				
+			    <!-- Dialogo para seleccionar que tipo de ausencia va a tener -->
+			    <p:PaperDialog ui:field="dialogAusencia" styleName="{style.dialogBoxStyle}"
+					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
+					withBackdrop="true">
+					<a:CustomDialogBar ui:field="customDialogBarDrop" styleName="{style.marginTopCloseDialog}" caption="Tipo ausencia:"/>
+					<g:HTMLPanel ui:field="confirmDropContent"></g:HTMLPanel>
+					<HTMLPanel>
+					    <i:IronLabel>Tipo:</i:IronLabel>
+				        <g:ListBox ui:field="dropMenu"/>
+			        </HTMLPanel>
+			        <HTMLPanel class="buttons">
+						<p:PaperButton ui:field="dialogDropCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
+						<p:PaperButton ui:field="dialogDropOk" attributes="dialog-confirm">OK</p:PaperButton>
+					</HTMLPanel>
+			    </p:PaperDialog>  
+			    
+				<!-- Dialogo para seleccionar fecha hasta... -->
 				<p:PaperDialog ui:field="dialogUntill" styleName="{style.dialogBoxStyle}"
 					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
 					withBackdrop="true">
@@ -414,6 +434,7 @@
 					</HTMLPanel>
 				</p:PaperDialog>
 
+				<!-- Dialogo para seleccionar las horas que se le va a asignar a cada dia de la semana -->
 				<p:PaperDialog ui:field="dialogHoras" styleName="{style.dialogBoxStyle}"
 					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
 					withBackdrop="true">
@@ -474,6 +495,7 @@
 					</HTMLPanel>
 				</p:PaperDialog>
 
+				<!-- Dialogo informativo para mostrar la leyenda -->
 				<p:PaperDialog ui:field="dialogInfo" modal="true"
 					entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
 					withBackdrop="true">
@@ -501,6 +523,11 @@
 						</i:IronLabel>
 					</g:HTMLPanel>
 					<g:HTMLPanel>
+					    <i:IronLabel>
+							<p:PaperButton
+								styleName="{style.cellStyle} {style.dropStyle} {style.dialogLeyendLabel}"></p:PaperButton>
+							Ausencia
+						</i:IronLabel>
 						<i:IronLabel>
 							<p:PaperButton
 								styleName="{style.cellStyle1} {style.suspensionStyle} {style.dialogLeyendLabel}"
@@ -512,12 +539,6 @@
 								styleName="{style.cellStyle1} {style.itStyle} {style.dialogLeyendLabel}"
 								ui:field="diaBajaITButton"></p:PaperButton>
 							Baja IT
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle1} {style.dropStyle} {style.dialogLeyendLabel}"
-								ui:field="diaAusenciaButton"></p:PaperButton>
-							Ausencia
 						</i:IronLabel>
 						<i:IronLabel>
 							<p:PaperButton
@@ -579,6 +600,11 @@
 						<p:PaperButton styleName="{style.cellStyle} {style.ereStyle}"
 							ui:field="diaEreButton"></p:PaperButton>
 						ERE
+					</i:IronLabel>
+					<i:IronLabel>
+						<p:PaperButton styleName="{style.cellStyle} {style.dropStyle}"
+							ui:field="diaAusenciaButton"></p:PaperButton>
+						Ausencia
 					</i:IronLabel>
 					<i:IronLabel>
 						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton"
