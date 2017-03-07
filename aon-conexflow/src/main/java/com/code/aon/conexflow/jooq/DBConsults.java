@@ -1,7 +1,5 @@
 package com.code.aon.conexflow.jooq;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Hotel.HOTEL;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
@@ -16,6 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBException;
@@ -31,6 +32,7 @@ import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
+import com.code.aon.conexflow.ConexFlowStatus;
 import com.code.aon.conexflow.XMLUtils;
 import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -50,28 +52,122 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBConsults {
-
+	
+	private static final Logger LOGGER  = Logger.getLogger(DBConsults.class.getName());
+	
 	//-------------------- GETS
-
-	public static String getEnterpriseId(Domain domain) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
-			return  ctx.getDslContext()
-			.select(ENTERPRISE.REGISTRY)
-			.from(ENTERPRISE)
-			.where(ENTERPRISE.DOMAIN.eq(domain.getId()))
-			.fetchOne().value1().toString();
-		}finally {
-			if (ctx != null) ctx.close();
-		}
+	
+	public static ConexFlow getConexFlowList(Domain domain, String login, ConexFlowStatus status){
+		//AON.getAttachStream(domain.getName(), domain.getId(), login, f -> 
+	//		f.get, AttachType.PROJECT);
+		return null;
 	}
+	
+	
+	public static Stream<ConexFlow> getConexFlowStreamX(Domain domain, String login, String description){
+		return AON.getAttachStream(domain.getName(), domain.getId(), login,
+				f -> f.getDescriptionProperty().like(description)
+					//.and(f.getTypeProperty().eq(ProjectAttachmentType.CONEXFLOW.value()))
+				, AttachType.PROJECT).map( r-> {
+					if(r.getData() == null && r.getDriveId() != null){
+						r.setData(DriveUtils.getByteFile(domain.getName(), domain.getId(), login,
+								r.getDriveId(), r.getId()));
+					}
+					try {
+						return  XMLUtils.readXml(r.getData(), new Query())
+								.setId(r.getId())
+								.setDate(r.getDate())
+								.setProject(r.getAttachModule());
+					} catch (JAXBException e) {
+						e.printStackTrace();
+					}
+					return null;
+					
+				});
+	}
+	
+	public static ConexFlow getConexFlowX(Domain domain, String login, Integer project, String description){
+		Optional<Attach> attach = AON.getAttachStream(domain.getName(), domain.getId(), login,
+				f -> f.getAttachModuleProperty().eq(project)
+				.and(f.getDescriptionProperty().like(description))
+				//.and(f.getTypeProperty().eq(ProjectAttachmentType.CONEXFLOW.value()))
+				, AttachType.PROJECT)
+			.sorted((a1, a2) -> a2.getDate().compareTo(a1.getDate())).findFirst();
+		if(attach.isPresent()){
+			if(attach.get().getData() == null && attach.get().getDriveId() != null){
+				attach.get().setData(DriveUtils.getByteFile(domain.getName(), domain.getId(), login,
+						attach.get().getDriveId(), attach.get().getId()));
+			}
+			try {
+				return  XMLUtils.readXml(attach.get().getData(), new Query())
+						.setId(attach.get().getId())
+						.setDate(attach.get().getDate())
+						.setStatus(ConexFlowStatus.valueOfDescriptionName(description));
+			} catch (JAXBException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Devuelve la última operación realizada.
+	 * @param domain
+	 * @param login
+	 * @param project
+	 * @param token
+	 * @return
+	 */
+	public static ConexFlow getConexFlowLastX(Domain domain, String login, Integer project, String token){
+		String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_%";
+		return getConexFlowX(domain, login, project, description);
+	}
+	
+	/**
+	 * Devuelve la última operación realizada de tipo 'op', incluyendo fallidas, canceladas, ...
+	 * @param domain 
+	 * @param login -> user name 
+	 * @param project -> Project id
+	 * @param token
+	 * @param op -> ( P | C | V | D | A | R | E | T | B | N | S ) 
+	 * @return
+	 */
+	public static ConexFlow getConexFlowLastOperationX(Domain domain, String login, Integer project, String token, String op){
+		String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_" + op + "%";
+		return getConexFlowX(domain, login, project, description);
+	}
+	
+	/**
+	 * Devuelve la última operación realizada con el estado ('status') introducido.
+	 * @param domain
+	 * @param login
+	 * @param project
+	 * @param token
+	 * @param status
+	 * @return
+	 */
+	public static ConexFlow getConexFlowLastStatusX(Domain domain, String login, Integer project, String token, ConexFlowStatus status){
+		String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_" + status.getName() + "#%";
+		return getConexFlowX(domain, login, project, description);
+	}
+	
+	public static Stream<ConexFlow> getConexFlowStatusStreamX(Domain domain, String login, ConexFlowStatus status){
+		String description = "CONEXFLOW_(%)_" + status.getName() + "#%";
+		return getConexFlowStreamX(domain, login, description);
+	}
+	
+	public static void updateConexFlowDescription(Domain domain, String login, Integer attachId, String description){
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.PROJECT);
+		attach.setDescription(description);
+		AON.update(domain.getName(), domain.getId(), login, attach);
+	}
+	
 	
 	public static ConexFlow getConexFlowLastOperation(Domain domain, Integer project){
 		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
@@ -110,21 +206,15 @@ public class DBConsults {
 				.limit(1).fetchOne();
 
 			if(data != null){ 
-				if(data.getValue(PROJECT_ATTACH.DATA) != null){
-					try {
-						return  XMLUtils.readXml(data.getValue(PROJECT_ATTACH.DATA), new Query());
-					} catch (JAXBException e) {
-						e.printStackTrace();
-					}
-				} else {
-					Integer attachId = data.getValue(PROJECT_ATTACH.ID);
-					String driveId = data.getValue(PROJECT_ATTACH.DRIVEID);
-					byte[] b = DriveUtils.getByteFile(domain.getName(), domain.getId(), login, driveId, attachId);
-					try {
-						return  XMLUtils.readXml(b, new Query());
-					} catch (JAXBException e) {
-						e.printStackTrace();
-					}
+				byte[] b = data.getValue(PROJECT_ATTACH.DATA); 
+				if(b == null){
+					b = DriveUtils.getByteFile(domain.getName(), domain.getId(), login, 
+						data.getValue(PROJECT_ATTACH.DRIVEID), data.getValue(PROJECT_ATTACH.ID));
+				}
+				try {
+					return  XMLUtils.readXml(b, new Query());
+				} catch (JAXBException e) {
+					e.printStackTrace();
 				}
 			}
 			return null;
@@ -172,28 +262,19 @@ public class DBConsults {
 	}
 	
 	public static ConexFlowConnection getConection(Domain domain){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(),"");
-			ApplicationParameter server = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
-			ApplicationParameter serverAck = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
-			ApplicationParameter user = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_USER);
-			ApplicationParameter keyA = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_KEY_A);
-			ApplicationParameter keyB = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_KEY_B);
+		ApplicationParameter server = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_SERVER_PARAM);
+		ApplicationParameter serverAck = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
+		ApplicationParameter user = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_USER);
+		ApplicationParameter keyA = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_KEY_A);
+		ApplicationParameter keyB = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_KEY_B);
 
-			ConexFlowConnection cfc = new ConexFlowConnection();
-			cfc.setActive(server != null && server.getValue() != null && !server.getValue().equals("Null"));
-			if(cfc.getActive()){
-				cfc.setServer(server.getValue());
-				cfc.setServerAck(serverAck.getValue());
-				cfc.setCfUser(user.getValue());
-				cfc.setKeyA(keyA.getValue());
-				cfc.setKeyB(keyB.getValue());
-			}
-			return cfc;
-		}finally {
-			if (ctx != null) ctx.close();
-		}
+		return new ConexFlowConnection()
+				.setActive(server != null && server.getValue() != null && !server.getValue().equals("Null"))
+				.setServer(server.getValue())
+				.setServerAck(serverAck.getValue())
+				.setCfUser(user.getValue())
+				.setKeyA(keyA.getValue())
+				.setKeyB(keyB.getValue());
 	}
 	
 	public static List<String> getHotels(AONContext ctx, String domainName, Integer domainId) {
@@ -214,23 +295,21 @@ public class DBConsults {
 	}
 	
 	public static Domain getDomain(AONContext ctx, String domainCon){
-
-			Result<Record3<Integer, String, String>> data = ctx.getDslContext().select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION)
-				.from(DOMAIN)
-				.where(DOMAIN.NAME.eq(domainCon))
-				.fetch();
-
-			Domain domain = new Domain();
-			if(data.get(0).value1()!= null)
-				domain.setId(data.get(0).value1());
-			if(data.get(0).value2()!= null)
-				domain.setName(data.get(0).value2());
-			if(data.get(0).value3()!= null)
-				domain.setDescription(data.get(0).value3());
-			return domain;
+		return AON.getDomain(domainCon, 1, "", f-> f.getNameProperty().eq(domainCon));
 	}
 	
 	//-------------------- INSERTS
+	
+	public static void insertConexFlow(Domain domain, String login, ConexFlow conexFlow, Integer project, String description){		
+		AON.insert(domain.getName(), domain.getId(), login, new Attach(AttachType.PROJECT)
+				.setAttachModule(project)
+				.setDomain(domain)
+				.setMimeType(MimeType.XML)
+				.setDescription(description)
+				.setData(conexFlow.getData())
+				.setConfidential(true)
+				.setDate(AonDateUtils.toSql(new java.util.Date())));
+	}
 	
 	public static void insertConexFlowOperation(Domain domain, byte[] xmlFile, Integer project, String op){
 		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());

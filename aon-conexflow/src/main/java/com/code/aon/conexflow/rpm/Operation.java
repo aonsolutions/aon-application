@@ -61,7 +61,7 @@ public class Operation {
 	
 	public static void op(ProjectReservation reservation){
 		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
-		if (connection.getActive()) {
+		if (connection.isActive()) {
 			Query query;ConexFlow conexFlow;
 			if(sale){
 				//TODO

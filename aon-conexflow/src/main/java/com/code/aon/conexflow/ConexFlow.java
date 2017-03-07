@@ -1,5 +1,7 @@
 package com.code.aon.conexflow;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -16,9 +18,13 @@ public class ConexFlow {
 
     @XmlElement(name = "Respuesta", required = true)
     protected ConexFlow.Respuesta respuesta;
+    protected ConexFlow.Query query;    
+    protected ConexFlowStatus status;
+    protected Integer id; 
+    protected byte[] data;
+    protected Date date;
+    protected Integer project;
 
-    protected ConexFlow.Query query;
-    
     public ConexFlow.Respuesta getRespuesta() {
         return respuesta;
     }
@@ -31,11 +37,59 @@ public class ConexFlow {
     	return query;
     }
     
-    public void setQuery(ConexFlow.Query value) {
+    public ConexFlow setQuery(ConexFlow.Query value) {
     	this.query = value;
+    	return this;
+    }
+    
+    public ConexFlowStatus getStatus(){
+    	return status;
+    }
+    
+    public ConexFlow setStatus(ConexFlowStatus status){
+    	this.status = status;
+    	return this;
     }
 
-    @XmlAccessorType(XmlAccessType.FIELD)
+    public byte[] getData() {
+		return data;
+	}
+
+	public ConexFlow setData(byte[] data) {
+		this.data = data;
+		return this;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public ConexFlow setDate(Date date) {
+		this.date = date;
+		return this;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public ConexFlow setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	
+	
+	public Integer getProject() {
+		return project;
+	}
+
+	public ConexFlow setProject(Integer project) {
+		this.project = project;
+		return this;
+	}
+
+
+	@XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
 
     })
@@ -120,7 +174,7 @@ public class ConexFlow {
         protected String importe;
         @XmlElement(name = "Token")
         protected String token;
-
+        
 		public String getRefClient() {
 			return refClient;
 		}

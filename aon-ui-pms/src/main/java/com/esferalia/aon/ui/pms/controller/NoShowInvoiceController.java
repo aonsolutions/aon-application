@@ -23,6 +23,7 @@ import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.ConexFlowPost;
+import com.code.aon.conexflow.ConexFlowStatus;
 import com.code.aon.conexflow.ConexFlowUtils;
 import com.code.aon.conexflow.jooq.DBConsults;
 import com.code.aon.config.PayMethod;
@@ -266,7 +267,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 		return getCheckedReservations().size();
 	}
 
-	private List<Integer> getChargeableReservations(List<Integer> reservations, NoShowInvoiceTo noShowInvoiceTo) throws ManagerBeanException {
+	private List<Integer> getChargeableReservations(List<Integer> reservations, NoShowInvoiceTo noShowInvoiceTo) throws ManagerBeanException { 
 		Domain domain = getDomain();
 		try {
 			LinkedList<Integer> chargeableReservations = new LinkedList<Integer>();
@@ -286,29 +287,54 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 				amount = CommonUtil.round(amount - reservation.getAdvancedAmount());
 
 				String token = reservation.getToken();
+				
 				if (token != null) {
 					String customerId = reservation.getCustomer().getId().toString();
 					String user = AonUtil.getRemoteUser();
 					ConexFlowConnection connection = DBConsults.getConection(domain);
-					ConexFlow cf = DBConsults.getConexFlowLastOperation(domain, user, reservationId, ConexFlowConstant.CHECK_PREAUTHORIZATION_OP);
-					if (cf == null || Double.parseDouble(cf.getRespuesta().getImporte()) <= 0.01 || Double.parseDouble(cf.getRespuesta().getImporte()) < amount)
-						cf = DBConsults.getConexFlowLastOperation(domain, user, reservationId, ConexFlowConstant.PREAUTHORIZATION_OP);
-
-					ConexFlow conexFlow = null;
-					if (cf != null && Double.parseDouble(cf.getRespuesta().getImporte()) >= amount) {
-						Query confirmPreQ = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, customerId, token, amount, 
-												Double.parseDouble(cf.getRespuesta().getImporte()), cf.getRespuesta().getFecha(),
-												cf.getRespuesta().getAutorizacion(), cf.getRespuesta().getFechaOriginal(), cf.getRespuesta().getOperacion());
-						conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreQ, reservationId, domain, false);
-						if (conexFlow.getRespuesta().getResultado().equals(ConexFlowConstant.RESULT_OK)) {
-							chargeableReservations.add(reservationId);
+					
+					ConexFlow cp = DBConsults.getConexFlowLastStatusX(domain, user, reservation.getId(), token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
+					ConexFlow s = DBConsults.getConexFlowLastStatusX(domain, user, reservation.getId(), token, ConexFlowStatus.SALE);
+					
+					if((cp != null && amount <= Double.parseDouble(cp.getRespuesta().getImporte()))
+							|| (s != null && amount <= Double.parseDouble(s.getRespuesta().getImporte()))){
+						chargeableReservations.add(reservationId);
+					}else {
+						ConexFlow confirmPreauthorization = null;
+						ConexFlow preauthorization = DBConsults.getConexFlowLastStatusX(domain, user, reservationId, token, ConexFlowStatus.PREAUTHORIZATION);
+						if(preauthorization != null && Double.parseDouble(preauthorization.getRespuesta().getImporte()) >= amount){
+							Query confirmPreQ = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, customerId, token, amount, 
+								Double.parseDouble(preauthorization.getRespuesta().getImporte()), preauthorization.getRespuesta().getFecha(),
+								preauthorization.getRespuesta().getAutorizacion(), preauthorization.getRespuesta().getFechaOriginal(), preauthorization.getRespuesta().getOperacion());
+							confirmPreauthorization = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreQ);
+								
+							Boolean ok = confirmPreauthorization.getRespuesta().getResultado().equals(confirmPreauthorization);
+							confirmPreauthorization.setStatus(ok ? ConexFlowStatus.CONFIRM_PREAUTHORIZATION : ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
+							String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
+								+ confirmPreauthorization.getStatus().getName() + "#" + confirmPreauthorization.getRespuesta().getImporte();
+							DBConsults.insertConexFlow(domain, user, confirmPreauthorization, reservation.getId(), description);
+							if(ok){
+								String description2 = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
+										+ ConexFlowStatus.PREAUTHORIZATION_PAID.getName() + "#" + preauthorization.getRespuesta().getImporte();
+								DBConsults.updateConexFlowDescription(domain, user, preauthorization.getId(), description2);	
+								chargeableReservations.add(reservationId);
+							}		
 						}
-					}
-					if (cf == null || (conexFlow != null && !conexFlow.getRespuesta().getResultado().equals(ConexFlowConstant.RESULT_OK))) {
-						Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount, customerId, reservation.getCreditCardCvv());
-						ConexFlow conexFlow2 = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, saleQ, reservationId, domain, false);
-						if (conexFlow2.getRespuesta().getResultado().equals(ConexFlowConstant.RESULT_OK)) {
-							chargeableReservations.add(reservationId);
+					
+						if(confirmPreauthorization == null || (confirmPreauthorization != null 
+								&& !confirmPreauthorization.getRespuesta().getResultado().equals(confirmPreauthorization))){
+							Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount, customerId, reservation.getCreditCardCvv());
+							ConexFlow conexFlow2 = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, saleQ);
+						
+							Boolean ok = conexFlow2.getRespuesta().getResultado().equals(conexFlow2);
+							conexFlow2.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
+							String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
+									+ conexFlow2.getStatus().getName() + "#" + conexFlow2.getRespuesta().getImporte();
+							DBConsults.insertConexFlow(domain, user, conexFlow2, reservation.getId(), description);
+								
+							if (ok) {
+								chargeableReservations.add(reservationId);
+							}
 						}
 					}
 				} else {

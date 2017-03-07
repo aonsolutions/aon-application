@@ -109,7 +109,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -220,7 +220,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -315,7 +315,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -352,7 +352,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -424,7 +424,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -509,7 +509,7 @@ public class ConexFlowUtils {
 	
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena2, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena2, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -547,7 +547,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -580,7 +580,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -628,7 +628,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -676,7 +676,7 @@ public class ConexFlowUtils {
 
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -706,7 +706,7 @@ public class ConexFlowUtils {
 				query.getRefTokenCliente();
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -747,7 +747,7 @@ public class ConexFlowUtils {
 				query.getDocumento() + query.getRefCliente();
 		try {
 			urlParameters.add(new BasicNameValuePair(ConexFlowEnum.CF_MAC_STR.getCode()
-					, claveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
+					, ClaveMAC.dameClaveMAC(cadena, cfc.getKeyA(), cfc.getKeyB())));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

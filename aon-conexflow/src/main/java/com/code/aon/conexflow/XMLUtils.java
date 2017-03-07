@@ -52,7 +52,7 @@ public class XMLUtils {
 		InputStream input = new ByteArrayInputStream(xmlFile);
 		ConexFlow conexFlow = (ConexFlow) unmarshaller.unmarshal(input);
 		conexFlow.setQuery(query);
-		
+		conexFlow.setData(xmlFile);
 		return conexFlow;
 	}
 	

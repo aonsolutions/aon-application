@@ -67,8 +67,7 @@ public class ConexFlowPost implements  Serializable {
 	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query) {
 		try {
 			byte[] xmlFile = sendPostHttpClient(connection, op, query);
-			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
-			return conexFlow;			
+			return XMLUtils.readXml(xmlFile, query);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -93,7 +92,7 @@ public class ConexFlowPost implements  Serializable {
 		try {
 			//Enviar petición POST a ConexFlow, devuelve archivo xml con la respuesta.
 			byte[] xmlFile = sendPostHttpClient(connection, op, query);
-			ConexFlow conexFlow = com.code.aon.conexflow.XMLUtils.readXml(xmlFile, query);
+			ConexFlow conexFlow = XMLUtils.readXml(xmlFile, query);
 			
 			//Guardar Operacion en project_attach (response en xml) 
 			if(!check && conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){

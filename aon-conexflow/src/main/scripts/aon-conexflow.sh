@@ -46,6 +46,10 @@ case $1 in
 	preauthorization) 
 		$JAVA -classpath $CLASSPATH com.code.aon.conexflow.rpm.Preauthorization "${@:2}" 
     	;;
+
+	sale) 
+		$JAVA -classpath $CLASSPATH com.code.aon.conexflow.rpm.Sale "${@:2}" 
+    	;;
 	*) 
     	[[ -n $1 ]] && echo "Unknown subcommand: '$1'"
     	echo "Type '$0 help' for usage."

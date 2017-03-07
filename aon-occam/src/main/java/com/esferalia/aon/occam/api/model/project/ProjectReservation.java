@@ -56,6 +56,8 @@ public class ProjectReservation implements Serializable{
 	String token;
 	Double penaltyAmount;
 	
+	TouristTaxFreeCause touristTaxFree;
+	
 	public Double getAdvance() {
 		return advance;
 	}
