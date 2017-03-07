@@ -72,12 +72,14 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		LOGGER.info("INGENET POST - " + this.getClass().getName());
 		process(request, response);
 	}
 	
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		LOGGER.info("INGENET GET - " + this.getClass().getName());
 		process(request, response);
 //		TODO do not allow GET method
 //		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -87,12 +89,6 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 			HttpServletResponse httpResponse) throws ServletException, IOException {
 
 		String _domainName = httpRequest.getServerName();
-		httpRequest.getContextPath();
-		httpRequest.getAuthType();
-		httpRequest.getPathInfo();
-		httpRequest.getRemoteAddr();
-		httpRequest.getServerName();
-		httpRequest.getRemoteHost();
 		String _username = httpRequest.getParameter(PARAM_USERNAME);
 		String _password = httpRequest.getParameter(PARAM_PASSWORD);
 		
