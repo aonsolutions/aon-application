@@ -110,6 +110,7 @@ public class ElaborationDAO {
 			ElaborationFilter filter) {
 		return ctx.getDslContext().select().from(ELABORATION)
 				.where(ELABORATION_PROPERTIES.getConditions(filter))
+				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
 				.fetchInto(ELABORATION).stream()
 				.map(new FullElaborationFiller()).collect(Collectors.toList());
 	}
@@ -123,12 +124,12 @@ public class ElaborationDAO {
 				.orElse(new Elaboration());
 	}
 	
-	public static Elaboration getElaboration(AONContext ctx,
-			String series, Integer number) {
+	public static Elaboration getElaboration(AONContext ctx, String series,
+			Integer number) {
 		return ctx.getDslContext().select().from(ELABORATION)
-				.where(ELABORATION.SERIES.eq(series)
-						.and(ELABORATION.NUMBER.eq(number)))
-						.limit(1)
+				.where(ELABORATION.SERIES.eq(series))
+				.and(ELABORATION.NUMBER.eq(number))
+				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId())).limit(1)
 				.fetchInto(ELABORATION).stream()
 				.map(new FullElaborationFiller()).findFirst()
 				.orElse(new Elaboration());
@@ -151,7 +152,7 @@ public class ElaborationDAO {
 						ELABORATION.CREATION_USER, ELABORATION.CREATION_DATE,
 						ELABORATION.MODIFICATION_USER,
 						ELABORATION.MODIFICATION_DATE)
-				.values(elaboration.getDomain(), elaboration.getSeries(),
+				.values(ctx.getDomainId(), elaboration.getSeries(),
 						elaboration.getNumber(),
 						new Timestamp(elaboration.getDate().getTime()),
 						elaboration.getItem().getId(),
@@ -167,9 +168,10 @@ public class ElaborationDAO {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
-		return ctx.getDslContext()
+		return ctx
+				.getDslContext()
 				.update(ELABORATION)
-				.set(ELABORATION.DOMAIN, elaboration.getDomain())
+				.set(ELABORATION.DOMAIN, ctx.getDomainId())
 				.set(ELABORATION.SERIES, elaboration.getSeries())
 				.set(ELABORATION.NUMBER, elaboration.getNumber())
 				.set(ELABORATION.DATE,
@@ -186,14 +188,13 @@ public class ElaborationDAO {
 				.where(ELABORATION.ID.eq(elaboration.getId())).execute();
 	}
 
-	public static int deleteElaboration(AONContext ctx,
-			ElaborationFilter filter) {
+	public static int deleteElaboration(AONContext ctx, ElaborationFilter filter) {
 		return ctx.getDslContext().delete(ELABORATION)
-				.where(ELABORATION_PROPERTIES.getConditions(filter)).execute();
+				.where(ELABORATION_PROPERTIES.getConditions(filter))
+				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId())).execute();
 	}
 	
-	public static int deleteElaboration(AONContext ctx,
-			Elaboration elaboration) {
+	public static int deleteElaboration(AONContext ctx, Elaboration elaboration) {
 		return ctx.getDslContext().delete(ELABORATION)
 				.where(ELABORATION.ID.eq(elaboration.getId())).execute();
 	}
@@ -216,6 +217,7 @@ public class ElaborationDAO {
 			AONContext ctx, ElaborationDetailFilter filter) {
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
+				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId()))
 				.fetchInto(ELABORATION_DETAIL).stream()
 				.map(new FullElaborationDetailFiller())
 				.collect(Collectors.toList());
@@ -224,8 +226,8 @@ public class ElaborationDAO {
 	public static ElaborationDetail getElaborationDetail(AONContext ctx,
 			Integer elaborationDetailId) {
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
-				.where(ELABORATION_DETAIL.ID.eq(elaborationDetailId))
-				.limit(1).fetchInto(ELABORATION_DETAIL).stream()
+				.where(ELABORATION_DETAIL.ID.eq(elaborationDetailId)).limit(1)
+				.fetchInto(ELABORATION_DETAIL).stream()
 				.map(new FullElaborationDetailFiller()).findFirst()
 				.orElse(new ElaborationDetail());
 	}
@@ -249,7 +251,7 @@ public class ElaborationDAO {
 						ELABORATION_DETAIL.CREATION_DATE,
 						ELABORATION_DETAIL.MODIFICATION_USER,
 						ELABORATION_DETAIL.MODIFICATION_DATE)
-				.values(elaborationDetail.getDomain(),
+				.values(ctx.getDomainId(),
 						elaborationDetail.getElaboration().getId(),
 						new Timestamp(elaborationDetail.getDate().getTime()),
 						elaborationDetail.getItem().getId(),
@@ -265,9 +267,10 @@ public class ElaborationDAO {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
-		return ctx.getDslContext()
+		return ctx
+				.getDslContext()
 				.update(ELABORATION_DETAIL)
-				.set(ELABORATION_DETAIL.DOMAIN, elaborationDetail.getDomain())
+				.set(ELABORATION_DETAIL.DOMAIN, ctx.getDomainId())
 				.set(ELABORATION_DETAIL.ELABORATION,
 						elaborationDetail.getElaboration().getId())
 				.set(ELABORATION_DETAIL.DATE,
@@ -290,7 +293,7 @@ public class ElaborationDAO {
 			ElaborationDetailFilter filter) {
 		return ctx.getDslContext().delete(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
-				.execute();
+				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId())).execute();
 	}
 
 	public static int deleteElaborationDetail(AONContext ctx,
@@ -324,6 +327,7 @@ public class ElaborationDAO {
 				.from(ELABORATION_DETAIL_COMPOSITION)
 				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES
 						.getConditions(filter))
+				.and(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
 				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
 				.map(new FullElaborationDetailCompositionFiller())
 				.collect(Collectors.toList());
@@ -364,7 +368,7 @@ public class ElaborationDAO {
 						ELABORATION_DETAIL_COMPOSITION.CREATION_DATE,
 						ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER,
 						ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE)
-				.values(elaborationDetailComposition.getDomain(),
+				.values(ctx.getDomainId(),
 						elaborationDetailComposition.getElaborationDetail()
 								.getId(),
 						elaborationDetailComposition.getItem().getId(),
@@ -386,7 +390,7 @@ public class ElaborationDAO {
 				.getDslContext()
 				.update(ELABORATION_DETAIL_COMPOSITION)
 				.set(ELABORATION_DETAIL_COMPOSITION.DOMAIN,
-						elaborationDetailComposition.getDomain())
+						ctx.getDomainId())
 				.set(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL,
 						elaborationDetailComposition.getElaborationDetail()
 								.getId())
@@ -412,7 +416,9 @@ public class ElaborationDAO {
 				.getDslContext()
 				.delete(ELABORATION_DETAIL_COMPOSITION)
 				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES
-						.getConditions(filter)).execute();
+						.getConditions(filter))
+				.and(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
+				.execute();
 	}
 	
 	public static int deleteElaborationDetailComposition(AONContext ctx,
@@ -437,6 +443,8 @@ public class ElaborationDAO {
 		}
 	}
 	
+	// TODO this is not the place for this method 
+	@Deprecated
 	public static String getCustomerItemCode(AONContext ctx, Integer itemId,
 			Integer customerId) {
 		try {

@@ -5,6 +5,7 @@ public enum ElaborationStatus {
     PENDING,
     CLOSED,
     IN_PROGRESS,
+    FAIL,
     ;
 	
 	public byte value(){

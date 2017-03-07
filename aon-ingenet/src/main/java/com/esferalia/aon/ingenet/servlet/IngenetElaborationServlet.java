@@ -208,7 +208,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					elaboration.getItem().getId());
 			Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
 			SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
-			Sales sales = obtainSales(ctx, salesDetail.getSales());
 			Customer customer = obtainCustomer(ctx, salesDetail.getSales());
 			RESPUESTAELABORACIONTYPE elaboracion = new RESPUESTAELABORACIONTYPE();
 			elaboracion.setSERIE(elaboration.getSeries());
@@ -216,12 +215,17 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			elaboracion.setFECHAEMISION(getDateFormatter().format(elaboration.getDate()));
 			elaboracion.setCOMENTARIOS(elaboration.getComments());
 			elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
-			elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
-			elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
-			elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
-			elaboracion.getDATOSPEDIDOORIGEN().setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
-			elaboracion.getDATOSPEDIDOORIGEN().setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
-			elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
+			if(salesDetail!=null && salesDetail.getId()!=null){
+				Sales sales = obtainSales(ctx, salesDetail.getSales());
+				elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
+				elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
+				elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
+				if(customer!=null && customer.getId()!=null){
+					elaboracion.getDATOSPEDIDOORIGEN().setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
+				}
+				elaboracion.getDATOSPEDIDOORIGEN().setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
+				elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
+			}
 			elaboracion.setDATOSPRODUCTO(new DATOSPRODUCTOTYPE());
 			elaboracion.getDATOSPRODUCTO().setCODIGO(product.getCode());
 			elaboracion.getDATOSPRODUCTO().setNOMBRE(product.getName());
@@ -233,7 +237,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
 			elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
 			elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
-			elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
+			if(customer!=null && customer.getId()!=null){
+				elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
+			}
 			elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
 			elaboracion.setUNIDADMEDIDA(elaboration.getItem().getStockUnitTag().getName());
 			ElaborationStatus elaborationStatus = ElaborationStatus.values()[elaboration.getStatus()];

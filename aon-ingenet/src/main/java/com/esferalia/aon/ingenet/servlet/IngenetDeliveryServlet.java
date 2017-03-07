@@ -197,21 +197,24 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							addError(albaran, th.getLocalizedMessage());
 						}
 						try {
-							try {
-								albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
-									manageElaborations(ctx, albaran, linea, test);
-								});
-							} catch (Throwable th) {
-								addError(albaran, th.getLocalizedMessage());
-							}
+							albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
+								manageElaborations(ctx, albaran, linea, test);
+							});
 						} catch (Throwable th) {
 							addError(albaran, th.getLocalizedMessage());
 						}
 					}
 				} catch (Throwable th) {
 					addError(albaran, th.getLocalizedMessage());
+					albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
+						failElaborations(ctx, albaran, linea, test);
+					});
 				}
 				
+			} else {
+				albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
+					failElaborations(ctx, albaran, linea, test);
+				});
 			}
 		}
 		
@@ -373,6 +376,16 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return detailList;
 	}
 
+	
+	private void failElaborations(AONContext ctx, ALBARANTYPE albaran,
+			DATOSLINEAALBARANTYPE linea, boolean test) {
+		Elaboration elaboration = obtainElaboration(ctx,
+				linea.getDATOSELABORACIONORIGEN());
+		if (elaboration != null && elaboration.getId() != null) {
+			elaboration.setStatus(ElaborationStatus.FAIL.value());
+			ElaborationDAO.updateElaboration(ctx, elaboration);
+		}
+	}
 	
 	private void manageElaborations(AONContext ctx, ALBARANTYPE albaran, DATOSLINEAALBARANTYPE linea,
 			boolean test) {
