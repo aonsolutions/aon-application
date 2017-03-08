@@ -69,6 +69,11 @@
 			font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 		}
 		
+		.doubleBoxLargeStyle {
+			width: 100% !important;
+			font: 11px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif !important;
+		}
+
 		.isSelectedStyle {
 			background-color: #166ef3 !important;
 			color: #ffffff !important;

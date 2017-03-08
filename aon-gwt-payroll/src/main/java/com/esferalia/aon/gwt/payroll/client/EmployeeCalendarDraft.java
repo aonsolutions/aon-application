@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogBar;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -192,6 +193,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					calendarGrid.getWidget(row, col).setStyleName(style.doubleBoxDisableStyle2());
 				else
 					calendarGrid.getWidget(row, col).setStyleName(style.doubleBoxDisableStyle());
+				
 			}
 		}
 		@Override
@@ -251,6 +253,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	interface MyStyle extends CssResource {
 		String doubleBoxStyle();
+
+		String doubleBoxLargeStyle();
 
 		String doubleBoxDisableStyle();
 
@@ -1146,7 +1150,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					horas.setStyleName(style.doubleBoxDisableStyle2());
 				else
 					horas.setStyleName(style.doubleBoxDisableStyle());
-
+				
+				horas.setStyleName(style.doubleBoxLargeStyle(), horas.getText() != null && horas.getText().length() > 2);
+				
+				
 				diaInfo.setText(contadorDias + "");
 				calendarGrid.setWidget(row, i, diaInfo);
 				calendarGrid.setWidget(row + 1, i, horas);
@@ -1181,6 +1188,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				horas.setStyleName(style.doubleBoxDisableStyle2());
 			else
 				horas.setStyleName(style.doubleBoxDisableStyle());
+			
+			horas.setStyleName(style.doubleBoxLargeStyle(), horas.getText() != null && horas.getText().length() > 2);
+			
 
 			calendarGrid.setWidget(row, 7 + diaActualSemana, diaInfo);
 			calendarGrid.setWidget(row + 1, 7 + diaActualSemana, horas);
