@@ -1219,6 +1219,7 @@
 	<table name="project_attach" class="com.esferalia.aon.entity.master.ProjectAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 		<column name="data" exclude="true" />
+		<column name="attach_type" type="com.code.aon.project.enumeration.ProjectAttachmentType" />
 	</table>
 
 	<table name="project_commercial">

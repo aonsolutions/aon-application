@@ -19,14 +19,16 @@ import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.esferalia.aon.entity.master.ProjectAttachmentDB;
 
 @Entity
 @Table(name="project_attach")
-public class ProjectAttachment extends ProjectAttachmentDB implements IAttachment, IBlobObject {
+public class ProjectAttachment extends ProjectAttachmentDB implements IAttachment, IBlobObject, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -37,6 +39,7 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 	public ProjectAttachment() {
 		setSecurityLevel(SecurityLevel.OFFICIAL);
 		setAttachDate(new Date());
+		setAttachType(ProjectAttachmentType.DOCUMENT);
 	}
 
 	@Formula("IFNULL(LENGTH(data),0)")
@@ -103,4 +106,9 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 		this.data = null;
 	}	
 	
+	@Transient
+	public boolean isDocument() {
+		return getAttachType() == ProjectAttachmentType.DOCUMENT;
+	}
+
 }

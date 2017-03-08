@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/faces/attachment/grid.xhtml">
-		<ui:define name="additionalColumns" >
+		<ui:define name="additionalColumns">
 			<aon:if test="#{(!skipConfidentialityColumn) and aonRole.confidentiality}">
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 					<f:facet name="header">
@@ -91,7 +91,7 @@
 				</aon:column>
 			</aon:if>
 		</ui:define>
-		<ui:define name="additionalDataTableContent" >
+		<ui:define name="additionalDataTableContent">
 			<aon:if test="#{!skipFreeSpaceMessage}">		
 				<aon:div styleClass="aon-margin-top" >
 					<aon:outputText style="#{documentManager.freeSpaceStyle}"

@@ -742,7 +742,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ProjectAttachment_description</value>
+			<value>ProjectAttachment_attachDate,ProjectAttachment_id</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>

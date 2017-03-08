@@ -56,6 +56,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectAttachment;
+import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -352,8 +353,11 @@ public class ReservationManager implements IReservationConstants {
 			projectAttach.setMimeType(MimeType.MIME_XML);
 			projectAttach.setDescription(getReservationUtils().obtainCrsAttachDescription(actionType) + "#");
 			projectAttach.setData(xmlData.getBytes());
-			projectAttach.setSecurityLevel(SecurityLevel.CONFIDENTIAL);
+			projectAttach.setSecurityLevel(SecurityLevel.OFFICIAL);
 			projectAttach.setAttachDate(new Date());
+			projectAttach.setAttachType(ProjectAttachmentType.CRS);
+			projectAttach.setCreationUser(CRS);
+			projectAttach.setCreationDate(new Date());
 
 			BeanManager.getManagerBean(ProjectAttachment.class).insert(projectAttach);
 			return true;

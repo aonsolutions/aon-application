@@ -1,22 +1,17 @@
-package com.code.aon.product.enumeration;
+package com.code.aon.project.enumeration;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-public enum ProductType implements IResourceable {
+public enum ProjectAttachmentType implements IResourceable {
 	
-	LABOUR,
-    SERVICE,
-	COMMERCIAL_PRODUCT,
-	EXTERNAL_WORK,
-	EXPENSE,
-	PREPAYMENT,
-	INCREASE,
-	AUXILIARY;
+	DOCUMENT,
+	CRS,
+	CONEXFLOW;
 
-    private static final String MSG_KEY_PREFIX = "aon_enum_product_type_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_project_attachment_type_";
 
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 

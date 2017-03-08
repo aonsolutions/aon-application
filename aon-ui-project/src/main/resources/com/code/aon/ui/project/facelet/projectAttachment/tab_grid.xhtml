@@ -7,11 +7,18 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+	<ui:decorate template="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 		<ui:param name="sortColumns" value="#{true}" />
 		<ui:param name="skipScopeColumn" value="#{true}" />
 		<ui:param name="skipCategoryColumn" value="#{true}" />
 		<ui:param name="skipFreeSpaceMessage" value="#{true}" />
-	</ui:include>
+
+		<ui:define name="endFormListContent">
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+				<ui:param name="auditableTO" value="#{to}" />
+			</ui:include>
+		</ui:define>
+
+	</ui:decorate>
 
 </ui:composition>

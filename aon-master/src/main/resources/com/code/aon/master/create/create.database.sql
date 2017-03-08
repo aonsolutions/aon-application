@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.93.1
+# Version: 8.94.0
 # Created by: girazu
-# Creation Date: 03/03/2017 12:30
+# Creation Date: 07/03/2017 11:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6807,7 +6807,12 @@ CREATE TABLE `project_attach` (
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
   `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  `attach_type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de Archivo Adjunto',
   `driveId` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_PROJECT_ATTACH_DOMAIN` (`domain`),
   KEY `IDX_PROJECT_ATTACH_PROJECT` (`project`),
@@ -8354,7 +8359,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.93.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.94.0');
 
 COMMIT;
 

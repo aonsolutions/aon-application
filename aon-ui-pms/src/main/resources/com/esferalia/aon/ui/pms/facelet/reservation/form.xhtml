@@ -153,8 +153,9 @@
 						</aon:panelTab>
 
 						<aon:panelTab id="documents" label="#{bundle.aon_documents}">
-							<ui:include	src="/com/code/aon/ui/project/facelet/projectAttachment/tab_grid.xhtml" >
+							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/attachment/tab_grid.xhtml" >
 								<ui:param name="controller" value="#{reservationAttach}" />
+								<ui:param name="customizedEditEnabled" value="#{reservation.reservationPermission.reservationAttachEditable}" />
 							</ui:include>
 						</aon:panelTab>
 
