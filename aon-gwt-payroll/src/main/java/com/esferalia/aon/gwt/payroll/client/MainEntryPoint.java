@@ -8,9 +8,13 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.junit.DoNotRunWith;
+import com.google.gwt.junit.Platform;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.storage.client.Storage;
+import com.google.gwt.user.client.Window;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronLabelElement;
@@ -25,6 +29,7 @@ import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
+
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 
 public class MainEntryPoint implements EntryPoint {
@@ -37,6 +42,12 @@ public class MainEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		
+		if (!supportWebComponents()){
+			__onModuleLoad();
+			return;
+		}
+		
 		Polymer.importHref(Arrays.asList(
 				IronIconsElement.SRC,
 				PaperInputElement.SRC,
@@ -52,52 +63,55 @@ public class MainEntryPoint implements EntryPoint {
 				PaperDropdownMenuElement.SRC,
 				PaperMenuElement.SRC,
 				PaperItemElement.SRC
-		));
+		)
+		);
 		
 		Polymer.whenReady(o -> {
-			ensureGwtSelector();
-			String entryPoint = getParameter(GWT.getModuleName(),
-					Constants.ENTRY_POINT_PARAM);
-
-			if (entryPoint.equalsIgnoreCase(Constants.ENTERPRISE_SITE_ENTRY_POINT)) {
-				EnterpriseSite enterpriseSite = new EnterpriseSite();
-				enterpriseSite.onModuleLoad();
-			}
-
-			else if (entryPoint
-					.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
-				EmployeeTree employeeTree = new EmployeeTree();
-				employeeTree.onModuleLoad();
-			} else if (entryPoint
-					.equalsIgnoreCase(Constants.MAIN_SYSTEM_ENTRY_POINT)) {
-				MainSystem mainSystem = new MainSystem();
-				mainSystem.onModuleLoad();
-			} else if (entryPoint
-					.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
-				MainCalculator mainCalculator = new MainCalculator();
-				mainCalculator.onModuleLoad();
-			} else if (entryPoint
-					.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
-				MainAgreement mainAgreement = new MainAgreement();
-				mainAgreement.onModuleLoad();
-			}else if (entryPoint
-					.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
-				MainTrash mainTrash = new MainTrash();
-				mainTrash.onModuleLoad();
-			}else if (entryPoint
-					.equalsIgnoreCase(Constants.MAIN_CRETA_ENTRY_POINT)) {
-				MainCreta mainCreta = new MainCreta();
-				mainCreta.onModuleLoad();
-			} else if (entryPoint
-					.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
-				ActivitySummary activitySummary = new ActivitySummary();
-				activitySummary.onModuleLoad();
-			}
-
+			__onModuleLoad();
 			return null;
 		});
-				
 
+	}
+
+	private void __onModuleLoad() {
+		ensureGwtSelector();
+		String entryPoint = getParameter(GWT.getModuleName(),
+				Constants.ENTRY_POINT_PARAM);
+
+		if (entryPoint.equalsIgnoreCase(Constants.ENTERPRISE_SITE_ENTRY_POINT)) {
+			EnterpriseSite enterpriseSite = new EnterpriseSite();
+			enterpriseSite.onModuleLoad();
+		}
+
+		else if (entryPoint
+				.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
+			EmployeeTree employeeTree = new EmployeeTree();
+			employeeTree.onModuleLoad();
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_SYSTEM_ENTRY_POINT)) {
+			MainSystem mainSystem = new MainSystem();
+			mainSystem.onModuleLoad();
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
+			MainCalculator mainCalculator = new MainCalculator();
+			mainCalculator.onModuleLoad();
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
+			MainAgreement mainAgreement = new MainAgreement();
+			mainAgreement.onModuleLoad();
+		}else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
+			MainTrash mainTrash = new MainTrash();
+			mainTrash.onModuleLoad();
+		}else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_CRETA_ENTRY_POINT)) {
+			MainCreta mainCreta = new MainCreta();
+			mainCreta.onModuleLoad();
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
+			ActivitySummary activitySummary = new ActivitySummary();
+			activitySummary.onModuleLoad();
+		}
 	}
 
 	/**
@@ -136,5 +150,17 @@ public class MainEntryPoint implements EntryPoint {
 			body.addClassName("gwt-Selector");
 
 	}
+	
+	public static native boolean supportWebComponents ()/*-{
+		try {
+			var object = document.createComment("")
+			var nativePrototype = Object.getPrototypeOf(object);
+			var descr = Object.getOwnPropertyDescriptor(Element.prototype, "classList");
+			Object.defineProperty(HTMLElement.prototype, "classList", descr);
+			return true;
+		} catch(ex) {
+			return false;
+		}
+	}-*/;
 
 }
