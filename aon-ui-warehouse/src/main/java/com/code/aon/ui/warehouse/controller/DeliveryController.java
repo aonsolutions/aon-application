@@ -83,7 +83,6 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.util.writer.connect.ConnectDeliveryWriter;
 import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
 
 public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
@@ -801,24 +800,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		OutputStream out = null;
 		try {
 			Delivery delivery = (Delivery) this.getTo();
-			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
-					.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-			String customerEdiCode = ediSupport.getEdiCodes(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).get(
-					CustomerEdiSupportController.ALBARANES);
-			String deliveryPointEdiCode = ediSupport.getEdiCodes(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).get(
-							CustomerEdiSupportController.PTO_ENTREGA);
-			CompanyController company = (CompanyController) AonUtil
-					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
-
-			// writer file
-			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
-			output = writer.createFile(delivery, companyEdiCode,
-					customerEdiCode, deliveryPointEdiCode);
+			output = getFtpEdiUploader().exportEdiFile(delivery);
 
 			// download file
 			String fileName = "alb_" + delivery.getSeries()+"_"+delivery.getNumber();
