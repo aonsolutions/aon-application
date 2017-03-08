@@ -199,7 +199,7 @@ public class AttachmentDAO {
 				attach.getDescription(), attach.getDomain().getId(), 
 				attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
 				attach.getAttachModule(), attach.getConfidential()?(byte)1:(byte)0,
-				attach.getType(),
+				attach.getType() != null ? attach.getType() : 0,
 				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
 				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
 		.returning(PROJECT_ATTACH.ID).fetchOne().getId();

@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -301,7 +302,8 @@ public class DBConsults {
 				.setDescription(description)
 				.setData(conexFlow.getData())
 				.setConfidential(false)
-				.setDate(AonDateUtils.toSql(new java.util.Date())));
+				.setDate(AonDateUtils.toSql(new java.util.Date()))
+				.setType(ProjectAttachmentType.CONEXFLOW.value()));
 	}
 	
 	public static void insertConexFlowOperation(Domain domain, byte[] xmlFile, Integer project, String op){
@@ -314,7 +316,8 @@ public class DBConsults {
 				.setDescription("CONEXFLOW-"+op)
 				.setData(xmlFile)
 				.setConfidential(true)
-				.setDate(currentDate);
+				.setDate(currentDate)
+				.setType(ProjectAttachmentType.CONEXFLOW.value());
 		
 		if(id != null ){
 			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
@@ -338,7 +341,8 @@ public class DBConsults {
 				.setDescription(desc + op)
 				.setData(xmlFile)
 				.setConfidential(true)
-				.setDate(currentDate);
+				.setDate(currentDate)
+				.setType(ProjectAttachmentType.CONEXFLOW.value());
 
 		if(id != null ){
 			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
