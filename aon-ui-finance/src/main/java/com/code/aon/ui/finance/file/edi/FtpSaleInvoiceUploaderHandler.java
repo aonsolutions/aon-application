@@ -15,12 +15,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.customer.Customer;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
+import com.code.aon.ui.common.ILongProcess;
+import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
@@ -168,28 +173,8 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 	public void onShowFtpServerConnectionData(ActionEvent event) {
 		showFtpServerConnectionData = !showFtpServerConnectionData;
 	}
-
-	private boolean storeFtpFile(String fileName, InputStream inputStream) {
-		if (showFtpServerConnectionData) {
-			saveLoginInfo();
-		}
-		
-		try {
-			return SeresFtpConnectionProvider.storeFile(remotePath, fileName,
-					inputStream, server, port, user, password);
-		} catch (FtpLoginException e) {
-			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
-			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-		return false;
-	}
-	
 	
 	public void onEdiFtpTransfer(ActionEvent event) {
-
 		FileOutput output = null;
 		try {
 			Invoice invoice = (Invoice) controller.getTo();
@@ -204,25 +189,16 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				// upload file
 				String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
 				byte[] data = output.getContent();
-				InputStream inputStream = new BufferedInputStream(
-						new ByteArrayInputStream(data));
-				
-				boolean success = storeFtpFile("factura-" + referenceCode + ".edi",
-						inputStream);
-				
+				FtpStoreProcess sdp = new FtpStoreProcess(data, referenceCode);
+				LongProcessThread thread = new LongProcessThread(sdp); 
+				thread.start();
 				// TODO: mark this invoice as sended 
-				if (success)
-					AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
-				else
-					AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
-				
-				IOUtils.closeQuietly(inputStream);
 			}
 		} catch (Throwable e) {
+			LOGGER.error(e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-
 	}
 	
 	public FileOutput exportEdiFile(Invoice invoice){
@@ -232,6 +208,17 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 					&& invoice.getRegistryAddress().getId() != null) {
 				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
 						.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+				try {
+					Customer customer = (Customer) BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
+					ediSupport.onRecover(customer);
+					if(!ediSupport.isEnabled()){
+						AonUtil.addErrorMessage("El cliente no tiene EDI habilitado");
+						throw new AbortProcessingException("El cliente no tiene EDI habilitado");
+					}
+				} catch (ManagerBeanException e) {
+					AonUtil.addErrorMessage(e.getMessage());
+					throw new AbortProcessingException(e.getMessage());
+				}
 				String customerEdiMainCode = ediSupport.getEdiCodes(
 						invoice.getRegistry(), invoice.getRegistryAddress())
 						.get(CustomerEdiSupportController.CABECERA);
@@ -256,6 +243,51 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
         	AonUtil.addErrorMessage(e.getMessage());
         	throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+	
+	public class FtpStoreProcess implements ILongProcess {
+
+		private boolean success = false;
+		private byte[] data;
+		private String referenceCode;
+		
+		public FtpStoreProcess(byte[] data, String referenceCode) {
+			this.data = data;
+			this.referenceCode = referenceCode;
+		}
+
+		@Override
+		public void execute() {
+			InputStream inputStream = new BufferedInputStream(
+					new ByteArrayInputStream(data));				
+			success = storeFtpFile("factura-" + referenceCode + ".edi",
+					inputStream);
+			IOUtils.closeQuietly(inputStream);
+			
+			LOGGER.error("FTP STORE: " + success);
+			if (success)
+				AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
+			else
+				AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
+		}
+		
+		private boolean storeFtpFile(String fileName, InputStream inputStream) {
+			if (showFtpServerConnectionData) {
+				saveLoginInfo();
+			}
+			try {
+				return SeresFtpConnectionProvider.storeFile(remotePath, fileName,
+						inputStream, server, port, user, password);
+			} catch (FtpLoginException e) {
+				LOGGER.error(e.getMessage());
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (FtpException e) {
+				LOGGER.error(e.getMessage());
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+			return false;
+		}
+
 	}
 	
 }
