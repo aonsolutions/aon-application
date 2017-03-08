@@ -554,22 +554,24 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		if(purchaseDetail.getSourceId()!=null && purchaseDetail.getSource()==PurchaseSource.SALES){
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			SalesDetail salesDetail = (SalesDetail) salesDetailBean.get(purchaseDetail.getSourceId());
-			info.append("<aon:div>");
-			info.append(AonUtil.getMessage(SALES_ORDER));
-			info.append(" ");
-			info.append(salesDetail.getSales().getReferenceCode());
-			info.append(" - ");
-			info.append(AonUtil.getMessage(LINE));
-			info.append(" ");
-			info.append(salesDetail.getLine());
-			if (purchaseDetail.getQuantity() > salesDetail.getQuantity()) {
-				info.append(" (");
-				info.append(formatter.format(salesDetail.getQuantity()));
+			if(salesDetail!=null && salesDetail.getId()!=null){
+				info.append("<aon:div>");
+				info.append(AonUtil.getMessage(SALES_ORDER));
 				info.append(" ");
-				info.append(AonUtil.getMessage(UNITS));
-				info.append(")");
+				info.append(salesDetail.getSales().getReferenceCode());
+				info.append(" - ");
+				info.append(AonUtil.getMessage(LINE));
+				info.append(" ");
+				info.append(salesDetail.getLine());
+				if (purchaseDetail.getQuantity() > salesDetail.getQuantity()) {
+					info.append(" (");
+					info.append(formatter.format(salesDetail.getQuantity()));
+					info.append(" ");
+					info.append(AonUtil.getMessage(UNITS));
+					info.append(")");
+				}
+				info.append("</aon:div>");
 			}
-			info.append("</aon:div>");
 		}
 		return info.toString();
 	}
@@ -582,22 +584,24 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		if(purchaseDetail.getSourceId()!=null && purchaseDetail.getSource()==PurchaseSource.PURCHASE){
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			PurchaseDetail sourcePurchaseDetail = (PurchaseDetail) purchaseDetailBean.get(purchaseDetail.getSourceId());
-			info.append("<aon:div>");
-			info.append(AonUtil.getMessage(PURCHASE_MODULE));
-			info.append(" ");
-			info.append(sourcePurchaseDetail.getPurchase().getReferenceCode());
-			info.append(" - ");
-			info.append(AonUtil.getMessage(LINE));
-			info.append(" ");
-			info.append(sourcePurchaseDetail.getLine());
-			if (sourcePurchaseDetail.getQuantity() > sourcePurchaseDetail.getQuantity()) {
-				info.append(" (");
-				info.append(formatter.format(sourcePurchaseDetail.getQuantity()));
+			if(sourcePurchaseDetail!=null && sourcePurchaseDetail.getId()!=null){
+				info.append("<aon:div>");
+				info.append(AonUtil.getMessage(PURCHASE_MODULE));
 				info.append(" ");
-				info.append(AonUtil.getMessage(UNITS));
-				info.append(")");
+				info.append(sourcePurchaseDetail.getPurchase().getReferenceCode());
+				info.append(" - ");
+				info.append(AonUtil.getMessage(LINE));
+				info.append(" ");
+				info.append(sourcePurchaseDetail.getLine());
+				if (sourcePurchaseDetail.getQuantity() > sourcePurchaseDetail.getQuantity()) {
+					info.append(" (");
+					info.append(formatter.format(sourcePurchaseDetail.getQuantity()));
+					info.append(" ");
+					info.append(AonUtil.getMessage(UNITS));
+					info.append(")");
+				}
+				info.append("</aon:div>");
 			}
-			info.append("</aon:div>");
 		}
 		return info.toString();
 	}
