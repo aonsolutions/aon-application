@@ -13,9 +13,7 @@ import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.LinkedList;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -35,10 +33,10 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class AttachmentDAO {
@@ -55,126 +53,52 @@ public class AttachmentDAO {
 	//-------------------- GETS 
 	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
-			.fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));
+		return RATTACH_PROPERTIES.build( ctx.getDslContext()
+				.select().from(RATTACH), filter)
+			.fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
 	}
 	
-	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH_PROPERTIES.getConditions(filter))
-			.fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller(ctx));
+	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter){
+		return CONTRACT_ATTACH_PROPERTIES.build(ctx.getDslContext()
+				.select().from(CONTRACT_ATTACH), filter)
+			.fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller(ctx));		
 	}
 	
 	public static Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(INVOICE_ATTACH).where(INVOICE_ATTACH_PROPERTIES.getConditions(filter))
+		return INVOICE_ATTACH_PROPERTIES.build(ctx.getDslContext()
+				.select().from(INVOICE_ATTACH), filter)
 			.fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller(ctx));
 	}
 	
 	public static Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(IATTACH).where(IATTACH_PROPERTIES.getConditions(filter))
+		return IATTACH_PROPERTIES.build(ctx.getDslContext()
+				.select().from(IATTACH), filter)
 			.fetchInto(IATTACH).stream().map(new FullItemAttachFiller(ctx));
 	}
 	
 	public static Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(OFFER_ATTACH).where(OFFER_ATTACH_PROPERTIES.getConditions(filter))
+		return OFFER_ATTACH_PROPERTIES.build( ctx.getDslContext()
+				.select().from(OFFER_ATTACH), filter)
 			.fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller(ctx));
 	}
 	
 	public static Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(PAYROLL_BATCH_ATTACH).where(PAYROLL_ATTACH_PROPERTIES.getConditions(filter))
+		return PAYROLL_ATTACH_PROPERTIES.build( ctx.getDslContext()
+				.select().from(PAYROLL_BATCH_ATTACH), filter)
 			.fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller(ctx));
 	}
 	
 	public static Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(PROJECT_ATTACH).where(PROJECT_ATTACH_PROPERTIES.getConditions(filter))
+		return PROJECT_ATTACH_PROPERTIES.build(ctx.getDslContext()
+				.select().from(PROJECT_ATTACH), filter)
 			.fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller(ctx));
 	}
 	
 	public static Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter){	
-		return ctx.getDslContext()
-			.select().from(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter))
+		return SEPE_ATTACH_PROPERTIES.build(ctx.getDslContext()
+				.select().from(SEPE_BATCH_ATTACH), filter)
 			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx));
 	}
-	
-	
-	public static LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(RATTACH).where(RATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(RATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(CONTRACT_ATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(INVOICE_ATTACH).where(INVOICE_ATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(INVOICE_ATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(IATTACH).where(IATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(IATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(IATTACH).stream().map(new FullItemAttachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(OFFER_ATTACH).where(OFFER_ATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(OFFER_ATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(PAYROLL_BATCH_ATTACH).where(PAYROLL_ATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(PAYROLL_BATCH_ATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(PROJECT_ATTACH).where(PROJECT_ATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(PROJECT_ATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp){	
-		return ctx.getDslContext()
-			.select().from(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter))
-			.orderBy(SEPE_BATCH_ATTACH.ID)
-			.limit(aqp.getLimit())
-			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx))
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
 	
 	public static Attach getRattachWithoutData(AONContext ctx, Condition condition){
 		Record7< Byte, Byte, String, Integer, String, java.sql.Date, Byte> record = ctx.getDslContext()
@@ -268,30 +192,36 @@ public class AttachmentDAO {
 				PROJECT_ATTACH.DATA, PROJECT_ATTACH.DESCRIPTION, 
 				PROJECT_ATTACH.DOMAIN, PROJECT_ATTACH.DRIVEID, 
 				PROJECT_ATTACH.MIMETYPE, PROJECT_ATTACH.PROJECT, 
-				PROJECT_ATTACH.SECURITY_LEVEL)
+				PROJECT_ATTACH.SECURITY_LEVEL, PROJECT_ATTACH.ATTACH_TYPE,
+				PROJECT_ATTACH.CREATION_DATE, PROJECT_ATTACH.CREATION_USER,
+				PROJECT_ATTACH.MODIFICATION_DATE, PROJECT_ATTACH.MODIFICATION_USER)
 		.values(new Date(attach.getDate().getTime()), attach.getData(), 
 				attach.getDescription(), attach.getDomain().getId(), 
 				attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
-				attach.getAttachModule(), attach.getConfidential()?(byte)1:(byte)0)
+				attach.getAttachModule(), attach.getConfidential()?(byte)1:(byte)0,
+				attach.getType(),
+				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
+				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
 		.returning(PROJECT_ATTACH.ID).fetchOne().getId();
 	}
 	
 	public static Integer insertRegistryAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
 		return ctx.getDslContext().insertInto(RATTACH, RATTACH.ATTACH_DATE,
-				RATTACH.CATEGORY, RATTACH.CREATION_DATE, RATTACH.CREATION_USER,
-				RATTACH.DATA, RATTACH.DESCRIPTION, RATTACH.DOMAIN,
-				RATTACH.DPARENT_ID, RATTACH.DRIVE_ID, RATTACH.MIMETYPE,
-				RATTACH.MODIFICATION_DATE, RATTACH.MODIFICATION_USER,
-				RATTACH.REGISTRY, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL,
-				RATTACH.TYPE)
+				RATTACH.CATEGORY, RATTACH.DATA, RATTACH.DESCRIPTION,
+				RATTACH.DOMAIN,	RATTACH.DPARENT_ID, RATTACH.DRIVE_ID,
+				RATTACH.MIMETYPE,RATTACH.REGISTRY, RATTACH.SCOPE,
+				RATTACH.SECURITY_LEVEL,	RATTACH.TYPE,
+				RATTACH.CREATION_DATE, RATTACH.CREATION_USER,
+				RATTACH.MODIFICATION_DATE, RATTACH.MODIFICATION_USER
+				)
 		.values(new Date(attach.getDate().getTime()), attach.getCategory(), 
-				new Timestamp(attach.getCreationDate().getTime()), attach.getCreationUser(), 
 				attach.getData(), attach.getDescription(), attach.getDomain().getId(), 
 				attach.getDparentId(), attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
-				new Timestamp(attach.getModificationDate().getTime()),attach.getModificationUser(),
 				attach.getAttachModule(), attach.getScope(),
-				attach.getConfidential()?(byte)1:(byte)0, (byte) attach.getType())
+				attach.getConfidential()?(byte)1:(byte)0, (byte) attach.getType(),
+				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
+				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
 		.returning(RATTACH.ID).fetchOne().getId();
 	}
 	
@@ -398,6 +328,8 @@ public class AttachmentDAO {
 				.set(PROJECT_ATTACH.MIMETYPE, (byte)attach.getMimeType().ordinal())
 				.set(PROJECT_ATTACH.PROJECT, attach.getAttachModule())
 				.set(PROJECT_ATTACH.SECURITY_LEVEL, attach.getConfidential()?(byte)1:(byte)0)
+				.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+				.set(PROJECT_ATTACH.MODIFICATION_USER, ctx.getUser())
 		.where(PROJECT_ATTACH.ID.eq(attach.getId()))
 		.execute();
 	}
@@ -406,20 +338,18 @@ public class AttachmentDAO {
 		ctx.getDslContext().update(RATTACH)
 			.set(RATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
 			.set(RATTACH.CATEGORY,attach.getCategory())
-			.set(RATTACH.CREATION_DATE, new Timestamp(attach.getCreationDate().getTime()))
-			.set(RATTACH.CREATION_USER, attach.getCreationUser())
 			.set(RATTACH.DATA, attach.getData())
 			.set(RATTACH.DESCRIPTION, attach.getDescription())
 			.set(RATTACH.DOMAIN, attach.getDomain().getId())
 			.set(RATTACH.DPARENT_ID, attach.getDparentId())
 			.set(RATTACH.DRIVE_ID, attach.getDriveId())
 			.set(RATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
-			.set(RATTACH.MODIFICATION_DATE, new Timestamp(attach.getModificationDate().getTime()))
-			.set(RATTACH.MODIFICATION_USER, attach.getModificationUser())
 			.set(RATTACH.REGISTRY, attach.getAttachModule())
 			.set(RATTACH.SCOPE, attach.getScope())
 			.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
 			.set(RATTACH.TYPE, (byte) attach.getType())
+			.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+			.set(RATTACH.MODIFICATION_USER, ctx.getUser())
 		.where(RATTACH.ID.eq(attach.getId()))
 		.execute();
 	}
@@ -480,6 +410,8 @@ public class AttachmentDAO {
 		public static void updateProjectAttachData(AONContext ctx, Attach attach){
 			ctx.getDslContext().update(PROJECT_ATTACH)
 					.set(PROJECT_ATTACH.DATA, attach.getData())
+					.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+					.set(PROJECT_ATTACH.MODIFICATION_USER, ctx.getUser())
 			.where(PROJECT_ATTACH.ID.eq(attach.getId()))
 			.execute();
 		}
@@ -538,6 +470,8 @@ public class AttachmentDAO {
 			public static void updateProjectAttachDriveId(AONContext ctx, Integer attachId, String driveId){
 				ctx.getDslContext().update(PROJECT_ATTACH)
 						.set(PROJECT_ATTACH.DRIVEID, driveId)
+						.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+						.set(PROJECT_ATTACH.MODIFICATION_USER, ctx.getUser())
 				.where(PROJECT_ATTACH.ID.eq(attachId))
 				.execute();
 			}
@@ -804,7 +738,12 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()]);	
+							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setCreationDate(r.getCreationDate())
+							.setCreationUser(r.getCreationUser())
+							.setModificationDate(r.getModificationDate())
+							.setModificationUser(r.getModificationUser())
+							;	
 		}
 	}
 	

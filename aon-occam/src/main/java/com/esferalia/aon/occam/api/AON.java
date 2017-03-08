@@ -78,7 +78,6 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -1748,47 +1747,6 @@ public class AON {
 			else if (attachType.equals(AttachType.SEPE))
 				return getAttachment().getSepeAttachStream(ctx, filter);
 			return null;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static LinkedList<Attach> getAttachList(String domainName,
-			Integer domainId, String login, AttachFilter filter,
-			AttachType attachType, AttachQueryProperties aqp) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-
-			LinkedList<Attach> attachList = new LinkedList<Attach>();
-
-			if (attachType.equals(AttachType.REGISTRY))
-				attachList = getAttachment().getRegistryAttachList(ctx, filter,
-						aqp);
-			else if (attachType.equals(AttachType.CONTRACT))
-				attachList = getAttachment().getContractAttachList(ctx, filter,
-						aqp);
-			else if (attachType.equals(AttachType.INVOICE))
-				attachList = getAttachment().getInvoiceAttachList(ctx, filter,
-						aqp);
-			else if (attachType.equals(AttachType.ITEM))
-				attachList = getAttachment().getItemAttachList(ctx, filter,
-						aqp);
-			else if (attachType.equals(AttachType.OFFER))
-				attachList = getAttachment().getOfferAttachList(ctx, filter,
-						aqp);
-			else if (attachType.equals(AttachType.PAYROLL))
-				attachList = getAttachment().getPayrollAttachList(ctx, filter,
-						aqp);
-			else if (attachType.equals(AttachType.PROJECT))
-				attachList = getAttachment().getProjectAttachList(ctx, filter,
-						aqp);
-			else if (attachType.equals(AttachType.SEPE))
-				attachList = getAttachment().getSepeAttachList(ctx, filter,
-						aqp);
-
-			return attachList;
 		} finally {
 			if (ctx != null)
 				ctx.close();

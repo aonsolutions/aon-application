@@ -14,6 +14,9 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import org.jooq.Condition;
+import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -22,6 +25,11 @@ import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 public class AttachPropertiesDAO {
 
 	protected static class RattachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -53,6 +61,11 @@ public class AttachPropertiesDAO {
 	}
 	
 	protected static class ContractAttachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -83,6 +96,11 @@ public class AttachPropertiesDAO {
 	}
 	
 	protected static class IattachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -113,6 +131,11 @@ public class AttachPropertiesDAO {
 	}
 	
 	protected static class InvoiceAttachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -144,6 +167,11 @@ public class AttachPropertiesDAO {
 	}
 	
 	protected static class OfferAttachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -174,6 +202,11 @@ public class AttachPropertiesDAO {
 	}
 	
 	protected static class PayrollAttachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -204,6 +237,11 @@ public class AttachPropertiesDAO {
 	}
 	
 	protected static class ProjectAttachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -212,7 +250,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_ATTACH.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_ATTACH.DOMAIN);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_ATTACH.DESCRIPTION);}
-		@Override public Property<Byte> getTypeProperty() {return null;}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.ATTACH_TYPE);}
 		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return null;}
 		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(PROJECT_ATTACH.DATA);}
 		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_ATTACH.DRIVEID);}
@@ -221,20 +259,26 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getScopeProperty() {return null;}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_ATTACH.SECURITY_LEVEL);}
 		
-		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<Date> getAttachDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.ATTACH_DATE);}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
 		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
-		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
-		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
 		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
-		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
-		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
+		
+		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.MODIFICATION_USER);}
 	}
 
 	protected static class SepeAttachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(AttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];

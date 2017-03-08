@@ -37,7 +37,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.model.File;
@@ -45,18 +44,15 @@ import com.google.api.services.drive.model.Property;
 
 public class DBDrive {
 	
-	public static Vector<FileInfo> getAttachLimit(Domain domain, User user, AttachType attachType, Integer firstId){
-		AttachQueryProperties aqp = new AttachQueryProperties()
-				.setLimit(10)
-				.setOrderby("id");
-		return AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
+	public static Vector<FileInfo> getAttachLimit(Domain domain, User user, AttachType attachType, Integer page, Integer perPage){
+		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getDriveIdProperty().isNull()
 				.and(f.getDataProperty().isNotNull())
-				.and(f.getIdProperty().gt(firstId))
-				.and(f.getMimeTypeProperty().isNotNull()),
-				attachType, aqp).stream().map(new AttachToFileInfo())
+				.and(f.getMimeTypeProperty().isNotNull())
+				.page(page).perPage(perPage),
+				attachType).map(new AttachToFileInfo())
 				.collect(Collectors.toCollection(Vector::new));
-	}
+	}	
 	
 	public static Vector<FileInfo> getRegistryAttachLimit(Domain domain, User user, Vector<RegistryAttachmentType> rats,Integer firstId ){
 		

@@ -1,13 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 
 public class AttachmentImpl implements IAttachment{
@@ -52,50 +50,6 @@ public class AttachmentImpl implements IAttachment{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> AttachmentDAO.getSepeAttachStream(ctx, filter));
 	}
-	
-	
-	
-	@Override
-	public LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getRegistryAttachList(ctx, filter, aqp));
-	}
-	@Override
-	public LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getContractAttachList(ctx, filter, aqp));
-	}
-	@Override
-	public LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getInvoiceAttachList(ctx, filter, aqp));
-	}
-	@Override
-	public LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getItemAttachList(ctx, filter, aqp));
-	}
-	@Override
-	public LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getOfferAttachList(ctx, filter, aqp));
-	}
-	@Override
-	public LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getPayrollAttachList(ctx, filter, aqp));
-	}
-	@Override
-	public LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getProjectAttachList(ctx, filter, aqp));
-	}
-	@Override
-	public LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getSepeAttachList(ctx, filter, aqp));
-	}
-	
 	
 	@Override
 	public Integer insertContractAttach(AONContext ctx, Attach attach) {

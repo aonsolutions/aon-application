@@ -62,14 +62,7 @@ public class DBConsults {
 	private static final Logger LOGGER  = Logger.getLogger(DBConsults.class.getName());
 	
 	//-------------------- GETS
-	
-	public static ConexFlow getConexFlowList(Domain domain, String login, ConexFlowStatus status){
-		//AON.getAttachStream(domain.getName(), domain.getId(), login, f -> 
-	//		f.get, AttachType.PROJECT);
-		return null;
-	}
-	
-	
+
 	public static Stream<ConexFlow> getConexFlowStreamX(Domain domain, String login, String description){
 		return AON.getAttachStream(domain.getName(), domain.getId(), login,
 				f -> f.getDescriptionProperty().like(description)
@@ -307,7 +300,7 @@ public class DBConsults {
 				.setMimeType(MimeType.XML)
 				.setDescription(description)
 				.setData(conexFlow.getData())
-				.setConfidential(true)
+				.setConfidential(false)
 				.setDate(AonDateUtils.toSql(new java.util.Date())));
 	}
 	

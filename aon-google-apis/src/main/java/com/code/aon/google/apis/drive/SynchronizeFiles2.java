@@ -90,80 +90,80 @@ public class SynchronizeFiles2 {
 			}
 		}
 		if (map.containsKey("contract")){
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, firstId);
+			Integer perPage = 10;
+			Integer page = 0;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}
 		if (map.containsKey("item")){
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, firstId);
+			Integer perPage = 10;
+			Integer page = 0;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}
 		if (map.containsKey("invoice")){
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, firstId);
+			Integer perPage = 10;
+			Integer page = 0;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}
 		if (map.containsKey("offer")){
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, firstId);
+			Integer perPage = 10;
+			Integer page = 0;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}	
 		if (map.containsKey("payroll")){
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, firstId);
+			Integer perPage = 10;
+			Integer page = 0;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}
 		if (map.containsKey("project")){
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, firstId);
+			Integer perPage = 10;
+			Integer page = 0;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}
 		if (map.containsKey("sepe")){
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, firstId);
+			Integer perPage = 10;
+			Integer page = 0;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}
 		if(numero == 0){

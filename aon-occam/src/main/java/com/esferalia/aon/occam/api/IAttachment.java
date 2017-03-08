@@ -1,12 +1,9 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
-
 
 public interface IAttachment {
 
@@ -18,15 +15,6 @@ public interface IAttachment {
 	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter);
 	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter);
 	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter);
-	
-	public LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
-	public LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
-	public LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
-	public LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
-	public LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
-	public LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
-	public LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
-	public LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter, AttachQueryProperties aqp);
 	
 	public Integer insertContractAttach(AONContext ctx, Attach attach);
 	public Integer insertItemAttach(AONContext ctx, Attach attach);
