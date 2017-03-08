@@ -226,9 +226,8 @@ public class ConnectSaleInvoiceWriter {
 	
 	private List<SINCT> createSINCTList(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode) {
-		List<SINCT> list = null;
+		List<SINCT> list = new ArrayList<>();
 		if(StringUtils.isNotBlank(invoice.getComments())){
-			list = new ArrayList<>();
 			list.add(createSINCTRecord(invoice, companyEdiCode, customerEdiMainCode));
 		}
 		return list;
