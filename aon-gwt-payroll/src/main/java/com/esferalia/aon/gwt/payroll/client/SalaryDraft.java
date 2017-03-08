@@ -5052,6 +5052,7 @@ public class SalaryDraft extends ResizeComposite
 		List<Variable> summingConstants = 
 				context.stream()
 				.filter(v->isSummingConstant(v))
+				.filter(v-> v.getValue() != null )
 				.collect(Collectors.groupingBy(
 						Variable::getName,
 						Collectors.summingDouble(v->Double.parseDouble(String.valueOf(v.getValue())))
