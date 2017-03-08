@@ -89,8 +89,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 	
 
-	@Test
-	public void TestDratRedefineSystemVariables() throws Exception {
+	// TODO:@Test
+	public void TestDraftSetHours() throws Exception {
 		open("draft");
 
 		wait4Id("draft_completo,_convenio");

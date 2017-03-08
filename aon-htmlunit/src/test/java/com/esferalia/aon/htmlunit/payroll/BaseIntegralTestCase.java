@@ -2,8 +2,6 @@ package com.esferalia.aon.htmlunit.payroll;
 
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.AON_MAIN_MENU_FORM;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.GWT_DEBUG_ID_PREFIX;
-import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
-import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.login;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.wait4;
@@ -11,7 +9,6 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.wait4;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,11 +19,9 @@ import java.util.logging.Level;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 
 import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.InteractivePage;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ScriptException;
@@ -43,7 +38,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.Keyboard;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.javascript.host.event.KeyboardEvent;
 
@@ -64,17 +58,43 @@ public abstract class BaseIntegralTestCase {
 		
 	protected static  void setup(String url, String user, String password) throws Exception {
 		LOGGER.setLevel(Level.WARNING);
-		webClient = new WebClient(BrowserVersion.FIREFOX_45);
+		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.setAlertHandler(new AlertHandler() {
 			@Override
 			public void handleAlert(Page page, String message) {
 				LOGGER.warning("ALERT '" + message + "'" );
-				
 			}
 		});
-	
+		webClient.setJavaScriptErrorListener( new  JavaScriptErrorListener() {
+			
+			@Override
+			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {
+				LOGGER.severe("Timeout " + executionTime + "ms" );
+			}
+			
+			@Override
+			public void scriptException(HtmlPage page, ScriptException scriptException) {
+				LOGGER.severe("Script Exception [" + scriptException.getFailingLine() + ","+ scriptException.getFailingLineNumber() +"] '" + scriptException.getMessage() + "'" );
+				
+			}
+			
+			@Override
+			public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {
+				LOGGER.severe("Malformed Script URL '" + url + "' " + malformedURLException.getMessage() + "'" );
+				
+			}
+			
+			@Override
+			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {
+				LOGGER.severe("Script Error '" + scriptUrl + "' " + exception.getMessage() + "'" );
+			}
+
+		});
+		
+		
+
 		htmlPage = login(webClient, url, user, password);
 	
 		// Payroll Menu
