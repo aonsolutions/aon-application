@@ -13,6 +13,9 @@ import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams;
 public class XMLUtils {
 
 	public static String writeXml(CarrierPackingParams params){
+		if(params.getParam().size()<= 0){
+			return "<params></params>";
+		}
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(CarrierPackingParams.class);
 			Marshaller marshaller = jaxbContext.createMarshaller();

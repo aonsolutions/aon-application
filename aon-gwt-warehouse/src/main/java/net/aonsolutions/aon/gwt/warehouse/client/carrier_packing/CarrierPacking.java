@@ -170,12 +170,15 @@ public class CarrierPacking extends AonTemplate{
 						
 						@Override
 						public void onSuccess(JSON<JsRmedia> result) {
+							StringBuilder emails = new StringBuilder();
 							result.getData().stream().forEach(rmedia -> {
 								String media = rmedia.getMedia() + "";
 								if(media.equals("4")){	
-									toText.setValue(rmedia.getValue());
+									emails.append(rmedia.getValue());
+									emails.append(";");
 								}
 							});
+							toText.setValue(emails.toString());
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
@@ -550,6 +553,7 @@ public class CarrierPacking extends AonTemplate{
 										
 										@Override public void onSuccess(JsCarrierPacking result2) {
 											setParameterPanel(result2.getParams());
+											w.setJsCarrierPacking(result2);
 										}
 										@Override public void onFailure(Throwable caught) {}
 									});
