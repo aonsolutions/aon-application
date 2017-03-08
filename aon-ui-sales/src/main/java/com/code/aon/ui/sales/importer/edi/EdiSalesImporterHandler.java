@@ -427,7 +427,10 @@ public class EdiSalesImporterHandler implements Serializable {
 	
 	private RegistryItem searchRegistryItem(ERE1L ere1l, Customer customer) {
 		try {			
-			String itemCustomerCode = StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_());
+			String itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo());
+			if(itemCustomerCode==null){
+				itemCustomerCode = StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_());
+			}
 			if(itemCustomerCode==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoEANDelArticuloAdicional_1__EN_());
 			}
@@ -436,9 +439,6 @@ public class EdiSalesImporterHandler implements Serializable {
 			}
 			if(itemCustomerCode==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoGrupoArticuloComprador_GB_());
-			}
-			if(itemCustomerCode==null){
-				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo());
 			}
 			if(itemCustomerCode!=null){
 				IManagerBean itemBean = BeanManager.getManagerBean(RegistryItem.class);
