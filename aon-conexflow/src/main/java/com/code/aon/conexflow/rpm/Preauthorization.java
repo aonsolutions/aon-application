@@ -90,7 +90,7 @@ public class Preauthorization {
 					conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION_CHECK : ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
 					String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 						+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte();
-					DBConsults.insertConexFlow(domain, login, conexFlow, r.getProject(), description);
+					DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
 	
 					String msg = "";
 					if (!ok){
@@ -152,7 +152,7 @@ public class Preauthorization {
 					conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
 					String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 							+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte();
-					DBConsults.insertConexFlow(domain, login, conexFlow, r.getProject(), description);
+					DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
 					
 					String msg = "";
 					if(!ok){
@@ -193,11 +193,11 @@ public class Preauthorization {
 				cancelConexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
 				String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 					+ cancelConexFlow.getStatus().getName() + "#" + cancelConexFlow.getRespuesta().getImporte();
-				DBConsults.insertConexFlow(domain, login, cancelConexFlow, r.getProject(), description);
+				DBConsults.insertConexFlow(d, login, cancelConexFlow, r.getProject(), description);
 			
 				String description2 = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 					+ p.getStatus().cancel().getName() + "#" + p.getRespuesta().getImporte();			
-				DBConsults.updateConexFlowDescription(domain, login, p.getId(), description2);
+				DBConsults.updateConexFlowDescription(d, login, p.getId(), description2);
 		
 				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
 					, r.getHotelReservation().toString(), r.getToken(), r.getPenaltyAmount());
@@ -206,7 +206,7 @@ public class Preauthorization {
 				conexFlow.setStatus(ok3 ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
 				String description3 = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 					+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte();
-				DBConsults.insertConexFlow(domain, login, conexFlow, r.getProject(), description3);
+				DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description3);
 				String msg = "";
 				if(!ok3){
 					msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
