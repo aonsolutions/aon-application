@@ -109,11 +109,14 @@ public class CommonServlet extends HttpServlet{
     
     private JSONArray getMailAccountList(Domain domain, String login) {		
     	JSONArray array = new JSONArray();
+    	Integer userId = AON.getUser(domain.getName(), domain.getId(), login).getId();
     	if(domain.isEnableHeredity())
-			AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> (f.getUserIdProperty().isNull())
+    		AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> 
+    			(f.getUserIdProperty().isNull().or(f.getUserIdProperty().eq(userId)))
 				.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))))
 			.stream().forEach(ma -> array.put(ToJSON.objectToJSON(ma.getId(), ma.getName())));
-		else AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> (f.getUserIdProperty().isNull())
+		else AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> 
+				(f.getUserIdProperty().isNull().or(f.getUserIdProperty().eq(userId)))
 				.and(f.getDomainProperty().eq(domain.getId())))
 			.stream().forEach(ma -> array.put(ToJSON.objectToJSON(ma.getId(), ma.getName())));
     	return array;

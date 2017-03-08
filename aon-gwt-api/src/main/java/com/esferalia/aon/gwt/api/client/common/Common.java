@@ -17,6 +17,7 @@ public class Common extends Methods{
 		this.accessToken = accesToken;
 		this.domainName = domainName;
 		this.userName = userName;
+		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
 	public void getWorkplaces(AsyncCallback<JSON<JsObject>> callback){

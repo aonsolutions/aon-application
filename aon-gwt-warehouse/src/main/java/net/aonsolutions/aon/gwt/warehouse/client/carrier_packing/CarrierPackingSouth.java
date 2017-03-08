@@ -352,7 +352,7 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 		value.setValue(js.getValue());
 		panel.add(value);
 		
-		AonDialog dialog = new AonDialog("Nuevo Par\u00e1metro", panel) {
+		AonDialog dialog = new AonDialog("Editar Par\u00e1metro", panel) {
 			
 			@Override protected void onCancel() {hide();}
 			
@@ -484,11 +484,11 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 					public void onSuccess(String result) {
 						String requestData = "{\"params\":\""+ result +"\"}";
 						parent.setParameterPanel(result);
-						parent.API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+						parent.API.getWarehouse().updateCarrierPacking(parent.getJsCarrierPacking().getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
 							
 							@Override
 							public void onSuccess(JsCarrierPacking result) {
-								
+								parent.setJsCarrierPacking(result);
 							}
 							
 							@Override
@@ -521,18 +521,17 @@ public class CarrierPackingSouth extends DockLayoutPanel{
 						params.getParam().remove(p);
 					}
 				}
-
 				parent.impl.writeXml(params, new AsyncCallback<String>() {
 				
 					@Override
 					public void onSuccess(String result) {
 						String requestData = "{\"params\":\""+ result +"\"}";
 						parent.setParameterPanel(result);
-						parent.API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+						parent.API.getWarehouse().updateCarrierPacking(parent.getJsCarrierPacking().getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
 						
 							@Override
 							public void onSuccess(JsCarrierPacking result) {
-								
+								parent.setJsCarrierPacking(result);
 							}
 						
 							@Override
