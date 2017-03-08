@@ -32,6 +32,7 @@ import com.esferalia.aon.jooq.tables.records.ProjectReservationServiceDetailReco
 import com.esferalia.aon.jooq.tables.records.ProjectReservationServiceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
 import com.esferalia.aon.occam.api.model.pms.HotelEmailCatchment;
 import com.esferalia.aon.occam.api.model.pms.HotelGuestByCountry;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
@@ -291,7 +292,8 @@ public class PMSDAO {
 	public static Stream<Integer> getFailPreauthorizationProjectIdStream(AONContext ctx){
 		return ctx.getDslContext().select(PROJECT_RESERVATION.PROJECT)
 			.from(PROJECT_RESERVATION).join(PROJECT_ATTACH).on(PROJECT_RESERVATION.PROJECT.eq(PROJECT_ATTACH.PROJECT))
-			.where(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-CHECK-NO-P"))
+			.where(PROJECT_ATTACH.ATTACH_TYPE.eq(ProjectAttachmentType.CONEXFLOW.value()))
+				.and(PROJECT_ATTACH.DESCRIPTION.like("CONEXFLOW%_P%-FAIL%"))
 				.and(PROJECT_RESERVATION.CHECK_STATUS.ne(ReservationCheckStatus.CANCEL_NO_INVOICEABLE.value()))
 				.and(PROJECT_RESERVATION.CHECK_STATUS.ne(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE.value()))
 			.fetch().stream().map(f -> f.value1());
