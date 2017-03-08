@@ -41,8 +41,10 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -550,21 +552,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		return null;
 	}
-	
-//	private SalesDetail obtainSalesDetail(AONContext ctx,
-//			DATOSLINEAALBARANTYPE linea) {
-//		String series = linea.getDATOSELABORACIONORIGEN().getSERIE();
-//		Integer number = Integer.valueOf(linea.getDATOSELABORACIONORIGEN()
-//				.getNUMERO());
-//		Sales sales = SalesDAO.getSales(ctx, series, number);
-//		if (sales != null && sales.getId() != null) {
-//			Short line = Short.valueOf(linea.getLINEA());
-//			SalesDetail detail = SalesDAO.getSalesDetail(ctx, sales.getId(),
-//					line);
-//			return detail;
-//		}
-//		return null;
-//	}
 
 	private RAddress obtainAddress(AONContext ctx, Customer customer,
 			DATOSDIRECCIONTYPE datosdireccionentrega) {
@@ -587,8 +574,30 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	
 	private Customer obtainCustomer(AONContext ctx,
 			DATOSCLIENTETYPE datoscliente) {
-		Customer customer = SalesDAO.getCustomer(ctx, datoscliente
+		List<Customer> customerList = SalesDAO.getCustomerList(ctx, datoscliente
 				.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
+		List<Integer> ids = customerList.stream().map(Customer::getId)
+				.map(i -> Integer.valueOf(i)).collect(Collectors.toList());
+		List<RegistryNote> ediRNotes = AON.getRNoteList(
+				ctx.getDomainName(),
+				ctx.getDomainId(),
+				ctx.getUser(),
+				f -> f.getNoteTypeProperty()
+						.eq(NoteType.FACTURAE.value())
+						.and(f.getRegistryProperty().in(
+								ids.toArray(new Integer[ids.size()])
+										)));
+		// TODO create method in AON for search customer by document and edi enabled
+		Customer customer = null;
+		if (ediRNotes != null && ediRNotes.size() > 0) {
+			try {
+				RegistryNote ediRNote = ediRNotes.get(0);
+				customer = AON.getCustomer(ctx.getDomainName(), ctx.getDomainId(),
+						ctx.getUser(), ediRNote.getRegistry());
+			} catch (Exception e) {
+				customer = null;
+			}
+		}
 		if (customer != null && customer.getId() != null) {
 			return customer;
 		}

@@ -11,7 +11,9 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 
@@ -287,12 +289,12 @@ public class SalesDAO {
 		return getSalesDetail(ctx, o -> o.getSalesProperty().eq(salesId).and(o.getLineProperty().eq(line)));
 	}
 	
-	public static Customer getCustomer(AONContext ctx, String document){
-		return ctx.getDslContext().select().from(CUSTOMER)
-				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+	public static List<Customer> getCustomerList(AONContext ctx, String document) {
+		return ctx.getDslContext().select().from(CUSTOMER).join(REGISTRY)
+				.on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 				.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
-				.and(REGISTRY.DOCUMENT.eq(document))
-				.fetch().stream().map(new CustomerFiller()).findFirst().orElse(null);
+				.and(REGISTRY.DOCUMENT.eq(document)).fetch().stream()
+				.map(new CustomerFiller()).collect(Collectors.toList());
 	}
 	
 	public static void createCustomer(AONContext ctx, int domain,

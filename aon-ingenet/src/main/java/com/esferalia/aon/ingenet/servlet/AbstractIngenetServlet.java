@@ -72,14 +72,14 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		LOGGER.info("INGENET POST - " + this.getClass().getName());
+		LOGGER.info("***** INGENET POST - " + this.getClass().getName());
 		process(request, response);
 	}
 	
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		LOGGER.info("INGENET GET - " + this.getClass().getName());
+		LOGGER.info("***** INGENET GET - " + this.getClass().getName());
 		process(request, response);
 //		TODO do not allow GET method
 //		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -113,7 +113,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 
 	protected boolean doLogin(String domainName, String username,
 			String password) {
-		LOGGER.info("INGENET LOGIN: " + domainName + "@" + username
+		LOGGER.info("***** INGENET LOGIN: " + domainName + "@" + username
 				+ " (using password " + (password != null ? "YES" : "NO") + ")");
 		if (domainName != null && username != null && password != null
 				&& domainName.matches("^udapa\\..*")) {
