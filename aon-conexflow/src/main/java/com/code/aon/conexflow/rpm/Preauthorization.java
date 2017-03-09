@@ -1,6 +1,7 @@
 package com.code.aon.conexflow.rpm;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,8 +40,8 @@ public class Preauthorization {
 	
 	private static final Logger LOGGER  = Logger.getLogger(DBConsults.class.getName());
 
-	private static final String SERVER = "https://test.conexflow.es/CF_WEB_PLAYASOL/WebPlugin/xtn.asp";
-	private static final String SERVER_ACK = "https://test.conexflow.es/CF_WEB_PLAYASOL/WebPlugin/ack.asp";
+	private static final String SERVER = "https://test.conexflow.com/CF_WEB_PLAYASOL/WebPlugin/xtn.asp";
+	private static final String SERVER_ACK = "https://test.conexflow.com/CF_WEB_PLAYASOL/WebPlugin/ack.asp";
 	private static final String CF_USER = "0000028302830283";
 	private static final String KEY_A = "193D59719B1B2662";
 	private static final String KEY_B = "A8DB8A2EF1223B4E";
@@ -68,18 +69,15 @@ public class Preauthorization {
 	}
 	
 	public static void preauthorization001(Domain domain, String login){
-		
-		AON.getDomainList(domain.getName(), domain.getId(), login, f -> f.getIdProperty().ge(0)).stream().forEach(d -> {
-			System.out.println(d.getName());
-		});
-		
 		Date currentDate = new Date(new java.util.Date().getTime());
 		Stream<ProjectReservation> stream = DBConsults.getProjectReservationStream(domain, login,
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getTokenProperty().isNotNull())); 
 		stream.forEach(r -> {
 			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
-			ConexFlow cf = DBConsults.getConexFlowLastStatusX(domain, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK);
-			if(cf == null){
+			ConexFlow cf = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK);
+			ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
+
+			if(cf == null && pcFail == null){
 				if(!dryRun){
 					ConexFlowConnection connection = DBConsults.getConection(d);
 					Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
@@ -128,7 +126,71 @@ public class Preauthorization {
 		});
 	}
 	
-	public static void preauthorizationPenalty(Domain domain, String login){
+	
+	// TODO NUEVO PROCESO PENALTY SIN TENER EN CUENTA LOS DIAS.
+	public static void preauthorizationPenalty(Domain domain,  String login){
+		DBConsults.getProjectReservationStream(domain, login, f ->
+				f.getPenaltyDateProperty().le(new Timestamp(new java.util.Date().getTime()))
+				.and(f.getTokenProperty().isNotNull()).and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
+				.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))))
+		.forEach(r ->{
+			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);		
+			ConexFlow p = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION);
+			ConexFlow pFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
+
+			java.util.Date date2 = AonDateUtils.addDays(new java.util.Date(), -7);
+			if((p == null && pFail == null) ||  (p != null && p.getDate().compareTo(date2) <= 1  && 
+					Double.parseDouble(p.getRespuesta().getImporte()) < r.getPenaltyAmount())){
+				if(!dryRun){
+					ConexFlowConnection connection = DBConsults.getConection(d);
+					
+					if(p != null){
+						// CANCELAR PREAUTHORIZACION 
+						Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
+							, p.getRespuesta().getOperacion(), Double.parseDouble(p.getRespuesta().getImporte())
+							, Double.parseDouble(p.getRespuesta().getImporte()) 
+							, p.getRespuesta().getAutorizacion(), r.getHotelReservation().toString()
+							, p.getRespuesta().getIdOperacion(), p.getRespuesta().getFecha());
+						ConexFlow cancelConexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
+					
+						Boolean ok = cancelConexFlow.getRespuesta().getResultado().equals("000");
+						cancelConexFlow.setStatus(ok ? ConexFlowStatus.CANCEL : ConexFlowStatus.CANCEL_FAIL);
+						String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+							+ cancelConexFlow.getStatus().getName() + "#" + cancelConexFlow.getRespuesta().getImporte();
+						DBConsults.insertConexFlow(d, login, cancelConexFlow, r.getProject(), description);
+				
+						String description2 = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+							+ p.getStatus().cancel().getName() + "#" + p.getRespuesta().getImporte();			
+						DBConsults.updateConexFlowDescription(d, login, p.getId(), description2);
+					}
+					
+					Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
+							, r.getHotelReservation().toString(), r.getToken(), r.getPenaltyAmount());
+					ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
+					Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
+					conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
+					String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+							+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte();
+					DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
+					
+					String msg = "";
+					if(!ok){
+						msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+					} else msg = "PREAUTHORIZATION OK";
+					String projectName = DBConsults.getProjectName(d, login, r.getProject());
+					View.preauthorized(projectName, r.getProject(), msg, r.getPenaltyAmount());
+				} else {
+					String msg = "PREAUTHORIZATION OK";
+					String projectName = DBConsults.getProjectName(d, login, r.getProject());
+					View.preauthorized(projectName, r.getProject(), msg, r.getPenaltyAmount());
+				}
+			}
+		});
+			
+		
+	}
+	
+	public static void preauthorizationPenaltyDays(Domain domain, String login){
 		Calendar calendar = Calendar.getInstance();
 		Date currentDate = new Date(calendar.getTime().getTime());
 		calendar.add(Calendar.DAY_OF_YEAR, days); 
@@ -139,12 +201,35 @@ public class Preauthorization {
 					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value())))); 
 		stream.forEach(r -> {
 			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);		
-			ConexFlow cf = DBConsults.getConexFlowLastStatusX(domain, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION);
+			ConexFlow cf = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION);
+			ConexFlow pFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
+
 			java.util.Date date2 = AonDateUtils.addDays(new java.util.Date(), -7);
-			if(cf == null ||  (cf.getDate().compareTo(date2) <= 1  && 
+			if((cf == null && pFail == null) ||  (cf != null && cf.getDate().compareTo(date2) <= 1  && 
 					Double.parseDouble(cf.getRespuesta().getImporte()) < r.getPenaltyAmount())){
 				if(!dryRun){
 					ConexFlowConnection connection = DBConsults.getConection(d);
+					
+					if(cf != null){
+						// CANCELAR PREAUTHORIZACION 
+						Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
+							, cf.getRespuesta().getOperacion(), Double.parseDouble(cf.getRespuesta().getImporte())
+							, Double.parseDouble(cf.getRespuesta().getImporte()) 
+							, cf.getRespuesta().getAutorizacion(), r.getHotelReservation().toString()
+							, cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
+						ConexFlow cancelConexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
+					
+						Boolean ok = cancelConexFlow.getRespuesta().getResultado().equals("000");
+						cancelConexFlow.setStatus(ok ? ConexFlowStatus.CANCEL : ConexFlowStatus.CANCEL_FAIL);
+						String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+							+ cancelConexFlow.getStatus().getName() + "#" + cancelConexFlow.getRespuesta().getImporte();
+						DBConsults.insertConexFlow(d, login, cancelConexFlow, r.getProject(), description);
+				
+						String description2 = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+							+ cf.getStatus().cancel().getName() + "#" + cf.getRespuesta().getImporte();			
+						DBConsults.updateConexFlowDescription(d, login, cf.getId(), description2);
+					}
+					
 					Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
 							, r.getHotelReservation().toString(), r.getToken(), r.getPenaltyAmount());
 					ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
@@ -190,7 +275,7 @@ public class Preauthorization {
 				ConexFlow cancelConexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
 
 				Boolean ok = cancelConexFlow.getRespuesta().getResultado().equals("000");
-				cancelConexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
+				cancelConexFlow.setStatus(ok ? ConexFlowStatus.CANCEL : ConexFlowStatus.CANCEL_FAIL);
 				String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 					+ cancelConexFlow.getStatus().getName() + "#" + cancelConexFlow.getRespuesta().getImporte();
 				DBConsults.insertConexFlow(d, login, cancelConexFlow, r.getProject(), description);
@@ -239,10 +324,18 @@ public class Preauthorization {
 		}
 		
 		if(penalty){
-			preauthorizationPenalty(domain, "system");
+			if(days == -1){
+				// TODO preauthorizationPenalty(domain, "system");
+				// REMOVE --> 
+				days = 7;
+				preauthorizationPenaltyDays(domain, "system");
+			} else preauthorizationPenaltyDays(domain, "system");
 		}
 		
 		if(renovate){
+			if(days == -1){
+				days = 7;
+			}
 			preauthorizationRenovate(domain, "system");
 		}
 	}
@@ -338,7 +431,7 @@ public class Preauthorization {
 			
 			String daysString = line.getOptionValue(daysOption.getOpt());
 			if(daysString == null)
-				days = 7;
+				days = -1;
 			else days = Integer.parseInt(daysString);
 		} catch (ParseException e) {
 			System.out.print(e.getMessage());

@@ -314,7 +314,9 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isCreditCardEditable() throws ManagerBeanException {
 		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
-		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isEmpty(reservation.getCreditCardNumber());
+		return roleAllowed && reservation.getCreationDate() != null && 
+			!isToken();	
+				//StringUtils.isEmpty(reservation.getCreditCardNumber());
 	}
 
 	public boolean isCreditCardOperable() throws ManagerBeanException {
@@ -328,6 +330,10 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isUndoTouristTaxFreeAllowed() throws ManagerBeanException {
 		return reservation.isActive() && reservation.getTouristTaxFree() != null;
+	}
+	
+	public boolean isToken() throws ManagerBeanException {
+		return reservation.getToken() != null;
 	}
 
 	/*************************** RESERVATION GUEST *******************************/

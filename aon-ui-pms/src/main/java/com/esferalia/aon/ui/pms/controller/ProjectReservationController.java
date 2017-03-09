@@ -1830,6 +1830,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setHrCreditCardNumber(null);
 		reservation.setCreditCardCvv(null);
 		reservation.setHrCreditCardCvv(null);
+		reservation.setToken(null);
 	}
 
 	public void onSaveCreditCard(ActionEvent event) {

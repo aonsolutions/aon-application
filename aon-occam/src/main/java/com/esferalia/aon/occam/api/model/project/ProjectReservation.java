@@ -55,6 +55,7 @@ public class ProjectReservation implements Serializable{
 	
 	String token;
 	Double penaltyAmount;
+	Date penaltyDate;
 	
 	TouristTaxFreeCause touristTaxFree;
 	
@@ -389,5 +390,20 @@ public class ProjectReservation implements Serializable{
 		this.penaltyAmount = penaltyAmount;
 		return this;
 	}
+	public Date getPenaltyDate() {
+		return penaltyDate;
+	}
+	public ProjectReservation setPenaltyDate(Date penaltyDate) {
+		this.penaltyDate = penaltyDate;
+		return this;
+	}
+	public TouristTaxFreeCause getTouristTaxFree() {
+		return touristTaxFree;
+	}
+	public ProjectReservation setTouristTaxFree(TouristTaxFreeCause touristTaxFree) {
+		this.touristTaxFree = touristTaxFree;
+		return this;
+	}
+	
 	
 }

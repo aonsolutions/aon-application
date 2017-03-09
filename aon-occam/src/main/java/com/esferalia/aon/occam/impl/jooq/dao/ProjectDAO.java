@@ -122,6 +122,7 @@ public class ProjectDAO {
 		@Override public Property<String> getTokenProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.TOKEN);}
 		@Override public Property<Double> getPenaltyAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.PENALTY_AMOUNT);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.STATUS);}
+		@Override public Property<Timestamp> getPenaltyDateProperty() {return null;}// TODO new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.PENALTY_DATE);}
 	}
 
 	public static Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter){
@@ -210,7 +211,8 @@ public class ProjectDAO {
 					.setTotal(r.getTotal())
 					.setVatQuota(r.getVatQuota())
 					.setToken(r.getToken())
-					.setPenaltyAmount(r.getPenaltyAmount());
+					.setPenaltyAmount(r.getPenaltyAmount())
+					.setPenaltyDate(new java.util.Date());// TODO r.getPenaltyDate());
 		}
 
 	}
