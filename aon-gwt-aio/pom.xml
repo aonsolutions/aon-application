@@ -32,6 +32,7 @@
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.warehouse</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>  
 					</compileSourcesArtifacts>
+					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
 				</configuration>
 				<executions>
 					<execution>
