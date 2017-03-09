@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
+import com.vaadin.polymer.iron.widget.IronInput;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
 import com.vaadin.polymer.paper.widget.PaperDropdownMenu;
@@ -365,6 +366,15 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	@UiField
 	PaperButton diaEreButton;
+	
+	@UiField
+	PaperDialog dialogEre;
+	
+	@UiField
+	DoubleBox erePercent;
+	
+	@UiField
+	PaperButton dialogEreOk;
 
 	@UiField
 	PaperButton diaReduccionButton;
@@ -605,7 +615,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				addEreDay();
+				dialogEre.open();
 			}
 			
 		});
@@ -874,9 +884,17 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("diaEreButton")
 	public void onEreClick(ClickEvent event) {
+		dialogEre.open();
+	}
+	
+	@UiHandler("dialogEreOk")
+	public void onDialogEreaClick(ClickEvent event) {
+		//TODO: mirar que hacer con el porcentaje de ERE
+		//Window.alert("Coeficiente ere :"+erePercent.getText());
+		dialogEre.close();
 		addEreDay();
 	}
-
+	
 	@UiHandler("diaAusenciaButton")
 	public void onDiaAusenciaClick(ClickEvent event) {
 		dialogAusencia.open();
@@ -885,6 +903,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	@UiHandler("dialogDropOk")
 	public void onDialogAusenciaClick(ClickEvent event) {
 		//TODO: mirar que hacer con el tipo de ausencia
+		//dropMenu.getSelectedItemText();
 		dialogAusencia.close();	
 		addDropDay();
 	}
@@ -1572,7 +1591,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			menu.addItem("Convertir dia(s) ERE", new Command() {
 				@Override
 				public void execute() {
-					addEreDay();
+					dialogEre.open();
 				}
 			});
 			menu.addItem("Convertir dia(s) Ausencia", new Command() {

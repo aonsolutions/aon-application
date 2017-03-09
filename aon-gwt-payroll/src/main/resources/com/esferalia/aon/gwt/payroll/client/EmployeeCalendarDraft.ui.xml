@@ -331,6 +331,14 @@
 			padding-top: 0px !important;
 			padding-bottom: 5px !important;
 		}
+
+		.dropType{
+			margin-left:15px;
+		}
+	
+		.widthDoubleEre{
+			width: 55px;
+		}
 		
 		</ui:style>
 
@@ -410,13 +418,30 @@
 					<g:HTMLPanel ui:field="confirmDropContent"></g:HTMLPanel>
 					<HTMLPanel>
 					    <i:IronLabel>Tipo:</i:IronLabel>
-				        <g:ListBox ui:field="dropMenu"/>
+				        <g:ListBox styleName="{style.dropType}" ui:field="dropMenu"/>
 			        </HTMLPanel>
 			        <HTMLPanel class="buttons">
 						<p:PaperButton ui:field="dialogDropCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
 						<p:PaperButton ui:field="dialogDropOk" attributes="dialog-confirm">OK</p:PaperButton>
 					</HTMLPanel>
 			    </p:PaperDialog>  
+			    
+			    <!-- Dialogo para seleccionar el porcetaje de ERE que va a tener -->
+			    <p:PaperDialog ui:field="dialogEre" styleName="{style.dialogBoxStyle}"
+					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
+					withBackdrop="true">
+					<a:CustomDialogBar ui:field="customDialogBarEre" styleName="{style.marginTopCloseDialog}" caption="Porcentaje ERE:"/>
+					<g:HTMLPanel ui:field="confirmErepContent"></g:HTMLPanel>
+					<HTMLPanel>
+					    <i:IronLabel>Porcentaje ERE:</i:IronLabel>
+					    <g:DoubleBox ui:field="erePercent" styleName="{style.widthDoubleEre}"></g:DoubleBox>
+					    <i:IronLabel>%</i:IronLabel>
+			        </HTMLPanel>
+			        <HTMLPanel class="buttons">
+						<p:PaperButton ui:field="dialogEreCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
+						<p:PaperButton ui:field="dialogEreOk" attributes="dialog-confirm">OK</p:PaperButton>
+					</HTMLPanel>
+			    </p:PaperDialog>
 			    
 				<!-- Dialogo para seleccionar fecha hasta... -->
 				<p:PaperDialog ui:field="dialogUntill" styleName="{style.dialogBoxStyle}"
