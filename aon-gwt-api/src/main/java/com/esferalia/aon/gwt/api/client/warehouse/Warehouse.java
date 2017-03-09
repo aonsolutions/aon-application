@@ -118,4 +118,22 @@ public class Warehouse extends Methods{
 	public void sendPackingList(String requestData){
 		post(getUrl() + "packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);
 	}
+	
+	/* ELABORATION */
+	public void getElaborationList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsElaboration>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration" + filter, callback);
+	}
+	public void getElaboration(Integer id, AsyncCallback<JSON<JsElaboration>> callback){
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/" + id, callback);
+	}
+	public void getElaborationStatuses(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/status", callback);
+	}
+	public void getElaborationDetail(Integer id, AsyncCallback<JSON<JsElaborationDetail>> callback){
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/" + id, callback);
+	}
+	public void getElaborationDetailComposition(Integer id, AsyncCallback<JSON<JsElaborationDetailComposition>> callback){
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/" + id, callback);
+	}
 }

@@ -9,6 +9,9 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.Elaboration;
+import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -21,6 +24,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -199,6 +203,65 @@ public class ToJSON {
 			.put("creation_user", carrierPacking.getCreationUser())
 			.put("modification_date", carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")
 			.put("modification_user", carrierPacking.getModificationUser());
+	}
+	
+	public static JSONObject elaborationToJSON(Elaboration elaboration) {
+		String seriesNumber = (elaboration.getSeries() != null ? elaboration.getSeries() + "/" : "") + elaboration.getNumber();
+		return new JSONObject()
+			.put(MSG.ID, elaboration.getId())
+			.put(MSG.DOMAIN, elaboration.getDomain())
+			.put("series_number", seriesNumber)
+			.put(MSG.SERIES, elaboration.getSeries())
+			.put(MSG.NUMBER, elaboration.getNumber())
+			.put(MSG.STATUS, new JSONObject()
+				.put(MSG.ID, elaboration.getStatus() != null ? elaboration.getStatus().intValue() : "")
+				.put(MSG.NAME, elaboration.getStatus() != null ? ElaborationStatus.values()[elaboration.getStatus()].getName(): "")) 
+			.put(MSG.DATE, elaboration.getDate() != null ? dateFormat.format(elaboration.getDate()) : "")
+			.put(MSG.ITEM, new JSONObject()
+					.put(MSG.ID, elaboration.getItem() != null ? elaboration.getItem().getId() : "")
+					.put("code", elaboration.getItem() != null ? elaboration.getItem().getProduct().getCode() : "")
+					.put(MSG.NAME, elaboration.getItem() != null ? elaboration.getItem().getProduct().getName(): ""))
+			.put(MSG.QUANTITY, String.format("%1$.2f", elaboration.getQuantity()))
+			.put(MSG.WAREHOUSE, elaboration.getWarehouse())
+			.put(MSG.COMMENT, elaboration.getComments() != null ? elaboration.getComments() : " ")
+			.put("creation_date", elaboration.getCreationDate() != null ? dateFormat.format(elaboration.getCreationDate()): "")
+			.put("creation_user", elaboration.getCreationUser())
+			.put("modification_date", elaboration.getModificationDate() != null ? dateFormat.format(elaboration.getModificationDate()) : "")
+			.put("modification_user", elaboration.getModificationUser());
+	}
+	
+	public static JSONObject elaborationDetailToJSON(ElaborationDetail detail) {
+		return new JSONObject()
+				.put(MSG.ID, detail.getId())
+				.put(MSG.DOMAIN, detail.getDomain())
+				.put(MSG.DATE, detail.getDate() != null ? dateFormat.format(detail.getDate()) : "")
+				.put(MSG.ITEM, new JSONObject()
+						.put(MSG.ID, detail.getItem() != null ? detail.getItem().getId() : "")
+						.put("code", detail.getItem() != null ? detail.getItem().getProduct().getCode() : "")
+						.put(MSG.NAME, detail.getItem() != null ? detail.getItem().getProduct().getName(): ""))
+				.put(MSG.QUANTITY, String.format("%1$.2f", detail.getQuantity()))
+				.put(MSG.WAREHOUSE, detail.getWarehouse())
+				.put("add_info", detail.getAddInfo() != null ? detail.getAddInfo() : " ")
+				.put("creation_date", detail.getCreationDate() != null ? dateFormat.format(detail.getCreationDate()): "")
+				.put("creation_user", detail.getCreationUser())
+				.put("modification_date", detail.getModificationDate() != null ? dateFormat.format(detail.getModificationDate()) : "")
+				.put("modification_user", detail.getModificationUser());
+	}
+	
+	public static JSONObject elaborationDetailCompositionToJSON(ElaborationDetailComposition detailComposition) {
+		return new JSONObject()
+				.put(MSG.ID, detailComposition.getId())
+				.put(MSG.DOMAIN, detailComposition.getDomain())
+				.put(MSG.ITEM, new JSONObject()
+						.put(MSG.ID, detailComposition.getItem() != null ? detailComposition.getItem().getId() : "")
+						.put("code", detailComposition.getItem() != null ? detailComposition.getItem().getProduct().getCode() : "")
+						.put(MSG.NAME, detailComposition.getItem() != null ? detailComposition.getItem().getProduct().getName(): ""))
+				.put(MSG.QUANTITY, String.format("%1$.2f", detailComposition.getQuantity()))
+				.put(MSG.WAREHOUSE, detailComposition.getWarehouse())
+				.put("creation_date", detailComposition.getCreationDate() != null ? dateFormat.format(detailComposition.getCreationDate()): "")
+				.put("creation_user", detailComposition.getCreationUser())
+				.put("modification_date", detailComposition.getModificationDate() != null ? dateFormat.format(detailComposition.getModificationDate()) : "")
+				.put("modification_user", detailComposition.getModificationUser());
 	}
 	
 	public static JSONObject purchaseToJSON(Purchase purchase) {

@@ -466,63 +466,56 @@ public class ElaborationDAO {
 	 * FILLERS 
 	 */
 	
-	private static class FullElaborationFiller implements
-			Function<ElaborationRecord, Elaboration> {
+	private static class FullElaborationFiller implements Function<ElaborationRecord, Elaboration> {
 		@Override
 		public Elaboration apply(ElaborationRecord r) {
-			return new Elaboration().setId(r.getId()).setDomain(r.getDomain())
-					.setSeries(r.getSeries()).setNumber(r.getNumber())
-					.setDate(r.getDate())
-					.setItem(new Item().setId(r.getItem()))
-					.setWarehouse(r.getWarehouse())
-					.setQuantity(r.getQuantity()).setStatus(r.getStatus())
-					.setComments(r.getComments()).setSource(r.getSource())
-					.setSourceId(r.getSourceId())
-					.setCreationDate(r.getCreationDate())
-					.setCreationUser(r.getCreationUser())
-					.setModificationDate(r.getModificationDate())
-					.setModificationUser(r.getModificationUser());
+			return new Elaboration().setId(r.getValue(ELABORATION.ID)).setDomain(r.getValue(ELABORATION.DOMAIN))
+					.setSeries(r.getValue(ELABORATION.SERIES)).setNumber(r.getValue(ELABORATION.NUMBER))
+					.setDate(r.getValue(ELABORATION.DATE)).setItem(new Item().setId(r.getValue(ELABORATION.ITEM)))
+					.setWarehouse(r.getValue(ELABORATION.WAREHOUSE)).setQuantity(r.getValue(ELABORATION.QUANTITY))
+					.setStatus(r.getValue(ELABORATION.STATUS)).setComments(r.getValue(ELABORATION.COMMENTS))
+					.setSource(r.getValue(ELABORATION.SOURCE)).setSourceId(r.getValue(ELABORATION.SOURCE_ID))
+					.setCreationDate(r.getValue(ELABORATION.CREATION_DATE))
+					.setCreationUser(r.getValue(ELABORATION.CREATION_USER))
+					.setModificationDate(r.getValue(ELABORATION.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(ELABORATION.MODIFICATION_USER));
 		}
 	}
 
-	private static class FullElaborationDetailFiller implements
-			Function<ElaborationDetailRecord, ElaborationDetail> {
+	private static class FullElaborationDetailFiller implements Function<ElaborationDetailRecord, ElaborationDetail> {
 		@Override
 		public ElaborationDetail apply(ElaborationDetailRecord r) {
-			return new ElaborationDetail()
-					.setId(r.getId())
-					.setDomain(r.getDomain())
-					.setElaboration(new Elaboration().setId(r.getElaboration()))
-					.setDate(r.getDate())
-					.setItem(new Item().setId(r.getItem()))
-					.setQuantity(r.getQuantity())
-					.setWarehouse(r.getWarehouse()).setAddInfo(r.getAddInfo())
-					.setCreationDate(r.getCreationDate())
-					.setCreationUser(r.getCreationUser())
-					.setModificationDate(r.getModificationDate())
-					.setModificationUser(r.getModificationUser());
+			return new ElaborationDetail().setId(r.getValue(ELABORATION_DETAIL.ID))
+					.setDomain(r.getValue(ELABORATION_DETAIL.DOMAIN))
+					.setElaboration(new Elaboration().setId(r.getValue(ELABORATION_DETAIL.ELABORATION)))
+					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
+					.setItem(new Item().setId(r.getValue(ELABORATION_DETAIL.ITEM)))
+					.setQuantity(r.getValue(ELABORATION_DETAIL.QUANTITY))
+					.setWarehouse(r.getValue(ELABORATION_DETAIL.WAREHOUSE))
+					.setAddInfo(r.getValue(ELABORATION_DETAIL.ADD_INFO))
+					.setCreationDate(r.getValue(ELABORATION_DETAIL.CREATION_DATE))
+					.setCreationUser(r.getValue(ELABORATION_DETAIL.CREATION_USER))
+					.setModificationDate(r.getValue(ELABORATION_DETAIL.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(ELABORATION_DETAIL.MODIFICATION_USER));
 		}
 	}
 
 	private static class FullElaborationDetailCompositionFiller
-			implements
-			Function<ElaborationDetailCompositionRecord, ElaborationDetailComposition> {
+			implements Function<ElaborationDetailCompositionRecord, ElaborationDetailComposition> {
 		@Override
-		public ElaborationDetailComposition apply(
-				ElaborationDetailCompositionRecord r) {
-			return new ElaborationDetailComposition()
-					.setId(r.getId())
-					.setDomain(r.getDomain())
-					.setElaborationDetail(
-							new ElaborationDetail().setId(r
-									.getElaborationDetail()))
-					.setItem(new Item().setId(r.getItem()))
-					.setQuantity(r.getQuantity())
-					.setWarehouse(r.getWarehouse()).setAddInfo(r.getAddInfo())
-					.setCreationDate(r.getCreationDate())
-					.setCreationUser(r.getCreationUser())
-					.setModificationDate(r.getModificationDate())
-					.setModificationUser(r.getModificationUser());
+		public ElaborationDetailComposition apply(ElaborationDetailCompositionRecord r) {
+			return new ElaborationDetailComposition().setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ID))
+					.setDomain(r.getValue(ELABORATION_DETAIL_COMPOSITION.DOMAIN))
+					.setElaborationDetail(new ElaborationDetail()
+							.setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL)))
+					.setItem(new Item().setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ITEM)))
+					.setQuantity(r.getValue(ELABORATION_DETAIL_COMPOSITION.QUANTITY))
+					.setWarehouse(r.getValue(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE))
+					.setAddInfo(r.getValue(ELABORATION_DETAIL_COMPOSITION.ADD_INFO))
+					.setCreationDate(r.getValue(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE))
+					.setCreationUser(r.getValue(ELABORATION_DETAIL_COMPOSITION.CREATION_USER))
+					.setModificationDate(r.getValue(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER));
 		}
 	}
 

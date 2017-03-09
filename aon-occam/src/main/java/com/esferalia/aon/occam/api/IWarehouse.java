@@ -2,10 +2,15 @@ package com.esferalia.aon.occam.api;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Elaboration;
+import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -98,5 +103,13 @@ public interface IWarehouse {
 	Integer insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking);
 	CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking, CarrierPackingFilter filter);
 	void deleteCarrierPacking(AONContext ctx, CarrierPackingFilter filter);
+
+	// 	***********************************************
+	// 	****************************** ELABORATION ****
+	// 	***********************************************
+	List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter);
+	Elaboration getElaboration(AONContext ctx, Integer id);
+	List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id);
+	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
 	
 }

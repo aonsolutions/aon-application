@@ -101,16 +101,6 @@
 										value="#{bundle.warehouse_manufacturing_order}" />
 								</aon:div>
 								<aon:if test="#{company.ediSupportEnabled}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="elaborationView"
-											action="elaboration_view"
-											actionListener="#{elaborationView.onInit}"
-											title="#{bundle.warehouse_manufacturing_order}" >
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;"
-												value="#{bundle.warehouse_manufacturing_order}" />
-										</aon:commandLink>
-									</aon:div>
 									<aon:if test="#{domainSwitcher.betaDomain}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_elaboration"

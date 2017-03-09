@@ -28,6 +28,9 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
+import com.esferalia.aon.occam.api.model.Elaboration;
+import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
@@ -40,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -2504,6 +2508,76 @@ public class AON {
 	
 	public static void deleteCarrierPacking(String domainName, Integer domainId, String login, Integer id) {
 		deleteCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
+	// ------------------ ELABORATION
+	
+	public static List<Elaboration> getElaborationList(String domainName, Integer domainId, String login,
+			ElaborationFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getElaborationList(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static List<Elaboration> getFullElaborationList(String domainName, Integer domainId, String login,
+			ElaborationFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			List<Elaboration> list = getWarehouse().getElaborationList(ctx, filter);
+			for(Elaboration elaboration: list){
+				elaboration.setItem(getItem(domainName, domainId, login, elaboration.getItem().getId()));
+			}
+			return list;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Elaboration getFullElaboration(String domainName, Integer domainId, String login,
+			Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			Elaboration e = getWarehouse().getElaboration(ctx, id);
+			e.setItem(getItem(domainName, domainId, login, e.getItem().getId()));
+			return e;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static List<ElaborationDetail> getElaborationDetailList(String domainName, Integer domainId, String login,
+			Integer elaborationId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			List<ElaborationDetail> list = getWarehouse().getElaborationDetailList(ctx, elaborationId);
+			return list;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(String domainName, Integer domainId, String login,
+			Integer elaborationDetailId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			List<ElaborationDetailComposition> list = getWarehouse().getElaborationDetailCompositionList(ctx, elaborationDetailId);
+			return list;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	// ********************************************

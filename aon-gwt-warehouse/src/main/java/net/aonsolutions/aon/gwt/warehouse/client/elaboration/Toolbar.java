@@ -15,24 +15,29 @@ public abstract class Toolbar extends Composite {
 	}
 
 	private static final ToolbarBinder binder = GWT.create(ToolbarBinder.class);
-	
-	@UiField Button back;
-	@UiField Button reset;
-	@UiField Button remove;
-	@UiField Button packingList;
-	
+
+	@UiField
+	Button back;
+	@UiField
+	Button reset;
+	@UiField
+	Button remove;
+	@UiField
+	Button download;
+
 	public Toolbar() {
 		initWidget(binder.createAndBindUi(this));
 	}
-	
 
 	// -------------------------------------------------------------- UiHandler
 
 	protected abstract void back();
-	protected abstract void reset();
-	protected abstract void remove();
-	protected abstract void packingList();
 
+	protected abstract void reset();
+
+	protected abstract void remove();
+
+	protected abstract void download();
 
 	@UiHandler("back")
 	public void onAccept(ClickEvent event) {
@@ -48,10 +53,10 @@ public abstract class Toolbar extends Composite {
 	public void onRemove(ClickEvent event) {
 		remove();
 	}
-	
-	@UiHandler("packingList")
-	public void onPackingList(ClickEvent event) {
-		packingList();
+
+	@UiHandler("download")
+	public void onDownload(ClickEvent event) {
+		download();
 	}
-	
+
 }
