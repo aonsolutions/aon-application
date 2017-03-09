@@ -2,12 +2,17 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IWarehouse;
+import com.esferalia.aon.occam.api.model.Elaboration;
+import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -23,6 +28,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
@@ -206,5 +212,31 @@ public class WarehouseImpl implements IWarehouse {
 		ctx.getDslContext().transaction(configuration ->
 			WarehouseDAO.deleteCarrierPacking(ctx, filter));
 	}
+	
+	// ------------------ ELABORATION
+	@Override
+	public List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getElaborationList(ctx, filter));
+	}
+	
+	@Override
+	public Elaboration getElaboration(AONContext ctx, Integer id){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getElaboration(ctx, id));
+	}
+	
+	@Override
+	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getElaborationDetailList(ctx, id));
+	}
+	
+	@Override
+	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getElaborationDetailCompositionList(ctx, id));
+	}
+	
 	
 }

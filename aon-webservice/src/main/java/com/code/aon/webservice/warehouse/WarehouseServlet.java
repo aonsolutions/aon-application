@@ -20,12 +20,14 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -78,6 +80,18 @@ public class WarehouseServlet extends HttpServlet{
 							object = getDeliveryDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
 						} else object = getDelivery(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else object = getDeliveryList(domain, userName, req.getParameterMap());
+				} else if(MSG.ELABORATION.equals(pathInfo[3])){
+					if(pathInfo.length > 4){
+						if(MSG.STATUS.equals(pathInfo[4])){
+							object = getElaborationStatusList();
+						} else if(MSG.DETAIL.equals(pathInfo[4])){
+							object = getElaborationDetailList(domain, userName, Integer.parseInt(pathInfo[5]));
+						} else if(MSG.DETAIL_COMPOSITION.equals(pathInfo[4])){
+							object = getElaborationDetailCompositionList(domain, userName, Integer.parseInt(pathInfo[5]));
+						} else {
+							object = getElaboration(domain, userName, Integer.parseInt(pathInfo[4]));
+						}
+					} else object = getElaborationList(domain, userName, req.getParameterMap());
 				}
 				
 				Utils.giveBack(req, resp, object, new JSONObject());
@@ -477,6 +491,90 @@ public class WarehouseServlet extends HttpServlet{
     	array.put(ToJSON.objectToJSON(2016, "2016"));
     	array.put(ToJSON.objectToJSON(2015, "2015"));
     	return array;
+    }
+    
+    private JSONArray getElaborationList(Domain domain,String login, Map<String, String[]> map){
+    	JSONArray array = new JSONArray();
+    	AON.getFullElaborationList(domain.getName(), domain.getId(), login, f -> elaborationFilter(domain, map, f))
+    		.forEach(elaboration -> array.put(ToJSON.elaborationToJSON(elaboration)));
+    	return array;
+    }
+    
+    private JSONArray getElaborationStatusList() {
+    	JSONArray array = new JSONArray();
+    	for(ElaborationStatus status: ElaborationStatus.values()){
+    		array.put(ToJSON.objectToJSON(status.ordinal(), status.getName()));
+    	}
+    	return array;
+    }
+    
+    private JSONObject getElaboration(Domain domain,String login, Integer id){
+    	return ToJSON.elaborationToJSON(AON.getFullElaboration(domain.getName(), domain.getId(), login, id));
+    }
+    
+    private JSONArray getElaborationDetailList(Domain domain,String login, Integer elaboration){
+    	JSONArray array = new JSONArray();
+    	AON.getElaborationDetailList(domain.getName(), domain.getId(), login, elaboration)
+    		.forEach(detail -> array.put(ToJSON.elaborationDetailToJSON(detail)));
+    	return array;
+    }
+    
+    private JSONArray getElaborationDetailCompositionList(Domain domain,String login, Integer elaborationDetail){
+    	JSONArray array = new JSONArray();
+    	AON.getElaborationDetailCompositionList(domain.getName(), domain.getId(), login, elaborationDetail)
+    		.forEach(composition -> array.put(ToJSON.elaborationDetailCompositionToJSON(composition)));
+    	return array;
+    }
+    
+    private Filter elaborationFilter(Domain domain, Map<String, String[]> filterMap, ElaborationProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+
+		if(filterMap.containsKey(MSG.DATE)){
+			filter = filter.and(f.getDateProperty().ge(new Timestamp(Long.parseLong(filterMap.get(MSG.DATE)[0])))
+					.or(f.getDateProperty().isNull()));
+		}
+		
+		if(filterMap.containsKey(MSG.SERIES)){
+			Filter fseries = f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[0]); 
+			for(Integer i = 1; i < filterMap.get(MSG.SERIES).length ; i++){
+				fseries = fseries.or(f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[i]));
+			}
+			filter = filter.and(fseries);
+		}
+		
+		if(filterMap.containsKey(MSG.ITEM)){
+			Filter fitem = f.getItemProperty().eq(Integer.parseInt(filterMap.get(MSG.ITEM)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.ITEM).length ; i++){
+				fitem = fitem.or(f.getItemProperty().eq(Integer.parseInt(filterMap.get(MSG.ITEM)[i])));
+			}
+			filter = filter.and(fitem);
+		}
+		
+		if(filterMap.containsKey(MSG.QUANTITY)){
+			Filter ftype = f.getQuantityProperty().eq(Double.parseDouble(filterMap.get(MSG.QUANTITY)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.QUANTITY).length ; i++){
+				ftype = ftype.or(f.getQuantityProperty().eq(Double.parseDouble(filterMap.get(MSG.QUANTITY)[i])));
+			}
+			filter = filter.and(ftype);
+		}
+		
+		if(filterMap.containsKey(MSG.STATUS)){
+			Filter fstatus = f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(MSG.STATUS)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.STATUS).length ; i++){
+				fstatus = fstatus.or(f.getStatusProperty().eq((byte) Integer.parseInt(filterMap.get(MSG.STATUS)[i])));
+			}
+			filter = filter.and(fstatus);
+		}
+		
+		if(filterMap.containsKey(MSG.WAREHOUSE)){
+			Filter fwh = f.getWarehouseProperty().eq(Integer.parseInt(filterMap.get(MSG.WAREHOUSE)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.WAREHOUSE).length ; i++){
+				fwh = fwh.or(f.getWarehouseProperty().eq(Integer.parseInt(filterMap.get(MSG.WAREHOUSE)[i])));
+			}
+			filter = filter.and(fwh);
+		}
+
+		return filter;
     }
   
 }

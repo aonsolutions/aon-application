@@ -1,15 +1,16 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
-	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
 
 
 	<g:FlowPanel height="100%"
-			styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+		styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
 		<g:HorizontalPanel>
 			<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
@@ -25,12 +26,13 @@
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
 					<g:Button ui:field="back" text="Volver" visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
-					<g:Button ui:field="reset" text="{msg.newAction}" 
+					<g:Button ui:field="reset" text="{msg.newAction}"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}" />
-					<g:Button ui:field="remove" text="{msg.deleteAction}"  visible="false"
+					<g:Button ui:field="remove" text="{msg.deleteAction}"
+						visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-					<g:Button ui:field="packingList" text="{msg.download}"  visible="false"
-						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
+					<g:Button ui:field="download" text="{msg.download}"
+						visible="false" styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HorizontalPanel>

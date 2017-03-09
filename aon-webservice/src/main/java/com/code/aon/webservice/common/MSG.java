@@ -25,12 +25,15 @@ public class MSG {
 	public static final String DELIVERY = "delivery";
 	public static final String DELIVERY_DATE = "delivery_date";
 	public static final String DESCRIPTION = "description";
+	public static final String DETAIL = "detail";
+	public static final String DETAIL_COMPOSITION = "detail_composition";
 	public static final String DOMAIN = "domain";
 	public static final String DRIVER_DOCUMENT = "driver_document";
 	public static final String DRIVER_NAME = "driver_name";
 	public static final String DUPLICATES = "duplicates";
 	public static final String EMPTY = "";
 	public static final String EVENTS = "events"; // EVENTS
+	public static final String ELABORATION = "elaboration";
 	public static final String ENTERPRISE = "enterprise";
 	public static final String EXCEL = "excel";
 	public static final String FAST_FILTER = "fast_filter";
@@ -44,6 +47,7 @@ public class MSG {
 	public static final String ISSUES = "issues";
 	public static final String ISSUE_DATE = "issue_date";
 	public static final String ISSUES_LIGHT = "issues_light";
+	public static final String ITEM = "item";
 	public static final String LABELS = "labels";
 	public static final String MAIL_ACCOUNT = "mail_account";
 	public static final String NAME = "name";
