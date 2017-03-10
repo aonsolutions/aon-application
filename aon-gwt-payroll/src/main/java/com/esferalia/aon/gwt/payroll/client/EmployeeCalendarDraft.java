@@ -62,6 +62,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	public static interface CalendarTypeDayCell{
 		void setAsType(DayType daytype, int row, int col);
 		void setStyle(int row, int col);
+		DayType getType();
 	}
 	
 	public class DayTypeCell implements CalendarTypeDayCell{
@@ -69,6 +70,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		public DayTypeCell(DayType dayTypeAux) {
 			this.dayType = dayTypeAux;
+		}
+		
+		@Override
+		public DayType getType() {
+			return this.dayType;
 		}
 		
 		@Override
@@ -137,6 +143,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			
 		}
+
 	}
 	
 	
@@ -747,10 +754,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		if (null != cellsDates[row][col] && calendarEmployeeInfo.getStartDateContract().after(cellsDates[row][col]))
 			return;
+		if (cellsType[row][col].getType().equals(DayType.BAJAIT))
+			return;
 	
 		//Pulsacion celda con CTRL
 		if (event.isControlKeyDown()) { 
-			cells[row][col].select(row, col);
+			if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
+				cells[row][col].select(row, col);
 		
 		//Pulsacion celda con SHIFT
 		} else if (event.isShiftKeyDown()){ 
@@ -765,9 +775,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				while (posicionIncial != posicionFin){
-					cells[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)]
-							.select(calcularFila(posicionIncial+1), calcularColumna(posicionIncial+1));
+					if (!cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.BAJAIT)){
+						cells[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)]
+								.select(calcularFila(posicionIncial+1), calcularColumna(posicionIncial+1));
+					}
 					posicionIncial++;
+					
 				}
 			}
 		
@@ -790,9 +803,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			if (esMes(row, col)){
 				for(int i = 1; i<38; i++)
-					cells[row][i].select(row, i);
+					if (!cellsType[row][i].getType().equals(DayType.BAJAIT))
+						cells[row][i].select(row, i);
 			}else
-				cells[row][col].select(row, col);
+				if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
+					cells[row][col].select(row, col);
 			
 			oldHourSelected = pos;
 		}
@@ -1179,6 +1194,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				cellsDates[row][i] = actualDay;
 				cells[row][i] = new DayCell();
 				cells[row + 1][i] = new HourCell();
+				if (DayType.BAJAIT == dayType){
+					calendarGrid.getCellFormatter().addStyleName(row+1, i, style.setOutOfContractStyle());
+					calendarGrid.getWidget(row+1, i).addStyleName(style.setOutOfContractStyle());
+				}
 				cellsType[row][i].setAsType(dayType, row, i);
 				contadorDias++;
 			}
@@ -1216,6 +1235,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			cellsDates[row][7 + diaActualSemana] = actualDay;
 			cells[row][7 + diaActualSemana] = new DayCell();
 			cells[row + 1][7 + diaActualSemana] = new HourCell();
+			if (DayType.BAJAIT == dayType){
+				calendarGrid.getCellFormatter().addStyleName(row+1, 7 + diaActualSemana, style.setOutOfContractStyle());
+				calendarGrid.getWidget(row+1, 7 + diaActualSemana).addStyleName(style.setOutOfContractStyle());
+			}
 			cellsType[row][7 + diaActualSemana].setAsType(dayType, row, (7 + diaActualSemana));
 			
 			contadorDias++;
