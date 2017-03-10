@@ -364,6 +364,20 @@ public class EmployeeCalendarDraftObjectData {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
 		
+		if ( draftMapaDiasHoras.isEmpty() )
+			return variablesList;
+		
+		Date lastDraftDate = new Date(0);
+		for ( Date date : draftMapaDiasHoras.keySet() )
+			if ( date.after(lastDraftDate) )
+				lastDraftDate = date;
+		
+		if ( startDate.after(lastDraftDate))
+			return variablesList;
+		
+		if ( endDate == null )
+			endDate = lastDraftDate;
+		
 		for ( int day = 0; day < 6 ; day++ ){
 			
 			LinkedList<CalendarVariable> queue = 
