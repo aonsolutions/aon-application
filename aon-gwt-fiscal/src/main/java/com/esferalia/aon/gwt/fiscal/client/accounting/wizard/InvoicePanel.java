@@ -31,7 +31,6 @@ import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -548,7 +547,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			payMethodList.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					getWrapper().getFinances().get(0).setPayMethod(AonNumberUtils.toInteger(payMethodList.getSelectedValue()));
+					getWrapper().getFinances().get(0).setPayMethod(payMethodList.getValue());
 					getWrapper().getAccountEntry().setDirty(true);
 					getCallback().getModule().refreshIdLabel();
 				}
