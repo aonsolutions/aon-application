@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.DATE3_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.SIMPLE_DATE2_PATTERN;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -77,7 +77,7 @@ public class PosFinanceController extends FinanceListController implements IFina
 
 	private FinanceBatch createFinanceBatch() {
 		PosFinanceSearchListener searchListener = (PosFinanceSearchListener)AonUtil.getRegisteredBean(POS_FINANCE_SEARCH_LISTENER_NAME);
-		String date = new SimpleDateFormat(AonUtil.getMessage(DATE3_PATTERN)).format(new Date());
+		String date = new SimpleDateFormat(AonUtil.getMessage(SIMPLE_DATE2_PATTERN)).format(new Date());
 		String payMethod = searchListener.getPayMethod().getName();
 		String hotel = searchListener.getWorkPlace().getDescription();
 		if ((payMethod + hotel).length() > 22) {

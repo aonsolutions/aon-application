@@ -129,6 +129,8 @@ public interface ICommonMessages {
 	String SEARCH_NO_RESULTS = "aon_search_no_results";
 	String SEE = "aon_see";
 	String SELLER = "seller_stat_name";
+	String SIMPLE_DATE_PATTERN = "aon_simple_date_pattern";
+	String SIMPLE_DATE2_PATTERN = "aon_simple_date2_pattern";
 	String SOURCE = "aon_source";
 	String STATE = "aon_state";
 	String STATUS = "aon_status";
