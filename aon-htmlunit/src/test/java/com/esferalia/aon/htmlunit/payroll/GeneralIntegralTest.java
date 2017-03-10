@@ -38,7 +38,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	// TODO: @Test
 	public void TestDraftWeekHours() throws Exception {
-		open("draft");
+		
+		if (!isDisplayed("draft_parcial,_vacio"))
+			open("draft");
 
 		wait4Id("draft_parcial,_vacio");
 
@@ -58,7 +60,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	@Test
 	public void TestDratPaymentVariables() throws Exception {
-		open("draft");
+
+		if (!isDisplayed("draft_completo,_convenio"))
+			open("draft");
 
 		wait4Id("draft_completo,_convenio");
 
@@ -91,7 +95,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	// TODO:@Test
 	public void TestDraftSetHours() throws Exception {
-		open("draft");
+		if (!isDisplayed("draft_completo,_convenio"))
+			open("draft");
 
 		wait4Id("draft_completo,_convenio");
 
@@ -133,7 +138,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	@Test
 	public void TestDraftRedefinePayments() throws Exception {
-		open("draft");
+		if (!isDisplayed("draft_completo,_convenio"))
+			open("draft");
 
 		wait4Id("draft_completo,_convenio");
 
@@ -183,7 +189,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	@Test
 	public void TestDraftExtrasRedefine() throws Exception {
-		open("draft");
+		if (!isDisplayed("draft_completo,_convenio"))
+			open("draft");
 
 		wait4Id("draft_completo,_convenio");
 		// [1]SALARIO BASE
@@ -259,7 +266,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	@Test
 	public void TestDraftFromScratch() throws Exception {
 
-		open("draft");
+		if (!isDisplayed("draft_completo,_convenio"))
+			open("draft");
 
 		wait4Id("draft_completo,_vacio");
 
@@ -511,6 +519,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 764.40);
 		assertValue("cgpBaseLabel", 764.40);
 		assertValue("totalPaymentsLabel", 764.40);
+
 
 		draft("GARANTIZADOS, ENFERMEDAD PROFESIONAL");
 		calculate(Calendar.JUNE,2016);

@@ -285,6 +285,11 @@ public abstract class BaseIntegralTestCase {
 		}
 		
 	}
+	
+	protected boolean isDisplayed(String id) {
+		DomElement el = getElementById(id);
+		return  el != null && el.isDisplayed();
+	}
 
 	protected static void wait4Id(String id) throws InterruptedException {
 		wait4(htmlPage,
