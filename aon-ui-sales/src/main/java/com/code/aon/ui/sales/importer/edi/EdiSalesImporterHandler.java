@@ -66,6 +66,7 @@ public class EdiSalesImporterHandler implements Serializable {
 	private IController controller;
 	private AonFile aonFile;
 	private boolean showImportFileWindow;
+	private boolean success;
 			
 	
 	public EdiSalesImporterHandler(IController controller) {
@@ -94,6 +95,9 @@ public class EdiSalesImporterHandler implements Serializable {
 	public void fileUploaded(UploadEvent event) {
 		setAonFile(AttachmentUtil.fileUploaded(event));
 	}
+	public boolean isSuccess() {
+		return success;
+	}
 	
 	
 	
@@ -113,6 +117,7 @@ public class EdiSalesImporterHandler implements Serializable {
 		
 	public void importFile(ActionEvent event, RegistryNote customerRegistryNote, boolean testing) {
 		ConnectSalesReader reader = new ConnectSalesReader();
+		success = true;
 		RECTL rectl = null;
 		try {
 			rectl = reader.readFile(aonFile.openStream());
@@ -144,6 +149,7 @@ public class EdiSalesImporterHandler implements Serializable {
 		if(customerRegistryNote==null){
 			String customerCode = obtainCustomerCodeSales(rectl);
 			if(customerCode==null){
+				success = false;
 				getLogPanel().error("Imposible continuar, el fichero no contiene el codigo de cliente.");
 				getLogPanel().error("CodigoEmisor: " + customerCode);
 				getLogPanel().info("PROCESO ABORTADO");
@@ -155,9 +161,11 @@ public class EdiSalesImporterHandler implements Serializable {
 					if(customerRegistryNoteList.size()==1){
 						customerRegistryNote = customerRegistryNoteList.get(0);
 					} else if(customerRegistryNoteList.size()>1){
+						success = false;
 						getLogPanel().error("Se han encontrado varias direcciones para el codigo " + customerCode);
 						getLogPanel().info("PROCESO ABORTADO");
 					} else {
+						success = false;
 						getLogPanel().error("No existe el cliente con el codigo " + customerCode);
 						getLogPanel().info("PROCESO ABORTADO");
 						LOGGER.error("No existe el cliente con el codigo " + customerCode);
@@ -166,6 +174,7 @@ public class EdiSalesImporterHandler implements Serializable {
 				if(customerRegistryNote==null 
 						|| customerRegistryNote.getRegistry()==null 
 						|| customerRegistryNote.getRegistry().getId()==null){
+					success = false;
 					getLogPanel().error("No existe el cliente con el codigo " + customerCode);
 					getLogPanel().info("PROCESO ABORTADO");
 					LOGGER.error("No existe el cliente con el codigo " + customerCode);
@@ -209,6 +218,7 @@ public class EdiSalesImporterHandler implements Serializable {
 								+ ", Cod. EAN: " + StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo()) + ")"
 								+ " no existe para el cliente " + customer.getRegistry().getFullName());
 					});
+					success = false;
 					getLogPanel().info("PROCESO ABORTADO");
 					LOGGER.error("Se han encontrado items que no existen: " + undefinedItems.size());
 				} else {
@@ -324,6 +334,7 @@ public class EdiSalesImporterHandler implements Serializable {
 				}
 					
 			} catch (ManagerBeanException e) {
+				success = false;
 				getLogPanel().error(e.getMessage());
 				LOGGER.error(e.getMessage());
 			}

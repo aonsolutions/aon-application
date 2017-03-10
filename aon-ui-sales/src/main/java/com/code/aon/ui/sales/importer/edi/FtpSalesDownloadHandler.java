@@ -392,8 +392,8 @@ public class FtpSalesDownloadHandler implements Serializable {
 			connectHandler.getAonFile().setData(byteFile);
 			try {
 				connectHandler.importFile(event, ediRNote, isTesting());
-				if(isDeleteOnComplete()){
-					deleteFile(ftpFileOrder.getFtpFile());
+				if( !connectHandler.isSuccess() ){
+					setDeleteOnComplete(false);
 				}
 			} catch (Throwable th) {
 				getLogPanel()
@@ -406,13 +406,14 @@ public class FtpSalesDownloadHandler implements Serializable {
 				udapaHandler.getAonFile().setData(byteFile);
 				try {
 					udapaHandler.importFile(event, isTesting());
-					if(isDeleteOnComplete()){
-						deleteFile(ftpFileOrder.getFtpFile());
-					}
 				} catch (Throwable th2) {
 					getLogPanel()
 							.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
+					setDeleteOnComplete(false);
 				}
+			}
+			if(isDeleteOnComplete()){
+				deleteFile(ftpFileOrder.getFtpFile());
 			}
 		}
 		
