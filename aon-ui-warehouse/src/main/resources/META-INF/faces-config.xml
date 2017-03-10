@@ -577,13 +577,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************* ELABORATION VIEW ********** -->
-	<managed-bean>
-		<managed-bean-name>elaborationView</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.warehouse.controller.ElaborationViewController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- ************ CONSUMPTION CONTROL ************* -->
 	<managed-bean>
 		<managed-bean-name>consumptionControl</managed-bean-name>
@@ -812,14 +805,6 @@
 		<navigation-case>
 			<from-outcome>consumptionControl_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/consumptionControl/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
-	
-   	<!-- ************* ELABORATION VIEW *************************** -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>elaboration_view</from-outcome>
-			<to-view-id>/com/code/aon/ui/warehouse/facelet/elaborationView/view.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
