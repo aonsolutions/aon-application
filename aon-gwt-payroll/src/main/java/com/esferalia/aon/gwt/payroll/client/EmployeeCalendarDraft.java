@@ -1570,31 +1570,31 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		event.stopPropagation();
 		if(!fechasSelecciondas.getSelectedList().isEmpty()){
 			ContextMenu menu = new  ContextMenu();
-			menu.addItem("Convertir dia(s) no laborables", new Command() {
+			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) no laborables", new Command() {
 				@Override
 				public void execute() {
 					addFreeDay();
 				}
 			});
-			menu.addItem("Convertir dia(s) vacaciones", new Command() {
+			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) vacaciones", new Command() {
 				@Override
 				public void execute() {
 					addHolidays();
 				}
 			});
-			menu.addItem("Convertir dia(s) huelga", new Command() {
+			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) huelga", new Command() {
 				@Override
 				public void execute() {
 					addStrikeDay();
 				}
 			});
-			menu.addItem("Convertir dia(s) ERE", new Command() {
+			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) ERE", new Command() {
 				@Override
 				public void execute() {
 					dialogEre.open();
 				}
 			});
-			menu.addItem("Convertir dia(s) Ausencia", new Command() {
+			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) Ausencia", new Command() {
 				@Override
 				public void execute() {
 					addDropDay();
