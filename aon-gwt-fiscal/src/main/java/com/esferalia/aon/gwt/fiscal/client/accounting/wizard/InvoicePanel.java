@@ -105,6 +105,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private DoubleBox invoiceTotal;
 	private Button fastSave;
 	private DateBoxEx payDate;
+	private InlineLabel payAccountLabel;
 	private AccountBox payAccount; 		
 	private PayMethodListBox payMethodList;
 	private InlineLabel payStatusLabel; 
@@ -558,7 +559,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			col++;
 		}
 		
-		InlineLabel payAccountLabel = new InlineLabel(AON.MSG.accountAbr());
+		payAccountLabel = new InlineLabel(AON.MSG.accountAbr());
 		payTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
 		payTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 		payTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
@@ -789,7 +790,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 
 	private void populatePayment(AccountingInvoice invoice) {
+		payAccountLabel.setVisible(false);
 		payAccount.setEnabled(true);
+		payAccount.setVisible(false);
+		payMethodList.setEnabled(false);
+		
 		payStatusLabel.setText(AonStringUtils.EMPTY);
 		if (invoice.hasFinances()) {
 			if (invoice.getFinances().size() == 1) {
@@ -809,8 +814,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 						finance.setPayAccountDescription(null);
 					}
 					payMethodList.setValue(finance.getPayMethod());
+					payAccountLabel.setVisible(true);
+					payAccount.setVisible(true);
+					payMethodList.setEnabled(true);
 				} else {
-					payMethodList.setValue(finance.getPayMethod());	
+					payMethodList.setValue(finance.getPayMethod());
+					payMethodList.setEnabled(false);
 				}
 				if (!finance.isPending()) {
 					payStatusLabel.setText(finance.getFinanceStatus().getDescription());
