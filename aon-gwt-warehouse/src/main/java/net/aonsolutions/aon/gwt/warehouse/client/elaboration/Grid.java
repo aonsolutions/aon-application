@@ -7,10 +7,12 @@ import java.util.List;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -123,6 +125,7 @@ public class Grid extends Composite {
 	}
 	
 	private void initTableColumns(final SelectionModel<JsElaboration> selectionModel, ListHandler<JsElaboration> sortHandler) {
+		NumberFormat numberFormat = NumberFormat.getDecimalFormat().overrideFractionDigits(2);
 		
 		/** Series-Number Column **/
 		Column<JsElaboration, String> nameColumn = new Column<JsElaboration, String>(new TextCell()) {
@@ -171,11 +174,11 @@ public class Grid extends Composite {
 		dataGrid.setColumnWidth(itemColumn, 30, Unit.PCT);
 		
 		/** Quantity Column **/
-		Column<JsElaboration,String> quantityColumn = new Column<JsElaboration, String>(new TextCell()) {
+		Column<JsElaboration,Number> quantityColumn = new Column<JsElaboration, Number>(new NumberCell(numberFormat)) {
 			
 			@Override
-			public String getValue(JsElaboration object) {
-				return object.getQuantity()!=null ? object.getQuantity().toString() : "";
+			public Number getValue(JsElaboration object) {
+				return object.getQuantity()!=null ? object.getQuantity() : null;
 			}
 		};
 		
@@ -193,33 +196,35 @@ public class Grid extends Composite {
 		dataGrid.setColumnWidth(quantityColumn, 10, Unit.PCT);
 		
 		/** Warehouse Column **/
-//		Column<JsElaboration,String> warehouseColumn = new Column<JsElaboration, String>(new TextCell()) {
-//			
-//			@Override
-//			public String getValue(JsElaboration object) {
-//				return object.getWarehouse().getName();
-//			}
-//		};
-//		
-//		warehouseColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-//		warehouseColumn.setSortable(true); 
-//		sortHandler.setComparator(warehouseColumn,new Comparator<JsElaboration>() {
-//			
-//			@Override
-//			public int compare(JsElaboration o1, JsElaboration o2) {
-//				return o1.getQuantity().compareTo(o2.getQuantity());
-//			}
-//		});
-//		dataGrid.getColumnSortList().push(warehouseColumn);
-//		dataGrid.addColumn(warehouseColumn, "Almacen");
-//		dataGrid.setColumnWidth(warehouseColumn, 15, Unit.PCT);
+		Column<JsElaboration,String> warehouseColumn = new Column<JsElaboration, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(JsElaboration object) {
+				return object.getWarehouse()!=null?object.getWarehouse().getName():" ";
+			}
+		};
+		
+		warehouseColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		warehouseColumn.setSortable(true); 
+		sortHandler.setComparator(warehouseColumn,new Comparator<JsElaboration>() {
+			
+			@Override
+			public int compare(JsElaboration o1, JsElaboration o2) {
+				String w1 = o1.getWarehouse()!=null?o1.getWarehouse().getName():"";
+				String w2 = o2.getWarehouse()!=null?o2.getWarehouse().getName():"";
+				return w1.compareTo(w2);
+			}
+		});
+		dataGrid.getColumnSortList().push(warehouseColumn);
+		dataGrid.addColumn(warehouseColumn, "Almacen");
+		dataGrid.setColumnWidth(warehouseColumn, 15, Unit.PCT);
 		
 		/** DATE Column **/
 		Column<JsElaboration,String> dateColumn = new Column<JsElaboration, String>(new TextCell()) {
 			
 			@Override
 			public String getValue(JsElaboration object) {
-				return object.getDate() != null ? object.getDate() : "";
+				return object.getDate() != null ? object.getDate() : null;
 			}
 		};
 		

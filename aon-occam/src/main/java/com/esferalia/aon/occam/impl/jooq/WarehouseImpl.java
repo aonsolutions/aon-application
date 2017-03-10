@@ -238,5 +238,10 @@ public class WarehouseImpl implements IWarehouse {
 			ElaborationDAO.getElaborationDetailCompositionList(ctx, id));
 	}
 	
+	@Override
+	public Integer insertElaboration(AONContext ctx, Elaboration elaboration) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.insertElaboration(ctx, elaboration));
+	}
 	
 }

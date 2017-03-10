@@ -111,5 +111,7 @@ public interface IWarehouse {
 	Elaboration getElaboration(AONContext ctx, Integer id);
 	List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
+	Integer insertElaboration(AONContext ctx, Elaboration elaboration);
+
 	
 }

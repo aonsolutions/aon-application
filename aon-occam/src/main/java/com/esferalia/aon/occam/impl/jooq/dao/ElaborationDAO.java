@@ -111,8 +111,9 @@ public class ElaborationDAO {
 		return ctx.getDslContext().select().from(ELABORATION)
 				.where(ELABORATION_PROPERTIES.getConditions(filter))
 				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
-				.fetchInto(ELABORATION).stream()
-				.map(new FullElaborationFiller()).collect(Collectors.toList());
+				.orderBy(ELABORATION.DATE.desc()).fetchInto(ELABORATION)
+				.stream().map(new FullElaborationFiller())
+				.collect(Collectors.toList());
 	}
 
 	public static Elaboration getElaboration(AONContext ctx,
@@ -208,6 +209,7 @@ public class ElaborationDAO {
 			AONContext ctx, Integer elaborationId) {
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL.ELABORATION.eq(elaborationId))
+				.orderBy(ELABORATION_DETAIL.DATE.desc())
 				.fetchInto(ELABORATION_DETAIL).stream()
 				.map(new FullElaborationDetailFiller())
 				.collect(Collectors.toList());
@@ -218,6 +220,7 @@ public class ElaborationDAO {
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
 				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId()))
+				.orderBy(ELABORATION_DETAIL.DATE.desc())
 				.fetchInto(ELABORATION_DETAIL).stream()
 				.map(new FullElaborationDetailFiller())
 				.collect(Collectors.toList());

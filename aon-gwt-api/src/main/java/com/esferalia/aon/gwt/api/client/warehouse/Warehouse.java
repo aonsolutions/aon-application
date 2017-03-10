@@ -136,4 +136,7 @@ public class Warehouse extends Methods{
 	public void getElaborationDetailComposition(Integer id, AsyncCallback<JSON<JsElaborationDetailComposition>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/" + id, callback);
 	}
+	public void insertElaboration(String requestData, AsyncCallback<JsCarrierPacking> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
+	}
 }

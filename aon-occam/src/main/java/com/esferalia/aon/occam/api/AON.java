@@ -2554,6 +2554,17 @@ public class AON {
 		}
 	}
 	
+	
+	public static Integer insertElaboration(String domainName, Integer domainId, String login, Elaboration elaboration) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertElaboration(ctx, elaboration);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static List<ElaborationDetail> getElaborationDetailList(String domainName, Integer domainId, String login,
 			Integer elaborationId) {
 		AONContext ctx = null;
