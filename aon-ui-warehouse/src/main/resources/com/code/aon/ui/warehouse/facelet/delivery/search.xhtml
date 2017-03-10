@@ -19,14 +19,6 @@
 						onclick="deliveryx()"
 						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 					</aon:commandLink>
-					<aon:if test="#{company.ediSupportEnabled}">
-						<aon:commandButton	id="sincronizeIngenet-delivery" 
-							value="Sincronizar INGENET"
-							styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-sincronize"
-							actionListener="#{delivery.udapaDeliveryHandler.onSincronizeIngenet}"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					</aon:if>
 				</ui:define>
 			</ui:decorate>
 

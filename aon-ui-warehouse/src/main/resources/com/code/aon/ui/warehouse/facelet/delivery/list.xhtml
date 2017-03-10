@@ -50,14 +50,6 @@
 						<f:param name="reportKey" value="deliveryDetailledList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-					<aon:if test="#{company.ediSupportEnabled}">
-						<aon:commandButton	id="sincronizeIngenet-delivery" 
-							value="Sincronizar INGENET"
-							styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-sincronize"
-							actionListener="#{delivery.udapaDeliveryHandler.onSincronizeIngenet}"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					</aon:if>
 				</ui:define>
 			</ui:decorate>
 

@@ -87,12 +87,6 @@
 							
 						<aon:if test="#{company.ediSupportEnabled}">
 							<rich:menuSeparator id="ediMenuSeparator" />
-							<aon:if test="#{company.ediSupport eq 'seresnet_udapa'}">
-								<aon:menuItem id="sincronizeIngenet-delivery"
-									value="Sincronizar INGENET"
-									iconClass="aon-icon-sincronize"
-									actionListener="#{delivery.udapaDeliveryHandler.onSincronizeIngenet}" />
-							</aon:if>
 							<aon:menuItem iconClass="aon-icon-file-download">
 								<aon:htmlCommandLink id="delivery-udapaEdi" 
 									value="#{bundle.aon_edi}" target="_blank"

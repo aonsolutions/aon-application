@@ -57,8 +57,6 @@ import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -82,7 +80,6 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.ingenet.IngenetSalesManager;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
@@ -1016,21 +1013,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private void manufacture(Sales sales) {
 		SalesUtils utils = new SalesUtils();
 		utils.createManufacturingOrder(sales);
-		
-		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		String ediSupport = company.getEdiSupport();
-		if ("seresnet_udapa".equals(ediSupport) || "seresnet_connect".equals(ediSupport)) {
-			LOGGER.info(" *** UDAPA INGENET ENABLED ***");
-			try {
-				IngenetSalesManager.getInstance().createSales(
-						AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales);
-				AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
-			} catch (Exception e) {
-				AonUtil.addErrorMessage("No se ha podido traspasar a Ingenet");
-				AonUtil.addErrorMessage(e.getMessage());
-				LOGGER.error(e.getMessage());
-			}
-		}
 	}
 	
 	
