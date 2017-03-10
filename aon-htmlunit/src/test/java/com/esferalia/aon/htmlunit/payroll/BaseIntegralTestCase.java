@@ -129,14 +129,14 @@ public abstract class BaseIntegralTestCase {
 		return (T) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id);
 	}
 
-	protected static void calculate(int month) throws IOException, InterruptedException {
+	protected static void calculate(int month) throws IOException, InterruptedException, ParseException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.MONTH, month);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calculate(calendar.getTime());
 	}
 
-	protected static void calculate(int month, int year) throws IOException, InterruptedException {
+	protected static void calculate(int month, int year) throws IOException, InterruptedException, ParseException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
@@ -158,8 +158,11 @@ public abstract class BaseIntegralTestCase {
 	}
 
 
-	protected static void calculate(Date date) throws IOException, InterruptedException {
+	protected static void calculate(Date date) throws IOException, InterruptedException, ParseException {
 		getElementById("monthListBox").click();
+		
+		scroll2MonthListBox(date);
+		
 		((HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$tB de %1$tY", date)+"']")).click();
 		
 		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
@@ -250,6 +253,35 @@ public abstract class BaseIntegralTestCase {
 		
 	}
 
+	protected static void scroll2MonthListBox(Date date) throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMMM 'de' yyyy", new Locale("es","ES"));
+		
+		HtmlSpan firstSpan = (HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("div/div/span");
+		Date firstDate = dateFormat.parse(firstSpan.getTextContent());
+		LOGGER.warning("First visible month is : " + dateFormat.format(firstDate) );
+		while ( firstDate.after(date) )  {
+			LOGGER.warning("Opps we need to scroll up to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			firstSpan.type(KeyboardEvent.DOM_VK_PAGE_UP);
+			firstSpan = (HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("div/div/span");
+			firstDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("First visible date is : " + dateFormat.format(firstDate) );
+		}
+
+		HtmlSpan lastSpan = (HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("div/div[last()]/span");
+		Date lastDate = dateFormat.parse(lastSpan.getTextContent());
+		LOGGER.warning("Last visible month is : " + dateFormat.format(lastDate) );
+		while ( lastDate.before(date) )  {
+			LOGGER.warning("Opps we need to scroll down to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			lastSpan.type(KeyboardEvent.DOM_VK_PAGE_DOWN);
+			lastSpan = (HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("div/div[last()]/span");
+			lastDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
+		}
+		
+	}
+
 	protected static void wait4Id(String id) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
@@ -259,15 +291,19 @@ public abstract class BaseIntegralTestCase {
 	protected static void wait4Text(String id, String text) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
-		LOGGER.warning("Found el: '" + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent()+"'");
+		LOGGER.warning("Found el: [" + id + "]'" + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent()+"'");
 		wait4(htmlPage,
-				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getTextContent().trim().equals(text.trim()));
+				htmlPage -> {
+					LOGGER.warning(htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent().trim()+"'== '" + text.trim() + "'");
+					return htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getTextContent().trim().equals(text.trim());
+					}
+			);
 	}
 
 	protected static void wait4Value(String id, String value) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
-		LOGGER.warning("wait4Value : '" + ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id )).getValueAttribute().trim() +"' = '" +value.trim()+"'");
+		LOGGER.warning("wait4Value : [ "+ id +"] '" + ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id )).getValueAttribute().trim() +"' = '" +value.trim()+"'");
 		wait4(htmlPage,
 				htmlPage -> ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id)).getValueAttribute().trim().equals(value.trim()));
 	}
@@ -275,7 +311,7 @@ public abstract class BaseIntegralTestCase {
 	protected static void wait4Value(String id, Double value) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
-		LOGGER.warning("Found el: '" + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent()+"'");
+		LOGGER.warning("wait4Value : [ "+ id +"] '" + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent()+"'");
 		
 		wait4(htmlPage,
 				htmlPage -> {
@@ -375,13 +411,13 @@ public abstract class BaseIntegralTestCase {
 	protected static DomElement open(String id) throws IndexOutOfBoundsException, IOException {
 		DomElement idElement =  htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id);
 		((HtmlImage)((HtmlTable)idElement.getFirstChild()).getRow(0).getCell(0).getFirstChild()).click();
-		LOGGER.warning("Cick on: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
+		LOGGER.warning("Open [" + id + "]: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
 		return idElement;
 	}
 
 	protected static void close(String id) throws IndexOutOfBoundsException, IOException {
 		((HtmlImage)((HtmlTable)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id).getFirstChild()).getRow(0).getCell(0).getFirstChild()).click();
-		LOGGER.warning("Cick on: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
+		LOGGER.warning("Close [" + id + "]: "+ htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
 	}
 
 	protected static void click(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
@@ -391,7 +427,7 @@ public abstract class BaseIntegralTestCase {
 	
 	protected static void select(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
 		htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).click();
-		LOGGER.warning("Cick on: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
+		LOGGER.warning("Select ["  + id + "]: "+ htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
 	}
 
 	protected static String normalize(String str) {
