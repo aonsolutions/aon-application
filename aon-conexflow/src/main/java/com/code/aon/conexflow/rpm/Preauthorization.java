@@ -130,8 +130,6 @@ public class Preauthorization {
 		});
 	}
 	
-	
-	// TODO NUEVO PROCESO PENALTY SIN TENER EN CUENTA LOS DIAS.
 	public static void preauthorizationPenalty(Domain domain,  String login){
 		final int[] cont = {0};
 		DBConsults.getProjectReservationStream(domain, login, f ->
@@ -339,10 +337,7 @@ public class Preauthorization {
 		
 		if(penalty){
 			if(days == -1){
-				// TODO preauthorizationPenalty(domain, "system");
-				// REMOVE --> 
-				days = 7;
-				preauthorizationPenaltyDays(domain, "system");
+				preauthorizationPenalty(domain, "system");
 			} else preauthorizationPenaltyDays(domain, "system");
 		}
 		
