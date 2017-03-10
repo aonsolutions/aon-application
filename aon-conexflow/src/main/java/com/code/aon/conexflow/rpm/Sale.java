@@ -49,34 +49,38 @@ public class Sale {
 	}
 	
 	private static void sale(Domain domain, String login) {
+		final int[] cont = {0};
 		Stream<ProjectReservation> stream = DBConsults.getProjectReservationStream(domain, login,
 				f -> f.getStartDateProperty().ge(AonDateUtils.toSql(new Date()))
 				.and(f.getPrepayProperty().eq((byte) 0))
 				.and(f.getAdvanceProperty().gt(0.00))
 				.and(f.getTokenProperty().isNotNull())); 
 		stream.forEach(r -> {
-			Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
-			ConexFlow cf = DBConsults.getConexFlowX(d, login, r.getProject(), "CONEXFLOW%ANT_TNR");
-			if(cf == null){
-				ConexFlowConnection connection = DBConsults.getConection(d);
-				Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
-					r.getAdvance(), r.getHotelReservation().toString(), r.getCreditCardCvv());
-				ConexFlow conexFlow = ConexFlowPost.execute(connection, ConexFlowStatus.SALE.getName(), query);
-				Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
-				conexFlow.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
-				String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+			if(number == -1 || cont[0] <= number){
+				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
+				ConexFlow cf = DBConsults.getConexFlowX(d, login, r.getProject(), "CONEXFLOW%ANT_TNR");
+				if(cf == null){
+					ConexFlowConnection connection = DBConsults.getConection(d);
+					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
+						r.getAdvance(), r.getHotelReservation().toString(), r.getCreditCardCvv());
+					ConexFlow conexFlow = ConexFlowPost.execute(connection, ConexFlowStatus.SALE.getName(), query);
+					Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
+					conexFlow.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
+					String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 						+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte() 
 						+ (ok ? "_ANT_TNR" : "");
-				DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
+					DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
 			
-				String msg = "";
-				if (!ok){
-					msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-				} else {
-					msg = "CHARGE OK";
+					String msg = "";
+					if (!ok){
+						msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+					} else {
+						msg = "CHARGE OK";
+					}
+					String projectName = DBConsults.getProjectName(d, login, r.getProject());
+					View.sale(projectName, r.getProject(), msg,r.getAdvance());
+					cont[0]++;
 				}
-				String projectName = DBConsults.getProjectName(d, login, r.getProject());
-				View.preauthorized(projectName, r.getProject(), msg,r.getAdvance());
 			}
 		});
 	}
@@ -100,6 +104,7 @@ public class Sale {
 	}
 
 	private static boolean dryRun;
+	private static Integer number;
 	
 	private static boolean parse(String args[]) {
 
@@ -120,8 +125,16 @@ public class Sale {
 		OptionBuilder.withLongOpt("dry-run");
 		Option dryOption = OptionBuilder.create('n');
 		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("number of iterations");
+		OptionBuilder.withLongOpt("number");
+		Option numberOption = OptionBuilder.create("number");
+		
 		options.addOption(helpOption);
 		options.addOption(dryOption);
+		options.addOption(numberOption);
+
 
 		try {
 			CommandLine line = parser.parse(options, args);
@@ -135,7 +148,10 @@ public class Sale {
 			if (dryRun)
 				LOGGER.info("DryRun ON: Perform a trial run with no changes made.");
 
-			;
+			String numberString = line.getOptionValue(numberOption.getOpt());
+			if(numberString == null){
+				number = -1;
+			} else number = Integer.parseInt(numberString);
 		} catch (ParseException e) {
 			System.out.print(e.getMessage());
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);

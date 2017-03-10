@@ -22,6 +22,9 @@ public class View {
 	
 	public static void preauthorized(String projectName, Integer projectId, String msg, Double amount){
 		System.out.println("PRE-AUTORIZACION --> " + projectId + " - " + projectName + " - " + msg + " - Importe = " + amount);
-		
+	}
+	
+	public static void sale(String projectName, Integer projectId, String msg, Double amount){
+		System.out.println("CHARGE --> " + projectId + " - " + projectName + " - " + msg + " - Importe = " + amount);
 	}
 }
