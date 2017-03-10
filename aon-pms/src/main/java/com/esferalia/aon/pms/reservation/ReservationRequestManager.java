@@ -773,6 +773,7 @@ System.out.println(message.toString());
 
 	private ProjectReservation finalizeReservation(ProjectReservation reservation) throws ManagerBeanException{
 		reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
+		reservation.setPenaltyDate(getReservationUtils().obtainCancellationPenaltyDate(reservation));
 		return (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 

@@ -133,6 +133,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 			}
 			if (penaltyValue != null) {
 				reservation.setPenaltyAmount(reservation.getAutoCancellationPenaltyPrice(penaltyValue, true));
+				reservation.setPenaltyDate(controller.getReservationUtils().obtainCancellationPenaltyDate(reservation));
 			}
 		} catch (ManagerBeanException ex) {
 			throw new ControllerListenerException(ex.getMessage(), ex);

@@ -571,6 +571,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setAdvance((reservation.getAdvance() != 0) ? reservation.getAdvance() : reservation.getTotal());
 		}
 		reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
+		reservation.setPenaltyDate(getReservationUtils().obtainCancellationPenaltyDate(reservation));
 		return (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
@@ -865,6 +866,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setCancellationDate(new Date());
 			reservation.setPenaltyValue(getReservationUtils().obtainCancellationPenaltyValue(reservation, reservation.getCancellationDate()));
 			reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
+			reservation.setPenaltyDate(getReservationUtils().obtainCancellationPenaltyDate(reservation));
 			if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
 				reservation.setCheckStatus(ReservationCheckStatus.CANCEL_NO_INVOICEABLE);
 			} else {

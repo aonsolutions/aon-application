@@ -1417,91 +1417,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	private String obtainPenaltyValue(ProjectReservation reservation, Integer tariffId, String key, Date date) throws ManagerBeanException {
-		String penaltyStr = null;
-		if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
-			for (String profileTmp : obtainTariffCodes(tariffId, key + "_" + reservation.getHotel().getCode())) {
-				if (profileTmp.contains("|")) {
-					profileTmp = obtainProfileData(profileTmp, date);
-					if (profileTmp != null) {
-						penaltyStr = profileTmp;
-						break;
-					}
-				} else if (penaltyStr == null) {
-					penaltyStr = profileTmp;
-				}
-			}
-		}
-		if (penaltyStr == null) {
-			for (String profileTmp : obtainTariffCodes(tariffId, key)) {
-				if (profileTmp.contains("|")) {
-					profileTmp = obtainProfileData(profileTmp, date);
-					if (profileTmp != null) {
-						penaltyStr = profileTmp;
-						break;
-					}
-				} else if (penaltyStr == null) {
-					penaltyStr = profileTmp;
-				}
-			}
-		}
-		if (penaltyStr == null) {
-			if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
-				for (String profileTmp : obtainCustomerCodes(reservation.getAgency(), key + "_" + reservation.getHotel().getCode())) {
-					if (profileTmp.contains("|")) {
-						profileTmp = obtainProfileData(profileTmp, date);
-						if (profileTmp != null) {
-							penaltyStr = profileTmp;
-							break;
-						}
-					} else if (penaltyStr == null) {
-						penaltyStr = profileTmp;
-					}
-				}
-			}
-		}
-		if (penaltyStr == null) {
-			for (String profileTmp : obtainCustomerCodes(reservation.getAgency(), key)) {
-				if (profileTmp.contains("|")) {
-					profileTmp = obtainProfileData(profileTmp, date);
-					if (profileTmp != null) {
-						penaltyStr = profileTmp;
-						break;
-					}
-				} else if (penaltyStr == null) {
-					penaltyStr = profileTmp;
-				}
-			}
-		}
-		Company company = getCompany();
-		if (penaltyStr == null) {
-			if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
-				for (String profileTmp : obtainCompanyCodes(company, key + "_" + reservation.getHotel().getCode())) {
-					if (profileTmp.contains("|")) {
-						profileTmp = obtainProfileData(profileTmp, date);
-						if (profileTmp != null) {
-							penaltyStr = profileTmp;
-							break;
-						}
-					} else if (penaltyStr == null) {
-						penaltyStr = profileTmp;
-					}
-				}
-			}
-		}
-		if (penaltyStr == null) {
-			for (String profileTmp : obtainCompanyCodes(company, key)) {
-				if (profileTmp.contains("|")) {
-					profileTmp = obtainProfileData(profileTmp, date);
-					if (profileTmp != null) {
-						penaltyStr = profileTmp;
-						break;
-					}
-				} else if (penaltyStr == null) {
-					penaltyStr = profileTmp;
-				}
-			}
-		}
-
+		String penaltyStr = obtainPenaltyPattern(reservation, tariffId, key);
 		if (StringUtils.contains(penaltyStr, "#")) {
 			String penaltyTmp = penaltyStr.substring(0, penaltyStr.indexOf("#"));
 			String dueHours = penaltyStr.substring(penaltyStr.indexOf("#") + 1);
@@ -1514,6 +1430,117 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			}
 		}
 		return penaltyStr;
+	}
+
+	public Date obtainCancellationPenaltyDate(ProjectReservation reservation) throws ManagerBeanException {
+		return obtainPenaltyDate(reservation, OUTOFDATE_CANCEL_PENALTY);
+	}
+
+	public Date obtainCancellationPenaltyDate(ProjectReservation reservation, Integer tariffId) throws ManagerBeanException {
+		return obtainPenaltyDate(reservation, tariffId, OUTOFDATE_CANCEL_PENALTY);
+	}
+
+	private Date obtainPenaltyDate(ProjectReservation reservation, String key) throws ManagerBeanException {
+		return obtainPenaltyDate(reservation, reservation.getMainTariffId(), key);
+	}
+
+	private Date obtainPenaltyDate(ProjectReservation reservation, Integer tariffId, String key) throws ManagerBeanException {
+		String penaltyStr = obtainPenaltyPattern(reservation, tariffId, key);
+		if (StringUtils.contains(penaltyStr, "#")) {
+			String dueHours = penaltyStr.substring(penaltyStr.indexOf("#") + 1);
+			if (NumberUtils.isNumber(dueHours)) {
+				return DateUtils.addHours(DateUtils.truncate(reservation.getStartDate(), Calendar.DATE), 0-Integer.parseInt(dueHours));
+			}
+		}
+		return new Date();
+	}
+
+	private String obtainPenaltyPattern(ProjectReservation reservation, Integer tariffId, String key) throws ManagerBeanException {
+		String penaltyPattern = null;
+		if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
+			for (String profileTmp : obtainTariffCodes(tariffId, key + "_" + reservation.getHotel().getCode())) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, reservation.getStartDate());
+					if (profileTmp != null) {
+						penaltyPattern = profileTmp;
+						break;
+					}
+				} else if (penaltyPattern == null) {
+					penaltyPattern = profileTmp;
+				}
+			}
+		}
+		if (penaltyPattern == null) {
+			for (String profileTmp : obtainTariffCodes(tariffId, key)) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, reservation.getStartDate());
+					if (profileTmp != null) {
+						penaltyPattern = profileTmp;
+						break;
+					}
+				} else if (penaltyPattern == null) {
+					penaltyPattern = profileTmp;
+				}
+			}
+		}
+		if (penaltyPattern == null) {
+			if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
+				for (String profileTmp : obtainCustomerCodes(reservation.getAgency(), key + "_" + reservation.getHotel().getCode())) {
+					if (profileTmp.contains("|")) {
+						profileTmp = obtainProfileData(profileTmp, reservation.getStartDate());
+						if (profileTmp != null) {
+							penaltyPattern = profileTmp;
+							break;
+						}
+					} else if (penaltyPattern == null) {
+						penaltyPattern = profileTmp;
+					}
+				}
+			}
+		}
+		if (penaltyPattern == null) {
+			for (String profileTmp : obtainCustomerCodes(reservation.getAgency(), key)) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, reservation.getStartDate());
+					if (profileTmp != null) {
+						penaltyPattern = profileTmp;
+						break;
+					}
+				} else if (penaltyPattern == null) {
+					penaltyPattern = profileTmp;
+				}
+			}
+		}
+		Company company = getCompany();
+		if (penaltyPattern == null) {
+			if (StringUtils.isNotEmpty(reservation.getHotel().getCode())) {
+				for (String profileTmp : obtainCompanyCodes(company, key + "_" + reservation.getHotel().getCode())) {
+					if (profileTmp.contains("|")) {
+						profileTmp = obtainProfileData(profileTmp, reservation.getStartDate());
+						if (profileTmp != null) {
+							penaltyPattern = profileTmp;
+							break;
+						}
+					} else if (penaltyPattern == null) {
+						penaltyPattern = profileTmp;
+					}
+				}
+			}
+		}
+		if (penaltyPattern == null) {
+			for (String profileTmp : obtainCompanyCodes(company, key)) {
+				if (profileTmp.contains("|")) {
+					profileTmp = obtainProfileData(profileTmp, reservation.getStartDate());
+					if (profileTmp != null) {
+						penaltyPattern = profileTmp;
+						break;
+					}
+				} else if (penaltyPattern == null) {
+					penaltyPattern = profileTmp;
+				}
+			}
+		}
+		return penaltyPattern;
 	}
 
 	public Double obtainCancellationPenaltyAmount(ProjectReservation reservation) throws ManagerBeanException {

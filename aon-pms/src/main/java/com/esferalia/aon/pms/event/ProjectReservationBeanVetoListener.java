@@ -71,6 +71,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 			reservation.setVatQuota(vatQuota);
 			reservation.setTotal(CommonUtil.round(taxableBase + vatQuota));
 			reservation.setPenaltyAmount(reservationUtils.obtainCancellationPenaltyAmount(reservation));
+			reservation.setPenaltyDate(reservationUtils.obtainCancellationPenaltyDate(reservation));
 		}
 	}
 

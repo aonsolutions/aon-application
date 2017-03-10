@@ -839,6 +839,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		if (reservation.getPenaltyValue() == null) {
 			reservation.setPenaltyValue(obtainCancelPenaltyValue(reservation, isConfirmNoShow()));
 			reservation.setPenaltyAmount(getReservationUtils().obtainCancellationPenaltyAmount(reservation));
+			reservation.setPenaltyDate(getReservationUtils().obtainCancellationPenaltyDate(reservation));
 			if (isConfirmNoShow()) {
 				if (reservation.getPenaltyDays() != null && reservation.getPenaltyDays() == 0 && reservation.getAdvancedAmount() == 0) {
 					reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE);

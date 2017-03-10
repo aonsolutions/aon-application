@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.94.0
+# Version: 8.94.1
 # Created by: girazu
-# Creation Date: 07/03/2017 11:35
+# Creation Date: 08/03/2017 12:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2185,6 +2185,7 @@ CREATE TABLE `project_reservation` (
   `token` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token de preautorizacion de cobro',
   `penalty_value` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Valor de penalizacion (patron)',
   `penalty_amount` double(15,2) DEFAULT '0.00' COMMENT 'Importe de penalizacion',
+  `penalty_date` datetime DEFAULT NULL COMMENT 'Fecha de penalizacion',
   `tourist_tax_free` tinyint(2) DEFAULT NULL COMMENT 'Tipo de exencion de la Tasa turistica',
   `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
   `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
@@ -8359,7 +8360,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.94.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.94.1');
 
 COMMIT;
 
