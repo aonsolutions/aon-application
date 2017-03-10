@@ -214,9 +214,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
 			elaboracion.setFECHAEMISION(getDateFormatter().format(elaboration.getDate()));
 			elaboracion.setCOMENTARIOS(elaboration.getComments());
-			elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
 			if(salesDetail!=null && salesDetail.getId()!=null){
 				Sales sales = obtainSales(ctx, salesDetail.getSales());
+				elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
 				elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
 				elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
 				elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
