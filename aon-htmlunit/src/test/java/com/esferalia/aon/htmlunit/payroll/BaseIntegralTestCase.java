@@ -115,7 +115,11 @@ public abstract class BaseIntegralTestCase {
 
 	protected static void draft(String employeeName) throws IndexOutOfBoundsException, IOException, InterruptedException {
 		String employeeId = normalize(employeeName);
-		open(employeeId);
+		
+		DomElement draft = getElementById(employeeId + "-draft");
+		if ( draft == null || !draft.isDisplayed() )
+			open(employeeId);
+		
 		select(employeeId + "-draft");
 		wait4Text("employeeNameLabel", employeeName);
 	}
