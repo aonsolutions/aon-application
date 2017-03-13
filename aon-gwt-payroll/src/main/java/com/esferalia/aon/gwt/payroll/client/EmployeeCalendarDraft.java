@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogBar;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -19,7 +18,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -34,21 +32,14 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
-import com.vaadin.polymer.iron.widget.IronInput;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
-import com.vaadin.polymer.paper.widget.PaperDropdownMenu;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
-import com.vaadin.polymer.paper.widget.PaperItem;
-import com.vaadin.polymer.paper.widget.PaperListbox;
-import com.vaadin.polymer.paper.widget.PaperMenu;
 
 public class EmployeeCalendarDraft extends Composite implements ContextMenuHandler {
 
@@ -269,6 +260,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String doubleBoxDisableStyle2();
 		
 		String isSelectedStyle();
+		
+		String nonWorkingStyle();
 		
 		String sundayStyle();
 

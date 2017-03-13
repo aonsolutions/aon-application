@@ -80,6 +80,13 @@
 			border-radius: 0px !important;
 		}
 		
+		.nonWorkingStyle{
+			background-color: rgba(114, 194, 250, 1);
+			border-radius: 15px;
+			padding: 3px;
+			color: #ffffff;
+		}
+
 		.sundayStyle {
 			background-color: salmon;
 			border-radius: 15px;
