@@ -66,6 +66,7 @@ public class EmployeeCalendarDraftObjectData {
 	
 	public static interface DayTypeVisitor<T>{
 		T visitFreeDay(DayType dayType);
+		T visitNoWorkingDay(DayType dayType);
 		T visitHolyDay(DayType dayType);
 		T visitDropDay(DayType dayType);
 		T visitEreDay(DayType dayType);
@@ -82,7 +83,13 @@ public class EmployeeCalendarDraftObjectData {
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitFreeDay(this);
 			}
-		}, 
+		},
+		NOWORKINGDAY{
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitNoWorkingDay(this);
+			}
+		},
 		HOLIDAY {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
@@ -530,7 +537,7 @@ public class EmployeeCalendarDraftObjectData {
 					if (0 == noLabroles.byteValue())
 						tipoDia = DayType.NOTYPEDAY;
 					else
-						tipoDia = DayType.FREEDAY;
+						tipoDia = DayType.NOWORKINGDAY;
 					
 					String horasDias = calcularDiaSemanaNoLaboral(cont);
 					

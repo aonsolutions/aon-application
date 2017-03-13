@@ -80,14 +80,14 @@
 			border-radius: 0px !important;
 		}
 		
-		.nonWorkingStyle{
+		.sundayStyle{
 			background-color: rgba(114, 194, 250, 1);
 			border-radius: 15px;
 			padding: 3px;
 			color: #ffffff;
 		}
 
-		.sundayStyle {
+		.nonWorkingStyle{
 			background-color: salmon;
 			border-radius: 15px;
 			padding: 3px;
@@ -319,8 +319,8 @@
 			margin-right: 8px;
 		}
 		
-		.reductionMarginDialogLeyend {
-			margin-left: 33px;
+		.ausenciaMarginDialogLeyend {
+			margin-left: 45px;
 		}
 		
 		.fechaDialogZIndex {
@@ -356,10 +356,11 @@
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="diaNoLaborable" text="Añadir día(s) no laborables" />
-								<g:MenuItem ui:field="diaVacaciones" text="Añadir día(s) vacaciones" />
-								<g:MenuItem ui:field="diaHuelga" text="Añadir día(s) huelga" />
-								<g:MenuItem ui:field="diaEre" text="Añadir día(s) ERE" />
-								<g:MenuItem ui:field="diaAusencia" text="Añadir día(s) Ausencia" />			
+							<g:MenuItem ui:field="diaFestivo" text="Añadir día(s) festivos" />
+							<g:MenuItem ui:field="diaVacaciones" text="Añadir día(s) vacaciones" />
+							<g:MenuItem ui:field="diaHuelga" text="Añadir día(s) huelga" />
+							<g:MenuItem ui:field="diaEre" text="Añadir día(s) ERE" />
+							<g:MenuItem ui:field="diaAusencia" text="Añadir día(s) Ausencia" />			
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
@@ -538,6 +539,11 @@
 					withBackdrop="true">
 					<a:CustomDialogBar ui:field="customDialogBarInformation" styleName="{style.marginTopCloseDialog}" caption="Leyenda"/>
 					<g:HTMLPanel>
+					    <i:IronLabel>
+							<p:PaperButton
+								styleName="{style.cellStyle} {style.sundayStyle} {style.dialogLeyendLabel}"></p:PaperButton>
+							No Laborables
+						</i:IronLabel>
 						<i:IronLabel>
 							<p:PaperButton
 								styleName="{style.cellStyle} {style.holidayStyle} {style.dialogLeyendLabel}"></p:PaperButton>
@@ -550,8 +556,8 @@
 						</i:IronLabel>
 						<i:IronLabel>
 							<p:PaperButton
-								styleName="{style.cellStyle} {style.sundayStyle} {style.dialogLeyendLabel}"></p:PaperButton>
-							NL/Festivos
+								styleName="{style.cellStyle} {style.sundayStyle} {style.nonWorkingStyle}"></p:PaperButton>
+							Festivos
 						</i:IronLabel>
 						<i:IronLabel>
 							<p:PaperButton
@@ -562,7 +568,8 @@
 					<g:HTMLPanel>
 					    <i:IronLabel>
 							<p:PaperButton
-								styleName="{style.cellStyle} {style.dropStyle} {style.dialogLeyendLabel}"></p:PaperButton>
+								styleName="{style.cellStyle} {style.dropStyle} {style.dialogLeyendLabel}
+											{style.ausenciaMarginDialogLeyend}"></p:PaperButton>
 							Ausencia
 						</i:IronLabel>
 						<i:IronLabel>
@@ -580,7 +587,7 @@
 						<i:IronLabel>
 							<p:PaperButton
 								styleName="{style.cellStyle1} {style.reductionStyle} 
-									{style.dialogLeyendLabel} {style.reductionMarginDialogLeyend}"
+									{style.dialogLeyendLabel} "
 								ui:field="diaReduccionButton"></p:PaperButton>
 							Reducción
 						</i:IronLabel>
@@ -619,9 +626,14 @@
 						Dias seleccionables:
 					</g:Label>
 					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.sundayStyle}"
+						<p:PaperButton styleName="{style.cellStyle} {style.nonWorkingStyle}"
 							ui:field="diaNoLaborableButton"></p:PaperButton>
-						No Laborables/Festivos
+						No Laborables
+					</i:IronLabel>
+					<i:IronLabel>
+						<p:PaperButton styleName="{style.cellStyle} {style.sundayStyle}"
+							ui:field="diaFestivoButton"></p:PaperButton>
+						Festivos
 					</i:IronLabel>
 					<i:IronLabel>
 						<p:PaperButton styleName="{style.cellStyle} {style.holidayStyle}"
