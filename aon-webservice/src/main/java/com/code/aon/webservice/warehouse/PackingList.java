@@ -80,12 +80,10 @@ public class PackingList {
 				document.add(new Paragraph(" "));
 			}
 			
-			
 			if(type.equals(CarrierPackingType.WAYBILL)){	
 				document.add(totalQuantity(orders, totalPackages, totalWeight));
 			}
-			
-			
+
 			Paragraph order = new Paragraph(" ");
 			order.add(getSeparator());
 			document.add(order);
@@ -431,8 +429,15 @@ public class PackingList {
 		HashMap<String, Double> measurementMap = new HashMap<>();
 		HashMap<String, Double> formatMap = new HashMap<>();
 
-		for(Integer i = 0 ; i < details.length() ; i++){
-			PdfPCell c1 = new PdfPCell(new Phrase(details.getJSONObject(i).getString("description"),getFont2()));
+		for(Integer i = 0 ; i < details.length() ; i++){	
+			StringBuilder description = new StringBuilder();
+			if(details.getJSONObject(i).opt("code") != null){
+				description.append("S/Ref:");
+				description.append(details.getJSONObject(i).getString("code"));
+				description.append(" - ");
+			}
+			description.append(details.getJSONObject(i).getString("description"));
+			PdfPCell c1 = new PdfPCell(new Phrase(description.toString(),getFont2()));
 			c1.setBorder(PdfPCell.NO_BORDER);
 	
 			Double measurements = details.getJSONObject(i).getDouble("measurements");

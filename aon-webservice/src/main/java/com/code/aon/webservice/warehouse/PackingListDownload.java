@@ -38,7 +38,6 @@ public class PackingListDownload extends HttpServlet{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {	       
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
@@ -74,7 +73,6 @@ public class PackingListDownload extends HttpServlet{
 				JSONObject addressJSON2 = ToJSON.raddressToJSON(ra);
 				addressJSON2.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument());
 				purchaseJSON.put("address",addressJSON2);
-				
 				JSONArray details = new JSONArray();
 				AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login,
 						f -> f.getPurchaseProperty().eq(purchase.getId())
@@ -82,6 +80,11 @@ public class PackingListDownload extends HttpServlet{
 				.forEach(detail -> {
 					JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);		
 					Optional<Item> item = getItem(domain, login, detail.getItem(), detail.getProductId());
+
+					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
+						f2.getRegistryProperty().eq(purchase.getSupplier())
+						.and(f2.getItemProperty().eq(detail.getItem()))).getCode();
+					detailJSON.put("code", code);
 					
 					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
 					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
@@ -107,6 +110,11 @@ public class PackingListDownload extends HttpServlet{
 				.forEach(detail -> {
 					JSONObject detailJSON = ToJSON.deliveryDetailToJSON(detail);
 					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
+					
+					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
+						f2.getRegistryProperty().eq(delivery.getCustomer())
+						.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
+					detailJSON.put("code", code);
 					
 					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
 					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
