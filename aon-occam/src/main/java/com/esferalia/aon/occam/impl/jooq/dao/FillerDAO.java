@@ -2,13 +2,15 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
-import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
-import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
+import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 
 import java.util.function.Function;
 
@@ -23,9 +25,13 @@ import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryItem;
+import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -112,6 +118,41 @@ public class FillerDAO {
 			carrier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
 			carrier.setType(r.getValue(REGISTRY.TYPE));
 			return carrier.setScope(r.getValue(CARRIER.SCOPE));				
+		}
+	}
+	
+	public static class RNoteFiller  implements Function<Record,RegistryNote> {
+
+		@Override
+		public RegistryNote apply(Record r) {
+			return new RegistryNote()
+					.setId(r.getValue(RNOTE.ID))
+					.setDomain(r.getValue(RNOTE.DOMAIN))
+					.setComments(r.getValue(RNOTE.COMMENTS))
+					.setDescription(r.getValue(RNOTE.DESCRIPTION))
+					.setNoteDate(r.getValue(RNOTE.NOTE_DATE))
+					.setNoteType(r.getValue(RNOTE.NOTE_TYPE))
+					.setRegistry(r.getValue(RNOTE.REGISTRY))
+					.setSecurityLevel(r.getValue(RNOTE.SECURITY_LEVEL));
+		}
+	}
+	
+	public static class RItemFiller  implements Function<Record,RegistryItem> {
+
+		@Override
+		public RegistryItem apply(Record r) {
+			return new RegistryItem()
+					.setId(r.getValue(RITEM.ID))
+					.setDomain(r.getValue(RITEM.DOMAIN))
+					.setRegistry(r.getValue(RITEM.REGISTRY))
+					.setItem(r.getValue(RITEM.ITEM))
+					.setType(r.getValue(RITEM.TYPE))
+					.setCode(r.getValue(RITEM.CODE))
+					.setPrice(r.getValue(RITEM.PRICE))
+					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
+					.setWorkplace(r.getValue(RITEM.WORKPLACE))
+					.setPriority(Priority.values()[r.getValue(RITEM.PRIORITY)])
+					.setStatus(RegistryItemStatus.values()[r.getValue(RITEM.STATUS)]);
 		}
 	}
 	

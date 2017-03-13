@@ -427,6 +427,20 @@ public interface Properties {
 		Property<Byte> getSecurityLevelProperty();
 	}
 	
+	public interface RegistryItemProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getItemProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getCodeProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getDiscountExprProperty();
+		Property<Byte> getPriorityProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
 	public interface StockProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
