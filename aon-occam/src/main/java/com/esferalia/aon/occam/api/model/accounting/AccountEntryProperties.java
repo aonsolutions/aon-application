@@ -12,6 +12,7 @@ public interface AccountEntryProperties {
 	Property<Date> getEntryDateProperty();
 	Property<Byte> getEntryTypeProperty();
 	Property<Integer> getJournalProperty();
+	Property<Integer> getActivityProperty();
 	Property<Byte> getConfidentialProperty();
 
 }

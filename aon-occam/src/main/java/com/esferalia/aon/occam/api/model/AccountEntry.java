@@ -21,6 +21,7 @@ public class AccountEntry implements Serializable, HasAudit {
 	private Date entryDate;
 	private AccountEntryType entryType;
 	private Integer activity;
+	private String activityDescription;
 	private Integer journal;
 	private SecurityLevel securityLevel;
 	
@@ -105,7 +106,14 @@ public class AccountEntry implements Serializable, HasAudit {
 		this.activity = activity;
 		return this;
 	}
-
+	public String getActivityDescription() {
+		return activityDescription;
+	}
+	public AccountEntry setActivityDescription(String activityDescription) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.activity,activity) );
+		this.activityDescription = activityDescription;
+		return this;
+	}
 	public boolean isInvoice() {
 		return getEntryType() == null || getEntryType().isInvoice();
 	}
@@ -248,6 +256,7 @@ public class AccountEntry implements Serializable, HasAudit {
 			.setEntryDate(ori.entryDate)
 			.setEntryType(ori.entryType)
 			.setActivity(ori.getActivity())
+			.setActivityDescription(ori.getActivityDescription())
 			.setJournal(ori.journal)
 			.setSecurityLevel(ori.securityLevel)
 			.setComments(ori.comments)

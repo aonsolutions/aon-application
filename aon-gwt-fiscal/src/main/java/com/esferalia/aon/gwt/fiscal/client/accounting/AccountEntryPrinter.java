@@ -55,7 +55,10 @@ public class AccountEntryPrinter {
 			 + AonStringUtils.CLOSE_BRACKET 
 			 + AonStringUtils.SPACE
 			:AonStringUtils.repeat(AonStringUtils.SPACE, 14));
-		buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 40));
+		buf.append(AonStringUtils.SPACE);
+		buf.append((entry.getActivity() == null) 
+			?AonStringUtils.repeat(AonStringUtils.SPACE, 40)
+			:AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(entry.getActivityDescription()), 39), 40));
 		buf.append(AON.MSG.date());
 		buf.append(AonStringUtils.COLON);
 		buf.append(AonStringUtils.SPACE);

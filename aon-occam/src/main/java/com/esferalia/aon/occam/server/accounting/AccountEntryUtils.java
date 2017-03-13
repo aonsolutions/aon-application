@@ -12,8 +12,14 @@ public class AccountEntryUtils {
 	public static Filter getFilter(AccountEntryProperties p,
 			AccountEntryParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
+		if (params.getPeriod()  != null && params.getPeriod().intValue() != 0 ) {
+			prop = prop.and(p.getAccountPeriodProperty().eq(params.getPeriod()));
+		}
 		if (params.getJournal()  != null && params.getJournal().intValue() != 0 ) {
 			prop = prop.and(p.getJournalProperty().eq(params.getJournal()));
+		}
+		if (params.getActivity()  != null && params.getActivity().intValue() != 0 ) {
+			prop = prop.and(p.getActivityProperty().eq(params.getActivity()));
 		}
 		if (params.getFrom() != null) {
 			prop = prop.and(p.getEntryDateProperty().ge(params.getFrom()));
@@ -51,7 +57,7 @@ public class AccountEntryUtils {
 			prop = prop.and(p.getDebitProperty().eq(params.getDebit()));
 		}
 		if (params.getCredit() != null) {
-			prop = prop.and(p.getDebitProperty().eq(params.getCredit()));
+			prop = prop.and(p.getCreditProperty().eq(params.getCredit()));
 		}
 		if (AonStringUtils.isNotEmpty(params.getDocument())) {
 			prop = prop.and(p.getDocumentNumber().like(

@@ -195,8 +195,9 @@ public class AccountEntryModule extends MainEntryPoint {
 	TabLayoutPanel tabLayout;
 	@UiField
 	SessionLog sessionLog;
-	@UiField(provided = true)
 	JournalPanel journalPanel;
+	@UiField
+	SimpleLayoutPanel journalPanelContainer;
 	@UiField
 	AccountBalancePanel balancePanel;
 	@UiField
@@ -223,7 +224,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 
 		splitLayoutPanel = new SplitLayoutPanel(4);
-		journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentDomain());
+		
 
 //		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 //			public void onUncaughtException(Throwable e) {
@@ -308,6 +309,16 @@ public class AccountEntryModule extends MainEntryPoint {
 							activity.setVisible(false);
 						}
 						confidential.setVisible(configuration.getUser().hasConfidentialityRole());
+						
+						journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentDomain(), JOURNAL_PANEL_TAB_OFFSET, result);
+						journalPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
+							@Override
+							public void onSelection(SelectionEvent<AccountEntry> event) {
+								final AccountEntry entry = event.getSelectedItem();
+								selectEntry(entry.getId());
+							}
+						});
+						journalPanelContainer.setWidget(journalPanel);
 						journalPanel.setUser(configuration.getUser());
 						
 						reset();
@@ -668,12 +679,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		selectEntry(entry.getId(),event.getSelectedItem());
 	}
 
-	
-	@UiHandler("journalPanel")
-	public void onSelectJournalPanel(SelectionEvent<AccountEntry> event) {
-		final AccountEntry entry = event.getSelectedItem();
-		selectEntry(entry.getId());
-	}
 	
 	@UiHandler("statementPanel")
 	public void onSelectStatement(SelectionEvent<Integer> event) {

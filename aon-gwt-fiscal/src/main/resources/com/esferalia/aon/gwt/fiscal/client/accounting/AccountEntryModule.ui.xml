@@ -141,7 +141,7 @@
 												styleName="{aonResources.css.aonIconJournal} {aonResources.css.aonPaddingRight}"  
 												text="{msg.journalBook}" />
 										</g:customHeader>
-										<accPanel:JournalPanel ui:field="journalPanel"/>
+										<g:SimpleLayoutPanel ui:field="journalPanelContainer"/>
 									</g:tab>
 									<g:tab>
 										<g:customHeader>

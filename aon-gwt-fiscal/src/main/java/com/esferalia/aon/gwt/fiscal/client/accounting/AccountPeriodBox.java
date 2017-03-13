@@ -18,15 +18,19 @@ public class AccountPeriodBox extends ListBox {
 		periods.add(new AccountPeriod());
 		AccountPeriodBox.this.addItem( "----","-1" );
 	}
-	
 	public void fill(LinkedList<AccountPeriod> result) {
+		fill(result,false);	
+	}
+	
+	public void fill(LinkedList<AccountPeriod> result,boolean enableAllPeriods) {
 		int i = 0;
 		for (AccountPeriod p : result) {
 			AccountPeriodBox.this.addItem( p.getName() + (p.isDefaultPeriod()?"*":""), AonNumberUtils.toString(p.getId()) );
 			i++;
-			if (p.getStatus() == AccountPeriodStatus.CLOSED 
+			if ( !enableAllPeriods 
+			 && (p.getStatus() == AccountPeriodStatus.CLOSED 
 			 || p.getStatus() == AccountPeriodStatus.INACTIVE
-			 || p.getStatus() == AccountPeriodStatus.OPERATING) {
+			 || p.getStatus() == AccountPeriodStatus.OPERATING)) {
 				getElement().getElementsByTagName("option").getItem(i).setAttribute("disabled", "disabled");	
 			} else {
 				if (p.isDefaultPeriod()) {
@@ -70,5 +74,10 @@ public class AccountPeriodBox extends ListBox {
 		} else {
 			setSelectedIndex(0);			
 		}
+	}
+
+	public Integer getValue() {
+		if (getSelectedIndex() == 0) return null;
+		return AonNumberUtils.toInteger( getSelectedValue() );
 	}
 }

@@ -78,9 +78,11 @@ public class AccountEntryDAO {
 					,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.SECURITY_LEVEL
 					,ACCOUNT_ENTRY.ACTIVITY,ACCOUNT_ENTRY.COMMENTS
 					,ACCOUNT_ENTRY.CREATION_USER,ACCOUNT_ENTRY.CREATION_DATE
-					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE)
+					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE
+					,ENTERPRISE_ACTIVITY.DESCRIPTION)
 				.from(ACCOUNT_ENTRY)
 				.join(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))
+				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ACCOUNT_ENTRY.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 				.where(ACCOUNT_ENTRY_PROPERTIES.getConditions(filter))
 				.orderBy(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.ENTRY_DATE)
 				.limit(offset,numberOfRows)
@@ -559,6 +561,7 @@ public class AccountEntryDAO {
 				.setEntryDate( record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
 				.setEntryType( AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)])
 				.setActivity( record.getValue(ACCOUNT_ENTRY.ACTIVITY))
+				.setActivityDescription(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
 				.setJournal( record.getValue(ACCOUNT_ENTRY.JOURNAL))
 				.setSecurityLevel(SecurityLevel.values()[record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)])
 				.setComments( record.getValue(ACCOUNT_ENTRY.COMMENTS))
@@ -608,44 +611,17 @@ public class AccountEntryDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override
-		public Property<Integer> getIdProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ID);
-		}
-
-		@Override
-		public Property<Integer> getJournalProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.JOURNAL);
-		}
-
-		@Override
-		public Property<Integer> getDomainProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.DOMAIN);
-		}
-
-		@Override
-		public Property<Integer> getAccountPeriodProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);
-		}
-		
-		@Override
-		public Property<Date> getEntryDateProperty() {
-			return new FilterDAO.DatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);
-		}
-
-		@Override
-		public Property<Byte> getEntryTypeProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.ENTRY_TYPE);
-		}
-
-		@Override
-		public Property<Byte> getConfidentialProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);
-		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ID);}
+		@Override public Property<Integer> getJournalProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.JOURNAL);}
+		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACTIVITY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.DOMAIN);}
+		@Override public Property<Integer> getAccountPeriodProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);}
+		@Override public Property<Date> getEntryDateProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);}
+		@Override public Property<Byte> getEntryTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.ENTRY_TYPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
 	}
 
-	private static final AccountEntryDetailPropertiesDAO ACCOUNT_ENTRY_DETAIL_PROPERTIES 
-		= new AccountEntryDetailPropertiesDAO();
+	private static final AccountEntryDetailPropertiesDAO ACCOUNT_ENTRY_DETAIL_PROPERTIES = new AccountEntryDetailPropertiesDAO();
 	private static class AccountEntryDetailPropertiesDAO extends AccountEntryPropertiesDAO implements AccountEntryDetailProperties {
 
 		private Condition[] getConditions(AccountEntryDetailFilter filter) {
@@ -656,40 +632,13 @@ public class AccountEntryDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override
-		public Property<Integer> getAccountProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);
-		}
-
-		@Override
-		public Property<String> getAccountCodeProperty() {
-			return new FilterDAO.PropertyDAO<String>(ACCOUNT.CODE);
-		}
-		
-		@Override
-		public Property<String> getAccountDescriptionProperty() {
-			return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);
-		}
-
-		@Override
-		public Property<String> getConceptProperty() {
-			return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.CONCEPT);
-		}
-
-		@Override
-		public Property<Double> getDebitProperty() {
-			return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.DEBIT);
-		}
-
-		@Override
-		public Property<Double> getCreditProperty() {
-			return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.CREDIT);
-		}
-
-		@Override
-		public Property<String> getDocumentNumber() {
-			return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);
-		}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);}
+		@Override public Property<String> getAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.CODE);}
+		@Override public Property<String> getAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);}
+		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.CONCEPT);}
+		@Override public Property<Double> getDebitProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
+		@Override public Property<Double> getCreditProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
+		@Override public Property<String> getDocumentNumber() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
 	}
 }
 

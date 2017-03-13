@@ -11,10 +11,12 @@ public class AccountEntryParams implements Serializable{
 	private static final long serialVersionUID = 7399522390660289406L;
 	
 	private int domain;
+	private Integer period;
 	private Date from;
 	private Date to;
 	private AccountEntryType type;
 	private Integer journal;
+	private Integer activity;
 	private boolean confidential; 
 	private boolean hasConfidentialityRole; 
 	
@@ -30,6 +32,13 @@ public class AccountEntryParams implements Serializable{
 	}
 	public AccountEntryParams setDomain(int domain) {
 		this.domain = domain;
+		return this;
+	}
+	public Integer getPeriod() {
+		return period;
+	}
+	public AccountEntryParams setPeriod(Integer period) {
+		this.period = period;
 		return this;
 	}
 	public Date getFrom() {
@@ -54,6 +63,13 @@ public class AccountEntryParams implements Serializable{
 	}
 	public AccountEntryParams setJournal(Integer journal) {
 		this.journal = journal;
+		return this;
+	}
+	public Integer getActivity() {
+		return activity;
+	}
+	public AccountEntryParams setActivity(Integer activity) {
+		this.activity = activity;
 		return this;
 	}
 	public AccountEntryParams setTo(Date to) {
