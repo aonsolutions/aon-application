@@ -1361,8 +1361,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			else return null;
 			break;
 		case "C\u00f3digo" : 
-			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				product.getProduct().setCode(toString(value));		
+			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){// TODO
+				product.getProduct().setCode(toString(value, type));
 				if(product.getProduct().getCode().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
@@ -1402,6 +1402,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							.setDetail2(c==2 || c==3 ? " " : null)
 							.setDetail3(c==3 ? " " : null));
 						product.getProduct().setCategory(productCategory.getId());
+						productCategoryList.add(productCategory);
 					} else product.getProduct().setCategory(pc.getId());
 				}
 			}
@@ -1419,6 +1420,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						brand = AON.insertBrand(domain.getName(), domain.getId(), getUser().getLogin(),
 								new Brand().setDomain(domain.getId()).setName(strAux));
 						product.getProduct().setBrand(brand.getId());
+						brandList.add(brand);
 					} else product.getProduct().setBrand(brand.getId());
 				}
 			}
@@ -1426,17 +1428,22 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break; 
 		case "Etiqueta" : 
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				Vector<String> strings = tags(toString(value));
+				String str = toString(value, type);
+				String[] array = str.split(",");
 				LinkedList<Tag> pts = new LinkedList<>();
-				for(String s : strings){
-					Tag tag = tagList.stream().filter(t -> t.getType() == TagType.PRODUCT.value() && t.getName().equals(s)).findFirst().orElse(new Tag());
-					if(tag.getId() == null){
-						tag = AON.insertTag(domain.getName(), domain.getId(), getUser().getLogin(),
-							new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));	
+				for(Integer i = 0; i < array.length; i++){
+					String s = array[i];
+					if(!s.isEmpty() && !" ".equals(s)){
+						Tag tag = tagList.stream().filter(t -> t.getType() == TagType.PRODUCT.value() && t.getName().equals(s)).findFirst().orElse(new Tag());
+						if(tag.getId() == null){
+							tag = AON.insertTag(domain.getName(), domain.getId(), getUser().getLogin(),
+								new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));	
+							tagList.add(tag);
+						}
+						pts.add(tag);
 					}
-					pts.add(tag);
 				}
-				if(!strings.isEmpty()) product.setTagList(pts);
+				if(array.length > 0) product.setTagList(pts);
 			}
 			break; 
 		case "Tipo":
@@ -2577,6 +2584,20 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			default:
 				return null;
 		}
+	}
+	
+	
+	public String toString(Object value, Integer type){
+		if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
+			return value.toString();
+		} else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			Double d = Double.parseDouble(value.toString());
+			Integer i = d.intValue();
+			if((d - i.doubleValue()) ==  0)
+				return i.toString();
+			return d.toString();
+		}
+		return value.toString();
 	}
 	
 	public String toString(Object value){

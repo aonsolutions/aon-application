@@ -29,15 +29,11 @@ public class UploadProductsServlet extends UploadAction{
 	    for (FileItem item : sessionFiles) {
 	    	System.out.println(item.isFormField());
 	      if (false == item.isFormField()) {
-	        
-	          
 	          String mimetype = item.getContentType();
 	          Long size = item.getSize();
 	          TemplatesServlet.setSize(size.intValue());
 	          TemplatesServlet.setOut(item.get());
-	          TemplatesServlet.setMimetype(mimetype);
-	        
-	        
+	          TemplatesServlet.setMimetype(mimetype); 
 	      }
 	    }
 	    
