@@ -325,6 +325,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							detail.setQuantity(Double.valueOf(linea
 									.getCANTIDAD()));
 							detail.setPrice(item.getPrice());
+							// TODO obtainCustomerItemPrice
+//							detail.setPrice(obtainCustomerItemPrice(delivery.getCustomer(), item.getProduct()));
 							detail.setDiscountExpression("0");
 							if(elaboration==null || elaboration.getId()==null){
 								addError(albaran, "No hay ninguna elaboracion asociada a la linea " + linea.getLINEA());
@@ -665,6 +667,18 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 													: f.getSerialNumberProperty()
 															.isNull())));
 			if(item==null || item.getId()==null){
+				Item baseItem = AON
+						.getItem(
+								ctx.getDomainName(),
+								ctx.getDomainId(),
+								ctx.getUser(),
+								f -> f.getDomainProperty()
+										.eq(ctx.getDomainId())
+										.and(f.getProductProperty().eq(
+												product.getId()))
+										.and(f.getSerialDateProperty().isNull())
+										.and(f.getSerialNumberProperty()
+												.isNull()));
 				item = new Item();
 				item.setDomain(ctx.getDomainId());
 				item.setProductId(product.getId());
@@ -675,6 +689,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				item.setDetail(productoelaborado.getDETALLE());
 				item.setDetail2(productoelaborado.getDETALLE2());
 				item.setDetail3(productoelaborado.getDETALLE3());
+				item.setPackFormatTag(baseItem.getPackFormatTag());
+				item.setPackMeasurement(baseItem.getPackMeasurement());
+				item.setPackMeasurementTag(baseItem.getPackMeasurementTag());
+				item.setPackUnits(baseItem.getPackUnits());
+				item.setPackUnitsTag(baseItem.getPackUnitsTag());
+				item.setStockUnitTag(baseItem.getStockUnitTag());
 				if(productoelaborado.getFECHALOTESERIE()!=null){
 					Date serialDate = null;
 					try {
@@ -705,6 +725,46 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			throw new AonException("Codigo de producto no encontrado " + productoelaborado.getCODIGO());
 		}
 	}
-	
+
+	private Double obtainCustomerItemPrice(AONContext ctx,  Integer customerId, Integer productId) {
+		Item baseItem = AON
+				.getItem(
+						ctx.getDomainName(),
+						ctx.getDomainId(),
+						ctx.getUser(),
+						f -> f.getDomainProperty()
+						.eq(ctx.getDomainId())
+						.and(f.getProductProperty().eq(
+								productId))
+								.and(f.getSerialDateProperty().isNull())
+								.and(f.getSerialNumberProperty()
+										.isNull()));
+//		AON.getRMedia(domainName, domainId, login, filter)
+		
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(
+//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID),
+//					item.getProduct().getBaseItem().getId());
+//			criteria.addEqualExpression(
+//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID),
+//					customer.getId());
+//			criteria.addEqualExpression(
+//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS),
+//					RegistryItemStatus.ACTIVE);
+//			criteria.addEqualExpression(
+//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE),
+//					RegistryMode.CUSTOMER);
+//			criteria.addOrder(bean
+//					.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
+//			List<ITransferObject> list = bean.getList(criteria);
+//			if (list != null && !list.isEmpty())
+//				return ((RegistryItem) list.get(0)).getCode();
+//		} catch (ManagerBeanException e) {
+//			LOGGER.error(e.getMessage());
+//		}
+		return null;
+	}
 		
 }
