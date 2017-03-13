@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistryMode;
+import com.code.aon.sales.Sales;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -97,7 +99,7 @@ public class ConnectDeliveryWriter {
 		seh1c.setCalificadorFecha_Hora2_2_11_63_(null);
 		seh1c.setFecha_hora2(null);
 		seh1c.setInformacionAdicional(null);
-		seh1c.setNumeroPedido_comprador__ON_(null);
+		seh1c.setNumeroPedido_comprador__ON_(obtainPurchaseReference(delivery));
 		seh1c.setFecha_horaNumeroPedido_171__102_203_(null);
 		seh1c.setNumeroAlbaran_DQ_(null);
 		seh1c.setFecha_horaNumeroAlbaran_171__102_203_(null);
@@ -439,6 +441,19 @@ public class ConnectDeliveryWriter {
 		record.setFechaDeEnvasadoOEmpaquetado_365__102_203_(null);
 		record.setFechaProduccion_fabricacion_94__102_203_(null);
 		return record;
+	}
+	
+	private String obtainPurchaseReference(Delivery delivery) {
+		List<DeliveryDetail> list = delivery.getDetailList().stream()
+				.map(to -> ((DeliveryDetail) to)).collect(Collectors.toList());
+		if (!list.isEmpty()) {
+			DeliveryDetail detail = list.get(0);
+			if (detail.getSalesDetail() != null) {
+				Sales sales = detail.getSalesDetail().getSales();
+				return sales.getPurchaseReference();
+			}
+		}
+		return null;
 	}
 
 	private String obtainProductCustomerCode(Item item, Customer customer) {
