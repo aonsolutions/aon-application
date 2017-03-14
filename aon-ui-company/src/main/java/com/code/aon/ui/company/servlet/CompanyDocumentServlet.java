@@ -109,7 +109,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 					if(attach.getDriveId() != null){
 						attach.setData(DriveUtils.getByteFile(domainName, domainId, "", attach.getDriveId(), attach.getId()));
 					}
-					if ( (attachmentId != null) && (attach.getId() != null) ) {
+					if ( (attachmentId != null) && (attach.getId() != null) && attach.getData() != null ) {
 						String md5Value = StringUtils.substringAfterLast(value, "-");
 						if (!md5Value.equals(generateMD5(attach.getData()))) {
 							attach = null;
@@ -136,7 +136,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
 		Attach attach = getAttachment(req);
-		if ( attach != null ) {			
+		if ( attach != null && attach.getData() != null) {			
 			Integer length = attach.getData().length;
 			ByteArrayInputStream bais = new ByteArrayInputStream(attach.getData());
 		       
