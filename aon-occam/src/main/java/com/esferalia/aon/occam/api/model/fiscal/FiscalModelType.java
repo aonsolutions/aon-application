@@ -27,7 +27,8 @@ public enum FiscalModelType implements Serializable{
 	M310	("310","310"),
 	M311	("311","311"),
 	M200	("200","200"),
-	M202	("202","202")
+	M202	("202","202"),
+	M303    ("303","303")
 	;
 
 	private String value;
