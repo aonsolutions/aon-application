@@ -39,6 +39,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.IProject;
+import com.code.aon.project.ProjectAttachment;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -78,6 +79,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private String hrCreditCardCvv;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
+	private Set<ProjectAttachment> attachments = new HashSet<ProjectAttachment>();
 	private Set<Invoice> invoices = new HashSet<Invoice>();
 
 	public ProjectReservation() {
@@ -280,6 +282,15 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setRooms(Set<ProjectReservationRoom> rooms) {
 		this.rooms = rooms;
+	}
+
+	@OneToMany(mappedBy = "project", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<ProjectAttachment> getAttachments() {
+		return this.attachments;
+	}
+	public void setAttachments(Set<ProjectAttachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	@OneToMany(mappedBy = "project")

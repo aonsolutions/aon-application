@@ -12,18 +12,8 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.asset_activity_module}" />
 				<ui:param name="controller" value="#{reservation}" />
-				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed
-														|| reservation.reservationPermission.failPreauthorization}" />
-				<ui:param name="skipSearchButton" value="#{reservation.reservationPermission.failPreauthorization}" />
+				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:define name="additionalToolbarContent">
-					<aon:if test="#{reservation.reservationPermission.failPreauthorization}">
-						<aon:commandButton id="reservation-FailPreauthorization-Search"
-							title="#{bundle.aon_key_search_accelerator}" immediate="true"
-							value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
-							action="#{reservation.searchAction}" actionListener="#{reservation.onEditFailPreauthorizationSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />
-					</aon:if>
 					<aon:commandButton id="reservation-Refresh"
 						value="#{bundle.webmail_refresh}" immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"

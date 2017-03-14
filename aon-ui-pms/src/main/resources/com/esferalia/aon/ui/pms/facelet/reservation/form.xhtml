@@ -13,8 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.asset_activity_module}" />
 				<ui:param name="controller" value="#{reservation}" />
-				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed
-														|| reservation.reservationPermission.failPreauthorization}" />
+				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:param name="skipSaveButton" value="#{!reservation.reservationPermission.saveReservationAllowed}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:param name="showMoreMenu" value="#{!reservation.nevv and reservation.reservationPermission.showMoreMenuAllowed}" />

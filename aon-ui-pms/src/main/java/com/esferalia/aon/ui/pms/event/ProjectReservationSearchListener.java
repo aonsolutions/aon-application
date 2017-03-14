@@ -1,15 +1,22 @@
 package com.esferalia.aon.ui.pms.event;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.project.ProjectAttachment;
+import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -20,9 +27,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
-public class ProjectReservationSearchListener extends ControllerSearchListener {
+public class ProjectReservationSearchListener extends ControllerSearchListener implements ISQLConstants {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -35,6 +43,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	private Seller seller;
 	private ReservationCheckStatus[] reservationCheckStatuses;
 	private ReservationStatus[] reservationStatuses;
+	private Integer conexFlowOperation;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -108,6 +117,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		this.reservationStatuses = reservationStatuses;
 	}
 	
+	public Integer getConexFlowOperation() {
+		return conexFlowOperation;
+	}
+
+	public void setConexFlowOperation(Integer conexFlowOperation) {
+		this.conexFlowOperation = conexFlowOperation;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
@@ -119,6 +136,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 		setReservationCheckStatuses(null);
 		setReservationStatuses(null);
+		setConexFlowOperation(null);
 	}
 	
 	@Override
@@ -152,12 +170,60 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_STATUS);
 			addEnumToCriteria(criteria, status, getReservationStatuses());
 		}
-		Expression hotelScopeExp = UserUtils.getInstance().getNullableScopeExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_SCOPE_ID));
+		completeScopeCriteria(criteria, getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_SCOPE_ID));
+		completeConexFlowCriteria(criteria);
+	}
+
+	private void completeScopeCriteria(Criteria criteria, String alias) throws ManagerBeanException, ExpressionException {
+		Expression hotelScopeExp = UserUtils.getInstance().getNullableScopeExpression(alias);
 		if (getController() instanceof ProjectReservationController) {
-			String alias = getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_SCOPE_ID);
 			hotelScopeExp = ExpressionUtilities.getOrExpression(hotelScopeExp, UserUtils.getInstance().getNullableScopeExpression(alias));
 		}
 		criteria.addExpression(hotelScopeExp);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void completeConexFlowCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		if (getConexFlowOperation() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachType"), ProjectAttachmentType.CONEXFLOW);
+
+			IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
+			Projection prjReservation = Projection.property(getFieldName(IEntityAlias.PROJECT_RESERVATION_ID));
+			List<Integer> reservationIds = getController().getManagerBean().getList(new ProjectionList(prjReservation), criteria);
+			Criteria pAttachCriteria = new Criteria();
+			pAttachCriteria.addInExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), reservationIds);
+			pAttachCriteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.CONEXFLOW);
+			Projection prjAttach = Projection.max(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ID));
+			Projection prjGroup = Projection.group(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID));
+			List<Integer> attachIds = new LinkedList<Integer>();
+			for (Object id : pAttachBean.getList(new ProjectionList(prjAttach, prjGroup), pAttachCriteria)) {
+				Object[] obj = (Object[])id;
+				attachIds.add((Integer)obj[0]);
+			}
+
+			criteria.addInExpression(getController().resolveAlias("ProjectReservation.attachments.id"), attachIds);
+			String alias = getController().resolveAlias("ProjectReservation.attachments.description");
+			switch (getConexFlowOperation().intValue()) {
+				case 1: Expression exp1 = ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_P#%");
+						Expression exp2 = ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_P-CHECK#%");
+						criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+						break;
+				case 2: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_P%-FAIL%"));
+						break;
+				case 3: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_C#%"));
+						break;
+				case 4: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_C-FAIL#%"));
+						break;
+				case 5: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_V#%"));
+						break;
+				case 6: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_V-FAIL#%"));
+						break;
+				case 7: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_D#%"));
+						break;
+				case 8: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_D-FAIL#%"));
+						break;
+			}
+		}
 	}
 
 }

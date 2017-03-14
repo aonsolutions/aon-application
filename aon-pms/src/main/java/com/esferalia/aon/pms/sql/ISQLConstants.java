@@ -15,6 +15,7 @@ public interface ISQLConstants {
 	String STAY_TYPE = "stay_type";
 	String ROOMS = "rooms";
 	String GUESTS = "guests";
+	String ATTACH = "attach";
 
 	String RESERVATION = "reservation";
 	String RESERVATION_GUEST = "reservationGuest";

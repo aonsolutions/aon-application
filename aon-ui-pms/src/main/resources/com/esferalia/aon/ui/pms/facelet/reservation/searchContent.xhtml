@@ -93,6 +93,30 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
+		<aon:if test="#{aonRole.commercialOperator or aonRole.financeOperator}">
+			<aon:panelCollapsible expanded="false" 
+				label="#{bundle.aon_external_conexFlow}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+
+					<aon:outputLabel for="ProjectReservation_conexFlowOperation" 
+						value="#{bundle.aon_operation}" />
+					<aon:selectOneMenu id="ProjectReservation_conexFlowOperation" 
+						value="#{searchController.conexFlowOperation}">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_preauthorization_ok}" itemValue="1" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_preauthorization_fail}" itemValue="2" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_confirm_ok}" itemValue="3" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_confirm_fail}" itemValue="4" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_sale_ok}" itemValue="5" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_sale_fail}" itemValue="6" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_refund_ok}" itemValue="7" />		
+						<f:selectItem itemLabel="#{bundle.conexflow_refund_fail}" itemValue="8" />		
+					</aon:selectOneMenu>
+
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</aon:if>
+
 		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml">
 			<ui:define name="additionalAuditableContent">
 				<aon:outputLabel for="ProjectReservation_cancellationUser"
