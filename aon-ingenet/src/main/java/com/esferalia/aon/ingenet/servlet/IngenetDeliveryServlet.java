@@ -44,6 +44,9 @@ import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryItem;
+import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -315,6 +318,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 									linea.getPRODUCTO(), test);
 							Elaboration elaboration = obtainElaboration(
 									ctx, linea.getDATOSELABORACIONORIGEN());
+							RegistryItem customerRItem = obtainCustomerItem(item.getProduct().getId(), delivery.getCustomer());
 							DeliveryDetail detail = new DeliveryDetail();
 							detail.setDomain(ctx.getDomainId());
 							detail.setDelivery(delivery);
@@ -324,10 +328,14 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							detail.setWarehouse(warehouse.getId());
 							detail.setQuantity(Double.valueOf(linea
 									.getCANTIDAD()));
-							detail.setPrice(item.getPrice());
-							// TODO obtainCustomerItemPrice
-//							detail.setPrice(obtainCustomerItemPrice(delivery.getCustomer(), item.getProduct()));
-							detail.setDiscountExpression("0");
+							if(customerRItem!=null){
+								detail.setPrice(customerRItem.getPrice());
+								detail.setDiscountExpression(customerRItem.getDiscountExpr());
+							}
+							if(detail.getPrice()==null && detail.getPrice().equals(0.0)){
+								detail.setPrice(item.getPrice());
+								detail.setDiscountExpression("0");
+							}
 							if(elaboration==null || elaboration.getId()==null){
 								addError(albaran, "No hay ninguna elaboracion asociada a la linea " + linea.getLINEA());
 							} else {
@@ -682,7 +690,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				item = new Item();
 				item.setDomain(ctx.getDomainId());
 				item.setProductId(product.getId());
-				item.setActive(true);
+				item.setActive(false);
 				item.setCode(productoelaborado.getCODIGO());
 				item.setName(productoelaborado.getNOMBRE());
 				item.setDescription(productoelaborado.getDESCRIPCION());
@@ -726,44 +734,32 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 	}
 
-	private Double obtainCustomerItemPrice(AONContext ctx,  Integer customerId, Integer productId) {
-		Item baseItem = AON
-				.getItem(
-						ctx.getDomainName(),
-						ctx.getDomainId(),
-						ctx.getUser(),
-						f -> f.getDomainProperty()
-						.eq(ctx.getDomainId())
-						.and(f.getProductProperty().eq(
-								productId))
-								.and(f.getSerialDateProperty().isNull())
-								.and(f.getSerialNumberProperty()
-										.isNull()));
-//		AON.getRMedia(domainName, domainId, login, filter)
-		
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(
-//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID),
-//					item.getProduct().getBaseItem().getId());
-//			criteria.addEqualExpression(
-//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID),
-//					customer.getId());
-//			criteria.addEqualExpression(
-//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS),
-//					RegistryItemStatus.ACTIVE);
-//			criteria.addEqualExpression(
-//					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE),
-//					RegistryMode.CUSTOMER);
-//			criteria.addOrder(bean
-//					.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
-//			List<ITransferObject> list = bean.getList(criteria);
-//			if (list != null && !list.isEmpty())
-//				return ((RegistryItem) list.get(0)).getCode();
-//		} catch (ManagerBeanException e) {
-//			LOGGER.error(e.getMessage());
-//		}
+	private RegistryItem obtainCustomerItem(Integer productId, Integer customerId) {
+		Item baseItem = AON.getItem(
+				getDomain(),
+				getDomainId(),
+				getUser(),
+				f -> f.getDomainProperty().eq(getDomainId())
+						.and(f.getProductProperty().eq(productId))
+						.and(f.getSerialDateProperty().isNull())
+						.and(f.getSerialNumberProperty().isNull()));
+
+		List<RegistryItem> rItemList = AON.getRItemList(
+				getDomain(),
+				getDomainId(),
+				getUser(),
+				f -> f.getDomainProperty()
+						.eq(getDomainId())
+						.and(f.getItemProperty().eq(baseItem.getId()))
+						.and(f.getRegistryProperty().eq(customerId))
+						.and(f.getTypeProperty().eq(
+								RegistryMode.CUSTOMER.value()))
+						.and(f.getStatusProperty().eq(
+								RegistryItemStatus.ACTIVE.value())));
+
+		if (rItemList != null && !rItemList.isEmpty()) {
+			return rItemList.get(0);
+		}
 		return null;
 	}
 		

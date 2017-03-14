@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -146,7 +147,7 @@ public class FillerDAO {
 					.setDomain(r.getValue(RITEM.DOMAIN))
 					.setRegistry(r.getValue(RITEM.REGISTRY))
 					.setItem(r.getValue(RITEM.ITEM))
-					.setType(r.getValue(RITEM.TYPE))
+					.setType(RegistryMode.safeValueOf(r.getValue(RITEM.TYPE)))
 					.setCode(r.getValue(RITEM.CODE))
 					.setPrice(r.getValue(RITEM.PRICE))
 					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
