@@ -30,8 +30,7 @@ import com.esferalia.aon.occam.api.model.management.SalesFilter;
 import com.esferalia.aon.occam.api.model.management.SalesProperties;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.CustomerFiller;
-
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
 
 public class SalesDAO {
 	

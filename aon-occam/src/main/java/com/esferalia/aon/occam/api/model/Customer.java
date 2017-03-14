@@ -7,8 +7,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 
 @SuppressWarnings("serial")
-public class Customer implements Serializable{
-
+public class Customer  extends Registry implements Serializable{
 	Integer id; // registryId
 	Integer account;
 	Date creationDate;

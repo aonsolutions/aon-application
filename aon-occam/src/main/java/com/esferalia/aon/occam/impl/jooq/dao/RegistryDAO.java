@@ -80,6 +80,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RNoteFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
@@ -749,35 +750,6 @@ public class RegistryDAO {
 				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 				.where(CUSTOMER_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new CustomerFiller());
-	}
-	
-	public static class CustomerFiller  implements Function<Record, Customer> {
-
-		@Override
-		public Customer apply(Record r) {
-			return new Customer()
-					.setId(r.getValue(CUSTOMER.REGISTRY))
-					.setAccount(r.getValue(CUSTOMER.ACCOUNT))
-					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
-					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
-					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED))
-					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED))
-					.setDomain(r.getValue(CUSTOMER.DOMAIN))
-					.seteInvoice(r.getValue(CUSTOMER.E_INVOICE))
-					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
-					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
-					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED))
-					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY))
-							.setName(r.getValue(REGISTRY.NAME)))
-					.setScope(r.getValue(CUSTOMER.SCOPE))
-					.setStatus(CustomerStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
-					.setSurcharge(r.getValue(CUSTOMER.STATUS))
-					.setTariff(r.getValue(CUSTOMER.TARIFF))
-					.setTransaction(r.getValue(CUSTOMER.TRANSACTION))
-					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING))
-					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
-		}
 	}
 	
 	// ------------------- SELLER

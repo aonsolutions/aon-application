@@ -321,6 +321,10 @@ public class ReposServlet extends HttpServlet{
 							AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
 						
 					Registry registry = new Registry();
+
+					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), userName, f-> f.getDomainProperty().eq(domain.getId())
+							.and(f.getNameProperty().eq(json.getString(MSG.ENTERPRISE))));
+					
 					if(!faq) registry = AON.getRegistryFD(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
 					Task task = new Task()
 						.setDescription(json.getString("title"))
@@ -330,7 +334,7 @@ public class ReposServlet extends HttpServlet{
 						.setStartDate(Calendar.getInstance().getTime())
 						.setDueDate(Calendar.getInstance().getTime())
 						.setStatus(!faq ? TaskStatus.PENDING.value() : TaskStatus.FAQ.value())
-						.setRegistry(!faq ? registry.getId() : null) 
+						.setRegistry(!faq ? customer.getId() : null) 
 						.setPercent((byte) 0) 
 						.setPriority((byte) 0)
 						.setRepeatPeriod((byte) 0)
@@ -475,7 +479,7 @@ public class ReposServlet extends HttpServlet{
 	
 	private JSONArray getAllRegistriesJSON(Domain domain, String userName) {		
 		JSONArray array = new JSONArray();
-		AON.getTaskCustomerStream(domain.getName(), domain.getId(), userName)
+		AON.getCustomerStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()))
 			.map(new CustomerToUserFiller()).forEach(l->array.put(l.toJSON()));
 		return array;
 	}
@@ -874,8 +878,8 @@ public class ReposServlet extends HttpServlet{
 		@Override
 		public User apply(Customer r) {
 			return new User()
-					.setId(r.getRegistry().getId())
-					.setLogin(r.getRegistry().getName())
+					.setId(r.getId())
+					.setLogin(r.getName())
 					.setStatus(r.getStatus());
 		}
 	}

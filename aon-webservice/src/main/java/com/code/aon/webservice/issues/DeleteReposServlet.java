@@ -74,6 +74,14 @@ public class DeleteReposServlet extends HttpServlet{
 							AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setWorkgroup(null));
 							object = new User().toJSON();
 						}
+					} else {
+						// DELETE TASK FOR EVER!!!!
+						Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
+						AON.deleteTaskComment(domain.getName(), domain.getId(), userName, f -> f.getTaskProperty().eq(task.getId()));
+						AON.deleteTaskTag(domain.getName(), domain.getId(), userName, f -> f.getTaskProperty().eq(task.getId()));
+						AON.deleteTaskEvent(domain.getName(), domain.getId(), userName, f -> f.getTaskProperty().eq(task.getId()));
+						AON.deleteTask(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(task.getId()));
+						object = new JSONObject();
 					}
 				}
 				break;

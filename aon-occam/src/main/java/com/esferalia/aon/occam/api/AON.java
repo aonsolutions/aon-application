@@ -3283,6 +3283,16 @@ public class AON {
 		}
 	}
 	
+	public static void deleteTask(String domainName, Integer domainId, String login, TaskFilter filter){
+		AONContext ctx = null;	
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().deleteTask(ctx, filter);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static void updateTaskUser(String domainName, Integer domainId, String login, Task task){
 		AONContext ctx = null;
 		try{
@@ -3469,6 +3479,16 @@ public class AON {
 		}
 	}
 	
+	public static void deleteTaskEvent(String domainName, Integer domainId, String login, TaskEventFilter filter) {
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().deleteTaskEvent(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static TaskEvent updateTaskEvent(String domainName, Integer domainId, String login, TaskEvent taskEvent, Integer taskCommentId) {
 		AONContext ctx = null;
 		try{
@@ -3596,21 +3616,6 @@ public class AON {
 		} finally {
 			if(ctx != null) ctx.close();
 		}
-	}
-	
-	public static Stream<Customer> getTaskCustomerStream(String domainName, Integer domainId, String login){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskCustomerStream(ctx);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static LinkedList<Customer> getTaskCustomerList(String domainName, Integer domainId, String login){
-		return getTaskCustomerStream(domainName, domainId, login)
-			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Stream<Customer> getFilterCustomerStream(String domainName, Integer domainId, String login, String filter){

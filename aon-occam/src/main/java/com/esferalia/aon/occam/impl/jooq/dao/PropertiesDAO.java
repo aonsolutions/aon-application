@@ -78,7 +78,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(APP_PARAM.VALUE);}
 	}
 	
-	public static class CustomerPropertiesDAO implements CustomerProperties {
+	public static class CustomerPropertiesDAO extends RegistryPropertiesDAO implements CustomerProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, CustomerFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);

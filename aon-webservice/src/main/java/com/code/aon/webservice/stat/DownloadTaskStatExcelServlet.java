@@ -1,16 +1,14 @@
 package com.code.aon.webservice.stat;
 
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +21,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 
+import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.issues.Label;
+import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -48,9 +48,11 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
 		System.out.println("GET METHOD");
-		String[] pathInfo = req.getPathInfo().split("/");
-		String domainName = pathInfo[1];
-		String userName = pathInfo[2]; 
+		
+		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
+		String domainName = parameters.get("domain");
+		String userName = parameters.get("login");
+		
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));		
 	 	
         HSSFWorkbook libro = new HSSFWorkbook();
@@ -139,7 +141,7 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
     	
     	cont = 1;
     	AON.getStatTaskStream(domain.getName(), domain.getId(), userName, 
-    			new StatParams().setIssueFilter(StatServlet.getFilter(domain, userName, req))).forEach(task -> {
+    			new StatParams().setIssueFilter(Utils.getFilter(parameters))).forEach(task -> {
     		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
@@ -257,28 +259,7 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
         archivo.close();
         libro.close();
 
-        Integer length = data.length;
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        
-        resp.addHeader("Content-Disposition","attachment; filename=\"tareas.xls" +"\"");
-        resp.setContentType("application/msexcel");
-
-        if (length > 0 && length <= Integer.MAX_VALUE);
-            resp.setContentLength((int)length);
-        ServletOutputStream out = resp.getOutputStream();
-        resp.setBufferSize(32768);
-        int bufSize = resp.getBufferSize();
-        byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
-        int bytes;
-        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
-            out.write(buffer, 0, bytes);
-        
-        
-        bis.close();
-        bais.close();
-        out.flush();
-        out.close();
+        Utils.giveBackData(resp, data , "tareas.xls");
     }
 	
 	public static Double round(Double value, Integer places) {

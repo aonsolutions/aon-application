@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -19,6 +20,7 @@ import org.jooq.Record;
 import com.esferalia.aon.jooq.tables.Product;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -30,6 +32,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Priority;
@@ -119,6 +122,44 @@ public class FillerDAO {
 			carrier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
 			carrier.setType(r.getValue(REGISTRY.TYPE));
 			return carrier.setScope(r.getValue(CARRIER.SCOPE));				
+		}
+	}
+	
+	public static class CustomerFiller  implements Function<Record, Customer> {
+
+		@Override
+		public Customer apply(Record r) {
+			Customer customer = new Customer();
+			customer.setId(r.getValue(REGISTRY.ID));
+			customer.setDocument(r.getValue(REGISTRY.DOCUMENT));
+			customer.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			customer.setDocumentCountry(null); // TODO
+			customer.setName(r.getValue(REGISTRY.NAME));
+			customer.setAlias(r.getValue(REGISTRY.ALIAS));
+			customer.setType(r.getValue(REGISTRY.TYPE));
+			customer.setNationality(null); // TODO
+			customer.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+
+			return customer.setAccount(r.getValue(CUSTOMER.ACCOUNT))
+					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
+					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
+					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED))
+					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED))
+					.setDomain(r.getValue(CUSTOMER.DOMAIN))
+					.seteInvoice(r.getValue(CUSTOMER.E_INVOICE))
+					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
+					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
+					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED))
+					// TODO QUITAR!!! 
+					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY)).setName(r.getValue(REGISTRY.NAME)))
+					.setScope(r.getValue(CUSTOMER.SCOPE))
+					.setStatus(CustomerStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
+					.setSurcharge(r.getValue(CUSTOMER.STATUS))
+					.setTariff(r.getValue(CUSTOMER.TARIFF))
+					.setTransaction(r.getValue(CUSTOMER.TRANSACTION))
+					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING))
+					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
 	

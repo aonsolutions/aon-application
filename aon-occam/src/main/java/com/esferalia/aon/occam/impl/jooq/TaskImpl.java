@@ -187,12 +187,6 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
-	public Stream<Customer> getTaskCustomerStream(AONContext ctx){
-		return ctx.getDslContext().transactionResult(
-			configuration -> TaskDAO.getTaskCustomerStream(ctx));	
-	}
-	
-	@Override
 	public Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter){
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskWorkgroupStream(ctx, filter));	
@@ -289,5 +283,17 @@ public class TaskImpl implements ITask {
 	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter) {
 		ctx.getDslContext().transaction(
 				configuration -> TaskDAO.deleteTaskHolderWorkgroup(ctx, filter));
+	}
+
+	@Override
+	public void deleteTask(AONContext ctx, TaskFilter filter) {
+		ctx.getDslContext().transaction(
+				configuration -> TaskDAO.deleteTask(ctx, filter));		
+	}
+
+	@Override
+	public void deleteTaskEvent(AONContext ctx, TaskEventFilter filter) {
+		ctx.getDslContext().transaction(
+				configuration -> TaskDAO.deleteTaskEvent(ctx, filter));				
 	}
 }

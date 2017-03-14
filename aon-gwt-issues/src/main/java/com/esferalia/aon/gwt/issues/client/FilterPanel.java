@@ -561,9 +561,9 @@ public class FilterPanel extends Composite {
 	}
 	
 	public void setButtonsLabels(JsSize s) {
-		openLabel.setText(s.getOpen() + " Abierta");
-		closeLabel.setText(s.getClosed() + " Cerrada");
-		removeLabel.setText(s.getDeleted() + " Borrada");
+		openLabel.setText(s.getOpen() + (s.getOpen() > 1 ? " Abiertas" : " Abierta"));
+		closeLabel.setText(s.getClosed() + (s.getClosed() >1 ? " Cerradas" : " Cerrada"));
+		removeLabel.setText(s.getDeleted() + (s.getDeleted() > 1 ? " Aparcadas" : " Aparcada"));
 	}
 	
 	public void initialize(Boolean faq) {

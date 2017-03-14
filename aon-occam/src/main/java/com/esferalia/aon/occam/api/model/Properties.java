@@ -627,7 +627,7 @@ public interface Properties {
 		Property<Date> getStatusDateProperty();
 	}
 	
-	public interface CustomerProperties{
+	public interface CustomerProperties extends RegistryProperties{
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTariffProperty();

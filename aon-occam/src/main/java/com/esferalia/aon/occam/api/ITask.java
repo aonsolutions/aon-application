@@ -22,8 +22,11 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 
 public interface ITask {
 	
+	public void deleteTask(AONContext ctx, TaskFilter filter);
+	public void deleteTaskEvent(AONContext ctx, TaskEventFilter filter);
+	
 	public Boolean isTaskParent(AONContext ctx, Integer parentId);
-
+	
 	public Task getTask(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
@@ -54,7 +57,6 @@ public interface ITask {
 	public TaskEvent updateTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskEventId);
 	
 	public Stream<Registry> getTaskMemberStream(AONContext ctx, String filter);
-	public Stream<Customer> getTaskCustomerStream(AONContext ctx);
 	public Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter);
 	
 	public Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter);

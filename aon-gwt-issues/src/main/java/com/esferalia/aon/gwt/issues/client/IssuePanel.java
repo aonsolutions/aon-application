@@ -94,6 +94,7 @@ public class IssuePanel extends Composite{
 	@UiField VerticalPanel usersVPanel;
 	@UiField FlowPanel historialVPanel;
 	@UiField PaperIconButton sendButton;
+	@UiField PaperIconButton parkIssueButton;
 	@UiField PaperIconButton removeIssueButton;
 	@UiField PaperButton faqButton;
 	@UiField PaperButton duplicatedButton;
@@ -165,8 +166,9 @@ public class IssuePanel extends Composite{
 			faqButton.setVisible(false);
 			
 			principalButton.setVisible(true);
+			parkIssueButton.setVisible(false);
 			removeIssueButton.setVisible(false);
-
+			
 			typeButton.setVisible(false);
 			priorityButton.setVisible(false);
 			tagButton.setVisible(false);
@@ -177,6 +179,7 @@ public class IssuePanel extends Composite{
 			duplicatedButton.setVisible(false);
 			desduplicatedButton.setVisible(false);
 			principalButton.setVisible(false);
+			parkIssueButton.setVisible(false);
 			removeIssueButton.setVisible(false);
 		}else if(issue.isDuplicate()){
 			commentButton.setVisible(false);
@@ -185,6 +188,7 @@ public class IssuePanel extends Composite{
 			duplicatedButton.setVisible(false);
 			desduplicatedButton.setVisible(true);
 			principalButton.setVisible(true);
+			parkIssueButton.setVisible(false);
 			removeIssueButton.setVisible(false);
 			
 			typeButton.setVisible(false);
@@ -212,6 +216,7 @@ public class IssuePanel extends Composite{
 			duplicatedButton.setVisible(true);
 			desduplicatedButton.setVisible(false);
 			principalButton.setVisible(false);
+			parkIssueButton.setVisible(true);
 			removeIssueButton.setVisible(true);
 		} 
 
@@ -860,8 +865,8 @@ public class IssuePanel extends Composite{
 		close();
 	}
 	
-	@UiHandler("removeIssueButton")
-	void onClickRemoveIssueButton(ClickEvent event){
+	@UiHandler("parkIssueButton")
+	void onClickParkIssueButton(ClickEvent event){
 		String request = "{\"state\":\"deleted\"}";
 		// TODO GITHUB!!!
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
@@ -880,6 +885,38 @@ public class IssuePanel extends Composite{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
+	}
+	
+	@UiHandler("removeIssueButton")
+	void onClickRemoveIssueButton(ClickEvent event){
+		AonDialog2 d = new AonDialog2("Borrar Tarea",new Label("Est\u00e1s seguro de Borrar definitivamente la tarea #" + issue.getNumber()) ) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override
+			protected void onAccept() {
+				// TODO GITHUB
+				incidence.deleteTask(issue, new AsyncCallback<JsIssue>() {
+					
+					@Override
+					public void onSuccess(JsIssue result) {
+						parent.contentDockLayoutPanel.removeFromParent();
+						AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
+						t.setVisibleRefreshButton(true).setVisibleFastFilterButton(true);
+						parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+						parent.contentDockLayoutPanel.addNorth(parent.searchContent, 85);
+						parent.contentDockLayoutPanel.add(parent.content);
+						parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);
+						parent.updateIssueList(parent.issueFilter, false);
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+				hide();
+			}
+		};
+		d.getElement().getStyle().setWidth(255, Unit.PX);
+		d.center();
 	}
 	
 	@UiHandler("reopenButton")

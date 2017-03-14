@@ -180,6 +180,11 @@ public class Incidence extends Methods{
 		post(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues/"
 						+ issue.getNumber(), requestData, callback);
 	}
+	
+	public void deleteTask(JsIssue issue, AsyncCallback<JsIssue> callback) {
+		post(url + "delete/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues/"
+						+ issue.getNumber(), "", callback);
+	}
 
 	//-------------------- LABELS
 	
@@ -528,8 +533,16 @@ public class Incidence extends Methods{
 	// -------------------- DOWNLOAD
 	
 	public void downloadStat(IssueFilter filter){
-		Window.open(url + "download_task_stat_excel/" + getDomainName() + "/" + getUserName()
-			+ getIssueFilter(filter), "_blank", null);
+		String str ="domain="+ getDomainName() + "&login="+getUserName() + "&"+ getIssueFilter(filter).substring(1);
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_task_stat_excel/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	//---------------------- Métodos Get & Set

@@ -193,6 +193,12 @@ public class TaskDAO {
 			.fetchOne().value1();
 	}
 	
+	public static void deleteTask(AONContext ctx, TaskFilter filter){
+		ctx.getDslContext().delete(TASK)
+		.where(TASK_PROPERTIES.getConditions(filter))
+		.execute();
+	}
+	
 	public static Integer getCommentsCount(AONContext ctx, Integer taskId){
 		return ctx.getDslContext()
 			.select(DSL.count(TASK_COMMENT.ID))
@@ -224,6 +230,12 @@ public class TaskDAO {
 			.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller());
 	}
 
+	public static void deleteTaskEvent(AONContext ctx, TaskEventFilter filter){
+		ctx.getDslContext().delete(TASK_EVENT)
+			.where(TASK_EVENT_PROPERTIES.getConditions(filter))
+			.execute();				
+	}
+	
 	public static Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter){
 		return ctx.getDslContext().select().from(TAG).join(TASK_TAG).on(TAG.ID.eq(TASK_TAG.TAG))
 			.where(TASK_TAG_PROPERTIES.getConditions(filter)).fetchInto(TAG).stream().map(new FullTagFiller());
@@ -700,12 +712,6 @@ public class TaskDAO {
 			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
 	}
 	
-	public static Stream<Customer> getTaskCustomerStream(AONContext ctx){
-		return ctx.getDslContext().select().from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
-			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId()))
-			.fetch().stream().map(new TaskCustomerFiller());
-	}
-	
 	public static Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter){
 		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.NAME, CUSTOMER.STATUS)
 				.from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
@@ -857,25 +863,13 @@ public class TaskDAO {
 		}
 	}
 	
-	private static class TaskCustomerFiller implements Function<Record, Customer> {
-		@Override
-		public Customer apply(Record r) {
-			return new Customer().setRegistry(new Registry().setId(r.getValue(REGISTRY.ID))
-								.setDomain(r.getValue(REGISTRY.DOMAIN))
-								.setAlias(r.getValue(REGISTRY.ALIAS))
-								.setName(r.getValue(REGISTRY.NAME))
-								.setType(r.getValue(REGISTRY.TYPE)))
-					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
-		}
-	}
-	
 	private static class TaskFilterCustomerFiller implements Function<Record3<Integer, String, Byte>, Customer> {
 		@Override
 		public Customer apply(Record3<Integer, String, Byte> r) {
-			return new Customer().setRegistry(new Registry()
-								.setId(r.getValue(REGISTRY.ID))
-								.setName(r.getValue(REGISTRY.NAME)))
-					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
+			Customer customer = new Customer();
+			customer.setId(r.getValue(REGISTRY.ID));
+			customer.setName(r.getValue(REGISTRY.NAME));			
+			return customer.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
 	

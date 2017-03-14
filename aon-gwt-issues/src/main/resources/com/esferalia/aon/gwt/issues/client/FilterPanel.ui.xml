@@ -62,7 +62,7 @@
 		
     	    <p:PaperButton ui:field="removeButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
 			    <i:IronIcon icon="remove-circle" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-			    <g:InlineLabel ui:field="removeLabel" text="Borrada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+			    <g:InlineLabel ui:field="removeLabel" text="Aparcada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 			</p:PaperButton>	
         </g:HorizontalPanel>
     
