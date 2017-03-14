@@ -30,6 +30,7 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -74,10 +75,11 @@ public class PackingListMailServlet extends HttpServlet{
 			signature = AON.getSignature(domain.getName(), domain.getId(), login, signature_id);
 		}
 		String scheme = req.getParameter("scheme");
-		sendNotification(domain, login, carrierPacking, signature, mail_account, type, to, order, scheme);		
+		MailAccount ma = AON.getMailAccount(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(mail_account));
+		sendNotification(domain, login, carrierPacking, signature, ma, type, to, order, scheme);		
 	}
 		
-	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, Integer mailAccount, String type, String to, Integer order, String scheme){
+	public void sendNotification(Domain domain, String login, CarrierPacking carrierPacking, Signature signature, MailAccount mailAccount, String type, String to, Integer order, String scheme){
 		msg = "<div> Estimado Colaborador, </div><div><p></p></div>";
 		Boolean isSC = CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType());
 		String str = "domain="+ domain.getName() + "&login="+ login + "&id="+carrierPacking.getId();
@@ -129,7 +131,7 @@ public class PackingListMailServlet extends HttpServlet{
 					f -> f.getRegistryProperty().eq(carrierPacking.getCarrier())
 					.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 			}
-			sendEmail(domain, login, mailAccount,(to != null) ? to : rmedia.getValue(), "", "packing List", msg, scheme);
+			sendEmail(domain, login, mailAccount.getId(),(to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "packing List", msg, scheme);
 		} else if(MSG.REGISTRY.equalsIgnoreCase(type)){
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 				Stream<Purchase> stream = null;
@@ -163,7 +165,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(purchase.getSupplier())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg, scheme);
+					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme);
 				});
 			} else if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
 				Stream<Delivery> stream = null;
@@ -193,7 +195,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(delivery.getCustomer())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), "", "prueba packingList", msg, scheme);
+					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme);
 				});
 			}
 		}

@@ -477,18 +477,21 @@ public class CarrierPackingSelect extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsRmedia> result) {
+				StringBuilder emails = new StringBuilder();
 				result.getData().stream().forEach(rmedia -> {
 					String media = rmedia.getMedia() + "";
 					if(media.equals("4")){	
-						toText.setValue(rmedia.getValue());
+						emails.append(rmedia.getValue());
+						emails.append(";");
 					}
 				});
+				toText.setValue(emails.toString());
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
 		panel.add(toText);
-
+		
 		AonComboBox signComboBox = new AonComboBox();
     	signComboBox.setLabel("Firma de Correo");
     	signComboBox.setItemLabelPath("name");
