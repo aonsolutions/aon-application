@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -20,6 +21,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -248,7 +252,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		saveButton = new Button();
 		saveButton.setTabIndex(InvoicePanel.VAT_PANEL_TAB_OFFSET + 50001);
 		saveButton.setTitle( AON.MSG.saveAction() );
-		saveButton.setAccessKey( 'L' );
+		saveButton.setAccessKey( 'G' );
 		saveButton.setStyleName(AON.AON_CSS.aonIconSave());
 		saveButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
 		saveButton.addStyleName(AON.AON_CSS.aonMarginLeft());
@@ -310,6 +314,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		private final AccountBox inputVatAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
 		private final AccountBox outputVatAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
 		private final CheckBox withholding  = new CheckBox();
+		private final Button removeButton = new Button();
 		private final InvestAssetListBox investAsset = new InvestAssetListBox(); 
 		private final DoubleBox dedPercent = new DoubleBox(6);
 		private final DoubleBox dedQuota = new DoubleBox(8);
@@ -348,12 +353,22 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			taxableBase.setStyleName(AON.AON_CSS.aonInputText());
 			taxableBase.addStyleName(AON.AON_CSS.aonTextRight());
 			taxableBase.setValue(vat.getBase());
+			taxableBase.addKeyUpHandler( new KeyUpHandler() {
+				public void onKeyUp(KeyUpEvent event) {
+					if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+						InvoiceCalculator.reverseCalculate(callback.getInvoice(),vat, taxableBase.getValue());
+						populate(vat);
+						ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
+					}
+				}
+			});
+
 			taxableBase.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					vat.setBase( event.getValue() );
-					calculate(vat);
+					checkCalculate(vat, vatPercent);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
@@ -370,7 +385,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					vat.setPercentage( event.getValue() );
-					calculate(vat);
+					checkCalculate(vat, vatQuota);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
@@ -380,17 +395,31 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			vatQuota.setTabIndex(++tabindex);
 			vatQuota.setStyleName(AON.AON_CSS.aonInputText());
 			vatQuota.addStyleName(AON.AON_CSS.aonTextRight());
-			vatQuota.setEnabled(false);
+			vatQuota.addStyleName(AON.AON_CSS.aonPaddingLeft10Important());
 			vatQuota.setValue(vat.getQuota());
 			vatQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
+					vat.setQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(vat, vatQuota.getValue())));
+					if (vat.isQuotaEdited()) {
+						vatQuota.setTitle("Cuota de IVA modificada. Deber\u00EDa ser: " + InvoiceCalculator.getQuota(vat));
+					} else {
+						vatQuota.setTitle(null);
+					}
 					vat.setQuota(event.getValue() );
 					calculate(vat);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
+			vatQuota.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					decorateVatQuota(vat);
+				}
+			});
+			decorateVatQuota(vat);
 			tab.setWidget(currentRow, col, vatQuota);
 			++col;
 			
@@ -405,7 +434,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					vat.setSurcharge(event.getValue() );
-					calculate(vat);
+					checkCalculate(vat, surchargeQuota);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
@@ -415,19 +444,33 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			surchargeQuota.setTabIndex(++tabindex);
 			surchargeQuota.setStyleName(AON.AON_CSS.aonInputText());
 			surchargeQuota.addStyleName(AON.AON_CSS.aonTextRight());
+			surchargeQuota.addStyleName(AON.AON_CSS.aonPaddingLeft10Important());
 			surchargeQuota.setValue(vat.getSurchargeQuota());
-			surchargeQuota.setEnabled(false);
 			surchargeQuota.setVisible(callback.getInvoice().isSurcharge());
 			reQuotaLabel.setVisible(callback.getInvoice().isSurcharge());
 			surchargeQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
+					vat.setSurchargeQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getSurchargeQuotaGap(vat, surchargeQuota.getValue())));
+					if (vat.isSurchargeQuotaEdited()) {
+						surchargeQuota.setTitle("Cuota de RE modificada. Deber\u00EDa ser: " + InvoiceCalculator.getSurchargeQuota(vat));
+					} else {
+						surchargeQuota.setTitle(null);
+					}
 					vat.setSurchargeQuota(event.getValue() );
 					calculate(vat);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
+			surchargeQuota.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					decorateSurchargeQuota(vat);
+				}
+			});
+			decorateSurchargeQuota(vat);
 			tab.setWidget(currentRow, col, surchargeQuota);
 			++col;
 			
@@ -454,7 +497,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					dedQuotaLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
 					adjAccountLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
 					
-					calculate(vat);
+					checkCalculate(vat,dedPercent);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 
@@ -477,7 +520,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					if (p > 100) p = 100.0;
 					if (p < 0) p = 0.0;
 					vat.setDeductiblePercent( p );
-					calculate(vat);
+					checkCalculate(vat,dedQuota);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
@@ -487,6 +530,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			dedQuota.setTabIndex(++tabindex);
 			dedQuota.setStyleName(AON.AON_CSS.aonInputText());
 			dedQuota.addStyleName(AON.AON_CSS.aonTextRight());
+			dedQuota.addStyleName(AON.AON_CSS.aonPaddingLeft10Important());
 			dedQuota.setValue(vat.getDeductibleQuota());
 			dedQuota.setVisible(callback.isInvestAssetsAvailable()  && vat.getInvestAsset() != null);
 			dedQuotaLabel.setVisible(callback.isInvestAssetsAvailable()  && otherLineWithInvestAssests);
@@ -494,11 +538,25 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
+					vat.setDeductibleQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getDeductibleQuotaGap(vat, dedQuota.getValue())));
+					if (vat.isSurchargeQuotaEdited()) {
+						dedQuota.setTitle("Cuota de IVA deducible modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDeductibleQuota(vat));
+					} else {
+						dedQuota.setTitle(null);
+					}
 					vat.setDeductibleQuota(event.getValue() );
 					calculate(vat);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
+			dedQuota.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					decorateDeductibleQuota(vat);
+				}
+			});
+			decorateDeductibleQuota(vat);
 			tab.setWidget(currentRow, col, dedQuota);
 			++col;
 
@@ -582,17 +640,15 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				@Override
 				public void onClick(ClickEvent event) {
 					vat.setWithholding(withholding.getValue());
-					calculate(vat);
+					checkCalculate(vat,null);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
 			tab.setWidget(currentRow, col, withholding);
 			++col;
 			
-			Button removeButton = new Button();
 			removeButton.setTabIndex(Integer.MAX_VALUE);
 			removeButton.setTitle( AON.MSG.deleteAction() );
-			removeButton.setAccessKey( 'L' );
 			removeButton.setStyleName(AON.AON_CSS.aonIconDelete());
 			removeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
 			removeButton.addStyleName(AON.AON_CSS.aonMarginLeft());
@@ -632,6 +688,38 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			
 			if (focus) {
 				expAccount.setFocus(true);
+			}
+		}
+		private void decorateDeductibleQuota(InvoiceVAT vat) {
+			double quota = InvoiceCalculator.getDeductibleQuota(vat);
+			double gap = InvoiceCalculator.getDeductibleQuotaGap(vat, dedQuota.getValue());
+			decorateEditableQuota(gap, quota, dedQuota);
+		}
+
+		private void decorateSurchargeQuota(InvoiceVAT vat) {
+			double quota = InvoiceCalculator.getSurchargeQuota(vat);
+			double gap = InvoiceCalculator.getSurchargeQuotaGap(vat, surchargeQuota.getValue());
+			decorateEditableQuota(gap, quota, surchargeQuota);
+		}
+
+		private void decorateVatQuota(InvoiceVAT vat) {
+			double quota = InvoiceCalculator.getQuota(vat);
+			double gap = InvoiceCalculator.getQuotaGap(vat, vatQuota.getValue());
+			decorateEditableQuota(gap, quota, vatQuota);
+		}
+		private void decorateEditableQuota(double gap, double quota, DoubleBox editableBox) {
+			editableBox.removeStyleName(AON.AON_CSS.aonChanged());
+			editableBox.removeStyleName(AON.AON_CSS.aonInputError());
+			if (AonMathUtils.isNotZero( gap )) {
+				if (gap > 1) {
+					editableBox.addStyleName(AON.AON_CSS.aonInputError());
+					editableBox.setTitle( AON.MSG.editedValueWarning(quota, gap) );
+				} else {
+					editableBox.addStyleName(AON.AON_CSS.aonChanged());
+					editableBox.setTitle( AON.MSG.editedValue(quota) );
+				}
+			} else {
+				editableBox.setTitle(null);
 			}
 		}
 
@@ -675,7 +763,39 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			withholding.setVisible(enabled);
 			withholdingLabel.setVisible(enabled);
 		}
-
+		
+		private void checkCalculate(final InvoiceVAT vat, DoubleBox toFocus) {
+			if (vat.isAnyquotaEdited()) {
+				ConfirmDialog cd = new ConfirmDialog();
+				cd.confirm(AON.MSG.manualChangeConfirm(),new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						if (toFocus != null) {
+							toFocus.selectAll();
+							toFocus.setFocus(true);
+						}
+					}
+					
+					@Override
+					public void onAccept() {
+						vat.setQuotaEdited(false);
+						vat.setSurchargeQuotaEdited(false);
+						vat.setDeductibleQuotaEdited(false);
+						calculate(vat);
+						decorateVatQuota(vat);
+						decorateSurchargeQuota(vat);
+						decorateDeductibleQuota(vat);
+						if (toFocus != null) {
+							toFocus.selectAll();
+							toFocus.setFocus(true);
+						}
+					}
+				});
+			} else {
+				calculate(vat);
+			}
+		}
 		private void calculate(InvoiceVAT vat) {
 			InvoiceCalculator.calculate(callback.getInvoice(),vat);
 			populate(vat);

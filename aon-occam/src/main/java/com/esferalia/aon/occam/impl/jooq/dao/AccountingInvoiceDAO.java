@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -152,8 +153,7 @@ public class AccountingInvoiceDAO {
 							boolean withholding = tax.getValue(INVOICE_TAX.TAX_TYPE) == TaxType.RETENTION.ordinal();
 							if (!withholding) {
 								vats.add(vat);
-									vat
-									.setVatDeductionType(AonEnumUtils.enumValue(VatDeductionType.class,tax.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
+								vat.setVatDeductionType(AonEnumUtils.enumValue(VatDeductionType.class,tax.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
 									.setBase(tax.getValue(INVOICE_TAX.BASE))
 									.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
 									.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
@@ -165,6 +165,9 @@ public class AccountingInvoiceDAO {
 									.setExpAccountId(det.getValue(EXP_ACCOUNT.ID))
 									.setExpAccountCode(det.getValue(EXP_ACCOUNT.CODE))
 									.setExpAccountDescription(det.getValue(EXP_ACCOUNT.DESCRIPTION));
+								vat.setQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(vat, vat.getQuota())));
+								vat.setSurchargeQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getSurchargeQuotaGap(vat, vat.getSurchargeQuota())));
+								vat.setDeductibleQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getDeductibleQuotaGap(vat, vat.getDeductibleQuota())));
 							}
 							if (withholding) {
 								vat.setWithholding(withholding);

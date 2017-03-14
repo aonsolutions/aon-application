@@ -36,20 +36,32 @@ public class InvoiceCalculator {
 	}
 	
 	public static void calculate(AccountingInvoice ai, InvoiceVAT vat) {
-		vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
-		vat.setSurchargeQuota( ai.isSurcharge()
-				?AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 )
-				:0.0);
-		vat.setDeductiblePercent(vat.getInvestAsset() != null
-				?vat.getDeductiblePercent()
-				:100.0);
-		vat.setDeductibleQuota(vat.getInvestAsset() != null
-				?AonMathUtils.round( vat.getQuota() * vat.getDeductiblePercent() / 100 )
-				:vat.getQuota());
+		if (!vat.isQuotaEdited()) {
+			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
+		}
+		if (ai.isSurcharge()) {
+			if (!vat.isSurchargeQuotaEdited()) {
+				vat.setSurchargeQuota( AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 ));	
+			}
+		} else {
+			vat.setSurchargeQuota( 0.0);	
+		}
+		vat.setDeductiblePercent(vat.getInvestAsset() != null?vat.getDeductiblePercent():100.0);
+		if ( vat.getInvestAsset() != null ) {
+			if (!vat.isDeductibleQuotaEdited()) {
+				vat.setDeductibleQuota( AonMathUtils.round( vat.getQuota() * vat.getDeductiblePercent() / 100 ));
+			}
+		} else {
+			vat.setDeductibleQuota( vat.getQuota() );
+		}
 	}
 	
 	public static void reverseCalculate(AccountingInvoice ai, double total) {
-		InvoiceVAT vat = ai.getFirstVat();
+		reverseCalculate(ai, ai.getFirstVat(),total);
+	}
+	
+	public static void reverseCalculate(AccountingInvoice ai, InvoiceVAT vat, double total) {
+		
 		double vatPerc = vat.getPercentage();
 		double surchargePerc = vat.getSurcharge();
 		double withholdingPerc = 0.0;
@@ -63,7 +75,6 @@ public class InvoiceCalculator {
 		calculate(ai,vat);
 		calculate(ai);
 	}
-	
 	
 	private static double reverseCalculate(double vatPercent, double surchargePercent, double withholdingPerc, double total) {
 		total = AonMathUtils.round(total);
@@ -98,6 +109,28 @@ public class InvoiceCalculator {
 				+ AonMathUtils.round(base * surchargePercent / 100) 
 				- AonMathUtils.round(base * retentionPercent / 100)
 				);
+	}
+
+	public static double getQuota(InvoiceVAT vat) {
+		return AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 );		
+	}
+	public static double getQuotaGap(InvoiceVAT vat, Double quota) {
+		if (quota == null) quota = 0.0;
+		return AonMathUtils.absRounded(quota - (vat.getBase() * vat.getPercentage() / 100 ));		
+	}
+	public static double getSurchargeQuota(InvoiceVAT vat) {
+		return AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 );		
+	}
+	public static double getSurchargeQuotaGap(InvoiceVAT vat, Double surchargeQuota) {
+		if (surchargeQuota == null) surchargeQuota = 0.0;
+		return AonMathUtils.absRounded(surchargeQuota - (vat.getBase() * vat.getSurcharge() / 100 ));		
+	}
+	public static double getDeductibleQuota(InvoiceVAT vat) {
+		return AonMathUtils.round( (vat.getBase() * vat.getPercentage() / 100) * vat.getDeductiblePercent() / 100 );		
+	}
+	public static double getDeductibleQuotaGap(InvoiceVAT vat, Double deductibleQuota) {
+		if (deductibleQuota == null) deductibleQuota = 0.0;
+		return AonMathUtils.absRounded(deductibleQuota - (vat.getQuota() * vat.getDeductiblePercent() / 100));		
 	}
 	
 

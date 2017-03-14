@@ -127,6 +127,7 @@ public interface CommonMessages extends Messages {
 		,"M311"		,"Mod. 311"
 		,"M200"		,"Mod. 200"
 		,"M202"		,"Mod. 202"
+		,"M303"		,"Mod. 303"
 		})	
 	String fiscalModelType(@Select FiscalModelType f);
 
@@ -152,6 +153,7 @@ public interface CommonMessages extends Messages {
 		,"M311"		,"IVA. Autoliquidaci\u00F3n Final. R\u00E9gimen Simplificado"
 		,"M200"		,"Declaraci\u00F3n-liquidaci\u00F3n del Impuesto sobre Sociedades."
 		,"M202"		,"Impuesto sobre sociedades. Pago fraccionado."
+		,"M303"		,"IVA. Autoliquidaci\u00F3n."
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
 
@@ -2872,6 +2874,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00BFDesea cambiar el n\u00FAmero de documento en todas las l\u00EDneas del asiento?")
 	String changeDocument();
 
+	@DefaultMessage("Alg\u00FAn dato de la l\u00EDnea, se ha modificado manualmente. \u00BFDesea recalcular la l\u00EDnea?")
+	String manualChangeConfirm();
+
 	@DefaultMessage("Asientos generados")
 	String generatedAccountEntries();
 
@@ -3246,4 +3251,10 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Factura creada desde \"gesti\u00F3n\"")
 	String managmentInvoice();
+	
+	@DefaultMessage("El valor no coincide con el c\u00E1lculo. Deber\u00EDa ser: {0,number}")
+	String editedValue(double value);
+	
+	@DefaultMessage("El valor no coincide con el c\u00E1lculo y supera el margen de aviso. Deber\u00EDa ser: {0,number} ( diferencia {1,number} )")
+	String editedValueWarning(double value,double gap);
 }

@@ -8,6 +8,10 @@ public class InvoiceVAT implements Serializable {
 
 	private static final long serialVersionUID = 8897444490096530091L;
 
+	private boolean quotaEdited;
+	private boolean surchargeQuotaEdited;
+	private boolean deductibleQuotaEdited;
+	
 	private VatDeductionType vatDeductionType;
 	private double base;
 	private double percentage;
@@ -33,6 +37,30 @@ public class InvoiceVAT implements Serializable {
 	private String expAccountCode;
 	private String expAccountDescription;
 
+	public boolean isAnyquotaEdited() {
+		return isQuotaEdited() || isSurchargeQuotaEdited() || isDeductibleQuotaEdited();
+	}
+	public boolean isQuotaEdited() {
+		return quotaEdited;
+	}
+	public InvoiceVAT setQuotaEdited(boolean quotaEdited) {
+		this.quotaEdited = quotaEdited;
+		return this;
+	}
+	public boolean isSurchargeQuotaEdited() {
+		return surchargeQuotaEdited;
+	}
+	public InvoiceVAT setSurchargeQuotaEdited(boolean surchargeQuotaEdited) {
+		this.surchargeQuotaEdited = surchargeQuotaEdited;
+		return this;
+	}
+	public boolean isDeductibleQuotaEdited() {
+		return deductibleQuotaEdited;
+	}
+	public InvoiceVAT setDeductibleQuotaEdited(boolean deductibleQuotaEdited) {
+		this.deductibleQuotaEdited = deductibleQuotaEdited;
+		return this;
+	}
 	public VatDeductionType getVatDeductionType() {
 		return vatDeductionType;
 	}
