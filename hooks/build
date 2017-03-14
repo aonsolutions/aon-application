@@ -24,8 +24,10 @@ BUILD=$(wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/a
 | grep -oE $POM_VERSION'[^"]*' | wc -l)
 export BUILD
 
-IMAGE_NAME=$POM_VERSION-$BUILD
+IMAGE_NAME=$POM_VERSION-$BUILD-tomcat9-jre8
 export IMAGE_NAME
 
+echo  'New name and tag of the Docker repository being built is '$IMAGE_NAME
 
-echo  'New tag will be '$IMAGE_NAME
+docker build --build-arg AON_VERSION=$POM_VERSION -t aon-application:$IMAGE_NAME .
+
