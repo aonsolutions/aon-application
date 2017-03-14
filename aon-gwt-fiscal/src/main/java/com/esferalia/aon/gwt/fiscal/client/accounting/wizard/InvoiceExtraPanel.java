@@ -70,9 +70,6 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	FlowPanel eastPanelInner;
 	Label invoiceTypeLabel;
 	
-//	DocumentTypeListBox rDocumentType;
-//	Country2ListBox rDocumentCountry;
-//	DocumentTextBox rDocument;
 	FullDocument fullDocument;
 	TextBox rName;
 	DateBoxEx taxDate;
@@ -334,6 +331,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				callback.getInvoice().getInvoice().setTaxDate(event.getValue());
+				decorateTaxDate(callback.getInvoice());
 			}
 		});
 		
@@ -637,12 +635,24 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 			vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
 			service.setValue(invoice.isService());
 			transactionBox.setValue(invoice.getTransaction());
-			taxDate.setValue(invoice.getInvoice().getIssueDate());
+			taxDate.setValue(invoice.getInvoice().getTaxDate());
+			decorateTaxDate(invoice);
 			ar.getType().visit(invoice.getRegistry(),accountingRegistryVisitor);
 		}
 	}
 	
-	
+	private void decorateTaxDate(AccountingInvoice ai) {
+		Date issue = ai.getInvoice().getIssueDate();
+		Date tax = ai.getInvoice().getTaxDate();
+		if(    (issue == null && tax != null)
+			|| (issue != null && tax == null)
+			|| (issue.compareTo(tax) != 0)) {
+			taxDate.addStyleName(AON.AON_CSS.aonChanged());
+		} else {
+			taxDate.removeStyleName(AON.AON_CSS.aonChanged());
+		}
+	}
+
 	private String getInvoiceLabel(InvoiceType invoiceType, RectificationType rt) {
 		String x = "";
 		if (rt == null || rt == RectificationType.NONE) {
