@@ -152,7 +152,7 @@ public class FillerDAO {
 					.setPrice(r.getValue(RITEM.PRICE))
 					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
 					.setWorkplace(r.getValue(RITEM.WORKPLACE))
-					.setPriority(Priority.values()[r.getValue(RITEM.PRIORITY)])
+					.setPriority(Priority.safeValueOf(r.getValue(RITEM.PRIORITY)))
 					.setStatus(RegistryItemStatus.values()[r.getValue(RITEM.STATUS)]);
 		}
 	}
