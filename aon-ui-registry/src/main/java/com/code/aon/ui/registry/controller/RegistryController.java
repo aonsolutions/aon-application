@@ -94,6 +94,7 @@ import com.code.aon.report.poi.ReportExporter;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.event.RegistryFormListener;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.master.CarrierDB;
 import com.esferalia.aon.entity.master.TargetDB;
 
 public class RegistryController extends BasicController {
@@ -380,12 +381,13 @@ public class RegistryController extends BasicController {
 
 	private String getDetailColumns(Class<?> pojoClass) {
 		String accountColumn = ",acc.code `" + AonUtil.getMessage(FINANCE_ACCOUNT) + "`";
+		String statusColumn = ",ELT(c.status+1" + ",'"
+				+ AonUtil.getMessage(ACTIVE) + "'" + ",'"
+				+ AonUtil.getMessage(INACTIVE) + "'" + ",'"
+				+ AonUtil.getMessage(BLOCKED) + "'" + ") `"
+				+ AonUtil.getMessage(STATUS) + "`";
 		return " r.id `" + AonUtil.getMessage(ID) + "`"
-		+",ELT(c.status+1"
-		+",'"+AonUtil.getMessage(ACTIVE)+"'"
-		+",'"+AonUtil.getMessage(INACTIVE)+"'"
-		+",'"+AonUtil.getMessage(BLOCKED)+"'"
-			+") `" + AonUtil.getMessage(STATUS) + "`"
+		+ ((!CarrierDB.class.isAssignableFrom(pojoClass))?statusColumn:"")		
 		+",ELT(r.type+1" 
 			+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"			
 			+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
@@ -503,6 +505,11 @@ public class RegistryController extends BasicController {
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 
+			String statusColumn = ",ELT(c.status+1" + ",'"
+					+ AonUtil.getMessage(ACTIVE) + "'" + ",'"
+					+ AonUtil.getMessage(INACTIVE) + "'" + ",'"
+					+ AonUtil.getMessage(BLOCKED) + "'" + ") ";
+			
 			Class<?> pojoClass = (Class<?>) Class.forName( getPojo() );
 			String select = "SELECT "
 					+"c.registry" 
@@ -510,11 +517,7 @@ public class RegistryController extends BasicController {
 					+",r.name" 
 					+",(SELECT rm1.value FROM rmedia rm1 WHERE r.id = rm1.registry  AND rm1.media = 1 LIMIT 1) phone" 
 					+",r.alias" 
-					+",ELT(c.status+1"
-					+",'"+AonUtil.getMessage(ACTIVE)+"'"
-					+",'"+AonUtil.getMessage(INACTIVE)+"'"
-					+",'"+AonUtil.getMessage(BLOCKED)+"'"
-					+") "
+					+ ((!CarrierDB.class.isAssignableFrom(pojoClass))?statusColumn:"")		
 					
 					+((!TargetDB.class.isAssignableFrom(pojoClass))?"":(",ELT(c.advertising+1"+",'"+Advertising.ALLOWED.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"+") "))
 					+ getSqlTables(pojoClass);
@@ -548,7 +551,10 @@ public class RegistryController extends BasicController {
 				String name= (String) o[2];
 				String phone= (String) o[3];
 				String alias= (String) o[4];
-				String status= (String) o[5];
+				String status= null;
+				if (!CarrierDB.class.isAssignableFrom(pojoClass)) {
+					status= (String) o[5];
+				}
 				String advertising = null;
 				if (TargetDB.class.isAssignableFrom(pojoClass)) {
 					advertising = (String) o[6];	
