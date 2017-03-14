@@ -51,6 +51,17 @@
 			<param id="title" value="#{seller.getReportTitle}" />
 		</params>
 	</report>
+	<report id="carrierReport" description="Carrier report ">
+		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
+		<bean key="com.code.aon.carrier.Carrier" />
+		<collection provider="#{carrier}" forceRefresh="false"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="title" value="#{customer.getReportTitle}" />
+		</params>
+	</report>
 
 	<!-- *********  REGISTRY ADD INFO  ********* -->
 	<report id="registryAddInfoReport" description="Registry Add Info report ">
