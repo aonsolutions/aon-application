@@ -744,7 +744,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						.and(f.getSerialDateProperty().isNull())
 						.and(f.getSerialNumberProperty().isNull()));
 
-		List<RegistryItem> rItemList = AON.getRItemList(
+		List<RegistryItem> rItemList = AON.getRItemStream(
 				getDomain(),
 				getDomainId(),
 				getUser(),
@@ -755,7 +755,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						.and(f.getTypeProperty().eq(
 								RegistryMode.CUSTOMER.value()))
 						.and(f.getStatusProperty().eq(
-								RegistryItemStatus.ACTIVE.value())));
+								RegistryItemStatus.ACTIVE.value())))
+								.collect(Collectors.toList());
 
 		if (rItemList != null && !rItemList.isEmpty()) {
 			return rItemList.get(0);

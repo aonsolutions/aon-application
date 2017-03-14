@@ -39,4 +39,14 @@ public enum Priority implements Serializable {
 			if(name.equals(p.getName())) return p;
 		return NONE;
 	}
+	
+	public static Priority safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static Priority safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= Priority.values().length) return null;
+		return Priority.values()[i];
+	}
 }
