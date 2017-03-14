@@ -39,7 +39,7 @@ public class BookingInfo implements Serializable {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(BookingInfo.class);
 	
-	private final static Module[] AON_ONE_MODULES = {Module.ACCOUNTING, Module.DOCUMENT};
+	private final static Module[] AON_ONE_MODULES = {Module.CALL_CENTER, Module.ACCOUNTING, Module.DOCUMENT};
 
 	private Domain domain;
 	
@@ -362,7 +362,7 @@ public class BookingInfo implements Serializable {
 	}
 		
 	private void updateEnterpriseModules() throws ManagerBeanException {
-		if ( isAonOne() ) {
+		if (isAonOne()) {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));

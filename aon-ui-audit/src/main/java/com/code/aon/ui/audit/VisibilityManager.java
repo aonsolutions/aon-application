@@ -28,7 +28,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(VisibilityManager.class);
 	
 	private final static Module[] AON_ONE_MODULES =
-		{Module.AON_ONE, Module.DOCUMENT, Module.ACCOUNTING};
+		{Module.AON_ONE, Module.DOCUMENT, Module.ACCOUNTING, Module.CALL_CENTER};
 		
 	private boolean hasModule( Integer domainId, Module module ) {
 		boolean defined = false;
