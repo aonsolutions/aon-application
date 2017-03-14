@@ -15,7 +15,7 @@ public class RegistryItem implements Serializable {
 	private Integer domain;
 	private Integer registry;
 	private Integer item;
-	private Byte type;
+	private RegistryMode type;
 	private String code;
 	private Double price;
 	private String discountExpr;
@@ -63,11 +63,11 @@ public class RegistryItem implements Serializable {
 		return this;
 	}
 
-	public Byte getType() {
+	public RegistryMode getType() {
 		return type;
 	}
 
-	public RegistryItem setType(Byte type) {
+	public RegistryItem setType(RegistryMode type) {
 		this.type = type;
 		return this;
 	}
