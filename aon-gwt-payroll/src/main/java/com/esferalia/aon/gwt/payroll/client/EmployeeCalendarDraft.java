@@ -923,10 +923,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		dialogEre.open();
 	}
 	
+	//TODO: mirar que hacer con el porcentaje de ERE
 	@UiHandler("dialogEreOk")
 	public void onDialogEreaClick(ClickEvent event) {
-		//TODO: mirar que hacer con el porcentaje de ERE
-		//Window.alert("Coeficiente ere :"+erePercent.getText());
+		double ce = Double.parseDouble(erePercent.getText());
+		for(Date dia : fechasSelecciondas.getSelectedList())
+			calendarEmployeeInfo.setCoeficienteEre(dia, ce);
 		dialogEre.close();
 		addEreDay();
 	}
@@ -1439,6 +1441,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 	
 	private void actualizarHoras(double horasLunes, double horasMartes, double horasMiercoles, double horasJueves, double horasViernes, double horasSabado, double horasDomingo) {
+//		Window.alert("L :"+horasLunes+", M :"+horasMartes+", X :"+horasMiercoles+", J :"+horasJueves+", V :"+horasViernes+
+//					 ", S :"+horasSabado+", D :"+horasDomingo);
 		for (Date date : fechasSelecciondas.getSelectedList()) {
 			if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
 				calendarEmployeeInfo.setHourByDay(date, horasDomingo);

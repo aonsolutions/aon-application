@@ -304,6 +304,7 @@ public class SalaryDraftObject implements IContextProvider {
 		removeCalendarDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+		//addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
 		employeeCalendarDraftObjectData.clearDraftHours();
 		
@@ -354,6 +355,7 @@ public class SalaryDraftObject implements IContextProvider {
 		removeCalendarDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+		//addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
 
 		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
@@ -1073,8 +1075,12 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 	
 	private void addCalendarDraft(ArrayList<StringVariable> variablesList) {
-		for (StringVariable stringVariable : variablesList)
-				salaryDraft.addDraftVariable(stringVariable);	
+		for (StringVariable stringVariable : variablesList){
+				salaryDraft.addDraftVariable(stringVariable);
+				if (stringVariable.getName().equals("COEFICIENTE_ERE")){
+					//Window.alert("Coeficiente ERE :"+stringVariable.getExpression());
+				}
+		}
 	}
 
 	private static void setDeductionType(Deduction d,

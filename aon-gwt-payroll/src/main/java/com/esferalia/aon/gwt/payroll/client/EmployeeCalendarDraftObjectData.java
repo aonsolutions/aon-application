@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -26,6 +27,7 @@ public class EmployeeCalendarDraftObjectData {
 	
 	private Map<Date,Double> draftMapaDiasHoras;
 	private Map<Date, DayType> draftMapaDiasTipo;
+	private Map<Date, Double> draftMapaDiasCoeficienteEre;
 	
 	private Date startContract;
 	private Date endContract;
@@ -232,6 +234,7 @@ public class EmployeeCalendarDraftObjectData {
 		
 		this.draftMapaDiasHoras = new HashMap<Date,Double>();
 		this.draftMapaDiasTipo = new HashMap<Date,DayType>();
+		this.draftMapaDiasCoeficienteEre = new HashMap<Date,Double>();
 		
 		this.startContract = startContract;
 		this.endContract = endContract;
@@ -284,7 +287,6 @@ public class EmployeeCalendarDraftObjectData {
 	public void setHourByDay (Date dia, Double hour){
 		Double old = draftMapaDiasHoras.put(dia, hour);
 		undoManager.add(new SetHourEdit(old, hour, dia));
-		//undoManager.add(new CompositeUndoable<Undoable>(undos));
 	} 
 	
 	public void setHourByDay (Map<Date, Double> hours){
@@ -295,7 +297,12 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 		
-	} 
+	}
+	
+	//TODO: setCoeficienteEre
+	public void setCoeficienteEre(Date dia, double ce) {
+		draftMapaDiasCoeficienteEre.put(dia, ce);
+	}
 
 	
 	// ---------------------------------------------- METODOS AUXILIARES ---------------------------------------------
@@ -337,16 +344,16 @@ public class EmployeeCalendarDraftObjectData {
 		return v instanceof CalendarVariable ;
 	}
 	
-	public ArrayList<StringVariable> __getVariablesList(Date startDate, Date endDate) {
+	//TODO: creacion variables del coeficienteERE
+	public ArrayList<StringVariable> getVariablesListCE(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
 		
-		for (Entry<Date,Double> entry : draftMapaDiasHoras.entrySet()) {		
+		for (Entry<Date,Double> entry : draftMapaDiasCoeficienteEre.entrySet()) {		
 			if (startDate.compareTo(entry.getKey())<=0 
 					&& endDate.compareTo(entry.getKey())>=0 ){
 				
-				@SuppressWarnings("deprecation")
-				String name = calcularDiaSemana (entry.getKey().getDay());
+				String name = "COEFICIENTE_ERE";
 				
 				CalendarVariable var = new CalendarVariable();
 				var.setImplicit(false);
@@ -362,6 +369,8 @@ public class EmployeeCalendarDraftObjectData {
 		
 		return variablesList;
 	}
+	
+	
 
 	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
 
@@ -703,4 +712,6 @@ public class EmployeeCalendarDraftObjectData {
 		undoManager.discardAll();
 		
 	}
+
+	
 }
