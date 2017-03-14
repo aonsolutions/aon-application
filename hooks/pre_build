@@ -1,26 +1,31 @@
 #!/bin/bash
-POM_VERSION=$(cat <<EOF | xsltproc - pom.xml
-<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0"
-xmlns:pom="http://maven.apache.org/POM/4.0.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
->
-<xsl:output method="text" />
 
-<xsl:template match="pom:project/pom:version/text()">
-<xsl:value-of select="."/>
-</xsl:template>
+#POM_VERSION=$(cat <<EOF | xsltproc - pom.xml
+#<?xml version="1.0" encoding="UTF-8"?>
+#<xsl:stylesheet version="1.0"
+#xmlns:pom="http://maven.apache.org/POM/4.0.0"
+#xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+#>
+#<xsl:output method="text" />
+#
+#<xsl:template match="pom:project/pom:version/text()">
+#<xsl:value-of select="."/>
+#</xsl:template>
+#
+#<xsl:template match="text()"/>
+#
+#</xsl:stylesheet>
+#EOF
+#)
 
-<xsl:template match="text()"/>
+POM_VERSION=$(grep -Po "(?<=<version>)[[:digit:]]+\.[[:digit:]]+-SNAPSHOT(?=</version>)" pom.xml)
 
-</xsl:stylesheet>
-EOF
-)
-
-
-SNAPSHOT_VERSION=$(wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
+BUILD=$(wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
 | grep -oE $POM_VERSION'[^"]*' | wc -l)
+export BUILD=$BUILD
 
-export TAG=$POM_VERSION-$SNAPSHOT_VERSION
+TAG=$POM_VERSION-$BUILD
+export TAG=$TAG;
+
 
 echo  'New tag will be '$TAG
