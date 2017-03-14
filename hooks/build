@@ -29,5 +29,5 @@ export IMAGE_NAME
 
 echo  'New name and tag of the Docker repository being built is '$IMAGE_NAME
 
-docker build --build-arg AON_VERSION=$POM_VERSION -t aon-application:$IMAGE_NAME .
+docker build --build-arg AON_VERSION=$POM_VERSION -t aonsolutions/aon-application:$IMAGE_NAME .
 
