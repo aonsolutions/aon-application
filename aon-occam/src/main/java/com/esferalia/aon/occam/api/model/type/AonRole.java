@@ -28,8 +28,8 @@ public enum AonRole implements Serializable {
 	,PAYROLL( "Payroll" ) 			// Capacidad de modificar las expresiones de las percepciones y deducciones.
 	,FISCAL( "Fiscal" ) 			// Acceso a los informes de nominas.
 	,ACCOUNTING_MANAGER( "AccountingManager" ) // Gestor de Contabilidad.
-	,CALL_CENTER( "Document" ) 			// Acceso al Call Center.
-	,CALL_CENTER_MANAGER( "DocumentManager" ) 	// Administrador Call Center.
+	,CALL_CENTER( "CallCenter" ) 			// Acceso al Call Center.
+	,CALL_CENTER_MANAGER( "CallCenterManager" ) 	// Administrador Call Center.
 	;
 	 
 	private String value;
