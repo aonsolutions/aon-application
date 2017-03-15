@@ -103,6 +103,7 @@ public class AccountStatementDAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ID
+					,ACCOUNT_ENTRY.JOURNAL
 					,ACCOUNT_ENTRY.ENTRY_DATE
 					,ACCOUNT_ENTRY_DETAIL.ACCOUNT
 					,DET_ACCOUNT.CODE
@@ -163,6 +164,7 @@ public class AccountStatementDAO {
 		public AccountStatement apply(Record record) {
 			return new AccountStatement()
 				.setAccountEntry( record.getValue(ACCOUNT_ENTRY.ID))
+				.setJournal( record.getValue(ACCOUNT_ENTRY.JOURNAL))
 				.setEntryDate( record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
 				.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.setAccountCode(record.getValue(DET_ACCOUNT.CODE))

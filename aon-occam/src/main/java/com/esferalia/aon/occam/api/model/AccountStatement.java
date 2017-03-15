@@ -9,6 +9,7 @@ public class AccountStatement implements Serializable {
 	
 	private Integer type;
 	private Integer accountEntry;
+	private Integer journal;
 	private Date entryDate;
 	private Integer account;
 	private String accountCode;
@@ -39,8 +40,13 @@ public class AccountStatement implements Serializable {
 		this.accountEntry = accountEntry;
 		return this;
 	}
-
-	
+	public Integer getJournal() {
+		return journal;
+	}
+	public AccountStatement setJournal(Integer journal) {
+		this.journal = journal;
+		return this;
+	}
 	public Date getEntryDate() {
 		return entryDate;
 	}

@@ -152,7 +152,7 @@ public class AccountStatementPanel extends ScrollPanel implements HasSelectionHa
 							}
 							header.add(label);
 						}
-						Label header1 = new Label("   ASIENTO    FECHA   CONCEPTO                                      "
+						Label header1 = new Label("    DIARIO    FECHA   CONCEPTO                                      "
 								+ "DEBE            HABER     SALDO DEUDOR    SALDO ACREDOR CONTRAPR. NUM.DOCUMENTO");
 						header1.setStyleName(AON.AON_CSS.aonBold());
 						header1.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -166,7 +166,7 @@ public class AccountStatementPanel extends ScrollPanel implements HasSelectionHa
 						} else {
 							for (final AccountStatement as : result.getDetails()) {
 								final Label label = new Label(
-										AonStringUtils.leftPad(AonNumberUtils.toString(as.getAccountEntry()), 10)
+										AonStringUtils.leftPad(AonStringUtils.defaultIfEmpty(AonNumberUtils.toString(as.getJournal()),AonStringUtils.SPACE), 10)
 										+AonStringUtils.center(AON.DATE_FORMAT.format(as.getEntryDate()),12)
 										+AonStringUtils.rightPad(AonStringUtils.abbreviate(as.getConcept(),32), 33)
 										+AonStringUtils.leftPad(AonMathUtils.isZero(as.getDebit())?AonStringUtils.SPACE:AON.FMT.format(as.getDebit()),17)		
@@ -204,7 +204,7 @@ public class AccountStatementPanel extends ScrollPanel implements HasSelectionHa
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						Label label = new Label(AON.MSG.noData());
+						Label label = new Label(AON.MSG.noData() + " ["+caught+"]");
 						panel.add(label );
 					}
 					
