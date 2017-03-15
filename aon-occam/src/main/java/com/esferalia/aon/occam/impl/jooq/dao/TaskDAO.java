@@ -715,7 +715,7 @@ public class TaskDAO {
 	public static Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter){
 		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.NAME, CUSTOMER.STATUS)
 				.from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
-							.join(RMEDIA).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
+							.leftOuterJoin(RMEDIA).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId()))
 				.and(REGISTRY.NAME.contains(filter).or(REGISTRY.ALIAS.contains(filter)).or(RMEDIA.VALUE.contains(filter)).or(REGISTRY.DOCUMENT.contains(filter)))
 			.fetch().stream().map(new TaskFilterCustomerFiller());
