@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -1442,22 +1443,44 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void actualizarHoras(double horasLunes, double horasMartes, double horasMiercoles, double horasJueves, double horasViernes, double horasSabado, double horasDomingo) {
 //		Window.alert("L :"+horasLunes+", M :"+horasMartes+", X :"+horasMiercoles+", J :"+horasJueves+", V :"+horasViernes+
 //					 ", S :"+horasSabado+", D :"+horasDomingo);
-		for (Date date : fechasSelecciondas.getSelectedList()) {
-			if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
-				calendarEmployeeInfo.setHourByDay(date, horasDomingo);
-			}else if (es(6, date) && horas[5] != horasSabado){//SABADO
-				calendarEmployeeInfo.setHourByDay(date, horasSabado);
-			}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
-				calendarEmployeeInfo.setHourByDay(date, horasViernes);
-			}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
-				calendarEmployeeInfo.setHourByDay(date, horasJueves);
-			}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
-				calendarEmployeeInfo.setHourByDay(date, horasMiercoles);
-			}else if (es(2, date) && horas[1] != horasMartes){//MARTES
-				calendarEmployeeInfo.setHourByDay(date, horasMartes);
-			}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
-				calendarEmployeeInfo.setHourByDay(date, horasLunes);
+		if(fechasSelecciondas.getSelectedList().size() == 1){
+			for (Date date : fechasSelecciondas.getSelectedList()) {
+				if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
+					calendarEmployeeInfo.setHourByDay(date, horasDomingo);
+				}else if (es(6, date) && horas[5] != horasSabado){//SABADO
+					calendarEmployeeInfo.setHourByDay(date, horasSabado);
+				}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
+					calendarEmployeeInfo.setHourByDay(date, horasViernes);
+				}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
+					calendarEmployeeInfo.setHourByDay(date, horasJueves);
+				}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
+					calendarEmployeeInfo.setHourByDay(date, horasMiercoles);
+				}else if (es(2, date) && horas[1] != horasMartes){//MARTES
+					calendarEmployeeInfo.setHourByDay(date, horasMartes);
+				}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
+					calendarEmployeeInfo.setHourByDay(date, horasLunes);
+				}
 			}
+		}else{
+			HashMap<Date, Double> composite = new HashMap<Date, Double>();
+			for (Date date : fechasSelecciondas.getSelectedList()) {
+				if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
+					composite.put(date, horasDomingo);
+				}else if (es(6, date) && horas[5] != horasSabado){//SABADO
+					composite.put(date, horasSabado);
+				}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
+					composite.put(date, horasViernes);
+				}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
+					composite.put(date, horasJueves);
+				}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
+					composite.put(date, horasMiercoles);
+				}else if (es(2, date) && horas[1] != horasMartes){//MARTES
+					composite.put(date, horasMartes);
+				}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
+					composite.put(date, horasLunes);
+				}
+			}
+			calendarEmployeeInfo.setHourByDay(composite);
 		}
 		limpiarSeleccion(fechasSelecciondas.getSelectedList());
 		fechasSelecciondas.getSelectedList().clear();
