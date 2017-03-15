@@ -1,38 +1,7 @@
 #!/bin/bash
 
-#POM_VERSION=$(cat <<EOF | xsltproc - pom.xml
-#<?xml version="1.0" encoding="UTF-8"?>
-#<xsl:stylesheet version="1.0"
-#xmlns:pom="http://maven.apache.org/POM/4.0.0"
-#xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-#>
-#<xsl:output method="text" />
-#
-#<xsl:template match="pom:project/pom:version/text()">
-#<xsl:value-of select="."/>
-#</xsl:template>
-#
-#<xsl:template match="text()"/>
-#
-#</xsl:stylesheet>
-#EOF
-#)
-
 POM_VERSION=$(grep -Po "(?<=<version>)[[:digit:]]+\.[[:digit:]]+-SNAPSHOT(?=</version>)" pom.xml)
 
-echo  'Tags for '$POM_VERSION' :'
-wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
-| grep -oE $POM_VERSION'[^"]*'
-echo  ' '
 
-BUILD=$(wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
-| grep -oE $POM_VERSION'[^"]*' | wc -l)
-export BUILD
-
-TAG=$POM_VERSION-$BUILD-tomcat9-jre8
-export TAG
-
-echo  'New tag being built is '$TAG
-
-docker build --build-arg AON_VERSION=$POM_VERSION -t aonsolutions/aon-application:$TAG .
+docker build --build-arg AON_VERSION=$POM_VERSION -t $IMAGE_NAME.
 
