@@ -923,7 +923,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		dialogEre.open();
 	}
 	
-	//TODO: mirar que hacer con el porcentaje de ERE
 	@UiHandler("dialogEreOk")
 	public void onDialogEreaClick(ClickEvent event) {
 		double ce = Double.parseDouble(erePercent.getText());
@@ -1630,7 +1629,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if (pos != -1){
 				int col = calcularColumna(pos);
 				int row = calcularFila(pos);
-				cells[row][col].select(row, col);
+				if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+					cells[row][col].select(row, col);
+				else
+					if(fechasSelecciondas.isSelected(date))
+						fechasSelecciondas.setSelected(DateUtils.copyDateOnly(date), false);	
 			}
 		}
 		

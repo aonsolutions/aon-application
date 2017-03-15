@@ -212,15 +212,46 @@ public class EmployeeCalendarDraftObjectData {
 		
 		@Override
 		public void undo() {
-			if (oldType == null)
+			if (oldType == null){
 				draftMapaDiasTipo.remove(day);
-			else
+//				draftMapaDiasCoeficienteEre.remove(day);
+			}
+			else{
+//				if(DayType.EREDAY.equals(oldType))
+//					draftMapaDiasCoeficienteEre.remove(day);
 				draftMapaDiasTipo.put(day, oldType);
+			}
 		}
 		
 		@Override
 		public void redo() {
 			draftMapaDiasTipo.put(day, newType);
+		}
+	}
+	
+	class SetEreEdit implements Undoable {
+
+		private Double oldEre;
+		private Double newEre;
+		private Date day;
+		
+		public SetEreEdit(Double oldT, Double newT, Date actualDay) {
+			this.oldEre = oldT;
+			this.newEre = newT;
+			this.day = actualDay;
+		}
+		
+		@Override
+		public void undo() {
+			if (oldEre == null)
+				draftMapaDiasCoeficienteEre.remove(day);
+			else
+				draftMapaDiasCoeficienteEre.put(day, oldEre);
+		}
+		
+		@Override
+		public void redo() {
+			draftMapaDiasCoeficienteEre.put(day, newEre);
 		}
 	}
 	
@@ -301,7 +332,8 @@ public class EmployeeCalendarDraftObjectData {
 	
 	//TODO: setCoeficienteEre
 	public void setCoeficienteEre(Date dia, double ce) {
-		draftMapaDiasCoeficienteEre.put(dia, ce);
+		Double old = draftMapaDiasCoeficienteEre.put(dia, ce);
+		undoManager.add(new SetEreEdit(old, ce, dia));
 	}
 
 	
