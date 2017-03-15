@@ -608,7 +608,7 @@ public class Mod130DAO extends FiscalModelDAO {
 					.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
 					.and(p.getAccountCodeProperty().like("6%"))
 					)
-			.filter( br -> (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime()) ));
+			.filter( br -> (!br.hasActivity() || (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime()))));
 	}
 	private static double getRawC02(AONContext ctx, final Mod130 mod) {
 		return getInitialBaseC02(ctx, mod)
