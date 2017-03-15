@@ -21,15 +21,15 @@
 POM_VERSION=$(grep -Po "(?<=<version>)[[:digit:]]+\.[[:digit:]]+-SNAPSHOT(?=</version>)" pom.xml)
 
 echo  'Tags for '$POM_VERSION' :'
-wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
-| grep -oE $POM_VERSION'[^"]*'
+wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags \
+| grep -oE $POM_VERSION
 echo  ' '
 
 BUILD=$(wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
-| grep -oE $POM_VERSION'[^"]*' | wc -l)
+| grep -oE $POM_VERSION | wc -l)
 export BUILD
 
-TAG=$POM_VERSION-$BUILD-tomcat9-jre8
+TAG=aonsolutions/aon-application:$POM_VERSION-$BUILD-tomcat9-jre8
 export TAG
 
 echo  'New tag being built is '$TAG
