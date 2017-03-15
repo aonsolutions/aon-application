@@ -20,14 +20,19 @@
 
 POM_VERSION=$(grep -Po "(?<=<version>)[[:digit:]]+\.[[:digit:]]+-SNAPSHOT(?=</version>)" pom.xml)
 
+echo  'Tags for '$POM_VERSION' :'
+wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
+| grep -oE $POM_VERSION'[^"]*'
+echo  ' '
+
 BUILD=$(wget -O - https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags 2>/dev/null \
 | grep -oE $POM_VERSION'[^"]*' | wc -l)
 export BUILD
 
-IMAGE_NAME=$POM_VERSION-$BUILD-tomcat9-jre8
-export IMAGE_NAME
+TAG=$POM_VERSION-$BUILD-tomcat9-jre8
+export TAG
 
-echo  'New name and tag of the Docker repository being built is '$IMAGE_NAME
+echo  'New tag being built is '$TAG
 
-docker build --build-arg AON_VERSION=$POM_VERSION -t aonsolutions/aon-application:$IMAGE_NAME .
+docker build --build-arg AON_VERSION=$POM_VERSION -t aonsolutions/aon-application:$TAG .
 
