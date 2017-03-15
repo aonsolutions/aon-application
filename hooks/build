@@ -3,5 +3,5 @@
 POM_VERSION=$(grep -Po "(?<=<version>)[[:digit:]]+\.[[:digit:]]+-SNAPSHOT(?=</version>)" pom.xml)
 
 
-docker build --build-arg AON_VERSION=$POM_VERSION -t $IMAGE_NAME.
+docker build --build-arg AON_VERSION=$POM_VERSION -t $IMAGE_NAME .
 
