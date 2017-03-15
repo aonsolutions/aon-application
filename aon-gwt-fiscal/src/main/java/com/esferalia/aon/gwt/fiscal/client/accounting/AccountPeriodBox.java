@@ -40,6 +40,14 @@ public class AccountPeriodBox extends ListBox {
 			periods.add(p);
 		}
 	}
+	public void selectDefaultPeriod() {
+		setSelectedIndex(0);
+		for (int i = 0; i < periods.size(); i++) {
+			if (periods.get(i).isDefaultPeriod()) {
+				setSelectedIndex(i);
+			}
+		}
+	}
 	
 	public boolean isOutOfRange(Date date) {
 		if (date == null) return true;

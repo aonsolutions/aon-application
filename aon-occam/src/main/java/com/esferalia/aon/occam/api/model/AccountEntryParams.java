@@ -128,8 +128,8 @@ public class AccountEntryParams implements Serializable{
 	
 	public boolean hasDetailProperties() {
 		return (account != null 
-			|| debit != null 
-			|| credit != null 
+			|| (debit != null  && debit != 0.0)
+			|| (credit != null && credit != 0.0)
 			|| AonStringUtils.isNotEmpty( concept ) 
 			|| AonStringUtils.isNotEmpty( document  ) );
 	}

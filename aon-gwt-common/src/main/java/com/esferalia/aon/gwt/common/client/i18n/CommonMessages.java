@@ -2315,6 +2315,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fichero")
 	String file();
 	
+ 	@DefaultMessage("Limpiar")
+	String clean();
+	
 	@DefaultMessage("Importar")
 	String importAction();
 	
@@ -2804,7 +2807,7 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Contrapartida")
 	String balancingAccount();
 
-    //-------------------- AON GWT TEMPLATES - Consumption
+ 	//-------------------- AON GWT TEMPLATES - Consumption
  	
  	@DefaultMessage("Limpiar")
 	String cleanTemplates();

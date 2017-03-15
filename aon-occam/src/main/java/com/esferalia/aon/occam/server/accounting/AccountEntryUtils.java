@@ -53,10 +53,10 @@ public class AccountEntryUtils {
 			prop = prop.and(p.getConceptProperty().like(
 					AonStringUtils.SQLlike(params.getConcept())));
 		}
-		if (params.getDebit() != null) {
+		if (params.getDebit() != null && params.getDebit() != 0.0 ) {
 			prop = prop.and(p.getDebitProperty().eq(params.getDebit()));
 		}
-		if (params.getCredit() != null) {
+		if (params.getCredit() != null  && params.getCredit() != 0.0 ) {
 			prop = prop.and(p.getCreditProperty().eq(params.getCredit()));
 		}
 		if (AonStringUtils.isNotEmpty(params.getDocument())) {

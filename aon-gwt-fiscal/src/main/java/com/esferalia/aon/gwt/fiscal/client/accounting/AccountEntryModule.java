@@ -319,8 +319,6 @@ public class AccountEntryModule extends MainEntryPoint {
 							}
 						});
 						journalPanelContainer.setWidget(journalPanel);
-						journalPanel.setUser(configuration.getUser());
-						
 						reset();
 					}
 
