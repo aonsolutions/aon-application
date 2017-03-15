@@ -21,11 +21,11 @@
 POM_VERSION=$(grep -Po "(?<=<version>)[[:digit:]]+\.[[:digit:]]+-SNAPSHOT(?=</version>)" pom.xml)
 
 echo  'Tags for '$POM_VERSION' :'
-curl "https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags" \
+curl "https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags/" \
 | grep -oE $POM_VERSION
 echo  ' '
 
-BUILD=$(curl "https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags" 2>/dev/null \
+BUILD=$(curl "https://registry.hub.docker.com/v2/repositories/aonsolutions/aon-application/tags/" 2>/dev/null \
 | grep -oE $POM_VERSION | wc -l)
 export BUILD
 
