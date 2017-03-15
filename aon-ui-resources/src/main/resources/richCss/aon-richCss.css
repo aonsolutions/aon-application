@@ -565,6 +565,21 @@ color:#000;
  .aon-icon-card-auth{
 	background:transparent url(images/aon-icon/aon-icon-card-auth.png) scroll left center no-repeat;	
  }
+ .aon-icon-card-grey{
+	background:transparent url(images/aon-icon/aon-icon-card-grey.png) scroll left center no-repeat;	
+ }
+ .aon-icon-card-blue{
+	background:transparent url(images/aon-icon/aon-icon-card-blue.png) scroll left center no-repeat;	
+ }
+ .aon-icon-card-red{
+	background:transparent url(images/aon-icon/aon-icon-card-red.png) scroll left center no-repeat;	
+ }
+ .aon-icon-card-green{
+	background:transparent url(images/aon-icon/aon-icon-card-green.png) scroll left center no-repeat;	
+ }
+ .aon-icon-card-green-ok{
+	background:transparent url(images/aon-icon/aon-icon-card-green-ok.png) scroll left center no-repeat;	
+ }
  .aon-icon-cheque{
 	background:transparent url(images/aon-icon/aon-icon-cheque.png) scroll left center no-repeat;	
  }

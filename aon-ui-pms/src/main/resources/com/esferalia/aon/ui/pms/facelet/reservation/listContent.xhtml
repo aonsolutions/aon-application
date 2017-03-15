@@ -206,9 +206,40 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_amount}" />
 		</f:facet>
-		<aon:outputText value="#{to.total}">
-			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-		</aon:outputText>
+		<aon:panelGrid styleClass="aon-width-all aon-noborder" columns="2" 
+			columnClasses="aon-width-20 aon-noborder aon-nopadding,aon-width-auto aon-noborder aon-nopadding">
+			<aon:div rendered="#{!to.blankToken and !to.invoiced and (!to.cancelled or !to.noInvoiceable)}">
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey"
+					rendered="#{to.lastConexFlowOperation == null or to.conexFlowPreauthorizedExpired}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green"
+					rendered="#{to.conexFlowPreauthorizedCheck}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green-ok"
+					rendered="#{to.conexFlowPreauthorizedOk}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-red"
+					rendered="#{to.conexFlowFail}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-blue"
+					rendered="#{to.conexFlowTransactionOk}" />
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" rendered="#{to.lastConexFlowOperation != null}">
+					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70 aon-text-left, aon-noborder aon-bold aon-text-left">
+						<aon:outputText	value="#{bundle.aon_date}:" styleClass="aon-margin-left" />
+						<aon:outputText	value="#{to.lastConexFlowOperation.attachDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:outputText	value="#{bundle.aon_amount}:" styleClass="aon-margin-left" />
+						<aon:outputText value="#{to.conexFlowOperationAmount}" styleClass="aon-text-right">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:panelGrid>
+				</rich:toolTip>
+			</aon:div>
+			<aon:outputText	value="&#160;" rendered="#{to.blankToken or to.invoiced or (to.cancelled and to.noInvoiceable)}" />
+			<aon:panelGroup styleClass="aon-text-right">
+				<aon:outputText value="#{to.total}" styleClass="aon-text-right">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:panelGroup>
+		</aon:panelGrid>
 	</aon:column>
 
 </ui:composition>

@@ -1182,8 +1182,6 @@ public class ProjectReservationController extends BasicController implements IPm
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
         		reservation.setTouristTaxPayed(null);
-        		/*reservation.setSkipDirtyControl(true);
-				accept(event);*/
 				setSelectedTab(INVOICE);
 			}
 		} catch (ManagerBeanException ex) {

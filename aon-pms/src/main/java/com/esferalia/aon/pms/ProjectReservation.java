@@ -40,6 +40,7 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.IProject;
 import com.code.aon.project.ProjectAttachment;
+import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -57,7 +58,7 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 @Entity
 @Table(name="project_reservation")
 @PrimaryKeyJoinColumn(name="project")
-public class ProjectReservation extends ProjectReservationDB implements ICalculableContainer, IProject, IAuditable {
+public class ProjectReservation extends ProjectReservationDB implements ICalculableContainer, IProject, IAuditable, IReservationConstants {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -72,6 +73,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private double realDiscountPercent;
 	private Double advancedAmount;
 	private Integer touristTaxPayed;
+	private ProjectAttachment lastConexFlowOperation;
 	private String hrCreditCardHolder;
 	private String hrCreditCardNumber;
 	private String hrCreditCardExpirationMonth;
@@ -210,6 +212,80 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			LOGGER.error("Error obtaining advanced amount", ex);
 		}
 		return 0;
+	}
+
+	@Transient
+	public ProjectAttachment getLastConexFlowOperation() {
+		if (lastConexFlowOperation == null) {
+			try {
+				IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), getId());
+				criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.CONEXFLOW);
+				criteria.addOrder(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_DATE), false);
+				criteria.addOrder(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ID), false);
+				for (ITransferObject ito : pAttachBean.getList(criteria)) {
+					lastConexFlowOperation = (ProjectAttachment)ito;
+					break;
+				}
+			} catch(ManagerBeanException ex) {
+				LOGGER.error("Error obtaining conexFlow operation", ex);
+			}
+		}
+		return lastConexFlowOperation;
+	}
+	public void setLastConexFlowOperation(ProjectAttachment lastConexFlowOperation) {
+		this.lastConexFlowOperation = lastConexFlowOperation;
+	}
+
+	@Transient
+	public boolean isConexFlowPreauthorizedCheck() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_PREAUTH_CHECK_OK_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
+	public boolean isConexFlowPreauthorizedOk() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		Date dueDate = DateUtils.addDays(new Date(), -7);
+		return lastCfOperation.matches(CONEXFLOW_PREAUTH_OK_PATTERN.replace("%", "(.*)")) && getLastConexFlowOperation().getAttachDate().after(dueDate);
+	}
+
+	@Transient
+	public boolean isConexFlowPreauthorizedExpired() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		Date dueDate = DateUtils.addDays(new Date(), -7);
+		return lastCfOperation.matches(CONEXFLOW_PREAUTH_OK_PATTERN.replace("%", "(.*)")) && getLastConexFlowOperation().getAttachDate().before(dueDate);
+	}
+
+	@Transient
+	public boolean isConexFlowFail() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_FAIL_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
+	public boolean isConexFlowSaleOk() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_CONFIRM_OK_PATTERN.replace("%", "(.*)")) || 
+				lastCfOperation.matches(CONEXFLOW_SALE_OK_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
+	public boolean isConexFlowRefundOk() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_REFUND_OK_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
+	public boolean isConexFlowTransactionOk() {
+		return isConexFlowSaleOk() || isConexFlowRefundOk();
+	}
+
+	@Transient
+	public double getConexFlowOperationAmount() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return NumberUtils.toDouble(StringUtils.substringAfterLast(lastCfOperation, "#"));
 	}
 
 	@Transient

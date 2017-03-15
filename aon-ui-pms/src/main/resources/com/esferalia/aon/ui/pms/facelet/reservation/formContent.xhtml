@@ -317,8 +317,23 @@
 					</aon:panelGrid>
 				</rich:toolTip>
 			</aon:div>
-			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-card"
-				title="Token" rendered="#{!reservation.to.blankToken}" />
+			<aon:div style="display:inline;" 
+				rendered="#{!reservation.to.blankToken and !reservation.to.invoiced and (!reservation.to.cancelled or !reservation.to.noInvoiceable)}">
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey"
+					rendered="#{reservation.to.lastConexFlowOperation == null or reservation.to.conexFlowPreauthorizedExpired}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green"
+					rendered="#{reservation.to.conexFlowPreauthorizedCheck}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green-ok"
+					rendered="#{reservation.to.conexFlowPreauthorizedOk}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-red"
+					rendered="#{reservation.to.conexFlowFail}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-blue"
+					rendered="#{reservation.to.conexFlowTransactionOk}" />
+			</aon:div>
+			<aon:div style="display:inline;" 
+				rendered="#{!reservation.to.blankToken and (reservation.to.invoiced or (reservation.to.cancelled and reservation.to.noInvoiceable))}">
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey" />
+			</aon:div>
 		</aon:div>
 		<aon:div id="AdvanceDiv">
 			<aon:outputLabel for="ProjectReservation_advance"

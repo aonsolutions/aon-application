@@ -27,10 +27,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.esferalia.aon.pms.sql.ISQLConstants;
+import com.esferalia.aon.pms.reservation.IReservationConstants;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
-public class ProjectReservationSearchListener extends ControllerSearchListener implements ISQLConstants {
+public class ProjectReservationSearchListener extends ControllerSearchListener implements IReservationConstants {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -204,23 +204,23 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 			criteria.addInExpression(getController().resolveAlias("ProjectReservation.attachments.id"), attachIds);
 			String alias = getController().resolveAlias("ProjectReservation.attachments.description");
 			switch (getConexFlowOperation().intValue()) {
-				case 1: Expression exp1 = ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_P#%");
-						Expression exp2 = ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_P-CHECK#%");
+				case 1: Expression exp1 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_OK_PATTERN);
+						Expression exp2 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_CHECK_OK_PATTERN);
 						criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 						break;
-				case 2: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_P%-FAIL%"));
+				case 2: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_FAIL_PATTERN));
 						break;
-				case 3: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_C#%"));
+				case 3: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_CONFIRM_OK_PATTERN));
 						break;
-				case 4: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_C-FAIL#%"));
+				case 4: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_CONFIRM_FAIL_PATTERN));
 						break;
-				case 5: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_V#%"));
+				case 5: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_SALE_OK_PATTERN));
 						break;
-				case 6: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_V-FAIL#%"));
+				case 6: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_SALE_FAIL_PATTERN));
 						break;
-				case 7: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_D#%"));
+				case 7: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_REFUND_OK_PATTERN));
 						break;
-				case 8: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "CONEXFLOW%_D-FAIL#%"));
+				case 8: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_REFUND_FAIL_PATTERN));
 						break;
 			}
 		}

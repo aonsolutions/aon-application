@@ -47,6 +47,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservation.setSource(ReservationSource.MANUAL);
 		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 		reservation.setStatus(ReservationStatus.ACTIVE);
+		reservation.setLastConexFlowOperation(null);
 
 		try {
 			controller.getReservationPermission().setReservation(reservation);
@@ -71,6 +72,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
+		reservation.setLastConexFlowOperation(null);
 
 		try {
 			controller.getReservationPermission().setReservation(reservation);
