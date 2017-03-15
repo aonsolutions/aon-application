@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -37,6 +47,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -137,6 +148,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			flushErrors(httpResponse, deliveryList, errorList);
 		} else {
 			httpResponse.setStatus(HttpServletResponse.SC_OK);
+			String successMsg = fillSuccessMessage(deliveryList.getDATOSALBARANES());
+			sendEmail(successMsg, "montse@udapa.com", "eagirrezabal@aonsolutions.es");
 		}
 	}
 	
@@ -147,11 +160,105 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			deliveryList.getERRORES().getERRORES().add(error);
 		});
 		String xml = IngenetXmlValidator.convertToXml(deliveryList, ALBARANES.class);
+		
+		String errorMsg = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
+		sendEmail(errorMsg, "eagirrezabal@aonsolutions.es", "jgarcia@aonsolutions.es");
+		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();
+	}
+	
+	private String fillSuccessMessage(List<ALBARANTYPE> deliveryList) {
+		StringBuffer bf = new StringBuffer("<h1>Recepción de albaranes.</h1>");
+		bf.append("<ul>");
+		deliveryList.forEach(alb -> {
+			bf.append("<li>Albarán " + alb.getNUMERO()+" del " + alb.getFECHAEMISION()+"</li>");
+		});
+		bf.append("</ul>");
+		return bf.toString();
+	}
+	
+	private String fillErrorMessage(List<ALBARANTYPE> deliveryList, List<String> errorList) {
+		StringBuffer bf = new StringBuffer("<h1>Recepción de albaranes.</h1>");
+		bf.append("<ul>");
+		errorList.forEach(error -> {
+			if(error!=null)
+				bf.append("<li>"+error+"</li>");
+		});
+		bf.append("</ul>");
+		deliveryList.forEach(alb -> {
+			bf.append("<h2>Albarán "+alb.getNUMERO()+"</h2>");
+			bf.append("<ul>");
+			alb.getERRORES().getERRORES().forEach(error -> {
+				if(error!=null)
+					bf.append("<li>"+error+"</li>");
+			});
+			bf.append("</ul>");
+		});
+		return bf.toString();
+	}
+	
+	public MailAccount getAdminMailAccount() {
+		return AON.getMailAccountList(getDomain(), getDomainId(), getUser(), 
+				f -> f.getDomainProperty().eq(0)).getFirst();
+	}
+	
+//	public static MailAccount getEmailSender() throws UnsupportedEncodingException {
+//		MailAccount mailAccount = new MailAccount();
+//		mailAccount.setEmail("admin@aonSolutions.es");
+//		mailAccount.setMailUsername("admin@aonSolutions.es");
+//		mailAccount.setPassword("admineM41L");
+//		mailAccount.setIncomingSecurity((byte)ConnectionSecurity.TLS.ordinal());
+//		mailAccount.setIncomingHost("imap.aonsolutions.es");
+//		mailAccount.setOutgoingSecurity((byte)ConnectionSecurity.TLS.ordinal());
+//		mailAccount.setOutgoingHost("smtp.aonsolutions.es");
+//		mailAccount.setDisplayName("aonSolutions");
+//		Address from = new InternetAddress( mailAccount.getEmail(), mailAccount.getDisplayName() );
+//		return new EmailSender( from, mailAccount );							
+//	}
+	
+	protected void sendEmail(String msg, String... recipients) {
+		String domain = getDomain();
+//		domain += ":8080/aon-aio";
+		JSONObject json = new JSONObject();
+		try {
+			String recipientsTo = "";
+			if(recipients!=null){
+				for(String to: recipients){
+					if(!recipientsTo.isEmpty())
+						recipientsTo += ",";
+					recipientsTo += to;
+				}
+			}
+			MailAccount mail = getAdminMailAccount();
+			json.put("mailAccountId", mail.getId())
+				.put("recipientsTo", recipientsTo)
+				.put("content", msg)
+				.put("subject", "[aonSolutions] Recepcion automatica de albaranes")
+				.put("login", getUser())
+				.put("domainName", getDomain())
+				.put("domainId", getDomainId())
+				.put("md5", "")
+				.put("bcc", "");
+		
+			String url = "http://"+domain+ "/send_email/";
+			System.out.println(url);
+			HttpClientBuilder base = HttpClientBuilder.create();
+			HttpClient client = base.build();
+			HttpPost post = new HttpPost(url);
+			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
+			urlParameters.add(new BasicNameValuePair("details", json.toString()));
+			post.setEntity(new UrlEncodedFormEntity(urlParameters));
+			HttpResponse resp = client.execute(post);
+			System.out.println(resp);
+		} catch (JSONException e) {
+			LOGGER.error(e.getMessage());
+		} catch (IOException e){
+			LOGGER.error(e.getMessage());
+		}
 	}
 	
 	

@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+
 
 public class TestIngenetDeliveryServlet  {
 
@@ -17,8 +19,8 @@ public class TestIngenetDeliveryServlet  {
 //		String filePath = "/temp/delivery_example.xml";
 //		String filePath = "/temp/albaranes20170216101946.xml";
 //		String filePath = "/temp/albaranes20170220110328.xml";
-//		String filePath = "/temp/albaranes20170224085549.xml";
-		String filePath = "/temp/albaranes-pv17-114-115.xml";
+		String filePath = "/temp/albaranes20170224085549.xml";
+//		String filePath = "/temp/albaranes-pv17-114-115.xml";
 		
 		try (
 			BufferedReader xml_br = new BufferedReader(new FileReader(filePath))) {
@@ -68,17 +70,25 @@ public class TestIngenetDeliveryServlet  {
         conn.setRequestProperty("User-Agent", "Mozilla/5.0");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
-        conn.connect();
-        conn.getOutputStream().write(postDataBytes);
-        
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8.name()));
-        StringBuffer sb = new StringBuffer();
-        for(String in; (in = br.readLine()) != null;) {
-            sb.append(in + "\n");
-        }
-        System.out.println(sb);
-        br.close();
+        try {
+			conn.connect();
+			conn.getOutputStream().write(postDataBytes);
+			System.out.print("Server response: ");
+			System.out.print("[" + conn.getResponseCode() + "] ");
+			System.out.println(conn.getResponseMessage());
+			
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					conn.getInputStream(), StandardCharsets.UTF_8.name()));
+			StringBuffer sb = new StringBuffer();
+			for (String in; (in = br.readLine()) != null;) {
+				sb.append(in + "\n");
+			}
+			System.out.println(sb);
+			br.close();
+		} catch (ConnectException e) {
+			System.out.println("IMPOSIBLE CONECTAR. " + e.getMessage());
+		}
 	}
 		
 }
