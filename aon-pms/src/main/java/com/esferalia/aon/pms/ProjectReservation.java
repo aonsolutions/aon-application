@@ -285,7 +285,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public double getConexFlowOperationAmount() {
 		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
-		return NumberUtils.toDouble(StringUtils.substringAfterLast(lastCfOperation, "#"));
+		if (StringUtils.indexOf(lastCfOperation, "_", StringUtils.indexOf(lastCfOperation, "#")) < 0) {
+			return NumberUtils.toDouble(StringUtils.substringAfterLast(lastCfOperation, "#"));
+		} else {
+			return NumberUtils.toDouble(StringUtils.substringBetween(lastCfOperation, "#", "_"));
+		}
 	}
 
 	@Transient
