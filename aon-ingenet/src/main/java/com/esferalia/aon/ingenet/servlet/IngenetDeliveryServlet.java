@@ -3,9 +3,14 @@ package com.esferalia.aon.ingenet.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,6 +69,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -85,6 +91,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final String RECIPIENTS_TO_LOG = "udapalog@aonsolutions.es";
+	private static final String RECIPIENTS_TO_SUCCESS = "udapasuccess@aonsolutions.es";
+	private static final String RECIPIENTS_TO_FAILURES = "udapafailures@aonsolutions.es";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetDeliveryServlet.class.getName());
 	
@@ -94,10 +103,15 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	protected void processRequest(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws ServletException, IOException {
 		
-		errorList = new LinkedList<>();
+		boolean test = true;
 		
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
+		
+		sendEmail("LOG", _xml, RECIPIENTS_TO_LOG);
+		saveToDisk(_xml);
+		
 		ALBARANES deliveryList = null;
+		errorList = new LinkedList<>();
 		if(_xml!=null){
 			try {
 				super.validateAlbaranesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
@@ -112,7 +126,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					&& deliveryList.getDATOSALBARANES().size()>0){
 				
 				processData(deliveryList.getDATOSALBARANES(), true);
-				boolean test = "S".equals(deliveryList.getPRUEBA());
+				test = "S".equals(deliveryList.getPRUEBA());
 				if (!test && (errorList == null || errorList.size() <= 0)) {
 					processData(deliveryList.getDATOSALBARANES(), test);
 				}
@@ -147,9 +161,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			errorList.forEach(System.out::println);
 			flushErrors(httpResponse, deliveryList, errorList);
 		} else {
-			httpResponse.setStatus(HttpServletResponse.SC_OK);
-			String successMsg = fillSuccessMessage(deliveryList.getDATOSALBARANES());
-			sendEmail(successMsg, "montse@udapa.com", "eagirrezabal@aonsolutions.es");
+			if (!test) {
+				httpResponse.setStatus(HttpServletResponse.SC_OK);
+				String successMsg = fillSuccessMessage(deliveryList.getDATOSALBARANES());
+				sendEmail(successMsg, null, RECIPIENTS_TO_SUCCESS);
+			}
 		}
 	}
 	
@@ -162,7 +178,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		String xml = IngenetXmlValidator.convertToXml(deliveryList, ALBARANES.class);
 		
 		String errorMsg = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
-		sendEmail(errorMsg, "eagirrezabal@aonsolutions.es", "jgarcia@aonsolutions.es");
+		sendEmail(errorMsg, xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
@@ -220,9 +236,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 //		return new EmailSender( from, mailAccount );							
 //	}
 	
-	protected void sendEmail(String msg, String... recipients) {
-		String domain = getDomain();
-//		domain += ":8080/aon-aio";
+	protected void sendEmail(String msg, String attach, String... recipients) {
 		JSONObject json = new JSONObject();
 		try {
 			String recipientsTo = "";
@@ -237,14 +251,24 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			json.put("mailAccountId", mail.getId())
 				.put("recipientsTo", recipientsTo)
 				.put("content", msg)
-				.put("subject", "[aonSolutions] Recepcion automatica de albaranes")
+				.put("subject", "[AON] Recepcion automatica de albaranes")
 				.put("login", getUser())
 				.put("domainName", getDomain())
 				.put("domainId", getDomainId())
-				.put("md5", "")
-				.put("bcc", "");
+				.put("bcc", "eagirrezabal@aonsolutions.es");
+			
+			if(attach==null || "".equals(attach)){
+				json.put("md5", "");
+			} else {
+				String encode = Base64.getEncoder().encodeToString(attach.getBytes());
+				json.put("md5", encode)
+					.put("attachName", "albaranes")
+					.put("mimetype", MimeType.XML.ordinal());
+			}
 		
-			String url = "http://"+domain+ "/send_email/";
+			String url = getScheme() + "://"
+					+ (isDevEnabled() ? ":8080/aon-aio" : "")
+					+ getDomain() + "/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
@@ -261,6 +285,20 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 	}
 	
+	protected void saveToDisk(String value) {
+		byte data[] = value.getBytes();
+		Path file = Paths.get("/var","tmp","ingenet",new SimpleDateFormat("ddMMyyyy-hhmm").format(new Date())+".xml");
+		try {
+			Path parentDir = file.getParent();
+			if (!Files.exists(parentDir))
+			    Files.createDirectories(parentDir);
+			Files.write(file, data, StandardOpenOption.CREATE_NEW);
+		} catch (IOException e) {
+			LOGGER.error("Error guardando el fichero recibido: " + e.getMessage());
+		} catch (Exception e) {
+			LOGGER.error("Error guardando el fichero recibido: " + e.getMessage());
+		}
+	}
 	
 	private void processData(List<ALBARANTYPE> list, boolean test){
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
@@ -439,7 +477,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 								detail.setPrice(customerRItem.getPrice());
 								detail.setDiscountExpression(customerRItem.getDiscountExpr());
 							}
-							if(detail.getPrice()==null && detail.getPrice().equals(0.0)){
+							if(detail.getPrice()==null || detail.getPrice().equals(0.0)){
 								detail.setPrice(item.getPrice());
 								detail.setDiscountExpression("0");
 							}
@@ -478,7 +516,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					if(linea.getLINEAALBARANCONTENIDA()!=null)
 						packages += ";LIN=" + linea.getLINEAALBARANCONTENIDA();
 					packages += "]";
-					delivery.setRemarks(packages + delivery.getRemarks());
+					delivery.setRemarks(delivery.getRemarks() + "\n" + packages );
 					String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
 					detail.setDescription(description);
 					detail.setWarehouse(warehouse.getId());
