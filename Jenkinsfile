@@ -141,13 +141,15 @@ node {
          sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
       }
 
-      stage 'Docker Build'
+      if (currentBuild.result == 'SUCCESS'){
+          stage 'Docker Build'
 
-      sh "docker build --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
+          sh "docker build --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
 
-      sh "docker login -u rtrepiana -p aon945121010"
+          sh "docker login -u rtrepiana -p aon945121010"
 
-      sh "docker push aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
+          sh "docker push aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
+      }
 
       //stage 'SonarQube Analysis'
       //
