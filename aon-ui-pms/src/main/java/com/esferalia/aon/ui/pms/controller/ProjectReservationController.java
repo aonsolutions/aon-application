@@ -66,6 +66,8 @@ import com.code.aon.marketing.util.MailProcessUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.ProjectAttachment;
+import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -102,6 +104,7 @@ import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.pms.reservation.IReservationConstants;
 import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
@@ -480,6 +483,8 @@ public class ProjectReservationController extends BasicController implements IPm
 			reservationRoomController.onSearch(event);
 			IController reservationServiceController = FormUtil.getController(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
 			reservationServiceController.onSearch(event);
+			IController reservationAttachController = FormUtil.getController(IPmsConstants.RESERVATION_ATTACH_CONTROLLER_NAME);
+			reservationAttachController.onSearch(event);
 			synchronizeAddedPojo();
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -1824,6 +1829,29 @@ public class ProjectReservationController extends BasicController implements IPm
 				setReservationConexFlow(null);
 			}
 		}
+	}
+
+	public void onRemoveToken(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		String token = reservation.getToken();
+		reservation.setToken(null);
+		accept(event);
+
+		ProjectAttachment pAttach = new ProjectAttachment();
+		pAttach.setProject(reservation.getProject());
+		pAttach.setMimeType(MimeType.MIME_XML);
+		pAttach.setDescription(IReservationConstants.CONEXFLOW_REMOVE_TOKEN_PATTERN.replace("?", StringUtils.substring(token, -5)));
+		pAttach.setSecurityLevel(SecurityLevel.OFFICIAL);
+		pAttach.setAttachDate(new Date());
+		pAttach.setAttachType(ProjectAttachmentType.CONEXFLOW);
+		try {
+			BeanManager.getManagerBean(ProjectAttachment.class).insert(pAttach);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+		IController reservationAttachController = FormUtil.getController(IPmsConstants.RESERVATION_ATTACH_CONTROLLER_NAME);
+		reservationAttachController.onSearch(event);
 	}
 
 	public void onConexflowOperation(ActionEvent event) {

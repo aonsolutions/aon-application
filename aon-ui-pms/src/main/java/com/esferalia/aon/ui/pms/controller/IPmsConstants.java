@@ -26,6 +26,7 @@ public interface IPmsConstants {
 	String RESERVATION_GUEST_CONTROLLER_NAME = "reservationGuest";
 	String RESERVATION_ROOM_CONTROLLER_NAME = "reservationRoom";
 	String RESERVATION_SERVICE_CONTROLLER_NAME = "reservationService";
+	String RESERVATION_ATTACH_CONTROLLER_NAME = "reservationAttach";
 	String ROOM_AVAILABILITY_CONTROLLER_NAME = "roomAvailability";
 	String ROOM_CONTROLLER_NAME = "room";
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
