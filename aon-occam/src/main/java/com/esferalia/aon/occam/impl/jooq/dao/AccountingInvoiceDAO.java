@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import org.jooq.conf.ParamType;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -349,14 +351,19 @@ public class AccountingInvoiceDAO {
 
 	private static LinkedList<Account> getSuggestedAccounts(final AONContext ctx, Integer registry) {
 		return ctx.getDslContext()
-			.select( ACCOUNT.ID, ACCOUNT.CODE, ACCOUNT.DESCRIPTION)
-			.from(INVOICE)
-			.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-			.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
-			.join(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
-			.where(INVOICE.REGISTRY.eq(registry))
-			.and(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.asc() , INVOICE_DETAIL.LINE.asc())
+			.selectDistinct( )	
+			.from(				
+				ctx.getDslContext()
+				.select( ACCOUNT.ID, ACCOUNT.CODE, ACCOUNT.DESCRIPTION)
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+				.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
+				.join(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+				.where(INVOICE.REGISTRY.eq(registry))
+					.and(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.orderBy(INVOICE.ID.desc(), INVOICE_DETAIL.LINE.asc())
+				.limit(50)
+			)
 			.limit(3)
 			.fetch()
 			.stream()
