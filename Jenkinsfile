@@ -164,7 +164,7 @@ node {
       //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
       //
       //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.code.aon:aon.webservice -Dsonar.sources=aon-webservice/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-      }
+      //}
       
       
    }   
