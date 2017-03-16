@@ -185,43 +185,47 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 	@SuppressWarnings("unchecked")
 	private void completeConexFlowCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getConexFlowOperation() != null) {
-			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachType"), ProjectAttachmentType.CONEXFLOW);
+			if (getConexFlowOperation().intValue() == 0) {
+				criteria.addNullExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_TOKEN));
+			} else {
+				criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachType"), ProjectAttachmentType.CONEXFLOW);
 
-			IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
-			Projection prjReservation = Projection.property(getFieldName(IEntityAlias.PROJECT_RESERVATION_ID));
-			List<Integer> reservationIds = getController().getManagerBean().getList(new ProjectionList(prjReservation), criteria);
-			Criteria pAttachCriteria = new Criteria();
-			pAttachCriteria.addInExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), reservationIds);
-			pAttachCriteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.CONEXFLOW);
-			Projection prjAttach = Projection.max(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ID));
-			Projection prjGroup = Projection.group(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID));
-			List<Integer> attachIds = new LinkedList<Integer>();
-			for (Object id : pAttachBean.getList(new ProjectionList(prjAttach, prjGroup), pAttachCriteria)) {
-				Object[] obj = (Object[])id;
-				attachIds.add((Integer)obj[0]);
-			}
+				IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
+				Projection prjReservation = Projection.property(getFieldName(IEntityAlias.PROJECT_RESERVATION_ID));
+				List<Integer> reservationIds = getController().getManagerBean().getList(new ProjectionList(prjReservation), criteria);
+				Criteria pAttachCriteria = new Criteria();
+				pAttachCriteria.addInExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), reservationIds);
+				pAttachCriteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.CONEXFLOW);
+				Projection prjAttach = Projection.max(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ID));
+				Projection prjGroup = Projection.group(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID));
+				List<Integer> attachIds = new LinkedList<Integer>();
+				for (Object id : pAttachBean.getList(new ProjectionList(prjAttach, prjGroup), pAttachCriteria)) {
+					Object[] obj = (Object[])id;
+					attachIds.add((Integer)obj[0]);
+				}
 
-			criteria.addInExpression(getController().resolveAlias("ProjectReservation.attachments.id"), attachIds);
-			String alias = getController().resolveAlias("ProjectReservation.attachments.description");
-			switch (getConexFlowOperation().intValue()) {
-				case 1: Expression exp1 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_OK_PATTERN);
-						Expression exp2 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_CHECK_OK_PATTERN);
-						criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-						break;
-				case 2: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_FAIL_PATTERN));
-						break;
-				case 3: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_CONFIRM_OK_PATTERN));
-						break;
-				case 4: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_CONFIRM_FAIL_PATTERN));
-						break;
-				case 5: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_SALE_OK_PATTERN));
-						break;
-				case 6: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_SALE_FAIL_PATTERN));
-						break;
-				case 7: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_REFUND_OK_PATTERN));
-						break;
-				case 8: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_REFUND_FAIL_PATTERN));
-						break;
+				criteria.addInExpression(getController().resolveAlias("ProjectReservation.attachments.id"), attachIds);
+				String alias = getController().resolveAlias("ProjectReservation.attachments.description");
+				switch (getConexFlowOperation().intValue()) {
+					case 1: Expression exp1 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_OK_PATTERN);
+							Expression exp2 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_CHECK_OK_PATTERN);
+							criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+							break;
+					case 2: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_FAIL_PATTERN));
+							break;
+					case 3: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_CONFIRM_OK_PATTERN));
+							break;
+					case 4: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_CONFIRM_FAIL_PATTERN));
+							break;
+					case 5: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_SALE_OK_PATTERN));
+							break;
+					case 6: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_SALE_FAIL_PATTERN));
+							break;
+					case 7: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_REFUND_OK_PATTERN));
+							break;
+					case 8: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_REFUND_FAIL_PATTERN));
+							break;
+				}
 			}
 		}
 	}
