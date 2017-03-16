@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -39,12 +40,13 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class AccountingRegistryPanel extends SimplePanel implements Focusable {
+public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusable {
 	
 	public static interface AccountingRegistryPanelCallback {
 		void onAccept(AccountingRegistry registry);
@@ -54,6 +56,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 
 	static CommonServiceAsync commonService;
 	final AccountingRegistryTypeListBox type = new AccountingRegistryTypeListBox();
+	FlowPanel documentWarningContainer = new FlowPanel();
 	
 	public AccountingRegistryPanel(final String domainName,final int domain
 			, Integer id 
@@ -65,6 +68,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		
 		setWidth("700px");
 		setHeight("550px");
+		documentWarningContainer.setStyleName(AON.AON_CSS.aonMarginBottom());
 		if (id != null) {
 			commonService.getAccountingRegistries(domainName, domain,id
 					,new AsyncCallback<LinkedList<AccountingRegistry>>() {
@@ -162,6 +166,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		type.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
+				documentWarningContainer.clear();
 				type.getValue().visit(reg, new IAccountingRegistryTypeVisitor() {
 					
 					@Override
@@ -200,54 +205,13 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 		
 		table.setWidget(row,0,new InlineLabel("."));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		table.setWidget(row,1,new InlineLabel());
+		table.setWidget(row,1,documentWarningContainer);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		++row;
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.document()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 
-//		FlowPanel documentPanel = new  FlowPanel();
-//		final DocumentTypeListBox documentType = new DocumentTypeListBox();
-//		documentType.setValue(reg.getDocumentType());
-//		documentType.setStyleName(AON.AON_CSS.aonMarginRight5());
-//		documentType.addKeyUpHandler( keyUpHandler);
-//		documentType.addChangeHandler(new ChangeHandler() {
-//			
-//			@Override
-//			public void onChange(ChangeEvent event) {
-//				reg.setDocumentType(documentType.getValue());
-//				okButton.setEnabled(reg.isDirty());
-//			}
-//		});
-//		documentPanel.add(documentType);
-//		final Country2ListBox documentCountry = new Country2ListBox();
-//		documentCountry.setValue(reg.getDocumentCountry());
-//		documentCountry.setStyleName(AON.AON_CSS.aonMarginRight5());
-//		documentCountry.addKeyUpHandler( keyUpHandler);
-//		documentCountry.addChangeHandler(new ChangeHandler() {
-//			
-//			@Override
-//			public void onChange(ChangeEvent event) {
-//				reg.setDocumentCountry(documentCountry.getValue());
-//				okButton.setEnabled(reg.isDirty());
-//			}
-//		});
-//		documentPanel.add(documentCountry);
-//		final DocumentTextBox document = new DocumentTextBox();
-//		document.setValue(reg.getDocument());		
-//		document.addStyleName(AON.AON_CSS.aonMarginRight5());
-//		document.addKeyUpHandler( keyUpHandler);
-//		document.addValueChangeHandler(new ValueChangeHandler<String>() {
-//			
-//			@Override
-//			public void onValueChange(ValueChangeEvent<String> event) {
-//				reg.setDocument(document.getValue());
-//				okButton.setEnabled(reg.isDirty());
-//			}
-//		});
-//		documentPanel.add(document);
-		
 		FullDocument fulldocument = new FullDocument();
 		fulldocument.setValue(reg.getDocumentType(), reg.getDocumentCountry(), reg.getDocument());
 		fulldocument.getTypeWidget().addKeyUpHandler( keyUpHandler);
@@ -256,7 +220,8 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 			public void onChange(ChangeEvent event) {
 				reg.setDocumentType(fulldocument.getType());
 				okButton.setEnabled(reg.isDirty());
-				}
+				checkRegistryDocument(domainName,domain,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer);
+			}
 		});
 		fulldocument.getCountryWidget().addKeyUpHandler( keyUpHandler);
 		fulldocument.addCountryChangeHandler(new ChangeHandler() {
@@ -265,6 +230,7 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 			public void onChange(ChangeEvent event) {
 				reg.setDocumentCountry(fulldocument.getCountry());
 				okButton.setEnabled(reg.isDirty());
+				checkRegistryDocument(domainName,domain,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer);
 			}
 		});
 		fulldocument.getDocumentWidget().addKeyUpHandler( keyUpHandler);
@@ -274,9 +240,10 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				reg.setDocument(fulldocument.getDocument());
 				okButton.setEnabled(reg.isDirty());
+				checkRegistryDocument(domainName,domain,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer);
 			}
+
 		});
-		
 		table.setWidget(row,1,fulldocument);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		++row;
@@ -793,5 +760,87 @@ public class AccountingRegistryPanel extends SimplePanel implements Focusable {
 	@Override
 	public void setTabIndex(int index) {
 		type.setTabIndex(index);
+	}
+
+	private void checkRegistryDocument(String domainName, int domain, AonConfiguration config
+			, AccountingRegistryPanelCallback callback
+			, AccountingRegistryType accountingRegistryType
+			, Integer id
+			, FullDocument fulldocument
+			, FlowPanel documentWarningContainer) {
+		if ( id == null
+		 && fulldocument.getType() != null 
+		 && fulldocument.getCountry() != null 
+		 && AonStringUtils.isNotBlank( fulldocument.getDocument())) {
+			commonService.getAccountingRegistries(domainName, domain,
+					new AccountingRegistryParams()
+						.setType(accountingRegistryType)
+						.setId(id)
+						.setDocument(fulldocument.getDocument())
+						.setDocumentType(fulldocument.getType())
+						.setDocumentCountry(fulldocument.getCountry())
+					,new AsyncCallback<LinkedList<AccountingRegistry>>() {
+				
+				@Override
+				public void onSuccess(LinkedList<AccountingRegistry> result) {
+					int count = 0;
+					documentWarningContainer.clear();
+					for (AccountingRegistry reg : result) {
+						String icon = AON.AON_CSS.aonLetterCGreenIcon();
+						if (reg.getType() == AccountingRegistryType.SUPPLIER) {
+							icon = AON.AON_CSS.aonLetterPBlueIcon();
+						} else if (reg.getType() == AccountingRegistryType.CREDITOR) {
+							icon = AON.AON_CSS.aonLetterAOrangeIcon();
+						}
+						if (!AonNumberUtils.equals(reg.getId(),id))  {
+							++count;
+							Label label = new Label(AonStringUtils.abbreviate( AccountingRegistry.getFullDescription(reg), 60) );
+							label.setStyleName(AON.AON_CSS.aonMarginLeft());
+							label.addStyleName(AON.AON_CSS.aonFixedFont());
+							label.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+							label.addStyleName(icon);
+							label.addStyleName(AON.AON_CSS.aonFontMedium());
+							label.addStyleName(AON.AON_CSS.aonClickableBlock());
+							label.addClickHandler( new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent event) {
+									if (reg.getType() == accountingRegistryType) {
+										callback.onAccept(reg);
+									} else {
+										ConfirmDialog cd = new ConfirmDialog();
+										cd.confirm("Seleccionar", "Ha seleccionado un "+
+												reg.getType().getDescription()	
+											+". Continuar?",new ConfirmDialogCallback() {
+											
+											@Override
+											public void onCancel() {
+											}
+											
+											@Override
+											public void onAccept() {
+												callback.onAccept(reg);
+											}
+										});
+									}
+								}
+							});
+							documentWarningContainer.add(label);
+						}
+					}
+					if (count > 0) {
+						Label errorLabel = new Label( AON.MSG.existingRegistryWarning(result.size()));
+						errorLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+						errorLabel.addStyleName(AON.AON_CSS.aonIconWarn());
+						errorLabel.addStyleName(AON.AON_CSS.aonBold());
+						documentWarningContainer.insert(errorLabel, 0 );
+					} 
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					show(domainName,domain, config, newAccountingRegistry(domain),callback);
+				}
+			});
+		}
 	}
 }

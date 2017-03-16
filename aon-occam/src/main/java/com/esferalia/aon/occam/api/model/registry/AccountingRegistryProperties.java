@@ -9,6 +9,8 @@ public interface AccountingRegistryProperties {
 	Property<String> getAccountCodeProperty();
 	Property<String> getAccountDescriptionProperty();
 	Property<String> getNameProperty();
+	Property<Byte> getDocumentTypeProperty();
+	Property<String> getDocumentCountryProperty();
 	Property<String> getDocumentProperty();
 	Property<String> getAliasProperty();
 	Property<Byte> getSecurityLevelProperty();

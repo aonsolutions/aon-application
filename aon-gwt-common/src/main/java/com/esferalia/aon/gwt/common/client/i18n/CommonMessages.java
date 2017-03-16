@@ -3260,4 +3260,8 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("El valor no coincide con el c\u00E1lculo y supera el margen de aviso. Deber\u00EDa ser: {0,number} ( diferencia {1,number} )")
 	String editedValueWarning(double value,double gap);
+	
+	@DefaultMessage("Existen {0,number} registros con ese documento.")
+	@AlternateMessage({"=1", "Existe un registro con ese documento"})
+	String existingRegistryWarning(@PluralCount int registryCount);
 }

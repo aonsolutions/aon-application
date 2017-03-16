@@ -13,7 +13,10 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
@@ -135,8 +138,23 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	}
 	
 	@Override
+	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain,
+			AccountingRegistryParams params) throws AonCoreException {
+		return ACCOUNTING.getAccountingRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+				p -> getFilter(p, params))
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	private Filter getFilter(AccountingRegistryProperties p, AccountingRegistryParams params) {
+		return p.getDocumentTypeProperty().eq(params.getDocumentType().value())
+			.and(p.getDocumentCountryProperty().eq(params.getDocumentCountry().getIso2()))
+			.and(p.getDocumentProperty().eq(params.getDocument()))
+		;
+	}
+	@Override
 	public AccountingRegistry insert(String domainName, int domain, AccountingRegistry reg) throws AonCoreException {
 		return ACCOUNTING.insert(domainName, domain,AonServletUtils.getLoggedUser(), reg);
 	}
 
+	
 }
