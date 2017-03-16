@@ -1857,7 +1857,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onConexflowOperation(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();		
 		Domain domain = getDomain(reservation);
-		String login = "";// TODO GET LOGIN
+		String login = getLogin();
 		ConexFlowConnection connection = DBConsults.getConection(domain);
 		if (connection.isActive()) {
 			String token = getToken(domain, login, reservation);
@@ -2081,7 +2081,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean conexFlowData(ProjectReservation reservation) {
 		Domain domain = getDomain(reservation);
 		ConexFlowConnection connection = DBConsults.getConection(domain);
-		String login = "";
+		String login = getLogin();
 		if (connection.isActive()) {
 			Query createTokenQuery = ConexFlowUtils.getConexFlowCreateTokenQuery(reservation.getHrCreditCardNumber()
 					, connection, reservation.getHrCreditCardExpirationMonth() + reservation.getHrCreditCardExpirationYear()
@@ -2105,10 +2105,7 @@ public class ProjectReservationController extends BasicController implements IPm
 						ConexFlow cf = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, q);
 						
 						Boolean ok2 = cf.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
-						cf.setStatus(ok2 ? ConexFlowStatus.SALE_CHECK : ConexFlowStatus.SALE_CHECK_FAIL);
-						String description2 = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
-								+ cf.getStatus().getName() + "#" + cf.getRespuesta().getImporte();
-						DBConsults.insertConexFlow(domain, login, cf, reservation.getId(), description2);
+						
 						if(!ok2){
 							deleteReservationCreditCard(reservation);
 							conexFlowError("Error " + cf.getRespuesta().getResultado() + ": " + cf.getRespuesta().getDesResultado() + ".");
@@ -2119,6 +2116,12 @@ public class ProjectReservationController extends BasicController implements IPm
 							String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
 									+ conexFlowCreateToken.getStatus().getName() + "#";
 							DBConsults.insertConexFlow(domain, login, conexFlowCreateToken, reservation.getId(), description);
+							
+							// INSERTA EL CHECKEO!
+							cf.setStatus(ConexFlowStatus.SALE_CHECK);
+							String description2 = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
+								+ cf.getStatus().getName() + "#" + cf.getRespuesta().getImporte();
+							DBConsults.insertConexFlow(domain, login, cf, reservation.getId(), description2);
 							
 							// REEMBOLSAR CARGO DE CHECKEO
 							Query query = ConexFlowUtils.getConexFlowRefundQuery(connection
@@ -2133,10 +2136,7 @@ public class ProjectReservationController extends BasicController implements IPm
 							, reservation.getCustomer().getId().toString(), conexFlowCreateToken.getRespuesta().getToken(), (Double) 0.01);
 						ConexFlow cf = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, q);
 						Boolean ok2 = cf.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
-						cf.setStatus(ok2 ? ConexFlowStatus.PREAUTHORIZATION_CHECK : ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
-						String description2 = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
-								+ cf.getStatus().getName() + "#" + cf.getRespuesta().getImporte();
-						DBConsults.insertConexFlow(domain, login, cf, reservation.getId(), description2);
+						
 						if(!ok2){
 							deleteReservationCreditCard(reservation);
 							conexFlowError("Error " + cf.getRespuesta().getResultado() + ": " + cf.getRespuesta().getDesResultado() + ".");
@@ -2147,6 +2147,12 @@ public class ProjectReservationController extends BasicController implements IPm
 							String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
 									+ conexFlowCreateToken.getStatus().getName() + "#";
 							DBConsults.insertConexFlow(domain, login, conexFlowCreateToken, reservation.getId(), description);
+							
+							// INSERTA EL CHECKEO
+							cf.setStatus(ConexFlowStatus.PREAUTHORIZATION_CHECK);
+							String description2 = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
+									+ cf.getStatus().getName() + "#" + cf.getRespuesta().getImporte();
+							DBConsults.insertConexFlow(domain, login, cf, reservation.getId(), description2);
 							
 							// CANCELAR PREAUTHORIZACION DE CHECKEO.
 							Query query = ConexFlowUtils.getConexFlowCancelationQuery(connection
@@ -2182,7 +2188,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		Domain domain = getDomain(reservation);
 		ConexFlowConnection connection = DBConsults.getConection(domain);
-		String login = "";
+		String login = getLogin();
 		if(connection.isActive()){
 			String token = getToken(domain, login, reservation);
 			ConexFlow conexFlow = DBConsults.getConexFlowLastStatusX(domain, login, reservation.getId(), token, ConexFlowStatus.PREAUTHORIZATION);
@@ -2202,7 +2208,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		Domain domain = getDomain(reservation);
 		ConexFlowConnection connection = DBConsults.getConection(domain);
-		String login = "";
+		String login = getLogin();
 		if(connection.isActive()){
 			if (reservation.getTotal() >= getCardOperationTo().getOperationAmount()) {
 				String token = getToken(domain, login, reservation);
@@ -2229,7 +2235,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		Domain domain = getDomain(reservation);
 		ConexFlowConnection connection = DBConsults.getConection(domain);
-		String login = "";
+		String login = getLogin();
 		if(connection.isActive()){
 			String token = getToken(domain, login, reservation);
 			ConexFlow cfPre = DBConsults.getConexFlowLastStatusX(domain, login, reservation.getId(), token, ConexFlowStatus.PREAUTHORIZATION);
@@ -2259,7 +2265,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private void checkPreauthorization(ProjectReservation reservation){
 		Domain domain = getDomain(reservation);
 		ConexFlowConnection connection = DBConsults.getConection(domain);
-		String login = "";
+		String login = getLogin();
 		if(connection.isActive()){
 			String token = getToken(domain, login, reservation);
 			ConexFlow cfPre = DBConsults.getConexFlowLastStatusX(domain, login, reservation.getId(), token, ConexFlowStatus.PREAUTHORIZATION);
@@ -2333,6 +2339,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		domain.setName(AonUtil.getDomainName());
 		domain.setId(reservation.getDomain());
 		return domain;
+	}
+	
+	private String getLogin() {
+		return UserUtils.getInstance().getLoggedUser().getLogin();
 	}
 
 }

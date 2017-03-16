@@ -30,6 +30,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -289,7 +290,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 				String token = reservation.getToken();
 				if (token != null) {
 					String customerId = reservation.getCustomer().getId().toString();
-					String user = AonUtil.getRemoteUser();
+					String user = getLogin();
 					ConexFlowConnection connection = DBConsults.getConection(domain);
 					ConexFlow cp = DBConsults.getConexFlowLastStatusX(domain, user, reservation.getId(), token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
 					ConexFlow s = DBConsults.getConexFlowLastStatusX(domain, user, reservation.getId(), token, ConexFlowStatus.SALE);
@@ -350,6 +351,10 @@ public class CancellationInvoiceController extends BasicController implements IP
 		domain.setId(DomainManager.getCurrentDomain());
 		domain.setName(AonUtil.getDomainName());
 		return domain;
+	}
+	
+	private String getLogin() {
+		return UserUtils.getInstance().getLoggedUser().getLogin();
 	}
 
 }

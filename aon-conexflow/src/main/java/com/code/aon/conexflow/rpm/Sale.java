@@ -60,8 +60,10 @@ public class Sale {
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
 				ConexFlow cf = DBConsults.getConexFlowX(d, login, r.getProject(), "CONEXFLOW%ANT_TNR");
 				ConexFlow sFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_FAIL);
-
-				if(cf == null && sFail == null){
+				ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
+				ConexFlow scFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL);
+				
+				if(cf == null && sFail == null && pcFail == null && scFail == null){
 					ConexFlowConnection connection = DBConsults.getConection(d);
 					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
 						r.getAdvance(), r.getHotelReservation().toString(), r.getCreditCardCvv());
