@@ -11,6 +11,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.project.ProjectAttachment;
 import com.code.aon.project.enumeration.ProjectAttachmentType;
@@ -41,6 +42,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 	private Date insideDateTo;
 	private Customer agency;
 	private Seller seller;
+	private Tariff tariff;
 	private ReservationCheckStatus[] reservationCheckStatuses;
 	private ReservationStatus[] reservationStatuses;
 	private Integer conexFlowOperation;
@@ -101,6 +103,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		this.seller = seller;
 	}
 
+	public Tariff getTariff() {
+		return tariff;
+	}
+
+	public void setTariff(Tariff tariff) {
+		this.tariff = tariff;
+	}
+
 	public ReservationCheckStatus[] getReservationCheckStatuses() {
 		return reservationCheckStatuses;
 	}
@@ -134,6 +144,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		setInsideDateTo(null);
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
+		setTariff((Tariff)BeanManager.getManagerBean(Tariff.class).createNewTo());
 		setReservationCheckStatuses(null);
 		setReservationStatuses(null);
 		setConexFlowOperation(null);
@@ -161,6 +172,9 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		}
 		if (getSeller() != null && getSeller().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_SELLER_ID), getSeller().getId());			
+		}
+		if (getTariff() != null && getTariff().getId() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());
 		}
 		if (!ArrayUtils.isEmpty(getReservationCheckStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS);

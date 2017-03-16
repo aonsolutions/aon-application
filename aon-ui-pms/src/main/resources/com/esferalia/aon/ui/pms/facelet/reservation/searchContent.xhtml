@@ -56,6 +56,15 @@
 					<f:selectItems value="#{pmsCollections.sellers}" />
 				</aon:selectOneMenu>
 
+				<aon:outputLabel for="ProjectReservation_tariff" 
+					value="#{bundle.report_tariff}" />
+				<aon:selectOneMenu id="ProjectReservation_tariff" 
+					value="#{searchController.tariff}"
+					styleClass="aon-width-350">
+					<f:selectItem itemLabel="-" value="#{null}" />		
+					<f:selectItems value="#{pmsCollections.tariffs}" />
+				</aon:selectOneMenu>
+
 				<aon:outputLabel for="ProjectReservation_remarks" 
 					value="#{bundle.aon_remark}" />
 				<aon:inputText id="ProjectReservation_remarks"
