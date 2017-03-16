@@ -239,6 +239,18 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public boolean isConexFlowCreateToken() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_CREATE_TOKEN_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
+	public boolean isConexFlowRemoveToken() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_REMOVE_TOKEN_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
 	public boolean isConexFlowPreauthorizedCheck() {
 		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_PREAUTH_CHECK_OK_PATTERN.replace("%", "(.*)"));

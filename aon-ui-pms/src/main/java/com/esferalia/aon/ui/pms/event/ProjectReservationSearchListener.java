@@ -202,6 +202,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 			if (getConexFlowOperation().intValue() == 0) {
 				criteria.addNullExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_TOKEN));
 			} else {
+				criteria.addNotNullExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_TOKEN));
 				criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachType"), ProjectAttachmentType.CONEXFLOW);
 
 				IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
@@ -225,7 +226,9 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 							Expression exp2 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_CHECK_OK_PATTERN);
 							criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 							break;
-					case 2: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_FAIL_PATTERN));
+					case 2: exp1 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_FAIL_PATTERN);
+							exp2 = ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_PREAUTH_CHECK_FAIL_PATTERN);
+							criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 							break;
 					case 3: criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, CONEXFLOW_CONFIRM_OK_PATTERN));
 							break;

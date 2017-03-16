@@ -1840,7 +1840,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectAttachment pAttach = new ProjectAttachment();
 		pAttach.setProject(reservation.getProject());
 		pAttach.setMimeType(MimeType.MIME_XML);
-		pAttach.setDescription(IReservationConstants.CONEXFLOW_REMOVE_TOKEN_PATTERN.replace("?", StringUtils.substring(token, -5)));
+		pAttach.setDescription(IReservationConstants.CONEXFLOW_REMOVE_TOKEN_PATTERN.replace("%", StringUtils.substring(token, -5)));
 		pAttach.setSecurityLevel(SecurityLevel.OFFICIAL);
 		pAttach.setAttachDate(new Date());
 		pAttach.setAttachType(ProjectAttachmentType.CONEXFLOW);

@@ -320,7 +320,7 @@
 			<aon:div style="display:inline;" 
 				rendered="#{!reservation.to.blankToken and !reservation.to.invoiced and (!reservation.to.cancelled or !reservation.to.noInvoiceable)}">
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey"
-					rendered="#{reservation.to.lastConexFlowOperation == null or reservation.to.conexFlowPreauthorizedExpired}" />
+					rendered="#{reservation.to.lastConexFlowOperation == null or reservation.to.conexFlowCreateToken or reservation.to.conexFlowPreauthorizedExpired}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green"
 					rendered="#{reservation.to.conexFlowPreauthorizedCheck}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green-ok"

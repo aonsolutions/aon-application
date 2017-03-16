@@ -210,7 +210,7 @@
 			columnClasses="aon-width-20 aon-noborder aon-nopadding,aon-width-auto aon-noborder aon-nopadding">
 			<aon:div rendered="#{!to.blankToken and !to.invoiced and (!to.cancelled or !to.noInvoiceable)}">
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey"
-					rendered="#{to.lastConexFlowOperation == null or to.conexFlowPreauthorizedExpired}" />
+					rendered="#{to.lastConexFlowOperation == null or to.conexFlowCreateToken or to.conexFlowPreauthorizedExpired}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green"
 					rendered="#{to.conexFlowPreauthorizedCheck}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green-ok"
