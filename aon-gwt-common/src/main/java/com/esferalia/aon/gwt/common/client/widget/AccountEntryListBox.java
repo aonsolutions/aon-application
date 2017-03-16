@@ -16,7 +16,11 @@ public class AccountEntryListBox extends ListBox {
 		setWidth("160px");
 		addItem("","------");
 		for (AccountEntryType type : AccountEntryType.values()) {
-			if ( type != AccountEntryType.LEASING && type != AccountEntryType.LEASING_FEE) {
+			if    (type != AccountEntryType.LEASING 
+				&& type != AccountEntryType.LEASING_FEE
+				&& type != AccountEntryType.INVESTMENT_INVOICE
+				&& type != AccountEntryType.STOCK_VARIATION
+				) {
 				this.addItem( MSGS.accountEntryType(type), AonNumberUtils.toString(type.ordinal()) );
 			}
 		}

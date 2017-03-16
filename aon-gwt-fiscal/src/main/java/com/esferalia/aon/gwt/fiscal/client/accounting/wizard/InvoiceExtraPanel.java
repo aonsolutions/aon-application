@@ -627,15 +627,17 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		} else {
 			invoiceTypeLabel.setText( getInvoiceLabel(ar.getType().getInvoiceType(),invoice.getInvoice().getRectificationType()));
 			eastPanelInner.setVisible(true);
+			//workplace
 			fullDocument.setValue(ar.getDocumentType(),ar.getDocumentCountry(),ar.getDocument());
 			rName.setValue(ar.getName());
+			taxDate.setValue(invoice.getInvoice().getTaxDate());
+			transactionBox.setValue(invoice.getTransaction());
+			service.setValue(invoice.isService());
+			investment.setValue(invoice.isInvestment());
 			surcharge.setValue(invoice.isSurcharge());
+			vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
 			withholding.setValue(invoice.isWithholding());
 			withholdingFarmer.setValue(invoice.isWithholdingFarmer());
-			vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
-			service.setValue(invoice.isService());
-			transactionBox.setValue(invoice.getTransaction());
-			taxDate.setValue(invoice.getInvoice().getTaxDate());
 			decorateTaxDate(invoice);
 			ar.getType().visit(invoice.getRegistry(),accountingRegistryVisitor);
 		}

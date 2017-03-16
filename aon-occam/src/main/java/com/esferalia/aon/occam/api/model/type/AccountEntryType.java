@@ -50,6 +50,7 @@ public enum AccountEntryType  implements Serializable {
 			visitor.visitExpenseInvoice(entry);
 		}
 	}),
+	@Deprecated
 	INVESTMENT_INVOICE ( new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
@@ -99,6 +100,7 @@ public enum AccountEntryType  implements Serializable {
 			visitor.visitCollection(entry);
 		}
 	}),
+	@Deprecated
 	STOCK_VARIATION ( new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {

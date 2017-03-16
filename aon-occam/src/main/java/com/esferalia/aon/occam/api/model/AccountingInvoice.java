@@ -192,6 +192,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public boolean isService() {
 		return invoice != null && invoice.isService();
 	}
+	public boolean isInvestment() {
+		return invoice != null && invoice.isInvestment();
+	}
 
 	public boolean isInputVatEnabled() {
 		return invoice != null && invoice.isInputVatEnabled();
