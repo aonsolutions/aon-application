@@ -27,6 +27,9 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIngenetServlet.class.getName());
 	
+	private String scheme;
+	private boolean devEnabled;
+	
 	private String user;
 	private String domain;
 	private Integer domainId;
@@ -38,6 +41,10 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	private SimpleDateFormat dateFormatter;
 	private SimpleDateFormat timeFormatter;
 	
+	protected String getScheme() {
+		return scheme;
+	}
+	
 	protected String getUser() {
 		return user;
 	}
@@ -48,6 +55,10 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	
 	protected Integer getDomainId() {
 		return domainId;
+	}
+	
+	protected boolean isDevEnabled(){
+		return devEnabled;
 	}
 
 
@@ -91,6 +102,12 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		String _domainName = httpRequest.getServerName();
 		String _username = httpRequest.getParameter(PARAM_USERNAME);
 		String _password = httpRequest.getParameter(PARAM_PASSWORD);
+		scheme = httpRequest.getScheme();
+		// TODO check devEnabled 
+		devEnabled = false;
+		System.out.print("local "+httpRequest.getLocalPort());
+		System.out.print(" | server "+httpRequest.getServerPort());
+		System.out.println(" | host "+httpRequest.getHeader("host"));
 		
 		if(doLogin(_domainName, _username, _password)){
 			user = _username;
