@@ -140,22 +140,30 @@ node {
          def key = keys[i]
          sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
       }
-   
-      stage 'SonarQube Analysis'
-      
+
+      stage 'Docker Build'
+
+      sh "docker build --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
+
+      sh "docker login -u rtrepiana -p aon945121010"
+
+      sh "docker push aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
+
+      //stage 'SonarQube Analysis'
+      //
       // requires SonarQube Scanner 2.8+
-      def scannerHome = tool 'SonarQube Scanner 2.8'
-      withSonarQubeEnv('My SonarQube Server') {
-
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=net.aonsolutions:aon-dump -Dsonar.sources=aon-dump/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.occam -Dsonar.sources=aon-occam/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.watson -Dsonar.sources=aon-watson/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.code.aon:aon.webservice -Dsonar.sources=aon-webservice/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
+      //def scannerHome = tool 'SonarQube Scanner 2.8'
+      //withSonarQubeEnv('My SonarQube Server') {
+      //
+      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=net.aonsolutions:aon-dump -Dsonar.sources=aon-dump/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
+      //
+      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.occam -Dsonar.sources=aon-occam/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
+      //
+      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.watson -Dsonar.sources=aon-watson/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
+      //
+      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
+      //
+      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.code.aon:aon.webservice -Dsonar.sources=aon-webservice/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
       }
       
       
