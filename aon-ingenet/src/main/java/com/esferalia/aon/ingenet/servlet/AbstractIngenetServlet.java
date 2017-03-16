@@ -107,7 +107,9 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		devEnabled = false;
 		System.out.print("local "+httpRequest.getLocalPort());
 		System.out.print(" | server "+httpRequest.getServerPort());
+		System.out.print(" | scheme "+httpRequest.getScheme());
 		System.out.println(" | host "+httpRequest.getHeader("host"));
+		scheme = devEnabled?"http":"https";
 		
 		if(doLogin(_domainName, _username, _password)){
 			user = _username;

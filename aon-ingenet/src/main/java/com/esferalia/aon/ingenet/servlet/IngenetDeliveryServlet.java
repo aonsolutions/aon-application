@@ -256,6 +256,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				.put("domainName", getDomain())
 				.put("domainId", getDomainId())
 				.put("bcc", "eagirrezabal@aonsolutions.es");
+			System.out.println("SEND EMAIL FROM");
+			System.out.print("domain "+mail.getDomain());
+			System.out.print(" | id "+mail.getId());
+			System.out.println(" | "+mail.getEmail());
+			System.out.println("SEND EMAIL TO");
+			System.out.println(recipientsTo);
 			
 			if(attach==null || "".equals(attach)){
 				json.put("md5", "");
