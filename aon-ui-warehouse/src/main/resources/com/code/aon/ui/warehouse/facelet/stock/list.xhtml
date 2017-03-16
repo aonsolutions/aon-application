@@ -15,20 +15,31 @@
 				<ui:param name="toolbarTitle" value="#{bundle.warehouse_stock_module}" />
 				<ui:param name="controller" value="#{stock}" />
 				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="showMoreMenu" value="true" />
 				
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="removeNoInventoriables"
-						value="#{bundle.warehouse_remove_no_inventoriable}" immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
+				<ui:define name="moreMenuContent">
+					<aon:menuItem id="removeStock0"
+						value="#{bundle.warehouse_remove_stock0}" immediate="#{true}"
+						iconClass="aon-icon-delete"
+						actionListener="#{stock.onRemoveStock0}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+
+					<aon:menuItem id="removeNoInventoriables2"
+						value="#{bundle.warehouse_remove_no_inventoriable}" 
+						iconClass="aon-icon-delete"
 						actionListener="#{stock.onRemoveNoInventoriables}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
-						oncomplete="Richfaces.hideModalPanel('waitProccess')" />			
-					<aon:commandButton id="removeDiscontinued"
-						value="#{bundle.warehouse_remove_discontinued}" immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+									
+					<aon:menuItem id="removeDiscontinued2"
+						value="#{bundle.warehouse_remove_discontinued}"
+						iconClass="aon-icon-delete"
 						actionListener="#{stock.onRemoveDiscontinued}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
-						oncomplete="Richfaces.hideModalPanel('waitProccess')" />			
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+ 				</ui:define>
+				<ui:define name="beforeSpinToolbarContent">	
 					<aon:htmlCommandLink id="stockWarehouseList-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">

@@ -2,7 +2,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:valueParam name="showMoreMenu" default="#{false}"/>
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
@@ -21,7 +24,23 @@
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
-			</aon:if>		
+			</aon:if>	
+			
+			<ui:insert name="beforeSpinToolbarContent"/>
+			
+			<aon:if test="#{showMoreMenu}">
+				<aon:dropDownMenu value="#{bundle.aon_more2}"
+				 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
+		             <f:facet name="label">
+		             	<aon:panelGroup>
+		             		<aon:outputText value="#{bundle.aon_more2}" /> 
+		                     <aon:graphicImage style="vertical-align:middle;"
+		                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+		                    </aon:panelGroup>
+		             </f:facet>			
+		             <ui:insert name="moreMenuContent"/>		                
+				</aon:dropDownMenu>			
+			</aon:if>	
 		</ui:define>
 	</ui:decorate>
 	

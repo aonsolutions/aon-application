@@ -13,6 +13,16 @@ public class StockController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	public void onRemoveStock0( ActionEvent event ) throws ManagerBeanException {
+		for( ITransferObject to :  getManagerBean().getList(getCriteria()) ) {
+			Stock stock = (Stock) to;
+			if ( (stock.getQuantity() == 0)) {
+				getManagerBean().remove(stock);
+			}
+		}
+		onSearch(event);
+	}
+	
 	public void onRemoveDiscontinued( ActionEvent event ) throws ManagerBeanException {
 		for( ITransferObject to :  getManagerBean().getList(getCriteria()) ) {
 			Stock stock = (Stock) to;
