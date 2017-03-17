@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.stream.Stream;
 
-import com.esferalia.aon.occam.api.model.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 public interface IAttachment {

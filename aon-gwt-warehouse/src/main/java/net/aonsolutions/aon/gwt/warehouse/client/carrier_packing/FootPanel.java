@@ -1,6 +1,11 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -19,6 +24,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -85,6 +91,22 @@ public class FootPanel extends Composite {
 						}
 					});
 					observationPanel.add(textArea);
+				} else if(value == 3){
+					openFootPanel();
+					HashMap<String, LinkedList<String>> map = new HashMap<>();
+					LinkedList<String> list = new LinkedList<>();
+					list.add(parent.getJsCarrierPacking().getId() + "");
+					map.put("carrier_packing", list);
+					parent.API.getWarehouse().getPurchases(map, new AsyncCallback<JSON<JsOrder>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsOrder> result) {
+							ReceivePanel rp = new ReceivePanel(parent.API, result.getData());
+			//				receptionPanel.setWidget(rp);
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
 				}
 				
 			}
@@ -97,7 +119,8 @@ public class FootPanel extends Composite {
 	@UiField ScrollPanel selectionPanel;
 	@UiField ScrollPanel parameterPanel;
 	@UiField ScrollPanel observationPanel;
-	@UiField PaperFab addButton;	
+//	@UiField SimpleLayoutPanel receptionPanel;
+	@UiField PaperFab addButton;
 	
 	public TabLayoutPanel getTabLayout() {
 		return tabLayout;
@@ -109,6 +132,10 @@ public class FootPanel extends Composite {
 	
 	public ScrollPanel getParameterPanel() {
 		return parameterPanel;
+	}
+	
+	public SimpleLayoutPanel getReceptionPanel(){
+		return new SimpleLayoutPanel();// receptionPanel;
 	}
 	
 	@UiHandler("footPanel")

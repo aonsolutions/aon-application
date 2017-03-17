@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -54,6 +55,9 @@ public class CarrierPacking extends AonTemplate{
 	
 	public CarrierPacking(AonData aonData, Boolean future) {
 		filterMap = new HashMap<>();
+		LinkedList<String> status = new LinkedList<>();
+		status.add(CarrierPackingStatus.PENDING.ordinal() + "");
+		filterMap.put("status", status);
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getUser().getLogin());
 		this.future = future; 
@@ -61,6 +65,9 @@ public class CarrierPacking extends AonTemplate{
 	
 	public CarrierPacking(AonData aonData) {
 		filterMap = new HashMap<>();
+		LinkedList<String> status = new LinkedList<>();
+		status.add(CarrierPackingStatus.PENDING.ordinal() + "");
+		filterMap.put("status", status);
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getUser().getLogin());
 	}
@@ -123,8 +130,8 @@ public class CarrierPacking extends AonTemplate{
 					Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 					toolbar.back.setVisible(true);
 					toolbar.remove.setVisible(true);
-					toolbar.packingList.setVisible(true);
-					toolbar.sendPackingList.setVisible(true);
+					toolbar.print.setVisible(true);
+					toolbar.email.setVisible(true);
 					getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 					setNorthContent(new CarrierPackingPanel(me));
 					setContent(new Label(""));
@@ -139,12 +146,12 @@ public class CarrierPacking extends AonTemplate{
 					startApplication();
 				}
 				@Override
-				protected void packingList() {
+				protected void print() {
 					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
 					API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
 				}
 				@Override
-				protected void sendPackingList() {
+				protected void email() {
 					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
 
 					VerticalPanel panel = new VerticalPanel();
@@ -274,12 +281,7 @@ public class CarrierPacking extends AonTemplate{
 					dialog.getElement().getStyle().setWidth(310, Unit.PX);
 					dialog.center();
 				}
-				@Override
-				protected void parameterButton() {
-					clickParameter();
-				}
 			};
-			toolbar.parameterButton.setVisible(false);
 			setToolbar(toolbar);
 		}
 	}
@@ -297,8 +299,8 @@ public class CarrierPacking extends AonTemplate{
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
-		toolbar.packingList.setVisible(true);
-		toolbar.sendPackingList.setVisible(true);
+		toolbar.print.setVisible(true);
+		toolbar.email.setVisible(true);
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 		setNorthContent(new CarrierPackingPanel(me,js));
 		setContent(new CarrierPackingSelect(me, js));
@@ -568,8 +570,6 @@ public class CarrierPacking extends AonTemplate{
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-					
-
 				}
 				hide();
 			}

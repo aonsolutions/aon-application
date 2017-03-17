@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -18,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
+import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
@@ -36,9 +39,17 @@ public interface IWarehouse {
 	Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter);
 	
 	// 	***********************************************
+	// 	************************************ INCOME ***
+	// 	***********************************************
+
+	Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter);
+	
+	// 	***********************************************
 	// 	****************************** INCOME DETAIL***
 	// 	***********************************************
 
+	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter);
+	
 	IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
 	IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
 	LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId);

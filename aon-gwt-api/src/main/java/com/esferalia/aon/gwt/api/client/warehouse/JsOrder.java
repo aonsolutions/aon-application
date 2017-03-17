@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.warehouse;
 
+import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
@@ -200,5 +201,13 @@ public class JsOrder extends JavaScriptObject {
 	public final native String getOrderType()/*-{
 		return this.order_type;
 	}-*/;
-
+	
+	public final native AonJsArray<JsOrderDetail> getDetails()/*-{
+		return this.details;
+	}-*/;
+	
+	public final native String getReferenceCode()/*-{
+		return this.reference_code;
+	}-*/;
+	
 }

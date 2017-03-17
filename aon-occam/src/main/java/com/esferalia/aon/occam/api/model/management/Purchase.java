@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.api.model.management;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonJSONUtils;
 
 public class Purchase implements Serializable {
 	
@@ -156,6 +159,11 @@ public class Purchase implements Serializable {
 		this.securityLevel = securityLevel;
 		return this;
 	}
+
+	public Boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL.value().equals(securityLevel);
+	}
+	
 	public PurchaseStatus getStatus() {
 		return status;
 	}
@@ -352,6 +360,76 @@ public class Purchase implements Serializable {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-	
+
+	public String toJSON() {
+		StringBuilder json = new StringBuilder();
+		json.append(AonJSONUtils.start());
+		json.append(AonJSONUtils.intToJSON("id", getId(), false));
+		json.append(AonJSONUtils.intToJSON("domain", getDomain(), false));
+		json.append(AonJSONUtils.intToJSON("project", getProject(), false));
+		json.append(AonJSONUtils.start("registry")); //TODO supplier o registry ¿?
+			json.append(AonJSONUtils.intToJSON("id", getSupplier(), false));
+			json.append(AonJSONUtils.strToJSON("name", getSupplierName(), true));
+		json.append(AonJSONUtils.end() + ",");
+		json.append(AonJSONUtils.strToJSON("series", getSeries(), false));
+		json.append(AonJSONUtils.intToJSON("number", getNumber(), false));	
+		json.append(AonJSONUtils.strToJSON("purchase_reference", getPurchaseReference(), false));
+		json.append(AonJSONUtils.intToJSON("address", getAddress(), false));
+		json.append(AonJSONUtils.strToJSON("discount_expr", getDiscountExpr(), false));
+		//	TODO SE USA EN PACKING LIST - HAY K CAMBIARLO!
+		json.append(AonJSONUtils.dateToJSON("issue_date", getIssueDate(), false));
+		//
+		json.append(AonJSONUtils.intToJSON("pay_method",  getPayMethod(), false));
+		if(getDocumentType() != null){
+			json.append(AonJSONUtils.start("document_type"));
+				json.append(AonJSONUtils.intToJSON("id", getDocumentType().ordinal(), false));
+				json.append(AonJSONUtils.strToJSON("name", getDocumentType().getName(), true));
+			json.append(AonJSONUtils.end() + ",");
+		}
+		json.append(AonJSONUtils.boolToJSON("confidential", isConfidential(), false));
+		if(getStatus() != null){
+			json.append(AonJSONUtils.start("status"));
+				json.append(AonJSONUtils.intToJSON("id", getStatus().ordinal(), false));
+				json.append(AonJSONUtils.strToJSON("name", getStatus().getName(), true));
+			json.append(AonJSONUtils.end() + ",");
+		}
+		json.append(AonJSONUtils.strToJSON("comments", getComments(), false));
+		json.append(AonJSONUtils.strToJSON("remarks", getRemarks(), false));
+		json.append(AonJSONUtils.intToJSON("workplace", getWorkplace(), false));
+		json.append(AonJSONUtils.intToJSON("warehouse", getWarehouse(), false));
+		json.append(AonJSONUtils.intToJSON("scope", getScope(), false));
+		json.append(AonJSONUtils.intToJSON("number_of_pymnts", getNumberOfPymnts(), false));
+		json.append(AonJSONUtils.intToJSON("days_to_first_pymnt", getDaysToFirstPymnt(), false));
+		json.append(AonJSONUtils.intToJSON("days_between_pymnts", getDaysBetweenPymnts(), false));
+		json.append(AonJSONUtils.strToJSON("pymnt_days", getPymntDays(), false));
+		json.append(AonJSONUtils.strToJSON("bankAccount", getBankAccount(), false));
+		json.append(AonJSONUtils.strToJSON("bankAlias", getBankAlias(), false));
+		json.append(AonJSONUtils.strToJSON("bic", getBic(), false));
+		json.append(AonJSONUtils.boolToJSON("email_communication", isEmailCommunication(), false));
+		json.append(AonJSONUtils.intToJSON("carrier", getCarrier(), false));
+		json.append(AonJSONUtils.intToJSON("carrier_packing", getCarrierPacking(), false));
+		json.append(AonJSONUtils.strToJSON("shipping_alternative_address", getShippingAlternativeAddress(), false));
+		json.append(AonJSONUtils.strToJSON("shipping_alternative_address2", getShippingAlternativeAddress2(), false));
+		json.append(AonJSONUtils.strToJSON("shipping_alternative_zip", getShippingAlternativeZip(), false));
+		json.append(AonJSONUtils.strToJSON("shipping_alternative_city", getShippingAlternativeCity(), false));
+		json.append(AonJSONUtils.strToJSON("shipping_alternative_phone", getShippingAlternativePhone(), false));
+		json.append(AonJSONUtils.strToJSON("shipping_alternative_recipient", getShippingAlternativeRecipient(), false));
+		json.append(AonJSONUtils.strToJSON("shipping_contact", getShippingContact(), false));
+		json.append(AonJSONUtils.intToJSON("shipping_period", getShippingPeriod(), false));
+		
+		json.append(AonJSONUtils.strToJSON("creation_user", getCreationUser(), false));
+		json.append(AonJSONUtils.dateToJSON("creation_date", getCreationDate(), false));
+		json.append(AonJSONUtils.strToJSON("modification_user", getModificationUser(), false));
+		json.append(AonJSONUtils.dateToJSON("modification_date", getModificationDate(), false));
+		
+		// TODO se utilizan en pantalla de packing list!!! 
+		json.append(AonJSONUtils.strToJSON("series_number", "",false));
+		json.append(AonJSONUtils.strToJSON("order_type", "purchase", false));
+		json.append(AonJSONUtils.strToJSON("reference",getPurchaseReference() != null ? getPurchaseReference() : " ", true));
+		
+		json.append(AonJSONUtils.end());
+		
+		return json.toString();
+	}
 }
 

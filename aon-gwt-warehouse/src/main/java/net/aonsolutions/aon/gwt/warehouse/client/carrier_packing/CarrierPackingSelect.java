@@ -61,6 +61,7 @@ import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.vaadin.polymer.paper.widget.PaperInput;
 
+import net.aonsolutions.aon.gwt.warehouse.client.Utils;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class CarrierPackingSelect extends Composite{
@@ -559,7 +560,9 @@ public class CarrierPackingSelect extends Composite{
 			
 			@Override
 			public String getValue(JsOrder object) {
-				return object.getIssueDate() != null ? object.getIssueDate() : "";
+				return object.getIssueDate() != null
+						? Utils.formatDate(Utils.parseDateTime(object.getIssueDate()))
+						: "";
 			}
 		};
 		
@@ -569,7 +572,9 @@ public class CarrierPackingSelect extends Composite{
 			
 			@Override
 			public int compare(JsOrder o1, JsOrder o2) {
-				return o1.getIssueDate().compareTo(o2.getIssueDate());
+				Date date1 = Utils.parseDateTime(o1.getIssueDate());
+				Date date2 = Utils.parseDateTime(o2.getIssueDate());
+				return date1.compareTo(date2);
 			}
 		});
 		dataGrid.getColumnSortList().push(dateColumn);

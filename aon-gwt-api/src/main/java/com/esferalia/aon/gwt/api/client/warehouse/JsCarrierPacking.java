@@ -97,4 +97,8 @@ public class JsCarrierPacking extends JavaScriptObject {
 		return this.modification_date;
 	}-*/;
 
+	public final native Integer getLines() /*-{
+		return this.lines;
+	}-*/;
+
 }

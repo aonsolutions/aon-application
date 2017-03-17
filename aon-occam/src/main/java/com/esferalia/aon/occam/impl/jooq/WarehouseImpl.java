@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -20,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
+import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
@@ -242,6 +245,20 @@ public class WarehouseImpl implements IWarehouse {
 	public Integer insertElaboration(AONContext ctx, Elaboration elaboration) {
 		return ctx.getDslContext().transactionResult(configuration ->
 		ElaborationDAO.insertElaboration(ctx, elaboration));
+	}
+
+
+	@Override
+	public Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			IncomeDAO.getIncomeStream(ctx, filter));
+	}
+
+
+	@Override
+	public Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			IncomeDAO.getIncomeDetailStream(ctx, filter));
 	}
 	
 }

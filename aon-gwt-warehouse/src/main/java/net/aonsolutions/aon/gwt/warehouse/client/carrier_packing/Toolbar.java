@@ -19,9 +19,8 @@ public abstract class Toolbar extends Composite {
 	@UiField Button back;
 	@UiField Button reset;
 	@UiField Button remove;
-	@UiField Button packingList;
-	@UiField Button sendPackingList;
-	@UiField Button parameterButton;
+	@UiField Button print;
+	@UiField Button email;
 	
 	public Toolbar() {
 		initWidget(binder.createAndBindUi(this));
@@ -33,39 +32,56 @@ public abstract class Toolbar extends Composite {
 	protected abstract void back();
 	protected abstract void reset();
 	protected abstract void remove();
-	protected abstract void packingList();
-	protected abstract void sendPackingList();
-	protected abstract void parameterButton();
+	protected abstract void print();
+	protected abstract void email();
 
 
 	@UiHandler("back")
-	public void onAccept(ClickEvent event) {
+	public void onBackClick(ClickEvent event) {
 		back();
 	}
+	
+	public void setBackVisible(Boolean visible){
+		back.setVisible(visible);
+	}
+	
 
 	@UiHandler("reset")
-	public void onReset(ClickEvent event) {
+	public void onResetClick(ClickEvent event) {
 		reset();
 	}
 
+	public void setResetVisible(Boolean visible){
+		reset.setVisible(visible);
+	}
+	
 	@UiHandler("remove")
-	public void onRemove(ClickEvent event) {
+	public void onRemoveClick(ClickEvent event) {
 		remove();
 	}
 	
-	@UiHandler("packingList")
-	public void onPackingList(ClickEvent event) {
-		packingList();
+	public void setRemoveVisible(Boolean visible){
+		remove.setVisible(visible);
 	}
 	
-	@UiHandler("sendPackingList")
-	public void onSendPackingList(ClickEvent event) {
-		sendPackingList();
+	@UiHandler("print")
+	public void onPrintClick(ClickEvent event) {
+		print();
 	}
 	
-	@UiHandler("parameterButton")
-	public void onParameterButton(ClickEvent event) {
-		parameterButton();
+	public void setPrintVisible(Boolean visible){
+		print.setVisible(visible);
 	}
 	
+	@UiHandler("email")
+	public void onEmailClick(ClickEvent event) {
+		email();
+	}
+	
+	public void setEmailVisible(Boolean visible){
+		email.setVisible(visible);
+	}
+	
+	
+
 }

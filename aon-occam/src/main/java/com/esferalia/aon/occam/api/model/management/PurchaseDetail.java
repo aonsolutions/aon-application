@@ -227,5 +227,7 @@ public class PurchaseDetail implements Serializable {
 		this.productId = productId;
 	}
 	
-	
+	public String toJSON(){
+		return "{}";
+	}
 }

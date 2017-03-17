@@ -42,6 +42,7 @@ public class MSG {
 	public static final String FEE_PROJECTION = "fee_projection";	
 	public static final String GITHUB = "github";
 	public static final String ID = "id";
+	public static final String INCOME = "income";
 	public static final String INVOICE = "invoice";
 	public static final String ISSUE = "issue";
 	public static final String ISSUES = "issues";
@@ -69,6 +70,7 @@ public class MSG {
 	public static final String SIGNATURE = "signature";
 	public static final String STATUS = "status";
 	public static final String STATUSES  = "statuses"; 
+	public static final String SUPPLIER  = "supplier";
 	public static final String TITLE = "title";
 	public static final String TYPE = "type";
 	public static final String TYPES = "types";

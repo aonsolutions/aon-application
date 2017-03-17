@@ -18,7 +18,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
-import com.esferalia.aon.occam.api.model.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 

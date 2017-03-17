@@ -1,0 +1,106 @@
+package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
+import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
+import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+public class CarrierPackingPrincipal extends Composite{
+	
+	interface Binder extends UiBinder<Widget, CarrierPackingPrincipal> {}
+	public static final AonGwtIssuesCSS I_CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
+	private static final Binder binder = GWT.create(Binder.class);
+	
+	@UiField DockLayoutPanel contentDockLayoutPanel;
+	@UiField SplitLayoutPanel contentSplitLayoutPanel;
+	@UiField SimpleLayoutPanel northContent;
+	@UiField SimpleLayoutPanel content;
+	@UiField SimpleLayoutPanel southContent;
+	
+	private CarrierPacking2 parent;
+	private API API;
+	private HashMap<String, LinkedList<String>> filterMap;
+	private CarrierPackingPrincipal me;
+
+	public CarrierPackingPrincipal(CarrierPacking2 carrierPacking) {
+		initWidget(binder.createAndBindUi(this));
+		this.API = carrierPacking.getAPI();
+		this.parent = carrierPacking;
+		this.me = this;
+		this.filterMap = new HashMap<>();
+		
+		filterContent();
+		gridContent();
+		southContent();
+		southContentSize(30.0);
+	}
+	
+	public void filterContent(){
+		northContent.setWidget(new FilterPanel(this));
+	}
+	
+	public void gridContent(){
+		API.getWarehouse().getCarrierPacking(getFilterMap(), new AsyncCallback<JSON<JsCarrierPacking>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsCarrierPacking> result) {
+				content.setWidget(new GridPanel(me, result.getData().toLinkedList()));
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+	}
+	
+	public void southContent(){
+		FootPanel fp = new FootPanel(this);
+		fp.getTabPanel().add(new ParameterPanel(this), new Label("Parametros"));
+		southContent.setWidget(fp);		
+	}
+	
+	public void southContentSize(Double value) {
+		contentSplitLayoutPanel.setWidgetSize(southContent, value);	
+	}
+	
+	public void selectCarrierPacking(JsCarrierPacking js){
+		parent.carrierPackingContent(js);
+	}
+
+	public API getAPI() {
+		return API;
+	}
+
+	public HashMap<String, LinkedList<String>> getFilterMap() {
+		return filterMap;
+	}
+
+	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
+		this.filterMap = filterMap;
+	}
+	
+	public void initializeFilterMap(){
+		HashMap<String, LinkedList<String>> map = new HashMap<>();
+		LinkedList<String> from = new LinkedList<>();
+		from.add(Long.toString(new Date().getTime()));
+		map.put("from", from );
+    	setFilterMap(map);
+	}
+	
+}

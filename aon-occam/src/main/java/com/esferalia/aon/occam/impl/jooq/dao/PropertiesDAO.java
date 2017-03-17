@@ -14,6 +14,8 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -30,6 +32,8 @@ import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
@@ -44,6 +48,8 @@ import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
@@ -412,6 +418,80 @@ public class PropertiesDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_USER);}
+	}
+	
+	protected static class IncomePropertiesDAO implements IncomeProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, IncomeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(IncomeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) {
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INCOME.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INCOME.DOMAIN);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(INCOME.PROJECT);}
+		@Override public Property<Integer> getSupplierProperty() {return new FilterDAO.PropertyDAO<>(INCOME.SUPPLIER);}
+		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(INCOME.ADDRESS);}
+		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(INCOME.PAY_METHOD);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(INCOME.SECURITY_LEVEL);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INCOME.STATUS);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(INCOME.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(INCOME.REMARKS);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(INCOME.WORKPLACE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(INCOME.SCOPE);}
+		@Override public Property<Short> getNumberOfPymntsProperty() {return new FilterDAO.PropertyDAO<>(INCOME.NUMBER_OF_PYMNTS);}
+		@Override public Property<Short> getDaysToFirstPymntProperty() {return new FilterDAO.PropertyDAO<>(INCOME.DAYS_TO_FIRST_PYMNT);}
+		@Override public Property<Short> getDaysBetweenPymntsProperty() {return new FilterDAO.PropertyDAO<>(INCOME.DAYS_BETWEEN_PYMNTS);}
+		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(INCOME.PYMNT_DAYS);}
+		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(INCOME.BANK_ACCOUNT);}
+		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<>(INCOME.BANK_ALIAS);}
+		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(INCOME.BIC);}
+		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(INCOME.CARRIER_PACKING);}
+		@Override public Property<String> getReferenceCodeProperty() {return new FilterDAO.PropertyDAO<>(INCOME.REFERENCE_CODE);}
+		@Override public Property<Date> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<>(INCOME.ISSUE_TIME);}
+		
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
+	}
+	
+	protected static class IncomeDetailPropertiesDAO implements IncomeDetailProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, IncomeDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(IncomeDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) {
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.PROJECT);}
+		@Override public Property<Integer> getIncomeProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.INCOME);}
+		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.LINE);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.ITEM);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.DESCRIPTION);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.WAREHOUSE);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.QUANTITY);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.PRICE);}
+		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.DISCOUNT_EXPR);}
+		@Override public Property<Integer> getPurchaseDetailProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.PURCHASE_DETAIL);}
+		
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
 	}
 	
 	protected static class RecordDataPropertiesDAO implements RecordDataProperties {

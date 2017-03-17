@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
-import com.esferalia.aon.occam.api.model.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 

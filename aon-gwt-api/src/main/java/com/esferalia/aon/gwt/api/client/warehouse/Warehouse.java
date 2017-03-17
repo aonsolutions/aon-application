@@ -89,6 +89,11 @@ public class Warehouse extends Methods{
 	public void updateDelivery(Integer id, String requestData){
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData);
 	}
+	
+	public void getIncomes(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/income" + filter, callback);
+	}
 
 	public void getDetails(Integer id, String orderType, AsyncCallback<JSON<JsOrderDetail>> callback){
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/" +id + "/detail" , callback);

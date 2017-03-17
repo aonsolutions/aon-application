@@ -1,7 +1,6 @@
-package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
+package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
@@ -12,14 +11,10 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -31,7 +26,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -54,37 +48,32 @@ public class FilterPanel extends Composite {
     @UiField InlineLabel periodLabel;
     @UiField PaperIconButton cleanFilter;
     
-    CarrierPacking carrierPacking;
-    API API;
+    private CarrierPackingPrincipal parent;
+    private API API;
     
-    public FilterPanel(CarrierPacking carrierPacking) {
-    	this.carrierPacking = carrierPacking;
-    	API = carrierPacking.API;
+    private void onChange(String key, LinkedList<String> value) {
+    	parent.getFilterMap().put(key, value);
+		parent.gridContent();
+	}
+    private void onClean(){
+    	parent.initializeFilterMap();
+    	parent.gridContent();
+    }
+    
+    public FilterPanel(CarrierPackingPrincipal parent) {
+    	this.parent = parent;
+    	this.API = parent.getAPI();
     	initWidget(binder.createAndBindUi(this));       
 
-    	/*TextBox text = new TextBox(); 
-    	text.setStyleName(ICSS.aonSearchBoxIssues());
-    	text.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				// filtrar por referencia/conductor(name y document)/ matricula
-			}
-		});
-    	panel.add(text);
-    	*/
     	// -------------------- DATE - FROM _____ TO ______
     	HorizontalPanel datePanel = new HorizontalPanel(); 
-    	datePanel.addStyleName(AON.AON_CSS.aonMarginTop()); 
+    	datePanel.addStyleName(AON.AON_CSS.aonMarginTop());  
     	InlineLabel issueLabel = new InlineLabel( AON.MSG.issueDate());
     	issueLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
     	issueLabel.setWidth("20px");
 		datePanel.add(issueLabel);
 		
 		final DateBoxEx issue = new DateBoxEx();
-		issue.getElement().getStyle().setBorderColor("#dedede");
-		issue.getElement().getStyle().setHeight(16, Unit.PX);;
-
 		//issue.setValue(new Date());
 		issue.setWidth("70px");
 		issue.addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -92,8 +81,7 @@ public class FilterPanel extends Composite {
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(issue.getValue().getTime()));
-				carrierPacking.getFilterMap().put("issue_date", list);
-				carrierPacking.content();
+				onChange("issue_date", list);
 			}
 		});
 		datePanel.add(issue);
@@ -106,35 +94,18 @@ public class FilterPanel extends Composite {
 		final DateBoxEx delivery = new DateBoxEx();
 		//delivery.setValue(new Date());
 		delivery.setWidth("70px");
-		delivery.getElement().getStyle().setBorderColor("#dedede");
-		delivery.getElement().getStyle().setHeight(16, Unit.PX);;
-
 		delivery.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(delivery.getValue().getTime()));
-				carrierPacking.getFilterMap().put("delivery_date", list);
-				carrierPacking.content();			
+				onChange("delivery_date", list);	
 			}
 		});
 		datePanel.add(delivery);
 		
 		panel.add(datePanel);
-		
-		TextBox tb = new TextBox();
-		tb.addStyleName(ICSS.aonSearchBoxIssues());
-		tb.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				LinkedList<String> list = new LinkedList<>();
-				list.add(tb.getValue());
-				carrierPacking.getFilterMap().put("text", list);
-				carrierPacking.content();
-			}
-		});
-		panel.add(tb);
+    
 		
 		// ------------------ FILTER BUTTONS
 		FlowPanel fpanel = new FlowPanel(); 
@@ -242,17 +213,7 @@ public class FilterPanel extends Composite {
     	workplaceLabel.setText("");
     	periodLabel.setText("");
     	
-
-		HashMap<String, LinkedList<String>> map = new HashMap<>();
-		LinkedList<String> from = new LinkedList<>();
-		from.add(Long.toString(new Date().getTime()));
-		map.put("from", from );
-		
-		LinkedList<String> status = new LinkedList<>();
-		status.add(CarrierPackingStatus.PENDING.ordinal() + "");
-		map.put("status", status);
-    	carrierPacking.setFilterMap(map);
-    	carrierPacking.content();
+    	onClean();
 	}
     
     private String key;
@@ -266,8 +227,8 @@ public class FilterPanel extends Composite {
     	} else if(AON.MSG.status().equals(label)){
     		key = "status"; 
     	}
-    	LinkedList<String> filterList = carrierPacking.getFilterMap().containsKey(key) ? 
-    			carrierPacking.getFilterMap().get(key) : new LinkedList<>();
+    	LinkedList<String> filterList = parent.getFilterMap().containsKey(key) ? 
+    			parent.getFilterMap().get(key) : new LinkedList<>();
     	AonFilterDialog sw = new AonFilterDialog(pb, label, "",
     			filterList, result.getData().cast()){
 
@@ -275,19 +236,19 @@ public class FilterPanel extends Composite {
 			protected void onSelect(JavaScriptObject o, Boolean apply) {
 				JsObject js = o.cast();
 				if(apply){
-					if(carrierPacking.getFilterMap().containsKey(key)){
-						carrierPacking.getFilterMap().get(key).add(js.getId()+"");
+					if(parent.getFilterMap().containsKey(key)){
+						parent.getFilterMap().get(key).add(js.getId()+"");
 					} else {
 						LinkedList<String> list = new LinkedList<>();
 						list.add(js.getId()+"");
-						carrierPacking.getFilterMap().put(key, list);
+						parent.getFilterMap().put(key, list);
 					}
 				} else {
-					if(carrierPacking.getFilterMap().containsKey(key)){
-						carrierPacking.getFilterMap().get(key).remove(js.getId()+"");
+					if(parent.getFilterMap().containsKey(key)){
+						parent.getFilterMap().get(key).remove(js.getId()+"");
 					}
 				}
-				carrierPacking.content();
+				parent.gridContent();
 			}
     	};
     	sw.show();

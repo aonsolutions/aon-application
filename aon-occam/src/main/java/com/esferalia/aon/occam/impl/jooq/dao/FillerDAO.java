@@ -12,6 +12,8 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
+import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 
 import java.util.function.Function;
 
@@ -35,6 +37,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
@@ -44,6 +47,8 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Income;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class FillerDAO {
@@ -355,5 +360,69 @@ public class FillerDAO {
 				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
 				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
 		}
+	}
+	
+	public static class IncomeFiller implements Function<Record, Income> {
+		@Override
+		public Income apply(Record r) {
+			Income income = new Income();
+			income.setCreationDate(r.getValue(INCOME.CREATION_DATE));
+			income.setCreationUser(r.getValue(INCOME.CREATION_USER));
+			income.setModificationDate(r.getValue(INCOME.MODIFICATION_DATE));
+			income.setModificationUser(r.getValue(INCOME.MODIFICATION_USER));
+			return income
+					.setAddress(r.getValue(INCOME.ADDRESS))
+					.setBankAccount(r.getValue(INCOME.BANK_ACCOUNT))
+					.setBankAlias(r.getValue(INCOME.BANK_ALIAS))
+					.setBic(r.getValue(INCOME.BIC))
+					.setCarrierPacking(r.getValue(INCOME.CARRIER_PACKING))
+					.setComments(r.getValue(INCOME.COMMENTS))
+					.setDaysBetweenPymnt(r.getValue(INCOME.DAYS_BETWEEN_PYMNTS).intValue())
+					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue())
+					.setDomain(r.getValue(INCOME.DOMAIN))
+					.setId(r.getValue(INCOME.ID))
+					.setIssueDate(r.getValue(INCOME.ISSUE_TIME))
+					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue())
+					.setPayMethod(r.getValue(INCOME.PAY_METHOD))
+					.setProject(new Project().setId(r.getValue(INCOME.PROJECT)))
+					.setPymntDays(r.getValue(INCOME.PYMNT_DAYS))
+					.setReferenceCode(r.getValue(INCOME.REFERENCE_CODE))
+					.setRemarks(r.getValue(INCOME.REMARKS))
+					.setScope(r.getValue(INCOME.SCOPE))
+					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL).intValue())
+					.setStatus(IncomeStatus.values()[r.getValue(INCOME.STATUS)])
+					.setSupplier(r.getValue(INCOME.SUPPLIER))
+					.setWorkplace(r.getValue(INCOME.WORKPLACE));
+					
+		}
+	}
+	
+	public static class IncomeDetailFiller implements Function<Record, IncomeDetail> {
+		
+		@Override
+		public IncomeDetail apply(Record r) {
+			IncomeDetail incomeDetail = new IncomeDetail();
+			incomeDetail.setCreationDate(r.getValue(INCOME_DETAIL.CREATION_DATE));
+			incomeDetail.setCreationUser(r.getValue(INCOME_DETAIL.CREATION_USER));
+			incomeDetail.setModificationDate(r.getValue(INCOME_DETAIL.MODIFICATION_DATE));
+			incomeDetail.setModificationUser(r.getValue(INCOME_DETAIL.MODIFICATION_USER));
+			return incomeDetail
+					.setDescription(r.getValue(INCOME_DETAIL.DESCRIPTION))
+					.setDiscountExpression(r.getValue(INCOME_DETAIL.DISCOUNT_EXPR))
+					.setDomain(r.getValue(INCOME_DETAIL.DOMAIN))
+					.setId(r.getValue(INCOME_DETAIL.ID))
+					.setIncome(new Income()
+							.setId(r.getValue(INCOME_DETAIL.INCOME)))
+					.setItem(new Item()
+							.setId(r.getValue(INCOME_DETAIL.ITEM)))
+					.setLine(r.getValue(INCOME_DETAIL.LINE))
+					.setPrice(r.getValue(INCOME_DETAIL.PRICE))
+					.setProject(new Project()
+							.setId(r.getValue(INCOME_DETAIL.PROJECT)))
+					.setPurchaseDetail(r.getValue(INCOME_DETAIL.PURCHASE_DETAIL))
+					.setQuantity(r.getValue(INCOME_DETAIL.QUANTITY))
+					.setWarehouse(r.getValue(INCOME_DETAIL.WAREHOUSE));
+		}
+
 	}
 }

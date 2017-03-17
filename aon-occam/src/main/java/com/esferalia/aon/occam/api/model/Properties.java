@@ -7,6 +7,13 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 
 public interface Properties {
 	
+	public interface AuditProperties {
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+	}
+	
 	public interface ApplicationParameterProperties {
 		Property<Integer> getIdProperty(); 
 		Property<Integer> getDomainProperty();	
@@ -60,7 +67,6 @@ public interface Properties {
 	}
 	
 	public interface AttachProperties {
-
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getDescriptionProperty();
@@ -85,16 +91,12 @@ public interface Properties {
 		Property<Byte> getSourceTypeProperty();
 	}
 	
-	public interface InvoicingGroupProperties {
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
+	public interface InvoicingGroupProperties extends AuditProperties{
 		Property<Integer> getCustomerProperty();
 		Property<Byte> getCustomerGroupedProperty();
 		Property<String> getDescriptionProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getIdProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 	}
 	
 	public interface CommercialTrackingProperties {
@@ -172,7 +174,7 @@ public interface Properties {
 		Property<String> getNameProperty();
 	}
 	
-	public interface ProductProperties {
+	public interface ProductProperties extends AuditProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getNameProperty();
@@ -192,13 +194,9 @@ public interface Properties {
 		Property<Byte> getCompositionPriceProperty();
 		Property<Integer> getSalesAccountProperty();
 		Property<Integer> getPurchaseAccountProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
 	}
 	
-	public interface ItemProperties {
+	public interface ItemProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getProductProperty();
@@ -216,10 +214,6 @@ public interface Properties {
 		Property<Double> getPurchasePriceProperty();
 		Property<Byte> getInternetProperty();
 		Property<String> getBarcodeProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
 		Property<Integer> getPackFormatTagProperty();
 		Property<Integer> getPackUnitsProperty();
 		Property<Integer> getPackUnitsTagProperty();
@@ -228,10 +222,8 @@ public interface Properties {
 		Property<Integer> getStockUnitTagProperty();
 	}
 	
-	public interface DomainProperties {
+	public interface DomainProperties extends AuditProperties{
 		Property<Byte> getActiveProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
 		Property<String> getDescriptionProperty();
 		Property<Byte> getDisabledomainmanagementProperty();
 		Property<Byte> getDomainmanagementProperty();
@@ -242,8 +234,6 @@ public interface Properties {
 		Property<String> getLastaccessUserProperty();
 		Property<Integer> getMaxdefinedusersProperty();
 		Property<Integer> getMaxdocumentsizeProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 		Property<String> getNameProperty();
 		Property<String> getOwnerProperty();
 		Property<Integer> getParentProperty();
@@ -287,7 +277,7 @@ public interface Properties {
 		Property<Integer> getContactDataProperty();
 	}
 	
-	public interface DeliveryProperties{
+	public interface DeliveryProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getProjectProperty();
@@ -310,15 +300,11 @@ public interface Properties {
 		Property<String> getBankAccountProperty();
 		Property<String> getBankAliasProperty();
 		Property<String> getBicProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 		Property<Integer> getCarrierProperty();
 		Property<Integer> getCarrierPackingProperty();
 	}
 	
-	public interface DeliveryDetailProperties{
+	public interface DeliveryDetailProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getDelivery();
@@ -330,10 +316,6 @@ public interface Properties {
 		Property<Double> getPrice();
 		Property<String> getDiscountExpressionProperty();
 		Property<Integer> getSalesDetail();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 	}
 	
 	public interface TagProperties{
@@ -350,7 +332,7 @@ public interface Properties {
 		Property<String> getNameProperty();
 	}
 	
-	public interface TaxProperties{
+	public interface TaxProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getNameProperty();
@@ -361,11 +343,6 @@ public interface Properties {
 		Property<Byte> getTaxTypeProperty();
 		Property<Byte> getVatDeductionTypeProperty();
 		Property<Byte> getWithholdingTypeProperty();
-		
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 	}
 	
 	public interface ProductCategoryProperties{
@@ -449,16 +426,12 @@ public interface Properties {
 		Property<Integer> getWarehouseProperty();
 	}
 	
-	public interface WarehouseTransferProperties{
+	public interface WarehouseTransferProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getCommentsProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
 		Property<Integer> getInventoryProperty();
 		Property<Timestamp> getIssueTimeProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 		Property<Integer> getNumberProperty();
 		Property<String> getSeriesProperty();
 		Property<Byte> getSourceProperty();
@@ -467,19 +440,15 @@ public interface Properties {
 		Property<Integer> getTargetWarehouseProperty();
 	}
 	
-	public interface WarehouseTransferDetailProperties{
+	public interface WarehouseTransferDetailProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getWarehouseTransferProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
 		Property<Integer> getItemProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 		Property<Double> getQuantityProperty();
 	}
 	
-	public interface TaskProperties{
+	public interface TaskProperties extends AuditProperties{
 		Property<Integer> getActivityTypeProperty();
 		Property<String> getCommentsProperty();
 		Property<String> getDescriptionProperty();
@@ -502,10 +471,6 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 		Property<Integer> getWorkgroupProperty();
 		Property<Integer> getNumberProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
 		Property<Integer> getParentProperty();
 	}
 	
@@ -516,28 +481,20 @@ public interface Properties {
 		Property<Integer> getTaskProperty();
 	}
 	
-	public interface TaskCommentProperties{
+	public interface TaskCommentProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTaskProperty();
 		Property<String> getCommentProperty();
 		Property<Integer> getSourceProperty();
 		Property<Integer> getSourceIdProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();	
 	}
 	
-	public interface TaskEventProperties{
+	public interface TaskEventProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTaskProperty();
 		Property<String> getEventProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
 	}
 	
 	public interface TaskHolderWorkgroupProperties{
@@ -564,7 +521,7 @@ public interface Properties {
 		Property<Byte> getSystemProperty();
 	}
 	
-	public interface ProjectReservationProperties{
+	public interface ProjectReservationProperties extends AuditProperties{
 		Property<Integer> getProjectProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getHotelProperty();
@@ -604,10 +561,6 @@ public interface Properties {
 		Property<String> getCreditPenaltyValueProperty();	
 		Property<Byte> getTouristTaxFreeProperty();
 		Property<Byte> getCheckStatusProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
 		Property<String> getCancellationUserProperty();
 		Property<Timestamp> getCancellationDateProperty();
 		Property<String> getTokenProperty();
@@ -627,7 +580,7 @@ public interface Properties {
 		Property<Date> getStatusDateProperty();
 	}
 	
-	public interface CustomerProperties extends RegistryProperties{
+	public interface CustomerProperties extends RegistryProperties, AuditProperties{
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTariffProperty();
@@ -642,10 +595,6 @@ public interface Properties {
 		Property<Byte> getDeliveryGroupedProperty();
 		Property<Byte> getDeliveryValuatedProperty();
 		Property<Integer> getAccountProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
 	}
 	
 	public interface SellerProperties{
@@ -656,7 +605,7 @@ public interface Properties {
 		Property<Integer> getScopeProperty();
 	}
 	
-	public interface CarrierPackingProperties{
+	public interface CarrierPackingProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getSeriesProperty();
@@ -670,10 +619,6 @@ public interface Properties {
 		Property<String> getNumberPlateProperty();
 		Property<String> getDriverNameProperty();
 		Property<String> getDriverDocumentProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
 	}
 	
 	public interface RegistryProperties {
@@ -694,7 +639,7 @@ public interface Properties {
 	}
 
 	
-	public interface PurchaseProperties{
+	public interface PurchaseProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getProjectProperty();
@@ -731,10 +676,6 @@ public interface Properties {
 		Property<String> getShippingAlternativeRecipientProperty();
 		Property<String> getShippingContactProperty();
 		Property<Byte> getShippingPeriodProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
 		Property<Integer> getCarrierPackingProperty();
 	}
 	
@@ -770,6 +711,46 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getProductProperty();
 		Property<Integer> getTagProperty();		
+	}
+	
+	public interface IncomeProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<String> getReferenceCodeProperty();
+		Property<Integer> getSupplierProperty();
+		Property<Integer> getAddressProperty();
+		Property<Date> getIssueTimeProperty();
+		Property<Integer> getPayMethodProperty();
+		Property<Byte> getSecurityLevelProperty();
+		Property<Byte> getStatusProperty();
+		Property<String> getCommentsProperty();
+		Property<String> getRemarksProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Integer> getScopeProperty();
+		Property<Short> getNumberOfPymntsProperty();
+		Property<Short> getDaysToFirstPymntProperty();
+		Property<Short> getDaysBetweenPymntsProperty();
+		Property<String> getPymntDaysProperty();
+		Property<String> getBankAccountProperty();
+		Property<String> getBankAliasProperty();
+		Property<String> getBicProperty();
+		Property<Integer> getCarrierPackingProperty();
+	}
+
+	public interface IncomeDetailProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getIncomeProperty();
+		Property<Integer> getProjectProperty();
+		Property<Short> getLineProperty();
+		Property<Integer> getItemProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getWarehouseProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getDiscountExprProperty();
+		Property<Integer> getPurchaseDetailProperty();
 	}
 
 }

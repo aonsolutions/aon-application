@@ -3,10 +3,13 @@ package com.esferalia.aon.occam.api.model.warehouse;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Audit;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonJSONUtils;
 
-public class Income implements Serializable {
+public class Income extends Audit implements Serializable {
 	
 	private static final long serialVersionUID = 8897444490096530091L;
 	
@@ -31,11 +34,8 @@ public class Income implements Serializable {
 	private String bankAccount;
 	private String bankAlias;
 	private String bic;
+	private Integer carrierPacking;
 
-	private Date creationDate;
-	private String creationUser;
-	private Date modificationDate;
-	private String modificationUser;
 	
 	public Integer getId() {
 		return id;
@@ -93,6 +93,11 @@ public class Income implements Serializable {
 		this.securityLevel = securityLevel;
 		return this;
 	}
+	
+	public Boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL.value().equals(securityLevel);
+	}
+	
 	public String getComments() {
 		return comments;
 	}
@@ -163,34 +168,7 @@ public class Income implements Serializable {
 		this.bic = bic;
 		return this;
 	}
-	public Date getCreationDate() {
-		return creationDate;
-	}
-	public Income setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-		return this;
-	}
-	public String getCreationUser() {
-		return creationUser;
-	}
-	public Income setCreationUser(String creationUser) {
-		this.creationUser = creationUser;
-		return this;
-	}
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-	public Income setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-		return this;
-	}
-	public String getModificationUser() {
-		return modificationUser;
-	}
-	public Income setModificationUser(String modificationUser) {
-		this.modificationUser = modificationUser;
-		return this;
-	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -215,8 +193,64 @@ public class Income implements Serializable {
 		this.workplace = workplace;
 		return this;
 	}
-
+	public Integer getCarrierPacking() {
+		return carrierPacking;
+	}
+	public Income setCarrierPacking(Integer carrierPacking) {
+		this.carrierPacking = carrierPacking;
+		return this;
+	}
 	
-	
+	public String toJSON() {
+		StringBuilder json = new StringBuilder();
+		json.append(AonJSONUtils.start());
+		json.append(AonJSONUtils.intToJSON("id", getId(), false));
+		json.append(AonJSONUtils.intToJSON("domain", getDomain(), false));
+		// TODO json.append(AonJSONUtils.intToJSON("project", getProject(), false));
+		json.append(AonJSONUtils.start("registry")); //TODO supplier o registry ¿?
+			json.append(AonJSONUtils.intToJSON("id", getSupplier(), true));
+			//json.append(AonJSONUtils.strToJSON("name", getSupplierName(), true));
+		json.append(AonJSONUtils.end() + ",");
+		json.append(AonJSONUtils.strToJSON("reference_code", getReferenceCode(), false));
+		json.append(AonJSONUtils.intToJSON("address", getAddress(), false));
+		//	TODO SE USA EN PACKING LIST - HAY K CAMBIARLO!
+		json.append(AonJSONUtils.dateToJSON("issue_date", getIssueDate(), false));
+		//
+		json.append(AonJSONUtils.intToJSON("pay_method",  getPayMethod(), false));
+		
+		json.append(AonJSONUtils.boolToJSON("confidential", isConfidential(), false));
+		if(getStatus() != null){
+			json.append(AonJSONUtils.start("status"));
+				json.append(AonJSONUtils.intToJSON("id", getStatus().ordinal(), false));
+				json.append(AonJSONUtils.strToJSON("name", getStatus().getName(), true));
+			json.append(AonJSONUtils.end() + ",");
+		}
+		json.append(AonJSONUtils.strToJSON("comments", getComments(), false));
+		json.append(AonJSONUtils.strToJSON("remarks", getRemarks(), false));
+		json.append(AonJSONUtils.intToJSON("workplace", getWorkplace(), false));
+		json.append(AonJSONUtils.intToJSON("scope", getScope(), false));
+		json.append(AonJSONUtils.intToJSON("number_of_pymnts", getNumberOfPymnts(), false));
+		json.append(AonJSONUtils.intToJSON("days_to_first_pymnt", getDaysToFirstPymnt(), false));
+		json.append(AonJSONUtils.intToJSON("days_between_pymnts", getDaysBetweenPymnt(), false));
+		json.append(AonJSONUtils.strToJSON("pymnt_days", getPymntDays(), false));
+		json.append(AonJSONUtils.strToJSON("bankAccount", getBankAccount(), false));
+		json.append(AonJSONUtils.strToJSON("bankAlias", getBankAlias(), false));
+		json.append(AonJSONUtils.strToJSON("bic", getBic(), false));
+		json.append(AonJSONUtils.intToJSON("carrier_packing", getCarrierPacking(), false));
+		
+		json.append(AonJSONUtils.strToJSON("creation_user", getCreationUser(), false));
+		json.append(AonJSONUtils.dateToJSON("creation_date", getCreationDate(), false));
+		json.append(AonJSONUtils.strToJSON("modification_user", getModificationUser(), false));
+		json.append(AonJSONUtils.dateToJSON("modification_date", getModificationDate(), false));
+		
+		// TODO se utilizan en pantalla de packing list!!! 
+		json.append(AonJSONUtils.strToJSON("series_number", "",false));
+		json.append(AonJSONUtils.strToJSON("order_type", "purchase", false));
+		json.append(AonJSONUtils.strToJSON("reference",getReferenceCode() != null ? getReferenceCode() : " ", true));
+		
+		json.append(AonJSONUtils.end());
+		
+		return json.toString();
+	}
 
 }

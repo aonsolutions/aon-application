@@ -8,18 +8,37 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeDetailFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomeDetailPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class IncomeDAO {
 	
+	private static final IncomePropertiesDAO INCOME_PROPERTIES = new IncomePropertiesDAO();	
+	private static final IncomeDetailPropertiesDAO INCOME_DETAIL_PROPERTIES = new IncomeDetailPropertiesDAO();
+	
+	public static Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter){
+		return INCOME_PROPERTIES.build(ctx.getDslContext().select().from(INCOME), filter)
+				.fetch().stream().map(new IncomeFiller());
+	}
+	
+	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter){
+		return INCOME_DETAIL_PROPERTIES.build(ctx.getDslContext().select().from(INCOME_DETAIL), filter)
+				.fetch().stream().map(new IncomeDetailFiller());
+	}
 	
 	public static IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
@@ -32,7 +51,7 @@ public class IncomeDAO {
 				.and(workplaceCondition)
 				.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.orderBy(INCOME.ISSUE_TIME.desc())
-				.limit(1).fetch().stream().map(new IncomeDetailFiller())
+				.limit(1).fetch().stream().map(new SpecialIncomeDetailFiller())
 				.findFirst().orElse(new IncomeDetail());
 	}
 	
@@ -48,7 +67,7 @@ public class IncomeDAO {
 				.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
 				.orderBy(INCOME.ISSUE_TIME.desc())
-				.limit(1).fetch().stream().map(new IncomeDetailFiller())
+				.limit(1).fetch().stream().map(new SpecialIncomeDetailFiller())
 				.findFirst().orElse(new IncomeDetail());
 	}
 	
@@ -69,7 +88,7 @@ public class IncomeDAO {
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull())))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 						,INCOME_DETAIL.ID.desc())
-				.fetch().stream().map(new IncomeDetailFiller())
+				.fetch().stream().map(new SpecialIncomeDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -91,7 +110,7 @@ public class IncomeDAO {
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull())))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 						,INCOME_DETAIL.ID.desc())
-				.fetch().stream().map(new IncomeDetailFiller())
+				.fetch().stream().map(new SpecialIncomeDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -111,7 +130,7 @@ public class IncomeDAO {
 															.and(INVOICE_DETAIL.WAREHOUSE.isNull())))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 						,INCOME_DETAIL.ID.desc())
-				.fetch().stream().map(new IncomeDetailFiller())
+				.fetch().stream().map(new SpecialIncomeDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -137,12 +156,12 @@ public class IncomeDAO {
 				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 						,INCOME_DETAIL.ID.desc())
-				.fetch().stream().map(new IncomeDetailFiller())
+				.fetch().stream().map(new SpecialIncomeDetailFiller())
 				.filter(f -> list.stream().filter(h -> h.equals(f.getId())).count() == 0)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	private static class IncomeDetailFiller implements Function<Record, IncomeDetail> {
+	private static class SpecialIncomeDetailFiller implements Function<Record, IncomeDetail> {
 		
 		@Override
 		public IncomeDetail apply(Record r) {

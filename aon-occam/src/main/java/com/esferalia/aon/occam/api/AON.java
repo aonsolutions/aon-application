@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
-import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
 import com.esferalia.aon.occam.api.model.CommercialActivity;
@@ -33,6 +32,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
+import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
@@ -45,6 +45,8 @@ import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
@@ -139,6 +141,7 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
+import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
@@ -1952,6 +1955,51 @@ public class AON {
 		}
 	}
 
+	public static Stream<Income> getIncomeStream(String domainName, Integer domainId, String login, IncomeFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getIncomeStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	
+	}
+	
+	public static LinkedList<Income> getIncomeList(String domainName, Integer domainId, String login, IncomeFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getIncomeStream(ctx, filter)
+					.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	
+	}
+	
+	public static Optional<Income> getIncome(String domainName, Integer domainId, String login, IncomeFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getIncomeStream(ctx, filter).findFirst();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	
+	}
+
+	public static Stream<IncomeDetail> getIncomeDetailStream(String domainName, Integer domainId, String login, IncomeDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getIncomeDetailStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	
+	}
+	
 	public static IncomeDetail getLastIncomeDetail(String domainName,
 			Integer domainId, String user, Item item, Integer workplaceId,
 			Integer warehouseId) {
