@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -31,6 +32,7 @@ import com.code.aon.ui.finance.event.PosFinanceSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 
 public class PosFinanceController extends FinanceListController implements IFinanceConstants {
 	
@@ -79,20 +81,36 @@ public class PosFinanceController extends FinanceListController implements IFina
 		PosFinanceSearchListener searchListener = (PosFinanceSearchListener)AonUtil.getRegisteredBean(POS_FINANCE_SEARCH_LISTENER_NAME);
 		String date = new SimpleDateFormat(AonUtil.getMessage(SIMPLE_DATE2_PATTERN)).format(new Date());
 		String payMethod = searchListener.getPayMethod().getName();
-		String hotel = searchListener.getWorkPlace().getDescription();
-		if ((payMethod + hotel).length() > 22) {
+		String workPlace = obtainWorkPlaceDescription(searchListener.getWorkPlace());
+		if ((payMethod + workPlace).length() > 22) {
 			if (payMethod.length() > 8) {
 				payMethod = payMethod.substring(0, 8);
 			}
-			hotel = StringUtils.substring(hotel, 0, 22 - payMethod.length());
+			workPlace = StringUtils.substring(workPlace, 0, 22 - payMethod.length());
 		}
 
 		FinanceBatch fBatch = new FinanceBatch();
-		fBatch.setDescription(date + "_" + payMethod + "_" + hotel);
+		fBatch.setDescription(date + "_" + payMethod + "_" + workPlace);
 		fBatch.setIssueDate(new Date());
 		return fBatch;
 	}
 
+	private String obtainWorkPlaceDescription(WorkPlace workPlace) {
+		String description = workPlace.getDescription();
+		try {
+			Hotel hotel = null;
+			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_ID), workPlace.getId());
+			for (ITransferObject ito : hotelBean.getList(criteria)) {
+				hotel = (Hotel)ito;
+			}
+			description = (hotel != null) ? hotel.getAlias() : description;
+		} catch(ManagerBeanException ex) {
+		}
+		return description;
+	}
+	
 	public List<SelectItem> getFinanceBatchList() throws ManagerBeanException {
 		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		Criteria criteria = new Criteria();

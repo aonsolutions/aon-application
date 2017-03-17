@@ -179,6 +179,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>com.esferalia.aon</groupId>
+      <artifactId>aon.pms</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.3</version>

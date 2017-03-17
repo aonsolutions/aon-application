@@ -23,6 +23,12 @@ public interface ISQLConstants {
 	String ASSET_ACTIVITY = "assetActivity";
 	String ASSET = "asset";
 
+	String PLAYASOL = "playasol";
+	String APARTAMENTOS = "apartamentos";
+	String APTOS = "aptos";
+	String APTS = "apts";
+	String APTHOTEL = "apthotel";
+
 	String HOTEL = "hotel";
 	String HOTEL_NAME = "hotelName";
 	String HOTEL_CUSTOMER = "hotelCustomer";
