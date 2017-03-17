@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,10 +169,40 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			Elaboration elaboration = ElaborationDAO.getElaboration(ctx,
 					series, number);
 			if(elaboration.getStatus()==ElaborationStatus.IN_PROGRESS.value()){
-				elaboration.setStatus(ElaborationStatus.PENDING.value());
+				elaboration.setStatus(ElaborationStatus.REOPEN.value());
+				elaboration.setComments(StringUtils.mid(ref.getOBSERVACIONES(), 0, 128));
 				elaborationList.add(elaboration);
 			}
 		});
+	}
+	
+	private String fillSuccessMessage(List<RESPUESTAELABORACIONTYPE> list) {
+		StringBuffer bf = new StringBuffer("<h1>Envío de elaboraciones.</h1>");
+		bf.append("<ul>");
+		list.forEach(elab -> {
+			bf.append("<li>Elaboración " + elab.getSERIE() + "/"
+					+ elab.getNUMERO() + " del " + elab.getFECHAEMISION()
+					+ "</li>");
+		});
+		bf.append("</ul>");
+		return bf.toString();
+	}
+	
+	private String fillErrorMessage(ERRORESTYPE errorestype, List<String> errorList) {
+		StringBuffer bf = new StringBuffer("<h1>Envío de elaboraciones.</h1>");
+		bf.append("<ul>");
+		errorList.forEach(error -> {
+			if(error!=null)
+				bf.append("<li>"+error+"</li>");
+		});
+		bf.append("</ul>");
+		bf.append("<ul>");
+		errorestype.getERRORES().forEach(error -> {
+			if(error!=null)
+				bf.append("<li>"+error+"</li>");
+		});
+		bf.append("</ul>");
+		return bf.toString();
 	}
 
 	private void flushErrors(HttpServletResponse httpResponse,
@@ -182,6 +213,10 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			respuesta.getERRORES().getERRORES().add(error);
 		});
 		String xml = IngenetXmlValidator.convertToXml(respuesta, RESPUESTAELABORACIONES.class);
+		
+		String errorMsg = fillErrorMessage(respuesta.getERRORES(), errorList);
+		sendEmail(errorMsg, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
+		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
 		
@@ -194,6 +229,10 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			AONContext ctx, List<Elaboration> pendingList) throws IOException {
 		RESPUESTAELABORACIONES elaboraciones = fillElaborationData(ctx, pendingList);
 		String xml = IngenetXmlValidator.convertToXml(elaboraciones, RESPUESTAELABORACIONES.class);
+		
+		String successMsg = fillSuccessMessage(elaboraciones.getDATOSRESPUESTAELABORACIONES());
+		sendEmail(successMsg, null, null, RECIPIENTS_TO_SUCCESS);
+		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();

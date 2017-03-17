@@ -528,6 +528,8 @@ public class WarehouseDAO {
 		.set(DELIVERY.BANK_ACCOUNT, delivery.getBankAccount())
 		.set(DELIVERY.BANK_ALIAS, delivery.getBankAlias())
 		.set(DELIVERY.BIC, delivery.getBic())
+		.set(DELIVERY.CARRIER, delivery.getCarrier())
+		.set(DELIVERY.CARRIER_PACKING, delivery.getCarrierPacking())
 		.set(DELIVERY.CREATION_USER, ctx.getUser())
 		.set(DELIVERY.CREATION_DATE, creationDate)
 		.set(DELIVERY.MODIFICATION_USER, ctx.getUser())

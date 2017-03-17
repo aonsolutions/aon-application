@@ -3,14 +3,8 @@ package com.esferalia.aon.ingenet.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,15 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -52,7 +37,6 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
-import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -69,7 +53,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -91,9 +74,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final String RECIPIENTS_TO_LOG = "udapalog@aonsolutions.es";
-	private static final String RECIPIENTS_TO_SUCCESS = "udapasuccess@aonsolutions.es";
-	private static final String RECIPIENTS_TO_FAILURES = "udapafailures@aonsolutions.es";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetDeliveryServlet.class.getName());
 	
@@ -106,9 +86,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		boolean test = true;
 		
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
-		
-		sendEmail("LOG", _xml, RECIPIENTS_TO_LOG);
-		saveToDisk(_xml);
 		
 		ALBARANES deliveryList = null;
 		errorList = new LinkedList<>();
@@ -164,7 +141,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			if (!test) {
 				httpResponse.setStatus(HttpServletResponse.SC_OK);
 				String successMsg = fillSuccessMessage(deliveryList.getDATOSALBARANES());
-				sendEmail(successMsg, null, RECIPIENTS_TO_SUCCESS);
+				sendEmail(successMsg, null, null, RECIPIENTS_TO_SUCCESS);
 			}
 		}
 	}
@@ -178,7 +155,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		String xml = IngenetXmlValidator.convertToXml(deliveryList, ALBARANES.class);
 		
 		String errorMsg = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
-		sendEmail(errorMsg, xml, RECIPIENTS_TO_FAILURES);
+		sendEmail(errorMsg, "albaranes", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
@@ -217,101 +194,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return bf.toString();
 	}
 	
-	public MailAccount getAdminMailAccount() {
-		return AON.getMailAccountList(getDomain(), getDomainId(), getUser(), 
-				f -> f.getDomainProperty().eq(0)).getFirst();
-	}
-	
-//	public static MailAccount getEmailSender() throws UnsupportedEncodingException {
-//		MailAccount mailAccount = new MailAccount();
-//		mailAccount.setEmail("admin@aonSolutions.es");
-//		mailAccount.setMailUsername("admin@aonSolutions.es");
-//		mailAccount.setPassword("admineM41L");
-//		mailAccount.setIncomingSecurity((byte)ConnectionSecurity.TLS.ordinal());
-//		mailAccount.setIncomingHost("imap.aonsolutions.es");
-//		mailAccount.setOutgoingSecurity((byte)ConnectionSecurity.TLS.ordinal());
-//		mailAccount.setOutgoingHost("smtp.aonsolutions.es");
-//		mailAccount.setDisplayName("aonSolutions");
-//		Address from = new InternetAddress( mailAccount.getEmail(), mailAccount.getDisplayName() );
-//		return new EmailSender( from, mailAccount );							
-//	}
-	
-	protected void sendEmail(String msg, String attach, String... recipients) {
-		JSONObject json = new JSONObject();
-		try {
-			String recipientsTo = "";
-			if(recipients!=null){
-				for(String to: recipients){
-					if(!recipientsTo.isEmpty())
-						recipientsTo += ",";
-					recipientsTo += to;
-				}
-			}
-			MailAccount mail = getAdminMailAccount();
-			json.put("mailAccountId", mail.getId())
-				.put("recipientsTo", recipientsTo)
-				.put("content", msg)
-				.put("subject", "[AON] Recepcion automatica de albaranes")
-				.put("login", getUser())
-				.put("domainName", getDomain())
-				.put("domainId", getDomainId())
-				.put("bcc", "eagirrezabal@aonsolutions.es");
-			System.out.println("SEND EMAIL FROM");
-			System.out.print("domain "+mail.getDomain());
-			System.out.print(" | id "+mail.getId());
-			System.out.println(" | "+mail.getEmail());
-			System.out.println("SEND EMAIL TO");
-			System.out.println(recipientsTo);
-			
-			if(attach==null || "".equals(attach)){
-				json.put("md5", "");
-			} else {
-				String encode = Base64.getEncoder().encodeToString(attach.getBytes());
-				json.put("md5", encode)
-					.put("attachName", "albaranes")
-					.put("mimetype", MimeType.XML.ordinal());
-			}
-		
-			String url = getScheme() + "://"
-					+ (isDevEnabled() ? ":8080/aon-aio" : "")
-					+ getDomain() + "/send_email/";
-			System.out.println(url);
-			HttpClientBuilder base = HttpClientBuilder.create();
-			HttpClient client = base.build();
-			HttpPost post = new HttpPost(url);
-			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("details", json.toString()));
-			post.setEntity(new UrlEncodedFormEntity(urlParameters));
-			HttpResponse resp = client.execute(post);
-			System.out.println(resp);
-		} catch (JSONException e) {
-			LOGGER.error(e.getMessage());
-		} catch (IOException e){
-			LOGGER.error(e.getMessage());
-		}
-	}
-	
-	protected void saveToDisk(String value) {
-		byte data[] = value.getBytes();
-		Path file = Paths.get("/var","tmp","ingenet",new SimpleDateFormat("ddMMyyyy-hhmm").format(new Date())+".xml");
-		try {
-			Path parentDir = file.getParent();
-			if (!Files.exists(parentDir))
-			    Files.createDirectories(parentDir);
-			Files.write(file, data, StandardOpenOption.CREATE_NEW);
-		} catch (IOException e) {
-			LOGGER.error("Error guardando el fichero recibido: " + e.getMessage());
-		} catch (Exception e) {
-			LOGGER.error("Error guardando el fichero recibido: " + e.getMessage());
-		}
-	}
-	
 	private void processData(List<ALBARANTYPE> list, boolean test){
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		ctx.getDslContext().transaction(configuration -> {
 			list.forEach(albaran -> {
-				createDelivery(ctx, albaran, test);
-				createCarrierPacking(ctx, albaran, test);
+				Delivery delivery = createDelivery(ctx, albaran, test);
+				createCarrierPacking(ctx, albaran, delivery, test);
 			});
 		});
 	}
@@ -324,7 +212,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		albaran.getERRORES().getERRORES().add(msg);
 	}
 
-	private void createDelivery(AONContext ctx, ALBARANTYPE albaran, boolean test) {
+	private Delivery createDelivery(AONContext ctx, ALBARANTYPE albaran, boolean test) {
 		Delivery delivery = new Delivery(); 
 		List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
 		try {
@@ -346,6 +234,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				try {
 					Integer deliveryId = WarehouseDAO.insertDelivery(ctx, delivery);
 					if(deliveryId!=null){
+						delivery.setId(deliveryId);
 						try {
 							detailList.forEach(detail -> {detail.getDelivery().setId(deliveryId);});
 							WarehouseDAO.insertDeliveryDetails(ctx, detailList);
@@ -359,6 +248,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						} catch (Throwable th) {
 							addError(albaran, th.getLocalizedMessage());
 						}
+						return delivery;
 					}
 				} catch (Throwable th) {
 					addError(albaran, th.getLocalizedMessage());
@@ -373,7 +263,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				});
 			}
 		}
-		
+		return null;
 	}
 
 	private Delivery fillDelivery(AONContext ctx, ALBARANTYPE albaran, Delivery delivery) {
@@ -437,6 +327,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		delivery.setBankAccount("");
 		delivery.setBankAlias("");
 		delivery.setBic("");
+		delivery.setCarrierPacking(null);
 		return delivery;
 	}
 
@@ -614,7 +505,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 	
 	
-	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran, boolean test) {
+	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran, Delivery delivery, boolean test) {
 		if(albaran.getDATOSHOJARUTA()!=null) {
 			Carrier carrier = obtainCarrier(ctx, albaran.getDATOSHOJARUTA()
 					.getDATOSAGENCIATRANSPORTE());
@@ -668,7 +559,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				}
 				try {
 					if(!test){
-						WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
+						Integer carrierPackingId = WarehouseDAO.insertCarrierPacking(ctx, carrierPacking);
+						if(delivery!=null && delivery.getId()!=null){
+							delivery.setCarrierPacking(carrierPackingId);
+							WarehouseDAO.updateDelivery(ctx, delivery);
+						}
 					}
 				} catch (Throwable th) {
 					addError(albaran, th.getLocalizedMessage());

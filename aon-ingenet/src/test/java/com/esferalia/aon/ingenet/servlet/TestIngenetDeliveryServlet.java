@@ -2,7 +2,6 @@ package com.esferalia.aon.ingenet.servlet;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -19,8 +18,8 @@ public class TestIngenetDeliveryServlet  {
 //		String filePath = "/temp/delivery_example.xml";
 //		String filePath = "/temp/albaranes20170216101946.xml";
 //		String filePath = "/temp/albaranes20170220110328.xml";
-		String filePath = "/temp/albaranes20170224085549.xml";
-//		String filePath = "/temp/albaranes-pv17-114-115.xml";
+//		String filePath = "/temp/albaranes20170224085549.xml";
+		String filePath = "/temp/albaranes-pv17-114-115.xml";
 		
 		try (
 			BufferedReader xml_br = new BufferedReader(new FileReader(filePath))) {
@@ -28,7 +27,7 @@ public class TestIngenetDeliveryServlet  {
 			while ((sCurrentLine = xml_br.readLine()) != null) {
 				xml += sCurrentLine;
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
