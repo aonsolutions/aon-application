@@ -48,6 +48,9 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private Label sumCredit;
 	private ExpressionResolver resolver;
 	
+	private boolean confirmConceptChange;
+	private boolean confirmDocumentChange;
+
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY		,"20px" ,AON.AON_CSS.aonTextCenter())
 		, ACC(AON.MSG.account()			,"auto" ,null)
@@ -85,6 +88,10 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	
 	public AccountEntryTable(IWizardContent wizardContent) {
 		this.wizardContent = wizardContent;
+
+		setConfirmConceptChange(true);
+		setConfirmDocumentChange(true);
+
 		sumDebit = new Label();
 		sumDebit.setStyleName(AON.AON_CSS.aonBold());
 		sumCredit = new Label();
@@ -98,6 +105,21 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		}; 
 	}
 	
+	public boolean isConfirmConceptChange() {
+		return confirmConceptChange;
+	}
+	public void setConfirmConceptChange(boolean confirmConceptChange) {
+		this.confirmConceptChange = confirmConceptChange;
+	}
+	public boolean isConfirmDocumentChange() {
+		return confirmDocumentChange;
+	}
+	public void setConfirmDocumentChange(boolean confirmDocumentChange) {
+		this.confirmDocumentChange = confirmDocumentChange;
+	}
+
+
+
 	public void paintTable() {
 		paintHeader();
 		paintDetails();
@@ -302,12 +324,16 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			@Override
 			public void onValueChange(final ValueChangeEvent<String> event) {
 				aed.setConcept(conceptBox.getValue());
-				if (getRowCount() > 3) {
+				if (getRowCount() > 3 &&  isConfirmConceptChange()) {
 					ConfirmDialog cd = new ConfirmDialog();
 					cd.confirm(AON.MSG.changeConcept(),new ConfirmDialogCallback() {
 						
 						@Override
 						public void onCancel() {
+							setConfirmConceptChange(false);
+						}
+						@Override
+						public void onClose() {
 							debitBox.setFocus(true);
 						}
 						
@@ -462,15 +488,18 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			@Override
 			public void onValueChange(final ValueChangeEvent<String> event) {
 				aed.setDocumentNumber(documentBox.getValue());
-				if (getRowCount() > 3) {
+				if (getRowCount() > 3 && isConfirmDocumentChange()) {
 					ConfirmDialog cd = new ConfirmDialog();
 					cd.confirm(AON.MSG.changeDocument(),new ConfirmDialogCallback() {
 						
 						@Override
 						public void onCancel() {
+							setConfirmDocumentChange(false);
+						}
+						@Override
+						public void onClose() {
 							AccountEntryTable.this.setFocus(true);
 						}
-						
 						@Override
 						public void onAccept() {
 							for (int i = 1; i < getRowCount() ; i++ ) {

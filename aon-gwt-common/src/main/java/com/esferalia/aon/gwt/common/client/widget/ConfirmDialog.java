@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,6 +21,9 @@ public class ConfirmDialog extends CustomDialog {
 	public static interface ConfirmDialogCallback {
 		void onAccept();
 		void onCancel();
+		default void onClose() {
+			this.onCancel();
+		}
 	}
 
 	private SimpleLayoutPanel root;
@@ -99,7 +101,7 @@ public class ConfirmDialog extends CustomDialog {
     	addCloseHandler(new CloseHandler<PopupPanel>() {
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
-				callback.onCancel();
+				callback.onClose();
 			}
 		});
     	buttons.add(cancelButton);
