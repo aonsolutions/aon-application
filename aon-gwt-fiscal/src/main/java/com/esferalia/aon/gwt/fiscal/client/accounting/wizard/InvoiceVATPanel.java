@@ -252,7 +252,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		saveButton = new Button();
 		saveButton.setTabIndex(InvoicePanel.VAT_PANEL_TAB_OFFSET + 50001);
 		saveButton.setTitle( AON.MSG.saveAction() );
-		saveButton.setAccessKey( 'G' );
 		saveButton.setStyleName(AON.AON_CSS.aonIconSave());
 		saveButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
 		saveButton.addStyleName(AON.AON_CSS.aonMarginLeft());
