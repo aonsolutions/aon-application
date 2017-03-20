@@ -13,10 +13,12 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -330,9 +332,15 @@ public class EmployeeCalendarDraftObjectData {
 	}
 	
 	//TODO: setCoeficienteEre
-	public void setCoeficienteEre(Date dia, double ce) {
-		Double old = draftMapaDiasCoeficienteEre.put(dia, ce);
-		undoManager.add(new SetEreEdit(old, ce, dia));
+	public void setCoeficienteEre(List<Date> diasEre, DayType ereday, double ce) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Date day : diasEre){
+			DayType oldType = draftMapaDiasTipo.put(day, ereday);
+			Double oldCE = draftMapaDiasCoeficienteEre.put(day, ce);
+			undos.add(new SetTypeEdit(oldType, ereday, day));
+			undos.add(new SetEreEdit(oldCE, ce, day));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
 
 	

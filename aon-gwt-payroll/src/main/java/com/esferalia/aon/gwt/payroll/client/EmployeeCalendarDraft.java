@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -927,10 +928,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	@UiHandler("dialogEreOk")
 	public void onDialogEreaClick(ClickEvent event) {
 		double ce = Double.parseDouble(erePercent.getText());
-		for(Date dia : fechasSelecciondas.getSelectedList())
-			calendarEmployeeInfo.setCoeficienteEre(dia, ce);
 		dialogEre.close();
-		addEreDay();
+		addEreDay(ce);
 	}
 	
 	@UiHandler("diaAusenciaButton")
@@ -1551,6 +1550,24 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 	}
 	
+	private void aplicarEreEstilosDiasSeleccionadios(double ce, DayType ereday) {
+		limpiarEstilos(fechasSelecciondas.getSelectedList());
+		List<Date> diasEre = new LinkedList<Date>();
+		
+		for (Date date : fechasSelecciondas.getSelectedList()) {
+			int pos = calcularPosicionFecha(date);
+			if(pos != -1){
+				int column = calcularColumna(pos);
+				int row = calcularFila(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(ereday, row, column);
+				diasEre.add(cellsDates[row][column]);
+			}
+		}
+		calendarEmployeeInfo.setCoeficienteEre(diasEre, ereday, ce);
+		fechasSelecciondas.clear();
+	}
+	
 	private void changeYear(int change) {
 		int actualYear = Integer.parseInt(yearLabel.getText());
 		int newYear = actualYear + change;
@@ -1679,9 +1696,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void addStrikeDay() {
 		aplicarEstilosDiasSeleccionadios(DayType.STRIKEDAY);
 	}
-	private void addEreDay() {
-		aplicarEstilosDiasSeleccionadios(DayType.EREDAY);
+	private void addEreDay(double ce) {
+		aplicarEreEstilosDiasSeleccionadios(ce, DayType.EREDAY);
 	}
+
 	private void addDropDay() {
 		aplicarEstilosDiasSeleccionadios(DayType.DROPDAY);
 	}
