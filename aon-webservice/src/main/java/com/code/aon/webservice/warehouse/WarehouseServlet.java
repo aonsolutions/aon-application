@@ -450,10 +450,10 @@ public class WarehouseServlet extends HttpServlet{
 		
 		if(filterMap.containsKey("text") && !"".equals(filterMap.get("text")[0])){
 			Filter ftext = f.getNumberPlateProperty().like("%" + filterMap.get("text")[0] + "%");
-			ftext.or(f.getDriverNameProperty().like("%" + filterMap.get("text")[0] + "%"));
-			ftext.or(f.getDriverDocumentProperty().like("%" + filterMap.get("text")[0] + "%"));
-			ftext.or(f.getCarrierReferenceProperty().like("%" + filterMap.get("text")[0] + "%"));
-			filter = filter.and(ftext);
+			ftext = ftext.or(f.getDriverNameProperty().like("%" + filterMap.get("text")[0] + "%"));
+			ftext = ftext.or(f.getDriverDocumentProperty().like("%" + filterMap.get("text")[0] + "%"));
+			ftext = ftext.or(f.getCarrierReferenceProperty().like("%" + filterMap.get("text")[0] + "%"));
+			ftext = filter = filter.and(ftext);
 		}
 
 		return filter;
