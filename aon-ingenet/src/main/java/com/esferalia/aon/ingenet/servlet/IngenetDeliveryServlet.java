@@ -87,6 +87,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
 		
+		String subject = "[AON] Recepcion automatica de albaranes";
+		String content = "Se ha detectado una nueva comunicación para albaranes";
+		sendEmail(subject, content, "delivery", _xml, RECIPIENTS_TO_LOG);
+		saveToDisk("delivery", _xml);
+		
+		
 		ALBARANES deliveryList = null;
 		errorList = new LinkedList<>();
 		if(_xml!=null){
@@ -140,8 +146,10 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		} else {
 			if (!test) {
 				httpResponse.setStatus(HttpServletResponse.SC_OK);
-				String successMsg = fillSuccessMessage(deliveryList.getDATOSALBARANES());
-				sendEmail(successMsg, null, null, RECIPIENTS_TO_SUCCESS);
+				
+				subject = "[AON] Recepcion automatica de albaranes";
+				content = fillSuccessMessage(deliveryList.getDATOSALBARANES());
+				sendEmail(subject, content, null, null, RECIPIENTS_TO_SUCCESS);
 			}
 		}
 	}
@@ -154,8 +162,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		});
 		String xml = IngenetXmlValidator.convertToXml(deliveryList, ALBARANES.class);
 		
-		String errorMsg = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
-		sendEmail(errorMsg, "albaranes", xml, RECIPIENTS_TO_FAILURES);
+		String subject = "[AON] Recepcion automatica de albaranes";
+		String content = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
+		sendEmail(subject, content, "albaranes", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());

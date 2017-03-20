@@ -135,6 +135,12 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
 					ElaborationDAO.updateElaboration(ctx, elaboration);
 				});
+				
+				// TODO 
+//				String subject = "[AON] Recuperación automática de elaboraciones";
+//				String content = fillResponseMessage(elaborationList);
+//				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
+//				saveToDisk("elaboration-request", _xml);
 			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
 				if(params.getELABORACIONES()!=null 
 						&& params.getELABORACIONES().getREFERENCIAS()!=null 
@@ -144,8 +150,13 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					elaborationList.forEach(elaboration -> {
 						ElaborationDAO.updateElaboration(ctx, elaboration);
 					});
-					httpResponse.setStatus(HttpServletResponse.SC_OK);
+					httpResponse.setStatus(HttpServletResponse.SC_OK);					
 				}
+				
+				String subject = "[AON] Cancelación automática de elaboraciones";
+				String content = fillCancellationMessage(elaborationList);
+				sendEmail(subject, content, "cancelar", _xml, RECIPIENTS_TO_LOG);
+				saveToDisk("elaboration-cancellation", _xml);
 			} else {
 				errorList.add("No se ha indicado la accion a realizar");
 			}
@@ -176,12 +187,24 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		});
 	}
 	
-	private String fillSuccessMessage(List<RESPUESTAELABORACIONTYPE> list) {
-		StringBuffer bf = new StringBuffer("<h1>Envío de elaboraciones.</h1>");
+	private String fillResponseMessage(List<Elaboration> elaborationList) {
+		StringBuffer bf = new StringBuffer("<h1>Recuperación de elaboraciones.</h1>");
 		bf.append("<ul>");
-		list.forEach(elab -> {
-			bf.append("<li>Elaboración " + elab.getSERIE() + "/"
-					+ elab.getNUMERO() + " del " + elab.getFECHAEMISION()
+		elaborationList.forEach(elab -> {
+			bf.append("<li>Elaboración " + elab.getSeries() + "/"
+					+ elab.getNumber() + " del " + elab.getDate()
+					+ "</li>");
+		});
+		bf.append("</ul>");
+		return bf.toString();
+	}
+	
+	private String fillCancellationMessage(List<Elaboration> elaborationList) {
+		StringBuffer bf = new StringBuffer("<h1>Cancelación de elaboraciones.</h1>");
+		bf.append("<ul>");
+		elaborationList.forEach(elab -> {
+			bf.append("<li>Elaboración " + elab.getSeries() + "/"
+					+ elab.getNumber() + " del " + elab.getDate()
 					+ "</li>");
 		});
 		bf.append("</ul>");
@@ -214,8 +237,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		});
 		String xml = IngenetXmlValidator.convertToXml(respuesta, RESPUESTAELABORACIONES.class);
 		
-		String errorMsg = fillErrorMessage(respuesta.getERRORES(), errorList);
-		sendEmail(errorMsg, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
+		String subject = "[AON] Envío automático de elaboraciones";
+		String content = fillErrorMessage(respuesta.getERRORES(), errorList);
+		sendEmail(subject, content, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
@@ -229,9 +253,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			AONContext ctx, List<Elaboration> pendingList) throws IOException {
 		RESPUESTAELABORACIONES elaboraciones = fillElaborationData(ctx, pendingList);
 		String xml = IngenetXmlValidator.convertToXml(elaboraciones, RESPUESTAELABORACIONES.class);
-		
-		String successMsg = fillSuccessMessage(elaboraciones.getDATOSRESPUESTAELABORACIONES());
-		sendEmail(successMsg, null, null, RECIPIENTS_TO_SUCCESS);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
