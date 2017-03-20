@@ -120,7 +120,7 @@ public class AccountStatementDAO {
 				.join(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
 				.where(getCondition(ctx, params, true))
-				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY)
+				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY)
 				.fetch()
 				.stream()
 				.map( new StatementFiller() )
