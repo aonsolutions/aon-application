@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttachCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -37,7 +38,9 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	private static int getDomain() {
 		return AccountEntryModule.getCurrentDomain();
 	}
-	
+	public AonConfiguration getConfiguration() {
+		return getCallback().getModule().getConfiguration();
+	}
 	public IAccountEntryModuleCallback getCallback() {
 		return callback;
 	}

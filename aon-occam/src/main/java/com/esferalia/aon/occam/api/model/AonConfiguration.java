@@ -25,6 +25,7 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<GeoZone> geozones;
 	private LinkedList<Scope> availableScopes;
 	private LinkedList<PayMethod> payMethods;
+	private LinkedList<String> autoConcepts;
 	private Tax defaultVatPercent;
 	private LinkedList<Tax> withholdingTaxes;
 	private Tax defaultWithholdingPercent;
@@ -171,6 +172,13 @@ public class AonConfiguration implements Serializable {
 	}
 	public AonConfiguration setPayMethods(LinkedList<PayMethod> payMethods) {
 		this.payMethods = payMethods;
+		return this;
+	}
+	public LinkedList<String> getAutoConcepts() {
+		return autoConcepts;
+	}
+	public AonConfiguration setAutoConcepts(LinkedList<String> autoConcepts) {
+		this.autoConcepts = autoConcepts;
 		return this;
 	}
 	public LinkedList<Scope> getAvailableScopes() {

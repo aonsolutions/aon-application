@@ -153,6 +153,11 @@
 									</aon:div>
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="autConcept-parent"
+												action="autConcept-parent"
+												value="#{bundle.accounting_aut_concept_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="accounting_balance-parent" 
 												action="balance_list-parent"
 												value="#{bundle.accounting_balance_menu2}" />
@@ -352,6 +357,11 @@
 									</aon:div>
 	
 									<aon:if test="#{aonRole.config}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="autConcept-account"
+												action="autConcept-account"
+												value="#{bundle.accounting_aut_concept_module}" />
+										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="costCenter"
 												action="costCenter"

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
@@ -36,6 +38,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -50,7 +54,9 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	
 	private boolean confirmConceptChange;
 	private boolean confirmDocumentChange;
-
+	
+	private MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+	
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY		,"20px" ,AON.AON_CSS.aonTextCenter())
 		, ACC(AON.MSG.account()			,"auto" ,null)
@@ -88,7 +94,10 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	
 	public AccountEntryTable(IWizardContent wizardContent) {
 		this.wizardContent = wizardContent;
-
+		LinkedList<String> autoConcepts =  wizardContent.getConfiguration().getAutoConcepts();
+		if (autoConcepts != null) {
+			oracle.addAll(autoConcepts);
+		}
 		setConfirmConceptChange(true);
 		setConfirmDocumentChange(true);
 
@@ -261,11 +270,12 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		setWidget(row, COLS.ACC.ordinal(), detailAccountBox );
 		
 		final TextBox conceptBox = new TextBox();
+		final SuggestBox conceptSuggestBox = new SuggestBox(oracle,conceptBox);
 		conceptBox.setVisibleLength(20);
 		conceptBox.setMaxLength(32);
 		conceptBox.setStyleName(AON.AON_CSS.aonInputText());
 		conceptBox.setValue(aed.getConcept());
-		setWidget(row, COLS.CON.ordinal(), conceptBox );
+		setWidget(row, COLS.CON.ordinal(), conceptSuggestBox );
 		
 		final DoubleBox debitBox = new DoubleBox();
 		debitBox.setValue(aed.getDebit());

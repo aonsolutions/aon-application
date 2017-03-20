@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 
@@ -26,6 +27,7 @@ import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
@@ -36,6 +38,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
+import com.esferalia.aon.occam.api.model.AutoConcept;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -67,6 +70,29 @@ public class AccountEntryDAO {
 		.findFirst().orElse(null);
 	}
 
+	public static Stream<AutoConcept> getAutoConcepts(AONContext ctx) {
+		System.out.println(
+				ctx.getDslContext()
+				.selectFrom(AUTO_CONCEPT)
+				.where(AUTO_CONCEPT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.orderBy(AUTO_CONCEPT.DESCRIPTION)
+				.getSQL(ParamType.INLINED)
+				);
+		
+		return ctx.getDslContext()
+				.selectFrom(AUTO_CONCEPT)
+				.where(AUTO_CONCEPT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.orderBy(AUTO_CONCEPT.DESCRIPTION)
+				.fetch()
+				.stream()
+				.map(rec -> 
+					new AutoConcept()
+						.setId( rec.getValue(AUTO_CONCEPT.ID))
+						.setDomain( rec.getValue(AUTO_CONCEPT.DOMAIN))
+						.setDescription( rec.getValue(AUTO_CONCEPT.DESCRIPTION))
+				);
+	}
+	
 	public static Stream<AccountEntry> fetch(AONContext ctx
 			, AccountEntryFilter filter
 			, int offset
