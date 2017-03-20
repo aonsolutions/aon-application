@@ -15,8 +15,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import org.jooq.conf.ParamType;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
