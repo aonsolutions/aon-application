@@ -126,13 +126,6 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		
 		loadContext(httpRequest);
 
-		String _value = httpRequest.getParameter(PARAM_VALUE);
-		String name = httpRequest.getServletPath().replaceAll("/", "")
-				.replaceAll("ingenet", "");
-		String content = "Se ha detectado una nueva comunicación para " + name;
-		sendEmail(content, name, _value, RECIPIENTS_TO_LOG);
-		saveToDisk(name, _value);
-		
 		if(doLogin(domain, user, password)){
 			processRequest(httpRequest, httpResponse);
 		} else {
@@ -219,62 +212,55 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 				f -> f.getDomainProperty().eq(0)).getFirst();
 	}
 	
-	
-//	public static MailAccount getEmailSender() throws UnsupportedEncodingException {
-//		MailAccount mailAccount = new MailAccount();
-//		mailAccount.setEmail("admin@aonSolutions.es");
-//		mailAccount.setMailUsername("admin@aonSolutions.es");
-//		mailAccount.setPassword("admineM41L");
-//		mailAccount.setIncomingSecurity((byte)ConnectionSecurity.TLS.ordinal());
-//		mailAccount.setIncomingHost("imap.aonsolutions.es");
-//		mailAccount.setOutgoingSecurity((byte)ConnectionSecurity.TLS.ordinal());
-//		mailAccount.setOutgoingHost("smtp.aonsolutions.es");
-//		mailAccount.setDisplayName("aonSolutions");
-//		Address from = new InternetAddress( mailAccount.getEmail(), mailAccount.getDisplayName() );
-//		return new EmailSender( from, mailAccount );							
-//	}
-	
-	protected void sendEmail(String msg, String attachName, String attachValue, String... recipients) {
+	protected void sendEmail(String subject, String content, String attachName, String attachValue, String... recipients) {
 		JSONObject json = new JSONObject();
 		try {
-			String recipientsTo = "";
-			if(recipients!=null){
-				for(String to: recipients){
-					if(!recipientsTo.isEmpty())
-						recipientsTo += ",";
-					recipientsTo += to;
-				}
-			}
 			MailAccount mail = getAdminMailAccount();
-			json.put("mailAccountId", mail.getId())
+			if(mail!=null && mail.getId()!=null){
+				String recipientsTo = "";
+				if(isDevEnabled()){
+					recipientsTo = "eagirrezabal@aonsolutions.es";
+					LOGGER.info("*** RUNNING TEST ENVIRONMENT, AVOID SPAM RECIPIENTS TO.");
+				} else {
+					if(recipients!=null){
+						for(String to: recipients){
+							if(!recipientsTo.isEmpty())
+								recipientsTo += ",";
+							recipientsTo += to;
+						}
+					}
+				}
+				json.put("mailAccountId", mail.getId())
 				.put("recipientsTo", recipientsTo)
-				.put("content", msg)
-				.put("subject", "[AON] Recepcion automatica de albaranes")
+				.put("content", content)
+//				.put("subject", "[AON] Recepcion automatica de albaranes")
+				.put("subject", subject)
 				.put("login", getUser())
 				.put("domainName", getDomain())
 				.put("domainId", getDomainId())
 				.put("bcc", "eagirrezabal@aonsolutions.es");
-			
-			if(attachValue==null || "".equals(attachValue)){
-				json.put("md5", "");
-			} else {
-				String encode = Base64.getEncoder().encodeToString(attachValue.getBytes());
-				json.put("md5", encode)
+				
+				if(attachValue==null || "".equals(attachValue)){
+					json.put("md5", "");
+				} else {
+					String encode = Base64.getEncoder().encodeToString(attachValue.getBytes());
+					json.put("md5", encode)
 					.put("attachName", attachName+".xml")
 					.put("mimetype", MimeType.XML.ordinal());
+				}
+				
+				String url = getScheme() + "://" + getDomain()
+						+ (isDevEnabled() ? ":8080/aon-aio" : "") + "/send_email/";
+				LOGGER.info("*** SEND EMAIL URL " + url);
+				HttpClientBuilder base = HttpClientBuilder.create();
+				HttpClient client = base.build();
+				HttpPost post = new HttpPost(url);
+				List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
+				urlParameters.add(new BasicNameValuePair("details", json.toString()));
+				post.setEntity(new UrlEncodedFormEntity(urlParameters));
+				HttpResponse resp = client.execute(post);
+				System.out.println(resp);
 			}
-		
-			String url = getScheme() + "://" + getDomain()
-					+ (isDevEnabled() ? ":8080/aon-aio" : "") + "/send_email/";
-			LOGGER.info("SEND EMAIL URL " + url);
-			HttpClientBuilder base = HttpClientBuilder.create();
-			HttpClient client = base.build();
-			HttpPost post = new HttpPost(url);
-			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("details", json.toString()));
-			post.setEntity(new UrlEncodedFormEntity(urlParameters));
-			HttpResponse resp = client.execute(post);
-			System.out.println(resp);
 		} catch (JSONException e) {
 			LOGGER.error(e.getMessage());
 		} catch (IOException e){
@@ -285,7 +271,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	protected void saveToDisk(String namePrefix, String value) {
 		byte data[] = value.getBytes();
 		Path file = Paths.get("/var", "tmp", "ingenet", namePrefix + "_"
-				+ new SimpleDateFormat("ddMMyyyy-hhmmss").format(new Date())
+				+ new SimpleDateFormat("yyyyMMdd-hhmmss").format(new Date())
 				+ ".xml");
 		try {
 			Path parentDir = file.getParent();
