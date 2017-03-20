@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
+import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.FinanceTrackingRecord;
@@ -72,13 +74,10 @@ public class FinanceDAO {
 	}
 	
 	public static Stream<Finance> getFinanceStream(AONContext ctx,FinanceFilter filter) {
-		return ctx.getDslContext().select().from(FINANCE)
-				.join(REGISTRY).on(REGISTRY.ID.eq(FINANCE.REGISTRY))
-				.join(INVOICE).on(INVOICE.ID.eq(FINANCE.INVOICE))
-				.join(SCOPE).on(SCOPE.ID.eq(FINANCE.SCOPE))
-				.join(PAY_METHOD).on(PAY_METHOD.ID.eq(FINANCE.PAY_METHOD))
-				.where(FINANCE_PROPERTIES.getConditions(filter))
-		.fetch().stream().map(new FullFinanceFiller());
+		return fetch(ctx, filter)
+				.fetch()
+				.stream()
+				.map(new FullFinanceFiller());
 	}
 	
 	// ------------------------------------------------------------- FINANCE
@@ -88,13 +87,25 @@ public class FinanceDAO {
 				.and(p.getInvoiceProperty().eq(invoice)), 0, 100)
 		.collect(Collectors.toCollection(LinkedList::new));
 	}
-
-	public static Stream<Finance> fetch(AONContext ctx
-			, FinanceFilter filter
-			, int offset
-			, int numberOfRows) {
+	
+	private static SelectConditionStep<Record> fetch(AONContext ctx , FinanceFilter filter) {
 		ctx.checkRead();
-		
+		System.out.println(
+				ctx.getDslContext()
+				.select(FINANCE.fields())
+				.select(REGISTRY.fields())
+				.select(PAY_METHOD.fields())
+				.select(SCOPE.fields())
+				.select(INVOICE.fields())
+					.from(FINANCE)
+					.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+					.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+					.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+					.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+					.where(FINANCE_PROPERTIES.getConditions(filter))
+					.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+				.getSQL(ParamType.INLINED)
+				);
 		return  ctx.getDslContext()
 			.select(FINANCE.fields())
 			.select(REGISTRY.fields())
@@ -107,6 +118,14 @@ public class FinanceDAO {
 				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 				.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
 				.where(FINANCE_PROPERTIES.getConditions(filter))
+				.and(FINANCE.DOMAIN.eq(ctx.getDomainId()));
+	}
+			
+	public static Stream<Finance> fetch(AONContext ctx
+			, FinanceFilter filter
+			, int offset
+			, int numberOfRows) {
+		return fetch(ctx, filter)
 				.limit(offset,numberOfRows)
 				.fetch()
 				.stream()
@@ -359,7 +378,8 @@ public class FinanceDAO {
 				.setCreationDate(record.getValue(FINANCE.CREATION_DATE))
 				.setModificationUser(record.getValue(FINANCE.MODIFICATION_USER))
 				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
-				.setPayMethodName(record.getValue(PAY_METHOD.NAME));
+				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
+				;
 		}
 
 			

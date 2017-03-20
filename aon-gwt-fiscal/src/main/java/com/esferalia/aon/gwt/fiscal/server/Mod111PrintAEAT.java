@@ -75,17 +75,17 @@ public class Mod111PrintAEAT extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 		
-		String urlParameters = "HID=IE6111VA" 
+		String urlParameters = "HID=IE7111VA" 
 				+"&IDI=ES"
 				+"&FIC=" + encodedFile
-				//+"&PRG=PTLINK9Y"
+				+"&RUT="
 				+"&PRG="
 				+"&FIN=F" 
 				+"&EJF=" + mod111.getYear() 
 				+"&MOD=111";
 		// Validacion e impresion
-		String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0022";
-//		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+//		String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0022";
+		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 				
 //		String urlParameters = "HID=IE61110B" 
 //				+"&TIA" + mod111.getDeclarationType()
