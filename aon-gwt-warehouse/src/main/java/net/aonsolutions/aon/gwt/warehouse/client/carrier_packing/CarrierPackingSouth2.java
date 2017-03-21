@@ -23,6 +23,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 
+import net.aonsolutions.aon.gwt.warehouse.client.Utils;
+
 public class CarrierPackingSouth2 extends DockLayoutPanel{
 	CarrierPacking parent;
 	JsCarrierPacking carrierPacking;
@@ -56,8 +58,12 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		panel.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
+		String issueDate = purchase.getIssueDate() != null
+				? Utils.formatDate(Utils.parseDateTime(purchase.getIssueDate()))
+				: "";
+		
 		final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
-				+ AonStringUtils.rightPad(AonStringUtils.defaultString(purchase.getIssueDate()),13)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(issueDate),13)
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
 						AonStringUtils.defaultString(purchase.getSeriesNumber()), 16), 17)
 
@@ -221,8 +227,12 @@ public class CarrierPackingSouth2 extends DockLayoutPanel{
 		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		panel.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
+		String issueDate = purchase.getIssueDate() != null
+				? Utils.formatDate(Utils.parseDateTime(purchase.getIssueDate()))
+				: "";
+				
 		final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
-				+ AonStringUtils.rightPad(AonStringUtils.defaultString(purchase.getIssueDate()),13)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(issueDate),13)
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
 						AonStringUtils.defaultString(purchase.getSeriesNumber()), 16), 17)
 
