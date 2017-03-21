@@ -2,6 +2,7 @@ package com.esferalia.aon.ingenet.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,10 +59,12 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	private String password;
 	private String domain;
 	private Integer domainId;
+	private Boolean metadata;
 
 	protected static final String PARAM_USERNAME = "username";
 	protected static final String PARAM_PASSWORD = "password";
 	protected static final String PARAM_VALUE = "value";
+	protected static final String PARAM_METADATA = "metadata";
 	
 	private SimpleDateFormat dateFormatter;
 	private SimpleDateFormat timeFormatter;
@@ -108,14 +111,14 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		LOGGER.info("***** INGENET POST - " + this.getClass().getName());
+		LOGGER.info("***** INGENET POST - " + this.getClass().getSimpleName());
 		process(request, response);
 	}
 	
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		LOGGER.info("***** INGENET GET - " + this.getClass().getName());
+		LOGGER.info("***** INGENET GET - " + this.getClass().getSimpleName());
 		process(request, response);
 //		TODO do not allow GET method
 //		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -125,18 +128,54 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 			HttpServletResponse httpResponse) throws ServletException, IOException {
 		
 		loadContext(httpRequest);
-
-		if(doLogin(domain, user, password)){
-			processRequest(httpRequest, httpResponse);
+		
+		if(metadata){
+			flushMetadataResponse(httpRequest, httpResponse);
 		} else {
-			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			if(doLogin(domain, user, password)){
+				domainId = searchDomainId(domain);
+				processRequest(httpRequest, httpResponse);
+			} else {
+				httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			}
 		}
 		
+	}
+	
+	private void flushMetadataResponse(HttpServletRequest httpRequest,
+			HttpServletResponse httpResponse) throws IOException {
+		String xml = "<metadata>";
+		xml += "<LocalAddr>"+httpRequest.getLocalAddr()+"</LocalAddr>";
+		xml += "<LocalPort>"+httpRequest.getLocalPort()+"</LocalPort>";
+		xml += "<PathInfo>"+httpRequest.getPathInfo()+"</PathInfo>";
+		xml += "<RemoteAddr>"+httpRequest.getRemoteAddr()+"</RemoteAddr>";
+		xml += "<RemoteHost>"+httpRequest.getRemoteHost()+"</RemoteHost>";
+		xml += "<ServerName>"+httpRequest.getServerName()+"</ServerName>";
+		xml += "<ServerPort>"+httpRequest.getServerPort()+"</ServerPort>";
+		xml += "<Protocol>"+httpRequest.getProtocol()+"</Protocol>";
+		xml += "<RequestURI>"+httpRequest.getRequestURI()+"</RequestURI>";
+		xml += "<RequestURL>"+httpRequest.getRequestURL()+"</RequestURL>";
+		xml += "<Scheme>"+httpRequest.getScheme()+"</Scheme>";
+		xml += "<host>"+httpRequest.getHeader("host")+"</host>";
+		xml += "</metadata>";
+
+		System.out.print("local "+httpRequest.getLocalPort());
+		System.out.print(" | server "+httpRequest.getServerPort());
+		System.out.print(" | protocol "+httpRequest.getProtocol());
+		System.out.print(" | url "+httpRequest.getRequestURL());
+		System.out.print(" | scheme "+httpRequest.getScheme());
+		System.out.println(" | host "+httpRequest.getHeader("host"));
+
+		httpResponse.setContentType("application/xml");
+		httpResponse.setContentLength(xml.length());
+		PrintWriter out = httpResponse.getWriter();
+		out.print(xml);
+		out.flush();
 	}
 
 	protected boolean doLogin(String domainName, String username,
 			String password) {
-		LOGGER.info("***** INGENET LOGIN: " + domainName + "@" + username
+		LOGGER.info("***** INGENET LOGIN: " + username + "@" + domainName
 				+ " (using password " + (password != null ? "YES" : "NO") + ")");
 		if (domainName != null && username != null && password != null
 				&& domainName.matches("^udapa\\..*")) {
@@ -149,25 +188,21 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		String _domainName = httpRequest.getServerName();
 		String _username = httpRequest.getParameter(PARAM_USERNAME);
 		String _password = httpRequest.getParameter(PARAM_PASSWORD);
+		String _metadata = httpRequest.getParameter(PARAM_METADATA);
 		
 		scheme = httpRequest.getScheme();
 		devEnabled = false;
 		// TODO check devEnabled 
 		devEnabled = httpRequest.getServerPort()==8080;
 		scheme = devEnabled?"http":"https";
-		System.out.print("local "+httpRequest.getLocalPort());
-		System.out.print(" | server "+httpRequest.getServerPort());
-		System.out.print(" | protocol "+httpRequest.getProtocol());
-		System.out.print(" | url "+httpRequest.getRequestURL());
-		System.out.print(" | scheme "+httpRequest.getScheme());
-		System.out.println(" | host "+httpRequest.getHeader("host"));
 		
-		if (_domainName != null && _username != null && _password != null) {
-			user = _username;
-			password = _password;			
-			domain = _domainName;
-			domainId = searchDomainId(_domainName);
-		}
+		user = _username;
+		password = _password;
+		domain = _domainName;
+//		if (_domainName != null) {
+//			domainId = searchDomainId(_domainName);
+//		}
+		metadata = new Boolean(_metadata);
 		
 	}
 	
@@ -212,67 +247,74 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 				f -> f.getDomainProperty().eq(0)).getFirst();
 	}
 	
-	protected void sendEmail(String subject, String content, String attachName, String attachValue, String... recipients) {
+	protected void sendEmail(String subject, String content, String attachName,
+			String attachValue, String... recipients) {
 		JSONObject json = new JSONObject();
 		try {
 			MailAccount mail = getAdminMailAccount();
-			if(mail!=null && mail.getId()!=null){
+			if (mail != null && mail.getId() != null) {
 				String recipientsTo = "";
-				if(isDevEnabled()){
+				if (isDevEnabled()) {
 					recipientsTo = "eagirrezabal@aonsolutions.es";
 					LOGGER.info("*** RUNNING TEST ENVIRONMENT, AVOID SPAM RECIPIENTS TO.");
 				} else {
-					if(recipients!=null){
-						for(String to: recipients){
-							if(!recipientsTo.isEmpty())
+					if (recipients != null) {
+						for (String to : recipients) {
+							if (!recipientsTo.isEmpty())
 								recipientsTo += ",";
 							recipientsTo += to;
 						}
 					}
 				}
 				json.put("mailAccountId", mail.getId())
-				.put("recipientsTo", recipientsTo)
-				.put("content", content)
-//				.put("subject", "[AON] Recepcion automatica de albaranes")
-				.put("subject", subject)
-				.put("login", getUser())
-				.put("domainName", getDomain())
-				.put("domainId", getDomainId())
-				.put("bcc", "eagirrezabal@aonsolutions.es");
-				
-				if(attachValue==null || "".equals(attachValue)){
+						.put("recipientsTo", recipientsTo)
+						.put("content", content).put("subject", subject)
+						.put("login", getUser()).put("domainName", getDomain())
+						.put("domainId", getDomainId())
+						.put("bcc", "eagirrezabal@aonsolutions.es");
+
+				if (attachValue == null || "".equals(attachValue)) {
 					json.put("md5", "");
 				} else {
-					String encode = Base64.getEncoder().encodeToString(attachValue.getBytes());
+					String encode = Base64.getEncoder().encodeToString(
+							attachValue.getBytes());
 					json.put("md5", encode)
-					.put("attachName", attachName+".xml")
-					.put("mimetype", MimeType.XML.ordinal());
+							.put("attachName", attachName + ".xml")
+							.put("mimetype", MimeType.XML.ordinal());
 				}
-				
+
 				String url = getScheme() + "://" + getDomain()
-						+ (isDevEnabled() ? ":8080/aon-aio" : "") + "/send_email/";
+						+ (isDevEnabled() ? ":8080/aon-aio" : "")
+						+ "/send_email/";
 				LOGGER.info("*** SEND EMAIL URL " + url);
 				HttpClientBuilder base = HttpClientBuilder.create();
 				HttpClient client = base.build();
 				HttpPost post = new HttpPost(url);
-				List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
-				urlParameters.add(new BasicNameValuePair("details", json.toString()));
+				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+				urlParameters.add(new BasicNameValuePair("details", json
+						.toString()));
 				post.setEntity(new UrlEncodedFormEntity(urlParameters));
 				HttpResponse resp = client.execute(post);
 				System.out.println(resp);
 			}
 		} catch (JSONException e) {
 			LOGGER.error(e.getMessage());
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
 	}
 	
-	protected void saveToDisk(String namePrefix, String value) {
-		byte data[] = value.getBytes();
-		Path file = Paths.get("/var", "tmp", "ingenet", namePrefix + "_"
-				+ new SimpleDateFormat("yyyyMMdd-hhmmss").format(new Date())
-				+ ".xml");
+	protected void saveToDisk(String folder, String namePrefix, String value) {
+		byte data[] = (value != null ? value : "").getBytes();
+		Path file = Paths.get(
+				"/var",
+				"tmp",
+				"ingenet",
+				folder,
+				namePrefix
+						+ "_"
+						+ new SimpleDateFormat("yyyyMMdd-hhmmss")
+								.format(new Date()) + ".xml");
 		try {
 			Path parentDir = file.getParent();
 			if (!Files.exists(parentDir))

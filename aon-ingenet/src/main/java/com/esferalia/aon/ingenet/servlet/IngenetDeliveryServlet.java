@@ -90,7 +90,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		String subject = "[AON] Recepcion automatica de albaranes";
 		String content = "Se ha detectado una nueva comunicación para albaranes";
 		sendEmail(subject, content, "delivery", _xml, RECIPIENTS_TO_LOG);
-		saveToDisk("delivery", _xml);
+		saveToDisk("delivery", "delivery", _xml!=null?_xml:"");
 		
 		
 		ALBARANES deliveryList = null;
@@ -144,9 +144,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			errorList.forEach(System.out::println);
 			flushErrors(httpResponse, deliveryList, errorList);
 		} else {
+			httpResponse.setStatus(HttpServletResponse.SC_OK);
 			if (!test) {
-				httpResponse.setStatus(HttpServletResponse.SC_OK);
-				
 				subject = "[AON] Recepcion automatica de albaranes";
 				content = fillSuccessMessage(deliveryList.getDATOSALBARANES());
 				sendEmail(subject, content, null, null, RECIPIENTS_TO_SUCCESS);
