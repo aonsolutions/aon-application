@@ -78,7 +78,7 @@ public class WarehouseServlet extends HttpServlet{
 							//DBPurchase.getPurchaseDetails(domain, login, req.getParameterMap())
 							object = DBPurchase.getPurchaseDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
 						} else object = DBPurchase.getPurchase(domain, userName, Integer.parseInt(pathInfo[4]));
-					} else object = DBPurchase.getPurchases(domain, userName, req.getParameterMap());
+					} else object = DBPurchase.getPurchaseList(domain, userName, req.getParameterMap());
 				} else if(MSG.DELIVERY.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						if(pathInfo.length > 5){
