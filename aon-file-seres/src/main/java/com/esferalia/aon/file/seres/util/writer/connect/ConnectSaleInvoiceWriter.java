@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
@@ -28,8 +29,9 @@ import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
-import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.connect.ConnectInvoice;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
@@ -438,9 +440,15 @@ public class ConnectSaleInvoiceWriter {
 		try {
 			if (!list.isEmpty()) {
 				InvoiceDetail detail = list.get(0);
-				if (detail.getSource() == InvoiceSource.SALES) {
-					Sales sales = (Sales) detail.getSourceTo();
-					return sales.getReferenceCode();
+				if (detail.getSource() == InvoiceSource.DELIVERY) {
+					Delivery delivery = (Delivery) detail.getSourceTo();
+					List<ITransferObject> deliveryDetailList = delivery.getDetailList();
+					if(deliveryDetailList!=null && !deliveryDetailList.isEmpty()){
+						DeliveryDetail deliveryDetail = (DeliveryDetail) deliveryDetailList.get(0);
+						SalesDetail salesDetail = deliveryDetail.getSalesDetail();
+						return salesDetail.getSales().getPurchaseReference();
+					}
+					return null;
 				}
 			}
 		} catch (ManagerBeanException e) {
