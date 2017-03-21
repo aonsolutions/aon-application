@@ -90,22 +90,6 @@ public class FinanceDAO {
 	
 	private static SelectConditionStep<Record> fetch(AONContext ctx , FinanceFilter filter) {
 		ctx.checkRead();
-		System.out.println(
-				ctx.getDslContext()
-				.select(FINANCE.fields())
-				.select(REGISTRY.fields())
-				.select(PAY_METHOD.fields())
-				.select(SCOPE.fields())
-				.select(INVOICE.fields())
-					.from(FINANCE)
-					.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
-					.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
-					.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-					.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
-					.where(FINANCE_PROPERTIES.getConditions(filter))
-					.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
-				.getSQL(ParamType.INLINED)
-				);
 		return  ctx.getDslContext()
 			.select(FINANCE.fields())
 			.select(REGISTRY.fields())

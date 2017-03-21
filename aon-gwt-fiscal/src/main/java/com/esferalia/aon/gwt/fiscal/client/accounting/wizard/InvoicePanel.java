@@ -103,6 +103,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private TextBox referenceCode;
 	private DoubleBox invoiceTotal;
 	private Button fastSave;
+	private TextBox manualConcept;
 	private DateBoxEx payDate;
 	private InlineLabel payAccountLabel;
 	private AccountBox payAccount; 		
@@ -320,6 +321,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private void createFlexTable() {
 		int row = 0;
 		flexTable = new FlexTable();
+		flexTable.setStyleName(AON.AON_CSS.aonWidthAll());
 		flexTable.setVisible(false);
 		Label label = new Label(AON.MSG.invoiceNumber());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
@@ -399,10 +401,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		numberPanel.add(referenceCode);
 		
 		flexTable.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonNowrap());
+		flexTable.getCellFormatter().setWidth(row, 1, "1%");
 		flexTable.setWidget(row, 1, numberPanel);
 		
 		Label label0 = new Label(AON.MSG.invoiceTotal());
 		label0.setStyleName(AON.AON_CSS.aonInnerLabel());
+		flexTable.getCellFormatter().setWidth(row, 2, "1%");
 		flexTable.setWidget(row, 2, label0);
 		
 		invoiceTotal = new DoubleBox();
@@ -450,6 +454,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			}
 		});
 		invoiceTotal.setVisibleLength(12);
+		flexTable.getCellFormatter().setWidth(row, 3, "1%");
 		flexTable.setWidget(row, 3, invoiceTotal);
 		
 		fastSave = new Button(AON.MSG.saveAction());
@@ -469,12 +474,31 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				vatPanel.setFocus(true);
 			}
 		});
-		
+		flexTable.getCellFormatter().setWidth(row, 4, "1%");
 		flexTable.setWidget(row, 4, fastSave);
 		
+		Label label1 = new Label(AON.MSG.concept());
+		label1.setStyleName(AON.AON_CSS.aonInnerLabel());
+		flexTable.getCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextRight());
+		flexTable.getCellFormatter().setWidth(row, 5, "auto");
+		flexTable.setWidget(row, 5, label1);
 
+		manualConcept = new TextBox();
+		manualConcept.setStyleName(AON.AON_CSS.aonInputText());
+		manualConcept.setTabIndex(-1);
+		manualConcept.setVisibleLength(20);
+		manualConcept.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				getWrapper().setManualConcept(manualConcept.getValue());
+				_paintEntry();
+				getWrapper().getAccountEntry().setDirty(true);
+				getCallback().getModule().refreshIdLabel();
+			}
+		});
+		flexTable.getCellFormatter().setWidth(row, 6, "1%");
+		flexTable.setWidget(row, 6, manualConcept);
 		row++;
-		
 	}
 
 	private void createPayTable() {
@@ -755,6 +779,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		withholdingPanel.setVisible(invoice.isWithholding());
 		withholdingPanel.setValue( invoice.getWithholdingData() );
 		getCallback().getModule().refreshIdLabel();
+		manualConcept.setValue(getWrapper().getManualConcept());
 		populatePayment(invoice);
 	}
 	private void populatePurchaseInvoice(AccountingInvoice invoice) {
@@ -770,6 +795,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		withholdingPanel.setVisible(invoice.isWithholding());
 		withholdingPanel.setValue( invoice.getWithholdingData() );
 		getCallback().getModule().refreshIdLabel();
+		manualConcept.setValue(getWrapper().getManualConcept());
 		populatePayment(invoice);
 	}
 	private void populateExpensesInvoice(AccountingInvoice invoice) {
@@ -785,6 +811,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		withholdingPanel.setVisible(invoice.isWithholding());		
 		withholdingPanel.setValue( invoice.getWithholdingData() );
 		getCallback().getModule().refreshIdLabel();
+		manualConcept.setValue(getWrapper().getManualConcept());
 		populatePayment(invoice);
 	}
 

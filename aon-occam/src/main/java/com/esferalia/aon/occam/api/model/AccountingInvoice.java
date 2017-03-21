@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-//import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	
@@ -25,11 +24,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private LinkedList<Finance> finances;
 	private boolean financeRecordable;
 	
-//	private Integer payMethod;
-//	private Integer payAccountId;
-//	private String payAccountCode;
-//	private String payAccountDescription;
-//	private Date payDate;
+	private String manualConcept;
 
 	private InvoiceWithholding withholdingData;
 	private LinkedList<Account> suggestedAccounts;
@@ -73,6 +68,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return invoice != null?invoice.getTransaction():null;
 	}
 
+	public String getManualConcept() {
+		return manualConcept;
+	}
+	public AccountingInvoice setManualConcept(String manualConcept) {
+		this.manualConcept = manualConcept;
+		return this;
+	}
 	public InvoiceWithholding getWithholdingData() {
 		ensureWithholdingData();
 		return withholdingData;

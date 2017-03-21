@@ -71,14 +71,6 @@ public class AccountEntryDAO {
 	}
 
 	public static Stream<AutoConcept> getAutoConcepts(AONContext ctx) {
-		System.out.println(
-				ctx.getDslContext()
-				.selectFrom(AUTO_CONCEPT)
-				.where(AUTO_CONCEPT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.orderBy(AUTO_CONCEPT.DESCRIPTION)
-				.getSQL(ParamType.INLINED)
-				);
-		
 		return ctx.getDslContext()
 				.selectFrom(AUTO_CONCEPT)
 				.where(AUTO_CONCEPT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))

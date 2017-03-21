@@ -441,13 +441,21 @@ public class InvoiceRecorder {
 		}
 	}
 	
-	private static String obtainConcept(Invoice invoice) {
+	private static String obtainConcept(Invoice invoice, String manualConcept) {
 		String prefix = (invoice.isSales()) ? N_FRA : S_FRA;
 		if (invoice.getTotal() < 0) {
 			prefix += " " + ABONO;
 		}
 		prefix += ": ";
-		return AonStringUtils.abbreviate(prefix + AonStringUtils.defaultIfBlank(invoice.getReferenceCode(),"????????"), 32);
+		String concept = AonStringUtils.abbreviate(prefix + AonStringUtils.defaultIfBlank(invoice.getReferenceCode(),"????????"), 32);
+		if (AonStringUtils.isNotBlank(manualConcept)) {
+			concept = concept + " [" + manualConcept;
+			if (AonStringUtils.length(concept) > 32) {
+				concept = AonStringUtils.abbreviate(concept,31);
+			}
+			concept = concept + "]";
+		}
+		return concept;
 	}
 	
 	public static AccountEntry getInvoiceEntry(AccountingInvoice invoice) {
@@ -456,7 +464,7 @@ public class InvoiceRecorder {
 		InvoiceEntryDetailType.visit(invoice,map);	
 		ae.setDetails(new LinkedList<AccountEntryDetail>());
 		ae.getDetails().addAll(map.values());
-		String concept = obtainConcept(invoice.getInvoice());
+		String concept = obtainConcept(invoice.getInvoice(), invoice.getManualConcept());
 		for (AccountEntryDetail detail : ae.getDetails()) {
 			detail.setConcept(concept)
 				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))

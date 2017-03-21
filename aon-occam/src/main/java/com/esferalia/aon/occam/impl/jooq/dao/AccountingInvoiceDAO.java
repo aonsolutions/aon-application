@@ -46,6 +46,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingInvoiceDAO {
 	
@@ -86,6 +87,11 @@ public class AccountingInvoiceDAO {
 			if (invoice != null) {
 				final AccountingInvoice ai = new AccountingInvoice();
 				ai.setAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntry));
+				
+				if (ai.getAccountEntry().getDetails() != null && ai.getAccountEntry().getDetails().size() > 0) {
+					String concept = ai.getAccountEntry().getDetails().get(0).getConcept();
+					ai.setManualConcept(AonStringUtils.substringBetween(concept,"[","]"));
+				}
 				ai.setInvoice(invoice);
 				ai.getInvoice().setDetails(new LinkedList<InvoiceDetail>());
 				AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
