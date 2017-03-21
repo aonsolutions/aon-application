@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.management;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
@@ -393,8 +392,9 @@ public class Purchase implements Serializable {
 				json.append(AonJSONUtils.strToJSON("name", getStatus().getName(), true));
 			json.append(AonJSONUtils.end() + ",");
 		}
-		json.append(AonJSONUtils.strToJSON("comments", getComments(), false));
-		json.append(AonJSONUtils.strToJSON("remarks", getRemarks(), false));
+// TODO
+//		json.append(AonJSONUtils.strToJSON("comments", getComments(), false));
+//		json.append(AonJSONUtils.strToJSON("remarks", getRemarks(), false));
 		json.append(AonJSONUtils.intToJSON("workplace", getWorkplace(), false));
 		json.append(AonJSONUtils.intToJSON("warehouse", getWarehouse(), false));
 		json.append(AonJSONUtils.intToJSON("scope", getScope(), false));
@@ -423,7 +423,8 @@ public class Purchase implements Serializable {
 		json.append(AonJSONUtils.dateToJSON("modification_date", getModificationDate(), false));
 		
 		// TODO se utilizan en pantalla de packing list!!! 
-		json.append(AonJSONUtils.strToJSON("series_number", "",false));
+		String seriesNumber = (getSeries() != null ? getSeries() + "/" : "") + getNumber();
+		json.append(AonJSONUtils.strToJSON("series_number", seriesNumber,false));
 		json.append(AonJSONUtils.strToJSON("order_type", "purchase", false));
 		json.append(AonJSONUtils.strToJSON("reference",getPurchaseReference() != null ? getPurchaseReference() : " ", true));
 		

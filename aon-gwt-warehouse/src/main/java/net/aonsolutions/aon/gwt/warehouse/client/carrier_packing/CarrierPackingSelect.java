@@ -201,9 +201,13 @@ public class CarrierPackingSelect extends Composite{
 				
 				@Override
 				public void onSuccess(JSON<JsOrder> result) {
-					result.getData().stream().forEach(js -> 
-						selectable.addItem(js.getIssueDate() + " #(" + js.getSeriesNumber()
-							+ ") " + js.getRegistry().getName(),js.getId()+""));
+				
+					result.getData().stream().forEach(js -> {
+						String issueDate = js.getIssueDate() != null
+								? Utils.formatDate(Utils.parseDateTime(js.getIssueDate()))
+								: "";
+						selectable.addItem(issueDate + " #(" + js.getSeriesNumber()
+							+ ") " + js.getRegistry().getName(),js.getId()+"");});
 				}
 				
 				@Override
