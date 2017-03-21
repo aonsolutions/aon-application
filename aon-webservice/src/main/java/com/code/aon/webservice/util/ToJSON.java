@@ -266,6 +266,7 @@ public class ToJSON {
 	}
 	
 	public static JSONObject purchaseToJSON(Purchase purchase) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		String seriesNumber = (purchase.getSeries() != null ? purchase.getSeries() + "/" : "") + purchase.getNumber();
 		return new JSONObject()
 			.put(MSG.ID, purchase.getId())
@@ -282,6 +283,8 @@ public class ToJSON {
 	}
 	
 	public static JSONObject deliveryToJSON(Delivery delivery) {		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
 		String seriesNumber = (delivery.getSeries() != null ? delivery.getSeries() + "/" : "") + delivery.getNumber();
 		return new JSONObject()
 			.put(MSG.ID, delivery.getId())
