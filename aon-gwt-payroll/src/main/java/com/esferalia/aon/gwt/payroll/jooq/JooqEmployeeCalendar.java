@@ -226,6 +226,14 @@ public class JooqEmployeeCalendar {
 			
 			for(Record r : countryHolidays)
 				listaFestivosContrato.add(r.get(HOLIDAY_DETAIL.DATE));
+		}else if(jornadaCompleta && calendar == null){
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 0);
+			listaNoLaborablesContrato.add((byte) 1);
+			listaNoLaborablesContrato.add((byte) 1);
 		}
 		
 		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
