@@ -152,7 +152,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 						&& params.getELABORACIONES().getREFERENCIAS()!=null 
 						&& params.getELABORACIONES().getREFERENCIAS().size()>0){
 					elaborationList = new ArrayList<>();
-					fillElaborationList(ctx, elaborationList, params.getELABORACIONES().getREFERENCIAS());
+					reopenElaborations(ctx, elaborationList, params.getELABORACIONES().getREFERENCIAS());
 					elaborationList.forEach(elaboration -> {
 						ElaborationDAO.updateElaboration(ctx, elaboration);
 					});
@@ -160,7 +160,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				}
 				
 				String subject = "[AON] Cancelación automática de elaboraciones";
-				String content = fillCancellationMessage(elaborationList);
+				String content = fillCancellationMessage(params.getELABORACIONES().getREFERENCIAS());
 				sendEmail(subject, content, "cancelar", _xml, RECIPIENTS_TO_LOG);
 				saveToDisk("elaboration", "elaboration-cancellation", _xml!=null?_xml:"");
 			} else {
@@ -178,7 +178,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		
 	}
 
-	private void fillElaborationList(AONContext ctx,
+	private void reopenElaborations(AONContext ctx,
 			List<Elaboration> elaborationList, List<REFERENCIATYPE> referencias) {
 		referencias.forEach(ref -> {
 			String series = ref.getSERIE();
@@ -198,20 +198,19 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		bf.append("<ul>");
 		elaborationList.forEach(elab -> {
 			bf.append("<li>Elaboración " + elab.getSeries() + "/"
-					+ elab.getNumber() + " del " + elab.getDate()
-					+ "</li>");
+					+ elab.getNumber() + " del " + elab.getDate() + "</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();
 	}
 	
-	private String fillCancellationMessage(List<Elaboration> elaborationList) {
+	private String fillCancellationMessage(List<REFERENCIATYPE> list) {
 		StringBuffer bf = new StringBuffer("<h1>Cancelación de elaboraciones.</h1>");
 		bf.append("<ul>");
-		elaborationList.forEach(elab -> {
-			bf.append("<li>Elaboración " + elab.getSeries() + "/"
-					+ elab.getNumber() + " del " + elab.getDate()
-					+ "</li>");
+		list.forEach(elab -> {
+			bf.append("<li>Elaboración " + elab.getSERIE() + "/"
+					+ elab.getNUMERO() + "</li>");
+			bf.append("<li>" + elab.getOBSERVACIONES() + "</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();

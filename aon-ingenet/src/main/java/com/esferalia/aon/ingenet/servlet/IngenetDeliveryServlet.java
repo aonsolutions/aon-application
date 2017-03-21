@@ -261,13 +261,21 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				} catch (Throwable th) {
 					addError(albaran, th.getLocalizedMessage());
 					albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
-						failElaborations(ctx, albaran, linea, test);
+						failElaborations(ctx, albaran, linea, th.getLocalizedMessage());
 					});
 				}
 				
 			} else {
 				albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
-					failElaborations(ctx, albaran, linea, test);
+					String cause = "";
+					if(albaran.getERRORES()==null
+							|| albaran.getERRORES().getERRORES()==null
+							|| albaran.getERRORES().getERRORES().isEmpty()){
+						for(String error: albaran.getERRORES().getERRORES()){
+							cause += error+". ";
+						}
+					}
+					failElaborations(ctx, albaran, linea, cause);
 				});
 			}
 		}
@@ -440,11 +448,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
 	
 	private void failElaborations(AONContext ctx, ALBARANTYPE albaran,
-			DATOSLINEAALBARANTYPE linea, boolean test) {
+			DATOSLINEAALBARANTYPE linea, String cause) {
 		Elaboration elaboration = obtainElaboration(ctx,
 				linea.getDATOSELABORACIONORIGEN());
 		if (elaboration != null && elaboration.getId() != null) {
 			elaboration.setStatus(ElaborationStatus.FAIL.value());
+			elaboration.setComments(StringUtils.mid(cause, 0, 128));
 			ElaborationDAO.updateElaboration(ctx, elaboration);
 		}
 	}
