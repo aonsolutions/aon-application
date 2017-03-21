@@ -545,6 +545,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiHandler("accept")
 	public void onAccept(ClickEvent event) {
 		accept.setEnabled(false);
+		remove.setEnabled(false);
 		wizardContent.save(new AsyncCallback<AccountEntry[]>() {
 
 			@Override
@@ -570,6 +571,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onFailure(Throwable caught) {
 				accept.setEnabled(true);
+				remove.setEnabled(true);
 				showError(caught.getMessage());
 			}
 		});

@@ -75,6 +75,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.manualConcept = manualConcept;
 		return this;
 	}
+	public boolean hasWithholdingData() {
+		return (withholdingData != null); 
+	}
 	public InvoiceWithholding getWithholdingData() {
 		ensureWithholdingData();
 		return withholdingData;

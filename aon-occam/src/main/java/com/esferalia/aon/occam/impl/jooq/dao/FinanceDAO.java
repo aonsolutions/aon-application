@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.jooq.tables.records.FinanceTrackingRecord;

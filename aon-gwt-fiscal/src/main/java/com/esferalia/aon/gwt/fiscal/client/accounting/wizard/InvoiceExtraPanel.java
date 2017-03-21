@@ -80,6 +80,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	CheckBox withholding;
 	CheckBox withholdingFarmer;
 	CheckBox vatAccrualPayment;
+	Label rectify;
 	private int tabindex;
 	
 	public InvoiceExtraPanel() {
@@ -542,7 +543,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 			panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 			panel.addStyleName(AON.AON_CSS.aonMarginTop());
 			
-			Label rectify = new Label(AON.MSG.rectifyInvoice());
+			rectify = new Label(AON.MSG.rectifyInvoice());
 			panel.add(rectify);
 			rectify.addStyleName(AON.AON_CSS.aonTextUnderline());
 			rectify.addStyleName(AON.AON_CSS.aonCursorPointer());
@@ -701,6 +702,10 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountingInvoice> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
+	}
+
+	public void hideButtons(boolean enabled) {
+		if (rectify != null) rectify.setVisible(enabled);
 	}
 
 	

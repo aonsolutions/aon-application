@@ -177,18 +177,17 @@ public class AccountingInvoiceDAO {
 							}
 							if (withholding) {
 								vat.setWithholding(withholding);
-								if (ai.getWithholdingData() == null) {
-									ai.setWithholdingData( new InvoiceWithholding());
+								if (!ai.hasWithholdingData()) {
+									ai.setWithholdingData( new InvoiceWithholding()
+											.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
+											.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
+											.setAccountId(tax.getValue(VAT_ACCOUNT.ID))
+											.setAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
+											.setAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION)));
 								}
-								InvoiceWithholding wd = ai.getWithholdingData();
-								wd.setBase(tax.getValue(INVOICE_TAX.BASE))
-									.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
-									.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
-									.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
-									.setAccountId(tax.getValue(VAT_ACCOUNT.ID))
-									.setAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
-									.setAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION))
-									;
+								ai.getWithholdingData()
+									.setBase (ai.getWithholdingData().getBase() + tax.getValue(INVOICE_TAX.BASE) )
+									.setQuota(ai.getWithholdingData().getQuota() + tax.getValue(INVOICE_TAX.QUOTA));
 							}
 							if (!withholding) {
 								if (ai.isSales()) {

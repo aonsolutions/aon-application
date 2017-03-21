@@ -881,4 +881,9 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		if (rows != null &&  rows.size() > 0) rows.get(0).setTabIndex(index);
 	}
 
+	public void hideButtons(boolean enabled) {
+		addButton.setVisible(enabled);
+		saveButton.setVisible(enabled);
+	}
+
 }

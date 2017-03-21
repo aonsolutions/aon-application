@@ -932,7 +932,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	@Override
 	public void save(final AsyncCallback<AccountEntry[]> callback) {
-		
+		fastSave.setVisible(false);
+		vatPanel.hideButtons(false);
+		extraPanel.hideButtons(false);
 		getFiscalService().save(AccountEntryModule.getCurrentDomainName()
 				,AccountEntryModule.getCurrentDomain()
 				, getWrapper(), new AsyncCallback<AccountingInvoice>() {
@@ -943,11 +945,17 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				lastRegistry = result.getRegistry();
 				int entriesSize = getWrapper().getAccountEntries().size();
 				AccountEntry[] entries = new AccountEntry[entriesSize];  
+				fastSave.setVisible(true);
+				vatPanel.hideButtons(true);
+				extraPanel.hideButtons(true);
 				callback.onSuccess(getWrapper().getAccountEntries().toArray(entries));
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
+				fastSave.setVisible(true);
+				vatPanel.hideButtons(true);
+				extraPanel.hideButtons(true);
 				callback.onFailure(caught);
 			}
 
