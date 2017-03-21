@@ -58,6 +58,30 @@ public class JooqEmployeeCalendar {
 		ArrayList<Byte> listaNoLaborablesContrato = new ArrayList<Byte>();
 		Boolean jornadaCompleta = false;
 		
+		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
+				String tipoJornadaInfoEmpleado;
+				
+				tipoJornadaInfoEmpleado = dslContext
+						  .select(CONTRACT_DATA.EXPRESSION)
+						  .from(CONTRACT_DATA)
+						  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+						  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+						  .orderBy(CONTRACT_DATA.START_DATE.desc())
+						  .limit(1)
+						  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+				
+				if(tipoJornadaInfoEmpleado == null)
+					tipoJornadaInfoEmpleado = dslContext
+					  .select(CONTRACT_DATA.EXPRESSION)
+					  .from(CONTRACT_DATA)
+					  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+					  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+					  .orderBy(CONTRACT_DATA.START_DATE.desc())
+					  .limit(1)
+					  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+				
+				jornadaCompleta = comprobarTipoJornada(tipoJornadaInfoEmpleado);
+		
 		// ---------------------------------------------- HORAS SEMANALES ---------------------------------------------------------
 		
 		Result<Record> contratoInfoEmpleado = dslContext
@@ -83,6 +107,31 @@ public class JooqEmployeeCalendar {
 			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
 			
 			listaHorasContrato.add(infoEmployee);
+		}
+		
+		// -------------------------------------- TIPOS DIAS NO LABORABLES SEGUN HORAS ---------------------------------------------
+		
+		if(!jornadaCompleta){
+			
+			String listaDiasSemana [] = {"HORAS_LUNES", "HORAS_MARTES", "HORAS_MIERCOLES", "HORAS_JUEVES", "HORAS_VIERNES",
+					 "HORAS_SABADO", "HORAS_DOMINGO"}; 
+	
+			ArrayList<String> listaDiasDefinidos = new ArrayList<String>();
+			for(Record r: contratoInfoEmpleado){
+				listaDiasDefinidos.add(r.get(CONTRACT_DATA.NAME));
+			}
+			
+			for (int i=0; i<contratoInfoEmpleado.size(); i++){
+				String diaSemana = listaDiasSemana[i];
+				String value = contratoInfoEmpleado.get(i).get(CONTRACT_DATA.EXPRESSION);
+				if (!listaDiasDefinidos.contains(diaSemana)){
+					listaNoLaborablesContrato.add((byte) 1);
+				}else if (null == value || "-1.0".equals(value)){
+					listaNoLaborablesContrato.add((byte) 1);
+				}else{
+					listaNoLaborablesContrato.add((byte) 0);
+				}
+			}
 		}
 		
 		// ---------------------------------------------- TIPOS DIAS ---------------------------------------------------------
@@ -177,39 +226,9 @@ public class JooqEmployeeCalendar {
 			
 			for(Record r : countryHolidays)
 				listaFestivosContrato.add(r.get(HOLIDAY_DETAIL.DATE));
-		}else{
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 1);
-			listaNoLaborablesContrato.add((byte) 1);
 		}
 		
-		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
-		String tipoJornadaInfoEmpleado;
-		
-		tipoJornadaInfoEmpleado = dslContext
-				  .select(CONTRACT_DATA.EXPRESSION)
-				  .from(CONTRACT_DATA)
-				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-				  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
-				  .orderBy(CONTRACT_DATA.START_DATE.desc())
-				  .limit(1)
-				  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
-		
-		if(tipoJornadaInfoEmpleado == null)
-			tipoJornadaInfoEmpleado = dslContext
-			  .select(CONTRACT_DATA.EXPRESSION)
-			  .from(CONTRACT_DATA)
-			  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-			  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
-			  .orderBy(CONTRACT_DATA.START_DATE.desc())
-			  .limit(1)
-			  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
-		
-		jornadaCompleta = comprobarTipoJornada(tipoJornadaInfoEmpleado);
+		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
 		
 		employeeInfoCalendar = new EmployeeCalendarData(listaHorasContrato, listaTipoDiasContrato, listaFestivosContrato, 
 				listaNoLaborablesContrato, jornadaCompleta);

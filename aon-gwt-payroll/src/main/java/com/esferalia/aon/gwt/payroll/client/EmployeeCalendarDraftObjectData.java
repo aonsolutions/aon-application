@@ -276,6 +276,10 @@ public class EmployeeCalendarDraftObjectData {
 		
 	}
 	
+	public Integer getEmployeeId(){
+		return this.employeeId;
+	}
+	
 	public DayType getTypeByDay (Date dia){
 		DayType typeDayDraft = draftMapaDiasTipo.get(dia);
 		
@@ -421,18 +425,17 @@ public class EmployeeCalendarDraftObjectData {
 		Date lastDraftDate = new Date(0);
 		for ( Date date : draftMapaDiasHoras.keySet() )
 			if ( date.after(lastDraftDate) )
-				lastDraftDate = date;
+				lastDraftDate = DateUtils.copyDateOnly(date);
 		
 		if ( startDate.after(lastDraftDate))
 			return variablesList;
 		
 		if ( endDate == null )
-			endDate = lastDraftDate;
+			endDate = DateUtils.copyDateOnly(lastDraftDate);
 		
-		for ( int day = 0; day < 6 ; day++ ){
+		for ( int day = 0; day <= 6 ; day++ ){
 			
-			LinkedList<CalendarVariable> queue = 
-					new LinkedList<CalendarVariable>();
+			LinkedList<CalendarVariable> queue = new LinkedList<CalendarVariable>();
 			
 			Date date = DateUtils.copyDateOnly(startDate);
 			DateUtils.addDays2Date(date, day);

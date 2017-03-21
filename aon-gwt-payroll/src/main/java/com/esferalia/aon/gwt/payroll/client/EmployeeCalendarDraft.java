@@ -1045,6 +1045,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		this.calendarEmployeeInfo = calendar;
 		
+		//Window.alert("IdEmployee :"+calendar.getEmployeeId());
+		
 		this.calendarEmployeeInfo.undoManager.addListener(new UndoManager.Listener() {
 			@SuppressWarnings("rawtypes")
 			@Override
@@ -1349,7 +1351,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
-				calendarEmployeeInfo.setTypeByDay(cellsDates[row][col], DayType.NOTYPEDAY);
+				//calendarEmployeeInfo.setTypeByDay(cellsDates[row][col], DayType.NOTYPEDAY);
 			}
 		}
 	}
