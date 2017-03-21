@@ -124,6 +124,12 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			if(params.getESTADO().contains(ESTADOTYPE.FINALIZADO)){
 				statusList.add(ElaborationStatus.CLOSED);
 			}
+			if(params.getESTADO().contains(ESTADOTYPE.FALLIDO)){
+				statusList.add(ElaborationStatus.FAIL);
+			}
+			if(params.getESTADO().contains(ESTADOTYPE.REABIERTO)){
+				statusList.add(ElaborationStatus.REOPEN);
+			}
 		}
 		
 		List<Elaboration> elaborationList = null;
@@ -140,7 +146,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 //				String subject = "[AON] Recuperación automática de elaboraciones";
 //				String content = fillResponseMessage(elaborationList);
 //				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
-//				saveToDisk("elaboration-request", _xml);
+				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
 			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
 				if(params.getELABORACIONES()!=null 
 						&& params.getELABORACIONES().getREFERENCIAS()!=null 
@@ -156,7 +162,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				String subject = "[AON] Cancelación automática de elaboraciones";
 				String content = fillCancellationMessage(elaborationList);
 				sendEmail(subject, content, "cancelar", _xml, RECIPIENTS_TO_LOG);
-				saveToDisk("elaboration-cancellation", _xml);
+				saveToDisk("elaboration", "elaboration-cancellation", _xml!=null?_xml:"");
 			} else {
 				errorList.add("No se ha indicado la accion a realizar");
 			}
@@ -478,7 +484,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		List<Elaboration> elaborationList = ElaborationDAO.getElaborationList(
 				ctx,
 				p -> {
-					Byte[] statuses = { null, null, null };
+					Byte[] statuses = { null, null, null, null, null };
 					if (statusList != null && statusList.size() > 0) {
 						for (int i = 0; i < statusList.size(); i++) {
 							statuses[i] = statusList.get(i).value();
@@ -486,6 +492,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					} else {
 						statuses[0] = ElaborationStatus.PENDING.value();
 						statuses[1] = ElaborationStatus.IN_PROGRESS.value();
+						statuses[2] = ElaborationStatus.FAIL.value();
+						statuses[3] = ElaborationStatus.REOPEN.value();
 					}
 					java.sql.Timestamp start = null;
 					java.sql.Timestamp end = null;

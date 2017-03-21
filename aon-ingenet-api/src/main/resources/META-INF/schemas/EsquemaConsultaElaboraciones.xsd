@@ -88,6 +88,8 @@
 			<xsd:enumeration value="PENDIENTE" />
 			<xsd:enumeration value="PROCESANDO" />
 			<xsd:enumeration value="FINALIZADO" />
+			<xsd:enumeration value="FALLIDO" />
+			<xsd:enumeration value="REABIERTO" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
