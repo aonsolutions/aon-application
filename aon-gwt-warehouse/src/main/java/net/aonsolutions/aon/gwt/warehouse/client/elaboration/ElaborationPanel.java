@@ -18,6 +18,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -36,7 +37,8 @@ public class ElaborationPanel extends Composite {
 	@UiField
 	DateBoxEx date;
 	@UiField
-	ListBox item;
+//	ListBox item;
+	TextBox item;
 	@UiField
 	ListBox warehouse;
 	@UiField
@@ -44,7 +46,7 @@ public class ElaborationPanel extends Composite {
 	@UiField
 	ListBox status;
 	@UiField
-	TextBox comments;
+	TextArea comments;
 //	source
 //	source_id
 
@@ -89,33 +91,19 @@ public class ElaborationPanel extends Composite {
 //		});
 		series.setText(jsElaboration != null && jsElaboration.getSeries() != null
 				? (jsElaboration.getSeries() + "") : "");
-		series.addChangeHandler(new ChangeHandler() {
-
-			@Override
-			public void onChange(ChangeEvent event) {
-				updateElaboration();
-			}
-		});
-		
 		number.setText(jsElaboration != null && jsElaboration.getNumber() != null
 				? (jsElaboration.getNumber() + "") : "");
-		number.addChangeHandler(new ChangeHandler() {
-
-			@Override
-			public void onChange(ChangeEvent event) {
-				updateElaboration();
-			}
-		});
-
+		
 		API.getWarehouse().getElaborationStatuses(new AsyncCallback<JSON<JsObject>>() {
-
+			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
 				result.getData().stream()
-						.filter(s -> !s.getName().equalsIgnoreCase("fallido")
-								&& !s.getName().equalsIgnoreCase("reabierto"))
+				.filter(s -> !s.getName().equalsIgnoreCase("fallido")
+						&& !s.getName().equalsIgnoreCase("reabierto")
+						&& !s.getName().equalsIgnoreCase("en progreso"))
 						.forEach(s -> status.addItem(s.getName(), s.getId() + ""));
-
+				
 				if (jsElaboration != null && jsElaboration.getStatus() != null) {
 					for (Integer i = 0; i < status.getItemCount(); i++) {
 						if (jsElaboration.getStatus() != null
@@ -125,20 +113,12 @@ public class ElaborationPanel extends Composite {
 					}
 				}
 			}
-
+			
 			@Override
 			public void onFailure(Throwable caught) {
 			}
 		});
-
-		status.addChangeHandler(new ChangeHandler() {
-
-			@Override
-			public void onChange(ChangeEvent event) {
-				updateElaboration();
-			}
-		});
-
+		
 		if (jsElaboration != null && jsElaboration.getDate() != null
 				&& !"".equals(jsElaboration.getDate())) {
 			// TODO
@@ -146,60 +126,74 @@ public class ElaborationPanel extends Composite {
 			Date issueDate = DateTimeFormat.getFormat("yyyy-MM-dd").parse(jsElaboration.getDate());
 			date.setValue(issueDate);
 		}
-		date.addValueChangeHandler(new ValueChangeHandler<Date>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				updateElaboration();
-			}
-		});
-
-		if (jsElaboration != null && jsElaboration.getComments() != null) {
-			comments.setText(
-					jsElaboration.getComments() != null ? jsElaboration.getComments() : "");
-		}
-		comments.addChangeHandler(new ChangeHandler() {
-
-			@Override
-			public void onChange(ChangeEvent event) {
-				updateElaboration();
-			}
-		});
 		
-		// TODO item
-//		item.setText(jsElaboration != null && jsElaboration.getItem() != null
-//				? (jsElaboration.getItem() + "") : "");
-		item.addChangeHandler(new ChangeHandler() {
+		comments.setText(jsElaboration != null && 
+				jsElaboration.getComments() != null ? jsElaboration.getComments() : "");
+		comments.setCharacterWidth(20);
+		comments.setVisibleLines(3);
 
-			@Override
-			public void onChange(ChangeEvent event) {
-				updateElaboration();
-			}
-		});
+		// TODO item: suggestBox? listBox? lookup?
+		item.setText(jsElaboration != null && jsElaboration.getItem() != null
+				? (jsElaboration.getItem().getName() + "") : "");
+		item.setReadOnly(true);
 
 		quantity.setText(jsElaboration != null && jsElaboration.getQuantity() != null
 				? (jsElaboration.getQuantity() + "") : "");
-		quantity.addChangeHandler(new ChangeHandler() {
+		
+		API.getWarehouse().getWarehouseList(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
-			public void onChange(ChangeEvent event) {
-				updateElaboration();
+			public void onSuccess(JSON<JsObject> result) {
+				result.getData().stream()
+				.forEach(w -> warehouse.addItem(w.getName(), w.getId() + ""));
+				
+				if (jsElaboration != null && jsElaboration.getStatus() != null) {
+					for (Integer i = 0; i < warehouse.getItemCount(); i++) {
+						if (jsElaboration.getStatus() != null
+								& jsElaboration.getStatus().getName().equals(warehouse.getItemText(i))) {
+							warehouse.setSelectedIndex(i);
+						}
+					}
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
 			}
 		});
 		
-		// TODO warehouse
-//		warehouse.setText(jsElaboration != null && jsElaboration.getWarehouse() != null
-//				? (jsElaboration.getWarehouse() + "") : "");
-		warehouse.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				updateElaboration();
-			}
-		});
+		series.addChangeHandler(getUpdateChangeListener());
+		number.addChangeHandler(getUpdateChangeListener());
+		status.addChangeHandler(getUpdateChangeListener());
+		date.addValueChangeHandler(getUpdateChangeHandler());
+		comments.addChangeHandler(getUpdateChangeListener());
+		item.addChangeHandler(getUpdateChangeListener());
+		quantity.addChangeHandler(getUpdateChangeListener());
+		warehouse.addChangeHandler(getUpdateChangeListener());
 		
 	}
 
+	private ChangeHandler getUpdateChangeListener() {
+		return new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateElaboration();
+			}
+		};
+	}
+	
+	private <T> ValueChangeHandler<T> getUpdateChangeHandler() {
+		return new ValueChangeHandler<T>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<T> event) {
+				updateElaboration();
+			}
+		};
+	}
+	
+	
 	private void updateElaboration() {
 //		if (jsElaboration != null) {
 //			API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(),

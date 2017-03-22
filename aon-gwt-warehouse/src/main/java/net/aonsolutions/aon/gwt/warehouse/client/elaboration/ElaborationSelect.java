@@ -8,12 +8,10 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaborationDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaborationDetailComposition;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
@@ -24,7 +22,6 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,7 +34,6 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -53,15 +49,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
-import com.vaadin.polymer.paper.widget.PaperInput;
-
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class ElaborationSelect extends Composite{
 	
@@ -119,7 +111,7 @@ public class ElaborationSelect extends Composite{
 		p.add(datebox);
 		loadSelectable();
 		loadSelected(true);
-		westPanel.add(p);
+//		westPanel.add(p);
 		westPanel.add(selectable);
 	}
 	
@@ -149,6 +141,7 @@ public class ElaborationSelect extends Composite{
 		selectableItems(map);
 		selectable.addClickHandler(selectableClickHandler());
 		selectable.addDoubleClickHandler(selectableDoubleClickHandler());
+		selectedItems(0, true);
 	}
 	
 	private void loadSelected(Boolean isCreate) {
@@ -199,7 +192,7 @@ public class ElaborationSelect extends Composite{
 			public void onClick(ClickEvent event) {
 				String value = selectable.getSelectedValue();
 				
-				selectedItems(Integer.parseInt(value), true);
+				selectedItems(Integer.parseInt(value), false);
 				
 //				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
 //					API.getWarehouse().getPurchase(Integer.parseInt(value),new AsyncCallback<JSON<JsOrder>>() {
@@ -589,12 +582,12 @@ public class ElaborationSelect extends Composite{
 		dataGrid.getColumnSortList().push(itemColumn);
 		
 		dataGrid.addColumn(dateColumn, AON.MSG.date());
-		dataGrid.addColumn(itemColumn, AON.MSG.productCategories());
+		dataGrid.addColumn(itemColumn, "Producto");
 		dataGrid.addColumn(quantityColumn, AON.MSG.quantity());
 		
-		dataGrid.setColumnWidth(dateColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(itemColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(quantityColumn, 10, Unit.PCT);
+		dataGrid.setColumnWidth(dateColumn, 15, Unit.PCT);
+		dataGrid.setColumnWidth(itemColumn, 70, Unit.PCT);
+		dataGrid.setColumnWidth(quantityColumn, 15, Unit.PCT);
 		
 	
 	}

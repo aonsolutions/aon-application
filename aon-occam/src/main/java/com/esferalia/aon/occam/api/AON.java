@@ -1955,6 +1955,18 @@ public class AON {
 		}
 	}
 
+	public static LinkedList<Warehouse> getWarehouseList(String domainName, Integer domainId,
+			String login, WarehouseFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getWarehouseList(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Stream<Income> getIncomeStream(String domainName, Integer domainId, String login, IncomeFilter filter){
 		AONContext ctx = null;
 		try {
@@ -2590,13 +2602,14 @@ public class AON {
 		}
 	}
 	
-	public static Elaboration getFullElaboration(String domainName, Integer domainId, String login,
-			Integer id) {
+	public static Elaboration getFullElaboration(String domainName,
+			Integer domainId, String login, Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Elaboration e = getWarehouse().getElaboration(ctx, id);
-			e.setItem(getItem(domainName, domainId, login, e.getItem().getId()));
+			e.setItem(AON.getItem(domainName, domainId, login, e.getItem()
+					.getId()));
 			return e;
 		} finally {
 			if (ctx != null)
@@ -2615,12 +2628,18 @@ public class AON {
 		}
 	}
 	
-	public static List<ElaborationDetail> getElaborationDetailList(String domainName, Integer domainId, String login,
+	public static List<ElaborationDetail> getElaborationDetailList(
+			String domainName, Integer domainId, String login,
 			Integer elaborationId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			List<ElaborationDetail> list = getWarehouse().getElaborationDetailList(ctx, elaborationId);
+			List<ElaborationDetail> list = getWarehouse()
+					.getElaborationDetailList(ctx, elaborationId);
+			list.forEach(detail -> {
+				detail.setItem(AON.getItem(domainName, domainId, login, detail
+						.getItem().getId()));
+			});
 			return list;
 		} finally {
 			if (ctx != null)
@@ -2628,12 +2647,19 @@ public class AON {
 		}
 	}
 	
-	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(String domainName, Integer domainId, String login,
+	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(
+			String domainName, Integer domainId, String login,
 			Integer elaborationDetailId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			List<ElaborationDetailComposition> list = getWarehouse().getElaborationDetailCompositionList(ctx, elaborationDetailId);
+			List<ElaborationDetailComposition> list = getWarehouse()
+					.getElaborationDetailCompositionList(ctx,
+							elaborationDetailId);
+			list.forEach(detail -> {
+				detail.setItem(AON.getItem(domainName, domainId, login, detail
+						.getItem().getId()));
+			});
 			return list;
 		} finally {
 			if (ctx != null)
