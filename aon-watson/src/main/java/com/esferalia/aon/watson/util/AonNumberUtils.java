@@ -104,6 +104,10 @@ public class AonNumberUtils {
 		if (value == null) return null;
 		return value.toString();
 	}
+	public static String toString(Number value) {
+		if (value == null) return null;
+		return value.toString();
+	}
 
 	public static boolean between(Number value, Number limit1, Number limit2) {
 		if (Double.compare(value.doubleValue(), limit1.doubleValue()) < 0) return false;

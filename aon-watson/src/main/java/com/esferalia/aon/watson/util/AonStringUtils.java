@@ -4845,6 +4845,10 @@ public class AonStringUtils {
 		return rightPad(str, size, ' ');
 	}
 
+	public static String rightPad(Number number, int size) {
+		return rightPad(AonNumberUtils.toString(number), size, ' ');
+	}
+	
 	/**
 	 * <p>
 	 * Right pad a String with a specified character.

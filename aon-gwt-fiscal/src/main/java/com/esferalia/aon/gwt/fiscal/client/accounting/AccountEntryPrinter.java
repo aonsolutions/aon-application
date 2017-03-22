@@ -43,6 +43,9 @@ public class AccountEntryPrinter {
 		header.setStyleName(AON.AON_CSS.aonBold());
 		header.addStyleName(AON.AON_CSS.aonTextUnderline());
 		header.setText(toString(entry,160));
+		if (AonStringUtils.isNotBlank(entry.getComments())) {
+			header.setTitle(entry.getComments());
+		}
 		return header;
 	}
 
@@ -67,8 +70,15 @@ public class AccountEntryPrinter {
 		buf.append(AON.MSG.journal());
 		buf.append(AonStringUtils.COLON);
 		buf.append(AonStringUtils.SPACE);
-		buf.append(entry.getJournal());
+		buf.append(AonStringUtils.rightPad(entry.getJournal(),10));
 		buf.append(AonStringUtils.SPACE);
+		if (AonStringUtils.isNotBlank(entry.getComments())) {
+			buf.append("[");
+			buf.append(AonStringUtils.abbreviate(entry.getComments(), 38));
+			buf.append("]");
+		} else {
+			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 40));
+		}
 		buf.append(AonStringUtils.leftPad(type, lineSize - buf.length()));
 		return buf.toString();
 	}
