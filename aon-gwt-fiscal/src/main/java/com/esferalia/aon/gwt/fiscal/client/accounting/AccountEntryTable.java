@@ -351,9 +351,9 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						public void onAccept() {
 							for (int i = 1; i < getRowCount() ; i++ ) {
 								Widget w = getWidget( i , COLS.CON.ordinal());
-								if (w instanceof TextBox) {
-									TextBox cb = (TextBox) w;
-									cb.setValue(event.getValue());
+								if (w instanceof SuggestBox) {
+									SuggestBox cb = (SuggestBox) w;
+									cb.getValueBox().setValue(event.getValue());
 								}
 							}
 							for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails() ) {
