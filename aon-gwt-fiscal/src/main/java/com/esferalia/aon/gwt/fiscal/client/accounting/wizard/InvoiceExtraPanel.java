@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificatio
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
@@ -626,11 +627,12 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		if (ar == null || ar.getId() == null) {
 			flexContainer.clear();
 		} else {
+			Invoice inv = invoice.getInvoice();
 			invoiceTypeLabel.setText( getInvoiceLabel(ar.getType().getInvoiceType(),invoice.getInvoice().getRectificationType()));
 			eastPanelInner.setVisible(true);
 			//workplace
-			fullDocument.setValue(ar.getDocumentType(),ar.getDocumentCountry(),ar.getDocument());
-			rName.setValue(ar.getName());
+			fullDocument.setValue(inv.getRegistryDocumentType(),inv.getRegistryDocumentCountry(),inv.getRegistryDocument());
+			rName.setValue(inv.getRegistryName());
 			taxDate.setValue(invoice.getInvoice().getTaxDate());
 			transactionBox.setValue(invoice.getTransaction());
 			service.setValue(invoice.isService());
