@@ -12,7 +12,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailProperties;
+import com.esferalia.aon.occam.api.model.type.PurchaseType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBPurchase {
@@ -20,7 +22,7 @@ public class DBPurchase {
 	public static JSONArray getPurchases(Domain domain,String login, Map<String, String[]> map){
 		JSONArray array = new JSONArray();
 		AON.getPurchaseStream(domain.getName(), domain.getId(), login, f -> purchaseFilter(domain, map, f))
-			.forEach(purchase -> array.put(new JSONObject(purchase.toJSON())));
+			.forEach(purchase -> array.put(ToJSON.purchaseToJSON(purchase)));
 		return array;
 	}
 	
@@ -39,15 +41,15 @@ public class DBPurchase {
 	public static JSONArray getPurchaseDetails(Domain domain,String login, Integer id){
 	    JSONArray array = new JSONArray();
 	    AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getPurchaseProperty().eq(id)))
-	    	.forEach(purchaseDetail -> array.put(purchaseDetail.toJSON()));
+	    	.forEach(purchaseDetail -> array.put(ToJSON.purchaseDetailToJSON(purchaseDetail)));
 	    return array;
 	}
 	
 	public static JSONArray getPurchaseDetails(Domain domain,String login, Map<String, String[]> map){
 		JSONArray array = new JSONArray();
-/*		AON.getPurchaseStream(domain.getName(), domain.getId(), login, f -> purchaseDetailFilter(domain, map, f))
-			.forEach(purchase -> array.put(new JSONObject(purchase.toJSON())));
-	*/	return array;
+		AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> purchaseDetailFilter(domain, map, f))
+			.forEach(purchaseDetail -> array.put(ToJSON.purchaseDetailToJSON(purchaseDetail)));
+		return array;
 	}
 	
 	@Deprecated
@@ -59,9 +61,11 @@ public class DBPurchase {
 	}
 	
     public static Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
-		Filter filter = f.getDomainProperty().eq(domain.getId());
+		Filter filter = f.getDomainProperty().eq(domain.getId())
+				.and(f.getDocumentTypeProperty().ne(PurchaseType.MANUFACTURE.value()));
 		
 		if(filterMap.containsKey(MSG.SUPPLIER)){
+			
 		}
 		
 		if(filterMap.containsKey(MSG.CARRIER)){
@@ -87,11 +91,12 @@ public class DBPurchase {
 		return filter;
     }
     
-    public static Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseDetailProperties f) {
+    public static Filter purchaseDetailFilter(Domain domain, Map<String, String[]> filterMap, PurchaseDetailProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-			
-		if(filterMap.containsKey(MSG.CARRIER)){
-		
+
+		if(filterMap.containsKey(MSG.PURCHASE)){
+			Integer purchase = Integer.parseInt(filterMap.get(MSG.PURCHASE)[0]);
+			filter = filter.and(f.getPurchaseProperty().eq(purchase));
 		}
 		
 		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
@@ -99,14 +104,32 @@ public class DBPurchase {
 			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
 		} 
 		
-		if(filterMap.containsKey(MSG.ISSUE_DATE)){
-	
-		}
-		
-		if(filterMap.containsKey(MSG.NOT_CARRIER_PACKING)){
-			filter = filter.and(f.getCarrierPackingProperty().isNull());
-		}
+		if(filterMap.containsKey(MSG.SUPPLIER)){
+			Integer supplier = Integer.parseInt(filterMap.get(MSG.SUPPLIER)[0]);
+			filter = filter.and(f.getSupplierProperty().eq(supplier));
+		} 
 		
 		return filter;
     }
+
+    public static JSONObject insertPurchaseDetail(Domain domain,String login, JSONObject json){
+    	// TODO  updatePurchaseDetail(domain, login, map)
+    	return new JSONObject();
+    }
+    
+    public static JSONObject updatePurchaseDetail(Domain domain,String login, JSONObject json){
+    	// TODO HACER EL MÉTODO PARA TODOS LOS CASOS!!!!! 
+    	Integer id = json.getInt("id");
+    	Double delivered = json.getDouble("delivered");
+    	PurchaseDetail purchaseDetail = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, id);
+    	purchaseDetail.setDelivered(purchaseDetail.getDelivered() + delivered);
+    	purchaseDetail = AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail);
+    	return ToJSON.purchaseDetailToJSON(purchaseDetail);
+    }
+    
+    public static JSONObject deletePurchaseDetail(Domain domain,String login, JSONObject json){
+    	// TODO  updatePurchaseDetail(domain, login, map)
+    	return new JSONObject();
+    }
+    
 }

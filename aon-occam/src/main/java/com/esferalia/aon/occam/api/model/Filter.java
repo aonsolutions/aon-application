@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Properties.StockProperties;
+import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
@@ -273,6 +274,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface CarrierFilter{
 		Filter filter(CarrierProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface SupplierFilter{
+		Filter filter(SupplierProperties properties);
 	}
 	
 	@FunctionalInterface

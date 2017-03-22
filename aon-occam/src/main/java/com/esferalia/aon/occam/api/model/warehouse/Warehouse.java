@@ -19,6 +19,10 @@ public class Warehouse implements Serializable{
 		this.active = active;
 		return this;
 	}
+	public Boolean isActive() {
+		return active == 1;
+	}	
+	
 	public Integer getDepartment() {
 		return department;
 	}

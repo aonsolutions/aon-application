@@ -1,9 +1,13 @@
 package com.code.aon.webservice.warehouse.jooq;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
@@ -11,27 +15,65 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.type.IncomeStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class DBIncome {
 	
 	public static JSONArray getIncomes(Domain domain,String login, Map<String, String[]> map){
 	    JSONArray array = new JSONArray();
 	    AON.getIncomeStream(domain.getName(), domain.getId(), login, f ->  incomeFilter(domain, map, f))
-	    	.forEach(income -> array.put(new JSONObject(income.toJSON())));
+	    	.sorted((e1, e2) -> e2.getIssueDate().compareTo(e1.getIssueDate()))
+	    .forEach(income -> array.put(incomeToJSON(income)));
 	    return array;
 	}
 	
     public static JSONObject getIncome(Domain domain,String login, Integer id){
     	Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
-    	return income.isPresent() ? new JSONObject(income.get().toJSON()) : new JSONObject();
+    	return incomeToJSON(income);
     }
 
 	public static JSONArray getIncomeDetails(Domain domain,String login, Integer incomeId){
 	    JSONArray array = new JSONArray();
 	    AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(incomeId))
-	    	.forEach(detail -> array.put(new JSONObject(detail.toJSON())));
+	    	.forEach(detail -> array.put(incomeDetailToJSON(detail)));
 	    return array;
+	}
+	
+	public static JSONObject insertIncome(Domain domain, String login, JSONObject json) {
+		Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getInt("supplier")));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		Date date = new Date();
+		try {
+			date = dateFormat.parse(json.getString("issue_time"));
+		} catch (JSONException | ParseException e) {
+			e.printStackTrace();
+		}
+		Income income = new Income()
+				.setCarrierPacking(json.getInt("carrier_packing"))
+				.setDomain(domain.getId())
+				.setIssueDate(date)
+				.setReferenceCode(json.getString("reference_code"))
+				.setScope(supplier.get().getScope())
+				.setSupplier(json.getInt("supplier"))
+				.setWorkplace(json.getInt("workplace"))
+				
+				// Por Defecto ¿?
+				.setStatus(IncomeStatus.PENDING)
+				.setSecurityLevel(SecurityLevel.OFFICIAL.ordinal())
+				.setNumberOfPymnts(1)
+				.setDaysToFirstPymnt(0)
+				.setDaysBetweenPymnt(0)
+				.setPymntDays("")
+				;
+		
+		Optional<Income> result = AON.insertIncome(domain.getName(), domain.getId(), login, income);
+		return  incomeToJSON(result);
 	}
     
 	public static Filter incomeFilter(Domain domain, Map<String, String[]> filterMap, IncomeProperties f) {
@@ -55,4 +97,131 @@ public class DBIncome {
 		
 		return filter;
 	}
+	
+	public static JSONObject insertIncomeDetail(Domain domain,String login, JSONObject json){
+		Integer incomeId = json.getInt("income");
+		Integer purchaseDetailId = json.getInt("purchase_detail");
+		
+		Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f ->
+			f.getIncomeProperty().eq(incomeId)
+			.and(f.getPurchaseDetailProperty().eq(purchaseDetailId)));
+		if(incomeDetail.isPresent()){
+			IncomeDetail iDetail = incomeDetail.get();
+			iDetail.setQuantity(iDetail.getQuantity() + json.getDouble("quantity"));
+			AON.updateIncomeDetail(domain.getName(), domain.getId(), login, iDetail);
+		} else  {
+			Integer workplaceId = json.getInt("workplace");
+			Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login, f -> f.getWorkplaceProperty().eq(workplaceId));
+			IncomeDetail iDetail = new IncomeDetail()
+					.setDescription(json.getString("description"))
+					.setDiscountExpression("0.0")
+					.setDomain(domain.getId())
+					.setIncome(new Income().setId(incomeId))
+					.setItem(new Item().setId(json.getInt("item")))
+					.setPurchaseDetail(purchaseDetailId)
+					.setQuantity(json.getDouble("quantity"))
+					.setWarehouse(warehouse.getId());
+			AON.insertIncomeDetail(domain.getName(), domain.getId(), login, iDetail);
+		}
+		return new JSONObject();	
+	}
+	    
+	public static JSONObject updateIncomeDetail(Domain domain,String login, JSONObject json){
+		// TODO HACER PARA TODOS LOS CASOS!!!!
+		Double quantity = json.getDouble("quantity");
+		Integer id = json.getInt("id");
+		Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
+		if(incomeDetail.isPresent()){
+			incomeDetail = AON.updateIncomeDetail(domain.getName(), domain.getId(), login, incomeDetail.get().setQuantity(quantity));
+			return incomeDetailToJSON(incomeDetail);
+		}
+		return new JSONObject();
+	}
+	    
+	public static JSONObject deleteIncomeDetail(Domain domain,String login, JSONObject json){
+		Integer id = json.getInt("id");
+		Optional<IncomeDetail> incomeDetail = AON.deleteIncomeDetail(domain.getName(), domain.getId(), login, id);
+		return incomeDetailToJSON(incomeDetail);
+	}
+	
+	public static JSONObject incomeToJSON(Optional<Income> income){
+		return income.isPresent() ? incomeToJSON(income.get()) : new JSONObject();
+	}
+	
+	public static JSONObject incomeDetailToJSON(Optional<IncomeDetail> incomeDetail){
+		return incomeDetail.isPresent() ? incomeDetailToJSON(incomeDetail.get()) : new JSONObject();
+	}
+	
+	public static JSONObject  incomeToJSON(Income income){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		JSONObject json = new JSONObject();
+		if(income != null){
+			json.put(MSG.ID, income.getId());
+			json.put(MSG.DOMAIN, income.getDomain());
+			json.put(MSG.PROJECT, income.getProject());
+			
+			JSONObject registry = new JSONObject();
+			registry.put(MSG.ID, income.getSupplier());
+			json.put(MSG.REGISTRY, registry);
+			
+			json.put(MSG.REFERENCE_CODE, income.getReferenceCode());
+			json.put(MSG.ADDRESS, income.getAddress());
+			json.put(MSG.ISSUE_DATE, dateFormat.format(income.getIssueDate()));
+			json.put(MSG.PAY_METHOD, income.getPayMethod());
+			json.put(MSG.CONFIDENTIAL, income.isConfidential());
+			
+			if(income.getStatus() != null ){
+				JSONObject status = new JSONObject();
+				status.put(MSG.ID, income.getStatus().ordinal());
+				status.put(MSG.NAME, income.getStatus().getName());
+				json.put(MSG.STATUS, status);
+			}
+			
+			json.put(MSG.COMMENTS, income.getComments());
+			json.put(MSG.REMARKS, income.getRemarks());
+			json.put(MSG.WORKPLACE, income.getWorkplace());
+			json.put(MSG.SCOPE, income.getScope());
+			json.put(MSG.NUMBER_OF_PYMNTS, income.getNumberOfPymnts());
+			json.put(MSG.DAYS_TO_FIRST_PYMNT, income.getDaysToFirstPymnt());
+			json.put(MSG.DAYS_BETWEEN_PYMNTS, income.getDaysBetweenPymnt());
+			json.put(MSG.PYMNT_DAYS, income.getPymntDays());
+			json.put(MSG.BANK_ACCOUNT, income.getBankAccount());
+			json.put(MSG.BANK_ALIAS, income.getBankAlias());
+			json.put(MSG.BIC, income.getBic());
+			json.put(MSG.CARRIER_PACKING, income.getCarrierPacking());
+			json.put(MSG.SERIES_NUMBER, "");
+			json.put(MSG.ORDER_TYPE, "income");
+			json.put(MSG.REFERENCE, income.getReferenceCode() != null ? income.getReferenceCode() : " ");
+			
+			json.put(MSG.CREATION_DATE, income.getCreationDate());
+			json.put(MSG.CREATION_USER, income.getCreationUser());
+			json.put(MSG.MODIFICATION_DATE, income.getModificationDate());
+			json.put(MSG.MODIFICATION_USER, income.getModificationUser());
+		}
+		return json;
+	}
+	
+	public static JSONObject  incomeDetailToJSON(IncomeDetail incomeDetail){
+		JSONObject json = new JSONObject();
+		if(incomeDetail != null){
+			json.put(MSG.ID, incomeDetail.getId());
+			json.put(MSG.DOMAIN, incomeDetail.getDomain());
+			json.put(MSG.PROJECT, incomeDetail.getProject());
+			json.put(MSG.INCOME, incomeDetail.getIncome().getId());
+			json.put(MSG.LINE, incomeDetail.getLine());
+			json.put(MSG.ITEM, incomeDetail.getItem().getId());
+			json.put(MSG.DESCRIPTION, incomeDetail.getDescription());
+			json.put(MSG.QUANTITY, incomeDetail.getQuantity());
+			json.put(MSG.PRICE, incomeDetail.getPrice());
+			json.put(MSG.PURCHASE_DETAIL, incomeDetail.getPurchaseDetail());
+			json.put(MSG.DISCOUNT_EXPR, incomeDetail.getDiscountExpression());
+			
+			json.put(MSG.CREATION_DATE, incomeDetail.getCreationDate());
+			json.put(MSG.CREATION_USER, incomeDetail.getCreationUser());
+			json.put(MSG.MODIFICATION_DATE, incomeDetail.getModificationDate());
+			json.put(MSG.MODIFICATION_USER, incomeDetail.getModificationUser());
+		}
+		return json;
+	}
+
 }

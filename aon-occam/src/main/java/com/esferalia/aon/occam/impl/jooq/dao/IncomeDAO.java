@@ -6,12 +6,15 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
@@ -33,6 +36,68 @@ public class IncomeDAO {
 	public static Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter){
 		return INCOME_PROPERTIES.build(ctx.getDslContext().select().from(INCOME), filter)
 				.fetch().stream().map(new IncomeFiller());
+	}
+	
+	public static Optional<Income> insertIncome(AONContext ctx, Income income){
+		return ctx.getDslContext().insertInto(INCOME, INCOME.DOMAIN, INCOME.PROJECT,
+				INCOME.REFERENCE_CODE, INCOME.SUPPLIER, INCOME.ADDRESS, INCOME.ISSUE_TIME,
+				INCOME.PAY_METHOD, INCOME.SECURITY_LEVEL, INCOME.STATUS, INCOME.COMMENTS,
+				INCOME.REMARKS, INCOME.WORKPLACE, INCOME.SCOPE, INCOME.NUMBER_OF_PYMNTS,
+				INCOME.DAYS_TO_FIRST_PYMNT, INCOME.DAYS_BETWEEN_PYMNTS, INCOME.PYMNT_DAYS,
+				INCOME.BANK_ACCOUNT, INCOME.BANK_ALIAS, INCOME.BIC, INCOME.CARRIER_PACKING, 
+				INCOME.CREATION_USER, INCOME.CREATION_DATE, INCOME.MODIFICATION_USER, INCOME.MODIFICATION_DATE)
+			.values(income.getDomain(), income.getProject(),
+					income.getReferenceCode(), income.getSupplier(), income.getAddress(), income.getIssueDate(),
+					income.getPayMethod(), income.getSecurityLevel(), income.getStatus() != null ? income.getStatus().value() : null, income.getComments(),
+					income.getRemarks(), income.getWorkplace(), income.getScope(), income.getNumberOfPymnts(),
+					income.getDaysToFirstPymnt(), income.getDaysBetweenPymnt(), income.getPymntDays(),
+					income.getBankAccount(), income.getBankAlias(), income.getBic(), income.getCarrierPacking(), 
+					ctx.getUser(), new Date(), ctx.getUser(), new Date())
+			.returning().fetch().stream().map(new IncomeFiller()).findFirst();
+	}
+	
+	public static Optional<IncomeDetail> insertIncomeDetail(AONContext ctx, IncomeDetail incomeDetail){
+		Record1<Short> a = ctx.getDslContext().select(DSL.max(INCOME_DETAIL.LINE))
+			.from(INCOME_DETAIL).where(INCOME_DETAIL.INCOME.eq(incomeDetail.getIncome().getId()))
+			.fetchOne();
+		Integer line = a.value1() != null  ? a.value1().intValue() + 1 : 1;
+		return ctx.getDslContext().insertInto(INCOME_DETAIL, INCOME_DETAIL.DOMAIN, INCOME_DETAIL.INCOME, INCOME_DETAIL.ITEM,
+				INCOME_DETAIL.LINE, INCOME_DETAIL.PRICE, INCOME_DETAIL.PROJECT, INCOME_DETAIL.PURCHASE_DETAIL,
+				INCOME_DETAIL.QUANTITY, INCOME_DETAIL.WAREHOUSE, INCOME_DETAIL.DESCRIPTION, INCOME_DETAIL.DISCOUNT_EXPR, 
+				INCOME_DETAIL.CREATION_USER, INCOME_DETAIL.CREATION_DATE, INCOME_DETAIL.MODIFICATION_USER, INCOME_DETAIL.MODIFICATION_DATE)
+			.values(incomeDetail.getDomain(), incomeDetail.getIncome() != null ? incomeDetail.getIncome().getId() : null, incomeDetail.getItem() != null ? incomeDetail.getItem().getId() : null,
+					line.shortValue(), incomeDetail.getPrice(), incomeDetail.getProject() != null ? incomeDetail.getProject().getId() : null, incomeDetail.getPurchaseDetail(),
+					incomeDetail.getQuantity(), incomeDetail.getWarehouse(), incomeDetail.getDescription(), incomeDetail.getDiscountExpression(),
+					ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
+			.returning().fetch().stream().map(new IncomeDetailFiller()).findFirst();
+	}
+	
+	public static Optional<IncomeDetail> updateIncomeDetail(AONContext ctx, IncomeDetail incomeDetail){
+		return ctx.getDslContext().update(INCOME_DETAIL)
+				.set(INCOME_DETAIL.DOMAIN, incomeDetail.getDomain())
+				.set(INCOME_DETAIL.INCOME, incomeDetail.getIncome().getId())
+				.set(INCOME_DETAIL.ITEM, incomeDetail.getItem().getId())
+				.set(INCOME_DETAIL.LINE, incomeDetail.getLine())
+				.set(INCOME_DETAIL.PRICE, incomeDetail.getPrice())
+				.set(INCOME_DETAIL.PROJECT, incomeDetail.getProject().getId())
+				.set(INCOME_DETAIL.PURCHASE_DETAIL, incomeDetail.getPurchaseDetail())
+				.set(INCOME_DETAIL.QUANTITY, incomeDetail.getQuantity())
+				.set(INCOME_DETAIL.WAREHOUSE, incomeDetail.getWarehouse())
+				.set(INCOME_DETAIL.DESCRIPTION, incomeDetail.getDescription())
+				.set(INCOME_DETAIL.DISCOUNT_EXPR, incomeDetail.getDiscountExpression())
+				.set(INCOME_DETAIL.MODIFICATION_USER, ctx.getUser())
+				.set(INCOME_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.where(INCOME_DETAIL.ID.eq(incomeDetail.getId()))
+			.returning().fetch().stream().map(new IncomeDetailFiller()).findFirst();
+	}
+	
+	public static Optional<IncomeDetail> deleteIncomeDetail(AONContext ctx, Integer id){
+		IncomeDetail incomeDetail = getIncomeDetailStream(ctx, f -> f.getIdProperty().eq(id)).findFirst().orElse(null);
+		ctx.getDslContext().update(INCOME_DETAIL).set(INCOME_DETAIL.LINE, INCOME_DETAIL.LINE.add(-1))
+		.where(INCOME_DETAIL.INCOME.eq(incomeDetail.getIncome().getId()).and(INCOME_DETAIL.LINE.greaterThan(incomeDetail.getLine())))
+		.execute();
+		return ctx.getDslContext().delete(INCOME_DETAIL).where(INCOME_DETAIL.ID.eq(id))
+				.returning().fetch().stream().map(new IncomeDetailFiller()).findFirst();
 	}
 	
 	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter){

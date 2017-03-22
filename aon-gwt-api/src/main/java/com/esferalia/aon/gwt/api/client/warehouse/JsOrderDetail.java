@@ -110,4 +110,8 @@ public class JsOrderDetail extends JavaScriptObject {
 		return this.carrier_packing;
 	}-*/;
 	
+	public final native Integer getPurchaseDetail() /*-{
+		return this.purchase_detail;
+	}-*/;
+	
 }

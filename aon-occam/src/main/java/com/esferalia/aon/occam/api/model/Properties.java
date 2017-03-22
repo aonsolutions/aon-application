@@ -637,8 +637,19 @@ public interface Properties {
 	public interface CarrierProperties extends RegistryProperties{
 		Property<Integer> getScopeProperty();
 	}
-
 	
+	public interface SupplierProperties extends RegistryProperties, AuditProperties{
+		Property<Integer> getTariffProperty();
+		Property<Byte> getWithholdingProperty();
+		Property<Byte> getWithholdingFarmerProperty();
+		Property<Byte> getVatAccrualPaymentProperty();
+		Property<Byte> getTransactionProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getScopeProperty();
+		Property<Byte> getPurchaseValuatedProperty();
+		Property<Integer> getAccountProperty();
+	}
+
 	public interface PurchaseProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

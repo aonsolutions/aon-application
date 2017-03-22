@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -35,14 +36,14 @@ public interface IWarehouse {
 	// 	***********************************************
 	// 	********************************* WAREHOUSE ***
 	// 	***********************************************
-	
+	Stream<Warehouse> getWarehouseStream(AONContext ctx, WarehouseFilter filter);
 	Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter);
-	LinkedList<Warehouse> getWarehouseList(AONContext ctx, WarehouseFilter filter);
 	
 	// 	***********************************************
 	// 	************************************ INCOME ***
 	// 	***********************************************
 
+	Optional<Income> insertIncome(AONContext ctx, Income income);
 	Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter);
 	
 	// 	***********************************************
@@ -50,6 +51,9 @@ public interface IWarehouse {
 	// 	***********************************************
 
 	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter);
+	Optional<IncomeDetail> insertIncomeDetail(AONContext ctx, IncomeDetail incomeDetail);
+	Optional<IncomeDetail> updateIncomeDetail(AONContext ctx, IncomeDetail incomeDetail);
+	Optional<IncomeDetail> deleteIncomeDetail(AONContext ctx, Integer id);
 	
 	IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
 	IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);

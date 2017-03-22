@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.util.function.Function;
 
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -42,6 +44,7 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -127,6 +130,37 @@ public class FillerDAO {
 			carrier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
 			carrier.setType(r.getValue(REGISTRY.TYPE));
 			return carrier.setScope(r.getValue(CARRIER.SCOPE));				
+		}
+	}
+	
+	public static class SupplierFiller implements Function<Record, Supplier> {
+		@Override
+		public Supplier apply(Record r) {
+			Supplier supplier = new Supplier();
+			supplier.setAlias(r.getValue(REGISTRY.ALIAS));
+			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
+			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
+			supplier.setDocumentCountry(null); // TODO
+			supplier.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			supplier.setDomain(r.getValue(REGISTRY.DOMAIN));
+			supplier.setId(r.getValue(REGISTRY.ID));
+			supplier.setName(r.getValue(REGISTRY.NAME));
+			supplier.setNationality(null); // TODO
+			supplier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			supplier.setType(r.getValue(REGISTRY.TYPE));
+			return supplier.setScope(r.getValue(CARRIER.SCOPE))
+					.setTariff(r.getValue(SUPPLIER.TARIFF))
+					.setAccount(r.getValue(SUPPLIER.ACCOUNT))
+					.setWithholding(r.getValue(SUPPLIER.WITHHOLDING).shortValue())
+					.setWithholdingFarmer(r.getValue(SUPPLIER.WITHHOLDING_FARMER).shortValue())
+					.setVatAccrualPayment(r.getValue(SUPPLIER.VAT_ACCRUAL_PAYMENT).shortValue())
+					.setTransaction(r.getValue(SUPPLIER.TRANSACTION).shortValue())
+					.setStatus(SupplierStatus.values()[r.getValue(SUPPLIER.STATUS)])
+					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED).shortValue())
+					.setCreationDate(r.getValue(SUPPLIER.CREATION_DATE))
+					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
+					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER));				
 		}
 	}
 	
@@ -377,23 +411,22 @@ public class FillerDAO {
 					.setBic(r.getValue(INCOME.BIC))
 					.setCarrierPacking(r.getValue(INCOME.CARRIER_PACKING))
 					.setComments(r.getValue(INCOME.COMMENTS))
-					.setDaysBetweenPymnt(r.getValue(INCOME.DAYS_BETWEEN_PYMNTS).intValue())
-					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue())
+					.setDaysBetweenPymnt(r.getValue(INCOME.DAYS_BETWEEN_PYMNTS) != null ? r.getValue(INCOME.DAYS_BETWEEN_PYMNTS).intValue() : null)
+					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT) != null ? r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
 					.setDomain(r.getValue(INCOME.DOMAIN))
 					.setId(r.getValue(INCOME.ID))
 					.setIssueDate(r.getValue(INCOME.ISSUE_TIME))
-					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue())
+					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS) != null ? r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue() : null)
 					.setPayMethod(r.getValue(INCOME.PAY_METHOD))
 					.setProject(new Project().setId(r.getValue(INCOME.PROJECT)))
 					.setPymntDays(r.getValue(INCOME.PYMNT_DAYS))
 					.setReferenceCode(r.getValue(INCOME.REFERENCE_CODE))
 					.setRemarks(r.getValue(INCOME.REMARKS))
 					.setScope(r.getValue(INCOME.SCOPE))
-					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL).intValue())
-					.setStatus(IncomeStatus.values()[r.getValue(INCOME.STATUS)])
+					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL) != null ? r.getValue(INCOME.SECURITY_LEVEL).intValue() : null)
+					.setStatus(r.getValue(INCOME.STATUS) != null ? IncomeStatus.values()[r.getValue(INCOME.STATUS)] : null)
 					.setSupplier(r.getValue(INCOME.SUPPLIER))
 					.setWorkplace(r.getValue(INCOME.WORKPLACE));
-					
 		}
 	}
 	

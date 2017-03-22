@@ -5,7 +5,6 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.watson.util.AonJSONUtils;
 
 public class IncomeDetail implements Serializable {
 
@@ -143,31 +142,5 @@ public class IncomeDetail implements Serializable {
 	public IncomeDetail setWarehouse(Integer warehouse) {
 		this.warehouse = warehouse;
 		return this;
-	}
-	
-	public String toJSON() {
-		StringBuilder json = new StringBuilder();
-		json.append(AonJSONUtils.start());
-		json.append(AonJSONUtils.intToJSON("id", getId(), false));
-		json.append(AonJSONUtils.intToJSON("domain", getDomain(), false));
-		json.append(AonJSONUtils.intToJSON("income", getIncome().getId(), false));
-		// TODO json.append(AonJSONUtils.intToJSON("project", getProject(), false));
-	
-		json.append(AonJSONUtils.intToJSON("line", getLine().intValue(), false));
-		json.append(AonJSONUtils.intToJSON("item", getItem().getId(), false));
-		json.append(AonJSONUtils.strToJSON("description", getDescription(), false));
-		json.append(AonJSONUtils.dblToJSON("quantity", getQuantity(), false));
-		json.append(AonJSONUtils.dblToJSON("price", getPrice(), false));
-		json.append(AonJSONUtils.intToJSON("purchase_detail", getPurchaseDetail(), false));
-		json.append(AonJSONUtils.strToJSON("discount_expr", getDiscountExpression(), false));
-		
-		json.append(AonJSONUtils.strToJSON("creation_user", getCreationUser(), false));
-		json.append(AonJSONUtils.dateToJSON("creation_date", getCreationDate(), false));
-		json.append(AonJSONUtils.strToJSON("modification_user", getModificationUser(), false));
-		json.append(AonJSONUtils.dateToJSON("modification_date", getModificationDate(), true));
-
-		json.append(AonJSONUtils.end());
-		
-		return json.toString();
 	}
 }
