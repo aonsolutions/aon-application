@@ -123,7 +123,7 @@ public class JooqEmployeeCalendar {
 			
 			for (int i=0; i<contratoInfoEmpleado.size(); i++){
 				String diaSemana = listaDiasSemana[i];
-				String value = contratoInfoEmpleado.get(i).get(CONTRACT_DATA.EXPRESSION);
+				String value = getValueDayOfWeek(contratoInfoEmpleado, diaSemana);
 				if (!listaDiasDefinidos.contains(diaSemana)){
 					listaNoLaborablesContrato.add((byte) 1);
 				}else if (null == value || "-1.0".equals(value)){
@@ -244,6 +244,16 @@ public class JooqEmployeeCalendar {
 		return employeeInfoCalendar;
 	}
 	
+	private static String getValueDayOfWeek(Result<Record> contratoInfoEmpleado, String diaSemana) {
+		String result = "";
+		for(Record r: contratoInfoEmpleado){
+			if(diaSemana.equals(r.get(CONTRACT_DATA.NAME))){
+				result = r.get(CONTRACT_DATA.EXPRESSION);
+			}
+		}
+		return result;
+	}
+
 	private static Boolean comprobarTipoJornada(String tipoJornadaInfoEmpleado) {
 		if ('1' == tipoJornadaInfoEmpleado.charAt(1) || '4' == tipoJornadaInfoEmpleado.charAt(1)
 				|| "false" == tipoJornadaInfoEmpleado)
@@ -305,7 +315,7 @@ public class JooqEmployeeCalendar {
 				
 				while (date.before(endDate) && mapaHorasUpdate.containsKey(date)){
 					if(!horasStart.equals(mapaHorasUpdate.get(date))){
-						Date sqlStartDate = new Date(auxStartDate.getTime());
+						Date sqlStartDate = new Date(startDate.getTime());
 						Date sqlEndDate = new Date(date.getTime());
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
@@ -320,7 +330,7 @@ public class JooqEmployeeCalendar {
 					DateUtils.addDays2Date(date, 7);
 				}
 				
-				Date sqlStartDate = new Date(auxStartDate.getTime());
+				Date sqlStartDate = new Date(startDate.getTime());
 				Date sqlEndDate;
 				
 				if(realEndDate == null)
