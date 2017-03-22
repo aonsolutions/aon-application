@@ -368,7 +368,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					vat.setBase( event.getValue() );
 					checkCalculate(vat, vatPercent);
-					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
 			tab.setWidget(currentRow, col, taxableBase);
@@ -774,6 +773,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 							toFocus.selectAll();
 							toFocus.setFocus(true);
 						}
+						ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 					}
 					
 					@Override
@@ -789,10 +789,12 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 							toFocus.selectAll();
 							toFocus.setFocus(true);
 						}
+						ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 					}
 				});
 			} else {
 				calculate(vat);
+				ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 			}
 		}
 		private void calculate(InvoiceVAT vat) {
