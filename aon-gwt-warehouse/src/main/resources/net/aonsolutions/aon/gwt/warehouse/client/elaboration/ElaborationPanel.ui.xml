@@ -31,7 +31,11 @@ source_id
 				</td>
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
 					<g:HorizontalPanel>
+						<!--  
 						<g:ListBox ui:field="series" styleName="{aonResources.css.aonListBox}" />
+						-->
+						<g:TextBox ui:field="series" width="50px"
+							styleName="{aonResources.css.aonTextBox}" />
 						<g:TextBox ui:field="number" width="50px"
 							styleName="{aonResources.css.aonTextBox}" />
 					</g:HorizontalPanel>

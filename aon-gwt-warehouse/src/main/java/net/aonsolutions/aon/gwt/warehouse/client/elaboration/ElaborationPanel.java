@@ -29,7 +29,8 @@ public class ElaborationPanel extends Composite {
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
-	ListBox series;
+//	ListBox series;
+	TextBox series;
 	@UiField
 	TextBox number;
 	@UiField
@@ -67,24 +68,27 @@ public class ElaborationPanel extends Composite {
 	}
 
 	private void load() {
-		API.getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
-
-			@Override
-			public void onSuccess(JSON<JsObject> result) {
-				result.getData().stream().forEach(s -> series.addItem(s.getName()));
-				if (jsElaboration != null && jsElaboration.getSeries() != null) {
-					for (Integer i = 0; i < series.getItemCount(); i++) {
-						if (jsElaboration.getSeries().equals(series.getItemText(i))) {
-							series.setSelectedIndex(i);
-						}
-					}
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-		});
+		// TODO elaboration series
+//		API.getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
+//
+//			@Override
+//			public void onSuccess(JSON<JsObject> result) {
+//				result.getData().stream().forEach(s -> series.addItem(s.getName()));
+//				if (jsElaboration != null && jsElaboration.getSeries() != null) {
+//					for (Integer i = 0; i < series.getItemCount(); i++) {
+//						if (jsElaboration.getSeries().equals(series.getItemText(i))) {
+//							series.setSelectedIndex(i);
+//						}
+//					}
+//				}
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//		});
+		series.setText(jsElaboration != null && jsElaboration.getSeries() != null
+				? (jsElaboration.getSeries() + "") : "");
 		series.addChangeHandler(new ChangeHandler() {
 
 			@Override
@@ -92,6 +96,7 @@ public class ElaborationPanel extends Composite {
 				updateElaboration();
 			}
 		});
+		
 		number.setText(jsElaboration != null && jsElaboration.getNumber() != null
 				? (jsElaboration.getNumber() + "") : "");
 		number.addChangeHandler(new ChangeHandler() {
@@ -102,11 +107,14 @@ public class ElaborationPanel extends Composite {
 			}
 		});
 
-		API.getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
+		API.getWarehouse().getElaborationStatuses(new AsyncCallback<JSON<JsObject>>() {
 
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
-				result.getData().stream().forEach(s -> status.addItem(s.getName(), s.getId() + ""));
+				result.getData().stream()
+						.filter(s -> !s.getName().equalsIgnoreCase("fallido")
+								&& !s.getName().equalsIgnoreCase("reabierto"))
+						.forEach(s -> status.addItem(s.getName(), s.getId() + ""));
 
 				if (jsElaboration != null && jsElaboration.getStatus() != null) {
 					for (Integer i = 0; i < status.getItemCount(); i++) {
@@ -133,7 +141,9 @@ public class ElaborationPanel extends Composite {
 
 		if (jsElaboration != null && jsElaboration.getDate() != null
 				&& !"".equals(jsElaboration.getDate())) {
-			Date issueDate = DateTimeFormat.getFormat("dd/MM/yyyy").parse(jsElaboration.getDate());
+			// TODO
+//			Date issueDate = DateTimeFormat.getFormat("dd/MM/yyyy").parse(jsElaboration.getDate());
+			Date issueDate = DateTimeFormat.getFormat("yyyy-MM-dd").parse(jsElaboration.getDate());
 			date.setValue(issueDate);
 		}
 		date.addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -155,7 +165,39 @@ public class ElaborationPanel extends Composite {
 				updateElaboration();
 			}
 		});
+		
+		// TODO item
+//		item.setText(jsElaboration != null && jsElaboration.getItem() != null
+//				? (jsElaboration.getItem() + "") : "");
+		item.addChangeHandler(new ChangeHandler() {
 
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateElaboration();
+			}
+		});
+
+		quantity.setText(jsElaboration != null && jsElaboration.getQuantity() != null
+				? (jsElaboration.getQuantity() + "") : "");
+		quantity.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateElaboration();
+			}
+		});
+		
+		// TODO warehouse
+//		warehouse.setText(jsElaboration != null && jsElaboration.getWarehouse() != null
+//				? (jsElaboration.getWarehouse() + "") : "");
+		warehouse.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateElaboration();
+			}
+		});
+		
 	}
 
 	private void updateElaboration() {

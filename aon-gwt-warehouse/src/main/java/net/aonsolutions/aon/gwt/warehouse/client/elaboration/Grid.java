@@ -22,7 +22,6 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -69,17 +68,12 @@ public class Grid extends Composite {
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsElaboration> event) {
 				if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
-//					Integer relRow = event.getIndex() - dataGrid.getPageStart();
-//				    Integer subrow = event.getContext().getSubIndex();
-//				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
-//				    JsCarrierPacking object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-//				    
-//				    // TODO Entrar a la pantalla del carrier!!!
-//				    
-//				    carrierPacking.carrierPackingContent(object);
-					
-					JsElaboration e = event.getValue();
-					Window.alert("" + e.getQuantity() + " x " + e.getItem().getName());
+					Integer relRow = event.getIndex() - dataGrid.getPageStart();
+				    Integer subrow = event.getContext().getSubIndex();
+				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
+				    JsElaboration object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				    
+				    elaboration.elaborationContent(object);
 				}		
 			}
 		};
@@ -147,9 +141,6 @@ public class Grid extends Composite {
 				return a.compareTo(b);
 			}
 		});
-		dataGrid.getColumnSortList().push(nameColumn);
-		dataGrid.addColumn(nameColumn, AON.MSG.series() + "/" + AON.MSG.number());
-		dataGrid.setColumnWidth(nameColumn, 20, Unit.PCT);
 
 		/** Item Column **/
 		Column<JsElaboration,String> itemColumn = new Column<JsElaboration, String>(new TextCell()) {
@@ -169,9 +160,6 @@ public class Grid extends Composite {
 				return o1.getItem().getName().compareTo(o2.getItem().getName());
 			}
 		});
-		dataGrid.getColumnSortList().push(itemColumn);
-		dataGrid.addColumn(itemColumn, "Producto");
-		dataGrid.setColumnWidth(itemColumn, 30, Unit.PCT);
 		
 		/** Quantity Column **/
 		Column<JsElaboration,Number> quantityColumn = new Column<JsElaboration, Number>(new NumberCell(numberFormat)) {
@@ -191,9 +179,6 @@ public class Grid extends Composite {
 				return o1.getQuantity().compareTo(o2.getQuantity());
 			}
 		});
-		dataGrid.getColumnSortList().push(quantityColumn);
-		dataGrid.addColumn(quantityColumn, AON.MSG.quantity());
-		dataGrid.setColumnWidth(quantityColumn, 10, Unit.PCT);
 		
 		/** Warehouse Column **/
 		Column<JsElaboration,String> warehouseColumn = new Column<JsElaboration, String>(new TextCell()) {
@@ -215,9 +200,6 @@ public class Grid extends Composite {
 				return w1.compareTo(w2);
 			}
 		});
-		dataGrid.getColumnSortList().push(warehouseColumn);
-		dataGrid.addColumn(warehouseColumn, "Almacen");
-		dataGrid.setColumnWidth(warehouseColumn, 15, Unit.PCT);
 		
 		/** DATE Column **/
 		Column<JsElaboration,String> dateColumn = new Column<JsElaboration, String>(new TextCell()) {
@@ -237,9 +219,6 @@ public class Grid extends Composite {
 				return o1.getDate().compareTo(o2.getDate());
 			}
 		});
-		dataGrid.getColumnSortList().push(dateColumn);
-		dataGrid.addColumn(dateColumn, AON.MSG.date());
-		dataGrid.setColumnWidth(dateColumn, 15, Unit.PCT);
 		
 		/** Status Column **/
 		Column<JsElaboration,String> statusColumn = new Column<JsElaboration, String>(new TextCell()) {
@@ -259,10 +238,26 @@ public class Grid extends Composite {
 				return o1.getStatus().getName().compareTo(o2.getStatus().getName());
 			}
 		});
-		dataGrid.getColumnSortList().push(statusColumn);
+
+		dataGrid.addColumn(nameColumn, AON.MSG.series() + "/" + AON.MSG.number());
+		dataGrid.addColumn(itemColumn, "Producto");
+		dataGrid.addColumn(quantityColumn, AON.MSG.quantity());
+		dataGrid.addColumn(warehouseColumn, "Almacen");
+		dataGrid.addColumn(dateColumn, AON.MSG.date());
 		dataGrid.addColumn(statusColumn, AON.MSG.status());
+		
+		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
+		dataGrid.setColumnWidth(itemColumn, 40, Unit.PCT);
+		dataGrid.setColumnWidth(quantityColumn, 10, Unit.PCT);
+		dataGrid.setColumnWidth(warehouseColumn, 15, Unit.PCT);
+		dataGrid.setColumnWidth(dateColumn, 10, Unit.PCT);
 		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
 				
-
+		dataGrid.getColumnSortList().push(nameColumn);
+		dataGrid.getColumnSortList().push(itemColumn);
+		dataGrid.getColumnSortList().push(quantityColumn);
+		dataGrid.getColumnSortList().push(warehouseColumn);
+		dataGrid.getColumnSortList().push(statusColumn);
+		dataGrid.getColumnSortList().push(dateColumn);
 	}
 }
