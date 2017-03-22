@@ -45,6 +45,12 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 				WarehouseDAO.getWarehouse(ctx, filter));
 	}
+	
+	@Override
+	public LinkedList<Warehouse> getWarehouseList(AONContext ctx, WarehouseFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> WarehouseDAO.getWarehouseList(ctx, filter));
+	}
 
 	
 	@Override

@@ -166,7 +166,7 @@ public class Elaboration extends AonTemplate {
 	public void elaborationContent(JsElaboration js) {
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.back.setVisible(true);
-		toolbar.remove.setVisible(true);
+//		toolbar.remove.setVisible(true);
 		toolbar.download.setVisible(true);
 //		toolbar.packingList.setVisible(true);
 //		toolbar.sendPackingList.setVisible(true);
@@ -206,7 +206,7 @@ public class Elaboration extends AonTemplate {
 //		} else {
 			// TODO setSouthContent(new CarrierPackingSouth(p, details));
 //		}
-//		setSouthContent(new ElaborationSouth(p, details));
+		setSouthContent(new ElaborationCommentsSouth(me, js));
 	}
 
 	private AonDialog createAddDialog() {

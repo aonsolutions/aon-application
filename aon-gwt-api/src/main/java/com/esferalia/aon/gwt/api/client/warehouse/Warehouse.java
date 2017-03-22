@@ -144,4 +144,10 @@ public class Warehouse extends Methods{
 	public void insertElaboration(String requestData, AsyncCallback<JsCarrierPacking> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
 	}
+	
+	
+	/* WAREHOUSE */
+	public void getWarehouseList(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse", callback);
+	}
 }

@@ -158,6 +158,14 @@ public class WarehouseDAO {
 				.findFirst().orElse(null);
 	}
 	
+	public static LinkedList<Warehouse> getWarehouseList(AONContext ctx,
+			WarehouseFilter filter) {
+		return ctx.getDslContext().select().from(WAREHOUSE)
+				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
+				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static WarehouseTransfer getWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
 		return ctx.getDslContext().select().from(WAREHOUSE_TRANSFER).where(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter))
 				.fetchInto(WAREHOUSE_TRANSFER).stream().map(new FullWarehouseTransferFiller()).findFirst().orElse(new WarehouseTransfer());

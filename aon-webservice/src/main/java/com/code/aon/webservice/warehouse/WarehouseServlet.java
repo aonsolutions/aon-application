@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -103,6 +104,8 @@ public class WarehouseServlet extends HttpServlet{
 							object = getElaboration(domain, userName, Integer.parseInt(pathInfo[4]));
 						}
 					} else object = getElaborationList(domain, userName, req.getParameterMap());
+				} else if(MSG.WAREHOUSE.equals(pathInfo[3])){
+					object = getWarehouseList(domain, userName, req.getParameterMap());
 				}
 				
 				Utils.giveBack(req, resp, object, new JSONObject());
@@ -620,4 +623,21 @@ public class WarehouseServlet extends HttpServlet{
 		return filter;
     }
   
+    private JSONArray getWarehouseList(Domain domain, String login, Map<String, String[]> filterMap){
+    	JSONArray array = new JSONArray();
+    	AON.getWarehouseList(domain.getName(), domain.getId(), login, 
+    			f -> warehouseFilter(domain, filterMap, f))
+    			.forEach(w -> {	
+    				JSONObject json = ToJSON.objectToJSON(w.getId(), w.getName());
+    				array.put(json);	
+    			});
+    	return array;
+    }
+    
+	private Filter warehouseFilter(Domain domain,
+			Map<String, String[]> filterMap, WarehouseProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		return filter;
+	}
+    
 }

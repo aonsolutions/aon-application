@@ -224,7 +224,7 @@ public class ToJSON {
 					.put(MSG.NAME, elaboration.getItem() != null ? elaboration.getItem().getProduct().getName(): ""))
 			.put(MSG.QUANTITY, elaboration.getQuantity())
 			.put(MSG.WAREHOUSE, elaboration.getWarehouse())
-			.put(MSG.COMMENT, elaboration.getComments() != null ? elaboration.getComments() : " ")
+			.put(MSG.COMMENTS, elaboration.getComments() != null ? elaboration.getComments() : " ")
 			.put("creation_date", elaboration.getCreationDate() != null ? dateFormat.format(elaboration.getCreationDate()): "")
 			.put("creation_user", elaboration.getCreationUser())
 			.put("modification_date", elaboration.getModificationDate() != null ? dateFormat.format(elaboration.getModificationDate()) : "")

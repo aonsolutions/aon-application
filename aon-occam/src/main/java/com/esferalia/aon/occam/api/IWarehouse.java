@@ -37,6 +37,7 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter);
+	LinkedList<Warehouse> getWarehouseList(AONContext ctx, WarehouseFilter filter);
 	
 	// 	***********************************************
 	// 	************************************ INCOME ***
