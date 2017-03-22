@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
@@ -142,10 +143,12 @@ public class AccountingImpl implements IAccounting {
 		return params.hasDetailProperties()
 			? AccountEntryDAO.fetchByLines(ctx,
 					p -> AccountEntryUtils.getFilterByLines(p, params) 
-					,offset,numberOfRows)
+					,offset,numberOfRows,
+					AccountEntryOrder.safeEnum(params.getOrder())
+					)
 			: AccountEntryDAO.fetch(ctx,
 				p -> AccountEntryUtils.getFilter(p, params) 
-				,offset,numberOfRows)
+				,offset,numberOfRows,AccountEntryOrder.safeEnum(params.getOrder()))
 			;
 	}
 

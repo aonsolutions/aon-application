@@ -27,7 +27,7 @@ import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
-import org.jooq.conf.ParamType;
+import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
@@ -60,7 +60,27 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 public class AccountEntryDAO {
 	
 	// --------------------------------------------------------------- LECTURA
-
+	public static enum AccountEntryOrder {
+		 ORDER_PERIOD_JOURNAL( ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc(),ACCOUNT_ENTRY.JOURNAL.asc(),ACCOUNT_ENTRY.ENTRY_DATE.asc())
+		,ORDER_CREATION_DATE_DESC ( ACCOUNT_ENTRY.ID.desc())
+		,ORDER_MODIFICATION_DATE_DESC ( ACCOUNT_ENTRY.MODIFICATION_DATE.desc(),ACCOUNT_ENTRY.CREATION_DATE.desc())
+		;
+		SortField<?>[] fields;
+		private AccountEntryOrder( SortField<?> ...fields) {
+			this.fields = fields;
+		}
+		public SortField<?>[] getFields() {
+			return fields;
+		}
+		
+		public static AccountEntryOrder safeEnum(int order) {
+			if (order < 0 || order > AccountEntryOrder.values().length) {
+				return ORDER_PERIOD_JOURNAL;
+			}
+			return AccountEntryOrder.values()[order];
+		}
+	}
+	
 	private static final Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
 
@@ -84,11 +104,18 @@ public class AccountEntryDAO {
 						.setDescription( rec.getValue(AUTO_CONCEPT.DESCRIPTION))
 				);
 	}
-	
 	public static Stream<AccountEntry> fetch(AONContext ctx
 			, AccountEntryFilter filter
 			, int offset
 			, int numberOfRows) {
+		return fetch(ctx, filter, offset, numberOfRows,AccountEntryOrder.ORDER_PERIOD_JOURNAL);
+	}
+	
+	public static Stream<AccountEntry> fetch(AONContext ctx
+			, AccountEntryFilter filter
+			, int offset
+			, int numberOfRows
+			, AccountEntryOrder orderBy) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
@@ -102,7 +129,7 @@ public class AccountEntryDAO {
 				.join(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ACCOUNT_ENTRY.ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 				.where(ACCOUNT_ENTRY_PROPERTIES.getConditions(filter))
-				.orderBy(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.ENTRY_DATE)
+				.orderBy(orderBy.getFields())
 				.limit(offset,numberOfRows)
 				.fetch()
 				.stream()
@@ -133,13 +160,21 @@ public class AccountEntryDAO {
 			, AccountEntryDetailFilter filter
 			, int offset
 			, int numberOfRows) {
+		return fetchByLines(ctx, filter, offset, numberOfRows, AccountEntryOrder.ORDER_PERIOD_JOURNAL);
+		
+	}
+	public static Stream<AccountEntry> fetchByLines(AONContext ctx
+				, AccountEntryDetailFilter filter
+				, int offset
+				, int numberOfRows
+				, AccountEntryOrder orderBy) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.selectDistinct(ACCOUNT_ENTRY.ID)
 				.from(ACCOUNT_ENTRY)
 				.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.where(ACCOUNT_ENTRY_DETAIL_PROPERTIES.getConditions(filter))
-				.orderBy(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.ENTRY_DATE)
+				.orderBy(orderBy.getFields())
 				.limit(offset,numberOfRows)
 				.fetch()
 				.stream()

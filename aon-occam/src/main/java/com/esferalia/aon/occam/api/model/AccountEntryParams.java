@@ -26,6 +26,7 @@ public class AccountEntryParams implements Serializable{
 	private String concept;
 	private String document;
 	
+	private int order;
 	
 	public int getDomain() {
 		return domain;
@@ -109,6 +110,14 @@ public class AccountEntryParams implements Serializable{
 	}
 	public AccountEntryParams setDocument(String document) {
 		this.document = document;
+		return this;
+	}
+	
+	public int getOrder() {
+		return order;
+	}
+	public AccountEntryParams setOrder(int order) {
+		this.order = order;
 		return this;
 	}
 	public boolean isConfidential() {

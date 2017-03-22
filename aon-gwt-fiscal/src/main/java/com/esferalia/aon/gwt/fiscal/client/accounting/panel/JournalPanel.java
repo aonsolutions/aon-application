@@ -84,6 +84,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private TextBox concept;
 	private TextBox document;
 	private ListBox activity;
+	private ListBox order;
 	private Button cleanButton;
 	
 	
@@ -289,6 +290,20 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			});
 		}
 		
+		order = new ListBox();
+		order.setWidth("150px");
+		order.addItem("Ejerc., n\u00BA diario, fecha");
+		order.addItem("Fecha creaci\u00F3n, descendente");
+		order.addItem("Fecha modificaci\u00F3n, descendente");
+		order.setSelectedIndex(0);
+		order.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				onSearch(config);
+			}
+		});
+		
 		tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -300,7 +315,8 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.getColumnFormatter().setWidth(4, "1%");
 		tab.getColumnFormatter().setWidth(5, "1%");
 		tab.getColumnFormatter().setWidth(6, "1%");
-		tab.getColumnFormatter().setWidth(7, "auto");
+		tab.getColumnFormatter().setWidth(7, "1%");
+		tab.getColumnFormatter().setWidth(8, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
@@ -374,8 +390,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			}
 		});
 
-		cleanButton.setTitle(AON.MSG.clean());
-		tab.setWidget(0, 8, cleanButton);
+		tab.setWidget(0, 8, order);
 		tab.getCellFormatter().setStyleName(0,8, AON.AON_CSS.aonPanelGridEven());
 
 		tab.setWidget(1, 0, new Label(AON.MSG.account()));
@@ -412,6 +427,9 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.setWidget(1, 7, document);
 		tab.getCellFormatter().setStyleName(1,7, AON.AON_CSS.aonPanelGridEven());
 		
+		cleanButton.setTitle(AON.MSG.clean());
+		tab.setWidget(1, 8, cleanButton);
+		tab.getCellFormatter().setStyleName(1,8, AON.AON_CSS.aonPanelGridEven());
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -475,6 +493,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			.setDocument(document.getValue())
 			.setConfidential(confidential.getValue())
 			.setHasConfidentialityRole(config.getUser() != null && config.getUser().hasConfidentialityRole())
+			.setOrder(order.getSelectedIndex())
 		;
 		
 		fiscalService.getAccountEntries(domainName,domainId, params, ofs, limit
