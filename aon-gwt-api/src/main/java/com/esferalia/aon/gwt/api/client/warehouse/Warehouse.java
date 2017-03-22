@@ -69,6 +69,18 @@ public class Warehouse extends Methods{
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/purchase/update/" + id, requestData, callback);
 	}
 	
+	public void insertDetail(String orderType, String requestData, AsyncCallback<JsOrderDetail> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail", requestData, callback);
+	}
+	
+	public void updateDetail(String orderType, String requestData, AsyncCallback<JsOrder> callback){
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail/update", requestData, callback);
+	}
+	
+	public void deleteDetail(String orderType, String requestData, AsyncCallback<JsOrder> callback){
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail/delete", requestData, callback);
+	}
+	
 	public void getDeliveries(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery" + filter, callback);
@@ -97,6 +109,11 @@ public class Warehouse extends Methods{
 
 	public void getDetails(Integer id, String orderType, AsyncCallback<JSON<JsOrderDetail>> callback){
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/" +id + "/detail" , callback);
+	}
+	
+	public void getDetails(String orderType, HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrderDetail>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/detail" + filter , callback);
 	}
 	
 	public void addCarrierPacking(String orderType, String requestData, AsyncCallback<JSON<JsOrderDetail>> callback){
@@ -145,9 +162,22 @@ public class Warehouse extends Methods{
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
 	}
 	
-	
 	/* WAREHOUSE */
-	public void getWarehouseList(AsyncCallback<JSON<JsObject>> callback){
+	public void getWarehouseList(AsyncCallback<JSON<JsObject>> callback){ 
+		// Se usa en elaboration cambia la clase JavaScript, por lo mas es igual a getWarehouses(callback)!
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse", callback);
+	}
+	
+	public void getWarehouses(AsyncCallback<JSON<JsWarehouse>> callback) {
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse", callback);
+	}
+	
+	public void getWarehouse(Integer id, AsyncCallback<JSON<JsWarehouse>> callback) {
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse/" + id, callback);
+	}
+	
+	/* INCOME */
+	public void insertIncome(String requestData, AsyncCallback<JsOrder> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/income", requestData, callback);
 	}
 }

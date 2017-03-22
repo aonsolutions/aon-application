@@ -64,6 +64,7 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
+import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -126,6 +127,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -1943,6 +1945,17 @@ public class AON {
 	// ******************************* WAREHOUSE **
 	// ********************************************
 
+	public static Stream<Warehouse> getWarehouseStream(String domainName, Integer domainId, String login, WarehouseFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getWarehouseStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Warehouse getWarehouse(String domainName, Integer domainId,
 			String login, WarehouseFilter filter) {
 		AONContext ctx = null;
@@ -1960,7 +1973,8 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getWarehouseList(ctx, filter);
+			return getWarehouse().getWarehouseStream(ctx, filter)
+					.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2000,12 +2014,64 @@ public class AON {
 				ctx.close();
 		}	
 	}
+	
+	public static Optional<Income> insertIncome(String domainName, Integer domainId, String login, Income income){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertIncome(ctx, income);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static Optional<IncomeDetail> insertIncomeDetail(String domainName, Integer domainId, String login, IncomeDetail incomeDetail){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertIncomeDetail(ctx, incomeDetail);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static Optional<IncomeDetail> updateIncomeDetail(String domainName, Integer domainId, String login, IncomeDetail incomeDetail){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().updateIncomeDetail(ctx, incomeDetail);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static Optional<IncomeDetail> deleteIncomeDetail(String domainName, Integer domainId, String login, Integer id){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().deleteIncomeDetail(ctx, id);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
 
 	public static Stream<IncomeDetail> getIncomeDetailStream(String domainName, Integer domainId, String login, IncomeDetailFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getIncomeDetailStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	
+	}
+	
+	public static Optional<IncomeDetail> getIncomeDetail(String domainName, Integer domainId, String login, IncomeDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getIncomeDetailStream(ctx, filter)
+					.findFirst();
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2482,6 +2548,33 @@ public class AON {
 		}
 	}
 
+	// ------------------ SUPPLIER 
+	
+	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getSupplierStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Supplier> getSupplierList(String domainName, Integer domainId, String login, SupplierFilter filter) {
+		return getSupplierStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Optional<Supplier> getSupplier(String domainName, Integer domainId, String login, SupplierFilter filter) {
+		return getSupplierStream(domainName, domainId, login, filter)
+				.findFirst();
+	}
+	
+	public static Optional<Supplier> getSupplier(String domainName, Integer domainId, String login, Integer id) {
+		return getSupplier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
+	
 	// ------------------ CARRIER 
 	
 	public static Stream<Carrier> getCarrierStream(String domainName, Integer domainId, String login, CarrierFilter filter) {

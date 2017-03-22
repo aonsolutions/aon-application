@@ -223,6 +223,7 @@ public class PurchaseDAO {
 		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
 				.join(ITEM).on(PURCHASE_DETAIL.ITEM.eq(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.join(PURCHASE).on(PURCHASE_DETAIL.PURCHASE.eq(PURCHASE.ID))
 			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new PurchaseDetailFiller());
 	}

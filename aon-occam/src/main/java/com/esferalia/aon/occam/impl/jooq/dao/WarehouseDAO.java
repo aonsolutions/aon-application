@@ -148,7 +148,12 @@ public class WarehouseDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(DEPARTMENT.NAME);}
 	}
 	
-	
+	public static Stream<Warehouse> getWarehouseStream(AONContext ctx, WarehouseFilter filter){
+		return ctx.getDslContext().select()
+				.from(WAREHOUSE)
+				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
+				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller());
+	}
 	
 	public static Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter){
 		return ctx.getDslContext().select()
@@ -156,14 +161,6 @@ public class WarehouseDAO {
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
 				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller())
 				.findFirst().orElse(null);
-	}
-	
-	public static LinkedList<Warehouse> getWarehouseList(AONContext ctx,
-			WarehouseFilter filter) {
-		return ctx.getDslContext().select().from(WAREHOUSE)
-				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
-				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static WarehouseTransfer getWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){

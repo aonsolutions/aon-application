@@ -138,9 +138,23 @@ public class CarrierPacking extends AonTemplate{
 					isMainScreem = false;
 				}
 				@Override protected void remove() {
-					CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
-					API.getWarehouse().deleteCarrierPacking(w.getJsCarrierPacking().getId());
-					startApplication();
+					Label label = new Label("Est\u00e1 seguro que quiere borrar el Carrier Packing ");
+					
+					AonDialog dialog = new AonDialog("Borrar Carrier Packing", label) {
+						
+						@Override protected void onCancel() {hide();}
+						
+						@Override 
+						protected void onAccept() {	
+							CarrierPackingPanel w = (CarrierPackingPanel) getNorthContent().getWidget();
+							API.getWarehouse().deleteCarrierPacking(w.getJsCarrierPacking().getId());
+							hide();
+							startApplication();								
+						}
+					};
+					dialog.setAutoHideEnabled(true);
+					dialog.getElement().getStyle().setWidth(310, Unit.PX);
+					dialog.center();
 				}
 				@Override protected void back() {
 					startApplication();
@@ -180,7 +194,7 @@ public class CarrierPacking extends AonTemplate{
 							StringBuilder emails = new StringBuilder();
 							result.getData().stream().forEach(rmedia -> {
 								String media = rmedia.getMedia() + "";
-								if(media.equals("4")){	
+								if(media.equals("4") && rmedia.isTechnical()){	
 									emails.append(rmedia.getValue());
 									emails.append(";");
 								}

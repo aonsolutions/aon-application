@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
+import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -28,6 +29,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 
 public interface IRegistry {
 	
@@ -71,6 +73,9 @@ public interface IRegistry {
 	
 	// ------------------- CARRIER
 	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter);
+	
+	// ------------------- SUPPLIER
+	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);
 
 	// ------------------- RECORD DATA
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);

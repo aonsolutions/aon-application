@@ -59,6 +59,7 @@ public class FootPanel extends Composite {
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				Integer value  = event.getSelectedItem();
+				JsCarrierPacking js = parent.getJsCarrierPacking();
 				if(value == 0){
 					openFootPanel();
 				} else if(value == 1){
@@ -68,7 +69,6 @@ public class FootPanel extends Composite {
 					TextArea textArea = new TextArea();
 					textArea.setWidth("95%");
 					textArea.setHeight("100px");
-					JsCarrierPacking js = parent.getJsCarrierPacking();
 					if(js.getObservation() != null){
 						textArea.setValue(js.getObservation());
 					}
@@ -101,8 +101,8 @@ public class FootPanel extends Composite {
 						
 						@Override
 						public void onSuccess(JSON<JsOrder> result) {
-							ReceivePanel rp = new ReceivePanel(parent.API, result.getData());
-			//				receptionPanel.setWidget(rp);
+							ReceivePanel rp = new ReceivePanel(parent.API, result.getData(), js);
+							receptionPanel.setWidget(rp);
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
@@ -119,7 +119,7 @@ public class FootPanel extends Composite {
 	@UiField ScrollPanel selectionPanel;
 	@UiField ScrollPanel parameterPanel;
 	@UiField ScrollPanel observationPanel;
-//	@UiField SimpleLayoutPanel receptionPanel;
+	@UiField SimpleLayoutPanel receptionPanel;
 	@UiField PaperFab addButton;
 	
 	public TabLayoutPanel getTabLayout() {
@@ -135,7 +135,7 @@ public class FootPanel extends Composite {
 	}
 	
 	public SimpleLayoutPanel getReceptionPanel(){
-		return new SimpleLayoutPanel();// receptionPanel;
+		return receptionPanel;
 	}
 	
 	@UiHandler("footPanel")

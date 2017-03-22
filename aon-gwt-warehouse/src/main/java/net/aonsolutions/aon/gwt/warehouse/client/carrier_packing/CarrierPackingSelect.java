@@ -488,7 +488,7 @@ public class CarrierPackingSelect extends Composite{
 				StringBuilder emails = new StringBuilder();
 				result.getData().stream().forEach(rmedia -> {
 					String media = rmedia.getMedia() + "";
-					if(media.equals("4")){	
+					if(rmedia.isTechnical() && media.equals("4")){	
 						emails.append(rmedia.getValue());
 						emails.append(";");
 					}
@@ -548,7 +548,21 @@ public class CarrierPackingSelect extends Composite{
 
 	        @Override
 	        public void execute(JsOrder object) {
-	        	deleteOrder(object);
+	        	Label label = new Label("Est\u00e1 seguro que quiere borrar la linea " + object.getSeriesNumber());
+				
+				AonDialog dialog = new AonDialog("Borrar Carrier Packing", label) {
+					
+					@Override protected void onCancel() {hide();}
+					
+					@Override 
+					protected void onAccept() {	
+			        	deleteOrder(object);
+			        	hide();						
+					}
+				};
+				dialog.setAutoHideEnabled(true);
+				dialog.getElement().getStyle().setWidth(310, Unit.PX);
+				dialog.center();
 	        }
 	    }));
 		

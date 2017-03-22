@@ -20,6 +20,7 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.code.aon.webservice.warehouse.jooq.DBIncome;
 import com.code.aon.webservice.warehouse.jooq.DBPurchase;
+import com.code.aon.webservice.warehouse.jooq.DBWarehouse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -27,7 +28,6 @@ import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
-import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -75,11 +75,12 @@ public class WarehouseServlet extends HttpServlet{
 					}
 				} else if(MSG.PURCHASE.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if(pathInfo.length > 5){
-							//DBPurchase.getPurchaseDetails(domain, login, req.getParameterMap())
+						if("detail".equalsIgnoreCase(pathInfo[4])){
+							object = DBPurchase.getPurchaseDetails(domain, userName, req.getParameterMap());
+						}else if(pathInfo.length > 5){
 							object = DBPurchase.getPurchaseDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
 						} else object = DBPurchase.getPurchase(domain, userName, Integer.parseInt(pathInfo[4]));
-					} else object = DBPurchase.getPurchaseList(domain, userName, req.getParameterMap());
+					} else object = DBPurchase.getPurchases(domain, userName, req.getParameterMap());
 				} else if(MSG.DELIVERY.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						if(pathInfo.length > 5){
@@ -105,7 +106,9 @@ public class WarehouseServlet extends HttpServlet{
 						}
 					} else object = getElaborationList(domain, userName, req.getParameterMap());
 				} else if(MSG.WAREHOUSE.equals(pathInfo[3])){
-					object = getWarehouseList(domain, userName, req.getParameterMap());
+					if(pathInfo.length > 4){
+						object = DBWarehouse.getWarehouse(domain, userName, Integer.parseInt(pathInfo[4]));
+					} else object = DBWarehouse.getWarehouses(domain, userName, req.getParameterMap());
 				}
 				
 				Utils.giveBack(req, resp, object, new JSONObject());
@@ -138,7 +141,15 @@ public class WarehouseServlet extends HttpServlet{
 			}
 			else if(MSG.PURCHASE.equals(pathInfo[3])){
 				if(pathInfo.length > 4){ 
-					if(MSG.UPDATE.equals(pathInfo[4])){
+					if(MSG.DETAIL.equalsIgnoreCase(pathInfo[4])){
+						if(pathInfo.length > 5){
+							if(MSG.UPDATE.equalsIgnoreCase(pathInfo[5])){
+								object = DBPurchase.updatePurchaseDetail(domain, userName, json);
+							} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[5])){
+								object = DBPurchase.deletePurchaseDetail(domain, userName, json);
+							}
+						} else DBPurchase.insertPurchaseDetail(domain, userName, json);
+					}else if(MSG.UPDATE.equals(pathInfo[4])){
 						object = updatePurchase(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} else if(MSG.CARRIER_PACKING.equals(pathInfo[4])){
 						object = updatePurhcaseCarrierPacking(domain, userName, json);
@@ -160,6 +171,18 @@ public class WarehouseServlet extends HttpServlet{
 				} else {
 					object = insertElaboration(domain, userName, json);
 				}	
+			} else if(MSG.INCOME.equals(pathInfo[3])){
+				if(pathInfo.length > 4){  // TODO 
+					if(MSG.DETAIL.equalsIgnoreCase(pathInfo[4])){
+						if(pathInfo.length > 5){
+							if(MSG.UPDATE.equalsIgnoreCase(pathInfo[5])){
+								object = DBIncome.updateIncomeDetail(domain, userName, json);
+							} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[5])){
+								object = DBIncome.deleteIncomeDetail(domain, userName, json);
+							}
+						} else object = DBIncome.insertIncomeDetail(domain, userName, json);
+					}
+				} else object = DBIncome.insertIncome(domain, userName, json);
 			}
 				
 			resp.setContentType("application/json;charset=UTF-8");
@@ -622,22 +645,5 @@ public class WarehouseServlet extends HttpServlet{
 
 		return filter;
     }
-  
-    private JSONArray getWarehouseList(Domain domain, String login, Map<String, String[]> filterMap){
-    	JSONArray array = new JSONArray();
-    	AON.getWarehouseList(domain.getName(), domain.getId(), login, 
-    			f -> warehouseFilter(domain, filterMap, f))
-    			.forEach(w -> {	
-    				JSONObject json = ToJSON.objectToJSON(w.getId(), w.getName());
-    				array.put(json);	
-    			});
-    	return array;
-    }
-    
-	private Filter warehouseFilter(Domain domain,
-			Map<String, String[]> filterMap, WarehouseProperties f) {
-		Filter filter = f.getDomainProperty().eq(domain.getId());
-		return filter;
-	}
-    
 }
+

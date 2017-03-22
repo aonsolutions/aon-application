@@ -22,4 +22,7 @@ public interface PurchaseDetailProperties{
 	Property<Double> getDeliveredProperty();
 	Property<Integer> getCarrierPackingProperty();
 	
+	// VALUE OF PURCHASE TABLE
+	Property<Integer> getSupplierProperty();
+	
 }

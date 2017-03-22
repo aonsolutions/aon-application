@@ -49,7 +49,7 @@
 					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			
-		<!-- <g:tab>
+			<g:tab>
 				<g:customHeader styleName="{style.jeje}">
 					<g:HTMLPanel>
 						<i:IronIcon icon="redo" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
@@ -57,7 +57,7 @@
 					</g:HTMLPanel>
 				</g:customHeader>
 					<g:SimpleLayoutPanel ui:field="receptionPanel" styleName="{aonResources.css.aonTextCenter}"/>
-			</g:tab> -->
+			</g:tab>
 		</g:TabLayoutPanel>
 		
 	</aon:MinimizePanel>
