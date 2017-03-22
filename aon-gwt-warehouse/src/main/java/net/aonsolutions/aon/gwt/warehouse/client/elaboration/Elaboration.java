@@ -8,8 +8,7 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
-import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
-import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
+import com.esferalia.aon.gwt.api.client.warehouse.JsElaborationDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate;
@@ -17,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -147,6 +147,7 @@ public class Elaboration extends AonTemplate {
 					ElaborationPanel w = (ElaborationPanel) getNorthContent().getWidget();
 					// TODO Toolbar::download
 //					API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
+					Window.alert("desarrollo en curso");
 				}
 			};
 			setToolbar(toolbar);
@@ -166,18 +167,21 @@ public class Elaboration extends AonTemplate {
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
-		// TODO toolbar.download.setVisible(true);
+		toolbar.download.setVisible(true);
+//		toolbar.packingList.setVisible(true);
+//		toolbar.sendPackingList.setVisible(true);
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
-		setNorthContent(new ElaborationPanel(me, js));
-		// TODO setContent(new CarrierPackingSelect(me, js));
+		setNorthContent(new ElaborationPanel(me,js));
+		setContent(new ElaborationSelect(me, js));
+//		setParameterPanel(js);
+//		isMainScreem = false;
 	}
 
 	public void setSelectContent(JsElaboration js) {
-		// setContent(new CarrierPackingSelect(me, js));
+		setContent(new ElaborationSelect(me, js));
 	}
 
 	public void content() {
-		// TODO 
 		API.getWarehouse().getElaborationList(filterMap, new AsyncCallback<JSON<JsElaboration>>() {
 
 			@Override
@@ -195,13 +199,14 @@ public class Elaboration extends AonTemplate {
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);
 	}
 
-	public void southContent(JsElaboration js, JsOrder p, AonJsArray<JsOrderDetail> details) {
+	public void southContent(JsElaboration js, AonJsArray<JsElaborationDetail> details) {
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
 //		if (js.getType().getName().equalsIgnoreCase(CarrierPackingType.SHIPMENT_REQUEST.getName())) {
 			// TODO setSouthContent(new CarrierPackingSouth2(me, js, p, details));
 //		} else {
 			// TODO setSouthContent(new CarrierPackingSouth(p, details));
 //		}
+//		setSouthContent(new ElaborationSouth(p, details));
 	}
 
 	private AonDialog createAddDialog() {
@@ -272,20 +277,20 @@ public class Elaboration extends AonTemplate {
 		this.filterMap = filterMap;
 	}
 
-//	public void setEnableType(Boolean enable) {
+	public void setEnableType(Boolean enable) {
 //		ElaborationPanel cpp = (ElaborationPanel) getNorthContent().getWidget();
 //		cpp.type.setEnabled(enable);
-//	}
-
-	public void refreshSelect() {
-		// TODO CarrierPackingSelect cps = (CarrierPackingSelect)
-		// TODO getContent().getWidget();
-		// TODO cps.refresh();
 	}
 
-	public void refreshSouth2(JsOrder order) {
-		// TODO CarrierPackingSouth2 cps = (CarrierPackingSouth2)
-		// TODO getSouthContent().getWidget();
-		// TODO cps.refresh(order);
+	public void refreshSelect() {
+		 ElaborationSelect cps = (ElaborationSelect)
+		 getContent().getWidget();
+		 cps.refresh();
+	}
+
+	public void refreshSouth2(JsElaboration order) {
+//		ElaborationSouth2 cps = (ElaborationSouth2)
+//		getSouthContent().getWidget();
+//		cps.refresh(order);
 	}
 }

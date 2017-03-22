@@ -24,6 +24,7 @@ public abstract class Toolbar extends Composite {
 	Button remove;
 	@UiField
 	Button download;
+	
 
 	public Toolbar() {
 		initWidget(binder.createAndBindUi(this));
