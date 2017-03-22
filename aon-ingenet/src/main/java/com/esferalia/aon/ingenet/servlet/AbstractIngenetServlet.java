@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -243,8 +244,9 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	 */
 	
 	public MailAccount getAdminMailAccount() {
-		return AON.getMailAccountList(getDomain(), getDomainId(), getUser(), 
-				f -> f.getDomainProperty().eq(0)).getFirst();
+		LinkedList<MailAccount> list = AON.getMailAccountList(getDomain(), getDomainId(), getUser(), 
+				f -> f.getDomainProperty().eq(0));
+		return list!=null && !list.isEmpty()?list.getFirst():null;
 	}
 	
 	protected void sendEmail(String subject, String content, String attachName,
@@ -252,7 +254,9 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		JSONObject json = new JSONObject();
 		try {
 			MailAccount mail = getAdminMailAccount();
-			if (mail != null && mail.getId() != null) {
+			if(mail==null || mail.getId()==null){
+				LOGGER.error("No ADMIN mail account defined, cannot continue with email sending!");
+			} else {
 				String recipientsTo = "";
 				if (isDevEnabled()) {
 					recipientsTo = "eagirrezabal@aonsolutions.es";
