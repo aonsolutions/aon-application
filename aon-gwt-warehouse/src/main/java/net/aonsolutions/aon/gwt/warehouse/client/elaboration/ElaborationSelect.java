@@ -75,12 +75,12 @@ public class ElaborationSelect extends Composite{
 	
 	ListBox selectable;
 	DateBoxEx datebox;
-	private Elaboration parent;
+	private MainElaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
 	private JsElaborationDetail jsElaborationDetail;
 	
-	public ElaborationSelect(Elaboration elaboration, JsElaboration jsElaboration) {
+	public ElaborationSelect(MainElaboration elaboration, JsElaboration jsElaboration) {
 		dataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
 				JsElaborationDetailComposition.PROVIDES_KEY);
 		initWidget(binder.createAndBindUi(this));

@@ -8,20 +8,6 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-<!-- 
-series
-number
-date
-item
-warehouse
-quantity
-status
-comments
-source
-source_id
- -->
-
-
 	<g:HTMLPanel ui:field="entryHeader" styleName="aon-margin-top10">
 		<table
 			class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
@@ -79,37 +65,19 @@ source_id
 				</td>
 
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+					<!--  
 					<g:InlineLabel text="{msg.comments}" />
+					-->
 				</td>
 				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
+					<!--  
 					<g:TextArea ui:field="comments" height="40px" width="400px"
 						styleName="{aonResources.css.aonTextBox}" />
+					-->
 				</td>
 			</tr>
 		</table>
-		<!--  
-		<table
-			class="{aonResources.css.aonPanelGrid} {aonResources.css.aonMarginTop5} {aonResources.css.aonWidthAll}">
-			<tr>
-				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="Matricula" />
-				</td>
-				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
-					<g:TextBox ui:field="numberPlate" styleName="{aonResources.css.aonTextBox}" />
-				</td>
-
-				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<g:InlineLabel text="Conductor" />
-				</td>
-				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
-					<g:InlineLabel text="Documento:" />
-					<g:TextBox ui:field="driverDocument" styleName="{aonResources.css.aonTextBox}" />
-					<g:InlineLabel text="{msg.name}:" />
-					<g:TextBox ui:field="driverName" styleName="{aonResources.css.aonTextBox}" />
-				</td>
-			</tr>
-		</table>
-		-->
+		
 	</g:HTMLPanel>
 
 </ui:UiBinder>
