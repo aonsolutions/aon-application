@@ -1764,7 +1764,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onConexFlowShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setNewCreditCard(reservation.isBlankToken() && StringUtils.isBlank(reservation.getCreditCardNumber()));
-		reservation.setHrCreditCardNumber((StringUtils.isNotBlank(reservation.getCreditCardNumber())) ? "********" + reservation.getCreditCardNumber() : null);
+		reservation.setHrCreditCardNumber(!reservation.isNewCreditCard() ? StringUtils.repeat("*", 8) + reservation.getCreditCardNumber() : null);
 		reservation.setHrCreditCardExpirationMonth(reservation.getCreditCardExpirationMonth());
 		reservation.setHrCreditCardExpirationYear(reservation.getCreditCardExpirationYear());
 

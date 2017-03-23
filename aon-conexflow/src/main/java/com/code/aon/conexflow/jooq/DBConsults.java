@@ -9,8 +9,6 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -27,7 +25,6 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Result;
 
-import com.code.aon.common.util.CryptoUtil;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
@@ -462,14 +459,12 @@ public class DBConsults {
 	
 	public static String getCreditCardNumber(Domain domain, Integer project){
 		com.esferalia.aon.occam.api.model.project.ProjectReservation pr = getProjectReservation(domain, new User().setLogin(""), project);
-		String key = getCryptoKey(pr);
-		return getSecureCreditCardNumber(CryptoUtil.decrypt(key, pr.getCreditCardNumber()));
+		return getSecureCreditCardNumber(pr.getCreditCardNumber());
 	}
 	
 	public static String getCreditCardFechCad(Domain domain, Integer project){
 		com.esferalia.aon.occam.api.model.project.ProjectReservation pr = getProjectReservation(domain, new User().setLogin(""), project);
-		String key = getCryptoKey(pr);
-		return CryptoUtil.decrypt(key,pr.getCreditCardExpirationMonth()) + "/" + CryptoUtil.decrypt(key,pr.getCreditCardExpirationYear());
+		return pr.getCreditCardExpirationMonth() + "/" + pr.getCreditCardExpirationYear();
 	}
 	
 	public static com.esferalia.aon.occam.api.model.project.ProjectReservation getProjectReservation(Domain domain, User user, Integer projectId){
@@ -543,17 +538,7 @@ public class DBConsults {
 		}
 	}
 	
-	private static String getCryptoKey(com.esferalia.aon.occam.api.model.project.ProjectReservation reservation) {
-		DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-		return formatter.format(reservation.getCreationDate());
-	}
-	
 	public static String getSecureCreditCardNumber(String cardNumber) {
-		int length = (cardNumber != null) ? cardNumber.length() : 0;
-		StringBuffer value = new StringBuffer();
-		value.append(StringUtils.substring(cardNumber, 0, 4));
-		value.append(StringUtils.repeat("*", length-8));
-		value.append(StringUtils.substring(cardNumber, -4, length));
-		return value.toString();
+		return StringUtils.repeat("*", 8) + cardNumber;
 	}
 }
