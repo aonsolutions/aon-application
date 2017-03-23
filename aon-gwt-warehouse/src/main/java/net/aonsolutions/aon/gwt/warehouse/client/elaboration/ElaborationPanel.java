@@ -45,23 +45,23 @@ public class ElaborationPanel extends Composite {
 	TextBox quantity;
 	@UiField
 	ListBox status;
-	@UiField
-	TextArea comments;
+//	@UiField
+//	TextArea comments;
 //	source
 //	source_id
 
-	private Elaboration parent;
+	private MainElaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
 
-	public ElaborationPanel(Elaboration elaboration) {
+	public ElaborationPanel(MainElaboration me) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = elaboration.API;
-		this.parent = elaboration;
+		this.API = me.API;
+		this.parent = me;
 		load();
 	}
 
-	public ElaborationPanel(Elaboration elaboration, JsElaboration js) {
+	public ElaborationPanel(MainElaboration elaboration, JsElaboration js) {
 		initWidget(binder.createAndBindUi(this));
 		this.API = elaboration.API;
 		this.parent = elaboration;
@@ -127,10 +127,10 @@ public class ElaborationPanel extends Composite {
 			date.setValue(issueDate);
 		}
 		
-		comments.setText(jsElaboration != null && 
-				jsElaboration.getComments() != null ? jsElaboration.getComments() : "");
-		comments.setCharacterWidth(20);
-		comments.setVisibleLines(3);
+//		comments.setText(jsElaboration != null && 
+//				jsElaboration.getComments() != null ? jsElaboration.getComments() : "");
+//		comments.setCharacterWidth(20);
+//		comments.setVisibleLines(3);
 
 		// TODO item: suggestBox? listBox? lookup?
 		item.setText(jsElaboration != null && jsElaboration.getItem() != null
@@ -166,7 +166,7 @@ public class ElaborationPanel extends Composite {
 		number.addChangeHandler(getUpdateChangeListener());
 		status.addChangeHandler(getUpdateChangeListener());
 		date.addValueChangeHandler(getUpdateChangeHandler());
-		comments.addChangeHandler(getUpdateChangeListener());
+//		comments.addChangeHandler(getUpdateChangeListener());
 		item.addChangeHandler(getUpdateChangeListener());
 		quantity.addChangeHandler(getUpdateChangeListener());
 		warehouse.addChangeHandler(getUpdateChangeListener());
@@ -178,7 +178,7 @@ public class ElaborationPanel extends Composite {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				updateElaboration();
+				parent.updateElaboration();
 			}
 		};
 	}
@@ -188,13 +188,13 @@ public class ElaborationPanel extends Composite {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<T> event) {
-				updateElaboration();
+				parent.updateElaboration();
 			}
 		};
 	}
 	
 	
-	private void updateElaboration() {
+//	protected void updateElaboration() {
 //		if (jsElaboration != null) {
 //			API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(),
 //					new AsyncCallback<JsElaboration>() {
@@ -225,7 +225,7 @@ public class ElaborationPanel extends Composite {
 //				}
 //			});
 //		}
-	}
+//	}
 
 	private String getData() {
 //		return "{\"series\":\"" + series.getSelectedValue() + "\"," + "\"number\":\"" + number.getValue() + "\","

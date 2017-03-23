@@ -56,10 +56,10 @@ public class FilterPanel extends Composite {
 	@UiField
 	PaperIconButton cleanFilter;
 
-	Elaboration elaboration;
+	MainElaboration elaboration;
 	API API;
 
-	public FilterPanel(Elaboration elaboration) {
+	public FilterPanel(MainElaboration elaboration) {
 		this.elaboration = elaboration;
 		API = elaboration.API;
 		initWidget(binder.createAndBindUi(this));
@@ -79,7 +79,7 @@ public class FilterPanel extends Composite {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(date.getValue().getTime()));
 				elaboration.getFilterMap().put("date", list);
-				elaboration.content();
+				elaboration.loadContent();
 			}
 		});
 		datePanel.add(date);
@@ -163,7 +163,7 @@ public class FilterPanel extends Composite {
 		from.add(Long.toString(new Date().getTime()));
 		map.put("from", from);
 		elaboration.setFilterMap(map);
-		elaboration.content();
+		elaboration.loadContent();
 	}
 
 	private String key;
@@ -198,7 +198,7 @@ public class FilterPanel extends Composite {
 						elaboration.getFilterMap().get(key).remove(js.getId() + "");
 					}
 				}
-				elaboration.content();
+				elaboration.loadContent();
 			}
 		};
 		sw.show();

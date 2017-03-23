@@ -33,9 +33,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class Grid extends Composite {
+public class GridPanel extends Composite {
 
-	interface GridBinder extends UiBinder<Widget, Grid> {
+	interface GridBinder extends UiBinder<Widget, GridPanel> {
 	}
 
 	private static final GridBinder binder = GWT.create(GridBinder.class);
@@ -49,9 +49,9 @@ public class Grid extends Composite {
 	
 	@UiField(provided = true) DataGrid<JsElaboration> dataGrid; 
 	
-	Elaboration elaboration;
+	MainElaboration elaboration;
 	API API;
-	public Grid(Elaboration elaboration, LinkedList<JsElaboration> list) {
+	public GridPanel(MainElaboration elaboration, LinkedList<JsElaboration> list) {
 		this.elaboration = elaboration;
 		this.API = elaboration.API; 
 		
@@ -73,7 +73,7 @@ public class Grid extends Composite {
 				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
 				    JsElaboration object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 				    
-				    elaboration.elaborationContent(object);
+				    elaboration.onSelectElaboration(object);
 				}		
 			}
 		};
