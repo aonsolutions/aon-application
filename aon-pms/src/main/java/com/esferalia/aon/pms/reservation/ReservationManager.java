@@ -16,6 +16,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.CommentType.Comment;
 import org.opentravel.ota.x2003.x05.ErrorType;
+import org.opentravel.ota.x2003.x05.GuaranteeType.GuaranteesAccepted.GuaranteeAccepted;
 import org.opentravel.ota.x2003.x05.HotelReservationIDsType;
 import org.opentravel.ota.x2003.x05.HotelReservationIDsType.HotelReservationID;
 import org.opentravel.ota.x2003.x05.HotelReservationType;
@@ -25,6 +26,7 @@ import org.opentravel.ota.x2003.x05.OTAHotelResNotifRSDocument;
 import org.opentravel.ota.x2003.x05.OTAHotelResNotifRSDocument.OTAHotelResNotifRS;
 import org.opentravel.ota.x2003.x05.POSType;
 import org.opentravel.ota.x2003.x05.ParagraphType;
+import org.opentravel.ota.x2003.x05.PaymentCardType;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
 import org.opentravel.ota.x2003.x05.RequiredPaymentsType.GuaranteePayment.GuaranteeType;
 import org.opentravel.ota.x2003.x05.ResGlobalInfoType;
@@ -253,6 +255,7 @@ public class ReservationManager implements IReservationConstants {
 			}
 			String prepayPayment = findPrepayInfo(reservationType.getResGlobalInfo(), PAYMENT_TRANSACTION);
 			boolean notRefundable = (!prepay) ? isTariffNotRefundable(reservationType.getResGlobalInfo(), tariffList) : false;
+			PaymentCardType creditCard = findCreditCard(reservationType.getResGlobalInfo());
 			double taxableBase = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue());
 			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
 			double vatPercent = findTaxPercent(reservationType.getResGlobalInfo(), VAT_TAX);
@@ -295,6 +298,9 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setBankTransaction(bankTransaction);
 			reservation.setNotRefundable(notRefundable);
 			reservation.setToken((!prepay) ? token : null);
+			reservation.setCreditCardNumber((creditCard != null) ? creditCard.getCardNumber() : null);
+			reservation.setCreditCardExpirationMonth((creditCard != null) ? StringUtils.substring(creditCard.getExpireDate(), 0, 2) : null);
+			reservation.setCreditCardExpirationYear((creditCard != null) ? StringUtils.substring(creditCard.getExpireDate(), -2) : null);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 
@@ -1034,6 +1040,25 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 		return value;
+	}
+
+	private boolean isGuaranteeVoucher(ResGlobalInfoType resGlobalInfoType) {
+		if (resGlobalInfoType.getGuarantee() != null && resGlobalInfoType.getGuarantee().getGuaranteeType() != null) {
+			return (resGlobalInfoType.getGuarantee().getGuaranteeType().toString().equals(GuaranteeType.CC_DC_VOUCHER.toString()));
+		}
+		return false;
+	}
+
+	private PaymentCardType findCreditCard(ResGlobalInfoType resGlobalInfoType) {
+		if (isGuaranteeVoucher(resGlobalInfoType)) {
+			for (int i=0; i<resGlobalInfoType.getGuarantee().getGuaranteesAccepted().sizeOfGuaranteeAcceptedArray(); i++) {
+				GuaranteeAccepted guaranteeAccepted = resGlobalInfoType.getGuarantee().getGuaranteesAccepted().getGuaranteeAcceptedArray(0);
+				if (guaranteeAccepted != null && guaranteeAccepted.getPaymentCard() != null) {
+					return guaranteeAccepted.getPaymentCard();
+				}
+			}
+		}
+		return null;
 	}
 
 	private Node findNode(Node parent, String nodeName, boolean deep) {
