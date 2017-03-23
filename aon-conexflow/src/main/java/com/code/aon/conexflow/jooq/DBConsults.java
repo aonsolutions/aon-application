@@ -290,8 +290,8 @@ public class DBConsults {
 	
 	//-------------------- INSERTS
 	
-	public static void insertConexFlow(Domain domain, String login, ConexFlow conexFlow, Integer project, String description){		
-		AON.insert(domain.getName(), domain.getId(), login, new Attach(AttachType.PROJECT)
+	public static ConexFlow insertConexFlow(Domain domain, String login, ConexFlow conexFlow, Integer project, String description){		
+		Integer id = AON.insert(domain.getName(), domain.getId(), login, new Attach(AttachType.PROJECT)
 				.setAttachModule(project)
 				.setDomain(domain)
 				.setMimeType(MimeType.XML)
@@ -300,6 +300,7 @@ public class DBConsults {
 				.setConfidential(false)
 				.setDate(AonDateUtils.toSql(new java.util.Date()))
 				.setType(ProjectAttachmentType.CONEXFLOW.value()));
+		return conexFlow.setId(id);
 	}
 	
 	public static void insertConexFlowOperation(Domain domain, byte[] xmlFile, Integer project, String op){

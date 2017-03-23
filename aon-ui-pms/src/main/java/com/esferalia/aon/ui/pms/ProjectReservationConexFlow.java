@@ -350,10 +350,10 @@ public class ProjectReservationConexFlow implements Serializable {
 			Boolean ok = cfV.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 			cfV.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
 			String description = getConexFlowDescription(token, cfV.getStatus().getName(), cfV.getRespuesta().getImporte());
-			DBConsults.insertConexFlow(getDomain(), getLogin(), cfV, getReservation().getId(), description);
+			cfV = DBConsults.insertConexFlow(getDomain(), getLogin(), cfV, getReservation().getId(), description);
 			if (!ok) {
 				conexFlowError("Error " + cfV.getRespuesta().getResultado() + ": " + cfV.getRespuesta().getDesResultado() + ".");
-			}
+			} else ConexFlowUtils.setVoucher(domain, getReservation().getProject().getId(), cfV);
 		}
 		resetConexflowOperation();
 	}
@@ -373,12 +373,13 @@ public class ProjectReservationConexFlow implements Serializable {
 			Boolean ok = cfC.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 			cfC.setStatus(ok ? ConexFlowStatus.CONFIRM_PREAUTHORIZATION : ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
 			String description = getConexFlowDescription(token, cfC.getStatus().getName(), cfC.getRespuesta().getImporte());
-			DBConsults.insertConexFlow(getDomain(), getLogin(), cfC, getReservation().getId(), description);
+			cfC = DBConsults.insertConexFlow(getDomain(), getLogin(), cfC, getReservation().getId(), description);
 			if (!ok) {
 				conexFlowError("Error " + cfC.getRespuesta().getResultado() + ": " + cfC.getRespuesta().getDesResultado() + ".");
 			} else{
 				description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION_PAID.getName(), cfP.getRespuesta().getImporte());
 				DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfP.getId(), description);		
+				ConexFlowUtils.setVoucher(domain, getReservation().getId(), cfC);
 			}
 		}
 		resetConexflowOperation();

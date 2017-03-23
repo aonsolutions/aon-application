@@ -117,7 +117,7 @@ public class ConexFlowUtils {
 		return urlParameters;
 	}
 	
-	protected static void setVoucher(Domain domain, Integer project, String voucher) {
+	private static void setVoucher(Domain domain, Integer project, String description, String voucher) {
 		voucher.replace("&lt;","<");
 		voucher.replace("&gt;",">");
 		File htmlFile = new File("voucher.html");
@@ -130,7 +130,7 @@ public class ConexFlowUtils {
 					.setAttachModule(project)
 					.setDomain(domain)
 					.setMimeType(MimeType.HTML)
-					.setDescription(VOUCHER)
+					.setDescription(description)
 					.setData(b)
 					.setConfidential(false)
 					.setDate(new Date());
@@ -228,9 +228,9 @@ public class ConexFlowUtils {
 		return urlParameters;
 	}
 	
-	protected static void setVoucher(Domain domain, Integer project, ConexFlow cf) {
-
+	public static void setVoucher(Domain domain, Integer project, ConexFlow cf) {
 		Respuesta r = cf.getRespuesta();
+		String description = "CONEXFLOW_("+ r.getToken().substring(r.getToken().length()-5) +")_PAYSLIP"+  cf.getId() +"#" + r.getImporte();
 		Query q = cf.getQuery();
 		String aut;
 		if(cf.getRespuesta().getOperacion().equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
@@ -243,7 +243,7 @@ public class ConexFlowUtils {
 				r.getDesCA()+"<br>"+r.getDesTipoDoc()+"<br>COM.PE: "+r.getComercio()+" TER.PE: "+r.getTeminal()+"<br>REF.PE: "+
 				r.getReferencia()+"          SES.PE: 050820  <br>*************** V E N T A **************<br><br>TOTAL:          "+
 				r.getImporte()+ " EUR<br><br>---------- FIRMA DEL TITULAR -----------<br><br><br><br><br>----------------------------------------<br>******** PARA EL ESTABLECIMIENTO *******<br><br></body></html>";
-		setVoucher(domain, project, voucher);
+		setVoucher(domain, project, description, voucher);
 	}
 	
 	//******************* Continue Card Payment with Authentication Request

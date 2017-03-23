@@ -73,13 +73,14 @@ public class Sale {
 					String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 						+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte() 
 						+ (ok ? "_ANT_TNR" : "");
-					DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
+					conexFlow = DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
 			
 					String msg = "";
 					if (!ok){
 						msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
 					} else {
 						msg = "CHARGE OK";
+						ConexFlowUtils.setVoucher(domain, r.getProject(), conexFlow);
 					}
 					String projectName = DBConsults.getProjectName(d, login, r.getProject());
 					View.sale(projectName, r.getProject(), msg,r.getAdvance());
