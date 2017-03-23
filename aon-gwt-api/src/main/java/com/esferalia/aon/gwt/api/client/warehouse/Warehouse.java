@@ -180,4 +180,9 @@ public class Warehouse extends Methods{
 	public void insertIncome(String requestData, AsyncCallback<JsOrder> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/income", requestData, callback);
 	}
+	
+	/* SALES */
+	public void getSalesDetail(Integer id, AsyncCallback<JSON<JsOrderDetail>> callback){
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/sales/"+id + "/detail" , callback);
+	}
 }

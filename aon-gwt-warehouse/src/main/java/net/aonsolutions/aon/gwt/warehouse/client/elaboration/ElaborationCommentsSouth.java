@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.gwt.warehouse.client.elaboration;
 
-import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.dom.client.Style.Unit;

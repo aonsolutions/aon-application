@@ -101,6 +101,10 @@ import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.management.SalesDetailFilter;
+import com.esferalia.aon.occam.api.model.management.SalesFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -1201,6 +1205,36 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	// ------------------ SALES
+		public static Stream<Sales> getSalesStream(String domainName,
+				Integer domainId, String login, SalesFilter filter) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, login);
+				return getManagement().getSalesStream(ctx, filter);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+		public static Sales getSales(String domainName,
+				Integer domainId, String login, SalesFilter filter) {
+			return getSalesStream(domainName, domainId, login, filter)
+					.findFirst().orElse(new Sales());
+		}
+		public static Stream<SalesDetail> getSalesDetailStream(String domainName,
+				Integer domainId, String login, SalesDetailFilter filter) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, login);
+				return getManagement().getSalesDetailStream(ctx, filter);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}	
+		
 	
 	// ------------------ PURCHASE
 	

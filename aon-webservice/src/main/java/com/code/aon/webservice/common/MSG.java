@@ -90,6 +90,7 @@ public class MSG {
 	public static final String REMARKS = "remarks";
 	public static final String REOPENED = "reopened";
 	public static final String SCOPE = "scope";
+	public static final String SALES = "sales";
 	public static final String SELLER = "seller";
 	public static final String SENDER = "sender";
 	public static final String SERIES = "series";

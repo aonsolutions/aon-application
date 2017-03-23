@@ -60,11 +60,11 @@ public class JsElaboration extends JavaScriptObject {
 												return this.comments;
 												}-*/;
 
-	public final native String getSource() /*-{
+	public final native Integer getSource() /*-{
 											return this.source;
 											}-*/;
 
-	public final native String getSourceId() /*-{
+	public final native Integer getSourceId() /*-{
 												return this.source_id;
 												}-*/;
 

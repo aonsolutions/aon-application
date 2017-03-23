@@ -14,7 +14,34 @@
 	<aon:MinimizePanel ui:field="footPanel"
 		styleName="{aonResources.css.aonSelector}">
 		<g:TabLayoutPanel ui:field="tabPanel" barHeight="26"
-			barUnit="PX" width="100%" />
+			barUnit="PX" width="100%">
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="receipt"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Origen"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="sourcePanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
+			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="speaker-notes"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Observaciones"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:ScrollPanel ui:field="observationPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
+			</g:tab>
+		</g:TabLayoutPanel>
 	</aon:MinimizePanel>
 
 </ui:UiBinder>

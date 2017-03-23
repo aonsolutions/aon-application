@@ -20,6 +20,7 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.code.aon.webservice.warehouse.jooq.DBIncome;
 import com.code.aon.webservice.warehouse.jooq.DBPurchase;
+import com.code.aon.webservice.warehouse.jooq.DBSales;
 import com.code.aon.webservice.warehouse.jooq.DBWarehouse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -109,6 +110,10 @@ public class WarehouseServlet extends HttpServlet{
 					if(pathInfo.length > 4){
 						object = DBWarehouse.getWarehouse(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else object = DBWarehouse.getWarehouses(domain, userName, req.getParameterMap());
+				} else if(MSG.SALES.equals(pathInfo[3])){
+					if(pathInfo.length > 4){
+						object = DBSales.getSalesDetail(domain, userName, Integer.parseInt(pathInfo[4]));
+					} else object = DBSales.getSalesDetails(domain, userName, req.getParameterMap());
 				}
 				
 				Utils.giveBack(req, resp, object, new JSONObject());

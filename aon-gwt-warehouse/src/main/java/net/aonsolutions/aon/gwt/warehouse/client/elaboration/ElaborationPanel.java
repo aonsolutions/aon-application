@@ -17,8 +17,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,11 +44,10 @@ public class ElaborationPanel extends Composite {
 	@UiField
 	TextBox quantity;
 	@UiField
-	ListBox status;
+//	ListBox status;
+	InlineLabel status;
 //	@UiField
 //	TextArea comments;
-//	source
-//	source_id
 
 	private MainElaboration parent;
 	private API API;
@@ -58,66 +57,51 @@ public class ElaborationPanel extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		this.API = me.API;
 		this.parent = me;
+		this.jsElaboration = parent.getJsElaboration();
 		load();
 	}
 
-	public ElaborationPanel(MainElaboration elaboration, JsElaboration js) {
+	public ElaborationPanel(MainElaboration me, JsElaboration jsElaboration) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = elaboration.API;
-		this.parent = elaboration;
-		this.jsElaboration = js;
+		this.API = me.API;
+		this.parent = me;
+		this.jsElaboration = jsElaboration;
 		load();
 	}
 
 	private void load() {
-		// TODO elaboration series
-//		API.getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
-//
-//			@Override
-//			public void onSuccess(JSON<JsObject> result) {
-//				result.getData().stream().forEach(s -> series.addItem(s.getName()));
-//				if (jsElaboration != null && jsElaboration.getSeries() != null) {
-//					for (Integer i = 0; i < series.getItemCount(); i++) {
-//						if (jsElaboration.getSeries().equals(series.getItemText(i))) {
-//							series.setSelectedIndex(i);
-//						}
-//					}
-//				}
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//		});
+
 		series.setText(jsElaboration != null && jsElaboration.getSeries() != null
 				? (jsElaboration.getSeries() + "") : "");
 		number.setText(jsElaboration != null && jsElaboration.getNumber() != null
 				? (jsElaboration.getNumber() + "") : "");
+		status.setText(jsElaboration != null && jsElaboration.getStatus() != null
+				? (jsElaboration.getStatus().getName() + "") : "");
 		
-		API.getWarehouse().getElaborationStatuses(new AsyncCallback<JSON<JsObject>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsObject> result) {
-				result.getData().stream()
-				.filter(s -> !s.getName().equalsIgnoreCase("fallido")
-						&& !s.getName().equalsIgnoreCase("reabierto")
-						&& !s.getName().equalsIgnoreCase("en progreso"))
-						.forEach(s -> status.addItem(s.getName(), s.getId() + ""));
-				
-				if (jsElaboration != null && jsElaboration.getStatus() != null) {
-					for (Integer i = 0; i < status.getItemCount(); i++) {
-						if (jsElaboration.getStatus() != null
-								& jsElaboration.getStatus().getName().equals(status.getItemText(i))) {
-							status.setSelectedIndex(i);
-						}
-					}
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-		});
+//		API.getWarehouse().getElaborationStatuses(new AsyncCallback<JSON<JsObject>>() {
+//			
+//			@Override
+//			public void onSuccess(JSON<JsObject> result) {
+//				result.getData().stream()
+//				.filter(s -> !s.getName().equalsIgnoreCase("fallido")
+//						&& !s.getName().equalsIgnoreCase("reabierto")
+//						&& !s.getName().equalsIgnoreCase("en progreso"))
+//						.forEach(s -> status.addItem(s.getName(), s.getId() + ""));
+//				
+//				if (jsElaboration != null && jsElaboration.getStatus() != null) {
+//					for (Integer i = 0; i < status.getItemCount(); i++) {
+//						if (jsElaboration.getStatus() != null
+//								& jsElaboration.getStatus().getName().equals(status.getItemText(i))) {
+//							status.setSelectedIndex(i);
+//						}
+//					}
+//				}
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//		});
 		
 		if (jsElaboration != null && jsElaboration.getDate() != null
 				&& !"".equals(jsElaboration.getDate())) {
@@ -164,7 +148,7 @@ public class ElaborationPanel extends Composite {
 		
 		series.addChangeHandler(getUpdateChangeListener());
 		number.addChangeHandler(getUpdateChangeListener());
-		status.addChangeHandler(getUpdateChangeListener());
+//		status.addChangeHandler(getUpdateChangeListener());
 		date.addValueChangeHandler(getUpdateChangeHandler());
 //		comments.addChangeHandler(getUpdateChangeListener());
 		item.addChangeHandler(getUpdateChangeListener());
@@ -192,54 +176,11 @@ public class ElaborationPanel extends Composite {
 			}
 		};
 	}
-	
-	
-//	protected void updateElaboration() {
-//		if (jsElaboration != null) {
-//			API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(),
-//					new AsyncCallback<JsElaboration>() {
-//
-//						@Override
-//						public void onSuccess(JsElaboration result) {
-//							jsElaboration = result;
-//							number.setValue(result.getNumber() + "");
-//							parent.setSelectContent(result);
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable caught) {
-//						}
-//					});
-//		} else {
-//			this.API.getWarehouse().insertElaboration(getData(), new AsyncCallback<JsElaboration>() {
-//
-//				@Override
-//				public void onSuccess(JsElaboration result) {
-//					jsElaboration = result;
-//					number.setValue(result.getNumber() + "");
-//					parent.setSelectContent(result);
-//				}
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//				}
-//			});
-//		}
-//	}
-
-	private String getData() {
-//		return "{\"series\":\"" + series.getSelectedValue() + "\"," + "\"number\":\"" + number.getValue() + "\","
-//				+ "\"type\":\"" + type.getSelectedValue() + "\"," + "\"status\":\"" + status.getSelectedValue() + "\","
-//				+ "\"issue_date\":\"" + (issueDate.getValue() != null ? issueDate.getValue().getTime() : "") + "\","
-//				+ "\"delivery_date\":\"" + (deliveryDate.getValue() != null ? deliveryDate.getValue().getTime() : "")
-//				+ "\"," + "\"carrier\":\"" + carrier.getSelectedValue() + "\"," + "\"carrier_reference\":\""
-//				+ reference.getValue() + "\"," + "\"number_plate\":\"" + numberPlate.getValue() + "\","
-//				+ "\"driver_document\":\"" + driverDocument.getValue() + "\"," + "\"driver_name\":\""
-//				+ driverName.getValue() + "\"" + "}";
-		return null;
-	}
 
 	public JsElaboration getJsElaboration() {
 		return jsElaboration;
+	}
+	public void setJsElaboration(JsElaboration jsElaboration) {
+		this.jsElaboration = jsElaboration;
 	}
 }

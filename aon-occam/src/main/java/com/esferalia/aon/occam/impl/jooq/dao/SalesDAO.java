@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
@@ -12,13 +14,16 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.records.SalesDetailRecord;
-import com.esferalia.aon.jooq.tables.records.SalesRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -262,6 +267,16 @@ public class SalesDAO {
 				.where(SALES_DETAIL.SALES.eq(sales.getId())).execute();
 	}
 	
+	public static Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter){
+		return ctx.getDslContext().select().from(SALES)
+				.where(SALES_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new FullSalesFiller()).filter(distinctByKey(p -> p.getId()));
+	}
+	public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+	    Map<Object,Boolean> seen = new ConcurrentHashMap<>();
+	    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+	}
+	
 	public static Sales getSales(AONContext ctx, SalesFilter filter){
 		return ctx.getDslContext().select().from(SALES).where(SALES_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(SALES).stream().map(new FullSalesFiller()).findFirst().orElse(new Sales());
@@ -273,6 +288,15 @@ public class SalesDAO {
 	
 	public static Sales getSales(AONContext ctx, String series, int number) {
 		return getSales(ctx, o -> o.getSeriesProperty().eq(series).and(o.getNumberProperty().eq(number)));
+	}
+	
+	public static Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter){
+		return ctx.getDslContext().select().from(SALES_DETAIL)
+				.join(ITEM).on(SALES_DETAIL.ITEM.eq(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.join(SALES).on(SALES_DETAIL.SALES.eq(SALES.ID))
+			.where(SALES_DETAIL_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new FullSalesDetailFiller());
 	}
 	
 	public static SalesDetail getSalesDetail(AONContext ctx, SalesDetailFilter filter){
@@ -376,69 +400,69 @@ public class SalesDAO {
 	
 
 	
-	private static class FullSalesFiller implements Function<SalesRecord, Sales> {
+	private static class FullSalesFiller implements Function<Record, Sales> {
 		
 		@Override
-		public Sales apply(SalesRecord r) {
+		public Sales apply(Record r) {
 			Sales sales = new Sales();
-			sales.setId(r.getId());
-			sales.setDomain(r.getDomain());
-			sales.setProject(r.getProject());
-			sales.setCustomer(r.getCustomer());
-			sales.setSeries(r.getSeries());
-			sales.setNumber(r.getNumber());
-			sales.setPurchaseReference(r.getPurchaseReference());
-			sales.setShippingAddress(r.getShippingAddress());
-			sales.setSeller(r.getSeller());
-			sales.setDiscountExpr(r.getDiscountExpr());
-			sales.setIssueDate(r.getIssueDate());
-			sales.setPayMethod(r.getPayMethod());
-			sales.setDocumentType(r.getDocumentType());
-			sales.setSecurityLevel(r.getSecurityLevel());
-			sales.setStatus(SalesStatus.values()[r.getStatus()]);
-			sales.setComments(r.getComments());
-			sales.setRemarks(r.getRemarks());
-			sales.setWorkplace(r.getWorkplace());
-			sales.setScope(r.getScope());
-			sales.setNumberOfPymnts(r.getNumberOfPymnts());
-			sales.setDaysToFirstPymnt(r.getDaysToFirstPymnt());
-			sales.setDaysBetweenPymnts(r.getDaysBetweenPymnts());
-			sales.setPymntDays(r.getPymntDays());
-			sales.setBankAccount(r.getBankAccount());
-			sales.setBankAlias(r.getBankAlias());
-			sales.setBic(r.getBic());
-			sales.setPurchaseGenerated(r.getPurchaseGenerated()==1);
-			sales.setCarrier(r.getCarrier());
-			sales.setShippingAlternativeAddress(r.getShippingAlternativeAddress());
-			sales.setShippingAlternativeAddress2(r.getShippingAlternativeAddress2());
-			sales.setShippingAlternativeZip(r.getShippingAlternativeZip());
-			sales.setShippingAlternativeCity(r.getShippingAlternativeCity());
-			sales.setShippingAlternativePhone(r.getShippingAlternativePhone());
-			sales.setShippingAlternativeRecipient(r.getShippingAlternativeRecipient());
-			sales.setShippingContact(r.getShippingContact());
-			sales.setShippingPeriod(r.getShippingPeriod()!=null?r.getShippingPeriod().intValue():null);
+			sales.setId(r.getValue(SALES.ID));
+			sales.setDomain(r.getValue(SALES.DOMAIN));
+			sales.setProject(r.getValue(SALES.PROJECT));
+			sales.setCustomer(r.getValue(SALES.CUSTOMER));
+			sales.setSeries(r.getValue(SALES.SERIES));
+			sales.setNumber(r.getValue(SALES.NUMBER));
+			sales.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE));
+			sales.setShippingAddress(r.getValue(SALES.SHIPPING_ADDRESS));
+			sales.setSeller(r.getValue(SALES.SELLER));
+			sales.setDiscountExpr(r.getValue(SALES.DISCOUNT_EXPR));
+			sales.setIssueDate(r.getValue(SALES.ISSUE_DATE));
+			sales.setPayMethod(r.getValue(SALES.PAY_METHOD));
+			sales.setDocumentType((int) r.getValue(SALES.DOCUMENT_TYPE));
+			sales.setSecurityLevel((int) r.getValue(SALES.SECURITY_LEVEL));
+			sales.setStatus(SalesStatus.values()[r.getValue(SALES.STATUS)]);
+			sales.setComments(r.getValue(SALES.COMMENTS));
+			sales.setRemarks(r.getValue(SALES.REMARKS));
+			sales.setWorkplace(r.getValue(SALES.WORKPLACE));
+			sales.setScope(r.getValue(SALES.SCOPE));
+			sales.setNumberOfPymnts((int) r.getValue(SALES.NUMBER_OF_PYMNTS));
+			sales.setDaysToFirstPymnt((int) r.getValue(SALES.DAYS_TO_FIRST_PYMNT));
+			sales.setDaysBetweenPymnts((int) r.getValue(SALES.DAYS_BETWEEN_PYMNTS));
+			sales.setPymntDays(r.getValue(SALES.PYMNT_DAYS));
+			sales.setBankAccount(r.getValue(SALES.BANK_ACCOUNT));
+			sales.setBankAlias(r.getValue(SALES.BANK_ALIAS));
+			sales.setBic(r.getValue(SALES.BIC));
+			sales.setPurchaseGenerated(r.getValue(SALES.PURCHASE_GENERATED)==1);
+			sales.setCarrier(r.getValue(SALES.CARRIER));
+			sales.setShippingAlternativeAddress(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS));
+			sales.setShippingAlternativeAddress2(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS2));
+			sales.setShippingAlternativeZip(r.getValue(SALES.SHIPPING_ALTERNATIVE_ZIP));
+			sales.setShippingAlternativeCity(r.getValue(SALES.SHIPPING_ALTERNATIVE_CITY));
+			sales.setShippingAlternativePhone(r.getValue(SALES.SHIPPING_ALTERNATIVE_PHONE));
+			sales.setShippingAlternativeRecipient(r.getValue(SALES.SHIPPING_ALTERNATIVE_RECIPIENT));
+			sales.setShippingContact(r.getValue(SALES.SHIPPING_CONTACT));
+			sales.setShippingPeriod(r.getValue(SALES.SHIPPING_PERIOD)!=null?r.getValue(SALES.SHIPPING_PERIOD).intValue():null);
 			return sales;
 		}
 	}
 	
-	private static class FullSalesDetailFiller implements Function<SalesDetailRecord, SalesDetail> {
+	private static class FullSalesDetailFiller implements Function<Record, SalesDetail> {
 		
 		@Override
-		public SalesDetail apply(SalesDetailRecord r) {
+		public SalesDetail apply(Record r) {
 			SalesDetail detail = new SalesDetail();
-			detail.setId(r.getId());
-			detail.setDomain(r.getDomain());
-			detail.setSales(r.getSales());
-			detail.setItem(r.getItem());
-			detail.setLine(r.getLine());
-			detail.setDescription(r.getDescription());
-			detail.setQuantity(r.getQuantity());
-			detail.setPrice(r.getPrice());
-			detail.setDiscountExpression(r.getDiscountExpr());
-			detail.setTaxes(r.getTaxes());
-			detail.setStatus(SalesDetailStatus.values()[r.getStatus()]);
-			detail.setOfferDetail(r.getOfferDetail());
-			detail.setDelivered(r.getDelivered());
+			detail.setId(r.getValue(SALES_DETAIL.ID));
+			detail.setDomain(r.getValue(SALES_DETAIL.DOMAIN));
+			detail.setSales(r.getValue(SALES_DETAIL.SALES));
+			detail.setItem(r.getValue(SALES_DETAIL.ITEM));
+			detail.setLine(r.getValue(SALES_DETAIL.LINE));
+			detail.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION));
+			detail.setQuantity(r.getValue(SALES_DETAIL.QUANTITY));
+			detail.setPrice(r.getValue(SALES_DETAIL.PRICE));
+			detail.setDiscountExpression(r.getValue(SALES_DETAIL.DISCOUNT_EXPR));
+			detail.setTaxes(r.getValue(SALES_DETAIL.TAXES));
+			detail.setStatus(SalesDetailStatus.values()[r.getValue(SALES_DETAIL.STATUS)]);
+			detail.setOfferDetail(r.getValue(SALES_DETAIL.OFFER_DETAIL));
+			detail.setDelivered(r.getValue(SALES_DETAIL.DELIVERED));
 			return detail;
 		}
 	}

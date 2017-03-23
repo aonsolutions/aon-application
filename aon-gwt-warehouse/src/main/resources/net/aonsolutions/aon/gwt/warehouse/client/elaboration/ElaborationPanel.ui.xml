@@ -24,6 +24,11 @@
 							styleName="{aonResources.css.aonTextBox}" />
 						<g:TextBox ui:field="number" width="50px"
 							styleName="{aonResources.css.aonTextBox}" />
+						<!--  
+						<g:ListBox ui:field="status" styleName="{aonResources.css.aonListBox}" />
+						-->
+						<g:InlineLabel ui:field="status" 
+							styleName="{aonResources.css.aonMarginLeft}" />
 					</g:HorizontalPanel>
 				</td>
 
@@ -33,7 +38,6 @@
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
 					<aon:DateBoxEx ui:field="date"
 						styleName="{aonResources.css.aonTextBox}" />
-					<g:ListBox ui:field="status" styleName="{aonResources.css.aonListBox}" />
 				</td>
 			</tr>
 			<tr>

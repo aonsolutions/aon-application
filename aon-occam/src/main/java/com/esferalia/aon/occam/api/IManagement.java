@@ -10,6 +10,10 @@ import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.management.SalesDetailFilter;
+import com.esferalia.aon.occam.api.model.management.SalesFilter;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 
@@ -21,6 +25,10 @@ public interface IManagement {
 	// 	***********************************************
 	Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter);
 
+	// -------------------- SALES 
+	Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter);
+	Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter);
+	
 	// -------------------- PURCHASE 
 	Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter);
 	Purchase insertPurchase(AONContext ctx, Purchase purchase);
