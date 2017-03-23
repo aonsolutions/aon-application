@@ -18,6 +18,7 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	private Account bankAccount;
 	private double expenses;
 	private Account expensesAccount;
+	private String manualConcept;
 	
 	private TreeMap<Integer,FinanceTracking> trackings;
 	
@@ -66,6 +67,13 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	}
 	public FinanceEntry setExpensesAccount(Account expensesAccount) {
 		this.expensesAccount = expensesAccount;
+		return this;
+	}
+	public String getManualConcept() {
+		return manualConcept;
+	}
+	public FinanceEntry setManualConcept(String manualConcept) {
+		this.manualConcept = manualConcept;
 		return this;
 	}
 	public TreeMap<Integer,FinanceTracking> getTrackings() {

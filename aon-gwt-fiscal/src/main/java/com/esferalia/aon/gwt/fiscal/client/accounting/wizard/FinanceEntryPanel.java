@@ -34,10 +34,12 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 
 
 public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implements HasSelectionHandlers<Finance>{
@@ -51,6 +53,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	private AccountBox bankAccount;
 	private DoubleBox  expenses;
 	private AccountBox expensesAccount;
+	private TextBox manualConcept;
 	private FlowPanel container;
 	private FinanceSearchPanel financeSearchPanel;
 	private FinanceEntry financeEntry;
@@ -123,7 +126,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		
 		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(northPanel,tabindex);
-		resultPanel.addNorth(northPanel, 105);
+		resultPanel.addNorth(northPanel, 125);
 		
 		
 		ScrollPanel resultScrollPanel = new ScrollPanel();
@@ -208,9 +211,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
 		
 		tab.getColumnFormatter().setWidth(0, "100px");
-		tab.getColumnFormatter().setWidth(1, "9px");
-		tab.getColumnFormatter().setWidth(2, "60px");
-		tab.getColumnFormatter().setWidth(3, "auto");
+		tab.getColumnFormatter().setWidth(1, "auto");
 		
 		bankAccount = createAccountBox();
 		bankAccount.addKeyUpHandler(f9KeyHandler);
@@ -230,6 +231,9 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		tab.setWidget(1, 0, new Label(AON.MSG.expenses()));
 		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
 		
+		FlowPanel expensesPanel = new FlowPanel();
+		expensesPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		
 		expenses = new DoubleBox();
 		expenses.addKeyUpHandler(f9KeyHandler);
 		expenses.setVisibleLength(6);
@@ -240,15 +244,17 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				valueChanged();
 			}
 		});
-		tab.setWidget(1, 1, expenses);
-
-		tab.setWidget(1, 2, new Label(AON.MSG.accountAbr()));
-		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
+		expensesPanel.add(expenses);
+		
+		InlineLabel aa = new InlineLabel(AON.MSG.accountAbr());
+		aa.setStyleName(AON.AON_CSS.aonBold());		
+		aa.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		expensesPanel.add(aa);
 
 		expensesAccount = createAccountBox();
+		expensesAccount.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		expensesAccount.setRequired(false);
 		expensesAccount.addKeyUpHandler(f9KeyHandler);
-		tab.setWidget(1, 3, expensesAccount);
 		expensesAccount.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
@@ -256,6 +262,25 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				valueChanged();
 			}
 		});
+		expensesPanel.add(expensesAccount);
+		tab.setWidget(1, 1, expensesPanel);
+		
+		tab.setWidget(2, 0, new Label(AON.MSG.concept()));
+		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonBold());
+
+		manualConcept = new TextBox();
+		manualConcept.setStyleName(AON.AON_CSS.aonInputText());
+		manualConcept.addKeyUpHandler(f9KeyHandler);
+		manualConcept.setVisibleLength(20);
+		manualConcept.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				getWrapper().setManualConcept(manualConcept.getValue());
+				valueChanged();
+			}
+		});
+		tab.setWidget(2, 1, manualConcept);
+
 		flowNorthPanel.add(tab);
 		northPanel.setWidget(flowNorthPanel);	
 	}
@@ -364,6 +389,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		bankAccount.setEnabled( isUpdatable() );
 		expenses.setValue(getWrapper().getExpenses());
 		expenses.setEnabled( isUpdatable() );
+		manualConcept.setValue(getWrapper().getManualConcept());
 		setAccount(expensesAccount,getWrapper().getExpensesAccount());
 		expensesAccount.setEnabled( isUpdatable() );
 		getCallback().getModule().refreshIdLabel();

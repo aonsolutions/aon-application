@@ -30,7 +30,7 @@ public class FinanceRecorder {
 				if (!finance.isPayment()) {
 					AccountEntryDetail detail = map.get(finance.getId());
 					if (detail == null) {
-						String concept = obtainConcept(finance);
+						String concept = obtainConcept(finance,financeEntry.getManualConcept());
 						String code = obtainAccountCode(finance);
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
@@ -56,7 +56,7 @@ public class FinanceRecorder {
 				if (finance.isPayment()) {
 					AccountEntryDetail detail = map.get(finance.getId());
 					if (detail == null) {
-						String concept = obtainConcept(finance);
+						String concept = obtainConcept(finance,financeEntry.getManualConcept());
 						String code = obtainAccountCode(finance); 
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
@@ -91,7 +91,7 @@ public class FinanceRecorder {
 	private static String obtainDocumentNumber(Finance finance) {
 		return finance.getInvoice()!=null?finance.getInvoice().getDocumentNumber():"";
 	}
-	private static String obtainConcept(Finance finance) {
+	private static String obtainConcept(Finance finance, String manualConcept) {
 		String prefix = null;
 		if (!finance.isPayment()) {
 			prefix = (finance.getAmount() < 0) ? REFU: CHAR;
@@ -99,7 +99,15 @@ public class FinanceRecorder {
 			prefix = (finance.getAmount() < 0) ? RETU : PAYM;
 		}
 		prefix = prefix + " " + INVO + ": ";
-		return (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();
+		String concept = (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();
+		if (AonStringUtils.isNotBlank(manualConcept)) {
+			concept = concept + " [" + manualConcept;
+			if (AonStringUtils.length(concept) > 32) {
+				concept = AonStringUtils.abbreviate(concept,31);
+			}
+			concept = concept + "]";
+		}
+		return concept;
 		
 	}
 	private static String obtainAccountCode(Finance finance) {
@@ -139,16 +147,21 @@ public class FinanceRecorder {
 				uniqueFinance = (validFinances == 1)?tracking.getFinance():null;
 			}
 		}
+		
 		ae.setDetails(new LinkedList<AccountEntryDetail>());
 		ae.getDetails().addAll(map.values());
 		if ( financeEntry.getExpenses() != 0.0
 			&& financeEntry.getExpensesAccount() != null 
 			&& financeEntry.getExpensesAccount().getId() != null) {
+			String concept = AonStringUtils.defaultIfBlank(financeEntry.getManualConcept(),"GASTOS");
+			if (uniqueFinance != null) {
+				concept = obtainConcept(uniqueFinance,financeEntry.getManualConcept());
+			} 
 			AccountEntryDetail detail = new AccountEntryDetail()
 					.setAccount(financeEntry.getExpensesAccount().getId())
 					.setAccountCode(financeEntry.getExpensesAccount().getCode())
 					.setAccountDescription(financeEntry.getExpensesAccount().getDescription())
-					.setConcept("GASTOS") // TODO
+					.setConcept(concept)
 					.setBalancingAccount(financeEntry.getBankAccount().getId())
 					.setBalancingAccountCode(financeEntry.getBankAccount().getCode())
 					.setBalancingAccountDescription(financeEntry.getBankAccount().getDescription());
@@ -156,14 +169,14 @@ public class FinanceRecorder {
 			ae.getDetails().add(detail);
 		}
 		if ( financeEntry.getBankAccount() != null && financeEntry.getBankAccount().getId() != null) {
-			String concept = "Apunte Tesorer\u00EDa";
+			String concept = AonStringUtils.defaultIfBlank(financeEntry.getManualConcept(),"Apunte Tesorer\u00EDa");
 			Integer balancingAccount = null;
 			String balancingAccountCode = null;
 			String balancingAccountDescription = null;
 			String documentNumber = null;
 			if (uniqueFinance != null) {
 				documentNumber = obtainDocumentNumber(uniqueFinance);
-				concept = obtainConcept(uniqueFinance);
+				concept = obtainConcept(uniqueFinance,financeEntry.getManualConcept());
 				balancingAccount = uniqueFinance.getRegistryAccountId();
 				balancingAccountCode = obtainAccountCode(uniqueFinance); 
 				balancingAccountDescription = obtainAccountDescription(uniqueFinance);
@@ -172,7 +185,7 @@ public class FinanceRecorder {
 				.setAccount(financeEntry.getBankAccount().getId())
 				.setAccountCode(financeEntry.getBankAccount().getCode())
 				.setAccountDescription(financeEntry.getBankAccount().getDescription())
-				.setConcept(concept) // TODO
+				.setConcept(concept)
 				.setBalancingAccount(balancingAccount)
 				.setBalancingAccountCode(balancingAccountCode)
 				.setBalancingAccountDescription(balancingAccountDescription)

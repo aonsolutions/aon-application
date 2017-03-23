@@ -534,6 +534,7 @@ public class FinanceDAO {
 			.forEach(detail -> {
 				if (AonStringUtils.startsWith(detail.getAccountCode(), "5")) {
 					entry.setBankAccount(AccountDAO.get(ctx, detail.getAccount()));
+					entry.setManualConcept(detail.getConcept());
 				} else if (AonStringUtils.startsWith(detail.getAccountCode(), "6")) {
 						entry.setExpensesAccount(AccountDAO.get(ctx, detail.getAccount()));
 						entry.setExpenses( AonMathUtils.round(detail.getDebit() - detail.getCredit() ));
