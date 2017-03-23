@@ -15,7 +15,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,13 +32,15 @@ public class CarrierPackingPrincipal extends Composite{
 	@UiField SimpleLayoutPanel southContent;
 	
 	private CarrierPacking2 parent;
-	private API API;
 	private HashMap<String, LinkedList<String>> filterMap;
 	private CarrierPackingPrincipal me;
+	
+	public API getAPI() {
+		return parent.getAPI();
+	}
 
 	public CarrierPackingPrincipal(CarrierPacking2 carrierPacking) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = carrierPacking.getAPI();
 		this.parent = carrierPacking;
 		this.me = this;
 		this.filterMap = new HashMap<>();
@@ -55,7 +56,7 @@ public class CarrierPackingPrincipal extends Composite{
 	}
 	
 	public void gridContent(){
-		API.getWarehouse().getCarrierPacking(getFilterMap(), new AsyncCallback<JSON<JsCarrierPacking>>() {
+		parent.getAPI().getWarehouse().getCarrierPacking(getFilterMap(), new AsyncCallback<JSON<JsCarrierPacking>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsCarrierPacking> result) {
@@ -70,9 +71,7 @@ public class CarrierPackingPrincipal extends Composite{
 	}
 	
 	public void southContent(){
-		FootPanel fp = new FootPanel(this);
-		fp.getTabPanel().add(new ParameterPanel(this), new Label("Parametros"));
-		southContent.setWidget(fp);		
+		southContent.setWidget(new PrincipalFootPanel(this));		
 	}
 	
 	public void southContentSize(Double value) {
@@ -81,10 +80,6 @@ public class CarrierPackingPrincipal extends Composite{
 	
 	public void selectCarrierPacking(JsCarrierPacking js){
 		parent.carrierPackingContent(js);
-	}
-
-	public API getAPI() {
-		return API;
 	}
 
 	public HashMap<String, LinkedList<String>> getFilterMap() {

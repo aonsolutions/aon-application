@@ -23,7 +23,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -58,14 +57,12 @@ public class CarrierPackingDetail extends Composite{
 	@UiField InlineLabel addObservations;
 	
 	private CarrierPacking2 parent;
-	private API API;
 	private JsCarrierPacking jsCarrierPacking;
 	
-	public CarrierPackingDetail(CarrierPacking2 carrierPacking, JsCarrierPacking js) {
+	public CarrierPackingDetail(CarrierPacking2 parent, JsCarrierPacking js) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = carrierPacking.getAPI();
-		this.parent = carrierPacking;
 		this.jsCarrierPacking = js;
+		this.parent = parent;
 		addObservations.setVisible(false);
 		load();
 		content();
@@ -74,7 +71,7 @@ public class CarrierPackingDetail extends Composite{
 	}
 	
 	private void load() {
-		API.getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -108,7 +105,7 @@ public class CarrierPackingDetail extends Composite{
 		});
 		
 		
-		API.getWarehouse().getCarrierPackingTypes(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingTypes(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -136,7 +133,7 @@ public class CarrierPackingDetail extends Composite{
 		});
 		
 
-		API.getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -189,7 +186,7 @@ public class CarrierPackingDetail extends Composite{
 			}
 		});
 		
-		API.getWarehouse().getCarrierPackingCarriers(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingCarriers(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -276,7 +273,7 @@ public class CarrierPackingDetail extends Composite{
 						String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
 								+ "\"observation\":\""+  textArea.getValue() +"\"}";
 
-						API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+						parent.getAPI().getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
 							
 							@Override
 							public void onSuccess(JsCarrierPacking result) {
@@ -297,7 +294,7 @@ public class CarrierPackingDetail extends Composite{
 	
 	private void updateCarrierPacking(){
 		if(jsCarrierPacking != null){
-			API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), getData(), new AsyncCallback<JsCarrierPacking>() {
+			parent.getAPI().getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), getData(), new AsyncCallback<JsCarrierPacking>() {
 			
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
@@ -309,7 +306,7 @@ public class CarrierPackingDetail extends Composite{
 				@Override public void onFailure(Throwable caught) { }
 			});
 		} else {
-			this.API.getWarehouse().insertCarrierPacking(getData(), new AsyncCallback<JsCarrierPacking>() {
+			parent.getAPI().getWarehouse().insertCarrierPacking(getData(), new AsyncCallback<JsCarrierPacking>() {
 				
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
@@ -340,14 +337,11 @@ public class CarrierPackingDetail extends Composite{
 	}
 	
 	public void content(){
-		
+		content.setWidget(new SelectionPanel());	
 	}
 	
 	public void southContent() {
-		FootPanel fp = new FootPanel(this);
-		fp.getTabPanel().add(new ParameterPanel(this), new Label("Parametros"));
-	//	fp.getTabPanel().add(new Label("zzzzzz"), new Label("Observaciones"));
-		southContent.setWidget(fp);	
+		southContent.setWidget(new DetailFootPanel(this));
 	}
 	
 	public void southContentSize(Double value) {
@@ -355,7 +349,7 @@ public class CarrierPackingDetail extends Composite{
 	}
 	
 	public API getAPI() {
-		return API;
+		return parent.getAPI();
 	}
 
 	public JsCarrierPacking getJsCarrierPacking() {

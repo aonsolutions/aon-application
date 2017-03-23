@@ -15,9 +15,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,7 +36,7 @@ import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams;
 import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams.Param;
 
 
-public class ParameterPanel extends ResizeComposite {
+public class ParameterPanel extends Composite {
 	final IWarehouseAsync impl = GWT.create(IWarehouse.class);
 
 	interface Binder extends UiBinder<Widget, ParameterPanel> {
