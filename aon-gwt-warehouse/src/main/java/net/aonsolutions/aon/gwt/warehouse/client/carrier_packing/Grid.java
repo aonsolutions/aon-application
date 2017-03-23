@@ -322,10 +322,5 @@ public class Grid extends Composite {
 		dataGrid.getColumnSortList().push(statusColumn);
 		dataGrid.addColumn(statusColumn, AON.MSG.status());
 		dataGrid.setColumnWidth(statusColumn, 15, Unit.PCT);
-		
-	
-
-		
-
 	}
 }

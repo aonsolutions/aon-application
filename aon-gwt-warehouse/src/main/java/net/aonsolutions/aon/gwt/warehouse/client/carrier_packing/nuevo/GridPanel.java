@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.cell.client.TextCell;
@@ -20,9 +19,10 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -31,7 +31,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class GridPanel extends Composite {
+public class GridPanel extends ResizeComposite implements RequiresResize {
 
 	interface GridBinder extends UiBinder<Widget, GridPanel> {
 	}
@@ -48,16 +48,12 @@ public class GridPanel extends Composite {
 	@UiField(provided = true) DataGrid<JsCarrierPacking> dataGrid; 
 	
 	CarrierPackingPrincipal parent;
-	API API;
+
 	public GridPanel(CarrierPackingPrincipal carrierPacking, LinkedList<JsCarrierPacking> list) {
-		this.parent = carrierPacking;
-		this.API = carrierPacking.getAPI(); 
-		
+		this.parent = carrierPacking;		
 		dataGrid = new DataGrid<JsCarrierPacking>(Integer.MAX_VALUE, resources,
 				JsCarrierPacking.PROVIDES_KEY);
-	
 		initWidget(binder.createAndBindUi(this));
-
 		load(list);				
 	}	
 	
@@ -116,53 +112,6 @@ public class GridPanel extends Composite {
 	}
 	
 	private void initTableColumns(final SelectionModel<JsCarrierPacking> selectionModel, ListHandler<JsCarrierPacking> sortHandler) {
-		/** Name Column **/
-		Column<JsCarrierPacking, String> nameColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
-
-			@Override
-			public String getValue(JsCarrierPacking object) {
-				return object.getSeries() + "/" + object.getNumber();
-			}
-		
-		};
-		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		nameColumn.setSortable(true); 
-		sortHandler.setComparator(nameColumn,new Comparator<JsCarrierPacking>() {
-			
-			@Override
-			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				String a = o1.getSeries() + "/" + o1.getNumber(); 
-				String b = o2.getSeries() + "/" + o2.getNumber(); 
-				return a.compareTo(b);
-			}
-		});
-		dataGrid.getColumnSortList().push(nameColumn);
-		dataGrid.addColumn(nameColumn, AON.MSG.series() + "/" + AON.MSG.number());
-		dataGrid.setColumnWidth(nameColumn, 30, Unit.PCT);
-		
-		/** CARRIER Column **/
-		Column<JsCarrierPacking,String> carrierColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
-			
-			@Override
-			public String getValue(JsCarrierPacking object) {
-				return object.getCarrier() != null ? object.getCarrier().getName() : "";
-			}
-		};
-		
-		carrierColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		carrierColumn.setSortable(true); 
-		sortHandler.setComparator(carrierColumn,new Comparator<JsCarrierPacking>() {
-			
-			@Override
-			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				return o1.getCarrier().getName().compareTo(o2.getCarrier().getName());
-			}
-		});
-		dataGrid.getColumnSortList().push(carrierColumn);
-		dataGrid.addColumn(carrierColumn, AON.MSG.carrier());
-		dataGrid.setColumnWidth(carrierColumn, 20, Unit.PCT);
-
-		
 		/** Type Column **/
 		Column<JsCarrierPacking,String> typeColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
 			
@@ -185,27 +134,53 @@ public class GridPanel extends Composite {
 		dataGrid.addColumn(typeColumn, AON.MSG.type());
 		dataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
 		
-		/** Status Column **/
-		Column<JsCarrierPacking,String> statusColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
-			
+		
+		/** Serie/Number Column **/
+		Column<JsCarrierPacking, String> nameColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+
 			@Override
 			public String getValue(JsCarrierPacking object) {
-				return object.getStatus() != null ? object.getStatus().getName() : "";
+				return object.getSeries() + "/" + object.getNumber();
 			}
-		};
 		
-		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		statusColumn.setSortable(true); 
-		sortHandler.setComparator(statusColumn,new Comparator<JsCarrierPacking>() {
+		};
+		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		nameColumn.setSortable(true); 
+		sortHandler.setComparator(nameColumn,new Comparator<JsCarrierPacking>() {
 			
 			@Override
 			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				return o1.getStatus().getName().compareTo(o2.getStatus().getName());
+				String a = o1.getSeries() + "/" + o1.getNumber(); 
+				String b = o2.getSeries() + "/" + o2.getNumber(); 
+				return a.compareTo(b);
 			}
 		});
-		dataGrid.getColumnSortList().push(statusColumn);
-		dataGrid.addColumn(statusColumn, AON.MSG.status());
-		dataGrid.setColumnWidth(statusColumn, 20, Unit.PCT);
+		dataGrid.getColumnSortList().push(nameColumn);
+		dataGrid.addColumn(nameColumn, AON.MSG.series() + "/" + AON.MSG.number());
+		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
+		
+		
+		/** S/RefColumn **/
+		Column<JsCarrierPacking, String> referenceColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+
+			@Override
+			public String getValue(JsCarrierPacking object) {
+				return object.getCarrierReference();
+			}
+		
+		};
+		referenceColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		referenceColumn.setSortable(true); 
+		sortHandler.setComparator(referenceColumn,new Comparator<JsCarrierPacking>() {
+			
+			@Override
+			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
+				return o1.getCarrierReference().compareTo(o2.getCarrierReference());
+			}
+		});
+		dataGrid.getColumnSortList().push(referenceColumn);
+		dataGrid.addColumn(referenceColumn, "Referencia");
+		dataGrid.setColumnWidth(referenceColumn, 20, Unit.PCT);
 		
 		/** ISSUE DATE Column **/
 		Column<JsCarrierPacking,String> issueDateColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
@@ -227,7 +202,7 @@ public class GridPanel extends Composite {
 		});
 		dataGrid.getColumnSortList().push(issueDateColumn);
 		dataGrid.addColumn(issueDateColumn, AON.MSG.issueDate());
-		dataGrid.setColumnWidth(issueDateColumn, 20, Unit.PCT);
+		dataGrid.setColumnWidth(issueDateColumn, 15, Unit.PCT);
 
 		
 		/** delivery DATE Column **/
@@ -250,6 +225,95 @@ public class GridPanel extends Composite {
 		});
 		dataGrid.getColumnSortList().push(deliveryDateColumn);
 		dataGrid.addColumn(deliveryDateColumn, AON.MSG.deliveryDate());
-		dataGrid.setColumnWidth(deliveryDateColumn, 20, Unit.PCT);
+		dataGrid.setColumnWidth(deliveryDateColumn, 15, Unit.PCT);
+		
+		/** CARRIER Column **/
+		Column<JsCarrierPacking,String> carrierColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(JsCarrierPacking object) {
+				return object.getCarrier() != null ? object.getCarrier().getName() : "";
+			}
+		};
+		
+		carrierColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		carrierColumn.setSortable(true); 
+		sortHandler.setComparator(carrierColumn,new Comparator<JsCarrierPacking>() {
+			
+			@Override
+			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
+				return o1.getCarrier().getName().compareTo(o2.getCarrier().getName());
+			}
+		});
+		dataGrid.getColumnSortList().push(carrierColumn);
+		dataGrid.addColumn(carrierColumn, AON.MSG.carrier());
+		dataGrid.setColumnWidth(carrierColumn, 30, Unit.PCT);
+
+		
+		/** Matricula Column **/
+		Column<JsCarrierPacking,String> plateColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(JsCarrierPacking object) {
+				return object.getNumberPlate() != null ? object.getNumberPlate() : "";
+			}
+		};
+		
+		plateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		plateColumn.setSortable(true); 
+		sortHandler.setComparator(plateColumn,new Comparator<JsCarrierPacking>() {
+			
+			@Override
+			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
+				return o1.getNumberPlate().compareTo(o2.getNumberPlate());
+			}
+		});
+		dataGrid.getColumnSortList().push(plateColumn);
+		dataGrid.addColumn(plateColumn, "Matricula");
+		dataGrid.setColumnWidth(plateColumn, 10, Unit.PCT);
+		
+		/** Line number Column **/
+		Column<JsCarrierPacking,String> lineColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(JsCarrierPacking object) {
+				return object.getLines() +"";
+			}
+		};
+		
+		lineColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		lineColumn.setSortable(true); 
+		sortHandler.setComparator(lineColumn,new Comparator<JsCarrierPacking>() {
+			
+			@Override
+			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
+				return o1.getStatus().getName().compareTo(o2.getStatus().getName());
+			}
+		});
+		dataGrid.getColumnSortList().push(lineColumn);
+		dataGrid.addColumn(lineColumn, "Lineas");
+		dataGrid.setColumnWidth(lineColumn, 10, Unit.PCT);
+		
+		/** Status Column **/
+		Column<JsCarrierPacking,String> statusColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(JsCarrierPacking object) {
+				return object.getStatus() != null ? object.getStatus().getName() : "";
+			}
+		};
+		
+		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		statusColumn.setSortable(true); 
+		sortHandler.setComparator(statusColumn,new Comparator<JsCarrierPacking>() {
+			
+			@Override
+			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
+				return o1.getStatus().getName().compareTo(o2.getStatus().getName());
+			}
+		});
+		dataGrid.getColumnSortList().push(statusColumn);
+		dataGrid.addColumn(statusColumn, AON.MSG.status());
+		dataGrid.setColumnWidth(statusColumn, 15, Unit.PCT);
 	}
 }

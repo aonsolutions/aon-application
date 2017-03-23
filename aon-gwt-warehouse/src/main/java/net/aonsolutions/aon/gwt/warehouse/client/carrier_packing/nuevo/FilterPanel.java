@@ -3,7 +3,6 @@ package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
 import java.util.Date;
 import java.util.LinkedList;
 
-import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -13,8 +12,11 @@ import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,6 +28,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -49,7 +52,6 @@ public class FilterPanel extends Composite {
     @UiField PaperIconButton cleanFilter;
     
     private CarrierPackingPrincipal parent;
-    private API API;
     
     private void onChange(String key, LinkedList<String> value) {
     	parent.getFilterMap().put(key, value);
@@ -62,7 +64,6 @@ public class FilterPanel extends Composite {
     
     public FilterPanel(CarrierPackingPrincipal parent) {
     	this.parent = parent;
-    	this.API = parent.getAPI();
     	initWidget(binder.createAndBindUi(this));       
 
     	// -------------------- DATE - FROM _____ TO ______
@@ -73,8 +74,10 @@ public class FilterPanel extends Composite {
     	issueLabel.setWidth("20px");
 		datePanel.add(issueLabel);
 		
+		
 		final DateBoxEx issue = new DateBoxEx();
-		//issue.setValue(new Date());
+		issue.getElement().getStyle().setBorderColor("#dedede");
+		issue.getElement().getStyle().setHeight(16, Unit.PX);;
 		issue.setWidth("70px");
 		issue.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
@@ -90,10 +93,12 @@ public class FilterPanel extends Composite {
 		deliveryLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		deliveryLabel.setWidth("20px");
 		datePanel.add(deliveryLabel);
-		
+
 		final DateBoxEx delivery = new DateBoxEx();
-		//delivery.setValue(new Date());
 		delivery.setWidth("70px");
+		delivery.getElement().getStyle().setBorderColor("#dedede");
+		delivery.getElement().getStyle().setHeight(16, Unit.PX);;
+
 		delivery.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
@@ -103,9 +108,21 @@ public class FilterPanel extends Composite {
 			}
 		});
 		datePanel.add(delivery);
-		
+	
 		panel.add(datePanel);
     
+		TextBox tb = new TextBox();
+		tb.addStyleName(ICSS.aonSearchBoxIssues());
+		tb.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(tb.getValue());
+				onChange("text", list);
+			}
+		});
+		panel.add(tb);
 		
 		// ------------------ FILTER BUTTONS
 		FlowPanel fpanel = new FlowPanel(); 
@@ -116,7 +133,7 @@ public class FilterPanel extends Composite {
 					
 			@Override
 			public void onClick(ClickEvent event) {
-				API.getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
+				parent.getAPI().getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
@@ -135,7 +152,7 @@ public class FilterPanel extends Composite {
 					
 			@Override
 			public void onClick(ClickEvent event) {
-				API.getWarehouse().getCarrierPackingCarriers(new AsyncCallback<JSON<JsObject>>() {
+				parent.getAPI().getWarehouse().getCarrierPackingCarriers(new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
@@ -154,7 +171,7 @@ public class FilterPanel extends Composite {
 					
 			@Override
 			public void onClick(ClickEvent event) {
-				API.getWarehouse().getCarrierPackingTypes(new AsyncCallback<JSON<JsObject>>() {
+				parent.getAPI().getWarehouse().getCarrierPackingTypes(new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
@@ -173,7 +190,7 @@ public class FilterPanel extends Composite {
 					
 			@Override
 			public void onClick(ClickEvent event) {
-				API.getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
+				parent.getAPI().getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
