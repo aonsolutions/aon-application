@@ -1575,25 +1575,26 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	public void encryptReservationCreditCardData(ProjectReservation reservation) {
 		String key = getCryptoKey(reservation);
-		reservation.setCreditCardHolder(CryptoUtil.encrypt(key, reservation.getHrCreditCardHolder()));
 		reservation.setCreditCardNumber(CryptoUtil.encrypt(key, reservation.getHrCreditCardNumber()));
 		reservation.setCreditCardExpirationMonth(CryptoUtil.encrypt(key, reservation.getHrCreditCardExpirationMonth()));
 		reservation.setCreditCardExpirationYear(CryptoUtil.encrypt(key, reservation.getHrCreditCardExpirationYear()));
-		reservation.setCreditCardCvv(CryptoUtil.encrypt(key, reservation.getHrCreditCardCvv()));
 	}
 
 	public void decryptReservationCreditCardData(ProjectReservation reservation) {
 		String key = getCryptoKey(reservation);
-		reservation.setHrCreditCardHolder(CryptoUtil.decrypt(key, reservation.getCreditCardHolder()));
 		reservation.setHrCreditCardNumber(CryptoUtil.decrypt(key, reservation.getCreditCardNumber()));
 		reservation.setHrCreditCardExpirationMonth(CryptoUtil.decrypt(key, reservation.getCreditCardExpirationMonth()));
 		reservation.setHrCreditCardExpirationYear(CryptoUtil.decrypt(key, reservation.getCreditCardExpirationYear()));
-		reservation.setHrCreditCardCvv(CryptoUtil.decrypt(key, reservation.getCreditCardCvv()));
 	}
 
 	private String getCryptoKey(ProjectReservation reservation) {
 		DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		return formatter.format(reservation.getCreationDate());
+	}
+
+	public boolean isConexFlowAvailable() {
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_SERVER_PARAM, domain);
+		return (appParam != null);
 	}
 
 }

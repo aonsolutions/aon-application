@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservationService;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationServiceDetail;
 
 public interface IPMS {
-	public void deleteReservationCreditCard(AONContext ctx, Integer reservationId);
 
 	public LinkedList<HotelGuestByCountry> getHotelGuestByCountry(AONContext ctx, Integer hotelId, Date date);
 	
@@ -32,7 +31,5 @@ public interface IPMS {
 
 	//***** FAIL PREAUTHORIZATION *****//
 	public Stream<Integer> getFailPreauthorizationProjectIdStream(AONContext ctx);
-	
-	public void updateToken(AONContext ctx, Integer projectId, String token);
 
 }

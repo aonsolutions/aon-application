@@ -117,51 +117,51 @@ public enum ConexFlowStatus {
 	}
 	
 	public static ConexFlowStatus valueOfDescriptionName(String name){
-		if(name.contains(PREAUTHORIZATION_CANCEL.getName())){return PREAUTHORIZATION_CANCEL;}
-		if(name.contains(PREAUTHORIZATION_CHECK_FAIL.getName())){return PREAUTHORIZATION_CHECK_FAIL;}
-		if(name.contains(PREAUTHORIZATION_CHECK.getName())){return PREAUTHORIZATION_CHECK;}
-		if(name.contains(PREAUTHORIZATION_FAIL.getName())){return PREAUTHORIZATION_FAIL;}
-		if(name.contains(PREAUTHORIZATION_PAID.getName())){return PREAUTHORIZATION_PAID;}
-		if(name.contains(PREAUTHORIZATION.getName())){return PREAUTHORIZATION;}
+		if(name.contains(PREAUTHORIZATION_CANCEL.getName()+"#")){return PREAUTHORIZATION_CANCEL;}
+		if(name.contains(PREAUTHORIZATION_CHECK_FAIL.getName()+"#")){return PREAUTHORIZATION_CHECK_FAIL;}
+		if(name.contains(PREAUTHORIZATION_CHECK.getName()+"#")){return PREAUTHORIZATION_CHECK;}
+		if(name.contains(PREAUTHORIZATION_FAIL.getName()+"#")){return PREAUTHORIZATION_FAIL;}
+		if(name.contains(PREAUTHORIZATION_PAID.getName()+"#")){return PREAUTHORIZATION_PAID;}
+		if(name.contains(PREAUTHORIZATION.getName()+"#")){return PREAUTHORIZATION;}
 
-		if(name.contains(CONFIRM_PREAUTHORIZATION_FAIL.getName())){return CONFIRM_PREAUTHORIZATION_FAIL;}
-		if(name.contains(CONFIRM_PREAUTHORIZATION_CANCEL.getName())){return CONFIRM_PREAUTHORIZATION_CANCEL;}
-		if(name.contains(CONFIRM_PREAUTHORIZATION_REFUND.getName())){return CONFIRM_PREAUTHORIZATION_REFUND;}
-		if(name.contains(CONFIRM_PREAUTHORIZATION.getName())){return CONFIRM_PREAUTHORIZATION;}
+		if(name.contains(CONFIRM_PREAUTHORIZATION_FAIL.getName()+"#")){return CONFIRM_PREAUTHORIZATION_FAIL;}
+		if(name.contains(CONFIRM_PREAUTHORIZATION_CANCEL.getName()+"#")){return CONFIRM_PREAUTHORIZATION_CANCEL;}
+		if(name.contains(CONFIRM_PREAUTHORIZATION_REFUND.getName()+"#")){return CONFIRM_PREAUTHORIZATION_REFUND;}
+		if(name.contains(CONFIRM_PREAUTHORIZATION.getName()+"#")){return CONFIRM_PREAUTHORIZATION;}
 
-		if(name.contains(SALE_CHECK_FAIL.getName())){return SALE_CHECK_FAIL;}
-		if(name.contains(SALE_CHECK.getName())){return SALE_CHECK;}
-		if(name.contains(SALE_FAIL.getName())){return SALE_FAIL;}
-		if(name.contains(SALE_CANCEL.getName())){return SALE_CANCEL;}
-		if(name.contains(SALE_REFUND.getName())){return SALE_REFUND;}
-		if(name.contains(SALE.getName())){return SALE;}
+		if(name.contains(SALE_CHECK_FAIL.getName()+"#")){return SALE_CHECK_FAIL;}
+		if(name.contains(SALE_CHECK.getName()+"#")){return SALE_CHECK;}
+		if(name.contains(SALE_FAIL.getName()+"#")){return SALE_FAIL;}
+		if(name.contains(SALE_CANCEL.getName()+"#")){return SALE_CANCEL;}
+		if(name.contains(SALE_REFUND.getName()+"#")){return SALE_REFUND;}
+		if(name.contains(SALE.getName()+"#")){return SALE;}
 
-		if(name.contains(REFUND_FAIL.getName())){return REFUND_FAIL;}
-		if(name.contains(REFUND_CANCEL.getName())){return REFUND_CANCEL;}
-		if(name.contains(REFUND.getName())){return REFUND;}
+		if(name.contains(REFUND_FAIL.getName()+"#")){return REFUND_FAIL;}
+		if(name.contains(REFUND_CANCEL.getName()+"#")){return REFUND_CANCEL;}
+		if(name.contains(REFUND.getName()+"#")){return REFUND;}
 
-		if(name.contains(CANCEL_FAIL.getName())){return CANCEL_FAIL;}
-		if(name.contains(CANCEL.getName())){return CANCEL;}
+		if(name.contains(CANCEL_FAIL.getName()+"#")){return CANCEL_FAIL;}
+		if(name.contains(CANCEL.getName()+"#")){return CANCEL;}
 		
-		if(name.contains(REDEMPTION_FAIL.getName())){return REDEMPTION_FAIL;}
-		if(name.contains(REDEMPTION_CANCEL.getName())){return REDEMPTION_CANCEL;}
-		if(name.contains(REDEMPTION.getName())){return REDEMPTION;}
+		if(name.contains(REDEMPTION_FAIL.getName()+"#")){return REDEMPTION_FAIL;}
+		if(name.contains(REDEMPTION_CANCEL.getName()+"#")){return REDEMPTION_CANCEL;}
+		if(name.contains(REDEMPTION.getName()+"#")){return REDEMPTION;}
 		
-		if(name.contains(ISSUE_FAIL.getName())){return ISSUE_FAIL;}
-		if(name.contains(ISSUE_CANCEL.getName())){return ISSUE_CANCEL;}
-		if(name.contains(ISSUE.getName())){return ISSUE;}
+		if(name.contains(ISSUE_FAIL.getName()+"#")){return ISSUE_FAIL;}
+		if(name.contains(ISSUE_CANCEL.getName()+"#")){return ISSUE_CANCEL;}
+		if(name.contains(ISSUE.getName()+"#")){return ISSUE;}
 		
-		if(name.contains(CREATE_TOKEN_FAIL.getName())){return CREATE_TOKEN_FAIL;}
-		if(name.contains(CREATE_TOKEN.getName())){return CREATE_TOKEN;}
+		if(name.contains(CREATE_TOKEN_FAIL.getName()+"#")){return CREATE_TOKEN_FAIL;}
+		if(name.contains(CREATE_TOKEN.getName()+"#")){return CREATE_TOKEN;}
 		
-		if(name.contains(DELETE_TOKEN_FAIL.getName())){return DELETE_TOKEN_FAIL;}
-		if(name.contains(DELETE_TOKEN.getName())){return DELETE_TOKEN;}
+		if(name.contains(DELETE_TOKEN_FAIL.getName()+"#")){return DELETE_TOKEN_FAIL;}
+		if(name.contains(DELETE_TOKEN.getName()+"#")){return DELETE_TOKEN;}
 		
-		if(name.contains(VALIDATE_CARD_FAIL.getName())){return VALIDATE_CARD_FAIL;}
-		if(name.contains(VALIDATE_CARD.getName())){return VALIDATE_CARD;}
+		if(name.contains(VALIDATE_CARD_FAIL.getName()+"#")){return VALIDATE_CARD_FAIL;}
+		if(name.contains(VALIDATE_CARD.getName()+"#")){return VALIDATE_CARD;}
 		
-		if(name.contains(TRANSACTION_INFO_FAIL.getName())){return TRANSACTION_INFO_FAIL;}
-		if(name.contains(TRANSACTION_INFO.getName())){return TRANSACTION_INFO;}
+		if(name.contains(TRANSACTION_INFO_FAIL.getName()+"#")){return TRANSACTION_INFO_FAIL;}
+		if(name.contains(TRANSACTION_INFO.getName()+"#")){return TRANSACTION_INFO;}
 		
 		return null;
 	}

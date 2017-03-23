@@ -43,7 +43,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.PMS;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
@@ -488,10 +487,6 @@ public class DBConsults {
 	public static Boolean hasCheckOp(Domain domain, String login,Integer projectId, String op){
 		return AON.getAttachStream(domain.getName(), domain.getId(), login, f -> f.getDescriptionProperty().like("%CONEXFLOW-CHECK%"+op)
 			.and(f.getAttachModuleProperty().eq(projectId)), AttachType.PROJECT).count() > 0;
-	}
-	
-	public static void updateToken(Domain domain, String login, Integer projectId, String token){
-		PMS.updateToken(domain.getName(), domain.getId(), token, projectId, token);
 	}
 	
 	public static ProjectReservation newProjectReservation(AONContext ctx, ProjectReservationRecord pr){

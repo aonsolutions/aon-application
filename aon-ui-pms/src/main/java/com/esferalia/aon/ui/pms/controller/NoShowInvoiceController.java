@@ -324,7 +324,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 					
 						if(confirmPreauthorization == null || (confirmPreauthorization != null 
 								&& !confirmPreauthorization.getRespuesta().getResultado().equals(confirmPreauthorization))){
-							Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount, customerId, reservation.getCreditCardCvv());
+							Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount, customerId, null);
 							ConexFlow conexFlow2 = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, saleQ);
 						
 							Boolean ok = conexFlow2.getRespuesta().getResultado().equals(conexFlow2);

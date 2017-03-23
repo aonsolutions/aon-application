@@ -44,17 +44,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 
 public class PMSDAO {
 	
-	public static void deleteReservationCreditCard(AONContext ctx, Integer reservationId){
-		String nullString = null;
-		ctx.getDslContext().update(PROJECT_RESERVATION)
-		.set(PROJECT_RESERVATION.CREDIT_CARD_HOLDER, nullString)
-		.set(PROJECT_RESERVATION.CREDIT_CARD_NUMBER, nullString)
-		.set(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_MONTH, nullString)
-		.set(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_YEAR, nullString)
-		.set(PROJECT_RESERVATION.CREDIT_CARD_CVV, nullString)
-		.where(PROJECT_RESERVATION.PROJECT.eq(reservationId)).execute();
-	}
-	
 	public static LinkedList<HotelGuestByCountry> getHotelGuestByCountry(AONContext ctx, Integer hotelId, Date date) {
 		Result<Record3<String, String, Integer>> r = ctx.getDslContext()
 			.select(WORKPLACE.DESCRIPTION, PROJECT_RESERVATION_GUEST.DOCUMENT_COUNTRY, DSL.count(PROJECT_RESERVATION_GUEST.ID))
@@ -299,13 +288,6 @@ public class PMSDAO {
 			.fetch().stream().map(f -> f.value1());
 	}
 
-	public static void updateToken(AONContext ctx, Integer projectId, String token){
-		ctx.getDslContext().update(PROJECT_RESERVATION)
-		.set(PROJECT_RESERVATION.TOKEN, token)
-		.where(PROJECT_RESERVATION.PROJECT.eq(projectId))
-		.execute();
-	}
-	
 	
 	private static class HotelGuestByCountryFiller implements Function<Record3<String, String, Integer>, HotelGuestByCountry> {
 	

@@ -3241,17 +3241,6 @@ public class AON {
 		}
 	}
 
-	public static void deleteReservationCreditCard(String domainName,
-			Integer domainId, String login, Integer reservationId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getPMS().deleteReservationCreditCard(ctx, reservationId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	// ********************************************
 	// ************************************* TAX **
 	// ********************************************

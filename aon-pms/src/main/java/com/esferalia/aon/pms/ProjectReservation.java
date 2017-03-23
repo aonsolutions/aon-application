@@ -74,11 +74,10 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private Double advancedAmount;
 	private Integer touristTaxPayed;
 	private ProjectAttachment lastConexFlowOperation;
-	private String hrCreditCardHolder;
+	private boolean newCreditCard;
 	private String hrCreditCardNumber;
 	private String hrCreditCardExpirationMonth;
 	private String hrCreditCardExpirationYear;
-	private String hrCreditCardCvv;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 	private Set<ProjectAttachment> attachments = new HashSet<ProjectAttachment>();
@@ -305,22 +304,13 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
-	public String getHrCreditCardHolder() {
-		return hrCreditCardHolder;
+	public boolean isNewCreditCard() {
+		return newCreditCard;
 	}
-	public void setHrCreditCardHolder(String hrCreditCardHolder) {
-		this.hrCreditCardHolder = hrCreditCardHolder;
+	public void setNewCreditCard(boolean newCreditCard) {
+		this.newCreditCard = newCreditCard;
 	}
 
-	@Transient
-	public String getHrSecureCreditCardNumber() {
-		int length = (hrCreditCardNumber != null) ? hrCreditCardNumber.length() : 0;
-		StringBuffer value = new StringBuffer();
-		value.append(StringUtils.substring(hrCreditCardNumber, 0, 4));
-		value.append(StringUtils.repeat("*", length-8));
-		value.append(StringUtils.substring(hrCreditCardNumber, -4, length));
-		return value.toString();
-	}
 	@Transient
 	public String getHrCreditCardNumber() {
 		return hrCreditCardNumber;
@@ -343,19 +333,6 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setHrCreditCardExpirationYear(String hrCreditCardExpirationYear) {
 		this.hrCreditCardExpirationYear = hrCreditCardExpirationYear;
-	}
-
-	@Transient
-	public String getHrSecureCreditCardCvv() {
-		int length = (hrCreditCardCvv != null) ? hrCreditCardCvv.length() : 0;
-		return StringUtils.repeat("*", length);
-	}
-	@Transient
-	public String getHrCreditCardCvv() {
-		return hrCreditCardCvv;
-	}
-	public void setHrCreditCardCvv(String hrCreditCardCvv) {
-		this.hrCreditCardCvv = hrCreditCardCvv;
 	}
 
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})

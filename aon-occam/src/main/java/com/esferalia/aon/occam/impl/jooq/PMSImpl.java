@@ -19,12 +19,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.PMSDAO;
 public class PMSImpl implements IPMS {
 	
 	@Override
-	public void deleteReservationCreditCard(AONContext ctx, Integer reservationId) {
-		ctx.getDslContext().transaction(configuration -> 
-			PMSDAO.deleteReservationCreditCard(ctx, reservationId));
-	}
-
-	@Override
 	public LinkedList<HotelGuestByCountry> getHotelGuestByCountry(AONContext ctx, Integer hotelId, Date date) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			PMSDAO.getHotelGuestByCountry(ctx, hotelId, date));
@@ -84,10 +78,5 @@ public class PMSImpl implements IPMS {
 			PMSDAO.getFailPreauthorizationProjectIdStream(ctx));
 	}
 
-	@Override
-	public void updateToken(AONContext ctx, Integer projectId, String token) {
-		ctx.getDslContext().transaction(configuration -> PMSDAO.updateToken(ctx, projectId, token));
-	}
-	
 	
 }

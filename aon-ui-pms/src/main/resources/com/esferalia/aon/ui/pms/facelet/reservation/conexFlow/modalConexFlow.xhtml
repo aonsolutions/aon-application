@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showConexFlowWindow">
+		<aon:if test="#{controller.showConexFlowWindow}">
+			<rich:modalPanel id="conexFlowModalPanel" minHeight="250" minWidth="525" 
+				rendered="#{controller.showConexFlowWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_external_conexFlow}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{reservation.refreshEntireReservation}"
+							reRender="showConexFlowWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showConexFlowWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="conexFlowForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div id="conexFlowModalToolbar" styleClass="aon-toolbar">
+									<aon:commandButton id="conexFlow-edit"
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										value="#{bundle.aon_reset} #{bundle.conexflow_token}"
+										rendered="#{reservation.reservationPermission.newConexFlowAllowed}"
+										actionListener="#{controller.onNewConexFlow}"
+										reRender="showConexFlowWindow" />
+									<aon:commandButton id="conexFlow-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{bundle.aon_save}"
+										rendered="#{reservation.reservationPermission.saveConexFlowAllowed}"
+										actionListener="#{controller.onSaveConexFlow}"
+										reRender="showConexFlowWindow,aonContent"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										<aon:actionListener method="#{controller.refreshAttachments}" />
+									</aon:commandButton>
+									<aon:commandButton id="conexFlow-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}"
+										actionListener="#{reservation.refreshEntireReservation}"
+										reRender="showConexFlowWindow">
+										<f:setPropertyActionListener
+											target="#{controller.showConexFlowWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:panelGrid id="creditCardGrid" columns="2" dir="true" styleClass="aon-width-all"
+										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto"
+										rendered="#{reservation.reservationPermission.creditCardVisible}">
+
+										<aon:outputLabel for="CreditCard_number"
+											value="#{bundle.aon_credit_card_number}" />
+										<aon:outputText value="#{controller.to.hrCreditCardNumber}" 
+											rendered="#{!reservation.reservationPermission.creditCardDataEditable}"	
+											styleClass="aon-bold" />
+										<aon:inputText id="CreditCard_number" 
+											value="#{controller.to.hrCreditCardNumber}"
+											required="true" size="25" maxlength="20"
+											rendered="#{reservation.reservationPermission.creditCardDataEditable}"	/>
+
+										<aon:outputLabel for="CreditCard_expirationMonth"
+											value="#{bundle.aon_expiration}" />
+										<aon:div>
+											<aon:outputText value="#{controller.to.hrCreditCardExpirationMonth}" 
+												rendered="#{!reservation.reservationPermission.creditCardDataEditable}"	
+												styleClass="aon-bold" />
+											<aon:selectOneMenu id="CreditCard_expirationMonth"
+												value="#{controller.to.hrCreditCardExpirationMonth}" required="true"
+												rendered="#{reservation.reservationPermission.creditCardDataEditable}">
+												<f:selectItem itemLabel="01" itemValue="01" />
+												<f:selectItem itemLabel="02" itemValue="02" />
+												<f:selectItem itemLabel="03" itemValue="03" />
+												<f:selectItem itemLabel="04" itemValue="04" />
+												<f:selectItem itemLabel="05" itemValue="05" />
+												<f:selectItem itemLabel="06" itemValue="06" />
+												<f:selectItem itemLabel="07" itemValue="07" />
+												<f:selectItem itemLabel="08" itemValue="08" />
+												<f:selectItem itemLabel="09" itemValue="09" />
+												<f:selectItem itemLabel="10" itemValue="10" />
+												<f:selectItem itemLabel="11" itemValue="11" />
+												<f:selectItem itemLabel="12" itemValue="12" />
+											</aon:selectOneMenu>
+											<aon:outputLabel value="/" styleClass="aon-bold aon-margin-left aon-margin-right" />
+											<aon:outputText value="#{controller.to.hrCreditCardExpirationYear}" 
+												rendered="#{!reservation.reservationPermission.creditCardDataEditable}"	
+												styleClass="aon-bold" />
+											<aon:selectOneMenu id="CreditCard_expirationYear"
+												value="#{controller.to.hrCreditCardExpirationYear}" required="true"
+												rendered="#{reservation.reservationPermission.creditCardDataEditable}">
+												<f:selectItems value="#{controller.creditCardYears}" />
+											</aon:selectOneMenu>
+										</aon:div>
+
+									</aon:panelGrid>
+
+									<aon:if test="#{controller.reservationConexFlow.conexFlowActive}">
+										<aon:panelGrid id="conexFlowGrid" columns="2" dir="true" styleClass="aon-width-all"
+											columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto"
+											rendered="#{reservation.reservationPermission.conexFlowOperable}">
+
+											<aon:outputLabel value="#{bundle.conexflow_token}" />
+											<aon:outputText value="#{controller.to.token}" 
+												styleClass="aon-bold" />
+
+											<aon:outputLabel for="ConexFlow_amount"
+												value="#{bundle.aon_amount}" />
+											<aon:inputText id="ConexFlow_amount" 
+												value="#{controller.reservationConexFlow.amount}"
+												required="true" size="10" maxlength="10"/>
+
+											<aon:outputLabel for="ConexFlow_operation"
+												value="#{bundle.aon_operation}" />
+											<aon:div>
+												<aon:selectOneMenu id="ConexFlow_operation"
+													value="#{controller.reservationConexFlow.conexflowOperation}" required="true">
+													<f:selectItem itemLabel=" - " itemValue="#{null}" />
+													<aon:if test="#{controller.reservationConexFlow.showPreauthorization}">
+														<f:selectItem itemLabel="#{bundle.pms_preauthorization}" itemValue="P" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.showCharge}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_charge}" itemValue="V" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.showConfirmPreauthorization}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_confirm_preauthorization}" itemValue="C" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.showCancelation}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_cancel_op}" itemValue="A" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.showRefund}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_refund}" itemValue="D" />
+													</aon:if>
+											 		<a4j:support event="onchange" 
+											 			actionListener="#{controller.reservationConexFlow.onConexflowOperationChange}" 
+											 			reRender="conexFlowGrid" ajaxSingle="true" />
+												</aon:selectOneMenu>
+												<aon:commandButton id="conexflow-accept"
+													styleClass="aon-commandButton"
+													value="#{bundle.pms_execute_operation}"
+													actionListener="#{controller.reservationConexFlow.onConexflowOperation}"
+													onclick="Richfaces.showModalPanel('waitProccess')"
+													oncomplete="Richfaces.hideModalPanel('waitProccess')"
+													reRender="conexFlowGrid,showNotifyWindow,aonContent">
+													<aon:actionListener method="#{controller.refreshAttachments}" />
+												</aon:commandButton>
+											</aon:div>
+
+											<aon:if test="#{controller.reservationConexFlow.showCancelationOption}">
+												<aon:outputLabel for="ConexFlow_cancelation"
+													value="#{bundle.aon_cancel}" />
+												<aon:selectOneMenu id="ConexFlow_cancelation"
+													value="#{controller.reservationConexFlow.conexflowOperationCancelation}" required="true">
+													<aon:if test="#{controller.reservationConexFlow.showConfirmPreauthorization}">
+														<f:selectItem itemLabel="#{bundle.pms_preauthorization}" itemValue="P" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.charge}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_charge}" itemValue="V" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.confirmPreauthorization}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_confirm_preauthorization}" itemValue="C" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.refund}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_refund}" itemValue="D" />
+													</aon:if>
+												</aon:selectOneMenu>
+											</aon:if>
+
+											<aon:if test="#{controller.reservationConexFlow.showRefundOption}">
+												<aon:outputLabel for="ConexFlow_refund"
+													value="#{bundle.pms_conexflow_refund}" />
+												<aon:selectOneMenu id="ConexFlow_refund"
+													value="#{controller.reservationConexFlow.conexflowOperationRefund}" required="true">
+													<aon:if test="#{controller.reservationConexFlow.charge}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_charge}" itemValue="V" />
+													</aon:if>
+													<aon:if test="#{controller.reservationConexFlow.confirmPreauthorization}">
+														<f:selectItem itemLabel="#{bundle.pms_conexflow_confirm_preauthorization}" itemValue="C" />
+													</aon:if>
+												</aon:selectOneMenu>
+											</aon:if>
+										</aon:panelGrid>
+									</aon:if>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/conexFlow/modalNotify.xhtml">
+		<ui:param name="controller" value="#{reservation.reservationConexFlow}" />
+	</ui:include>
+</ui:composition>

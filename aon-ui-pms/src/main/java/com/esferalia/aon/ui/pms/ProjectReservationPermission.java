@@ -143,7 +143,7 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isShowMoreMenuAllowed() throws ManagerBeanException {
 		return (isCheckInAllowed() || isCheckOutAllowed() || isEarlyCheckOutAllowed() || isAdvanceInvoiceAllowed() || isInvoiceAllowed() || isNoShowAllowed() 
-				|| isCancelAllowed() || isDivertAllowed() || isCreditCardVisible()) && isMyScope();
+				|| isCancelAllowed() || isDivertAllowed() || isConexFlowVisible()) && isMyScope();
 	}
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {
@@ -307,27 +307,42 @@ public class ProjectReservationPermission implements Serializable {
 		return isRoleAdmin();
 	}
 
-	public boolean isCreditCardVisible() throws ManagerBeanException {
-		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
-		return roleAllowed && reservation.getCreationDate() != null && !reservation.isInvoiced() && !reservation.isNoInvoiceable();
-	}
-
-	public boolean isCreditCardEditable() throws ManagerBeanException {
-		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
-		return roleAllowed && reservation.getCreationDate() != null && reservation.isBlankToken();	
-	}
-
-	public boolean isCreditCardOperable() throws ManagerBeanException {
-		boolean roleAllowed = isRoleFinance();
-		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isNotEmpty(reservation.getToken());
-	}
-
 	public boolean isTouristTaxFreeAllowed() throws ManagerBeanException {
 		return reservation.isActive() && reservation.getTouristTaxFree() == null && reservation.getTouristTaxPending() == reservation.getAdultCount();
 	}
 
 	public boolean isUndoTouristTaxFreeAllowed() throws ManagerBeanException {
 		return reservation.isActive() && reservation.getTouristTaxFree() != null;
+	}
+
+	public boolean isConexFlowVisible() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && !reservation.isInvoiced() && !reservation.isNoInvoiceable() && getReservationUtils().isConexFlowAvailable();
+	}
+
+	public boolean isNewConexFlowAllowed() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && !reservation.isNewCreditCard();
+	}
+
+	public boolean isSaveConexFlowAllowed() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && reservation.isNewCreditCard();
+	}
+
+	public boolean isCreditCardVisible() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && (StringUtils.isNotBlank(reservation.getCreditCardNumber()) || reservation.isNewCreditCard());
+	}
+
+	public boolean isCreditCardDataEditable() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && reservation.isNewCreditCard();
+	}
+
+	public boolean isConexFlowOperable() throws ManagerBeanException {
+		boolean roleAllowed = isRoleFinance();
+		return roleAllowed && !reservation.isBlankToken() && !reservation.isNewCreditCard();
 	}
 
 	public boolean isTokenRemoveEnable() {

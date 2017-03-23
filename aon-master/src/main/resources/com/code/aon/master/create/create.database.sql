@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.94.1
+# Version: 8.96.0
 # Created by: girazu
-# Creation Date: 08/03/2017 12:50
+# Creation Date: 17/03/2017 14:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2177,11 +2177,9 @@ CREATE TABLE `project_reservation` (
   `early_check_out` tinyint(1) DEFAULT '0' COMMENT 'Indica si se ha producido una salida anticipada',
   `prepay` tinyint(1) DEFAULT '0' COMMENT 'Indica si es un prepago',
   `bank_transaction` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de transaccion bancaria',
-  `credit_card_holder` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Titular de la tarjeta de credito',
-  `credit_card_number` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de la tarjeta de credito',
-  `credit_card_expiration_month` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mes de expiracion de la tarjeta de credito',
-  `credit_card_expiration_year` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Año de expiracion de la tarjeta de credito',
-  `credit_card_cvv` varchar(24) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de seguridad de la tarjeta de credito',
+  `credit_card_number` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Ultimos 4 numeros de la tarjeta de credito',
+  `credit_card_expiration_month` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mes de expiracion de la tarjeta de credito',
+  `credit_card_expiration_year` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Año de expiracion de la tarjeta de credito',
   `token` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token de preautorizacion de cobro',
   `penalty_value` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Valor de penalizacion (patron)',
   `penalty_amount` double(15,2) DEFAULT '0.00' COMMENT 'Importe de penalizacion',
@@ -8360,7 +8358,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.94.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.96.0');
 
 COMMIT;
 
