@@ -66,7 +66,7 @@ public class Sale {
 				if(cf == null && sFail == null && pcFail == null && scFail == null){
 					ConexFlowConnection connection = DBConsults.getConection(d);
 					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
-						r.getAdvance(), r.getHotelReservation().toString(), r.getCreditCardCvv());
+						r.getAdvance(), r.getHotelReservation().toString(), null);
 					ConexFlow conexFlow = ConexFlowPost.execute(connection, ConexFlowStatus.SALE.getName(), query);
 					Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
 					conexFlow.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);

@@ -23,10 +23,8 @@ public class ProjectReservation implements Serializable{
 	Integer company;
 	Date creationDate;
 	String creationUser;
-	String creditCardCvv;
 	String creditCardExpirationMonth;
 	String creditCardExpirationYear;
-	String creditCardHolder;
 	String creditCardNumber;
 	String crsCode;
 	Double discountAmount;
@@ -171,13 +169,6 @@ public class ProjectReservation implements Serializable{
 		this.creationUser = creationUser;
 		return this;
 	}
-	public String getCreditCardCvv() {
-		return creditCardCvv;
-	}
-	public ProjectReservation setCreditCardCvv(String creditCardCvv) {
-		this.creditCardCvv = creditCardCvv;
-		return this;
-	}
 	public String getCreditCardExpirationMonth() {
 		return creditCardExpirationMonth;
 	}
@@ -190,13 +181,6 @@ public class ProjectReservation implements Serializable{
 	}
 	public ProjectReservation setCreditCardExpirationYear(String creditCardExpirationYear) {
 		this.creditCardExpirationYear = creditCardExpirationYear;
-		return this;
-	}
-	public String getCreditCardHolder() {
-		return creditCardHolder;
-	}
-	public ProjectReservation setCreditCardHolder(String creditCardHolder) {
-		this.creditCardHolder = creditCardHolder;
 		return this;
 	}
 	public String getCreditCardNumber() {
