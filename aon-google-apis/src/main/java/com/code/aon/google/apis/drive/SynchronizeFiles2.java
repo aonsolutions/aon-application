@@ -91,7 +91,7 @@ public class SynchronizeFiles2 {
 		}
 		if (map.containsKey("contract")){
 			Integer perPage = 10;
-			Integer page = 0;
+			Integer page = 1;
 			while(perPage == 10){
 				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
@@ -102,7 +102,7 @@ public class SynchronizeFiles2 {
 		}
 		if (map.containsKey("item")){
 			Integer perPage = 10;
-			Integer page = 0;
+			Integer page = 1;
 			while(perPage == 10){
 				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
@@ -113,7 +113,7 @@ public class SynchronizeFiles2 {
 		}
 		if (map.containsKey("invoice")){
 			Integer perPage = 10;
-			Integer page = 0;
+			Integer page = 1;
 			while(perPage == 10){
 				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
@@ -124,7 +124,7 @@ public class SynchronizeFiles2 {
 		}
 		if (map.containsKey("offer")){
 			Integer perPage = 10;
-			Integer page = 0;
+			Integer page = 1;
 			while(perPage == 10){
 				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
@@ -135,7 +135,7 @@ public class SynchronizeFiles2 {
 		}	
 		if (map.containsKey("payroll")){
 			Integer perPage = 10;
-			Integer page = 0;
+			Integer page = 1;
 			while(perPage == 10){
 				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
@@ -146,7 +146,7 @@ public class SynchronizeFiles2 {
 		}
 		if (map.containsKey("project")){
 			Integer perPage = 10;
-			Integer page = 0;
+			Integer page = 1;
 			while(perPage == 10){
 				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
@@ -157,7 +157,7 @@ public class SynchronizeFiles2 {
 		}
 		if (map.containsKey("sepe")){
 			Integer perPage = 10;
-			Integer page = 0;
+			Integer page = 1;
 			while(perPage == 10){
 				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
