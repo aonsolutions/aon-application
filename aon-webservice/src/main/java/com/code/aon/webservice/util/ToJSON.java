@@ -17,6 +17,8 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -335,6 +337,34 @@ public class ToJSON {
 			.put("product_code", deliveryDetail.getProductCode())
 			.put("product_name", deliveryDetail.getProductName())
 			;
+	}
+	
+	public static JSONObject salesToJSON(Sales sales) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		String seriesNumber = (sales.getSeries() != null ? sales.getSeries() + "/" : "") + sales.getNumber();
+		return new JSONObject()
+		.put(MSG.ID, sales.getId())
+		.put(MSG.DOMAIN, sales.getDomain())
+		.put("series_number", seriesNumber)
+		.put(MSG.SERIES, sales.getSeries())
+		.put(MSG.NUMBER, sales.getNumber())
+		.put(MSG.REGISTRY, new JSONObject())
+		.put(MSG.ID, sales.getCustomer()) 
+		.put(MSG.ISSUE_DATE, sales.getIssueDate() != null ? dateFormat.format(sales.getIssueDate()) : "")
+		.put("reference", sales.getPurchaseReference() != null ? sales.getPurchaseReference() : " ");
+	}
+	
+	public static JSONObject salesDetailToJSON(SalesDetail detail) {
+		return new JSONObject()
+		.put(MSG.ID, detail.getId())
+		.put(MSG.DOMAIN, detail.getDomain())
+		.put("price", detail.getPrice())
+		.put("quantity", detail.getQuantity())
+		.put("discount_expr", detail.getDiscountExpression())
+		.put("line", detail.getLine())
+		.put("item", detail.getItem())
+		.put("description", detail.getDescription())
+		;
 	}
 	
 	public static JSONObject objectToJSON(Integer id, String name) {

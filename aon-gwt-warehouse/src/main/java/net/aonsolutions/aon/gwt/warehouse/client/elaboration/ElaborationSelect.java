@@ -80,6 +80,16 @@ public class ElaborationSelect extends Composite{
 	private JsElaboration jsElaboration;
 	private JsElaborationDetail jsElaborationDetail;
 	
+	public ElaborationSelect(MainElaboration elaboration) {
+		dataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
+				JsElaborationDetailComposition.PROVIDES_KEY);
+		initWidget(binder.createAndBindUi(this));
+		this.API = elaboration.API;
+		this.parent = elaboration;
+		this.jsElaboration = parent.getJsElaboration();
+		load();
+	}
+
 	public ElaborationSelect(MainElaboration elaboration, JsElaboration jsElaboration) {
 		dataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
 				JsElaborationDetailComposition.PROVIDES_KEY);

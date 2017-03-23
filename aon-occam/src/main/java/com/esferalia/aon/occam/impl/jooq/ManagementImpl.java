@@ -12,11 +12,16 @@ import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.management.SalesDetailFilter;
+import com.esferalia.aon.occam.api.model.management.SalesFilter;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 
 public class ManagementImpl implements IManagement {
 
@@ -25,6 +30,19 @@ public class ManagementImpl implements IManagement {
 		return OfferDAO.getOfferDetails(ctx, filter);
 	}
 
+	// ------------------ SALES
+	@Override
+	public Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SalesDAO.getSalesStream(ctx, filter));
+	}
+	
+	@Override
+	public Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SalesDAO.getSalesDetailStream(ctx, filter));
+	}
+	
 	// ------------------ PURCHASE
 	
 	@Override
