@@ -4,12 +4,20 @@
 		roleClassNames="com.code.aon.jaas.auth.SimpleGroup" 
 		useContextClassLoader="false" 
 		userClassNames="com.code.aon.jaas.auth.AuthPrincipal"/>
-	<!--  
-	<Manager
-		className="de.javakaffee.web.msm.MemcachedBackupSessionManager"
-		memcachedNodes="n1:localhost:11211"
-		requestUriIgnorePattern="(.*/aon-aio/testServlet.*|.*\.(ico|png|gif|jpg|css|js|logo)$)"
-		transcoderFactoryClass="de.javakaffee.web.msm.JavaSerializationTranscoderFactory">
- 	</Manager> 
- 	-->  		
+	<!--
+	The following example shows a configuration for non-sticky sessions.
+	In this case there's no need for failoverNodes, as sessions are served by
+	all tomcats round-robin and they're not bound to a single tomcat.
+	For non-sticky sessions the configuration (for both/all tomcats) would look like this
+	-->
+        <!--Manager
+		sticky="false"
+		lockingMode="none"
+		sessionBackupAsync="false"
+		requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js|logo)$"
+                className="de.javakaffee.web.msm.MemcachedBackupSessionManager"
+                memcachedNodes="MEMCACHED_NODES"
+		transcoderFactoryClass="de.javakaffee.web.msm.JavaSerializationTranscoderFactory"
+	>
+        </Manager-->
 </Context>
