@@ -105,12 +105,10 @@ public class ProjectDAO {
 		@Override public Property<Byte> getEarlyCheckOutProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.EARLY_CHECK_OUT);}
 		@Override public Property<Byte> getPrepayProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.PREPAY);}
 		@Override public Property<String> getBankTransactionProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.BANK_TRANSACTION);}
-		@Override public Property<String> getCreditCardHolderProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_HOLDER);}
 		@Override public Property<String> getCreditCardNumberProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_NUMBER);}
 		@Override public Property<String> getCreditCardExpirationMonthProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_MONTH);}
 		@Override public Property<String> getCreditCardExpirationYearProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_YEAR);}
-		@Override public Property<String> getCreditCardCvvProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_CVV);}
-		@Override public Property<String> getCreditPenaltyValueProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.PENALTY_VALUE);}
+		@Override public Property<String> getPenaltyValueProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.PENALTY_VALUE);}
 		@Override public Property<Byte> getTouristTaxFreeProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.TOURIST_TAX_FREE);}
 		@Override public Property<Byte> getCheckStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.CHECK_STATUS);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREATION_USER);}
@@ -181,10 +179,8 @@ public class ProjectDAO {
 					.setCompany(r.getCompany())
 					.setCreationDate(r.getCreationDate())
 					.setCreationUser(r.getCreationUser())
-					.setCreditCardCvv(r.getCreditCardCvv())
 					.setCreditCardExpirationMonth(r.getCreditCardExpirationMonth())
 					.setCreditCardExpirationYear(r.getCreditCardExpirationYear())
-					.setCreditCardHolder(r.getCreditCardHolder())
 					.setCreditCardNumber(r.getCreditCardNumber())
 					.setCrsCode(r.getCrsCode())
 					.setDiscountAmount(r.getDiscountAmount())

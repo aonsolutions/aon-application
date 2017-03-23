@@ -553,12 +553,10 @@ public interface Properties {
 		Property<Byte> getEarlyCheckOutProperty();
 		Property<Byte> getPrepayProperty();
 		Property<String> getBankTransactionProperty();
-		Property<String> getCreditCardHolderProperty();
 		Property<String> getCreditCardNumberProperty();
 		Property<String> getCreditCardExpirationMonthProperty();
 		Property<String> getCreditCardExpirationYearProperty();
-		Property<String> getCreditCardCvvProperty();
-		Property<String> getCreditPenaltyValueProperty();	
+		Property<String> getPenaltyValueProperty();	
 		Property<Byte> getTouristTaxFreeProperty();
 		Property<Byte> getCheckStatusProperty();
 		Property<String> getCancellationUserProperty();
