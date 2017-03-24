@@ -426,7 +426,8 @@
 											<include>com.code.aon:aon.asset:${project.version}</include>
 											<include>com.code.aon:aon.finance:${project.version}</include>
 											<include>com.code.aon:aon.warehouse:${project.version}</include>
-											
+											<include>com.code.aon:aon.google.apis:${project.version}</include>
+
 											<include>com.esferalia.aon:aon.entity.alias:${project.version}</include>
 										</includes>
 									</dependency>
