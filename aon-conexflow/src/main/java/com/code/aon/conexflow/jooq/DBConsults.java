@@ -158,6 +158,11 @@ public class DBConsults {
 		AON.update(domain.getName(), domain.getId(), login, attach);
 	}
 	
+	public static void updateConexFlowPayslipDescription(Domain domain, String login, String filter, String description){
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getDescriptionProperty().eq(filter), AttachType.PROJECT);
+		attach.setDescription(description);
+		AON.update(domain.getName(), domain.getId(), login, attach);
+	}
 	
 	public static ConexFlow getConexFlowLastOperation(Domain domain, Integer project){
 		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH

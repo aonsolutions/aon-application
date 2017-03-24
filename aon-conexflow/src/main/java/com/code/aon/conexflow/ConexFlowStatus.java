@@ -58,7 +58,12 @@ public enum ConexFlowStatus {
 	
 	//-------------------- TRANSACTION INFO
 	TRANSACTION_INFO("S"),		
-	TRANSACTION_INFO_FAIL("S-FAIL")
+	TRANSACTION_INFO_FAIL("S-FAIL"),
+	
+	//-------------------- PAYSLIP
+	PAYSLIP("PAYSLIP"),
+	PAYSLIP_CANCEL("PAYSLIP-CANCEL"),
+	PAYSLIP_REFUND("PAYSLIP-REFUND")
 	;
 	
 	private String name;
@@ -98,6 +103,7 @@ public enum ConexFlowStatus {
 		if(this.equals(REFUND)){return REFUND_CANCEL;}
 		if(this.equals(REDEMPTION)){return REDEMPTION_CANCEL;}
 		if(this.equals(ISSUE)){return ISSUE_CANCEL;}
+		if(this.equals(PAYSLIP)){return PAYSLIP_CANCEL;}
 		return this;
 	}
 	
@@ -113,6 +119,7 @@ public enum ConexFlowStatus {
 		if(DELETE_TOKEN.getName().equalsIgnoreCase(name)){return DELETE_TOKEN;}
 		if(VALIDATE_CARD.getName().equalsIgnoreCase(name)){return VALIDATE_CARD;}
 		if(TRANSACTION_INFO.getName().equalsIgnoreCase(name)){return TRANSACTION_INFO;}
+		if(PAYSLIP.getName().equalsIgnoreCase(name)){return PAYSLIP;}
 		return null;
 	}
 	
@@ -163,6 +170,12 @@ public enum ConexFlowStatus {
 		if(name.contains(TRANSACTION_INFO_FAIL.getName()+"#")){return TRANSACTION_INFO_FAIL;}
 		if(name.contains(TRANSACTION_INFO.getName()+"#")){return TRANSACTION_INFO;}
 		
+		// No llevan # porque en la descripción del project_attach le sigue
+		// el id del project_attach al que afecta el payslip y luego #	
+		if(name.contains(PAYSLIP.getName())){return PAYSLIP;}
+		if(name.contains(PAYSLIP_CANCEL.getName())){return PAYSLIP_CANCEL;}
+		if(name.contains(PAYSLIP_REFUND.getName())){return PAYSLIP_REFUND;}
+
 		return null;
 	}
 	
