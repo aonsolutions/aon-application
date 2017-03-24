@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -133,7 +134,8 @@ public class ConexFlowUtils {
 					.setDescription(description)
 					.setData(b)
 					.setConfidential(false)
-					.setDate(new Date());
+					.setDate(new Date())
+					.setType(ProjectAttachmentType.PAYSLIP.value());
 			AON.insert(domain.getName(), domain.getId(), "",attach);
 		} catch (IOException e) {
 			e.printStackTrace();

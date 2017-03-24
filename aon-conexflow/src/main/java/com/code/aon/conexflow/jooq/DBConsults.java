@@ -159,7 +159,9 @@ public class DBConsults {
 	}
 	
 	public static void updateConexFlowPayslipDescription(Domain domain, String login, String filter, String description){
-		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getDescriptionProperty().eq(filter), AttachType.PROJECT);
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> 
+			f.getDescriptionProperty().eq(filter).and(f.getTypeProperty().eq(ProjectAttachmentType.PAYSLIP.value()))
+			, AttachType.PROJECT);
 		attach.setDescription(description);
 		AON.update(domain.getName(), domain.getId(), login, attach);
 	}

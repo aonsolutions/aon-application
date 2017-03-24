@@ -4,7 +4,8 @@ public enum ProjectAttachmentType {
 
 	DOCUMENT,
 	CRS,
-	CONEXFLOW
+	CONEXFLOW,
+	PAYSLIP
 	;
 	
 	public byte value() {

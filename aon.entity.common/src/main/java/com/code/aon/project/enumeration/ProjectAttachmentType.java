@@ -9,7 +9,8 @@ public enum ProjectAttachmentType implements IResourceable {
 	
 	DOCUMENT,
 	CRS,
-	CONEXFLOW;
+	CONEXFLOW,
+	PAYSLIP;
 
     private static final String MSG_KEY_PREFIX = "aon_enum_project_attachment_type_";
 
