@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -387,33 +389,62 @@ public class EmployeeCalendarDraftObjectData {
 		return v instanceof CalendarVariable ;
 	}
 	
-	//TODO: creacion variables del coeficienteERE
+	//Creacion variables del coeficienteERE
 	public ArrayList<StringVariable> getVariablesListCE(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		List<Date> orderDraftDatesCE = draftMapaDiasCoeficienteEre.keySet().stream().collect(Collectors.toList());
+		Collections.sort(orderDraftDatesCE);
 		
-		for (Entry<Date,Double> entry : draftMapaDiasCoeficienteEre.entrySet()) {		
-			if (startDate.compareTo(entry.getKey())<=0 
-					&& endDate.compareTo(entry.getKey())>=0 ){
+		CalendarVariable var = null;
+		Date dateBefore = null;
+		String name = "COEFICIENTE_ERE";
+		
+		for(Date date : orderDraftDatesCE){
+			//Filtrar que este dentro del rango que se pasa de fechas
+			if(date.before(startDate))
+				continue;
+			if(date.after(endDate))
+				continue;
+			
+			if(isNext(date, dateBefore)){
+				var.setEndDate(date);
+				dateBefore = DateUtils.copyDateOnly(date);
+				continue;
+			}else{
+				//Buscar cómo meter el primer caso
+				if(var != null){
+					variablesList.add(var);
+				}	
 				
-				String name = "COEFICIENTE_ERE";
+				dateBefore = DateUtils.copyDateOnly(date);
 				
-				CalendarVariable var = new CalendarVariable();
+				var = new CalendarVariable();
 				var.setImplicit(false);
 				var.setScope(Scope.SALARY); // DRAFT
 				var.setName(name);
-				var.setEndDate(entry.getKey());
-				var.setStartDate(entry.getKey());
-				var.setExpression(Double.toString(entry.getValue()));
-				
-				variablesList.add(var);	
-			}
+				var.setEndDate(date);
+				var.setStartDate(date);
+				var.setExpression(Double.toString(draftMapaDiasCoeficienteEre.get(date)));
+			}	
+		}
+		
+		if(var != null){
+			variablesList.add(var);
 		}
 		
 		return variablesList;
 	}
 	
-	
+	//Comprobar si el son consecutivos
+	private boolean isNext(Date date, Date dateBefore) {
+		if(dateBefore == null)
+			return false;
+		else if(DateUtils.addDays2Date(dateBefore, 1).equals(date))
+			return true;
+		else
+			return false;
+	}
 
 	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
 

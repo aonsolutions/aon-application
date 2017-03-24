@@ -121,12 +121,14 @@ public class JooqEmployeeCalendar {
 				listaDiasDefinidos.add(r.get(CONTRACT_DATA.NAME));
 			}
 			
-			for (int i=0; i<contratoInfoEmpleado.size(); i++){
+			for (int i=0; i<7; i++){
 				String diaSemana = listaDiasSemana[i];
-				String value = getValueDayOfWeek(contratoInfoEmpleado, diaSemana);
+				ArrayList<String> values = getValueDayOfWeek(contratoInfoEmpleado, diaSemana);
 				if (!listaDiasDefinidos.contains(diaSemana)){
 					listaNoLaborablesContrato.add((byte) 1);
-				}else if (null == value || "-1.0".equals(value)){
+				}else if (values.size() > 1){
+					listaNoLaborablesContrato.add((byte) 0);
+				}else if (null == values || values.isEmpty() || "-1.0".equals(values.get(0))){
 					listaNoLaborablesContrato.add((byte) 1);
 				}else{
 					listaNoLaborablesContrato.add((byte) 0);
@@ -244,11 +246,11 @@ public class JooqEmployeeCalendar {
 		return employeeInfoCalendar;
 	}
 	
-	private static String getValueDayOfWeek(Result<Record> contratoInfoEmpleado, String diaSemana) {
-		String result = "";
+	private static ArrayList<String> getValueDayOfWeek(Result<Record> contratoInfoEmpleado, String diaSemana) {
+		ArrayList<String> result = new ArrayList<String>();
 		for(Record r: contratoInfoEmpleado){
 			if(diaSemana.equals(r.get(CONTRACT_DATA.NAME))){
-				result = r.get(CONTRACT_DATA.EXPRESSION);
+				result.add(r.get(CONTRACT_DATA.EXPRESSION));
 			}
 		}
 		return result;
