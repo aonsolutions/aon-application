@@ -44,6 +44,8 @@ import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationDB;
@@ -301,6 +303,23 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		} else {
 			return NumberUtils.toDouble(StringUtils.substringBetween(lastCfOperation, "#", "_"));
 		}
+	}
+	
+	@Transient
+	public boolean isConexFlowPayslip() {
+		try {
+			IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), getId());
+			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.PAYSLIP);
+			Expression exp = ExpressionUtilities.getLikeExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_DESCRIPTION), 
+					"CONEXFLOW%PAYSLIP#%");
+			criteria.addExpression(exp);
+			return pAttachBean.getList(criteria).size() > 0;
+		} catch(ManagerBeanException ex) {
+			LOGGER.error("Error obtaining conexFlow payslip", ex);
+		}
+		return false;
 	}
 
 	@Transient

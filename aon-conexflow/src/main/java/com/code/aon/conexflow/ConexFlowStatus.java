@@ -170,11 +170,9 @@ public enum ConexFlowStatus {
 		if(name.contains(TRANSACTION_INFO_FAIL.getName()+"#")){return TRANSACTION_INFO_FAIL;}
 		if(name.contains(TRANSACTION_INFO.getName()+"#")){return TRANSACTION_INFO;}
 		
-		// No llevan # porque en la descripción del project_attach le sigue
-		// el id del project_attach al que afecta el payslip y luego #	
-		if(name.contains(PAYSLIP.getName())){return PAYSLIP;}
-		if(name.contains(PAYSLIP_CANCEL.getName())){return PAYSLIP_CANCEL;}
-		if(name.contains(PAYSLIP_REFUND.getName())){return PAYSLIP_REFUND;}
+		if(name.contains(PAYSLIP.getName()+"#")){return PAYSLIP;}
+		if(name.contains(PAYSLIP_CANCEL.getName()+"#")){return PAYSLIP_CANCEL;}
+		if(name.contains(PAYSLIP_REFUND.getName()+"#")){return PAYSLIP_REFUND;}
 
 		return null;
 	}

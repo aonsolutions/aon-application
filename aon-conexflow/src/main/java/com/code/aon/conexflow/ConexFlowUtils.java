@@ -232,7 +232,7 @@ public class ConexFlowUtils {
 	
 	public static void setVoucher(Domain domain, Integer project, ConexFlow cf) {
 		Respuesta r = cf.getRespuesta();
-		String description = "CONEXFLOW_("+ r.getToken().substring(r.getToken().length()-5) +")_PAYSLIP"+  cf.getId() +"#" + r.getImporte();
+		String description = "CONEXFLOW_("+ cf.getQuery().getDocumento().substring(cf.getQuery().getDocumento().length()-5) +")_PAYSLIP#" + cf.getId() +"#" + r.getImporte();
 		Query q = cf.getQuery();
 		String aut;
 		if(cf.getRespuesta().getOperacion().equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))

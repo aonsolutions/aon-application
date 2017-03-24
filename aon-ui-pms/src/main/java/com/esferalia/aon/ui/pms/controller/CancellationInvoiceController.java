@@ -317,6 +317,8 @@ public class CancellationInvoiceController extends BasicController implements IP
 										+ ConexFlowStatus.PREAUTHORIZATION_PAID.getName() + "#" + preauthorization.getRespuesta().getImporte();
 								DBConsults.updateConexFlowDescription(domain, user, preauthorization.getId(), description2);	
 								chargeableReservations.add(reservationId);
+								// CREACION  DEL PAYSLIP PARA LA CONFIRMACION DE PREAUTHORIZACION
+								ConexFlowUtils.setVoucher(getDomain(), reservationId, confirmPreauthorization);
 							}			
 						}
 					
@@ -333,6 +335,8 @@ public class CancellationInvoiceController extends BasicController implements IP
 								
 							if (ok) {
 								chargeableReservations.add(reservationId);
+								// CREACION  DEL PAYSLIP PARA LA CARGO DIRECTO
+								ConexFlowUtils.setVoucher(getDomain(), reservationId, conexFlow2);
 							}
 						}
 					}

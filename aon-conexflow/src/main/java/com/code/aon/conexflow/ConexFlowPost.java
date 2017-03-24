@@ -40,8 +40,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.code.aon.conexflow.ConexFlow.Query;
-import com.code.aon.conexflow.jooq.DBConsults;
-import com.esferalia.aon.occam.api.model.Domain;
 
 public class ConexFlowPost implements  Serializable {
 	
@@ -50,7 +48,6 @@ public class ConexFlowPost implements  Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String RESULT_OK = "000";
 	private static final String TLS = "TLS";
 	private static final String HTTPS = "https";
 	
@@ -74,49 +71,6 @@ public class ConexFlowPost implements  Serializable {
 		return null;
 	}
 	
-	/**
-	 * Realiza la operación (op) de ConexFlow dada. Se envía una petición POST a
-	 * ConexFlow, guarda en base de datos (project_attach) el archivo xml de
-	 * respuesta y devuelve la respuesta correspondiente.
-	 * 
-	 * @param connection, Datos de conexión a ConexFlow.
-	 * @param op, Operación ConexFlow a realizar.
-	 * @param query, Información de la petición.
-	 * @param project, Id de project en base de datos.
-	 * @param domain, Dominio de la empresa.
-	 * @param check, True sii es una preautorización para comprobar la validez
-	 * de la tarjeta a la hora de crear el Token.
-	 * @return ConexFlow, Datos de la operación realizada.
-	 */
-	public static ConexFlow execute(ConexFlowConnection connection, String op, Query query, Integer project, Domain domain, Boolean check) {
-		try {
-			//Enviar petición POST a ConexFlow, devuelve archivo xml con la respuesta.
-			byte[] xmlFile = sendPostHttpClient(connection, op, query);
-			ConexFlow conexFlow = XMLUtils.readXml(xmlFile, query);
-			
-			//Guardar Operacion en project_attach (response en xml) 
-			if(!check && conexFlow.getRespuesta().getResultado().equals(RESULT_OK)){
-				if(!op.equals(ConexFlowConstant.VALIDATE_CARD_OP)){
-					DBConsults.insertConexFlowOperation(domain, xmlFile, project,op);
-					if(op.equals(ConexFlowConstant.SALE_OP))
-						ConexFlowUtils.setVoucher(domain, project, conexFlow);
-					if(op.equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
-						ConexFlowUtils.setVoucher(domain, project, conexFlow);
-					if(op.equals(ConexFlowConstant.CANCELATION_OP)){
-						DBConsults.delete(domain, project, query.getOperacionOriginal());
-					}
-				}
-			}else{
-				DBConsults.insertCheckConexFlowOperation(domain, xmlFile, project, op, conexFlow.getRespuesta().getResultado().equals(RESULT_OK));
-			}
-			
-			return conexFlow;			
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return null;
-	}
-
 	/**
 	 * Envía petición POST a ConexFlow y devuelve archivo xml con la respuesta.
 	 * 
