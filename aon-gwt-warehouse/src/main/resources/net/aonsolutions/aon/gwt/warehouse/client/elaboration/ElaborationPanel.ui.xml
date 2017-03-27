@@ -22,13 +22,15 @@
 						-->
 						<g:TextBox ui:field="series" width="50px"
 							styleName="{aonResources.css.aonTextBox}" />
+						<g:InlineLabel text="/"
+							styleName="{aonResources.css.aonMargin}" />
 						<g:TextBox ui:field="number" width="50px"
 							styleName="{aonResources.css.aonTextBox}" />
 						<!--  
 						<g:ListBox ui:field="status" styleName="{aonResources.css.aonListBox}" />
 						-->
 						<g:InlineLabel ui:field="status" 
-							styleName="{aonResources.css.aonMarginLeft}" />
+							styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonNowrap}" />
 					</g:HorizontalPanel>
 				</td>
 

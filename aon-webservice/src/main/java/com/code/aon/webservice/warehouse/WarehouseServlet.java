@@ -172,7 +172,11 @@ public class WarehouseServlet extends HttpServlet{
 			}
 			else if(MSG.ELABORATION.equals(pathInfo[3])){
 				if(pathInfo.length > 4){ 
-					 
+					if(MSG.UPDATE.equals(pathInfo[4])){
+						object = DBWarehouse.updateElaboration(domain, userName, json);
+					} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[4])){
+						object = DBWarehouse.deleteElaboration(domain, userName, json);
+					}
 				} else {
 					object = insertElaboration(domain, userName, json);
 				}	

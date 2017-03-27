@@ -251,10 +251,22 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public Integer insertElaboration(AONContext ctx, Elaboration elaboration) {
 		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDAO.insertElaboration(ctx, elaboration));
+			ElaborationDAO.insertElaboration(ctx, elaboration));
+	}
+	
+	@Override
+	public Elaboration updateElaboration(AONContext ctx, Elaboration elaboration) {
+		return (Elaboration) ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.updateElaboration(ctx, elaboration));
 	}
 
-
+	@Override
+	public Elaboration deleteElaboration(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.deleteElaboration(ctx, id));
+	}
+	
+	// -------------------------- INCOME
 	@Override
 	public Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration ->

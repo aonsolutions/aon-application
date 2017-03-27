@@ -2755,6 +2755,26 @@ public class AON {
 		}
 	}
 	
+	public static Elaboration updateElaboration(String domainName, Integer domainId, String login, Elaboration elaboration) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().updateElaboration(ctx, elaboration);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Elaboration deleteElaboration(String domainName, Integer domainId, String login, Integer elaborationId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().deleteElaboration(ctx, elaborationId);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static List<ElaborationDetail> getElaborationDetailList(
 			String domainName, Integer domainId, String login,
 			Integer elaborationId) {

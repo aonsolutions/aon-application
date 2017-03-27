@@ -30,6 +30,7 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -185,9 +186,22 @@ public class ElaborationSelect extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsElaborationDetail> result) {
-				result.getData().stream().forEach(js -> 
-				selectable.addItem(js.getQuantity() + " x " +js.getItem().getName() + " - #SN"
-				,js.getId()+""));
+				result.getData().stream().forEach(js -> selectable
+						.addItem(js.getQuantity() + " uds. (#SN)" + js.getItem().getName(), js.getId() + ""));
+				if (result.getData().length() == 1) {
+					selectable.setSelectedIndex(0);
+					selectable.fireEvent(new GwtEvent<ClickHandler>() {
+						@Override
+						public GwtEvent.Type<ClickHandler> getAssociatedType() {
+							return ClickEvent.getType();
+						}
+
+						@Override
+						protected void dispatch(ClickHandler handler) {
+							handler.onClick(null);
+						}
+					});
+				}
 			}
 			
 			@Override
@@ -204,45 +218,6 @@ public class ElaborationSelect extends Composite{
 				
 				selectedItems(Integer.parseInt(value), false);
 				
-//				if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
-//					API.getWarehouse().getPurchase(Integer.parseInt(value),new AsyncCallback<JSON<JsOrder>>() {
-//					
-//						@Override
-//						public void onSuccess(JSON<JsOrder> result) {
-//							API.getWarehouse().getPurchaseDetails(result.getOneData().getId(), new AsyncCallback<JSON<JsOrderDetail>>() {
-//							
-//								@Override
-//								public void onSuccess(JSON<JsOrderDetail> details) {
-//									parent.southContent(jsCarrierPacking, result.getOneData(), details.getData());
-//								}
-//								
-//								@Override public void onFailure(Throwable caught) {}
-//							});
-//						}
-//					
-//						@Override
-//						public void onFailure(Throwable caught) {}
-//					});
-//				} else {
-//					API.getWarehouse().getDelivery(Integer.parseInt(value),new AsyncCallback<JSON<JsOrder>>() {
-//						
-//						@Override
-//						public void onSuccess(JSON<JsOrder> result) {
-//							API.getWarehouse().getDeliveryDetails(result.getOneData().getId(), new AsyncCallback<JSON<JsOrderDetail>>() {
-//							
-//								@Override
-//								public void onSuccess(JSON<JsOrderDetail> details) {
-//									parent.southContent(jsCarrierPacking, result.getOneData(), details.getData());
-//								}
-//								
-//								@Override public void onFailure(Throwable caught) {}
-//							});
-//						}
-//					
-//						@Override
-//						public void onFailure(Throwable caught) {}
-//					});
-//				}
 			}
 		};
 	}
