@@ -55,6 +55,13 @@ public class ProductServlet extends HttpServlet{
 					}
 					break;
 				default:
+					Integer id;
+					try {
+						id = Integer.parseInt(pathInfo[3]);
+						object = getProduct(domain, userName, id);
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+					}
 					break;
 				}
 				
@@ -76,15 +83,19 @@ public class ProductServlet extends HttpServlet{
     	return array;
     }
     
+    private Object getProduct(Domain domain, String userName, int id) {
+		return ToJSON.productToJSON(AON.getProduct(domain.getName(), domain.getId(), userName, id));
+    }
+    
     private Object getItem(Domain domain, String userName, int id) {
-		return ToJSON.itemToJSON(AON.getItem(domain.getName(), domain.getId(), userName, id));
+    	return ToJSON.itemToJSON(AON.getItem(domain.getName(), domain.getId(), userName, id));
     }
     
     private JSONArray getItemList(Domain domain, String login){
     	JSONArray array = new JSONArray();
     	AON.getItemList(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId()))
-    			.forEach(pc -> array.put(ToJSON.itemToJSON(pc)));
+    			.forEach(i -> array.put(ToJSON.itemToJSON(i)));
     	return array;
     }
   

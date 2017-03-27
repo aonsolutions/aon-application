@@ -2,12 +2,12 @@ package net.aonsolutions.aon.gwt.warehouse.client.elaboration;
 
 import java.util.Date;
 
-import net.aonsolutions.aon.gwt.warehouse.client.widget.ItemBox;
+import net.aonsolutions.aon.gwt.warehouse.client.widget.ProductBox;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
-import com.esferalia.aon.gwt.api.client.product.JsItem;
+import com.esferalia.aon.gwt.api.client.product.JsProduct;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
@@ -18,6 +18,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -121,15 +122,16 @@ public class ElaborationPanel extends Composite {
 //		comments.setVisibleLines(3);
 
 		if(jsElaboration != null && jsElaboration.getItem() != null){
-			API.getProduct().getItem(jsElaboration.getItem().getId(), new AsyncCallback<JSON<JsItem>>() {
+			Window.alert(jsElaboration.getItem().getId()+" - "+jsElaboration.getItem().getProductId());
+			API.getProduct().getProduct(jsElaboration.getItem().getProductId(), new AsyncCallback<JSON<JsProduct>>() {
 				
 				@Override
-				public void onSuccess(JSON<JsItem> result) {
-					ItemBox ib = new ItemBox(API);
+				public void onSuccess(JSON<JsProduct> result) {
+					ProductBox pBox = new ProductBox(API);
 					if(result!=null){
-						ib.set(result.getOneData());
+						pBox.set(result.getOneData());
 					}
-					itemPanel.add(ib);
+					itemPanel.add(pBox);
 				}
 				
 				@Override

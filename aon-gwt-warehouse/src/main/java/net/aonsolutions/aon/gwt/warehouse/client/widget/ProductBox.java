@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.product.JsItem;
+import com.esferalia.aon.gwt.api.client.product.JsProduct;
 import com.esferalia.aon.gwt.common.client.AON;
 //import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 //import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryPanel;
@@ -56,8 +56,8 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ItemBox extends ResizeComposite implements HasValue<String>
-	, HasDescription, Focusable, HasSelectionHandlers<JsItem>, HasAllFocusHandlers
+public class ProductBox extends ResizeComposite implements HasValue<String>
+	, HasDescription, Focusable, HasSelectionHandlers<JsProduct>, HasAllFocusHandlers
 	,HasAllKeyHandlers, HasEnabled {
 
 	private API API;
@@ -72,14 +72,14 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	private String description;
 	
 	private FlowPanel rooPanel; 
-	private SuggestBox item;
-	private TextBox itemTextBox;
+	private SuggestBox product;
+	private TextBox productTextBox;
 	private InlineLabel descriptionLabel;
 	private boolean required = true;
 	
-	private ItemSuggestionDisplay suggestionDisplay;
+	private ProductSuggestionDisplay suggestionDisplay;
 	
-	private static class ItemSuggestionDisplay extends DefaultSuggestionDisplay {
+	private static class ProductSuggestionDisplay extends DefaultSuggestionDisplay {
 	    private Widget suggestionMenu;
 
 	    @Override
@@ -91,16 +91,16 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	    @Override
 		protected void moveSelectionDown() {
 			super.moveSelectionDown();
-			scrollSelectedItemIntoView();
+			scrollSelectedProductIntoView();
 		}
 
 		@Override
 		protected void moveSelectionUp() {
 			super.moveSelectionUp();
-			scrollSelectedItemIntoView();
+			scrollSelectedProductIntoView();
 		}
 		
-	    private void scrollSelectedItemIntoView() {
+	    private void scrollSelectedProductIntoView() {
 	        NodeList<Node> trList = suggestionMenu.getElement().getChild(1).getChild(0).getChildNodes();
 	        for (int trIndex = 0; trIndex < trList.getLength(); ++trIndex) {
 	            Element trElement = (Element)trList.getItem(trIndex);
@@ -112,31 +112,31 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	    }
 	}
 	
-	private static class ItemSuggestion extends MultiWordSuggestion {
+	private static class ProductSuggestion extends MultiWordSuggestion {
 		
-		private JsItem item;
+		private JsProduct product;
 		
-		private ItemSuggestion(JsItem item, String replacementString, String displayString) {
+		private ProductSuggestion(JsProduct product, String replacementString, String displayString) {
 			super( replacementString, displayString );
-			this.item = item;
+			this.product = product;
 		}
 		
-		public JsItem getItem() {
-			return item;
+		public JsProduct getProduct() {
+			return product;
 		}
 		
 	}
 	 
-	public ItemBox(API API) {
+	public ProductBox(API API) {
 		this(null,-1);
 		this.API = API;
 	}
 	
-	public ItemBox(final String domainName, final int domain) {
+	public ProductBox(final String domainName, final int domain) {
 		this(domainName,domain,null,true);
 	}
 	
-	public ItemBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
+	public ProductBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -145,17 +145,17 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 						&& AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
 					
-					API.getProduct().getItemList(new HashMap<>(), new AsyncCallback<JSON<JsItem>>() {
+					API.getProduct().getProductList(new HashMap<>(), new AsyncCallback<JSON<JsProduct>>() {
 						
 						@Override
-						public void onSuccess(JSON<JsItem> result) {
+						public void onSuccess(JSON<JsProduct> result) {
 							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 							if (result != null) {
-								result.getData().stream().forEach(jsItem -> 
-								suggestions.add(new ItemSuggestion(
-										jsItem
-										,jsItem.getId().toString()
-										,decorate(jsItem, request.getQuery())))
+								result.getData().stream().forEach(jsProduct -> 
+								suggestions.add(new ProductSuggestion(
+										jsProduct
+										,jsProduct.getCode()
+										,decorate(jsProduct, request.getQuery())))
 								);
 							}
 							Response resp = new Response(suggestions);
@@ -174,25 +174,25 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 				}
 			}
 		};
-		itemTextBox = new TextBox();
-		suggestionDisplay =  new ItemSuggestionDisplay();
-		item = new SuggestBox(oracle,itemTextBox,suggestionDisplay);
-		itemTextBox.setStyleName(AON.AON_CSS.aonInputText());
-		itemTextBox.setVisibleLength(9);
-		itemTextBox.setMaxLength(9);
+		productTextBox = new TextBox();
+		suggestionDisplay =  new ProductSuggestionDisplay();
+		product = new SuggestBox(oracle,productTextBox,suggestionDisplay);
+		productTextBox.setStyleName(AON.AON_CSS.aonInputText());
+		productTextBox.setVisibleLength(9);
+		productTextBox.setMaxLength(9);
 		descriptionLabel = new InlineLabel();
 		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
 		descriptionLabel.addStyleName(AON.AON_CSS.aonBold());
 		descriptionLabel.setVisible(showDescription);
 		
-		item.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+		product.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
-				ItemSuggestion selected = (ItemSuggestion) event.getSelectedItem();
-				select( selected.getItem() );
+				ProductSuggestion selected = (ProductSuggestion) event.getSelectedItem();
+				select( selected.getProduct() );
 			}
 		});
-		item.addKeyUpHandler( new KeyUpHandler() {
+		product.addKeyUpHandler( new KeyUpHandler() {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
@@ -201,11 +201,11 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 				}
 			}
 		});
-		item.addValueChangeHandler( new ValueChangeHandler<String>() {
+		product.addValueChangeHandler( new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				if ( AonStringUtils.isBlank( item.getValue() )) {
+				if ( AonStringUtils.isBlank( product.getValue() )) {
 					select( null );	
 				}
 			}
@@ -213,7 +213,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		rooPanel = new FlowPanel();
 		rooPanel.setStyleName(AON.AON_CSS.aonNowrap() );
 		rooPanel.addStyleName(AON.AON_CSS.aonInline() );
-		rooPanel.add(item);
+		rooPanel.add(product);
 		rooPanel.add(descriptionLabel);
 		initWidget(rooPanel);
 	}
@@ -222,58 +222,58 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		return (event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3);
 	}
 	private boolean isPlusKeyAlone(KeyUpEvent event) {
-		return event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS && AonStringUtils.PLUS.equals(itemTextBox.getValue());
+		return event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS && AonStringUtils.PLUS.equals(productTextBox.getValue());
 	}
 	
-	public void set(JsItem item) {
-		itemTextBox.setText(item.getId()+"");
-		select(item);
+	public void set(JsProduct product) {
+		productTextBox.setText(product.getCode());
+		select(product);
 	}
 	
-	private void select(JsItem item) {
-		if (item != null) {
-			itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-			id = item.getId();
-			descriptionLabel.setText(item.getId()+"");
+	private void select(JsProduct product) {
+		if (product != null) {
+			productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+			id = product.getId();
+			descriptionLabel.setText(product.getCode());
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
 			id = null;
 			if (isRequired()) {
-				itemTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+				productTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
 			} else {
-				itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+				productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 			}
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		}
-		SelectionEvent.fire(ItemBox.this, item );
+		SelectionEvent.fire(ProductBox.this, product );
 	}
 	
-	public void setValue(JsItem item, boolean fireEvents) {
-		if (item != null && item.getId() != null) {
-			id = item.getId();
-			itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-			itemTextBox.setValue(item.getId()+"",fireEvents);
-			description = item.getId()+"";
+	public void setValue(JsProduct product, boolean fireEvents) {
+		if (product != null && product.getId() != null) {
+			id = product.getId();
+			productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+			productTextBox.setValue(product.getCode(),fireEvents);
+			description = product.getCode();
 			descriptionLabel.setText(description);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
 			id = null;
 			if (isRequired()) {
-				itemTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+				productTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
 			}
-			itemTextBox.setValue(null,fireEvents);
+			productTextBox.setValue(null,fireEvents);
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		}
 	}
 	
-	public void setValue(JsItem item) {
-		setValue(item,true);
+	public void setValue(JsProduct product) {
+		setValue(product,true);
 	}
 
 	private void reset() {
-		itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+		productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 		id = null;
 		description = null;
 		descriptionLabel.setText(null);
@@ -293,7 +293,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 
 	@Override
 	public String getValue() {
-		return item.getValue();
+		return product.getValue();
 	}
 
 	public void setValue(Integer id, String code,String description) {
@@ -305,20 +305,20 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 
 	@Override
 	public void setValue(String value) {
-		item.setValue(value);
+		product.setValue(value);
 		if (AonStringUtils.isEmpty(value)) {
 			reset();
 		}
 		if (AonStringUtils.isEmpty(value) || AonValidationUtil.isValidRequired(value, required)) {
-			itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );	
+			productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );	
 		} else {
-			itemTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
+			productTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
 		}
 	}
 
 	@Override
 	public void setValue(String value, boolean fireEvents) {
-		item.setValue(value,fireEvents);
+		product.setValue(value,fireEvents);
 	}
 
 	@Override
@@ -329,65 +329,63 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	// --------------------------------------------------------- HANDLERS
 	@Override
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
-		return itemTextBox.addBlurHandler(handler);
+		return productTextBox.addBlurHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return itemTextBox.addFocusHandler(handler);
+		return productTextBox.addFocusHandler(handler);
 	}
 
 	@Override
 	public int getTabIndex() {
-		return itemTextBox.getTabIndex();
+		return productTextBox.getTabIndex();
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-		itemTextBox.setAccessKey(key);
+		productTextBox.setAccessKey(key);
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
-		itemTextBox.selectAll();
-		itemTextBox.setFocus(focused);
+		productTextBox.selectAll();
+		productTextBox.setFocus(focused);
 	}
 
 	@Override
 	public void setTabIndex(int index) {
-		itemTextBox.setTabIndex(index);
+		productTextBox.setTabIndex(index);
 	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
-		return item.addValueChangeHandler(handler);
+		return product.addValueChangeHandler(handler);
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<JsItem> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<JsProduct> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 	@Override
 	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-		return itemTextBox.addKeyUpHandler(handler);
+		return productTextBox.addKeyUpHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
-		return itemTextBox.addKeyDownHandler(handler);
+		return productTextBox.addKeyDownHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
-		return itemTextBox.addKeyPressHandler(handler);
+		return productTextBox.addKeyPressHandler(handler);
 	}
 	
-	private static String decorate(JsItem item, String query) {
+	private static String decorate(JsProduct product, String query) {
 //		String text = AccountingRegistry.getFullDescription(accountingRegistry);
-		String text = item.getId() + " - " 
-//				+ item.getName()
-				;
+		String text = product.getCode() + " - " + product.getName();
 
 //		String icon = AON.AON_CSS.aonLetterCGreenIcon();
 //		if (accountingRegistry.getType() == AccountingRegistryType.SUPPLIER) {
@@ -417,12 +415,12 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 
 	@Override
 	public boolean isEnabled() {
-		return item.isEnabled();
+		return product.isEnabled();
 	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		item.setEnabled(enabled);
+		product.setEnabled(enabled);
 	}
 	
 	// TODO showDialog
@@ -448,7 +446,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 //
 //			@Override
 //			public void setFocus(boolean b) {
-//				ItemBox.this.setFocus(b);
+//				ProductBox.this.setFocus(b);
 //			}
 //		});
 		

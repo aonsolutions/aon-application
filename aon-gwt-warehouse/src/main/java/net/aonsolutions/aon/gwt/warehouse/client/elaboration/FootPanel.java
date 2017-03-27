@@ -93,33 +93,35 @@ public class FootPanel extends Composite {
 	}
 	
 	protected void loadSourceTab(JsElaboration js){
-//		final Widget widget = new Widget();		
-//		if(ElaborationSource.SALES.ordinal()==js.getSource()){
-//			Integer salesDetailId = js.getSourceId();
-//			
-//			API.getWarehouse().getSalesDetail(salesDetailId, new AsyncCallback<JSON<JsOrderDetail>>() {
-//				
-//				@Override
-//				public void onSuccess(JSON<JsOrderDetail> result) {
-//					FlowPanel panel = createSourcePanel(result.getOneData());
-//					widget.setLayoutData(panel);
-//				}
-//				
-//				@Override public void onFailure(Throwable caught) {}
-//			});
-//			
-//		} else if(ElaborationSource.PURCHASE.ordinal()==js.getSource()){
-//			// TODO elaboration have purchase source
-//		} else {
+//		ElaborationSource source = ElaborationSource.safeValueOf(js.getSource());
+//		switch (source){
+//		case SALES:
 //			Label label = new Label();
-//			label.setText("La elaboración se ha creado manualmente, no tiene origen.");
-//			widget.setLayoutData(label);
-//		};
-//		 
-//		sourcePanel.add(widget);
-		
+//			label.setText("Origen:  VENTAS. " + js.getSource() + ". " + js.getSourceId());
+//			sourcePanel.add(label);
+////			Integer salesDetailId = js.getSourceId();
+////			
+////			API.getWarehouse().getSalesDetail(salesDetailId, new AsyncCallback<JSON<JsOrderDetail>>() {
+////				
+////				@Override
+////				public void onSuccess(JSON<JsOrderDetail> result) {
+////					FlowPanel panel = createSourcePanel(result.getOneData());
+////					widget.setLayoutData(panel);
+////				}
+////				
+////				@Override public void onFailure(Throwable caught) {}
+////			});
+//			break;
+//		case PURCHASE:
+//			break;
+//		default:
+//			label = new Label();
+//			label.setText("La elaboración se ha creado manualmente, no tiene origen. ");
+//			sourcePanel.add(label);
+//			break;
+//		}
 		Label label = new Label();
-		label.setText("La elaboración se ha creado manualmente, no tiene origen. " + js.getSource() + ". " + js.getSourceId());
+		label.setText("Origen sin confirmar");
 		sourcePanel.add(label);
 	}
 	

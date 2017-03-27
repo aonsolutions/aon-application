@@ -3,12 +3,12 @@ package com.esferalia.aon.gwt.api.client.product;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
-public class JsItem extends JavaScriptObject {
+public class JsProduct extends JavaScriptObject {
 
-	protected JsItem() {}	public static final ProvidesKey<JsItem> PROVIDES_KEY = new ProvidesKey<JsItem>() {
+	protected JsProduct() {}	public static final ProvidesKey<JsProduct> PROVIDES_KEY = new ProvidesKey<JsProduct>() {
 		@Override
-		public Object getKey(JsItem item) {
-			return item == null ? null : item.getId();
+		public Object getKey(JsProduct p) {
+			return p == null ? null : p.getId();
 		}
 	};
 	
@@ -20,10 +20,10 @@ public class JsItem extends JavaScriptObject {
 		return this.domain;
 	}-*/;
 
-	public final native Integer getProductId() /*-{
-		return this.product_id;
+	public final native String getCode() /*-{
+		return this.code;
 	}-*/;
-
+	
 	public final native String getName() /*-{
 		return this.name;
 	}-*/;

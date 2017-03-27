@@ -55,11 +55,6 @@
 					<g:InlineLabel text="Producto" />
 				</td>
 				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
-					<!--  
-					<g:ListBox ui:field="item" styleName="{aonResources.css.aonListBox}" />
-					<g:TextBox ui:field="item" width="400px"
-						styleName="{aonResources.css.aonListBox}" />
-					-->
 					<g:HorizontalPanel ui:field="itemPanel" width="400px"
 						styleName="{aonResources.css.aonTextBox}" />
 				</td>
@@ -73,15 +68,10 @@
 				</td>
 
 				<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-					<!--  
-					<g:InlineLabel text="{msg.comments}" />
-					-->
+					
 				</td>
 				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
-					<!--  
-					<g:TextArea ui:field="comments" height="40px" width="400px"
-						styleName="{aonResources.css.aonTextBox}" />
-					-->
+					
 				</td>
 			</tr>
 		</table>
