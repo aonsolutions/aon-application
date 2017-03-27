@@ -356,7 +356,7 @@ public class ProjectReservationConexFlow implements Serializable {
 			if (!ok) {
 				conexFlowError("Error " + cfV.getRespuesta().getResultado() + ": " + cfV.getRespuesta().getDesResultado() + ".");
 			} else {
-				ConexFlowUtils.setVoucher(getDomain(), getReservation().getProject().getId(), cfV);
+				ConexFlowUtils.setVoucher(getDomain(), getLogin(), getReservation().getProject().getId(), cfV);
 			}
 		}
 		resetConexflowOperation();
@@ -383,7 +383,7 @@ public class ProjectReservationConexFlow implements Serializable {
 			} else{
 				description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION_PAID.getName(), cfP.getRespuesta().getImporte());
 				DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfP.getId(), description);		
-				ConexFlowUtils.setVoucher(getDomain(), getReservation().getId(), cfC);
+				ConexFlowUtils.setVoucher(getDomain(), getLogin(), getReservation().getId(), cfC);
 			}
 		}
 		resetConexflowOperation();
