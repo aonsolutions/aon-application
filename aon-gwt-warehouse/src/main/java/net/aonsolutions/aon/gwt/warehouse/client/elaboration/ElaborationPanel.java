@@ -2,9 +2,12 @@ package net.aonsolutions.aon.gwt.warehouse.client.elaboration;
 
 import java.util.Date;
 
+import net.aonsolutions.aon.gwt.warehouse.client.widget.ItemBox;
+
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
@@ -17,6 +20,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -38,7 +42,7 @@ public class ElaborationPanel extends Composite {
 	DateBoxEx date;
 	@UiField
 //	ListBox item;
-	TextBox item;
+	HorizontalPanel itemPanel;
 	@UiField
 	ListBox warehouse;
 	@UiField
@@ -116,10 +120,24 @@ public class ElaborationPanel extends Composite {
 //		comments.setCharacterWidth(20);
 //		comments.setVisibleLines(3);
 
-		// TODO item: suggestBox? listBox? lookup?
-		item.setText(jsElaboration != null && jsElaboration.getItem() != null
-				? (jsElaboration.getItem().getName() + "") : "");
-		item.setReadOnly(true);
+		if(jsElaboration != null && jsElaboration.getItem() != null){
+			API.getProduct().getItem(jsElaboration.getItem().getId(), new AsyncCallback<JSON<JsItem>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsItem> result) {
+					ItemBox ib = new ItemBox(API);
+					if(result!=null){
+						ib.set(result.getOneData());
+					}
+					itemPanel.add(ib);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+			});
+		}
+		
 
 		quantity.setText(jsElaboration != null && jsElaboration.getQuantity() != null
 				? (jsElaboration.getQuantity() + "") : "");
@@ -146,14 +164,14 @@ public class ElaborationPanel extends Composite {
 			}
 		});
 		
-		series.addChangeHandler(getUpdateChangeListener());
-		number.addChangeHandler(getUpdateChangeListener());
-//		status.addChangeHandler(getUpdateChangeListener());
-		date.addValueChangeHandler(getUpdateChangeHandler());
-//		comments.addChangeHandler(getUpdateChangeListener());
-		item.addChangeHandler(getUpdateChangeListener());
-		quantity.addChangeHandler(getUpdateChangeListener());
-		warehouse.addChangeHandler(getUpdateChangeListener());
+//		series.addChangeHandler(getUpdateChangeListener());
+//		number.addChangeHandler(getUpdateChangeListener());
+////		status.addChangeHandler(getUpdateChangeListener());
+//		date.addValueChangeHandler(getUpdateChangeHandler());
+////		comments.addChangeHandler(getUpdateChangeListener());
+//		item.addChangeHandler(getUpdateChangeListener());
+//		quantity.addChangeHandler(getUpdateChangeListener());
+//		warehouse.addChangeHandler(getUpdateChangeListener());
 		
 	}
 

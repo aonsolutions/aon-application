@@ -134,7 +134,7 @@ public class FootPanel extends Composite {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				parent.updateElaboration();
+				parent.updateElaboration(js);
 			}
 		});
 
