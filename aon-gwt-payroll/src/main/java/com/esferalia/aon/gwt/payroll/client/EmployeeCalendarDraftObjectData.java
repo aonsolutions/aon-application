@@ -15,12 +15,10 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -507,8 +505,41 @@ public class EmployeeCalendarDraftObjectData {
 			
 		}
 		
+		editDatesVariablesList(variablesList, startDate, endDate);
 		
 		return variablesList;
+	}
+
+	private void editDatesVariablesList(ArrayList<StringVariable> variablesList, Date startDate, Date endDate) {
+		for(StringVariable v : variablesList){
+			if(v.getStartDate().getDay() == 1){
+				changeEndDate(v, endDate);
+				continue;
+			}else if(v.getEndDate().getDay() == 0){
+				changeStartDate(v, startDate);
+				continue;
+			}else{
+				changeStartDate(v, startDate);
+				changeEndDate(v, endDate);
+			}
+				
+		}
+	}
+
+	private void changeEndDate(StringVariable v, Date endDate) {
+		Date endDateAux = DateUtils.copyDateOnly(v.getEndDate());
+		while (endDateAux.getDay() != 0 || endDateAux.equals(endDate)){
+			DateUtils.addDays2Date(endDateAux, 1);
+		}
+		v.setEndDate(endDateAux);
+	}
+
+	private void changeStartDate(StringVariable v, Date startDate) {
+		Date startDateAux = DateUtils.copyDateOnly(v.getStartDate());
+		while (startDateAux.getDay() != 1 || startDateAux.equals(startDate)){
+			DateUtils.addDays2Date(startDateAux, -1);
+		}
+		v.setStartDate(startDateAux);
 	}
 
 	// ---------------------------------------------- METODOS SYNC BD ---------------------------------------------
