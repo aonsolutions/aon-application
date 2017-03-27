@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.api.client.warehouse;
 
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -44,7 +45,7 @@ public class JsElaboration extends JavaScriptObject {
 											return this.date;
 											}-*/;
 
-	public final native JsObject getItem() /*-{
+	public final native JsItem getItem() /*-{
 											return this.item;
 											}-*/;
 
@@ -60,7 +61,7 @@ public class JsElaboration extends JavaScriptObject {
 												return this.comments;
 												}-*/;
 
-	public final native Integer getSource() /*-{
+	public final native Byte getSource() /*-{
 											return this.source;
 											}-*/;
 

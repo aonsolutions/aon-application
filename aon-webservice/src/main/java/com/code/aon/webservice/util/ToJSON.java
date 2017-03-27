@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -174,6 +175,15 @@ public class ToJSON {
 		json.put(MSG.ID, pc.getId());
 		json.put(MSG.DOMAIN, pc.getDomain());
 		json.put(MSG.NAME, pc.getName());
+		return json;
+	}
+	
+	public static JSONObject productToJSON(Product product) {
+		JSONObject json = new JSONObject();
+		json.put(MSG.ID, product.getId());
+		json.put(MSG.DOMAIN, product.getDomain());
+		json.put("code", product.getCode());
+		json.put(MSG.NAME, product.getName());
 		return json;
 	}
 
