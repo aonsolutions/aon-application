@@ -62,8 +62,9 @@ public class Sale {
 				ConexFlow sFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_FAIL);
 				ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
 				ConexFlow scFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL);
-				
-				if(cf == null && sFail == null && pcFail == null && scFail == null){
+				ConexFlow sale = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE);
+
+				if(cf == null && sFail == null && pcFail == null && scFail == null && sale == null){
 					ConexFlowConnection connection = DBConsults.getConection(d);
 					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
 						r.getAdvance(), r.getHotelReservation().toString(), null);
@@ -80,7 +81,7 @@ public class Sale {
 						msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
 					} else {
 						msg = "CHARGE OK";
-						ConexFlowUtils.setVoucher(domain, r.getProject(), conexFlow);
+						ConexFlowUtils.setVoucher(d, login,  r.getProject(), conexFlow);
 					}
 					String projectName = DBConsults.getProjectName(d, login, r.getProject());
 					View.sale(projectName, r.getProject(), msg,r.getAdvance());

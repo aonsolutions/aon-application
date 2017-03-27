@@ -320,7 +320,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 								DBConsults.updateConexFlowDescription(domain, user, preauthorization.getId(), description2);	
 								chargeableReservations.add(reservationId);
 								// CREACION  DEL PAYSLIP PARA LA CONFIRMACION DE PREAUTHORIZACION
-								ConexFlowUtils.setVoucher(getDomain(), reservationId, confirmPreauthorization);
+								ConexFlowUtils.setVoucher(getDomain(), getLogin(), reservationId, confirmPreauthorization);
 							}		
 						}
 					
@@ -338,7 +338,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 							if (ok) {
 								chargeableReservations.add(reservationId);
 								// CREACION  DEL PAYSLIP PARA LA CARGO DIRECTO
-								ConexFlowUtils.setVoucher(getDomain(), reservationId, conexFlow2);
+								ConexFlowUtils.setVoucher(getDomain(), getLogin(), reservationId, conexFlow2);
 							}
 						}
 					}
