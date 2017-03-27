@@ -339,7 +339,7 @@ public class ToJSON {
 			.put("description", purchaseDetail.getDescription())
 			.put("product_code", purchaseDetail.getProductCode())
 			.put("product_name", purchaseDetail.getProductName())
-			
+			.put("purchase", purchaseDetail.getPurchaseId())
 			.put("carrier_packing", purchaseDetail.getCarrierPacking())
 			;
 	}

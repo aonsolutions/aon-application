@@ -337,7 +337,7 @@ public class CarrierPackingDetail extends Composite{
 	}
 	
 	public void content(){
-		content.setWidget(new SelectionPanel());	
+		content.setWidget(new SelectionPanel(this));	
 	}
 	
 	public void southContent() {

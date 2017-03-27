@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
+import com.code.aon.webservice.warehouse.jooq.DBDelivery;
 import com.code.aon.webservice.warehouse.jooq.DBIncome;
 import com.code.aon.webservice.warehouse.jooq.DBPurchase;
 import com.code.aon.webservice.warehouse.jooq.DBSales;
@@ -84,7 +85,9 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = DBPurchase.getPurchases(domain, userName, req.getParameterMap());
 				} else if(MSG.DELIVERY.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if(pathInfo.length > 5){
+						if("detail".equalsIgnoreCase(pathInfo[4])){
+							object = DBDelivery.getDeliveryDetails(domain, userName, req.getParameterMap());
+						} else if(pathInfo.length > 5){
 							object = getDeliveryDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
 						} else object = getDelivery(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else object = getDeliveryList(domain, userName, req.getParameterMap());

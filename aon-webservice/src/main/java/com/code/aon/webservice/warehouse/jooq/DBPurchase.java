@@ -99,9 +99,18 @@ public class DBPurchase {
 			filter = filter.and(f.getPurchaseProperty().eq(purchase));
 		}
 		
+		if(filterMap.containsKey("parent_id")){
+			Integer purchase = Integer.parseInt(filterMap.get("parent_id")[0]);
+			filter = filter.and(f.getPurchaseProperty().eq(purchase));
+		}
+		
 		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
-			Integer carrierPacking = Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0]);
-			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
+			if("null".equalsIgnoreCase(filterMap.get(MSG.CARRIER_PACKING)[0])){
+				filter = filter.and(f.getCarrierPackingProperty().isNull());
+			} else {
+				Integer carrierPacking = Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0]);
+				filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
+			}
 		} 
 		
 		if(filterMap.containsKey(MSG.SUPPLIER)){
