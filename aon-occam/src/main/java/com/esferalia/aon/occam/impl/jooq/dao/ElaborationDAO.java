@@ -165,7 +165,7 @@ public class ElaborationDAO {
 				.getId();
 	}
 
-	public static int updateElaboration(AONContext ctx, Elaboration elaboration) {
+	public static Elaboration updateElaboration(AONContext ctx, Elaboration elaboration) {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
@@ -186,18 +186,19 @@ public class ElaborationDAO {
 				.set(ELABORATION.SOURCE_ID, elaboration.getSourceId())
 				.set(ELABORATION.MODIFICATION_USER, ctx.getUser())
 				.set(ELABORATION.MODIFICATION_DATE, modificationDate)
-				.where(ELABORATION.ID.eq(elaboration.getId())).execute();
+				.where(ELABORATION.ID.eq(elaboration.getId()))
+				.returning().fetch().stream().map(new FullElaborationFiller()).findFirst().orElse(null);
 	}
 
-	public static int deleteElaboration(AONContext ctx, ElaborationFilter filter) {
+	public static Elaboration deleteElaboration(AONContext ctx, ElaborationFilter filter) {
 		return ctx.getDslContext().delete(ELABORATION)
 				.where(ELABORATION_PROPERTIES.getConditions(filter))
-				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId())).execute();
+				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
+				.returning().fetch().stream().map(new FullElaborationFiller()).findFirst().orElse(null);
 	}
 	
-	public static int deleteElaboration(AONContext ctx, Elaboration elaboration) {
-		return ctx.getDslContext().delete(ELABORATION)
-				.where(ELABORATION.ID.eq(elaboration.getId())).execute();
+	public static Elaboration deleteElaboration(AONContext ctx, Integer elaborationId) {
+		return deleteElaboration(ctx, f -> f.getIdProperty().eq(elaborationId));
 	}
 	
 	
@@ -446,7 +447,7 @@ public class ElaborationDAO {
 		}
 	}
 	
-	// TODO this is not the place for this method 
+	// FIXME this is not the place for this method 
 	@Deprecated
 	public static String getCustomerItemCode(AONContext ctx, Integer itemId,
 			Integer customerId) {

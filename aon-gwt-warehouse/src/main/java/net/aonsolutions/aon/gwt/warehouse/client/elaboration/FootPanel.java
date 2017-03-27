@@ -64,8 +64,8 @@ public class FootPanel extends Composite {
 		this.parent = parent;
 		API = parent.API;
 		initWidget(binder.createAndBindUi(this));
-//		JsElaboration js = parent.getJsElaboration();
 		
+		closeFootPanel();
 		if(jsElaboration!=null){
 			loadSourceTab(jsElaboration);
 			loadCommetsTab(jsElaboration);
@@ -119,7 +119,7 @@ public class FootPanel extends Composite {
 //		sourcePanel.add(widget);
 		
 		Label label = new Label();
-		label.setText("La elaboración se ha creado manualmente, no tiene origen.");
+		label.setText("La elaboración se ha creado manualmente, no tiene origen. " + js.getSource() + ". " + js.getSourceId());
 		sourcePanel.add(label);
 	}
 	

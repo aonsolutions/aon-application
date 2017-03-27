@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import net.aonsolutions.polymer.aon.AonComboBoxElement;
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
-
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
@@ -26,6 +23,9 @@ import com.vaadin.polymer.paper.PaperButtonElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
+
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class MainElaboration extends AonTemplate {
 
@@ -152,38 +152,20 @@ public class MainElaboration extends AonTemplate {
 	}
 	
 	// TODO update elaboration
-	protected void updateElaboration() {
-		Window.alert("update no imlementado");
-//		if (jsElaboration != null) {
-//			API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(),
-//					new AsyncCallback<JsElaboration>() {
+	protected void updateElaboration(JsElaboration jsElaboration) {
+		Window.alert("update no implementado");
+//		API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(), new AsyncCallback<JsElaboration>() {
 //
-//						@Override
-//						public void onSuccess(JsElaboration result) {
-//							jsElaboration = result;
-//							number.setValue(result.getNumber() + "");
-//							parent.setSelectContent(result);
-//						}
+//			@Override
+//			public void onSuccess(JsElaboration result) {
+//				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
+//				panel.setJsElaboration(result);
+//			}
 //
-//						@Override
-//						public void onFailure(Throwable caught) {
-//						}
-//					});
-//		} else {
-//			this.API.getWarehouse().insertElaboration(getData(), new AsyncCallback<JsElaboration>() {
-//
-//				@Override
-//				public void onSuccess(JsElaboration result) {
-//					jsElaboration = result;
-//					number.setValue(result.getNumber() + "");
-//					parent.setSelectContent(result);
-//				}
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//				}
-//			});
-//		}
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//		});
 	}
 	
 	// TODO delete elaboration
@@ -193,8 +175,20 @@ public class MainElaboration extends AonTemplate {
 	}
 	
 	// TODO create elaboration
-	protected void createElaboration() {
-		
+	protected void createElaboration(JsElaboration jsElaboration) {
+		Window.alert("create no implementado");
+//		API.getWarehouse().insertElaboration(getData(), new AsyncCallback<JsElaboration>() {
+//
+//			@Override
+//			public void onSuccess(JsElaboration result) {
+//				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
+//				panel.setJsElaboration(result);
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//		});
 	}
 	
 	// TODO download elaboration
@@ -294,11 +288,11 @@ public class MainElaboration extends AonTemplate {
 		 cps.refresh();
 	}
 
-	public void refreshSouth(JsElaboration elaboration) {
-		ElaborationCommentsSouth ecs = (ElaborationCommentsSouth)
-		getSouthContent().getWidget();
-		ecs.refresh(elaboration);
-	}
+//	public void refreshSouth(JsElaboration elaboration) {
+//		ElaborationCommentsSouth ecs = (ElaborationCommentsSouth)
+//		getSouthContent().getWidget();
+//		ecs.refresh(elaboration);
+//	}
 	
 	public JsElaboration getJsElaboration(){ 
 		ElaborationPanel w = (ElaborationPanel) getNorthContent().getWidget();

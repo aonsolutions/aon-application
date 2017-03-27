@@ -162,7 +162,7 @@ public class ElaborationPanel extends Composite {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				parent.updateElaboration();
+				parent.updateElaboration(getJsElaboration());
 			}
 		};
 	}
@@ -172,7 +172,7 @@ public class ElaborationPanel extends Composite {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<T> event) {
-				parent.updateElaboration();
+				parent.updateElaboration(getJsElaboration());
 			}
 		};
 	}

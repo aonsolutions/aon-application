@@ -158,8 +158,14 @@ public class Warehouse extends Methods{
 	public void getElaborationDetailComposition(Integer id, AsyncCallback<JSON<JsElaborationDetailComposition>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/" + id, callback);
 	}
-	public void insertElaboration(String requestData, AsyncCallback<JsCarrierPacking> callback) {
+	public void insertElaboration(String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
+	}
+	public void updateElaboration(Integer id,String requestData, AsyncCallback<JsElaboration> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update"+id, requestData, callback);
+	}
+	public void deleteElaboration(Integer id,String requestData, AsyncCallback<JsElaboration> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/delete"+id, requestData, callback);
 	}
 	
 	/* WAREHOUSE */

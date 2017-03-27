@@ -128,6 +128,8 @@ public interface IWarehouse {
 	List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
 	Integer insertElaboration(AONContext ctx, Elaboration elaboration);
+	Elaboration updateElaboration(AONContext ctx, Elaboration elaboration);
+	Elaboration deleteElaboration(AONContext ctx, Integer id);
 
 	
 }
