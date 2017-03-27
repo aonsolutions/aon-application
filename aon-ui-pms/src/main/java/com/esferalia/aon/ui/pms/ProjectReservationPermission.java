@@ -330,6 +330,11 @@ public class ProjectReservationPermission implements Serializable {
 		return roleAllowed && reservation.isNewCreditCard();
 	}
 
+	public boolean isRemoveConexFlowAllowed() throws ManagerBeanException {
+		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
+		return roleAllowed && !reservation.isNewCreditCard() && !reservation.isBlankToken();
+	}
+
 	public boolean isCreditCardVisible() throws ManagerBeanException {
 		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
 		return roleAllowed && (StringUtils.isNotBlank(reservation.getCreditCardNumber()) || reservation.isNewCreditCard());
@@ -343,10 +348,6 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isConexFlowOperable() throws ManagerBeanException {
 		boolean roleAllowed = isRoleFinance();
 		return roleAllowed && !reservation.isBlankToken() && !reservation.isNewCreditCard();
-	}
-
-	public boolean isTokenRemoveEnable() {
-		return isRoleCommercial() || isRoleFinance();
 	}
 
 	/*************************** RESERVATION GUEST *******************************/

@@ -325,7 +325,7 @@
 					rendered="#{reservation.to.conexFlowPreauthorizedCheck}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green-ok"
 					rendered="#{reservation.to.conexFlowPreauthorizedOk}" />
-				<aon:if test="#{reservation.reservationPermission.tokenRemoveEnable}">
+				<aon:if test="#{reservation.reservationPermission.removeConexFlowAllowed}">
 					<aon:confirmButton id="remove-Token" value="&#160;"
 						styleClass="aon-icon-commandButton aon-icon-card-red"
 						title="#{bundle.pms_remove_token}" immediate="true" 
@@ -334,7 +334,7 @@
 						confirmMessage="¿#{bundle.pms_remove_token}?"
 						confirmActionListener="#{reservation.onRemoveToken}" />
 				</aon:if>
-				<aon:if test="#{!reservation.reservationPermission.tokenRemoveEnable}">
+				<aon:if test="#{!reservation.reservationPermission.removeConexFlowAllowed}">
 					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-red"
 						rendered="#{reservation.to.conexFlowFail}" />
 				</aon:if>

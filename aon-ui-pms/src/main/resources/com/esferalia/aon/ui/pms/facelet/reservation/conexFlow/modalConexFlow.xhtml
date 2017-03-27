@@ -28,6 +28,9 @@
 							<f:setPropertyActionListener
 								target="#{controller.showConexFlowWindow}"
 								value="#{false}" />
+							<f:setPropertyActionListener
+								target="#{controller.to.newCreditCard}"
+								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
@@ -37,7 +40,7 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div id="conexFlowModalToolbar" styleClass="aon-toolbar">
-									<aon:commandButton id="conexFlow-edit" immediate="true"
+									<aon:commandButton id="conexFlow-reset" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										value="#{bundle.aon_reset} #{bundle.conexflow_token}"
 										rendered="#{reservation.reservationPermission.newConexFlowAllowed}"
@@ -53,6 +56,14 @@
 										oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<aon:actionListener method="#{controller.refreshAttachments}" />
 									</aon:commandButton>
+									<aon:confirmButton id="conexFlow-delete" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										value="#{bundle.aon_remove} #{bundle.conexflow_token}"
+										rendered="#{reservation.reservationPermission.removeConexFlowAllowed}"
+										confirmTitle="#{bundle.aon_confirm_title}"
+										confirmMessage="¿#{bundle.pms_remove_token}?"
+										confirmActionListener="#{reservation.onRemoveToken}">
+									</aon:confirmButton>
 									<aon:commandButton id="conexFlow-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_back}"
@@ -60,6 +71,9 @@
 										reRender="showConexFlowWindow">
 										<f:setPropertyActionListener
 											target="#{controller.showConexFlowWindow}"
+											value="#{false}" />
+										<f:setPropertyActionListener
+											target="#{controller.to.newCreditCard}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>

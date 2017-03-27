@@ -1849,6 +1849,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+		setShowConexFlowWindow(false);
 		IController reservationAttachController = FormUtil.getController(IPmsConstants.RESERVATION_ATTACH_CONTROLLER_NAME);
 		reservationAttachController.onSearch(event);
 	}
