@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.api.client.product;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -25,6 +28,15 @@ public class Product extends Methods{
 	
 	public void getProductCategory(Integer id, AsyncCallback<JSON<JsObject>> callback){
 		get(getUrl() + "product/"+getDomainName()+"/"+getUserName()+"/category/" + id, callback);
+	}
+	
+	public void getItemList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsItem>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item" + filter, callback);
+	}
+	
+	public void getItem(Integer id, AsyncCallback<JSON<JsItem>> callback){
+		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item/"+id , callback);
 	}
 	
 }

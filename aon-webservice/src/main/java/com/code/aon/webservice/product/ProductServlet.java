@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
@@ -46,6 +47,13 @@ public class ProductServlet extends HttpServlet{
 						object = getCategoryList(domain, userName);
 					}
 					break;
+				case MSG.ITEM:
+					if(pathInfo.length > 4){
+						object = getItem(domain, userName, Integer.parseInt(pathInfo[4]));
+					} else {
+						object = getItemList(domain, userName);
+					}
+					break;
 				default:
 					break;
 				}
@@ -65,6 +73,18 @@ public class ProductServlet extends HttpServlet{
     	AON.getProductCategoryStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId()))
     		.forEach(pc -> array.put(ToJSON.productCategoryToJSON(pc)));
+    	return array;
+    }
+    
+    private Object getItem(Domain domain, String userName, int id) {
+		return ToJSON.itemToJSON(AON.getItem(domain.getName(), domain.getId(), userName, id));
+    }
+    
+    private JSONArray getItemList(Domain domain, String login){
+    	JSONArray array = new JSONArray();
+    	AON.getItemList(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId()))
+    			.forEach(pc -> array.put(ToJSON.itemToJSON(pc)));
     	return array;
     }
   

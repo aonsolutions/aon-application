@@ -57,9 +57,11 @@
 				<td style="width: 100%;" class="{aonResources.css.aonPanelGridEven}">
 					<!--  
 					<g:ListBox ui:field="item" styleName="{aonResources.css.aonListBox}" />
-					-->
 					<g:TextBox ui:field="item" width="400px"
 						styleName="{aonResources.css.aonListBox}" />
+					-->
+					<g:HorizontalPanel ui:field="itemPanel" width="400px"
+						styleName="{aonResources.css.aonTextBox}" />
 				</td>
 			</tr>
 			<tr>
