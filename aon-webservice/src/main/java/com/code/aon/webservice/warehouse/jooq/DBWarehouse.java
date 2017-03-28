@@ -1,5 +1,6 @@
 package com.code.aon.webservice.warehouse.jooq;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -49,49 +50,59 @@ public class DBWarehouse {
 		return json;
 	}
 	
-	// FIXME insertElaboration
-	public static JSONObject insertElaboration(Domain domain,String login, JSONObject json){
-//		Integer elaborationId = json.getInt("elaboration");
-//		Integer workplaceId = json.getInt("workplace");
-//		Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login, f -> f.getWorkplaceProperty().eq(workplaceId));
-		Elaboration elaboration = new Elaboration()
-				.setSeries(json.getString("series"))
-				.setNumber(0)
-				.setDate(null)
-				.setItem(new Item().setId(json.getInt("item")))
-//				.setWarehouse(warehouse.getId())
-				.setWarehouse(json.getInt("warehouse"))
-				.setQuantity(json.getDouble("quantity"))
-				.setStatus(ElaborationStatus.PENDING.value())
-				.setComments(json.getString("comments"))
-				;
-		AON.insertElaboration(domain.getName(), domain.getId(), login, elaboration);
-		return new JSONObject();	
+	public static JSONObject createElaboration(Domain domain, String login) {
+		Elaboration elaboration = new Elaboration();
+		elaboration.setStatus(ElaborationStatus.PENDING.value());
+		elaboration.setDate(new Date());
+		elaboration.setItem(new Item());
+		return ToJSON.elaborationToJSON(elaboration);
+	}
+	
+	public static JSONObject insertElaboration(Domain domain, String login, JSONObject json) {
+		Elaboration elaboration = getElaboration(domain, login, json, new Elaboration());
+		Integer id = AON.insertElaboration(domain.getName(), domain.getId(), login, elaboration);
+		elaboration.setId(id);
+		return ToJSON.elaborationToJSON(elaboration);
 	}
 	    
-	// FIXME updateElaboration
-	public static JSONObject updateElaboration(Domain domain,String login, JSONObject json){
-		Integer id = json.getInt("id");
-		Integer workplaceId = json.getInt("workplace");
-		Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login, f -> f.getWorkplaceProperty().eq(workplaceId));
-		Elaboration elaboration = AON.getFullElaboration(domain.getName(), domain.getId(), login, id);
-		if(elaboration!=null && elaboration.getId()!=null){
-			elaboration.setDate(null)
-			.setItem(new Item().setId(json.getInt("item")))
-			.setWarehouse(warehouse.getId())
-			.setQuantity(json.getDouble("quantity"))
-			.setStatus(ElaborationStatus.values()[json.getInt("status")].value())
-			.setComments(json.getString("comments"));
-			elaboration = AON.updateElaboration(domain.getName(), domain.getId(), login, elaboration);
-			return ToJSON.elaborationToJSON(elaboration);
-		}
+	public static JSONObject updateElaboration(Domain domain,String login, int id, JSONObject json){
+		Elaboration elaboration = getElaboration(domain, login, json, new Elaboration());
+		elaboration.setId(id);
+		AON.updateElaboration(domain.getName(), domain.getId(), login, elaboration);
+		return ToJSON.elaborationToJSON(elaboration);
+	}
+	    
+	public static JSONObject deleteElaboration(Domain domain,String login, int id){
+		AON.deleteElaboration(domain.getName(), domain.getId(), login, id);
 		return new JSONObject();
 	}
-	    
-	// FIXME deleteElaboration
-	public static JSONObject deleteElaboration(Domain domain,String login, JSONObject json){
-		Integer id = json.getInt("id");
-		Elaboration elaboration = AON.deleteElaboration(domain.getName(), domain.getId(), login, id);
-		return ToJSON.elaborationToJSON(elaboration);
+	
+	private static Elaboration getElaboration(Domain domain, String login, JSONObject json, Elaboration elaboration) {
+		if(json.opt(MSG.SERIES) != null){
+			elaboration.setSeries(json.getString(MSG.SERIES));
+		}
+		if(json.opt(MSG.NUMBER) != null && !MSG.EMPTY.equals(json.opt(MSG.NUMBER))){
+			elaboration.setNumber(json.optInt(MSG.NUMBER,0));
+		}
+		if(json.opt(MSG.DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.DATE))){
+			elaboration.setDate(new Date(json.getLong(MSG.DATE)));
+		}
+		if(json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))){
+			elaboration.setItem(new Item().setId(json.getInt(MSG.ITEM)));
+		}
+		if(json.opt(MSG.QUANTITY) != null && !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))){
+			elaboration.setQuantity(json.getDouble(MSG.QUANTITY));
+		}
+		if(json.opt(MSG.WAREHOUSE) != null && !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))){
+			elaboration.setWarehouse(json.getInt(MSG.WAREHOUSE));
+		}
+		if(json.opt(MSG.STATUS) != null && !MSG.EMPTY.equals(json.opt(MSG.STATUS))){
+			elaboration.setStatus(ElaborationStatus.values()[json.getInt(MSG.STATUS)].value());
+		}
+		if(json.opt(MSG.COMMENTS) != null){
+			elaboration.setComments(json.getString(MSG.COMMENTS));
+		}
+		
+		return elaboration;
 	}
 }

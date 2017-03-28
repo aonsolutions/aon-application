@@ -5,31 +5,38 @@ import com.google.gwt.view.client.ProvidesKey;
 
 public class JsItem extends JavaScriptObject {
 
-	protected JsItem() {}	public static final ProvidesKey<JsItem> PROVIDES_KEY = new ProvidesKey<JsItem>() {
+	protected JsItem() {
+	}
+
+	public static final ProvidesKey<JsItem> PROVIDES_KEY = new ProvidesKey<JsItem>() {
 		@Override
 		public Object getKey(JsItem item) {
 			return item == null ? null : item.getId();
 		}
 	};
-	
+
 	public final native Integer getId() /*-{
-		return this.id;
-	}-*/;
-	
+										return this.id;
+										}-*/;
+
 	public final native Integer getDomain() /*-{
-		return this.domain;
-	}-*/;
+											return this.domain;
+											}-*/;
 
 	public final native Integer getProductId() /*-{
-		return this.product_id;
-	}-*/;
+												return this.product_id;
+												}-*/;
 
 	public final native String getName() /*-{
-		return this.name;
-	}-*/;
+											return this.name;
+											}-*/;
 
 	public final native String getCode() /*-{
-		return this.code;
-	}-*/;
-	
+											return this.code;
+											}-*/;
+
+	public final native String getSerialNumber() /*-{
+											return this.serial_number;
+											}-*/;
+
 }

@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
+
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
@@ -23,9 +26,6 @@ import com.vaadin.polymer.paper.PaperButtonElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
-
-import net.aonsolutions.polymer.aon.AonComboBoxElement;
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class MainElaboration extends AonTemplate {
 
@@ -66,35 +66,54 @@ public class MainElaboration extends AonTemplate {
 	private void loadToolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar() {
+			
+			@Override
+			protected void accept() {
+				this.download.setVisible(true);
+				JsElaboration js = getJsElaboration();
+				if(js.getId()!=null){
+					updateElaboration(js);
+				} else {
+					insertElaboration(js);
+				}
+//				onSelectElaboration(js);
+			}
 
 			@Override
 			protected void reset() {
-				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
-				toolbar.back.setVisible(true);
-				toolbar.remove.setVisible(true);
-				getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
-				setNorthContent(new ElaborationPanel(me));
-				setContent(new Label(""));
+				this.accept.setVisible(true);
+				this.back.setVisible(true);
+				this.remove.setVisible(false);
+				this.reset.setVisible(false);
+				this.download.setVisible(false);
+				this.subtitle.setText("Nuevo");
+				resetElaboration();
 			}
 
 			@Override
 			protected void remove() {
-				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
-				deleteElaboration(panel.getJsElaboration().getId());
+				deleteElaboration(getJsElaboration().getId());
 				load();
 			}
 
 			@Override
 			protected void back() {
+				this.accept.setVisible(false);
 				load();
 			}
 
 			@Override
 			protected void download() {
-				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
-				downloadElaboration(panel.getJsElaboration().getId());
+				downloadElaboration(getJsElaboration().getId());
 			}
 		};
+		
+		toolbar.back.setVisible(false);
+		toolbar.accept.setVisible(false);
+		toolbar.remove.setVisible(false);
+		toolbar.download.setVisible(false);
+		toolbar.title.setText("Elaboraciones");
+		toolbar.subtitle.setText("Lista");
 		setToolbar(toolbar);
 	}
 
@@ -113,7 +132,6 @@ public class MainElaboration extends AonTemplate {
 
 			@Override
 			public void onSuccess(JSON<JsElaboration> result) {
-				getToolbar().setTitle(getToolbar().getTitle()+" - Lista");
 				setContent(new GridPanel(me, result.getData().toLinkedList()));
 			}
 
@@ -131,70 +149,99 @@ public class MainElaboration extends AonTemplate {
 
 	public void onSelectElaboration(JsElaboration js) {
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
-		toolbar.setTitle(toolbar.getTitle()+" - Edicion");
+		toolbar.accept.setVisible(true);
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
 		toolbar.download.setVisible(true);
+		toolbar.subtitle.setText("Edicion");
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
 		
-		// NORTH
 		setNorthContent(new ElaborationPanel(me, js));
-		
-		// CONTENT
 		setContent(new ElaborationSelect(me, js));
-		
-		// FOOTER
 		setSouthContent(new FootPanel(me, js));
+	}
+	
+	private void resetElaboration() {
+		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+		toolbar.accept.setVisible(true);
+		toolbar.back.setVisible(true);
+		toolbar.remove.setVisible(false);
+		toolbar.download.setVisible(false);
+		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
+				
+		API.getWarehouse().createElaboration(new AsyncCallback<JSON<JsElaboration>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsElaboration> result) {
+				ElaborationPanel panel = new ElaborationPanel(me, result.getOneData());
+				setNorthContent(panel);
+				setContent(new Label(""));
+				loadSouthContent();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error resetear. \n"+caught.getMessage());
+			}
+		});
 	}
 	
 	public void changeSouthContentSize(Double value) {
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), value);	
 	}
 	
-	// TODO update elaboration
-	protected void updateElaboration(JsElaboration jsElaboration) {
-		Window.alert("update no implementado");
-//		API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(), new AsyncCallback<JsElaboration>() {
-//
-//			@Override
-//			public void onSuccess(JsElaboration result) {
-//				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
-//				panel.setJsElaboration(result);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//		});
+	private void updateElaboration(JsElaboration jsElaboration) {
+		API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(), new AsyncCallback<JsElaboration>() {
+
+			@Override
+			public void onSuccess(JsElaboration result) {
+				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
+				panel.setJsElaboration(result);
+				onSelectElaboration(panel.getJsElaboration());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+			}
+		});
 	}
 	
-	// TODO delete elaboration
-	protected void deleteElaboration(Integer elaboratinId) {
-//		API.getWarehouse().deleteCarrierPacking(panel.getJsCarrierPacking().getId());
-		Window.alert("delete no implementado");
+	private void deleteElaboration(Integer elaboratinId) {
+		API.getWarehouse().deleteElaboration(elaboratinId, getData(), new AsyncCallback<JsElaboration>() {
+
+			@Override
+			public void onSuccess(JsElaboration result) {
+				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+				toolbar.back();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al eliminar. \n"+caught.getMessage());
+			}
+		});
 	}
 	
-	// TODO create elaboration
-	protected void createElaboration(JsElaboration jsElaboration) {
-		Window.alert("create no implementado");
-//		API.getWarehouse().insertElaboration(getData(), new AsyncCallback<JsElaboration>() {
-//
-//			@Override
-//			public void onSuccess(JsElaboration result) {
-//				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
-//				panel.setJsElaboration(result);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//		});
+	private void insertElaboration(JsElaboration jsElaboration) {
+		API.getWarehouse().insertElaboration(getData(), new AsyncCallback<JsElaboration>() {
+
+			@Override
+			public void onSuccess(JsElaboration result) {
+				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
+				panel.setJsElaboration(result);
+				onSelectElaboration(panel.getJsElaboration());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+			}
+		});
 	}
 	
-	// TODO download elaboration
 	protected void downloadElaboration(Integer elaboratinId) {
-//		API.getWarehouse().downloadPackingList(panel.getJsElaboration().getId());
-		Window.alert("download no implementado");
+		API.getWarehouse().downloadElaboration(getJsElaboration().getId());
 	}
 	
 	private String getData() {
@@ -206,7 +253,18 @@ public class MainElaboration extends AonTemplate {
 //				+ reference.getValue() + "\"," + "\"number_plate\":\"" + numberPlate.getValue() + "\","
 //				+ "\"driver_document\":\"" + driverDocument.getValue() + "\"," + "\"driver_name\":\""
 //				+ driverName.getValue() + "\"" + "}";
-		return null;
+		
+//		String data = JsonUtils.stringify(getJsElaboration());
+		ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
+		String data = "{\"series\":\"" + panel.series.getValue() + "\"," 
+				+ "\"number\":\"" + panel.number.getValue() + "\","
+				+ "\"status\":\"" + 0 + "\","
+				+ "\"date\":\"" + (panel.date.getValue() != null ? panel.date.getValue().getTime() : "") + "\","
+				+ "\"quantity\":\"" + panel.quantity.getValue() + "\","
+				+ "\"item\":\"" + panel.pBox.getId() + "\","
+				+ "\"warehouse\":\"" + panel.warehouse.getSelectedValue() + "\","
+				+ "\"comments\":\"" + getJsElaboration().getComments() + "\"" + "}";
+		return data;
 	}
 
 	private AonDialog createAddDialog() {

@@ -5,11 +5,11 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
+import com.esferalia.aon.gwt.api.client.warehouse.JsSalesDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -93,34 +93,37 @@ public class FootPanel extends Composite {
 	}
 	
 	protected void loadSourceTab(JsElaboration js){
-		switch (js.getSource()){
-		case 0:
+//		Window.alert("source "+js.getSource());
+		if (js.getSource()==null || js.getSource().getId()==null){
 			Label label = new Label();
-			label.setText("Origen:  VENTAS. " + js.getSource() + ". " + js.getSourceId());
-			sourcePanel.add(label);
-//			Integer salesDetailId = js.getSourceId();
-//			
-//			API.getWarehouse().getSalesDetail(salesDetailId, new AsyncCallback<JSON<JsOrderDetail>>() {
-//				
-//				@Override
-//				public void onSuccess(JSON<JsOrderDetail> result) {
-//					FlowPanel panel = createSourcePanel(result.getOneData());
-//					widget.setLayoutData(panel);
-//				}
-//				
-//				@Override public void onFailure(Throwable caught) {}
-//			});
-			break;
-		case 1:
-			label = new Label();
-			label.setText("Origen sin confirmar");
-			sourcePanel.add(label);
-			break;
-		default:
-			label = new Label();
 			label.setText("La elaboración se ha creado manualmente, no tiene origen. ");
 			sourcePanel.add(label);
-			break;
+		} else if("SALES".equals(js.getSource().getName())){
+//			Label label = new Label();
+//			label.setText("Origen:  VENTAS. " + js.getSource() + ". " + js.getSourceId());
+//			sourcePanel.add(label);
+			
+			Integer salesDetailId = js.getSourceId();
+			API.getWarehouse().getSalesDetail(salesDetailId, new AsyncCallback<JSON<JsSalesDetail>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsSalesDetail> result) {
+//					Window.alert("salesDetail "+result.getOneData().get);
+					FlowPanel panel = createSourcePanel(result.getOneData());
+//					widget.setLayoutData(panel);
+					sourcePanel.add(panel);
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else if("PURCHASE".equals(js.getSource().getName())){
+			Label label = new Label();
+			label.setText("Origen:  COMPRAS. " + js.getSource() + ". " + js.getSourceId());
+			sourcePanel.add(label);
+		} else {
+			Label label = new Label();
+			label.setText("Origen sin confirmar");
+			sourcePanel.add(label);
 		}
 	}
 	
@@ -135,14 +138,15 @@ public class FootPanel extends Composite {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				parent.updateElaboration(js);
+//				parent.updateElaboration(js);
+				parent.setJsElaboration(js);
 			}
 		});
 
 		observationPanel.add(comments);
 	}
 	
-	protected FlowPanel createSourcePanel(JsOrderDetail orderDetail){
+	protected FlowPanel createSourcePanel(JsSalesDetail orderDetail){
 		JsOrder order2 = null; 
 		final FlowPanel p = new FlowPanel("pre");
 		final FlowPanel headerPanel = new FlowPanel("pre");
@@ -274,19 +278,19 @@ public class FootPanel extends Composite {
 		
 		Double discount = orderDetail.getDiscountExpr() != null ? Double.parseDouble(orderDetail.getDiscountExpr()) : 1.0;
 		Double importe = orderDetail.getPrice() * orderDetail.getQuantity() * (1 - (discount/100));
-		InlineLabel d = new InlineLabel(AonStringUtils.SPACE
-				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getLine() + ""),11)
-				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-						AonStringUtils.defaultString(orderDetail.getProductCode() + "-" + orderDetail.getProductName()), 39), 44)
-				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getQuantity() + ""), 16)
-				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getPrice() + ""), 16)
-				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getDiscountExpr()), 16)
-				+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
-				);
-		d.setTitle("");
-		d.setStyleName(AON.AON_CSS.aonBold());
+//		InlineLabel d = new InlineLabel(AonStringUtils.SPACE
+//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getLine() + ""),11)
+//				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
+//						AonStringUtils.defaultString(orderDetail.getProductCode() + "-" + orderDetail.getProductName()), 39), 44)
+//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getQuantity() + ""), 16)
+//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getPrice() + ""), 16)
+//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getDiscountExpr()), 16)
+//				+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
+//				);
+//		d.setTitle("");
+//		d.setStyleName(AON.AON_CSS.aonBold());
 		
-		line.add(d);
+//		line.add(d);
 		center.add(line);
 		
 		p.add(center);
