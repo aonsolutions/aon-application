@@ -73,6 +73,7 @@ node {
 
    }
    else {
+
       // Mark the code build 'stage'....
       stage 'Build'
    
@@ -143,6 +144,8 @@ node {
       
       echo "currentBuild.result = ${currentBuild.result}"
 
+      //if ( currentBuild.result != 'UNSTABLE' ) {
+
       stage 'Docker Build'
 
       sh "docker build --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
@@ -150,6 +153,24 @@ node {
       sh "docker login -u rtrepiana -p aon945121010"
 
       sh "docker push aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
+
+      sh "aws ecs list-task-definitions --family-prefix SNAPSHOT > snapshot-task-definitions.json"
+
+      def snapshot_task_definitions_json = readFile 'snapshot-task-definitions.json'
+
+      def snapshot_task_definitions_arns = getTaskDefinitionArns(snapshot_task_definitions_json)
+
+      def last_snapshot_task_definition_arn = snapshot_task_definitions_arns[snapshot_task_definitions_arns.size()-1]
+
+      sh "aws ecs describe-task-definition --task-definition ${last_snapshot_task_definition_arn} > last-snapshot-task-definition.json"
+
+      def last_snapshot_task_definition_json = readFile 'last-snapshot-task-definition.json'
+
+      def snapshot_container_definitions_json = getContainerDefinitions(last_snapshot_task_definition_json, "aonsolutions/aon-application:${pom.version}-${BUILD_NUMBER}-tomcat9-jre8")
+
+      sh "aws ecs register-task-definition --family SNAPSHOT --container-definitions '${snapshot_container_definitions_json}'"
+
+      //}
 
       //stage 'SonarQube Analysis'
       //
@@ -174,10 +195,28 @@ node {
 }
 
 @NonCPS
+def toJson(def object) {
+    groovy.json.JsonOutput.toJson(object)
+}
+
+@NonCPS
 def getKeys(def json) {
     def objects = new groovy.json.JsonSlurper().parseText(json)
     def keys = new String[objects.Contents.size()]
     for (int i = 0; i < objects.Contents.size(); i++)
        keys[i]=objects.Contents[i].Key
     keys
+}
+
+
+@NonCPS
+def getTaskDefinitionArns(def json) {
+    new groovy.json.JsonSlurper().parseText(json).taskDefinitionArns
+}
+
+@NonCPS
+def getContainerDefinitions(def json, def image) {
+    def containerDefinitions = new groovy.json.JsonSlurper().parseText(json).taskDefinition.containerDefinitions
+    containerDefinitions[0].image = image
+    groovy.json.JsonOutput.toJson(containerDefinitions)
 }
