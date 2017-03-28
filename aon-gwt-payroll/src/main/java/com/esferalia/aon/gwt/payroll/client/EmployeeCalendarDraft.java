@@ -673,9 +673,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			private void selectAll() {
 				Date startDate = DateUtils.copyDateOnly(calendarEmployeeInfo.getStartDateContract());
 				Date endDate;
-				if(null == calendarEmployeeInfo.getEndDateContract()){
-					int actualYear = new Date().getYear();
-					endDate = new Date(actualYear+1, 11, 31);
+				if(null == calendarEmployeeInfo.getEndDateContract() && 0 == calendarEmployeeInfo.getMapSize()){
+					Integer actualYear = new Date().getYear();
+					endDate = new Date(actualYear+1,11,31);
+				} else if(null == calendarEmployeeInfo.getEndDateContract()){
+					endDate = calendarEmployeeInfo.getLastMapDate();
 				}else
 					endDate = DateUtils.copyDateOnly(calendarEmployeeInfo.getEndDateContract());
 				
@@ -683,7 +685,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					fechasSelecciondas.setSelected(DateUtils.copyDateOnly(startDate), true);
 					DateUtils.addDays2Date(startDate, 1);
 				}
-				pintarSeleccion(fechasSelecciondas.getSelectedList());
+				pintarSeleccionTodosDias(fechasSelecciondas.getSelectedList());
+				hourButton.setDisabled(false);
 			}
 			
 		});
@@ -740,6 +743,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		saveButton.setVisible(false);
 		//#endif
 		
+		//saveButton.setVisible(true);
 	}
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
@@ -1447,18 +1451,25 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		if(fechasSelecciondas.getSelectedList().size() == 1){
 			for (Date date : fechasSelecciondas.getSelectedList()) {
 				if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
+					comprobarDiaNoLaborable(date, horasDomingo);
 					calendarEmployeeInfo.setHourByDay(date, horasDomingo);
 				}else if (es(6, date) && horas[5] != horasSabado){//SABADO
+					comprobarDiaNoLaborable(date, horasSabado);
 					calendarEmployeeInfo.setHourByDay(date, horasSabado);
 				}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
+					comprobarDiaNoLaborable(date, horasViernes);
 					calendarEmployeeInfo.setHourByDay(date, horasViernes);
 				}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
+					comprobarDiaNoLaborable(date, horasJueves);
 					calendarEmployeeInfo.setHourByDay(date, horasJueves);
 				}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
+					comprobarDiaNoLaborable(date, horasMiercoles);
 					calendarEmployeeInfo.setHourByDay(date, horasMiercoles);
 				}else if (es(2, date) && horas[1] != horasMartes){//MARTES
+					comprobarDiaNoLaborable(date, horasMartes);
 					calendarEmployeeInfo.setHourByDay(date, horasMartes);
 				}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
+					comprobarDiaNoLaborable(date, horasLunes);
 					calendarEmployeeInfo.setHourByDay(date, horasLunes);
 				}
 			}
@@ -1466,18 +1477,25 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			HashMap<Date, Double> composite = new HashMap<Date, Double>();
 			for (Date date : fechasSelecciondas.getSelectedList()) {
 				if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
+					comprobarDiaNoLaborable(date, horasDomingo);
 					composite.put(date, horasDomingo);
 				}else if (es(6, date) && horas[5] != horasSabado){//SABADO
+					comprobarDiaNoLaborable(date, horasSabado);
 					composite.put(date, horasSabado);
 				}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
+					comprobarDiaNoLaborable(date, horasViernes);
 					composite.put(date, horasViernes);
 				}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
+					comprobarDiaNoLaborable(date, horasJueves);
 					composite.put(date, horasJueves);
 				}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
+					comprobarDiaNoLaborable(date, horasMiercoles);
 					composite.put(date, horasMiercoles);
 				}else if (es(2, date) && horas[1] != horasMartes){//MARTES
+					comprobarDiaNoLaborable(date, horasMartes);
 					composite.put(date, horasMartes);
 				}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
+					comprobarDiaNoLaborable(date, horasLunes);
 					composite.put(date, horasLunes);
 				}
 			}
@@ -1487,6 +1505,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		fechasSelecciondas.getSelectedList().clear();
 	}
 	
+	private void comprobarDiaNoLaborable(Date date, double hora) {
+		if(hora == Double.parseDouble("-1")){
+			calendarEmployeeInfo.setTypeByDay(date, DayType.NOWORKINGDAY);
+		}	
+	}
+
 	private void comprobarDiasAMostrar() {
 		//Ocultar todos los dias
 		for (int i=0; i<7; i++)
@@ -1550,6 +1574,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}	
 		fechasSelecciondas.clear();
 		
+	}
+	
+	private void aplicarEstilosDiasSeleccionadios(Date date, DayType dayType) {
+		int pos = calcularPosicionFecha(date);
+		if(pos != -1){
+			int col = calcularColumna(pos);
+			int row = calcularFila(pos);
+			limpiarEstilo(row, col);
+			cells[row][col].unSelect(row, col);
+			cellsType[row][col].setAsType(dayType, row, col);
+			calendarEmployeeInfo.setTypeByDay(cellsDates[row][col], dayType);
+		}
 	}
 	
 	private void aplicarEreEstilosDiasSeleccionadios(double ce, DayType ereday) {
@@ -1677,8 +1713,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					if(fechasSelecciondas.isSelected(date))
 						fechasSelecciondas.setSelected(DateUtils.copyDateOnly(date), false);	
 			}
-		}
-		
+		}	
+	}
+	
+	private void pintarSeleccionTodosDias(List<Date> fechasSeleccionadas) {
+		for(Date date : fechasSeleccionadas){
+			int pos = calcularPosicionFecha(date);
+			if (pos != -1){
+				int col = calcularColumna(pos);
+				int row = calcularFila(pos);
+				cells[row][col].select(row, col);
+			}
+		}	
 	}
 	
 	// ------------------------------------------------------------- GESTION EVENTOS ---------------------------------------------------------------------

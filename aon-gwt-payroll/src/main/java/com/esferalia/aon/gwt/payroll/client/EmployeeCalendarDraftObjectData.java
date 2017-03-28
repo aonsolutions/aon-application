@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -280,6 +281,18 @@ public class EmployeeCalendarDraftObjectData {
 		return this.employeeId;
 	}
 	
+	public Integer getMapSize(){
+		return mapaDiasHoras.keySet().size();
+	}
+	
+	public Date getLastMapDate(){
+		Date lastDraftDate = new Date(0);
+		for ( Date date : mapaDiasHoras.keySet() )
+			if ( date.after(lastDraftDate) )
+				lastDraftDate = DateUtils.copyDateOnly(date);
+		return lastDraftDate;
+	}
+	
 	public DayType getTypeByDay (Date dia){
 		DayType typeDayDraft = draftMapaDiasTipo.get(dia);
 		
@@ -328,6 +341,7 @@ public class EmployeeCalendarDraftObjectData {
 	public void setHourByDay (Map<Date, Double> hours){
 		List<Undoable> undos = new ArrayList<Undoable>();
 		for (Map.Entry<Date, Double> entry : hours.entrySet()) {
+			DateUtils.resetTime(entry.getKey());
 			Double old = draftMapaDiasHoras.put(entry.getKey(), entry.getValue());
 			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
 		}
@@ -367,15 +381,6 @@ public class EmployeeCalendarDraftObjectData {
 	
 	public boolean getJornadaEmpleado(){
 		return jornadaEmpleado;
-	}
-	
-	public Date getLastDateMap(){
-		Date finalDate = new Date();
-		for(Entry<Date, Double> date : mapaDiasHoras.entrySet()){
-			if(date.getKey().after(finalDate))
-				finalDate = DateUtils.copyDateOnly(date.getKey());
-		}
-		return finalDate;
 	}
 
 	// ---------------------------------------------- METODOS VARIABLES SYNC BORRADOR ---------------------------------------------
@@ -801,10 +806,12 @@ public class EmployeeCalendarDraftObjectData {
 		HashMap<Date, Double> mapaUpdate = new HashMap<Date, Double>();
 		
 		for ( Entry<Date,Double> e : mapaDiasHoras.entrySet()){
+			DateUtils.resetTime(e.getKey());
 			mapaUpdate.put(e.getKey(), e.getValue());
 		}
 		
 		for (Entry<Date,Double> e : draftMapaDiasHoras.entrySet()){
+			DateUtils.resetTime(e.getKey());
 			mapaUpdate.put(e.getKey(), e.getValue());
 		}
 		

@@ -11,8 +11,11 @@ import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -317,7 +320,7 @@ public class JooqEmployeeCalendar {
 				
 				while (date.before(endDate) && mapaHorasUpdate.containsKey(date)){
 					if(!horasStart.equals(mapaHorasUpdate.get(date))){
-						Date sqlStartDate = new Date(startDate.getTime());
+						Date sqlStartDate = new Date(auxStartDate.getTime());
 						Date sqlEndDate = new Date(date.getTime());
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
