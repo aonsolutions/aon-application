@@ -108,6 +108,7 @@ public class ElaborationDAO {
 	
 	public static List<Elaboration> getElaborationList(AONContext ctx,
 			ElaborationFilter filter) {
+		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION)
 				.where(ELABORATION_PROPERTIES.getConditions(filter))
 				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
@@ -118,6 +119,7 @@ public class ElaborationDAO {
 
 	public static Elaboration getElaboration(AONContext ctx,
 			Integer elaborationId) {
+		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION)
 				.where(ELABORATION.ID.eq(elaborationId)).limit(1)
 				.fetchInto(ELABORATION).stream()
@@ -127,6 +129,7 @@ public class ElaborationDAO {
 	
 	public static Elaboration getElaboration(AONContext ctx, String series,
 			Integer number) {
+		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION)
 				.where(ELABORATION.SERIES.eq(series))
 				.and(ELABORATION.NUMBER.eq(number))
@@ -142,6 +145,8 @@ public class ElaborationDAO {
 		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
 		modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
+		String series = elaboration.getSeries();
+		int number = elaboration.getNumber()>0?elaboration.getNumber():getSerieMaxNumber(ctx, series)+1;
 		return ctx
 				.getDslContext()
 				.insertInto(ELABORATION, ELABORATION.DOMAIN,
@@ -153,8 +158,7 @@ public class ElaborationDAO {
 						ELABORATION.CREATION_USER, ELABORATION.CREATION_DATE,
 						ELABORATION.MODIFICATION_USER,
 						ELABORATION.MODIFICATION_DATE)
-				.values(ctx.getDomainId(), elaboration.getSeries(),
-						elaboration.getNumber(),
+				.values(ctx.getDomainId(), series, number,
 						new Timestamp(elaboration.getDate().getTime()),
 						elaboration.getItem().getId(),
 						elaboration.getWarehouse(), elaboration.getQuantity(),
@@ -191,6 +195,7 @@ public class ElaborationDAO {
 	}
 
 	public static Elaboration deleteElaboration(AONContext ctx, ElaborationFilter filter) {
+		ctx.checkWrite();
 		return ctx.getDslContext().delete(ELABORATION)
 				.where(ELABORATION_PROPERTIES.getConditions(filter))
 				.and(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
@@ -208,6 +213,7 @@ public class ElaborationDAO {
 	
 	public static List<ElaborationDetail> getElaborationDetailList(
 			AONContext ctx, Integer elaborationId) {
+		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL.ELABORATION.eq(elaborationId))
 				.orderBy(ELABORATION_DETAIL.DATE.desc())
@@ -218,6 +224,7 @@ public class ElaborationDAO {
 
 	public static List<ElaborationDetail> getElaborationDetailList(
 			AONContext ctx, ElaborationDetailFilter filter) {
+		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
 				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId()))
@@ -229,6 +236,7 @@ public class ElaborationDAO {
 			
 	public static ElaborationDetail getElaborationDetail(AONContext ctx,
 			Integer elaborationDetailId) {
+		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL.ID.eq(elaborationDetailId)).limit(1)
 				.fetchInto(ELABORATION_DETAIL).stream()
@@ -295,6 +303,7 @@ public class ElaborationDAO {
 
 	public static int deleteElaborationDetail(AONContext ctx,
 			ElaborationDetailFilter filter) {
+		ctx.checkWrite();
 		return ctx.getDslContext().delete(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
 				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId())).execute();
@@ -302,6 +311,7 @@ public class ElaborationDAO {
 
 	public static int deleteElaborationDetail(AONContext ctx,
 			ElaborationDetail detail) {
+		ctx.checkWrite();
 		return ctx.getDslContext().delete(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL.ID.eq(detail.getId())).execute();
 	}
@@ -312,6 +322,7 @@ public class ElaborationDAO {
 	 */
 	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(
 			AONContext ctx, Integer elaborationDetailId) {
+		ctx.checkRead();
 		return ctx
 				.getDslContext()
 				.select()
@@ -325,6 +336,7 @@ public class ElaborationDAO {
 	
 	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(
 			AONContext ctx, ElaborationDetailCompositionFilter filter) {
+		ctx.checkRead();
 		return ctx
 				.getDslContext()
 				.select()
@@ -339,6 +351,7 @@ public class ElaborationDAO {
 	
 	public static ElaborationDetailComposition getElaborationDetailComposition(
 			AONContext ctx, Integer elaborationDetailCompositionId) {
+		ctx.checkRead();
 		return ctx
 				.getDslContext()
 				.select()
@@ -416,6 +429,7 @@ public class ElaborationDAO {
 	
 	public static int deleteElaborationDetailComposition(AONContext ctx,
 			ElaborationDetailCompositionFilter filter) {
+		ctx.checkWrite();
 		return ctx
 				.getDslContext()
 				.delete(ELABORATION_DETAIL_COMPOSITION)
@@ -427,6 +441,7 @@ public class ElaborationDAO {
 	
 	public static int deleteElaborationDetailComposition(AONContext ctx,
 			ElaborationDetailComposition composition) {
+		ctx.checkWrite();
 		return ctx
 				.getDslContext()
 				.delete(ELABORATION_DETAIL_COMPOSITION)

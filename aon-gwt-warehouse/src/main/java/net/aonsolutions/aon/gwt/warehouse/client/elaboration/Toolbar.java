@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Toolbar extends Composite {
@@ -16,6 +17,13 @@ public abstract class Toolbar extends Composite {
 
 	private static final ToolbarBinder binder = GWT.create(ToolbarBinder.class);
 
+	@UiField
+	Label title;
+	@UiField
+	Label subtitle;
+	
+	@UiField
+	Button accept;
 	@UiField
 	Button back;
 	@UiField
@@ -32,6 +40,8 @@ public abstract class Toolbar extends Composite {
 
 	// -------------------------------------------------------------- UiHandler
 
+	protected abstract void accept();
+	
 	protected abstract void back();
 
 	protected abstract void reset();
@@ -40,8 +50,13 @@ public abstract class Toolbar extends Composite {
 
 	protected abstract void download();
 
-	@UiHandler("back")
+	@UiHandler("accept")
 	public void onAccept(ClickEvent event) {
+		accept();
+	}
+	
+	@UiHandler("back")
+	public void onBack(ClickEvent event) {
 		back();
 	}
 

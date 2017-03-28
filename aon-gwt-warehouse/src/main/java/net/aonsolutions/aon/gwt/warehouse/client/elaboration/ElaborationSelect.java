@@ -187,7 +187,7 @@ public class ElaborationSelect extends Composite{
 			@Override
 			public void onSuccess(JSON<JsElaborationDetail> result) {
 				result.getData().stream().forEach(js -> selectable
-						.addItem(js.getQuantity() + " uds. (#SN)" + js.getItem().getName(), js.getId() + ""));
+						.addItem(js.getQuantity() + " uds. ("+js.getItem().getSerialNumber()+") " + js.getDate(), js.getId() + ""));
 				if (result.getData().length() == 1) {
 					selectable.setSelectedIndex(0);
 					selectable.fireEvent(new GwtEvent<ClickHandler>() {

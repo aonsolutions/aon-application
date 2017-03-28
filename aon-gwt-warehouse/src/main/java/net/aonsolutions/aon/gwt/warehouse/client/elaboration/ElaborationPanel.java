@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
-import com.esferalia.aon.gwt.api.client.product.JsProduct;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
@@ -19,7 +18,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -36,7 +34,6 @@ public class ElaborationPanel extends Composite {
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
-//	ListBox series;
 	TextBox series;
 	@UiField
 	TextBox number;
@@ -50,10 +47,7 @@ public class ElaborationPanel extends Composite {
 	@UiField
 	TextBox quantity;
 	@UiField
-//	ListBox status;
 	InlineLabel status;
-//	@UiField
-//	TextArea comments;
 
 	private MainElaboration parent;
 	private API API;
@@ -74,40 +68,21 @@ public class ElaborationPanel extends Composite {
 		this.jsElaboration = jsElaboration;
 		load();
 	}
+	
+	ItemBox pBox;
 
 	private void load() {
 
 		series.setText(jsElaboration != null && jsElaboration.getSeries() != null
 				? (jsElaboration.getSeries() + "") : "");
-		number.setText(jsElaboration != null && jsElaboration.getNumber() != null
-				? (jsElaboration.getNumber() + "") : "");
+		if(jsElaboration != null && jsElaboration.getNumber() != null){
+			number.setText(jsElaboration.getNumber() + "");
+		} else {			
+			number.setText("auto");
+			number.setEnabled(false);
+		}
 		status.setText(jsElaboration != null && jsElaboration.getStatus() != null
 				? (jsElaboration.getStatus().getName() + "") : "");
-		
-//		API.getWarehouse().getElaborationStatuses(new AsyncCallback<JSON<JsObject>>() {
-//			
-//			@Override
-//			public void onSuccess(JSON<JsObject> result) {
-//				result.getData().stream()
-//				.filter(s -> !s.getName().equalsIgnoreCase("fallido")
-//						&& !s.getName().equalsIgnoreCase("reabierto")
-//						&& !s.getName().equalsIgnoreCase("en progreso"))
-//						.forEach(s -> status.addItem(s.getName(), s.getId() + ""));
-//				
-//				if (jsElaboration != null && jsElaboration.getStatus() != null) {
-//					for (Integer i = 0; i < status.getItemCount(); i++) {
-//						if (jsElaboration.getStatus() != null
-//								& jsElaboration.getStatus().getName().equals(status.getItemText(i))) {
-//							status.setSelectedIndex(i);
-//						}
-//					}
-//				}
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//		});
 		
 		if (jsElaboration != null && jsElaboration.getDate() != null
 				&& !"".equals(jsElaboration.getDate())) {
@@ -117,12 +92,8 @@ public class ElaborationPanel extends Composite {
 			date.setValue(issueDate);
 		}
 		
-//		comments.setText(jsElaboration != null && 
-//				jsElaboration.getComments() != null ? jsElaboration.getComments() : "");
-//		comments.setCharacterWidth(20);
-//		comments.setVisibleLines(3);
-
-		if(jsElaboration != null && jsElaboration.getItem() != null){
+		if(jsElaboration != null && jsElaboration.getItem() != null
+			&& jsElaboration.getItem().getId() != null){
 //			API.getProduct().getProduct(jsElaboration.getItem().getProductId(), new AsyncCallback<JSON<JsProduct>>() {
 //				
 //				@Override
@@ -142,7 +113,7 @@ public class ElaborationPanel extends Composite {
 				
 				@Override
 				public void onSuccess(JSON<JsItem> result) {
-					ItemBox pBox = new ItemBox(API);
+					pBox = new ItemBox(API);
 					if(result!=null){
 						pBox.set(result.getOneData());
 					}
@@ -153,6 +124,9 @@ public class ElaborationPanel extends Composite {
 				public void onFailure(Throwable caught) {
 				}
 			});
+		} else {
+			pBox = new ItemBox(API);
+			itemPanel.add(pBox);
 		}
 		
 
@@ -166,10 +140,10 @@ public class ElaborationPanel extends Composite {
 				result.getData().stream()
 				.forEach(w -> warehouse.addItem(w.getName(), w.getId() + ""));
 				
-				if (jsElaboration != null && jsElaboration.getStatus() != null) {
+				if (jsElaboration != null && jsElaboration.getWarehouse() != null) {
 					for (Integer i = 0; i < warehouse.getItemCount(); i++) {
-						if (jsElaboration.getStatus() != null
-								& jsElaboration.getStatus().getName().equals(warehouse.getItemText(i))) {
+						if (jsElaboration.getWarehouse() != null
+								& jsElaboration.getWarehouse().getName().equals(warehouse.getItemText(i))) {
 							warehouse.setSelectedIndex(i);
 						}
 					}
@@ -181,35 +155,46 @@ public class ElaborationPanel extends Composite {
 			}
 		});
 		
-//		series.addChangeHandler(getUpdateChangeListener());
-//		number.addChangeHandler(getUpdateChangeListener());
-////		status.addChangeHandler(getUpdateChangeListener());
-//		date.addValueChangeHandler(getUpdateChangeHandler());
-////		comments.addChangeHandler(getUpdateChangeListener());
-//		item.addChangeHandler(getUpdateChangeListener());
-//		quantity.addChangeHandler(getUpdateChangeListener());
-//		warehouse.addChangeHandler(getUpdateChangeListener());
-		
-	}
+		series.addChangeHandler(new ChangeHandler() {
 
-	private ChangeHandler getUpdateChangeListener() {
-		return new ChangeHandler() {
-			
 			@Override
 			public void onChange(ChangeEvent event) {
-				parent.updateElaboration(getJsElaboration());
+				loadNumberBySeries(getJsElaboration().getSeries());
 			}
-		};
-	}
-	
-	private <T> ValueChangeHandler<T> getUpdateChangeHandler() {
-		return new ValueChangeHandler<T>() {
+		});
+		date.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
 			@Override
-			public void onValueChange(ValueChangeEvent<T> event) {
-				parent.updateElaboration(getJsElaboration());
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				// TODO date::onValueChange
 			}
-		};
+		});
+		
+	}
+	
+	// TODO recover next free number
+	private void loadNumberBySeries(String series) {
+//		API.getWarehouse().getElaborationSeriesNumber(new AsyncCallback<JSON<JsObject>>() {
+//			
+//			@Override
+//			public void onSuccess(JSON<JsObject> result) {
+//				result.getData().stream()
+//				.forEach(w -> warehouse.addItem(w.getName(), w.getId() + ""));
+//				
+//				if (jsElaboration != null && jsElaboration.getWarehouse() != null) {
+//					for (Integer i = 0; i < warehouse.getItemCount(); i++) {
+//						if (jsElaboration.getWarehouse() != null
+//								& jsElaboration.getWarehouse().getName().equals(warehouse.getItemText(i))) {
+//							warehouse.setSelectedIndex(i);
+//						}
+//					}
+//				}
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//		});
 	}
 
 	public JsElaboration getJsElaboration() {

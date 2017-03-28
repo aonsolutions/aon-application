@@ -25,14 +25,12 @@ import com.code.aon.webservice.warehouse.jooq.DBSales;
 import com.code.aon.webservice.warehouse.jooq.DBWarehouse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -106,7 +104,11 @@ public class WarehouseServlet extends HttpServlet{
 						} else if(MSG.DETAIL_COMPOSITION.equals(pathInfo[4])){
 							object = getElaborationDetailCompositionList(domain, userName, Integer.parseInt(pathInfo[5]));
 						} else {
-							object = getElaboration(domain, userName, Integer.parseInt(pathInfo[4]));
+							if("create".equals(pathInfo[4])){
+								object = DBWarehouse.createElaboration(domain, userName);
+							} else {
+								object = getElaboration(domain, userName, Integer.parseInt(pathInfo[4]));
+							}
 						}
 					} else object = getElaborationList(domain, userName, req.getParameterMap());
 				} else if(MSG.WAREHOUSE.equals(pathInfo[3])){
@@ -176,12 +178,12 @@ public class WarehouseServlet extends HttpServlet{
 			else if(MSG.ELABORATION.equals(pathInfo[3])){
 				if(pathInfo.length > 4){ 
 					if(MSG.UPDATE.equals(pathInfo[4])){
-						object = DBWarehouse.updateElaboration(domain, userName, json);
+						object = DBWarehouse.updateElaboration(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[4])){
-						object = DBWarehouse.deleteElaboration(domain, userName, json);
+						object = DBWarehouse.deleteElaboration(domain, userName, Integer.parseInt(pathInfo[5]));
 					}
 				} else {
-					object = insertElaboration(domain, userName, json);
+					object = DBWarehouse.insertElaboration(domain, userName, json);
 				}	
 			} else if(MSG.INCOME.equals(pathInfo[3])){
 				if(pathInfo.length > 4){  // TODO 
@@ -571,13 +573,6 @@ public class WarehouseServlet extends HttpServlet{
     	return ToJSON.elaborationToJSON(AON.getFullElaboration(domain.getName(), domain.getId(), login, id));
     }
     
-    private JSONObject insertElaboration(Domain domain, String login, JSONObject json) {
-    	Elaboration elaboration = getElaboration(domain, login, json, new Elaboration());
-		Integer id = AON.insertElaboration(domain.getName(), domain.getId(), login, elaboration);
-		elaboration.setId(id);
-		return ToJSON.elaborationToJSON(elaboration);
-	}
-    
     private JSONArray getElaborationDetailList(Domain domain,String login, Integer elaboration){
     	JSONArray array = new JSONArray();
     	AON.getElaborationDetailList(domain.getName(), domain.getId(), login, elaboration)
@@ -591,35 +586,6 @@ public class WarehouseServlet extends HttpServlet{
     		.forEach(composition -> array.put(ToJSON.elaborationDetailCompositionToJSON(composition)));
     	return array;
     }
-    
-    private Elaboration getElaboration(Domain domain, String login, JSONObject json, Elaboration elaboration) {
-		if(json.opt(MSG.SERIES) != null){
-			elaboration.setSeries(json.getString(MSG.SERIES));
-		}
-		if(json.opt(MSG.NUMBER) != null && !MSG.EMPTY.equals(json.opt(MSG.NUMBER))){
-			elaboration.setNumber(json.getInt(MSG.NUMBER));
-		}
-		if(json.opt(MSG.DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.DATE))){
-			elaboration.setDate(new Date(json.getLong(MSG.DATE)));
-		}
-		if(json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))){
-			elaboration.setItem(new Item().setId(json.getInt(MSG.ITEM)));
-		}
-		if(json.opt(MSG.QUANTITY) != null && !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))){
-			elaboration.setQuantity(json.getDouble(MSG.QUANTITY));
-		}
-		if(json.opt(MSG.WAREHOUSE) != null && !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))){
-			elaboration.setWarehouse(json.getInt(MSG.WAREHOUSE));
-		}
-		if(json.opt(MSG.STATUS) != null && !MSG.EMPTY.equals(json.opt(MSG.STATUS))){
-			elaboration.setStatus(ElaborationStatus.values()[json.getInt(MSG.STATUS)].value());
-		}
-		if(json.opt(MSG.COMMENTS) != null){
-			elaboration.setComments(json.getString(MSG.COMMENTS));
-		}
-		
-		return elaboration;
-	}
     
     private Filter elaborationFilter(Domain domain, Map<String, String[]> filterMap, ElaborationProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());

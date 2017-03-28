@@ -2,22 +2,14 @@ package net.aonsolutions.aon.gwt.warehouse.client.widget;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.common.client.AON;
-//import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-//import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryPanel;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-//import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox.AccountingRegistrySuggestion;
-//import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox.AccountingRegistrySuggestionDisplay;
-//import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryPanel.AccountingRegistryPanelCallback;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-//import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-//import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
 import com.google.gwt.core.client.Scheduler;

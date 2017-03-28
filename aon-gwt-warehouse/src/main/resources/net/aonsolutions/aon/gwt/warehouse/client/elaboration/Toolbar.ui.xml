@@ -14,25 +14,26 @@
 		<g:HorizontalPanel>
 			<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
-					<g:Label text="Elaboraciones" />
+					<g:Label ui:field="title" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="aon-finding-subtitle">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
-					<g:Label></g:Label>
+					<g:Label ui:field="subtitle "/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
-					<g:Button ui:field="back" text="Volver" visible="false"
+					<g:Button ui:field="back" text="Volver"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
+					<g:Button ui:field="accept" text="{msg.saveAction}"
+						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}" />
 					<g:Button ui:field="reset" text="{msg.newAction}"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}" />
 					<g:Button ui:field="remove" text="{msg.deleteAction}"
-						visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
 					<g:Button ui:field="download" text="{msg.download}"
-						visible="false" styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
+						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HorizontalPanel>

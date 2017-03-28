@@ -163,14 +163,29 @@ public class Warehouse extends Methods{
 	public void getElaborationDetailComposition(Integer id, AsyncCallback<JSON<JsElaborationDetailComposition>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/" + id, callback);
 	}
+	public void createElaboration(AsyncCallback<JSON<JsElaboration>> callback) {
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/create", callback);
+	}
 	public void insertElaboration(String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
 	}
-	public void updateElaboration(Integer id,String requestData, AsyncCallback<JsElaboration> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update"+id, requestData, callback);
+	public void updateElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update/"+id, requestData, callback);
 	}
-	public void deleteElaboration(Integer id,String requestData, AsyncCallback<JsElaboration> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/delete"+id, requestData, callback);
+	public void deleteElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/delete/"+id, requestData, callback);
+	}
+	public void downloadElaboration(Integer id){
+		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id;
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_elaboration/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	/* WAREHOUSE */
@@ -193,7 +208,7 @@ public class Warehouse extends Methods{
 	}
 	
 	/* SALES */
-	public void getSalesDetail(Integer id, AsyncCallback<JSON<JsOrderDetail>> callback){
+	public void getSalesDetail(Integer id, AsyncCallback<JSON<JsSalesDetail>> callback){
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/sales/"+id + "/detail" , callback);
 	}
 }

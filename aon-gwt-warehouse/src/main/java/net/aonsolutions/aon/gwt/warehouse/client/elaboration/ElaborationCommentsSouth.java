@@ -41,7 +41,7 @@ public class ElaborationCommentsSouth extends DockLayoutPanel{
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				parent.updateElaboration(null);
+//				parent.updateElaboration(null);
 			}
 		});
 		
