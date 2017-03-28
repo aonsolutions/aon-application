@@ -405,9 +405,8 @@ public class WarehouseServlet extends HttpServlet{
     			lines = AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> 
     					f.getCarrierPackingProperty().eq(cp.getId())).count();
     		}else {
-    			Integer[] ids  = AON.getDeliveryStream(domain.getName(), domain.getId(), login, f -> 
-    					f.getCarrierPackingProperty().eq(cp.getId())).map(f -> f.getId()).toArray(Integer[]::new);
-    			lines = AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().in(ids)).count();
+    			lines = AON.getDeliveryStream(domain.getName(), domain.getId(), login, f -> 
+					f.getCarrierPackingProperty().eq(cp.getId())).count();
     		}
     		json.put("lines", lines.intValue());
     		array.put(json);	
@@ -500,6 +499,21 @@ public class WarehouseServlet extends HttpServlet{
     private Filter deliveryFilter(Domain domain, Map<String, String[]> filterMap, DeliveryProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 			
+		if(filterMap.containsKey(MSG.REGISTRY)){
+			Filter fRegistry = f.getRegistryNameProperty().like("%" + filterMap.get(MSG.REGISTRY)[0] + "%")
+					.or(f.getRegistryDocumentProperty().like("%" + filterMap.get(MSG.REGISTRY)[0] + "%"));
+			filter = filter.and(fRegistry);
+		}
+		
+		if(filterMap.containsKey(MSG.SERIES)){
+			filter = filter.and(f.getSeriesProperty().like("%" + filterMap.get(MSG.SERIES)[0] + "%"));
+		}
+		
+		if(filterMap.containsKey(MSG.NUMBER)){
+			Integer number = Integer.parseInt(filterMap.get(MSG.NUMBER)[0]);
+			filter = filter.and(f.getNumberProperty().eq(number));
+		}
+		
 		if(filterMap.containsKey(MSG.CARRIER)){
 			Integer carrier = Integer.parseInt(filterMap.get(MSG.CARRIER)[0]);
 			filter = filter.and(f.getCarrierProperty().eq(carrier)

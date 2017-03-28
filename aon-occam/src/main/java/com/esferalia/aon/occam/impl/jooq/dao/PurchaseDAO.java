@@ -60,6 +60,7 @@ public class PurchaseDAO {
 				.join(REGISTRY).on(REGISTRY.ID.eq(PURCHASE.SUPPLIER))
 				.join(PURCHASE_DETAIL).on(PURCHASE_DETAIL.PURCHASE.eq(PURCHASE.ID))
 				.where(PURCHASE_PROPERTIES.getConditions(filter))
+				.orderBy(PURCHASE.ISSUE_DATE.desc())
 			.fetch().stream().map(new FullPurchaseFiller()).filter(distinctByKey(p -> p.getId()));
 	}
 	

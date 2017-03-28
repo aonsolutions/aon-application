@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -44,7 +45,9 @@ public class CarrierPackingPrincipal extends Composite{
 		this.parent = carrierPacking;
 		this.me = this;
 		this.filterMap = new HashMap<>();
-		
+		LinkedList<String> status = new LinkedList<>();
+		status.add(CarrierPackingStatus.PENDING.ordinal() + "");
+		filterMap.put("status", status);
 		filterContent();
 		gridContent();
 		southContent();

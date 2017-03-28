@@ -9,7 +9,7 @@
 
 	<g:FlowPanel height="100%"
 			styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
-		<g:HorizontalPanel>
+		<g:HorizontalPanel >
 			<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
 					<g:Label text="Carrier Packing" />
@@ -20,8 +20,8 @@
 					<g:Label></g:Label>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
-				<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+			<g:HTMLPanel width="400px" styleName="{aonResources.css.aonFindingToolbar}">
+				<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup} {aonResources.css.aonWidthAll}">
 					<g:Button ui:field="back" text="Volver" visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
 					<g:Button ui:field="reset" text="{msg.newAction}" 

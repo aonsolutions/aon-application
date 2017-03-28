@@ -300,7 +300,7 @@ public class CarrierPackingDetail extends Composite{
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
 					number.setValue(result.getNumber() + "");
-					//parent.setSelectContent(result);
+					content();
 				}
 			
 				@Override public void onFailure(Throwable caught) { }
@@ -312,8 +312,7 @@ public class CarrierPackingDetail extends Composite{
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
 					number.setValue(result.getNumber() + "");
-					//parent.setSelectContent(result);
-					//parent.setParameterPanel(result.getParams());
+					content();
 				}
 				
 				@Override public void onFailure(Throwable caught) { }

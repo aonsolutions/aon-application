@@ -302,6 +302,10 @@ public interface Properties {
 		Property<String> getBicProperty();
 		Property<Integer> getCarrierProperty();
 		Property<Integer> getCarrierPackingProperty();
+		// REGISTRY
+		Property<String> getRegistryNameProperty();
+		Property<String> getRegistryDocumentProperty();
+		
 	}
 	
 	public interface DeliveryDetailProperties extends AuditProperties{
@@ -686,6 +690,11 @@ public interface Properties {
 		Property<String> getShippingContactProperty();
 		Property<Byte> getShippingPeriodProperty();
 		Property<Integer> getCarrierPackingProperty();
+		
+		// REGISTRY
+		Property<String> getRegistryNameProperty();
+		Property<String> getRegistryDocumentProperty();
+		
 	}
 	
 	public interface RecordDataProperties {

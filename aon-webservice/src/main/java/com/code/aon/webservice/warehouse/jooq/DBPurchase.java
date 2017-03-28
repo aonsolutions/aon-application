@@ -68,6 +68,21 @@ public class DBPurchase {
 			
 		}
 		
+		if(filterMap.containsKey(MSG.REGISTRY)){
+			Filter fRegistry = f.getRegistryNameProperty().like("%" + filterMap.get(MSG.REGISTRY)[0] + "%")
+					.or(f.getRegistryDocumentProperty().like("%" + filterMap.get(MSG.REGISTRY)[0] + "%"));
+			filter = filter.and(fRegistry);
+		}
+		
+		if(filterMap.containsKey(MSG.SERIES)){
+			filter = filter.and(f.getSeriesProperty().like("%" + filterMap.get(MSG.SERIES)[0] + "%"));
+		}
+		
+		if(filterMap.containsKey(MSG.NUMBER)){
+			Integer number = Integer.parseInt(filterMap.get(MSG.NUMBER)[0]);
+			filter = filter.and(f.getNumberProperty().eq(number));
+		}
+		
 		if(filterMap.containsKey(MSG.CARRIER)){
 			Integer carrier = Integer.parseInt(filterMap.get(MSG.CARRIER)[0]);
 			filter = filter.and(f.getCarrierProperty().eq(carrier)
