@@ -29,7 +29,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-@WebServlet(name = "printConexFlowPayslip", urlPatterns = {"/print_conexflow_log/*"})
+@WebServlet(name = "printConexFlowLog", urlPatterns = {"/print_conexflow_log/*"})
 public class PrintConexFlowLog extends HttpServlet{
 	
 	/**

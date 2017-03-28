@@ -14,12 +14,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.itextpdf.text.Document;
@@ -45,8 +48,8 @@ public class PrintConexFlowPayslip extends HttpServlet{
 		String projectIdStr = parameters.get("project");
 		Integer projectId = Integer.parseInt(projectIdStr);
 	
-		
-		
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		User user = new User().setLogin(login);
 		LinkedList<Attach>  attachList = AON.getAttachList(domainName, domainId, login, f -> 
 			f.getTypeProperty().eq(ProjectAttachmentType.PAYSLIP.value())
 			.and(f.getAttachModuleProperty().eq(projectId))
@@ -69,6 +72,11 @@ public class PrintConexFlowPayslip extends HttpServlet{
 		document.open();
 		
 		attachList.stream().forEach(r ->{
+			if(r.getData() == null){
+				byte[] b = DriveUtils.getByteFile(domain, user, r.getDriveId(), r.getId());
+				r.setData(b);
+			}
+			
 			if(r.getData() != null){
 				String html = new String(r.getData());				
 				
