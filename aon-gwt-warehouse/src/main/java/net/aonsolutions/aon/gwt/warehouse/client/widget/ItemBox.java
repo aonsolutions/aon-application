@@ -2,6 +2,7 @@ package net.aonsolutions.aon.gwt.warehouse.client.widget;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -145,7 +146,10 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 						&& AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
 					
-					API.getProduct().getItemList(new HashMap<>(), new AsyncCallback<JSON<JsItem>>() {
+					HashMap<String,LinkedList<String>> map = new HashMap<>();
+					map.put("description", new LinkedList<>());
+					map.get("description").add(request.getQuery());
+					API.getProduct().getItemList(map, new AsyncCallback<JSON<JsItem>>() {
 						
 						@Override
 						public void onSuccess(JSON<JsItem> result) {
@@ -154,7 +158,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 								result.getData().stream().forEach(jsItem -> 
 								suggestions.add(new ItemSuggestion(
 										jsItem
-										,jsItem.getId().toString()
+										,jsItem.getCode()
 										,decorate(jsItem, request.getQuery())))
 								);
 							}
@@ -192,15 +196,15 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 				select( selected.getItem() );
 			}
 		});
-		item.addKeyUpHandler( new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if ( config != null &&	(isControlF3(event) || isPlusKeyAlone(event))) {
-					showDialog(domainName,domain,config);
-				}
-			}
-		});
+//		item.addKeyUpHandler( new KeyUpHandler() {
+//			
+//			@Override
+//			public void onKeyUp(KeyUpEvent event) {
+//				if ( config != null &&	(isControlF3(event) || isPlusKeyAlone(event))) {
+//					showDialog(domainName,domain,config);
+//				}
+//			}
+//		});
 		item.addValueChangeHandler( new ValueChangeHandler<String>() {
 			
 			@Override
@@ -226,7 +230,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	}
 	
 	public void set(JsItem item) {
-		itemTextBox.setText(item.getId()+"");
+		itemTextBox.setText(item.getCode());
 		select(item);
 	}
 	
@@ -234,7 +238,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		if (item != null) {
 			itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 			id = item.getId();
-			descriptionLabel.setText(item.getId()+"");
+			descriptionLabel.setText(item.getName());
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
 			id = null;
@@ -253,8 +257,8 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		if (item != null && item.getId() != null) {
 			id = item.getId();
 			itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-			itemTextBox.setValue(item.getId()+"",fireEvents);
-			description = item.getId()+"";
+			itemTextBox.setValue(item.getCode(),fireEvents);
+			description = item.getCode();
 			descriptionLabel.setText(description);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
@@ -385,9 +389,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	
 	private static String decorate(JsItem item, String query) {
 //		String text = AccountingRegistry.getFullDescription(accountingRegistry);
-		String text = item.getId() + " - " 
-//				+ item.getName()
-				;
+		String text = item.getCode() + " - " + item.getName();
 
 //		String icon = AON.AON_CSS.aonLetterCGreenIcon();
 //		if (accountingRegistry.getType() == AccountingRegistryType.SUPPLIER) {

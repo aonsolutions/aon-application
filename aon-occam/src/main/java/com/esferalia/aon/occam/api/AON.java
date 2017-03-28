@@ -856,6 +856,18 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Item> getFullItemList(String domainName, Integer domainId, String login, ProductFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().getFullItemStream(ctx, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Item getItem(String domainName, Integer domainId, String login, Integer itemId) {
 		AONContext ctx = null;
 		try {

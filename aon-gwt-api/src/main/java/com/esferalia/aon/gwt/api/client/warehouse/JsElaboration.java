@@ -61,7 +61,7 @@ public class JsElaboration extends JavaScriptObject {
 												return this.comments;
 												}-*/;
 
-	public final native Byte getSource() /*-{
+	public final native Integer getSource() /*-{
 											return this.source;
 											}-*/;
 

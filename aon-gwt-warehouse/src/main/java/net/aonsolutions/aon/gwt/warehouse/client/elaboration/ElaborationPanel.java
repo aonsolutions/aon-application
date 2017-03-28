@@ -2,11 +2,12 @@ package net.aonsolutions.aon.gwt.warehouse.client.elaboration;
 
 import java.util.Date;
 
-import net.aonsolutions.aon.gwt.warehouse.client.widget.ProductBox;
+import net.aonsolutions.aon.gwt.warehouse.client.widget.ItemBox;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.product.JsProduct;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -122,12 +123,26 @@ public class ElaborationPanel extends Composite {
 //		comments.setVisibleLines(3);
 
 		if(jsElaboration != null && jsElaboration.getItem() != null){
-			Window.alert(jsElaboration.getItem().getId()+" - "+jsElaboration.getItem().getProductId());
-			API.getProduct().getProduct(jsElaboration.getItem().getProductId(), new AsyncCallback<JSON<JsProduct>>() {
+//			API.getProduct().getProduct(jsElaboration.getItem().getProductId(), new AsyncCallback<JSON<JsProduct>>() {
+//				
+//				@Override
+//				public void onSuccess(JSON<JsProduct> result) {
+//					ProductBox pBox = new ProductBox(API);
+//					if(result!=null){
+//						pBox.set(result.getOneData());
+//					}
+//					itemPanel.add(pBox);
+//				}
+//				
+//				@Override
+//				public void onFailure(Throwable caught) {
+//				}
+//			});
+			API.getProduct().getItem(jsElaboration.getItem().getId(), new AsyncCallback<JSON<JsItem>>() {
 				
 				@Override
-				public void onSuccess(JSON<JsProduct> result) {
-					ProductBox pBox = new ProductBox(API);
+				public void onSuccess(JSON<JsItem> result) {
+					ItemBox pBox = new ItemBox(API);
 					if(result!=null){
 						pBox.set(result.getOneData());
 					}

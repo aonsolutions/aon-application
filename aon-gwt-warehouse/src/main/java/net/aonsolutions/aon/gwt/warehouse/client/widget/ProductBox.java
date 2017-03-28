@@ -145,31 +145,31 @@ public class ProductBox extends ResizeComposite implements HasValue<String>
 						&& AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
 					
-					API.getProduct().getProductList(new HashMap<>(), new AsyncCallback<JSON<JsProduct>>() {
-						
-						@Override
-						public void onSuccess(JSON<JsProduct> result) {
-							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
-							if (result != null) {
-								result.getData().stream().forEach(jsProduct -> 
-								suggestions.add(new ProductSuggestion(
-										jsProduct
-										,jsProduct.getCode()
-										,decorate(jsProduct, request.getQuery())))
-								);
-							}
-							Response resp = new Response(suggestions);
-							callback.onSuggestionsReady(request, resp);
-							
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							descriptionLabel.setText(AON.MSG.noData());
-							descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
-							callback.onSuggestionsReady(request, new Response());
-						}
-					});
+//					API.getProduct().getProductList(new HashMap<>(), new AsyncCallback<JSON<JsProduct>>() {
+//						
+//						@Override
+//						public void onSuccess(JSON<JsProduct> result) {
+//							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
+//							if (result != null) {
+//								result.getData().stream().forEach(jsProduct -> 
+//								suggestions.add(new ProductSuggestion(
+//										jsProduct
+//										,jsProduct.getCode()
+//										,decorate(jsProduct, request.getQuery())))
+//								);
+//							}
+//							Response resp = new Response(suggestions);
+//							callback.onSuggestionsReady(request, resp);
+//							
+//						}
+//						
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							descriptionLabel.setText(AON.MSG.noData());
+//							descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
+//							callback.onSuggestionsReady(request, new Response());
+//						}
+//					});
 					
 				}
 			}
@@ -234,7 +234,7 @@ public class ProductBox extends ResizeComposite implements HasValue<String>
 		if (product != null) {
 			productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 			id = product.getId();
-			descriptionLabel.setText(product.getCode());
+			descriptionLabel.setText(product.getName());
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
 			id = null;

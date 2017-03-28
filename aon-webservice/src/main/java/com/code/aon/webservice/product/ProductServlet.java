@@ -1,5 +1,6 @@
 package com.code.aon.webservice.product;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +16,8 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ProductServlet", urlPatterns = { "/product/*",
@@ -51,17 +54,10 @@ public class ProductServlet extends HttpServlet{
 					if(pathInfo.length > 4){
 						object = getItem(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else {
-						object = getItemList(domain, userName);
+						object = getElaborableItemList(domain, userName, req.getParameterMap());
 					}
 					break;
 				default:
-					Integer id;
-					try {
-						id = Integer.parseInt(pathInfo[3]);
-						object = getProduct(domain, userName, id);
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-					}
 					break;
 				}
 				
@@ -83,20 +79,28 @@ public class ProductServlet extends HttpServlet{
     	return array;
     }
     
-    private Object getProduct(Domain domain, String userName, int id) {
-		return ToJSON.productToJSON(AON.getProduct(domain.getName(), domain.getId(), userName, id));
-    }
-    
     private Object getItem(Domain domain, String userName, int id) {
     	return ToJSON.itemToJSON(AON.getItem(domain.getName(), domain.getId(), userName, id));
     }
     
-    private JSONArray getItemList(Domain domain, String login){
+    private JSONArray getElaborableItemList(Domain domain, String login, Map<String, String[]> map){
     	JSONArray array = new JSONArray();
-    	AON.getItemList(domain.getName(), domain.getId(), login,
-    			f -> f.getDomainProperty().eq(domain.getId()))
+    	AON.getFullItemList(domain.getName(), domain.getId(), login,
+    			f -> elaborableItemFilter(domain, map, f))
     			.forEach(i -> array.put(ToJSON.itemToJSON(i)));
     	return array;
     }
-  
+    
+    private Filter elaborableItemFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		filter = filter.and(f.getManufacturedProperty().eq((byte) 1));
+
+		if(filterMap.containsKey(MSG.DESCRIPTION)){
+			filter = filter.and(f.getCodeProperty().like("%"+filterMap.get(MSG.DESCRIPTION)[0]+"%")
+					.or(f.getNameProperty().like("%"+filterMap.get(MSG.DESCRIPTION)[0]+"%")));
+		}
+		
+		return filter;
+    }
+    
 }

@@ -27,5 +27,9 @@ public class JsItem extends JavaScriptObject {
 	public final native String getName() /*-{
 		return this.name;
 	}-*/;
+
+	public final native String getCode() /*-{
+		return this.code;
+	}-*/;
 	
 }

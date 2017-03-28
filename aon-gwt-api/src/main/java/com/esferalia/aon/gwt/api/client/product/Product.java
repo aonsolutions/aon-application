@@ -39,13 +39,5 @@ public class Product extends Methods{
 		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item/"+id , callback);
 	}
 	
-	public void getProduct(Integer id, AsyncCallback<JSON<JsProduct>> callback){
-		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/"+id , callback);
-	}
-	
-	public void getProductList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsProduct>> callback){
-		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/" + filter, callback);
-	}
 	
 }
