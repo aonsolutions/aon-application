@@ -168,7 +168,13 @@ node {
 
       def snapshot_container_definitions_json = getContainerDefinitions(last_snapshot_task_definition_json, "aonsolutions/aon-application:${pom.version}-${BUILD_NUMBER}-tomcat9-jre8")
 
-      sh "aws ecs register-task-definition --family SNAPSHOT --container-definitions '${snapshot_container_definitions_json}'"
+      sh "aws ecs register-task-definition --family SNAPSHOT --container-definitions '${snapshot_container_definitions_json}' > snapshot-task-definition.json"
+	
+      def snapshot_task_definition_json = readFile 'snapshot-task-definition.json'
+
+      def snapshot_task_definition_arn = getTaskDefinitionArn(snapshot_task_definition_json)
+
+      sh "aws ecs update-service --cluster SNAPSHOT --service SNAPSHOT --task-definition ${snapshot_task_definition_arn}"
 
       //}
 
@@ -208,6 +214,11 @@ def getKeys(def json) {
     keys
 }
 
+
+@NonCPS
+def getTaskDefinitionArn(def json) {
+    new groovy.json.JsonSlurper().parseText(json).taskDefinition.taskDefinitionArn
+}
 
 @NonCPS
 def getTaskDefinitionArns(def json) {
