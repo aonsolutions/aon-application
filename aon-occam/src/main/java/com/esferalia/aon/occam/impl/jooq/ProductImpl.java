@@ -122,6 +122,12 @@ public class ProductImpl implements IProduct{
 	}
 	
 	@Override
+	public Stream<Item> getFullItemStream(AONContext ctx, ProductFilter filter){
+		return ctx.getDslContext().transactionResult(configuration -> 
+				ProductDAO.getFullItemStream(ctx, filter));			
+	}
+	
+	@Override
 	public void insertItem(AONContext ctx, Item i) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertItem(ctx, i);

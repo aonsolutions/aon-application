@@ -546,6 +546,16 @@ public class ProductDAO {
 				.from(ITEM), filter)
 			.fetch().stream().map(new FullItemFiller(ctx));
 	}
+	
+	public static Stream<Item> getFullItemStream(AONContext ctx, ProductFilter filter){
+		return ctx.getDslContext().select(ITEM.fields())
+				.from ( ITEM )
+				.join( PRODUCT ).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.where(PRODUCT_PROPERTIES.getConditions(filter))
+				.fetch()
+				.stream()
+				.map(new FullItemFiller(ctx));
+	}
 
 	@Deprecated
 	public static Item getItemOld(AONContext ctx, Integer id){

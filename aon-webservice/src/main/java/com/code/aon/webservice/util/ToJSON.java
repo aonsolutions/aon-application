@@ -191,8 +191,9 @@ public class ToJSON {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, item.getId());
 		json.put(MSG.DOMAIN, item.getDomain());
-		json.put("code", item.getCode());
-		json.put(MSG.NAME, item.getName());
+		json.put("code", item.getProduct() != null ? item.getProduct().getCode(): "");
+		json.put(MSG.NAME, item.getProduct() != null ? item.getProduct().getName(): "");
+		json.put("product_id", item.getProductId());
 		return json;
 	}
 	
@@ -238,15 +239,19 @@ public class ToJSON {
 			.put(MSG.NUMBER, elaboration.getNumber())
 			.put(MSG.STATUS, new JSONObject()
 				.put(MSG.ID, elaboration.getStatus() != null ? elaboration.getStatus().intValue() : "")
-				.put(MSG.NAME, elaboration.getStatus() != null ? ElaborationStatus.values()[elaboration.getStatus()].getName(): "")) 
+				.put(MSG.NAME, elaboration.getStatus() != null ? ElaborationStatus.values()[elaboration.getStatus()].getName(): ""))
 			.put(MSG.DATE, elaboration.getDate() != null ? dateFormat_YYYY_MM_DD.format(elaboration.getDate()) : "")
-			.put(MSG.ITEM, new JSONObject()
-					.put(MSG.ID, elaboration.getItem() != null ? elaboration.getItem().getId() : "")
-					.put("code", elaboration.getItem() != null ? elaboration.getItem().getProduct().getCode() : "")
-					.put(MSG.NAME, elaboration.getItem() != null ? elaboration.getItem().getProduct().getName(): ""))
+//			.put(MSG.ITEM, new JSONObject()
+//					.put(MSG.ID, elaboration.getItem() != null ? elaboration.getItem().getId() : "")
+//					.put("code", elaboration.getItem() != null ? elaboration.getItem().getProduct().getCode() : "")
+//					.put(MSG.NAME, elaboration.getItem() != null ? elaboration.getItem().getProduct().getName(): "")
+//					)
+			.put(MSG.ITEM, itemToJSON(elaboration.getItem()))
 			.put(MSG.QUANTITY, elaboration.getQuantity())
 			.put(MSG.WAREHOUSE, elaboration.getWarehouse())
 			.put(MSG.COMMENTS, elaboration.getComments() != null ? elaboration.getComments() : " ")
+			.put("source", elaboration.getSource()!=null ? elaboration.getSource().intValue() : 0)
+			.put("source_id", elaboration.getSourceId())
 			.put("creation_date", elaboration.getCreationDate() != null ? dateFormat.format(elaboration.getCreationDate()): "")
 			.put("creation_user", elaboration.getCreationUser())
 			.put("modification_date", elaboration.getModificationDate() != null ? dateFormat.format(elaboration.getModificationDate()) : "")
@@ -258,10 +263,11 @@ public class ToJSON {
 				.put(MSG.ID, detail.getId())
 				.put(MSG.DOMAIN, detail.getDomain())
 				.put(MSG.DATE, detail.getDate() != null ? dateFormat_YYYY_MM_DD.format(detail.getDate()) : "")
-				.put(MSG.ITEM, new JSONObject()
-						.put(MSG.ID, detail.getItem() != null ? detail.getItem().getId() : "")
-						.put("code", detail.getItem() != null ? detail.getItem().getProduct().getCode() : "")
-						.put(MSG.NAME, detail.getItem() != null ? detail.getItem().getProduct().getName(): ""))
+//				.put(MSG.ITEM, new JSONObject()
+//						.put(MSG.ID, detail.getItem() != null ? detail.getItem().getId() : "")
+//						.put("code", detail.getItem() != null ? detail.getItem().getProduct().getCode() : "")
+//						.put(MSG.NAME, detail.getItem() != null ? detail.getItem().getProduct().getName(): ""))
+				.put(MSG.ITEM, itemToJSON(detail.getItem()))
 				.put(MSG.QUANTITY, detail.getQuantity())
 				.put(MSG.WAREHOUSE, detail.getWarehouse())
 				.put("add_info", detail.getAddInfo() != null ? detail.getAddInfo() : " ")
@@ -275,10 +281,11 @@ public class ToJSON {
 		return new JSONObject()
 				.put(MSG.ID, detailComposition.getId())
 				.put(MSG.DOMAIN, detailComposition.getDomain())
-				.put(MSG.ITEM, new JSONObject()
-						.put(MSG.ID, detailComposition.getItem() != null ? detailComposition.getItem().getId() : "")
-						.put("code", detailComposition.getItem() != null ? detailComposition.getItem().getProduct().getCode() : "")
-						.put(MSG.NAME, detailComposition.getItem() != null ? detailComposition.getItem().getProduct().getName(): ""))
+//				.put(MSG.ITEM, new JSONObject()
+//						.put(MSG.ID, detailComposition.getItem() != null ? detailComposition.getItem().getId() : "")
+//						.put("code", detailComposition.getItem() != null ? detailComposition.getItem().getProduct().getCode() : "")
+//						.put(MSG.NAME, detailComposition.getItem() != null ? detailComposition.getItem().getProduct().getName(): ""))
+				.put(MSG.ITEM, itemToJSON(detailComposition.getItem()))
 				.put(MSG.QUANTITY, detailComposition.getQuantity())
 				.put(MSG.WAREHOUSE, detailComposition.getWarehouse())
 				.put("creation_date", detailComposition.getCreationDate() != null ? dateFormat.format(detailComposition.getCreationDate()): "")
