@@ -9,6 +9,9 @@ public class EnterpriseActivity implements Serializable {
 	private Integer id;
 	private String description;
 	private boolean principal;
+	private Integer cnae;
+	private String cnaeCode;
+	private String cnaeDescription;
 
 	public Integer getId() {
 		return id;
@@ -34,5 +37,32 @@ public class EnterpriseActivity implements Serializable {
 		this.principal = principal;
 		return this;		
 	}
+
+	public Integer getCnae() {
+		return cnae;
+	}
+
+	public EnterpriseActivity setCnae(Integer cnae) {
+		this.cnae = cnae;
+		return this;		
+	}
+	public String getCnaeCode() {
+		return cnaeCode;
+	}
+
+	public EnterpriseActivity setCnaeCode(String cnaeCode) {
+		this.cnaeCode = cnaeCode;
+		return this;		
+	}
+
+	public String getCnaeDescription() {
+		return cnaeDescription;
+	}
+
+	public EnterpriseActivity setCnaeDescription(String cnaeDescription) {
+		this.cnaeDescription = cnaeDescription;
+		return this;		
+	}
+
 
 }

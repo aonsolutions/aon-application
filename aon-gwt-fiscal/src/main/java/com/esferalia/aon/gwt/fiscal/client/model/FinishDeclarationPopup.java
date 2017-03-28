@@ -159,7 +159,8 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 			tab.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			
 			tab.setWidget(row, 1, iban);
-			iban.setEnabled( false );
+			FiscalModelDeclarationType type = FiscalModelDeclarationType.safeValueOf(listBox.getSelectedValue());
+			iban.setEnabled( type.isBankRequired() );
 			iban.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 				
 				@Override

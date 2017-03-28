@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -906,6 +907,50 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.deleteMod202(domainName, mod202, new AsyncCallbackWrapper<Void>(
 				callback));
+	}
+	@Override
+	public void saveCommentsMod202(String domainName, Mod202 mod202,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fsa.saveCommentsMod202(domainName, mod202, new AsyncCallbackWrapper<Mod202>(
+				callback));
+	}
+
+	@Override
+	public void initializeForFinishMod202(String domainName, Mod202 mod202,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fsa.initializeForFinishMod202(domainName, mod202, new AsyncCallbackWrapper<Mod202>(
+				callback));
+	}
+	
+	@Override
+	public void finishMod202(String domainName, Mod202 mod202,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fsa.finishMod202(domainName, mod202, new AsyncCallbackWrapper<Mod202>(
+				callback));
+	}
+	
+	@Override
+	public void reopenMod202(String domainName, Mod202 mod202,
+			AsyncCallback<Mod202> callback) {
+		AON.start();
+		fsa.reopenMod202(domainName, mod202, new AsyncCallbackWrapper<Mod202>(
+				callback));
+	}
+	@Override
+	public void createMod202(String domainName, int currentDomain,
+			Mod202 mod202, AsyncCallback<Mod202> callback) {
+		AON.start();
+		fsa.createMod202(domainName, currentDomain, mod202,new AsyncCallbackWrapper<Mod202>(callback));
+
+	}
+	@Override
+	public void getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey,
+			AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInfo(domainName, domain, mod202, script, infoKey,new AsyncCallbackWrapper<String>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 200

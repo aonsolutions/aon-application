@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.MOD2002015;
@@ -669,6 +670,36 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public void deleteMod202(String domainName, Mod202 mod202) {
 		FISCAL.deleteMod202(domainName,this.getUserLogin(), mod202);
+	}
+	@Override
+	public Mod202 saveCommentsMod202(String domainName, Mod202 mod202) {
+		return FISCAL.saveComments(domainName, this.getUserLogin(), mod202);
+	}
+
+	@Override
+	public Mod202 initializeForFinishMod202(String domainName, Mod202 mod202) {
+		return FISCAL.initializeForFinish(domainName, this.getUserLogin(), mod202);
+	}
+
+	@Override
+	public Mod202 finishMod202(String domainName, Mod202 mod202) {
+		return FISCAL.finish(domainName, this.getUserLogin(), mod202);
+	}
+
+	@Override
+	public Mod202 reopenMod202(String domainName, Mod202 mod202) {
+		return FISCAL.reopen(domainName, this.getUserLogin(), mod202);
+	}
+
+	@Override
+	public Mod202 createMod202(String domainName, int domain, Mod202 mod202) {
+		return FISCAL.createMod202(domainName, domain, this.getUserLogin(), mod202);
+	}
+	@Override
+	public String getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey)
+			throws AonCoreException {
+		return FISCAL.getMod202Info(domainName, domain, this.getUserLogin(), mod202, script, infoKey);
+		
 	}
 
 	// ---------------------------------------------------------------MODELO 200 - 2013

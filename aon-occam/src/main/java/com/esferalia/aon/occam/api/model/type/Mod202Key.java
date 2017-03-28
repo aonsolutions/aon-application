@@ -1,6 +1,18 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+// Á --> \u00C1 á --> \u00E1 
+// É --> \u00C9 é --> \u00E9 
+// Í --> \u00CD í --> \u00ED 
+// Ó --> \u00D3 ó --> \u00F3 
+// Ú --> \u00DA ú --> \u00FA ... acento
+// Ü --> \u00DC ü --> \u00fc ... diéresis
+// Ñ --> \u00D1 ñ --> \u00F1
+// º --> \u00BA ª --> \u00AA 
+// ¿ --> \u00BF
+
 
 public enum Mod202Key implements IFiscalModelKey{
 	 P00("202-P00",0,"IBAN")
@@ -12,6 +24,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,X02("202-X02",0,"Entidad que aplica el r\u00E9gimen de la Ley 11/2009 de 26 de octubre")
 	,X03("202-X03",0,"Volumen de operaciones superior a 6.010.121 euros")
 	,X04("202-X04",0,"Entidad que aplica el r\u00E9gimen de las entidades navieras en funci\u00F3n del tonelaje")
+	
 	,X05("202-X05",0,"Entidades que aplican incentivos de empresa de reducida dimensi\u00F3n")
 	,X06("202-X06",0,"Cifra de negocios de los 12 meses anteriores a la fecha de inicio del per\u00EDodo impositivo > 6.000.000  \u20AC")
 	,X07("202-X07",0,"Cooperativa fiscalmente protegida u Otras entidades con posibilidad de aplicar dos tipos impositivos (ej. entidades ZEC)")
@@ -20,6 +33,10 @@ public enum Mod202Key implements IFiscalModelKey{
 	,X10("202-X10",0,"Entidades en las que al menos el 85% de ingresos del periodo impositivo")
 	,X11("202-X11",0,"Marque esta casilla si concurre ALGUNA de las siguientes circunstancias:")
 	,X00("202-X00",0,"Modalidad de c\u00E1lculo")
+	,X12("202-X12",0,"Entidad que cumpla los requisitos del art. 101 LIS y apliquen tipo gravamen art. 29.1, 1 er p\u00E1rrafo LIS.")
+	,X13("202-X13",0,"Cooperativa fiscalmente protegida.")
+	,X14("202-X14",0,"Otras entidades con posibilidad de aplicar dos tipos impositivos.")
+	
 	
 	,C01("202-C01", 1,"Base del pago fraccionado")
 	,C02("202-C02", 2,"Resultado de la declaraci\u00F3n anterior (complementarias)")
@@ -29,7 +46,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,C05("202-C05", 5,"Correcciones al resultado contable - por Impuesto sobre Sociedades - Aumentos")
 	,C06("202-C06", 6,"Correcciones al resultado contable - por Impuesto sobre Sociedades - Disminuciones")
 	,C36("202-C36",36,"30% gastos amortiz (exc.  emp. reducidas) - Aumentos")
-	,C37("202-C37",37,"30% gastos amortiz (exc.  emp. reducidas) - Disminuciones")
+	,C37("202-C37",37,"Reversi\u00F3n del 30% del importe de los gastos de amortiz. contable (art. 7 Ley 16/2012)")
 	,C07("202-C07", 7,"Resto correcciones al resultado contable, excepto comp. - Aumentos")
 	,C08("202-C08", 8,"Resto correcciones al resultado contable, excepto comp. - Disminuciones")
 	,C38("202-C38",38,"TOTAL. - Aumentos")
@@ -48,7 +65,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,C40("202-C40",40,"Compensaci\u00F3n de cuotas negativas ejer. anteriores (s\u00F3lo cooperativas)")
 	,C48("202-C48",48,"Reserva de nivelaci\u00F3n (105 LIS) convertido en cuotas - Aumentos")
 	,C49("202-C49",49,"Reserva de nivelaci\u00F3n (105 LIS) convertido en cuotas - Disminuciones") 
-	,C18("202-C18",18,"Caso general - Resultado previo (clave ([16] x [17]) - [47]-[40]+[48]-[49])")
+	,C18("202-C18",18,"Caso general - Resultado previo (clave ([16] x [17]) + [47]-[40]+[48]-[49])")
 	
 	,C19("202-C19",19,"Base del pago fraccionado")
 	,C20("202-C20",20,"Base a tipo 1")
@@ -75,6 +92,15 @@ public enum Mod202Key implements IFiscalModelKey{
 	,A02("202-A02",0,"Numero de Referencia de Sociedades (NRS)")
 	,A03("202-A03",0,"Importe excluido por operaciones de quita o espera")
 	,A04("202-A04",0,"Parte integrada en la base imponible por operaciones de quita o espera")
+	,A05("202-A05",0,"Parte integrada en la base imponible por operaciones de quita o espera (s\u00F3lo cooperativas)")
+	,A06("202-A06",0,"Rentas de reversi\u00F3n de deterioros que se integran en la base imponible")
+	,A07("202-A07",0,"Importe correspondiente a la reserva para inversiones en Canarias")
+	,A08("202-A08",0,"Importe correspondiente a la bonificaci\u00F3n prevista en el art. 26 de la Ley 19/1994")
+	,A09("202-A09",0,"Importe no computable por aplicaci\u00F3n del r\u00E9gimen fiscal de la ZEC")
+	,A10("202-A10",0,"Importe de la minoraci\u00F3n correspondiente a las rentas que tengan derecho a la bonificaci\u00F3n prevista en el art. 33 LIS")
+	,A11("202-A11",0,"Importe excluido por operaciones de aumento de capital o fondos propios por compensaci\u00F3n de cr\u00E9ditos que no se integren en la base imponible por aplicaci\u00F3n del art. 17.2 LIS")
+	,A12("202-A12",0,"Importe renta exenta de las entidades que aplican el r\u00E9gimen fiscal especial del Cap\u00EDtulo XIV del T\u00EDtulo VII LIS")
+	,A13("202-A13",0,"Importe de la bonificaci\u00F3n prevista en el art. 34 LIS")	
 	;
 
 	private String value;
@@ -116,5 +142,13 @@ public enum Mod202Key implements IFiscalModelKey{
 		return true;
 	}
 	
+	public static Mod202Key getKey(String value) {
+		for (Mod202Key key : Mod202Key.values()) {
+			if (AonStringUtils.equals(key.getValue(), value)) {
+				return key;
+			}
+		}
+		return null;
+	}
 	
 }

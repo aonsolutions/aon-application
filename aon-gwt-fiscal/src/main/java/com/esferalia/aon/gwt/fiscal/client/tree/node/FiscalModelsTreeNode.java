@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.fiscal.client.tree.content.EnterpriseYear;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+//import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -74,22 +74,22 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 			}
 		};
 
-		public static TreeNodeFiscalModelTypes<Mod202> MODEL_202 = new TreeNodeFiscalModelTypes<Mod202>() {
-			@Override
-			public TreeNode<Mod202> getInstance() {
-				return new Model202TreeNode();
-			}
-			@Override
-			public boolean accept(IFiscalModel fm) {
-				return (fm.getModel() == FiscalModelType.M202);
-			}
-			@Override
-			public Mod202 getFiscalModel(IFiscalModel fm) {
-				Mod202 mod202 = new Mod202();
-				copy(fm, mod202);
-				return mod202;
-			}
-		};
+//		public static TreeNodeFiscalModelTypes<Mod202> MODEL_202 = new TreeNodeFiscalModelTypes<Mod202>() {
+//			@Override
+//			public TreeNode<Mod202> getInstance() {
+//				return new Model202TreeNode();
+//			}
+//			@Override
+//			public boolean accept(IFiscalModel fm) {
+//				return (fm.getModel() == FiscalModelType.M202);
+//			}
+//			@Override
+//			public Mod202 getFiscalModel(IFiscalModel fm) {
+//				Mod202 mod202 = new Mod202();
+//				copy(fm, mod202);
+//				return mod202;
+//			}
+//		};
 
 		public abstract boolean accept(IFiscalModel fm);
 		public abstract T getFiscalModel(IFiscalModel fm);
@@ -109,9 +109,9 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 			to.setName(from.getName());
 		}
 		
-		static TreeNodeFiscalModelTypes<?>[] NODE_TYPES = new TreeNodeFiscalModelTypes<?>[]{
-			MODEL_202	
-		};
+//		static TreeNodeFiscalModelTypes<?>[] NODE_TYPES = new TreeNodeFiscalModelTypes<?>[]{
+//			MODEL_202	
+//		};
 		
 	}
 	
@@ -180,11 +180,12 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
     					// TODO HACER ALGO CON ESTO!!!
     					if(fm.getYear() == ey.getYear()){
     						
-    						if (TreeNodeFiscalModelTypes.MODEL_202.accept(fm) ) {
-        						final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
-    							TreeNodeFiscalModelTypes.MODEL_202.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_202.getFiscalModel(fm));
-    							parentNode.setState(true);	
-        					} else if (TreeNodeFiscalModelTypes.MODEL_200_2013.accept(fm) ) {
+//    						if (TreeNodeFiscalModelTypes.MODEL_202.accept(fm) ) {
+//        						final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
+//    							TreeNodeFiscalModelTypes.MODEL_202.getInstance().render(parentNode, TreeNodeFiscalModelTypes.MODEL_202.getFiscalModel(fm));
+//    							parentNode.setState(true);	
+//        					} else 
+        					if (TreeNodeFiscalModelTypes.MODEL_200_2013.accept(fm) ) {
         						final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
         						Mod2002013TreeObject to = TreeNodeFiscalModelTypes.MODEL_200_2013.getFiscalModel(fm);
         						final TreeItem item = TreeNodeFiscalModelTypes.CORPORATE_TAX_2013.getInstance().render(parentNode,to);

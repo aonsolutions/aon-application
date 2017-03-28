@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
@@ -633,6 +634,34 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public Mod202 initializeMod202(AONContext ctx, Mod202 mod202) {
 		return Mod202DAO.initializeMod202(ctx,mod202);
+	}
+	@Override
+	public Mod202 saveCommentsMod202(AONContext ctx, Mod202 mod202) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod202DAO.saveCommentsMod202(ctx, mod202));		
+	}
+	@Override
+	public Mod202 initializeForFinishMod202(AONContext ctx, Mod202 mod202){
+		return Mod202DAO.initializeForFinish(ctx, mod202);
+	}
+	@Override
+	public Mod202 finishMod202(AONContext ctx, Mod202 mod202){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod202DAO.finish(ctx, mod202));		
+	}
+	@Override
+	public Mod202 reopenMod202(AONContext ctx, Mod202 mod202){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod202DAO.reopen(ctx, mod202));		
+	}
+
+	@Override
+	public Mod202 createMod202(AONContext ctx, Mod202 mod202) {
+		return Mod202DAO.createMod202(ctx,mod202);
+	}
+	@Override
+	public String getMod202Info(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) {
+		return Mod202DAO.getMod202Info(ctx,mod202,script,infoKey);
 	}
 
 	// ----------------------------------------------------------- [MODELO 200 - 2013]

@@ -280,10 +280,10 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		status.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
 		status.addStyleName(mod202.isFinished()?AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
 		
-		this.cnae.setValue( mod202.getCnae() );
-		CNAE2009 cnae = CNAE2009.valueOfCode(mod202.getCnae());
+//		this.cnae.setValue( mod202.getCnae() );
+//		CNAE2009 cnae = CNAE2009.valueOfCode(mod202.getCnae());
 		this.cnae.setEnabled(isEnabled(mod202));
-		this.cnaeDescription.setText( cnae==null?null:cnae.getDescription() );
+//		this.cnaeDescription.setText( cnae==null?null:cnae.getDescription() );
 		
 		this.initialDate.setValue(mod202.getInitialDate());
 		this.initialDate.setEnabled(isEnabled(mod202));
@@ -797,7 +797,7 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		
 		mod202.setPeriod( Period.values()[ period.getSelectedIndex() + Period.T1.ordinal() ] );
 		
-		mod202.setCnae( cnae.getValue() );
+//		mod202.setCnae( cnae.getValue() );
 		mod202.setInitialDate(this.initialDate.getValue());
 		
 		for (Mod202Key key : checks.keySet()) {
@@ -819,9 +819,9 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		this.mod202 = result;
 		enableToolbarItems();		
 
-		this.cnae.setValue( mod202.getCnae() );
-		CNAE2009 cn = CNAE2009.valueOfCode(mod202.getCnae());
-		this.cnaeDescription.setText( cn==null?null:cn.getDescription() );
+//		this.cnae.setValue( mod202.getCnae() );
+//		CNAE2009 cn = CNAE2009.valueOfCode(mod202.getCnae());
+//		this.cnaeDescription.setText( cn==null?null:cn.getDescription() );
 		this.initialDate.setValue(mod202.getInitialDate());
 		
 		for (Mod202Key key : checks.keySet()) {

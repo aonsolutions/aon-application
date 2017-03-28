@@ -14,6 +14,7 @@ public enum FiscalModelKeyInfo implements Serializable {
 	, ACT_ACCOUNT	(false, "Ver desglose de cuentas")
 	, TITLE 		(false, "Título")
 	, IRPF_ACTIVITY	(false, "Detalle de la actividad")
+	, CORPORATE		(false, "Ver desglose de c\u00E1lculos")
 	;
 	
 	private String label;

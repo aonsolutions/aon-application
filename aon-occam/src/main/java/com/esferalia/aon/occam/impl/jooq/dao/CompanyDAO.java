@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -260,8 +261,10 @@ public class CompanyDAO {
 
 	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain, Date atDate) {
 		return ctx.getDslContext()
-				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL)
+				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,
+						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE)
 				.from(ENTERPRISE_ACTIVITY)
+				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 				.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(domain)
 					.and(atDate == null
 						?DSL.trueCondition()
@@ -283,6 +286,9 @@ public class CompanyDAO {
 						.setId(rec.getValue(ENTERPRISE_ACTIVITY.ID) )
 						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
 						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
+						.setCnae( rec.getValue(CNAE2009.ID) )
+						.setCnaeCode( rec.getValue(CNAE2009.CODE) )
+						.setCnaeDescription( rec.getValue(CNAE2009.TITLE) )
 					);
 	}
 
@@ -306,4 +312,5 @@ public class CompanyDAO {
 					)
 				;
 	}
+
 }

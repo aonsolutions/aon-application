@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 
 public class FISCAL {
@@ -1094,6 +1095,73 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
 			return getFiscal().initializeMod202(ctx, mod202);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod202 saveComments(String domainName, String user, Mod202 mod202) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod202.getDomain(),user);
+			return getFiscal().saveCommentsMod202(ctx, mod202);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod202 initializeForFinish(String domainName, String user, Mod202 mod202) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod202.getDomain(),user);
+			return getFiscal().initializeForFinishMod202(ctx, mod202);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod202 finish(String domainName, String user, Mod202 mod202) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod202.getDomain(),user);
+			return getFiscal().finishMod202(ctx, mod202);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod202 reopen(String domainName, String user, Mod202 mod202) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod202.getDomain(),user);
+			return getFiscal().reopenMod202(ctx, mod202);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod202 createMod202(String domainName, int domain, String user,Mod202 mod202) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().createMod202(ctx, mod202);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static String getMod202Info(String domainName, int domain, String user, Mod202 mod202
+			,IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().getMod202Info(ctx, mod202, script, infoKey);
 		} finally {
 			if (ctx != null)
 				ctx.close();

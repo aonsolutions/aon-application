@@ -311,18 +311,24 @@ public class Mod2002015DAO  {
 		initializeNewMod200(ctx,mod200);
 		return mod200;
 	}
-
+	
 	public static Mod2002015 getByYear(AONContext ctx, int year) {
+		return getByYear(ctx, year, true);
+	}
+	
+	public static Mod2002015 getByYear(AONContext ctx, int year, boolean initialize) {
 		FsModel200Record record = ctx.getDslContext()
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
 				.and(FS_MODEL200.YEAR.equal(year))
 				.fetchOne();
 		Mod2002015 mod200 = populateMod200(ctx,record);
-		if (mod200 == null) {
-			createNewMod200(ctx, year);
-		} else {
-			initializeActiveMap(mod200);
+		if (initialize) {
+			if (mod200 == null) {
+				createNewMod200(ctx, year);
+			} else {
+				initializeActiveMap(mod200);
+			}
 		}
 		return mod200;
 	}

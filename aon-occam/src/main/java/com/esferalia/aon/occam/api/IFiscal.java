@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 
 public interface IFiscal {
 	// 			        FISCAL PANEL
@@ -166,6 +167,13 @@ public interface IFiscal {
 	public Mod202 saveMod202(AONContext ctx, Mod202 mod202);
 	public Mod202 initializeMod202(AONContext ctx, Mod202 mod202);
 	public void deleteMod202(AONContext ctx, Mod202 mod202);
+	public Mod202 saveCommentsMod202(AONContext ctx, Mod202 mod202);
+	public Mod202 initializeForFinishMod202(AONContext ctx, Mod202 mod202);
+	public Mod202 finishMod202(AONContext ctx, Mod202 mod202);
+	public Mod202 reopenMod202(AONContext ctx, Mod202 mod202);
+	public Mod202 createMod202(AONContext ctx, Mod202 mod202);
+	public String getMod202Info(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey);
+	
 
 	// 				   		  MOD200 - 2013
 	public Mod2002013 initializeNewMod2002013(AONContext ctx, Mod2002013 mod200);

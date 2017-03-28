@@ -116,6 +116,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod131/gwt.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<!-- =================== Mod202 ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mod202</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod202/gwt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- =================== Deposit ========================== -->
 	<navigation-rule>
 		<navigation-case>

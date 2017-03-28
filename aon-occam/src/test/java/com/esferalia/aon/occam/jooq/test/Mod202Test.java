@@ -37,7 +37,7 @@ public class Mod202Test {
 		List<Mod202> list = FISCAL.getMod202s(DOMAIN_NAME, DOMAIN_ID, USER_NAME);
 		for (Mod202 mod202 : list) {
 			Mod202 m202 = FISCAL.getMod202(DOMAIN_NAME, DOMAIN_ID, USER_NAME, mod202.getId());
-			Mod202Writer.fill(writer, m202);
+			Mod202Writer.fillWriter(m202,writer);
 		}
 		writer.flush();
 		writer.close();

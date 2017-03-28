@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FiscalServiceAsync {
@@ -192,6 +193,12 @@ public interface FiscalServiceAsync {
 	void deleteMod202(String currentDomainName, Mod202 treeObject,AsyncCallback<Void> callback);
 	void saveMod202(String domainName, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
 	void initializeMod202(String domainName, int domain, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
+	void saveCommentsMod202(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void initializeForFinishMod202(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void finishMod202(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void reopenMod202(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void createMod202(String domainName, int domain, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
 
 	// ---------------------------------------------------------------MODELO 200 - 2013
 	void initializeNewMod2002013(String domainName, int domain, Mod2002013 mod200, AsyncCallback<Mod2002013> callback);

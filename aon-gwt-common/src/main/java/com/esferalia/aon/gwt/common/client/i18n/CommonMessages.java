@@ -2240,10 +2240,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("A) Art\u00EDculo LIS 40.2 LIS")
 	String calculation0();
 	
-	@DefaultMessage("B.1) Art\u00EDculo 40.3 LIS")
+	@DefaultMessage("B.1) Casos Generales. Porcentaje \u00FAnico. (Art\u00EDculo 40.3 LIS.)")
 	String calculation1();
 	
-	@DefaultMessage("B.2) Art\u00EDculo 40.3 LIS")
+	@DefaultMessage("B.2) Casos espec\u00EDficos. M\u00E1s de un porcentaje. (Art\u00EDculo 40.3 LIS.)")
 	String calculation2();
 	
 	@DefaultMessage("I. Actividades econ\u00F3micas en estimaci\u00F3n objetiva distintas de las agr\u00EDcolas, ganaderas y forestales.")

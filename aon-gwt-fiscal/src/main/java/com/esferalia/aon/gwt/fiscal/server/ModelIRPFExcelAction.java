@@ -221,9 +221,10 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		}
 		row = sheet.createRow(rowCount++);
 		String concept = AonStringUtils.trimToEmpty(ms.getLabel());
+		concept = AonStringUtils.abbreviate(concept, 100);
 		int l = AonStringUtils.length(concept);
 		if (l != 0) {
-			int r = (int) (l / 70) + 1; 
+			int r = (int) (l / getConceptLength() ) + 1; 
 			int h = (r * 250);
 			row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
 		}
@@ -252,29 +253,40 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 				cellCount = 2;
 			}
 			for (K key : ms.getKeys()) {
-				Cell boxCell = addCell(AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0"));
-				boxCell.setCellType(Cell.CELL_TYPE_STRING);
-				boxCell.setCellStyle(boxCellStyle);
+				if (key == null) {
+					addCell("");
+					addCell("");
+				} else{
+					Cell boxCell = addCell((key.getBox() == 0
+							?""
+							:AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")));
+					boxCell.setCellType(Cell.CELL_TYPE_STRING);
+					boxCell.setCellStyle(boxCellStyle);
 
-				cell = row.createCell(cellCount++);
-				style = workbook.createCellStyle();
-				style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
-				style.setFont(ms.isTitle()?boldFont:defaulFont);
-				style.setBorderBottom(CellStyle.BORDER_THIN);
-				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-				cell.setCellStyle(style);
-				if (ms.hasGraphicParticularity()) {
-					fillParticularityCell(cell,style,key);
-				} else {
-					double amount = model.ensureDetail(key).getAmount();
-					style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
-					style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-					cell.setCellValue(amount);
-					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					cell = row.createCell(cellCount++);
+					style = workbook.createCellStyle();
+					style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
+					style.setFont(ms.isTitle()?boldFont:defaulFont);
+					style.setBorderBottom(CellStyle.BORDER_THIN);
+					style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+					cell.setCellStyle(style);
+					if (ms.hasGraphicParticularity()) {
+						fillParticularityCell(cell,style,key);
+					} else {
+						double amount = model.ensureDetail(key).getAmount();
+						style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+						style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
+						cell.setCellValue(amount);
+						cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					}
 				}
 			}
 
 		}
+	}
+
+	protected int getConceptLength() {
+		return 70;
 	}
 
 	protected String getDeclarationType() {

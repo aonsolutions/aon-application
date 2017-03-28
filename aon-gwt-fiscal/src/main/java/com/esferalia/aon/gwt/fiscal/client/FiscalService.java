@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -194,7 +195,12 @@ public interface FiscalService extends RemoteService {
 	Mod202 saveMod202(String domainName, Mod202 mod202) throws AonCoreException;
 	void deleteMod202(String domainName, Mod202 mod202) throws AonCoreException;
 	Mod202 initializeMod202(String domainName, int domain, Mod202 mod202) throws AonCoreException;
-
+	Mod202 saveCommentsMod202(String domainName, Mod202 mod202) throws AonCoreException;
+	Mod202 initializeForFinishMod202(String domainName, Mod202 mod202) throws AonCoreException;
+	Mod202 finishMod202(String domainName, Mod202 mod202) throws AonCoreException;
+	Mod202 reopenMod202(String domainName, Mod202 mod202) throws AonCoreException;
+	Mod202 createMod202(String domainName, int domain, Mod202 mod202) throws AonCoreException;
+	String getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
 	// ---------------------------------------------------------------MODELO 200 - 2013
 	Mod2002013 initializeNewMod2002013(String domainName,int domain,Mod2002013 mod200) throws AonCoreException;
