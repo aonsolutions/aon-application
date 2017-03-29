@@ -2788,9 +2788,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		Calendar startCalendar = Calendar.getInstance();
 		startCalendar.setTime(start);
-
+		
+		int startDayOfMonth = startCalendar.get(Calendar.DAY_OF_MONTH);
+		
 		Calendar endCalendar = Calendar.getInstance();
 		endCalendar.setTime(end);
+
+		int endDayOfMonth = endCalendar.get(Calendar.DAY_OF_MONTH);
 
 		startCalendar.add(Calendar.YEAR, 1);
 		while (startCalendar.getTime().compareTo(end) <= 0) {
@@ -2813,7 +2817,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if (calendar.get(Calendar.DAY_OF_MONTH) == calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
 				return years + months / 12d;
 		}
-
+		
+		if ( startDayOfMonth == endDayOfMonth )
+			return years + months / 12d;
+		
 		startCalendar.add(Calendar.MONTH, -1);
 		long days = CommonUtil.getDaysBetweenDates(startCalendar.getTime(), end);
 		if (days > 0)
