@@ -554,7 +554,7 @@ public class AccountingInvoiceDAO {
 				Integer financeId = FinanceDAO.insert(ctx, finance);
 				finance.setId(financeId);
 			} else {
-				ctx.log().info("------ FINANCE NOT SAVED [AMOUNT 0]");
+				ctx.log().info("FINANCE NOT SAVED [AMOUNT 0]");
 			}
 		}
 	}
@@ -562,30 +562,34 @@ public class AccountingInvoiceDAO {
 	private static LinkedList<AccountEntry> recordFinances(AONContext ctx, AccountingInvoice accInvoice) {
 		LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
 		for (Finance finance : accInvoice.getFinances() ) {
-			AccountEntry ae = InvoiceRecorder.getFinanceEntry(accInvoice, finance);
-			Integer entryId = AccountEntryDAO.insert(ctx, ae);
-			AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
-			entries.add(newEntry);
-			Integer financTrackingId = ctx.getDslContext().insertInto(FINANCE_TRACKING)
-					.set(FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
-					.set(FINANCE_TRACKING.FINANCE, finance.getId() )
-					.set(FINANCE_TRACKING.TRACKING_DATE, AonDateUtils.toSql(finance.getDueDate()))
-					.set(FINANCE_TRACKING.TYPE,FinanceTrackingType.PAID.value())
-					.set(FINANCE_TRACKING.AMOUNT, finance.getAmount())
-					.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(true))
-					.set(FINANCE_TRACKING.DESCRIPTION, "Asiento: " + entryId)
-					.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
-					.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-					.returning(FINANCE_TRACKING.ID)
-					.fetchOne()
-					.getValue(FINANCE_TRACKING.ID);
-			ctx.log().info("INSERT FINANCE_TRACKING (finance: "+ finance.getId()+") Id:" + financTrackingId);			
-			ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
+			if (finance.getId() == null) {
+				ctx.log().info("FINANCE NOT SAVED, NO ENTRY WILL BE RECORDED.");
+			} else {
+				AccountEntry ae = InvoiceRecorder.getFinanceEntry(accInvoice, finance);
+				Integer entryId = AccountEntryDAO.insert(ctx, ae);
+				AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
+				entries.add(newEntry);
+				Integer financTrackingId = ctx.getDslContext().insertInto(FINANCE_TRACKING)
+						.set(FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+						.set(FINANCE_TRACKING.FINANCE, finance.getId() )
+						.set(FINANCE_TRACKING.TRACKING_DATE, AonDateUtils.toSql(finance.getDueDate()))
+						.set(FINANCE_TRACKING.TYPE,FinanceTrackingType.PAID.value())
+						.set(FINANCE_TRACKING.AMOUNT, finance.getAmount())
+						.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(true))
+						.set(FINANCE_TRACKING.DESCRIPTION, "Asiento: " + entryId)
+						.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
+						.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.returning(FINANCE_TRACKING.ID)
+						.fetchOne()
+						.getValue(FINANCE_TRACKING.ID);
+				ctx.log().info("INSERT FINANCE_TRACKING (finance: "+ finance.getId()+") Id:" + financTrackingId);			
+				ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
 				.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
 				.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY, entryId )
 				.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING, financTrackingId )
 				.execute();
-			ctx.log().info("INSERT ACCOUNT_ENTRY_FINANCE_TRACKING (financTracking: "+ financTrackingId+") AccountEntry: " + entryId);
+				ctx.log().info("INSERT ACCOUNT_ENTRY_FINANCE_TRACKING (financTracking: "+ financTrackingId+") AccountEntry: " + entryId);
+			}
 		}
 		return entries;
 	}

@@ -30,7 +30,7 @@ public class InvoiceRecorder {
 			@Override
 			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
 				double amount = invoice.getTotalInvoice();
-				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER && AonMathUtils.isNotZero(amount)) {
+				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
 					Integer registryAccount = invoice.getRegistry().getAccountId();
 					String registryAccountCode = invoice.getRegistry().getAccountCode();
 					if (AonStringUtils.isBlank(registryAccountCode)) registryAccountCode = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "?????";
@@ -75,7 +75,7 @@ public class InvoiceRecorder {
 			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
 				double amount = invoice.getTotalInvoice();
 				if ( (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
-					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR) && AonMathUtils.isNotZero(amount)) {
+					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR)) {
 					
 					Integer registryAccount = invoice.getRegistry().getAccountId();
 					String registryAccountCode = invoice.getRegistry().getAccountCode();
@@ -174,7 +174,7 @@ public class InvoiceRecorder {
 			@Override
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
 				double amount = invoice.getTotalInvoice(); 
-				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER && AonMathUtils.isNotZero(amount)) {
+				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						Integer account = obtainRegistryAccount(invoice); 
@@ -196,7 +196,7 @@ public class InvoiceRecorder {
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
 				double amount = invoice.getTotalInvoice();
 				if ((invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
-					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR) && AonMathUtils.isNotZero(amount)) {
+					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR)) {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						Integer account = obtainRegistryAccount(invoice);
