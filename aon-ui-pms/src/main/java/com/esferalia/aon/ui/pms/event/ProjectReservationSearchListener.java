@@ -46,6 +46,8 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 	private ReservationCheckStatus[] reservationCheckStatuses;
 	private ReservationStatus[] reservationStatuses;
 	private Integer conexFlowOperation;
+	private Date conexFlowDateFrom;
+	private Date conexFlowDateTo;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -135,6 +137,22 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		this.conexFlowOperation = conexFlowOperation;
 	}
 
+	public Date getConexFlowDateFrom() {
+		return conexFlowDateFrom;
+	}
+
+	public void setConexFlowDateFrom(Date conexFlowDateFrom) {
+		this.conexFlowDateFrom = conexFlowDateFrom;
+	}
+
+	public Date getConexFlowDateTo() {
+		return conexFlowDateTo;
+	}
+
+	public void setConexFlowDateTo(Date conexFlowDateTo) {
+		this.conexFlowDateTo = conexFlowDateTo;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
@@ -148,6 +166,8 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		setReservationCheckStatuses(null);
 		setReservationStatuses(null);
 		setConexFlowOperation(null);
+		setConexFlowDateFrom(null);
+		setConexFlowDateTo(null);
 	}
 	
 	@Override
@@ -246,6 +266,12 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 					}
 				}
 			}
+		}
+		if (getConexFlowDateFrom() != null) {
+			criteria.addGreaterThanOrEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachDate"), getConexFlowDateFrom());
+		}
+		if (getConexFlowDateTo() != null) {
+			criteria.addLessThanOrEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachDate"), getConexFlowDateTo());
 		}
 	}
 

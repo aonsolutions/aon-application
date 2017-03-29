@@ -123,6 +123,22 @@
 						<f:selectItem itemLabel="#{bundle.conexflow_refund_fail}" itemValue="8" />		
 					</aon:selectOneMenu>
 
+					<aon:outputLabel value="Fecha Operacion" />
+					<aon:div>
+						<aon:outputLabel for="ProjectReservation_conexFlowDate-From"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="ProjectReservation_conexFlowDate-From"
+							value="#{searchController.conexFlowDateFrom}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="ProjectReservation_conexFlowDate-To"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="ProjectReservation_conexFlowDate-To"
+							value="#{searchController.conexFlowDateTo}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+
 				</aon:panelGrid>
 			</aon:panelCollapsible>
 		</aon:if>
