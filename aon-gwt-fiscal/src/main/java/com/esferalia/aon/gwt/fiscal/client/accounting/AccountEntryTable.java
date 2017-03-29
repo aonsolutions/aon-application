@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SuggestOracle.Response;
 
 
 public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Focusable
@@ -55,7 +56,28 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private boolean confirmConceptChange;
 	private boolean confirmDocumentChange;
 	
-	private MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
+		
+		@Override
+		public void requestSuggestions(Request request, Callback callback) {
+		    String query = request.getQuery();
+			LinkedList<String> autoConcepts =  wizardContent.getConfiguration().getAutoConcepts();
+			if (autoConcepts == null || autoConcepts.size() == 0) {
+				callback.onSuggestionsReady(request, new Response());	
+			} else {
+				LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
+				for ( String concept : autoConcepts ) {
+					if (AonStringUtils.startsWithIgnoreCase(concept, query) ) {
+						suggestions.add(new MultiWordSuggestion(concept, concept));
+					}
+				}
+				callback.onSuggestionsReady(request, new Response(suggestions));
+			}
+			
+		    
+		}
+		
+	};
 	
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY		,"20px" ,AON.AON_CSS.aonTextCenter())
@@ -94,10 +116,6 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	
 	public AccountEntryTable(IWizardContent wizardContent) {
 		this.wizardContent = wizardContent;
-		LinkedList<String> autoConcepts =  wizardContent.getConfiguration().getAutoConcepts();
-		if (autoConcepts != null) {
-			oracle.addAll(autoConcepts);
-		}
 		setConfirmConceptChange(true);
 		setConfirmDocumentChange(true);
 
