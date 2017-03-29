@@ -6,7 +6,15 @@
 BEGIN;
 
 DELETE FROM `customer_fee` WHERE `item` IS NULL;
+<<<<<<< Updated upstream
 ALTER TABLE `customer_fee` MODIFY `item` int(4) NOT NULL COMMENT 'Identificador del Articulo';
+=======
+<<<<<<< Updated upstream
+
+=======
+#ALTER TABLE `customer_fee` MODIFY `item` int(4) NOT NULL COMMENT 'Identificador del Articulo';
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 
 UPDATE `db_version` SET `version_number` = '8.82.0';
