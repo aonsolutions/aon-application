@@ -307,7 +307,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 									preauthorization.getRespuesta().getAutorizacion(), preauthorization.getRespuesta().getFechaOriginal(), preauthorization.getRespuesta().getOperacion());
 							confirmPreauthorization = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreQ);
 								
-							Boolean ok = confirmPreauthorization.getRespuesta().getResultado().equals(confirmPreauthorization);
+							Boolean ok = "000".equals(confirmPreauthorization.getRespuesta().getResultado());
 							confirmPreauthorization.setStatus(ok ? ConexFlowStatus.CONFIRM_PREAUTHORIZATION : ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
 							String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
 									+ confirmPreauthorization.getStatus().getName() + "#" + confirmPreauthorization.getRespuesta().getImporte();
@@ -323,11 +323,11 @@ public class CancellationInvoiceController extends BasicController implements IP
 						}
 					
 						if(confirmPreauthorization == null || (confirmPreauthorization != null 
-								&& !confirmPreauthorization.getRespuesta().getResultado().equals(confirmPreauthorization))){
+								&& !"000".equals(confirmPreauthorization.getRespuesta().getResultado()))){
 							Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount, customerId, null);
 							ConexFlow conexFlow2 = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, saleQ);
 							
-							Boolean ok = conexFlow2.getRespuesta().getResultado().equals(conexFlow2);
+							Boolean ok = "000".equals(conexFlow2.getRespuesta().getResultado());
 							conexFlow2.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
 							String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_"
 									+ conexFlow2.getStatus().getName() + "#" + conexFlow2.getRespuesta().getImporte();

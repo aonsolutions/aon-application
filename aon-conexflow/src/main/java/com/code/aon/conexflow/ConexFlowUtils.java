@@ -463,7 +463,7 @@ public class ConexFlowUtils {
 		query.setInfoAdicionalEntrada("");
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
-		query.setCentroOriginal(leftZeros(4, connection.getEmpresa().toString()));
+		query.setCentroOriginal(leftZeros(4, connection.getCentro().toString()));
 		query.setTpvOriginal(leftZeros(4, connection.getTpv().toString()));
 		query.setFechaOriginal(fechaOriginal);
 		query.setIdOperacionOriginal(operacionId);
