@@ -233,7 +233,7 @@ public class SQLFunctionsTestCase extends
 				ctx.getExpressionContext().eval(
 						String.format("DIA(FECHA(%d,%d,%d))", 
 								get(today, Calendar.YEAR),
-								get(today, Calendar.MONTH),
+								get(today, Calendar.MONTH)+1,
 								get(today, Calendar.DATE)
 						)
 						, startDate
