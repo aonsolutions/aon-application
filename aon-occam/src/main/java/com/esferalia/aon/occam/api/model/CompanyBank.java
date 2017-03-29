@@ -51,7 +51,7 @@ public class CompanyBank implements Serializable, IIbanContainer {
 	}
 	@Override
 	public String getDisplay() {
-		return AonStringUtils.isEmpty(alias)?"":"(" + alias +") " + bankAccount;
+		return (AonStringUtils.isEmpty(alias)?"":"(" + alias +") ") + bankAccount;
 	}
 	
 }
