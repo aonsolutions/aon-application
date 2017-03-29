@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class Elaboration implements Serializable {
 
@@ -19,7 +20,7 @@ public class Elaboration implements Serializable {
 	private int number;
 	private Date date;
 	private Item item;
-	private Integer warehouse;
+	private Warehouse warehouse;
 	private double quantity;
 	private Byte status;
 	private String comments;
@@ -76,10 +77,10 @@ public class Elaboration implements Serializable {
 		this.item = item;
 		return this;
 	}
-	public Integer getWarehouse() {
+	public Warehouse getWarehouse() {
 		return warehouse;
 	}
-	public Elaboration setWarehouse(Integer warehouse) {
+	public Elaboration setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
 		return this;
 	}

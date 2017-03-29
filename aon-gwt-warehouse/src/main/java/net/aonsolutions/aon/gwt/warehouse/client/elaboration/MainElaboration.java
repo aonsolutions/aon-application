@@ -76,7 +76,6 @@ public class MainElaboration extends AonTemplate {
 				} else {
 					insertElaboration(js);
 				}
-//				onSelectElaboration(js);
 			}
 
 			@Override
@@ -244,26 +243,20 @@ public class MainElaboration extends AonTemplate {
 		API.getWarehouse().downloadElaboration(getJsElaboration().getId());
 	}
 	
-	private String getData() {
-//		return "{\"series\":\"" + series.getSelectedValue() + "\"," + "\"number\":\"" + number.getValue() + "\","
-//				+ "\"type\":\"" + type.getSelectedValue() + "\"," + "\"status\":\"" + status.getSelectedValue() + "\","
-//				+ "\"issue_date\":\"" + (issueDate.getValue() != null ? issueDate.getValue().getTime() : "") + "\","
-//				+ "\"delivery_date\":\"" + (deliveryDate.getValue() != null ? deliveryDate.getValue().getTime() : "")
-//				+ "\"," + "\"carrier\":\"" + carrier.getSelectedValue() + "\"," + "\"carrier_reference\":\""
-//				+ reference.getValue() + "\"," + "\"number_plate\":\"" + numberPlate.getValue() + "\","
-//				+ "\"driver_document\":\"" + driverDocument.getValue() + "\"," + "\"driver_name\":\""
-//				+ driverName.getValue() + "\"" + "}";
-		
+	private String getData() {		
 //		String data = JsonUtils.stringify(getJsElaboration());
-		ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
-		String data = "{\"series\":\"" + panel.series.getValue() + "\"," 
-				+ "\"number\":\"" + panel.number.getValue() + "\","
-				+ "\"status\":\"" + 0 + "\","
-				+ "\"date\":\"" + (panel.date.getValue() != null ? panel.date.getValue().getTime() : "") + "\","
-				+ "\"quantity\":\"" + panel.quantity.getValue() + "\","
-				+ "\"item\":\"" + panel.pBox.getId() + "\","
-				+ "\"warehouse\":\"" + panel.warehouse.getSelectedValue() + "\","
-				+ "\"comments\":\"" + getJsElaboration().getComments() + "\"" + "}";
+		ElaborationPanel main = (ElaborationPanel) getNorthContent().getWidget();
+		FootPanel footer = (FootPanel) getSouthContent().getWidget();
+		String data = "{\"series\":\"" + main.series.getValue()+ "\""
+				+ ",\"number\":\"" + main.number.getValue()+ "\""
+//				+ ",\"status\":\"" + 0+ "\""
+				+ ",\"date\":\"" + (main.date.getValue() != null ? main.date.getValue().getTime() : "")+ "\""
+				+ ",\"quantity\":\"" + main.quantity.getValue()+ "\""
+				+ ",\"item\":\"" + main.pBox.getId()+ "\""
+				+ ",\"warehouse\":\"" + main.warehouse.getSelectedValue()+ "\""
+				+ ",\"comments\":\"" 
+				+ (footer.comments.getValue()!=null && !"".equals(footer.comments.getValue().trim())?footer.comments.getValue():"") + "\""
+				+ "}";
 		return data;
 	}
 

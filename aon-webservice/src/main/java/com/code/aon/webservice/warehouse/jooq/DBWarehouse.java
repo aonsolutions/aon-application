@@ -66,8 +66,8 @@ public class DBWarehouse {
 	}
 	    
 	public static JSONObject updateElaboration(Domain domain,String login, int id, JSONObject json){
-		Elaboration elaboration = getElaboration(domain, login, json, new Elaboration());
-		elaboration.setId(id);
+		Elaboration elaboration = AON.getFullElaboration(domain.getName(), domain.getId(), login, id);
+		elaboration = getElaboration(domain, login, json, elaboration);
 		AON.updateElaboration(domain.getName(), domain.getId(), login, elaboration);
 		return ToJSON.elaborationToJSON(elaboration);
 	}
@@ -94,7 +94,7 @@ public class DBWarehouse {
 			elaboration.setQuantity(json.getDouble(MSG.QUANTITY));
 		}
 		if(json.opt(MSG.WAREHOUSE) != null && !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))){
-			elaboration.setWarehouse(json.getInt(MSG.WAREHOUSE));
+			elaboration.setWarehouse(new Warehouse().setId(json.getInt(MSG.WAREHOUSE)));
 		}
 		if(json.opt(MSG.STATUS) != null && !MSG.EMPTY.equals(json.opt(MSG.STATUS))){
 			elaboration.setStatus(ElaborationStatus.values()[json.getInt(MSG.STATUS)].value());

@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class ElaborationDAO {
 	
@@ -146,7 +147,8 @@ public class ElaborationDAO {
 		modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
 		String series = elaboration.getSeries();
-		int number = elaboration.getNumber()>0?elaboration.getNumber():getSerieMaxNumber(ctx, series)+1;
+		int number = elaboration.getNumber() > 0 ? elaboration.getNumber()
+				: getSerieMaxNumber(ctx, series) + 1;
 		return ctx
 				.getDslContext()
 				.insertInto(ELABORATION, ELABORATION.DOMAIN,
@@ -158,18 +160,22 @@ public class ElaborationDAO {
 						ELABORATION.CREATION_USER, ELABORATION.CREATION_DATE,
 						ELABORATION.MODIFICATION_USER,
 						ELABORATION.MODIFICATION_DATE)
-				.values(ctx.getDomainId(), series, number,
+				.values(ctx.getDomainId(),
+						series,
+						number,
 						new Timestamp(elaboration.getDate().getTime()),
 						elaboration.getItem().getId(),
-						elaboration.getWarehouse(), elaboration.getQuantity(),
-						elaboration.getStatus(), elaboration.getComments(),
-						elaboration.getSource(), elaboration.getSourceId(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate).returning(ELABORATION.ID).fetchOne()
-				.getId();
+						elaboration.getWarehouse() != null ? elaboration
+								.getWarehouse().getId() : null,
+						elaboration.getQuantity(), elaboration.getStatus(),
+						elaboration.getComments(), elaboration.getSource(),
+						elaboration.getSourceId(), ctx.getUser(), creationDate,
+						ctx.getUser(), modificationDate)
+				.returning(ELABORATION.ID).fetchOne().getId();
 	}
 
-	public static Elaboration updateElaboration(AONContext ctx, Elaboration elaboration) {
+	public static Elaboration updateElaboration(AONContext ctx,
+			Elaboration elaboration) {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
@@ -182,7 +188,9 @@ public class ElaborationDAO {
 				.set(ELABORATION.DATE,
 						new Timestamp(elaboration.getDate().getTime()))
 				.set(ELABORATION.ITEM, elaboration.getItem().getId())
-				.set(ELABORATION.WAREHOUSE, elaboration.getWarehouse())
+				.set(ELABORATION.WAREHOUSE,
+						elaboration.getWarehouse() != null ? elaboration
+								.getWarehouse().getId() : null)
 				.set(ELABORATION.QUANTITY, elaboration.getQuantity())
 				.set(ELABORATION.STATUS, elaboration.getStatus())
 				.set(ELABORATION.COMMENTS, elaboration.getComments())
@@ -190,8 +198,9 @@ public class ElaborationDAO {
 				.set(ELABORATION.SOURCE_ID, elaboration.getSourceId())
 				.set(ELABORATION.MODIFICATION_USER, ctx.getUser())
 				.set(ELABORATION.MODIFICATION_DATE, modificationDate)
-				.where(ELABORATION.ID.eq(elaboration.getId()))
-				.returning().fetch().stream().map(new FullElaborationFiller()).findFirst().orElse(null);
+				.where(ELABORATION.ID.eq(elaboration.getId())).returning()
+				.fetch().stream().map(new FullElaborationFiller()).findFirst()
+				.orElse(null);
 	}
 
 	public static Elaboration deleteElaboration(AONContext ctx, ElaborationFilter filter) {
@@ -485,19 +494,31 @@ public class ElaborationDAO {
 	 * FILLERS 
 	 */
 	
-	private static class FullElaborationFiller implements Function<ElaborationRecord, Elaboration> {
+	private static class FullElaborationFiller implements
+			Function<ElaborationRecord, Elaboration> {
 		@Override
 		public Elaboration apply(ElaborationRecord r) {
-			return new Elaboration().setId(r.getValue(ELABORATION.ID)).setDomain(r.getValue(ELABORATION.DOMAIN))
-					.setSeries(r.getValue(ELABORATION.SERIES)).setNumber(r.getValue(ELABORATION.NUMBER))
-					.setDate(r.getValue(ELABORATION.DATE)).setItem(new Item().setId(r.getValue(ELABORATION.ITEM)))
-					.setWarehouse(r.getValue(ELABORATION.WAREHOUSE)).setQuantity(r.getValue(ELABORATION.QUANTITY))
-					.setStatus(r.getValue(ELABORATION.STATUS)).setComments(r.getValue(ELABORATION.COMMENTS))
-					.setSource(r.getValue(ELABORATION.SOURCE)).setSourceId(r.getValue(ELABORATION.SOURCE_ID))
+			return new Elaboration()
+					.setId(r.getValue(ELABORATION.ID))
+					.setDomain(r.getValue(ELABORATION.DOMAIN))
+					.setSeries(r.getValue(ELABORATION.SERIES))
+					.setNumber(r.getValue(ELABORATION.NUMBER))
+					.setDate(r.getValue(ELABORATION.DATE))
+					.setItem(new Item().setId(r.getValue(ELABORATION.ITEM)))
+					.setWarehouse(
+							new Warehouse().setId(r
+									.getValue(ELABORATION.WAREHOUSE)))
+					.setQuantity(r.getValue(ELABORATION.QUANTITY))
+					.setStatus(r.getValue(ELABORATION.STATUS))
+					.setComments(r.getValue(ELABORATION.COMMENTS))
+					.setSource(r.getValue(ELABORATION.SOURCE))
+					.setSourceId(r.getValue(ELABORATION.SOURCE_ID))
 					.setCreationDate(r.getValue(ELABORATION.CREATION_DATE))
 					.setCreationUser(r.getValue(ELABORATION.CREATION_USER))
-					.setModificationDate(r.getValue(ELABORATION.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(ELABORATION.MODIFICATION_USER));
+					.setModificationDate(
+							r.getValue(ELABORATION.MODIFICATION_DATE))
+					.setModificationUser(
+							r.getValue(ELABORATION.MODIFICATION_USER));
 		}
 	}
 

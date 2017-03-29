@@ -2725,14 +2725,22 @@ public class AON {
 		}
 	}
 	
-	public static List<Elaboration> getFullElaborationList(String domainName, Integer domainId, String login,
-			ElaborationFilter filter) {
+	public static List<Elaboration> getFullElaborationList(String domainName,
+			Integer domainId, String login, ElaborationFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			List<Elaboration> list = getWarehouse().getElaborationList(ctx, filter);
-			for(Elaboration elaboration: list){
-				elaboration.setItem(getItem(domainName, domainId, login, elaboration.getItem().getId()));
+			List<Elaboration> list = getWarehouse().getElaborationList(ctx,
+					filter);
+			for (Elaboration elaboration : list) {
+				elaboration.setItem(getItem(domainName, domainId, login,
+						elaboration.getItem().getId()));
+				elaboration.setWarehouse(getWarehouse(
+						domainName,
+						domainId,
+						login,
+						f -> f.getIdProperty().eq(
+								elaboration.getWarehouse().getId())));
 			}
 			return list;
 		} finally {
@@ -2749,6 +2757,12 @@ public class AON {
 			Elaboration e = getWarehouse().getElaboration(ctx, id);
 			e.setItem(AON.getItem(domainName, domainId, login, e.getItem()
 					.getId()));
+			e.setWarehouse(getWarehouse(
+					domainName,
+					domainId,
+					login,
+					f -> f.getIdProperty().eq(
+							e.getWarehouse().getId())));
 			return e;
 		} finally {
 			if (ctx != null)
