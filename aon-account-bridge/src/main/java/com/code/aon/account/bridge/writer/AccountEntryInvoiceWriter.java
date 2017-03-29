@@ -300,8 +300,15 @@ public class AccountEntryInvoiceWriter implements Serializable {
 			if (profitLoss != 0.0) {
 				if (profitLoss > 0) {
 					pl = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_ASSET_PROFIT_ACC);
+					if (pl == null) {
+						throw new ManagerBeanException("No se ha definido cuenta contable para beneficios por venta de inmovilizado");
+					}
+					
 				} else {
 					pl = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_ASSET_LOST_ACC);
+					if (pl == null) {
+						throw new ManagerBeanException("No se ha definido cuenta contable para pérdidas por venta de inmovilizado");
+					}
 				}
 				basesPerAccount.put(pl , profitLoss);
 			}
