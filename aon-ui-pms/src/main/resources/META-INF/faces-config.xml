@@ -766,12 +766,21 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{reservationAttachControllerListener}</value> 
+				<value>#{attachmentControllerListener}</value> 
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
 		<managed-bean-name>reservationAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.pms.event.ProjectReservationAttachControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>attachmentControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.faces.controller.event.AttachmentControllerListener
 		</managed-bean-class>

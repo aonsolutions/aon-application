@@ -57,7 +57,10 @@
 						value="#{bundle.aon_key_invoice_description}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.invoiceAllowed}"
 						iconClass="aon-icon-favorite"
-						actionListener="#{reservation.onInvoiceShow}">
+						actionListener="#{reservation.onInvoiceShow}"
+						reRender="#{(reservation.to.conexFlowPreauthorizedOk) ? ('showPreauthorizationWindow') : ('showInvoiceWindow')}">
+						<f:setPropertyActionListener target="#{reservation.showPreauthorizationWindow}"
+							value="#{reservation.to.conexFlowPreauthorizedOk}" />
 						<f:setPropertyActionListener target="#{reservation.showInvoiceWindow}"
 							value="#{true}" />
 					</aon:menuItem>
@@ -238,6 +241,9 @@
 			<ui:param name="skipStatus" value="true" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/conexFlow/modalConexFlow.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/conexFlow/modalPreauthorization.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
 		</ui:include>
 	</ui:define>

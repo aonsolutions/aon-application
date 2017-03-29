@@ -133,6 +133,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean showModificationWindow;
 	private Invoice invoiceToModify;
 	private boolean showConexFlowWindow;
+	private boolean showPreauthorizationWindow;
 	private List<Integer> multipleReservation;
 	private DataModel invoiceModel;
 
@@ -388,6 +389,13 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 	public void setShowConexFlowWindow(boolean showConexFlowWindow) {
 		this.showConexFlowWindow = showConexFlowWindow;
+	}
+
+	public boolean isShowPreauthorizationWindow() {
+		return showPreauthorizationWindow;
+	}
+	public void setShowPreauthorizationWindow(boolean showPreauthorizationWindow) {
+		this.showPreauthorizationWindow = showPreauthorizationWindow;
 	}
 
 	public List<Integer> getMultipleReservation() {
@@ -1764,7 +1772,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onConexFlowShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setNewCreditCard(reservation.isBlankToken() && StringUtils.isBlank(reservation.getCreditCardNumber()));
-		reservation.setHrCreditCardNumber(!reservation.isNewCreditCard() ? StringUtils.repeat("*", 8) + reservation.getCreditCardNumber() : null);
+		reservation.setHrCreditCardNumber(!reservation.isNewCreditCard() ? reservation.getSecureCreditCardNumber() : null);
 		reservation.setHrCreditCardExpirationMonth(reservation.getCreditCardExpirationMonth());
 		reservation.setHrCreditCardExpirationYear(reservation.getCreditCardExpirationYear());
 

@@ -272,6 +272,12 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public boolean isConexFlowPreauthorizedCancelled() {
+		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_PREAUTH_CANCELLED_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
 	public boolean isConexFlowFail() {
 		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_FAIL_PATTERN.replace("%", "(.*)"));
@@ -312,8 +318,8 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), getId());
 			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.PAYSLIP);
-			Expression exp = ExpressionUtilities.getLikeExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_DESCRIPTION), 
-					"CONEXFLOW%PAYSLIP#%");
+			Expression exp = 
+					ExpressionUtilities.getLikeExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_DESCRIPTION), CONEXFLOW_PAYSLIP_PATTERN);
 			criteria.addExpression(exp);
 			return pAttachBean.getList(criteria).size() > 0;
 		} catch(ManagerBeanException ex) {
@@ -352,6 +358,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setHrCreditCardExpirationYear(String hrCreditCardExpirationYear) {
 		this.hrCreditCardExpirationYear = hrCreditCardExpirationYear;
+	}
+
+	@Transient
+	public String getSecureCreditCardNumber() {
+		if (StringUtils.isNotBlank(getCreditCardNumber())) {
+			return StringUtils.repeat("*", 8) + getCreditCardNumber();
+		}
+		return null;
 	}
 
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})

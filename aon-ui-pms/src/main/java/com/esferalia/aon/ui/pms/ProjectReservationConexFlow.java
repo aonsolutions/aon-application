@@ -8,6 +8,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
@@ -16,10 +17,12 @@ import com.code.aon.conexflow.ConexFlowPost;
 import com.code.aon.conexflow.ConexFlowStatus;
 import com.code.aon.conexflow.ConexFlowUtils;
 import com.code.aon.conexflow.jooq.DBConsults;
+import com.code.aon.config.PayMethod;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationConexFlow implements Serializable {
 
@@ -526,6 +529,12 @@ public class ProjectReservationConexFlow implements Serializable {
 		}
 	}
 
+	public void cancelPreauthorization(ActionEvent event) {
+		ConexFlowConnection connection = DBConsults.getConection(getDomain());
+		setConexflowOperationCancelation(ConexFlowStatus.PREAUTHORIZATION.getName());
+		cancelOperation(connection);
+	}
+
 
 	private Boolean isAmex(String creditCard) {
 		return creditCard.substring(0, 2).equals("37") || creditCard.substring(0, 2).equals("34");
@@ -550,10 +559,15 @@ public class ProjectReservationConexFlow implements Serializable {
 		throw new AbortProcessingException(error);
 	}
 
-	
+	public PayMethod getConexFlowDefaultPayMethod() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(getDomain().getId());
+		return reservationUtils.obtainConexFlowPayMethod();
+	}
+
 	public String getPrintConexFlowPayslip() {
 		String str = "domain_name="+ getDomain().getName() + "&domain_id="+ getDomain().getId()+ "&login="+ getLogin() + "&project=" + getReservation().getId();
 		String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 		return "/print_conexflowpayslip/"+ base;
 	}
+
 }

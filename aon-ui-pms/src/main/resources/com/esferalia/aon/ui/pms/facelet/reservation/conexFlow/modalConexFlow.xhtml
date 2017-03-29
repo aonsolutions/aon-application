@@ -61,7 +61,7 @@
 										value="#{bundle.aon_remove} #{bundle.conexflow_token}"
 										rendered="#{reservation.reservationPermission.removeConexFlowAllowed}"
 										confirmTitle="#{bundle.aon_confirm_title}"
-										confirmMessage="¿#{bundle.pms_remove_token}?"
+										confirmMessage="¿#{bundle.conexflow_remove_token}?"
 										confirmActionListener="#{reservation.onRemoveToken}">
 									</aon:confirmButton>
 									<aon:commandButton id="conexFlow-cancel" immediate="true"
@@ -141,7 +141,7 @@
 												value="#{bundle.aon_amount}" />
 											<aon:inputText id="ConexFlow_amount" 
 												value="#{controller.reservationConexFlow.amount}"
-												required="true" size="10" maxlength="10"/>
+												required="true" size="10" maxlength="10" ajaxSingle="true" />
 
 											<aon:outputLabel for="ConexFlow_operation"
 												value="#{bundle.aon_operation}" />
@@ -150,19 +150,19 @@
 													value="#{controller.reservationConexFlow.conexflowOperation}" required="true">
 													<f:selectItem itemLabel=" - " itemValue="#{null}" />
 													<aon:if test="#{controller.reservationConexFlow.showPreauthorization}">
-														<f:selectItem itemLabel="#{bundle.pms_preauthorization}" itemValue="P" />
+														<f:selectItem itemLabel="#{bundle.conexflow_preauthorization}" itemValue="P" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.showCharge}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_charge}" itemValue="V" />
+														<f:selectItem itemLabel="#{bundle.conexflow_sale}" itemValue="V" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.showConfirmPreauthorization}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_confirm_preauthorization}" itemValue="C" />
+														<f:selectItem itemLabel="#{bundle.conexflow_confirm_preauthorization}" itemValue="C" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.showCancelation}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_cancel_op}" itemValue="A" />
+														<f:selectItem itemLabel="#{bundle.conexflow_cancel_operation}" itemValue="A" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.showRefund}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_refund}" itemValue="D" />
+														<f:selectItem itemLabel="#{bundle.conexflow_refund}" itemValue="D" />
 													</aon:if>
 											 		<a4j:support event="onchange" 
 											 			actionListener="#{controller.reservationConexFlow.onConexflowOperationChange}" 
@@ -170,7 +170,7 @@
 												</aon:selectOneMenu>
 												<aon:commandButton id="conexflow-accept"
 													styleClass="aon-commandButton"
-													value="#{bundle.pms_execute_operation}"
+													value="#{bundle.aon_execute_operation}"
 													actionListener="#{controller.reservationConexFlow.onConexflowOperation}"
 													onclick="Richfaces.showModalPanel('waitProccess')"
 													oncomplete="Richfaces.hideModalPanel('waitProccess')"
@@ -185,30 +185,30 @@
 												<aon:selectOneMenu id="ConexFlow_cancelation"
 													value="#{controller.reservationConexFlow.conexflowOperationCancelation}" required="true">
 													<aon:if test="#{controller.reservationConexFlow.showConfirmPreauthorization}">
-														<f:selectItem itemLabel="#{bundle.pms_preauthorization}" itemValue="P" />
+														<f:selectItem itemLabel="#{bundle.conexflow_preauthorization}" itemValue="P" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.charge}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_charge}" itemValue="V" />
+														<f:selectItem itemLabel="#{bundle.conexflow_sale}" itemValue="V" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.confirmPreauthorization}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_confirm_preauthorization}" itemValue="C" />
+														<f:selectItem itemLabel="#{bundle.conexflow_confirm_preauthorization}" itemValue="C" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.refund}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_refund}" itemValue="D" />
+														<f:selectItem itemLabel="#{bundle.conexflow_refund}" itemValue="D" />
 													</aon:if>
 												</aon:selectOneMenu>
 											</aon:if>
 
 											<aon:if test="#{controller.reservationConexFlow.showRefundOption}">
 												<aon:outputLabel for="ConexFlow_refund"
-													value="#{bundle.pms_conexflow_refund}" />
+													value="#{bundle.conexflow_refund}" />
 												<aon:selectOneMenu id="ConexFlow_refund"
 													value="#{controller.reservationConexFlow.conexflowOperationRefund}" required="true">
 													<aon:if test="#{controller.reservationConexFlow.charge}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_charge}" itemValue="V" />
+														<f:selectItem itemLabel="#{bundle.conexflow_sale}" itemValue="V" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.confirmPreauthorization}">
-														<f:selectItem itemLabel="#{bundle.pms_conexflow_confirm_preauthorization}" itemValue="C" />
+														<f:selectItem itemLabel="#{bundle.conexflow_confirm_preauthorization}" itemValue="C" />
 													</aon:if>
 												</aon:selectOneMenu>
 											</aon:if>

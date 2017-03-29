@@ -11,6 +11,9 @@
 		<ui:param name="skipConfidentialityColumn" value="true" />
 		<ui:param name="skipResetButton" value="#{customizedNewEnabled}" />
 		<ui:param name="skipEditSelectedTo" value="#{!aonRole.admin and (!to.document or !customizedEditEnabled)}" />
+		<ui:param name="newSaveButtonReRender" value="reservationForm" />
+		<ui:param name="saveButtonReRender" value="reservationForm" />
+		<ui:param name="removeButtonReRender" value="reservationForm" />
 	</ui:decorate>
 
 </ui:composition>

@@ -38,6 +38,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.common.util.CryptoUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffAddInfo;
@@ -1595,6 +1596,14 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	public boolean isConexFlowAvailable() {
 		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_SERVER_PARAM, domain);
 		return (appParam != null);
+	}
+
+	public PayMethod obtainConexFlowPayMethod() throws ManagerBeanException {
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_PAY_METHOD, domain);
+		if (appParam != null && StringUtils.isNotBlank(appParam.getValue())) {
+			return (PayMethod)BeanManager.getManagerBean(PayMethod.class).get(Integer.parseInt(appParam.getValue()));
+		}
+		return null;
 	}
 
 }
