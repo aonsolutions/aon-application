@@ -343,6 +343,10 @@ public class ToJSON {
 			.put("product_name", purchaseDetail.getProductName())
 			.put("purchase", purchaseDetail.getPurchaseId())
 			.put("carrier_packing", purchaseDetail.getCarrierPacking())
+			.put("lotable", purchaseDetail.getItem2() != null ?
+					purchaseDetail.getItem2().getProduct().isLotable() : "")
+			.put("serializable", purchaseDetail.getItem2() != null ?
+					purchaseDetail.getItem2().getProduct().isSerializable() : "")
 			;
 	}
 	

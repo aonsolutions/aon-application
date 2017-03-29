@@ -6,26 +6,27 @@ import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
-import static com.esferalia.aon.jooq.tables.Income.INCOME;
-import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.util.function.Function;
 
 import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.Product;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -261,10 +262,82 @@ public class FillerDAO {
 			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
 			detail.setCarrierPacking(r.getValue(PURCHASE_DETAIL.CARRIER_PACKING));
 			
-			detail.setProductId(r.getValue(Product.PRODUCT.ID));
-			detail.setProductCode(r.getValue(Product.PRODUCT.CODE));
-			detail.setProductName(r.getValue(Product.PRODUCT.NAME));
+
+			return detail;
+		}
+	}
 	
+	public static class PurchaseDetailItemFiller implements Function<Record, PurchaseDetail> {
+		
+		@Override
+		public PurchaseDetail apply(Record r) {
+			PurchaseDetail detail = new PurchaseDetail();
+			detail.setId(r.getValue(PURCHASE_DETAIL.ID));
+			detail.setDomain(r.getValue(PURCHASE_DETAIL.DOMAIN));
+			detail.setPurchaseId(r.getValue(PURCHASE_DETAIL.PURCHASE));
+			detail.setItem(r.getValue(PURCHASE_DETAIL.ITEM));
+			detail.setLine(r.getValue(PURCHASE_DETAIL.LINE).intValue());
+			detail.setDescription(r.getValue(PURCHASE_DETAIL.DESCRIPTION));
+			detail.setQuantity(r.getValue(PURCHASE_DETAIL.QUANTITY));
+			detail.setPrice(r.getValue(PURCHASE_DETAIL.PRICE));
+			detail.setDiscountExpression(r.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR));
+			detail.setTaxes(r.getValue(PURCHASE_DETAIL.TAXES));
+			detail.setStatus(PurchaseDetailStatus.values()[r.getValue(PURCHASE_DETAIL.STATUS)]);
+			detail.setProposalDetail(r.getValue(PURCHASE_DETAIL.PROPOSAL_DETAIL));
+			if(r.getValue(PURCHASE_DETAIL.SOURCE) != null)
+				detail.setSource(PurchaseSourceType.values()[r.getValue(PURCHASE_DETAIL.SOURCE)]);
+			detail.setSourceId(r.getValue(PURCHASE_DETAIL.SOURCE_ID));
+			detail.setDelivered(r.getValue(PURCHASE_DETAIL.DELIVERED));
+			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
+			detail.setCarrierPacking(r.getValue(PURCHASE_DETAIL.CARRIER_PACKING));
+			detail.setProductId(r.getValue(PRODUCT.ID));
+			detail.setProductCode(r.getValue(PRODUCT.CODE));
+			detail.setProductName(r.getValue(PRODUCT.NAME));
+			detail.setItem2(new Item().setId(r.getValue(ITEM.ID))
+				.setBarcode(r.getValue(ITEM.BARCODE))
+				.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+				.setCreationUser(r.getValue(ITEM.CREATION_USER))
+				.setDescription(r.getValue(ITEM.DESCRIPTION))
+				.setDetail(r.getValue(ITEM.DETAIL))
+				.setDetail2(r.getValue(ITEM.DETAIL2))
+				.setDetail3(r.getValue(ITEM.DETAIL3))
+				.setDomain(r.getValue(ITEM.DOMAIN))
+				.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
+				.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
+				.setInternet(r.getValue(ITEM.INTERNET) == 1)
+				.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
+				.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
+				.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
+				.setPrice(r.getValue(ITEM.PRICE))
+				.setProductId(r.getValue(ITEM.PRODUCT))
+				.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
+				.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
+				.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
+				.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+				.setStatus(r.getValue(ITEM.STATUS))
+				.setProduct(new Product().setId(r.getValue(PRODUCT.ID))
+					.setName(r.getValue(PRODUCT.NAME))
+					.setDomain(r.getValue(PRODUCT.DOMAIN))
+					.setCode(r.getValue(PRODUCT.CODE))
+					.setComposition(r.getValue(PRODUCT.COMPOSITION) == 1)
+					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
+					.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
+					.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
+					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) == 1)
+					.setKind(r.getValue(PRODUCT.KIND))
+					.setLotable(r.getValue(PRODUCT.LOTABLE) == 1)
+					.setManufactured(r.getValue(PRODUCT.MANUFACTURED))
+					.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER))
+					.setPackaged(r.getValue(PRODUCT.PACKAGED) == 1)
+					.setPurchaseAccount(r.getValue(PRODUCT.PURCHASE_ACCOUNT))
+					.setRetention(r.getValue(PRODUCT.RETENTION)) 
+					.setSalesAccount(r.getValue(PRODUCT.SALES_ACCOUNT))
+					.setSerializable(r.getValue(PRODUCT.SERIALIZABLE) == 1)
+					.setStatus(r.getValue(PRODUCT.STATUS))
+					.setType(r.getValue(PRODUCT.TYPE))
+					.setVat(r.getValue(PRODUCT.VAT))));
 			return detail;
 		}
 	}
@@ -427,6 +500,41 @@ public class FillerDAO {
 					.setStatus(r.getValue(INCOME.STATUS) != null ? IncomeStatus.values()[r.getValue(INCOME.STATUS)] : null)
 					.setSupplier(r.getValue(INCOME.SUPPLIER))
 					.setWorkplace(r.getValue(INCOME.WORKPLACE));
+		}
+	}
+	
+	public static class IncomeRegistryFiller implements Function<Record, Income> {
+		@Override
+		public Income apply(Record r) {
+			Income income = new Income();
+			income.setCreationDate(r.getValue(INCOME.CREATION_DATE));
+			income.setCreationUser(r.getValue(INCOME.CREATION_USER));
+			income.setModificationDate(r.getValue(INCOME.MODIFICATION_DATE));
+			income.setModificationUser(r.getValue(INCOME.MODIFICATION_USER));
+			return income
+					.setAddress(r.getValue(INCOME.ADDRESS))
+					.setBankAccount(r.getValue(INCOME.BANK_ACCOUNT))
+					.setBankAlias(r.getValue(INCOME.BANK_ALIAS))
+					.setBic(r.getValue(INCOME.BIC))
+					.setCarrierPacking(r.getValue(INCOME.CARRIER_PACKING))
+					.setComments(r.getValue(INCOME.COMMENTS))
+					.setDaysBetweenPymnt(r.getValue(INCOME.DAYS_BETWEEN_PYMNTS) != null ? r.getValue(INCOME.DAYS_BETWEEN_PYMNTS).intValue() : null)
+					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT) != null ? r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
+					.setDomain(r.getValue(INCOME.DOMAIN))
+					.setId(r.getValue(INCOME.ID))
+					.setIssueDate(r.getValue(INCOME.ISSUE_TIME))
+					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS) != null ? r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue() : null)
+					.setPayMethod(r.getValue(INCOME.PAY_METHOD))
+					.setProject(new Project().setId(r.getValue(INCOME.PROJECT)))
+					.setPymntDays(r.getValue(INCOME.PYMNT_DAYS))
+					.setReferenceCode(r.getValue(INCOME.REFERENCE_CODE))
+					.setRemarks(r.getValue(INCOME.REMARKS))
+					.setScope(r.getValue(INCOME.SCOPE))
+					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL) != null ? r.getValue(INCOME.SECURITY_LEVEL).intValue() : null)
+					.setStatus(r.getValue(INCOME.STATUS) != null ? IncomeStatus.values()[r.getValue(INCOME.STATUS)] : null)
+					.setSupplier(r.getValue(INCOME.SUPPLIER))
+					.setWorkplace(r.getValue(INCOME.WORKPLACE))
+					.setSupplierName(r.getValue(REGISTRY.NAME));
 		}
 	}
 	

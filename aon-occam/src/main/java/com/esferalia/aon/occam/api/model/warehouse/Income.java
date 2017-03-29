@@ -17,6 +17,8 @@ public class Income extends Audit implements Serializable {
 	private Project project;
 	private String referenceCode;
 	private Integer supplier;
+	private String supplierName;
+	
 	private Integer address;
 	private Date issueDate;
 	private Integer payMethod;
@@ -199,5 +201,14 @@ public class Income extends Audit implements Serializable {
 		this.carrierPacking = carrierPacking;
 		return this;
 	}
+	public String getSupplierName() {
+		return supplierName;
+	}
+	public Income setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
+		return this;
+	}
+	
+	
 
 }

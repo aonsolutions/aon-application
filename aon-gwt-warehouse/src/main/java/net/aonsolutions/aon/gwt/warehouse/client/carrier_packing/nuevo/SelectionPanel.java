@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
+import com.esferalia.aon.gwt.api.client.warehouse.JsWarehouse;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -45,9 +46,12 @@ import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
+import com.vaadin.polymer.paper.widget.PaperToggleButton;
 
 import net.aonsolutions.aon.gwt.warehouse.client.Utils;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler;
 
 
 public class SelectionPanel extends ResizeComposite implements RequiresResize {
@@ -64,6 +68,12 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	private Integer selectableOrder;	
 	
 	private VerticalPanel receptionVerticalPanel;
+	private Boolean receptionMore = true;
+	private HashMap<String, LinkedList<String>> receptionFilter;
+	private Integer receptionOrder;	
+
+
+
 
 	private CarrierPackingDetail parent;
 	
@@ -93,6 +103,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		this.parent = parent;
 		initSelectedFilter();
 		initSelectableFilter();
+		initReceptionFilter();
 		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
 
 		//  -------------------------- SELECTABLE PANEL ------------------------------
@@ -143,10 +154,80 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		receptionVerticalPanel.add(receptionItems());
 	}
 	
-	private ScrollPanel receptionItems() {
-		ScrollPanel scroll = new ScrollPanel();
+	private void initReceptionFilter(){
+		receptionFilter = new HashMap<>();
 		
-		return scroll;
+		LinkedList<String> list = new LinkedList<>();
+		list.add(getCarrierPacking().getId() + "");
+		receptionFilter.put("carrier_packing", list);
+		
+		// -------------------- per page
+		list = new LinkedList<>();
+		list.add("30");
+		receptionFilter.put("per_page", list);
+		
+		// -------------------- page
+		list = new LinkedList<>();
+		list.add("1");
+		receptionFilter.put("page", list);
+	}
+	
+	private ScrollPanel receptionItems() {
+		ScrollPanel scrollPanel = new ScrollPanel();
+	//	scrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 25 ? getOffsetHeight() - 25 : 0.0, Unit.PX);
+		scrollPanel.addScrollHandler(new ScrollHandler() {
+			
+			@Override
+			public void onScroll(ScrollEvent event) {
+				Integer scrollTop = scrollPanel.getElement().getScrollTop();
+				Integer offsetHeight = scrollPanel.getElement().getOffsetHeight();
+				Integer physicalSize = scrollPanel.getElement().getScrollHeight();
+				Integer maxScrollPosition = physicalSize - offsetHeight;
+				if(scrollTop > maxScrollPosition && receptionMore){
+					Integer page = Integer.parseInt(receptionFilter.get("page").get(0));
+					LinkedList<String> list = new LinkedList<>();
+					list.add(Integer.toString(page +1));
+					receptionFilter.put("page", list);	
+					getAPI().getWarehouse().getOrders(getOrderType(), receptionFilter, new AsyncCallback<JSON<JsOrder>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsOrder> result) {
+							receptionMore = Integer.parseInt(receptionFilter.get("perPage").get(0)) > result.getData().length();
+							addReception(result);
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				}
+			}
+		});
+		
+		HashMap<String, LinkedList<String>> map = new HashMap<>();
+		LinkedList<String> l = new LinkedList<>();
+		l.add(getCarrierPacking().getId() + "");
+		map.put("carrier_packing", l);
+		
+		scrollPanel.add(new VerticalPanel());
+		getAPI().getWarehouse().getOrders("income", receptionFilter, new AsyncCallback<JSON<JsOrder>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsOrder> result) {
+				addReception(scrollPanel, result);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		return scrollPanel;
+	}
+	
+	private void addReception(JSON<JsOrder> orders){
+		ScrollPanel scroll = (ScrollPanel) selectedVerticalPanel.getWidget(1);
+		addReception(scroll, orders);
+	}
+	
+	private void addReception(ScrollPanel scroll, JSON<JsOrder> orders){
+		VerticalPanel vp = (VerticalPanel) scroll.getWidget();
+		orders.getData().stream().forEach(order -> buildOrderItem(vp, order, "reception"));
 	}
 
 	// -------------------- SELECTED PANEL
@@ -181,6 +262,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private ScrollPanel selectedItems() {
 		ScrollPanel scrollPanel = new ScrollPanel();
+	//	scrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 25 ? getOffsetHeight() - 25 : 0.0, Unit.PX);
 		scrollPanel.addScrollHandler(new ScrollHandler() {
 			
 			@Override
@@ -198,6 +280,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						
 						@Override
 						public void onSuccess(JSON<JsOrder> result) {
+							selectedMore = Integer.parseInt(selectedFilter.get("perPage").get(0)) > result.getData().length();
 							addSelected(result);
 						}
 						
@@ -227,7 +310,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private void addSelected(ScrollPanel scroll, JSON<JsOrder> orders){
 		VerticalPanel vp = (VerticalPanel) scroll.getWidget();
-		orders.getData().stream().forEach(order -> buildOrderItem(vp, order, true));
+		orders.getData().stream().forEach(order -> buildOrderItem(vp, order, "selected"));
 	}
 
 	// -------------------- SELECTABLE PANEL
@@ -286,7 +369,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(datebox.getValue().getTime()));
 				selectableFilter.put("issue_date", list);
-			
+
 				selectableVerticalPanel.remove(1);
 				selectableVerticalPanel.add(selectableItems());
 			}
@@ -383,6 +466,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private ScrollPanel selectableItems() {
 		ScrollPanel scrollPanel = new ScrollPanel();
+	//	scrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 50 ? getOffsetHeight() - 50 : 0.0, Unit.PX);
 		scrollPanel.addScrollHandler(new ScrollHandler() {
 			
 			@Override
@@ -400,6 +484,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						
 						@Override
 						public void onSuccess(JSON<JsOrder> result) {
+							selectableMore = Integer.parseInt(selectableFilter.get("perPage").get(0)) > result.getData().length();
 							addSelectable(result);
 						}
 						
@@ -429,14 +514,15 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private void addSelectable(ScrollPanel scroll, JSON<JsOrder> orders){
 		VerticalPanel vp = (VerticalPanel) scroll.getWidget();
-		orders.getData().stream().forEach(order -> buildOrderItem(vp, order, false));
+		orders.getData().stream().forEach(order -> buildOrderItem(vp, order, "selectable"));
 	}
 	
-	private void buildOrderItem(VerticalPanel vp, JsOrder order, Boolean selected){
+	private void buildOrderItem(VerticalPanel vp, JsOrder order, String panel){
 		PaperItem pi = new PaperItem();
 		HorizontalPanel hp = new HorizontalPanel();
-		if(!isFinished()){
-			if(selected){
+
+		if(isPending()){
+			if(isSelected(panel)){
 				PaperIconButton sendMail = new PaperIconButton();
 				sendMail.setIcon("mail");
 				sendMail.setStyle("height:24px;font-size:12px;padding:0px;font-weight: bold;");
@@ -451,7 +537,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 				});
 		    	hp.add(sendMail);
 			}
-		
+
 			PaperIconButton pib = new PaperIconButton();
 			//pib.setIcon(selected ? "remove" : "add");
 			pib.setIcon("swap-horiz");
@@ -463,7 +549,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 				@Override
 				public void onClick(ClickEvent event) {
 					if(isPending()){
-						if(selected){
+						if(isSelected(panel)){
 							removeAllOrder(order); 
 						} else {
 							addAllOrder(order);
@@ -473,6 +559,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					}
 				}
 			});
+
 			hp.add(pib);
 		}
 		IronIcon ironIcon = new IronIcon();
@@ -480,98 +567,175 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	    pi.add(ironIcon);
 	    String title = (order.getIssueDate() != null 
 	    		? Utils.formatDate(Utils.parseDateTime(order.getIssueDate())) + " - "
-	    		: "") + order.getSeriesNumber() + " - " + order.getRegistry().getName(); // + WORKPLACE!
-	    pi.add(new Label(title));
+	    		: "") + (isReception(panel) ? order.getReferenceCode() : order.getSeriesNumber()) + " - " + order.getRegistry().getName(); // + WORKPLACE!
+	   
+	    Label ot = new Label(title.length() > 70 ? title.substring(0,70) + "..." : title);
+	    ot.setTitle(title);
+	    pi.add(ot);
+	    
+
 	    pi.setStyle("min-height:24px;font-size:12px;padding:0px;font-weight: bold;");
 	    
 	    SimplePanel sp = new SimplePanel();
 		sp.setVisible(false);
-		
-	    if(selected || (!selected && selectableOrder != null && selectableOrder == order.getId())){
+
+	    if(isSelected(panel) || (isSelectable(panel) && selectableOrder != null && selectableOrder == order.getId())
+	    		|| (isReception(panel) && receptionOrder != null && receptionOrder == order.getId())){
 	    	ironIcon.setIcon("arrow-drop-down");
-	    	loadDetails(sp, selected, order);
+	    	loadDetails(sp, panel, order);
 	    }
-	
+
 		pi.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent arg0) {
 		    	ironIcon.setIcon(sp.isVisible() ? "arrow-drop-up" : "arrow-drop-down" );
-				loadDetails(sp, selected, order);
+				loadDetails(sp, panel, order);
 			}
 		});
+
 	    hp.add(pi);
 	    vp.add(hp);
 		vp.add(sp);
 	}
 	
-	private void loadDetails(SimplePanel sp, Boolean selected, JsOrder order){
+	private void loadDetails(SimplePanel sp, String panel, JsOrder order){
 		if(!sp.isVisible()){
-			HashMap<String, LinkedList<String>> map = new HashMap<>();
-			LinkedList<String> list = new LinkedList<>();
-			list.add(selected ? (getCarrierPacking().getId() + "") : "null");
-			map.put("carrier_packing", list);
-			list = new LinkedList<>();
-			list.add("" + order.getId());
-			map.put("parent_id", list);
-			getAPI().getWarehouse().getDetails(getOrderType(), map, new AsyncCallback<JSON<JsOrderDetail>>() {
+			if(isReception(panel)){
+				getAPI().getWarehouse().getDetails(order.getId(), "income", new AsyncCallback<JSON<JsOrderDetail>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsOrderDetail> result) {
+						sp.setWidget(buildDetail(order, result, panel));
+						sp.setVisible(!sp.isVisible());
+					}
 				
-				@Override
-				public void onSuccess(JSON<JsOrderDetail> result) {
-					sp.setWidget(buildDetail(result, selected));
-					sp.setVisible(!sp.isVisible());
-				}
+					@Override public void onFailure(Throwable caught) {}
+				});
+			} else {
+				HashMap<String, LinkedList<String>> map = new HashMap<>();
+				LinkedList<String> list = new LinkedList<>();
+				list.add(isSelected(panel) ? (getCarrierPacking().getId() + "") : "null");
+				map.put("carrier_packing", list);
+				list = new LinkedList<>();
+				list.add("" + order.getId());
+				map.put("parent_id", list);
+				getAPI().getWarehouse().getDetails(getOrderType(), map, new AsyncCallback<JSON<JsOrderDetail>>() {
 				
-				@Override public void onFailure(Throwable caught) {}
-			});
+					@Override
+					public void onSuccess(JSON<JsOrderDetail> result) {
+						sp.setWidget(buildDetail(order, result, panel));
+						sp.setVisible(!sp.isVisible());
+					}
+				
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
 		} else sp.setVisible(!sp.isVisible());
 	}
 	
-	private VerticalPanel buildDetail(JSON<JsOrderDetail> details, Boolean selected) {
+	private VerticalPanel buildDetail(JsOrder order, JSON<JsOrderDetail> details, String panl) {
 		VerticalPanel vp = new VerticalPanel();
+		if(!isShipment() && isSelected(panl)){
+			vp.add(buildBultosPeso(order));
+		}
 		details.getData().stream().forEach(detail ->{
 			HorizontalPanel panel = new HorizontalPanel();
-			panel.getElement().getStyle().setPaddingLeft(40, Unit.PX);
-
-		    Label label = new Label(detail.getDescription());
+			if(isSelected(panl) & isPending()){
+				panel.getElement().getStyle().setPaddingLeft(80, Unit.PX);
+			} else 	panel.getElement().getStyle().setPaddingLeft(40, Unit.PX);
+			Label label = new Label(detail.getDescription());
 		    label.getElement().getStyle().setPaddingTop(2, Unit.PX);
-		   
 		    
 		    DoubleBox db = new DoubleBox();
 		    db.getElement().getStyle().setMarginRight(10, Unit.PX);
 		    db.getElement().getStyle().setHeight(13, Unit.PX);
 		    db.getElement().getStyle().setWidth(40, Unit.PX);
 		    db.getElement().getStyle().setPadding(0, Unit.PX);
-		    db.setEnabled(isShipment() && !selected);
+		    db.setEnabled(isShipment() && isSelectable(panl));
 		    db.setValue(detail.getQuantity());
-		    
-		    if(isShipment() && !isFinished()){
+		    if(isShipment() && !isFinished() &&
+		    	((isSelected(panl) && (detail.getQuantity()- detail.getDelivered()) > 0)
+	    		|| isReception(panl) || isSelectable(panl))){
 				PaperIconButton pib = new PaperIconButton();
 				//pib.setIcon(selected ? "remove" : "add");
 				pib.setIcon("swap-horiz");
 				pib.setStyle("height:16px;font-size:12px;padding:0px;font-weight: bold;");
 		    	pib.setNoink(false);
 		    	panel.add(pib);
-			    pib.addClickHandler(new ClickHandler() {
+		    	pib.addClickHandler(new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
 						if(isPending()){
 							addOneDetail(detail, db.getValue());
 						} else {
-							// TODO RECEPTION OPTIONS.
+							if(isReception(panl)){
+								removeIncomeDetail(order, detail, detail.getQuantity());
+							} else {
+								addToIncome(order, detail);
+							}
 						}
 					}
 				});
-			}
+			
+		    }
 		    panel.add(db);
 		    panel.add(new Label(detail.getDescription()));
-		    
 		    vp.add(panel);
 		});
 		return vp;
 	}
 	
+	private HorizontalPanel buildBultosPeso(JsOrder order){
+		HorizontalPanel hp = new HorizontalPanel();
+		if(isPending()){
+			hp.getElement().getStyle().setPaddingLeft(80, Unit.PX);
+		} else hp.getElement().getStyle().setPaddingLeft(40, Unit.PX);
+		Label bultoslabel = new Label("Bultos");
+		bultoslabel.getElement().getStyle().setPaddingTop(2, Unit.PX);
+		bultoslabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		DoubleBox bultos = new DoubleBox();
+		bultos.getElement().getStyle().setMarginRight(10, Unit.PX);
+		bultos.getElement().getStyle().setHeight(13, Unit.PX);
+		bultos.getElement().getStyle().setWidth(40, Unit.PX);
+		bultos.getElement().getStyle().setPadding(0, Unit.PX);
+		bultos.setValue(order.getTotalPackages());
+		bultos.setEnabled(isPending());
+		bultos.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				String requestData = "{\"total_packages\":\""+ bultos.getValue() +"\"}";
+				getAPI().getWarehouse().updateDelivery(order.getId(), requestData);
+			}
+		});
+		
+		Label pesolabel = new Label("Peso");
+		pesolabel.getElement().getStyle().setPaddingTop(2, Unit.PX);
+		pesolabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		DoubleBox peso = new DoubleBox();
+		peso.getElement().getStyle().setMarginRight(10, Unit.PX);
+		peso.getElement().getStyle().setHeight(13, Unit.PX);
+		peso.getElement().getStyle().setWidth(50, Unit.PX);
+		peso.getElement().getStyle().setPadding(0, Unit.PX);
+		peso.setValue(order.getTotalWeight());
+		peso.setEnabled(isPending());
+		peso.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				String requestData = "{\"total_weight\":\""+ peso.getValue() +"\"}";
+				getAPI().getWarehouse().updateDelivery(order.getId(), requestData);
+			}
+		});
+		
+		hp.add(bultoslabel);
+		hp.add(bultos);
+		hp.add(pesolabel);
+		hp.add(peso);
+		return hp;
+	}
 	
 	private void removeAllOrder(JsOrder order){
 		String requestData = "{\"carrier_packing\":\"\"}";
@@ -665,12 +829,245 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.FINISHED.getName());
 	}
 	
+	private Boolean isSelected(String panel){
+		return "selected".equals(panel);
+	}
+	
+	private Boolean isSelectable(String panel){
+		return "selectable".equals(panel);
+	}
+	
+	private Boolean isReception(String panel){
+		return "reception".equals(panel);
+	}
+	
 	private String getOrderType(){
 		if(isShipment()){
 			return "purchase";
 		} else {
 			return "delivery";
 		}
+	}	
+	
+	private void addToIncome(JsOrder order, JsOrderDetail detail){
+		VerticalPanel panel = new VerticalPanel();
+
+		Label label = new Label(detail.getDescription());
+		panel.add(label);
+		
+		AonComboBox income = new AonComboBox();
+		income.setLabel("Albaran");
+		income.setItemLabelPath("reference_code");
+		income.setItemValuePath("reference_code");
+		
+		HashMap<String, LinkedList<String>> map = new HashMap<>();
+		LinkedList<String> l = new LinkedList<>();
+		l.add(getCarrierPacking().getId() + "");
+		map.put("carrier_packing", l);
+		LinkedList<String> l2 = new LinkedList<>();
+		l2.add(order.getRegistry().getId() + "");
+		map.put("supplier", l2);
+		getAPI().getWarehouse().getOrders("income", map, new AsyncCallback<JSON<JsOrder>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsOrder> result) {
+				income.setVisible(result.getData().length() > 0);	
+				income.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		panel.add(income);
+		
+		PaperInput ref = new PaperInput();
+		ref.setLabel("Numero");
+		panel.add(ref);
+		
+		AonComboBox warehouse = new AonComboBox();
+		warehouse.setLabel("Almacen");
+		warehouse.setItemLabelPath("name");
+		warehouse.setItemValuePath("name");
+		getAPI().getWarehouse().getWarehouses(new AsyncCallback<JSON<JsWarehouse>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsWarehouse> result) {
+				warehouse.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		panel.add(warehouse);
+		PaperInput param = new PaperInput();
+		param.setLabel("Fecha");
+		param.setValue(Utils.formatDate(new Date()));
+		param.setMaxlength(10);
+
+		panel.add(param);
+
+		income.addValueChangedHandler(new ValueChangedEventHandler() {
+			
+			@Override
+			public void onValueChanged(ValueChangedEvent event) {
+				if(income.getValue() == null || income.getValue().equals("")){
+					ref.setVisible(true);
+					warehouse.setVisible(true);
+					param.setVisible(true);
+				}else {
+					ref.setVisible(false);
+					warehouse.setVisible(false);
+					param.setVisible(false);
+				}
+			}
+		});
+		
+		HorizontalPanel hp = new HorizontalPanel();
+		PaperInput quantity = new PaperInput();
+		quantity.setLabel("Cantidad");
+		quantity.setValue(detail.getQuantity() + "");
+		quantity.setMaxlength(8);
+		hp.add(quantity);
+		
+		Label saldarLabel = new Label("Saldar");
+		saldarLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
+		saldarLabel.getElement().getStyle().setMarginTop(45, Unit.PX);
+		saldarLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
+		hp.add(saldarLabel);
+		
+		PaperToggleButton ptb = new PaperToggleButton();
+		ptb.getElement().getStyle().setMarginLeft(10, Unit.PX);
+		ptb.getElement().getStyle().setMarginTop(40, Unit.PX);	
+		ptb.setChecked(false);
+		
+		hp.add(ptb);
+		panel.add(hp);
+
+		PaperInput lote = new PaperInput();
+		lote.setLabel("Lote");
+		lote.setValue("");
+		lote.setVisible(detail.isLotable());//TODO 
+    	AonDialog dialog = new AonDialog("Albaran", panel) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {	
+				Double q = Double.parseDouble(quantity.getValue());
+				Boolean saldar = ptb.getChecked();//TODO SALDAR & LOTE!!!
+				String l = "";
+				if(detail.isLotable()){
+					l = lote.getValue();
+				}
+				if(income.getValue() != null && !income.getValue().equals("")){
+					JsOrder order = (JsOrder) income.getSelectedItem();
+					addIncomeDetail(order, detail, q);
+				} else {
+					JsWarehouse js = (JsWarehouse) warehouse.getSelectedItem();
+					String number = ref.getValue();
+					String date = Utils.formatDateTime(Utils.parseDate(param.getValue()));
+					String requestData = "{\"reference_code\":\""+ number +"\","
+							+ "\"issue_time\":\""+ date +"\","
+							+ "\"supplier\":\""+ order.getRegistry().getId() +"\","
+							+ "\"carrier_packing\":\""+ getCarrierPacking().getId() +"\","
+							+ "\"workplace\":\"" + js.getWorkplace() + "\"" + "}";
+					getAPI().getWarehouse().insertIncome(requestData, new AsyncCallback<JsOrder>() {
+						
+						@Override
+						public void onSuccess(JsOrder result) {
+							addIncomeDetail(result, detail, q);
+							// TODO ACTUALIZAR PANTALLA
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+					
+				}
+				hide();
+			}
+    	};
+		dialog.addAutoHidePartner(income.getElementById("overlay"));
+		dialog.addAutoHidePartner(warehouse.getElementById("overlay"));
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
+	}
+	
+	private void addIncomeDetail(JsOrder income, JsOrderDetail detail, Double quantity){
+		receptionOrder = income.getId();
+		Double pq = detail.getQuantity();
+		if(quantity > 0 && quantity <= pq){
+			String requestData = "{\"item\":\""+ detail.getItem() +"\","
+				+ "\"description\":\""+ detail.getDescription() +"\","
+				+ "\"workplace\":\""+ income.getWorkplace() +"\","
+				+ "\"quantity\":\""+ quantity +"\","
+				+ "\"income\":\""+ income.getId() +"\","
+				+ "\"purchase_detail\":\"" + detail.getId() + "\"" + "}";
+			getAPI().getWarehouse().insertDetail("income", requestData, new AsyncCallback<JsOrderDetail>() {
+			
+				@Override
+				public void onSuccess(JsOrderDetail result) {
+					updatePurchaseDetailDelivered(detail.getId(), quantity);
+				}
+			
+				@Override public void onFailure(Throwable caught) {}
+			});			
+		}
+	}
+	
+	
+	private void removeIncomeDetail(JsOrder income, JsOrderDetail incomeDetail, Double quantity){
+		receptionOrder = income.getId();
+
+		Double pq = incomeDetail.getQuantity();
+		if(quantity > 0 && quantity <= pq){
+			if(quantity == pq){
+				String requestData = "{"
+						+ "\"id\":\""+ incomeDetail.getId() +"\""
+						+ "}";
+				getAPI().getWarehouse().deleteDetail("income", requestData, new AsyncCallback<JsOrder>() {
+					@Override
+					public void onSuccess(JsOrder result) {
+						updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			} else {
+				String requestData = "{\"quantity\":\""+ (incomeDetail.getQuantity() - quantity) +"\","
+						+ "\"id\":\""+ incomeDetail.getId() +"\""
+						+ "}";
+				getAPI().getWarehouse().updateDetail("income", requestData, new AsyncCallback<JsOrder>() {
+					
+					@Override
+					public void onSuccess(JsOrder result) {
+						updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity);						
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		}
+	}
+	
+	private void updatePurchaseDetailDelivered(Integer purchaseDetailId, Double quantity){
+		String purchaseDetailRD = "{\"delivered\":\""+ quantity +"\","
+				+ "\"id\":\""+ purchaseDetailId +"\""
+				+ "}";
+		getAPI().getWarehouse().updateDetail("purchase", purchaseDetailRD, new AsyncCallback<JsOrder>() {
+			
+			@Override
+			public void onSuccess(JsOrder result) {
+				receptionVerticalPanel.remove(1);
+				receptionVerticalPanel.add(receptionItems());
+				
+
+				selectedVerticalPanel.remove(1);
+				selectedVerticalPanel.add(selectedItems());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	private void send(JsOrder js) {

@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.type.PurchaseType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchaseDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PurchaseDetailFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PurchaseDetailItemFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -226,7 +227,7 @@ public class PurchaseDAO {
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.join(PURCHASE).on(PURCHASE_DETAIL.PURCHASE.eq(PURCHASE.ID))
 			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new PurchaseDetailFiller());
+			.fetch().stream().map(new PurchaseDetailItemFiller());
 	}
 	
 	public static int insertPurchaseDetail(AONContext ctx, PurchaseDetail detail) {

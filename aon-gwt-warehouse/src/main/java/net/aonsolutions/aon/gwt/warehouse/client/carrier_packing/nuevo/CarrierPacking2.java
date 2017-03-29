@@ -22,8 +22,10 @@ import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
 import com.vaadin.polymer.paper.PaperFabElement;
+import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
+import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperRadioButton;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
@@ -53,7 +55,9 @@ public class CarrierPacking2 extends AonTemplate2{
 				PaperButtonElement.SRC,
 				PaperRadioButtonElement.SRC,
 				PaperItemElement.SRC,
-				PaperFabElement.SRC
+				PaperFabElement.SRC,
+				PaperInputElement.SRC,
+				PaperToggleButtonElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {

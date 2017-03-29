@@ -162,6 +162,7 @@ public class DBIncome {
 			
 			JSONObject registry = new JSONObject();
 			registry.put(MSG.ID, income.getSupplier());
+			registry.put(MSG.NAME, income.getSupplierName());
 			json.put(MSG.REGISTRY, registry);
 			
 			json.put(MSG.REFERENCE_CODE, income.getReferenceCode());

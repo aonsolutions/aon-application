@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeRegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomeDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -34,8 +36,9 @@ public class IncomeDAO {
 	private static final IncomeDetailPropertiesDAO INCOME_DETAIL_PROPERTIES = new IncomeDetailPropertiesDAO();
 	
 	public static Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter){
-		return INCOME_PROPERTIES.build(ctx.getDslContext().select().from(INCOME), filter)
-				.fetch().stream().map(new IncomeFiller());
+		return INCOME_PROPERTIES.build(ctx.getDslContext().select()
+				.from(INCOME).join(REGISTRY).on(REGISTRY.ID.eq(INCOME.SUPPLIER))
+				, filter).fetch().stream().map(new IncomeRegistryFiller());
 	}
 	
 	public static Optional<Income> insertIncome(AONContext ctx, Income income){
