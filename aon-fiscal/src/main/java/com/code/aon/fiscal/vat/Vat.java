@@ -59,7 +59,7 @@ public class Vat implements Serializable {
 	public VatType getVatType() {
 		if (vatType == null) {
 			if (invoiceType == InvoiceType.SALES) {
-				setVatType( VatType.OUTPUT );
+				setVatType( isInvestment()?VatType.INVESTMENT:VatType.OUTPUT );
 			} else {
 				setVatType( isInvestment()?VatType.INVESTMENT:VatType.INPUT);
 			}

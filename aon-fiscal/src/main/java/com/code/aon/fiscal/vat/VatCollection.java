@@ -382,7 +382,8 @@ public class VatCollection {
 	private String getDetailVatAccrualSelect(VatCollectionParameters params, InvoiceReportOrder order) {
 		// Mediante la operacion siguiente se determinada cual de los tipos de factura
 		// es de ventas, compras o inversión y se asocia al tipo de IVA correspondiente.
-		String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) ";
+//		String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) ";
+		String operation = "IF(i.investment=1,3,ELT((i.type+1),2,1,2,2))";
 		// ---------------------------------------------------------------------------
 		StringWriter stmt = new StringWriter();
 		stmt.append(" SELECT ");
@@ -504,7 +505,8 @@ public class VatCollection {
 	private String getDetailSelect(VatCollectionParameters params, InvoiceReportOrder order) {
 		// Mediante la operacion siguiente se determinada cual de los tipos de factura
 		// es de ventas, compras o inversión y se asocia al tipo de IVA correspondiente.
-		String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) ";
+//		String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) ";
+		String operation = "IF(i.investment=1,3,ELT((i.type+1),2,1,2,2))";
 		// ---------------------------------------------------------------------------
 		StringWriter stmt = new StringWriter();
 		stmt.append(" SELECT ");
@@ -615,3 +617,5 @@ public class VatCollection {
 	}
 	
 }
+
+		
