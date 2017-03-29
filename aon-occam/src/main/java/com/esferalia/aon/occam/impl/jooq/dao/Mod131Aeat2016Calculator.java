@@ -136,23 +136,23 @@ public class Mod131Aeat2016Calculator  {
 //			coef = AonMathUtils.round( as * 0.40 );
 //		} 
 		if (AonMathUtils.round(as) > 0 ) {
-			coef = coef + AonMathUtils.round( (as>1?1:as) * 0.10 );	
+			coef = coef + ( (as>1?1:as) * 0.10 );	
 			as = AonMathUtils.round(as - 1);	
 		} 
 		if (AonMathUtils.round(as) > 0 ) {
-			coef = coef + AonMathUtils.round( (as>2?2:as) * 0.15 );
+			coef = coef + ( (as>2?2:as) * 0.15 );
 			as = AonMathUtils.round(as - 2);
 		} 
 		if (AonMathUtils.round(as) > 0 ) {
-			coef = coef + AonMathUtils.round( (as>2?2:as) * 0.20 );
+			coef = coef + ( (as>2?2:as) * 0.20 );
 			as = AonMathUtils.round(as - 2);
 		} 
 		if (AonMathUtils.round(as) > 0 ) {
-			coef = coef + AonMathUtils.round( (as>3?3:as) * 0.25 );
+			coef = coef + ( (as>3?3:as) * 0.25 );
 			as = AonMathUtils.round(as - 3);
 		} 
 		if (AonMathUtils.round(as) > 0 ) {
-			coef = coef + AonMathUtils.round( as * 0.30 );
+			coef = coef + ( as * 0.30 );
 			as = 0;
 		}
 		

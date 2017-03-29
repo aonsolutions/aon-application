@@ -441,19 +441,19 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 			coef = CommonUtil.round( as * 0.40 );
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + AonMathUtils.round( (as>1?1:as) * 0.10 );
+			coef = coef + ((as>1?1:as) * 0.10 );
 			as = CommonUtil.round(as - 1);
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + AonMathUtils.round( (as>2?2:as) * 0.15 );
+			coef = coef + ((as>2?2:as) * 0.15 );
 			as = CommonUtil.round(as - 2);
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + AonMathUtils.round( (as>2?2:as) * 0.20 );
+			coef = coef + ((as>2?2:as) * 0.20 );
 			as = CommonUtil.round(as - 2);
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + AonMathUtils.round( (as>3?3:as) * 0.25 );
+			coef = coef + ((as>3?3:as) * 0.25 );
 			as = CommonUtil.round(as - 3);
 		}
 		if (CommonUtil.round(as) > 0.0) {
