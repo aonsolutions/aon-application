@@ -268,11 +268,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			} else {
 				albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
 					String cause = "";
-					if(albaran.getERRORES()==null
-							|| albaran.getERRORES().getERRORES()==null
-							|| albaran.getERRORES().getERRORES().isEmpty()){
+					if(albaran.getERRORES()!=null
+							&& albaran.getERRORES().getERRORES()!=null
+							&& !albaran.getERRORES().getERRORES().isEmpty()){
 						for(String error: albaran.getERRORES().getERRORES()){
-							cause += error+". ";
+							cause += error!=null?error+". ":"";
 						}
 					}
 					failElaborations(ctx, albaran, linea, cause);
@@ -674,7 +674,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		if (customer != null && customer.getId() != null) {
 			return customer;
 		}
-		return null;
+		return customerList!=null&&customerList.size()>0?customerList.get(0):null;
 	}
 	
 	private Item obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
