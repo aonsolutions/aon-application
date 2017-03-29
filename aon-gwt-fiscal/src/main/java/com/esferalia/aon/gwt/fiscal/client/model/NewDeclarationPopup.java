@@ -132,7 +132,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		row++;
 	}
 
-	private void paintPeriod() {
+	protected void paintPeriod() {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.period()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
