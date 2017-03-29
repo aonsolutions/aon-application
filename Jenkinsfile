@@ -144,7 +144,7 @@ node {
       
       echo "currentBuild.result = ${currentBuild.result}"
 
-      //if ( currentBuild.result != 'UNSTABLE' ) {
+      if ( currentBuild.result != 'UNSTABLE' ) {
 
       stage 'Docker Build'
 
@@ -176,7 +176,7 @@ node {
 
       sh "aws ecs update-service --cluster SNAPSHOT --service SNAPSHOT --task-definition ${snapshot_task_definition_arn}"
 
-      //}
+      }
 
       //stage 'SonarQube Analysis'
       //
