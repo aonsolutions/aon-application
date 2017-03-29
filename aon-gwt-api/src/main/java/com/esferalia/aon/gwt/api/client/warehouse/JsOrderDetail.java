@@ -114,4 +114,14 @@ public class JsOrderDetail extends JavaScriptObject {
 		return this.purchase_detail;
 	}-*/;
 	
+	
+	public final native Boolean isLotable() /*-{
+		return this.lotable;
+	}-*/;
+	
+	
+	public final native Boolean isSerializable() /*-{
+		return this.serializable;
+	}-*/;
+	
 }
