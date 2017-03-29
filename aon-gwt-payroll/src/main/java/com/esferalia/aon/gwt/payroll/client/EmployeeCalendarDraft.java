@@ -140,15 +140,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					return null;
 				}
 
-			});
-			
-			
+			});	
+
 		}
 
 	}
 	
 	
-// ----------------------------------------------------- INTERFAZ MULTISELECCION CELDAS --------------------------------------------------
+// ----------------------------------------------- INTERFAZ MULTISELECCION CELDAS -----------------------------------------------
 	
 	public static interface CalendarTypeCell{
 		void select(int row, int col);
@@ -1574,18 +1573,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}	
 		fechasSelecciondas.clear();
 		
-	}
-	
-	private void aplicarEstilosDiasSeleccionadios(Date date, DayType dayType) {
-		int pos = calcularPosicionFecha(date);
-		if(pos != -1){
-			int col = calcularColumna(pos);
-			int row = calcularFila(pos);
-			limpiarEstilo(row, col);
-			cells[row][col].unSelect(row, col);
-			cellsType[row][col].setAsType(dayType, row, col);
-			calendarEmployeeInfo.setTypeByDay(cellsDates[row][col], dayType);
-		}
 	}
 	
 	private void aplicarEreEstilosDiasSeleccionadios(double ce, DayType ereday) {

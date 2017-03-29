@@ -19,7 +19,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -349,7 +348,6 @@ public class EmployeeCalendarDraftObjectData {
 		
 	}
 	
-	//TODO: setCoeficienteEre
 	public void setCoeficienteEre(List<Date> diasEre, DayType ereday, double ce) {
 		List<Undoable> undos = new ArrayList<Undoable>();
 		for (Date day : diasEre){
@@ -449,6 +447,7 @@ public class EmployeeCalendarDraftObjectData {
 			return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
@@ -515,6 +514,7 @@ public class EmployeeCalendarDraftObjectData {
 		return variablesList;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void editDatesVariablesList(ArrayList<StringVariable> variablesList, Date startDate, Date endDate) {
 		for(StringVariable v : variablesList){
 			if(v.getStartDate().getDay() == 1){
@@ -531,6 +531,7 @@ public class EmployeeCalendarDraftObjectData {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void changeEndDate(StringVariable v, Date endDate) {
 		Date endDateAux = DateUtils.copyDateOnly(v.getEndDate());
 		while (endDateAux.getDay() != 0 || endDateAux.equals(endDate)){
@@ -539,6 +540,7 @@ public class EmployeeCalendarDraftObjectData {
 		v.setEndDate(endDateAux);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void changeStartDate(StringVariable v, Date startDate) {
 		Date startDateAux = DateUtils.copyDateOnly(v.getStartDate());
 		while (startDateAux.getDay() != 1 || startDateAux.equals(startDate)){
@@ -768,7 +770,6 @@ public class EmployeeCalendarDraftObjectData {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
 				failure.accept(caught);
 			}
 

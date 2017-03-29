@@ -11,11 +11,8 @@ import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
