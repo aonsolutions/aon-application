@@ -413,7 +413,7 @@ public class AccountingInvoiceDAO {
 
 		@Override
 		public void visitSupplier(AccountingRegistry reg) {
-			invoice.setSurcharge(reg.isSurcharge() && config.getCompany().isSurcharge());
+			invoice.setSurcharge(config.getCompany().isSurcharge());
 			invoice.setWithholding(reg.isWithholding());
 			invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
 			visitCommon(reg);
