@@ -168,17 +168,16 @@ public class Model202AEAT extends Model202Base {
 	
 	private void paintCheckRow(final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
 		int row = getTable().getRowCount();
-		Mod202Key key = script.getKeys()[0]; 
-		final FiscalModelDetail detail = callback.getFiscalModel().ensureDetail(key);
+		final Mod202Key key = script.getKeys()[0]; 
 		final CheckBox check = new CheckBox();
 		check.setText(script.getLabel());
 		check.setEnabled(callback.getFiscalModel().isNotFinished());
-		check.setValue(detail.getAmount() == 1);
+		check.setValue(callback.getFiscalModel().getAmount(key) == 1);
 		check.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				detail.setAmount(check.getValue()?1.0:0.0);
+				callback.getFiscalModel().putAmount(key,check.getValue()?1.0:0.0);
 				calculateAndRefresh( callback );
 				callback.markAsDirty();
 			}
@@ -192,9 +191,7 @@ public class Model202AEAT extends Model202Base {
 	
 	private void paintR18(final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
 		int row = getTable().getRowCount();
-		Mod202Key key = script.getKeys()[0];
-		final FiscalModelDetail detail = callback.getFiscalModel().ensureDetail(key);
-		
+		final Mod202Key key = script.getKeys()[0];
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
@@ -203,12 +200,12 @@ public class Model202AEAT extends Model202Base {
 		textBox.setStyleName(AON.AON_CSS.aonInputText());
 		textBox.setMaxLength(5);
 		textBox.setVisibleLength(6);
-		textBox.setValue(detail.getDescription());
+		textBox.setValue(callback.getFiscalModel().getDescription(key));
 		textBox.setEnabled(callback.getFiscalModel().isNotFinished());
 		textBox.addValueChangeHandler( new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setDescription(textBox.getValue());
+				callback.getFiscalModel().putDescription(key,textBox.getValue());
 				calculateAndRefresh( callback );
 				callback.markAsDirty();
 			}
@@ -220,8 +217,6 @@ public class Model202AEAT extends Model202Base {
 	private void paintR19(final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
 		int row = getTable().getRowCount();
 		Mod202Key key = script.getKeys()[0];
-		final FiscalModelDetail detail = callback.getFiscalModel().ensureDetail(key);
-		
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
@@ -232,14 +227,14 @@ public class Model202AEAT extends Model202Base {
 		r19Box.addItem("- Igual/sup. 10 mill. \u20AC e inferior a 20 mill. \u20AC","1");
 		r19Box.addItem("- Igual/sup. 20 mill. \u20AC e inferior a 60 mill. \u20AC","2");
 		r19Box.addItem("- Igual/sup. 60 mill. \u20AC.","3");
-		int value = (int) detail.getAmount();
+		int value = (int) callback.getFiscalModel().getAmount(key);
 		if (value < 0 || value > 4) value = 0;
 		r19Box.setSelectedIndex(value);
 		r19Box.setEnabled(callback.getFiscalModel().isNotFinished());
 		r19Box.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				detail.setAmount(r19Box.getSelectedIndex());
+				callback.getFiscalModel().putAmount(key,r19Box.getSelectedIndex());		
 				calculateAndRefresh( callback );
 				callback.markAsDirty();
 			}
@@ -251,8 +246,6 @@ public class Model202AEAT extends Model202Base {
 	private void paintR21(final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
 		int row = getTable().getRowCount();
 		Mod202Key key = script.getKeys()[0];
-		final FiscalModelDetail detail = callback.getFiscalModel().ensureDetail(key);
-		
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
@@ -262,14 +255,14 @@ public class Model202AEAT extends Model202Base {
 		r21Box.addItem(AON.MSG.calculation0(), "0");
 		r21Box.addItem(AON.MSG.calculation1(), "1");
 		r21Box.addItem(AON.MSG.calculation2(), "2");
-		int value = (int) detail.getAmount();
+		int value = (int) callback.getFiscalModel().getAmount(key);
 		if (value < 0 || value > 2) value = 0;
 		r21Box.setSelectedIndex(value);
 		r21Box.setEnabled(callback.getFiscalModel().isNotFinished());
 		r21Box.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				detail.setAmount(r21Box.getSelectedIndex());
+				callback.getFiscalModel().putAmount(Mod202Key.X00,r21Box.getSelectedIndex());
 				calculationMethodChanged(callback,r21Box.getSelectedIndex());
 				calculateAndRefresh( callback );
 				callback.markAsDirty();
@@ -282,7 +275,6 @@ public class Model202AEAT extends Model202Base {
 	private void paintR62(final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
 		int row = getTable().getRowCount();
 		Mod202Key key = script.getKeys()[0];
-		final FiscalModelDetail detail = callback.getFiscalModel().ensureDetail(key);
 
 		paintLabel(row, callback, script);
 		getTable().getFlexCellFormatter().setColSpan(row, 0, 6);
@@ -291,12 +283,12 @@ public class Model202AEAT extends Model202Base {
 		textBox.setStyleName(AON.AON_CSS.aonInputText());
 		textBox.setMaxLength(22);
 		textBox.setVisibleLength(15);
-		textBox.setValue(detail.getDescription());
+		textBox.setValue(callback.getFiscalModel().getDescription(key));
 		textBox.setEnabled(callback.getFiscalModel().isNotFinished());
 		textBox.addValueChangeHandler( new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setDescription(textBox.getValue());
+				callback.getFiscalModel().putDescription(key,textBox.getValue());
 				calculateAndRefresh( callback );
 				callback.markAsDirty();
 			}

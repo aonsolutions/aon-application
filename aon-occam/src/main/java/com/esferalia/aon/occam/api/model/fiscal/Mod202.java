@@ -39,10 +39,10 @@ public class Mod202 extends FiscalModel implements Serializable {
 		if (getAdministration() == null) return 0;
 		else if (isAEAT()) {
 			double x00 = getAmount(Mod202Key.X00);
-			if (x00 == 1 ) {
-				return getAmount(Mod202Key.C34);
+			if (x00 == 0 ) {
+				return getAmount(Mod202Key.C03);
 			} 
-			return getAmount(Mod202Key.C03);
+			return getAmount(Mod202Key.C34);			
 		}
 		return 0;
 	}
