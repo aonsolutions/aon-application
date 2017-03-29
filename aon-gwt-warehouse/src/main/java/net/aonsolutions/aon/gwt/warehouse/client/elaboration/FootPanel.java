@@ -4,12 +4,12 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
-import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsSalesDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -93,32 +93,46 @@ public class FootPanel extends Composite {
 	}
 	
 	protected void loadSourceTab(JsElaboration js){
-//		Window.alert("source "+js.getSource());
-		if (js.getSource()==null || js.getSource().getId()==null){
-			Label label = new Label();
-			label.setText("La elaboración se ha creado manualmente, no tiene origen. ");
-			sourcePanel.add(label);
-		} else if("SALES".equals(js.getSource().getName())){
-//			Label label = new Label();
-//			label.setText("Origen:  VENTAS. " + js.getSource() + ". " + js.getSourceId());
-//			sourcePanel.add(label);
-			
-			Integer salesDetailId = js.getSourceId();
-			API.getWarehouse().getSalesDetail(salesDetailId, new AsyncCallback<JSON<JsSalesDetail>>() {
+		Integer source = js.getSource().getId();
+		Integer sourceId = js.getSourceId();
+//		if(source!=null){
+//			Window.alert(ElaborationSource.safeValueOf(source).name());
+//		}
+		if(sourceId!=null){
+			API.getWarehouse().getSalesDetail(sourceId, new AsyncCallback<JSON<JsSalesDetail>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsSalesDetail> result) {
-//					Window.alert("salesDetail "+result.getOneData().get);
+//					Window.alert("salesDetail "+result.getOneData().getId()
+//							+ " - " + result.getOneData().getSales());
+//					FlowPanel panel = createSourcePanel(result.getOneData());
+//					sourcePanel.add(panel);
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else if (source==null){
+//			Window.alert("source is NULL!!  "+source+ " / "+sourceId);
+			Label label = new Label();
+			label.setText("La elaboración se ha creado manualmente, no tiene origen. ");
+			sourcePanel.add(label);
+		} else if(source==0){
+//			Window.alert("source is SALES!!  "+source+ " / "+sourceId);
+
+			API.getWarehouse().getSalesDetail(sourceId, new AsyncCallback<JSON<JsSalesDetail>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsSalesDetail> result) {
 					FlowPanel panel = createSourcePanel(result.getOneData());
-//					widget.setLayoutData(panel);
 					sourcePanel.add(panel);
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else if("PURCHASE".equals(js.getSource().getName())){
+		} else if(source==1){
+//			Window.alert("source is PURCHASE!!  "+source+ " / "+sourceId);
 			Label label = new Label();
-			label.setText("Origen:  COMPRAS. " + js.getSource() + ". " + js.getSourceId());
+			label.setText("Origen:  COMPRAS. " + source + ". " + sourceId);
 			sourcePanel.add(label);
 		} else {
 			Label label = new Label();
@@ -127,18 +141,18 @@ public class FootPanel extends Composite {
 		}
 	}
 	
+	TextArea comments;
 	protected void loadCommetsTab(JsElaboration js){
-		TextArea comments = new TextArea();
+		comments = new TextArea();
 		comments.setWidth("95%");
 		comments.setHeight("100px");
-		if (js.getComments() != null) {
+		if (js.getComments() != null && !"".equals(js.getComments().trim())) {
 			comments.setValue(js.getComments());
 		}
 		comments.addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-//				parent.updateElaboration(js);
 				parent.setJsElaboration(js);
 			}
 		});

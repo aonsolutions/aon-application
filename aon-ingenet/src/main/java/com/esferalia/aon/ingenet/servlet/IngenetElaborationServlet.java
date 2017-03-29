@@ -455,8 +455,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	}
 
 	private SalesDetail obtainSalesDetail(AONContext ctx, Elaboration elaboration){
-		if(elaboration.getSource()==ElaborationSource.SALES.value()
-				&& elaboration.getSourceId()!=null){
+		if(elaboration.getSource()!=null
+				&& elaboration.getSourceId()!=null
+				&& elaboration.getSource()==ElaborationSource.SALES.value()){
 			return SalesDAO.getSalesDetail(ctx, elaboration.getSourceId());
 		}
 		return null;

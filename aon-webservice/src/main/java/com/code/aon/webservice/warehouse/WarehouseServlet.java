@@ -117,8 +117,12 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = DBWarehouse.getWarehouses(domain, userName, req.getParameterMap());
 				} else if(MSG.SALES.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						object = DBSales.getSalesDetail(domain, userName, Integer.parseInt(pathInfo[4]));
-					} else object = DBSales.getSalesDetails(domain, userName, req.getParameterMap());
+						if(MSG.DETAIL.equals(pathInfo[4])){
+							if(pathInfo.length > 5){
+								object = DBSales.getSalesDetail(domain, userName, Integer.parseInt(pathInfo[5]));
+							} else object = DBSales.getSalesDetails(domain, userName, req.getParameterMap());
+						}
+					} else object = DBSales.getSales(domain, userName, Integer.parseInt(pathInfo[4]));
 				}
 				
 				Utils.giveBack(req, resp, object, new JSONObject());

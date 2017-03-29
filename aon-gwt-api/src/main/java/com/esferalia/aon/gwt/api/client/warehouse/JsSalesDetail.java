@@ -8,8 +8,8 @@ public class JsSalesDetail extends JavaScriptObject {
 
 	protected JsSalesDetail() {}	public static final ProvidesKey<JsSalesDetail> PROVIDES_KEY = new ProvidesKey<JsSalesDetail>() {
 		@Override
-		public Object getKey(JsSalesDetail carrierPacking) {
-			return carrierPacking == null ? null : carrierPacking.getId();
+		public Object getKey(JsSalesDetail salesDetail) {
+			return salesDetail == null ? null : salesDetail.getId();
 		}
 	};
 	

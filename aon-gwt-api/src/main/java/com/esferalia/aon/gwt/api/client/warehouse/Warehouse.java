@@ -209,6 +209,6 @@ public class Warehouse extends Methods{
 	
 	/* SALES */
 	public void getSalesDetail(Integer id, AsyncCallback<JSON<JsSalesDetail>> callback){
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/sales/"+id + "/detail" , callback);
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/sales/detail/"+id , callback);
 	}
 }
