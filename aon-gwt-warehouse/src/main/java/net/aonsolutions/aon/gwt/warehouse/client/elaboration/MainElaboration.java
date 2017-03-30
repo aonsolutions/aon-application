@@ -20,6 +20,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
@@ -172,10 +173,12 @@ public class MainElaboration extends AonTemplate {
 			
 			@Override
 			public void onSuccess(JSON<JsElaboration> result) {
+				JsElaboration js = result.getOneData();
 				ElaborationPanel panel = new ElaborationPanel(me, result.getOneData());
 				setNorthContent(panel);
 				setContent(new Label(""));
-				loadSouthContent();
+//				loadSouthContent();
+				setSouthContent(new FootPanel(me, js));
 			}
 			
 			@Override
@@ -243,21 +246,30 @@ public class MainElaboration extends AonTemplate {
 		API.getWarehouse().downloadElaboration(getJsElaboration().getId());
 	}
 	
-	private String getData() {		
+	private String getData() {
 //		String data = JsonUtils.stringify(getJsElaboration());
-		ElaborationPanel main = (ElaborationPanel) getNorthContent().getWidget();
-		FootPanel footer = (FootPanel) getSouthContent().getWidget();
+		ElaborationPanel main = getElaborationPanel();
+		FootPanel footer = getFooterPanel();
+		String comments = footer!=null?footer.comments.getValue():""; 
 		String data = "{\"series\":\"" + main.series.getValue()+ "\""
 				+ ",\"number\":\"" + main.number.getValue()+ "\""
-//				+ ",\"status\":\"" + 0+ "\""
 				+ ",\"date\":\"" + (main.date.getValue() != null ? main.date.getValue().getTime() : "")+ "\""
 				+ ",\"quantity\":\"" + main.quantity.getValue()+ "\""
 				+ ",\"item\":\"" + main.pBox.getId()+ "\""
 				+ ",\"warehouse\":\"" + main.warehouse.getSelectedValue()+ "\""
-				+ ",\"comments\":\"" 
-				+ (footer.comments.getValue()!=null && !"".equals(footer.comments.getValue().trim())?footer.comments.getValue():"") + "\""
+				+ ",\"comments\":\"" + (comments!=null && !"".equals(comments.trim())?comments:"") + "\""
 				+ "}";
 		return data;
+	}
+	
+	private ElaborationPanel getElaborationPanel() {
+		ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
+		return panel;
+	}
+	
+	private FootPanel getFooterPanel() {
+		FootPanel panel = (FootPanel) getSouthContent().getWidget();
+		return panel;
 	}
 
 	private AonDialog createAddDialog() {

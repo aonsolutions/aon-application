@@ -273,7 +273,10 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					elaboration.getItem().getId());
 			Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
 			SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
-			Customer customer = obtainCustomer(ctx, salesDetail.getSales());
+			Customer customer = null;
+			if(salesDetail!=null && salesDetail.getId()!=null){
+				customer = obtainCustomer(ctx, salesDetail.getSales());
+			}
 			RESPUESTAELABORACIONTYPE elaboracion = new RESPUESTAELABORACIONTYPE();
 			elaboracion.setSERIE(elaboration.getSeries());
 			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
