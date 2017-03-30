@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
@@ -433,7 +434,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		p2.add(serie);
 		table.setWidget(1, 1, serie);
 		
-		Label numberLabel = new Label("Numero ");
+		Label numberLabel = new Label("N\u00famero ");
 		numberLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		numberLabel.getElement().getStyle().setPadding(3, Unit.PX);
 		p2.add(numberLabel);
@@ -653,7 +654,9 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		    db.getElement().getStyle().setWidth(40, Unit.PX);
 		    db.getElement().getStyle().setPadding(0, Unit.PX);
 		    db.setEnabled(isShipment() && isSelectable(panl));
-		    db.setValue(detail.getQuantity());
+		    if(isSelected(panl) && isShipment()){
+		    	db.setValue(detail.getQuantity() - detail.getDelivered());
+		    }else db.setValue(detail.getQuantity());
 		    if(isShipment() && !isFinished() &&
 		    	((isSelected(panl) && (detail.getQuantity()- detail.getDelivered()) > 0)
 	    		|| isReception(panl) || isSelectable(panl))){
@@ -668,10 +671,27 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					@Override
 					public void onClick(ClickEvent event) {
 						if(isPending()){
-							addOneDetail(detail, db.getValue());
+							if(detail.getCarrierPacking() != null){
+								String text = "Est\u00e1s seguro Eliminar "+ detail.getDescription() + " del packing list " + getCarrierPacking().getSeriesNumber();
+						      	AonDialog dialog = new AonDialog("Eliminar", new Label(text)) {
+									
+									@Override protected void onCancel() {hide();}
+									
+									@Override 
+									protected void onAccept() {
+										addOneDetail(detail, db.getValue());
+										hide();
+									}
+						      	};
+						      	dialog.setAutoHideEnabled(true);
+								dialog.getElement().getStyle().setWidth(310, Unit.PX);
+								dialog.center();
+							} else {
+								addOneDetail(detail, db.getValue());
+							}
 						} else {
 							if(isReception(panl)){
-								removeIncomeDetail(order, detail, detail.getQuantity());
+								removeIncomeDetail(order, detail, detail.getQuantity(), false);
 							} else {
 								addToIncome(order, detail);
 							}
@@ -738,26 +758,39 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	}
 	
 	private void removeAllOrder(JsOrder order){
-		String requestData = "{\"carrier_packing\":\"\"}";
-		if(isShipment()){
-			requestData = "{\"carrier_packing\":\""+ getCarrierPacking().getId() +"\","
-					+ "\"purchase\":\""+ order.getId() +"\"," 
-					+ "\"action\":\"delete\""+ "}";
+		String text = "Est\u00e1s seguro Eliminar "+ order.getSeriesNumber() + " del packing list " + getCarrierPacking().getSeriesNumber();
+      	AonDialog dialog = new AonDialog("Eliminar", new Label(text)) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				String requestData = "{\"carrier_packing\":\"\"}";
+				if(isShipment()){
+					requestData = "{\"carrier_packing\":\""+ getCarrierPacking().getId() +"\","
+							+ "\"purchase\":\""+ order.getId() +"\"," 
+							+ "\"action\":\"delete\""+ "}";
 
-			getAPI().getWarehouse().addAllCarrierPacking("purchase", requestData, new AsyncCallback<JSON<JsOrderDetail>>() {
-				@Override public void onSuccess(JSON<JsOrderDetail> result) {
-					refresh();
+					getAPI().getWarehouse().addAllCarrierPacking("purchase", requestData, new AsyncCallback<JSON<JsOrderDetail>>() {
+						@Override public void onSuccess(JSON<JsOrderDetail> result) {
+							refresh();
+						}
+						@Override public void onFailure(Throwable caught) {}
+					});
+				} else {
+					getAPI().getWarehouse().updateDelivery(order.getId(), requestData, new AsyncCallback<JsOrder>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(JsOrder result) {
+							refresh();
+						}
+					});		
 				}
-				@Override public void onFailure(Throwable caught) {}
-			});
-		} else {
-			getAPI().getWarehouse().updateDelivery(order.getId(), requestData, new AsyncCallback<JsOrder>() {
-				@Override public void onFailure(Throwable caught) {}
-				@Override public void onSuccess(JsOrder result) {
-					refresh();
-				}
-			});		
-		}
+				hide();
+			}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
 	}
 	
 	private void addAllOrder(JsOrder order){
@@ -850,13 +883,14 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	}	
 	
 	private void addToIncome(JsOrder order, JsOrderDetail detail){
+		String serie = Utils.format("yyMMdd", new Date());
 		VerticalPanel panel = new VerticalPanel();
 
 		Label label = new Label(detail.getDescription());
 		panel.add(label);
 		
 		AonComboBox income = new AonComboBox();
-		income.setLabel("Albaran");
+		income.setLabel("Albar\u00e1n");
 		income.setItemLabelPath("reference_code");
 		income.setItemValuePath("reference_code");
 		
@@ -880,11 +914,11 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		panel.add(income);
 		
 		PaperInput ref = new PaperInput();
-		ref.setLabel("Numero");
+		ref.setLabel("N\u00famero");
 		panel.add(ref);
 		
 		AonComboBox warehouse = new AonComboBox();
-		warehouse.setLabel("Almacen");
+		warehouse.setLabel("Almac\u00e9n");
 		warehouse.setItemLabelPath("name");
 		warehouse.setItemValuePath("name");
 		getAPI().getWarehouse().getWarehouses(new AsyncCallback<JSON<JsWarehouse>>() {
@@ -904,22 +938,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 
 		panel.add(param);
 
-		income.addValueChangedHandler(new ValueChangedEventHandler() {
-			
-			@Override
-			public void onValueChanged(ValueChangedEvent event) {
-				if(income.getValue() == null || income.getValue().equals("")){
-					ref.setVisible(true);
-					warehouse.setVisible(true);
-					param.setVisible(true);
-				}else {
-					ref.setVisible(false);
-					warehouse.setVisible(false);
-					param.setVisible(false);
-				}
-			}
-		});
-		
 		HorizontalPanel hp = new HorizontalPanel();
 		PaperInput quantity = new PaperInput();
 		quantity.setLabel("Cantidad");
@@ -943,9 +961,38 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 
 		PaperInput lote = new PaperInput();
 		lote.setLabel("Lote");
-		lote.setValue("");
-		lote.setVisible(detail.isLotable());//TODO 
-    	AonDialog dialog = new AonDialog("Albaran", panel) {
+		lote.setVisible(detail.isLotable()); 
+		getAPI().getWarehouse().getIncomeLastLote(serie, new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+				ref.setValue(result.getOneData().getName());
+				lote.setValue(result.getOneData().getName() + "1");				
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
+		income.addValueChangedHandler(new ValueChangedEventHandler() {
+			
+			@Override
+			public void onValueChanged(ValueChangedEvent event) {
+				if(income.getValue() == null || income.getValue().equals("")){
+					ref.setVisible(true);
+					warehouse.setVisible(true);
+					param.setVisible(true);
+					lote.setValue(ref.getValue() + "1");
+				}else {
+					ref.setVisible(false);
+					warehouse.setVisible(false);
+					param.setVisible(false);
+					JsOrder js = (JsOrder) income.getSelectedItem();
+					lote.setValue(js.getReferenceCode() + js.getDetailCount());
+				}
+			}
+		});
+		panel.add(lote);
+    	AonDialog dialog = new AonDialog("Albar\u00e1n", panel) {
 			
 			@Override protected void onCancel() {hide();}
 			
@@ -954,12 +1001,23 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 				Double q = Double.parseDouble(quantity.getValue());
 				Boolean saldar = ptb.getChecked();//TODO SALDAR & LOTE!!!
 				String l = "";
-				if(detail.isLotable()){
-					l = lote.getValue();
-				}
+				
 				if(income.getValue() != null && !income.getValue().equals("")){
 					JsOrder order = (JsOrder) income.getSelectedItem();
-					addIncomeDetail(order, detail, q);
+					if(detail.isLotable()){
+						l = lote.getValue();
+						String requestData = "{\"item_id\":\""+ detail.getItem() +"\","
+								+ "\"lote\":\""+ l +"\"}";
+						getAPI().getProduct().insertItem(requestData, new AsyncCallback<JsItem>() {
+							
+							@Override
+							public void onSuccess(JsItem result) {
+								addIncomeDetail(order, detail, q, result.getId(), saldar);
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					} else addIncomeDetail(order, detail, q, detail.getItem(), saldar);
 				} else {
 					JsWarehouse js = (JsWarehouse) warehouse.getSelectedItem();
 					String number = ref.getValue();
@@ -973,8 +1031,20 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						
 						@Override
 						public void onSuccess(JsOrder result) {
-							addIncomeDetail(result, detail, q);
-							// TODO ACTUALIZAR PANTALLA
+							if(detail.isLotable()){
+								String l = lote.getValue();
+								String requestData = "{\"item_id\":\""+ detail.getItem() +"\","
+										+ "\"lote\":\""+ l +"\"}";
+								getAPI().getProduct().insertItem(requestData, new AsyncCallback<JsItem>() {
+									
+									@Override
+									public void onSuccess(JsItem result2) {
+										addIncomeDetail(result, detail, q, result2.getId(), saldar);
+									}
+									
+									@Override public void onFailure(Throwable caught) {}
+								});
+							}else addIncomeDetail(result, detail, q, detail.getItem(), saldar);
 						}
 						
 						@Override
@@ -992,11 +1062,11 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		dialog.center();
 	}
 	
-	private void addIncomeDetail(JsOrder income, JsOrderDetail detail, Double quantity){
+	private void addIncomeDetail(JsOrder income, JsOrderDetail detail, Double quantity, Integer item, Boolean saldar){
 		receptionOrder = income.getId();
 		Double pq = detail.getQuantity();
-		if(quantity > 0 && quantity <= pq){
-			String requestData = "{\"item\":\""+ detail.getItem() +"\","
+		if(quantity > 0){
+			String requestData = "{\"item\":\""+ item +"\","
 				+ "\"description\":\""+ detail.getDescription() +"\","
 				+ "\"workplace\":\""+ income.getWorkplace() +"\","
 				+ "\"quantity\":\""+ quantity +"\","
@@ -1006,7 +1076,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			
 				@Override
 				public void onSuccess(JsOrderDetail result) {
-					updatePurchaseDetailDelivered(detail.getId(), quantity);
+					updatePurchaseDetailDelivered(detail.getId(), quantity, saldar);
 				}
 			
 				@Override public void onFailure(Throwable caught) {}
@@ -1015,44 +1085,58 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	}
 	
 	
-	private void removeIncomeDetail(JsOrder income, JsOrderDetail incomeDetail, Double quantity){
-		receptionOrder = income.getId();
+	private void removeIncomeDetail(JsOrder income, JsOrderDetail incomeDetail, Double quantity, Boolean saldar){
+		String text = "Est\u00e1s seguro Eliminar "+ incomeDetail.getDescription() + " del Albar\u00e1n " + income.getReferenceCode();
+      	AonDialog dialog = new AonDialog("Eliminar", new Label(text)) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				receptionOrder = income.getId();
 
-		Double pq = incomeDetail.getQuantity();
-		if(quantity > 0 && quantity <= pq){
-			if(quantity == pq){
-				String requestData = "{"
-						+ "\"id\":\""+ incomeDetail.getId() +"\""
-						+ "}";
-				getAPI().getWarehouse().deleteDetail("income", requestData, new AsyncCallback<JsOrder>() {
-					@Override
-					public void onSuccess(JsOrder result) {
-						updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity);
+				Double pq = incomeDetail.getQuantity();
+				if(quantity > 0 && quantity <= pq){
+					if(quantity == pq){
+						String requestData = "{"
+								+ "\"id\":\""+ incomeDetail.getId() +"\""
+								+ "}";
+						getAPI().getWarehouse().deleteDetail("income", requestData, new AsyncCallback<JsOrder>() {
+							@Override
+							public void onSuccess(JsOrder result) {
+								updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity, saldar);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					} else {
+						String requestData = "{\"quantity\":\""+ (incomeDetail.getQuantity() - quantity) +"\","
+								+ "\"id\":\""+ incomeDetail.getId() +"\""
+								+ "}";
+						getAPI().getWarehouse().updateDetail("income", requestData, new AsyncCallback<JsOrder>() {
+							
+							@Override
+							public void onSuccess(JsOrder result) {
+								updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity, saldar);						
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
 					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
-			} else {
-				String requestData = "{\"quantity\":\""+ (incomeDetail.getQuantity() - quantity) +"\","
-						+ "\"id\":\""+ incomeDetail.getId() +"\""
-						+ "}";
-				getAPI().getWarehouse().updateDetail("income", requestData, new AsyncCallback<JsOrder>() {
-					
-					@Override
-					public void onSuccess(JsOrder result) {
-						updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity);						
-					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
+				}
+				hide();
 			}
-		}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
 	}
 	
-	private void updatePurchaseDetailDelivered(Integer purchaseDetailId, Double quantity){
+	private void updatePurchaseDetailDelivered(Integer purchaseDetailId, Double quantity, Boolean saldar){
 		String purchaseDetailRD = "{\"delivered\":\""+ quantity +"\","
-				+ "\"id\":\""+ purchaseDetailId +"\""
+				+ "\"id\":\""+ purchaseDetailId +"\","
+				+ "\"saldar\":\""+ saldar +"\""
 				+ "}";
 		getAPI().getWarehouse().updateDetail("purchase", purchaseDetailRD, new AsyncCallback<JsOrder>() {
 			

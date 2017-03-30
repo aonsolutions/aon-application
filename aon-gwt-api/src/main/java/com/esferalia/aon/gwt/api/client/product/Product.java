@@ -20,6 +20,7 @@ public class Product extends Methods{
 		this.accessToken = accesToken;
 		this.domainName = domainName;
 		this.userName = userName;
+		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
 	public void getProductCategories(AsyncCallback<JSON<JsObject>> callback){
@@ -37,6 +38,10 @@ public class Product extends Methods{
 	
 	public void getItem(Integer id, AsyncCallback<JSON<JsItem>> callback){
 		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item/"+id , callback);
+	}
+	
+	public void insertItem( String requestData, AsyncCallback<JsItem> callback){
+		post(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item", requestData, callback);
 	}
 	
 	

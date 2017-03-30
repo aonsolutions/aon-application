@@ -1,6 +1,8 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -41,6 +43,7 @@ public class CarrierPacking2 extends AonTemplate2{
 
 	final IWarehouseAsync impl = GWT.create(IWarehouse.class);
 	private API API;
+	public HashMap<String, LinkedList<String>> filterMap;
 	
 	public CarrierPacking2(AonData aonData) {
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
@@ -86,7 +89,7 @@ public class CarrierPacking2 extends AonTemplate2{
 			}
 			
 			@Override protected void back() {
-				startApplication();
+				content(filterMap);
 			}
 			
 			@Override
@@ -115,10 +118,19 @@ public class CarrierPacking2 extends AonTemplate2{
 		setContent(new CarrierPackingPrincipal(this));
 	}
 	
+	public void content(HashMap<String, LinkedList<String>> filterMap){
+		setContent(new CarrierPackingPrincipal(this, filterMap));
+	}
+	
 	/**
 	 * Contenido con la información y funciones de 1 único CarrierPacking.
 	 * (Información General - Selecciónar pedidos | envios - FooterPanel)
 	 */
+	public void carrierPackingContent(JsCarrierPacking js, HashMap<String, LinkedList<String>> filterMap){
+		this.filterMap = filterMap;
+		carrierPackingContent(js);
+	}
+
 	public void carrierPackingContent(JsCarrierPacking js){
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.setBackVisible(true);
@@ -126,9 +138,8 @@ public class CarrierPacking2 extends AonTemplate2{
 		toolbar.setPrintVisible(true);
 		toolbar.setEmailVisible(true);		
 		setContent(new CarrierPackingDetail(this, js));
-		//setContent(widget);
 	}
-
+	
 	public API getAPI() {
 		return API;
 	}

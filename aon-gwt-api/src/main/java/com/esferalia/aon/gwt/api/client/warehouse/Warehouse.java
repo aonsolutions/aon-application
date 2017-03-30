@@ -222,6 +222,10 @@ public class Warehouse extends Methods{
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/income", requestData, callback);
 	}
 	
+	public void getIncomeLastLote(String serie, AsyncCallback<JSON<JsObject>> callback) {
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/income/last_lote/"+serie, callback);
+	}
+
 	/* SALES */
 	public void getSalesDetail(Integer id, AsyncCallback<JSON<JsSalesDetail>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/sales/detail/"+id , callback);

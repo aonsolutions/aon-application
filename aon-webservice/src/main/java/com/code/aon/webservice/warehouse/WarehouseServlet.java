@@ -91,7 +91,9 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = getDeliveryList(domain, userName, req.getParameterMap());
 				} else if(MSG.INCOME.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if(pathInfo.length > 5){
+						if("last_lote".equalsIgnoreCase(pathInfo[4])){
+							object = DBIncome.getIncomeLastLote(domain, userName, pathInfo[5]);
+						} else if(pathInfo.length > 5){
 							object = DBIncome.getIncomeDetails(domain, userName, Integer.parseInt(pathInfo[4]));
 						} else object = DBIncome.getIncome(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else object = DBIncome.getIncomes(domain, userName, req.getParameterMap());

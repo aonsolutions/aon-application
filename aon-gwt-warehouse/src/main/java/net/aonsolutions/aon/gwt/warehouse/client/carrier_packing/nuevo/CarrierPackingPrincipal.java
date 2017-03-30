@@ -40,6 +40,18 @@ public class CarrierPackingPrincipal extends Composite{
 		return parent.getAPI();
 	}
 
+	public CarrierPackingPrincipal(CarrierPacking2 carrierPacking, HashMap<String, LinkedList<String>> filterMap) {
+		initWidget(binder.createAndBindUi(this));
+		this.parent = carrierPacking;
+		this.me = this;
+		this.filterMap = filterMap;
+		
+		filterContent();
+		gridContent();
+		southContent();
+		southContentSize(30.0);
+	}
+	
 	public CarrierPackingPrincipal(CarrierPacking2 carrierPacking) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = carrierPacking;
@@ -48,6 +60,7 @@ public class CarrierPackingPrincipal extends Composite{
 		LinkedList<String> status = new LinkedList<>();
 		status.add(CarrierPackingStatus.PENDING.ordinal() + "");
 		filterMap.put("status", status);
+		
 		filterContent();
 		gridContent();
 		southContent();
@@ -82,7 +95,7 @@ public class CarrierPackingPrincipal extends Composite{
 	}
 	
 	public void selectCarrierPacking(JsCarrierPacking js){
-		parent.carrierPackingContent(js);
+		parent.carrierPackingContent(js, filterMap);
 	}
 
 	public HashMap<String, LinkedList<String>> getFilterMap() {
