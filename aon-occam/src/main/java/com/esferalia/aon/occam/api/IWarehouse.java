@@ -123,13 +123,17 @@ public interface IWarehouse {
 	// 	***********************************************
 	// 	****************************** ELABORATION ****
 	// 	***********************************************
-	List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter);
 	Elaboration getElaboration(AONContext ctx, Integer id);
+	List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter);
+	ElaborationDetail getElaborationDetail(AONContext ctx, Integer id);
 	List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
 	Integer insertElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration updateElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration deleteElaboration(AONContext ctx, Integer id);
+	Integer insertElaborationDetail(AONContext ctx, ElaborationDetail detail);
+	ElaborationDetail updateElaborationDetail(AONContext ctx, ElaborationDetail detail);
+	ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id);
 
 	
 }

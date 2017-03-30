@@ -1,18 +1,21 @@
 package net.aonsolutions.aon.gwt.warehouse.client.elaboration;
 
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import net.aonsolutions.aon.gwt.warehouse.client.Utils;
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaborationDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaborationDetailComposition;
+import com.esferalia.aon.gwt.api.client.warehouse.JsWarehouse;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -22,14 +25,11 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -41,7 +41,9 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -55,6 +57,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.vaadin.polymer.paper.widget.PaperInput;
 
 public class ElaborationSelect extends Composite{
 	
@@ -63,26 +66,29 @@ public class ElaborationSelect extends Composite{
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
-	@UiField DockLayoutPanel splitLayoutPanel;
-	@UiField VerticalPanel westPanel;
-	@UiField(provided = true) DataGrid<JsElaborationDetailComposition> dataGrid; 
+	@UiField
+	DockLayoutPanel splitLayoutPanel;
+	@UiField
+	VerticalPanel westPanel;
+	@UiField(provided = true)
+	DataGrid<JsElaborationDetailComposition> compositionDataGrid;
 
 	DataGridResources resources = GWT.create(DataGridResources.class);
-	
+
 	public interface DataGridResources extends DataGrid.Resources {
 		@Source("com/esferalia/aon/gwt/common/client/css/data-grid.css")
 		Style dataGridStyle();
 	}
 	
-	ListBox selectable;
-	DateBoxEx datebox;
+	ListBox detailList;
+	Button newDetailButton;
 	private MainElaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
-	private JsElaborationDetail jsElaborationDetail;
+//	private JsElaborationDetail jsElaborationDetail;
 	
 	public ElaborationSelect(MainElaboration elaboration) {
-		dataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
+		compositionDataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
 				JsElaborationDetailComposition.PROVIDES_KEY);
 		initWidget(binder.createAndBindUi(this));
 		this.API = elaboration.API;
@@ -92,7 +98,7 @@ public class ElaborationSelect extends Composite{
 	}
 
 	public ElaborationSelect(MainElaboration elaboration, JsElaboration jsElaboration) {
-		dataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
+		compositionDataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
 				JsElaborationDetailComposition.PROVIDES_KEY);
 		initWidget(binder.createAndBindUi(this));
 		this.API = elaboration.API;
@@ -102,42 +108,156 @@ public class ElaborationSelect extends Composite{
 	}
 	
 	private void load() {
-		HorizontalPanel p = new HorizontalPanel();
-		Label label = new Label("Fecha ");
-		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		label.getElement().getStyle().setPadding(3, Unit.PX);
-		p.add(label);
-		datebox = new DateBoxEx();
-		datebox.setStyleName(AON.AON_CSS.aonTextBox());
-		datebox.setValue(new Date());
-		datebox.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
+		HorizontalPanel panel = new HorizontalPanel();
+//		Label label = new Label("Fecha ");
+//		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+//		label.getElement().getStyle().setPadding(3, Unit.PX);
+//		p.add(label);
+//		datebox = new DateBoxEx();
+//		datebox.setStyleName(AON.AON_CSS.aonTextBox());
+//		datebox.setValue(new Date());
+//		datebox.addValueChangeHandler(new ValueChangeHandler<Date>() {
+//			
+//			@Override
+//			public void onValueChange(ValueChangeEvent<Date> event) {
+//				loadSelectable();
+//				westPanel.remove(1);
+//				westPanel.add(selectable);
+//			}
+//		});
+//		p.add(datebox);
+		
+//		Label label = new Label("Finalizados ");
+//		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+//		label.getElement().getStyle().setPadding(3, Unit.PX);
+//		panel.add(label);
+		newDetailButton = new Button();
+		newDetailButton.setAccessKey( 'L' );
+		newDetailButton.setText("Nuevo elaborado");
+		newDetailButton.setStyleName(AON.AON_CSS.aonIconReset());
+		newDetailButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		newDetailButton.addClickHandler(new ClickHandler() {
 			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				loadSelectable();
-				westPanel.remove(1);
-				westPanel.add(selectable);
+			public void onClick(ClickEvent event) {
+				clickAddDetail();
 			}
 		});
-		p.add(datebox);
+		panel.add(newDetailButton);
+		
 		loadSelectable();
 		loadSelected(true);
-//		westPanel.add(p);
-		westPanel.add(selectable);
+		westPanel.add(panel);
+		westPanel.add(detailList);
+	}
+	
+	private void clickAddDetail(){
+		VerticalPanel panel = new VerticalPanel();
+	
+		PaperInput inputNumber = new PaperInput();
+		inputNumber.setLabel("Numero");
+		panel.add(inputNumber);
+		
+		PaperInput inputDate = new PaperInput();
+		inputDate.setLabel("Fecha");
+		inputDate.setValue(getJsElaboration().getDate());
+		inputDate.setMaxlength(10);
+		panel.add(inputDate);
+
+		PaperInput inputQuantity = new PaperInput();
+		inputQuantity.setLabel("Cantidad");
+		inputQuantity.setValue(getJsElaboration().getQuantity()+"");
+		inputQuantity.setMaxlength(10);
+		panel.add(inputQuantity);
+	
+		AonComboBox inputWarehouse = new AonComboBox();
+		inputWarehouse.setLabel("Almacen");
+		inputWarehouse.setItemLabelPath("name");
+		inputWarehouse.setItemValuePath("name");
+		API.getWarehouse().getWarehouses(new AsyncCallback<JSON<JsWarehouse>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsWarehouse> result) {
+				inputWarehouse.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		panel.add(inputWarehouse);
+		
+		AonDialog dialog = new AonDialog("Nuevo elaborado", panel) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				Window.alert("before accept");
+				Window.alert("before input");
+				String number = inputNumber.getValue();
+				Window.alert("before date");
+//				String date = Utils.formatDateTime(Utils.parseDate(inputDate.getValue()));
+				String date = Utils.parseDate(inputDate.getValue()).getTime()+"";
+				Window.alert("before quantity");
+				String quantity = inputQuantity.getValue();
+				Window.alert("before warehouse");
+				JsWarehouse js = (JsWarehouse) inputWarehouse.getSelectedItem();
+				
+				String requestData = "{\"serial_number\":\""+ number +"\","
+						+ "\"elaboration\":\""+ getJsElaboration().getId() +"\","
+						+ "\"date\":\""+ date +"\","
+						+ "\"quantity\":\""+ quantity +"\","
+						+ "\"workplace\":\"" + js.getWorkplace() + "\"" + "}";
+				Window.alert("before insert");
+				API.getWarehouse().insertElaborationDetail(requestData, new AsyncCallback<JsElaborationDetail>() {
+					
+					@Override
+					public void onSuccess(JsElaborationDetail result) {
+						Window.alert("before success");
+//						selectedIncome = result.getId();
+//						VerticalPanel vp = (VerticalPanel)receivePanel.getWidget();
+						
+//						PaperItem pincome = buildIncome(result);
+//						SimplePanel sp = new SimplePanel();
+////						Window.alert(result.getId() + ", " + selectedIncome + " -> " + (result.getId() == selectedIncome));
+//						sp.setVisible(result.getId() == selectedIncome);
+//						buildIncomeDetail(sp, result);
+//						pincome.addClickHandler(new ClickHandler() {
+//		        			
+//		        			@Override
+//		        			public void onClick(ClickEvent arg0) {
+//		        				sp.setVisible(!sp.isVisible());
+//		        			}
+//		        		});
+//						vp.insert(pincome, 0);
+//						vp.insert(sp, 1);
+						selectableItems(null);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+					}
+				});
+				hide();
+			}
+		};
+		dialog.addAutoHidePartner(inputWarehouse.getElementById("overlay"));
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
 	}
 	
 	public void refresh(){
 		loadSelectable();
 		westPanel.remove(1);
-		westPanel.add(selectable);
+		westPanel.add(detailList);
 		loadSelected(false);
 	}
 	
 	private void loadSelectable() {
-		selectable = new ListBox();
-		selectable.getElement().getStyle().setBackgroundColor("#f6f5e3");
-		selectable.setWidth("300px");
-		selectable.setVisibleItemCount(20);
+		detailList = new ListBox();
+		detailList.getElement().getStyle().setBackgroundColor("#f6f5e3");
+		detailList.setWidth("300px");
+		detailList.setVisibleItemCount(20);
 	
 		HashMap<String, LinkedList<String>> map = new HashMap<>();
 //		LinkedList<String> carrierList = new LinkedList<>();
@@ -146,12 +266,12 @@ public class ElaborationSelect extends Composite{
 //		LinkedList<String> ncarrierList = new LinkedList<>();
 //		ncarrierList.add("");
 //		map.put("not_carrier_packing", ncarrierList);
-		LinkedList<String> nDate = new LinkedList<>();
-		nDate.add(Long.toString(datebox.getValue().getTime()));
-		map.put("date", nDate);	
+//		LinkedList<String> nDate = new LinkedList<>();
+//		nDate.add(Long.toString(datebox.getValue().getTime()));
+//		map.put("date", nDate);	
 		selectableItems(map);
-		selectable.addClickHandler(selectableClickHandler());
-		selectable.addDoubleClickHandler(selectableDoubleClickHandler());
+		detailList.addClickHandler(selectableClickHandler());
+		detailList.addDoubleClickHandler(selectableDoubleClickHandler());
 		selectedItems(0, true);
 	}
 	
@@ -172,7 +292,7 @@ public class ElaborationSelect extends Composite{
 				if(isCreate){
 					loadDatagrid(result.getData().toLinkedList());
 				} else {
-					addDataDisplay(dataGrid, result.getData().toLinkedList());
+					addDataDisplay(compositionDataGrid, result.getData().toLinkedList());
 				}
 			}
 		
@@ -186,11 +306,11 @@ public class ElaborationSelect extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsElaborationDetail> result) {
-				result.getData().stream().forEach(js -> selectable
+				result.getData().stream().forEach(js -> detailList
 						.addItem(js.getQuantity() + " uds. ("+js.getItem().getSerialNumber()+") " + js.getDate(), js.getId() + ""));
 				if (result.getData().length() == 1) {
-					selectable.setSelectedIndex(0);
-					selectable.fireEvent(new GwtEvent<ClickHandler>() {
+					detailList.setSelectedIndex(0);
+					detailList.fireEvent(new GwtEvent<ClickHandler>() {
 						@Override
 						public GwtEvent.Type<ClickHandler> getAssociatedType() {
 							return ClickEvent.getType();
@@ -214,7 +334,7 @@ public class ElaborationSelect extends Composite{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				String value = selectable.getSelectedValue();
+				String value = detailList.getSelectedValue();
 				
 				selectedItems(Integer.parseInt(value), false);
 				
@@ -227,9 +347,9 @@ public class ElaborationSelect extends Composite{
 			
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				String value = selectable.getSelectedValue();
+				String value = detailList.getSelectedValue();
 				
-				selectable.removeItem(selectable.getSelectedIndex());
+				detailList.removeItem(detailList.getSelectedIndex());
 				
 //				String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
 //						+ "\"purchase\":\""+ Integer.parseInt(value) +"\","
@@ -318,17 +438,17 @@ public class ElaborationSelect extends Composite{
 		
 //		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
 		
-		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-		dataGrid.setAutoHeaderRefreshDisabled(true);
-		dataGrid.setEmptyTableWidget(new Label("NO HAY DATOS DISPONIBLES"));
-		addDataDisplay(dataGrid, list);
+		compositionDataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+		compositionDataGrid.setAutoHeaderRefreshDisabled(true);
+		compositionDataGrid.setEmptyTableWidget(new Label("NO HAY DATOS DISPONIBLES"));
+		addDataDisplay(compositionDataGrid, list);
 		ListHandler<JsElaborationDetailComposition> sortHandler = getSortHandler();
-		dataGrid.addColumnSortHandler(sortHandler);
+		compositionDataGrid.addColumnSortHandler(sortHandler);
  		final SingleSelectionModel<JsElaborationDetailComposition> selectionModel = new SingleSelectionModel<JsElaborationDetailComposition>(
  				JsElaborationDetailComposition.PROVIDES_KEY);
-		dataGrid.setSelectionModel(selectionModel,
+		compositionDataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<JsElaborationDetailComposition> createCheckboxManager());
-		dataGrid.setSelectionModel(selectionModel);
+		compositionDataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
 		
 		// TODO add button
@@ -385,7 +505,7 @@ public class ElaborationSelect extends Composite{
 	
 	public void addItem(JsElaborationDetailComposition js){
 		dataProvider.getList().add(js);
-		dataGrid.redraw();
+		compositionDataGrid.redraw();
 //		parent.setEnableType(false);
 	}
 	
@@ -613,17 +733,17 @@ public class ElaborationSelect extends Composite{
 			}
 		});
 		
-		dataGrid.getColumnSortList().push(dateColumn);
-		dataGrid.getColumnSortList().push(quantityColumn);
-		dataGrid.getColumnSortList().push(itemColumn);
+		compositionDataGrid.getColumnSortList().push(dateColumn);
+		compositionDataGrid.getColumnSortList().push(quantityColumn);
+		compositionDataGrid.getColumnSortList().push(itemColumn);
 		
-		dataGrid.addColumn(dateColumn, AON.MSG.date());
-		dataGrid.addColumn(itemColumn, "Producto");
-		dataGrid.addColumn(quantityColumn, AON.MSG.quantity());
+		compositionDataGrid.addColumn(dateColumn, AON.MSG.date());
+		compositionDataGrid.addColumn(itemColumn, "Producto");
+		compositionDataGrid.addColumn(quantityColumn, AON.MSG.quantity());
 		
-		dataGrid.setColumnWidth(dateColumn, 15, Unit.PCT);
-		dataGrid.setColumnWidth(itemColumn, 70, Unit.PCT);
-		dataGrid.setColumnWidth(quantityColumn, 15, Unit.PCT);
+		compositionDataGrid.setColumnWidth(dateColumn, 15, Unit.PCT);
+		compositionDataGrid.setColumnWidth(itemColumn, 70, Unit.PCT);
+		compositionDataGrid.setColumnWidth(quantityColumn, 15, Unit.PCT);
 		
 	
 	}

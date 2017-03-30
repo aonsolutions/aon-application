@@ -283,7 +283,7 @@ public class ElaborationDAO {
 				.returning(ELABORATION_DETAIL.ID).fetchOne().getId();
 	}
 	
-	public static int updateElaborationDetail(AONContext ctx,
+	public static ElaborationDetail updateElaborationDetail(AONContext ctx,
 			ElaborationDetail elaborationDetail) {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
@@ -307,22 +307,27 @@ public class ElaborationDAO {
 				.set(ELABORATION_DETAIL.MODIFICATION_USER, ctx.getUser())
 				.set(ELABORATION_DETAIL.MODIFICATION_DATE, modificationDate)
 				.where(ELABORATION_DETAIL.ID.eq(elaborationDetail.getId()))
-				.execute();
+				.returning()
+				.fetch().stream().map(new FullElaborationDetailFiller()).findFirst()
+				.orElse(null);
 	}
 
-	public static int deleteElaborationDetail(AONContext ctx,
+	public static ElaborationDetail deleteElaborationDetail(AONContext ctx,
 			ElaborationDetailFilter filter) {
 		ctx.checkWrite();
 		return ctx.getDslContext().delete(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
-				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId())).execute();
+				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId()))
+				.returning().fetch().stream().map(new FullElaborationDetailFiller()).findFirst().orElse(null);
 	}
 
-	public static int deleteElaborationDetail(AONContext ctx,
+	public static ElaborationDetail deleteElaborationDetail(AONContext ctx,
 			ElaborationDetail detail) {
-		ctx.checkWrite();
-		return ctx.getDslContext().delete(ELABORATION_DETAIL)
-				.where(ELABORATION_DETAIL.ID.eq(detail.getId())).execute();
+		return deleteElaborationDetail(ctx, f -> f.getIdProperty().eq(detail.getId()));
+	}
+	
+	public static ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id) {
+		return deleteElaborationDetail(ctx, f -> f.getIdProperty().eq(id));
 	}
 	
 	

@@ -146,7 +146,9 @@ public class Warehouse extends Methods{
 		post(getUrl() + "packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);
 	}
 	
-	/* ELABORATION */
+	/*
+	 *  ELABORATION
+	 */
 	public void getElaborationList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsElaboration>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration" + filter, callback);
@@ -166,15 +168,28 @@ public class Warehouse extends Methods{
 	public void createElaboration(AsyncCallback<JSON<JsElaboration>> callback) {
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/create", callback);
 	}
+	
 	public void insertElaboration(String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
 	}
+	public void insertElaborationDetail(String requestData, AsyncCallback<JsElaborationDetail> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail", requestData, callback);
+	}
+	
 	public void updateElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update/"+id, requestData, callback);
 	}
+	public void updateElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/update/"+id, requestData, callback);
+	}
+	
 	public void deleteElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/delete/"+id, requestData, callback);
 	}
+	public void deleteElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/delete/"+id, requestData, callback);
+	}
+	
 	public void downloadElaboration(Integer id){
 		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id;
 		impl.base(str, new AsyncCallback<String>() {

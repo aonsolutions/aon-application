@@ -10,15 +10,10 @@
 
 	<g:DockLayoutPanel ui:field="splitLayoutPanel">
 		<g:west size="350">
-			<g:VerticalPanel ui:field="westPanel">
-
-			</g:VerticalPanel>
+			<g:VerticalPanel ui:field="westPanel" />
 		</g:west>
 		<g:center>
-			<c:DataGrid ui:field='dataGrid' visible="true">
-
-			</c:DataGrid>
-
+			<c:DataGrid ui:field='compositionDataGrid' visible="true" />
 		</g:center>
 	</g:DockLayoutPanel>
 

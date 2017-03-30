@@ -2820,6 +2820,51 @@ public class AON {
 		}
 	}
 	
+	public static ElaborationDetail getFullElaborationDetail(String domainName,
+			Integer domainId, String login, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			ElaborationDetail d = getWarehouse().getElaborationDetail(ctx, id);
+			d.setItem(AON.getItem(domainName, domainId, login, d.getItem()
+					.getId()));
+			return d;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Integer insertElaborationDetail(String domainName, Integer domainId, String login, ElaborationDetail detail) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertElaborationDetail(ctx, detail);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static ElaborationDetail updateElaborationDetail(String domainName, Integer domainId, String login, ElaborationDetail detail) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().updateElaborationDetail(ctx, detail);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static ElaborationDetail deleteElaborationDetail(String domainName, Integer domainId, String login, Integer detailId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().deleteElaborationDetail(ctx, detailId);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static List<ElaborationDetailComposition> getElaborationDetailCompositionList(
 			String domainName, Integer domainId, String login,
 			Integer elaborationDetailId) {
