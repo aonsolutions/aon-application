@@ -441,14 +441,22 @@ public class Mod202DAO extends FiscalModelDAO {
 		);
 	}
 	private static Stream<AccountingBreakdown> getInitialBaseC04(AONContext ctx, final Mod202 mod) {
-		Period per = Period.T1; 
-		if (mod.getPeriod() == Period.T2) per = Period.T3;
-		if (mod.getPeriod() == Period.T3) per = Period.T4;
-		final Period period = per;
+		Date startDate = AonDateUtils.getYearFirstDay(mod.getYear());
+		Date end = null;
+		if (mod.getPeriod() == Period.T1) {
+			end = FiscalUtils.getPeriodEnd(mod.getYear(),Period.T1); // Hasta el 31 de marzo
+		}
+		if (mod.getPeriod() == Period.T2) {
+			end = FiscalUtils.getPeriodEnd(mod.getYear(),Period.T3); // Hasta el 30 de septiembre
+		}
+		if (mod.getPeriod() == Period.T3) {
+			end = FiscalUtils.getPeriodEnd(mod.getYear(),Period.M11); // Hasta el 30 de Noviembre.
+		}
+		final Date endDate = end;
 		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
-					.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
-					.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod.getYear(),period)))
+					.and(p.getEntryDateProperty().ge( startDate ))
+					.and(p.getEntryDateProperty().le( endDate ))
 					.and(
 							p.getAccountCodeProperty().like("6%")
 							.or(p.getAccountCodeProperty().like("7%"))
