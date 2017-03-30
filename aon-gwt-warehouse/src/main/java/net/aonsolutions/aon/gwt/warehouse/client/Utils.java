@@ -27,9 +27,9 @@ public class Utils {
 		return hourFormat.parse(date);
 	}
 	
-	public static Date format(String format, String date) {
+	public static String format(String format, Date date) {
 		DateTimeFormat dateFormat = DateTimeFormat.getFormat(format);
-		return dateFormat.parse(date);
+		return dateFormat.format(date);
 	}
 	
 	public static String formatDateTime(Date date) {
