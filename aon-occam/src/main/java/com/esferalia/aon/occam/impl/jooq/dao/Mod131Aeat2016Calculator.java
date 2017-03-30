@@ -184,19 +184,24 @@ public class Mod131Aeat2016Calculator  {
 		double ic1 = 0.0;
 		act.setIndiceEmpresasPequenaDimensionAplicable(true); 
 		if (Epigraph.E_659_4B.getEpigraph().equals(act.getEpigraph())) {
-			// Actividad de comercio al por menor de prensa, revistas y libros 
-			// en quioscos situados en la v?a p?blica:
-			//	Ubicaci?n de los quioscos					?ndice
-			//  --------------------------------------------------
-			//	Madrid y Barcelona							  1,00
-			//	Municipios de m?s de 100.000 habitantes		  0,95
-			//	Resto de municipios							  0,80
-			if (AonMathUtils.round(mun) == 7.0) {
-				ic1 = 1.0;
-			} else if (AonMathUtils.round(mun) == 6.0) {
-				ic1 = 0.95;
-			} else {
-				ic1 = 0.80;
+
+			// PREGUNTA para diferenciar de Epigraph.E_659_4A, puesto que el epigrafe es el mismo 
+			if (act.getModules() != null && act.getModules().size() == 4) {
+				
+				// Actividad de comercio al por menor de prensa, revistas y libros 
+				// en quioscos situados en la v?a p?blica:
+				//	Ubicaci?n de los quioscos					?ndice
+				//  --------------------------------------------------
+				//	Madrid y Barcelona							  1,00
+				//	Municipios de m?s de 100.000 habitantes		  0,95
+				//	Resto de municipios							  0,80
+				if (AonMathUtils.round(mun) == 7.0) {
+					ic1 = 1.0;
+				} else if (AonMathUtils.round(mun) == 6.0) {
+					ic1 = 0.95;
+				} else {
+					ic1 = 0.80;
+				}
 			}
 		} else if (Epigraph.E_721_1.getEpigraph().equals(act.getEpigraph()) 
 				|| Epigraph.E_721_3.getEpigraph().equals(act.getEpigraph())) {

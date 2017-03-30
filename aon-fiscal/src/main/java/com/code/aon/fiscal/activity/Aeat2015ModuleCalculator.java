@@ -505,20 +505,25 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		double i06 = 0.0;
 		boolean indiceEmpresasPequeñaDimensionAplicable = true; 
 		if ("659.4".equals(fa.getEpigraph())) {
-			// Actividad de comercio al por menor de prensa, revistas y libros 
-			// en quioscos situados en la vía pública:
-			//	Ubicación de los quioscos					Índice
-			//  --------------------------------------------------
-			//	Madrid y Barcelona							  1,00
-			//	Municipios de más de 100.000 habitantes		  0,95
-			//	Resto de municipios							  0,80
-			if (CommonUtil.round(a09) == 7.0) {
-				i06 = 1.0;
-			} else if (CommonUtil.round(a09) == 6.0) {
-				i06 = 0.95;
-			} else {
-				i06 = 0.80;
+			
+			// PREGUNTA para diferenciar de Epigraph.E_659_4A, puesto que el epigrafe es el mismo 
+			if (fa.getMaxPerson() == 2) {
+				// Actividad de comercio al por menor de prensa, revistas y libros 
+				// en quioscos situados en la vía pública:
+				//	Ubicación de los quioscos					Índice
+				//  --------------------------------------------------
+				//	Madrid y Barcelona							  1,00
+				//	Municipios de más de 100.000 habitantes		  0,95
+				//	Resto de municipios							  0,80
+				if (CommonUtil.round(a09) == 7.0) {
+					i06 = 1.0;
+				} else if (CommonUtil.round(a09) == 6.0) {
+					i06 = 0.95;
+				} else {
+					i06 = 0.80;
+				}
 			}
+			
 		} else if ("721.1".equals(fa.getEpigraph()) || "721.3".equals(fa.getEpigraph())) {
 			// Actividad de transporte urbano colectivo y de viajeros por carretera:
 			// Se aplicará el índice 0,80 cuando el titular disponga de un único vehículo.
