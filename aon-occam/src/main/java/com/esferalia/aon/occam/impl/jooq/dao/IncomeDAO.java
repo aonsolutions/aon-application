@@ -95,12 +95,12 @@ public class IncomeDAO {
 	}
 	
 	public static Optional<IncomeDetail> deleteIncomeDetail(AONContext ctx, Integer id){
-		IncomeDetail incomeDetail = getIncomeDetailStream(ctx, f -> f.getIdProperty().eq(id)).findFirst().orElse(null);
+		Optional<IncomeDetail> incomeDetail = getIncomeDetailStream(ctx, f -> f.getIdProperty().eq(id)).findFirst();
 		ctx.getDslContext().update(INCOME_DETAIL).set(INCOME_DETAIL.LINE, INCOME_DETAIL.LINE.add(-1))
-		.where(INCOME_DETAIL.INCOME.eq(incomeDetail.getIncome().getId()).and(INCOME_DETAIL.LINE.greaterThan(incomeDetail.getLine())))
+		.where(INCOME_DETAIL.INCOME.eq(incomeDetail.get().getIncome().getId()).and(INCOME_DETAIL.LINE.greaterThan(incomeDetail.get().getLine())))
 		.execute();
-		return ctx.getDslContext().delete(INCOME_DETAIL).where(INCOME_DETAIL.ID.eq(id))
-				.returning().fetch().stream().map(new IncomeDetailFiller()).findFirst();
+		ctx.getDslContext().delete(INCOME_DETAIL).where(INCOME_DETAIL.ID.eq(id)).execute();
+		return incomeDetail;
 	}
 	
 	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter){

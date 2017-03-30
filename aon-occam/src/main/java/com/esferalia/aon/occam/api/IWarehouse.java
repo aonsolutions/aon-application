@@ -113,6 +113,10 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	Stream<Stock> getStockStream(AONContext ctx, StockFilter filter);
+	Optional<Stock> insertStock(AONContext ctx, Stock stock);
+	Optional<Stock> updateStock(AONContext ctx, Stock stock);
+	Optional<Stock> deleteStock(AONContext ctx, Integer stockId);
+
 	
 	// ------------------- CARRIER PACKING
 	Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter);

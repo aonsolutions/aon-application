@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -347,6 +348,29 @@ public class WarehouseDAO {
 		.fetchInto(STOCK).stream().map(new FullStockFiller());
 	}
 	
+	public static Optional<Stock> insertStock(AONContext ctx, Stock stock){
+		ctx.checkWrite();
+		return ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE)
+				.values(stock.getDomain(), stock.getItem(), stock.getQuantity(), stock.getWarehouse())
+				.returning().fetch().stream().map(new FullStockFiller()).findFirst();
+	}
+	
+	public static Optional<Stock> updateStock(AONContext ctx, Stock stock){
+		ctx.checkWrite();
+		return ctx.getDslContext().update(STOCK)
+			.set(STOCK.QUANTITY, stock.getQuantity())
+			.set(STOCK.DOMAIN, stock.getDomain())
+			.set(STOCK.ITEM, stock.getItem())
+			.set(STOCK.WAREHOUSE, stock.getWarehouse())
+			.where(STOCK.ID.eq(stock.getId()))
+			.returning().fetch().stream().map(new FullStockFiller()).findFirst();
+	}
+	
+	public static Optional<Stock> deleteStock(AONContext ctx, Integer stockId){
+		Optional<Stock> stock = getStockStream(ctx, f -> f.getIdProperty().eq(stockId)).findFirst();
+		ctx.getDslContext().delete(STOCK).where(STOCK.ID.eq(stockId)).execute();
+		return stock;
+	}
 	
 	public static Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
 		Result<Record1<Integer>> result = null;
