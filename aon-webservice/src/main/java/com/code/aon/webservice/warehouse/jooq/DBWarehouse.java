@@ -60,6 +60,7 @@ public class DBWarehouse {
 	
 	public static JSONObject insertElaboration(Domain domain, String login, JSONObject json) {
 		Elaboration elaboration = getElaboration(domain, login, json, new Elaboration());
+		elaboration.setStatus(ElaborationStatus.PENDING.value());
 		Integer id = AON.insertElaboration(domain.getName(), domain.getId(), login, elaboration);
 		elaboration.setId(id);
 		return ToJSON.elaborationToJSON(elaboration);

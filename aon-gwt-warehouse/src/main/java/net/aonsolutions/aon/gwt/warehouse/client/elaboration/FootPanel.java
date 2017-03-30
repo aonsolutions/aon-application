@@ -99,6 +99,9 @@ public class FootPanel extends Composite {
 //			Window.alert(ElaborationSource.safeValueOf(source).name());
 //		}
 		if(sourceId!=null){
+			Label label = new Label();
+			label.setText("Origen de la elaboracion: " + sourceId);
+			sourcePanel.add(label);
 			API.getWarehouse().getSalesDetail(sourceId, new AsyncCallback<JSON<JsSalesDetail>>() {
 				
 				@Override
@@ -107,6 +110,10 @@ public class FootPanel extends Composite {
 //							+ " - " + result.getOneData().getSales());
 //					FlowPanel panel = createSourcePanel(result.getOneData());
 //					sourcePanel.add(panel);
+					JsSalesDetail detail = result.getOneData();
+					sourcePanel.add(new Label("Origen de la elaboracion, id: " + detail.getId()));
+					sourcePanel.add(new Label("Origen de la elaboracion, line: " + detail.getLine()));
+					sourcePanel.add(new Label("Origen de la elaboracion, sales: " + detail.getSales()));
 				}
 				
 				@Override public void onFailure(Throwable caught) {}

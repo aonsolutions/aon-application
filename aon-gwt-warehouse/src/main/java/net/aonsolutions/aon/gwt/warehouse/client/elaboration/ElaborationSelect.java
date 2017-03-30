@@ -330,6 +330,57 @@ public class ElaborationSelect extends Composite{
 				DefaultSelectionEventManager.<JsElaborationDetailComposition> createCheckboxManager());
 		dataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
+		
+		// TODO add button
+//		final Button addButton = new Button();
+//		addButton.setAccessKey( 'L' );
+//		addButton.setStyleName(AON.AON_CSS.aonIconReset());
+//		addButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+//		addButton.addFocusHandler(new FocusHandler() {
+//			@Override
+//			public void onFocus(FocusEvent event) {
+//				if (canAddLine()) {
+//					addLine();
+//					remove(addButton);
+//					setFocus(true);
+//				}
+//			}
+//		});
+//		
+//		addButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				addLine();
+//				remove(addButton);
+//				Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+//				focusable.setFocus(true);
+//			}
+//		});
+//		setWidget(getRowCount() - 1, COLS.NUM.ordinal(),  addButton );
+		
+		// TODO remove button
+//		Button removeButton = new Button();
+//		removeButton.setStyleName(AON.AON_CSS.aonIconDelete());
+//		removeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+//		removeButton.setTabIndex(Integer.MAX_VALUE);
+//		removeButton.addClickHandler( new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				if (aed.getId() == null) {
+//					wizardContent.getMainEntry().getDetails().remove(aed);
+//					removeRow(curRow);
+//					removeRow(getRowCount() - 1);
+//					paintFooter();
+//					paintAddButton();
+//				} else {
+//					aed.setId( aed.getId() * -1 );
+//					paintDeletedRow(curRow, aed);
+//					refreshTotals();
+//				}
+//			}
+//		});
+//		setWidget(row, COLS.BUT.ordinal(), removeButton);
 	}
 	
 	public void addItem(JsElaborationDetailComposition js){
