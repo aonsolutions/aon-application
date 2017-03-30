@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEV
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
@@ -19,6 +20,8 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
+import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
@@ -50,6 +53,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Configuration;
+import org.jooq.InsertSetStep;
 import org.jooq.TransactionalCallable;
 import org.junit.After;
 import org.junit.Before;
@@ -72,6 +76,8 @@ import com.esferalia.aon.jooq.tables.AgreementPayment;
 import com.esferalia.aon.jooq.tables.BonusConcept;
 import com.esferalia.aon.jooq.tables.ContractBonus;
 import com.esferalia.aon.jooq.tables.ContractEmbargo;
+import com.esferalia.aon.jooq.tables.Holiday;
+import com.esferalia.aon.jooq.tables.HolidayDetail;
 import com.esferalia.aon.jooq.tables.SystemDeduction;
 import com.esferalia.aon.jooq.tables.SystemPayment;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
@@ -80,12 +86,15 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
+import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
+import com.esferalia.aon.jooq.tables.records.HolidayRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -627,19 +636,25 @@ public abstract class AbstractSQLTestCase {
 	public static final ContractRecord newContract(AONContext aonContext, Date startDate, Map<String, String> data,
 			String[] payments, String[] deductions, AgreementLevelCategoryRecord category) {
 		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL, startDate, null, data, payments,
-				deductions, category);
+				deductions, category, null);
+	}
+
+	public static final ContractRecord newContract(AONContext aonContext, Date startDate, Map<String, String> data,
+			String[] payments, String[] deductions, AgreementLevelCategoryRecord category, CalendarRecord calendar) {
+		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL, startDate, null, data, payments,
+				deductions, category, calendar);
 	}
 
 	public static final ContractRecord newContract(AONContext aonContext, Date startDate, Date endDate,
 			Map<String, String> data, String[] payments, String[] deductions, AgreementLevelCategoryRecord category) {
 		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL, startDate, endDate, data, payments,
-				deductions, category);
+				deductions, category, null);
 	}
 
 	public static final ContractRecord newContract(AONContext aonContext, SSRegimeType ssRegimeType, CCCType cccType,
 			Date startDate, Map<String, String> data, String[] payments, String[] deductions,
 			AgreementLevelCategoryRecord category) {
-		return newContract(aonContext, ssRegimeType, cccType, startDate, null, data, payments, deductions, category);
+		return newContract(aonContext, ssRegimeType, cccType, startDate, null, data, payments, deductions, category, null);
 	}
 
 	public static final ContractRecord newContract(AONContext aonContext, SSRegimeType ssRegimeType, CCCType cccType,
@@ -721,6 +736,11 @@ public abstract class AbstractSQLTestCase {
 
 	public static final WorkplaceRecord newWorkplace(AONContext aonContext, int domainId, int scopeId,
 			int enterpriseId) {
+		return newWorkplace(aonContext, domainId, scopeId, enterpriseId, null);
+	}
+
+	public static final WorkplaceRecord newWorkplace(AONContext aonContext, int domainId, int scopeId,
+			int enterpriseId, Integer calendarId) {
 
 		RaddressRecord raddress = aonContext.getDslContext().insertInto(RADDRESS).set(RADDRESS.DOMAIN, domainId)
 				.set(RADDRESS.REGISTRY, enterpriseId).set(RADDRESS.TYPE, (byte) AddressType.MAIN.ordinal()).returning()
@@ -732,11 +752,80 @@ public abstract class AbstractSQLTestCase {
 				.set(WORKPLACE.DESCRIPTION, "").set(WORKPLACE.ADDRESS, raddress.getId()).set(WORKPLACE.SCOPE, scopeId)
 				.returning().fetchOne();
 
-		aonContext.getDslContext().insertInto(PAYROLL_WORKPLACE).set(PAYROLL_WORKPLACE.DOMAIN, domainId)
-				.set(PAYROLL_WORKPLACE.WORKPLACE, workplace.getId()).execute();
+		aonContext.getDslContext().insertInto(PAYROLL_WORKPLACE)
+				.set(PAYROLL_WORKPLACE.DOMAIN, domainId)
+				.set(PAYROLL_WORKPLACE.WORKPLACE, workplace.getId())
+				.set(PAYROLL_WORKPLACE.CALENDAR, calendarId)
+				.execute();
 		return workplace;
 	}
+	
+	public static CalendarRecord newCalendar(AONContext aonContext,
+			Integer domainId, 
+			Integer holidayId,
+			Double mondayHours, 
+			Double tuesdayHours, 
+			Double wednesdayHours, 
+			Double thursdayHours, 
+			Double fridayHours, 
+			Double saturdayHours, 
+			Double sundayHours) {
+		return 
+		aonContext.getDslContext()
+		.insertInto(CALENDAR)
+		
+		.set(CALENDAR.DOMAIN, domainId)
+		.set(CALENDAR.HOLIDAY, holidayId)
 
+		.set(CALENDAR.MONDAY_HOURS, mondayHours)
+		.set(CALENDAR.TUESDAY_HOURS, tuesdayHours)
+		.set(CALENDAR.TUESDAY_HOURS, wednesdayHours)
+		.set(CALENDAR.THURSDAY_HOURS, thursdayHours)
+		.set(CALENDAR.FRIDAY_HOURS, fridayHours)
+		.set(CALENDAR.SATURDAY_HOURS, saturdayHours)
+		.set(CALENDAR.SUNDAY_HOURS, sundayHours)
+		
+		.set(CALENDAR.MONDAY, mondayHours != null ? (byte)0 : (byte)1 )
+		.set(CALENDAR.TUESDAY, tuesdayHours != null ? (byte)0 : (byte)1 )
+		.set(CALENDAR.TUESDAY, wednesdayHours != null ? (byte)0 : (byte)1 )
+		.set(CALENDAR.THURSDAY, thursdayHours != null ? (byte)0 : (byte)1 )
+		.set(CALENDAR.FRIDAY, fridayHours != null ? (byte)0 : (byte)1 )
+		.set(CALENDAR.SATURDAY, saturdayHours != null ? (byte)0 : (byte)1 )
+		.set(CALENDAR.SUNDAY, sundayHours != null ? (byte)0 : (byte)1 )
+
+		.returning()
+		.fetchOne()
+		;
+		
+	}
+	
+	public static HolidayRecord newHoliday(AONContext aonContext, Integer domainId, Integer parentId, Date ...holidays) {
+		HolidayRecord holidayRecord =  
+		
+		aonContext.getDslContext()
+		.insertInto(HOLIDAY)
+		.set(HOLIDAY.DOMAIN, domainId)
+		.set(HOLIDAY.HOLIDAY_, parentId)
+		.returning()
+		.fetchOne()
+		;
+		
+
+		for (Date holiday : holidays)
+			aonContext.getDslContext()
+			.insertInto(HOLIDAY_DETAIL)
+			.set(HOLIDAY_DETAIL.DATE, holiday)
+			.set(HOLIDAY_DETAIL.HOLIDAY, holidayRecord.getId())
+			.set(HOLIDAY_DETAIL.DOMAIN, holidayRecord.getDomain())
+			.execute()
+			;
+		
+		return holidayRecord;
+		
+	}
+	
+
+	
 	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document) {
 		RegistryRecord person = aonContext.getDslContext().insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
 				.set(REGISTRY.NAME, "").set(REGISTRY.ALIAS, "").set(REGISTRY.DOCUMENT, document)
@@ -760,7 +849,7 @@ public abstract class AbstractSQLTestCase {
 
 	public static final ContractRecord newContract(AONContext aonContext, SSRegimeType ssRegimeType, CCCType cccType,
 			Date startDate, Date endDate, Map<String, String> data, String[] payments, String[] deductions,
-			AgreementLevelCategoryRecord category) {
+			AgreementLevelCategoryRecord category, CalendarRecord calendar) {
 		return aonContext.getDslContext().transactionResult(new TransactionalCallable<ContractRecord>() {
 			@Override
 			public ContractRecord run(Configuration configuration) throws Exception {
@@ -778,7 +867,7 @@ public abstract class AbstractSQLTestCase {
 						enterpriseActivity.getId(), cccType, null);
 
 				WorkplaceRecord workplace = newWorkplace(aonContext, domain.getId(), scope.getId(),
-						enterpriseActivity.getEnterprise());
+						enterpriseActivity.getEnterprise(), calendar != null ? calendar.getId() : null );
 
 				RegistryRecord person = newPerson(aonContext, domain.getId(), "");
 
@@ -789,6 +878,7 @@ public abstract class AbstractSQLTestCase {
 		});
 
 	}
+	
 
 	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			Map<String, String> datas) {
