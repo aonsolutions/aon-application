@@ -40,6 +40,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
+import com.vaadin.polymer.iron.widget.IronLabel;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -299,6 +300,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String setOutOfContractStyle();	
 		
 		String fechaDialogZIndex();
+		
+		String  pointer();
 	}
 
 	@UiField
@@ -307,8 +310,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	@UiField
 	MenuItem diaNoLaborable;
 	
-	@UiField
-	MenuItem diaFestivo;
+//	@UiField
+//	MenuItem diaFestivo;
 	
 	@UiField
 	MenuItem diaVacaciones;
@@ -319,8 +322,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	@UiField
 	MenuItem diaEre;
 	
-	@UiField
-	MenuItem diaAusencia;
+//	@UiField
+//	MenuItem diaAusencia;
 	
 	@UiField
 	MenuItem borrarEvento;
@@ -336,6 +339,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiField
 	MenuItem horasButton;
+	
+	@UiField
+	MenuItem viewButton;
 	
 	@UiField
 	Button undoButton;
@@ -449,6 +455,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	PaperIconButton expandHourBtnD;
 	
 	@UiField
+	IronLabel hourButtonBlock;
+	
+	@UiField
 	PaperIconButton hourButton;
 	
 	@UiField
@@ -521,6 +530,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private int mes;
 	private int annio;
 	private boolean mostrarHoras;
+	private boolean jornadaCompleta;
 	
 	private final CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
 	private final CalendarTypeDayCell cellsType[][] = new CalendarTypeDayCell[25][38];
@@ -608,13 +618,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 		});
 		
-		diaFestivo.setScheduledCommand(new Command() {
-			
-			@Override
-			public void execute() {
-				addFreeDay();	
-			}
-		});
+//		diaFestivo.setScheduledCommand(new Command() {
+//			
+//			@Override
+//			public void execute() {
+//				addFreeDay();	
+//			}
+//		});
 		
 		diaVacaciones.setScheduledCommand(new Command() {
 			
@@ -643,14 +653,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 		});
 		
-		diaAusencia.setScheduledCommand(new Command() {
-			
-			@Override
-			public void execute() {
-				dialogAusencia.open();
-			}
-			
-		});
+//		diaAusencia.setScheduledCommand(new Command() {
+//			
+//			@Override
+//			public void execute() {
+//				dialogAusencia.open();
+//			}
+//			
+//		});
 		
 		borrarEvento.setScheduledCommand(new Command() {
 			
@@ -910,7 +920,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	@UiHandler("diaFestivoButton")
 	public void onDiaFestivoClick(ClickEvent event) {
-		addFreeDay();	
+		//addFreeDay();	
 	}
 
 	@UiHandler("diaVacacionesButton")
@@ -937,7 +947,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("diaAusenciaButton")
 	public void onDiaAusenciaClick(ClickEvent event) {
-		dialogAusencia.open();
+		//dialogAusencia.open();
 	}
 
 	@UiHandler("dialogDropOk")
@@ -1063,6 +1073,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		calendar.inicialiazarCalendarioBD(
 				r -> { this.mostrarHoras = r.isJornadaCompleta();
+					   this.jornadaCompleta = r.isJornadaCompleta();
 					   initCalendar();
 					 }, t -> {});
 	}
@@ -1095,6 +1106,16 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}else{
 			horasMenuItem.setStyleName("aon-MenuItemCheckYes", mostrarHoras);
 			visualizarHoras();
+		}
+		
+		if(this.jornadaCompleta){
+			horasButton.setVisible(false);
+			hourButtonBlock.setVisible(false);
+			viewButton.setVisible(false);
+		}else{
+			horasButton.setVisible(true);
+			hourButtonBlock.setVisible(true);
+			viewButton.setVisible(true);
 		}
 		
 		pintarCambiosHorasRealizados(calendarEmployeeInfo.getHourChanges());
@@ -1236,6 +1257,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				
 				
 				diaInfo.setText(contadorDias + "");
+				diaInfo.addStyleName(style.pointer());
 				calendarGrid.setWidget(row, i, diaInfo);
 				if (DayType.NOWORKINGDAY == dayType){
 					calendarGrid.setWidget(row + 1, i, horasT);
@@ -1265,6 +1287,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			// Label insetar
 			Label diaInfo = new Label(contadorDias + "");
 			diaInfo.setStyleName(style.cellStyle());
+			diaInfo.addStyleName(style.pointer());
 			
 			DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
 			
@@ -1575,6 +1598,24 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 	}
 	
+	private void aplicarNoLaborableEstilosDiasSeleccionadios(double hora, DayType nonWorkingDay) {
+		limpiarEstilos(fechasSelecciondas.getSelectedList());
+		List<Date> diasNoLaborables = new LinkedList<Date>();
+		
+		for (Date date : fechasSelecciondas.getSelectedList()) {
+			int pos = calcularPosicionFecha(date);
+			if(pos != -1){
+				int column = calcularColumna(pos);
+				int row = calcularFila(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(nonWorkingDay, row, column);
+				diasNoLaborables.add(cellsDates[row][column]);
+			}
+		}
+		calendarEmployeeInfo.setNonWorking(diasNoLaborables, nonWorkingDay, hora);
+		fechasSelecciondas.clear();
+	}
+	
 	private void aplicarEreEstilosDiasSeleccionadios(double ce, DayType ereday) {
 		limpiarEstilos(fechasSelecciondas.getSelectedList());
 		List<Date> diasEre = new LinkedList<Date>();
@@ -1720,14 +1761,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		aplicarEstilosDiasSeleccionadios(DayType.HOLIDAY);
 	}
 	private void addNoWorkingDay() {
-		for (Date date : fechasSelecciondas.getSelectedList()) {
-			calendarEmployeeInfo.setHourByDay(date, -1.00);
-		}
-		aplicarEstilosDiasSeleccionadios(DayType.NOWORKINGDAY);	
+		aplicarNoLaborableEstilosDiasSeleccionadios(-1.00, DayType.NOWORKINGDAY);
 	}
-	private void addFreeDay() {
-		aplicarEstilosDiasSeleccionadios(DayType.FREEDAY);
-	}
+//	private void addFreeDay() {
+//		aplicarEstilosDiasSeleccionadios(DayType.FREEDAY);
+//	}
 	private void addStrikeDay() {
 		aplicarEstilosDiasSeleccionadios(DayType.STRIKEDAY);
 	}
@@ -1757,12 +1795,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					addNoWorkingDay();
 				}
 			});
-			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) festivos", new Command() {
-				@Override
-				public void execute() {
-					addFreeDay();
-				}
-			});
+//			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) festivos", new Command() {
+//				@Override
+//				public void execute() {
+//					addFreeDay();
+//				}
+//			});
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) vacaciones", new Command() {
 				@Override
 				public void execute() {
@@ -1781,12 +1819,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					dialogEre.open();
 				}
 			});
-			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) Ausencia", new Command() {
-				@Override
-				public void execute() {
-					addDropDay();
-				}
-			});
+//			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) Ausencia", new Command() {
+//				@Override
+//				public void execute() {
+//					addDropDay();
+//				}
+//			});
 			menu.addSeparator();
 			menu.addItem("Borrar evento(s)", new Command() {
 				@Override

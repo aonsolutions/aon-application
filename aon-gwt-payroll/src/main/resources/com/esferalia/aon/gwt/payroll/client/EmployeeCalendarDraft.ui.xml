@@ -79,13 +79,6 @@
 			color: #ffffff !important;
 			border-radius: 0px !important;
 		}
-		
-		.sundayStyle{
-			background-color: rgba(114, 194, 250, 1);
-			border-radius: 15px;
-			padding: 3px;
-			color: #ffffff;
-		}
 
 		.nonWorkingStyle{
 			background-color: salmon;
@@ -115,6 +108,12 @@
 			color: #ffffff;
 		}
 		
+		.sundayStyle{
+			background-color: rgba(114, 194, 250, 1);
+			padding: 3px;
+			color: #ffffff;
+		}		
+
 		.reductionStyle {
 			background-color: #065b69;
 			color: #ffffff;
@@ -123,7 +122,6 @@
 		
 		.dropStyle {
 			background-color: #733969;
-			border-radius: 15px;
 			padding: 3px;
 			color: #ffffff;
 			
@@ -319,10 +317,6 @@
 			margin-right: 8px;
 		}
 		
-		.ausenciaMarginDialogLeyend {
-			margin-left: 45px;
-		}
-		
 		.fechaDialogZIndex {
 			z-index: 105;
 		}
@@ -347,6 +341,10 @@
 			width: 55px;
 		}
 		
+		.pointer{
+			cursor:pointer;
+		}	
+
 		</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -356,11 +354,11 @@
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="diaNoLaborable" text="Añadir día(s) no laborables" />
-							<g:MenuItem ui:field="diaFestivo" text="Añadir día(s) festivos" />
+							<!-- g:MenuItem ui:field="diaFestivo" text="Añadir día(s) festivos" / -->
 							<g:MenuItem ui:field="diaVacaciones" text="Añadir día(s) vacaciones" />
 							<g:MenuItem ui:field="diaHuelga" text="Añadir día(s) huelga" />
 							<g:MenuItem ui:field="diaEre" text="Añadir día(s) ERE" />
-							<g:MenuItem ui:field="diaAusencia" text="Añadir día(s) Ausencia" />			
+							<!-- g:MenuItem ui:field="diaAusencia" text="Añadir día(s) Ausencia" / -->			
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
@@ -375,7 +373,7 @@
 					</g:MenuItem>
 					<g:MenuItem ui:field="horasButton" text="Horas">
 					</g:MenuItem>
-					<g:MenuItem text="Ver">
+					<g:MenuItem text="Ver" ui:field="viewButton">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="horasMenuItem" text="Ocultar horas" />
 						</g:MenuBar>
@@ -541,7 +539,7 @@
 					<g:HTMLPanel>
 					    <i:IronLabel>
 							<p:PaperButton
-								styleName="{style.cellStyle} {style.sundayStyle} {style.dialogLeyendLabel}"></p:PaperButton>
+								styleName="{style.cellStyle} {style.nonWorkingStyle} {style.dialogLeyendLabel}"></p:PaperButton>
 							No Laborables
 						</i:IronLabel>
 						<i:IronLabel>
@@ -556,11 +554,6 @@
 						</i:IronLabel>
 						<i:IronLabel>
 							<p:PaperButton
-								styleName="{style.cellStyle} {style.sundayStyle} {style.nonWorkingStyle}"></p:PaperButton>
-							Festivos
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
 								styleName="{style.cellStyle} {style.ereStyle} {style.dialogLeyendLabel}"></p:PaperButton>
 							ERE
 						</i:IronLabel>
@@ -568,8 +561,14 @@
 					<g:HTMLPanel>
 					    <i:IronLabel>
 							<p:PaperButton
-								styleName="{style.cellStyle} {style.dropStyle} {style.dialogLeyendLabel}
-											{style.ausenciaMarginDialogLeyend}"></p:PaperButton>
+								styleName="{style.cellStyle} {style.sundayStyle} {style.dialogLeyendLabel}"
+								ui:field="diaFestivoButton"></p:PaperButton>
+							Festivos
+						</i:IronLabel>
+					    <i:IronLabel>
+							<p:PaperButton
+								styleName="{style.cellStyle} {style.dropStyle} {style.dialogLeyendLabel}"
+								ui:field="diaAusenciaButton"></p:PaperButton>
 							Ausencia
 						</i:IronLabel>
 						<i:IronLabel>
@@ -631,11 +630,6 @@
 						No Laborables
 					</i:IronLabel>
 					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.sundayStyle}"
-							ui:field="diaFestivoButton"></p:PaperButton>
-						Festivos
-					</i:IronLabel>
-					<i:IronLabel>
 						<p:PaperButton styleName="{style.cellStyle} {style.holidayStyle}"
 							ui:field="diaVacacionesButton"></p:PaperButton>
 						Vacaciones
@@ -650,12 +644,7 @@
 							ui:field="diaEreButton"></p:PaperButton>
 						ERE
 					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.dropStyle}"
-							ui:field="diaAusenciaButton"></p:PaperButton>
-						Ausencia
-					</i:IronLabel>
-					<i:IronLabel>
+					<i:IronLabel ui:field="hourButtonBlock">
 						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton"
 							disabled="true" />
 						Horas
@@ -790,7 +779,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Enero</g:Label>
 							</g:customCell>
 						</g:row>
@@ -800,7 +789,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row>
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Febrero</g:Label>
 							</g:customCell>
 						</g:row>
@@ -810,7 +799,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}  {style.pointer}">
 								<g:Label>Marzo</g:Label>
 							</g:customCell>
 						</g:row>
@@ -820,7 +809,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row>
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Abril</g:Label>
 							</g:customCell>
 						</g:row>
@@ -830,7 +819,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Mayo</g:Label>
 							</g:customCell>
 						</g:row>
@@ -840,7 +829,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row>
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Junio</g:Label>
 							</g:customCell>
 						</g:row>
@@ -850,7 +839,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Julio</g:Label>
 							</g:customCell>
 						</g:row>
@@ -860,7 +849,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row>
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Agosto</g:Label>
 							</g:customCell>
 						</g:row>
@@ -870,7 +859,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Septiembre</g:Label>
 							</g:customCell>
 						</g:row>
@@ -880,7 +869,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row>
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Octubre</g:Label>
 							</g:customCell>
 						</g:row>
@@ -890,7 +879,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Noviembre</g:Label>
 							</g:customCell>
 						</g:row>
@@ -900,7 +889,7 @@
 							</g:customCell>
 						</g:row>
 						<g:row>
-							<g:customCell styleName="{style.cabeceraStyle}">
+							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
 								<g:Label>Diciembre</g:Label>
 							</g:customCell>
 						</g:row>
