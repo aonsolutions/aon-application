@@ -126,13 +126,22 @@
 									action="globalConfig_form"
 									value="#{bundle.admin_global_print_parameters_short}" />
 							</aon:div>
+							<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="pmsParams" 
+										reRender="configPanelBar,configContent"
+										action="globalConfig_form"
+										actionListener="#{pmsParams.onLoad}"
+										value="#{bundle.admin_global_pms_parameters_short}" />
+								</aon:div>
+							</aon:if>
 							<aon:if test="#{actionDenied.moduleEnabled['pos']}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="posParameters" 
 										reRender="configPanelBar,configContent"
 										action="globalConfig_form"
 										actionListener="#{posInvoiceParams.onInit}"
-										value="#{bundle.admin_global_finance_parameters_short}" />
+										value="#{bundle.admin_global_pos_parameters_short}" />
 								</aon:div>
 							</aon:if>
 							<aon:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
@@ -319,4 +328,5 @@
 		</rich:panelBar>
 	</aon:form>
 	<aon:lookupButtonPopup lookup="#{accountLookup}" />
+	<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 </ui:composition>

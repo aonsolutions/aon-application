@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
@@ -330,9 +331,9 @@ public class ProductionReportController implements Serializable {
 		Integer rooms = getRoomsCountHotel(hotel);
 		java.sql.Date openDate = getOpenDate(hotel, year);
 		
-		ApplicationParameter ap = AppParamUtil.getParameter("PMS_PRODUCTION_REPORT_PCATEGORY");
-		ApplicationParameter ap_hora_apertura = AppParamUtil.getParameter("PMS_HORA_APERTURA");
-		ApplicationParameter ap_hora_cierre = AppParamUtil.getParameter("PMS_HORA_CIERRE");
+		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_CATEGORY);
+		ApplicationParameter ap_hora_apertura = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_OPEN_HOUR);
+		ApplicationParameter ap_hora_cierre = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_CLOSE_HOUR);
 		
 		int productCategory = 0;
 		try {

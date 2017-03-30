@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+		<ui:param name="toolbarTitle"
+			value="#{bundle.admin_global_pms_parameters}" />
+		<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+		<ui:define name="toolbarContent">
+			<aon:commandButton id="save" value="#{bundle.aon_save}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				actionListener="#{pmsParams.onAccept}"
+				accesskey="#{bundle.aon_key_save}">
+			</aon:commandButton>
+		</ui:define>
+	</ui:decorate>
+
+	<aon:div styleClass="aon-scroll-area">
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="#{bundle.aon_categories} PMS" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+	
+				<aon:outputLabel for="PMS_Room_Category"
+					value="#{bundle.report_rooms}" />
+				<aon:selectOneMenu id="PMS_Room_Category"
+					value="#{pmsParams.roomCategory}" required="true">
+					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="PMS_Board_Category"
+					value="#{bundle.pms_board_group}" />
+				<aon:selectOneMenu id="PMS_Board_Category"
+					value="#{pmsParams.boardCategory}" required="true">
+					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="PMS_Service_Category"
+					value="#{bundle.pms_services}" />
+				<aon:selectOneMenu id="PMS_Service_Category"
+					value="#{pmsParams.serviceCategory}" required="true">
+					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="PMS_ExtraPax_Category"
+					value="#{bundle.pms_extra_pax}" />
+				<aon:selectOneMenu id="PMS_ExtraPax_Category"
+					value="#{pmsParams.extraPaxCategory}" required="true">
+					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+	
+			</aon:panelGrid>
+		</aon:div>
+
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="#{bundle.aon_role_product} PMS" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+	
+				<aon:outputLabel for="Item_id_PMS_Undefined_Room"
+					value="#{bundle.pms_room} #{bundle.aon_undefined}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.undefinedRoomItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_Undefined_Room" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_Undefined_Service"
+					value="#{bundle.pms_service} #{bundle.aon_undefined}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.undefinedServiceItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_Undefined_Service" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_Advance"
+					value="#{bundle.finance_money_advance}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.advanceItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_Advance" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_EarlyCheckOut"
+					value="#{bundle.pms_penalty_early_checkout}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.earlyCheckOutItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_EarlyCheckOut" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_NoShow"
+					value="#{bundle.pms_penalty_no_show}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.noShowItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_NoShow" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_Cancellation"
+					value="#{bundle.pms_penalty_cancellation}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.cancellationItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_Cancellation" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_TouristTax"
+					value="#{bundle.pms_tourist_tax}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.touristTaxItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_TouristTax" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_BestPrice"
+					value="#{bundle.pms_best_price_policy}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.bestPriceItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_BestPrice" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+				<aon:outputLabel for="Item_id_PMS_AutoDiscount"
+					value="#{bundle.pms_auto_discount}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupBean" value="#{saleItemLookup}" />
+					<ui:param name="lookupTo" value="#{pmsParams.autoDiscountItem}" />
+					<ui:param name="lookupSuffix" value="_PMS_AutoDiscount" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+
+			</aon:panelGrid>
+		</aon:div>
+
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="#{bundle.aon_external_services}" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+	
+				<aon:outputLabel for="PMS_Simple_Availability_URL"
+					value="#{bundle.pms_url_simple_availability_crs}" />
+				<aon:inputText id="PMS_Simple_Availability_URL"
+					value="#{pmsParams.simpleAvailabilityURL}" size="85" maxlength="96" />
+
+				<aon:outputLabel for="PMS_Booking_URL"
+					value="#{bundle.pms_url_booking_crs}" />
+				<aon:inputText id="PMS_Booking_URL"
+					value="#{pmsParams.bookingURL}" size="85" maxlength="96" />
+
+				<aon:outputLabel for="PMS_Hhg_URL"
+					value="#{bundle.pms_url_hhg_server}" />
+				<aon:inputText id="PMS_Hhg_URL"
+					value="#{pmsParams.hhgURL}" size="85" maxlength="96" />
+
+			</aon:panelGrid>
+		</aon:div>
+
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="#{bundle.pms_productionReport_module}" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+	
+				<aon:outputLabel for="PMS_ProductionReport_Category"
+					value="#{bundle.aon_category}" />
+				<aon:selectOneMenu id="PMS_ProductionReport_Category"
+					value="#{pmsParams.productionReportCategory}">
+					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="PMS_ProductionReport_openHour"
+					value="#{bundle.report_opening_hour}" />
+				<aon:inputText id="PMS_ProductionReport_openHour"
+					value="#{pmsParams.productionReportOpenHour}" size="10" maxlength="8" />
+
+				<aon:outputLabel for="PMS_ProductionReport_closeHour"
+					value="#{bundle.report_closing_hour}" />
+				<aon:inputText id="PMS_ProductionReport_closeHour"
+					value="#{pmsParams.productionReportCloseHour}" size="10" maxlength="8" />
+
+			</aon:panelGrid>
+		</aon:div>
+
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="#{bundle.aon_other_parameters}" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+	
+				<aon:outputLabel for="PMS_Undefined_Tariff"
+					value="#{bundle.report_tariff} #{bundle.aon_undefined}" />
+				<aon:selectOneMenu id="PMS_Undefined_Tariff"
+					value="#{pmsParams.undefinedTariff}" required="true">
+					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{configCollections.salesTariffs}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="PMS_Clean_Days"
+					value="#{bundle.pms_room_clean_check_days}" />
+				<rich:inputNumberSpinner id="PMS_Clean_Days"
+					value="#{pmsParams.cleanDays}"
+					inputSize="1" minValue="1" maxValue="99" />
+
+				<aon:outputLabel for="PMS_Police_Count"
+					value="#{bundle.pms_webpolExporter_counter}" />
+				<rich:inputNumberSpinner id="PMS_Police_Count"
+					value="#{pmsParams.policeCount}"
+					inputSize="1" minValue="1" maxValue="999" />
+
+			</aon:panelGrid>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>
+

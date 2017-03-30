@@ -10,6 +10,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************ PMS PARAMS **************************** -->
+	<managed-bean>
+		<managed-bean-name>pmsParams</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PmsParamsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* HOTEL ******************************** -->
 	<managed-bean>
 		<managed-bean-name>hotel</managed-bean-name>

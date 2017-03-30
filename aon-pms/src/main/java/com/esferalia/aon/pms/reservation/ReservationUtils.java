@@ -964,7 +964,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return null;
 	}
 
-	private Item obtainItem(String itemCode) throws ManagerBeanException {
+	public Item obtainItem(String itemCode) throws ManagerBeanException {
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE), itemCode);

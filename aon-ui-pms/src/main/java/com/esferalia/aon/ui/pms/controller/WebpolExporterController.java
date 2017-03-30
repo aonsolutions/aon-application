@@ -24,6 +24,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
@@ -42,9 +43,6 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 public class WebpolExporterController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	public static final String APP_PMS_POLICE_COUNT = "PMS_POLICE_COUNT";
-	
 	
 	private Hotel[] hotels;
 	
@@ -259,7 +257,7 @@ public class WebpolExporterController extends BasicController {
 		if(hotel!=null){
 			return hotel.getPoliceCounter();
 		} else {
-			ApplicationParameter ap = AppParamUtil.getParameter(APP_PMS_POLICE_COUNT);
+			ApplicationParameter ap = AppParamUtil.getParameter(AppParam.PMS_POLICE_COUNT);
 			int value = ap==null?1:Integer.parseInt(ap.getValue());
 			value = value==999?1:value;
 			return value;
@@ -272,10 +270,10 @@ public class WebpolExporterController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(Hotel.class);
 			bean.update(hotel);
 		} else {
-			ApplicationParameter ap = AppParamUtil.getParameter(APP_PMS_POLICE_COUNT);
+			ApplicationParameter ap = AppParamUtil.getParameter(AppParam.PMS_POLICE_COUNT);
 			if(ap==null){
 				ap = new ApplicationParameter();
-				ap.setName(APP_PMS_POLICE_COUNT);
+				ap.setName(AppParam.PMS_POLICE_COUNT.getValue());
 			}
 			ap.setValue(String.valueOf(fileCount));
 			AppParamUtil.insertParameter(ap);
