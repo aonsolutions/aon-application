@@ -245,17 +245,17 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 
 	private void validate(FiscalActivityInfoKey infoKey, Object v, FiscalActivityController c) throws AonException {
 		FiscalActivity fa = (FiscalActivity) c.getTo();
-		IManagerBean bean = BeanManager.getManagerBean(FiscalActivity.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_YEAR), fa.getYear() );
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_EPIGRAPH), fa.getEpigraph() );
-		if ( fa.getId() != null) {
-			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_ID), fa.getId() );
-		}
-		List<ITransferObject> list = bean.getList(criteria);
-		if (list != null && list.size()>0) {
-			throw new AonException("Ya existe la definición del epígrafe "+ fa.getEpigraph() +" para el ejercicio " + fa.getYear()); 
-		}
+//		IManagerBean bean = BeanManager.getManagerBean(FiscalActivity.class);
+//		Criteria criteria = new Criteria();
+//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_YEAR), fa.getYear() );
+//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_EPIGRAPH), fa.getEpigraph() );
+//		if ( fa.getId() != null) {
+//			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_ID), fa.getId() );
+//		}
+//		List<ITransferObject> list = bean.getList(criteria);
+//		if (list != null && list.size()>0) {
+//			throw new AonException("Ya existe la definición del epígrafe "+ fa.getEpigraph() +" para el ejercicio " + fa.getYear()); 
+//		}
 		
 		if (infoKey == FiscalActivityInfoKey.A02) {
 			Double d = (Double) v;
