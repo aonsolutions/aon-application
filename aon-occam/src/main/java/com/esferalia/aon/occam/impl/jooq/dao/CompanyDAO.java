@@ -271,11 +271,11 @@ public class CompanyDAO {
 						:(
 								(
 								ENTERPRISE_ACTIVITY.START_DATE.isNull()
-								.or(ENTERPRISE_ACTIVITY.START_DATE.ge(AonDateUtils.toSql(atDate)))
+								.or(ENTERPRISE_ACTIVITY.START_DATE.le(AonDateUtils.toSql(atDate)))
 								)
 							.and(
 								ENTERPRISE_ACTIVITY.END_DATE.isNull()
-								.or(ENTERPRISE_ACTIVITY.END_DATE.le(AonDateUtils.toSql(atDate)))
+								.or(ENTERPRISE_ACTIVITY.END_DATE.ge(AonDateUtils.toSql(atDate)))
 								)
 						 )
 						)
