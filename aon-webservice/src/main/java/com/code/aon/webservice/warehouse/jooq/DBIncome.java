@@ -16,11 +16,13 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class DBIncome {
@@ -110,14 +112,15 @@ public class DBIncome {
 		Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f ->
 			f.getIncomeProperty().eq(incomeId)
 			.and(f.getPurchaseDetailProperty().eq(purchaseDetailId)));
+		IncomeDetail iDetail = new IncomeDetail();
+		Integer workplaceId = json.getInt("workplace");
+		Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login, f -> f.getWorkplaceProperty().eq(workplaceId));
 		if(incomeDetail.isPresent()){
-			IncomeDetail iDetail = incomeDetail.get();
+			iDetail = incomeDetail.get();
 			iDetail.setQuantity(iDetail.getQuantity() + json.getDouble("quantity"));
 			AON.updateIncomeDetail(domain.getName(), domain.getId(), login, iDetail);
 		} else  {
-			Integer workplaceId = json.getInt("workplace");
-			Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), login, f -> f.getWorkplaceProperty().eq(workplaceId));
-			IncomeDetail iDetail = new IncomeDetail()
+			iDetail = new IncomeDetail()
 					.setDescription(json.getString("description"))
 					.setDiscountExpression("0.0")
 					.setDomain(domain.getId())
@@ -128,6 +131,8 @@ public class DBIncome {
 					.setWarehouse(warehouse.getId());
 			AON.insertIncomeDetail(domain.getName(), domain.getId(), login, iDetail);
 		}
+		
+		stock(domain, login, json.getInt("item"), json.getDouble("quantity"), warehouse.getId());
 		return new JSONObject();	
 	}
 	    
@@ -138,14 +143,46 @@ public class DBIncome {
 		Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
 		if(incomeDetail.isPresent()){
 			incomeDetail = AON.updateIncomeDetail(domain.getName(), domain.getId(), login, incomeDetail.get().setQuantity(quantity));
+			Integer warehouse = incomeDetail.get().getWarehouse();
+			stock(domain, login, json.getInt("item"), quantity, warehouse);
 			return incomeDetailToJSON(incomeDetail);
 		}
 		return new JSONObject();
 	}
 	    
+	private static Double stock(Domain domain, String login, Integer item, Double quantity, Integer warehouse) {
+		Double q = quantity;
+		Optional<Stock> stock = AON.getStockStream(domain.getName(), domain.getId(), login, f -> f.getItemProperty().eq(item)
+				.and(f.getWarehouseProperty().eq(warehouse))).findFirst();
+		if(stock.isPresent()){
+			Stock s = stock.get();
+			q = s.getQuantity() + quantity;
+			if(q == 0.0){
+				AON.deleteStock(domain.getName(), domain.getId(), login, s.getId());
+			} else {
+				s.setQuantity(q);
+				AON.updateStock(domain.getName(), domain.getId(), login, s);
+			}
+		} else {
+			Stock s = new Stock().setDomain(domain.getId())
+					.setItem(item)
+					.setQuantity(quantity)
+					.setWarehouse(warehouse);
+			AON.insertStock(domain.getName(), domain.getId(), login, s);
+		}
+		return q;
+	}	
 	public static JSONObject deleteIncomeDetail(Domain domain,String login, JSONObject json){
 		Integer id = json.getInt("id");
 		Optional<IncomeDetail> incomeDetail = AON.deleteIncomeDetail(domain.getName(), domain.getId(), login, id);
+		if(incomeDetail.isPresent()){
+			Double q = stock(domain, login, incomeDetail.get().getItem().getId(), -incomeDetail.get().getQuantity(), incomeDetail.get().getWarehouse());
+			Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getItem().getId()));
+			Product product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
+			if(product.isLotable() && q == 0.0){
+				AON.deleteItem(domain.getName(), domain.getId(), login, item);
+			}
+		}
 		return incomeDetailToJSON(incomeDetail);
 	}
 	

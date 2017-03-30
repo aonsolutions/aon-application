@@ -914,6 +914,17 @@ public class AON {
 		}
 	}
 	
+	public static void deleteItem(String domainName, Integer domainId, String login, Item item) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			deleteItem(ctx, item);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	}
+
+	
 	public static void insertItem(AONContext ctx, Item i) {
 		getProduct().insertItem(ctx, i);
 	}
@@ -2482,6 +2493,39 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getStockStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Optional<Stock> updateStock(String domainName, Integer domainId, String login, Stock stock){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().updateStock(ctx, stock);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Optional<Stock> deleteStock(String domainName, Integer domainId, String login, Integer stockId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().deleteStock(ctx, stockId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Optional<Stock> insertStock(String domainName, Integer domainId, String login, Stock stock){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertStock(ctx, stock);
 		} finally {
 			if (ctx != null)
 				ctx.close();

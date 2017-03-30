@@ -329,5 +329,23 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 			IncomeDAO.deleteIncomeDetail(ctx, id));
 	}
+
+	@Override
+	public Optional<Stock> insertStock(AONContext ctx, Stock stock) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+				WarehouseDAO.insertStock(ctx, stock));
+	}
+	
+	@Override
+	public Optional<Stock> updateStock(AONContext ctx, Stock stock) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+				WarehouseDAO.updateStock(ctx, stock));
+	}
+
+	@Override
+	public Optional<Stock> deleteStock(AONContext ctx, Integer stockId) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		WarehouseDAO.deleteStock(ctx, stockId));
+	}
 	
 }
