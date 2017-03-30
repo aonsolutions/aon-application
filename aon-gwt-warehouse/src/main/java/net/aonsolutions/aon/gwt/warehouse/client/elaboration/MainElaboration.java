@@ -15,12 +15,12 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
@@ -93,7 +93,6 @@ public class MainElaboration extends AonTemplate {
 			@Override
 			protected void remove() {
 				deleteElaboration(getJsElaboration().getId());
-				load();
 			}
 
 			@Override
@@ -142,7 +141,7 @@ public class MainElaboration extends AonTemplate {
 	}
 
 	public void loadSouthContent() {
-		FootPanel fp = new FootPanel(this);
+		FooterPanel fp = new FooterPanel(this);
 		setSouthContent(fp);
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);		
 	}
@@ -158,7 +157,7 @@ public class MainElaboration extends AonTemplate {
 		
 		setNorthContent(new ElaborationPanel(me, js));
 		setContent(new ElaborationSelect(me, js));
-		setSouthContent(new FootPanel(me, js));
+		setSouthContent(new FooterPanel(me, js));
 	}
 	
 	private void resetElaboration() {
@@ -168,6 +167,9 @@ public class MainElaboration extends AonTemplate {
 		toolbar.remove.setVisible(false);
 		toolbar.download.setVisible(false);
 		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
+		
+		FooterPanel footer = (FooterPanel) getSouthContent().getWidget();
+		footer.sourcePanel.setVisible(false);
 				
 		API.getWarehouse().createElaboration(new AsyncCallback<JSON<JsElaboration>>() {
 			
@@ -177,8 +179,7 @@ public class MainElaboration extends AonTemplate {
 				ElaborationPanel panel = new ElaborationPanel(me, result.getOneData());
 				setNorthContent(panel);
 				setContent(new Label(""));
-//				loadSouthContent();
-				setSouthContent(new FootPanel(me, js));
+				setSouthContent(new FooterPanel(me, js));
 			}
 			
 			@Override
@@ -210,19 +211,31 @@ public class MainElaboration extends AonTemplate {
 	}
 	
 	private void deleteElaboration(Integer elaboratinId) {
-		API.getWarehouse().deleteElaboration(elaboratinId, getData(), new AsyncCallback<JsElaboration>() {
-
-			@Override
-			public void onSuccess(JsElaboration result) {
-				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
-				toolbar.back();
+		AonDialog dialog = new AonDialog("Solicitud de confirmaci\u00f3n", new Label("\u00bfBorrar\u003f")) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {	
+				API.getWarehouse().deleteElaboration(elaboratinId, getData(), new AsyncCallback<JsElaboration>() {
+					
+					@Override
+					public void onSuccess(JsElaboration result) {
+						hide();
+						Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+						toolbar.back();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Ha ocurrido algun error al eliminar. \n"+caught.getMessage());
+					}
+				});
 			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Ha ocurrido algun error al eliminar. \n"+caught.getMessage());
-			}
-		});
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();		
 	}
 	
 	private void insertElaboration(JsElaboration jsElaboration) {
@@ -249,7 +262,7 @@ public class MainElaboration extends AonTemplate {
 	private String getData() {
 //		String data = JsonUtils.stringify(getJsElaboration());
 		ElaborationPanel main = getElaborationPanel();
-		FootPanel footer = getFooterPanel();
+		FooterPanel footer = getFooterPanel();
 		String comments = footer!=null?footer.comments.getValue():""; 
 		String data = "{\"series\":\"" + main.series.getValue()+ "\""
 				+ ",\"number\":\"" + main.number.getValue()+ "\""
@@ -267,8 +280,8 @@ public class MainElaboration extends AonTemplate {
 		return panel;
 	}
 	
-	private FootPanel getFooterPanel() {
-		FootPanel panel = (FootPanel) getSouthContent().getWidget();
+	private FooterPanel getFooterPanel() {
+		FooterPanel panel = (FooterPanel) getSouthContent().getWidget();
 		return panel;
 	}
 

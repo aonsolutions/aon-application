@@ -11,6 +11,7 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
+import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -77,33 +78,95 @@ public class DBWarehouse {
 		AON.deleteElaboration(domain.getName(), domain.getId(), login, id);
 		return new JSONObject();
 	}
+
+	public static JSONObject insertElaborationDetail(Domain domain, String login, JSONObject json) {
+		// TODO insert new serial item
+//		Item item = new Item();
+//		item.setSerialNumber();
+//		AON.insertItem(ctx, item);
+		
+		ElaborationDetail detail = getElaborationDetail(domain, login, json, new ElaborationDetail());
+		Elaboration elaboration = AON.getFullElaboration(domain.getName(), domain.getId(), login, detail.getElaboration().getId());
+		detail.setItem(elaboration.getItem());
+		Integer id = AON.insertElaborationDetail(domain.getName(), domain.getId(), login, detail);
+		detail.setId(id);
+		
+		// TODO insert composition
+		
+		return ToJSON.elaborationDetailToJSON(detail);
+	}
 	
-	private static Elaboration getElaboration(Domain domain, String login, JSONObject json, Elaboration elaboration) {
-		if(json.opt(MSG.SERIES) != null){
+	public static JSONObject updateElaborationDetail(Domain domain,String login, int id, JSONObject json){
+		ElaborationDetail detail = AON.getFullElaborationDetail(domain.getName(), domain.getId(), login, id);
+		detail = getElaborationDetail(domain, login, json, detail);
+		AON.updateElaborationDetail(domain.getName(), domain.getId(), login, detail);
+		return ToJSON.elaborationDetailToJSON(detail);
+	}
+	
+	public static JSONObject deleteElaborationDetail(Domain domain,String login, int id){
+		AON.deleteElaborationDetail(domain.getName(), domain.getId(), login, id);
+		return new JSONObject();
+	}
+	
+	private static Elaboration getElaboration(Domain domain, String login,
+			JSONObject json, Elaboration elaboration) {
+		if (json.opt(MSG.SERIES) != null) {
 			elaboration.setSeries(json.getString(MSG.SERIES));
 		}
-		if(json.opt(MSG.NUMBER) != null && !MSG.EMPTY.equals(json.opt(MSG.NUMBER))){
-			elaboration.setNumber(json.optInt(MSG.NUMBER,0));
+		if (json.opt(MSG.NUMBER) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.NUMBER))) {
+			elaboration.setNumber(json.optInt(MSG.NUMBER, 0));
 		}
-		if(json.opt(MSG.DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.DATE))){
+		if (json.opt(MSG.DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.DATE))) {
 			elaboration.setDate(new Date(json.getLong(MSG.DATE)));
 		}
-		if(json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))){
+		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
 			elaboration.setItem(new Item().setId(json.getInt(MSG.ITEM)));
 		}
-		if(json.opt(MSG.QUANTITY) != null && !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))){
+		if (json.opt(MSG.QUANTITY) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {
 			elaboration.setQuantity(json.getDouble(MSG.QUANTITY));
 		}
-		if(json.opt(MSG.WAREHOUSE) != null && !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))){
-			elaboration.setWarehouse(new Warehouse().setId(json.getInt(MSG.WAREHOUSE)));
+		if (json.opt(MSG.WAREHOUSE) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))) {
+			elaboration.setWarehouse(new Warehouse().setId(json
+					.getInt(MSG.WAREHOUSE)));
 		}
-		if(json.opt(MSG.STATUS) != null && !MSG.EMPTY.equals(json.opt(MSG.STATUS))){
-			elaboration.setStatus(ElaborationStatus.values()[json.getInt(MSG.STATUS)].value());
+		if (json.opt(MSG.STATUS) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.STATUS))) {
+			elaboration.setStatus(ElaborationStatus.values()[json
+					.getInt(MSG.STATUS)].value());
 		}
-		if(json.opt(MSG.COMMENTS) != null){
+		if (json.opt(MSG.COMMENTS) != null) {
 			elaboration.setComments(json.getString(MSG.COMMENTS));
 		}
-		
+
 		return elaboration;
+	}
+
+	private static ElaborationDetail getElaborationDetail(Domain domain,
+			String login, JSONObject json, ElaborationDetail detail) {
+		if (json.opt(MSG.ELABORATION) != null && !MSG.EMPTY.equals(json.opt(MSG.ELABORATION))) {
+			detail.setElaboration(new Elaboration().setId(json.getInt(MSG.ELABORATION)));
+		}
+		if (json.opt(MSG.DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.DATE))) {
+			detail.setDate(new Date(json.getLong(MSG.DATE)));
+		}
+		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
+			detail.setItem(new Item().setId(json.getInt(MSG.ITEM)));
+		}
+		if (json.opt(MSG.QUANTITY) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {
+			detail.setQuantity(json.getDouble(MSG.QUANTITY));
+		}
+		if (json.opt(MSG.WAREHOUSE) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))) {
+			detail.setWarehouse(json.getInt(MSG.WAREHOUSE));
+		}
+		if (json.opt(MSG.COMMENTS) != null) {
+			detail.setAddInfo(json.getString(MSG.COMMENTS));
+		}
+
+		return detail;
 	}
 }

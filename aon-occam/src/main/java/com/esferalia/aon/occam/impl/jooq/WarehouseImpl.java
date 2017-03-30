@@ -225,46 +225,73 @@ public class WarehouseImpl implements IWarehouse {
 	
 	// ------------------ ELABORATION
 	@Override
-	public List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter){
-		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.getElaborationList(ctx, filter));
-	}
-	
-	@Override
 	public Elaboration getElaboration(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.getElaboration(ctx, id));
 	}
+	@Override
+	public ElaborationDetail getElaborationDetail(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.getElaborationDetail(ctx, id));
+	}
+
 	
+	
+	@Override
+	public List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.getElaborationList(ctx, filter));
+	}
 	@Override
 	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.getElaborationDetailList(ctx, id));
 	}
-	
 	@Override
 	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.getElaborationDetailCompositionList(ctx, id));
+		ElaborationDAO.getElaborationDetailCompositionList(ctx, id));
 	}
+	
+	
 	
 	@Override
 	public Integer insertElaboration(AONContext ctx, Elaboration elaboration) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.insertElaboration(ctx, elaboration));
+	}	
+	@Override
+	public Integer insertElaborationDetail(AONContext ctx,
+			ElaborationDetail detail) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.insertElaborationDetail(ctx, detail));
 	}
+	
 	
 	@Override
 	public Elaboration updateElaboration(AONContext ctx, Elaboration elaboration) {
 		return (Elaboration) ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.updateElaboration(ctx, elaboration));
 	}
+	@Override
+	public ElaborationDetail updateElaborationDetail(AONContext ctx,
+			ElaborationDetail detail) {
+		return (ElaborationDetail) ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.updateElaborationDetail(ctx, detail));
+	}
 
+	
 	@Override
 	public Elaboration deleteElaboration(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.deleteElaboration(ctx, id));
 	}
+	@Override
+	public ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.deleteElaborationDetail(ctx, id));
+	}
+	
 	
 	// -------------------------- INCOME
 	@Override

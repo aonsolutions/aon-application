@@ -178,13 +178,23 @@ public class WarehouseServlet extends HttpServlet{
 						object = updateDelivery(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} 
 				} 
-			}
-			else if(MSG.ELABORATION.equals(pathInfo[3])){
+			} else if(MSG.ELABORATION.equals(pathInfo[3])) {
 				if(pathInfo.length > 4){ 
 					if(MSG.UPDATE.equals(pathInfo[4])){
 						object = DBWarehouse.updateElaboration(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[4])){
 						object = DBWarehouse.deleteElaboration(domain, userName, Integer.parseInt(pathInfo[5]));
+					} else if(MSG.DETAIL.equalsIgnoreCase(pathInfo[4])){
+						if(pathInfo.length > 5){
+							if(MSG.UPDATE.equals(pathInfo[5])){
+								object = DBWarehouse.updateElaborationDetail(domain, userName, Integer.parseInt(pathInfo[6]), json);
+							} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[5])){
+								object = DBWarehouse.deleteElaborationDetail(domain, userName, Integer.parseInt(pathInfo[6]));
+							}
+						} else {
+							object = DBWarehouse.insertElaborationDetail(domain, userName, json);
+						}
+					} else if(MSG.DETAIL_COMPOSITION.equalsIgnoreCase(pathInfo[4])){
 					}
 				} else {
 					object = DBWarehouse.insertElaboration(domain, userName, json);
