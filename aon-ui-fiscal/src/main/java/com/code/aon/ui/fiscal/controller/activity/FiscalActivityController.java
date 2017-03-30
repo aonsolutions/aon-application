@@ -433,7 +433,11 @@ public class FiscalActivityController extends BasicController implements IFiscal
 					info.setInfoKey(key);
 					info.setValue(key.getDefaultValue());
 					if (key == FiscalActivityInfoKey.V05) {
-						info.setDoubleValue(fa.getVatPercent());	
+						if ("659.4".equals(info.getFiscalActivity().getEpigraph())) {
+							info.setDoubleValue(100.0);
+						} else {
+							info.setDoubleValue(fa.getVatPercent());
+						}
 					}
 					info.setLine(++i);
 					getVatInfoList().add(info);
