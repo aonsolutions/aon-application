@@ -163,7 +163,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
 						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
 				}
-				, category);
+				, category
+				,null);
 
 		Date start = startDate;
 		Date end = getLastDayOfMonth(startDate);
@@ -329,7 +330,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
 						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
 				}
-				, category);
+				, category, null);
 
 
 		Criteria criteria = new Criteria();
