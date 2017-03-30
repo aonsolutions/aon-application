@@ -3596,6 +3596,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Double getValue(Period p) {
 
 					return p.daysStream()
+							.filter(day -> !isHoliday(day))
+							.filter(day -> getDayType(day) != DayType.HOLIDAY)
 							.map(day -> ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(),
 									day.getTime(), Number.class))
 							.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
