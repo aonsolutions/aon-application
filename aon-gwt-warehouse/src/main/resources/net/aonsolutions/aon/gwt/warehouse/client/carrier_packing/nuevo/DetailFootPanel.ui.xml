@@ -31,6 +31,7 @@
 					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			
+		<!--
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
@@ -40,6 +41,7 @@
 				</g:customHeader>
 					<g:SimpleLayoutPanel ui:field="receptionPanel" styleName="{aonResources.css.aonTextCenter}"/>
 			</g:tab>
+		-->
 		</g:TabLayoutPanel>
 	</aon:MinimizePanel>
 

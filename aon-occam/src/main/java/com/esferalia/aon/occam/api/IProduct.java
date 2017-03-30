@@ -35,7 +35,7 @@ public interface IProduct {
 	// ITEM
 	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter);
 	public Stream<Item> getFullItemStream(AONContext ctx, ProductFilter filter);
-	public void insertItem(AONContext ctx, Item i);
+	public Item insertItem(AONContext ctx, Item i);
 	public void insertItemWithId(AONContext ctx,Item i);
 	public void insertItem(AONContext ctx, Stream<Item> is);
 	public void insertItemWithId(AONContext ctx,Stream<Item> is);

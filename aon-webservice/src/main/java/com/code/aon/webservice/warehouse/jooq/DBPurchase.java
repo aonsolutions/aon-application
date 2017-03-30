@@ -145,8 +145,12 @@ public class DBPurchase {
     	// TODO HACER EL MÉTODO PARA TODOS LOS CASOS!!!!! 
     	Integer id = json.getInt("id");
     	Double delivered = json.getDouble("delivered");
+    	Boolean saldar = json.getBoolean("saldar");
     	PurchaseDetail purchaseDetail = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, id);
     	purchaseDetail.setDelivered(purchaseDetail.getDelivered() + delivered);
+    	if(saldar || (purchaseDetail.getQuantity() - purchaseDetail.getDelivered() < 0)){
+    		purchaseDetail.setQuantity(purchaseDetail.getDelivered());
+    	}
     	purchaseDetail = AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail);
     	return ToJSON.purchaseDetailToJSON(purchaseDetail);
     }

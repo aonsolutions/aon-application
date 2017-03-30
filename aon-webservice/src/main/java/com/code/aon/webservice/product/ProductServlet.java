@@ -1,5 +1,6 @@
 package com.code.aon.webservice.product;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -18,6 +19,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.product.Item;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ProductServlet", urlPatterns = { "/product/*",
@@ -69,6 +71,25 @@ public class ProductServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("POST METHOD");
+		
+		JSONObject json = Utils.getRequestJSON(req);
+
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		if(pathInfo.length > 3){				
+			Object object = new Object();
+			if(MSG.ITEM.equals(pathInfo[3])){
+				object = insertItem(domain, userName, json);	
+			}
+			resp.setContentType("application/json;charset=UTF-8");
+			Utils.addCorsHeader(resp);
+			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+			os.println(object.toString());
+			os.flush();
+			os.close();
+		}
 	}
 
     private JSONArray getCategoryList(Domain domain, String login){
@@ -103,4 +124,12 @@ public class ProductServlet extends HttpServlet{
 		return filter;
     }
     
+    
+    private JSONObject insertItem(Domain domain, String login, JSONObject json) {
+    	Integer itemId = json.getInt("item_id");
+    	Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(itemId));
+    	item.setSerialNumber(json.getString("lote"));
+    	item = AON.insertItem(domain.getName(), domain.getId(), login, item);
+    	return ToJSON.itemToJSON(item);
+    }
 }

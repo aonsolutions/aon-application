@@ -903,6 +903,17 @@ public class AON {
 		}
 	}
 
+	public static Item insertItem(String domainName, Integer domainId, String login, Item i) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().insertItem(ctx, i);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static void insertItem(AONContext ctx, Item i) {
 		getProduct().insertItem(ctx, i);
 	}

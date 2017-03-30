@@ -84,27 +84,19 @@ public class DetailFootPanel extends Composite {
 						}
 					});
 					observationPanel.add(textArea);
-				} else if(value == 2){
-					openFootPanel();
-					receptionPanel.setWidget(new ReceivePanel2(parent));
 				}
-				
 			}
 		});
 	}
 	public void parameterPanel() {
 		parameterPanel.setWidget(new ParameterPanel(parent));
 	}
-	
-	public void receptionPanel() {
-		receptionPanel.setWidget(new ReceivePanel2(parent));
-	}
+
 	
 	@UiField MinimizePanel footPanel;
 	@UiField TabLayoutPanel tabPanel;
 	@UiField SimpleLayoutPanel parameterPanel;
 	@UiField ScrollPanel observationPanel;
-	@UiField SimpleLayoutPanel receptionPanel;
 	
 	public TabLayoutPanel getTabPanel() {
 		return tabPanel;

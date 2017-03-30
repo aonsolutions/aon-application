@@ -545,6 +545,7 @@ public class ProductDAO {
 				.select()
 				.from(ITEM), filter)
 			.fetch().stream().map(new FullItemFiller(ctx));
+			//TODO aplicar BasicItemFiller ¿?
 	}
 	
 	public static Stream<Item> getFullItemStream(AONContext ctx, ProductFilter filter){
@@ -612,6 +613,18 @@ public class ProductDAO {
 			.execute();
 	}
 	
+	public static Item insertItemResult(AONContext ctx, Item i){
+		ctx.checkWrite();
+		ProductValidation.validateItem(ctx, i);
+		return ctx.getDslContext()
+			.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE,
+					ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG)
+			.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber()
+					, i.getSerialDate(), i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate(),
+					i.getPackFormatTag().getId(), i.getPackUnits(), i.getPackUnitsTag().getId(), i.getPackMeasurement(), i.getPackMeasurementTag().getId())
+			.returning().fetch().stream().map(new BasicItemFiller()).findFirst().orElse(null);
+	}
+	
 	public static void insertItem(AONContext ctx, Item i) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
@@ -623,7 +636,7 @@ public class ProductDAO {
 						, i.getSerialDate(), i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate(),
 						i.getPackFormatTag().getId(), i.getPackUnits(), i.getPackUnitsTag().getId(), i.getPackMeasurement(), i.getPackMeasurementTag().getId())
 				.execute();
-		});		
+		});	
 	}
 
 	public static void insertItem(AONContext ctx, Stream<Item> is) {
@@ -846,6 +859,41 @@ public class ProductDAO {
 					.setStatus(r.getStatus())
 					.setType(r.getType())
 					.setVat(r.getVat());					
+		}
+	}
+	
+	private static class BasicItemFiller implements Function<Record, Item> {
+		
+		@Override
+		public Item apply(Record r) {
+			return new Item().setId(r.getValue(ITEM.ID))
+					.setBarcode(r.getValue(ITEM.BARCODE))
+					.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+					.setCreationUser(r.getValue(ITEM.CREATION_USER))
+					.setDescription(r.getValue(ITEM.DESCRIPTION))
+					.setDetail(r.getValue(ITEM.DETAIL))
+					.setDetail2(r.getValue(ITEM.DETAIL2))
+					.setDetail3(r.getValue(ITEM.DETAIL3))
+					.setDomain(r.getValue(ITEM.DOMAIN))
+					.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
+					.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
+					.setInternet(r.getValue(ITEM.INTERNET) == 1)
+					.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
+					.setPackFormatTag(new Tag().setId(r.getValue(ITEM.PACK_FORMAT_TAG)))
+					.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
+					.setPackMeasurementTag(new Tag().setId(r.getValue(ITEM.PACK_MEASUREMENT_TAG)))
+					.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
+					.setPackUnitsTag(new Tag().setId(r.getValue(ITEM.PACK_UNITS_TAG)))
+					.setStockUnitTag(new Tag().setId(r.getValue(ITEM.STOCK_UNIT_TAG)))
+					.setPrice(r.getValue(ITEM.PRICE))
+					.setProduct(new Product().setId(r.getValue(ITEM.PRODUCT)))
+					.setProductId(r.getValue(ITEM.PRODUCT))
+					.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
+					.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
+					.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
+					.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+					.setStatus(r.getValue(ITEM.STATUS));
 		}
 	}
 	

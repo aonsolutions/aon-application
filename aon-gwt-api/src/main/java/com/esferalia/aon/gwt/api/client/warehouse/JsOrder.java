@@ -210,4 +210,8 @@ public class JsOrder extends JavaScriptObject {
 		return this.reference_code;
 	}-*/;
 	
+	public final native Integer getDetailCount()/*-{
+		return this.detail_count;
+	}-*/;
+	
 }

@@ -29,7 +29,12 @@ public class DBIncome {
 	    JSONArray array = new JSONArray();
 	    AON.getIncomeStream(domain.getName(), domain.getId(), login, f ->  incomeFilter(domain, map, f))
 	    	.sorted((e1, e2) -> e2.getIssueDate().compareTo(e1.getIssueDate()))
-	    .forEach(income -> array.put(incomeToJSON(income)));
+	    .forEach(income -> {
+	    	JSONObject json = incomeToJSON(income);
+	    	Long l = AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId())).count();
+	    	json.put("detail_count", l.intValue() + 1);
+	    	array.put(json);	
+	    });
 	    return array;
 	}
 	
@@ -150,6 +155,14 @@ public class DBIncome {
 	
 	public static JSONObject incomeDetailToJSON(Optional<IncomeDetail> incomeDetail){
 		return incomeDetail.isPresent() ? incomeDetailToJSON(incomeDetail.get()) : new JSONObject();
+	}
+	
+	public static JSONObject getIncomeLastLote(Domain domain, String login, String referenceCode) {
+		Long l = AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().like(referenceCode + "%"))
+				.count();
+		JSONObject json = new JSONObject();
+		json.put(MSG.NAME, referenceCode + (l.toString().length() == 1 ? "0" + l : l));
+		return json;
 	}
 	
 	public static JSONObject  incomeToJSON(Income income){
