@@ -37,9 +37,14 @@ public class FooterPanel extends Composite {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	public static final int TAB_INDEX_PENDING = 0;
-	public static final int TAB_INDEX_SOURCE = 1;
-	public static final int TAB_INDEX_COMMENTS = 2;
+	public static final String TAB_INDEX_PENDING = "PENDING";
+	public static final String TAB_INDEX_SOURCE = "SOURCE";
+	public static final String TAB_INDEX_COMMENTS = "COMMENTS";
+	public static final String[] TAB_INDEX = {
+//			TAB_INDEX_PENDING,
+			TAB_INDEX_SOURCE,
+			TAB_INDEX_COMMENTS
+			};
 
 	private API API;
 	
@@ -74,6 +79,7 @@ public class FooterPanel extends Composite {
 //			tabPanel.remove(TAB_INDEX_PENDING);
 //			tabPanel.getTabWidget(TAB_INDEX_SOURCE).setVisible(true);
 //			tabPanel.getTabWidget(TAB_INDEX_COMMENTS).setVisible(true);
+			
 			loadSourceTab(jsElaboration);
 			loadCommetsTab(jsElaboration);
 			
@@ -88,16 +94,12 @@ public class FooterPanel extends Composite {
 
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
-				switch (event.getSelectedItem()) {
-				case TAB_INDEX_PENDING:
+				if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_PENDING){
 					openFooterPanel();
-					break;
-				case TAB_INDEX_SOURCE:
+				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_SOURCE){
 					openFooterPanel();
-					break;
-				case TAB_INDEX_COMMENTS:
+				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_COMMENTS){
 					openFooterPanel();
-					break;
 				}
 			}
 		});
@@ -177,18 +179,25 @@ public class FooterPanel extends Composite {
 				parent.setJsElaboration(js);
 			}
 		});
-//		if (js.getComments() != null && !"".equals(js.getComments().trim())) {
-//			comments.setValue(js.getComments());
-//		}
+		
+		if (js.getComments() != null && !"".equals(js.getComments().trim())) {
+			comments.setValue(js.getComments());
+			openFooterPanel();
+			selectTab(TAB_INDEX_COMMENTS);
+		}
 
 		commentsPanel.add(comments);
 		
-		if (js.getComments() != null && !"".equals(js.getComments().trim())) {
-//			comments.setValue(js.getComments());
-			openFooterPanel();
-			tabPanel.selectTab(TAB_INDEX_COMMENTS);
+	}
+	
+	private void selectTab(String tabConts){
+		int idx = -1;
+		for(int i=0; i<TAB_INDEX.length; i++){
+			if(TAB_INDEX[i].equals(tabConts)){
+				idx = i;
+			}
 		}
-		
+		tabPanel.selectTab(idx);
 	}
 	
 	protected FlowPanel createSourcePanel(JsSalesDetail orderDetail){

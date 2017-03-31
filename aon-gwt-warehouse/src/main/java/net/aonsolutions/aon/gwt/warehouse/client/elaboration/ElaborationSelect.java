@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.aonsolutions.aon.gwt.warehouse.client.Utils;
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
-
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
@@ -31,6 +28,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -59,6 +57,8 @@ import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.vaadin.polymer.paper.widget.PaperInput;
 
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
+
 public class ElaborationSelect extends Composite{
 	
 	interface Binder extends UiBinder<Widget, ElaborationSelect> {
@@ -82,6 +82,7 @@ public class ElaborationSelect extends Composite{
 	
 	ListBox detailList;
 	Button newDetailButton;
+	Button removeDetailButton;
 	private MainElaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
@@ -109,30 +110,7 @@ public class ElaborationSelect extends Composite{
 	
 	private void load() {
 		HorizontalPanel panel = new HorizontalPanel();
-//		Label label = new Label("Fecha ");
-//		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-//		label.getElement().getStyle().setPadding(3, Unit.PX);
-//		p.add(label);
-//		datebox = new DateBoxEx();
-//		datebox.setStyleName(AON.AON_CSS.aonTextBox());
-//		datebox.setValue(new Date());
-//		datebox.addValueChangeHandler(new ValueChangeHandler<Date>() {
-//			
-//			@Override
-//			public void onValueChange(ValueChangeEvent<Date> event) {
-//				loadSelectable();
-//				westPanel.remove(1);
-//				westPanel.add(selectable);
-//			}
-//		});
-//		p.add(datebox);
-		
-//		Label label = new Label("Finalizados ");
-//		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-//		label.getElement().getStyle().setPadding(3, Unit.PX);
-//		panel.add(label);
 		newDetailButton = new Button();
-		newDetailButton.setAccessKey( 'L' );
 		newDetailButton.setText("Nuevo elaborado");
 		newDetailButton.setStyleName(AON.AON_CSS.aonIconReset());
 		newDetailButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
@@ -143,6 +121,19 @@ public class ElaborationSelect extends Composite{
 			}
 		});
 		panel.add(newDetailButton);
+		
+		removeDetailButton = new Button();
+		removeDetailButton.setText("Borrar seleccionado");
+		removeDetailButton.setStyleName(AON.AON_CSS.aonIconDelete());
+		removeDetailButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		removeDetailButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		removeDetailButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				clickRemoveDetail();
+			}
+		});
+		panel.add(removeDetailButton);
 		
 		loadSelectable();
 		loadSelected(true);
@@ -190,28 +181,22 @@ public class ElaborationSelect extends Composite{
 			
 			@Override 
 			protected void onAccept() {
-				Window.alert("before accept");
-				Window.alert("before input");
+				DateTimeFormat format = DateTimeFormat.getFormat("yyyy/MM/dd");
 				String number = inputNumber.getValue();
-				Window.alert("before date");
 //				String date = Utils.formatDateTime(Utils.parseDate(inputDate.getValue()));
-				String date = Utils.parseDate(inputDate.getValue()).getTime()+"";
-				Window.alert("before quantity");
+				String date = format.parse(inputDate.getValue()).getTime()+"";
 				String quantity = inputQuantity.getValue();
-				Window.alert("before warehouse");
 				JsWarehouse js = (JsWarehouse) inputWarehouse.getSelectedItem();
 				
-				String requestData = "{\"serial_number\":\""+ number +"\","
+				String requestData = "{\"number\":\""+ number +"\","
 						+ "\"elaboration\":\""+ getJsElaboration().getId() +"\","
 						+ "\"date\":\""+ date +"\","
 						+ "\"quantity\":\""+ quantity +"\","
-						+ "\"workplace\":\"" + js.getWorkplace() + "\"" + "}";
-				Window.alert("before insert");
+						+ "\"warehouse\":\"" + js.getId() + "\"" + "}";
 				API.getWarehouse().insertElaborationDetail(requestData, new AsyncCallback<JsElaborationDetail>() {
 					
 					@Override
 					public void onSuccess(JsElaborationDetail result) {
-						Window.alert("before success");
 //						selectedIncome = result.getId();
 //						VerticalPanel vp = (VerticalPanel)receivePanel.getWidget();
 						
@@ -230,6 +215,7 @@ public class ElaborationSelect extends Composite{
 //						vp.insert(pincome, 0);
 //						vp.insert(sp, 1);
 						selectableItems(null);
+						selectDetail(detailList.getItemCount());
 					}
 					
 					@Override
@@ -244,6 +230,37 @@ public class ElaborationSelect extends Composite{
 		dialog.setAutoHideEnabled(true);
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
 		dialog.center();
+	}
+	
+	private void clickRemoveDetail(){		
+		String value = detailList.getSelectedValue();
+		if(value!=null){
+			AonDialog dialog = new AonDialog("Solicitud de confirmaci\u00f3n", new Label("\u00bfBorrar\u003f")) {
+				
+				@Override protected void onCancel() {hide();}
+				
+				@Override 
+				protected void onAccept() {	
+					Integer id = Integer.parseInt(value);
+					API.getWarehouse().deleteElaborationDetail(id, null, new AsyncCallback<JsElaborationDetail>() {
+						
+						@Override
+						public void onSuccess(JsElaborationDetail result) {
+							hide();
+							selectableItems(null);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+						}
+					});
+				}
+			};
+			dialog.setAutoHideEnabled(true);
+			dialog.getElement().getStyle().setWidth(310, Unit.PX);
+			dialog.center();
+		}		
 	}
 	
 	public void refresh(){
@@ -306,26 +323,43 @@ public class ElaborationSelect extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsElaborationDetail> result) {
+				detailList.clear();
 				result.getData().stream().forEach(js -> detailList
 						.addItem(js.getQuantity() + " uds. ("+js.getItem().getSerialNumber()+") " + js.getDate(), js.getId() + ""));
 				if (result.getData().length() == 1) {
-					detailList.setSelectedIndex(0);
-					detailList.fireEvent(new GwtEvent<ClickHandler>() {
-						@Override
-						public GwtEvent.Type<ClickHandler> getAssociatedType() {
-							return ClickEvent.getType();
-						}
-
-						@Override
-						protected void dispatch(ClickHandler handler) {
-							handler.onClick(null);
-						}
-					});
+					selectDetail(0);
+//					detailList.setSelectedIndex(0);
+//					detailList.fireEvent(new GwtEvent<ClickHandler>() {
+//						@Override
+//						public GwtEvent.Type<ClickHandler> getAssociatedType() {
+//							return ClickEvent.getType();
+//						}
+//
+//						@Override
+//						protected void dispatch(ClickHandler handler) {
+//							handler.onClick(null);
+//						}
+//					});
 				}
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	private void selectDetail(int idx){
+		detailList.setSelectedIndex(idx);
+		detailList.fireEvent(new GwtEvent<ClickHandler>() {
+			@Override
+			public GwtEvent.Type<ClickHandler> getAssociatedType() {
+				return ClickEvent.getType();
+			}
+
+			@Override
+			protected void dispatch(ClickHandler handler) {
+				handler.onClick(null);
+			}
 		});
 	}
 	
@@ -347,9 +381,9 @@ public class ElaborationSelect extends Composite{
 			
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				String value = detailList.getSelectedValue();
+//				String value = detailList.getSelectedValue();
 				
-				detailList.removeItem(detailList.getSelectedIndex());
+//				detailList.removeItem(detailList.getSelectedIndex());
 				
 //				String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
 //						+ "\"purchase\":\""+ Integer.parseInt(value) +"\","
@@ -386,7 +420,7 @@ public class ElaborationSelect extends Composite{
 	
 	// -------------------- Actions
 	private void deleteElaboration(JsElaboration js){
-		String requestData = "{\"carrier_packing\":\"\"}";
+//		String requestData = "{\"carrier_packing\":\"\"}";
 //		if(jsCarrierPacking.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName())){
 //			requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
 //					+ "\"purchase\":\""+ js.getId() +"\"," 
@@ -675,23 +709,25 @@ public class ElaborationSelect extends Composite{
 //	    }));
 		
 		CompositeCell<JsElaborationDetailComposition> cell = new CompositeCell<JsElaborationDetailComposition>(cells);
-
-		/** Date Column **/
-		Column<JsElaborationDetailComposition,String> dateColumn = new Column<JsElaborationDetailComposition, String>(new TextCell()) {
+		
+		/** Warehouse Column **/
+		Column<JsElaborationDetailComposition,String> warehouseColumn = new Column<JsElaborationDetailComposition, String>(new TextCell()) {
 			
 			@Override
 			public String getValue(JsElaborationDetailComposition object) {
-				return object.getDate() != null ? object.getDate() : "";
+				return object.getWarehouse()!=null?object.getWarehouse().getName():" ";
 			}
 		};
 		
-		dateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		dateColumn.setSortable(true); 
-		sortHandler.setComparator(dateColumn,new Comparator<JsElaborationDetailComposition>() {
+		warehouseColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		warehouseColumn.setSortable(true); 
+		sortHandler.setComparator(warehouseColumn,new Comparator<JsElaborationDetailComposition>() {
 			
 			@Override
 			public int compare(JsElaborationDetailComposition o1, JsElaborationDetailComposition o2) {
-				return o1.getDate().compareTo(o2.getDate());
+				String w1 = o1.getWarehouse()!=null?o1.getWarehouse().getName():"";
+				String w2 = o2.getWarehouse()!=null?o2.getWarehouse().getName():"";
+				return w1.compareTo(w2);
 			}
 		});
 		
@@ -713,7 +749,7 @@ public class ElaborationSelect extends Composite{
 				return o1.getItem().getName().compareTo(o2.getItem().getName());
 			}
 		});
-		
+
 		/** Quantity Column **/
 		Column<JsElaborationDetailComposition,Number> quantityColumn = new Column<JsElaborationDetailComposition, Number>(new NumberCell(numberFormat)) {
 			
@@ -733,17 +769,33 @@ public class ElaborationSelect extends Composite{
 			}
 		});
 		
-		compositionDataGrid.getColumnSortList().push(dateColumn);
+
+		/** Buttons Column **/
+		Column<JsElaborationDetailComposition,String> buttonsColumn = new Column<JsElaborationDetailComposition, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(JsElaborationDetailComposition object) {
+				return "";
+			}
+		};
+		
+		itemColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		itemColumn.setSortable(true); 
+
+		
+		compositionDataGrid.getColumnSortList().push(warehouseColumn);
 		compositionDataGrid.getColumnSortList().push(quantityColumn);
 		compositionDataGrid.getColumnSortList().push(itemColumn);
 		
-		compositionDataGrid.addColumn(dateColumn, AON.MSG.date());
+		compositionDataGrid.addColumn(warehouseColumn, "Almac\u00e9n");
 		compositionDataGrid.addColumn(itemColumn, "Producto");
 		compositionDataGrid.addColumn(quantityColumn, AON.MSG.quantity());
+		compositionDataGrid.addColumn(buttonsColumn, "");
 		
-		compositionDataGrid.setColumnWidth(dateColumn, 15, Unit.PCT);
-		compositionDataGrid.setColumnWidth(itemColumn, 70, Unit.PCT);
+		compositionDataGrid.setColumnWidth(warehouseColumn, 25, Unit.PCT);
+		compositionDataGrid.setColumnWidth(itemColumn, 55, Unit.PCT);
 		compositionDataGrid.setColumnWidth(quantityColumn, 15, Unit.PCT);
+		compositionDataGrid.setColumnWidth(buttonsColumn, 5, Unit.PCT);
 		
 	
 	}

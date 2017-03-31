@@ -43,6 +43,8 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
@@ -110,6 +112,7 @@ import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -897,6 +900,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItemStream(ctx, filter).findFirst();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<ItemComposition> getItemCompositionList(String domainName, Integer domainId, String login, Integer itemId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().getItemComposition(ctx, itemId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2867,6 +2881,12 @@ public class AON {
 			list.forEach(detail -> {
 				detail.setItem(AON.getItem(domainName, domainId, login, detail
 						.getItem().getId()));
+				detail.setWarehouse(getWarehouse(
+						domainName,
+						domainId,
+						login,
+						f -> f.getIdProperty().eq(
+								detail.getWarehouse().getId())));
 			});
 			return list;
 		} finally {
@@ -2883,6 +2903,12 @@ public class AON {
 			ElaborationDetail d = getWarehouse().getElaborationDetail(ctx, id);
 			d.setItem(AON.getItem(domainName, domainId, login, d.getItem()
 					.getId()));
+			d.setWarehouse(getWarehouse(
+					domainName,
+					domainId,
+					login,
+					f -> f.getIdProperty().eq(
+							d.getWarehouse().getId())));
 			return d;
 		} finally {
 			if (ctx != null)
@@ -2910,11 +2936,11 @@ public class AON {
 		}
 	}
 	
-	public static ElaborationDetail deleteElaborationDetail(String domainName, Integer domainId, String login, Integer detailId) {
+	public static ElaborationDetail deleteElaborationDetail(String domainName, Integer domainId, String login, ElaborationDetailFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().deleteElaborationDetail(ctx, detailId);
+			return getWarehouse().deleteElaborationDetail(ctx, filter);
 		} finally {
 			if (ctx != null) ctx.close();
 		}
@@ -2929,11 +2955,53 @@ public class AON {
 			List<ElaborationDetailComposition> list = getWarehouse()
 					.getElaborationDetailCompositionList(ctx,
 							elaborationDetailId);
-			list.forEach(detail -> {
-				detail.setItem(AON.getItem(domainName, domainId, login, detail
+			list.forEach(composition -> {
+				composition.setItem(AON.getItem(domainName, domainId, login, composition
 						.getItem().getId()));
+				composition.setWarehouse(getWarehouse(
+						domainName,
+						domainId,
+						login,
+						f -> f.getIdProperty().eq(
+								composition.getWarehouse().getId())));
 			});
 			return list;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer insertElaborationDetailComposition(String domainName, Integer domainId, String login,
+			ElaborationDetailComposition composition) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertElaborationDetailComposition(ctx, composition);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static ElaborationDetailComposition updateElaborationDetailComposition(String domainName, Integer domainId,
+			String login, ElaborationDetailComposition composition) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().updateElaborationDetailComposition(ctx, composition);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static ElaborationDetailComposition deleteElaborationDetailComposition(String domainName, Integer domainId,
+			String login, ElaborationDetailCompositionFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().deleteElaborationDetailComposition(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

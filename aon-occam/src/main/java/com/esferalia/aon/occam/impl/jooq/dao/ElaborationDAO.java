@@ -277,7 +277,7 @@ public class ElaborationDAO {
 						new Timestamp(elaborationDetail.getDate().getTime()),
 						elaborationDetail.getItem().getId(),
 						elaborationDetail.getQuantity(),
-						elaborationDetail.getWarehouse(),
+						elaborationDetail.getWarehouse()!=null?elaborationDetail.getWarehouse().getId():null,
 						elaborationDetail.getAddInfo(), ctx.getUser(),
 						creationDate, ctx.getUser(), modificationDate)
 				.returning(ELABORATION_DETAIL.ID).fetchOne().getId();
@@ -301,7 +301,7 @@ public class ElaborationDAO {
 				.set(ELABORATION_DETAIL.QUANTITY,
 						elaborationDetail.getQuantity())
 				.set(ELABORATION_DETAIL.WAREHOUSE,
-						elaborationDetail.getWarehouse())
+						elaborationDetail.getWarehouse()!=null?elaborationDetail.getWarehouse().getId():null)
 				.set(ELABORATION_DETAIL.ADD_INFO,
 						elaborationDetail.getAddInfo())
 				.set(ELABORATION_DETAIL.MODIFICATION_USER, ctx.getUser())
@@ -404,7 +404,8 @@ public class ElaborationDAO {
 								.getId(),
 						elaborationDetailComposition.getItem().getId(),
 						elaborationDetailComposition.getQuantity(),
-						elaborationDetailComposition.getWarehouse(),
+						elaborationDetailComposition.getWarehouse()!=null?
+								elaborationDetailComposition.getWarehouse().getId():null,
 						elaborationDetailComposition.getAddInfo(),
 						ctx.getUser(), creationDate, ctx.getUser(),
 						modificationDate)
@@ -412,7 +413,7 @@ public class ElaborationDAO {
 				.getId();
 	}
 	
-	public static int updateElaborationDetailComposition(AONContext ctx,
+	public static ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx,
 			ElaborationDetailComposition elaborationDetailComposition) {
 		ctx.checkWrite();
 		Timestamp modificationDate = new java.sql.Timestamp(
@@ -430,7 +431,8 @@ public class ElaborationDAO {
 				.set(ELABORATION_DETAIL_COMPOSITION.QUANTITY,
 						elaborationDetailComposition.getQuantity())
 				.set(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE,
-						elaborationDetailComposition.getWarehouse())
+						elaborationDetailComposition.getWarehouse()!=null?
+								elaborationDetailComposition.getWarehouse().getId():null)
 				.set(ELABORATION_DETAIL_COMPOSITION.ADD_INFO,
 						elaborationDetailComposition.getAddInfo())
 				.set(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER,
@@ -438,10 +440,13 @@ public class ElaborationDAO {
 				.set(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE,
 						modificationDate)
 				.where(ELABORATION_DETAIL_COMPOSITION.ID
-						.eq(elaborationDetailComposition.getId())).execute();
+						.eq(elaborationDetailComposition.getId()))
+				.returning()
+				.fetch().stream().map(new FullElaborationDetailCompositionFiller()).findFirst()
+				.orElse(null);
 	}
 	
-	public static int deleteElaborationDetailComposition(AONContext ctx,
+	public static ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx,
 			ElaborationDetailCompositionFilter filter) {
 		ctx.checkWrite();
 		return ctx
@@ -450,17 +455,17 @@ public class ElaborationDAO {
 				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES
 						.getConditions(filter))
 				.and(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
-				.execute();
+				.returning().fetch().stream().map(new FullElaborationDetailCompositionFiller()).findFirst().orElse(null);
 	}
 	
-	public static int deleteElaborationDetailComposition(AONContext ctx,
+	public static ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx,
 			ElaborationDetailComposition composition) {
 		ctx.checkWrite();
 		return ctx
 				.getDslContext()
 				.delete(ELABORATION_DETAIL_COMPOSITION)
 				.where(ELABORATION_DETAIL_COMPOSITION.ID.eq(composition.getId()))
-				.execute();
+				.returning().fetch().stream().map(new FullElaborationDetailCompositionFiller()).findFirst().orElse(null);
 	}
 	
 
@@ -536,7 +541,9 @@ public class ElaborationDAO {
 					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
 					.setItem(new Item().setId(r.getValue(ELABORATION_DETAIL.ITEM)))
 					.setQuantity(r.getValue(ELABORATION_DETAIL.QUANTITY))
-					.setWarehouse(r.getValue(ELABORATION_DETAIL.WAREHOUSE))
+					.setWarehouse(
+							new Warehouse().setId(r
+									.getValue(ELABORATION_DETAIL.WAREHOUSE)))
 					.setAddInfo(r.getValue(ELABORATION_DETAIL.ADD_INFO))
 					.setCreationDate(r.getValue(ELABORATION_DETAIL.CREATION_DATE))
 					.setCreationUser(r.getValue(ELABORATION_DETAIL.CREATION_USER))
@@ -555,7 +562,9 @@ public class ElaborationDAO {
 							.setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL)))
 					.setItem(new Item().setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ITEM)))
 					.setQuantity(r.getValue(ELABORATION_DETAIL_COMPOSITION.QUANTITY))
-					.setWarehouse(r.getValue(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE))
+					.setWarehouse(
+							new Warehouse().setId(r
+									.getValue(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE)))
 					.setAddInfo(r.getValue(ELABORATION_DETAIL_COMPOSITION.ADD_INFO))
 					.setCreationDate(r.getValue(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE))
 					.setCreationUser(r.getValue(ELABORATION_DETAIL_COMPOSITION.CREATION_USER))

@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
+import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -74,24 +75,50 @@ public class DBWarehouse {
 		return ToJSON.elaborationToJSON(elaboration);
 	}
 	    
-	public static JSONObject deleteElaboration(Domain domain,String login, int id){
-		AON.deleteElaboration(domain.getName(), domain.getId(), login, id);
+	public static JSONObject deleteElaboration(Domain domain,String login, int elaborationId){
+		// delete all compositions 
+		Integer[] detailIds = AON.getElaborationDetailList(domain.getName(), domain.getId(), login, elaborationId).stream()
+				.mapToInt(ElaborationDetail::getId).boxed().toArray(Integer[]::new);
+		AON.deleteElaborationDetailComposition(domain.getName(), domain.getId(), login,
+				f -> f.getElaborationDetailProperty().in(detailIds));
+		// delete all details
+		AON.deleteElaborationDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(detailIds));
+		
+		// delete elaboration
+		AON.deleteElaboration(domain.getName(), domain.getId(), login, elaborationId);
 		return new JSONObject();
 	}
 
 	public static JSONObject insertElaborationDetail(Domain domain, String login, JSONObject json) {
-		// TODO insert new serial item
-//		Item item = new Item();
-//		item.setSerialNumber();
-//		AON.insertItem(ctx, item);
-		
 		ElaborationDetail detail = getElaborationDetail(domain, login, json, new ElaborationDetail());
 		Elaboration elaboration = AON.getFullElaboration(domain.getName(), domain.getId(), login, detail.getElaboration().getId());
-		detail.setItem(elaboration.getItem());
-		Integer id = AON.insertElaborationDetail(domain.getName(), domain.getId(), login, detail);
-		detail.setId(id);
 		
-		// TODO insert composition
+		// create serialized item
+		Integer baseItemId = elaboration.getItem().getId();
+		Item item = elaboration.getItem();
+		item.setId(null);
+		item.setBarcode(null);
+		item.setSerialDate(new java.sql.Date(detail.getDate().getTime()));
+		if (json.opt(MSG.NUMBER) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.NUMBER))) {
+			item.setSerialNumber(json.getString(MSG.NUMBER));
+		}
+		int itemId = AON.insertItem(domain.getName(), domain.getId(), login, item).getId();
+		item.setId(itemId);
+		
+		detail.setItem(item);
+		Integer detailId = AON.insertElaborationDetail(domain.getName(), domain.getId(), login, detail);
+		detail.setId(detailId);
+		
+		// create composition
+		AON.getItemCompositionList(domain.getName(), domain.getId(), login, baseItemId).forEach(ic -> {
+			ElaborationDetailComposition composition = new ElaborationDetailComposition();
+			composition.setElaborationDetail(detail);
+			composition.setItem(new Item().setId(ic.getCompositionItemId()));
+			composition.setQuantity(detail.getQuantity()*ic.getQuantity());
+			composition.setWarehouse(detail.getWarehouse());
+			AON.insertElaborationDetailComposition(domain.getName(), domain.getId(), login, composition);
+		});
 		
 		return ToJSON.elaborationDetailToJSON(detail);
 	}
@@ -103,8 +130,10 @@ public class DBWarehouse {
 		return ToJSON.elaborationDetailToJSON(detail);
 	}
 	
-	public static JSONObject deleteElaborationDetail(Domain domain,String login, int id){
-		AON.deleteElaborationDetail(domain.getName(), domain.getId(), login, id);
+	public static JSONObject deleteElaborationDetail(Domain domain, String login, int detailId) {
+		AON.deleteElaborationDetailComposition(domain.getName(), domain.getId(), login,
+				f -> f.getElaborationDetailProperty().eq(detailId));
+		AON.deleteElaborationDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(detailId));
 		return new JSONObject();
 	}
 	
@@ -161,7 +190,8 @@ public class DBWarehouse {
 		}
 		if (json.opt(MSG.WAREHOUSE) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))) {
-			detail.setWarehouse(json.getInt(MSG.WAREHOUSE));
+			detail.setWarehouse(new Warehouse().setId(json
+					.getInt(MSG.WAREHOUSE)));
 		}
 		if (json.opt(MSG.COMMENTS) != null) {
 			detail.setAddInfo(json.getString(MSG.COMMENTS));

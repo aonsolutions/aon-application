@@ -744,6 +744,13 @@ public class ProductDAO {
 	}
 	
 	// ------------------------------------- ITEM-COMPOSITION
+	public static LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId){
+		ctx.checkRead();
+		return ctx.getDslContext().select().from(ITEM_COMPOSITION).where(ITEM_COMPOSITION.ITEM.eq(itemId))
+				.fetchInto(ITEM_COMPOSITION).stream().map(new FullItemCompositionFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static void insertItemComposition(AONContext ctx,
 			ItemComposition itemComposition) {
 		ctx.checkWrite();
@@ -933,6 +940,21 @@ public class ProductDAO {
 					.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
 					.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
 					.setStatus(r.getValue(ITEM.STATUS));
+		}
+	}
+	
+	private static class FullItemCompositionFiller implements Function<Record, ItemComposition> {
+		@Override
+		public ItemComposition apply(Record r) {
+			return new ItemComposition().setId(r.getValue(ITEM_COMPOSITION.ID))
+					.setDomain(r.getValue(ITEM_COMPOSITION.DOMAIN))
+					.setItemId(r.getValue(ITEM_COMPOSITION.ITEM))
+					.setCompositionItemId(r.getValue(ITEM_COMPOSITION.COMPOSITION_ITEM))
+					.setSequence((int)r.getValue(ITEM_COMPOSITION.SEQUENCE))
+					.setDescription(r.getValue(ITEM_COMPOSITION.DESCRIPTION))
+					.setQuantity(r.getValue(ITEM_COMPOSITION.QUANTITY))
+					.setDiscountExpression(r.getValue(ITEM_COMPOSITION.DISCOUNT_EXPR))
+					;
 		}
 	}
 	

@@ -186,7 +186,7 @@ public class Warehouse extends Methods{
 	public void deleteElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/delete/"+id, requestData, callback);
 	}
-	public void deleteElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
+	public void deleteElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaborationDetail> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/delete/"+id, requestData, callback);
 	}
 	

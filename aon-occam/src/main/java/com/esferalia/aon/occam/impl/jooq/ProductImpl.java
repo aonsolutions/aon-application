@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -173,6 +174,12 @@ public class ProductImpl implements IProduct{
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertItemWithId(ctx, is);
 		} );
+	}
+	
+	@Override
+	public LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			ProductDAO.getItemComposition(ctx, itemId));
 	}
 	
 	// ------------------------------------- BRAND

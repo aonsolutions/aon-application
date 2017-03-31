@@ -86,29 +86,12 @@ public class ElaborationPanel extends Composite {
 		
 		if (jsElaboration != null && jsElaboration.getDate() != null
 				&& !"".equals(jsElaboration.getDate())) {
-			// TODO
-//			Date issueDate = DateTimeFormat.getFormat("dd/MM/yyyy").parse(jsElaboration.getDate());
-			Date issueDate = DateTimeFormat.getFormat("yyyy-MM-dd").parse(jsElaboration.getDate());
+			Date issueDate = DateTimeFormat.getFormat("yyyy/MM/dd").parse(jsElaboration.getDate());
 			date.setValue(issueDate);
 		}
 		
 		if(jsElaboration != null && jsElaboration.getItem() != null
 			&& jsElaboration.getItem().getId() != null){
-//			API.getProduct().getProduct(jsElaboration.getItem().getProductId(), new AsyncCallback<JSON<JsProduct>>() {
-//				
-//				@Override
-//				public void onSuccess(JSON<JsProduct> result) {
-//					ProductBox pBox = new ProductBox(API);
-//					if(result!=null){
-//						pBox.set(result.getOneData());
-//					}
-//					itemPanel.add(pBox);
-//				}
-//				
-//				@Override
-//				public void onFailure(Throwable caught) {
-//				}
-//			});
 			API.getProduct().getItem(jsElaboration.getItem().getId(), new AsyncCallback<JSON<JsItem>>() {
 				
 				@Override

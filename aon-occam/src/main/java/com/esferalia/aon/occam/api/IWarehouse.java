@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
@@ -138,6 +140,10 @@ public interface IWarehouse {
 	Integer insertElaborationDetail(AONContext ctx, ElaborationDetail detail);
 	ElaborationDetail updateElaborationDetail(AONContext ctx, ElaborationDetail detail);
 	ElaborationDetail deleteElaborationDetail(AONContext ctx, Integer id);
+	ElaborationDetail deleteElaborationDetail(AONContext ctx, ElaborationDetailFilter filter);
+	Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition);
+	ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition);
+	ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, ElaborationDetailCompositionFilter filter);
 
 	
 }

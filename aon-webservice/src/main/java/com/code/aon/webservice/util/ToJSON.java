@@ -40,7 +40,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public class ToJSON {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat dateFormat_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+	private static final SimpleDateFormat dateFormat_YYYY_MM_DD = new SimpleDateFormat("yyyy/MM/dd");
 	
 	public static JSONObject applicationParameterToJSON(ApplicationParameter appParam){	
 		return new JSONObject()
@@ -268,7 +268,9 @@ public class ToJSON {
 				.put(MSG.DATE, detail.getDate() != null ? dateFormat_YYYY_MM_DD.format(detail.getDate()) : "")
 				.put(MSG.ITEM, itemToJSON(detail.getItem()))
 				.put(MSG.QUANTITY, detail.getQuantity())
-				.put(MSG.WAREHOUSE, detail.getWarehouse())
+				.put(MSG.WAREHOUSE, new JSONObject()
+						.put(MSG.ID, detail.getWarehouse() != null ? detail.getWarehouse().getId() : "")
+						.put(MSG.NAME, detail.getWarehouse() != null ? detail.getWarehouse().getName(): ""))
 				.put("add_info", detail.getAddInfo() != null ? detail.getAddInfo() : " ")
 				.put("creation_date", detail.getCreationDate() != null ? dateFormat.format(detail.getCreationDate()): "")
 				.put("creation_user", detail.getCreationUser())
@@ -283,6 +285,9 @@ public class ToJSON {
 				.put(MSG.ITEM, itemToJSON(detailComposition.getItem()))
 				.put(MSG.QUANTITY, detailComposition.getQuantity())
 				.put(MSG.WAREHOUSE, detailComposition.getWarehouse())
+				.put(MSG.WAREHOUSE, new JSONObject()
+						.put(MSG.ID, detailComposition.getWarehouse() != null ? detailComposition.getWarehouse().getId() : "")
+						.put(MSG.NAME, detailComposition.getWarehouse() != null ? detailComposition.getWarehouse().getName(): ""))
 				.put("creation_date", detailComposition.getCreationDate() != null ? dateFormat.format(detailComposition.getCreationDate()): "")
 				.put("creation_user", detailComposition.getCreationUser())
 				.put("modification_date", detailComposition.getModificationDate() != null ? dateFormat.format(detailComposition.getModificationDate()) : "")
