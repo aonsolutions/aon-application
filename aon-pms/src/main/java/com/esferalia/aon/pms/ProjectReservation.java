@@ -240,6 +240,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public boolean isConexFlow() {
+		return getLastConexFlowOperation() != null;
+	}
+
+	@Transient
 	public boolean isConexFlowCreateToken() {
 		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_CREATE_TOKEN_PATTERN.replace("%", "(.*)"));

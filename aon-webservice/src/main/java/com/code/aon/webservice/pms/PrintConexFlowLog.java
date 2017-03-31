@@ -25,6 +25,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -50,9 +51,8 @@ public class PrintConexFlowLog extends HttpServlet{
 		
 		
 		LinkedList<Attach>  attachList = AON.getAttachList(domainName, domainId, login, f -> 
-			f.getTypeProperty().eq(ProjectAttachmentType.PAYSLIP.value())
+			f.getTypeProperty().eq(ProjectAttachmentType.CONEXFLOW.value())
 			.and(f.getAttachModuleProperty().eq(projectId))
-			.and(f.getDescriptionProperty().like("CONEXFLOW%PAYSLIP#%"))
 		, AttachType.PROJECT);
 		
 		
@@ -72,31 +72,33 @@ public class PrintConexFlowLog extends HttpServlet{
 		
 		
 		PdfPTable table = new PdfPTable(3);
+		table.setWidthPercentage(95);
+	
 		PdfPCell date = new PdfPCell(new Phrase("Fecha", getFont()));
-		date.setBorder(PdfPCell.NO_BORDER);
+		date.setBorder(Rectangle.BOTTOM);
 		table.addCell(date);
 		
-		PdfPCell text = new PdfPCell(new Phrase("Descripcion", getFont()));
-		text.setBorder(PdfPCell.NO_BORDER);
+		PdfPCell text = new PdfPCell(new Phrase("Descripci\u00f3n", getFont()));
+		text.setBorder(Rectangle.BOTTOM);
 		table.addCell(text);
 		
 		PdfPCell amount = new PdfPCell(new Phrase("Importe", getFont()));
-		amount.setBorder(PdfPCell.NO_BORDER);
+		amount.setBorder(Rectangle.BOTTOM);
 		table.addCell(amount);
 		
 		attachList.stream().sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
 		.forEach(r ->{
 			
 			PdfPCell d = new PdfPCell(new Phrase(r.getCreationDate().toString(), getFont2()));
-			d.setBorder(PdfPCell.NO_BORDER);
+			d.setBorder(Rectangle.BOTTOM);
 			table.addCell(d);
 			
 			PdfPCell t = new PdfPCell(new Phrase(getDescription(r.getDescription()), getFont2()));
-			t.setBorder(PdfPCell.NO_BORDER);
+			t.setBorder(Rectangle.BOTTOM);
 			table.addCell(t);
 			
 			PdfPCell a = new PdfPCell(new Phrase(getAmount(r.getDescription()), getFont2()));
-			a.setBorder(PdfPCell.NO_BORDER);
+			a.setBorder(Rectangle.BOTTOM);
 			table.addCell(a);
 							
 		});
@@ -141,13 +143,13 @@ public class PrintConexFlowLog extends HttpServlet{
 	
 	private static Font getFont2(){
 		Font font2 = new Font();
-		font2.setSize(12);
+		font2.setSize(10);
 		return font2;
 	}
 
 	private static Font getFont(){
 		Font font1 = new Font();
-		font1.setSize(12);
+		font1.setSize(10);
 		font1.setStyle(Font.BOLD);
 		return font1;
 	}

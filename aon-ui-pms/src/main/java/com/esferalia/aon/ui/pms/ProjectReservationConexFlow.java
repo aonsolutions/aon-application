@@ -600,5 +600,12 @@ public class ProjectReservationConexFlow implements Serializable {
 		String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 		return "/print_conexflowpayslip/"+ base;
 	}
+	
+	public String getPrintConexFlowLog() {
+		String str = "domain_name="+ getDomain().getName() + "&domain_id="+ getDomain().getId()+ "&login="+ getLogin() + "&project=" + getReservation().getId();
+		String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+		return "/print_conexflow_log/"+ base;
+	}
+
 
 }

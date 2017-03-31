@@ -127,6 +127,13 @@
 							<aon:outputText value="#{bundle.aon_external_print_conexFlowPayslip}" styleClass="aon-finding-toolbar-item aon-icon-pdf"/>
 						</h:outputLink> 
 					</aon:if>
+					
+					<aon:if test="#{reservation.to.conexFlow}">
+ 						<h:outputLink title="#{bundle.aon_external_print_conexFlowLog}" 
+							value="#{reservation.reservationConexFlow.printConexFlowLog}" target="_blank">
+							<aon:outputText value="#{bundle.aon_external_print_conexFlowLog}" styleClass="aon-finding-toolbar-item aon-icon-pdf"/>
+						</h:outputLink> 
+					</aon:if>
 		
 					<ui:include
 						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
