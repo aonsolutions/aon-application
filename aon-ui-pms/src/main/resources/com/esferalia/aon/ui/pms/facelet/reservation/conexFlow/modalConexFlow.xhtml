@@ -152,7 +152,7 @@
 													<aon:if test="#{controller.reservationConexFlow.showPreauthorization}">
 														<f:selectItem itemLabel="#{bundle.conexflow_preauthorization}" itemValue="P" />
 													</aon:if>
-													<aon:if test="#{controller.reservationConexFlow.showCharge}">
+													<aon:if test="#{controller.reservationConexFlow.showSale}">
 														<f:selectItem itemLabel="#{bundle.conexflow_sale}" itemValue="V" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.showConfirmPreauthorization}">
@@ -187,7 +187,7 @@
 													<aon:if test="#{controller.reservationConexFlow.showConfirmPreauthorization}">
 														<f:selectItem itemLabel="#{bundle.conexflow_preauthorization}" itemValue="P" />
 													</aon:if>
-													<aon:if test="#{controller.reservationConexFlow.charge}">
+													<aon:if test="#{controller.reservationConexFlow.sale}">
 														<f:selectItem itemLabel="#{bundle.conexflow_sale}" itemValue="V" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.confirmPreauthorization}">
@@ -204,7 +204,7 @@
 													value="#{bundle.conexflow_refund}" />
 												<aon:selectOneMenu id="ConexFlow_refund"
 													value="#{controller.reservationConexFlow.conexflowOperationRefund}" required="true">
-													<aon:if test="#{controller.reservationConexFlow.charge}">
+													<aon:if test="#{controller.reservationConexFlow.sale}">
 														<f:selectItem itemLabel="#{bundle.conexflow_sale}" itemValue="V" />
 													</aon:if>
 													<aon:if test="#{controller.reservationConexFlow.confirmPreauthorization}">

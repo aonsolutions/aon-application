@@ -42,10 +42,20 @@ public class ProjectReservationConexFlow implements Serializable {
 	private boolean showRefundOption;
 	private boolean showNotifyWindow;
 
+	private Boolean preauthorization;
+	private Boolean confirmPreauthorization;
+	private Boolean sale;
+	private Boolean refund;
+
 	public ProjectReservationConexFlow(ProjectReservation reservation) {
 		setReservation(reservation);
 		setLogin(UserUtils.getInstance().getLoggedUser().getLogin());
 		setDomain(getDomain(reservation));
+
+		setPreauthorization(null);
+		setConfirmPreauthorization(null);
+		setSale(null);
+		setRefund(null);
 	}
 
 	public ProjectReservation getReservation() {
@@ -74,14 +84,14 @@ public class ProjectReservationConexFlow implements Serializable {
 		domain.setId(reservation.getDomain());
 		return domain;
 	}
-	
+
 	public String getConexflowOperation() {
 		return conexflowOperation;
 	}
 	public void setConexflowOperation(String conexflowOperation) {
 		this.conexflowOperation = conexflowOperation;
 	}
-	
+
 	public String getConexflowOperationCancelation() {
 		return conexflowOperationCancelation;
 	}
@@ -101,7 +111,7 @@ public class ProjectReservationConexFlow implements Serializable {
 			ConexFlowStatus status = null;
 			if (isPreauthorization()) {
 				status = ConexFlowStatus.PREAUTHORIZATION;
-			} else if (isCharge()) {
+			} else if (isSale()) {
 				status = ConexFlowStatus.SALE;
 			} else if (isConfirmPreauthorization()) {
 				status = ConexFlowStatus.CONFIRM_PREAUTHORIZATION;
@@ -142,65 +152,88 @@ public class ProjectReservationConexFlow implements Serializable {
 		this.showNotifyWindow = showNotifyWindow;
 	}
 
+	public boolean isPreauthorization() {
+		if (preauthorization == null) {
+			preauthorization = false;
+			if (getReservation().getToken() != null) {
+				ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
+						ConexFlowStatus.PREAUTHORIZATION);
+				preauthorization = (cfP !=null && cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+			}
+		}
+		return preauthorization;
+	}
+	public void setPreauthorization(Boolean value) {
+		this.preauthorization = value;
+	}
+
+	public boolean isConfirmPreauthorization() {
+		if (confirmPreauthorization == null) {
+			confirmPreauthorization = false;
+			if (getReservation().getToken() != null) {
+				ConexFlow cfC = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
+						ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
+				confirmPreauthorization = (cfC != null && cfC.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+			}
+		}
+		return confirmPreauthorization;
+	}
+	public void setConfirmPreauthorization(Boolean value) {
+		this.confirmPreauthorization = value;
+	}
+
+	public boolean isSale() {
+		if (sale == null) {
+			sale = false;
+			if (getReservation().getToken() != null) {
+				ConexFlow cfV = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
+						ConexFlowStatus.SALE);
+				sale = (cfV != null && cfV.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+			}
+		}
+		return sale;
+	}
+	public void setSale(Boolean value) {
+		this.sale = value;
+	}
+	
+	public boolean isRefund() {
+		if (refund == null) {
+			refund = false;
+			if (getReservation().getToken() == null) {
+				ConexFlow cfD = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
+						ConexFlowStatus.REFUND);
+				refund = (cfD != null && cfD.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
+			}
+		}
+		return refund;
+	}
+	public void setRefund(Boolean value) {
+		this.refund = value;
+	}
 
 	public boolean isConexFlowActive() {
 		return DBConsults.getConection(getDomain()).isActive();
 	}
 	
-	public boolean isPreauthorization() {
-		if (getReservation().getToken() == null) {
-			return false;
-		}
-		ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-				ConexFlowStatus.PREAUTHORIZATION);
-		return (cfP !=null && cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-	}
-
-	public boolean isConfirmPreauthorization() {
-		if (getReservation().getToken() == null) {
-			return false;
-		}
-		ConexFlow cfC = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-				ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
-		return (cfC != null && cfC.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-	}
-
-	public boolean isCharge() {
-		if (getReservation().getToken() == null) {
-			return false;
-		}
-		ConexFlow cfV = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-				ConexFlowStatus.SALE);
-		return (cfV != null && cfV.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-	}
-	
-	public boolean isRefund() {
-		if (getReservation().getToken() == null) {
-			return false;
-		}
-		ConexFlow cfD = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-				ConexFlowStatus.REFUND);
-		return (cfD != null && cfD.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-	}
-
 	public boolean isShowPreauthorization() {
-		return (!isPreauthorization() && !isCharge());
+		return (!isPreauthorization() && !isSale());
 	}
 
-	public boolean isShowCharge() {
-		return (!isConfirmPreauthorization() && !isCharge());
+	public boolean isShowSale() {
+		return (!isConfirmPreauthorization() && !isSale());
 	}
 
 	public boolean isShowConfirmPreauthorization() {
-		return (isPreauthorization() && !isCharge() && !isConfirmPreauthorization());
+		return (isPreauthorization() && !isSale() && !isConfirmPreauthorization());
 	}
 
 	public boolean isShowCancelation() {
-		return (isPreauthorization() || isCharge() || isConfirmPreauthorization() || isRefund());
+		return (isPreauthorization() || isSale() || isConfirmPreauthorization() || isRefund());
 	}
 
 	public boolean isShowRefund() {
-		return (isCharge() || isConfirmPreauthorization()) && !isRefund();
+		return (isSale() || isConfirmPreauthorization()) && !isRefund();
 	}
 	
 
