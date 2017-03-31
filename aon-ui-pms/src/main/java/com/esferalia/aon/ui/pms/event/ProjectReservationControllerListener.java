@@ -51,6 +51,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 
 		try {
 			controller.getReservationPermission().setReservation(reservation);
+			controller.getReservationConexFlow().setReservation(reservation);
 			controller.resetHotel();
 			controller.resetStartTime();
 			controller.resetEndTime();
@@ -76,6 +77,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 
 		try {
 			controller.getReservationPermission().setReservation(reservation);
+			controller.getReservationConexFlow().setReservation(reservation);
 			controller.resetStartTime();
 			controller.resetEndTime();
 			controller.resetNights();

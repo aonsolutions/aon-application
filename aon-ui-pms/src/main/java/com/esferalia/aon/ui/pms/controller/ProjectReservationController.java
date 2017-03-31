@@ -156,8 +156,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public ProjectReservationConexFlow getReservationConexFlow() {
 		if (reservationConexFlow == null) {
-			ProjectReservation reservation = (ProjectReservation)this.getTo();
-			reservationConexFlow = new ProjectReservationConexFlow(reservation);
+			reservationConexFlow = new ProjectReservationConexFlow();
 		}
 		return reservationConexFlow;
 	}
@@ -1775,8 +1774,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setHrCreditCardNumber(!reservation.isNewCreditCard() ? reservation.getSecureCreditCardNumber() : null);
 		reservation.setHrCreditCardExpirationMonth(reservation.getCreditCardExpirationMonth());
 		reservation.setHrCreditCardExpirationYear(reservation.getCreditCardExpirationYear());
-
-		setReservationConexFlow(null);
 	}
 
 	public List<SelectItem> getCreditCardYears() {

@@ -47,11 +47,8 @@ public class ProjectReservationConexFlow implements Serializable {
 	private Boolean sale;
 	private Boolean refund;
 
-	public ProjectReservationConexFlow(ProjectReservation reservation) {
-		setReservation(reservation);
+	public ProjectReservationConexFlow() {
 		setLogin(UserUtils.getInstance().getLoggedUser().getLogin());
-		setDomain(getDomain(reservation));
-
 		setPreauthorization(null);
 		setConfirmPreauthorization(null);
 		setSale(null);
@@ -63,6 +60,7 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 	public void setReservation(ProjectReservation reservation) {
 		this.reservation = reservation;
+		setDomain(getDomain(reservation));
 	}
 
 	public String getLogin() {
