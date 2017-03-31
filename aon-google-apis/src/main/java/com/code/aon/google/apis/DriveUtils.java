@@ -1050,6 +1050,8 @@ public class DriveUtils implements IBlobManager {
 						return false;
 					}
 					return true;
+				} else if(type.equals("project")){
+					return file.getType() != ProjectAttachmentType.CONEXFLOW.value();
 				}
 			}
 		} else if("project".equals(file.getAonType())){
