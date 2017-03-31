@@ -75,6 +75,9 @@ public class FilesEditor extends ResizeComposite {
 		tabLayoutPanel.add(fileEditor, template.tab(text, icon));
 	}
 	
+	public int getSelectedIndex() {
+		return tabLayoutPanel.getSelectedIndex();
+	}
 	
 
 	// -----------------------------------------------------------------------
