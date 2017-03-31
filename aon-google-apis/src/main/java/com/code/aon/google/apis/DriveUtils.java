@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -1032,27 +1033,28 @@ public class DriveUtils implements IBlobManager {
 			if(file.getType() != -1) rat = RegistryAttachmentType.values()[file.getType()].toString();
 			else rat="";	
 			for (String type : types) {
-					if (rat.equals(type) && type != null) {
-						return true;
-					}
-					if(type.equals("registry")){
-						if(file.getType() == RegistryAttachmentType.LOGO.value()
-							|| file.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
-							|| file.getType() == RegistryAttachmentType.D2_DEPOSIT.value()
+				if (rat.equals(type) && type != null) {
+					return true;
+				}
+				if(type.equals("registry")){
+					if(file.getType() == RegistryAttachmentType.LOGO.value()
+						|| file.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
+						|| file.getType() == RegistryAttachmentType.D2_DEPOSIT.value()
 							
-							|| file.getType() == RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value() // Historial en configuración
-							
-							|| file.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 
-							|| file.getType() == RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value() 
-							
+						|| file.getType() == RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value() // Historial en configuración
+						
+						|| file.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 
+						|| file.getType() == RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value() 
+						
 							|| file.getType() == RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()){
-							return false;
-						}
-						return true;
+						return false;
 					}
+					return true;
+				}
 			}
-		}
-		else{
+		} else if("project".equals(file.getAonType())){
+			return file.getType() != ProjectAttachmentType.CONEXFLOW.value();
+		} else{
 			return true;
 		}
 		return false;
