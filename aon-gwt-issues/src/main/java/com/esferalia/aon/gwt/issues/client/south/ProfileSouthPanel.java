@@ -34,8 +34,7 @@ public class ProfileSouthPanel extends SouthPanel {
         			
         			@Override
         			public void onClick(ClickEvent arg0) {
-        				if(vp.isVisible()) vp.setVisible(false);
-        				else vp.setVisible(true);
+        				vp.setVisible(!vp.isVisible());
         			}
         		});
         		vertical.add(pi);

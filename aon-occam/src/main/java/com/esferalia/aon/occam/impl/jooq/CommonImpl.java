@@ -247,9 +247,9 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
-	public void deleteTag(AONContext ctx, Tag tag){
+	public void deleteTag(AONContext ctx, TagFilter filter){
 		 ctx.getDslContext().transaction(configuration -> 
-		 	TagDAO.deleteTag(ctx, tag));
+		 	TagDAO.deleteTag(ctx, filter));
 	}
 
 	// ------------------ TAX

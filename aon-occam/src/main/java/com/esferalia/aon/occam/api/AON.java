@@ -3510,9 +3510,20 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getCommon().deleteTag(ctx, tag);
+			getCommon().deleteTag(ctx, f -> f.getIdProperty().eq(tag.getId()));
 		} finally {
 			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void deleteTag(String domainName, Integer domainId, String login, TagFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommon().deleteTag(ctx, filter);
+		} finally {
+			if(ctx != null)
 				ctx.close();
 		}
 	}

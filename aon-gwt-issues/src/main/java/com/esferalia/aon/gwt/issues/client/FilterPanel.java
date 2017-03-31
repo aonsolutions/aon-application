@@ -288,7 +288,7 @@ public class FilterPanel extends Composite {
 						if(jsLabel != null){
 							assignedButton.setTitle(jsLabel.getLogin());
 							assignedLabel.setText("Asignado:"+jsLabel.getLogin()+"; ");
-							getIssues().issueFilter.setAssignee(jsLabel.getId().toString());
+							getIssues().issueFilter.setAssignee(jsLabel.getId() + "");
 							getIssues().updateIssueList(issues.issueFilter, false);
 							popup.hide();
 						}

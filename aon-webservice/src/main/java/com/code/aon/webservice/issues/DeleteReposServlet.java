@@ -17,7 +17,6 @@ import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
-import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
@@ -85,17 +84,11 @@ public class DeleteReposServlet extends HttpServlet{
 					}
 				}
 				break;
-			case MSG.LABELS:
-				Tag tag = DB.getTag(domain, userName, pathInfo[4], TagType.TASK_LABEL);
-				DB.deleteTaskTag(domain, userName, f-> f.getTagProperty().eq(tag.getId()));
-				DB.deleteTag(domain, userName, tag);
+			case MSG.TAG:
+				Integer tagId = Integer.parseInt(pathInfo[4]);
+				DB.deleteTaskTag(domain, userName, f-> f.getTagProperty().eq(tagId));
+				DB.deleteTag(domain, userName, tagId);
 				object = new JSONObject();
-				break;
-			case MSG.TYPES:
-				Tag tag2 = DB.getTag(domain, userName, pathInfo[4], TagType.TASK_TYPE);
-				DB.deleteTaskTag(domain, userName, f-> f.getTagProperty().eq(tag2.getId()));
-				DB.deleteTag(domain, userName, tag2);
-				object = new JSONObject();					
 				break;
 			default:
 				break;

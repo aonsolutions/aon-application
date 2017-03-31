@@ -186,6 +186,22 @@ public class Incidence extends Methods{
 						+ issue.getNumber(), "", callback);
 	}
 
+	//-------------------- TAGS
+	
+	public void createTag(String requestData, AsyncCallback<JsLabel> callback){
+		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag", requestData, callback);
+	}
+	
+	public void updateTag(JsLabel tag, String requestData, AsyncCallback<JsLabel> callback){
+		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag/"
+				+ tag.getId(), requestData, callback);
+	}	
+	
+	public void deleteTag(JsLabel tag, AsyncCallback<JsLabel> callback){
+		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag/"
+				+ tag.getId(), "{}", callback);
+	}
+	
 	//-------------------- LABELS
 	
 	public void getLabels(AsyncCallback<JSON<JsLabel>> callback){
@@ -195,20 +211,6 @@ public class Incidence extends Methods{
 	public void getLabels(String filter, AsyncCallback<JSON<JsLabel>> callback){
 		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels?filter=" + filter,callback);
 	}	
-	
-	public void createLabel(String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels", requestData, callback);
-	}	
-	
-	public void updateLabel(JsLabel label, String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels/"
-				+ label.getName(), requestData, callback);
-	}	
-	
-	public void deleteLabel(JsLabel label, AsyncCallback<JsLabel> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels/"
-				+ label.getName(), "{}", callback);
-	}
 	
 	public void addLabel2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
 		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/labels/"+name, "{}", callback);
@@ -227,20 +229,6 @@ public class Incidence extends Methods{
 	public void getTypes(String filter, AsyncCallback<JSON<JsLabel>> callback){
 		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types?filter=" + filter,callback);
 	}	
-	
-	public void createType(String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types", requestData, callback);
-	}	
-	
-	public void updateType(JsLabel label, String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types/"
-				+ label.getName(), requestData, callback);
-	}	
-	
-	public void deleteType(JsLabel label, AsyncCallback<JsLabel> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types/"
-				+ label.getName(), "{}", callback);
-	}
 	
 	public void addType2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
 		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/type/"+name, "{}", callback);

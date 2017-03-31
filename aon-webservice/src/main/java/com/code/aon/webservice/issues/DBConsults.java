@@ -113,10 +113,18 @@ public class DBConsults {
 				.and(f.getTypeProperty().eq(tagType.value())));
 	}
 	
+	public Tag getTag(Domain domain, String login, Integer tagId){
+		return AON.getTag(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(tagId).and(f.getDomainProperty().eq(domain.getId())));
+	}
+	
 	public void deleteTag(Domain domain, String login, Tag tag){
 		AON.deleteTag(domain.getName(), domain.getId(), login, tag); 
 	}
 	
+	public void deleteTag(Domain domain, String login, Integer tagId){
+		AON.deleteTag(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(tagId)); 
+	}
+
 	//-------------------- TASK_TAG
 
 	public Stream<Tag> getTaskLabelStream(Domain domain, String login, TaskTagFilter filter){

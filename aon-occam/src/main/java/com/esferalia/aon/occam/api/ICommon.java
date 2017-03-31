@@ -99,7 +99,7 @@ public interface ICommon {
 	public Stream<Tag> getTagStream(AONContext ctx, TagFilter filter);
 	public Tag insertTag(AONContext ctx, Tag tag);
 	public void updateTag(AONContext ctx, Tag tag);
-	public void deleteTag(AONContext ctx, Tag tag);
+	public void deleteTag(AONContext ctx, TagFilter filter);
 	
 	//TAX
 	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);

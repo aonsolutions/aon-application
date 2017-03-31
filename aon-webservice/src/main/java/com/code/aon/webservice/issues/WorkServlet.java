@@ -176,7 +176,7 @@ public class WorkServlet extends HttpServlet{
 	private JSONObject updateOperator(Domain domain, String userName, Integer id, JSONObject json){
 		Registry registry = AON.getRegistry(domain.getName(), domain.getId(), userName, id)
 			.setName(json.getString("name")).setAlias(json.getString("name"));
-		registry = AON.updateRegistry(domain.getName(), domain.getId(), userName, registry);
+		AON.updateRegistry(domain.getName(), domain.getId(), userName, registry);
 		if(json.opt("email") != null){
 			RegistryMedia rmedia = AON.getRMedia(domain.getName(), domain.getId(), userName,
 				f -> f.getMediaProperty().eq((byte) 4).and(f.getRegistryProperty().eq(id)));
@@ -184,7 +184,11 @@ public class WorkServlet extends HttpServlet{
 				AON.updateRMedia(domain.getName(), domain.getId(), userName,
 						rmedia.setValue(json.getString("email")));
 			} else if(rmedia.getValue() == null){
-				rmedia = new RegistryMedia().setMedia((byte) 4).setValue(json.getString("email"));
+				rmedia = new RegistryMedia()
+						.setRegistry(registry)
+						.setDomain(domain.getId())
+						.setMedia((byte) 4)
+						.setValue(json.getString("email"));
 				AON.insertRMedia(domain.getName(), domain.getId(), userName, rmedia);
 			}
 		}			

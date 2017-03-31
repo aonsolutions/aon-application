@@ -350,33 +350,20 @@ public class ReposServlet extends HttpServlet{
 							registry, principal, url).toJSON();
 				}
 				break;
-			case "labels":
+			case MSG.TAG:
 				if(pathInfo.length > 4){	
-					Tag tag= DB.getTag(domain, userName, pathInfo[4], TagType.TASK_LABEL);
-					tag.setName(json.getString("name"));
+					Integer tagId = Integer.parseInt(pathInfo[4]);
+					Tag tag = DB.getTag(domain, userName, tagId);
+					tag.setName(json.getString(MSG.NAME));
 					AON.updateTag(domainName, domain.getId(), userName, tag);
 					object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
 				} else {
 					Random rnd = new Random();		
-					Tag tag = new Tag().setName(json.getString("name"))
-						.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value())
+					Tag tag = new Tag().setName(json.getString(MSG.NAME))
+						.setDomain(domain.getId())
+						.setType((byte) json.getInt(MSG.TYPE))
 						.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
 					Tag t = AON.insertTag(domain.getName(), domain.getId(), userName, tag);
-					object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
-				}
-				break;
-			case "types":
-				if(pathInfo.length > 4){
-					Tag tag= DB.getTag(domain, userName, pathInfo[4], TagType.TASK_TYPE);
-					tag.setName(json.getString("name"));
-					AON.updateTag(domainName, domain.getId(), userName, tag);
-					object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
-				} else {
-					Random rnd = new Random();		
-					Tag tag = new Tag().setName(json.getString("name"))
-							.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value())
-							.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
-					Tag t = AON.insertTag(domain.getName(), domain.getId(),userName, tag);
 					object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 				}
 				break;

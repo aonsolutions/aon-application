@@ -61,9 +61,9 @@ public class TagDAO {
 				.fetchOne();
 		return new FullTagFiller().apply(tagRecord);
 	}
-	
-	public static void deleteTag(AONContext ctx, Tag tag){
-		ctx.getDslContext().delete(TAG).where(TAG.ID.eq(tag.getId())).execute();
+
+	public static void deleteTag(AONContext ctx, TagFilter filter){
+		ctx.getDslContext().delete(TAG).where(TAG_PROPERTIES.getConditions(filter)).execute();
 	}
 	
 	private static class FullTagFiller implements Function<TagRecord, Tag> {

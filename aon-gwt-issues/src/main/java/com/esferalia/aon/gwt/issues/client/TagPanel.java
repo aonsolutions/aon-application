@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.issues.client;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -270,19 +271,22 @@ public class TagPanel extends Composite {
 			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
-				incidence.createType("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+				if(!"".equals(pi.getValue())){
+					incidence.createTag("{\"name\":\""+ pi.getValue() +"\","
+						+ "\"type\":\""+ TagType.TASK_TYPE.ordinal() +"\"" +"}", new AsyncCallback<JsLabel>() {
 					
-					@Override
-					public void onSuccess(JsLabel result) {
-						typeSelector.removeFromParent();
-						typeSelector = new IronSelector();
-						collapse2.add(typeSelector);
-						loadType();
-					}
+						@Override
+						public void onSuccess(JsLabel result) {
+							typeSelector.removeFromParent();
+							typeSelector = new IronSelector();
+							collapse2.add(typeSelector);
+							loadType();
+						}
 					
-					@Override public void onFailure(Throwable caught) {}
-				});		
-				hide();
+						@Override public void onFailure(Throwable caught) {}
+					});		
+					hide();
+				}
 			}
 		};
 		dialog.center();	
@@ -297,26 +301,29 @@ public class TagPanel extends Composite {
 			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
-				incidence.createLabel("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+				if(!"".equals(pi.getValue())){
+					incidence.createTag("{\"name\":\""+ pi.getValue() +"\","
+						+ "\"type\":\"" + TagType.TASK_LABEL.ordinal() + "\"" +"}", new AsyncCallback<JsLabel>() {
 					
-					@Override
-					public void onSuccess(JsLabel result) {
-						tagSelector.removeFromParent();
-						tagSelector = new IronSelector();
-						collapse3.add(tagSelector);
-						loadTag();					
-					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
-				hide();
+						@Override
+						public void onSuccess(JsLabel result) {
+							tagSelector.removeFromParent();
+							tagSelector = new IronSelector();
+							collapse3.add(tagSelector);
+							loadTag();					
+						}	
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+					hide();
+				}
 			}
 		};
 		dialog.center();
 	}
 	
 	void onClickRemoveTypeButton(ClickEvent event, JsLabel label) {
-		incidence.deleteType(label, new AsyncCallback<JsLabel>() {
+		incidence.deleteTag(label, new AsyncCallback<JsLabel>() {
 			
 			@Override public void onSuccess(JsLabel result) {
 				typeSelector.removeFromParent();
@@ -330,7 +337,7 @@ public class TagPanel extends Composite {
 	}
 	
 	void onClickRemoveTagButton(ClickEvent event, JsLabel label) {
-		incidence.deleteLabel(label, new AsyncCallback<JsLabel>() {
+		incidence.deleteTag(label, new AsyncCallback<JsLabel>() {
 			
 			@Override public void onSuccess(JsLabel result) {
 				tagSelector.removeFromParent();
@@ -351,19 +358,21 @@ public class TagPanel extends Composite {
 			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
-				incidence.updateType(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+				if(!"".equals(pi.getValue())){
+					incidence.updateTag(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
 					
-					@Override
-					public void onSuccess(JsLabel result) {
-						typeSelector.removeFromParent();
-						typeSelector = new IronSelector();
-						collapse2.add(typeSelector);
-						loadType();					
-					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
-				hide();
+						@Override
+						public void onSuccess(JsLabel result) {
+							typeSelector.removeFromParent();
+							typeSelector = new IronSelector();
+							collapse2.add(typeSelector);
+							loadType();					
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+					hide();
+				}
 			}
 		};
 		dialog.center();	
@@ -377,19 +386,21 @@ public class TagPanel extends Composite {
 			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
-				incidence.updateLabel(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+				if(!"".equals(pi.getValue())){
+					incidence.updateTag(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
 					
-					@Override
-					public void onSuccess(JsLabel result) {
-						tagSelector.removeFromParent();
-						tagSelector = new IronSelector();
-						collapse3.add(tagSelector);
-						loadTag();					
-					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
-				hide();
+						@Override
+						public void onSuccess(JsLabel result) {
+							tagSelector.removeFromParent();
+							tagSelector = new IronSelector();
+							collapse3.add(tagSelector);
+							loadTag();					
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+					hide();
+				}
 			}
 		};
 		dialog.center();	

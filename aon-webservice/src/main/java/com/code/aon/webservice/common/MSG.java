@@ -99,6 +99,7 @@ public class MSG {
 	public static final String STATUS = "status";
 	public static final String STATUSES  = "statuses"; 
 	public static final String SUPPLIER  = "supplier";
+	public static final String TAG  = "tag";
 	public static final String TITLE = "title";
 	public static final String TYPE = "type";
 	public static final String TYPES = "types";
