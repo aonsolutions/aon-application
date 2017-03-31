@@ -448,19 +448,34 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void refreshEntireReservation(ActionEvent event) {
 		try {
 			refresh(event);
-			IController reservationGuestController = FormUtil.getController(IPmsConstants.RESERVATION_GUEST_CONTROLLER_NAME);
-			reservationGuestController.onSearch(event);
-			IController reservationRoomController = FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
-			reservationRoomController.onSearch(event);
-			IController reservationServiceController = FormUtil.getController(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
-			reservationServiceController.onSearch(event);
-			IController reservationAttachController = FormUtil.getController(IPmsConstants.RESERVATION_ATTACH_CONTROLLER_NAME);
-			reservationAttachController.onSearch(event);
+			refreshGuests(event);
+			refreshRooms(event);
+			refreshAttachments(event);
 			synchronizeAddedPojo();
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+
+	public void refreshGuests(ActionEvent event) {
+		IController reservationGuestController = FormUtil.getController(IPmsConstants.RESERVATION_GUEST_CONTROLLER_NAME);
+		reservationGuestController.onSearch(event);
+	}
+
+	public void refreshRooms(ActionEvent event) {
+		IController reservationRoomController = FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
+		reservationRoomController.onSearch(event);
+	}
+
+	public void refreshServices(ActionEvent event) {
+		IController reservationServiceController = FormUtil.getController(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+		reservationServiceController.onSearch(event);
+	}
+
+	public void refreshAttachments(ActionEvent event) {
+		IController reservationAttachController = FormUtil.getController(IPmsConstants.RESERVATION_ATTACH_CONTROLLER_NAME);
+		reservationAttachController.onSearch(event);
 	}
 
 	public List<SelectItem> getReservationTimes() {
@@ -818,17 +833,15 @@ public class ProjectReservationController extends BasicController implements IPm
 			sendInventoryData(reservation, inventoryItems, reservation.getStartDate(), DateUtils.addDays(reservation.getEndDate(), -1));
 		}
 
-		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
-    	reservationRoomController.onSearch(event);
-		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
-    	reservationServiceController.onSearch(event);
-
-		if (isConfirmNoShow() && reservation.isAgencyHolder()) {
-			sendAgencyNoShowEmail(reservation);
+		refreshRooms(event);
+		refreshServices(event);
+		if (!reservation.isBlankToken() && !reservation.isNoInvoiceable()) {
+			getReservationConexFlow().checkPreauthorization();
+			refreshAttachments(event);
 		}
 
-		if (!reservation.isBlankToken()) {
-			getReservationConexFlow().checkPreauthorization();
+    	if (isConfirmNoShow() && reservation.isAgencyHolder()) {
+			sendAgencyNoShowEmail(reservation);
 		}
 	}
 
@@ -1617,8 +1630,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				reservation.setAdvancedAmount(null);
 			}
 			if (getInvoiceToRectify().isService()) {
-				IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
-				reservationServiceController.onSearch(null);
+				refreshServices(event);
 				reservation.setTouristTaxPayed(null);
 			}
 		} catch (ManagerBeanException ex) {
@@ -1855,13 +1867,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 		setShowConexFlowWindow(false);
-		IController reservationAttachController = FormUtil.getController(IPmsConstants.RESERVATION_ATTACH_CONTROLLER_NAME);
-		reservationAttachController.onSearch(event);
-	}
-
-	public void refreshAttachments(ActionEvent event) {
-		IController reservationAttachController = FormUtil.getController(IPmsConstants.RESERVATION_ATTACH_CONTROLLER_NAME);
-		reservationAttachController.onSearch(event);
+		refreshAttachments(event);
 	}
 
 }
