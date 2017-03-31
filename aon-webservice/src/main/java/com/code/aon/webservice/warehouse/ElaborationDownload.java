@@ -29,8 +29,11 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.itextpdf.text.BadElementException;
@@ -93,7 +96,7 @@ public class ElaborationDownload extends HttpServlet {
 
 		// --------------- //
 
-		Attach attach = AON.getAttach(
+		Attach logoAttach = AON.getAttach(
 				domain.getName(),
 				domain.getId(),
 				login,
@@ -102,8 +105,27 @@ public class ElaborationDownload extends HttpServlet {
 						.and(f.getDomainProperty().eq(domain.getId())),
 				AttachType.REGISTRY);
 
-		File file = createPdf(elaborationList, company, address,
-				attach.getData());
+		Elaboration elaboration = elaborationList.get(0);
+		SalesDetail salesDetail = null;
+		Sales sales = null;
+		if(elaboration.getSourceId()!=null){
+			ElaborationSource source = ElaborationSource.safeValueOf(elaboration.getSource());
+			if(source==ElaborationSource.SALES){
+				salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, 
+						f -> f.getIdProperty().eq(elaboration.getSourceId()))
+						.findFirst().orElse(null);
+				if(salesDetail!=null && salesDetail.getSales()>0){
+					int salesId = salesDetail.getSales(); 
+					sales = AON.getSales(domain.getName(), domain.getId(), login, 
+							f -> f.getIdProperty().eq(salesId));
+				}
+			} else if(source==ElaborationSource.PURCHASE){
+				// TODO purchase source of elaboration
+			}
+		}
+		
+		File file = createPdf(elaboration, sales, salesDetail, company, address,
+				logoAttach.getData());
 
 		Utils.addCorsHeader(resp);
 		resp.setContentType(MimeType.PDF.getName());
@@ -115,7 +137,7 @@ public class ElaborationDownload extends HttpServlet {
 
 		fileInpurOs.close();
 	}
-
+	
 	private Optional<Item> getItem(Domain domain, String login, Integer itemId,
 			Integer productId) {
 		Optional<Item> optional = AON.getItemOptional(
@@ -141,7 +163,8 @@ public class ElaborationDownload extends HttpServlet {
 	/*
 	 * PDF METHODS
 	 */
-	public static File createPdf(List<Elaboration> elaborationList,
+	public static File createPdf(Elaboration elaboration,
+			Sales sales, SalesDetail salesDetail,
 			Company company, RAddress address, byte[] image) {
 		File archivoPDF = null;
 		try {
@@ -155,15 +178,18 @@ public class ElaborationDownload extends HttpServlet {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
 
 			document.open();
-			document.add(getHeader(elaborationList.get(0), company, address,
+			document.add(getHeader(elaboration, company, address,
 					image));
 			document.add(new Paragraph(" "));
-			document.add(getSubHeader(elaborationList.get(0)));
+			document.add(getSubHeader(elaboration));
 			document.add(new Paragraph(" "));
 
-			Paragraph order = new Paragraph(" ");
-			order.add(getSeparator());
-			document.add(order);
+			if(salesDetail!=null){
+				Paragraph salesPdf = getSales(sales, salesDetail);
+				document.add(getSeparator());
+				document.add(salesPdf);
+				document.add(getSeparator());
+			}
 
 			document.add(new Paragraph(" "));
 			document.add(new Paragraph(" "));
@@ -286,6 +312,57 @@ public class ElaborationDownload extends HttpServlet {
 		return cell;
 	}
 
+	private static Paragraph getSales(Sales sales, SalesDetail salesDetail){
+		Paragraph paragraph = new Paragraph();
+		
+		PdfPTable tableM = new PdfPTable(1);
+		tableM.setWidthPercentage(100);
+		PdfPTable table = new PdfPTable(1);
+		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		table.setWidthPercentage(100);
+		
+
+		table.addCell(getDottedSeparator());
+		
+		PdfPCell cell1 = new PdfPCell(new Phrase("Articulo",getFont1()));
+		cell1.setBorder(PdfPCell.NO_BORDER);
+		PdfPCell cell2 = new PdfPCell(new Phrase("Formato",getFont1()));
+		cell2.setBorder(PdfPCell.NO_BORDER);
+		PdfPCell cell3 = new PdfPCell(new Phrase("Cantidad",getFont1()));
+		cell3.setBorder(PdfPCell.NO_BORDER);
+		
+		PdfPTable detail = new PdfPTable(3);
+		float[] medidaCeldas2 = {4f, 1f, 1f};
+		try {
+			detail.setWidths(medidaCeldas2);
+		} catch (DocumentException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+		
+		detail.addCell(cell1);
+		detail.addCell(cell2);
+		detail.addCell(cell3);
+		detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+
+		
+		PdfPTable reception = new PdfPTable(2);
+		PdfPCell sign = new PdfPCell(new Phrase("Firma", getFont1()));
+		sign.setBorder(PdfPCell.NO_BORDER);
+		reception.addCell(sign);
+
+		PdfPCell date = new PdfPCell(new Phrase("Fecha", getFont1()));
+		date.setBorder(PdfPCell.NO_BORDER);
+		reception.addCell(date);
+		
+		table.addCell(detail);
+		table.addCell(reception);
+		
+		tableM.addCell(table);
+		paragraph.add(tableM);
+		return paragraph;
+	}
+	
+	
 	/*
 	 * SEPARATORS
 	 */
