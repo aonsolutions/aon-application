@@ -305,6 +305,7 @@ public class SalaryDraftObject implements IContextProvider {
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
 		employeeCalendarDraftObjectData.clearDraftHours();
 		
@@ -356,6 +357,7 @@ public class SalaryDraftObject implements IContextProvider {
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
 
 		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
@@ -1076,7 +1078,7 @@ public class SalaryDraftObject implements IContextProvider {
 	
 	private void addCalendarDraft(ArrayList<StringVariable> variablesList) {
 		for (StringVariable stringVariable : variablesList){
-				salaryDraft.addDraftVariable(stringVariable);
+			salaryDraft.addDraftVariable(stringVariable);
 		}
 	}
 

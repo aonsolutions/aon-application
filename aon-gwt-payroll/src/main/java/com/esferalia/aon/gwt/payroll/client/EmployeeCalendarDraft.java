@@ -784,12 +784,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		if (null != cellsDates[row][col] && calendarEmployeeInfo.getStartDateContract().after(cellsDates[row][col]))
 			return;
-		if (cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
+		//if (cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
+		if (cellsType[row][col].getType().equals(DayType.BAJAIT))
 			return;
 	
 		//Pulsacion celda con CTRL
 		if (event.isControlKeyDown()) { 
-			if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+			//if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+			if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
 				cells[row][col].select(row, col);
 		
 		//Pulsacion celda con SHIFT
@@ -805,8 +807,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				while (posicionIncial != posicionFin){
-					if (!(cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.BAJAIT)
-							|| cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))){
+//					if (!(cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.BAJAIT)
+//							|| cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))){
+					if (!cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.BAJAIT)){
 						cells[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)]
 								.select(calcularFila(posicionIncial+1), calcularColumna(posicionIncial+1));
 					}
@@ -834,10 +837,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			if (esMes(row, col)){
 				for(int i = 1; i<38; i++)
-					if (!(cellsType[row][i].getType().equals(DayType.BAJAIT) || cellsType[row][i].getType().equals(DayType.NOWORKINGDAY)))
+					//if (!(cellsType[row][i].getType().equals(DayType.BAJAIT) || cellsType[row][i].getType().equals(DayType.NOWORKINGDAY)))
+					if (!cellsType[row][i].getType().equals(DayType.BAJAIT))
 						cells[row][i].select(row, i);
 			}else
-				if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+				//if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+				if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
 					cells[row][col].select(row, col);
 			
 			oldHourSelected = pos;
@@ -1584,20 +1589,61 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	private void aplicarEstilosDiasSeleccionadios(DayType dayType) {
 		limpiarEstilos(fechasSelecciondas.getSelectedList());
-		for (Date date : fechasSelecciondas.getSelectedList()) {
-			int pos = calcularPosicionFecha(date);
-			if(pos != -1){
-				int column = calcularColumna(pos);
-				int row = calcularFila(pos);
-				cells[row][column].unSelect(row, column);
-				cellsType[row][column].setAsType(dayType, row, column);
-				calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], dayType);
+		if(fechasSelecciondas.getSelectedList().size()==1){
+			for (Date date : fechasSelecciondas.getSelectedList()) {
+				if(esFinde(date) && dayType.equals(DayType.HOLIDAY)){	
+					int pos = calcularPosicionFecha(date);
+					if(pos != -1){
+						int column = calcularColumna(pos);
+						int row = calcularFila(pos);
+						cells[row][column].unSelect(row, column);
+						cellsType[row][column].setAsType(dayType, row, column);
+						calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], dayType);
+					}
+				}else if(!esFinde(date)){
+					int pos = calcularPosicionFecha(date);
+					if(pos != -1){
+						int column = calcularColumna(pos);
+						int row = calcularFila(pos);
+						cells[row][column].unSelect(row, column);
+						cellsType[row][column].setAsType(dayType, row, column);
+						calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], dayType);
+					}
+				}
+			}	
+		}else{
+			HashMap<Date, DayType> composite = new HashMap<Date, DayType>();
+			for (Date date : fechasSelecciondas.getSelectedList()) {
+				if(esFinde(date) && dayType.equals(DayType.HOLIDAY)){
+					int pos = calcularPosicionFecha(date);
+					if(pos != -1){
+						int column = calcularColumna(pos);
+						int row = calcularFila(pos);
+						cells[row][column].unSelect(row, column);
+						cellsType[row][column].setAsType(dayType, row, column);
+						composite.put(date, dayType);
+					}
+				}else if(!esFinde(date)){
+					int pos = calcularPosicionFecha(date);
+					if(pos != -1){
+						int column = calcularColumna(pos);
+						int row = calcularFila(pos);
+						cells[row][column].unSelect(row, column);
+						cellsType[row][column].setAsType(dayType, row, column);
+						composite.put(date, dayType);
+					}
+				}
 			}
-		}	
+			calendarEmployeeInfo.setTypeByDay(composite);
+		}
 		fechasSelecciondas.clear();
 		
 	}
 	
+	private boolean esFinde(Date date) {
+		return date.getDay() == 0 || date.getDay() == 6;
+	}
+
 	private void aplicarNoLaborableEstilosDiasSeleccionadios(double hora, DayType nonWorkingDay) {
 		limpiarEstilos(fechasSelecciondas.getSelectedList());
 		List<Date> diasNoLaborables = new LinkedList<Date>();
@@ -1735,7 +1781,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if (pos != -1){
 				int col = calcularColumna(pos);
 				int row = calcularFila(pos);
-				if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+				//if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+				if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
 					cells[row][col].select(row, col);
 				else
 					if(fechasSelecciondas.isSelected(date))

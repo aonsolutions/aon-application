@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -449,6 +450,66 @@ public class EmployeeCalendarDraftObjectData {
 		return variablesList;
 	}
 	
+	//Creacion variables del coeficienteERE
+		public ArrayList<StringVariable> getVariablesListHolidays(Date startDate, Date endDate) {
+
+			ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+			List<Date> orderDraftDatesHolidays = getHolidaysDates();
+			Collections.sort(orderDraftDatesHolidays);
+			
+			CalendarVariable var = null;
+			Date dateBefore = null;
+			String name = "DIAS_VACACIONES";
+			Integer contDiasVacaciones = 0;
+			
+			for(Date date : orderDraftDatesHolidays){
+				//Filtrar que este dentro del rango que se pasa de fechas
+				if(date.before(startDate))
+					continue;
+				if(date.after(endDate))
+					continue;
+				
+				if(isNext(date, dateBefore)){
+					contDiasVacaciones++;
+					var.setExpression(Integer.toString(contDiasVacaciones));
+					var.setEndDate(date);
+					dateBefore = DateUtils.copyDateOnly(date);
+					continue;
+				}else{
+					//Buscar cómo meter el primer caso
+					if(var != null){
+						variablesList.add(var);
+						contDiasVacaciones=0;
+					}	
+					
+					dateBefore = DateUtils.copyDateOnly(date);
+					contDiasVacaciones++;
+					var = new CalendarVariable();
+					var.setImplicit(false);
+					var.setScope(Scope.SALARY); // DRAFT
+					var.setName(name);
+					var.setEndDate(date);
+					var.setStartDate(date);
+					var.setExpression(Integer.toString(contDiasVacaciones));
+				}	
+			}
+			
+			if(var != null){
+				variablesList.add(var);
+			}
+			
+			return variablesList;
+		}
+	
+	private List<Date> getHolidaysDates() {
+		List<Date> holidaysDates = new ArrayList<>();
+		for(Entry<Date,DayType> e : draftMapaDiasTipo.entrySet()){
+			if(e.getValue().equals(DayType.HOLIDAY))
+				holidaysDates.add(e.getKey());
+		}
+		return holidaysDates;
+	}
+
 	//Comprobar si el son consecutivos
 	private boolean isNext(Date date, Date dateBefore) {
 		if(dateBefore == null)
