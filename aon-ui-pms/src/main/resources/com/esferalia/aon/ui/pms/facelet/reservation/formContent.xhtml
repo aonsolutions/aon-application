@@ -318,9 +318,10 @@
 				</rich:toolTip>
 			</aon:div>
 			<aon:div style="display:inline;" 
-				rendered="#{!reservation.to.blankToken and !reservation.to.invoiced and (!reservation.to.cancelled or !reservation.to.noInvoiceable)}">
+				rendered="#{!reservation.to.blankToken and !reservation.to.invoiced and (!reservation.to.cancelled or !reservation.to.noInvoiceable) and
+							reservation.to.conexFlow}">
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey"
-					rendered="#{reservation.to.lastConexFlowOperation == null or reservation.to.conexFlowCreateToken or reservation.to.conexFlowPreauthorizedExpired}" />
+					rendered="#{reservation.to.conexFlowCreateToken or reservation.to.conexFlowCancelOk or reservation.to.conexFlowPreauthorizedExpired}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green"
 					rendered="#{reservation.to.conexFlowPreauthorizedCheck}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green-ok"
@@ -338,10 +339,13 @@
 						rendered="#{reservation.to.conexFlowFail}" />
 				</aon:if>
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-blue"
-					rendered="#{reservation.to.conexFlowTransactionOk}" />
+					rendered="#{reservation.to.conexFlowSaleOk}" />
+				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-purple"
+					rendered="#{reservation.to.conexFlowRefundOk}" />
 			</aon:div>
 			<aon:div style="display:inline;" 
-				rendered="#{!reservation.to.blankToken and (reservation.to.invoiced or (reservation.to.cancelled and reservation.to.noInvoiceable))}">
+				rendered="#{!reservation.to.blankToken and (reservation.to.invoiced or (reservation.to.cancelled and reservation.to.noInvoiceable) or
+							!reservation.to.conexFlow)}">
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey" />
 			</aon:div>
 		</aon:div>

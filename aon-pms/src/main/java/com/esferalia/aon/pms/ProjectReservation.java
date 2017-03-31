@@ -246,69 +246,70 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	@Transient
 	public boolean isConexFlowCreateToken() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_CREATE_TOKEN_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
 	public boolean isConexFlowRemoveToken() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_REMOVE_TOKEN_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
 	public boolean isConexFlowPreauthorizedCheck() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_PREAUTH_CHECK_OK_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
 	public boolean isConexFlowPreauthorizedOk() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		Date dueDate = DateUtils.addDays(new Date(), -7);
 		return lastCfOperation.matches(CONEXFLOW_PREAUTH_OK_PATTERN.replace("%", "(.*)")) && getLastConexFlowOperation().getAttachDate().after(dueDate);
 	}
 
 	@Transient
 	public boolean isConexFlowPreauthorizedExpired() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		Date dueDate = DateUtils.addDays(new Date(), -7);
 		return lastCfOperation.matches(CONEXFLOW_PREAUTH_OK_PATTERN.replace("%", "(.*)")) && getLastConexFlowOperation().getAttachDate().before(dueDate);
 	}
 
 	@Transient
 	public boolean isConexFlowPreauthorizedCancelled() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_PREAUTH_CANCELLED_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
 	public boolean isConexFlowFail() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_FAIL_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
 	public boolean isConexFlowSaleOk() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_CONFIRM_OK_PATTERN.replace("%", "(.*)")) || 
 				lastCfOperation.matches(CONEXFLOW_SALE_OK_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
 	public boolean isConexFlowRefundOk() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_REFUND_OK_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
-	public boolean isConexFlowTransactionOk() {
-		return isConexFlowSaleOk() || isConexFlowRefundOk();
+	public boolean isConexFlowCancelOk() {
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_CANCEL_OK_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
 	public double getConexFlowOperationAmount() {
-		String lastCfOperation = (getLastConexFlowOperation() != null) ? getLastConexFlowOperation().getDescription() : "";
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		if (StringUtils.indexOf(lastCfOperation, "_", StringUtils.indexOf(lastCfOperation, "#")) < 0) {
 			return NumberUtils.toDouble(StringUtils.substringAfterLast(lastCfOperation, "#"));
 		} else {

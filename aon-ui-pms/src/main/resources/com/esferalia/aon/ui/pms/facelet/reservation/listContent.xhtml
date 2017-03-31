@@ -210,9 +210,9 @@
 			columnClasses="aon-width-20 aon-noborder aon-nopadding,aon-width-auto aon-noborder aon-nopadding">
 			<aon:div>
 				<aon:outputText	value="&#160;" rendered="#{to.blankToken}" />
-				<aon:div rendered="#{!to.blankToken and !to.invoiced and (!to.cancelled or !to.noInvoiceable)}">
+				<aon:div rendered="#{!to.blankToken and !to.invoiced and (!to.cancelled or !to.noInvoiceable) and to.conexFlow}">
 					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey"
-						rendered="#{to.lastConexFlowOperation == null or to.conexFlowCreateToken or to.conexFlowPreauthorizedExpired}" />
+						rendered="#{to.conexFlowCreateToken or to.conexFlowCancelOk or to.conexFlowPreauthorizedExpired}" />
 					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green"
 						rendered="#{to.conexFlowPreauthorizedCheck}" />
 					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-green-ok"
@@ -220,12 +220,14 @@
 					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-red"
 						rendered="#{to.conexFlowFail}" />
 					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-blue"
-						rendered="#{to.conexFlowTransactionOk}" />
+						rendered="#{to.conexFlowSaleOk}" />
+					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-purple"
+						rendered="#{to.conexFlowRefundOk}" />
 				</aon:div>
-				<aon:div rendered="#{!to.blankToken and (to.invoiced or (to.cancelled and to.noInvoiceable))}">
+				<aon:div rendered="#{!to.blankToken and (to.invoiced or (to.cancelled and to.noInvoiceable) or !to.conexFlow)}">
 					<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey" />
 				</aon:div>
-				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" rendered="#{to.lastConexFlowOperation != null}">
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" rendered="#{to.conexFlow}">
 					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70 aon-text-left, aon-noborder aon-bold aon-text-left">
 						<aon:outputText	value="#{bundle.aon_date}:" styleClass="aon-margin-left" />
 						<aon:outputText	value="#{to.lastConexFlowOperation.attachDate}">
