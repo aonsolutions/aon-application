@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -49,6 +50,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -60,6 +62,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -445,9 +448,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		protected void onJsFileDblClick(int x, int y, JsFile... jsFiles) {
 			FilesEditor filesEditor = new FilesEditor();
-
+			
+			Button basesButton = new Button("SLD-FICHERO DE BASES");
+			basesButton.setStyleName("aon-finding-toolbar-item");
+			basesButton.addStyleName(AON.AON_ICON_SEGSOCIAL_SMALL);
+			basesButton.addClickHandler( e-> bases(jsFiles[filesEditor.getSelectedIndex()], this::onBases ));
+			
+			filesEditor.add(basesButton);
+			
 			for (JsFile jsFile : jsFiles) {
-
+				
 				FileEditor fileEditor = new FileEditor(false);
 				fileEditor.setMode("text/xml");
 				fileEditor.setFoldGutter(true);
@@ -1252,6 +1262,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return enterprises.getEnterprise(workplace).getBankAccounts();
 	}
 
+
 	// ------------------------------------------------------------------------
 
 	protected static void submit(String url, Map<String, Collection<String>> datas, Collection<JsFile> jsFiles,
@@ -1382,6 +1393,27 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				});
 
 	}
+	
+	protected void bases(JsFile jsFile, Consumer<JsBasesResult> onBases) {
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
+				Collections.emptyMap(),
+				Collections.singletonList(jsFile),
+				new AsyncCallback<CretaService.JsBasesResult>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsBasesResult result) {
+						onBases.accept(result);
+					}
+				});
+		
+	}
+	
 	// ------------------------------------------------------------------------
 
 	private static String getDescription(CCC ccc, String fullccc) {
