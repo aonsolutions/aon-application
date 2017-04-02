@@ -1135,7 +1135,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		dumpEvents();
 		loadContentAssistManager();
 		
-		setReadOnly(object.isSystem() && !object.isMine() );
+		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
 
 	}
 
