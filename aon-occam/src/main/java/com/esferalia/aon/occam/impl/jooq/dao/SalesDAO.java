@@ -416,6 +416,7 @@ public class SalesDAO {
 			sales.setSeller(r.getValue(SALES.SELLER));
 			sales.setDiscountExpr(r.getValue(SALES.DISCOUNT_EXPR));
 			sales.setIssueDate(r.getValue(SALES.ISSUE_DATE));
+			sales.setDeliveryDate(r.getValue(SALES.DELIVERY_DATE));
 			sales.setPayMethod(r.getValue(SALES.PAY_METHOD));
 			sales.setDocumentType((int) r.getValue(SALES.DOCUMENT_TYPE));
 			sales.setSecurityLevel((int) r.getValue(SALES.SECURITY_LEVEL));

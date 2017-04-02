@@ -38,6 +38,7 @@ public class Sales implements Serializable {
 	private String bankAlias;
 	private String bic;
 	private boolean purchaseGenerated;
+	private Date deliveryDate;
 	private Integer carrier;
 	private String shippingAlternativeAddress;
 	private String shippingAlternativeAddress2;
@@ -209,6 +210,12 @@ public class Sales implements Serializable {
 	}
 	public void setPurchaseGenerated(boolean purchaseGenerated) {
 		this.purchaseGenerated = purchaseGenerated;
+	}
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 	public Integer getCarrier() {
 		return carrier;
