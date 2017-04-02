@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,8 @@ public class ElaborationDownload extends HttpServlet {
 	private static final Logger LOGGER = Logger
 			.getLogger(ElaborationDownload.class.getName());
 
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	private Integer elaborationId = null;
 
 	@Override
@@ -285,7 +288,7 @@ public class ElaborationDownload extends HttpServlet {
 		c2.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c2);
 
-		PdfPCell c3 = new PdfPCell(new Phrase(elaboration.getDate().toString(),
+		PdfPCell c3 = new PdfPCell(new Phrase(dateFormat.format(elaboration.getDate()),
 				getFont2()));
 		c3.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c3);
@@ -343,7 +346,7 @@ public class ElaborationDownload extends HttpServlet {
 		PdfPCell date = new PdfPCell(new Phrase("Fecha",getFont1()));
 		date.setBorder(PdfPCell.NO_BORDER);
 		header.addCell(date);
-		header.addCell(new Phrase(elaboration.getDate().toString(),getFont2()));
+		header.addCell(new Phrase(dateFormat.format(elaboration.getDate()),getFont2()));
 		
 		PdfPCell quantity = new PdfPCell(new Phrase("Cantidad",getFont1()));
 		quantity.setBorder(PdfPCell.NO_BORDER);
@@ -399,41 +402,44 @@ public class ElaborationDownload extends HttpServlet {
 		elaborationDetailList.forEach(elaborationDetail -> {
 			String groupHeader = elaborationDetail.getQuantity() + " uds. ";
 			groupHeader += "(" + elaborationDetail.getItem().getSerialNumber() + ") ";
-			groupHeader += elaborationDetail.getDate().toString();
+			groupHeader += dateFormat.format(elaborationDetail.getDate());
 			tableM.addCell(new Phrase(groupHeader,getFont2()));
 
 			PdfPTable table = new PdfPTable(1);
 			table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 			table.setWidthPercentage(100);
-			PdfPTable detail = new PdfPTable(6);
-			detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-			float[] medidaCeldas = {0.5f, 0.5f, 0.5f, 2.5f, 0.5f, 1.5f};
-			try {
-				detail.setWidths(medidaCeldas);
-			} catch (DocumentException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
-			}
 			
 			List<ElaborationDetailComposition> list = compositionMap.get(elaborationDetail.getId());
 			list.forEach(composition -> {
+				PdfPTable detail = new PdfPTable(6);
+				detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+				float[] medidaCeldas = {0.5f, 0.5f, 0.5f, 2.5f, 0.5f, 1.5f};
+				try {
+					detail.setWidths(medidaCeldas);
+				} catch (DocumentException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage());
+				}
+				
 				PdfPCell quantity = new PdfPCell(new Phrase("Cantidad",getFont1()));
 				quantity.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(quantity);
 				detail.addCell(new Phrase(String.valueOf(composition.getQuantity()),getFont2()));
+				
 				PdfPCell item = new PdfPCell(new Phrase("Producto",getFont1()));
 				item.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(item);
 				detail.addCell(new Phrase(String.valueOf(composition.getItem().getProduct()!=null?composition.getItem().getProduct().getName():""),getFont2()));
+				
 				PdfPCell warehouse = new PdfPCell(new Phrase("Almacén",getFont1()));
 				warehouse.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(warehouse);
 				detail.addCell(new Phrase(composition.getWarehouse()!=null?composition.getWarehouse().getName():"",getFont2()));
+				
 				table.addCell(detail);
 			});
 			
 			tableM.addCell(table);
 		});
-		
 		
 		paragraph.add(tableM);
 		return paragraph;
@@ -468,7 +474,7 @@ public class ElaborationDownload extends HttpServlet {
 		destinatario.addCell(ca);
 		
 		destinatario.addCell(new Phrase("Fecha pedido:",getFont1()));
-		destinatario.addCell(new Phrase(sales.getIssueDate().toString(),getFont2()));
+		destinatario.addCell(new Phrase(sales.getIssueDate()!=null?dateFormat.format(sales.getIssueDate()):"",getFont2()));
 		PdfPCell cn = new PdfPCell(new Phrase("NIF",getFont1()));
 		cn.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(cn);
@@ -477,7 +483,7 @@ public class ElaborationDownload extends HttpServlet {
 		destinatario.addCell(cd);
 		
 		destinatario.addCell(new Phrase("Fecha entrega:",getFont1()));
-		destinatario.addCell(new Phrase(sales.getDeliveryDate().toString(),getFont2()));
+		destinatario.addCell(new Phrase(sales.getDeliveryDate()!=null?dateFormat.format(sales.getDeliveryDate()):"",getFont2()));
 		destinatario.addCell("");
 		PdfPCell cbc2 = new PdfPCell(new Phrase("",getFont2()));
 		cbc2.setBorder(PdfPCell.NO_BORDER);
@@ -546,13 +552,6 @@ public class ElaborationDownload extends HttpServlet {
 		return font;
 	}
 
-	private static Font getBoeInfoFont() {
-		Font font = new Font();
-		font.setSize(13);
-		font.setStyle(Font.BOLD);
-		return font;
-	}
-
 	private static Font getFont1() {
 		Font font1 = new Font();
 		font1.setSize(8);
@@ -564,13 +563,6 @@ public class ElaborationDownload extends HttpServlet {
 		Font font2 = new Font();
 		font2.setSize(8);
 		return font2;
-	}
-
-	private static Font getFont3() {
-		Font font1 = new Font();
-		font1.setSize(12);
-		font1.setStyle(Font.BOLD);
-		return font1;
 	}
 
 }

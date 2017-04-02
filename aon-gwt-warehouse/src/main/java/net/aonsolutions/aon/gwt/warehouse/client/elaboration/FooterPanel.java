@@ -118,9 +118,7 @@ public class FooterPanel extends Composite {
 //			Window.alert(ElaborationSource.safeValueOf(source).name());
 //		}
 		if(sourceId!=null){
-			Label label = new Label();
-			label.setText("Origen de la elaboracion: " + sourceId);
-			sourcePanel.add(label);
+			sourcePanel.add(new Label("Origen de la elaboracion: " + sourceId));
 			API.getWarehouse().getSalesDetail(sourceId, new AsyncCallback<JSON<JsSalesDetail>>() {
 				
 				@Override
