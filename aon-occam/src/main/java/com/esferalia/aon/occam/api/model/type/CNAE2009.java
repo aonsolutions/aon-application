@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 // Á --> \u00C1 á --> \u00E1
 // É --> \u00C9 é --> \u00E9
 // Í --> \u00CD í --> \u00ED
@@ -661,6 +663,7 @@ public enum CNAE2009 implements Serializable {
 	}
 	
 	public static CNAE2009 valueOfCode(String code) {
+		if (AonStringUtils.isBlank(code)) return null; 
 		for (CNAE2009 cnae : CNAE2009.values() ) {
 			if (cnae.getCode().equals(code)) {
 				return cnae;
