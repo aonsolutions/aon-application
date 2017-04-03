@@ -242,6 +242,7 @@ public class PurchaseDAO {
 					PURCHASE_DETAIL.STATUS, PURCHASE_DETAIL.PROPOSAL_DETAIL,
 					PURCHASE_DETAIL.DELIVERED, PURCHASE_DETAIL.DELIVERY_DATE, 
 					PURCHASE_DETAIL.SOURCE, PURCHASE_DETAIL.SOURCE_ID,
+					PURCHASE_DETAIL.CARRIER, PURCHASE_DETAIL.CARRIER_PACKING,
 					PURCHASE_DETAIL.CREATION_USER, PURCHASE_DETAIL.CREATION_DATE,
 					PURCHASE_DETAIL.MODIFICATION_USER, PURCHASE_DETAIL.MODIFICATION_DATE)
 			.values(detail.getDomain(), detail.getPurchaseId(),
@@ -252,6 +253,7 @@ public class PurchaseDAO {
 					detail.getStatus().value(), detail.getProposalDetail(), 
 					detail.getDelivered(), AonDateUtils.toSql(detail.getDeliveryDate()),
 					detail.getSource() != null ? detail.getSource().value() : null, detail.getSourceId(),
+					detail.getCarrier(), detail.getCarrierPacking(),
 					ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 					ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
 			.execute();

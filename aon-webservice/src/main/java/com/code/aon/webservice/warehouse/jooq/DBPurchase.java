@@ -1,13 +1,16 @@
 package com.code.aon.webservice.warehouse.jooq;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.google.apis.drive.RemoveFiles;
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.util.ToJSON;
+import com.esferalia.aon.jooq.tables.Purchase;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -142,7 +145,7 @@ public class DBPurchase {
     	return new JSONObject();
     }
     
-    public static JSONObject updatePurchaseDetail(Domain domain,String login, JSONObject json){
+    public static JSONObject updatePurchaseDetailOld(Domain domain,String login, JSONObject json){
     	// TODO HACER EL MÉTODO PARA TODOS LOS CASOS!!!!! 
     	Integer id = json.getInt("id");
     	Double delivered = json.getDouble("delivered");
@@ -159,6 +162,53 @@ public class DBPurchase {
     	} else purchaseDetail.setStatus(PurchaseDetailStatus.SETTLED);
     	purchaseDetail = AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail);
     	return ToJSON.purchaseDetailToJSON(purchaseDetail);
+    }
+    
+    public static JSONObject updatePurchaseDetail(Domain domain,String login, JSONObject json){
+    	Integer id = json.getInt("id");
+    	Double delivered = json.getDouble("delivered");
+    	Boolean saldar = json.getBoolean("saldar");    	
+    	PurchaseDetail purchaseDetail = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, id);
+
+   		Boolean newLine = !saldar && purchaseDetail.getQuantity() > delivered && delivered > 0;
+   		if(newLine){
+   			purchaseDetail.setQuantity(purchaseDetail.getQuantity() - delivered);
+   		} else {
+   			purchaseDetail.setDelivered(purchaseDetail.getDelivered() + delivered);
+   			if(saldar || (purchaseDetail.getQuantity() - purchaseDetail.getDelivered() < 0)){
+   				purchaseDetail.setQuantity(purchaseDetail.getDelivered());
+    		}
+   		}
+   		if(newLine){
+   			AON.insertPurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail);
+   			purchaseDetail.setQuantity(delivered);
+   			purchaseDetail.setDelivered(delivered);
+   		}
+   		if(purchaseDetail.getDelivered() == 0){
+   			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+   		} else if(purchaseDetail.getDelivered() < purchaseDetail.getQuantity()){
+   			purchaseDetail.setStatus(PurchaseDetailStatus.PARTIAL_SETTLED);
+   		} else purchaseDetail.setStatus(PurchaseDetailStatus.SETTLED);
+    	AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail);
+    	refreshPurchaseDetail(domain, login, purchaseDetail);
+    	return ToJSON.purchaseDetailToJSON(purchaseDetail);
+	}
+    
+    public static void refreshPurchaseDetail(Domain domain, String login, PurchaseDetail purchaseDetail){
+    	LinkedList<PurchaseDetail> list = AON.getPurchaseDetailList(domain.getName(), domain.getId(), login, f -> 
+    			f.getCarrierPackingProperty().eq(purchaseDetail.getCarrierPacking())
+    			.and(f.getItemProperty().eq(purchaseDetail.getItem()))
+    			.and(f.getDeliveredProperty().eq(0.0)));
+    	if(list.size()> 0){
+    		PurchaseDetail pd = list.get(0);
+    		Double quantity = pd.getQuantity();
+    		for(Integer i = 1; i < list.size(); i++){
+    			quantity = quantity + list.get(i).getQuantity();
+    			AON.deletePurchaseDetail(domain.getName(), domain.getId(), login, list.get(i).getId());
+    		}
+    		pd.setQuantity(quantity);
+    		AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
+    	}
     }
     
     public static JSONObject deletePurchaseDetail(Domain domain,String login, JSONObject json){
