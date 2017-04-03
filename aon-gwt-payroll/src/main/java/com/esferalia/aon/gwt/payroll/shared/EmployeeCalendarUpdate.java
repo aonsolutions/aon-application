@@ -9,47 +9,49 @@ public class EmployeeCalendarUpdate implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private HashMap<java.util.Date, DayType> mapaTipoDias;
-	private HashMap<java.util.Date, Double> mapaHorasDias;
-	private Double coeficienteEre;
+	private HashMap<java.util.Date, DayType> daysTypesMap;
+	private HashMap<java.util.Date, Double> daysHoursMap;
+	private Double ereCoefficient;
 	
 	public EmployeeCalendarUpdate() {
 		super();
 	}
 
-	public EmployeeCalendarUpdate(HashMap<java.util.Date, DayType> mapaTipoDias, HashMap<java.util.Date, Double> mapaHorasDias,
-			Double coeficienteEre) {
+	public EmployeeCalendarUpdate(HashMap<java.util.Date, DayType> daysTypesMap, HashMap<java.util.Date, Double> daysHoursMap,
+			Double ereCoefficient) {
 		super();
-		this.mapaTipoDias = mapaTipoDias;
-		this.mapaHorasDias = mapaHorasDias;
-		this.coeficienteEre = coeficienteEre;
+		this.daysTypesMap = daysTypesMap;
+		this.daysHoursMap = daysHoursMap;
+		this.ereCoefficient = ereCoefficient;
 		
 	}
 
-	public HashMap<java.util.Date, DayType> getMapaTipoDias() {
-		return mapaTipoDias;
+	// ------------ GETTERS / SETTERS ------------
+	
+	public HashMap<java.util.Date, DayType> getDaysTypeMap() {
+		return daysTypesMap;
 	}
 
-	public EmployeeCalendarUpdate setMapaTipoDias(HashMap<java.util.Date, DayType> mapaTipoDias) {
-		this.mapaTipoDias = mapaTipoDias;
+	public EmployeeCalendarUpdate setDaysTypeMap(HashMap<java.util.Date, DayType> daysTypesMap) {
+		this.daysTypesMap = daysTypesMap;
 		return this;
 	}
 
-	public HashMap<java.util.Date, Double> getMapaHorasDias() {
-		return mapaHorasDias;
+	public HashMap<java.util.Date, Double> getDaysHourMap() {
+		return daysHoursMap;
 	}
 
-	public EmployeeCalendarUpdate setMapaHorasDias(HashMap<java.util.Date, Double> mapaHorasDias) {
-		this.mapaHorasDias = mapaHorasDias;
+	public EmployeeCalendarUpdate setDaysHourMap(HashMap<java.util.Date, Double> daysHoursMap) {
+		this.daysHoursMap = daysHoursMap;
 		return this;
 	}
 
-	public Double getCoeficienteEre() {
-		return coeficienteEre;
+	public Double getEreCoefficient() {
+		return ereCoefficient;
 	}
 
-	public EmployeeCalendarUpdate setCoeficienteEre(Double coeficienteEre) {
-		this.coeficienteEre = coeficienteEre;
+	public EmployeeCalendarUpdate setEreCoefficient(Double ereCoefficient) {
+		this.ereCoefficient = ereCoefficient;
 		return this;
 	}
 	

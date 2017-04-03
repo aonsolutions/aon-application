@@ -52,39 +52,38 @@ public class JooqEmployeeCalendar {
 
 		EmployeeCalendarData employeeInfoCalendar;
 		
-		ArrayList<Quartet<Date, Date, String, String>> listaHorasContrato = new ArrayList<Quartet<Date, Date, String, String>>();
-		ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato = new ArrayList<Quartet<Date, Date, String, String>>();
-		ArrayList<java.util.Date> listaFestivosContrato = new ArrayList<java.util.Date>();
-		ArrayList<Byte> listaNoLaborablesContrato = new ArrayList<Byte>();
-		Boolean jornadaCompleta = false;
+		ArrayList<Quartet<Date, Date, String, String>> contractHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<Quartet<Date, Date, String, String>> contractDayTypesList = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<java.util.Date> contractFestiveDaysList = new ArrayList<java.util.Date>();
+		ArrayList<Byte> contractNonWorkingDaysList = new ArrayList<Byte>();
+		Boolean fullTimeJourney = false;
 		
 		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
-				String tipoJornadaInfoEmpleado;
-				
-				tipoJornadaInfoEmpleado = dslContext
-						  .select(CONTRACT_DATA.EXPRESSION)
-						  .from(CONTRACT_DATA)
-						  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-						  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
-						  .orderBy(CONTRACT_DATA.START_DATE.desc())
-						  .limit(1)
-						  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
-				
-				if(tipoJornadaInfoEmpleado == null)
-					tipoJornadaInfoEmpleado = dslContext
-					  .select(CONTRACT_DATA.EXPRESSION)
-					  .from(CONTRACT_DATA)
-					  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-					  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
-					  .orderBy(CONTRACT_DATA.START_DATE.desc())
-					  .limit(1)
-					  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
-				
-				jornadaCompleta = comprobarTipoJornada(tipoJornadaInfoEmpleado);
+				 	
+		String journeyTypeEmployee = dslContext
+				  .select(CONTRACT_DATA.EXPRESSION)
+				  .from(CONTRACT_DATA)
+				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+				  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+				  .orderBy(CONTRACT_DATA.START_DATE.desc())
+				  .limit(1)
+				  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+		
+		if(journeyTypeEmployee == null)
+			journeyTypeEmployee = dslContext
+			  .select(CONTRACT_DATA.EXPRESSION)
+			  .from(CONTRACT_DATA)
+			  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+			  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+			  .orderBy(CONTRACT_DATA.START_DATE.desc())
+			  .limit(1)
+			  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+		
+		fullTimeJourney = isFullTimeJourney(journeyTypeEmployee);
 		
 		// ---------------------------------------------- HORAS SEMANALES ---------------------------------------------------------
 		
-		Result<Record> contratoInfoEmpleado = dslContext
+		Result<Record> contractHoursEmployeeInfo = dslContext
 				  .select()
 				  .from(CONTRACT_DATA)
 				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
@@ -98,47 +97,47 @@ public class JooqEmployeeCalendar {
 						  ,ContextVariable.SUNDAY_HOURS.getName()))
 				  .fetch();
 		
-		for(Record r: contratoInfoEmpleado){
-			Quartet<Date, Date, String, String> infoEmployee = new Quartet<Date, Date, String, String>();
+		for(Record r: contractHoursEmployeeInfo){
+			Quartet<Date, Date, String, String> quarterEmployeeHourInfo = new Quartet<Date, Date, String, String>();
 			
-			infoEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+			quarterEmployeeHourInfo.setStartDate(r.get(CONTRACT_DATA.START_DATE))
 			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
 			.setName(r.get(CONTRACT_DATA.NAME))
 			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
 			
-			listaHorasContrato.add(infoEmployee);
+			contractHoursList.add(quarterEmployeeHourInfo);
 		}
 		
 		// -------------------------------------- TIPOS DIAS NO LABORABLES SEGUN HORAS ---------------------------------------------
 		
-		if(!jornadaCompleta){
+		if(!fullTimeJourney){
 			
-			String listaDiasSemana [] = {"HORAS_LUNES", "HORAS_MARTES", "HORAS_MIERCOLES", "HORAS_JUEVES", "HORAS_VIERNES",
+			String listDaysOfWeek [] = {"HORAS_LUNES", "HORAS_MARTES", "HORAS_MIERCOLES", "HORAS_JUEVES", "HORAS_VIERNES",
 					 "HORAS_SABADO", "HORAS_DOMINGO"}; 
 	
-			ArrayList<String> listaDiasDefinidos = new ArrayList<String>();
-			for(Record r: contratoInfoEmpleado){
-				listaDiasDefinidos.add(r.get(CONTRACT_DATA.NAME));
+			ArrayList<String> listDefinedDays = new ArrayList<String>();
+			for(Record r: contractHoursEmployeeInfo){
+				listDefinedDays.add(r.get(CONTRACT_DATA.NAME));
 			}
 			
 			for (int i=0; i<7; i++){
-				String diaSemana = listaDiasSemana[i];
-				ArrayList<String> values = getValueDayOfWeek(contratoInfoEmpleado, diaSemana);
-				if (!listaDiasDefinidos.contains(diaSemana)){
-					listaNoLaborablesContrato.add((byte) 1);
+				String dayOfWeek = listDaysOfWeek[i];
+				ArrayList<String> values = getValueDayOfWeek(contractHoursEmployeeInfo, dayOfWeek);
+				if (!listDefinedDays.contains(dayOfWeek)){
+					contractNonWorkingDaysList.add((byte) 1);
 				}else if (values.size() > 1){
-					listaNoLaborablesContrato.add((byte) 0);
+					contractNonWorkingDaysList.add((byte) 0);
 				}else if (null == values || values.isEmpty() || "-1.0".equals(values.get(0))){
-					listaNoLaborablesContrato.add((byte) 1);
+					contractNonWorkingDaysList.add((byte) 1);
 				}else{
-					listaNoLaborablesContrato.add((byte) 0);
+					contractNonWorkingDaysList.add((byte) 0);
 				}
 			}
 		}
 		
 		// ---------------------------------------------- TIPOS DIAS ---------------------------------------------------------
 		
-		Result<Record> tipoDiasContratoEmpleado = dslContext
+		Result<Record> contractDayTypesEmployeeInfo = dslContext
 					.select()
 					.from(CONTRACT_DATA)
 					.where(CONTRACT_DATA.CONTRACT.eq(contract))
@@ -148,32 +147,32 @@ public class JooqEmployeeCalendar {
 							,ContextVariable.HOLIDAYS.getName()))
 					.fetch();
 		
-		Result<Record> tipoDiasITContratoEmpleado = dslContext
+		for(Record r: contractDayTypesEmployeeInfo){
+			Quartet<Date, Date, String, String> quarterDayTypeEmployee = new Quartet<Date, Date, String, String>();
+			
+			quarterDayTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+			.setName(r.get(CONTRACT_DATA.NAME))
+			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+			
+			contractDayTypesList.add(quarterDayTypeEmployee);
+		}
+		
+		Result<Record> contractITDaysEmployeeInfo = dslContext
 				.select()
 				.from(CONTRACT_LEAVE)
 				.where(CONTRACT_LEAVE.CONTRACT.eq(contract))
 				.fetch();
 		
-		for(Record r: tipoDiasContratoEmpleado){
-			Quartet<Date, Date, String, String> infoEmployee = new Quartet<Date, Date, String, String>();
+		for(Record r: contractITDaysEmployeeInfo){
+			Quartet<Date, Date, String, String> quarterITDayEmployee = new Quartet<Date, Date, String, String>();
 			
-			infoEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
-			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
-			.setName(r.get(CONTRACT_DATA.NAME))
-			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
-			
-			listaTipoDiasContrato.add(infoEmployee);
-		}
-		
-		for(Record r: tipoDiasITContratoEmpleado){
-			Quartet<Date, Date, String, String> infoEmployee = new Quartet<Date, Date, String, String>();
-			
-			infoEmployee.setStartDate(r.get(CONTRACT_LEAVE.START_DATE))
+			quarterITDayEmployee.setStartDate(r.get(CONTRACT_LEAVE.START_DATE))
 			.setEndDate(r.get(CONTRACT_LEAVE.END_DATE))
 			.setName("DIAS_IT")
 			.setExpression("");
 			
-			listaTipoDiasContrato.add(infoEmployee);
+			contractDayTypesList.add(quarterITDayEmployee);
 		}
 		
 		// -------------------------------------- DIAS NO LABRABLES / FESTIVOS ---------------------------------------------------------
@@ -188,19 +187,19 @@ public class JooqEmployeeCalendar {
 		
 		if (calendar != null){
 		 
-			Result<Record> diasNoLaborables = dslContext.select()
+			Result<Record> nonWorkingDays = dslContext.select()
 														.from(CALENDAR)
 														.where(CALENDAR.ID.eq(calendar))
 														.fetch();
 			
-			for(Record r: diasNoLaborables){
-				listaNoLaborablesContrato.add(r.get(CALENDAR.MONDAY));
-				listaNoLaborablesContrato.add(r.get(CALENDAR.TUESDAY));
-				listaNoLaborablesContrato.add(r.get(CALENDAR.WEDNESDAY));
-				listaNoLaborablesContrato.add(r.get(CALENDAR.THURSDAY));
-				listaNoLaborablesContrato.add(r.get(CALENDAR.FRIDAY));
-				listaNoLaborablesContrato.add(r.get(CALENDAR.SATURDAY));
-				listaNoLaborablesContrato.add(r.get(CALENDAR.SUNDAY));
+			for(Record r: nonWorkingDays){
+				contractNonWorkingDaysList.add(r.get(CALENDAR.MONDAY));
+				contractNonWorkingDaysList.add(r.get(CALENDAR.TUESDAY));
+				contractNonWorkingDaysList.add(r.get(CALENDAR.WEDNESDAY));
+				contractNonWorkingDaysList.add(r.get(CALENDAR.THURSDAY));
+				contractNonWorkingDaysList.add(r.get(CALENDAR.FRIDAY));
+				contractNonWorkingDaysList.add(r.get(CALENDAR.SATURDAY));
+				contractNonWorkingDaysList.add(r.get(CALENDAR.SUNDAY));
 			}
 			
 			Integer holiday = dslContext.select(CALENDAR.HOLIDAY)
@@ -227,36 +226,39 @@ public class JooqEmployeeCalendar {
 														.fetch();
 			
 			for(Record r : countryHolidays)
-				listaFestivosContrato.add(r.get(HOLIDAY_DETAIL.DATE));
-		}else if(jornadaCompleta && calendar == null){
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 0);
-			listaNoLaborablesContrato.add((byte) 1);
-			listaNoLaborablesContrato.add((byte) 1);
+				contractFestiveDaysList.add(r.get(HOLIDAY_DETAIL.DATE));
+		
+		}else if(fullTimeJourney && calendar == null){
+			contractNonWorkingDaysList.add((byte) 0);
+			contractNonWorkingDaysList.add((byte) 0);
+			contractNonWorkingDaysList.add((byte) 0);
+			contractNonWorkingDaysList.add((byte) 0);
+			contractNonWorkingDaysList.add((byte) 0);
+			contractNonWorkingDaysList.add((byte) 1);
+			contractNonWorkingDaysList.add((byte) 1);
 		}
 		
 		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
 		
-		employeeInfoCalendar = new EmployeeCalendarData(listaHorasContrato, listaTipoDiasContrato, listaFestivosContrato, 
-				listaNoLaborablesContrato, jornadaCompleta);
+		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractDayTypesList, contractFestiveDaysList, 
+				contractNonWorkingDaysList, fullTimeJourney);
 		
 		return employeeInfoCalendar;
 	}
 	
-	private static ArrayList<String> getValueDayOfWeek(Result<Record> contratoInfoEmpleado, String diaSemana) {
+	// -------------- AUX METHODS GET EMPLOYEE INFO ------------
+	
+	private static ArrayList<String> getValueDayOfWeek(Result<Record> contractHoursEmployeeInfo, String dayOfWeek) {
 		ArrayList<String> result = new ArrayList<String>();
-		for(Record r: contratoInfoEmpleado){
-			if(diaSemana.equals(r.get(CONTRACT_DATA.NAME))){
+		for(Record r: contractHoursEmployeeInfo){
+			if(dayOfWeek.equals(r.get(CONTRACT_DATA.NAME))){
 				result.add(r.get(CONTRACT_DATA.EXPRESSION));
 			}
 		}
 		return result;
 	}
 
-	private static Boolean comprobarTipoJornada(String tipoJornadaInfoEmpleado) {
+	private static Boolean isFullTimeJourney(String tipoJornadaInfoEmpleado) {
 		if ('1' == tipoJornadaInfoEmpleado.charAt(1) || '4' == tipoJornadaInfoEmpleado.charAt(1)
 				|| "false" == tipoJornadaInfoEmpleado)
 			return true;
@@ -264,10 +266,12 @@ public class JooqEmployeeCalendar {
 			return false;
 	}
 
+	
 	@SuppressWarnings("deprecation")
 	private static void setEmployeeInformation(DSLContext dslContext, Integer contract, EmployeeCalendarUpdate updateInfo) {
 		
 		// -------------------------------------------------- ACTUALIZACION HORAS ------------------------------------------------------
+		
 		Integer domain = dslContext.select(CONTRACT.DOMAIN)
 						.from(CONTRACT)
 						.where(CONTRACT.ID.eq(contract))
@@ -291,66 +295,66 @@ public class JooqEmployeeCalendar {
 						.where(CONTRACT.ID.eq(contract))
 						.fetchOne().value1();
 		
-		HashMap<java.util.Date, Double> mapaHorasUpdate = updateInfo.getMapaHorasDias();
+		HashMap<java.util.Date, Double> updateHoursMap = updateInfo.getDaysHourMap();
 		
-		if (!mapaHorasUpdate.isEmpty()){
+		if (!updateHoursMap.isEmpty()){
 			
-			java.util.Date startDate = new java.util.Date();
-			java.util.Date endDate = new java.util.Date();
+			java.util.Date startDateHour = new java.util.Date();
+			java.util.Date endDateHour = new java.util.Date();
 			
-			for (Entry<java.util.Date, Double> entry : mapaHorasUpdate.entrySet()) {
-				if (entry.getKey().before(startDate))
-					startDate = DateUtils.copyDateOnly(entry.getKey());
+			for (Entry<java.util.Date, Double> entry : updateHoursMap.entrySet()) {
+				if (entry.getKey().before(startDateHour))
+					startDateHour = DateUtils.copyDateOnly(entry.getKey());
 				
-				if (entry.getKey().after(endDate))
-					endDate = DateUtils.copyDateOnly(entry.getKey());
+				if (entry.getKey().after(endDateHour))
+					endDateHour = DateUtils.copyDateOnly(entry.getKey());
 			}
 			
 			for (int i=0; i<7; i++){
-				java.util.Date  date = DateUtils.copyDateOnly(startDate);
+				java.util.Date  date = DateUtils.copyDateOnly(startDateHour);
 				DateUtils.addDays2Date(date, i);
 	
-				String diaSemana = calcularDiaSemana(date.getDay());
+				String dayOfWeek = calculateDayOfWeek(date.getDay());
 				
-				java.util.Date auxStartDate = DateUtils.copyDateOnly(date);
-				Double horasStart = mapaHorasUpdate.get(auxStartDate);
+				java.util.Date auxstartDateHour = DateUtils.copyDateOnly(date);
+				Double startHour = updateHoursMap.get(auxstartDateHour);
 				
-				while (date.before(endDate) && mapaHorasUpdate.containsKey(date)){
-					if(!horasStart.equals(mapaHorasUpdate.get(date))){
-						Date sqlStartDate = new Date(auxStartDate.getTime());
-						Date sqlEndDate = new Date(date.getTime());
+				while (date.before(endDateHour) && updateHoursMap.containsKey(date)){
+					if(!startHour.equals(updateHoursMap.get(date))){
+						Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
+						Date sqlendDateHour = new Date(date.getTime());
+						
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 								CONTRACT_DATA.END_DATE)
-								.values(domain, diaSemana, contract, Double.toString(horasStart), 
-										sqlStartDate, sqlEndDate).execute();
+								.values(domain, dayOfWeek, contract, Double.toString(startHour), 
+										sqlstartDateHour, sqlendDateHour).execute();
 					
-						horasStart = mapaHorasUpdate.get(date);
-						auxStartDate = DateUtils.copyDateOnly(date);
+						startHour = updateHoursMap.get(date);
+						auxstartDateHour = DateUtils.copyDateOnly(date);
 					}
 					
 					DateUtils.addDays2Date(date, 7);
 				}
 				
-				Date sqlStartDate = new Date(startDate.getTime());
-				Date sqlEndDate;
+				Date sqlstartDateHour = new Date(startDateHour.getTime());
+				Date sqlendDateHour;
 				
 				if(realEndDate == null)
-					sqlEndDate = null;
+					sqlendDateHour = null;
 				else
-					sqlEndDate = new Date(realEndDate.getTime());
+					sqlendDateHour = new Date(realEndDate.getTime());
 				
 				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 						CONTRACT_DATA.END_DATE)
-						.values(domain, diaSemana, contract, Double.toString(horasStart), 
-								sqlStartDate, sqlEndDate).execute();
-			
+						.values(domain, dayOfWeek, contract, Double.toString(startHour), 
+								sqlstartDateHour, sqlendDateHour).execute();
+
 			}
 		}
 		
 		// ----------------------------------------------- ACTUALIZACION TIPO DIAS -------------------------------------------------------
-		HashMap<java.util.Date, DayType> mapaTiposUpdate = updateInfo.getMapaTipoDias();
 		
 		dslContext.delete(CONTRACT_DATA)
 		   .where(CONTRACT_DATA.CONTRACT.eq(contract))
@@ -360,58 +364,65 @@ public class JooqEmployeeCalendar {
 				  ,ContextVariable.HOLIDAYS.getName()))
 		   .execute();
 		
-		java.util.Date startDateTipo = new java.util.Date();
-		java.util.Date endDateTipo = new java.util.Date();
+		HashMap<java.util.Date, DayType> updateDaysTypeMap = updateInfo.getDaysTypeMap();
 		
-		for (Entry<java.util.Date, DayType> entry : mapaTiposUpdate.entrySet()) {
-			if (entry.getKey().before(startDateTipo))
-				startDateTipo = DateUtils.copyDateOnly(entry.getKey());
+		java.util.Date startDateType = new java.util.Date();
+		java.util.Date endDateType = new java.util.Date();
+		
+		for (Entry<java.util.Date, DayType> entry : updateDaysTypeMap.entrySet()) {
+			if (entry.getKey().before(startDateType))
+				startDateType = DateUtils.copyDateOnly(entry.getKey());
 			
-			if (entry.getKey().after(endDateTipo))
-				endDateTipo = DateUtils.copyDateOnly(entry.getKey());
+			if (entry.getKey().after(endDateType))
+				endDateType = DateUtils.copyDateOnly(entry.getKey());
 		}
 		
-		java.util.Date  dateTipo = DateUtils.copyDateOnly(startDateTipo);
-		java.util.Date auxStartDateTipo = DateUtils.copyDateOnly(dateTipo);
-		String tipoDia = "";
-		DayType tipoStart = DayType.NOTYPEDAY;
+		java.util.Date dateType = DateUtils.copyDateOnly(startDateType);
+		java.util.Date auxStartDateType = DateUtils.copyDateOnly(dateType);
+		String dayType = "";
+		DayType startDayType = DayType.NOTYPEDAY;
 		
-		if (mapaTiposUpdate.get(dateTipo) != null){
-			tipoDia = calcularDiaTipo(mapaTiposUpdate.get(dateTipo));
-			tipoStart = mapaTiposUpdate.get(auxStartDateTipo);
+		if (updateDaysTypeMap.get(dateType) != null){
+			dayType = calculateDayType(updateDaysTypeMap.get(dateType));
+			startDayType = updateDaysTypeMap.get(auxStartDateType);
 		}
 		
-		while (dateTipo.before(endDateTipo)){
-			if (mapaTiposUpdate.get(dateTipo) != null){
-				if(!tipoStart.equals(mapaTiposUpdate.get(dateTipo))){
-					if(tipoDiaValido(tipoDia)){
-						Date sqlStartDate = new Date(auxStartDateTipo.getTime());
-						java.util.Date javaEndDate = DateUtils.copyDateOnly(dateTipo);
-						DateUtils.addDays2Date(javaEndDate, -1);
-						Date sqlEndDate = new Date(javaEndDate.getTime());
+		while (dateType.before(endDateType)){
+			if (updateDaysTypeMap.get(dateType) != null){
+				if(!startDayType.equals(updateDaysTypeMap.get(dateType))){
+					if(validDayType(dayType)){
+						
+						Date sqlStartDateType = new Date(auxStartDateType.getTime());
+						java.util.Date javaEndDateType = DateUtils.copyDateOnly(dateType);
+						DateUtils.addDays2Date(javaEndDateType, -1);
+						Date sqlEndDateType = new Date(javaEndDateType.getTime());
+						
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 								CONTRACT_DATA.END_DATE)
-								.values(domain, tipoDia, contract, "", 
-										sqlStartDate, sqlEndDate).execute();
+								.values(domain, dayType, contract, "", 
+										sqlStartDateType, sqlEndDateType).execute();
 					}
-					tipoDia = calcularDiaTipo(mapaTiposUpdate.get(dateTipo));
-					tipoStart = mapaTiposUpdate.get(dateTipo);
-					auxStartDateTipo = DateUtils.copyDateOnly(dateTipo);
+					
+					dayType = calculateDayType(updateDaysTypeMap.get(dateType));
+					startDayType = updateDaysTypeMap.get(dateType);
+					auxStartDateType = DateUtils.copyDateOnly(dateType);
 				}
 			}
 			
-			DateUtils.addDays2Date(dateTipo, 1);
+			DateUtils.addDays2Date(dateType, 1);
 		}
 		
 	}
 	
-	private static boolean tipoDiaValido(String dayType) {
+	// ---------- CLASS AUX METHODS ----------
+	
+	private static boolean validDayType(String dayType) {
 		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") 
 				|| dayType.equals("DIAS_VACACIONES");
 	}
 
-	private static String calcularDiaTipo(DayType dayType) {
+	private static String calculateDayType(DayType dayType) {
 		String result = "";
 		switch (dayType) {
 		case EREDAY:
@@ -434,7 +445,7 @@ public class JooqEmployeeCalendar {
 		return result;
 	}
 
-	private static String calcularDiaSemana(int day) {
+	private static String calculateDayOfWeek(int day) {
 		String result = "";
 		switch (day) {
 		case 0:

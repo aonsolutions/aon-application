@@ -15,22 +15,20 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
 
-	private Map<Date,Double> mapaDiasHoras;
-	private Map<Date, DayType> mapaDiasTipo;
+	private Map<Date,Double> mapDaysHour;
+	private Map<Date, DayType> mapDaysType;
 	
-	private Map<Date,Double> draftMapaDiasHoras;
-	private Map<Date, DayType> draftMapaDiasTipo;
-	private Map<Date, Double> draftMapaDiasCoeficienteEre;
+	private Map<Date,Double> draftMapDaysHour;
+	private Map<Date, DayType> draftMapDaysType;
+	private Map<Date, Double> draftMapDaysCoefficientEre;
 	
 	private Date startContract;
 	private Date endContract;
@@ -38,7 +36,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Integer employeeId;
 	private EmployeesServiceAsync employeesService;
 	
-	private boolean jornadaEmpleado;
+	private boolean fullTimeEmployee;
 	
 	public UndoManager<Undoable> undoManager;
 	
@@ -68,6 +66,8 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_ERE", DayType.EREDAY);
 		}
 	};
+	
+	// --------------------------------------------- INTERFACE DAY TYPE ----------------------------------------------------
 	
 	public static interface DayTypeVisitor<T>{
 		T visitFreeDay(DayType dayType);
@@ -149,7 +149,7 @@ public class EmployeeCalendarDraftObjectData {
 		
 	};
 	
-	// --------------------------------------------- INTERFAZ REDO/UNDO -----------------------------------------------
+	// --------------------------------------------- INTERFACE REDO/UNDO -----------------------------------------------
 	
 	private class CompositeUndoable<T extends Undoable > implements Undoable {
 
@@ -189,16 +189,16 @@ public class EmployeeCalendarDraftObjectData {
 		@Override
 		public void undo() {
 			if (oldHour == null)
-				draftMapaDiasHoras.remove(day);
+				draftMapDaysHour.remove(day);
 			else
-				draftMapaDiasHoras.put(day, oldHour);
-			
+				draftMapDaysHour.put(day, oldHour);	
 		}
 		
 		@Override
 		public void redo() {
-			draftMapaDiasHoras.put(day, newHour);
+			draftMapDaysHour.put(day, newHour);
 		}
+		
 	}
 	
 	class SetTypeEdit implements Undoable {
@@ -215,21 +215,17 @@ public class EmployeeCalendarDraftObjectData {
 		
 		@Override
 		public void undo() {
-			if (oldType == null){
-				draftMapaDiasTipo.remove(day);
-//				draftMapaDiasCoeficienteEre.remove(day);
-			}
-			else{
-//				if(DayType.EREDAY.equals(oldType))
-//					draftMapaDiasCoeficienteEre.remove(day);
-				draftMapaDiasTipo.put(day, oldType);
-			}
+			if (oldType == null)
+				draftMapDaysType.remove(day);
+			else
+				draftMapDaysType.put(day, oldType);
 		}
 		
 		@Override
 		public void redo() {
-			draftMapaDiasTipo.put(day, newType);
+			draftMapDaysType.put(day, newType);
 		}
+		
 	}
 	
 	class SetEreEdit implements Undoable {
@@ -247,28 +243,31 @@ public class EmployeeCalendarDraftObjectData {
 		@Override
 		public void undo() {
 			if (oldEre == null)
-				draftMapaDiasCoeficienteEre.remove(day);
+				draftMapDaysCoefficientEre.remove(day);
 			else
-				draftMapaDiasCoeficienteEre.put(day, oldEre);
+				draftMapDaysCoefficientEre.put(day, oldEre);
 		}
 		
 		@Override
 		public void redo() {
-			draftMapaDiasCoeficienteEre.put(day, newEre);
+			draftMapDaysCoefficientEre.put(day, newEre);
 		}
+		
 	}
 	
-	// ---------------------------------------------- METODOS DE LA CLASE ---------------------------------------------	
-	public EmployeeCalendarDraftObjectData(Integer employeeId,
-			Date startContract, Date endContract, EmployeesServiceAsync employeesService) {
+	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
+	
+	public EmployeeCalendarDraftObjectData(Integer employeeId, Date startContract, Date endContract,
+			EmployeesServiceAsync employeesService) {
+		
 		this.undoManager = new UndoManager<>();
 		
-		this.mapaDiasHoras = new HashMap<Date,Double>();
-		this.mapaDiasTipo = new HashMap<Date,DayType>();
+		this.mapDaysHour = new HashMap<Date,Double>();
+		this.mapDaysType = new HashMap<Date,DayType>();
 		
-		this.draftMapaDiasHoras = new HashMap<Date,Double>();
-		this.draftMapaDiasTipo = new HashMap<Date,DayType>();
-		this.draftMapaDiasCoeficienteEre = new HashMap<Date,Double>();
+		this.draftMapDaysHour = new HashMap<Date,Double>();
+		this.draftMapDaysType = new HashMap<Date,DayType>();
+		this.draftMapDaysCoefficientEre = new HashMap<Date,Double>();
 		
 		this.startContract = startContract;
 		this.endContract = endContract;
@@ -283,103 +282,15 @@ public class EmployeeCalendarDraftObjectData {
 	}
 	
 	public Integer getMapSize(){
-		return mapaDiasHoras.keySet().size();
+		return mapDaysHour.keySet().size();
 	}
 	
-	public Date getLastMapDate(){
-		Date lastDraftDate = new Date(0);
-		for ( Date date : mapaDiasHoras.keySet() )
-			if ( date.after(lastDraftDate) )
-				lastDraftDate = DateUtils.copyDateOnly(date);
-		return lastDraftDate;
+	public Set<Entry<Date, Double>> getChangesHours(){
+		return draftMapDaysHour.entrySet();
 	}
 	
-	public DayType getTypeByDay (Date dia){
-		DayType typeDayDraft = draftMapaDiasTipo.get(dia);
-		
-		if (typeDayDraft != null)
-			return typeDayDraft;
-		else	
-			return mapaDiasTipo.getOrDefault(dia, DayType.NOTYPEDAY);
-	}
-	
-	public Date getDateByDay (Date dia){
-		for ( Date key: mapaDiasTipo.keySet() )
-			if ( key.equals(dia ))
-				return dia;
-		return null;
-	}
-
-	public void setTypeByDay (Date dia, DayType typeDay){
-		DayType old = draftMapaDiasTipo.put(dia, typeDay);
-		undoManager.add(new SetTypeEdit(old, typeDay, dia));
-	} 
-	
-	public void setTypeByDay (Map<Date, DayType> types){
-		List<Undoable> undos = new ArrayList<Undoable>();
-		for (Map.Entry<Date, DayType> entry : types.entrySet()) {
-			DayType old = draftMapaDiasTipo.put(entry.getKey(), entry.getValue());
-			undos.add(new SetTypeEdit(old, entry.getValue(), entry.getKey()));
-		}
-		undoManager.add(new CompositeUndoable<Undoable>(undos));
-	}
-	
-	public double getHourByDay (Date dia){
-		Double hourDayDraft = draftMapaDiasHoras.get(dia);
-		
-		if (hourDayDraft != null)
-			return hourDayDraft;
-		else{
-			return mapaDiasHoras.getOrDefault(dia, (double) 0);
-		}
-	}
-	
-	public void setHourByDay (Date dia, Double hour){
-		Double old = draftMapaDiasHoras.put(dia, hour);
-		undoManager.add(new SetHourEdit(old, hour, dia));
-	} 
-	
-	public void setHourByDay (Map<Date, Double> hours){
-		List<Undoable> undos = new ArrayList<Undoable>();
-		for (Map.Entry<Date, Double> entry : hours.entrySet()) {
-			DateUtils.resetTime(entry.getKey());
-			Double old = draftMapaDiasHoras.put(entry.getKey(), entry.getValue());
-			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
-		}
-		undoManager.add(new CompositeUndoable<Undoable>(undos));
-		
-	}
-	
-	public void setNonWorking(List<Date> diasNoLaborables, DayType nonWorkingDay, double hora) {
-		List<Undoable> undos = new ArrayList<Undoable>();
-		for (Date day : diasNoLaborables){
-			DayType oldType = draftMapaDiasTipo.put(day, nonWorkingDay);
-			Double oldHour = draftMapaDiasHoras.put(day, hora);
-			undos.add(new SetTypeEdit(oldType, nonWorkingDay, day));
-			undos.add(new SetHourEdit(oldHour, hora, day));
-		}
-		undoManager.add(new CompositeUndoable<Undoable>(undos));	
-	}
-	
-	public void setCoeficienteEre(List<Date> diasEre, DayType ereday, double ce) {
-		List<Undoable> undos = new ArrayList<Undoable>();
-		for (Date day : diasEre){
-			DayType oldType = draftMapaDiasTipo.put(day, ereday);
-			Double oldCE = draftMapaDiasCoeficienteEre.put(day, ce);
-			undos.add(new SetTypeEdit(oldType, ereday, day));
-			undos.add(new SetEreEdit(oldCE, ce, day));
-		}
-		undoManager.add(new CompositeUndoable<Undoable>(undos));
-	}
-
-	
-	// ---------------------------------------------- METODOS AUXILIARES ---------------------------------------------
-	public Set<Entry<Date, Double>> getHourChanges(){
-		return draftMapaDiasHoras.entrySet();
-	}
-	
-	public Set<Entry<Date, DayType>> getTypeChanges(){
-		return draftMapaDiasTipo.entrySet();
+	public Set<Entry<Date, DayType>> getChangesTypes(){
+		return draftMapDaysType.entrySet();
 	}
 	
 	public Date getStartDateContract(){
@@ -390,11 +301,103 @@ public class EmployeeCalendarDraftObjectData {
 		return endContract;
 	}
 	
-	public boolean getJornadaEmpleado(){
-		return jornadaEmpleado;
+	public boolean isFullTimeJourney(){
+		return fullTimeEmployee;
+	}
+	
+	public Date getLastMapDate(){
+		Date lastDraftDate = new Date(0);
+		for ( Date date : mapDaysHour.keySet() )
+			if ( date.after(lastDraftDate) )
+				lastDraftDate = DateUtils.copyDateOnly(date);
+		return lastDraftDate;
+	}
+	
+	public Date getDateByDay (Date day){
+		for ( Date key: mapDaysType.keySet() )
+			if ( key.equals(day))
+				return day;
+		return null;
+	}
+	
+	public void clearDraftHours() {
+		draftMapDaysHour.clear();
+		undoManager.discardAll();	
+	}
+	
+	// ---------- GETTERS / SETTERS -----------
+	
+	public DayType getTypeByDay (Date day){
+		DayType typeDayDraft = draftMapDaysType.get(day);	
+		if (typeDayDraft != null)
+			return typeDayDraft;
+		else	
+			return mapDaysType.getOrDefault(day, DayType.NOTYPEDAY);
 	}
 
-	// ---------------------------------------------- METODOS VARIABLES SYNC BORRADOR ---------------------------------------------
+	public void setTypeByDay (Date day, DayType typeDay){
+		DayType old = draftMapDaysType.put(day, typeDay);
+		undoManager.add(new SetTypeEdit(old, typeDay, day));
+	} 
+	
+	public void setTypeByDay (Map<Date, DayType> types){
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Map.Entry<Date, DayType> entry : types.entrySet()) {
+			DayType old = draftMapDaysType.put(entry.getKey(), entry.getValue());
+			undos.add(new SetTypeEdit(old, entry.getValue(), entry.getKey()));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
+	public double getHourByDay (Date day){
+		Double hourDayDraft = draftMapDaysHour.get(day);
+		if (hourDayDraft != null)
+			return hourDayDraft;
+		else
+			return mapDaysHour.getOrDefault(day, (double) 0);
+	}
+	
+	public void setHourByDay (Date day, Double hour){
+		Double old = draftMapDaysHour.put(day, hour);
+		undoManager.add(new SetHourEdit(old, hour, day));
+	} 
+	
+	public void setHourByDay (Map<Date, Double> hours){
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Map.Entry<Date, Double> entry : hours.entrySet()) {
+			DateUtils.resetTime(entry.getKey());
+			Double old = draftMapDaysHour.put(entry.getKey(), entry.getValue());
+			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
+	// ----------- SET SPECIAL DAYS -----------
+	
+	public void setNonWorkingDays(List<Date> nonWorkingDays, DayType nonWorkingType, double hour) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Date day : nonWorkingDays){
+			DayType oldType = draftMapDaysType.put(day, nonWorkingType);
+			Double oldHour = draftMapDaysHour.put(day, hour);
+			undos.add(new SetTypeEdit(oldType, nonWorkingType, day));
+			undos.add(new SetHourEdit(oldHour, hour, day));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));	
+	}
+	
+	public void setEreCoefficientDays(List<Date> ereDays, DayType ereType, double ce) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Date day : ereDays){
+			DayType oldType = draftMapDaysType.put(day, ereType);
+			Double oldCE = draftMapDaysCoefficientEre.put(day, ce);
+			undos.add(new SetTypeEdit(oldType, ereType, day));
+			undos.add(new SetEreEdit(oldCE, ce, day));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+
+	// ---------------------------------------------- METHODS VARIABLES SYNC SALARYDRAFT ---------------------------------------------
+	
 	public static class CalendarVariable extends StringVariable{
 		private static final long serialVersionUID = 1L;
 	}
@@ -403,19 +406,21 @@ public class EmployeeCalendarDraftObjectData {
 		return v instanceof CalendarVariable ;
 	}
 	
-	//Creacion variables del coeficienteERE
+	
+	// ------------ GET VARIABLES LIST METHODS -------------
+	
 	public ArrayList<StringVariable> getVariablesListCE(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
-		List<Date> orderDraftDatesCE = draftMapaDiasCoeficienteEre.keySet().stream().collect(Collectors.toList());
-		Collections.sort(orderDraftDatesCE);
+		List<Date> orderedDraftDatesCE = draftMapDaysCoefficientEre.keySet().stream().collect(Collectors.toList());
+		Collections.sort(orderedDraftDatesCE);
 		
 		CalendarVariable var = null;
 		Date dateBefore = null;
 		String name = "COEFICIENTE_ERE";
 		
-		for(Date date : orderDraftDatesCE){
-			//Filtrar que este dentro del rango que se pasa de fechas
+		for(Date date : orderedDraftDatesCE){
+			
 			if(date.before(startDate))
 				continue;
 			if(date.after(endDate))
@@ -426,7 +431,6 @@ public class EmployeeCalendarDraftObjectData {
 				dateBefore = DateUtils.copyDateOnly(date);
 				continue;
 			}else{
-				//Buscar cómo meter el primer caso
 				if(var != null){
 					variablesList.add(var);
 				}	
@@ -439,7 +443,7 @@ public class EmployeeCalendarDraftObjectData {
 				var.setName(name);
 				var.setEndDate(date);
 				var.setStartDate(date);
-				var.setExpression(Double.toString(draftMapaDiasCoeficienteEre.get(date)));
+				var.setExpression(Double.toString(draftMapDaysCoefficientEre.get(date)));
 			}	
 		}
 		
@@ -450,86 +454,66 @@ public class EmployeeCalendarDraftObjectData {
 		return variablesList;
 	}
 	
-	//Creacion variables del coeficienteERE
-		public ArrayList<StringVariable> getVariablesListHolidays(Date startDate, Date endDate) {
+	public ArrayList<StringVariable> getVariablesListHolidays(Date startDate, Date endDate) {
 
-			ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
-			List<Date> orderDraftDatesHolidays = getHolidaysDates();
-			Collections.sort(orderDraftDatesHolidays);
+		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		List<Date> orderedDraftDatesHolidays = getHolidaysDates();
+		Collections.sort(orderedDraftDatesHolidays);
+		
+		CalendarVariable var = null;
+		Date dateBefore = null;
+		String name = "DIAS_VACACIONES";
+		Integer contHolidayDays = 0;
+		
+		for(Date date : orderedDraftDatesHolidays){
 			
-			CalendarVariable var = null;
-			Date dateBefore = null;
-			String name = "DIAS_VACACIONES";
-			Integer contDiasVacaciones = 0;
+			if(date.before(startDate))
+				continue;
+			if(date.after(endDate))
+				continue;
 			
-			for(Date date : orderDraftDatesHolidays){
-				//Filtrar que este dentro del rango que se pasa de fechas
-				if(date.before(startDate))
-					continue;
-				if(date.after(endDate))
-					continue;
-				
-				if(isNext(date, dateBefore)){
-					contDiasVacaciones++;
-					var.setExpression(Integer.toString(contDiasVacaciones));
-					var.setEndDate(date);
-					dateBefore = DateUtils.copyDateOnly(date);
-					continue;
-				}else{
-					//Buscar cómo meter el primer caso
-					if(var != null){
-						variablesList.add(var);
-						contDiasVacaciones=0;
-					}	
-					
-					dateBefore = DateUtils.copyDateOnly(date);
-					contDiasVacaciones++;
-					var = new CalendarVariable();
-					var.setImplicit(false);
-					var.setScope(Scope.SALARY); // DRAFT
-					var.setName(name);
-					var.setEndDate(date);
-					var.setStartDate(date);
-					var.setExpression(Integer.toString(contDiasVacaciones));
+			if(isNext(date, dateBefore)){
+				contHolidayDays++;
+				var.setExpression(Integer.toString(contHolidayDays));
+				var.setEndDate(date);
+				dateBefore = DateUtils.copyDateOnly(date);
+				continue;
+			}else{
+				if(var != null){
+					variablesList.add(var);
+					contHolidayDays=0;
 				}	
-			}
-			
-			if(var != null){
-				variablesList.add(var);
-			}
-			
-			return variablesList;
+				
+				dateBefore = DateUtils.copyDateOnly(date);
+				contHolidayDays++;
+				
+				var = new CalendarVariable();
+				var.setImplicit(false);
+				var.setScope(Scope.SALARY); // DRAFT
+				var.setName(name);
+				var.setEndDate(date);
+				var.setStartDate(date);
+				var.setExpression(Integer.toString(contHolidayDays));
+			}	
 		}
+		
+		if(var != null){
+			variablesList.add(var);
+		}
+		
+		return variablesList;
+	}
 	
-	private List<Date> getHolidaysDates() {
-		List<Date> holidaysDates = new ArrayList<>();
-		for(Entry<Date,DayType> e : draftMapaDiasTipo.entrySet()){
-			if(e.getValue().equals(DayType.HOLIDAY))
-				holidaysDates.add(e.getKey());
-		}
-		return holidaysDates;
-	}
-
-	//Comprobar si el son consecutivos
-	private boolean isNext(Date date, Date dateBefore) {
-		if(dateBefore == null)
-			return false;
-		else if(DateUtils.addDays2Date(dateBefore, 1).equals(date))
-			return true;
-		else
-			return false;
-	}
-
 	@SuppressWarnings("deprecation")
 	public ArrayList<StringVariable> getVariablesList(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
 		
-		if ( draftMapaDiasHoras.isEmpty() )
+		if ( draftMapDaysHour.isEmpty() )
 			return variablesList;
 		
 		Date lastDraftDate = new Date(0);
-		for ( Date date : draftMapaDiasHoras.keySet() )
+		for ( Date date : draftMapDaysHour.keySet() )
 			if ( date.after(lastDraftDate) )
 				lastDraftDate = DateUtils.copyDateOnly(date);
 		
@@ -545,19 +529,19 @@ public class EmployeeCalendarDraftObjectData {
 			
 			Date date = DateUtils.copyDateOnly(startDate);
 			DateUtils.addDays2Date(date, day);
-			String name = calcularDiaSemana (date.getDay());
+			String name = calculateDayOfWeek (date.getDay());
 			
 			CalendarVariable var = null ;
 			for(Date start = startDate ;
 				date.compareTo(endDate) <= 0 ;
 				start = DateUtils.addDays2Date(date, 7) ){
 				
-				if ( !draftMapaDiasHoras.containsKey(date) ){
+				if ( !draftMapDaysHour.containsKey(date) ){
 					var = null;
 					continue;
 				}
 				
-				Double hours = draftMapaDiasHoras.get(date);
+				Double hours = draftMapDaysHour.get(date);
 				if ( var != null && var.getValue().equals(Double.toString(hours))) {
 					var.setEndDate(DateUtils.copyDateOnly(date));
 					continue;
@@ -586,6 +570,26 @@ public class EmployeeCalendarDraftObjectData {
 		
 		return variablesList;
 	}
+	
+	// ---------- AUX METHODS GET VARIABLES LIST --------
+	
+	private List<Date> getHolidaysDates() {
+		List<Date> holidaysDates = new ArrayList<>();
+		for(Entry<Date,DayType> e : draftMapDaysType.entrySet()){
+			if(e.getValue().equals(DayType.HOLIDAY))
+				holidaysDates.add(e.getKey());
+		}
+		return holidaysDates;
+	}
+
+	private boolean isNext(Date date, Date dateBefore) {
+		if(dateBefore == null)
+			return false;
+		else if(DateUtils.addDays2Date(dateBefore, 1).equals(date))
+			return true;
+		else
+			return false;
+	}
 
 	@SuppressWarnings("deprecation")
 	private void editDatesVariablesList(ArrayList<StringVariable> variablesList, Date startDate, Date endDate) {
@@ -599,11 +603,10 @@ public class EmployeeCalendarDraftObjectData {
 			}else{
 				changeStartDate(v, startDate);
 				changeEndDate(v, endDate);
-			}
-				
+			}		
 		}
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	private void changeEndDate(StringVariable v, Date endDate) {
 		Date endDateAux = DateUtils.copyDateOnly(v.getEndDate());
@@ -622,8 +625,186 @@ public class EmployeeCalendarDraftObjectData {
 		v.setStartDate(startDateAux);
 	}
 
-	// ---------------------------------------------- METODOS SYNC BD ---------------------------------------------
-	private String calcularDiaSemana(int day) {
+	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
+	
+	public void initializeDBCalendar(Consumer<EmployeeCalendarData> success, Consumer<Throwable> failure) {
+		
+		employeesService.getEmployeeCalendar(employeeId, new AsyncCallback<EmployeeCalendarData>() {
+			
+			@Override
+			public void onSuccess(EmployeeCalendarData result) {
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> hoursList = result.getContractHoursList();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> typesList = result.getContractTypeDaysList();
+				ArrayList<Byte> nonWorkingList = result.getContractNonWorkingDaysList();
+				ArrayList<java.util.Date> festivesList = result.getContractFestiveDaysList();
+				initializeHoursMap(hoursList);
+				initializeNonWorkingsDaysTypeMap(nonWorkingList);
+				initializeTypesMap(typesList);
+				initializeFestivesDaysTypeMap(festivesList);
+				fullTimeEmployee = result.isFullTimeJourney();
+				
+				success.accept(result);
+				
+			}
+			
+			private void initializeHoursMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> hoursList) {
+				
+				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterHours : hoursList) {
+					
+					Date startDate = DateUtils.copyDateOnly(quarterHours.getStartDate());
+					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
+					Date endDate;
+					
+					if (quarterHours.getEndDate() == null){
+						endDate = DateUtils.addYears2Date(endDateAux, 1);
+					}else
+						endDate = DateUtils.copyDateOnly(quarterHours.getEndDate());;
+					
+					DateUtils.addDays2Date(endDate, 1);
+					
+					Double hour = Double.parseDouble(quarterHours.getExpression());
+					String stringHourDay = quarterHours.getName();
+					
+					@SuppressWarnings("deprecation")
+					int initialDay = startDate.getDay();
+					int findingDay = DAY_OF_WEEKS.get(stringHourDay);
+					
+					int auxDay = findingDay - initialDay;
+					
+					if (auxDay == 7)
+						auxDay = 0;
+					
+					if (auxDay < 0)
+						auxDay = 7 + auxDay;
+					
+					Date auxDate = DateUtils.addDays2Date(startDate, auxDay);
+					
+					while (auxDate.before(endDate) || auxDate.equals(endDate)){
+						Date date = DateUtils.copyDateOnly(auxDate);
+						DateUtils.resetTime(date);
+						mapDaysHour.put(date, hour);
+						DateUtils.addDays2Date(auxDate, 7);
+					}
+				}
+				
+			}
+			
+			private void initializeNonWorkingsDaysTypeMap(ArrayList<Byte> nonWorkingList) {
+				
+				int cont = 0;
+				
+				for (Byte nonWorkingDay : nonWorkingList) {
+					
+					Date startDate = DateUtils.copyDateOnly(startContract);
+					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
+					Date endDate;
+					
+					if (endContract == null)
+						endDate = DateUtils.addYears2Date(endDateAux, 1);
+					else
+						endDate = DateUtils.copyDateOnly(endContract);
+					
+					DayType dayType;
+					
+					if (0 == nonWorkingDay.byteValue())
+						dayType = DayType.NOTYPEDAY;
+					else
+						dayType = DayType.NOWORKINGDAY;
+					
+					String stringHourDay = calculateNonWorkingDayOfWeek(cont);
+					
+					@SuppressWarnings("deprecation")
+					int initialDay = startDate.getDay();
+					int findingDay = DAY_OF_WEEKS.get(stringHourDay)+1;
+					
+					int auxDay = findingDay - initialDay;
+					
+					if (auxDay == 7)
+						auxDay = 0;
+					
+					if (auxDay < 0)
+						auxDay = 7 + auxDay;
+					
+					Date auxDate = DateUtils.addDays2Date(startDate, auxDay);
+					
+					while (auxDate.before(endDate) || auxDate.equals(endDate)){
+						Date date = DateUtils.copyDateOnly(auxDate);
+						DateUtils.resetTime(date);
+						mapDaysType.put(date, dayType);
+						DateUtils.addDays2Date(auxDate, 7);
+					}
+					cont++;
+				}	
+			}
+			
+			private void initializeTypesMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> typesList) {
+				
+				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterTypes : typesList) {
+					
+					Date startDate = DateUtils.copyDateOnly(quarterTypes.getStartDate());
+					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
+					Date endDate;
+					
+					if (quarterTypes.getEndDate() == null){
+						endDate = DateUtils.addYears2Date(endDateAux, 1);
+					}else
+						endDate = DateUtils.copyDateOnly(quarterTypes.getEndDate());;
+					
+					DateUtils.addDays2Date(endDate, 1);
+					
+					DayType dayType = TYPE_OF_DAY.get(quarterTypes.getName());
+					
+					Date auxDate = DateUtils.copyDateOnly(startDate);
+					
+					while (auxDate.before(endDate)){
+						Date date = DateUtils.copyDateOnly(auxDate);
+						DateUtils.resetTime(date);
+						mapDaysType.put(date, dayType);
+						DateUtils.addDays2Date(auxDate, 1);
+					}
+				}	
+			}
+			
+			private void initializeFestivesDaysTypeMap(ArrayList<java.util.Date> festivesList) {
+				for(java.util.Date d : festivesList){
+					mapDaysType.put(d, DayType.FREEDAY);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void updateDBCalendar(Consumer<EmployeeCalendarUpdate> success, Consumer<Throwable> failure){
+		
+		EmployeeCalendarUpdate updateInfo = new EmployeeCalendarUpdate();
+		
+		updateInfo.setDaysHourMap(createUpdateHoursMap(mapDaysHour, draftMapDaysHour));
+		updateInfo.setDaysTypeMap(createUpdateTypesMap(mapDaysType, draftMapDaysType));
+		
+		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(EmployeeCalendarUpdate result) {
+				draftMapDaysHour.clear();
+				draftMapDaysType.clear();
+				success.accept(result);
+			}
+			
+		});
+	}
+
+	// -------- AUX METHODS DATABASE SYNC --------
+	
+	private String calculateDayOfWeek(int day) {
 		String result = "";
 		switch (day) {
 		case 0:
@@ -651,8 +832,8 @@ public class EmployeeCalendarDraftObjectData {
 		
 		return result;
 	}
-	
-	private String calcularDiaSemanaNoLaboral(int day) {
+		
+	private String calculateNonWorkingDayOfWeek(int day) {
 		String result = "";
 		switch (day) {
 		case 0:
@@ -682,220 +863,40 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		return result;
+	}	
+	
+	private HashMap<Date, Double> createUpdateHoursMap(Map<Date, Double> mapDaysHour,
+			Map<Date, Double> draftMapDaysHour) {
+		
+		HashMap<Date, Double> updateHoursMap = new HashMap<Date, Double>();
+		
+		for ( Entry<Date,Double> entry : mapDaysHour.entrySet()){
+			DateUtils.resetTime(entry.getKey());
+			updateHoursMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		for (Entry<Date,Double> entry : draftMapDaysHour.entrySet()){
+			DateUtils.resetTime(entry.getKey());
+			updateHoursMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		return updateHoursMap;
 	}
 	
-	public void inicialiazarCalendarioBD(Consumer<EmployeeCalendarData> success, Consumer<Throwable> failure) {
+	private HashMap<Date, DayType> createUpdateTypesMap(Map<Date, DayType> mapDaysType,
+			Map<Date, DayType> draftMapDaysType) {
 		
-		employeesService.getEmployeeCalendar(employeeId, 
-			new AsyncCallback<EmployeeCalendarData>() {
-			
-			@Override
-			public void onSuccess(EmployeeCalendarData result) {
-				List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaHoras = result.getListaHorasContrato();
-				List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaTipos = result.getListaTipoDiasContrato();
-				ArrayList<Byte> listaNoLaborables = result.getListaNoLaborablesContrato();
-				ArrayList<java.util.Date> listaFestivos = result.getListaFestivosContrato();
-				inicializarMapaHoras(listaHoras);
-				inicializarMapaTiposNoLaborables(listaNoLaborables);
-				inicializarMapaTipos(listaTipos);
-				inicializarMapaTiposFestivos(listaFestivos);
-				jornadaEmpleado = result.isJornadaCompleta();
-				
-				success.accept(result);
-				
-			}
-			
-			private void inicializarMapaTiposFestivos(ArrayList<java.util.Date> listaFestivos) {
-				for(java.util.Date d : listaFestivos){
-					mapaDiasTipo.put(d, DayType.FREEDAY);
-				}
-			}
-
-			private void inicializarMapaTiposNoLaborables(ArrayList<Byte> listaNoLaborables) {
-				int cont = 0;
-				
-				for (Byte noLabroles : listaNoLaborables) {
-					
-					Date fechaInicio = DateUtils.copyDateOnly(startContract);
-					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
-					Date fechaFin;
-					
-					if (endContract == null)
-						fechaFin = DateUtils.addYears2Date(endDateAux, 1);
-					else
-						fechaFin = DateUtils.copyDateOnly(endContract);
-					
-					DayType tipoDia;
-					
-					if (0 == noLabroles.byteValue())
-						tipoDia = DayType.NOTYPEDAY;
-					else
-						tipoDia = DayType.NOWORKINGDAY;
-					
-					String horasDias = calcularDiaSemanaNoLaboral(cont);
-					
-					@SuppressWarnings("deprecation")
-					int initialDay = fechaInicio.getDay();
-					int findingDay = DAY_OF_WEEKS.get(horasDias)+1;
-					
-					int auxDay = findingDay - initialDay;
-					
-					if (auxDay == 7)
-						auxDay = 0;
-					
-					if (auxDay < 0)
-						auxDay = 7 + auxDay;
-					
-					Date auxDate = DateUtils.addDays2Date(fechaInicio, auxDay);
-					
-					while (auxDate.before(fechaFin) || auxDate.equals(fechaFin)){
-						Date date = DateUtils.copyDateOnly(auxDate);
-						DateUtils.resetTime(date);
-						mapaDiasTipo.put(date, tipoDia);
-						DateUtils.addDays2Date(auxDate, 7);
-					}
-					cont++;
-				}	
-			}
-
-			private void inicializarMapaTipos(List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaTipos) {
-				
-				for (Quartet<java.sql.Date, java.sql.Date, String, String> quartetTipos : listaTipos) {
-					
-					Date startDate = DateUtils.copyDateOnly(quartetTipos.getStartDate());
-					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
-					Date endDate;
-					if (quartetTipos.getEndDate() == null){
-						endDate = DateUtils.addYears2Date(endDateAux, 1);
-					}else
-						endDate = DateUtils.copyDateOnly(quartetTipos.getEndDate());;
-					
-					DateUtils.addDays2Date(endDate, 1);
-					
-					DayType TipoDia = TYPE_OF_DAY.get(quartetTipos.getName());
-					
-					Date auxDate = DateUtils.copyDateOnly(startDate);
-					
-					while (auxDate.before(endDate)){
-						Date date = DateUtils.copyDateOnly(auxDate);
-						DateUtils.resetTime(date);
-						mapaDiasTipo.put(date, TipoDia);
-						DateUtils.addDays2Date(auxDate, 1);
-					}
-				}	
-			}
-
-			private void inicializarMapaHoras(List<Quartet<java.sql.Date, java.sql.Date, String, String>> listaHoras) {
-				
-				for (Quartet<java.sql.Date, java.sql.Date, String, String> quartetHoras : listaHoras) {
-					
-					Date startDate = DateUtils.copyDateOnly(quartetHoras.getStartDate());
-					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
-					Date endDate;
-					if (quartetHoras.getEndDate() == null){
-						endDate = DateUtils.addYears2Date(endDateAux, 1);
-					}else
-						endDate = DateUtils.copyDateOnly(quartetHoras.getEndDate());;
-					
-					DateUtils.addDays2Date(endDate, 1);
-					
-					Double horas = Double.parseDouble(quartetHoras.getExpression());
-					String horasDias = quartetHoras.getName();
-					
-					@SuppressWarnings("deprecation")
-					int initialDay = startDate.getDay();
-					int findingDay = DAY_OF_WEEKS.get(horasDias);
-					
-					int auxDay = findingDay - initialDay;
-					
-					if (auxDay == 7)
-						auxDay = 0;
-					
-					if (auxDay < 0)
-						auxDay = 7 + auxDay;
-					
-					Date auxDate = DateUtils.addDays2Date(startDate, auxDay);
-					
-					while (auxDate.before(endDate) || auxDate.equals(endDate)){
-						Date date = DateUtils.copyDateOnly(auxDate);
-						DateUtils.resetTime(date);
-						mapaDiasHoras.put(date, horas);
-						DateUtils.addDays2Date(auxDate, 7);
-					}
-				}
-				
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void actualizarCalendarioBD(Consumer<EmployeeCalendarUpdate> success, Consumer<Throwable> failure){
-		EmployeeCalendarUpdate updateInfo = new EmployeeCalendarUpdate();
+		HashMap<Date, DayType> updateTypesMap = new HashMap<Date, DayType>();
 		
-		updateInfo.setMapaHorasDias(crearMapaHorasUpdate(mapaDiasHoras, draftMapaDiasHoras));
-		updateInfo.setMapaTipoDias(crearMapaTiposUpdate(mapaDiasTipo, draftMapaDiasTipo));
-		
-		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(EmployeeCalendarUpdate result) {
-				draftMapaDiasHoras.clear();
-				draftMapaDiasTipo.clear();
-				success.accept(result);
-			}
-			
-		});
-	}
-
-	private HashMap<Date, DayType> crearMapaTiposUpdate(Map<Date, DayType> mapaDiasTipo,
-			Map<Date, DayType> draftMapaDiasTipo) {
-		
-		HashMap<Date, DayType> mapaUpdate = new HashMap<Date, DayType>();
-		
-		for ( Entry<Date,DayType> e : mapaDiasTipo.entrySet()){
-			mapaUpdate.put(e.getKey(), e.getValue());
+		for ( Entry<Date,DayType> e : mapDaysType.entrySet()){
+			updateTypesMap.put(e.getKey(), e.getValue());
 		}
 		
-		for (Entry<Date,DayType> e : draftMapaDiasTipo.entrySet()){
-			mapaUpdate.put(e.getKey(), e.getValue());
+		for (Entry<Date,DayType> e : draftMapDaysType.entrySet()){
+			updateTypesMap.put(e.getKey(), e.getValue());
 		}
 		
-		return mapaUpdate;
-		
-		
-	}
-
-	private HashMap<Date, Double> crearMapaHorasUpdate(Map<Date, Double> mapaDiasHoras,
-			Map<Date, Double> draftMapaDiasHoras) {
-		
-		HashMap<Date, Double> mapaUpdate = new HashMap<Date, Double>();
-		
-		for ( Entry<Date,Double> e : mapaDiasHoras.entrySet()){
-			DateUtils.resetTime(e.getKey());
-			mapaUpdate.put(e.getKey(), e.getValue());
-		}
-		
-		for (Entry<Date,Double> e : draftMapaDiasHoras.entrySet()){
-			DateUtils.resetTime(e.getKey());
-			mapaUpdate.put(e.getKey(), e.getValue());
-		}
-		
-		return mapaUpdate;
-	}
-
-	public void clearDraftHours() {
-		draftMapaDiasHoras.clear();
-		undoManager.discardAll();
-		
+		return updateTypesMap;
 	}
 
 	

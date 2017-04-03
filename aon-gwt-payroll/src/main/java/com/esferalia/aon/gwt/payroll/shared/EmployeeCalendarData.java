@@ -10,70 +10,73 @@ import com.esferalia.aon.gwt.payroll.client.Quartet;
 public class EmployeeCalendarData implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private ArrayList<Quartet<Date, Date, String, String>> listaHorasContrato;
-	private ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato;
-	private ArrayList<java.util.Date> listaFestivosContrato;
-	private ArrayList<Byte> listaNoLaborablesContrato;
-	private boolean jornadaCompleta;
+	private ArrayList<Quartet<Date, Date, String, String>> contractHoursList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList;
+	private ArrayList<java.util.Date> contractFestivesDaysList;
+	private ArrayList<Byte> contractNonWorkingDaysList;
+	private boolean fullTimeJourney;
 	
 	public EmployeeCalendarData() {
 		super();
 	}
 
-	public EmployeeCalendarData(ArrayList<Quartet<Date, Date, String, String>> listaHorasContrato,
-			ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato,
-			ArrayList<java.util.Date> listaFestivosContrato,
-			ArrayList<Byte> listaNoLaborablesContrato, boolean jornadaCompleta) {
+	public EmployeeCalendarData(ArrayList<Quartet<Date, Date, String, String>> contractHoursList,
+			ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList,
+			ArrayList<java.util.Date> contractFestivesDaysList,
+			ArrayList<Byte> contractNonWorkingDaysList, 
+			boolean fullTimeJourney) {
 		super();
-		this.listaHorasContrato = listaHorasContrato;
-		this.listaTipoDiasContrato = listaTipoDiasContrato;
-		this.listaFestivosContrato = listaFestivosContrato;
-		this.listaNoLaborablesContrato = listaNoLaborablesContrato;
-		this.jornadaCompleta = jornadaCompleta;
+		this.contractHoursList = contractHoursList;
+		this.contractTypeDaysList = contractTypeDaysList;
+		this.contractFestivesDaysList = contractFestivesDaysList;
+		this.contractNonWorkingDaysList = contractNonWorkingDaysList;
+		this.fullTimeJourney = fullTimeJourney;
+	}
+	
+	// ------------- GETTERS / SETTERS -------------
+
+	public List<Quartet<Date, Date, String, String>> getContractHoursList() {
+		return contractHoursList;
 	}
 
-	public List<Quartet<Date, Date, String, String>> getListaHorasContrato() {
-		return listaHorasContrato;
-	}
-
-	public EmployeeCalendarData setListaHorasContrato(ArrayList<Quartet<Date, Date, String, String>> listaHorasContrato) {
-		this.listaHorasContrato = listaHorasContrato;
+	public EmployeeCalendarData setContractHoursList(ArrayList<Quartet<Date, Date, String, String>> contractHoursList) {
+		this.contractHoursList = contractHoursList;
 		return this;
 	}
 
-	public List<Quartet<Date, Date, String, String>> getListaTipoDiasContrato() {
-		return listaTipoDiasContrato;
+	public List<Quartet<Date, Date, String, String>> getContractTypeDaysList() {
+		return contractTypeDaysList;
 	}
 
-	public EmployeeCalendarData setListaTipoDiasContrato(ArrayList<Quartet<Date, Date, String, String>> listaTipoDiasContrato) {
-		this.listaTipoDiasContrato = listaTipoDiasContrato;
+	public EmployeeCalendarData setContractTypeDaysList(ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList) {
+		this.contractTypeDaysList = contractTypeDaysList;
 		return this;
 	}
 
-	public ArrayList<java.util.Date> getListaFestivosContrato() {
-		return listaFestivosContrato;
+	public ArrayList<java.util.Date> getContractFestiveDaysList() {
+		return contractFestivesDaysList;
 	}
 
-	public EmployeeCalendarData setListaFestivosContrato(ArrayList<java.util.Date> listaFestivosContrato) {
-		this.listaFestivosContrato = listaFestivosContrato;
+	public EmployeeCalendarData setContractFestiveDaysList(ArrayList<java.util.Date> contractFestivesDaysList) {
+		this.contractFestivesDaysList = contractFestivesDaysList;
 		return this;
 	}
 
-	public ArrayList<Byte> getListaNoLaborablesContrato() {
-		return listaNoLaborablesContrato;
+	public ArrayList<Byte> getContractNonWorkingDaysList() {
+		return contractNonWorkingDaysList;
 	}
 
-	public EmployeeCalendarData setListaNoLaborablesContrato(ArrayList<Byte> listaNoLaborablesContrato) {
-		this.listaNoLaborablesContrato = listaNoLaborablesContrato;
+	public EmployeeCalendarData setContractNonWorkingDaysList(ArrayList<Byte> contractNonWorkingDaysList) {
+		this.contractNonWorkingDaysList = contractNonWorkingDaysList;
 		return this;
 	}
 
-	public boolean isJornadaCompleta() {
-		return jornadaCompleta;
+	public boolean isFullTimeJourney() {
+		return fullTimeJourney;
 	}
 
-	public EmployeeCalendarData setJornadaCompleta(boolean jornadaCompleta) {
-		this.jornadaCompleta = jornadaCompleta;
+	public EmployeeCalendarData setFullTimeJourney(boolean fullTimeJourney) {
+		this.fullTimeJourney = fullTimeJourney;
 		return this;
 	}
 	
