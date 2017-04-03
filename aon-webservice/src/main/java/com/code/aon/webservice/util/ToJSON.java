@@ -372,25 +372,27 @@ public class ToJSON {
 	
 	public static JSONObject salesToJSON(Sales sales) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		String seriesNumber = (sales.getSeries() != null ? sales.getSeries() + "/" : "") + sales.getNumber();
 		return new JSONObject()
 		.put(MSG.ID, sales.getId())
 		.put(MSG.DOMAIN, sales.getDomain())
-		.put("series_number", seriesNumber)
 		.put(MSG.SERIES, sales.getSeries())
 		.put(MSG.NUMBER, sales.getNumber())
-		.put(MSG.REGISTRY, new JSONObject())
-		.put(MSG.ID, sales.getCustomer()) 
+		.put(MSG.CUSTOMER, sales.getCustomer()) 
+		.put(MSG.CUSTOMER, new JSONObject()
+			.put(MSG.ID, sales.getCustomer() != null ? sales.getCustomer().getId() : "")
+			.put(MSG.NAME, sales.getCustomer() != null ? sales.getCustomer().getName(): ""))
 		.put(MSG.ISSUE_DATE, sales.getIssueDate() != null ? dateFormat.format(sales.getIssueDate()) : "")
-		.put("reference", sales.getPurchaseReference() != null ? sales.getPurchaseReference() : " ");
+		.put(MSG.DELIVERY_DATE, sales.getDeliveryDate() != null ? dateFormat.format(sales.getDeliveryDate()) : "")
+		.put("purchase_reference", sales.getPurchaseReference() != null ? sales.getPurchaseReference() : " ");
 	}
 	
 	public static JSONObject salesDetailToJSON(SalesDetail detail) {
 		return new JSONObject()
 		.put(MSG.ID, detail.getId())
 		.put(MSG.DOMAIN, detail.getDomain())
+		.put(MSG.SALES, salesToJSON(detail.getSales()))
 		.put(MSG.LINE, detail.getLine())
-		.put(MSG.ITEM, detail.getItem())
+		.put(MSG.ITEM, itemToJSON(detail.getItem()))
 		.put(MSG.DESCRIPTION, detail.getDescription())
 		.put(MSG.QUANTITY, detail.getQuantity())
 		.put(MSG.PRICE, detail.getPrice())

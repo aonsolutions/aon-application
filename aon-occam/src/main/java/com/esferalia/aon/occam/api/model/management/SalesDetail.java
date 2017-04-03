@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.management;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 
 public class SalesDetail implements Serializable {
@@ -13,8 +14,8 @@ public class SalesDetail implements Serializable {
 	
 	private Integer id;
 	private int domain;
-	private int sales;
-	private int item;
+	private Sales sales;
+	private Item item;
 	private short line;
 	private String description;
 	private double quantity;
@@ -29,80 +30,93 @@ public class SalesDetail implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public SalesDetail setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public SalesDetail setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
-	public int getSales() {
+	public Sales getSales() {
 		return sales;
 	}
-	public void setSales(int sales) {
+	public SalesDetail setSales(Sales sales) {
 		this.sales = sales;
+		return this;
 	}
-	public int getItem() {
+	public Item getItem() {
 		return item;
 	}
-	public void setItem(int item) {
+	public SalesDetail setItem(Item item) {
 		this.item = item;
+		return this;
 	}
 	public short getLine() {
 		return line;
 	}
-	public void setLine(short line) {
+	public SalesDetail setLine(short line) {
 		this.line = line;
+		return this;
 	}
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public SalesDetail setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	public double getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(double quantity) {
+	public SalesDetail setQuantity(double quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 	public double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public SalesDetail setPrice(double price) {
 		this.price = price;
+		return this;
 	}
 	public String getDiscountExpression() {
 		return discountExpression;
 	}
-	public void setDiscountExpression(String discountExpression) {
+	public SalesDetail setDiscountExpression(String discountExpression) {
 		this.discountExpression = discountExpression;
+		return this;
 	}
 	public double getTaxes() {
 		return taxes;
 	}
-	public void setTaxes(double taxes) {
+	public SalesDetail setTaxes(double taxes) {
 		this.taxes = taxes;
+		return this;
 	}
 	public SalesDetailStatus getStatus() {
 		return status;
 	}
-	public void setStatus(SalesDetailStatus status) {
+	public SalesDetail setStatus(SalesDetailStatus status) {
 		this.status = status;
+		return this;
 	}
 	public Integer getOfferDetail() {
 		return offerDetail;
 	}
-	public void setOfferDetail(Integer offerDetail) {
+	public SalesDetail setOfferDetail(Integer offerDetail) {
 		this.offerDetail = offerDetail;
+		return this;
 	}
 	public double getDelivered() {
 		return delivered;
 	}
-	public void setDelivered(double delivered) {
+	public SalesDetail setDelivered(double delivered) {
 		this.delivered = delivered;
+		return this;
 	}
 		
 }

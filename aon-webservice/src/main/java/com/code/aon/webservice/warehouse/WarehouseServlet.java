@@ -123,7 +123,7 @@ public class WarehouseServlet extends HttpServlet{
 							if(pathInfo.length > 5){
 								object = DBSales.getSalesDetail(domain, userName, Integer.parseInt(pathInfo[5]));
 							} else object = DBSales.getSalesDetails(domain, userName, req.getParameterMap());
-						}
+						} else object = DBSales.getSales(domain, userName, Integer.parseInt(pathInfo[4]));
 					} else object = DBSales.getSales(domain, userName, Integer.parseInt(pathInfo[4]));
 				}
 				

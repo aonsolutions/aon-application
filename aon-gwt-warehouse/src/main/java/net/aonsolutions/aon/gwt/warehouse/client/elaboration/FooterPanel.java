@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.gwt.warehouse.client.elaboration;
 
+import net.aonsolutions.aon.gwt.warehouse.client.Utils;
+
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
@@ -21,7 +23,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -71,6 +72,7 @@ public class FooterPanel extends Composite {
 	public FooterPanel(MainElaboration parent, JsElaboration jsElaboration) {
 		this.parent = parent;
 		API = parent.API;
+		
 		initWidget(binder.createAndBindUi(this));
 		
 		closeFooterPanel();
@@ -112,57 +114,29 @@ public class FooterPanel extends Composite {
 	
 	protected void loadSourceTab(JsElaboration js){
 		
-		Integer source = js.getSource().getId();
-		Integer sourceId = js.getSourceId();
-//		if(source!=null){
-//			Window.alert(ElaborationSource.safeValueOf(source).name());
-//		}
-		if(sourceId!=null){
-			sourcePanel.add(new Label("Origen de la elaboracion: " + sourceId));
-			API.getWarehouse().getSalesDetail(sourceId, new AsyncCallback<JSON<JsSalesDetail>>() {
-				
-				@Override
-				public void onSuccess(JSON<JsSalesDetail> result) {
-//					Window.alert("salesDetail "+result.getOneData().getId()
-//							+ " - " + result.getOneData().getSales());
-//					FlowPanel panel = createSourcePanel(result.getOneData());
-//					sourcePanel.add(panel);
-					JsSalesDetail detail = result.getOneData();
-					sourcePanel.add(new Label("Origen de la elaboracion, id: " + detail.getId()));
-					sourcePanel.add(new Label("Origen de la elaboracion, line: " + detail.getLine()));
-					sourcePanel.add(new Label("Origen de la elaboracion, sales: " + detail.getSales()));
-				}
-				
-				@Override public void onFailure(Throwable caught) {}
-			});
-		} else if (source==null){
-//			Window.alert("source is NULL!!  "+source+ " / "+sourceId);
-			Label label = new Label();
-			label.setText("La elaboración se ha creado manualmente, no tiene origen. ");
-			sourcePanel.add(label);
-		} else if(source==0){
-//			Window.alert("source is SALES!!  "+source+ " / "+sourceId);
-
-			API.getWarehouse().getSalesDetail(sourceId, new AsyncCallback<JSON<JsSalesDetail>>() {
-				
-				@Override
-				public void onSuccess(JSON<JsSalesDetail> result) {
-					FlowPanel panel = createSourcePanel(result.getOneData());
-					sourcePanel.add(panel);
-				}
-				
-				@Override public void onFailure(Throwable caught) {}
-			});
-		} else if(source==1){
-//			Window.alert("source is PURCHASE!!  "+source+ " / "+sourceId);
-			Label label = new Label();
-			label.setText("Origen:  COMPRAS. " + source + ". " + sourceId);
-			sourcePanel.add(label);
-		} else {
-			Label label = new Label();
-			label.setText("Origen sin confirmar");
-			sourcePanel.add(label);
+		if (js.getSource()!=null) {
+			switch (js.getSource().getName()) {
+			case "SALES":
+				API.getWarehouse().getSalesDetail(js.getSourceId(), new AsyncCallback<JSON<JsSalesDetail>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsSalesDetail> result) {
+						FlowPanel panel = createSourcePanel(result.getOneData());
+						sourcePanel.add(panel);
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+				break;
+			case "PURCHASE":
+				sourcePanel.add(new Label("Origen Compras: " + js.getSource() + ". " + js.getSourceId()));
+				break;
+			default:
+				sourcePanel.add(new Label("La elaboraci\u00F3n se ha creado manualmente, no tiene origen. "));
+				break;
+			}
 		}
+		
 	}
 	
 	TextArea comments;
@@ -198,18 +172,18 @@ public class FooterPanel extends Composite {
 		tabPanel.selectTab(idx);
 	}
 	
-	protected FlowPanel createSourcePanel(JsSalesDetail orderDetail){
+	protected FlowPanel createSourcePanel(JsSalesDetail detail){
 		JsOrder order2 = null; 
 		final FlowPanel p = new FlowPanel("pre");
 		final FlowPanel headerPanel = new FlowPanel("pre");
 		headerPanel.setStyleName(AON.AON_CSS.aonFixedFont());
 		headerPanel.addStyleName(AON.AON_CSS.aonFontMedium());
-		Label header = new Label(" FECHA        " //13
-				+ "SERIE/NUMERO     " //17
-				+ "PROVEEDOR                        " //33
-				+ "IMPORTE TOTAL    "  //17
-				+ "BULTOS    "  //10
-				+ "PESO      ");  //10
+		Label header = new Label(" SERIE/NUMERO     " //17
+				+ "CLIENTE                          " //33
+				+ "FECHA EMISION    "  //17
+				+ "FECHA ENTREGA    "  //17
+				+ "REF. COMPRA      "  //17
+				+ "      ");  //10
 		header.setStyleName(AON.AON_CSS.aonBold());
 		header.addStyleName(AON.AON_CSS.aonMarginTop());
 		header.addStyleName(AON.AON_CSS.aonBorderTop());
@@ -222,62 +196,31 @@ public class FooterPanel extends Composite {
 		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		panel.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
-		// TODO issueDate
-		String issueDate = "";
-//		String issueDate = order.getIssueDate() != null
-//				? Utils.formatDate(Utils.parseDateTime(order.getIssueDate()))
-//				: "";
-		// TODO acc
-		final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE);
-//		final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
-//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(issueDate),13)
-//				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-//						AonStringUtils.defaultString(order.getSeriesNumber()), 16), 17)
-//
-//				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-//						AonStringUtils.defaultString(order.getRegistry().getName()), 32),33)
-//				+ AonStringUtils.rightPad("",17)		
-//				);
+		String issueDate = detail.getSales().getIssueDate() != null
+				? Utils.formatDate(Utils.parseDateTime(detail.getSales().getIssueDate()))
+				: "";
+		String deliveryDate = detail.getSales().getDeliveryDate() != null
+				? Utils.formatDate(Utils.parseDateTime(detail.getSales().getDeliveryDate()))
+						: "";
+		
+		final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
+				+ AonStringUtils.rightPad("",9)		
+				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
+						AonStringUtils.defaultString(detail.getSales().getSeries()+"/"+detail.getSales().getNumber()), 16), 17)
+
+				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
+						AonStringUtils.defaultString(detail.getSales().getCustomer().getName()), 32),33)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(issueDate),17)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(deliveryDate),17)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getSales().getPurchaseReference()),17)
+				+ AonStringUtils.rightPad("",17)		
+				);
 		acc.setTitle("");
 		acc.setStyleName(AON.AON_CSS.aonBold());
-		
-		DoubleBox  db1 = new DoubleBox();
-		db1.setWidth("50px");
-		db1.setStyleName(AON.AON_CSS.aonTextBox());
-		// TODO
-		db1.setValue(0.0);
-//		db1.setValue(order.getTotalPackages());
-		db1.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				// TODO
-//				String requestData = "{\"total_packages\":\""+ db1.getValue() +"\"}";
-//				parent.API.getWarehouse().updateDelivery(order.getId(), requestData);
-			}
-		});
-		
-		DoubleBox  db2 = new DoubleBox();
-		db2.setWidth("50px");
-		db2.setStyleName(AON.AON_CSS.aonTextBox());
-		// TODO
-		db2.setValue(0.0);
-//		db2.setValue(order.getTotalWeight());
-		db2.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				// TODO
-//				String requestData = "{\"total_weight\":\""+ db2.getValue() +"\"}";
-//				parent.API.getWarehouse().updateDelivery(order.getId(), requestData);
-			}
-		});
 	
 		panel.add(acc);
-		panel.add(db1);
-		panel.add(new InlineLabel("  "));
-		panel.add(db2);
 		p.add(panel);
+		
 		
 		final FlowPanel headerPanel2 = new FlowPanel("pre");
 		headerPanel2.setStyleName(AON.AON_CSS.aonFixedFont());
@@ -297,54 +240,29 @@ public class FooterPanel extends Composite {
 
 	
 		FlowPanel center = new FlowPanel();
-		
-//		details.stream().forEach(detail ->{
-//			FlowPanel line = new FlowPanel("pre");
-//			
-//			line.setStyleName(AON.AON_CSS.aonFixedFont());
-//			line.addStyleName(AON.AON_CSS.aonFontMedium());
-//			line.addStyleName(AON.AON_CSS.aonMarginBottom());
-//			
-//			Double discount = detail.getDiscountExpr() != null ? Double.parseDouble(detail.getDiscountExpr()) : 1.0;
-//			Double importe = detail.getPrice() * detail.getQuantity() * (1 - (discount/100));
-//			InlineLabel d = new InlineLabel(AonStringUtils.SPACE
-//					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getLine() + ""),11)
-//					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-//							AonStringUtils.defaultString(detail.getProductCode() + "-" + detail.getProductName()), 39), 44)
-//					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getQuantity() + ""), 16)
-//					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getPrice() + ""), 16)
-//					+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDiscountExpr()), 16)
-//					+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
-//					);
-//			d.setTitle("");
-//			d.setStyleName(AON.AON_CSS.aonBold());
-//			
-//			line.add(d);
-//			center.add(line);
-//		});
 		FlowPanel line = new FlowPanel("pre");
 		
 		line.setStyleName(AON.AON_CSS.aonFixedFont());
 		line.addStyleName(AON.AON_CSS.aonFontMedium());
 		line.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
-		Double discount = orderDetail.getDiscountExpr() != null ? Double.parseDouble(orderDetail.getDiscountExpr()) : 1.0;
-		Double importe = orderDetail.getPrice() * orderDetail.getQuantity() * (1 - (discount/100));
-//		InlineLabel d = new InlineLabel(AonStringUtils.SPACE
-//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getLine() + ""),11)
-//				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
-//						AonStringUtils.defaultString(orderDetail.getProductCode() + "-" + orderDetail.getProductName()), 39), 44)
-//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getQuantity() + ""), 16)
-//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getPrice() + ""), 16)
-//				+ AonStringUtils.rightPad(AonStringUtils.defaultString(orderDetail.getDiscountExpr()), 16)
-//				+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
-//				);
-//		d.setTitle("");
-//		d.setStyleName(AON.AON_CSS.aonBold());
+		Double discount = detail.getDiscountExpr() != null ? Double.parseDouble(detail.getDiscountExpr()) : 1.0;
+		Double importe = detail.getPrice() * detail.getQuantity() * (1 - (discount/100));
+		InlineLabel d = new InlineLabel(AonStringUtils.SPACE
+				+ AonStringUtils.rightPad("",3)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getLine() + ""),11)
+				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
+						AonStringUtils.defaultString(detail.getItem().getCode() + "-" + detail.getItem().getName()), 39), 44)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getQuantity() + ""), 16)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getPrice() + ""), 16)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString(detail.getDiscountExpr()), 16)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultString( importe + ""), 15)	
+				);
+		d.setTitle("");
+		d.setStyleName(AON.AON_CSS.aonBold());
 		
-//		line.add(d);
+		line.add(d);
 		center.add(line);
-		
 		p.add(center);
 		
 		return p;

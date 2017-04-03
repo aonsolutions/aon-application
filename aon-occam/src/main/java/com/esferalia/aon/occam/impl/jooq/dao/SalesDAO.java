@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.management.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.management.SalesDetailProperties;
 import com.esferalia.aon.occam.api.model.management.SalesFilter;
 import com.esferalia.aon.occam.api.model.management.SalesProperties;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
@@ -172,7 +173,7 @@ public class SalesDAO {
 				.update(SALES)
 				.set(SALES.DOMAIN, sales.getDomain())
 				.set(SALES.PROJECT, sales.getProject())
-				.set(SALES.CUSTOMER, sales.getCustomer())
+				.set(SALES.CUSTOMER, sales.getCustomer().getId())
 				.set(SALES.SERIES, sales.getSeries())
 				.set(SALES.NUMBER, sales.getNumber())
 				.set(SALES.PURCHASE_REFERENCE, sales.getPurchaseReference())
@@ -215,38 +216,38 @@ public class SalesDAO {
 		ctx.checkWrite();
 		Timestamp creationDate = null, modificationDate = null;
 		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		
+
 		ctx.getDslContext()
 				.insertInto(SALES_DETAIL, SALES_DETAIL.DOMAIN,
 						SALES_DETAIL.SALES, SALES_DETAIL.LINE,
-						SALES_DETAIL.ITEM,
-						SALES_DETAIL.DESCRIPTION,
+						SALES_DETAIL.ITEM, SALES_DETAIL.DESCRIPTION,
 						SALES_DETAIL.QUANTITY, SALES_DETAIL.PRICE,
-						SALES_DETAIL.DISCOUNT_EXPR,
-						SALES_DETAIL.TAXES, SALES_DETAIL.STATUS,
-						SALES_DETAIL.OFFER_DETAIL,
-						SALES_DETAIL.DELIVERED,
-						SALES_DETAIL.CREATION_USER,
+						SALES_DETAIL.DISCOUNT_EXPR, SALES_DETAIL.TAXES,
+						SALES_DETAIL.STATUS, SALES_DETAIL.OFFER_DETAIL,
+						SALES_DETAIL.DELIVERED, SALES_DETAIL.CREATION_USER,
 						SALES_DETAIL.CREATION_DATE,
 						SALES_DETAIL.MODIFICATION_USER,
 						SALES_DETAIL.MODIFICATION_DATE)
-				.values(detail.getDomain(), detail.getSales(), detail.getLine(), detail.getItem(), detail.getDescription(),
-						detail.getQuantity(), detail.getPrice(), detail.getDiscountExpression(), detail.getTaxes(),
-						(byte) detail.getStatus().ordinal(), detail.getOfferDetail(), detail.getDelivered(),
-						ctx.getUser(), creationDate,
-						ctx.getUser(), modificationDate)
-				.execute();
+				.values(detail.getDomain(), detail.getSales().getId(),
+						detail.getLine(), detail.getItem().getId(),
+						detail.getDescription(), detail.getQuantity(),
+						detail.getPrice(), detail.getDiscountExpression(),
+						detail.getTaxes(), (byte) detail.getStatus().ordinal(),
+						detail.getOfferDetail(), detail.getDelivered(),
+						ctx.getUser(), creationDate, ctx.getUser(),
+						modificationDate).execute();
 	}
 	
 	public static void updateSalesDetail(AONContext ctx, SalesDetail detail) {
 		ctx.checkWrite();
 		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		
+		modificationDate = new java.sql.Timestamp(
+				new java.util.Date().getTime());
+
 		ctx.getDslContext()
 				.update(SALES_DETAIL)
 				.set(SALES_DETAIL.LINE, detail.getLine())
-				.set(SALES_DETAIL.ITEM, detail.getItem())
+				.set(SALES_DETAIL.ITEM, detail.getItem().getId())
 				.set(SALES_DETAIL.DESCRIPTION, detail.getDescription())
 				.set(SALES_DETAIL.QUANTITY, detail.getQuantity())
 				.set(SALES_DETAIL.PRICE, detail.getPrice())
@@ -408,7 +409,7 @@ public class SalesDAO {
 			sales.setId(r.getValue(SALES.ID));
 			sales.setDomain(r.getValue(SALES.DOMAIN));
 			sales.setProject(r.getValue(SALES.PROJECT));
-			sales.setCustomer(r.getValue(SALES.CUSTOMER));
+			sales.setCustomer(new Customer().setId(r.getValue(SALES.CUSTOMER)));
 			sales.setSeries(r.getValue(SALES.SERIES));
 			sales.setNumber(r.getValue(SALES.NUMBER));
 			sales.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE));
@@ -453,8 +454,8 @@ public class SalesDAO {
 			SalesDetail detail = new SalesDetail();
 			detail.setId(r.getValue(SALES_DETAIL.ID));
 			detail.setDomain(r.getValue(SALES_DETAIL.DOMAIN));
-			detail.setSales(r.getValue(SALES_DETAIL.SALES));
-			detail.setItem(r.getValue(SALES_DETAIL.ITEM));
+			detail.setSales(new Sales().setId(r.getValue(SALES_DETAIL.SALES)));
+			detail.setItem(new Item().setId(r.getValue(SALES_DETAIL.ITEM)));
 			detail.setLine(r.getValue(SALES_DETAIL.LINE));
 			detail.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION));
 			detail.setQuantity(r.getValue(SALES_DETAIL.QUANTITY));

@@ -1255,33 +1255,46 @@ public class AON {
 	}
 	
 	// ------------------ SALES
-		public static Stream<Sales> getSalesStream(String domainName,
-				Integer domainId, String login, SalesFilter filter) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, login);
-				return getManagement().getSalesStream(ctx, filter);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
+	public static Stream<Sales> getSalesStream(String domainName,
+			Integer domainId, String login, SalesFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getSalesStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
-		public static Sales getSales(String domainName,
-				Integer domainId, String login, SalesFilter filter) {
-			return getSalesStream(domainName, domainId, login, filter)
-					.findFirst().orElse(new Sales());
-		}
-		public static Stream<SalesDetail> getSalesDetailStream(String domainName,
-				Integer domainId, String login, SalesDetailFilter filter) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, login);
-				return getManagement().getSalesDetailStream(ctx, filter);
-			} finally {
-				if (ctx != null)
-					ctx.close();
+	}
+
+	public static Sales getSales(String domainName, Integer domainId,
+			String login, SalesFilter filter) {
+		Sales sales = getSalesStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new Sales());
+		sales.setCustomer(getCustomer(domainName, domainId, login, sales
+				.getCustomer().getId()));
+		return sales;
+	}
+
+	public static Stream<SalesDetail> getSalesDetailStream(String domainName,
+			Integer domainId, String login, SalesDetailFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			List<SalesDetail> list = getManagement().getSalesDetailStream(ctx,
+					filter).collect(Collectors.toList());
+			for (SalesDetail detail : list) {
+				detail.setSales(getSales(domainName, domainId, login, f -> f
+						.getIdProperty().eq(detail.getSales().getId())));
+				detail.setItem(getItem(domainName, domainId, login, detail
+						.getItem().getId()));
 			}
-		}	
+			return list.stream();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 		
 	
 	// ------------------ PURCHASE
