@@ -887,7 +887,13 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 			<componentElement>
 				<reportElement uuid="7c91b6ab-8563-44cb-8876-474cded8ad4e" key="prepayments" positionType="Float" x="1" y="242" width="535" height="15" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="detail" uuid="2f406cb4-ad10-4771-b599-c03360c24f1c">
+					<datasetRun subDataset="detail" uuid="f7949fb3-8128-4315-80f7-7ac72595ea2c">
+						<datasetParameter name="valuated">
+							<datasetParameterExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PriceStrategy">
+							<datasetParameterExpression><![CDATA[$P{PriceStrategy}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="536" uuid="f0e20b9f-0b4f-47da-9624-863df2d53453">
