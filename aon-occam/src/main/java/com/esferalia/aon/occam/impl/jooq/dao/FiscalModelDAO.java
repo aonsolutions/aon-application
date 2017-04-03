@@ -336,10 +336,10 @@ public class FiscalModelDAO {
 			int month = AonDateUtils.getMonth(today);
 			if (month == 0) {
 				year = year - 1;
-				month = 11;
+				month = 12;  // Mas abajo restamos.
 			}
 			fm.setYear(year);
-			fm.setPeriod( Period.getQuarterlyPeriod(month));
+			fm.setPeriod( Period.getQuarterlyPeriod(month-1));
 		}
 		fm.setAdmonAeat(params.getAdministrationCode());
 		fm.setStatus(FiscalStatus.PENDING);

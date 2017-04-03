@@ -25,7 +25,6 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202>{
 		}
 
 		public Period getValue() {
-			if (getSelectedIndex() == 0) return null;
 			return Period.values()[ AonNumberUtils.toInteger( getSelectedValue() ) ];
 		}
 	}
