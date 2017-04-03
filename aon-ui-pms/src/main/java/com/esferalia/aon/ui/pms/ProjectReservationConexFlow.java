@@ -47,8 +47,10 @@ public class ProjectReservationConexFlow implements Serializable {
 	private Boolean sale;
 	private Boolean refund;
 
-	public ProjectReservationConexFlow() {
+	public ProjectReservationConexFlow(ProjectReservation reservation) {
+		setReservation(reservation);
 		setLogin(UserUtils.getInstance().getLoggedUser().getLogin());
+		setAmount(null);
 		setPreauthorization(null);
 		setConfirmPreauthorization(null);
 		setSale(null);
@@ -234,8 +236,6 @@ public class ProjectReservationConexFlow implements Serializable {
 		return (isSale() || isConfirmPreauthorization()) && !isRefund();
 	}
 	
-
-	/********** TRAIDOS DEL PROJECT RESERVATION CONTROLLER **********/
 
 	public String onCreateToken() {
 		ConexFlowConnection connection = DBConsults.getConection(getDomain());

@@ -156,7 +156,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public ProjectReservationConexFlow getReservationConexFlow() {
 		if (reservationConexFlow == null) {
-			reservationConexFlow = new ProjectReservationConexFlow();
+			reservationConexFlow = new ProjectReservationConexFlow((ProjectReservation)getTo());
 		}
 		return reservationConexFlow;
 	}
