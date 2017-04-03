@@ -938,7 +938,8 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			public void onSuccess(JSON<JsWarehouse> result) {
 				warehouse.setItems(result.getData());
 				if(result.getData().length() > 0){
-					warehouse.setInputElementValue(result.getData().get(0).getName());
+					//warehouse.setInputElementValue(result.getData().get(0).getName());
+					warehouse.setSelectedItem(warehouse.getItems().get(0));
 				}
 			}
 			
@@ -955,7 +956,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		HorizontalPanel hp = new HorizontalPanel();
 		PaperInput quantity = new PaperInput();
 		quantity.setLabel("Cantidad");
-		quantity.setValue(detail.getQuantity() + "");
+		quantity.setValue((detail.getQuantity() - detail.getDelivered())+ "");
 		quantity.setMaxlength(8);
 		hp.add(quantity);
 		
@@ -1092,7 +1093,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			@Override protected void onCancel() {hide();}
 			
 			@Override 
-			protected void onAccept() {	
+			protected void onAccept() {
 				Double q = basculaPtb.getChecked() 
 						? Double.parseDouble(quan.getValue()) 
 						: Double.parseDouble(quantity.getValue()); 
