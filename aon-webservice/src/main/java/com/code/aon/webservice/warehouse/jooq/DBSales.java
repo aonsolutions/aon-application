@@ -11,6 +11,7 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.management.SalesDetailProperties;
 import com.esferalia.aon.occam.api.model.management.SalesProperties;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -31,11 +32,12 @@ public class DBSales {
 		return array;
 	}
 	
-	public static JSONArray getSalesDetail(Domain domain,String login, Integer id){
-		JSONArray array = new JSONArray();
-		AON.getSalesDetailStream(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id))
-		.forEach(detail -> array.put(ToJSON.salesDetailToJSON(detail)));
-		return array;
+	public static JSONObject getSalesDetail(Domain domain, String login,
+			Integer id) {
+		return ToJSON.salesDetailToJSON(AON
+				.getSalesDetailStream(domain.getName(), domain.getId(), login,
+						f -> f.getIdProperty().eq(id)).findFirst()
+				.orElse(new SalesDetail()));
 	}
 	
     public static Filter salesFilter(Domain domain, Map<String, String[]> filterMap, SalesProperties f) {

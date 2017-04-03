@@ -372,7 +372,8 @@ public class IngenetSalesManager {
 		com.esferalia.aon.occam.api.model.management.Sales  newSales = new com.esferalia.aon.occam.api.model.management.Sales();
 		newSales.setDomain(domainId);
 		newSales.setProject(sales.getProject() != null ? sales.getProject().getId() : null);
-		newSales.setCustomer(sales.getCustomer() != null ? sales.getCustomer().getId() : null);
+		newSales.setCustomer(new com.esferalia.aon.occam.api.model.Customer());
+		newSales.getCustomer().setId(sales.getCustomer() != null ? sales.getCustomer().getId() : null);
 		newSales.setSeries(sales.getSeries());
 		newSales.setNumber(sales.getNumber());
 		newSales.setPurchaseReference(sales.getPurchaseReference());
@@ -426,8 +427,10 @@ public class IngenetSalesManager {
 			Integer salesId, Integer itemId, SalesDetail detail) {
 		com.esferalia.aon.occam.api.model.management.SalesDetail newDetail = new com.esferalia.aon.occam.api.model.management.SalesDetail();
 		newDetail.setDomain(domainId);
-		newDetail.setSales(salesId);
-		newDetail.setItem(itemId);
+		newDetail.setSales(new com.esferalia.aon.occam.api.model.management.Sales());
+		newDetail.getSales().setId(salesId);
+		newDetail.setItem(new com.esferalia.aon.occam.api.model.product.Item());
+		newDetail.getItem().setId(itemId);
 		newDetail.setLine(detail.getLine().shortValue());
 		newDetail.setDescription(detail.getDescription());
 		newDetail.setQuantity(detail.getQuantity());

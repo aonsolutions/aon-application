@@ -87,7 +87,7 @@ public class IngenetDeliveryManager {
 		SalesDetail ingenetSalesDetail = obtainIngenetSalesDetail(domainName,
 				user, ingenetSalesDetailId);
 		Sales ingenetSales = obtainIngenetSales(domainName, user,
-				ingenetSalesDetail.getSales());
+				ingenetSalesDetail.getSales().getId());
 		
 		String ingenetSalesSeries = ingenetSales.getSeries();
 		Integer ingenetSalesNumber = ingenetSales.getNumber();
@@ -176,7 +176,7 @@ public class IngenetDeliveryManager {
 				aonSalesDetail = obtainAonSalesDetail(ctx.getDomainName(),
 						ctx.getUser(), ctx.getDomainId(), detail, aonSales);
 				item = createNewItem(ctx, ctx.getDomainId(),
-						aonSalesDetail.getItem(),
+						aonSalesDetail.getItem().getId(),
 						ingenetItem.getSerialNumber(),
 						ingenetItem.getSerialDate());
 			}

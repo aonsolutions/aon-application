@@ -274,16 +274,16 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
 			SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
 			Customer customer = null;
-			if(salesDetail!=null && salesDetail.getId()!=null){
-				customer = obtainCustomer(ctx, salesDetail.getSales());
+			if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
+				customer = obtainCustomer(ctx, salesDetail.getSales().getId());
 			}
 			RESPUESTAELABORACIONTYPE elaboracion = new RESPUESTAELABORACIONTYPE();
 			elaboracion.setSERIE(elaboration.getSeries());
 			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
 			elaboracion.setFECHAEMISION(getDateFormatter().format(elaboration.getDate()));
 			elaboracion.setCOMENTARIOS(elaboration.getComments());
-			if(salesDetail!=null && salesDetail.getId()!=null){
-				Sales sales = obtainSales(ctx, salesDetail.getSales());
+			if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
+				Sales sales = obtainSales(ctx, salesDetail.getSales().getId());
 				elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
 				elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
 				elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
@@ -415,7 +415,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		if(salesId!=null){
 			Sales sales = obtainSales(ctx, salesId);
 			return AON.getCustomer(ctx.getDomainName(), ctx.getDomainId(),
-					ctx.getUser(), sales.getCustomer());
+					ctx.getUser(), sales.getCustomer().getId());
 		}
 		return null;
 	}

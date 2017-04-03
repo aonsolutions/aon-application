@@ -131,13 +131,12 @@ public class ElaborationDownload extends HttpServlet {
 				salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, 
 						f -> f.getIdProperty().eq(elaboration.getSourceId()))
 						.findFirst().orElse(null);
-				if(salesDetail!=null && salesDetail.getSales()>0){
-					int salesId = salesDetail.getSales(); 
+				if(salesDetail!=null && salesDetail.getSales().getId()>0){
+					int salesId = salesDetail.getSales().getId(); 
 					sales = AON.getSales(domain.getName(), domain.getId(), login, 
 							f -> f.getIdProperty().eq(salesId));
 					if(sales!=null && sales.getId()!=null){
-						customer = AON.getCustomer(domain.getName(), domain.getId(), login, 
-								sales.getCustomer());
+						customer = sales.getCustomer();
 					}
 				}
 			} else if(source==ElaborationSource.PURCHASE){
