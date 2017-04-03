@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetailProperties;
+import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -151,6 +152,11 @@ public class DBPurchase {
     	if(saldar || (purchaseDetail.getQuantity() - purchaseDetail.getDelivered() < 0)){
     		purchaseDetail.setQuantity(purchaseDetail.getDelivered());
     	}
+    	if(purchaseDetail.getDelivered() == 0){
+    		purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+    	} else if(purchaseDetail.getDelivered() < purchaseDetail.getQuantity()){
+    		purchaseDetail.setStatus(PurchaseDetailStatus.PARTIAL_SETTLED);
+    	} else purchaseDetail.setStatus(PurchaseDetailStatus.SETTLED);
     	purchaseDetail = AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, purchaseDetail);
     	return ToJSON.purchaseDetailToJSON(purchaseDetail);
     }

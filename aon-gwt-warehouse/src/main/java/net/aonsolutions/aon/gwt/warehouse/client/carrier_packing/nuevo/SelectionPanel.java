@@ -28,6 +28,8 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
@@ -44,10 +46,14 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.iron.widget.IronIcon;
+import com.vaadin.polymer.iron.widget.event.IronChangeEvent;
+import com.vaadin.polymer.iron.widget.event.IronChangeEventHandler;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
+import com.vaadin.polymer.paper.widget.event.ChangeEvent;
+import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
 import net.aonsolutions.aon.gwt.warehouse.client.Utils;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -93,11 +99,15 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		selectedScrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 25 ? getOffsetHeight() - 25 : 0.0, Unit.PX);
 		if(isPending()){
 			ScrollPanel selectableScrollPanel = (ScrollPanel) selectableVerticalPanel.getWidget(1);
-			selectableScrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 50 ? getOffsetHeight() - 50 : 0.0, Unit.PX);
+			selectableScrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 65 ? getOffsetHeight() - 65 : 0.0, Unit.PX);
 		} else if(isShipment()){
 			ScrollPanel receptionScrollPanel = (ScrollPanel) receptionVerticalPanel.getWidget(1);
 			receptionScrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 25 ? getOffsetHeight() - 25 : 0.0, Unit.PX);
 		}
+	}
+	
+	public void resize() {
+		onResize();
 	}
 	
 	public SelectionPanel(CarrierPackingDetail parent) {	
@@ -106,6 +116,14 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		initSelectableFilter();
 		initReceptionFilter();
 		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
+		
+		 Window.addResizeHandler(new ResizeHandler() {
+				
+			@Override
+			public void onResize(ResizeEvent event) {
+				resize();
+			}
+		});
 
 		//  -------------------------- SELECTABLE PANEL ------------------------------
 		if(isPending()){
@@ -142,6 +160,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		rootPanel.add(selected);
 		
 		initWidget(rootPanel);
+		onResize();
 	}
 	
 	// -------------------- RECEPTION PANEL
@@ -175,7 +194,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private ScrollPanel receptionItems() {
 		ScrollPanel scrollPanel = new ScrollPanel();
-	//	scrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 25 ? getOffsetHeight() - 25 : 0.0, Unit.PX);
 		scrollPanel.addScrollHandler(new ScrollHandler() {
 			
 			@Override
@@ -263,7 +281,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private ScrollPanel selectedItems() {
 		ScrollPanel scrollPanel = new ScrollPanel();
-	//	scrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 25 ? getOffsetHeight() - 25 : 0.0, Unit.PX);
 		scrollPanel.addScrollHandler(new ScrollHandler() {
 			
 			@Override
@@ -370,9 +387,9 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(datebox.getValue().getTime()));
 				selectableFilter.put("issue_date", list);
-
 				selectableVerticalPanel.remove(1);
 				selectableVerticalPanel.add(selectableItems());
+				onResize();
 			}
 		});
 		p.add(datebox);
@@ -399,6 +416,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					}
 					selectableVerticalPanel.remove(1);
 					selectableVerticalPanel.add(selectableItems());
+					onResize();
 				}
 			}
 		}); 
@@ -428,6 +446,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					}
 					selectableVerticalPanel.remove(1);
 					selectableVerticalPanel.add(selectableItems());
+					onResize();
 				}
 			}
 		}); 
@@ -457,6 +476,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					}
 					selectableVerticalPanel.remove(1);
 					selectableVerticalPanel.add(selectableItems());
+					onResize();
 				}
 			}
 		}); 
@@ -467,7 +487,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private ScrollPanel selectableItems() {
 		ScrollPanel scrollPanel = new ScrollPanel();
-	//	scrollPanel.getElement().getStyle().setHeight(getOffsetHeight() > 50 ? getOffsetHeight() - 50 : 0.0, Unit.PX);
 		scrollPanel.addScrollHandler(new ScrollHandler() {
 			
 			@Override
@@ -540,7 +559,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			}
 
 			PaperIconButton pib = new PaperIconButton();
-			//pib.setIcon(selected ? "remove" : "add");
 			pib.setIcon("swap-horiz");
 	    	pib.setStyle("height:24px;font-size:12px;padding:0px;font-weight: bold;");
 	    	pib.setNoink(true);
@@ -555,9 +573,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						} else {
 							addAllOrder(order);
 						}
-					} else{
-						// TODO RECEPTION OPTIONS!!! 
-					}
+					} 
 				}
 			});
 
@@ -661,7 +677,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		    	((isSelected(panl) && (detail.getQuantity()- detail.getDelivered()) > 0)
 	    		|| isReception(panl) || isSelectable(panl))){
 				PaperIconButton pib = new PaperIconButton();
-				//pib.setIcon(selected ? "remove" : "add");
 				pib.setIcon("swap-horiz");
 				pib.setStyle("height:16px;font-size:12px;padding:0px;font-weight: bold;");
 		    	pib.setNoink(false);
@@ -854,10 +869,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.PENDING.getName());
 	}
 	
-	private Boolean isOnRoute(){
-		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.ON_ROUTE.getName());
-	}
-	
 	private Boolean isFinished(){
 		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.FINISHED.getName());
 	}
@@ -885,7 +896,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	private void addToIncome(JsOrder order, JsOrderDetail detail){
 		String serie = Utils.format("yyMMdd", new Date());
 		VerticalPanel panel = new VerticalPanel();
-
+		panel.addStyleName(AON.AON_CSS.aonWidthAll());
 		Label label = new Label(detail.getDescription());
 		panel.add(label);
 		
@@ -926,6 +937,9 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onSuccess(JSON<JsWarehouse> result) {
 				warehouse.setItems(result.getData());
+				if(result.getData().length() > 0){
+					warehouse.setInputElementValue(result.getData().get(0).getName());
+				}
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -945,18 +959,99 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		quantity.setMaxlength(8);
 		hp.add(quantity);
 		
+		PaperInput peso1 = new PaperInput();
+		peso1.setLabel("Peso 1");
+		peso1.setValue(detail.getQuantity() + "");
+		peso1.setMaxlength(8);
+		peso1.setWidth("50px");
+		peso1.setVisible(false);
+		hp.add(peso1);
+		
+		PaperInput peso2 = new PaperInput();
+		peso2.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		peso2.setLabel("Peso 2");
+		peso2.setValue(detail.getQuantity() + "");
+		peso2.setMaxlength(8);
+		peso2.setWidth("50px");
+		peso2.setVisible(false);
+		hp.add(peso2);
+		
+		PaperInput quan = new PaperInput();
+		quan.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		quan.setLabel("Cantidad");
+		Double p1 = Double.parseDouble(peso1.getValue());
+		Double p2 = Double.parseDouble(peso2.getValue());
+		quan.setValue((p2 - p1) + "");
+		quan.setMaxlength(8);
+		quan.setWidth("50px");
+		quan.setVisible(false);
+		quan.setDisabled(true);
+		hp.add(quan);
+		
+		peso1.addChangeHandler(new ChangeEventHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				Double p1 = Double.parseDouble(peso1.getValue());
+				Double p2 = Double.parseDouble(peso2.getValue());
+				quan.setValue((p2 - p1) + "");
+			}
+		});
+		
+		peso2.addChangeHandler(new ChangeEventHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				Double p1 = Double.parseDouble(peso1.getValue());
+				Double p2 = Double.parseDouble(peso2.getValue());
+				quan.setValue((p2 - p1) + "");
+			}
+		});
+		
+		VerticalPanel vp = new VerticalPanel();
+		Label basculaLabel = new Label("B\u00e1scula");
+		basculaLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
+		basculaLabel.getElement().getStyle().setMarginTop(15, Unit.PX);
+		basculaLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
+		vp.add(basculaLabel);
+		
 		Label saldarLabel = new Label("Saldar");
 		saldarLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
-		saldarLabel.getElement().getStyle().setMarginTop(45, Unit.PX);
+		saldarLabel.getElement().getStyle().setMarginTop(15, Unit.PX);
 		saldarLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
-		hp.add(saldarLabel);
+		vp.add(saldarLabel);
+		hp.add(vp);
+		
+		VerticalPanel vp2 = new VerticalPanel();
+		PaperToggleButton basculaPtb = new PaperToggleButton();
+		basculaPtb.getElement().getStyle().setMarginLeft(10, Unit.PX);
+		basculaPtb.getElement().getStyle().setMarginTop(8, Unit.PX);	
+		basculaPtb.setChecked(false);
+		basculaPtb.addIronChangeHandler(new IronChangeEventHandler() {
+			
+			@Override
+			public void onIronChange(IronChangeEvent event) {
+				if(basculaPtb.getChecked()){
+					quantity.setVisible(false);
+					peso1.setVisible(true);
+					peso2.setVisible(true);
+					quan.setVisible(true);
+				} else {
+					quantity.setVisible(true);
+					peso1.setVisible(false);
+					peso2.setVisible(false);
+					quan.setVisible(false);
+				}
+			}
+		});
+		vp2.add(basculaPtb);
 		
 		PaperToggleButton ptb = new PaperToggleButton();
 		ptb.getElement().getStyle().setMarginLeft(10, Unit.PX);
-		ptb.getElement().getStyle().setMarginTop(40, Unit.PX);	
+		ptb.getElement().getStyle().setMarginTop(8, Unit.PX);	
 		ptb.setChecked(false);
-		
-		hp.add(ptb);
+		vp2.add(ptb);
+		hp.add(vp2);
 		panel.add(hp);
 
 		PaperInput lote = new PaperInput();
@@ -998,8 +1093,10 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			
 			@Override 
 			protected void onAccept() {	
-				Double q = Double.parseDouble(quantity.getValue());
-				Boolean saldar = ptb.getChecked();//TODO SALDAR & LOTE!!!
+				Double q = basculaPtb.getChecked() 
+						? Double.parseDouble(quan.getValue()) 
+						: Double.parseDouble(quantity.getValue()); 
+				Boolean saldar = ptb.getChecked();
 				String l = "";
 				
 				if(income.getValue() != null && !income.getValue().equals("")){
@@ -1064,7 +1161,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private void addIncomeDetail(JsOrder income, JsOrderDetail detail, Double quantity, Integer item, Boolean saldar){
 		receptionOrder = income.getId();
-		Double pq = detail.getQuantity();
 		if(quantity > 0){
 			String requestData = "{\"item\":\""+ item +"\","
 				+ "\"description\":\""+ detail.getDescription() +"\","
