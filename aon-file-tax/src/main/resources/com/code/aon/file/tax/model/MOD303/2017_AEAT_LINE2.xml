@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <register name="Line2">
-	<field name="init"      value="&lt;T30302>"                                     format="AlphaNumeric"  pattern="X(8)"  />
+	<field name="init"      value="&lt;T30302000>"                                  format="AlphaNumeric"  pattern="X(11)"  />
 	<field name="free0"     value=" "                                               format="Alphabetic"    pattern="X"     />
 	
 	<field name="agr1"      value="bean"  bean="sr"    property="agr1CodeString"    format="AlphaNumeric"  pattern="X(2)" />
@@ -99,6 +99,6 @@
 	<field name="indAux1"  value="bean"  bean="sr"    property="indAux1"    format="AlphaNumeric"  pattern="X(1)" />
 	<field name="indAux2"  value="bean"  bean="sr"    property="indAux2"    format="AlphaNumeric"  pattern="X(1)" />
 	
-	<field name="free1"     value=" "                                                        format="Alphabetic"    pattern="X(590)"     />
-	<field name="free2"     value="&lt;/T30302>"                                             format="Alphabetic"    pattern="X(9)" />
+	<field name="free1"     value=" "                                               format="Alphabetic"    pattern="X(590)"     />
+	<field name="free2"     value="&lt;/T30302000>"                                 format="Alphabetic"    pattern="X(12)" />
 </register>
