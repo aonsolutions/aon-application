@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,7 +88,6 @@ import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002015Import2014;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.ibm.icu.text.SimpleDateFormat;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
