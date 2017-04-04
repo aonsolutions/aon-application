@@ -1166,14 +1166,19 @@ public class InvoiceDAO {
 					.execute();
 				ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
 				
-				count = ctx.getDslContext()
-					.delete(INVOICE_TAX_ACCOUNT)
-					.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.in( 
-						ctx.getDslContext().select(INVOICE_TAX.ID)
-								.from(INVOICE_TAX)
-								.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))))
-					.execute();
-				ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+count+" filas.)");
+				ctx.getDslContext().select(INVOICE_TAX.ID)
+					.from(INVOICE_TAX)
+					.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
+					.fetch()
+					.stream()
+					.mapToInt(rec -> rec.getValue(INVOICE_TAX.ID))
+					.forEach(id -> {
+						int x = ctx.getDslContext()
+								.delete(INVOICE_TAX_ACCOUNT)
+								.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
+								.execute();
+						ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
+					});
 			}
 		});
 		
