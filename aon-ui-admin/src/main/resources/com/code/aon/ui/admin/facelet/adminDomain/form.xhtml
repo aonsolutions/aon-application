@@ -313,64 +313,25 @@
 						<aon:if test="#{conexflow.showConexflow}" >
 							<aon:outputLabel for="Domain_externalApplications"
 								value="#{bundle.aon_external_applications}" />
-							<aon:div>
-						<!-- TIRANT ASESORES
-						<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
-							value="#{adminDomain.bookingInfo.tirant}">
-						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="ExternalApplication_Tirant"
-							value="#{bundle.aon_external_tirant}" />	
-						 -->
-						 
-						<!-- DEH Online  					
-						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<aon:selectBooleanCheckbox id="ExternalApplication_DEHOnline"
-								value="#{adminDomain.bookingInfo.dehOnline}">
-							</aon:selectBooleanCheckbox>
-							<aon:outputLabel for="ExternalApplication_DEHOnline"
-								value="#{bundle.aon_external_dehOnline}" />
-							<aon:if test="#{dehOnline.showConfiguration}">								
-								<aon:if test="#{!dehOnline.configured}">	
-									<aon:div styleClass="aon-margin-left aon-margin-right" layout="inline" >
-										<aon:outputText value="&#160;" styleClass="aon-icon-warning"
-											style="padding-left:12px" />
-										<rich:toolTip value="#{bundle.admin_domain_dehOnline_warning}" />
-									</aon:div>												
-								</aon:if>				
-								<aon:commandLink id="dehOnlineParameters"
-									styleClass="aon-button-goto aon-margin-left"
-									style="padding-right: 20px;"
-									value="&#160;" title="#{bundle.admin_goTo_dehOnline}"
-									actionListener="#{dehOnline.onInit}"
-									action="globalConfig_form" >
-									<f:setPropertyActionListener value="parameters"
-										target="#{globalConfig.selectedPanel}" />
-									<f:setPropertyActionListener value="dehOnlineParameters"
-										target="#{globalConfig.currentOption}" />
-								</aon:commandLink>									
-							</aon:if>								
-						</aon:if>	
-						-->	
-						
-							<aon:selectBooleanCheckbox id="ExternalApplication_ConexFlow"
-								value="#{conexflow.conexFlow}" reRender="aonContent">
-							
-								<a4j:support event="onchange" reRender="showConexFlowWindow"
-									actionListener="#{conexflow.onChangeConexFlowStatus}"
-									ajaxSingle="true" />
-							</aon:selectBooleanCheckbox>
-							<aon:if test="#{!conexflow.conexFlow}">
-								<aon:outputLabel for="ExternalApplication_ConexFlow"
-									value="#{bundle.aon_external_conexFlow}" />	
-							</aon:if>
-							<aon:if test="#{conexflow.conexFlow}">
-								<aon:commandButton id="conexFlow-link"
+							<aon:div id="Domain_externalApplications">
+								<aon:selectBooleanCheckbox id="ExternalApplication_ConexFlow"
+									value="#{conexflow.conexFlow}" reRender="aonContent"
+									onclick="this.blur();">
+									<a4j:support event="onchange" reRender="showConexFlowWindow"
+										actionListener="#{conexflow.onChangeConexFlowStatus}"
+										ajaxSingle="true" />
+								</aon:selectBooleanCheckbox>
+								<aon:if test="#{!conexflow.conexFlow}">
+									<aon:outputLabel for="ExternalApplication_ConexFlow"
+										value="#{bundle.aon_external_conexFlow}" />	
+								</aon:if>
+								<aon:if test="#{conexflow.conexFlow}">
+									<aon:commandButton id="conexFlow-link"
 										styleClass="aon-table-portlet aon-selectInputDate-buttonClass aon-nopadding"
 										value="#{bundle.aon_external_conexFlow}"
 										actionListener="#{conexflow.onChangeConexFlowStatus}"
-										reRender="showConexFlowWindow">
-								</aon:commandButton>
-							</aon:if>
+										reRender="showConexFlowWindow" />
+								</aon:if>
 							</aon:div>
 						</aon:if>	
 					</aon:if>

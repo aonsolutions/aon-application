@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showConexFlowWindow">
 		<aon:if test="#{controller.showConexFlowWindow}">
-			<rich:modalPanel id="conexFlowModalPanel" minHeight="240" minWidth="580" 
+			<rich:modalPanel id="conexFlowModalPanel" minHeight="260" minWidth="580" 
 				rendered="#{controller.showConexFlowWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -34,7 +34,6 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div id="conexFlowModalToolbar" styleClass="aon-toolbar">
-									
 									<aon:commandButton id="conexFlow-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_save}"
@@ -46,12 +45,16 @@
 											target="#{controller.showConexFlowWindow}"
 											value="#{false}" />		
 									</aon:commandButton>
-								
 									<aon:commandButton id="conexFlow-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_back}"
 										actionListener="#{controller.onClose}"
-										reRender="showConexFlowWindow , aonContent">
+										reRender="showConexFlowWindow,aonContent">
+										<rich:componentControl for="conexFlowModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showConexFlowWindow}"
+											value="#{false}" />		
 									</aon:commandButton>
 								</aon:div>
 								
@@ -62,37 +65,43 @@
 										<aon:outputLabel for="conexFlow_server"
 											value="#{bundle.aon_server}" />
 										<aon:inputText id="conexFlow_server" 
-												value="#{controller.server}"
-												required="true" size="50"/>
+											value="#{controller.server}"
+											required="true" size="70" maxlength="96" />
 										
 										<aon:outputLabel for="conexFlow_server_ack"
 											value="#{bundle.aon_server_ack}" />
 										<aon:inputText id="conexFlow_server_ack" 
-												value="#{controller.serverAck}"
-												required="true" size="50"/>
+											value="#{controller.serverAck}"
+											required="true" size="70" maxlength="96" />
 												
 										<aon:outputLabel for="conexFlow_user"
 											value="#{bundle.aon_login_user}" />
 										<aon:inputText id="conexFlow_user" 
-												value="#{controller.user}"
-												required="true" size="16" maxlength="16">
+											value="#{controller.user}"
+											required="true" size="25" maxlength="16">
 											<f:validateLength minimum="16" maximum="16" />
 										</aon:inputText>
 										
-										<aon:outputLabel for="conexFlow_keyA" value="Clave A" />
+										<aon:outputLabel for="conexFlow_keyA" value="#{bundle.aon_key} A" />
 										<aon:inputText id="conexFlow_keyA"
-												value="#{controller.keyA}"
-												required="true" size="16" maxlength="16">
+											value="#{controller.keyA}"
+											required="true" size="25" maxlength="16">
 										</aon:inputText>
 								
-										<aon:outputLabel for="conexFlow_keyB" value="Clave B" />
+										<aon:outputLabel for="conexFlow_keyB" value="#{bundle.aon_key} B" />
 										<aon:inputText id="conexFlow_keyB" 
-												value="#{controller.keyB}"
-												required="true" size="16" maxlength="16">
+											value="#{controller.keyB}"
+											required="true" size="25" maxlength="16">
 										</aon:inputText>
 										
-										
-									
+										<aon:outputLabel for="conexFlow_payMethod" value="#{bundle.finance_payMethod}" />
+										<aon:selectOneMenu id="conexFlow_payMethod"
+											value="#{controller.payMethod}"
+											required="true">
+											<f:selectItem itemLabel="-" value="#{null}" />
+											<f:selectItems value="#{configCollections.noCashDirectPayMethods}" />
+										</aon:selectOneMenu>
+
 									</aon:panelGrid>
 								</aon:div>
 								
