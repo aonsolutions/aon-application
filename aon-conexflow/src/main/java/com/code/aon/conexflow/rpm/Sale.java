@@ -71,7 +71,10 @@ public class Sale {
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE)
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CANCEL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_REFUND)
+					
 				};
 			
 				if(!DBConsults.hasConexFlow(d, login, r.getProject(), difference ? differenceDescriptions : descriptions)){
