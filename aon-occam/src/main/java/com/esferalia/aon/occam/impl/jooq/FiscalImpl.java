@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
@@ -24,6 +25,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
@@ -49,9 +53,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.Mod2002015DAO;
+import com.esferalia.aon.occam.server.finance.FinanceUtils;
 
 public class FiscalImpl implements IFiscal {
 
@@ -812,5 +818,17 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public Mod2002015 importMod2002014(AONContext ctx, Mod2002015 mod200) {
 		return Mod2002015DAO.importMod2002014(ctx,mod200);
+	}
+	@Override
+	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, VatParams params) {
+		return VATDAO.getVatSummary(ctx, params.getFromDate()
+				,params.getToDate(),p -> FinanceUtils.getVATFilter(p, params))
+				.stream();
+	}
+	
+	@Override
+	public Stream<VatContext> getVatContext(AONContext ctx, VatParams params) {
+		return VATDAO.getVatBreakdown(ctx, params.getFromDate()
+				,params.getToDate(),p -> FinanceUtils.getVATFilter(p, params));
 	}
 }

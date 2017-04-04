@@ -94,4 +94,13 @@ public enum InvoiceType implements Serializable  {
 	public void visit(AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor) {
 		accountingInvoiceWalker.visit(invoice,visitor);
 	}
+	public static InvoiceType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static InvoiceType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= DocumentType.values().length) return null;
+		return InvoiceType.values()[i];
+	}
 }

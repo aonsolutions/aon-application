@@ -163,6 +163,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Notificaciones")
 	String notifications();
 
+	@DefaultMessage("Resumen")
+	String summary();
+
 	@DefaultMessage("Desglose informaci\u00F3n")
 	String informationBreakdown();
 
@@ -2158,6 +2161,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("IVA Rep.")
 	String outputVatAccount();
+
+	@DefaultMessage("Recibidas")
+	String inputInvoices();
+
+	@DefaultMessage("Emitidas")
+	String outputInvoices();
 
 	@DefaultMessage("Informaci\u00F3n adicional del ep\u00EDgrafe")
 	String epigraphAdditionalInfo();

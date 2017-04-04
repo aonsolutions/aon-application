@@ -178,18 +178,21 @@ public class InvoiceDAO {
 				.fetch();
 	}
 	
-	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilter filter) {
-		ctx.checkRead();
-
+	public static Field<Integer> getOrderedType() {
 		// Field para que salgan ordenado primero 
 		// compras,gastos y gastos no .ded y luego ventas.
 		// En la select se complementa con invoice.type
-		Field<Integer> orderedType = DSL.decode()
+		return DSL.decode()
 		   .when(INVOICE.TYPE.equal((byte) 0), 0)
 		   .when(INVOICE.TYPE.equal((byte) 1), 1)
 		   .when(INVOICE.TYPE.equal((byte) 2), 0)
 		   .when(INVOICE.TYPE.equal((byte) 3), 0);
-		
+
+	}
+	
+	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilter filter) {
+		ctx.checkRead();
+		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
 			.select(
 				 INVOICE.ID
@@ -614,25 +617,21 @@ public class InvoiceDAO {
 	}
 	
 	public static LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate){
-		Field<Integer> type = DSL.decode()
-				   .when(INVOICE.TYPE.equal((byte) 0), 0)
-				   .when(INVOICE.TYPE.equal((byte) 1), 1)
-				   .when(INVOICE.TYPE.equal((byte) 2), 0)
-				   .when(INVOICE.TYPE.equal((byte) 3), 0);
+		Field<Integer> orderedType = getOrderedType();
 		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);
 		AggregateFunction<Integer> max = DSL.max(INVOICE.NUMBER);
 		LinkedList<InvoiceSeries> list = new LinkedList<InvoiceSeries>(); 
 		ctx.getDslContext()
-		.select(type,INVOICE.SERIES,min,max)
+		.select(orderedType,INVOICE.SERIES,min,max)
 		.from(INVOICE)
 		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 		.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
-		.groupBy(type,INVOICE.SERIES)
+		.groupBy(orderedType,INVOICE.SERIES)
 		.fetch()
 		.stream()
 		.forEach( rec -> list.add(
 			new InvoiceSeries()
-				.setSales(rec.getValue(type) == 1)
+				.setSales(rec.getValue(orderedType) == 1)
 				.setSeriesInfo(true)
 				.setDescription(rec.getValue(INVOICE.SERIES))
 				.setFromNumber(rec.getValue(min))
@@ -640,16 +639,16 @@ public class InvoiceDAO {
 				);
 		AggregateFunction<Integer> count = DSL.count();
 		ctx.getDslContext()
-			.select(type,INVOICE.TRANSACTION,count)
+			.select(orderedType,INVOICE.TRANSACTION,count)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 			.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
-			.groupBy(type,INVOICE.TRANSACTION)
+			.groupBy(orderedType,INVOICE.TRANSACTION)
 			.fetch()
 			.stream()
 			.forEach( rec -> list.add(
 				new InvoiceSeries()
-					.setSales(rec.getValue(type) == 1)
+					.setSales(rec.getValue(orderedType) == 1)
 					.setSeriesInfo(false)
 					.setDescription(InvoiceTransactionType.values()[rec.getValue(INVOICE.TRANSACTION)].getDescription())
 					.setFromNumber(rec.getValue(count)))

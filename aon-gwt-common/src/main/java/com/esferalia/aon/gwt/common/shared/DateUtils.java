@@ -139,7 +139,12 @@ public class DateUtils {
 	public static Date getFirstDayOfYear(Date date) {
 		return new Date(date.getYear(), 0, 1);
 	}
-
+	public static Date getFirstDayOfYear(int year) {
+		return new Date(year, 0, 1);
+	}
+	public static Date getLastDayOfYear(int year) {
+		return new Date(year, 11, 31);
+	}
 	public static Date getLastDayOfYear(Date date) {
 		return new Date(date.getYear(), 11, 31);
 	}

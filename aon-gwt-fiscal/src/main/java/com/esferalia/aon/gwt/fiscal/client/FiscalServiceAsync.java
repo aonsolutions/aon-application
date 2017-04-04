@@ -38,6 +38,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
@@ -282,6 +285,12 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<SalaryEntry>> callback);
 	void getSalaryFormatted(String domainName, int domain, Date from, Date to, AsyncCallback<String> callback);
 
+	// --------------------------------------------------------------- VAT
+	void getVatSummaryContext(String domainName, int domain, VatParams params,
+			AsyncCallback<LinkedList<VatSummaryContext>> callback);
+	void getVatContext(String domainName, int domain, VatParams params, AsyncCallback<LinkedList<VatContext>> callback);
+	void getVatContextReport(String domainName, int domain, VatParams params, AsyncCallback<String> callback);
+
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	void getAccountStatement(String domainName, int domain, 
 			AccountStatementParams params,
@@ -304,6 +313,8 @@ public interface FiscalServiceAsync {
 			AsyncCallback<FinanceEntry> asyncCallback);
 	void save(String currentDomainName, int currentDomain, FinanceEntry financeEntry,
 			AsyncCallback<FinanceEntry> asyncCallback);
+
+
 
 
 	

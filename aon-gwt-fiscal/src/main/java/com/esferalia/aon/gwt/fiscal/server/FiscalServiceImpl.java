@@ -53,6 +53,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod115.Model115ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123ScriptProvider;
@@ -75,6 +78,7 @@ import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.MOD2002015;
@@ -83,11 +87,13 @@ import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002015Import2014;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.ibm.icu.text.SimpleDateFormat;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
 public class FiscalServiceImpl extends AonRemoteServiceServlet implements FiscalService {
 
+	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	@Override
 	public Double mathExpression(String expression) throws AonCoreException {
 		try {
@@ -1148,4 +1154,82 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public FinanceEntry getFinanceEntry(String domainName, int domain, Integer accountEntry) {
 		return ACCOUNTING.getFinanceEntry(domainName, domain, this.getUserLogin(), accountEntry);		
 	};
+	
+	// --------------------------------------------------------------- ACCOUNT ENTRIES
+	@Override
+	public LinkedList<VatContext> getVatContext(String domainName, int domain, VatParams params)
+			throws AonCoreException {
+		return FISCAL.getVatContext(domainName, domain, this.getUserLogin(), params)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	@Override
+	public String getVatContextReport(String domainName, int domain, VatParams params)
+			throws AonCoreException {
+		return VATFormatter.formatInvoices("LISTADO IVA", toString(params), 
+				FISCAL.getVatContext(domainName, domain, this.getUserLogin(), params)
+					.collect(Collectors.toCollection(LinkedList::new)));
+	}
+
+	@Override
+	public LinkedList<VatSummaryContext> getVatSummaryContext(String domainName, int domain, VatParams params)
+			throws AonCoreException {
+		return FISCAL.getVatSummaryContext(domainName, domain, this.getUserLogin(), params)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	private static String toString(VatParams params) {
+		StringBuffer buf = new StringBuffer();
+		if (params.getFromDate() != null) {
+			buf.append(" (Desde:");
+			buf.append( DATE_FORMATTER.format(params.getFromDate()));
+			buf.append(")");
+		}
+		if (params.getToDate() != null) {
+			buf.append(" (Hasta:");
+			buf.append( DATE_FORMATTER.format(params.getToDate()));
+			buf.append(")");
+		}
+		if (params.getRegistry() != null) {
+			buf.append(" (Titular:");
+			buf.append(params.getRegistry());
+			buf.append(")");
+		}
+		if (params.getActivity() != null) {
+			buf.append(" (Actividad:");
+			buf.append(params.getActivity());
+			buf.append(")");
+		}
+		if (params.getOutput() != null) {
+			buf.append(params.getOutput() ?" (Emitidas)":" (Recibidas)");
+		}
+		if (params.getVatSummaryType() != null) {
+			buf.append(" (");
+			buf.append(params.getVatSummaryType().getDescription());
+			buf.append(")");
+		}
+		if (params.getPercent() != null) {
+			buf.append(" (Porc:");
+			buf.append(params.getPercent());
+			buf.append(")");
+		}
+		if (params.getSurcharge()!= null) {
+			buf.append(params.getSurcharge()?" (Rec.Equiv. SI)":" (Rec.Equiv. NO)");
+		}
+		
+		if (params.getFarmerRegime()!= null) {
+			buf.append(params.getFarmerRegime()?" (Reg.Agric. SI)":" (Reg.Agric. NO)");
+		} 
+		if (params.getAccrualRegime()!= null) {
+			buf.append(params.getAccrualRegime()?" (Crit.Caja. SI)":" (Crit.Caja. NO)");
+		} 
+		if (params.getInvestment()!= null) {
+			buf.append(params.getInvestment()?" (Bien Inv.)":" (Bien Corr.)");
+		} 
+		if (params.getService() != null) {
+			buf.append(params.getService() ?" (Serv. SI)":" (Serv. NO)");
+		} 
+		return buf.length()>0 ? buf.insert(0,"Filtro:").toString():"";
+	}
+	
 }

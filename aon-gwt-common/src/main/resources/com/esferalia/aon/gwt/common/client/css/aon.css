@@ -56,6 +56,14 @@ input[type="checkbox"]:focus + label {
 	float: right;
 }
 
+.aon-height-5 {
+	height: 5px;
+}
+
+.aon-height-10 {
+	height: 10px;
+}
+
 .aon-height-all {
 	height: 100%;
 }

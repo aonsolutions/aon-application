@@ -78,6 +78,12 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-float-right")
 	String aonFloatRight();
 
+	@ClassName("aon-height-5")
+	String aonHeight5();
+
+	@ClassName("aon-height-10")
+	String aonHeight10();
+
 	@ClassName("aon-height-all")
 	String aonHeightAll();
 

@@ -38,6 +38,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
@@ -268,13 +271,16 @@ public interface FiscalService extends RemoteService {
 	LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, Date from, Date to) throws AonCoreException;
 	String getSalaryFormatted(String domainName, int domain, Date from, Date to) throws AonCoreException;
 	
+	// --------------------------------------------------------------- VAT
+	LinkedList<VatSummaryContext> getVatSummaryContext(String domainName, int domain,VatParams params) throws AonCoreException;
+	LinkedList<VatContext> getVatContext(String domainName, int domain,VatParams params) throws AonCoreException;
+	String getVatContextReport(String domainName, int domain,VatParams params) throws AonCoreException;
+	
+	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	AccountStatementReport getAccountStatement(String domainName,int domain, AccountStatementParams params) throws AonCoreException;	
 	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain, AccountStatementParams params) throws AonCoreException;
 
-	Attach getMod111Attach(String domainName, Mod111 mod111);
-	Attach getMod115Attach(String domainName, Mod115 mod115);
-	Attach getMod123Attach(String domainName, Mod123 mod123);
 
 	LinkedList<Finance> getAccountFinances(String domainName, int domain, FinanceParams params, int offset,
 			int limit) throws AonCoreException;
@@ -282,5 +288,8 @@ public interface FiscalService extends RemoteService {
 	FinanceEntry save(String currentDomainName, int currentDomain, FinanceEntry financeEntry) throws AonCoreException;
 
 	
+	Attach getMod111Attach(String domainName, Mod111 mod111);
+	Attach getMod115Attach(String domainName, Mod115 mod115);
+	Attach getMod123Attach(String domainName, Mod123 mod123);
 	
 }
