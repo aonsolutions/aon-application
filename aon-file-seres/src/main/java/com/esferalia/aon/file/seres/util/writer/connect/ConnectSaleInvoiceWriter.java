@@ -25,10 +25,15 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.product.Item;
+import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryItemStatus;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -70,18 +75,24 @@ public class ConnectSaleInvoiceWriter {
 		return output;
 	}
 
-	private RECTL createRECTLRecord(Invoice invoice, Company company, String companyEdiCode,
-			String customerEdiMainCode, String customerEdiOperationCode) {
-		
+	private RECTL createRECTLRecord(Invoice invoice, Company company,
+			String companyEdiCode, String customerEdiMainCode,
+			String customerEdiOperationCode) {
+
+		List<InvoiceDetail> detailList = invoice.getDetailList().stream()
+				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
+
 		List<Finance> financeList = getFinances(invoice);
-		
+
 		RECTL rectl = new RECTL();
 		rectl.setTipoDeMensaje(RECTL.RECTL_2.FACTURA_INVOIC.getValue());
 		rectl.setCodigoEmisor(companyEdiCode);
 		rectl.setCodigoReceptor(customerEdiMainCode);
-		rectl.setIdentificacionDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
-		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
-		
+		rectl.setIdentificacionDelMensaje(SeresUtils.dateTimeFormat().format(
+				new Date()));
+		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(
+				new Date()));
+
 		try {
 			rectl.sincc = createSINCCRecord(invoice, companyEdiCode,
 					customerEdiMainCode, customerEdiOperationCode);
@@ -112,41 +123,45 @@ public class ConnectSaleInvoiceWriter {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sinclList = createSINCLList(
-					invoice.getDetailList().stream()
-					.map(to -> ((InvoiceDetail) to))
-					.collect(Collectors.toList()), companyEdiCode,
+			rectl.sinclList = createSINCLList(detailList, companyEdiCode,
 					customerEdiMainCode);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sincuList = createSINCUList(invoice);
+			rectl.sincuList = createSINCUList(detailList);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sinceList = createSINCEList(invoice);
+			rectl.sinceList = createSINCEList(detailList);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sinciList = createSINCIList(
-					invoice.getDetailList().stream()
-					.map(to -> ((InvoiceDetail) to))
-					.collect(Collectors.toList()), invoice, companyEdiCode,
-					customerEdiMainCode);
+			rectl.sinciList = createSINCIList(detailList, invoice,
+					companyEdiCode, customerEdiMainCode);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
-		
+
 		return rectl;
 	}
 
+	/*
+	 * Cabecera
+	 */
 	private SINCC createSINCCRecord(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode, String customerEdiOperationCode) {
 		List<Finance> financeList = getFinances(invoice);
 		SINCC sincc = new SINCC();
+//		if(invoice.getType()==InvoiceType.SALES){
+//			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_E_ABONO_381
+//					.getValue());
+//		} else if(invoice.getType()==InvoiceType.PURCHASE){
+//			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_DE_CARGO_383
+//					.getValue());
+//		}
 		sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.FACTURA_COMERCIAL_380
 				.getValue());
 		sincc.setNumeroDeFactura(invoice.getReferenceCode());
@@ -168,9 +183,9 @@ public class ConnectSaleInvoiceWriter {
 			sincc.setFechaDeVencimientoUnico(Integer.valueOf(SeresUtils.dateFormat()
 					.format(financeList.get(0).getDueDate())));
 		}		
-		sincc.setImporteNetoTotalDeFactura_79_(invoice.getTotal());
+		sincc.setImporteNetoTotalDeFactura_79_(invoice.getTaxableBase());
 		sincc.setBaseImponible_125_(invoice.getTaxableBase());
-		sincc.setImporteBrutoTotalDeFactura_98_(null);
+		sincc.setImporteBrutoTotalDeFactura_98_(invoice.getTaxableBase());
 		sincc.setImporteTotalDeImpuestos_Tasas_176_(invoice.getVatQuota());
 		sincc.setImporteTotalAPagar_139_(invoice.getTotal());
 		sincc.setSubvencionesVinculadasAlPrecio_80A_(null);
@@ -183,46 +198,34 @@ public class ConnectSaleInvoiceWriter {
 		return sincc;
 	}
 	
-	/*
-		SU - PROVEEDOR
-		II - EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA
-		DP - PUNTO_DESTINO_DE_LA_MERCANCIA
-		UC - DESTINATARIO_FINAL
-		BY - COMPRADOR
-		IV - A_QUIEN_SE_FACTURA
-		PE - SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA
-		PR - PAGADOR__QUIEN_PAGA
-		MS - EMISOR_DEL_MENSAJE
-		MR - RECEPTOR_DEL_MENSAJE
-	*/
-	private List<SINCP> createSINCPList(Invoice invoice, Company company, String companyEdiCode,
-			String customerEdiMainCode) {
+	private List<SINCP> createSINCPList(Invoice invoice, Company company,
+			String companyEdiCode, String customerEdiMainCode) {
 		List<SINCP> list = new ArrayList<>();
-		
-//		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU, invoice,
-//				companyEdiCode, null));
+
+		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
+				company.getRegistry(), companyEdiCode));
 		list.add(createSINCPRecord(
 				SINCP.SINCP_2.EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA__II,
 				company.getRegistry(), companyEdiCode));
 		list.add(createSINCPRecord(
-				SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP, invoice.getRegistry(),
-				customerEdiMainCode));
+				SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
+				invoice.getRegistry(), customerEdiMainCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
 				invoice.getRegistry(), customerEdiMainCode));
-		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY, invoice.getRegistry(),
-				customerEdiMainCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
+				invoice.getRegistry(), customerEdiMainCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
 				invoice.getRegistry(), customerEdiMainCode));
 		list.add(createSINCPRecord(
-				SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE, company.getRegistry(),
-				companyEdiCode));
+				SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
+				company.getRegistry(), companyEdiCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,
 				invoice.getRegistry(), customerEdiMainCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS,
 				invoice.getRegistry(), companyEdiCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.RECEPTOR_DEL_MENSAJE_MR,
 				invoice.getRegistry(), customerEdiMainCode));
-		
+
 		return list;
 	}
 	
@@ -248,9 +251,9 @@ public class ConnectSaleInvoiceWriter {
 		return list;
 	}
 
-	// TODO createSINCDList
 	private List<SINCD> createSINCDList(Invoice invoice) {
 		List<SINCD> list = new ArrayList<>();
+		list.add(createSINCDRecord(invoice));
 		return list;
 	}
 
@@ -264,15 +267,19 @@ public class ConnectSaleInvoiceWriter {
 		return list;
 	}
 
-	// TODO createSINCUList
-	private List<SINCU> createSINCUList(Invoice invoice) {
+	private List<SINCU> createSINCUList(List<InvoiceDetail> detailList) {
 		List<SINCU> list = new ArrayList<>();
+		detailList.forEach(detail -> {
+			list.add(createSINCURecord(detail, detailList.indexOf(detail)));
+		});
 		return list;
 	}
 
-	// TODO createSINCEList
-	private List<SINCE> createSINCEList(Invoice invoice) {
+	private List<SINCE> createSINCEList(List<InvoiceDetail> detailList) {
 		List<SINCE> list = new ArrayList<>();
+		detailList.forEach(detail -> {
+			list.add(createSINCERecord(detail, detailList.indexOf(detail)));
+		});
 		return list;
 	}
 
@@ -290,7 +297,9 @@ public class ConnectSaleInvoiceWriter {
 		return list;
 	}
 
-	
+	/*
+	 * Información partes involucradas
+	 */
 	private SINCP createSINCPRecord(SINCP.SINCP_2 type, Registry registry, String ediCode) {
 		SINCP sincp = new SINCP();
 		sincp.setCalificadorDelInterlocutor(type.getValue());
@@ -329,6 +338,9 @@ public class ConnectSaleInvoiceWriter {
 		return sincp;
 	}
 	
+	/*
+	 * Observaciones cabecera
+	 */
 	private SINCT createSINCTRecord(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode) {
 		SINCT sinct = new SINCT();
@@ -343,6 +355,9 @@ public class ConnectSaleInvoiceWriter {
 		return sinct;
 	}
 
+	/*
+	 * Vencimientos
+	 */
 	private SINCV createSINCVRecord(Finance finance, int lineNumber,
 			String companyEdiCode, String customerEdiMainCode) {
 		SINCV sincv = new SINCV();
@@ -353,16 +368,26 @@ public class ConnectSaleInvoiceWriter {
 		return sincv;
 	}
 
-	// TODO createSINCDRecord
+	/*
+	 * Descuentos y cargos cabecera
+	 */
 	private SINCD createSINCDRecord(Invoice invoice) {
+		// TODO createSINCDRecord
 		return null;
 	}
 
+	/*
+	 * Línea detalle
+	 */
 	private SINCL createSINCLRecord(InvoiceDetail detail, int lineNumber,
 			String companyEdiCode, String customerEdiMainCode) {
+		Item item = detail.getItem();
+		Integer customerId = detail.getInvoice().getRegistry().getId();
+		RegistryItem rItem = obtainCustomerItem(item.getProduct(), customerId);
+		
 		SINCL sincl = new SINCL();
 		sincl.setNumeroDeLinea(lineNumber);
-		sincl.setCodigoArticulo(detail.getItem().getProduct().getCode());
+		sincl.setCodigoArticulo(rItem.getCode());
 		sincl.setDescripcionDelArticulo(detail.getItem().getProduct().getName());
 		if (detail.getItem().getProduct().getType() == ProductType.SERVICE) {
 			 sincl.setTipoArticulo(SINCL.SINCL_5.SERVICIO_S.getValue());
@@ -376,13 +401,14 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setNumeroDeLote_BN_(detail.getItem().getSerialNumber());
 		sincl.setCantidadFacturada_47_(detail.getQuantity());
 		sincl.setCantidadBonificada_15E_(null);
-		sincl.setUnidadDeMedida(null);
+		sincl.setUnidadDeMedida(SINCL.SINCL_13.KILOGRAMO_KGM.getValue());
 		sincl.setUnidadesEntregadas(null);
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
 		sincl.setImporteTotalNetoDeLaLineaDeArticulo(detail
 				.getTotalSalesPrice());
 		sincl.setPrecioBrutoUnitario(detail.getPrice());
-		sincl.setPrecioNetoUnitario(null);
+		sincl.setPrecioNetoUnitario(detail.getTotalSalesPrice()
+				/ detail.getQuantity());
 		sincl.setUnidadDeMedidaDelPrecio(null);
 		sincl.setCalificadorIVA_IGIG(SINCL.SINCL_20.IVA_VAT.getValue());
 		sincl.setPorcentajeImpuestoIVA_IGIG(detail.getVatPercent());
@@ -392,8 +418,14 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setCalificadorOtroTipoDeImpuesto(null);
 		sincl.setPorcentajeOtroTipoDeImpuesto(null);
 		sincl.setImporteOtroTipoDeImpuesto(null);
-		sincl.setNumeroPedido_ON_(null);
-		sincl.setNumeroDeAlbaran_DQ_(null);
+		if(detail.getSource()==InvoiceSource.SALES){
+			sincl.setNumeroPedido_ON_(obtainSalesNumber(detail));
+			sincl.setNumeroDeAlbaran_DQ_(null);
+		}
+		if(detail.getSource()==InvoiceSource.DELIVERY){
+			sincl.setNumeroPedido_ON_(null);
+			sincl.setNumeroDeAlbaran_DQ_(obtainDeliveryNumber(detail));
+		}
 		sincl.setNumeroDeEmbalajes(null);
 		sincl.setTipoDeEmbalaje(null);
 		sincl.setImporteTotalBrutoDeLaLineaDeDetalle(null);
@@ -410,16 +442,25 @@ public class ConnectSaleInvoiceWriter {
 		return sincl;
 	}
 
-	// TODO createSINCURecord
-	private SINCU createSINCURecord(Invoice invoice) {
+	/*
+	 * Observaciones de línea de detalle
+	 */
+	private SINCU createSINCURecord(InvoiceDetail detail, int lineNumber) {
+		// TODO createSINCURecord
 		return null;
 	}
 
-	// TODO createSINCERecord
-	private SINCE createSINCERecord(Invoice invoice) {
+	/*
+	 * Descuentos y cargos línea de detalle
+	 */
+	private SINCE createSINCERecord(InvoiceDetail detail, int lineNumber) {
+		// TODO createSINCERecord
 		return null;
 	}
 
+	/*
+	 * Impuestos
+	 */
 	private SINCI createSINCIRecord(TaxBreakDown tax, int lineNumber,
 			Invoice invoice, String companyEdiCode, String customerEdiMainCode) {
 		SINCI sinci = new SINCI();		
@@ -433,23 +474,35 @@ public class ConnectSaleInvoiceWriter {
 		sinci.setBaseImponible(tax.getBase());
 		return sinci;
 	}
+	
 
+	///////////////////////////////////////////////
+	///////////////////////////////////////////////
+	///////////////////////////////////////////////
+	
 	private String obtainSalesNumber(Invoice invoice) {
 		List<InvoiceDetail> list = invoice.getDetailList().stream()
 				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
+		if (!list.isEmpty()) {
+			InvoiceDetail detail = list.get(0);
+			return obtainSalesNumber(detail);
+		}
+		return null;
+	}
+
+	private String obtainSalesNumber(InvoiceDetail detail) {
 		try {
-			if (!list.isEmpty()) {
-				InvoiceDetail detail = list.get(0);
-				if (detail.getSource() == InvoiceSource.DELIVERY) {
-					Delivery delivery = (Delivery) detail.getSourceTo();
-					List<ITransferObject> deliveryDetailList = delivery.getDetailList();
-					if(deliveryDetailList!=null && !deliveryDetailList.isEmpty()){
-						DeliveryDetail deliveryDetail = (DeliveryDetail) deliveryDetailList.get(0);
-						SalesDetail salesDetail = deliveryDetail.getSalesDetail();
-						return salesDetail.getSales().getPurchaseReference();
-					}
-					return null;
+			if (detail.getSource() == InvoiceSource.DELIVERY) {
+				Delivery delivery = (Delivery) detail.getSourceTo();
+				List<ITransferObject> deliveryDetailList = delivery
+						.getDetailList();
+				if (deliveryDetailList != null && !deliveryDetailList.isEmpty()) {
+					DeliveryDetail deliveryDetail = (DeliveryDetail) deliveryDetailList
+							.get(0);
+					SalesDetail salesDetail = deliveryDetail.getSalesDetail();
+					return salesDetail.getSales().getPurchaseReference();
 				}
+				return null;
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
@@ -460,13 +513,18 @@ public class ConnectSaleInvoiceWriter {
 	private String obtainDeliveryNumber(Invoice invoice) {
 		List<InvoiceDetail> list = invoice.getDetailList().stream()
 				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
+		if (!list.isEmpty()) {
+			InvoiceDetail detail = list.get(0);
+			return obtainDeliveryNumber(detail);
+		}
+		return null;
+	}
+
+	private String obtainDeliveryNumber(InvoiceDetail detail) {
 		try {
-			if (!list.isEmpty()) {
-				InvoiceDetail detail = list.get(0);
-				if (detail.getSource() == InvoiceSource.DELIVERY) {
-					Delivery delivery = (Delivery) detail.getSourceTo();
-					return delivery.getSeries() + "/" + delivery.getNumber();
-				}
+			if (detail.getSource() == InvoiceSource.DELIVERY) {
+				Delivery delivery = (Delivery) detail.getSourceTo();
+				return delivery.getSeries() + "/" + delivery.getNumber();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
@@ -483,6 +541,35 @@ public class ConnectSaleInvoiceWriter {
 					invoice.getId());
 			return bean.getList(criteria).stream().map(to -> ((Finance) to))
 					.collect(Collectors.toList());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return null;
+	}
+	
+	private RegistryItem obtainCustomerItem(Product product, Integer customerId) {
+		try {
+			Item baseItem = product.getBaseItem();
+			IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID),
+					customerId);
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ID),
+					baseItem.getId());
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE),
+					RegistryMode.CUSTOMER);
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS),
+					RegistryItemStatus.ACTIVE);
+			List<RegistryItem> rItemList = bean.getList(criteria).stream()
+					.map(to -> ((RegistryItem) to)).collect(Collectors.toList());
+
+			if (rItemList != null && !rItemList.isEmpty()) {
+				return rItemList.get(0);
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}

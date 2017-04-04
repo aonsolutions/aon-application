@@ -82,6 +82,9 @@ public class ConnectDeliveryWriter {
 		return rectl;
 	}
 	
+	/*
+	 * Cabecera
+	 */
 	private SEH1C createSEH1CRecord(Delivery delivery, String companyEdiCode,
 			String customerEdiCode, String deliveryPointEdiCode) {
 		SEH1C seh1c = new SEH1C();
@@ -125,17 +128,6 @@ public class ConnectDeliveryWriter {
 		return seh1c;
 	}
 
-	/*
-	    MS - Emisor del mensaje
-	    MR - Receptor del mensaje
-	    SU - Proveedor.
-	    PW - Punto desde donde se envían las mercancías
-	    DP - Punto destino de la mercancía
-	    UC - Destinatario final
-	    BY - Comprador
-	    SH - Expedidor
-	    IV - A quien se factura	 
-	 */
 	private List<SEH1D> createSEH1DList(Delivery delivery,
 			String companyEdiCode, String customerEdiCode,
 			String deliveryPointEdiCode) {
@@ -217,6 +209,9 @@ public class ConnectDeliveryWriter {
 		return list;
 	}
 
+	/*
+	 * Información de partes
+	 */
 	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, IRegistry registry) {
 		SEH1D record = new SEH1D();
 		record.setCalificadorDelInterlocutor(type.getValue());
@@ -249,8 +244,11 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	// TODO createSEH1PRecord
+	/*
+	 * Secuencia de embalajes
+	 */
 	private SEH1P createSEH1PRecord(DeliveryDetail detail, int lineNumber) {
+		// TODO createSEH1PRecord
 		
 		String format = "";
 //		CT - Caja de cartón
@@ -339,6 +337,9 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
+	/*
+	 * Línea de artículos
+	 */
 	private SEH1L createSEH1LRecord(DeliveryDetail detail,
 			String companyEdiCode, String customerEdiCode) {
 		Item item = detail.getItem();
@@ -384,7 +385,7 @@ public class ConnectDeliveryWriter {
 		record.setCalificadorCantidadAdicional(null);
 		record.setCantidadAdicional(null);
 		record.setUnidadDeMedidaCantidadAdicional(null);
-		record.setNumeroDeSerieDelArticulo_SN_(null);
+		record.setNumeroDeSerieDelArticulo_SN_(item.getSerialNumber());
 		record.setNumeroArticuloFabricante_MF_(null);
 		record.setNumeroDeLineaReferencia1(null);
 		record.setNumeroDeLineaReferencia2(null);
@@ -412,6 +413,9 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
+	/*
+	 * Desglose cantidad/Localizaciones
+	 */
 	private SEH1G createSEH1GRecord(Delivery delivery) {
 		// TODO createSEH1GRecord
 		SEH1G record = new SEH1G();
@@ -426,6 +430,9 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
+	/*
+	 * Información de lotes
+	 */
 	private SEH1B createSEH1BRecord(Delivery delivery) {
 		// TODO createSEH1BRecord
 		SEH1B record = new SEH1B();
@@ -442,6 +449,11 @@ public class ConnectDeliveryWriter {
 		record.setFechaProduccion_fabricacion_94__102_203_(null);
 		return record;
 	}
+	
+	
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
 	
 	private String obtainPurchaseReference(Delivery delivery) {
 		List<DeliveryDetail> list = delivery.getDetailList().stream()
