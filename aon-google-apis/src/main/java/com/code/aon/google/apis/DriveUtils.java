@@ -1159,7 +1159,7 @@ public class DriveUtils implements IBlobManager {
 			} else {
 
 				if (fileInfo.getData() == null) {
-					LOGGER.debug("Skip '{}': No new data.", fileInfo.getTitle());
+					//LOGGER.debug("Skip '{}': No new data.", fileInfo.getTitle());
 					return false;
 				}
 
@@ -1195,17 +1195,17 @@ public class DriveUtils implements IBlobManager {
 							type, fileInfo.getTitle() );
 					return false;
 				} else {
-					LOGGER.debug(
-							"Skip '{}': New data it's the same that at drive ( MD5s are the same ).",
-							fileInfo.getTitle());
+				//	LOGGER.debug(
+				//			"Skip '{}': New data it's the same that at drive ( MD5s are the same ).",
+				//			fileInfo.getTitle());
 					return false;
 				}
 			}
 		} else {
 			String type = fileInfo.getType() != -1 ? RegistryAttachmentType
 					.values()[fileInfo.getType()].name() : "UNKNOWN";
-			LOGGER.warn("Skip '{}': {} won't be synchronized.",
-					fileInfo.getTitle(), type);
+			//LOGGER.warn("Skip '{}': {} won't be synchronized.",
+			//		fileInfo.getTitle(), type);
 			return false;
 		}
 	}
