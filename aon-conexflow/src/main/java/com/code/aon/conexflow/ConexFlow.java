@@ -24,6 +24,9 @@ public class ConexFlow {
     protected byte[] data;
     protected Date date;
     protected Integer project;
+    protected Double amount;
+    protected Boolean antTnr;
+    protected String description;
 
     public ConexFlow.Respuesta getRespuesta() {
         return respuesta;
@@ -88,6 +91,42 @@ public class ConexFlow {
 		return this;
 	}
 
+	public Double getAmount() {
+		return amount;
+	}
+
+	public ConexFlow setAmount(Double amount) {
+		this.amount = amount;
+		return this;
+	}
+
+	public Boolean isAntTnr() {
+		return antTnr;
+	}
+
+	public ConexFlow setAntTnr(Boolean antTnr) {
+		this.antTnr = antTnr;
+		return this;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public ConexFlow setDescription(String description) {
+		setStatus(ConexFlowStatus.valueOfDescriptionName(description));
+		Integer index = description.indexOf("#");
+		String s = description.substring(index + 1);
+		if(s.contains("#")){
+			index = s.indexOf("#");
+			s = s.substring(0, index);
+		}
+		setAmount(!ConexFlowStatus.CREATE_TOKEN.equals(getStatus()) && !ConexFlowStatus.CREATE_TOKEN_FAIL.equals(getStatus())
+				? Double.parseDouble(s) : null);
+		setAntTnr(description.contains("ANT_TNR"));
+		this.description = description;
+		return this;
+	}
 
 	@XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {

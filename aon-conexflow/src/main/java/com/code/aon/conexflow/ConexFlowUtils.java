@@ -118,11 +118,12 @@ public class ConexFlowUtils {
 		return urlParameters;
 	}
 	
-	private static void setVoucher(Domain domain, String login, Integer project, String description, String voucher) {
+	private static void setVoucher(Domain domain, String login, Integer project, String description, String ticket, String voucher) {
 		voucher.replace("&lt;","<");
 		voucher.replace("&gt;",">");
 		File htmlFile = new File("voucher.html");
-		String htmlString = "<html><head></head><body>"+voucher+"</body></html>";
+		String htmlString = "<html><head></head><body>"
+				+ ticket  + "<br>" + voucher+"</body></html>";
 		try {
 			AonFileUtils.writeStringToFile(htmlFile, htmlString);
 			InputStream is = new FileInputStream(htmlFile);
@@ -245,7 +246,7 @@ public class ConexFlowUtils {
 				r.getDesCA()+"<br>"+r.getDesTipoDoc()+"<br>COM.PE: "+r.getComercio()+" TER.PE: "+r.getTeminal()+"<br>REF.PE: "+
 				r.getReferencia()+"          SES.PE: 050820  <br>*************** V E N T A **************<br><br>TOTAL:          "+
 				r.getImporte()+ " EUR<br><br>---------- FIRMA DEL TITULAR -----------<br><br><br><br><br>----------------------------------------<br>******** PARA EL ESTABLECIMIENTO *******<br><br></body></html>";
-		setVoucher(domain, login, project, description, voucher);
+		setVoucher(domain, login, project, description, r.getTicket(), voucher);
 	}
 	
 	//******************* Continue Card Payment with Authentication Request

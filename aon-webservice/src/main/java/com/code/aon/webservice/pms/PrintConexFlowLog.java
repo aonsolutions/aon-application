@@ -1,5 +1,7 @@
 package com.code.aon.webservice.pms;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,6 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,11 +22,15 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -55,6 +62,11 @@ public class PrintConexFlowLog extends HttpServlet{
 			.and(f.getAttachModuleProperty().eq(projectId))
 		, AttachType.PROJECT);
 		
+		Attach attachLogo = AON.getAttach(domainName, domainId, login, 
+				f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+				.and(f.getDomainProperty().eq(domainId)),
+			AttachType.REGISTRY);
+		
 		
 		File archivoPDF = null;
 		try {
@@ -69,7 +81,12 @@ public class PrintConexFlowLog extends HttpServlet{
 			e.printStackTrace();
 		}
 		document.open();
-		
+		try {
+			document.add(getHeader(attachLogo.getData()));
+			document.add(new Paragraph(" "));
+		} catch (DocumentException e3) {
+			e3.printStackTrace();
+		}
 		
 		PdfPTable table = new PdfPTable(3);
 		table.setWidthPercentage(95);
@@ -120,18 +137,68 @@ public class PrintConexFlowLog extends HttpServlet{
 		
 	}
 	
+	private static PdfPTable getHeader(byte [] image) {
+        PdfPTable header = new PdfPTable(2);
+        float[] medidaCeldas = {1.25f, 1.75f};
+		try {
+			header.setWidths(medidaCeldas);
+		} catch (DocumentException e) {
+			//LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+        header.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+        header.setWidthPercentage(100);
+      
+        header.addCell(getHeaderLogo(image));
+		header.addCell(new Phrase("CONEXFLOW LOG", getTitleFont()));
+		return header;
+	}
+	
+	private static PdfPCell getHeaderLogo(byte [] image) {
+		try {
+			Image i1 = Image.getInstance(image);
+			
+			float percentage = 0;
+			if(i1.getWidth() > i1.getHeight()){
+				percentage = 100 / i1.getWidth();
+			} else percentage = 100 / i1.getHeight();
+		
+			Float width = i1.getWidth() * percentage;
+			Float height = i1.getHeight() * percentage;
+		
+			BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
+		
+			Image logo = Image.getInstance(img, null);
+			logo.scaleAbsolute(width, height);
+			PdfPCell headerLogo = new PdfPCell(logo, false);
+			headerLogo.setBorder(PdfPCell.NO_BORDER);
+			return headerLogo;
+		} catch (BadElementException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	private static String getDescription(String description){
 		if (description.contains("T#")) return "Obtener Token / Get Token";
 		else if(description.contains("-CHECK#")) return "Tarjeta correcta / Card Ok";
 		else if(description.contains("-CHECK-FAIL#")) return "Tarjeta No válida / Card Fail";
-		else if(description.contains("P#")) return "Preautorización correcta / Preauthorization OK";
+		else if(description.contains("P#") 
+			|| description.contains("P-CANCEL#")
+			|| description.contains("P-PAID#")) return "Preautorización correcta / Preauthorization OK";
 		else if(description.contains("P-FAIL#")) return "Preautorización fallida / Preauthorization Fail";
+		else if(description.contains("C#")
+			|| description.contains("C-CANCEL#")
+			|| description.contains("C-REFUND#")) return "Confirmación de la Preautorización correcta / Confirm Preauthorization OK";
+		else if(description.contains("C-FAIL#")) return "Confirmación de la Preautorización fallida / Confirm Preauthorization Fail";
 		else if(description.contains("ANT_TNR")) return "Cobro No Reembolsable / Not refundable Sale";
-		else if(description.contains("V#")) return "Cobro Anticipo / Advance Sale";
+		else if(description.contains("V#")
+			|| description.contains("V-CANCEL#")
+			|| description.contains("V-REFUND#")) return "Cobro Anticipo / Advance Sale";
 		else if(description.contains("V-FAIL#")) return "Cobro fallido / Sale Fail";
 		else if(description.contains("A#")) return "Cancelación correcta / Cancel OK";
 		else if(description.contains("A-FAIL#")) return "Cancelación fallida / Cancel Fail";
-		else if(description.contains("D#")) return "Reembolso correcto / Refund Fail";
+		else if(description.contains("D#")
+			|| description.contains("D-CANCEL#")) return "Reembolso correcto / Refund Fail";
 		else if(description.contains("D-FAIL#")) return "Reembolso fallido / Refund Fail";
 		else return "Otra Operacion  / Another operation";	
 	}
@@ -150,6 +217,13 @@ public class PrintConexFlowLog extends HttpServlet{
 	private static Font getFont(){
 		Font font1 = new Font();
 		font1.setSize(10);
+		font1.setStyle(Font.BOLD);
+		return font1;
+	}
+	
+	private static Font getTitleFont(){
+		Font font1 = new Font();
+		font1.setSize(12);
 		font1.setStyle(Font.BOLD);
 		return font1;
 	}

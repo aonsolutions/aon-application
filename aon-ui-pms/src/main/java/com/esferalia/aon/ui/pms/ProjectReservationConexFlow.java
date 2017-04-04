@@ -42,19 +42,10 @@ public class ProjectReservationConexFlow implements Serializable {
 	private boolean showRefundOption;
 	private boolean showNotifyWindow;
 
-	private Boolean preauthorization;
-	private Boolean confirmPreauthorization;
-	private Boolean sale;
-	private Boolean refund;
-
 	public ProjectReservationConexFlow(ProjectReservation reservation) {
 		setReservation(reservation);
 		setLogin(UserUtils.getInstance().getLoggedUser().getLogin());
 		setAmount(null);
-		setPreauthorization(null);
-		setConfirmPreauthorization(null);
-		setSale(null);
-		setRefund(null);
 	}
 
 	public ProjectReservation getReservation() {
@@ -153,63 +144,27 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 
 	public boolean isPreauthorization() {
-		if (preauthorization == null) {
-			preauthorization = false;
-			if (getReservation().getToken() != null) {
-				ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-						ConexFlowStatus.PREAUTHORIZATION);
-				preauthorization = (cfP !=null && cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-			}
-		}
-		return preauthorization;
-	}
-	public void setPreauthorization(Boolean value) {
-		this.preauthorization = value;
+		return isOperation(ConexFlowStatus.PREAUTHORIZATION);
 	}
 
 	public boolean isConfirmPreauthorization() {
-		if (confirmPreauthorization == null) {
-			confirmPreauthorization = false;
-			if (getReservation().getToken() != null) {
-				ConexFlow cfC = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-						ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
-				confirmPreauthorization = (cfC != null && cfC.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-			}
-		}
-		return confirmPreauthorization;
-	}
-	public void setConfirmPreauthorization(Boolean value) {
-		this.confirmPreauthorization = value;
+		return isOperation(ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
 	}
 
 	public boolean isSale() {
-		if (sale == null) {
-			sale = false;
-			if (getReservation().getToken() != null) {
-				ConexFlow cfV = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-						ConexFlowStatus.SALE);
-				sale = (cfV != null && cfV.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-			}
-		}
-		return sale;
-	}
-	public void setSale(Boolean value) {
-		this.sale = value;
+		return isOperation(ConexFlowStatus.SALE);
 	}
 	
 	public boolean isRefund() {
-		if (refund == null) {
-			refund = false;
-			if (getReservation().getToken() == null) {
-				ConexFlow cfD = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), getReservation().getToken(), 
-						ConexFlowStatus.REFUND);
-				refund = (cfD != null && cfD.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
-			}
-		}
-		return refund;
+		return isOperation(ConexFlowStatus.REFUND);
 	}
-	public void setRefund(Boolean value) {
-		this.refund = value;
+	
+	public boolean isOperation(ConexFlowStatus status){
+		if (getReservation().getToken() != null) {
+			ConexFlow cfP = DBConsults.getConexFlowLastStatusWD(getDomain(), getLogin(), 
+					getReservation().getId(), getReservation().getToken(), status);
+			return cfP !=null;
+		} else return false;
 	}
 
 	public boolean isConexFlowActive() {

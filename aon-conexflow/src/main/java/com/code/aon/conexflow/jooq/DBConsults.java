@@ -28,7 +28,6 @@ import org.jooq.Result;
 import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlow.Query;
 import com.code.aon.conexflow.ConexFlowConnection;
-import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.ConexFlowStatus;
 import com.code.aon.conexflow.XMLUtils;
 import com.code.aon.customer.Customer;
@@ -36,13 +35,14 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.Registry;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
+import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
@@ -82,6 +82,44 @@ public class DBConsults {
 				});
 	}
 	
+	public static Stream<ConexFlow> getConexFlowStreamWD(Domain domain, String login, String description){
+		return AON.getAttachStream(domain.getName(), domain.getId(), login,
+				f -> f.getDescriptionProperty().like(description)
+					.and(f.getDomainProperty().eq(domain.getId()))
+					//.and(f.getTypeProperty().eq(ProjectAttachmentType.CONEXFLOW.value()))
+				, AttachType.PROJECT).map( r-> {
+					return new ConexFlow()
+					 	.setId(r.getId())
+					 	.setDate(r.getDate())
+					 	.setProject(r.getAttachModule())
+					 	.setDescription(r.getDescription());					
+				});
+	}
+	
+	public static Boolean hasConexFlow(Domain domain, String login, Integer project, String[] descriptions){
+		Optional<Attach> attach = AON.getAttachStream(domain.getName(), domain.getId(), login,
+				f ->  hasConexFlowFilter(project, descriptions, f), AttachType.PROJECT).findFirst();
+		return attach.isPresent();
+	}
+	
+	public static Filter hasConexFlowFilter(Integer project, String[] descriptions, AttachProperties f) {
+		Filter filter = f.getAttachModuleProperty().eq(project);
+		Filter descriptionFilter = null;
+		for(Integer i = 0; i < descriptions.length; i++){
+			if(i == 0){
+				descriptionFilter = f.getDescriptionProperty().like(descriptions[i]);
+			} else {
+				descriptionFilter = descriptionFilter.or(f.getDescriptionProperty().like(descriptions[i]));
+			}
+		}
+		filter = filter.and(descriptionFilter);
+		return filter;
+	}
+	
+	public static String getStatusDescription(String token, ConexFlowStatus status) {
+		return "CONEXFLOW_(" + token.substring(token.length()-5) + ")_" + status.getName() + "#%";
+	}
+	
 	public static ConexFlow getConexFlowX(Domain domain, String login, Integer project, String description){
 		Optional<Attach> attach = AON.getAttachStream(domain.getName(), domain.getId(), login,
 				f -> f.getAttachModuleProperty().eq(project)
@@ -106,6 +144,22 @@ public class DBConsults {
 		return null;
 	}
 	
+	// Without Data
+	public static ConexFlow getConexFlowWD(Domain domain, String login, Integer project, String description){
+		Optional<Attach> attach = AON.getAttachStream(domain.getName(), domain.getId(), login,
+				f -> f.getAttachModuleProperty().eq(project)
+				.and(f.getDescriptionProperty().like(description))
+				, AttachType.PROJECT)
+			.sorted((a1, a2) -> a2.getDate().compareTo(a1.getDate())).findFirst();
+		if(attach.isPresent()){
+			return new ConexFlow()
+					.setId(attach.get().getId())
+					.setDate(attach.get().getDate())
+					.setProject(attach.get().getAttachModule())
+					.setDescription(attach.get().getDescription());
+		}
+		return null;
+	}
 	/**
 	 * Devuelve la última operación realizada.
 	 * @param domain
@@ -145,6 +199,11 @@ public class DBConsults {
 	public static ConexFlow getConexFlowLastStatusX(Domain domain, String login, Integer project, String token, ConexFlowStatus status){
 		String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_" + status.getName() + "#%";
 		return getConexFlowX(domain, login, project, description);
+	}
+	
+	public static ConexFlow getConexFlowLastStatusWD(Domain domain, String login, Integer project, String token, ConexFlowStatus status){
+		String description = "CONEXFLOW_(" + token.substring(token.length()-5) + ")_" + status.getName() + "#%";
+		return getConexFlowWD(domain, login, project, description);
 	}
 	
 	public static Stream<ConexFlow> getConexFlowStatusStreamX(Domain domain, String login, ConexFlowStatus status){
@@ -310,81 +369,6 @@ public class DBConsults {
 		return conexFlow.setId(id);
 	}
 	
-	public static void insertConexFlowOperation(Domain domain, byte[] xmlFile, Integer project, String op){
-		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());
-		Integer id = getConexFlowLastOperationId(domain, project,op);
-		Attach attach = new Attach(AttachType.PROJECT)
-				.setAttachModule(project)
-				.setDomain(domain)
-				.setMimeType(MimeType.XML)
-				.setDescription("CONEXFLOW-"+op)
-				.setData(xmlFile)
-				.setConfidential(true)
-				.setDate(currentDate)
-				.setType(ProjectAttachmentType.CONEXFLOW.value());
-		
-		if(id != null ){
-			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
-			if(op.equals(ConexFlowConstant.CREATE_TOKEN_OP)){
-				deletePreuthorization(domain, project);
-			}
-		}
-		if(id == null) AON.insert(domain.getName(), domain.getId(), "", attach);
-	}
-	
-	public static void insertCheckConexFlowOperation(Domain domain, byte[] xmlFile, Integer project, String op, Boolean ok){
-		String desc = ok ? "CONEXFLOW-CHECK-" : "CONEXFLOW-CHECK-NO-";
-		Integer id = AON.getAttach(domain.getName(), domain.getId(), "", f -> f.getAttachModuleProperty().eq(project)
-				.and(f.getDescriptionProperty().eq("CONEXFLOW-CHECK-"+op).or(f.getDescriptionProperty().eq("CONEXFLOW-CHECK-NO-"+op)))
-				, AttachType.PROJECT).getId();
-		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());	
-		Attach attach = new Attach(AttachType.PROJECT)
-				.setAttachModule(project)
-				.setDomain(domain)
-				.setMimeType(MimeType.XML)
-				.setDescription(desc + op)
-				.setData(xmlFile)
-				.setConfidential(true)
-				.setDate(currentDate)
-				.setType(ProjectAttachmentType.CONEXFLOW.value());
-
-		if(id != null ){
-			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
-			if(op.equals(ConexFlowConstant.CREATE_TOKEN_OP)){
-				deletePreuthorization(domain, project);
-			}
-		}
-		if(id == null) AON.insert(domain.getName(), domain.getId(), "", attach);
-	}
-	
-	//-------------------- DELETES
-	
-	public static void deletePreuthorization(Domain domain, Integer projectId) {
-		Integer preId = getConexFlowLastOperationId(domain, projectId, ConexFlowConstant.PREAUTHORIZATION_OP);
-		String login = AonUtil.getRemoteUser()!= null ? AonUtil.getRemoteUser() : "";
-		if(preId != null)
-			AON.delete(domain.getName(), domain.getId(), login, 
-					filter -> filter.getIdProperty().eq(preId)
-					, AttachType.PROJECT);
-	}
-	
-	public static void deletePreuthorization(Domain domain, Integer projectId, Attach attach) {		
-		String login = AonUtil.getRemoteUser()!= null ? AonUtil.getRemoteUser() : "";
-		AON.delete(domain.getName(), domain.getId(), login,
-			filter -> filter.getAttachModuleProperty().eq(projectId)
-					.and(filter.getDescriptionProperty().eq("CONEXFLOW-P"))
-			, AttachType.PROJECT);
-	}
-	
-	public static void delete(Domain domain, Integer projectId, String op) {
-		String login = AonUtil.getRemoteUser()!= null ? AonUtil.getRemoteUser() : "";
-		AON.delete(domain.getName(), domain.getId(), login,
-				filter -> filter.getAttachModuleProperty().eq(projectId)
-						.and(filter.getDescriptionProperty().eq("CONEXFLOW-"+op))
-				, AttachType.PROJECT);
-	}
-	
-	
 	public static Boolean estaHotel(AONContext ctx,Domain domain,String hotel){
 		Result<Record1<Integer>> result = ctx.getDslContext().select(WORKPLACE.ID)
 		.from(HOTEL).join(WORKPLACE).on(HOTEL.WORKPLACE.eq(WORKPLACE.ID))
@@ -487,10 +471,6 @@ public class DBConsults {
 		return AON.getProjectReservationStream(domain.getName(), domain.getId(), login, filter);
 	}
 	
-	public static Boolean hasCheckOp(Domain domain, String login,Integer projectId, String op){
-		return AON.getAttachStream(domain.getName(), domain.getId(), login, f -> f.getDescriptionProperty().like("%CONEXFLOW-CHECK%"+op)
-			.and(f.getAttachModuleProperty().eq(projectId)), AttachType.PROJECT).count() > 0;
-	}
 	
 	public static ProjectReservation newProjectReservation(AONContext ctx, ProjectReservationRecord pr){
 		ProjectReservation reservation = new ProjectReservation();

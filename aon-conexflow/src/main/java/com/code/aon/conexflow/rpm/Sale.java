@@ -58,13 +58,24 @@ public class Sale {
 		stream.forEach(r -> {
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
+				
+				/*
 				ConexFlow cf = DBConsults.getConexFlowX(d, login, r.getProject(), "CONEXFLOW%ANT_TNR");
 				ConexFlow sFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_FAIL);
 				ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
-				ConexFlow scFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL);
+				ConexFlow scFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
 				ConexFlow sale = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE);
-
-				if(cf == null && sFail == null && pcFail == null && scFail == null && sale == null){
+				 */
+				
+				String[] descriptions = {
+					"CONEXFLOW%ANT_TNR",
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE)
+				};
+				if(!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)){
+				//if(cf == null && sFail == null && pcFail == null && scFail == null && sale == null){
 					ConexFlowConnection connection = DBConsults.getConection(d);
 					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
 						r.getAdvance(), r.getHotelReservation().toString(), null);
@@ -90,8 +101,7 @@ public class Sale {
 			}
 		});
 	}
-	
-	
+
 	public static void main(String[] args) throws AonConnectionException{
 		if (!parse(args))
 			return;
