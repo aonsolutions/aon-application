@@ -54,7 +54,8 @@ public class JooqEmployeeCalendar {
 		
 		ArrayList<Quartet<Date, Date, String, String>> contractHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractDayTypesList = new ArrayList<Quartet<Date, Date, String, String>>();
-		ArrayList<java.util.Date> contractFestiveDaysList = new ArrayList<java.util.Date>();
+		ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
+		HashMap<java.util.Date, String> contractFestiveDaysList = new HashMap<java.util.Date, String>();
 		ArrayList<Byte> contractNonWorkingDaysList = new ArrayList<Byte>();
 		Boolean fullTimeJourney = false;
 		
@@ -172,7 +173,7 @@ public class JooqEmployeeCalendar {
 			.setName("DIAS_IT")
 			.setExpression("");
 			
-			contractDayTypesList.add(quarterITDayEmployee);
+			contractITDayTypeList.add(quarterITDayEmployee);
 		}
 		
 		// -------------------------------------- DIAS NO LABRABLES / FESTIVOS ---------------------------------------------------------
@@ -186,20 +187,22 @@ public class JooqEmployeeCalendar {
 							  .get(CONTRACT.CALENDAR);
 		
 		if (calendar != null){
-		 
-			Result<Record> nonWorkingDays = dslContext.select()
-														.from(CALENDAR)
-														.where(CALENDAR.ID.eq(calendar))
-														.fetch();
 			
-			for(Record r: nonWorkingDays){
-				contractNonWorkingDaysList.add(r.get(CALENDAR.MONDAY));
-				contractNonWorkingDaysList.add(r.get(CALENDAR.TUESDAY));
-				contractNonWorkingDaysList.add(r.get(CALENDAR.WEDNESDAY));
-				contractNonWorkingDaysList.add(r.get(CALENDAR.THURSDAY));
-				contractNonWorkingDaysList.add(r.get(CALENDAR.FRIDAY));
-				contractNonWorkingDaysList.add(r.get(CALENDAR.SATURDAY));
-				contractNonWorkingDaysList.add(r.get(CALENDAR.SUNDAY));
+			if(fullTimeJourney){
+				Result<Record> nonWorkingDays = dslContext.select()
+															.from(CALENDAR)
+															.where(CALENDAR.ID.eq(calendar))
+															.fetch();
+				
+				for(Record r: nonWorkingDays){
+					contractNonWorkingDaysList.add(r.get(CALENDAR.MONDAY));
+					contractNonWorkingDaysList.add(r.get(CALENDAR.TUESDAY));
+					contractNonWorkingDaysList.add(r.get(CALENDAR.WEDNESDAY));
+					contractNonWorkingDaysList.add(r.get(CALENDAR.THURSDAY));
+					contractNonWorkingDaysList.add(r.get(CALENDAR.FRIDAY));
+					contractNonWorkingDaysList.add(r.get(CALENDAR.SATURDAY));
+					contractNonWorkingDaysList.add(r.get(CALENDAR.SUNDAY));
+				}
 			}
 			
 			Integer holiday = dslContext.select(CALENDAR.HOLIDAY)
@@ -226,7 +229,7 @@ public class JooqEmployeeCalendar {
 														.fetch();
 			
 			for(Record r : countryHolidays)
-				contractFestiveDaysList.add(r.get(HOLIDAY_DETAIL.DATE));
+				contractFestiveDaysList.put(r.get(HOLIDAY_DETAIL.DATE), r.get(HOLIDAY_DETAIL.DESCRIPTION));
 		
 		}else if(fullTimeJourney && calendar == null){
 			contractNonWorkingDaysList.add((byte) 0);
@@ -240,8 +243,8 @@ public class JooqEmployeeCalendar {
 		
 		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
 		
-		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractDayTypesList, contractFestiveDaysList, 
-				contractNonWorkingDaysList, fullTimeJourney);
+		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractDayTypesList, contractITDayTypeList, 
+				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney);
 		
 		return employeeInfoCalendar;
 	}

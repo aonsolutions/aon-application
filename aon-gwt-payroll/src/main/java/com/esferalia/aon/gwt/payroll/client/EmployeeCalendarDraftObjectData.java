@@ -25,6 +25,7 @@ public class EmployeeCalendarDraftObjectData {
 
 	private Map<Date,Double> mapDaysHour;
 	private Map<Date, DayType> mapDaysType;
+	private Map<Date, String> mapFestivesDays;
 	
 	private Map<Date,Double> draftMapDaysHour;
 	private Map<Date, DayType> draftMapDaysType;
@@ -264,6 +265,7 @@ public class EmployeeCalendarDraftObjectData {
 		
 		this.mapDaysHour = new HashMap<Date,Double>();
 		this.mapDaysType = new HashMap<Date,DayType>();
+		this.mapFestivesDays = new HashMap<Date,String>();
 		
 		this.draftMapDaysHour = new HashMap<Date,Double>();
 		this.draftMapDaysType = new HashMap<Date,DayType>();
@@ -283,6 +285,10 @@ public class EmployeeCalendarDraftObjectData {
 	
 	public Integer getMapSize(){
 		return mapDaysHour.keySet().size();
+	}
+	
+	public String getDescriptionFestive(Date actualDay) {
+		return mapFestivesDays.get(actualDay);
 	}
 	
 	public Set<Entry<Date, Double>> getChangesHours(){
@@ -635,18 +641,20 @@ public class EmployeeCalendarDraftObjectData {
 			public void onSuccess(EmployeeCalendarData result) {
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> hoursList = result.getContractHoursList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> typesList = result.getContractTypeDaysList();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> ITDaysList = result.getcontractITDayTypeList();
 				ArrayList<Byte> nonWorkingList = result.getContractNonWorkingDaysList();
-				ArrayList<java.util.Date> festivesList = result.getContractFestiveDaysList();
+				HashMap<java.util.Date, String> festivesList = result.getContractFestiveDaysList();
 				initializeHoursMap(hoursList);
 				initializeNonWorkingsDaysTypeMap(nonWorkingList);
 				initializeTypesMap(typesList);
 				initializeFestivesDaysTypeMap(festivesList);
+				initializeITDaysTypeMap(ITDaysList);
 				fullTimeEmployee = result.isFullTimeJourney();
 				
 				success.accept(result);
 				
 			}
-			
+
 			private void initializeHoursMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> hoursList) {
 				
 				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterHours : hoursList) {
@@ -765,10 +773,40 @@ public class EmployeeCalendarDraftObjectData {
 				}	
 			}
 			
-			private void initializeFestivesDaysTypeMap(ArrayList<java.util.Date> festivesList) {
-				for(java.util.Date d : festivesList){
-					mapDaysType.put(d, DayType.FREEDAY);
+			private void initializeFestivesDaysTypeMap(HashMap<java.util.Date, String> festivesList) {
+				for(Entry<java.util.Date, String> entry : festivesList.entrySet()){
+					mapDaysType.put(entry.getKey(), DayType.FREEDAY);
+					mapFestivesDays.put(entry.getKey(), entry.getValue());
 				}
+			}
+			
+			private void initializeITDaysTypeMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> iTDaysList) {
+				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterTypes : iTDaysList) {
+					
+					Date startDate = DateUtils.copyDateOnly(quarterTypes.getStartDate());
+					Date endDateAux = DateUtils.getLastDayOfYear(new Date());
+					Date endDate;
+					
+					if (quarterTypes.getEndDate() == null){
+						endDate = DateUtils.addYears2Date(endDateAux, 1);
+					}else
+						endDate = DateUtils.copyDateOnly(quarterTypes.getEndDate());;
+					
+					DateUtils.addDays2Date(endDate, 1);
+					
+					DayType dayType = DayType.BAJAIT;
+					//TYPE_OF_DAY.get(quarterTypes.getName());
+					
+					Date auxDate = DateUtils.copyDateOnly(startDate);
+					
+					while (auxDate.before(endDate)){
+						Date date = DateUtils.copyDateOnly(auxDate);
+						DateUtils.resetTime(date);
+						mapDaysType.put(date, dayType);
+						DateUtils.addDays2Date(auxDate, 1);
+					}
+				}
+				
 			}
 
 			@Override

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.Quartet;
@@ -12,7 +13,8 @@ public class EmployeeCalendarData implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Quartet<Date, Date, String, String>> contractHoursList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList;
-	private ArrayList<java.util.Date> contractFestivesDaysList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList;
+	private HashMap<java.util.Date, String> contractFestivesDaysList;
 	private ArrayList<Byte> contractNonWorkingDaysList;
 	private boolean fullTimeJourney;
 	
@@ -22,12 +24,14 @@ public class EmployeeCalendarData implements Serializable {
 
 	public EmployeeCalendarData(ArrayList<Quartet<Date, Date, String, String>> contractHoursList,
 			ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList,
-			ArrayList<java.util.Date> contractFestivesDaysList,
+			ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList, 
+			HashMap<java.util.Date, String> contractFestivesDaysList,
 			ArrayList<Byte> contractNonWorkingDaysList, 
 			boolean fullTimeJourney) {
 		super();
 		this.contractHoursList = contractHoursList;
 		this.contractTypeDaysList = contractTypeDaysList;
+		this.contractITDayTypeList = contractITDayTypeList;
 		this.contractFestivesDaysList = contractFestivesDaysList;
 		this.contractNonWorkingDaysList = contractNonWorkingDaysList;
 		this.fullTimeJourney = fullTimeJourney;
@@ -52,12 +56,21 @@ public class EmployeeCalendarData implements Serializable {
 		this.contractTypeDaysList = contractTypeDaysList;
 		return this;
 	}
+	
+	public List<Quartet<Date, Date, String, String>> getcontractITDayTypeList() {
+		return contractITDayTypeList;
+	}
 
-	public ArrayList<java.util.Date> getContractFestiveDaysList() {
+	public EmployeeCalendarData setcontractITDayTypeList(ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList) {
+		this.contractITDayTypeList = contractITDayTypeList;
+		return this;
+	}
+
+	public HashMap<java.util.Date, String> getContractFestiveDaysList() {
 		return contractFestivesDaysList;
 	}
 
-	public EmployeeCalendarData setContractFestiveDaysList(ArrayList<java.util.Date> contractFestivesDaysList) {
+	public EmployeeCalendarData setContractFestiveDaysList(HashMap<java.util.Date, String> contractFestivesDaysList) {
 		this.contractFestivesDaysList = contractFestivesDaysList;
 		return this;
 	}

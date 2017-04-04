@@ -1223,7 +1223,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				TextBox horasT = new TextBox();
 				DoubleBox horasD = new DoubleBox();
 				
-				if (DayType.NOWORKINGDAY == dayType){
+				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 					horasT.setValue("-");
 				}else{
 					horasD.setEnabled(false);
@@ -1231,7 +1231,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					horasD.setEnabled(false);
 				}
 				
-				if (DayType.NOWORKINGDAY == dayType){
+				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 					int filaHoras = row + 1;
 					if (filaHoras % 4 == 0)
 						horasT.setStyleName(style.doubleBoxDisableStyle2());
@@ -1251,12 +1251,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					
 				}
 				
-				
-				
 				diaInfo.setText(contadorDias + "");
 				diaInfo.addStyleName(style.pointer());
 				calendarGrid.setWidget(row, i, diaInfo);
-				if (DayType.NOWORKINGDAY == dayType){
+				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 					calendarGrid.setWidget(row + 1, i, horasT);
 				}else{
 					calendarGrid.setWidget(row + 1, i, horasD);
@@ -1264,9 +1262,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				cellsDates[row][i] = actualDay;
 				cells[row][i] = new DayCell();
 				cells[row + 1][i] = new HourCell();
-				if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType){
+				if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 					calendarGrid.getCellFormatter().addStyleName(row+1, i, style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, i).addStyleName(style.setOutOfContractStyle());
+				}
+				if(DayType.FREEDAY == dayType){
+					calendarGrid.getWidget(row, i).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
+					calendarGrid.getWidget(row+1, i).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
 				}
 				cellsType[row][i].setAsType(dayType, row, i);
 				contadorDias++;
@@ -1291,7 +1293,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			TextBox horasT = new TextBox();
 			DoubleBox horasD = new DoubleBox();
 			
-			if (DayType.NOWORKINGDAY == dayType){
+			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 				horasT.setValue("-");
 			}else{
 				horasD.setEnabled(false);
@@ -1299,7 +1301,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				horasD.setEnabled(false);
 			}
 			
-			if (DayType.NOWORKINGDAY == dayType){
+			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 				int filaHoras = row + 1;
 				if (filaHoras % 4 == 0)
 					horasT.setStyleName(style.doubleBoxDisableStyle2());
@@ -1320,7 +1322,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 			
 			calendarGrid.setWidget(row, 7 + diaActualSemana, diaInfo);
-			if (DayType.NOWORKINGDAY == dayType){
+			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 				calendarGrid.setWidget(row + 1, 7 + diaActualSemana, horasT);
 			}else{
 				calendarGrid.setWidget(row + 1, 7 + diaActualSemana, horasD);
@@ -1329,11 +1331,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			cellsDates[row][7 + diaActualSemana] = actualDay;
 			cells[row][7 + diaActualSemana] = new DayCell();
 			cells[row + 1][7 + diaActualSemana] = new HourCell();
-			if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType){
+			if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 				calendarGrid.getCellFormatter().addStyleName(row+1, 7 + diaActualSemana, style.setOutOfContractStyle());
 				calendarGrid.getWidget(row+1, 7 + diaActualSemana).addStyleName(style.setOutOfContractStyle());
 			}
-			
+			if(DayType.FREEDAY == dayType){
+				calendarGrid.getWidget(row, 7 + diaActualSemana).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
+				calendarGrid.getWidget(row+1, 7 + diaActualSemana).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
+			}
 			cellsType[row][7 + diaActualSemana].setAsType(dayType, row, (7 + diaActualSemana));
 			
 			contadorDias++;
