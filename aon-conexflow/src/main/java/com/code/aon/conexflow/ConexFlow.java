@@ -101,7 +101,7 @@ public class ConexFlow {
 	}
 
 	public Boolean isAntTnr() {
-		return antTnr;
+		return antTnr != null ? antTnr : false;
 	}
 
 	public ConexFlow setAntTnr(Boolean antTnr) {

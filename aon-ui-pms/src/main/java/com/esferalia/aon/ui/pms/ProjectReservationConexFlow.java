@@ -218,12 +218,12 @@ public class ProjectReservationConexFlow implements Serializable {
 						} else {
 							// ACTUALIZA VALOR DEL TOKEN EN PROJECT_RESERVATION E INSERTA XML - CREATE TOKEN EN PROJECT ATTACH.
 							cfT.setStatus(ConexFlowStatus.CREATE_TOKEN);
-							String description = getConexFlowDescription(token, cfT.getStatus().getName(), null);
+							String description = getConexFlowDescription(token, cfT.getStatus().getName(), null, cfT.isAntTnr());
 							DBConsults.insertConexFlow(getDomain(), getLogin(), cfT, getReservation().getId(), description);
 
 							// INSERTA EL CHECKEO!
 							cfV.setStatus(ConexFlowStatus.SALE_CHECK);
-							description = getConexFlowDescription(token, cfV.getStatus().getName(), cfV.getRespuesta().getImporte());
+							description = getConexFlowDescription(token, cfV.getStatus().getName(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
 							DBConsults.insertConexFlow(getDomain(), getLogin(), cfV, getReservation().getId(), description);
 
 							// REEMBOLSAR CARGO DE CHECKEO
@@ -241,12 +241,12 @@ public class ProjectReservationConexFlow implements Serializable {
 						} else {
 							// ACTUALIZA VALOR DEL TOKEN EN PROJECT_RESERVATION E INSERTA XML - CREATE TOKEN EN PROJECT ATTACH.
 							cfT.setStatus(ConexFlowStatus.CREATE_TOKEN);
-							String description = getConexFlowDescription(token, cfT.getStatus().getName(), null);
+							String description = getConexFlowDescription(token, cfT.getStatus().getName(), null, cfT.isAntTnr());
 							DBConsults.insertConexFlow(getDomain(), getLogin(), cfT, getReservation().getId(), description);
 
 							// INSERTA EL CHECKEO
 							cfP.setStatus(ConexFlowStatus.PREAUTHORIZATION_CHECK);
-							description = getConexFlowDescription(token, cfP.getStatus().getName(), cfP.getRespuesta().getImporte());
+							description = getConexFlowDescription(token, cfP.getStatus().getName(), cfP.getRespuesta().getImporte(), cfP.isAntTnr());
 							DBConsults.insertConexFlow(getDomain(), getLogin(), cfP, getReservation().getId(), description);
 
 							// CANCELAR PREAUTHORIZACION DE CHECKEO.
@@ -321,7 +321,7 @@ public class ProjectReservationConexFlow implements Serializable {
 		} else {
 			Boolean ok = cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 			cfP.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
-			String description = getConexFlowDescription(token, cfP.getStatus().getName(), cfP.getRespuesta().getImporte());
+			String description = getConexFlowDescription(token, cfP.getStatus().getName(), cfP.getRespuesta().getImporte(), cfP.isAntTnr());
 			DBConsults.insertConexFlow(getDomain(), getLogin(), cfP, getReservation().getId(), description);
 			if (!ok) {
 				conexFlowError("Error " + cfP.getRespuesta().getResultado() + ": " + cfP.getRespuesta().getDesResultado() + ".");
@@ -340,7 +340,7 @@ public class ProjectReservationConexFlow implements Serializable {
 		} else {
 			Boolean ok = cfV.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 			cfV.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
-			String description = getConexFlowDescription(token, cfV.getStatus().getName(), cfV.getRespuesta().getImporte());
+			String description = getConexFlowDescription(token, cfV.getStatus().getName(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
 			cfV = DBConsults.insertConexFlow(getDomain(), getLogin(), cfV, getReservation().getId(), description);
 			if (!ok) {
 				conexFlowError("Error " + cfV.getRespuesta().getResultado() + ": " + cfV.getRespuesta().getDesResultado() + ".");
@@ -365,12 +365,12 @@ public class ProjectReservationConexFlow implements Serializable {
 		} else {
 			Boolean ok = cfC.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 			cfC.setStatus(ok ? ConexFlowStatus.CONFIRM_PREAUTHORIZATION : ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
-			String description = getConexFlowDescription(token, cfC.getStatus().getName(), cfC.getRespuesta().getImporte());
+			String description = getConexFlowDescription(token, cfC.getStatus().getName(), cfC.getRespuesta().getImporte(), cfC.isAntTnr());
 			cfC = DBConsults.insertConexFlow(getDomain(), getLogin(), cfC, getReservation().getId(), description);
 			if (!ok) {
 				conexFlowError("Error " + cfC.getRespuesta().getResultado() + ": " + cfC.getRespuesta().getDesResultado() + ".");
 			} else{
-				description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION_PAID.getName(), cfP.getRespuesta().getImporte());
+				description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION_PAID.getName(), cfP.getRespuesta().getImporte(), cfP.isAntTnr());
 				DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfP.getId(), description);		
 				ConexFlowUtils.setVoucher(getDomain(), getLogin(), getReservation().getId(), cfC);
 			}
@@ -395,12 +395,12 @@ public class ProjectReservationConexFlow implements Serializable {
 			} else {
 				Boolean ok = cfA.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 				cfA.setStatus(ok ? ConexFlowStatus.CANCEL : ConexFlowStatus.CANCEL_FAIL);
-				String description = getConexFlowDescription(token, cfA.getStatus().getName(), cfA.getRespuesta().getImporte());
+				String description = getConexFlowDescription(token, cfA.getStatus().getName(), cfA.getRespuesta().getImporte(), cfA.isAntTnr());
 				DBConsults.insertConexFlow(getDomain(), getLogin(), cfA, getReservation().getId(), description);
 				if (!ok) {
 					conexFlowError("Error " + cfA.getRespuesta().getResultado() + ": " + cfA.getRespuesta().getDesResultado() + ".");
 				} else {
-					description = getConexFlowDescription(token, cf.getStatus().cancel().getName(), cf.getRespuesta().getImporte());
+					description = getConexFlowDescription(token, cf.getStatus().cancel().getName(), cf.getRespuesta().getImporte(), cf.isAntTnr());
 					DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cf.getId(), description);
 					if (ConexFlowStatus.REFUND.equals(subStatus)) {
 						ConexFlow cfV = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, 
@@ -408,28 +408,28 @@ public class ProjectReservationConexFlow implements Serializable {
 						ConexFlow cfC = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, 
 								ConexFlowStatus.CONFIRM_PREAUTHORIZATION_REFUND);
 						if (cfV != null && (cfC == null || cfV.getDate().compareTo(cfC.getDate()) > 0)) {
-							description = getConexFlowDescription(token, ConexFlowStatus.SALE.getName(), cfV.getRespuesta().getImporte());
+							description = getConexFlowDescription(token, ConexFlowStatus.SALE.getName(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
 							DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfV.getId(), description);	
 							// PASAR PAYSLIP A ESTADO ANTERIOR
-							String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte());
-							description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte());
+							String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
+							description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
 							DBConsults.updateConexFlowPayslipDescription(getDomain(), getLogin(), filter, description);
 						} else if (cfC != null) {
-							description = getConexFlowDescription(token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION.getName(), cfC.getRespuesta().getImporte());
+							description = getConexFlowDescription(token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION.getName(), cfC.getRespuesta().getImporte(), cfC.isAntTnr());
 							DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfC.getId(), description);	 
 							ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, 
 									ConexFlowStatus.PREAUTHORIZATION);
-							description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION_PAID.getName(), cfP.getRespuesta().getImporte());
+							description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION_PAID.getName(), cfP.getRespuesta().getImporte(), cfP.isAntTnr());
 							DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfC.getId(), description);	 
 							// PASAR PAYSLIP A ESTADO ANTERIOR
-							String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte());
-							description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte());
+							String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte(), cfC.isAntTnr());
+							description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte(), cfC.isAntTnr());
 							DBConsults.updateConexFlowPayslipDescription(getDomain(), getLogin(), filter, description);
 						}
 					} else if(ConexFlowStatus.CONFIRM_PREAUTHORIZATION.equals(subStatus) || ConexFlowStatus.SALE.equals(subStatus)){
 						// PASAR PAYSLIP A ESTADO CANCELADO
-						String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cf.getId(), cf.getRespuesta().getImporte());
-						description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_CANCEL.getName() + "#" + cf.getId(), cf.getRespuesta().getImporte());
+						String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cf.getId(), cf.getRespuesta().getImporte(), cf.isAntTnr());
+						description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_CANCEL.getName() + "#" + cf.getId(), cf.getRespuesta().getImporte(), cf.isAntTnr());
 						DBConsults.updateConexFlowPayslipDescription(getDomain(), getLogin(), filter, description);	 
 					}
 				}
@@ -449,7 +449,7 @@ public class ProjectReservationConexFlow implements Serializable {
 		} else {
 			Boolean ok = cfD.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 			cfD.setStatus(ok ? ConexFlowStatus.REFUND : ConexFlowStatus.REFUND_FAIL);
-			String description = getConexFlowDescription(token, cfD.getStatus().getName(), cfD.getRespuesta().getImporte());
+			String description = getConexFlowDescription(token, cfD.getStatus().getName(), cfD.getRespuesta().getImporte(), cfD.isAntTnr());
 			DBConsults.insertConexFlow(getDomain(), getLogin(), cfD, getReservation().getId(), description);
 			if (!ok) {
 				conexFlowError("Error " + cfD.getRespuesta().getResultado() + ": " + cfD.getRespuesta().getDesResultado() + ".");
@@ -458,22 +458,22 @@ public class ProjectReservationConexFlow implements Serializable {
 				ConexFlow cfC = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, 
 						ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
 				if (cfV != null && (cfC == null || cfV.getDate().compareTo(cfC.getDate()) > 0)) {
-					description = getConexFlowDescription(token, ConexFlowStatus.SALE_REFUND.getName(), cfV.getRespuesta().getImporte());
+					description = getConexFlowDescription(token, ConexFlowStatus.SALE_REFUND.getName(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
 					DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfV.getId(), description);		
 					// PASAR PAYSLIP A ESTADO REEMBOLSADO.
-					String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte());
-					description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte());
+					String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
+					description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfV.getId(), cfV.getRespuesta().getImporte(), cfV.isAntTnr());
 					DBConsults.updateConexFlowPayslipDescription(getDomain(), getLogin(), filter, description);	 
 				} else if (cfC != null) {
-					description = getConexFlowDescription(token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION_REFUND.getName(), cfC.getRespuesta().getImporte());
+					description = getConexFlowDescription(token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION_REFUND.getName(), cfC.getRespuesta().getImporte(), cfC.isAntTnr());
 					DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfC.getId(), description);	 
 					ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, 
 							ConexFlowStatus.PREAUTHORIZATION_PAID);
-					description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION.getName(), cfP.getRespuesta().getImporte());
+					description = getConexFlowDescription(token, ConexFlowStatus.PREAUTHORIZATION.getName(), cfP.getRespuesta().getImporte(), cfP.isAntTnr());
 					DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfC.getId(), description);	 
 					// PASAR PAYSLIP A ESTADO REEMBOLSADO.
-					String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte());
-					description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte());
+					String filter = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte(), cfC.isAntTnr());
+					description = getConexFlowDescription(token, ConexFlowStatus.PAYSLIP_REFUND.getName() + "#" + cfC.getId(), cfC.getRespuesta().getImporte(), cfC.isAntTnr());
 					DBConsults.updateConexFlowPayslipDescription(getDomain(), getLogin(), filter, description);	
 				}
 			}
@@ -495,10 +495,10 @@ public class ProjectReservationConexFlow implements Serializable {
 				if (cfA != null) {
 					Boolean ok = cfA.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 					cfA.setStatus(ok ? ConexFlowStatus.CANCEL : ConexFlowStatus.CANCEL_FAIL);
-					String description = getConexFlowDescription(token, cfA.getStatus().getName(), cfA.getRespuesta().getImporte());
+					String description = getConexFlowDescription(token, cfA.getStatus().getName(), cfA.getRespuesta().getImporte(), cfA.isAntTnr());
 					DBConsults.insertConexFlow(getDomain(), getLogin(), cfA, getReservation().getId(), description);
 					if (ok) {
-						description = getConexFlowDescription(token, cfP.getStatus().cancel().getName(), cfP.getRespuesta().getImporte());
+						description = getConexFlowDescription(token, cfP.getStatus().cancel().getName(), cfP.getRespuesta().getImporte(), cfP.isAntTnr());
 						DBConsults.updateConexFlowDescription(getDomain(), getLogin(), cfP.getId(), description);
 					}
 				}
@@ -509,7 +509,7 @@ public class ProjectReservationConexFlow implements Serializable {
  			if (cfP != null) {
  				Boolean ok = cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 				cfP.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
-				String description = getConexFlowDescription(token, cfP.getStatus().getName(), cfP.getRespuesta().getImporte());
+				String description = getConexFlowDescription(token, cfP.getStatus().getName(), cfP.getRespuesta().getImporte(), cfP.isAntTnr());
 				DBConsults.insertConexFlow(getDomain(), getLogin(), cfP, getReservation().getId(), description);
  			}
 		}
@@ -526,7 +526,7 @@ public class ProjectReservationConexFlow implements Serializable {
 		return creditCard.substring(0, 2).equals("37") || creditCard.substring(0, 2).equals("34");
 	}
 
-	private String getConexFlowDescription(String token, String status, String amount) {
+	private String getConexFlowDescription(String token, String status, String amount, Boolean antTnr ) {
 		StringBuffer description = new StringBuffer();
 		description.append(CONEXFLOW_PREFIX);
 		description.append("(");
@@ -536,6 +536,9 @@ public class ProjectReservationConexFlow implements Serializable {
 		description.append("#");
 		if (amount != null) {
 			description.append(amount);
+		}
+		if(antTnr){
+			description.append("_ANT_TNR");
 		}
 		return description.toString();
 	}

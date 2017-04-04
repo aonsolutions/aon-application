@@ -59,47 +59,72 @@ public class Sale {
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
 				
-				/*
-				ConexFlow cf = DBConsults.getConexFlowX(d, login, r.getProject(), "CONEXFLOW%ANT_TNR");
-				ConexFlow sFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_FAIL);
-				ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
-				ConexFlow scFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
-				ConexFlow sale = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE);
-				 */
+				String[] differenceDescriptions = {
+					"CONEXFLOW%ANT_TNR",
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL)
+				};
 				
 				String[] descriptions = {
 					"CONEXFLOW%ANT_TNR",
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE)
 				};
-				if(!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)){
-				//if(cf == null && sFail == null && pcFail == null && scFail == null && sale == null){
-					ConexFlowConnection connection = DBConsults.getConection(d);
-					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
-						r.getAdvance(), r.getHotelReservation().toString(), null);
-					ConexFlow conexFlow = ConexFlowPost.execute(connection, ConexFlowStatus.SALE.getName(), query);
-					Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
-					conexFlow.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
-					String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
-						+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte() 
-						+ (ok ? "_ANT_TNR" : "");
-					conexFlow = DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
 			
-					String msg = "";
-					if (!ok){
-						msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-					} else {
-						msg = "CHARGE OK";
-						ConexFlowUtils.setVoucher(d, login,  r.getProject(), conexFlow);
+				if(!DBConsults.hasConexFlow(d, login, r.getProject(), difference ? differenceDescriptions : descriptions)){
+					Double amount = difference ? getDiference(d, login, r.getToken()) : r.getAdvance();
+					if(amount != 0.0){
+						ConexFlowConnection connection = DBConsults.getConection(d);
+						Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), 
+							amount, r.getHotelReservation().toString(), null);
+						ConexFlow conexFlow = ConexFlowPost.execute(connection, ConexFlowStatus.SALE.getName(), query);
+						Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
+						conexFlow.setStatus(ok ? ConexFlowStatus.SALE : ConexFlowStatus.SALE_FAIL);
+						String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+							+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte() 
+							+ (ok ? "_ANT_TNR" : "");
+						conexFlow = DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
+			
+						String msg = "";
+						if (!ok){
+							msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+						} else {
+							msg = "CHARGE OK";
+							ConexFlowUtils.setVoucher(d, login,  r.getProject(), conexFlow);
+						}
+						String projectName = DBConsults.getProjectName(d, login, r.getProject());
+						View.sale(projectName, r.getProject(), msg,r.getAdvance());
+						cont[0]++;
 					}
-					String projectName = DBConsults.getProjectName(d, login, r.getProject());
-					View.sale(projectName, r.getProject(), msg,r.getAdvance());
-					cont[0]++;
 				}
 			}
 		});
+	}
+	
+	private static Double getDiference(Domain domain, String login, String token) {
+		Double c1 = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		Double c2 = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION_CANCEL))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		Double c3 = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION_REFUND))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		
+		Double v1 = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.SALE))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		Double v2 = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.SALE_CANCEL))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		Double v3 = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.SALE_REFUND))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		
+		Double a = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.CANCEL))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		Double d = DBConsults.getConexFlowStreamWD(domain, login, DBConsults.getStatusDescription(token, ConexFlowStatus.REFUND))
+			.mapToDouble(cf -> cf.getAmount() != null ? cf.getAmount() : 0.0).sum();
+		
+		return c1 + c2 + c3 + v1 + v2 + v3 - a - d; 
 	}
 
 	public static void main(String[] args) throws AonConnectionException{
@@ -115,11 +140,12 @@ public class Sale {
 		}finally{
 			if(ctx != null) ctx.close();
 		}
-		
+
 		sale(domain, "system"); 
 	}
 
 	private static boolean dryRun;
+	private static boolean difference;
 	private static Integer number;
 	
 	private static boolean parse(String args[]) {
@@ -142,6 +168,12 @@ public class Sale {
 		Option dryOption = OptionBuilder.create('n');
 		
 		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(false);
+		OptionBuilder.withDescription("difference mode -> C + V - A - D");
+		OptionBuilder.withLongOpt("Difference");
+		Option differenceOption = OptionBuilder.create('d');
+		
+		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
 		OptionBuilder.withDescription("number of iterations");
 		OptionBuilder.withLongOpt("number");
@@ -150,6 +182,7 @@ public class Sale {
 		options.addOption(helpOption);
 		options.addOption(dryOption);
 		options.addOption(numberOption);
+		options.addOption(differenceOption);
 
 
 		try {
@@ -163,6 +196,8 @@ public class Sale {
 			dryRun = line.hasOption(dryOption.getOpt());
 			if (dryRun)
 				LOGGER.info("DryRun ON: Perform a trial run with no changes made.");
+
+			difference = line.hasOption(differenceOption.getOpt());
 
 			String numberString = line.getOptionValue(numberOption.getOpt());
 			if(numberString == null){

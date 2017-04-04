@@ -73,7 +73,8 @@ public class DBConsults {
 						return  XMLUtils.readXml(r.getData(), new Query())
 								.setId(r.getId())
 								.setDate(r.getDate())
-								.setProject(r.getAttachModule());
+								.setProject(r.getAttachModule())
+								.setDescription(r.getDescription());
 					} catch (JAXBException e) {
 						e.printStackTrace();
 					}
@@ -136,7 +137,8 @@ public class DBConsults {
 				return  XMLUtils.readXml(attach.get().getData(), new Query())
 						.setId(attach.get().getId())
 						.setDate(attach.get().getDate())
-						.setStatus(ConexFlowStatus.valueOfDescriptionName(description));
+						.setProject(attach.get().getAttachModule())
+						.setDescription(description);
 			} catch (JAXBException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage());
 			}
