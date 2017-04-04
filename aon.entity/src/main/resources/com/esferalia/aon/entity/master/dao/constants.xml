@@ -351,8 +351,8 @@
 		<hibernate names="id,domain,projectReservation.id,projectReservation.hotel.id,projectReservation.startDate,projectReservation.endDate,guestIndex,name,surname,surname2,treatment,document,documentType,documentCountry,documentExpDate,birthDate,email,phone,address,number,address2,zip,city,province,country,barcode,person,person.id" />
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationRoom" sqlName="project_reservation_room">
-		<alias names="id,domain,projectReservation_id,projectReservation_agency_id,projectReservation_hotel_id,projectReservation_hotel_scope_id,projectReservation_startDate,projectReservation_endDate,projectReservation_status,roomIndex,item_id,allotmentRateCode,ratePlan,tariff_id,adults,children" />
-		<hibernate names="id,domain,projectReservation.id,projectReservation.agency.id,projectReservation.hotel.id,projectReservation.hotel.scope.id,projectReservation.startDate,projectReservation.endDate,projectReservation.status,roomIndex,item.id,allotmentRateCode,ratePlan,tariff.id,adults,children" />
+		<alias names="id,domain,projectReservation_id,projectReservation_agency_id,projectReservation_hotel_id,projectReservation_hotel_scope_id,projectReservation_startDate,projectReservation_endDate,projectReservation_status,roomIndex,item_id,allotmentRateCode,ratePlan,tariff_id,tariff_code,tariff_name,adults,children" />
+		<hibernate names="id,domain,projectReservation.id,projectReservation.agency.id,projectReservation.hotel.id,projectReservation.hotel.scope.id,projectReservation.startDate,projectReservation.endDate,projectReservation.status,roomIndex,item.id,allotmentRateCode,ratePlan,tariff.id,tariff.code,tariff.name,adults,children" />
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationRoomDetail" sqlName="project_reservation_room_detail">
 		<alias names="id,domain,projectReservationRoom_id,projectReservationRoom_projectReservation_id,projectReservationRoom_projectReservation_hotel_id,projectReservationRoom_projectReservation_startDate,projectReservationRoom_projectReservation_endDate,assetActivity_id,assetActivity_asset_id,assetActivity_asset_name,assetActivity_date"/>

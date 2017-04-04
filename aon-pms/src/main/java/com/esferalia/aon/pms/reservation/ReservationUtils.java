@@ -1595,7 +1595,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	public boolean isConexFlowAvailable() {
 		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_SERVER_PARAM, domain);
-		return (appParam != null);
+		return (appParam != null && StringUtils.isNotBlank(appParam.getValue()));
 	}
 
 	public PayMethod obtainConexFlowPayMethod() throws ManagerBeanException {

@@ -18,6 +18,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -78,7 +79,7 @@ public class AdvanceInvoicing {
 					createInvoiceDetails(invoice, reservation, advanceInvoiceTo.getItem(), advanceAmount);
 					createInvoiceAddress(invoice, advanceInvoiceTo.getReservationInvoiceTo(), reservation);
 					if (advanceAmount != 0) {
-						createInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
+						createInvoiceFinances(invoice, reservation, advanceInvoiceTo, advanceAmount);
 					}
 					recordInvoice(invoice);
 				}
@@ -203,7 +204,8 @@ public class AdvanceInvoicing {
 		}
 	}
 
-	private void createInvoiceFinances(Invoice invoice, AdvanceInvoiceTo advanceInvoiceTo, double advanceAmount) throws ManagerBeanException {
+	private void createInvoiceFinances(Invoice invoice, ProjectReservation reservation, AdvanceInvoiceTo advanceInvoiceTo, double advanceAmount) 
+			throws ManagerBeanException {
 		Finance finance = new Finance();
 		finance.setInvoice(invoice);
 		finance.setRegistry(invoice.getRegistry());
@@ -211,7 +213,7 @@ public class AdvanceInvoicing {
 		finance.setDueDate(advanceInvoiceTo.getFinanceDate());
 		finance.setScope(invoice.getScope());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
-		finance.setPayMethod(advanceInvoiceTo.getPayMethod());
+		finance.setPayMethod(obtainPayMethod(reservation, advanceInvoiceTo));
 		if (advanceInvoiceTo.getRegistryBank() != null) {
 			finance.setBankAccount(advanceInvoiceTo.getRegistryBank().getBankAccount());
 			finance.setBankAlias(advanceInvoiceTo.getRegistryBank().getBankAlias());
@@ -303,7 +305,12 @@ public class AdvanceInvoicing {
 		return (StringUtils.isEmpty(address.getAddress()) && StringUtils.isEmpty(address.getCity()) && StringUtils.isEmpty(address.getProvince()));
 	}
 
-	public RegistryBank getRegistryBank(Registry registry) throws ManagerBeanException {
+	private PayMethod obtainPayMethod(ProjectReservation reservation, AdvanceInvoiceTo advanceInvoiceTo) {
+		boolean conexFlow = reservation.isPrepay() || reservation.isConexFlowNotRefundable();
+		return (conexFlow) ? advanceInvoiceTo.getConexFlowPayMethod() : advanceInvoiceTo.getPayMethod();
+	}
+	
+	private RegistryBank getRegistryBank(Registry registry) throws ManagerBeanException {
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());

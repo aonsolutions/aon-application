@@ -296,6 +296,12 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public boolean isConexFlowNotRefundable() {
+		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
+		return lastCfOperation.matches(CONEXFLOW_NOT_REFUNDABLE_PATTERN.replace("%", "(.*)"));
+	}
+
+	@Transient
 	public boolean isConexFlowRefundOk() {
 		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_REFUND_OK_PATTERN.replace("%", "(.*)"));
@@ -596,6 +602,34 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjTariff), criteria);
 		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (Integer)resultList.get(0);
+		}
+		return null;
+	}
+
+	@Transient
+	public String getMainTariffCode() throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
+		Projection prjTariff = Projection.property(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_TARIFF_CODE));
+		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjTariff), criteria);
+		if (resultList.size() > 0 && resultList.get(0) != null) {
+			return (String)resultList.get(0);
+		}
+		return null;
+	}
+
+	@Transient
+	public String getMainTariffName() throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
+		Projection prjTariff = Projection.property(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_TARIFF_NAME));
+		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjTariff), criteria);
+		if (resultList.size() > 0 && resultList.get(0) != null) {
+			return (String)resultList.get(0);
 		}
 		return null;
 	}

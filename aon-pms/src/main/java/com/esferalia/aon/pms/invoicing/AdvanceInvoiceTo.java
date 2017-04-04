@@ -20,6 +20,7 @@ public class AdvanceInvoiceTo implements Serializable {
 	private double percent;
 	private double amount;
 	private PayMethod payMethod;
+	private PayMethod conexFlowPayMethod;
 	private RegistryBank registryBank;
 	private Date financeDate;
 	private PosShift posShift;
@@ -71,6 +72,13 @@ public class AdvanceInvoiceTo implements Serializable {
 	}
 	public void setPayMethod(PayMethod payMethod) {
 		this.payMethod = payMethod;
+	}
+
+	public PayMethod getConexFlowPayMethod() {
+		return conexFlowPayMethod;
+	}
+	public void setConexFlowPayMethod(PayMethod conexFlowPayMethod) {
+		this.conexFlowPayMethod = conexFlowPayMethod;
 	}
 
 	public RegistryBank getRegistryBank() {

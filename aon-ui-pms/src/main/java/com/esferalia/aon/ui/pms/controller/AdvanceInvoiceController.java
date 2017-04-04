@@ -141,6 +141,7 @@ public class AdvanceInvoiceController extends BasicController{
 				advanceInvoiceTo.setPercent(getAdvancePercent());
 				advanceInvoiceTo.setAmount(getAdvanceAmount());
 				advanceInvoiceTo.setPayMethod(getAdvancePayMethod());
+				advanceInvoiceTo.setConexFlowPayMethod(obtainConexFlowPayMethod());
 				advanceInvoiceTo.setRegistryBank(getAdvanceBank());
 				advanceInvoiceTo.setFinanceDate(getAdvancePaymentDate());
 				advanceInvoiceTo.setPosShift(PosUtils.getUserPosShift());
@@ -181,6 +182,11 @@ public class AdvanceInvoiceController extends BasicController{
 	private Item obtainAdvanceItem() throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
 		return reservationUtils.obtainAdvanceItem();
+	}
+
+	private PayMethod obtainConexFlowPayMethod() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		return reservationUtils.obtainConexFlowPayMethod();
 	}
 
 
