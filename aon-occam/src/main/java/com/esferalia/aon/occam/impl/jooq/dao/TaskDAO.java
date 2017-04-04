@@ -287,7 +287,7 @@ public class TaskDAO {
 				LinkedList<Integer> L =getTaskHolderWorkgroupStream(ctx,
 						f -> f.getTaskHolderProperty().in(issueFilter.getAssignee().toArray(new Integer[issueFilter.getAssignee().size()])))
 					.map(r -> r.getId()).collect(Collectors.toCollection(LinkedList::new));
-				m = m.or(TASK.WORKGROUP.in(L));
+				m = m.or(TASK.WORKGROUP.in(L).and(TASK.TASK_HOLDER.isNull()));
 				issueFilter.setWorkgroup(null);
 			}
 			c = c.and(m);			
