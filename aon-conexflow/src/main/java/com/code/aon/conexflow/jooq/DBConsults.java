@@ -138,7 +138,7 @@ public class DBConsults {
 						.setId(attach.get().getId())
 						.setDate(attach.get().getDate())
 						.setProject(attach.get().getAttachModule())
-						.setDescription(description);
+						.setDescription(attach.get().getDescription());
 			} catch (JAXBException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage());
 			}
