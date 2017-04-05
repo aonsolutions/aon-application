@@ -121,9 +121,14 @@ public class ConexFlow {
 			index = s.indexOf("#");
 			s = s.substring(0, index);
 		}
+		setAntTnr(description.contains("ANT_TNR"));
+		if(isAntTnr()){
+			String[] array =s.split("_");
+			s = array[0];
+		}
 		setAmount(!ConexFlowStatus.CREATE_TOKEN.equals(getStatus()) && !ConexFlowStatus.CREATE_TOKEN_FAIL.equals(getStatus())
 				? Double.parseDouble(s) : null);
-		setAntTnr(description.contains("ANT_TNR"));
+		
 		this.description = description;
 		return this;
 	}
