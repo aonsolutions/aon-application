@@ -162,7 +162,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		public void select(int row, int col) {
 			if (cellsDates[row][col] != null){
 				calendarGrid.getWidget(row, col).addStyleName(style.isSelectedStyle());
-				fechasSelecciondas.setSelected(cellsDates[row][col], true);
+				selectedDates.setSelected(cellsDates[row][col], true);
 			}
 		}
 		@Override
@@ -190,7 +190,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		public void select(int row, int col) {
 			if (cellsDates[row][col] != null){
 				calendarGrid.getWidget(row, col).addStyleName(style.doubleBoxStyle());
-				fechasSelecciondas.setSelected(cellsDates[row][col], true);
+				selectedDates.setSelected(cellsDates[row][col], true);
 			}
 		}
 		@Override
@@ -483,25 +483,25 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	HTMLPanel sundayBlock;
 
 	@UiField(provided = true)
-	SuggestBox lunesOpt;
+	SuggestBox mondayOpt;
 	
 	@UiField(provided = true)
-	SuggestBox martesOpt;
+	SuggestBox tuesdayOpt;
 	
 	@UiField(provided = true)
-	SuggestBox miercolesOpt;
+	SuggestBox wendsdayOpt;
 	
 	@UiField(provided = true)
-	SuggestBox juevesOpt;
+	SuggestBox thursdayOpt;
 	
 	@UiField(provided = true)
-	SuggestBox viernesOpt;
+	SuggestBox fridayOpt;
 	
 	@UiField(provided = true)
-	SuggestBox sabadoOpt;
+	SuggestBox saturdayOpt;
 	
 	@UiField(provided = true)
-	SuggestBox domingoOpt;
+	SuggestBox sundayOpt;
 	
 	@UiField
 	ScrollPanel scrollInfo;
@@ -516,13 +516,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private final static int SATURDAY = 5;
 	private final static int SUNDAY = 6;
 	
-	private OrderedMultiSelectionModel<Date> fechasSelecciondas = new OrderedMultiSelectionModel<Date>();
+	private OrderedMultiSelectionModel<Date> selectedDates = new OrderedMultiSelectionModel<Date>();
 	
 	private int oldHourSelected = 0;
-	private int mes;
-	private int annio;
-	private boolean mostrarHoras;
-	private boolean jornadaCompleta;
+	private int month;
+	private int year;
+	private boolean showHours;
+	private boolean fullTimeJourney;
 	
 	private final CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
 	private final CalendarTypeDayCell cellsType[][] = new CalendarTypeDayCell[25][38];
@@ -531,7 +531,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private final SuggestBox suggestOpts[] = new SuggestBox[7];
 	private final HTMLPanel divDays[] = new HTMLPanel[7];
 	
-	private double horas[] = new double[7];
+	private double listOldHours[] = new double[7];
 	
 	private EmployeeCalendarDraftObjectData calendarEmployeeInfo;
 	private Integer startEmployeeContract;
@@ -542,7 +542,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	public EmployeeCalendarDraft() {
 		
 		//Inicializamos todos los SuggestBox para insertar horas nuevas
-		ArrayList<String> tipoHoras = new ArrayList<String>();
+		ArrayList<String> suggestHours = new ArrayList<String>();
 		MultiWordSuggestOracle oracleL = new MultiWordSuggestOracle();
 		MultiWordSuggestOracle oracleM = new MultiWordSuggestOracle();
 		MultiWordSuggestOracle oracleX = new MultiWordSuggestOracle();
@@ -550,17 +550,17 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		MultiWordSuggestOracle oracleV = new MultiWordSuggestOracle();
 		MultiWordSuggestOracle oracleS = new MultiWordSuggestOracle();
 		MultiWordSuggestOracle oracleD = new MultiWordSuggestOracle();
-		tipoHoras.add("2");
-		tipoHoras.add("4");
-		tipoHoras.add("6");
-		tipoHoras.add("8");
-		oracleL.setDefaultSuggestionsFromText(tipoHoras);
-		oracleM.setDefaultSuggestionsFromText(tipoHoras);
-		oracleX.setDefaultSuggestionsFromText(tipoHoras);
-		oracleJ.setDefaultSuggestionsFromText(tipoHoras);
-		oracleV.setDefaultSuggestionsFromText(tipoHoras);
-		oracleS.setDefaultSuggestionsFromText(tipoHoras);
-		oracleD.setDefaultSuggestionsFromText(tipoHoras);
+		suggestHours.add("2");
+		suggestHours.add("4");
+		suggestHours.add("6");
+		suggestHours.add("8");
+		oracleL.setDefaultSuggestionsFromText(suggestHours);
+		oracleM.setDefaultSuggestionsFromText(suggestHours);
+		oracleX.setDefaultSuggestionsFromText(suggestHours);
+		oracleJ.setDefaultSuggestionsFromText(suggestHours);
+		oracleV.setDefaultSuggestionsFromText(suggestHours);
+		oracleS.setDefaultSuggestionsFromText(suggestHours);
+		oracleD.setDefaultSuggestionsFromText(suggestHours);
 		
 		suggestOpts[MONDAY] = new SuggestBox(oracleL);
 		suggestOpts[TUESDAY] = new SuggestBox(oracleM);
@@ -570,13 +570,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		suggestOpts[SATURDAY] = new SuggestBox(oracleS);
 		suggestOpts[SUNDAY] = new SuggestBox(oracleD);
 		
-		this.lunesOpt = suggestOpts[MONDAY];
-		this.martesOpt = suggestOpts[TUESDAY];
-		this.miercolesOpt = suggestOpts[WEDNESDAY];
-		this.juevesOpt = suggestOpts[THURSDAY];
-		this.viernesOpt = suggestOpts[FRIDAY];
-		this.sabadoOpt = suggestOpts[SATURDAY];
-		this.domingoOpt = suggestOpts[SUNDAY];
+		this.mondayOpt = suggestOpts[MONDAY];
+		this.tuesdayOpt = suggestOpts[TUESDAY];
+		this.wendsdayOpt = suggestOpts[WEDNESDAY];
+		this.thursdayOpt = suggestOpts[THURSDAY];
+		this.fridayOpt = suggestOpts[FRIDAY];
+		this.saturdayOpt = suggestOpts[SATURDAY];
+		this.sundayOpt = suggestOpts[SUNDAY];
 		
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
@@ -591,8 +591,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		divDays[5] = saturdayBlock;
 		divDays[6] = sundayBlock;
 		
-		inicializarCellsCalendar();
-		inicializarCellsTypeCalendar();
+		initializeCellsCalendar();
+		initializeCellsTypeCalendar();
 		
 		//Gestion tipo de ausencia
 		dropMenu.addItem("No remunerado");
@@ -609,14 +609,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				addNoWorkingDay();	
 			}
 		});
-		
-//		diaFestivo.setScheduledCommand(new Command() {
-//			
-//			@Override
-//			public void execute() {
-//				addFreeDay();	
-//			}
-//		});
 		
 		holidayDayMenuItem.setScheduledCommand(new Command() {
 			
@@ -658,7 +650,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				limpiarSeleccionados();
+				cleanSelectedDates();
 			}
 			
 		});
@@ -683,10 +675,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					endDate = DateUtils.copyDateOnly(calendarEmployeeInfo.getEndDateContract());
 				
 				while (startDate.before(endDate) || startDate.equals(endDate)) {
-					fechasSelecciondas.setSelected(DateUtils.copyDateOnly(startDate), true);
+					selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
 					DateUtils.addDays2Date(startDate, 1);
 				}
-				pintarSeleccionTodosDias(fechasSelecciondas.getSelectedList());
+				paintAllDates(selectedDates.getSelectedList());
 				hourButton.setDisabled(false);
 			}
 			
@@ -697,7 +689,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			@Override
 			public void execute() {
 				dialogUntill.open();
-				anadirFechas();
+				addDates();
 				
 			}
 		});
@@ -715,9 +707,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				if(!fechasSelecciondas.getSelectedList().isEmpty()){
+				if(!selectedDates.getSelectedList().isEmpty()){
 					hourDialog.open();
-					comprobarDiasAMostrar();
+					checkShowingUpDays();
 				}
 			}
 		});
@@ -727,12 +719,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 			@Override
 			public void execute() {
-				mostrarHoras = !mostrarHoras;
-				showHourMenuItem.setStyleName("aon-MenuItemCheckYes", mostrarHoras);
-				if (mostrarHoras)
-					ocultarHoras();		
+				showHours = !showHours;
+				showHourMenuItem.setStyleName("aon-MenuItemCheckYes", showHours);
+				if (showHours)
+					hideHours();		
 				else
-					visualizarHoras();
+					showHours();
 			}
 		});		
 		
@@ -744,22 +736,22 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		saveButton.setVisible(false);
 		//#endif
 		
-		//saveButton.setVisible(true);
+		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
 	}
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
 	
 	@UiHandler("dialogUntillOk")
 	public void onOkuntillDialogClick(ClickEvent event) {
-		if(fechasSelecciondas.getSelectedList().size() == 1){
-			Date startDate = DateUtils.copyDateOnly(fechasSelecciondas.getSelectedList().get(0));
+		if(selectedDates.getSelectedList().size() == 1){
+			Date startDate = DateUtils.copyDateOnly(selectedDates.getSelectedList().get(0));
 			Date endDate = DateUtils.copyDateOnly(endDateBoxDialogUntill.getValue());
 			while (startDate.before(endDate) || startDate.equals(endDate)) {
-				fechasSelecciondas.setSelected(DateUtils.copyDateOnly(startDate), true);
+				selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
 				DateUtils.addDays2Date(startDate, 1);
 			}
 		}
-		pintarSeleccion(fechasSelecciondas.getSelectedList());
+		paintSelectedDates(selectedDates.getSelectedList());
 	}
 	
 	@UiHandler("calendarGrid")
@@ -776,64 +768,62 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		if (null != cellsDates[row][col] && calendarEmployeeInfo.getStartDateContract().after(cellsDates[row][col]))
 			return;
-		//if (cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
+		
+		//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
 		if (cellsType[row][col].getType().equals(DayType.BAJAIT))
 			return;
 	
 		//Pulsacion celda con CTRL
 		if (event.isControlKeyDown()) { 
-			//if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+			//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
 			if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
 				cells[row][col].select(row, col);
 		
 		//Pulsacion celda con SHIFT
 		} else if (event.isShiftKeyDown()){ 
-			int posicionIncial = calcularPosicionFecha(fechasSelecciondas.getSelectedList().get(0));
-			if(posicionIncial != -1){
-				int posicionFin = pos;
+			int initialPosition = calculateDatePosition(selectedDates.getSelectedList().get(0));
+			if(initialPosition != -1){
+				int endPosition = pos;
 				
-				if (posicionIncial > posicionFin){
-					int posAux = posicionIncial;
-					posicionIncial = posicionFin-1;
-					posicionFin = posAux;
+				if (initialPosition > endPosition){
+					int posAux = initialPosition;
+					initialPosition = endPosition-1;
+					endPosition = posAux;
 				}
 				
-				while (posicionIncial != posicionFin){
-//					if (!(cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.BAJAIT)
-//							|| cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))){
-					if (!cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.BAJAIT)){
-						cells[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)]
-								.select(calcularFila(posicionIncial+1), calcularColumna(posicionIncial+1));
+				while (initialPosition != endPosition){
+					//TODO: poner este codigo para bloquear no laborables -> || cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))
+					if (!cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.BAJAIT)){
+						cells[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)]
+								.select(calculatePositionRow(initialPosition+1), calculatePositionCol(initialPosition+1));
 					}
-					posicionIncial++;
-					
+					initialPosition++;	
 				}
 			}
 		
 		//Pulsacion una sola celda	
 		} else { 
-			for (Date date : fechasSelecciondas.getSelectedList()) {
-				int posicion = calcularPosicionFecha(date);
+			for (Date date : selectedDates.getSelectedList()) {
+				int posicion = calculateDatePosition(date);
 				if(posicion != -1){
-					int colSelect = calcularColumna(posicion);
-					int filSelect = calcularFila(posicion);
+					int colSelect = calculatePositionCol(posicion);
+					int filSelect = calculatePositionRow(posicion);
 					cells[filSelect][colSelect].unSelect(filSelect, colSelect);
 			
 				}
 			}
-			fechasSelecciondas.clear();
 			
+			selectedDates.clear();
+			cells[calculatePositionRow(oldHourSelected)][calculatePositionCol(oldHourSelected)]
+					.unSelect(calculatePositionRow(oldHourSelected), calculatePositionCol(oldHourSelected));
 			
-			cells[calcularFila(oldHourSelected)][calcularColumna(oldHourSelected)]
-					.unSelect(calcularFila(oldHourSelected), calcularColumna(oldHourSelected));
-			
-			if (esMes(row, col)){
+			if (isMonth(row, col)){
 				for(int i = 1; i<38; i++)
-					//if (!(cellsType[row][i].getType().equals(DayType.BAJAIT) || cellsType[row][i].getType().equals(DayType.NOWORKINGDAY)))
+					//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][i].getType().equals(DayType.NOWORKINGDAY))
 					if (!cellsType[row][i].getType().equals(DayType.BAJAIT))
 						cells[row][i].select(row, i);
 			}else
-				//if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
+				//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
 				if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
 					cells[row][col].select(row, col);
 			
@@ -844,19 +834,19 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	@UiHandler("hourDialogOk")
 	public void onConfirmDialogClick(ClickEvent event) {
-		double horasLunes = Double.parseDouble(suggestOpts[MONDAY].getValue());
-		double horasMartes = Double.parseDouble(suggestOpts[TUESDAY].getValue());
-		double horasMiercoles = Double.parseDouble(suggestOpts[WEDNESDAY].getValue());
-		double horasJueves = Double.parseDouble(suggestOpts[THURSDAY].getValue());
-		double horasViernes = Double.parseDouble(suggestOpts[FRIDAY].getValue());
-		double horasSabado = Double.parseDouble(suggestOpts[SATURDAY].getValue());
-		double horasDomingo = Double.parseDouble(suggestOpts[SUNDAY].getValue());
+		double mondayHour = Double.parseDouble(suggestOpts[MONDAY].getValue());
+		double tuesdayHour = Double.parseDouble(suggestOpts[TUESDAY].getValue());
+		double wendsdayHour = Double.parseDouble(suggestOpts[WEDNESDAY].getValue());
+		double thursdayHour = Double.parseDouble(suggestOpts[THURSDAY].getValue());
+		double fridayHour = Double.parseDouble(suggestOpts[FRIDAY].getValue());
+		double saturdayHour = Double.parseDouble(suggestOpts[SATURDAY].getValue());
+		double sundayHour = Double.parseDouble(suggestOpts[SUNDAY].getValue());
 		
-		actualizarHoras(horasLunes, horasMartes, horasMiercoles, horasJueves, horasViernes, horasSabado, horasDomingo);
+		updateHours(mondayHour, tuesdayHour, wendsdayHour, thursdayHour, fridayHour, saturdayHour, sundayHour);
 		hourDialog.close();
 		hourMenuItem.setEnabled(false);
 		hourButton.setDisabled(true);
-		fechasSelecciondas.clear();
+		selectedDates.clear();
 		changeYear(0);
 	}
 	
@@ -907,7 +897,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("eraseEventButton")
 	public void onEraseClick(ClickEvent event) {
-		limpiarSeleccionados();
+		cleanSelectedDates();
 	}
 
 	@UiHandler("nonWorkingDayButton")
@@ -968,9 +958,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("hourButton")
 	public void onHourClick(ClickEvent event) {
-		if(!fechasSelecciondas.getSelectedList().isEmpty()){	
+		if(!selectedDates.getSelectedList().isEmpty()){	
 			hourDialog.open();
-			comprobarDiasAMostrar();
+			checkShowingUpDays();
 		}
 	}
 	
@@ -994,14 +984,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	void onUndoButtonClick(ClickEvent event) {
 		calendarEmployeeInfo.undoManager.undo();
 		
-		this.mes = 0;
+		this.month = 0;
 		
-		limpiarEstiloCambios();
-		limpiarCalendario();
-		mostrarCalendarioWidget(Integer.parseInt(yearLabel.getText())- 1900);
+		cleanStyleChanges();
+		cleanCalendar();
+		showCalendarWidget(Integer.parseInt(yearLabel.getText())- 1900);
 		
-		pintarCambiosHorasRealizados(calendarEmployeeInfo.getChangesHours());
-		pintarCambiosTiposRealizados(calendarEmployeeInfo.getChangesTypes());
+		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
+		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
 			
 	}
 
@@ -1009,14 +999,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	void onRedoButtonClick(ClickEvent event) {
 		calendarEmployeeInfo.undoManager.redo();
 		
-		this.mes = 0;
+		this.month = 0;
 		
-		limpiarEstiloCambios();
-		limpiarCalendario();
-		mostrarCalendarioWidget(Integer.parseInt(yearLabel.getText())- 1900);
+		cleanStyleChanges();
+		cleanCalendar();
+		showCalendarWidget(Integer.parseInt(yearLabel.getText())- 1900);
 		
-		pintarCambiosHorasRealizados(calendarEmployeeInfo.getChangesHours());
-		pintarCambiosTiposRealizados(calendarEmployeeInfo.getChangesTypes());
+		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
+		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
 		
 	}
 	
@@ -1025,14 +1015,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		while (calendarEmployeeInfo.undoManager.canUndo())
 			calendarEmployeeInfo.undoManager.undo();
 		
-		this.mes = 0;
+		this.month = 0;
 		
-		limpiarEstiloCambios();
-		limpiarCalendario();
-		mostrarCalendarioWidget(Integer.parseInt(yearLabel.getText())- 1900);
+		cleanStyleChanges();
+		cleanCalendar();
+		showCalendarWidget(Integer.parseInt(yearLabel.getText())- 1900);
 		
-		pintarCambiosHorasRealizados(calendarEmployeeInfo.getChangesHours());
-		pintarCambiosTiposRealizados(calendarEmployeeInfo.getChangesTypes());
+		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
+		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
 		
 	}
 	
@@ -1069,8 +1059,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		});
 		
 		calendar.initializeDBCalendar(
-				r -> { this.mostrarHoras = r.isFullTimeJourney();
-					   this.jornadaCompleta = r.isFullTimeJourney();
+				r -> { this.showHours = r.isFullTimeJourney();
+					   this.fullTimeJourney = r.isFullTimeJourney();
 					   initCalendar();
 					 }, t -> {});
 	}
@@ -1084,28 +1074,28 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		undoButton.setEnabled(this.calendarEmployeeInfo.undoManager.canUndo());
 		undoAllButton.setEnabled(this.calendarEmployeeInfo.undoManager.canUndo());
 		
-		this.annio = new Date().getYear();
-		this.mes = 0;
+		this.year = new Date().getYear();
+		this.month = 0;
 		this.startEmployeeContract = getStartYearContract(calendarEmployeeInfo.getStartDateContract());
 		this.endEmployeeContract = getEndYearContract(calendarEmployeeInfo.getEndDateContract());
-		int actualYear = this.annio+1900;
+		int actualYear = this.year+1900;
 		this.yearLabel.setText(Integer.toString(actualYear));
 		
-		limpiarEstiloCambios();
-		limpiarCalendario();
-		inicializarCellsCalendar();
-		inicializarCellsTypeCalendar();
-		mostrarCalendarioWidget(this.annio);
+		cleanStyleChanges();
+		cleanCalendar();
+		initializeCellsCalendar();
+		initializeCellsTypeCalendar();
+		showCalendarWidget(this.year);
 		
-		if (this.mostrarHoras){
-			showHourMenuItem.setStyleName("aon-MenuItemCheckYes", mostrarHoras);
-			ocultarHoras();
+		if (this.showHours){
+			showHourMenuItem.setStyleName("aon-MenuItemCheckYes", showHours);
+			hideHours();
 		}else{
-			showHourMenuItem.setStyleName("aon-MenuItemCheckYes", mostrarHoras);
-			visualizarHoras();
+			showHourMenuItem.setStyleName("aon-MenuItemCheckYes", showHours);
+			showHours();
 		}
 		
-		if(this.jornadaCompleta){
+		if(this.fullTimeJourney){
 			hourMenuItem.setVisible(false);
 			hourButtonBlock.setVisible(false);
 			viewMenuItem.setVisible(false);
@@ -1115,8 +1105,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			viewMenuItem.setVisible(true);
 		}
 		
-		pintarCambiosHorasRealizados(calendarEmployeeInfo.getChangesHours());
-		pintarCambiosTiposRealizados(calendarEmployeeInfo.getChangesTypes());
+		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
+		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
 				
 	}
 	
@@ -1133,13 +1123,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			return Integer.MAX_VALUE;
 	}
 	
-	private void inicializarCellsCalendar() {
+	private void initializeCellsCalendar() {
 		for (int row = 0; row < 25; row++)
 			for (int column = 0; column < 38; column++)
 				cells[row][column] = NoneCell.NONE_CELL;
 	}
 	
-	private void inicializarCellsTypeCalendar() {
+	private void initializeCellsTypeCalendar() {
 		for (int row = 0; row < 25; row++)
 			for (int column = 0; column < 38; column++)
 				cellsType[row][column] = new DayTypeCell(DayType.NOTYPEDAY);
@@ -1147,215 +1137,224 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	/**
 	 * Metodo que gestiona la movibilidad entre años y llama a pintar el calendario
-	 * @param annio : año que debe pintar el calendario
+	 * @param year : año que debe pintar el calendario
 	 */
 	@SuppressWarnings("deprecation")
-	private void mostrarCalendarioWidget(int annio) {
+	private void showCalendarWidget(int year) {
 		//Crear calendario
 		for (int row = 1; row < 25; row += 2)
-			mostrarCalendario(row, annio);
+			showCalendar(row, year);
 		
 		this.nextYearButton.setEnabled(true);
 		this.lastYearButton.setEnabled(true);
 		
-		if (annio == startEmployeeContract || annio == ((new Date().getYear())-1)){
-			bloquearDiasFueraDeContrato(calendarEmployeeInfo.getStartDateContract());
+		if (year == startEmployeeContract || year == ((new Date().getYear())-1)){
+			blockBeforeOutOfContractDays(calendarEmployeeInfo.getStartDateContract());
 			this.lastYearButton.setEnabled(false);
 		}
-		if (annio == endEmployeeContract || annio == ((new Date().getYear())+1)){
+		if (year == endEmployeeContract || year == ((new Date().getYear())+1)){
 			this.nextYearButton.setEnabled(false);
 			if(endEmployeeContract != null)
-				bloquearDiasFueraDeContratoPost(calendarEmployeeInfo.getEndDateContract());
+				blockAfterOutOfContractDays(calendarEmployeeInfo.getEndDateContract());
 		}
 		
 		
 	}
 
-	private int calcularNumeroDiaSemana(int dia, int mes, int anio) {
+	private int calcutaNumberDayOfWeek(int day, int month, int year) {
 		@SuppressWarnings("deprecation")
-		Date fecha = new Date(anio, mes, dia);
+		Date date = new Date(year, month, day);
 		@SuppressWarnings("deprecation")
-		int numDia = fecha.getDay();
+		int numDay = date.getDay();
 
 		// Tratamiento calendario español, 0 = Lunes, 6 = Domingo
-		if (0 == numDia)
-			numDia = 7;
+		if (0 == numDay)
+			numDay = 7;
 
-		return numDia;
+		return numDay;
 	}
 	
 	@SuppressWarnings("deprecation")
-	private boolean comprobarFecha(int dia, int mes, int anio) {
-		return mes >= 0 && mes <= 11 && anio > 0 && anio < 32768 && dia >= 0
-				&& dia <= (new Date(anio, mes, dia)).getDate();
+	private boolean checkDate(int day, int month, int year) {
+		return month >= 0 && month <= 11 && year > 0 && year < 32768 && day >= 0
+				&& day <= (new Date(year, month, day)).getDate();
 	}
 
-	private int calcularUltimoDiaMes(int mes, int anio) {
-		int ultimo_dia = 28;
-		while (comprobarFecha(ultimo_dia + 1, mes, anio))
-			ultimo_dia++;
+	private int calculateLastDayOfMonth(int month, int year) {
+		int lastDay = 28;
+		while (checkDate(lastDay + 1, month, year))
+			lastDay++;
 
-		return ultimo_dia;
+		return lastDay;
 	}
 
-	private void mostrarCalendario(int row, int anio) {
+	private void showCalendar(int row, int year) {
 		// Mostrar días del mes
-		int contadorDias = 1;
-		int primerDiaMes = calcularNumeroDiaSemana(1, mes, anio);
-		int ultimoDiaMes = calcularUltimoDiaMes(mes, anio);
+		int contDays = 1;
+		int firstDayOfMonth = calcutaNumberDayOfWeek(1, month, year);
+		int lastDayOfMonth = calculateLastDayOfMonth(month, year);
 
 		// Escribo la primera fila de la semana
 		for (int i = 1; i <= 7; i++) {
 			// Label insetar
-			Label diaInfo = new Label();
-			diaInfo.setStyleName(style.cellStyle());
+			Label labelDay = new Label();
+			labelDay.setStyleName(style.cellStyle());
 
-			if (i < primerDiaMes) {
-				diaInfo.setText("");
-				calendarGrid.setWidget(row, i, diaInfo);
+			if (i < firstDayOfMonth) {
+				labelDay.setText("");
+				calendarGrid.setWidget(row, i, labelDay);
 				cells[row + 1][i] = new NoneCell();
 			} else {
 				@SuppressWarnings("deprecation")
-				Date actualDay = new Date(anio, mes, contadorDias);
+				Date actualDay = new Date(year, month, contDays);
 				
 				DateUtils.resetTime(actualDay);
 				DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
-				TextBox horasT = new TextBox();
-				DoubleBox horasD = new DoubleBox();
+				TextBox textHour = new TextBox();
+				DoubleBox doubleHour = new DoubleBox();
 				
 				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
-					horasT.setValue("-");
+					textHour.setValue("-");
 				}else{
-					horasD.setEnabled(false);
-					horasD.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
-					horasD.setEnabled(false);
+					doubleHour.setEnabled(false);
+					doubleHour.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+					doubleHour.setEnabled(false);
 				}
 				
 				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
-					int filaHoras = row + 1;
-					if (filaHoras % 4 == 0)
-						horasT.setStyleName(style.doubleBoxDisableStyle2());
+					int hourRow = row + 1;
+					if (hourRow % 4 == 0)
+						textHour.setStyleName(style.doubleBoxDisableStyle2());
 					else
-						horasT.setStyleName(style.doubleBoxDisableStyle());
+						textHour.setStyleName(style.doubleBoxDisableStyle());
 					
-					horasT.setStyleName(style.doubleBoxLargeStyle(), horasT.getText() != null && horasT.getText().length() > 2);
+					textHour.setStyleName(style.doubleBoxLargeStyle(), textHour.getText() != null && textHour.getText().length() > 2);
 					
 				}else{
-					int filaHoras = row + 1;
-					if (filaHoras % 4 == 0)
-						horasD.setStyleName(style.doubleBoxDisableStyle2());
+					int hourRow = row + 1;
+					if (hourRow % 4 == 0)
+						doubleHour.setStyleName(style.doubleBoxDisableStyle2());
 					else
-						horasD.setStyleName(style.doubleBoxDisableStyle());
+						doubleHour.setStyleName(style.doubleBoxDisableStyle());
 					
-					horasD.setStyleName(style.doubleBoxLargeStyle(), horasD.getText() != null && horasD.getText().length() > 2);
+					doubleHour.setStyleName(style.doubleBoxLargeStyle(), doubleHour.getText() != null && doubleHour.getText().length() > 2);
 					
 				}
 				
-				diaInfo.setText(contadorDias + "");
-				diaInfo.addStyleName(style.pointer());
-				calendarGrid.setWidget(row, i, diaInfo);
+				labelDay.setText(contDays + "");
+				labelDay.addStyleName(style.pointer());
+				calendarGrid.setWidget(row, i, labelDay);
+				
 				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
-					calendarGrid.setWidget(row + 1, i, horasT);
+					calendarGrid.setWidget(row + 1, i, textHour);
 				}else{
-					calendarGrid.setWidget(row + 1, i, horasD);
+					calendarGrid.setWidget(row + 1, i, doubleHour);
 				}
+				
 				cellsDates[row][i] = actualDay;
 				cells[row][i] = new DayCell();
 				cells[row + 1][i] = new HourCell();
+				
 				if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
 					calendarGrid.getCellFormatter().addStyleName(row+1, i, style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, i).addStyleName(style.setOutOfContractStyle());
 				}
+				
 				if(DayType.FREEDAY == dayType){
 					calendarGrid.getWidget(row, i).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
 					calendarGrid.getWidget(row+1, i).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
 				}
+				
 				cellsType[row][i].setAsType(dayType, row, i);
-				contadorDias++;
+				contDays++;
 			}
 		}
 
 		
-		int diaActualSemana = 1;
-		while (contadorDias <= ultimoDiaMes) {
+		int actualDayOfWeek = 1;
+		while (contDays <= lastDayOfMonth) {
 			// Dia Acutal
 			@SuppressWarnings("deprecation")
-			Date actualDay = new Date(anio, mes, contadorDias);
+			Date actualDay = new Date(year, month, contDays);
 			
 			DateUtils.resetTime(actualDay);
+			
 			// Label insetar
-			Label diaInfo = new Label(contadorDias + "");
-			diaInfo.setStyleName(style.cellStyle());
-			diaInfo.addStyleName(style.pointer());
+			Label labelDay = new Label(contDays + "");
+			labelDay.setStyleName(style.cellStyle());
+			labelDay.addStyleName(style.pointer());
 			
 			DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
 			
-			TextBox horasT = new TextBox();
-			DoubleBox horasD = new DoubleBox();
+			TextBox textHour = new TextBox();
+			DoubleBox doubleHour = new DoubleBox();
 			
 			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
-				horasT.setValue("-");
+				textHour.setValue("-");
 			}else{
-				horasD.setEnabled(false);
-				horasD.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
-				horasD.setEnabled(false);
+				doubleHour.setEnabled(false);
+				doubleHour.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+				doubleHour.setEnabled(false);
 			}
 			
 			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
-				int filaHoras = row + 1;
-				if (filaHoras % 4 == 0)
-					horasT.setStyleName(style.doubleBoxDisableStyle2());
+				int hourRow = row + 1;
+				if (hourRow % 4 == 0)
+					textHour.setStyleName(style.doubleBoxDisableStyle2());
 				else
-					horasT.setStyleName(style.doubleBoxDisableStyle());
+					textHour.setStyleName(style.doubleBoxDisableStyle());
 				
-				horasT.setStyleName(style.doubleBoxLargeStyle(), horasT.getText() != null && horasT.getText().length() > 2);
+				textHour.setStyleName(style.doubleBoxLargeStyle(), textHour.getText() != null && textHour.getText().length() > 2);
 				
 			}else{
-				int filaHoras = row + 1;
-				if (filaHoras % 4 == 0)
-					horasD.setStyleName(style.doubleBoxDisableStyle2());
+				int hourRow = row + 1;
+				if (hourRow % 4 == 0)
+					doubleHour.setStyleName(style.doubleBoxDisableStyle2());
 				else
-					horasD.setStyleName(style.doubleBoxDisableStyle());
+					doubleHour.setStyleName(style.doubleBoxDisableStyle());
 				
-				horasD.setStyleName(style.doubleBoxLargeStyle(), horasD.getText() != null && horasD.getText().length() > 2);
+				doubleHour.setStyleName(style.doubleBoxLargeStyle(), doubleHour.getText() != null && doubleHour.getText().length() > 2);
 				
 			}
 			
-			calendarGrid.setWidget(row, 7 + diaActualSemana, diaInfo);
+			calendarGrid.setWidget(row, 7 + actualDayOfWeek, labelDay);
+			
 			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
-				calendarGrid.setWidget(row + 1, 7 + diaActualSemana, horasT);
+				calendarGrid.setWidget(row + 1, 7 + actualDayOfWeek, textHour);
 			}else{
-				calendarGrid.setWidget(row + 1, 7 + diaActualSemana, horasD);
+				calendarGrid.setWidget(row + 1, 7 + actualDayOfWeek, doubleHour);
 			}
 			
-			cellsDates[row][7 + diaActualSemana] = actualDay;
-			cells[row][7 + diaActualSemana] = new DayCell();
-			cells[row + 1][7 + diaActualSemana] = new HourCell();
+			cellsDates[row][7 + actualDayOfWeek] = actualDay;
+			cells[row][7 + actualDayOfWeek] = new DayCell();
+			cells[row + 1][7 + actualDayOfWeek] = new HourCell();
+			
 			if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
-				calendarGrid.getCellFormatter().addStyleName(row+1, 7 + diaActualSemana, style.setOutOfContractStyle());
-				calendarGrid.getWidget(row+1, 7 + diaActualSemana).addStyleName(style.setOutOfContractStyle());
+				calendarGrid.getCellFormatter().addStyleName(row+1, 7 + actualDayOfWeek, style.setOutOfContractStyle());
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).addStyleName(style.setOutOfContractStyle());
 			}
-			if(DayType.FREEDAY == dayType){
-				calendarGrid.getWidget(row, 7 + diaActualSemana).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
-				calendarGrid.getWidget(row+1, 7 + diaActualSemana).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
-			}
-			cellsType[row][7 + diaActualSemana].setAsType(dayType, row, (7 + diaActualSemana));
 			
-			contadorDias++;
-			diaActualSemana++;
+			if(DayType.FREEDAY == dayType){
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle(calendarEmployeeInfo.getDescriptionFestive(actualDay));
+			}
+			
+			cellsType[row][7 + actualDayOfWeek].setAsType(dayType, row, (7 + actualDayOfWeek));
+			contDays++;
+			actualDayOfWeek++;
 			
 		}
 
-		if ((diaActualSemana) < 30) {
-			for (int i = 7 + diaActualSemana; i < 38; i++) {
-				Label diaInfo = new Label("");
-				diaInfo.setStyleName(style.cellStyle());
-				calendarGrid.setWidget(row, i, diaInfo);
+		if ((actualDayOfWeek) < 30) {
+			for (int i = 7 + actualDayOfWeek; i < 38; i++) {
+				Label labelDay = new Label("");
+				labelDay.setStyleName(style.cellStyle());
+				calendarGrid.setWidget(row, i, labelDay);
 				cells[row][i] = new NoneCell();
 			}
 		}
 
-		mes++;
+		month++;
 	}
 	
 	/**
@@ -1363,12 +1362,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	 * limpiar estilo de seleccion de las posiciones seleccionadas , limpiar estilo fuera de
 	 * contraro al cambiar de año, limpiar el calendario completamente.
 	 */
-	private void limpiarEstilos(List<Date> fechasSeleccionadas) {
-		for (Date date : fechasSeleccionadas) {
-			int pos = calcularPosicionFecha(date);
+	private void cleanStyles(List<Date> selectedDates) {
+		for (Date date : selectedDates) {
+			int pos = calculateDatePosition(date);
 			if(pos != -1){
-				int col = calcularColumna(pos);
-				int row = calcularFila(pos);
+				int col = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
 				calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.sundayStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.holidayStyle());
@@ -1379,12 +1378,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
-				//calendarEmployeeInfo.setTypeByDay(cellsDates[row][col], DayType.NOTYPEDAY);
 			}
 		}
 	}
 	
-	private void limpiarEstilo(int row, int col) {
+	private void cleanOneDayStyle(int row, int col) {
 		calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.sundayStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.holidayStyle());
@@ -1397,18 +1395,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 	}
 	
-	private void limpiarSeleccion(List<Date> fechasSeleccionadas) {
-		for (Date date : fechasSeleccionadas) {
-			int pos = calcularPosicionFecha(date);
+	private void cleanSelectStyleSelectedDates(List<Date> selectedDates) {
+		for (Date date : selectedDates) {
+			int pos = calculateDatePosition(date);
 			if(pos != -1){
-				int col = calcularColumna(pos);
-				int fil = calcularFila(pos);
+				int col = calculatePositionCol(pos);
+				int fil = calculatePositionRow(pos);
 				calendarGrid.getWidget(fil, col).removeStyleName(style.isSelectedStyle());
 			}
 		}
 	}
 	
-	private void limpiarEstiloCambios() {
+	private void cleanStyleChanges() {
 		for (int i = 1; i < 25; i++)
 			for (int j = 1; j < 38; j++){
 				cells[i][j].eraseOnChange(i, j);
@@ -1417,7 +1415,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}	
 	}
 
-	private void limpiarCalendario() {
+	private void cleanCalendar() {
 		for (int i = 1; i < 25; i++)
 			for (int j = 1; j < 38; j++)
 				calendarGrid.clearCell(i, j);
@@ -1427,7 +1425,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	 * Pintar los cambios realizados tanto en las horas como en los tipos de dias, cuando
 	 * todavia no se ha guardado.
 	 */
-	private void pintarCambiosHorasRealizados(Set<Entry<Date, Double>> hourChanges) {
+	private void paintMadeHourChanges(Set<Entry<Date, Double>> hourChanges) {
 		for (Entry<Date,Double> e : hourChanges){
 			for (int i = 1; i < 25; i++)
 				for (int j = 1; j < 38; j++){
@@ -1437,7 +1435,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}	
 	}
 	
-	private void pintarCambiosTiposRealizados(Set<Entry<Date, DayType>> typeChanges) {
+	private void paintMadeTypeChanges(Set<Entry<Date, DayType>> typeChanges) {
 		for (Entry<Date,DayType> e : typeChanges){
 			for (int i = 1; i < 25; i++)
 				for (int j = 1; j < 38; j++){
@@ -1452,90 +1450,90 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		return day == date.getDay();
 	}
 
-	private int calcularColumna(int pos) {
+	private int calculatePositionCol(int pos) {
 		return pos % 38;
 	}
 
-	private int calcularFila(int pos) {
+	private int calculatePositionRow(int pos) {
 		return pos / 38;
 	}
 	
-	private boolean esMes(int row, int col) {
-		return col==0 && esMesAux(row);
+	private boolean isMonth(int row, int col) {
+		return col==0 && isMonthAux(row);
 	}
 	
-	private boolean esMesAux(int row) {
+	private boolean isMonthAux(int row) {
 		return row == 1 || row == 3 || row == 5 || row == 7 || row == 9 || row == 11 || row == 13 || row == 15 || row == 17 || 
 				row == 19 || row == 21 || row == 23;
 	}
 	
-	private void actualizarHoras(double horasLunes, double horasMartes, double horasMiercoles, double horasJueves, double horasViernes, double horasSabado, double horasDomingo) {
-//		Window.alert("L :"+horasLunes+", M :"+horasMartes+", X :"+horasMiercoles+", J :"+horasJueves+", V :"+horasViernes+
-//					 ", S :"+horasSabado+", D :"+horasDomingo);
-		if(fechasSelecciondas.getSelectedList().size() == 1){
-			for (Date date : fechasSelecciondas.getSelectedList()) {
-				if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
-					comprobarDiaNoLaborable(date, horasDomingo);
-					calendarEmployeeInfo.setHourByDay(date, horasDomingo);
-				}else if (es(6, date) && horas[5] != horasSabado){//SABADO
-					comprobarDiaNoLaborable(date, horasSabado);
-					calendarEmployeeInfo.setHourByDay(date, horasSabado);
-				}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
-					comprobarDiaNoLaborable(date, horasViernes);
-					calendarEmployeeInfo.setHourByDay(date, horasViernes);
-				}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
-					comprobarDiaNoLaborable(date, horasJueves);
-					calendarEmployeeInfo.setHourByDay(date, horasJueves);
-				}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
-					comprobarDiaNoLaborable(date, horasMiercoles);
-					calendarEmployeeInfo.setHourByDay(date, horasMiercoles);
-				}else if (es(2, date) && horas[1] != horasMartes){//MARTES
-					comprobarDiaNoLaborable(date, horasMartes);
-					calendarEmployeeInfo.setHourByDay(date, horasMartes);
-				}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
-					comprobarDiaNoLaborable(date, horasLunes);
-					calendarEmployeeInfo.setHourByDay(date, horasLunes);
+	private void updateHours(double mondayHour, double tuesdayHour, double wendsdayHour, double thursdayHour, double fridayHour, 
+			double saturdayHour, double sundayHour) {
+
+		if(selectedDates.getSelectedList().size() == 1){
+			for (Date date : selectedDates.getSelectedList()) {
+				if (es(0, date) && listOldHours[6] != sundayHour){//DOMINGO
+					checkNonWorkingDay(date, sundayHour);
+					calendarEmployeeInfo.setHourByDay(date, sundayHour);
+				}else if (es(6, date) && listOldHours[5] != saturdayHour){//SABADO
+					checkNonWorkingDay(date, saturdayHour);
+					calendarEmployeeInfo.setHourByDay(date, saturdayHour);
+				}else if (es(5, date) && listOldHours[4] != fridayHour){//VIERNES
+					checkNonWorkingDay(date, fridayHour);
+					calendarEmployeeInfo.setHourByDay(date, fridayHour);
+				}else if (es(4, date) && listOldHours[3] != thursdayHour){//JUEVES
+					checkNonWorkingDay(date, thursdayHour);
+					calendarEmployeeInfo.setHourByDay(date, thursdayHour);
+				}else if (es(3, date) && listOldHours[2] != wendsdayHour){//MIERCOLES
+					checkNonWorkingDay(date, wendsdayHour);
+					calendarEmployeeInfo.setHourByDay(date, wendsdayHour);
+				}else if (es(2, date) && listOldHours[1] != tuesdayHour){//MARTES
+					checkNonWorkingDay(date, tuesdayHour);
+					calendarEmployeeInfo.setHourByDay(date, tuesdayHour);
+				}else if (es(1, date) && listOldHours[0] != mondayHour){//LUNES 
+					checkNonWorkingDay(date, mondayHour);
+					calendarEmployeeInfo.setHourByDay(date, mondayHour);
 				}
 			}
 		}else{
 			HashMap<Date, Double> composite = new HashMap<Date, Double>();
-			for (Date date : fechasSelecciondas.getSelectedList()) {
-				if (es(0, date) && horas[6] != horasDomingo){//DOMINGO
-					comprobarDiaNoLaborable(date, horasDomingo);
-					composite.put(date, horasDomingo);
-				}else if (es(6, date) && horas[5] != horasSabado){//SABADO
-					comprobarDiaNoLaborable(date, horasSabado);
-					composite.put(date, horasSabado);
-				}else if (es(5, date) && horas[4] != horasViernes){//VIERNES
-					comprobarDiaNoLaborable(date, horasViernes);
-					composite.put(date, horasViernes);
-				}else if (es(4, date) && horas[3] != horasJueves){//JUEVES
-					comprobarDiaNoLaborable(date, horasJueves);
-					composite.put(date, horasJueves);
-				}else if (es(3, date) && horas[2] != horasMiercoles){//MIERCOLES
-					comprobarDiaNoLaborable(date, horasMiercoles);
-					composite.put(date, horasMiercoles);
-				}else if (es(2, date) && horas[1] != horasMartes){//MARTES
-					comprobarDiaNoLaborable(date, horasMartes);
-					composite.put(date, horasMartes);
-				}else if (es(1, date) && horas[0] != horasLunes){//LUNES 
-					comprobarDiaNoLaborable(date, horasLunes);
-					composite.put(date, horasLunes);
+			for (Date date : selectedDates.getSelectedList()) {
+				if (es(0, date) && listOldHours[6] != sundayHour){//DOMINGO
+					checkNonWorkingDay(date, sundayHour);
+					composite.put(date, sundayHour);
+				}else if (es(6, date) && listOldHours[5] != saturdayHour){//SABADO
+					checkNonWorkingDay(date, saturdayHour);
+					composite.put(date, saturdayHour);
+				}else if (es(5, date) && listOldHours[4] != fridayHour){//VIERNES
+					checkNonWorkingDay(date, fridayHour);
+					composite.put(date, fridayHour);
+				}else if (es(4, date) && listOldHours[3] != thursdayHour){//JUEVES
+					checkNonWorkingDay(date, thursdayHour);
+					composite.put(date, thursdayHour);
+				}else if (es(3, date) && listOldHours[2] != wendsdayHour){//MIERCOLES
+					checkNonWorkingDay(date, wendsdayHour);
+					composite.put(date, wendsdayHour);
+				}else if (es(2, date) && listOldHours[1] != tuesdayHour){//MARTES
+					checkNonWorkingDay(date, tuesdayHour);
+					composite.put(date, tuesdayHour);
+				}else if (es(1, date) && listOldHours[0] != mondayHour){//LUNES 
+					checkNonWorkingDay(date, mondayHour);
+					composite.put(date, mondayHour);
 				}
 			}
 			calendarEmployeeInfo.setHourByDay(composite);
 		}
-		limpiarSeleccion(fechasSelecciondas.getSelectedList());
-		fechasSelecciondas.getSelectedList().clear();
+		cleanSelectStyleSelectedDates(selectedDates.getSelectedList());
+		selectedDates.getSelectedList().clear();
 	}
 	
-	private void comprobarDiaNoLaborable(Date date, double hora) {
+	private void checkNonWorkingDay(Date date, double hora) {
 		if(hora == Double.parseDouble("-1")){
 			calendarEmployeeInfo.setTypeByDay(date, DayType.NOWORKINGDAY);
 		}	
 	}
 
-	private void comprobarDiasAMostrar() {
+	private void checkShowingUpDays() {
 		//Ocultar todos los dias
 		for (int i=0; i<7; i++)
 			divDays[i].addStyleName(style.ocultarDivStyle());
@@ -1549,7 +1547,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				int days [] = {1,2,3,4,5,6,0};
 				
 				@SuppressWarnings("deprecation")
-				Double value = fechasSelecciondas.getSelectedList().stream()
+				Double value = selectedDates.getSelectedList().stream()
 						.filter(d -> d.getDay() == days[c])
 						.map(d-> calendarEmployeeInfo.getHourByDay(d))
 						.peek(p -> divDays[c].removeStyleName(style.ocultarDivStyle()))
@@ -1559,10 +1557,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				
 				if(value != null && value != Double.MAX_VALUE){
 					suggestOpts[c].setValue(value+"");
-					horas[c] = value;
+					listOldHours[c] = value;
 				}else{
 					suggestOpts[c].setValue("");
-					horas[c] = -1;
+					listOldHours[c] = -1;
 				}
 				
 			} catch (Exception e) {
@@ -1572,36 +1570,36 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	}
 	
-	private void ocultarHoras() {
+	private void hideHours() {
 		for (int i = 2; i < 25; i += 2) {
 			calendarGrid.getRowFormatter().addStyleName(i, style.ocultarHorasStyle());
 		}
 	}
 
-	private void visualizarHoras() {
+	private void showHours() {
 		for (int i = 2; i < 25; i += 2) {
 			calendarGrid.getRowFormatter().removeStyleName(i, style.ocultarHorasStyle());
 		}
 	}
 	
-	private void aplicarEstilosDiasSeleccionadios(DayType dayType) {
-		limpiarEstilos(fechasSelecciondas.getSelectedList());
-		if(fechasSelecciondas.getSelectedList().size()==1){
-			for (Date date : fechasSelecciondas.getSelectedList()) {
-				if(esFinde(date) && dayType.equals(DayType.HOLIDAY)){	
-					int pos = calcularPosicionFecha(date);
+	private void applyDayTypeSelectedDates(DayType dayType) {
+		cleanStyles(selectedDates.getSelectedList());
+		if(selectedDates.getSelectedList().size()==1){
+			for (Date date : selectedDates.getSelectedList()) {
+				if(isWeekEnd(date) && dayType.equals(DayType.HOLIDAY)){	
+					int pos = calculateDatePosition(date);
 					if(pos != -1){
-						int column = calcularColumna(pos);
-						int row = calcularFila(pos);
+						int column = calculatePositionCol(pos);
+						int row = calculatePositionRow(pos);
 						cells[row][column].unSelect(row, column);
 						cellsType[row][column].setAsType(dayType, row, column);
 						calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], dayType);
 					}
-				}else if(!esFinde(date)){
-					int pos = calcularPosicionFecha(date);
+				}else if(!isWeekEnd(date)){
+					int pos = calculateDatePosition(date);
 					if(pos != -1){
-						int column = calcularColumna(pos);
-						int row = calcularFila(pos);
+						int column = calculatePositionCol(pos);
+						int row = calculatePositionRow(pos);
 						cells[row][column].unSelect(row, column);
 						cellsType[row][column].setAsType(dayType, row, column);
 						calendarEmployeeInfo.setTypeByDay(cellsDates[row][column], dayType);
@@ -1610,21 +1608,21 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}	
 		}else{
 			HashMap<Date, DayType> composite = new HashMap<Date, DayType>();
-			for (Date date : fechasSelecciondas.getSelectedList()) {
-				if(esFinde(date) && dayType.equals(DayType.HOLIDAY)){
-					int pos = calcularPosicionFecha(date);
+			for (Date date : selectedDates.getSelectedList()) {
+				if(isWeekEnd(date) && dayType.equals(DayType.HOLIDAY)){
+					int pos = calculateDatePosition(date);
 					if(pos != -1){
-						int column = calcularColumna(pos);
-						int row = calcularFila(pos);
+						int column = calculatePositionCol(pos);
+						int row = calculatePositionRow(pos);
 						cells[row][column].unSelect(row, column);
 						cellsType[row][column].setAsType(dayType, row, column);
 						composite.put(date, dayType);
 					}
-				}else if(!esFinde(date)){
-					int pos = calcularPosicionFecha(date);
+				}else if(!isWeekEnd(date)){
+					int pos = calculateDatePosition(date);
 					if(pos != -1){
-						int column = calcularColumna(pos);
-						int row = calcularFila(pos);
+						int column = calculatePositionCol(pos);
+						int row = calculatePositionRow(pos);
 						cells[row][column].unSelect(row, column);
 						cellsType[row][column].setAsType(dayType, row, column);
 						composite.put(date, dayType);
@@ -1633,48 +1631,48 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 			calendarEmployeeInfo.setTypeByDay(composite);
 		}
-		fechasSelecciondas.clear();
+		selectedDates.clear();
 		
 	}
 	
-	private boolean esFinde(Date date) {
+	private boolean isWeekEnd(Date date) {
 		return date.getDay() == 0 || date.getDay() == 6;
 	}
 
-	private void aplicarNoLaborableEstilosDiasSeleccionadios(double hora, DayType nonWorkingDay) {
-		limpiarEstilos(fechasSelecciondas.getSelectedList());
-		List<Date> diasNoLaborables = new LinkedList<Date>();
+	private void applyNonWorkingDayTypeSelectedDates(double hour, DayType nonWorkingDay) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> nonWorkingDatesList = new LinkedList<Date>();
 		
-		for (Date date : fechasSelecciondas.getSelectedList()) {
-			int pos = calcularPosicionFecha(date);
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
 			if(pos != -1){
-				int column = calcularColumna(pos);
-				int row = calcularFila(pos);
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
 				cells[row][column].unSelect(row, column);
 				cellsType[row][column].setAsType(nonWorkingDay, row, column);
-				diasNoLaborables.add(cellsDates[row][column]);
+				nonWorkingDatesList.add(cellsDates[row][column]);
 			}
 		}
-		calendarEmployeeInfo.setNonWorkingDays(diasNoLaborables, nonWorkingDay, hora);
-		fechasSelecciondas.clear();
+		calendarEmployeeInfo.setNonWorkingDays(nonWorkingDatesList, nonWorkingDay, hour);
+		selectedDates.clear();
 	}
 	
-	private void aplicarEreEstilosDiasSeleccionadios(double ce, DayType ereday) {
-		limpiarEstilos(fechasSelecciondas.getSelectedList());
-		List<Date> diasEre = new LinkedList<Date>();
+	private void applyEREDayTypeSelectedDates(double ce, DayType ereday) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> ereDatesList = new LinkedList<Date>();
 		
-		for (Date date : fechasSelecciondas.getSelectedList()) {
-			int pos = calcularPosicionFecha(date);
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
 			if(pos != -1){
-				int column = calcularColumna(pos);
-				int row = calcularFila(pos);
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
 				cells[row][column].unSelect(row, column);
 				cellsType[row][column].setAsType(ereday, row, column);
-				diasEre.add(cellsDates[row][column]);
+				ereDatesList.add(cellsDates[row][column]);
 			}
 		}
-		calendarEmployeeInfo.setEreCoefficientDays(diasEre, ereday, ce);
-		fechasSelecciondas.clear();
+		calendarEmployeeInfo.setEreCoefficientDays(ereDatesList, ereday, ce);
+		selectedDates.clear();
 	}
 	
 	private void changeYear(int change) {
@@ -1683,21 +1681,21 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		yearLabel.setText(Integer.toString(newYear));
 		
 		int parseNewYear = newYear - 1900;
-		this.annio = parseNewYear;
-		mes = 0;
+		this.year = parseNewYear;
+		month = 0;
 		
-		limpiarEstiloCambios();
-		limpiarCalendario();
-		inicializarCellsCalendar();
-		inicializarCellsTypeCalendar();
-		mostrarCalendarioWidget(this.annio);
+		cleanStyleChanges();
+		cleanCalendar();
+		initializeCellsCalendar();
+		initializeCellsTypeCalendar();
+		showCalendarWidget(this.year);
 		
-		pintarCambiosHorasRealizados(calendarEmployeeInfo.getChangesHours());
-		pintarCambiosTiposRealizados(calendarEmployeeInfo.getChangesTypes());
+		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
+		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
 		
 	}
 	
-	private void bloquearDiasFueraDeContrato(Date startDateContract) {
+	private void blockBeforeOutOfContractDays(Date startDateContract) {
 		for (int row = 1; row < 25; row+=2)
 			for (int column = 1; column < 38; column++){
 				if (null != cellsDates[row][column] && 
@@ -1706,12 +1704,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					calendarGrid.getCellFormatter().addStyleName(row+1, column, style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).addStyleName(style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).setVisible(false);
-					limpiarEstilo(row, column);
+					cleanOneDayStyle(row, column);
 				}
 			}	
 	}
 	
-	private void bloquearDiasFueraDeContratoPost(Date endDateContract) {
+	private void blockAfterOutOfContractDays(Date endDateContract) {
 		for (int row = 1; row < 25; row+=2)
 			for (int column = 1; column < 38; column++){
 				if (null != cellsDates[row][column] && 
@@ -1720,19 +1718,19 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					calendarGrid.getCellFormatter().addStyleName(row+1, column, style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).addStyleName(style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, column).setVisible(false);
-					limpiarEstilo(row, column);
+					cleanOneDayStyle(row, column);
 				}
 			}	
 	}
 	
-	private void anadirFechas() {
-		//Date endDate = fechaMax(fechasSelecciondas.getSelectedList());
+	private void addDates() {
+		//Date endDate = fechaMax(selectedDates.getSelectedList());
 		this.endDateBoxDialogUntill.setValue(new Date());
 	}
 
 	@SuppressWarnings("deprecation")
-	private Integer calcularPosicionFecha(Date date){
-		int row = cacularFilaFecha(date.getMonth());
+	private Integer calculateDatePosition(Date date){
+		int row = calculateMonthRow(date.getMonth());
 		int pos = -1;
 		for(int col = 1; col < 38; col++){
 			if(date.equals(cellsDates[row][col])){
@@ -1743,7 +1741,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		return pos;
 	}
 	
-	private int cacularFilaFecha(int month) {
+	private int calculateMonthRow(int month) {
 		switch (month) {
 		case 0:
 			return 1;
@@ -1772,28 +1770,28 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}
 	}
 	
-	private void pintarSeleccion(List<Date> fechasSeleccionadas) {
-		for(Date date : fechasSeleccionadas){
-			int pos = calcularPosicionFecha(date);
+	private void paintSelectedDates(List<Date> selectedDatesList) {
+		for(Date date : selectedDatesList){
+			int pos = calculateDatePosition(date);
 			if (pos != -1){
-				int col = calcularColumna(pos);
-				int row = calcularFila(pos);
+				int col = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
 				//if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
 				if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
 					cells[row][col].select(row, col);
 				else
-					if(fechasSelecciondas.isSelected(date))
-						fechasSelecciondas.setSelected(DateUtils.copyDateOnly(date), false);	
+					if(selectedDates.isSelected(date))
+						selectedDates.setSelected(DateUtils.copyDateOnly(date), false);	
 			}
 		}	
 	}
 	
-	private void pintarSeleccionTodosDias(List<Date> fechasSeleccionadas) {
-		for(Date date : fechasSeleccionadas){
-			int pos = calcularPosicionFecha(date);
+	private void paintAllDates(List<Date> selectedDatesList) {
+		for(Date date : selectedDatesList){
+			int pos = calculateDatePosition(date);
 			if (pos != -1){
-				int col = calcularColumna(pos);
-				int row = calcularFila(pos);
+				int col = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
 				cells[row][col].select(row, col);
 			}
 		}	
@@ -1802,36 +1800,32 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	// ------------------------------------------------------------- GESTION EVENTOS ---------------------------------------------------------------------
 	
 	private void addHolidays() {
-		aplicarEstilosDiasSeleccionadios(DayType.HOLIDAY);
+		applyDayTypeSelectedDates(DayType.HOLIDAY);
 	}
 	private void addNoWorkingDay() {
-		aplicarNoLaborableEstilosDiasSeleccionadios(-1.00, DayType.NOWORKINGDAY);
+		applyNonWorkingDayTypeSelectedDates(-1.00, DayType.NOWORKINGDAY);
 	}
-//	private void addFreeDay() {
-//		aplicarEstilosDiasSeleccionadios(DayType.FREEDAY);
-//	}
 	private void addStrikeDay() {
-		aplicarEstilosDiasSeleccionadios(DayType.STRIKEDAY);
+		applyDayTypeSelectedDates(DayType.STRIKEDAY);
 	}
 	private void addEreDay(double ce) {
-		aplicarEreEstilosDiasSeleccionadios(ce, DayType.EREDAY);
+		applyEREDayTypeSelectedDates(ce, DayType.EREDAY);
+	}
+	private void addDropDay() {
+		applyDayTypeSelectedDates(DayType.DROPDAY);
 	}
 
-	private void addDropDay() {
-		aplicarEstilosDiasSeleccionadios(DayType.DROPDAY);
-	}
-	
-	private void limpiarSeleccionados() {
-		if(!fechasSelecciondas.getSelectedList().isEmpty())
-			limpiarEstilos(fechasSelecciondas.getSelectedList());
-		fechasSelecciondas.clear();
+	private void cleanSelectedDates() {
+		if(!selectedDates.getSelectedList().isEmpty())
+			cleanStyles(selectedDates.getSelectedList());
+		selectedDates.clear();
 	}
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
-		if(!fechasSelecciondas.getSelectedList().isEmpty()){
+		if(!selectedDates.getSelectedList().isEmpty()){
 			ContextMenu menu = new  ContextMenu();
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) no laborables", new Command() {
 				@Override
@@ -1839,12 +1833,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					addNoWorkingDay();
 				}
 			});
-//			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) festivos", new Command() {
-//				@Override
-//				public void execute() {
-//					addFreeDay();
-//				}
-//			});
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) vacaciones", new Command() {
 				@Override
 				public void execute() {
@@ -1873,7 +1861,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			menu.addItem("Borrar evento(s)", new Command() {
 				@Override
 				public void execute() {
-					limpiarSeleccionados();
+					cleanSelectedDates();
 				}
 			});
 			

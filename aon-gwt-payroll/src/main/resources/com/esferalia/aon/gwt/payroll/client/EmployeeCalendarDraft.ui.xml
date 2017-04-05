@@ -478,49 +478,49 @@
 					<g:HTMLPanel ui:field="confirmContent"></g:HTMLPanel>
 					<g:HTMLPanel ui:field="mondayBlock" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleL}">Lunes:</i:IronLabel>
-						<g:SuggestBox ui:field="lunesOpt" styleName="{style.suggestBoxStyle}" />
+						<g:SuggestBox ui:field="mondayOpt" styleName="{style.suggestBoxStyle}" />
 						<p:PaperIconButton icon="icons:expand-more"
 							styleName="{style.optionButtons} {style.expandButtonStyle}"
 							ui:field="expandHourBtnL" />
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="tuesdayBlock" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleM}">Martes:</i:IronLabel>
-						<g:SuggestBox ui:field="martesOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+						<g:SuggestBox ui:field="tuesdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
 						<p:PaperIconButton icon="icons:expand-more"
 							styleName="{style.optionButtons} {style.expandButtonStyle}"
 							ui:field="expandHourBtnM" />
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="wendsdayBlock" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleX}">Miércoles:</i:IronLabel>
-						<g:SuggestBox ui:field="miercolesOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+						<g:SuggestBox ui:field="wendsdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
 						<p:PaperIconButton icon="icons:expand-more"
 							styleName="{style.optionButtons} {style.expandButtonStyle}"
 							ui:field="expandHourBtnX" />
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="thursdayBlock" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleJ}">Jueves:</i:IronLabel>
-						<g:SuggestBox ui:field="juevesOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+						<g:SuggestBox ui:field="thursdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
 						<p:PaperIconButton icon="icons:expand-more"
 							styleName="{style.optionButtons} {style.expandButtonStyle}"
 							ui:field="expandHourBtnJ" />
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="fridayBlock" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleV}">Viernes:</i:IronLabel>
-						<g:SuggestBox ui:field="viernesOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+						<g:SuggestBox ui:field="fridayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
 						<p:PaperIconButton icon="icons:expand-more"
 							styleName="{style.optionButtons} {style.expandButtonStyle}"
 							ui:field="expandHourBtnV" />
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="saturdayBlock" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleS}">Sábado:</i:IronLabel>
-						<g:SuggestBox ui:field="sabadoOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+						<g:SuggestBox ui:field="saturdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
 						<p:PaperIconButton icon="icons:expand-more"
 							styleName="{style.optionButtons} {style.expandButtonStyle}"
 							ui:field="expandHourBtnS" />
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="sundayBlock" styleName="{style.divWidthStyle}">
 						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleD}">Domingo:</i:IronLabel>
-						<g:SuggestBox ui:field="domingoOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
+						<g:SuggestBox ui:field="sundayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
 						<p:PaperIconButton icon="icons:expand-more"
 							styleName="{style.optionButtons} {style.expandButtonStyle}"
 							ui:field="expandHourBtnD" />
