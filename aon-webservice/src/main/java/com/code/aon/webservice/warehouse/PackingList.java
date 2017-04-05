@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -14,6 +17,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
@@ -38,7 +42,10 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 public class PackingList {
 	
 	private static final Logger LOGGER  = Logger.getLogger(PackingList.class.getName());
-
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	public static final SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+	
 	private PackingList() {
 	    throw new IllegalAccessError("Utility class");
 	}
@@ -56,11 +63,11 @@ public class PackingList {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
 			
 			CarrierPackingType type = CarrierPackingType.values()[json.getJSONObject(MSG.CARRIER_PACKING).getJSONObject(MSG.TYPE).getInt(MSG.ID)];
-
+			String printType = json.getString("type");
 			document.open();			
 			document.add(getHeader(json, image));
 			document.add(new Paragraph(" "));
-			document.add(getSubHeader(json, type));
+			document.add(getSubHeader(json, type, printType));
 			document.add(new Paragraph(" "));
 
 			JSONArray orders  = json.getJSONArray("orders");	
@@ -68,7 +75,7 @@ public class PackingList {
 			Double totalWeight = 0.0;
 			
 			for(Integer i = 0 ; i < orders.length() ; i++){				
-				document.add(order(orders.getJSONObject(i), type));
+				document.add(order(orders.getJSONObject(i), type, printType));
 				if(type.equals(CarrierPackingType.WAYBILL)){				
 					if(orders.getJSONObject(i).opt("total_packages") != null){
 						totalPackages = totalPackages + orders.getJSONObject(i).getDouble("total_packages");
@@ -87,17 +94,18 @@ public class PackingList {
 			Paragraph order = new Paragraph(" ");
 			order.add(getSeparator());
 			document.add(order);
-
-			String observation  = json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") != null ?
-					json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") : "";
-			com.esferalia.aon.occam.server.warehouse.CarrierPackingParams params = XMLUtils.readXml(json.getJSONObject(MSG.CARRIER_PACKING).getString("params"));
-			if(params.getParam() == null){
-				params.setParam(new LinkedList<>());
+			if(!"reception".equals(printType)){
+				String observation  = json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") != null ?
+						json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") : "";
+				com.esferalia.aon.occam.server.warehouse.CarrierPackingParams params = XMLUtils.readXml(json.getJSONObject(MSG.CARRIER_PACKING).getString("params"));
+				if(params.getParam() == null){
+					params.setParam(new LinkedList<>());
+				}
+				document.add(new Paragraph(" "));
+				document.add(getObservations(observation, type, params));		
+				document.add(new Paragraph(" "));
+				document.add(new Paragraph(" "));
 			}
-			document.add(new Paragraph(" "));
-			document.add(getObservations(observation, type, params));		
-			document.add(new Paragraph(" "));
-			document.add(new Paragraph(" "));
 			document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -207,7 +215,7 @@ public class PackingList {
 	
 	// ------------------- SUB-HEADER
 
-	private static PdfPTable getSubHeader(JSONObject json, CarrierPackingType type) throws BadElementException, MalformedURLException, IOException{
+	private static PdfPTable getSubHeader(JSONObject json, CarrierPackingType type, String printType) throws BadElementException, MalformedURLException, IOException{
 		JSONObject carrierPackingJSON = json.getJSONObject("carrier_packing");
 		PdfPTable subHeader = new PdfPTable(1);
         subHeader.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
@@ -216,13 +224,13 @@ public class PackingList {
         if(type.equals(CarrierPackingType.WAYBILL)){
             subHeader.addCell(getSubHeaderBoeInfo());
         }
-        subHeader.addCell(getSubHeaderPackingListType(carrierPackingJSON));
+        subHeader.addCell(getSubHeaderPackingListType(carrierPackingJSON, printType));
 
 		PdfPCell space = new PdfPCell(new Phrase("",getFont1()));
 		space.setBorder(PdfPCell.NO_BORDER);
         subHeader.addCell(space);
         
-        subHeader.addCell(getSubHeaderPackingListCarrier(carrierPackingJSON, type));
+        subHeader.addCell(getSubHeaderPackingListCarrier(carrierPackingJSON, type, printType));
 		return subHeader;
 	}
 
@@ -238,8 +246,11 @@ public class PackingList {
 		return cell;
 	}
 	
-	private static PdfPCell getSubHeaderPackingListType(JSONObject json) {
+	private static PdfPCell getSubHeaderPackingListType(JSONObject json, String printType) {		
 		String type = json.getJSONObject("type").getString("name").toUpperCase();
+		if("reception".equals(printType)){
+			type = "RECEPCIÓN";
+		}
 		Paragraph title = new Paragraph(type, getTitleFont());
 		title.setAlignment(Element.ALIGN_CENTER);
 		PdfPCell cell = new PdfPCell();
@@ -248,7 +259,7 @@ public class PackingList {
 		return cell;
 	}
 	
-	private static PdfPTable getSubHeaderPackingListCarrier(JSONObject json, CarrierPackingType type) {
+	private static PdfPTable getSubHeaderPackingListCarrier(JSONObject json, CarrierPackingType type, String printType) {
 		PdfPTable table = new PdfPTable(1);
 		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 
@@ -329,6 +340,36 @@ public class PackingList {
 		carrier.addCell(c13);
 
 		table.addCell(carrier);
+		
+		if("reception".equals(printType)){ // TODO
+			PdfPTable pesos = new PdfPTable(6);
+			pesos.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+			
+			PdfPCell brutoLabel = new PdfPCell(new Phrase("Peso Bruto:",getFont1()));
+			brutoLabel.setBorder(PdfPCell.NO_BORDER);
+			pesos.addCell(brutoLabel);
+			
+			PdfPCell bruto = new PdfPCell(new Phrase("-",getFont1()));
+			bruto.setBorder(PdfPCell.NO_BORDER);
+			pesos.addCell(bruto);
+
+			PdfPCell taraLabel = new PdfPCell(new Phrase("Tara:",getFont1()));
+			taraLabel.setBorder(PdfPCell.NO_BORDER);
+			pesos.addCell(taraLabel);
+			
+			PdfPCell tara = new PdfPCell(new Phrase("-",getFont1()));
+			tara.setBorder(PdfPCell.NO_BORDER);
+			pesos.addCell(tara);
+			
+			PdfPCell netoLabel = new PdfPCell(new Phrase("Neto:",getFont1()));
+			netoLabel.setBorder(PdfPCell.NO_BORDER);
+			pesos.addCell(netoLabel);
+			
+			PdfPCell neto = new PdfPCell(new Phrase("-",getFont1()));
+			neto.setBorder(PdfPCell.NO_BORDER);
+			pesos.addCell(neto);
+			table.addCell(pesos);
+		}
 
 		return table;
 	}
@@ -349,7 +390,7 @@ public class PackingList {
         return p;
 	}
 	
-	private static Paragraph order(JSONObject json, CarrierPackingType type){
+	private static Paragraph order(JSONObject json, CarrierPackingType type, String printType){
 		Paragraph paragraph = new Paragraph();
 		
 		PdfPTable tableM = new PdfPTable(1);
@@ -368,29 +409,43 @@ public class PackingList {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	
-		PdfPCell c = new PdfPCell(new Phrase("Destinatario",getFont1()));
+		PdfPCell c = new PdfPCell(new Phrase(CarrierPackingType.SHIPMENT_REQUEST.equals(type) ? "Remitente" : "Destinatario",getFont1()));
 		c.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(c);
 
 		PdfPCell ca = new PdfPCell(new Phrase(address.getString("name"),getFont1()));
 		ca.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(ca);
-		destinatario.addCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ?"Albarán:" : "Pedido:",getFont1()));
-		destinatario.addCell(new Phrase(json.getString("series_number"),getFont2()));
+		String descr = type.equals(CarrierPackingType.SHIPMENT_REQUEST) ? "Pedido:" : "Albarán:";
+		String val = json.getString("series_number");
+		if("reception".equals(printType)){
+			descr = "Albarán";
+			val = json.getString("reference_code");
+		}
+		destinatario.addCell(new Phrase(descr,getFont1()));
+		destinatario.addCell(new Phrase(val,getFont2()));
 		
 		destinatario.addCell("");
 		PdfPCell cbc = new PdfPCell(new Phrase("NIF: " + address.getString("document"),getFont2()));
 		cbc.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(cbc);
 		destinatario.addCell(new Phrase("Fecha:",getFont1()));
-		destinatario.addCell(new Phrase(json.getString("issue_date"),getFont2()));
+		String dstr = "";
+		try {
+			Date d = dateTimeFormat.parse(json.getString("issue_date"));
+			dstr = dateFormat.format(d);
+		} catch (JSONException | ParseException e1) {
+			e1.printStackTrace();
+		}
+		destinatario.addCell(new Phrase(dstr,getFont2()));
 		
 		destinatario.addCell("");
 		PdfPCell cb = new PdfPCell(new Phrase(address.getString("address"),getFont2()));
 		cb.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(cb);
-		destinatario.addCell(new Phrase("Su Referencia:",getFont1()));
-		destinatario.addCell(new Phrase(json.getString("reference"),getFont2()));
+		destinatario.addCell(new Phrase("reception".equals(printType) ? "" : "Su Referencia:",getFont1()));
+		String val2 = json.getString("reference");
+		destinatario.addCell(new Phrase("reception".equals(printType) ? "" : json.getString("reference"),getFont2()));
 		
 		destinatario.addCell("");
 		PdfPCell cc = new PdfPCell(new Phrase(address.getString("zip") + " " 

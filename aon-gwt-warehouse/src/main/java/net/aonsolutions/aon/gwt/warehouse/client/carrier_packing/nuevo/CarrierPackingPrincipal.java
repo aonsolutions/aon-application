@@ -72,6 +72,12 @@ public class CarrierPackingPrincipal extends Composite{
 	}
 	
 	public void gridContent(){
+		LinkedList<String> list = new LinkedList<>();
+		list.add("1");
+		getFilterMap().put("page", list);
+		list = new LinkedList<>();
+		list.add("40");
+		getFilterMap().put("per_page", list);
 		parent.getAPI().getWarehouse().getCarrierPacking(getFilterMap(), new AsyncCallback<JSON<JsCarrierPacking>>() {
 			
 			@Override

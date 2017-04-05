@@ -592,9 +592,8 @@ public class WarehouseDAO {
 	// ----------------- CARRIER PACKING
 	
 	public static Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter){
-		return ctx.getDslContext().select().from(CARRIER_PACKING)
-				.join(REGISTRY).on(REGISTRY.ID.eq(CARRIER_PACKING.CARRIER))				
-				.where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
+		return CARRIER_PACKING_PROPERTIES.build(ctx.getDslContext().select().from(CARRIER_PACKING)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CARRIER_PACKING.CARRIER)), filter)
 				.fetch().stream().map(new CarrierPackingFiller());
 	}
 	
