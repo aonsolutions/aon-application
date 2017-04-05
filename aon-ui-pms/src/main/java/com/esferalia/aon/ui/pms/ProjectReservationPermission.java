@@ -317,7 +317,7 @@ public class ProjectReservationPermission implements Serializable {
 
 	public boolean isConexFlowVisible() throws ManagerBeanException {
 		boolean roleAllowed = isRoleCommercial() || isRoleFinance();
-		return roleAllowed && !reservation.isInvoiced() && !reservation.isNoInvoiceable() && getReservationUtils().isConexFlowAvailable();
+		return roleAllowed && getReservationUtils().isConexFlowAvailable();
 	}
 
 	public boolean isNewConexFlowAllowed() throws ManagerBeanException {
