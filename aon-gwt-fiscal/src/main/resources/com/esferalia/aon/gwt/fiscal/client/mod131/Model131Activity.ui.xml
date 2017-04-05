@@ -37,7 +37,7 @@
 									<g:Label text="{msg.irpfActivityCom}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="com" maxLength="6" visibleLength="6"/>
+									<aon:DoubleBox ui:field="com"  visibleLength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -45,7 +45,7 @@
 									<g:Label text="{msg.irpfActivityTem}" />
 								</td>
 								<td>
-									<aon:IntegerBox ui:field="tem" maxLength="6" visibleLength="6"/>
+									<aon:IntegerBox ui:field="tem"  visibleLength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -53,7 +53,7 @@
 									<g:Label text="{msg.irpfActivityNue}" />
 								</td>
 								<td>
-									<aon:IntegerBox ui:field="nue" maxLength="6" visibleLength="6"/>
+									<aon:IntegerBox ui:field="nue"  visibleLength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -77,7 +77,7 @@
 									<g:Label text="{msg.irpfActivityVeh}" />
 								</td>
 								<td>
-									<aon:IntegerBox ui:field="veh" maxLength="6" visibleLength="6"/>
+									<aon:IntegerBox ui:field="veh"  visibleLength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -117,7 +117,7 @@
 									<g:Label text="{msg.irpfActivityEmp}" />
 								</td>
 								<td>
-									<aon:IntegerBox ui:field="emp" maxLength="6" visibleLength="6"/>
+									<aon:IntegerBox ui:field="emp"  visibleLength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -141,7 +141,7 @@
 									<g:Label text="{msg.irpfActivityPrc}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="prc" maxLength="6" visibleLength="6"/>
+									<aon:DoubleBox ui:field="prc"  visibleLength="6"/>
 								</td>
 							</tr>
 						</tbody>
@@ -308,7 +308,7 @@
 									<g:Label text="{msg.irpfActivityRnp}"/>
 								</td>
 								<td class="{aonResources.css.aonTextRight}">
-									<aon:DoubleBox ui:field="rnp0" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="rnp0"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 						</tbody>
@@ -336,7 +336,7 @@
 									<g:Label text="{msg.irpfActivityRnp}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="rnp" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="rnp"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -344,7 +344,7 @@
 									<g:Label text="{msg.irpfActivityIem}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="iem" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="iem"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -352,7 +352,7 @@
 									<g:Label text="{msg.irpfActivityIin}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="iin" maxLength="6" visibleLength="6"/>
+									<aon:DoubleBox ui:field="iin"  visibleLength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -360,7 +360,7 @@
 									<g:Label text="{msg.irpfActivityRnm}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="rnm" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="rnm"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -368,7 +368,7 @@
 									<g:Label text="{msg.irpfActivityIc1}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="ic1" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="ic1"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -376,7 +376,7 @@
 									<g:Label text="{msg.irpfActivityIc2}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="ic2" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="ic2"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -384,7 +384,7 @@
 									<g:Label text="{msg.irpfActivityIc3}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="ic3" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="ic3"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -392,7 +392,7 @@
 									<g:Label text="{msg.irpfActivityIc4}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="ic4" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="ic4"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -400,7 +400,7 @@
 									<g:Label text="{msg.irpfActivityIc5}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="ic5" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="ic5"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -408,7 +408,7 @@
 									<g:Label text="{msg.irpfActivityRpf}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="rpf" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="rpf"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -416,7 +416,7 @@
 									<g:Label text="{msg.irpfActivityRlo}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="rlo" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="rlo"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -424,7 +424,7 @@
 									<g:Label text="{msg.irpfActivityRdr}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="rdr" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="rdr"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -432,7 +432,7 @@
 									<g:Label text="{msg.irpfActivityDia}" />
 								</td>
 								<td>
-									<aon:IntegerBox ui:field="dia" maxLength="6" visibleLength="6"/>
+									<aon:IntegerBox ui:field="dia"  visibleLength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -440,7 +440,7 @@
 									<g:Label text="{msg.irpfActivityNet}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="net" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="net"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -448,7 +448,7 @@
 									<g:Label text="{msg.irpfActivityPor}" />
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="por" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="por"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 							<tr>
@@ -456,7 +456,7 @@
 									<g:Label text="{msg.irpfActivityRes}" />
 								</td>
 								<td class="aon-bold" style="font-size: 1.2em;">
-									<aon:DoubleBox ui:field="res" maxLength="6" visibleLength="6" enabled="false"/>
+									<aon:DoubleBox ui:field="res"  visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 						</tbody>
