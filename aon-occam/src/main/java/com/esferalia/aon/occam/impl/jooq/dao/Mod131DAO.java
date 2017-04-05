@@ -1453,7 +1453,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			+ "foreach (act : activities) {"
 			+ "	 	ret = ret + act.getRes();"
 			+ "}"
-			+ "return round(ret);"
+			+ "return ret < 0 ? 0.0 : round(ret);"
 			,"<li>Sumatorio de los resultados"
 			+"@code{c02Sum = 0.0;}"
 			+"@foreach{act : activities}"
@@ -1462,7 +1462,10 @@ public class Mod131DAO extends FiscalModelDAO {
 					+"<li>@{act.getEpigraph()}			Rendimiento neto --> 	@{act.getRes()}</li>"
 				+"@end{}"		
 			+"@end{}"
-			+"</ul><li>Resultado					@{c02Sum}</li>"				
+			+"<li>Resultado					@{c02Sum}</li></ul>"
+			+"@if{ c02Sum < 0}"
+			+"<li>Al ser negativo, resultado 0</li>"
+			+"@end{}"
 		)
 		,C03 ( Mod131Key.C03.getValue()
 			,(mod -> mod.isAEAT())
