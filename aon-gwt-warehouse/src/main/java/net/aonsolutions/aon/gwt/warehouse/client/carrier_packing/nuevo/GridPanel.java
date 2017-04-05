@@ -277,7 +277,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public String getValue(JsCarrierPacking object) {
-				return object.getLines() +"";
+				return "-"; //object.getLines() +"";
 			}
 		};
 		

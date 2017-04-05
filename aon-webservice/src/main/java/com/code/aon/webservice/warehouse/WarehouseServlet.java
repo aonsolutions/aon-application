@@ -420,11 +420,13 @@ public class WarehouseServlet extends HttpServlet{
     		JSONObject json = ToJSON.carrierPackingToJSON(cp);
     		Long lines = (long) 0;
     		if(cp.getType().equals(CarrierPackingType.SHIPMENT_REQUEST)){
-    			lines = AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> 
-    					f.getCarrierPackingProperty().eq(cp.getId())).count();
+    			//lines = AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> 
+    			//		f.getCarrierPackingProperty().eq(cp.getId())).count();
     		}else {
-    			lines = AON.getDeliveryStream(domain.getName(), domain.getId(), login, f -> 
-					f.getCarrierPackingProperty().eq(cp.getId())).count();
+    			
+    			
+    			//lines = AON.getDeliveryStream(domain.getName(), domain.getId(), login, f -> 
+				//	f.getCarrierPackingProperty().eq(cp.getId())).count();
     		}
     		json.put("lines", lines.intValue());
     		array.put(json);	
