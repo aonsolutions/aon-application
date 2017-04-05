@@ -512,7 +512,16 @@ public class WarehouseServlet extends HttpServlet{
 			ftext = ftext.or(f.getCarrierReferenceProperty().like("%" + filterMap.get("text")[0] + "%"));
 			ftext = filter = filter.and(ftext);
 		}
-
+		if(filterMap.containsKey("per_page")){
+			String per_page = filterMap.get("per_page")[0];
+			Integer perPage = Integer.parseInt(per_page);
+			filter.perPage(perPage);
+		}
+		if(filterMap.containsKey("page")){
+			String page_str = filterMap.get("page")[0];
+			Integer page = Integer.parseInt(page_str);
+			filter.page(page);
+		}
 		return filter;
     }
     

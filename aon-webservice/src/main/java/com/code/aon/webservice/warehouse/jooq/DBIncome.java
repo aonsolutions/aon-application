@@ -70,15 +70,14 @@ public class DBIncome {
 				.setScope(supplier.get().getScope())
 				.setSupplier(json.getInt("supplier"))
 				.setWorkplace(json.getInt("workplace"))
-				
+				.setAddress(json.optInt("address") != 0 ? json.optInt("address") : null)
 				// Por Defecto ¿?
 				.setStatus(IncomeStatus.PENDING)
 				.setSecurityLevel(SecurityLevel.OFFICIAL.ordinal())
 				.setNumberOfPymnts(1)
 				.setDaysToFirstPymnt(0)
 				.setDaysBetweenPymnt(0)
-				.setPymntDays("")
-				;
+				.setPymntDays("");
 		
 		Optional<Income> result = AON.insertIncome(domain.getName(), domain.getId(), login, income);
 		return  incomeToJSON(result);

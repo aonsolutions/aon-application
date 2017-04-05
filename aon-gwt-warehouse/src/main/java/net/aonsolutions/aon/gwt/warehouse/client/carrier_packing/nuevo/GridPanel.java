@@ -4,12 +4,16 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -19,10 +23,12 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -45,14 +51,41 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) DataGrid<JsCarrierPacking> dataGrid; 
+	@UiField(provided = true) CustomDataGrid<JsCarrierPacking> dataGrid; 
 	
 	CarrierPackingPrincipal parent;
 
 	public GridPanel(CarrierPackingPrincipal carrierPacking, LinkedList<JsCarrierPacking> list) {
 		this.parent = carrierPacking;		
-		dataGrid = new DataGrid<JsCarrierPacking>(Integer.MAX_VALUE, resources,
+		dataGrid = new CustomDataGrid<JsCarrierPacking>(Integer.MAX_VALUE, resources,
 				JsCarrierPacking.PROVIDES_KEY);
+		
+		ScrollPanel scrollPanel = dataGrid.getScrollPanel();
+		scrollPanel.addScrollHandler(new ScrollHandler() {
+			
+			@Override
+			public void onScroll(ScrollEvent event) {
+				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
+					Integer page = 2;
+					if(parent.getFilterMap().containsKey("page")){
+						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+					}
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page +"");
+					parent.getFilterMap().put("page", list);
+					parent.getAPI().getWarehouse().getCarrierPacking(parent.getFilterMap(), new AsyncCallback<JSON<JsCarrierPacking>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsCarrierPacking> result) {
+							dataProvider.getList().addAll(result.getData().toLinkedList());
+							dataGrid.redraw();
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});	
+				}
+			}
+		});
 		initWidget(binder.createAndBindUi(this));
 		load(list);				
 	}	
@@ -316,4 +349,5 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		dataGrid.addColumn(statusColumn, AON.MSG.status());
 		dataGrid.setColumnWidth(statusColumn, 15, Unit.PCT);
 	}
+	
 }

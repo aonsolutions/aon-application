@@ -275,7 +275,14 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		Label label = new Label(isShipment() ? "Solicitud de Carga" : "Hoja de Ruta");
 		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		label.getElement().getStyle().setPadding(3, Unit.PX);
-		selectedVerticalPanel.add(label);
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(label);
+		if(isShipment() && isOnRoute()){
+			IronIcon camion = new IronIcon();
+			camion.setIcon("truck");
+			hp.add(camion);
+		}
+		selectedVerticalPanel.add(hp);
 		selectedVerticalPanel.add(selectedItems());
 	}
 	
@@ -869,6 +876,10 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.PENDING.getName());
 	}
 	
+	private Boolean isOnRoute(){
+		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.ON_ROUTE.getName());
+	}
+	
 	private Boolean isFinished(){
 		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.FINISHED.getName());
 	}
@@ -1014,7 +1025,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		basculaLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
 		basculaLabel.getElement().getStyle().setMarginTop(15, Unit.PX);
 		basculaLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
-		vp.add(basculaLabel);
+		//vp.add(basculaLabel);
 		
 		Label saldarLabel = new Label("Saldar");
 		saldarLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
@@ -1123,6 +1134,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					String requestData = "{\"reference_code\":\""+ number +"\","
 							+ "\"issue_time\":\""+ date +"\","
 							+ "\"supplier\":\""+ order.getRegistry().getId() +"\","
+							+ "\"address\":\""+ order.getAddress() +"\","
 							+ "\"carrier_packing\":\""+ getCarrierPacking().getId() +"\","
 							+ "\"workplace\":\"" + js.getWorkplace() + "\"" + "}";
 					getAPI().getWarehouse().insertIncome(requestData, new AsyncCallback<JsOrder>() {

@@ -30,6 +30,10 @@ public class CustomDataGrid<T> extends DataGrid<T> {
 	public CustomDataGrid(int pageSize, ProvidesKey<T> keyProvider) {
 		super(pageSize, DEFAULT_RESOURCES, keyProvider);
 	}
+	public CustomDataGrid(int pageSize, Resources resources, ProvidesKey<T> keyProvider) {
+		super(pageSize, resources, keyProvider);
+	}
+
 
 	public ScrollPanel getScrollPanel() {
 		HeaderPanel header = (HeaderPanel) getWidget();

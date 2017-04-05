@@ -219,7 +219,7 @@ public class ToJSON {
 				.put(MSG.ID, carrierPacking.getCarrier())
 				.put(MSG.NAME, carrierPacking.getCarrierName()))
 			.put("delivery_date", carrierPacking.getDeliveryDate() != null ? dateFormat.format(carrierPacking.getDeliveryDate()) : "")
-			.put("carrier_reference", carrierPacking.getCarrierReference())
+			.put("carrier_reference", carrierPacking.getCarrierReference() != null ? carrierPacking.getCarrierReference() : "")
 			.put("number_plate", carrierPacking.getNumberPlate())
 			.put("driver_name", carrierPacking.getDriverName())
 			.put("driver_document", carrierPacking.getDriverDocument())
@@ -308,6 +308,7 @@ public class ToJSON {
 				.put(MSG.NAME, purchase.getSupplierName())) 
 			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "")
 			.put("order_type", "purchase")
+			.put("address", purchase.getAddress())
 			.put("reference", purchase.getPurchaseReference() != null ? purchase.getPurchaseReference() : " ");
 	}
 	
