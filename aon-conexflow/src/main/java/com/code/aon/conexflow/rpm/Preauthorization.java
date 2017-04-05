@@ -76,12 +76,7 @@ public class Preauthorization {
 		stream.forEach(r -> {
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
-				/*
-				ConexFlow cf = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK);
-				ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
-				ConexFlow sale = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE);
-				ConexFlow sFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_FAIL);
-				*/
+
 				String[] descriptions = {
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
@@ -89,7 +84,6 @@ public class Preauthorization {
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL)
 				};
 				if(!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)){
-				//if(cf == null && pcFail == null && sale == null && sFail == null){
 					if(!dryRun){
 						ConexFlowConnection connection = DBConsults.getConection(d);
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
@@ -150,13 +144,18 @@ public class Preauthorization {
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);		
 				ConexFlow p = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION);
-				ConexFlow pFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
-				ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
-				ConexFlow sale = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE);
-				ConexFlow sFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_FAIL);
 
+				String[] descriptions = {
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL)
+				};
+				
 				java.util.Date date2 = AonDateUtils.addDays(new java.util.Date(), -7);
-				if((p == null && pFail == null && pcFail == null && sale == null && sFail == null) ||  (p != null && p.getDate().compareTo(date2) <= 1  && 
+				if((!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)) ||  (p != null && p.getDate().compareTo(date2) <= 1  && 
 						Double.parseDouble(p.getRespuesta().getImporte()) < r.getPenaltyAmount())){
 					if(!dryRun){
 						ConexFlowConnection connection = DBConsults.getConection(d);
