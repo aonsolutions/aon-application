@@ -3,12 +3,23 @@ package com.esferalia.aon.gwt.fiscal.shared;
 
 public interface IRequestParamsNames {
 
+	String DOMAIN = "domain";
+	String REGISTRY = "registry";
+	String ACTIVITY = "activity";
+	String FROM_DATE = "fromDate";
+	String TO_DATE = "toDate";
+	String PERCENT = "percent";
+	String TYPE = "type";
+	String OUTPUT = "output";
+	String SURCHARGE = "surcharge";
+	String FARMER_REGIME = "farmerRegime";
+	String ACCRUAL_REGIME = "accrualRegime";
+	String INVESTMENT = "investment";
+	String SERVICE = "service";
+	
 	String DOMAIN_ID = "domainId";
 	String DOMAIN_NAME = "domainName";
 
-	String FROM_DATE = "fromDate";
-	String TO_DATE = "toDate";
-	
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";

@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -21,6 +20,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.shared.JsonVatParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -42,17 +42,18 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -64,6 +65,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class VatReport extends MainEntryPoint {
 
+	private static final String VAT_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/VatReportExcelPrint";
+	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy"); 
+	
 	private static CommonServiceAsync commonService;
 	private static FiscalServiceAsync fiscalService;
 	
@@ -92,15 +96,20 @@ public class VatReport extends MainEntryPoint {
 
 	private VatParams params;	
 	
+	FormPanel diskForm;
+	Hidden vatParamsHidden;
+	Hidden domainIdHidden;
+	Hidden domainNameHidden;
+	
 	private int domain;
 	private int enterprise;
 
-	interface Template extends SafeHtmlTemplates {
+	interface SafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
 
-	private static final Template template = GWT.create(Template.class);
+	private static final SafeTemplate template = GWT.create(SafeTemplate.class);
 
 	@Override
 	public void onModuleLoad() {
@@ -227,9 +236,45 @@ public class VatReport extends MainEntryPoint {
 		});
 		buttonContainer.add(clean);
 		
+		final Button excel = new Button();
+		excel.setText(AON.MSG.export());
+		excel.setTitle(AON.MSG.export());
+		excel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		excel.addStyleName(AON.AON_CSS.aonIconExcel());
+		excel.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				submitForm(VAT_EXCEL_REPORT_PRINT);
+			}
+		});
+		buttonContainer.add(excel);
+
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		vatParamsHidden = new Hidden("vatParams");
+		formFlowPanel.add(vatParamsHidden);
+		domainIdHidden = new Hidden("domainId");
+		formFlowPanel.add(domainIdHidden);
+		domainNameHidden = new Hidden("domainName");
+		formFlowPanel.add(domainNameHidden);
+		buttonContainer.add(diskForm);
+		
+		
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
 	}
+	
+	private void submitForm(String action) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		vatParamsHidden.setValue(JsonVatParams.convert(getWidgetParams()));
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
+		diskForm.submit();
+	}
+	
 	
 	private Widget getFilterPanel() {
 		year = new IntegerBox();
