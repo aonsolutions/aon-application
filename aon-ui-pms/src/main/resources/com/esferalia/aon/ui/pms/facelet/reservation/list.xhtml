@@ -20,9 +20,8 @@
 						actionListener="#{reservation.onSearch}"
 						reRender="aonContent" />
 					<aon:htmlCommandLink id="reservation-excel-report"
-						value="&#160;" target="_blank" action="#{report.onExecute}"
+						value="&#160;" target="_blank" action="#{reservation.onExcelReport}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="reservationList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="reservation-report"
@@ -40,7 +39,7 @@
 					<ui:param name="controller" value="#{reservation}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
-					
+
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/listContent.xhtml" />
 
 					</ui:define>

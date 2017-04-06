@@ -2,10 +2,25 @@ package com.esferalia.aon.ui.pms.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PMS_AGENCY;
+import static com.code.aon.ui.common.ICommonMessages.PMS_CHECKIN;
+import static com.code.aon.ui.common.ICommonMessages.PMS_CHECKOUT;
+import static com.code.aon.ui.common.ICommonMessages.PMS_DIRECT_CUSTOMER;
+import static com.code.aon.ui.common.ICommonMessages.PMS_GUEST;
+import static com.code.aon.ui.common.ICommonMessages.PMS_HOTEL;
+import static com.code.aon.ui.common.ICommonMessages.PMS_PAX;
+import static com.code.aon.ui.common.ICommonMessages.PMS_REGIME_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_RESERVATION_CODE;
+import static com.code.aon.ui.common.ICommonMessages.PMS_RESERVATION_ID;
+import static com.code.aon.ui.common.ICommonMessages.PMS_ROOMS_ABBRV;
+import static com.code.aon.ui.common.ICommonMessages.PMS_TOTAL;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_DOCUMENT_INCORRECT_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.TIME_2_PATTERN;
 
+import java.io.IOException;
+import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,10 +41,15 @@ import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -64,6 +84,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ExcelReportExporter;
+import com.code.aon.report.poi.IReportExporter;
+import com.code.aon.report.poi.ReportColumnMetadata;
+import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
@@ -1868,6 +1893,105 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 		setShowConexFlowWindow(false);
 		refreshAttachments(event);
+	}
+
+	public String onExcelReport() {
+		FacesContext faces = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+		String fileName = "Listado de Reservas";
+		response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+		response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+
+		ServletOutputStream output;
+		try {
+			output = response.getOutputStream();
+			ExcelReportExporter report = new ExcelReportExporter();
+			report.startExport(IReportExporter.DEFAULT_NAME);
+			ReportMetadata metadata = createExcelHeader(report);
+			for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+				ProjectReservation reservation = (ProjectReservation)ito;
+				report.startLine();
+				report.exportColumn(metadata.getColumns().get(0), reservation.getStatus().getName(AonUtil.getCurrentLocale()));
+				report.exportColumn(metadata.getColumns().get(1), reservation.getHotel().getWorkPlace().getDescription());
+				report.exportColumn(metadata.getColumns().get(2), reservation.getId());
+				report.exportColumn(metadata.getColumns().get(3), reservation.getRoomCount());
+				report.exportColumn(metadata.getColumns().get(4), reservation.getPersonCount());
+				report.exportColumn(metadata.getColumns().get(5), reservation.getMealPlan().getName(AonUtil.getCurrentLocale()));
+				report.exportColumn(metadata.getColumns().get(6), reservation.getCode());
+				report.exportColumn(metadata.getColumns().get(7), reservation.getStartDate());
+				report.exportColumn(metadata.getColumns().get(8), reservation.getEndDate());
+				report.exportColumn(metadata.getColumns().get(9), reservation.getGuestFullName());
+				report.exportColumn(metadata.getColumns().get(10), obtainReportAgencyName(reservation));
+				report.exportColumn(metadata.getColumns().get(11), reservation.getTotal());
+				report.endLine();
+			}
+			report.autoSizeColumns();
+			report.endExport(output);
+			response.flushBuffer();
+			faces.responseComplete();
+		} catch (ManagerBeanException e1) {
+			e1.printStackTrace();
+		} catch (ReportException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return null;
+	}
+	
+	private ReportMetadata createExcelHeader(ExcelReportExporter report) {
+		HSSFCellStyle cellStyleBlack = newExcelHeaderStyle(report);
+		HSSFFont cellFont = report.createFont();
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    cellStyleBlack.setFont(cellFont);
+
+	    report.addHeaderRow();
+		report.addHeaderCell(AonUtil.getMessage(STATUS).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_HOTEL).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_RESERVATION_ID).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_ROOMS_ABBRV).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_PAX).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_REGIME_ABBRV).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_RESERVATION_CODE).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_CHECKIN).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_CHECKOUT).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_GUEST).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_AGENCY).toUpperCase(), 0, cellStyleBlack);
+		report.addHeaderCell(AonUtil.getMessage(PMS_TOTAL).toUpperCase(), 0, cellStyleBlack);
+
+		ReportMetadata metadata = new ReportMetadata();
+		metadata.getColumns().add(new ReportColumnMetadata("status", Types.VARCHAR, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("hotel", Types.VARCHAR, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("reservationId", Types.INTEGER, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomCount", Types.INTEGER, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("pax", Types.INTEGER, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("regime", Types.VARCHAR, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("reservationCode", Types.VARCHAR, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("checkIn", Types.DATE, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("checkOut", Types.DATE, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("guest", Types.VARCHAR, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("agency", Types.VARCHAR, "", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("total", Types.DOUBLE, "", 30));
+		return metadata;
+	}
+
+	private HSSFCellStyle newExcelHeaderStyle(ExcelReportExporter report) {
+		HSSFCellStyle cellStyle = report.createCellStyle();
+	    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+	    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+	    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THICK);
+	    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+	    cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	    return cellStyle;
+	}
+
+	private String obtainReportAgencyName(ProjectReservation reservation) {
+		if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+			return reservation.getAgency().getRegistry().getFullName();
+		} else if (reservation.getCompany() != null && reservation.getCompany().getId() != null) {
+			return reservation.getCompany().getRegistry().getFullName();
+		}
+		return AonUtil.getMessage(PMS_DIRECT_CUSTOMER);
 	}
 
 }
