@@ -34,10 +34,11 @@ public class DBSales {
 	
 	public static JSONObject getSalesDetail(Domain domain, String login,
 			Integer id) {
-		return ToJSON.salesDetailToJSON(AON
+		SalesDetail detail = AON
 				.getSalesDetailStream(domain.getName(), domain.getId(), login,
 						f -> f.getIdProperty().eq(id)).findFirst()
-				.orElse(new SalesDetail()));
+				.orElse(null);
+		return detail!=null ? ToJSON.salesDetailToJSON(detail):null;
 	}
 	
     public static Filter salesFilter(Domain domain, Map<String, String[]> filterMap, SalesProperties f) {
