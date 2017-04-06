@@ -105,18 +105,22 @@ public class UdapaInvoiceReader {
 	public static void main(String[] args) {
 		UdapaInvoiceReader reader = new UdapaInvoiceReader();
 		
-		String FILE = String.format("%1$s/Descargas/EDI/udapa/", System.getProperty("user.home"));
-		String fileName = "Fichero de ejemplo de facturas UDAPA.txt";
+		String FILE = String.format("%1$s/Downloads/EDI UDAPA/", System.getProperty("user.home"));
+//		String fileName = "Fichero de ejemplo de facturas UDAPA.txt";
+		String fileName = "invoicd93a_20170405_153245";
+		System.out.println("Process start...");
 		if (Files.exists(Paths.get(FILE + fileName))) {
 			try {
 				SINCC value = reader.readFile(new FileInputStream(FILE + fileName), CHARSET_ENCODING);
 				value.getTipoFactura_325_380_381_383_385_();
+				System.out.println(value);
 			} catch (FileNotFoundException e) {
 				// nada
 			} catch (IOException e) {
 				// nada
 			}
 		}
+		System.out.println("Done.");
 		
 	}
 	
