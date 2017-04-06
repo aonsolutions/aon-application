@@ -613,4 +613,7 @@ public class VatTaxDeclarationController extends LinesController {
 		}
 	}
 	
+	public String getPredeclarationURL() {
+		return "https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/ov/servurlp.html?WEB=INTERNET&PRG=303&EJE=0003&URL=IMP";
+	}
 }
