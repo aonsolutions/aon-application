@@ -366,7 +366,7 @@ public class CancellationInvoicing {
 	}
 
 	private PayMethod obtainPayMethod(ProjectReservation reservation, CancellationInvoiceTo cancellationInvoiceTo) {
-		boolean conexFlow = reservation.isPrepay() || reservation.isConexFlowNotRefundable();
+		boolean conexFlow = !reservation.isBlankToken() && reservation.isConexFlowSaleOk();
 		return (conexFlow) ? cancellationInvoiceTo.getConexFlowPayMethod() : cancellationInvoiceTo.getPayMethod();
 	}
 

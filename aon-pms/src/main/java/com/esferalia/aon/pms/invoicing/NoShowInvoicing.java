@@ -366,7 +366,7 @@ public class NoShowInvoicing {
 	}
 
 	private PayMethod obtainPayMethod(ProjectReservation reservation, NoShowInvoiceTo noShowInvoiceTo) {
-		boolean conexFlow = reservation.isPrepay() || reservation.isConexFlowNotRefundable();
+		boolean conexFlow = !reservation.isBlankToken() && reservation.isConexFlowSaleOk();
 		return (conexFlow) ? noShowInvoiceTo.getConexFlowPayMethod() : noShowInvoiceTo.getPayMethod();
 	}
 
