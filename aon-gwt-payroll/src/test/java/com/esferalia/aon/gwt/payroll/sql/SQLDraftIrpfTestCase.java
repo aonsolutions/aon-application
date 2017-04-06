@@ -135,13 +135,19 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			double annualRemuneration) {
 		super.assertAnnualRemuneration(expected + 66666.00, annualRemuneration);
 	}
-	
+
 	@Override
 	protected void assertAnnualRemuneration(double expected,
 			double annualRemuneration, double delta) {
 		super.assertAnnualRemuneration(expected + 66666.00, annualRemuneration, delta);
 	}
-	
+
+	@Override
+	protected void assertAnnualRemuneration(double expected,
+			double annualRemuneration, int months, double delta) {
+		super.assertAnnualRemuneration(expected + (66666.00 / (6.00 *12) * months), annualRemuneration, delta);
+	}
+
 	@Override
 	protected void assertDeduccibleExpenses(double expected,
 			double deduccibleExpenses) {

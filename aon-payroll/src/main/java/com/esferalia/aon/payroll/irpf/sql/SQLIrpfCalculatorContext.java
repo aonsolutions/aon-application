@@ -61,6 +61,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
@@ -313,7 +314,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 						}
 					}, super.getContractDeductions());
 		}
-
+		
 		// --------------------------------------------------------------------
 
 		public boolean next() throws SQLException, ExpressionException {
@@ -329,7 +330,16 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 					ContextVariable.IRPF_PERCENT, getStartDate(), getEndDate(),
 					Number.class).doubleValue();
 		}
-
+		
+		public boolean isFullStandard()  {
+			try {
+				ctx.getExpressionContext().eval(ContextVariable.LEAVE_DAYS.getName(), period.getStart(), period.getEnd());
+				return false;
+			} catch ( ExpressionException e ) {
+				return true;
+			}
+		}
+		
 		// --------------------------------------------------------------------
 
 		private static <T extends Enum<?>> T get(
@@ -1097,6 +1107,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		Collection<IrpfContractSalaryCalculatorContext> contexts = IrpfContractSalaryCalculatorContext
 				.getContexts(ctx);
 		
+		int size = contexts.size();
+		
 		for (IrpfContractSalaryCalculatorContext irpfCtx : contexts) {
 			irpfCtx.getExpressionContext().setVariable(ContextVariable.START,
 					irpfCtx.getStartDate(), irpfCtx.getStartDate(),
@@ -1106,7 +1118,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 					irpfCtx.getEndDate());
 
 			ISalary salary = calculator.calculate(irpfCtx);
-
+			
 			Double irpf = irpfCtx.getIrpfPercent();
 			if (irpf != null && irpf > 0.00) {
 				SALARIES.set(salaries);
@@ -1115,12 +1127,19 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				((Salary) salary).setTotalIrpf(irpf / 100
 						* salary.getIrpfBase());
 			}
-
-			nextIrpfBase += salary.getIrpfBase() * contexts.size();
-			nextSocialSecurityContributons += salary
-					.getSocialSecurityContributions() * contexts.size();
 			
-			break;
+			if ( irpfCtx.isFullStandard() ) {
+				nextIrpfBase += salary.getIrpfBase() * size;
+				nextSocialSecurityContributons += salary
+						.getSocialSecurityContributions() * size;
+				break;
+			}
+			
+			nextIrpfBase += salary.getIrpfBase();
+			nextSocialSecurityContributons += salary
+					.getSocialSecurityContributions();
+
+			size--;
 
 		}
 

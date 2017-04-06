@@ -553,16 +553,18 @@ public class EmployeesServiceHelper {
 					Connection conn, Date startDate, Date endDate,
 					Criteria criteria) {
 				try {
-					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
-							conn, startDate, endDate, endDate, criteria) {
-
-						@Override
-						public double getIrpf() {
-							return 0.00;
-						}
-
-					};
-
+//					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+//							conn, startDate, endDate, endDate, criteria) {
+//
+//						@Override
+//						public double getIrpf() {
+//							return 0.00;
+//						}
+//
+//					};
+					
+					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = getUnderlyingIrpfSQLCalculatorContext(conn, startDate, endDate, criteria);
+					
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
 
