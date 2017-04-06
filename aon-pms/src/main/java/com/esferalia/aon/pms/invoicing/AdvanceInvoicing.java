@@ -309,7 +309,7 @@ public class AdvanceInvoicing {
 		boolean conexFlow = reservation.isPrepay() || reservation.isConexFlowNotRefundable();
 		return (conexFlow) ? advanceInvoiceTo.getConexFlowPayMethod() : advanceInvoiceTo.getPayMethod();
 	}
-	
+
 	private RegistryBank getRegistryBank(Registry registry) throws ManagerBeanException {
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();

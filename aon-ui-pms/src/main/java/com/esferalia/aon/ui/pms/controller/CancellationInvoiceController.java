@@ -136,6 +136,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 				cancellationInvoiceTo.setItem(obtainCancellationItem());
 				cancellationInvoiceTo.setPenaltyDays(getCancellationPenalty());
 				cancellationInvoiceTo.setPayMethod(getCancellationPayMethod());
+				cancellationInvoiceTo.setConexFlowPayMethod(obtainConexFlowPayMethod());
 				cancellationInvoiceTo.setRegistryBank(getCancellationBank());
 				cancellationInvoiceTo.setFinanceDate(getCancellationPaymentDate());
 				cancellationInvoiceTo.setManual(search.isManual());
@@ -177,6 +178,11 @@ public class CancellationInvoiceController extends BasicController implements IP
 	private Item obtainCancellationItem() throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
 		return reservationUtils.obtainCancellationItem();
+	}
+
+	private PayMethod obtainConexFlowPayMethod() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		return reservationUtils.obtainConexFlowPayMethod();
 	}
 
 	public void onCancellationNoInvoice(ActionEvent event) {

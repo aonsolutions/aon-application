@@ -21,6 +21,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -80,7 +81,7 @@ public class CancellationInvoicing {
 				double cancellationAmount = createInvoiceDetails(invoice, reservation, cancellationInvoiceTo);
 				createInvoiceAddress(invoice, reservation);
 				if (cancellationAmount != 0) {
-					createInvoiceFinances(invoice, cancellationInvoiceTo, cancellationAmount);
+					createInvoiceFinances(invoice, reservation, cancellationInvoiceTo, cancellationAmount);
 				}
 				recordInvoice(invoice);
 	
@@ -253,7 +254,8 @@ public class CancellationInvoicing {
 		}
 	}
 
-	private void createInvoiceFinances(Invoice invoice, CancellationInvoiceTo cancellationInvoiceTo, double cancellationAmount) throws ManagerBeanException {
+	private void createInvoiceFinances(Invoice invoice, ProjectReservation reservation, CancellationInvoiceTo cancellationInvoiceTo, double cancellationAmount) 
+			throws ManagerBeanException {
 		Finance finance = new Finance();
 		finance.setInvoice(invoice);
 		finance.setRegistry(invoice.getRegistry());
@@ -261,7 +263,7 @@ public class CancellationInvoicing {
 		finance.setDueDate(cancellationInvoiceTo.getFinanceDate());
 		finance.setScope(invoice.getScope());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
-		finance.setPayMethod(cancellationInvoiceTo.getPayMethod());
+		finance.setPayMethod(obtainPayMethod(reservation, cancellationInvoiceTo));
 		if (cancellationInvoiceTo.getRegistryBank() != null) {
 			finance.setBankAccount(cancellationInvoiceTo.getRegistryBank().getBankAccount());
 			finance.setBankAlias(cancellationInvoiceTo.getRegistryBank().getBankAlias());
@@ -361,6 +363,11 @@ public class CancellationInvoicing {
 			return (Finance)ito;
 		}
 		return null;
+	}
+
+	private PayMethod obtainPayMethod(ProjectReservation reservation, CancellationInvoiceTo cancellationInvoiceTo) {
+		boolean conexFlow = reservation.isPrepay() || reservation.isConexFlowNotRefundable();
+		return (conexFlow) ? cancellationInvoiceTo.getConexFlowPayMethod() : cancellationInvoiceTo.getPayMethod();
 	}
 
 	public RegistryBank getRegistryBank(Registry registry) throws ManagerBeanException {

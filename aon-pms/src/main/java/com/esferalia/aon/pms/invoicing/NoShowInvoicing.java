@@ -21,6 +21,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -80,7 +81,7 @@ public class NoShowInvoicing {
 				double noShowAmount = createInvoiceDetails(invoice, reservation, noShowInvoiceTo);
 				createInvoiceAddress(invoice, reservation);
 				if (noShowAmount != 0) {
-					createInvoiceFinances(invoice, noShowInvoiceTo, noShowAmount);
+					createInvoiceFinances(invoice, reservation, noShowInvoiceTo, noShowAmount);
 				}
 				recordInvoice(invoice);
 	
@@ -253,7 +254,8 @@ public class NoShowInvoicing {
 		}
 	}
 
-	private void createInvoiceFinances(Invoice invoice, NoShowInvoiceTo noShowInvoiceTo, double noShowAmount) throws ManagerBeanException {
+	private void createInvoiceFinances(Invoice invoice, ProjectReservation reservation, NoShowInvoiceTo noShowInvoiceTo, double noShowAmount) 
+			throws ManagerBeanException {
 		Finance finance = new Finance();
 		finance.setInvoice(invoice);
 		finance.setRegistry(invoice.getRegistry());
@@ -261,7 +263,7 @@ public class NoShowInvoicing {
 		finance.setDueDate(noShowInvoiceTo.getFinanceDate());
 		finance.setScope(invoice.getScope());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
-		finance.setPayMethod(noShowInvoiceTo.getPayMethod());
+		finance.setPayMethod(obtainPayMethod(reservation, noShowInvoiceTo));
 		if (noShowInvoiceTo.getRegistryBank() != null) {
 			finance.setBankAccount(noShowInvoiceTo.getRegistryBank().getBankAccount());
 			finance.setBankAlias(noShowInvoiceTo.getRegistryBank().getBankAlias());
@@ -363,6 +365,11 @@ public class NoShowInvoicing {
 		return null;
 	}
 
+	private PayMethod obtainPayMethod(ProjectReservation reservation, NoShowInvoiceTo noShowInvoiceTo) {
+		boolean conexFlow = reservation.isPrepay() || reservation.isConexFlowNotRefundable();
+		return (conexFlow) ? noShowInvoiceTo.getConexFlowPayMethod() : noShowInvoiceTo.getPayMethod();
+	}
+
 	public RegistryBank getRegistryBank(Registry registry) throws ManagerBeanException {
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
@@ -373,5 +380,5 @@ public class NoShowInvoicing {
 		}
 		return null;
 	}
-	
+
 }

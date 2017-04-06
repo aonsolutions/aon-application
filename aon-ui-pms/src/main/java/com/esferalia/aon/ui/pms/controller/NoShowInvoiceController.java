@@ -136,6 +136,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 				noShowInvoiceTo.setItem(obtainNoShowItem());
 				noShowInvoiceTo.setPenaltyDays(getNoShowPenalty());
 				noShowInvoiceTo.setPayMethod(getNoShowPayMethod());
+				noShowInvoiceTo.setConexFlowPayMethod(obtainConexFlowPayMethod());
 				noShowInvoiceTo.setRegistryBank(getNoShowBank());
 				noShowInvoiceTo.setFinanceDate(getNoShowPaymentDate());
 				noShowInvoiceTo.setManual(search.isManual());
@@ -177,6 +178,11 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 	private Item obtainNoShowItem() throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
 		return reservationUtils.obtainNoShowItem();
+	}
+
+	private PayMethod obtainConexFlowPayMethod() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		return reservationUtils.obtainConexFlowPayMethod();
 	}
 
 	public void onNoShowNoInvoice(ActionEvent event) {

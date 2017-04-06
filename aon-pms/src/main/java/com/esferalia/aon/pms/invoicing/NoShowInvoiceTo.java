@@ -18,6 +18,7 @@ public class NoShowInvoiceTo implements Serializable {
 	private Item item;
 	private Integer penaltyDays;
 	private PayMethod payMethod;
+	private PayMethod conexFlowPayMethod;
 	private RegistryBank registryBank;
 	private Date financeDate;
 	private boolean keepAdvance;
@@ -58,6 +59,13 @@ public class NoShowInvoiceTo implements Serializable {
 	}
 	public void setPayMethod(PayMethod payMethod) {
 		this.payMethod = payMethod;
+	}
+
+	public PayMethod getConexFlowPayMethod() {
+		return conexFlowPayMethod;
+	}
+	public void setConexFlowPayMethod(PayMethod conexFlowPayMethod) {
+		this.conexFlowPayMethod = conexFlowPayMethod;
 	}
 
 	public RegistryBank getRegistryBank() {
