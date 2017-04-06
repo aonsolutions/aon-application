@@ -148,7 +148,9 @@ public class UdapaSaleInvoiceWriter {
 	private List<SINCT> createSINCTList(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode) {
 		List<SINCT> list = new ArrayList<>();
-		list.add(createSINCTRecord(invoice, companyEdiCode, customerEdiMainCode));
+		if(StringUtils.isNotBlank(invoice.getComments())){
+			list.add(createSINCTRecord(invoice, companyEdiCode, customerEdiMainCode));
+		}
 		return list;
 	}
 
