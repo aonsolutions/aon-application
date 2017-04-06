@@ -306,7 +306,7 @@ public class AdvanceInvoicing {
 	}
 
 	private PayMethod obtainPayMethod(ProjectReservation reservation, AdvanceInvoiceTo advanceInvoiceTo) {
-		boolean conexFlow = !reservation.isBlankToken() && reservation.isConexFlowSaleOk();
+		boolean conexFlow = reservation.isPrepay() || reservation.isConexFlowNotRefundable();
 		return (conexFlow) ? advanceInvoiceTo.getConexFlowPayMethod() : advanceInvoiceTo.getPayMethod();
 	}
 
