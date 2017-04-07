@@ -199,17 +199,6 @@ public class VatTaxManager implements Serializable {
 					invoiceTotal = CommonUtil.round(invoiceBase + invoiceVat - invoiceRetention);
 					taxableBase = CommonUtil.round(financeAmount * taxableBase / invoiceTotal,4);
 					quota = CommonUtil.round(taxableBase * percent / 100);
-					
-					System.out.println(
-							rs.getBoolean(INVESTMENT)
-							+ "\t" + invoiceTotal
-							+ "\t" + financeAmount
-							+ "---> \t" + taxableBase
-							+ "\t" + percent
-							+ "\t" + quota
-							);
-					
-					
 					deductibleQuota = quota; // TODO soporte a cuota deducible.
 					hasVatAccrualPayment = true;
 				}
@@ -229,8 +218,20 @@ public class VatTaxManager implements Serializable {
 							proratedAmount.setTaxableBase(taxableBase);
 							proratedAmount.setQuota(CommonUtil.round( quota * prorata / 100  ));
 							proratedAmount.setDeductibleQuota(CommonUtil.round( deductibleQuota * prorata / 100  ));
+
+							// ---- ÑAPA para tener en cuenta el IVA deducible
+							proratedAmount.setQuota(proratedAmount.getDeductibleQuota());
+							// -----------------------------------------------
+							
 							manageKey(column,list,keyEx,proratedAmount);
 						} else {
+							
+							// ---- ÑAPA para tener en cuenta el IVA deducible
+							if (keyEx.getKey().isProrrataAware()) {
+								amount.setQuota(amount.getDeductibleQuota());	
+							}
+							// -----------------------------------------------
+							
 							manageKey(column,list,keyEx,amount);	
 						}
 						if (keyEx.getKey() == VatTaxKey.A1 || keyEx.getKey() == VatTaxKey.A5) {
@@ -586,6 +587,17 @@ public class VatTaxManager implements Serializable {
 	
 	private String getSelect() {
 		String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) )";
+		String dedQuotaStmt = 
+			 "IF(it.deductible_quota != 0"
+			+	",it.deductible_quota"
+			+	",(IF (it.deductible_percent in (0,100)" 
+			+		",it.quota"
+			+		",(IF (it.quota != 0"
+			+			",ROUND(it.base * it.percentage / 100, 2)"
+			+			",ROUND(it.base * (it.percentage / 100) * (it.deductible_percent / 100), 2)"
+			+		"))"
+			+ 	"))"
+			+")";
 		StringWriter stmt = new StringWriter();
 		stmt.append("SELECT i.type " + TYPE);
 		stmt.append(	",i.rectification_type " + RECTIFICATION_TYPE);
@@ -603,7 +615,7 @@ public class VatTaxManager implements Serializable {
 		stmt.append(	",SUM( it.base) " + BASE);
 		stmt.append(	",SUM( " + quotaStmt + " ) " + QUOTA);
 		stmt.append(	",SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + SURCHARGE_QUOTA);
-		stmt.append(	",SUM( IF(it.deductible_quota != 0,it.deductible_quota," + quotaStmt + ")) " + DEDUCTIBLE_QUOTA);
+		stmt.append(	",SUM( " + dedQuotaStmt+ ") " + DEDUCTIBLE_QUOTA);
 		stmt.append(" FROM invoice_tax it ");
 		stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 		stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 

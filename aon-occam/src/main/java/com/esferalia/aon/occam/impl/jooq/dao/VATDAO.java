@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -131,6 +130,12 @@ public class VATDAO  {
 		
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		
+//		Condition[] a = VAT_PROPERTIES.getConditions(filter);
+//		for (Condition c : a ) {
+//			System.out.println(ctx.getDslContext().render(c));
+//		}
+		
 		return ctx.getDslContext().select(
 				 INVOICE.ID
 				,INVOICE.SERIES
@@ -276,13 +281,14 @@ public class VATDAO  {
 
 	private static double getDeductibleQuota( Record rec) {
 		double ded_quota = rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA);
-		double percent = rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT);
-		double quota = getQuota(rec);
-		if (AonMathUtils.isZero(percent) || percent == 100) {
-			ded_quota = quota;
-		} else {
-			if (AonMathUtils.isZero(percent)) percent = 100;
-			ded_quota = AonMathUtils.round(quota * percent / 100);
+		if (AonMathUtils.isZero(ded_quota)) {
+			double percent = rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT);
+			double quota = getQuota(rec);
+			if (AonMathUtils.isZero(percent) || percent == 100) {
+				ded_quota = quota;
+			} else {
+				ded_quota = AonMathUtils.round(quota * percent / 100);
+			}
 		}
 		return ded_quota;
 	}
@@ -332,7 +338,7 @@ public class VATDAO  {
 				.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
 				.setInvoiceType(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)))
 				.setRectificationType(RectificationType.safeValueOf(rec.getValue(INVOICE.RECTIFICATION_TYPE)))
-				.setService(rec.getValue(INVOICE.SERVICE) == 1)
+				.setService(rec.getValue(INVOICE.SERVICE) == 1 || InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.EXPENSES)
 				.setTransaction(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)))
 				.setInvestment(rec.getValue(INVOICE.INVESTMENT) == 1)
 				.setVatAccrualRegime(rec.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1)

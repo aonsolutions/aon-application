@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -57,6 +58,7 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -101,6 +103,8 @@ public class VatReport extends MainEntryPoint {
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
 	
+	NumberFormat formatter;
+	
 	private int domain;
 	private int enterprise;
 
@@ -125,6 +129,9 @@ public class VatReport extends MainEntryPoint {
 		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(dockLayoutPanel);
+		
+		formatter = NumberFormat.getDecimalFormat();
+		formatter.overrideFractionDigits(2, 2);
 		
 		commonService.getAonConfiguration(getCurrentDomainName(),
 				getCurrentDomain(),
@@ -610,6 +617,48 @@ public class VatReport extends MainEntryPoint {
 		return params;
 	}
 
+	private void refreshAndSeeResults(VatParams params) {
+		if (tabLayout.getSelectedIndex() == 0) {
+			tabLayout.setAnimationDuration(300);
+			tabLayout.selectTab(1);
+		}
+		refreshResults(params);
+	}
+	
+	private void refreshResults(VatParams params) {
+		resultsContent.clear();
+		
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		ScrollPanel scroll = new ScrollPanel();			
+		resultsContent.setWidget(scroll);
+		fiscalService.getVatContextReport(getCurrentDomainName(), getCurrentDomain(), params
+				, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				popup.hide();
+				HTMLPanel panel = new HTMLPanel(result);
+				scroll.setWidget(panel);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				popup.hide();
+				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
+				error.setStyleName(AON.AON_CSS.aonMargin());
+				error.addStyleName(AON.AON_CSS.aonColorRed());
+				error.addStyleName(AON.AON_CSS.aonBold());
+				scroll.setWidget(error);
+			}
+		});		
+	}
+
 	private void refreshSummary(VatParams params) {
 		summaryContent.clear();
 		ScrollPanel scroll = new ScrollPanel();			
@@ -656,33 +705,32 @@ public class VatReport extends MainEntryPoint {
 				tab.getColumnFormatter().setStyleName(7, AON.AON_CSS.aonWidth120());
 				tab.getColumnFormatter().setStyleName(8, AON.AON_CSS.aonWidth120());
 				
-				
 				paintTableHeader(tab);
-				NumberFormat formatter = NumberFormat.getDecimalFormat();
-				formatter.overrideFractionDigits(2, 2);
 				
+				double outputBase = 0;
+				double outputQuota = 0;
+				double inputBase = 0;
+				double inputQuota = 0;
+				double inputDeductibleQuota = 0;
+
+				double estimation = 0;
+
 				int row = 2;
 				for (VatSummaryType type :  map.keySet() ) {
-					tab.setWidget(row, 0, new Label());
-					tab.getFlexCellFormatter().setColSpan(row, 0, 9);
-					tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonHeight5());
-					row++;
+					row = paintEmptyRow(tab,row);
 					
 					Label typeLabel = new Label(type.getDescription());
 					typeLabel.addClickHandler(new ClickHandler() {
 						
 						@Override
 						public void onClick(ClickEvent event) {
-							VatParams params = getWidgetParams();
-							params.setVatSummaryType(type);
-							refreshAndSeeResults(params);
+							refreshAndSeeResults(getWidgetParams().setVatSummaryType(type));
 						}
 					});
 					tab.setWidget(row,0, typeLabel);
 					int rowspan = map.get(type).values().size();
-					if (rowspan > 1) {
-						tab.getFlexCellFormatter().setRowSpan(row, 0, rowspan+1);
-					}
+					tab.getFlexCellFormatter().setRowSpan(row, 0, rowspan+1);
+					
 					tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonBold());
 					tab.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
 					tab.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFontBig());
@@ -691,12 +739,13 @@ public class VatReport extends MainEntryPoint {
 					tab.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBackgroundDisabled());
 					
 					boolean first = true;
-					double outputBase = 0;
-					double outputQuota = 0;
-					double inputBase = 0;
-					double inputQuota = 0;
-					double inputDeductibleQuota = 0;
-					
+
+					double typeOutputBase = 0;
+					double typeOutputQuota = 0;
+					double typeInputBase = 0;
+					double typeInputQuota = 0;
+					double typeInputDeductibleQuota = 0;
+
 					for (Pair<VatSummaryContext,VatSummaryContext> pair : map.get(type).values() ) {
 						int col = first? 0 : -1;
 						first = false;
@@ -705,15 +754,14 @@ public class VatReport extends MainEntryPoint {
 								
 								@Override
 								public void onClick(ClickEvent event) {
-									VatParams params = getWidgetParams();
-									params.setVatSummaryType(type);
-									params.setPercent(pair.getLeft().getPercentage());
-									params.setOutput(true);
-									refreshAndSeeResults(params);
+									refreshAndSeeResults(getWidgetParams()
+										.setVatSummaryType(type)
+										.setPercent(pair.getLeft().getPercentage())
+										.setOutput(true));
 								}
 							};
-							outputBase = outputBase + pair.getLeft().getBase();
-							outputQuota = outputQuota + pair.getLeft().getQuota();
+							typeOutputBase = typeOutputBase + pair.getLeft().getBase();
+							typeOutputQuota = typeOutputQuota + pair.getLeft().getQuota();
 							
 							Label baseLabel = addCell(tab, row, (col+1) , formatter.format( pair.getLeft().getBase()));
 							tab.getCellFormatter().addStyleName(row, (col+1), AON.AON_CSS.aonClickableBlock());
@@ -734,18 +782,17 @@ public class VatReport extends MainEntryPoint {
 						}
 						
 						if (pair.getRight() != null) {
-							inputBase = inputBase + pair.getRight().getBase();
-							inputQuota = inputQuota + pair.getRight().getQuota();
-							inputDeductibleQuota = inputDeductibleQuota + pair.getRight().getDeductibleQuota();
+							typeInputBase = typeInputBase + pair.getRight().getBase();
+							typeInputQuota = typeInputQuota + pair.getRight().getQuota();
+							typeInputDeductibleQuota = typeInputDeductibleQuota + pair.getRight().getDeductibleQuota();
 							ClickHandler rightClickHandler = new ClickHandler() {
 								
 								@Override
 								public void onClick(ClickEvent event) {
-									VatParams params = getWidgetParams();
-									params.setVatSummaryType(type);
-									params.setPercent(pair.getLeft().getPercentage());
-									params.setOutput(false);
-									refreshAndSeeResults(params);
+									refreshAndSeeResults(getWidgetParams()
+										.setVatSummaryType(type)
+										.setPercent(pair.getRight().getPercentage())
+										.setOutput(false));
 								}
 							};
 							Label baseLabel = addCell(tab, row, (col+5) , formatter.format( pair.getRight().getBase()));
@@ -763,6 +810,7 @@ public class VatReport extends MainEntryPoint {
 							Label deductibleQuotaLabel = addCell(tab, row, (col+8) , formatter.format( pair.getRight().getDeductibleQuota()));
 							tab.getCellFormatter().addStyleName(row, (col+8), AON.AON_CSS.aonClickableBlock());
 							deductibleQuotaLabel.addClickHandler(rightClickHandler);
+							
 						} else {
 							addCell(tab, row, (col+5) , "");
 							addCell(tab, row, (col+6) , "");
@@ -771,81 +819,95 @@ public class VatReport extends MainEntryPoint {
 						}
 						++row;
 					}
-					if (rowspan > 1) {
 						
-						Label obl = addCell(tab, row, 0 , formatter.format( outputBase));
-						obl.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								VatParams params = getWidgetParams();
-								params.setVatSummaryType(type);
-								params.setOutput(true);
-								refreshAndSeeResults(params);
-							}
-						});
-						Label oql = addCell(tab, row, 2 , formatter.format( outputQuota));
-						oql.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								VatParams params = getWidgetParams();
-								params.setVatSummaryType(type);
-								params.setOutput(true);
-								refreshAndSeeResults(params);
-							}
-						});
-						
-						Label ibl = addCell(tab, row, 4 , formatter.format( inputBase));
-						ibl.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								VatParams params = getWidgetParams();
-								params.setVatSummaryType(type);
-								params.setOutput(false);
-								refreshAndSeeResults(params);
-							}
-						});
-						Label iql = addCell(tab, row, 6 , formatter.format( inputQuota));
-						iql.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								VatParams params = getWidgetParams();
-								params.setVatSummaryType(type);
-								params.setOutput(false);
-								refreshAndSeeResults(params);
-							}
-						});
-						Label idql = addCell(tab, row, 7 , formatter.format( inputDeductibleQuota));
-						idql.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								VatParams params = getWidgetParams();
-								params.setVatSummaryType(type);
-								params.setOutput(false);
-								refreshAndSeeResults(params);
-							}
-						});
-						
-						tab.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonClickableBlock());
-						tab.getCellFormatter().addStyleName(row,0, AON.AON_CSS.aonBold());
-						tab.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonClickableBlock());
-						tab.getCellFormatter().addStyleName(row,2, AON.AON_CSS.aonBold());
-						tab.getCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonClickableBlock());
-						tab.getCellFormatter().addStyleName(row,4, AON.AON_CSS.aonBold());
-						tab.getCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonClickableBlock());
-						tab.getCellFormatter().addStyleName(row,6, AON.AON_CSS.aonBold());
-						tab.getCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonClickableBlock());
-						tab.getCellFormatter().addStyleName(row,7, AON.AON_CSS.aonBold());
-						++row;
-					}
+					if (type == VatSummaryType.NATIONAL
+						|| type == VatSummaryType.SURCHARGE
+						|| type == VatSummaryType.FARMER) {
+							estimation = estimation + typeOutputQuota;	
+							estimation = estimation - typeInputDeductibleQuota;
+						}
+
+					row = paintTotal( tab, row,type,typeOutputBase,typeOutputQuota,typeInputBase,typeInputQuota,typeInputDeductibleQuota);					
+					
+					outputBase = outputBase + typeOutputBase;
+					outputQuota = outputQuota  + typeOutputQuota; 
+					inputBase = inputBase + typeInputBase;
+					inputQuota = inputQuota + typeInputQuota;
+					inputDeductibleQuota = inputDeductibleQuota + typeInputDeductibleQuota;
 				}
+				row = paintEmptyRow(tab, row);
+				row = paintTotal( tab, row,null,outputBase,outputQuota,inputBase,inputQuota,inputDeductibleQuota);
+				row = paintEmptyRow(tab, row);
+				 
+				tab.setWidget(row, 0, new Label());
+				String est = "Estimaci\u00F3n: ";
+				if (estimation < 0  ) {
+					est = est + "A Compensar / Devolver: " + formatter.format( AonMathUtils.absRounded( estimation ) );
+					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorRed());
+				} else if (estimation > 0  ) { 
+					est = est + "A Ingresar: " + formatter.format( estimation );
+					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorGreen());
+				} else {
+					est = est + "Cero / Sin Actividad ";
+				}
+				tab.getFlexCellFormatter().setColSpan(row, 0, 9);
+				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextCenter());
+				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonFontMedium());
+				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonSimpleBorder());
+				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBold());
+				tab.setWidget(row, 0, new Label(est));
 				scroll.setWidget( tab );		
 			}
 			
+			private int paintEmptyRow(FlexTable tab, int row) {
+				tab.setWidget(row, 0, new Label());
+				tab.getFlexCellFormatter().setColSpan(row, 0, 9);
+				tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonHeight5());
+				return ++row;
+			}
+
+			private int paintTotal(FlexTable tab, int row, VatSummaryType type,double typeOutputBase, double typeOutputQuota,
+					double typeInputBase, double typeInputQuota, double typeInputDeductibleQuota) {
+				int col = type==null?1:0;
+				ClickHandler leftClickHandler = new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						refreshAndSeeResults(getWidgetParams().setVatSummaryType(type).setOutput(true));
+					}
+				}; 
+				Label obl = addCell(tab, row, col+0 , formatter.format( typeOutputBase));
+				obl.addClickHandler(leftClickHandler);
+				Label oql = addCell(tab, row, col+2 , formatter.format( typeOutputQuota));
+				oql.addClickHandler(leftClickHandler);
+				
+				ClickHandler rightClickHandler = new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						refreshAndSeeResults(getWidgetParams().setVatSummaryType(type).setOutput(false));
+					}
+				}; 
+				Label ibl = addCell(tab, row, col+4 , formatter.format( typeInputBase));
+				ibl.addClickHandler(rightClickHandler);
+				Label iql = addCell(tab, row, col+6 , formatter.format( typeInputQuota));
+				iql.addClickHandler(rightClickHandler);
+				Label idql = addCell(tab, row, col+7 , formatter.format( typeInputDeductibleQuota));
+				idql.addClickHandler(rightClickHandler);
+				
+				tab.getCellFormatter().addStyleName(row, col+0, AON.AON_CSS.aonClickableBlock());
+				tab.getCellFormatter().addStyleName(row,col+0, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(row, col+2, AON.AON_CSS.aonClickableBlock());
+				tab.getCellFormatter().addStyleName(row,col+2, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(row, col+4, AON.AON_CSS.aonClickableBlock());
+				tab.getCellFormatter().addStyleName(row,col+4, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(row, col+6, AON.AON_CSS.aonClickableBlock());
+				tab.getCellFormatter().addStyleName(row,col+6, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(row, col+7, AON.AON_CSS.aonClickableBlock());
+				tab.getCellFormatter().addStyleName(row,col+7, AON.AON_CSS.aonBold());
+				return ++row;
+			}
+
 			private Label addCell(FlexTable tab, int row, int col, String text) {
 				Label label = new Label(text);
 				tab.setWidget(row, col, label);
@@ -905,7 +967,7 @@ public class VatReport extends MainEntryPoint {
 				Label outputPercentLabel = new Label( "%" );
 				tab.setWidget(1,2, outputPercentLabel);
 				tab.getCellFormatter().setStyleName(1, 2, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonTextCenter());
 				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonPaddingRight());
 				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonBackgroundDisabled());
 				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonSimpleBorder());
@@ -937,7 +999,7 @@ public class VatReport extends MainEntryPoint {
 				Label inputQuotaLabel = new Label( AON.MSG.quota() );
 				tab.setWidget(1,7, inputQuotaLabel);
 				tab.getCellFormatter().setStyleName(1, 7, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonTextCenter());
 				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonPaddingRight());
 				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonBackgroundDisabled());
 				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonSimpleBorder());
@@ -951,38 +1013,6 @@ public class VatReport extends MainEntryPoint {
 				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonSimpleBorder());
 			}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
-				error.setStyleName(AON.AON_CSS.aonMargin());
-				error.addStyleName(AON.AON_CSS.aonColorRed());
-				error.addStyleName(AON.AON_CSS.aonBold());
-				scroll.setWidget(error);
-			}
-		});		
-	}
-
-
-	private void refreshAndSeeResults(VatParams params) {
-		if (tabLayout.getSelectedIndex() == 0) {
-			tabLayout.selectTab(1);
-		}
-		refreshResults(params);
-	}
-	
-	private void refreshResults(VatParams params) {
-		resultsContent.clear();
-		ScrollPanel scroll = new ScrollPanel();			
-		resultsContent.setWidget(scroll);
-		fiscalService.getVatContextReport(getCurrentDomainName(), getCurrentDomain(), params
-				, new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-				HTMLPanel panel = new HTMLPanel(result);
-				scroll.setWidget(panel);
-			}
-			
 			@Override
 			public void onFailure(Throwable caught) {
 				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));

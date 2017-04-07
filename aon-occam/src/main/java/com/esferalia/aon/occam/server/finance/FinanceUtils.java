@@ -86,7 +86,15 @@ public class FinanceUtils {
 			prop = prop.and(p.getInvestmentProperty().eq( AonEnumUtils.getByte(params.getInvestment())));
 		}
 		if (params.getService() != null) {
-			prop = prop.and(p.getServiceProperty().eq( AonEnumUtils.getByte(params.getService())));
+			if ( params.getService() ) {
+				prop = prop.and(
+					p.getServiceProperty().eq((byte)1).or( p.getInvoiceTypeProperty().eq( InvoiceType.EXPENSES.value())) 
+						);
+			} else {
+				prop = prop.and(
+					p.getServiceProperty().ne((byte)1).and(p.getInvoiceTypeProperty().ne( InvoiceType.EXPENSES.value()))
+						);
+			}
 		}
 		if (params.getPercent() != null) {
 			if (params.getVatSummaryType() == VatSummaryType.SURCHARGE) {
@@ -105,7 +113,7 @@ public class FinanceUtils {
 		if (params.getVatSummaryType() != null) {
 			if (params.getVatSummaryType() == VatSummaryType.NATIONAL) {
 				prop = prop.and(p.getInvoiceTransactionProperty().eq( InvoiceTransactionType.NATIONAL.value()));
-				prop = prop.and(p.getSurchargeProperty().eq( AonEnumUtils.getByte(false)));
+//				prop = prop.and(p.getSurchargeProperty().eq( AonEnumUtils.getByte(false)));
 				prop = prop.and(p.getFarmerRegimeProperty().eq( AonEnumUtils.getByte(false)));
 			} else if (params.getVatSummaryType() == VatSummaryType.SURCHARGE){	
 				prop = prop.and(p.getInvoiceTransactionProperty().eq( InvoiceTransactionType.NATIONAL.value()));
