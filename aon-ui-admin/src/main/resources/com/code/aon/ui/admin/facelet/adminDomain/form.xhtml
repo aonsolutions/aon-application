@@ -317,21 +317,19 @@
 								<aon:selectBooleanCheckbox id="ExternalApplication_ConexFlow"
 									value="#{conexflow.conexFlow}" reRender="aonContent"
 									onclick="this.blur();">
-									<a4j:support event="onchange" reRender="showConexFlowWindow"
+									<a4j:support event="onchange" reRender="Domain_externalApplications,showConexFlowWindow"
 										actionListener="#{conexflow.onChangeConexFlowStatus}"
 										ajaxSingle="true" />
 								</aon:selectBooleanCheckbox>
-								<aon:if test="#{!conexflow.conexFlow}">
-									<aon:outputLabel for="ExternalApplication_ConexFlow"
-										value="#{bundle.aon_external_conexFlow}" />	
-								</aon:if>
-								<aon:if test="#{conexflow.conexFlow}">
-									<aon:commandButton id="conexFlow-link"
-										styleClass="aon-table-portlet aon-selectInputDate-buttonClass aon-nopadding"
-										value="#{bundle.aon_external_conexFlow}"
-										actionListener="#{conexflow.onChangeConexFlowStatus}"
-										reRender="showConexFlowWindow" />
-								</aon:if>
+								<aon:outputLabel for="ExternalApplication_ConexFlow"
+									value="#{bundle.aon_external_conexFlow}" />	
+								<aon:commandLink id="conexFlow-link" immediate="true"
+									value="&#160;" title="#{bundle.aon_edit}"
+									styleClass="aon-icon-edit-add-simple" 
+									style="margin-left: 5px; padding-right: 12px;"
+									rendered="#{conexflow.conexFlow}"
+									actionListener="#{conexflow.onChangeConexFlowStatus}"
+									reRender="showConexFlowWindow" />
 							</aon:div>
 						</aon:if>	
 					</aon:if>

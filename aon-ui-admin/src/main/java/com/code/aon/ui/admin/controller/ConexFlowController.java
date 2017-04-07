@@ -33,7 +33,7 @@ public class ConexFlowController extends BasicController {
 	PayMethod payMethod;
 	
 	public ConexFlowController() {
-		conexFlow = getConexFlowAux();
+		setConexFlow(getConexFlowAux());
 	}
 	
 	public boolean isConexFlow() {
@@ -168,6 +168,7 @@ public class ConexFlowController extends BasicController {
 			AppParamUtil.removeParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_A);
 			AppParamUtil.removeParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_KEY_B);
 			AppParamUtil.removeParameter(com.code.aon.common.enumeration.AppParam.PMS_CONEXFLOW_PAY_METHOD);
+			setConexFlow(false);
 		}	
 	}
 

@@ -23,7 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							actionListener="#{controller.onClose}"
-							reRender="showConexFlowWindow , aonContent" immediate="true">
+							reRender="showConexFlowWindow,aonContent" immediate="true">
 							<aon:actionHotKey key="esc" />
 						</aon:commandButton>
 					</aon:form>
@@ -86,12 +86,14 @@
 										<aon:inputText id="conexFlow_keyA"
 											value="#{controller.keyA}"
 											required="true" size="25" maxlength="16">
+											<f:validateLength minimum="16" maximum="16" />
 										</aon:inputText>
 								
 										<aon:outputLabel for="conexFlow_keyB" value="#{bundle.aon_key} B" />
 										<aon:inputText id="conexFlow_keyB" 
 											value="#{controller.keyB}"
 											required="true" size="25" maxlength="16">
+											<f:validateLength minimum="16" maximum="16" />
 										</aon:inputText>
 										
 										<aon:outputLabel for="conexFlow_payMethod" value="#{bundle.finance_payMethod}" />
