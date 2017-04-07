@@ -138,7 +138,11 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 	}
 
 	public AccountEntryDetail addDebit(double debit) {
-		return setDebit((getDebit() - getCredit()) + debit);
+		double newDebit = (getDebit() - getCredit()) + debit;
+		if (AonMathUtils.isZero(newDebit)) {
+			credit = 0;
+		}
+		return setDebit(newDebit);
 	}
 
 	public double getCredit() {
@@ -167,7 +171,11 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 		return this;
 	}
 	public AccountEntryDetail addCredit(double credit) {
-		return setCredit((getCredit() - getDebit()) + credit);
+		double newCredit = (getCredit() - getDebit()) + credit;
+		if (AonMathUtils.isZero(newCredit)) {
+			debit = 0;
+		}
+		return setCredit(newCredit);
 	}
 
 	public Integer getBalancingAccount() {
