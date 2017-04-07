@@ -6,7 +6,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
@@ -23,9 +22,11 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.controller.SalesController;
-import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Elaboration;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 
 public class SalesControllerListener extends ControllerAdapter implements ISalesConstants {
 	
@@ -124,13 +125,16 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		SalesController controller = (SalesController)event.getController();
-		Sales sales = (Sales)controller.getTo();
-		SalesUtils utils = new SalesUtils();
-		for (ITransferObject to : sales.getDetailList()) {
-			SalesDetail detail = (SalesDetail) to;
-			if (utils.isManufactureDone(detail)) {
-				throw new ControllerListenerException(detail.getDescription() + ": No se puede borrar, el producto está en elaboración.");
-			}
+		Sales sales = (Sales)controller.getTo();		
+		Integer[] ids = sales.getDetailList().stream()
+				.map(to -> (SalesDetail) to).mapToInt(SalesDetail::getId)
+				.boxed().toArray(Integer[]::new);
+		List<Elaboration> list = AON.getElaborationList(AonUtil.getDomainName(), sales.getDomain(),
+				AonUtil.getRemoteUser(),
+				f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
+						.and(f.getSourceIdProperty().in(ids)));
+		if(list!=null && list.size()>0){
+			throw new ControllerListenerException("No se puede borrar, hay productos que están en elaboración.");
 		}
 	}
 
