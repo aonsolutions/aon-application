@@ -82,7 +82,6 @@ public class ConnectSaleInvoiceWriter {
 		List<InvoiceDetail> detailList = invoice.getDetailList().stream()
 				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
 		
-//		List<InvoiceTax> taxList = getTaxes(invoice);
 		BasicPriceStrategy bps = new BasicPriceStrategy();
 		List<TaxBreakDown> taxList = bps.getTaxBreakDowns(invoice, invoice);
 
@@ -324,7 +323,7 @@ public class ConnectSaleInvoiceWriter {
 		SINCP sincp = new SINCP();
 		sincp.setCalificadorDelInterlocutor(type.getValue());
 		sincp.setCodigoInterlocutor(ediCode);
-		sincp.setTipoInterlocutor_J_Persa_Juridica_F_Persa_Fisica_9_EDI_(SINCP.SINCP_41.CODIGO_ASIGNADO_POR_EL_EMISOR_DEL_MENSAJE_91.getValue());
+		sincp.setTipoInterlocutor_J_Persa_Juridica_F_Persa_Fisica_9_EDI_(SINCP.SINCP_41.PERSONA_JURIDICA_J.getValue());
 		sincp.setNombre1(null);
 		sincp.setNombre1(registry.getRegistry().getName());
 		sincp.setNombre2(null);
