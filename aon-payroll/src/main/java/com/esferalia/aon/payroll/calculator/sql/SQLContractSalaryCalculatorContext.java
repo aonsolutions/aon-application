@@ -143,6 +143,7 @@ import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.IrpfOutcome;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
@@ -2833,31 +2834,49 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
 
 		int contractId = getId();
+		
+		boolean fullTime = true ;
+		try {
+			fullTime = isFullTime();
+		} catch ( Throwable t ) {
+		}
 
-		Date prevMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
+		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
+		Date prevStartMonth = getLastDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1: -3 ));
 
 		double br = 0.00;
 
 		try {
 			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaries(new AONContext(connection),
 					p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
-							.and(p.getStartDateProperty().le(prevMonth)).and(p.getEndDateProperty().ge(prevMonth)));
-			br = salaries.collect(Collectors.summingDouble(s -> s.getCommonContingenciesBase()
-					/ s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble))));
+							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
+			
+			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
+			salaries.forEach(s-> {
+				pair.fst += s.getCommonContingenciesBase();
+				pair.snd += s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
+			} )
+			;
+			br = pair.fst / pair.snd;
+			
 			salaries.close();
 		} catch (Throwable t) {
 			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaries(new AONContext(connection),
 					p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
-							.and(p.getStartDateProperty().le(prevMonth)).and(p.getEndDateProperty().ge(prevMonth)));
-			br = salaries
-					.collect(
-							Collectors
-									.summingDouble(s -> s.getCommonContingenciesBase() / (s.getSalaryDays()
-											* ifnull(
-													s.getContextData(MONTH_DAYS.getName(),
-															summingDouble(Double::parseDouble)),
-													(double) getMax(s.getStartDate(), DAY_OF_MONTH))
-											/ getMax(s.getStartDate(), DAY_OF_MONTH))));
+							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
+			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
+			salaries.forEach(s-> {
+				pair.fst += s.getCommonContingenciesBase();
+				pair.snd += ( s.getSalaryDays()
+						* ifnull(
+								s.getContextData(MONTH_DAYS.getName(),
+										summingDouble(Double::parseDouble)),
+								(double) getMax(s.getStartDate(), DAY_OF_MONTH))
+						/ getMax(s.getStartDate(), DAY_OF_MONTH));
+			} )
+			;
+			br = pair.fst / pair.snd;
+
 			salaries.close();
 
 		}
@@ -2964,6 +2983,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
 		}
 		return ("123".indexOf(tc2.charAt(0)) != -1);
+	}
+
+	private boolean isFullTime() {
+		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString());
+		if (tc2 == null) {
+			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
+		}
+		return ("14".indexOf(tc2.charAt(0)) != -1);
 	}
 
 	private boolean isFullTime(Period p) {

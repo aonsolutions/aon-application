@@ -2,10 +2,15 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
@@ -35,6 +40,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -789,6 +795,166 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 					salary.getCommonBase(), DELTA);
 		}
 
+	}
+
+	@Test
+	public void testBRPartialTimeI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] {});
+
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						//put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								ContractCode.C200.getValue()));
+					}
+				}, new String[] { 
+						"0.10 * P_1",
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES" },
+				new String[] {}, 
+				category);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		int januaryDays = get(endDate, DAY_OF_MONTH);
+		Date januaryStartDate = startDate;
+		Date januaryEndDate = endDate;
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%d", 4));
+						put(TUESDAY_HOURS.getName(), format("%d", 4));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(THURSDAY_HOURS.getName(), format("%d", 4));
+						put(FRIDAY_HOURS.getName(), format("%d", 4));
+					}
+				}
+				);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		int februaryDays = get(endDate, DAY_OF_MONTH);
+		Date februaryStartDate = startDate;
+		Date februaryEndDate = endDate;
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%d", 3));
+						put(TUESDAY_HOURS.getName(), format("%d", 3));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 3));
+						put(THURSDAY_HOURS.getName(), format("%d", 3));
+						put(FRIDAY_HOURS.getName(), format("%d", 3));
+					}
+				}
+				);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		int marchDays = get(endDate, DAY_OF_MONTH);
+		Date marchStartDate = startDate;
+		Date marchEndDate = endDate;
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%d", 2));
+						put(TUESDAY_HOURS.getName(), format("%d", 2));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 2));
+						put(THURSDAY_HOURS.getName(), format("%d", 2));
+						put(FRIDAY_HOURS.getName(), format("%d", 2));
+					}
+				}
+				);
+
+		//@formatter:off
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		double br = (3000.00 * 1.10 * ( 2.00/8.00 ) ) / (marchDays);
+		
+		// Same day of job start. Without salaries.
+		ctx.getExpressionContext().setVariable("TODAY", startDate, startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		int aprilDays = get(endDate, DAY_OF_MONTH);
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%d", 6));
+						put(TUESDAY_HOURS.getName(), format("%d", 6));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 6));
+						put(THURSDAY_HOURS.getName(), format("%d", 6));
+						put(FRIDAY_HOURS.getName(), format("%d", 6));
+					}
+				}
+				);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		br = (3000.00 * 1.10 * ( 6.00/8.00 ) ) / (aprilDays);
+
+		ctx.getExpressionContext().setVariable("TODAY", startDate, startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		
+		// Save MARCH
+		ctx = getContractSalaryCalculatorContext(
+				connection, marchStartDate, marchEndDate, marchEndDate, contract);
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		br = (3000.00 * 1.10 * ( 2.00/8.00 ) ) / (marchDays);
+		ctx.getExpressionContext().setVariable("TODAY", startDate, startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		
+		// Save FEBRUARY
+		ctx = getContractSalaryCalculatorContext(
+				connection, februaryStartDate, februaryEndDate, februaryEndDate, contract);
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		br = (3000.00 * 1.10 * ( 2.00/8.00 + 3.00/8.00) ) / (marchDays+ februaryDays);
+		ctx.getExpressionContext().setVariable("TODAY", startDate, startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+
+		// Save JANUARY
+		ctx = getContractSalaryCalculatorContext(
+				connection, januaryStartDate, januaryEndDate, januaryEndDate, contract);
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		br = (3000.00 * 1.10 * ( 2.00/8.00 + 3.00/8.00 + 4.00/8.00) ) / (marchDays+ februaryDays+ januaryDays);
+		ctx.getExpressionContext().setVariable("TODAY", startDate, startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 	}
 
 	// ------------------------------------------------------------------------
