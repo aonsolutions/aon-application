@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class WarehouseDAO {
@@ -611,15 +612,19 @@ public class WarehouseDAO {
 				CARRIER_PACKING.DRIVER_NAME, CARRIER_PACKING.ISSUE_DATE,
 				CARRIER_PACKING.MODIFICATION_DATE, CARRIER_PACKING.MODIFICATION_USER,
 				CARRIER_PACKING.NUMBER, CARRIER_PACKING.NUMBER_PLATE,
-				CARRIER_PACKING.SERIES,	CARRIER_PACKING.STATUS, CARRIER_PACKING.TYPE)
+				CARRIER_PACKING.SERIES,	CARRIER_PACKING.STATUS, CARRIER_PACKING.TYPE,
+				CARRIER_PACKING.GROSS, CARRIER_PACKING.TARE, CARRIER_PACKING.NET, 
+				CARRIER_PACKING.RECEPTION_START_DATE, CARRIER_PACKING.RECEPTION_END_DATE)
 				.values(carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0,
-						carrierPacking.getCarrierReference(), carrierPacking.getComments(), carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null,
-						carrierPacking.getCreationUser(), carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null,
+						carrierPacking.getCarrierReference(), carrierPacking.getComments(), carrierPacking.getCreationDate() != null ? new Timestamp(new Date().getTime()) : null,
+						ctx.getUser(), carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null,
 						carrierPacking.getDomain() != null ? carrierPacking.getDomain() : ctx.getDomainId(), carrierPacking.getDriverDocument(),
 						carrierPacking.getDriverName(), carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null,
 						carrierPacking.getModificationDate() != null ? new Timestamp(carrierPacking.getModificationDate().getTime()) : null, carrierPacking.getModificationUser(),
 						carrierPacking.getNumber() != null ? carrierPacking.getNumber() : 1, carrierPacking.getNumberPlate(), 
-						carrierPacking.getSeries(), carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : 0, carrierPacking.getStatus() != null ? carrierPacking.getType().value() : 0)
+						carrierPacking.getSeries(), carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : 0, carrierPacking.getStatus() != null ? carrierPacking.getType().value() : 0,
+						carrierPacking.getGross(), carrierPacking.getTare(), carrierPacking.getNet(),
+						AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()), AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
 				.returning(CARRIER_PACKING.ID).fetchOne().getId();
 	}
 	
@@ -642,6 +647,13 @@ public class WarehouseDAO {
 				.set(CARRIER_PACKING.SERIES, carrierPacking.getSeries())
 				.set(CARRIER_PACKING.STATUS, carrierPacking.getStatus().value())
 				.set(CARRIER_PACKING.TYPE, carrierPacking.getType().value())
+				.set(CARRIER_PACKING.GROSS, carrierPacking.getGross())
+				.set(CARRIER_PACKING.TARE, carrierPacking.getTare())
+				.set(CARRIER_PACKING.NET, carrierPacking.getNet())
+				.set(CARRIER_PACKING.RECEPTION_START_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()))
+				.set(CARRIER_PACKING.RECEPTION_END_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
+				.set(CARRIER_PACKING.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+				.set(CARRIER_PACKING.MODIFICATION_USER, ctx.getUser())
 			.where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
 			.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
 	}

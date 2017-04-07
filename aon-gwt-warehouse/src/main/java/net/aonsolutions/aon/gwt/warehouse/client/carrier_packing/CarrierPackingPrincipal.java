@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
+package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class CarrierPackingPrincipal extends Composite{
 	@UiField SimpleLayoutPanel content;
 	@UiField SimpleLayoutPanel southContent;
 	
-	private CarrierPacking2 parent;
+	private CarrierPacking parent;
 	private HashMap<String, LinkedList<String>> filterMap;
 	private CarrierPackingPrincipal me;
 	
@@ -40,7 +40,7 @@ public class CarrierPackingPrincipal extends Composite{
 		return parent.getAPI();
 	}
 
-	public CarrierPackingPrincipal(CarrierPacking2 carrierPacking, HashMap<String, LinkedList<String>> filterMap) {
+	public CarrierPackingPrincipal(CarrierPacking carrierPacking, HashMap<String, LinkedList<String>> filterMap) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = carrierPacking;
 		this.me = this;
@@ -52,7 +52,7 @@ public class CarrierPackingPrincipal extends Composite{
 		southContentSize(30.0);
 	}
 	
-	public CarrierPackingPrincipal(CarrierPacking2 carrierPacking) {
+	public CarrierPackingPrincipal(CarrierPacking carrierPacking) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = carrierPacking;
 		this.me = this;
@@ -83,6 +83,7 @@ public class CarrierPackingPrincipal extends Composite{
 			@Override
 			public void onSuccess(JSON<JsCarrierPacking> result) {
 				content.setWidget(new GridPanel(me, result.getData().toLinkedList()));
+				//content.setWidget(new VaadinGridPanel(result));
 			}
 			
 			@Override

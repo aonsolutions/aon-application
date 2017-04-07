@@ -23,6 +23,12 @@ public class CarrierPacking {
 	private String params;
 	private String observation;
 	
+	private Double gross; // PESO BRUTO
+	private Double tare; // TARA
+	private Double net; // PESO NETO
+	private Date receptionStartDate; // FECHA ENTRADA TRANSPORTE (RECEPCIÓN)
+	private Date receptionEndDate; // FECHA SALIDA TRANSPORTE (RECEPCIÓN)
+	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -165,17 +171,54 @@ public class CarrierPacking {
 	public String getParams() {
 		return params;
 	}
-	public void setParams(String params) {
+	public CarrierPacking setParams(String params) {
 		this.params = params;
+		return this;
 	}
 	public String getObservation() {
 		return observation;
 	}
-	public void setObservation(String observation) {
+	public CarrierPacking setObservation(String observation) {
 		this.observation = observation;
+		return this;
 	}
+	
 
-
+	public Double getGross() {
+		return gross;
+	}
+	public CarrierPacking setGross(Double gross) {
+		this.gross = gross;
+		return this;
+	}
+	public Double getTare() {
+		return tare;
+	}
+	public CarrierPacking setTare(Double tare) {
+		this.tare = tare;
+		return this;
+	}
+	public Double getNet() {
+		return net;
+	}
+	public CarrierPacking setNet(Double net) {
+		this.net = net;
+		return this;
+	}
+	public Date getReceptionStartDate() {
+		return receptionStartDate;
+	}
+	public CarrierPacking setReceptionStartDate(Date receptionStartDate) {
+		this.receptionStartDate = receptionStartDate;
+		return this;
+	}
+	public Date getReceptionEndDate() {
+		return receptionEndDate;
+	}
+	public CarrierPacking setReceptionEndDate(Date receptionEndDate) {
+		this.receptionEndDate = receptionEndDate;
+		return this;
+	}
 	public void separateComments(String comments) {
 		if(comments == null){
 			comments = "";
@@ -190,5 +233,4 @@ public class CarrierPacking {
 			setParams(comments.substring(a,z));
 		}
 	}
-	
 }

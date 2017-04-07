@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 public abstract class Toolbar extends Composite {
 
@@ -21,11 +22,12 @@ public abstract class Toolbar extends Composite {
 	@UiField Button remove;
 	@UiField Button print;
 	@UiField Button email;
+	@UiField PaperIconButton ant;
+	@UiField PaperIconButton next;
 	
 	public Toolbar() {
 		initWidget(binder.createAndBindUi(this));
 	}
-	
 
 	// -------------------------------------------------------------- UiHandler
 
@@ -34,6 +36,9 @@ public abstract class Toolbar extends Composite {
 	protected abstract void remove();
 	protected abstract void print();
 	protected abstract void email();
+	
+	protected abstract void ant();
+	protected abstract void next();
 
 
 	@UiHandler("back")
@@ -80,6 +85,26 @@ public abstract class Toolbar extends Composite {
 	
 	public void setEmailVisible(Boolean visible){
 		email.setVisible(visible);
+	}
+	
+	@UiHandler("ant")
+	public void onAntClick(ClickEvent event) {
+		ant();
+	}
+	
+	public void setAntVisible(Boolean visible){
+		ant.setVisible(visible);
+		ant.setDisabled(!visible);
+	}
+	
+	@UiHandler("next")
+	public void onNextClick(ClickEvent event) {
+		next();
+	}
+	
+	public void setNextVisible(Boolean visible){
+		next.setVisible(visible);
+		next.setDisabled(!visible);
 	}
 	
 	

@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget' >
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget' >
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
@@ -32,8 +33,12 @@
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
 					<g:Button ui:field="email" text="Enviar"  visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-mail" />
+				
+					<p:PaperIconButton ui:field="ant" noink="true" visible="false" style="margin:0px;padding:0px;height:20px;right:40px;position:absolute;" icon="chevron-left"/>
+					<p:PaperIconButton ui:field="next" noink="true" visible="false" style="margin:0px;padding:0px;height:20px;right:0px;position:absolute;" icon="chevron-right"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
+			
 		</g:HorizontalPanel>
 	</g:FlowPanel>
 

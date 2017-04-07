@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
+package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;

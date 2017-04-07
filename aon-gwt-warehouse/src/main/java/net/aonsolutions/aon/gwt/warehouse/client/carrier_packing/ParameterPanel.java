@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
+package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.LinkedList;
 

@@ -30,9 +30,6 @@ import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 
-import net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.CarrierPackingSouth;
-import net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.CarrierPackingSouth2;
-import net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.FootPanel;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 

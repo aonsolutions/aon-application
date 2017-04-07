@@ -1,18 +1,11 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
-import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -28,33 +21,34 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.polymer.paper.widget.PaperFab;
 
-public class FootPanel extends Composite {
+public class DetailFootPanel extends Composite {
 
-	interface Binder extends UiBinder<Widget, FootPanel> {
+	interface Binder extends UiBinder<Widget, DetailFootPanel> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
+		
 	
-	CarrierPacking parent;
-
-	public FootPanel(CarrierPacking parent) {
+	CarrierPackingDetail parent;
+	
+	public API getAPI() {
+		return parent.getAPI();
+	}
+	
+	public JsCarrierPacking getJsCarrierPacking(){
+		return parent.getJsCarrierPacking();
+	}
+	
+	public void setJsCarrierPacking(JsCarrierPacking js){
+		parent.setJsCarrierPacking(js);
+	}
+	
+	public DetailFootPanel(CarrierPackingDetail parent) {
 		this.parent = parent;
 		initWidget(binder.createAndBindUi(this));
-		getTabLayout().selectTab(1);
-		
-		
-		getTabLayout().addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-			
-			@Override
-			public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-				if(parent.isMainScreem && event.getItem() != 1){
-					event.cancel();
-				}
-			}
-		});
-		getTabLayout().addSelectionHandler(new SelectionHandler<Integer>() {
+		parameterPanel();
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
@@ -62,9 +56,8 @@ public class FootPanel extends Composite {
 				JsCarrierPacking js = parent.getJsCarrierPacking();
 				if(value == 0){
 					openFootPanel();
-				} else if(value == 1){
-					openFootPanel();
-				}else if(value == 2){
+					parameterPanel();
+				}else if(value == 1){
 					openFootPanel();
 					TextArea textArea = new TextArea();
 					textArea.setWidth("95%");
@@ -79,7 +72,7 @@ public class FootPanel extends Composite {
 							String requestData = "{\"carrier_packing\":\""+ js.getId() +"\","
 									+ "\"observation\":\""+  textArea.getValue() +"\"}";
 
-							parent.API.getWarehouse().updateCarrierPacking(js.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+							parent.getAPI().getWarehouse().updateCarrierPacking(js.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
 								
 								@Override
 								public void onSuccess(JsCarrierPacking result) {
@@ -91,51 +84,22 @@ public class FootPanel extends Composite {
 						}
 					});
 					observationPanel.add(textArea);
-				} else if(value == 3){
-					openFootPanel();
-					HashMap<String, LinkedList<String>> map = new HashMap<>();
-					LinkedList<String> list = new LinkedList<>();
-					list.add(parent.getJsCarrierPacking().getId() + "");
-					map.put("carrier_packing", list);
-					parent.API.getWarehouse().getPurchases(map, new AsyncCallback<JSON<JsOrder>>() {
-						
-						@Override
-						public void onSuccess(JSON<JsOrder> result) {
-							ReceivePanel rp = new ReceivePanel(parent.API, result.getData(), js);
-							receptionPanel.setWidget(rp);
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});
 				}
-				
 			}
 		});
-		//getTabLayout().getTabWidget(0).setVisible(false);
 	}
+	public void parameterPanel() {
+		parameterPanel.setWidget(new ParameterPanel(parent));
+	}
+
 	
 	@UiField MinimizePanel footPanel;
-	@UiField TabLayoutPanel tabLayout;
-	@UiField ScrollPanel selectionPanel;
-	@UiField ScrollPanel parameterPanel;
+	@UiField TabLayoutPanel tabPanel;
+	@UiField SimpleLayoutPanel parameterPanel;
 	@UiField ScrollPanel observationPanel;
-	@UiField SimpleLayoutPanel receptionPanel;
-	@UiField PaperFab addButton;
 	
-	public TabLayoutPanel getTabLayout() {
-		return tabLayout;
-	}
-	
-	public ScrollPanel getSelectionPanel() {
-		return selectionPanel;
-	}
-	
-	public ScrollPanel getParameterPanel() {
-		return parameterPanel;
-	}
-	
-	public SimpleLayoutPanel getReceptionPanel(){
-		return receptionPanel;
+	public TabLayoutPanel getTabPanel() {
+		return tabPanel;
 	}
 	
 	@UiHandler("footPanel")
@@ -148,17 +112,14 @@ public class FootPanel extends Composite {
 		openFootPanel();
 	}
 	
-	@UiHandler("addButton")
-	void onClickParamater(ClickEvent event) {
-		parent.clickParameter();
-	}
-	
 	public void openFootPanel() {
 		Integer clientHeight = Window.getClientHeight();
 		parent.southContentSize(clientHeight.doubleValue() / 3);
+		parent.contentSplitLayoutPanel.animate(500);
 	}
 	
 	public void closeFootPanel() {
 		parent.southContentSize(30.0);
+		parent.contentSplitLayoutPanel.animate(500);
 	}
 }

@@ -96,9 +96,28 @@ public class JsCarrierPacking extends JavaScriptObject {
 	public final native String getModificationDate() /*-{
 		return this.modification_date;
 	}-*/;
-
+	
 	public final native Integer getLines() /*-{
 		return this.lines;
 	}-*/;
+	
+	public final native Double getGross() /*-{
+		return this.gross;
+	}-*/;
+	
+	public final native Double getTare() /*-{
+		return this.tare;
+	}-*/;
+	
+	public final native Double getNet() /*-{
+		return this.net;
+	}-*/;
 
+	public final native String getReceptionStartDate() /*-{
+		return this.reception_start_date;
+	}-*/;
+	
+	public final native String getReceptionEndDate() /*-{
+		return this.reception_end_date;
+	}-*/;
 }

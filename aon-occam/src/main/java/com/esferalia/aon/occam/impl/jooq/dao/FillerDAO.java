@@ -93,7 +93,14 @@ public class FillerDAO {
 					.setType(CarrierPackingType.values()[r.getValue(CARRIER_PACKING.TYPE)])
 					
 					.setCarrierName(r.getValue(REGISTRY.NAME))
-					.setComments(r.getValue(CARRIER_PACKING.COMMENTS));
+					.setComments(r.getValue(CARRIER_PACKING.COMMENTS))
+					
+					.setGross(r.getValue(CARRIER_PACKING.GROSS))
+					.setTare(r.getValue(CARRIER_PACKING.TARE))
+					.setNet(r.getValue(CARRIER_PACKING.NET))						
+					.setReceptionStartDate(r.getValue(CARRIER_PACKING.RECEPTION_START_DATE))
+					.setReceptionEndDate(r.getValue(CARRIER_PACKING.RECEPTION_END_DATE))
+					;
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.nuevo;
+package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,6 +33,9 @@ import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -46,8 +50,6 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.iron.widget.IronIcon;
-import com.vaadin.polymer.iron.widget.event.IronChangeEvent;
-import com.vaadin.polymer.iron.widget.event.IronChangeEventHandler;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
@@ -90,6 +92,10 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 
 	private JsCarrierPacking getCarrierPacking(){
 		return parent.getJsCarrierPacking();
+	}
+	
+	private void setCarrierPacking(JsCarrierPacking js){
+		parent.setJsCarrierPacking(js);
 	}
 	
 	@Override
@@ -170,7 +176,32 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		Label label = new Label("Recepcion");
 		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		label.getElement().getStyle().setPadding(3, Unit.PX);
-		receptionVerticalPanel.add(label);
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(label);
+		if(isShipment() && isOnRoute()){
+			PaperIconButton truck = new PaperIconButton();
+			truck.setIcon("maps:local-shipping");
+			truck.getElement().getStyle().setMargin(0, Unit.PX);
+			truck.getElement().getStyle().setPadding(0, Unit.PX);
+			truck.getElement().getStyle().setHeight(20, Unit.PX);
+			truck.setNoink(true);
+			if(getCarrierPacking().getReceptionStartDate() != null){
+				truck.getElement().getStyle().setColor(
+						getCarrierPacking().getReceptionEndDate() != null
+						? "red" : "green");
+			}
+			truck.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					if(getCarrierPacking().getReceptionEndDate() == null){
+						truckHandler(truck);
+					}
+				}
+			});
+			hp.add(truck);
+		}
+		receptionVerticalPanel.add(hp);
 		receptionVerticalPanel.add(receptionItems());
 	}
 	
@@ -277,11 +308,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		label.getElement().getStyle().setPadding(3, Unit.PX);
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(label);
-		if(isShipment() && isOnRoute()){
-			IronIcon camion = new IronIcon();
-			camion.setIcon("truck");
-			hp.add(camion);
-		}
+	
 		selectedVerticalPanel.add(hp);
 		selectedVerticalPanel.add(selectedItems());
 	}
@@ -330,7 +357,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private void addSelected(JSON<JsOrder> orders){
 		ScrollPanel scroll = (ScrollPanel) selectedVerticalPanel.getWidget(1);
-		addSelectable(scroll, orders);
+		addSelected(scroll, orders);
 	}
 	
 	private void addSelected(ScrollPanel scroll, JSON<JsOrder> orders){
@@ -1019,51 +1046,18 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 				quan.setValue((p2 - p1) + "");
 			}
 		});
-		
-		VerticalPanel vp = new VerticalPanel();
-		Label basculaLabel = new Label("B\u00e1scula");
-		basculaLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
-		basculaLabel.getElement().getStyle().setMarginTop(15, Unit.PX);
-		basculaLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
-		//vp.add(basculaLabel);
-		
+	
 		Label saldarLabel = new Label("Saldar");
 		saldarLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
-		saldarLabel.getElement().getStyle().setMarginTop(15, Unit.PX);
+		saldarLabel.getElement().getStyle().setMarginTop(45, Unit.PX);
 		saldarLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
-		vp.add(saldarLabel);
-		hp.add(vp);
-		
-		VerticalPanel vp2 = new VerticalPanel();
-		PaperToggleButton basculaPtb = new PaperToggleButton();
-		basculaPtb.getElement().getStyle().setMarginLeft(10, Unit.PX);
-		basculaPtb.getElement().getStyle().setMarginTop(8, Unit.PX);	
-		basculaPtb.setChecked(false);
-		basculaPtb.addIronChangeHandler(new IronChangeEventHandler() {
-			
-			@Override
-			public void onIronChange(IronChangeEvent event) {
-				if(basculaPtb.getChecked()){
-					quantity.setVisible(false);
-					peso1.setVisible(true);
-					peso2.setVisible(true);
-					quan.setVisible(true);
-				} else {
-					quantity.setVisible(true);
-					peso1.setVisible(false);
-					peso2.setVisible(false);
-					quan.setVisible(false);
-				}
-			}
-		});
-		vp2.add(basculaPtb);
-		
+		hp.add(saldarLabel);
+				
 		PaperToggleButton ptb = new PaperToggleButton();
 		ptb.getElement().getStyle().setMarginLeft(10, Unit.PX);
-		ptb.getElement().getStyle().setMarginTop(8, Unit.PX);	
+		ptb.getElement().getStyle().setMarginTop(40, Unit.PX);	
 		ptb.setChecked(false);
-		vp2.add(ptb);
-		hp.add(vp2);
+		hp.add(ptb);
 		panel.add(hp);
 
 		PaperInput lote = new PaperInput();
@@ -1105,9 +1099,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			
 			@Override 
 			protected void onAccept() {
-				Double q = basculaPtb.getChecked() 
-						? Double.parseDouble(quan.getValue()) 
-						: Double.parseDouble(quantity.getValue()); 
+				Double q = Double.parseDouble(quantity.getValue()); 
 				Boolean saldar = ptb.getChecked();
 				String l = "";
 				
@@ -1338,6 +1330,52 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		};
 		dialog.addAutoHidePartner(emailComboBox.getElementById("overlay"));
 		dialog.addAutoHidePartner(signComboBox.getElementById("overlay"));
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
+	}
+	
+	private void truckHandler(PaperIconButton truck) {
+		VerticalPanel panel = new VerticalPanel();
+		panel.setStyleName(AON.AON_CSS.aonWidthAll());
+
+		PaperInput quantity = new PaperInput();
+		quantity.setLabel("Cantidad");
+		panel.add(quantity);
+    	
+      	AonDialog dialog = new AonDialog("Recepcion", panel) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				JSONObject json = new JSONObject();	
+				String requestData = json.toString();
+				if(getCarrierPacking().getReceptionStartDate() != null){
+					Double tare = Double.parseDouble(quantity.getValue());
+					json.put("tare", new JSONNumber(tare));
+					json.put("net", new JSONNumber(getCarrierPacking().getGross() - tare));	
+					json.put("reception_end_date", new JSONString(Utils.formatDateTime(new Date())));
+					requestData = JsonUtils.stringify(json.getJavaScriptObject());
+				} else {
+					Double gross = Double.parseDouble(quantity.getValue()); 
+					json.put("gross", new JSONNumber(gross));
+					json.put("reception_start_date", new JSONString(Utils.formatDateTime(new Date())));
+					requestData = JsonUtils.stringify(json.getJavaScriptObject());
+				}
+				getAPI().getWarehouse().updateCarrierPacking(getCarrierPacking().getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+
+					@Override public void onFailure(Throwable caught) {}
+
+					@Override
+					public void onSuccess(JsCarrierPacking result) {
+						setCarrierPacking(result);
+						truck.getElement().getStyle().setColor(result.getReceptionEndDate() != null ? "red" : "green");
+						hide();
+					}
+				});
+			}
+		};
 		dialog.setAutoHideEnabled(true);
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
 		dialog.center();

@@ -621,6 +621,12 @@ public interface Properties {
 		Property<String> getNumberPlateProperty();
 		Property<String> getDriverNameProperty();
 		Property<String> getDriverDocumentProperty();
+		
+		Property<Double> getGrossWeightProperty();
+		Property<Double> getTareProperty();
+		Property<Double> getNetProperty();
+		Property<Timestamp> getReceptionStartDateProperty();
+		Property<Timestamp> getReceptionEndDateProperty();
 	}
 	
 	public interface RegistryProperties {

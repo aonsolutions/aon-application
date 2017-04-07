@@ -1,16 +1,22 @@
 package net.aonsolutions.aon.gwt.warehouse.client.carrier_packing;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -20,9 +26,12 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -31,9 +40,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class Grid extends Composite {
+public class GridPanel extends ResizeComposite implements RequiresResize {
 
-	interface GridBinder extends UiBinder<Widget, Grid> {
+	interface GridBinder extends UiBinder<Widget, GridPanel> {
 	}
 
 	private static final GridBinder binder = GWT.create(GridBinder.class);
@@ -45,20 +54,55 @@ public class Grid extends Composite {
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) DataGrid<JsCarrierPacking> dataGrid; 
+	@UiField(provided = true) CustomDataGrid<JsCarrierPacking> dataGrid; 
 	
-	CarrierPacking carrierPacking;
-	API API;
-	public Grid(CarrierPacking carrierPacking, LinkedList<JsCarrierPacking> list) {
-		this.carrierPacking = carrierPacking;
-		this.API = carrierPacking.API; 
-		
-		dataGrid = new DataGrid<JsCarrierPacking>(Integer.MAX_VALUE, resources,
-				JsCarrierPacking.PROVIDES_KEY);
-	
-		initWidget(binder.createAndBindUi(this));
+	CarrierPackingPrincipal parent;
+	Integer cont = 0;
 
-		load(list);				
+	public GridPanel(CarrierPackingPrincipal carrierPacking, LinkedList<JsCarrierPacking> list) {
+		this.parent = carrierPacking;		
+		dataGrid = new CustomDataGrid<JsCarrierPacking>(Integer.MAX_VALUE, resources,
+				JsCarrierPacking.PROVIDES_KEY);
+		
+		ScrollPanel scrollPanel = dataGrid.getScrollPanel();
+		scrollPanel.addScrollHandler(new ScrollHandler() {
+			
+			@Override
+			public void onScroll(ScrollEvent event) {
+				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
+					Integer page = 2;
+					if(parent.getFilterMap().containsKey("page")){
+						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+					}
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page +"");
+					parent.getFilterMap().put("page", list);
+					parent.getAPI().getWarehouse().getCarrierPacking(parent.getFilterMap(), new AsyncCallback<JSON<JsCarrierPacking>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsCarrierPacking> result) {
+							dataProvider.getList().addAll(result.getData().toLinkedList());
+							dataGrid.redraw();
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});	
+				}
+			}
+		});
+		
+		dataGrid.addHandler(new MouseOverHandler() {
+			
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				if(cont < 2){
+					dataGrid.redraw();
+					cont++;
+				}
+			}
+		}, MouseOverEvent.getType());
+		load(list);	
+		initWidget(binder.createAndBindUi(this));
 	}	
 	
 	private void load(LinkedList<JsCarrierPacking> list) {
@@ -69,11 +113,13 @@ public class Grid extends Composite {
 					Integer relRow = event.getIndex() - dataGrid.getPageStart();
 				    Integer subrow = event.getContext().getSubIndex();
 				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
-				    JsCarrierPacking object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-				    
-				    // TODO Entrar a la pantalla del carrier!!!
-				    
-				    carrierPacking.carrierPackingContent(object);
+				    JsCarrierPacking object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());				    
+				    LinkedList<String> list = new LinkedList<>();
+				    list.add((dataGrid.getKeyboardSelectedRow()+1) + "");
+				    HashMap<String, LinkedList<String>> map = parent.getFilterMap();
+				    map.put("page", list);
+				    parent.setFilterMap(map);
+				    parent.selectCarrierPacking(object);
 				}		
 			}
 		};
@@ -284,7 +330,7 @@ public class Grid extends Composite {
 			
 			@Override
 			public String getValue(JsCarrierPacking object) {
-				return object.getLines() +"";
+				return "-"; //object.getLines() +"";
 			}
 		};
 		
@@ -323,4 +369,5 @@ public class Grid extends Composite {
 		dataGrid.addColumn(statusColumn, AON.MSG.status());
 		dataGrid.setColumnWidth(statusColumn, 15, Unit.PCT);
 	}
+	
 }

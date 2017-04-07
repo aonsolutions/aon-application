@@ -208,6 +208,11 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.MODIFICATION_DATE);}
+		@Override public Property<Double> getGrossWeightProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.GROSS);}
+		@Override public Property<Double> getTareProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.TARE);}
+		@Override public Property<Double> getNetProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.NET);}
+		@Override public Property<Timestamp> getReceptionStartDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.RECEPTION_START_DATE);}
+		@Override public Property<Timestamp> getReceptionEndDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.RECEPTION_END_DATE);}
 	}
 	
 	public static class RegistryPropertiesDAO implements RegistryProperties {

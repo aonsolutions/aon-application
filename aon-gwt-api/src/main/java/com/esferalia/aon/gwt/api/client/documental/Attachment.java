@@ -22,6 +22,7 @@ public class Attachment extends Methods{
 		this.userName = userName;
 		this.domainName = domainName;
 		this.accessToken = accesToken;
+		this.scheme = url.getUrl().contains("https") ? "https" : "http";
 	}
 	
 	public Attachment(String url, String accesToken, String userName, String domainName) {
@@ -29,6 +30,7 @@ public class Attachment extends Methods{
 		this.userName = userName;
 		this.domainName = domainName;
 		this.accessToken = accesToken;
+		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
 	public void getA(String url, AsyncCallback<JSON<JavaScriptObject>> callback){

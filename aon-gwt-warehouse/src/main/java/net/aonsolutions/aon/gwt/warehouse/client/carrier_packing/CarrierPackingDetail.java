@@ -21,18 +21,26 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CarrierPackingPanel extends Composite{
+public class CarrierPackingDetail extends Composite{
 	
-	interface Binder extends UiBinder<Widget, CarrierPackingPanel> {
+	interface Binder extends UiBinder<Widget, CarrierPackingDetail> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	@UiField DockLayoutPanel contentDockLayoutPanel;
+	@UiField SplitLayoutPanel contentSplitLayoutPanel;
+	@UiField SimpleLayoutPanel content;
+	@UiField SimpleLayoutPanel southContent;
 	
 	@UiField ListBox series;
 	@UiField TextBox number;
@@ -49,28 +57,21 @@ public class CarrierPackingPanel extends Composite{
 	@UiField InlineLabel addObservations;
 	
 	private CarrierPacking parent;
-	private API API;
 	private JsCarrierPacking jsCarrierPacking;
 	
-	public CarrierPackingPanel(CarrierPacking carrierPacking) {
+	public CarrierPackingDetail(CarrierPacking parent, JsCarrierPacking js) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = carrierPacking.API;
-		this.parent = carrierPacking;
-		addObservations.setVisible(false);
-		load();
-	}
-	
-	public CarrierPackingPanel(CarrierPacking carrierPacking, JsCarrierPacking js) {
-		initWidget(binder.createAndBindUi(this));
-		this.API = carrierPacking.API;
-		this.parent = carrierPacking;
 		this.jsCarrierPacking = js;
+		this.parent = parent;
 		addObservations.setVisible(false);
 		load();
+		content();
+		southContent();
+		southContentSize(30.0);
 	}
 	
 	private void load() {
-		API.getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingSeries(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -104,7 +105,7 @@ public class CarrierPackingPanel extends Composite{
 		});
 		
 		
-		API.getWarehouse().getCarrierPackingTypes(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingTypes(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -132,7 +133,7 @@ public class CarrierPackingPanel extends Composite{
 		});
 		
 
-		API.getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -185,7 +186,7 @@ public class CarrierPackingPanel extends Composite{
 			}
 		});
 		
-		API.getWarehouse().getCarrierPackingCarriers(new AsyncCallback<JSON<JsObject>>() {
+		parent.getAPI().getWarehouse().getCarrierPackingCarriers(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
@@ -272,7 +273,7 @@ public class CarrierPackingPanel extends Composite{
 						String requestData = "{\"carrier_packing\":\""+ jsCarrierPacking.getId() +"\","
 								+ "\"observation\":\""+  textArea.getValue() +"\"}";
 
-						API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
+						parent.getAPI().getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
 							
 							@Override
 							public void onSuccess(JsCarrierPacking result) {
@@ -293,26 +294,25 @@ public class CarrierPackingPanel extends Composite{
 	
 	private void updateCarrierPacking(){
 		if(jsCarrierPacking != null){
-			API.getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), getData(), new AsyncCallback<JsCarrierPacking>() {
+			parent.getAPI().getWarehouse().updateCarrierPacking(jsCarrierPacking.getId(), getData(), new AsyncCallback<JsCarrierPacking>() {
 			
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
 					number.setValue(result.getNumber() + "");
-					parent.setSelectContent(result);
+					content();
 				}
 			
 				@Override public void onFailure(Throwable caught) { }
 			});
 		} else {
-			this.API.getWarehouse().insertCarrierPacking(getData(), new AsyncCallback<JsCarrierPacking>() {
+			parent.getAPI().getWarehouse().insertCarrierPacking(getData(), new AsyncCallback<JsCarrierPacking>() {
 				
 				@Override
 				public void onSuccess(JsCarrierPacking result) {
 					jsCarrierPacking = result;
 					number.setValue(result.getNumber() + "");
-					parent.setSelectContent(result);
-					parent.setParameterPanel(result.getParams());
+					content();
 				}
 				
 				@Override public void onFailure(Throwable caught) { }
@@ -333,6 +333,22 @@ public class CarrierPackingPanel extends Composite{
 				+ "\"driver_document\":\""+ driverDocument.getValue() +"\","
 				+ "\"driver_name\":\""+ driverName.getValue() +"\""
 				+ "}";
+	}
+	
+	public void content(){
+		content.setWidget(new SelectionPanel(this));	
+	}
+	
+	public void southContent() {
+		southContent.setWidget(new DetailFootPanel(this));
+	}
+	
+	public void southContentSize(Double value) {
+		contentSplitLayoutPanel.setWidgetSize(southContent, value);	
+	}
+	
+	public API getAPI() {
+		return parent.getAPI();
 	}
 
 	public JsCarrierPacking getJsCarrierPacking() {

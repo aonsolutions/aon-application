@@ -49,20 +49,42 @@ public class ReceivePanel extends Composite{
 		
 	}
 	private static final Binder binder = GWT.create(Binder.class);
-	private API API;
-	private Integer supplier;
-	private JsCarrierPacking carrierPacking;
-	private Integer selectedIncome;
+	
 	@UiField SplitLayoutPanel contentSplitLayoutPanel;
 	@UiField SimpleLayoutPanel supplierPanel;
 	@UiField ScrollPanel receivePanel;
 	@UiField PaperFab addButton;
-	public ReceivePanel(API API, AonJsArray<JsOrder> orders, JsCarrierPacking carrierPacking) {
+	
+	private CarrierPackingDetail parent;
+	private Integer supplier;
+	private Integer selectedIncome;
+	
+	public API getApi(){
+		return parent.getAPI();
+	}
+	
+	public JsCarrierPacking getJsCarrierPacking(){
+		return parent.getJsCarrierPacking();
+	}
+	
+	public ReceivePanel(CarrierPackingDetail parent){
 		initWidget(binder.createAndBindUi(this));
-		this.API = API;
-		this.carrierPacking = carrierPacking;
-		buildSupplierPanel(orders);
-		buildReceivePanel(orders.get(0));
+		this.parent = parent;
+		
+		HashMap<String, LinkedList<String>> map = new HashMap<>();
+		LinkedList<String> list = new LinkedList<>();
+		list.add(getJsCarrierPacking().getId() + "");
+		map.put("carrier_packing", list);
+		getApi().getWarehouse().getPurchases(map, new AsyncCallback<JSON<JsOrder>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsOrder> result) {
+				buildSupplierPanel(result.getData());
+				buildReceivePanel(result.getData().get(0));
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	private void buildSupplierPanel(AonJsArray<JsOrder> orders) {		
@@ -99,12 +121,12 @@ public class ReceivePanel extends Composite{
 		receivePanel.setWidget(new Label("prueba2"));
 		HashMap<String, LinkedList<String>> map = new HashMap<String, LinkedList<String>>();
 		LinkedList<String> l = new LinkedList<>();
-		l.add(carrierPacking.getId() + "");
+		l.add(getJsCarrierPacking().getId() + "");
 		map.put("carrier_packing", l);
 		LinkedList<String> l2 = new LinkedList<>();
 		l2.add(supplier + "");
 		map.put("supplier", l2);
-		API.getWarehouse().getIncomes(map, new AsyncCallback<JSON<JsOrder>>() {
+		getApi().getWarehouse().getIncomes(map, new AsyncCallback<JSON<JsOrder>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsOrder> result) {
@@ -144,7 +166,7 @@ public class ReceivePanel extends Composite{
 	}
 	
 	private void buildIncomeDetail(SimplePanel sp , JsOrder	income) {
-		API.getWarehouse().getDetails(income.getId(), "income", new AsyncCallback<JSON<JsOrderDetail>>() {
+		getApi().getWarehouse().getDetails(income.getId(), "income", new AsyncCallback<JSON<JsOrderDetail>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsOrderDetail> result) {
@@ -186,14 +208,14 @@ public class ReceivePanel extends Composite{
 				});
 				HashMap<String, LinkedList<String>> map2 = new HashMap<String, LinkedList<String>>();
 				LinkedList<String> l = new LinkedList<>();
-				l.add(carrierPacking.getId() + "");
+				l.add(getJsCarrierPacking().getId() + "");
 				map2.put("carrier_packing", l);
 
 				LinkedList<String> l2 = new LinkedList<>();
 				l2.add(supplier + "");
 				map2.put("supplier", l2);
 
-				API.getWarehouse().getDetails("purchase", map2, new AsyncCallback<JSON<JsOrderDetail>>() {
+				getApi().getWarehouse().getDetails("purchase", map2, new AsyncCallback<JSON<JsOrderDetail>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsOrderDetail> result2) {
@@ -260,7 +282,7 @@ public class ReceivePanel extends Composite{
 				+ "\"quantity\":\""+ quantity +"\","
 				+ "\"income\":\""+ income.getId() +"\","
 				+ "\"purchase_detail\":\"" + detail.getId() + "\"" + "}";
-			API.getWarehouse().insertDetail("income", requestData, new AsyncCallback<JsOrderDetail>() {
+			getApi().getWarehouse().insertDetail("income", requestData, new AsyncCallback<JsOrderDetail>() {
 			
 				@Override
 				public void onSuccess(JsOrderDetail result) {
@@ -281,7 +303,7 @@ public class ReceivePanel extends Composite{
 				String requestData = "{"
 						+ "\"id\":\""+ incomeDetail.getId() +"\""
 						+ "}";
-				API.getWarehouse().deleteDetail("income", requestData, new AsyncCallback<JsOrder>() {
+				getApi().getWarehouse().deleteDetail("income", requestData, new AsyncCallback<JsOrder>() {
 					@Override
 					public void onSuccess(JsOrder result) {
 						updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity);
@@ -294,7 +316,7 @@ public class ReceivePanel extends Composite{
 				String requestData = "{\"quantity\":\""+ (incomeDetail.getQuantity() - quantity) +"\","
 						+ "\"id\":\""+ incomeDetail.getId() +"\""
 						+ "}";
-				API.getWarehouse().updateDetail("income", requestData, new AsyncCallback<JsOrder>() {
+				getApi().getWarehouse().updateDetail("income", requestData, new AsyncCallback<JsOrder>() {
 					
 					@Override
 					public void onSuccess(JsOrder result) {
@@ -311,7 +333,7 @@ public class ReceivePanel extends Composite{
 		String purchaseDetailRD = "{\"delivered\":\""+ quantity +"\","
 				+ "\"id\":\""+ purchaseDetailId +"\""
 				+ "}";
-		API.getWarehouse().updateDetail("purchase", purchaseDetailRD, new AsyncCallback<JsOrder>() {
+		getApi().getWarehouse().updateDetail("purchase", purchaseDetailRD, new AsyncCallback<JsOrder>() {
 			
 			@Override
 			public void onSuccess(JsOrder result) {
@@ -339,7 +361,7 @@ public class ReceivePanel extends Composite{
 		warehouse.setLabel("Almacen");
 		warehouse.setItemLabelPath("name");
 		warehouse.setItemValuePath("name");
-		API.getWarehouse().getWarehouses(new AsyncCallback<JSON<JsWarehouse>>() {
+		getApi().getWarehouse().getWarehouses(new AsyncCallback<JSON<JsWarehouse>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsWarehouse> result) {
@@ -351,7 +373,7 @@ public class ReceivePanel extends Composite{
 		panel.add(warehouse);
 		PaperInput param = new PaperInput();
 		param.setLabel("Fecha");
-		param.setValue(carrierPacking.getDeliveryDate());
+		param.setValue(getJsCarrierPacking().getDeliveryDate());
 		param.setMaxlength(10);
 
 		panel.add(param);
@@ -368,9 +390,9 @@ public class ReceivePanel extends Composite{
 				String requestData = "{\"reference_code\":\""+ number +"\","
 						+ "\"issue_time\":\""+ date +"\","
 						+ "\"supplier\":\""+ supplier +"\","
-						+ "\"carrier_packing\":\""+ carrierPacking.getId() +"\","
+						+ "\"carrier_packing\":\""+ getJsCarrierPacking().getId() +"\","
 						+ "\"workplace\":\"" + js.getWorkplace() + "\"" + "}";
-				API.getWarehouse().insertIncome(requestData, new AsyncCallback<JsOrder>() {
+				getApi().getWarehouse().insertIncome(requestData, new AsyncCallback<JsOrder>() {
 					
 					@Override
 					public void onSuccess(JsOrder result) {

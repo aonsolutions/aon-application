@@ -41,7 +41,8 @@ public class ToJSON {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat dateFormat_YYYY_MM_DD = new SimpleDateFormat("yyyy/MM/dd");
-	
+	private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
 	public static JSONObject applicationParameterToJSON(ApplicationParameter appParam){	
 		return new JSONObject()
 			.put("id",appParam.getId())
@@ -205,31 +206,39 @@ public class ToJSON {
 		return new JSONObject()
 			.put(MSG.ID, carrierPacking.getId())
 			.put(MSG.DOMAIN, carrierPacking.getDomain())
-			.put("series_number", seriesNumber)
-			.put("series", carrierPacking.getSeries())
-			.put("number", carrierPacking.getNumber())
-			.put("type", new JSONObject()
+			.put(MSG.SERIES_NUMBER, seriesNumber)
+			.put(MSG.SERIES, carrierPacking.getSeries())
+			.put(MSG.NUMBER, carrierPacking.getNumber())
+			.put(MSG.TYPE, new JSONObject()
 				.put(MSG.ID, carrierPacking.getType() != null ? carrierPacking.getType().value() : "")
 				.put(MSG.NAME, carrierPacking.getType() != null ? carrierPacking.getType().getName() : ""))
-			.put("status", new JSONObject()
+			.put(MSG.STATUS, new JSONObject()
 				.put(MSG.ID, carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : "")
 				.put(MSG.NAME, carrierPacking.getStatus() != null ? carrierPacking.getStatus().getName(): "")) 
 			.put(MSG.ISSUE_DATE, carrierPacking.getIssueDate() != null ? dateFormat.format(carrierPacking.getIssueDate()) : "")
-			.put("carrier", new JSONObject()
+			.put(MSG.CARRIER, new JSONObject()
 				.put(MSG.ID, carrierPacking.getCarrier())
 				.put(MSG.NAME, carrierPacking.getCarrierName()))
-			.put("delivery_date", carrierPacking.getDeliveryDate() != null ? dateFormat.format(carrierPacking.getDeliveryDate()) : "")
-			.put("carrier_reference", carrierPacking.getCarrierReference() != null ? carrierPacking.getCarrierReference() : "")
-			.put("number_plate", carrierPacking.getNumberPlate())
-			.put("driver_name", carrierPacking.getDriverName())
-			.put("driver_document", carrierPacking.getDriverDocument())
-			.put("comments", carrierPacking.getComments() != null ? carrierPacking.getComments() : " ")
-			.put("observation", carrierPacking.getObservation())
-			.put("params", carrierPacking.getParams())
-			.put("creation_date", carrierPacking.getCreationDate() != null ? dateFormat.format(carrierPacking.getCreationDate()): "")
-			.put("creation_user", carrierPacking.getCreationUser())
-			.put("modification_date", carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")
-			.put("modification_user", carrierPacking.getModificationUser());
+			.put(MSG.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? dateFormat.format(carrierPacking.getDeliveryDate()) : "")
+			.put(MSG.CARRIER_REFERENCE, carrierPacking.getCarrierReference() != null ? carrierPacking.getCarrierReference() : "")
+			.put(MSG.NUMBER_PLATE, carrierPacking.getNumberPlate())
+			.put(MSG.DRIVER_NAME, carrierPacking.getDriverName())
+			.put(MSG.DRIVER_DOCUMENT, carrierPacking.getDriverDocument())
+			.put(MSG.COMMENTS, carrierPacking.getComments() != null ? carrierPacking.getComments() : " ")
+			.put(MSG.OBSERVATION, carrierPacking.getObservation())
+			.put(MSG.PARAMS, carrierPacking.getParams())
+			
+			.put(MSG.GROSS, carrierPacking.getGross())
+			.put(MSG.TARE, carrierPacking.getTare())
+			.put(MSG.NET, carrierPacking.getNet())
+			.put(MSG.RECEPTION_START_DATE, carrierPacking.getReceptionStartDate() != null ? dateTimeFormat.format(carrierPacking.getReceptionStartDate()) : null)
+			.put(MSG.RECEPTION_END_DATE, carrierPacking.getReceptionEndDate() != null ? dateTimeFormat.format(carrierPacking.getReceptionEndDate()) : null)
+			
+			
+			.put(MSG.CREATION_DATE, carrierPacking.getCreationDate() != null ? dateFormat.format(carrierPacking.getCreationDate()): "")
+			.put(MSG.CREATION_USER, carrierPacking.getCreationUser())
+			.put(MSG.MODIFICATION_DATE, carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")
+			.put(MSG.MODIFICATION_USER, carrierPacking.getModificationUser());
 	}
 	
 	public static JSONObject elaborationToJSON(Elaboration elaboration) {
@@ -237,7 +246,7 @@ public class ToJSON {
 		return new JSONObject()
 			.put(MSG.ID, elaboration.getId())
 			.put(MSG.DOMAIN, elaboration.getDomain())
-			.put("series_number", seriesNumber)
+			.put(MSG.SERIES_NUMBER, seriesNumber)
 			.put(MSG.SERIES, elaboration.getSeries())
 			.put(MSG.NUMBER, elaboration.getNumber())
 			.put(MSG.STATUS, new JSONObject()

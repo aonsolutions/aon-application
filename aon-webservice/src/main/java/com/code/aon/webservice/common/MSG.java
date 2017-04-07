@@ -50,7 +50,8 @@ public class MSG {
 	public static final String FAST_FILTER = "fast_filter";
 	public static final String FAQS = "faqs";
 	public static final String FEE = "fee";	
-	public static final String FEE_PROJECTION = "fee_projection";	
+	public static final String FEE_PROJECTION = "fee_projection";
+	public static final String GROSS = "gross";
 	public static final String GITHUB = "github";
 	public static final String ID = "id";
 	public static final String INCOME = "income";
@@ -67,12 +68,15 @@ public class MSG {
 	public static final String NAME = "name";
 	public static final String MODIFICATION_DATE = "modification_date";
 	public static final String MODIFICATION_USER = "modification_user";
+	public static final String NET = "net";
 	public static final String NOT_CARRIER_PACKING = "not_carrier_packing";	
 	public static final String NUMBER = "number";
 	public static final String NUMBER_OF_PYMNTS = "number_of_pymnts";
 	public static final String NUMBER_PLATE = "number_plate";
+	public static final String OBSERVATION = "observation";
 	public static final String ORDER_OPTIONS = "order_options"; 
 	public static final String ORDER_TYPE = "order_type";
+	public static final String PARAMS = "params";
 	public static final String PAY_METHOD = "pay_method";
 	public static final String PDF = "pdf";
 	public static final String PRICE = "price";
@@ -83,6 +87,8 @@ public class MSG {
 	public static final String PURCHASE_DETAIL = "purchase_detail";
 	public static final String PYMNT_DAYS = "pymnt_days";
 	public static final String QUANTITY = "quantity";
+	public static final String RECEPTION_END_DATE = "reception_end_date";
+	public static final String RECEPTION_START_DATE = "reception_start_date";
 	public static final String REFERENCE = "reference";
 	public static final String REFERENCE_CODE = "reference_code";
 	public static final String REGISTRY = "registry";
@@ -100,6 +106,7 @@ public class MSG {
 	public static final String STATUSES  = "statuses"; 
 	public static final String SUPPLIER  = "supplier";
 	public static final String TAG  = "tag";
+	public static final String TARE = "tare";
 	public static final String TITLE = "title";
 	public static final String TYPE = "type";
 	public static final String TYPES = "types";
@@ -108,5 +115,4 @@ public class MSG {
 	public static final String WAREHOUSE = "warehouse";
 	public static final String WORKGROUP = "workgroup";
 	public static final String WORKPLACE = "workplace";
-
 }

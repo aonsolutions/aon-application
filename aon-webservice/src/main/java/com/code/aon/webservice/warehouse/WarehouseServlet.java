@@ -393,14 +393,27 @@ public class WarehouseServlet extends HttpServlet{
 		if(json.opt(MSG.COMMENTS) != null){
 			carrierPacking.setComments(json.getString(MSG.COMMENTS));
 		}
-		
-		if(json.opt("params") != null){
-			carrierPacking.setComments(carrierPacking.getObservation() + json.getString("params"));
+		if(json.opt(MSG.PARAMS) != null){
+			carrierPacking.setComments(carrierPacking.getObservation() + json.getString(MSG.PARAMS));
 		}
-		if(json.opt("observation") != null){
-			carrierPacking.setComments(json.getString("observation") + carrierPacking.getParams());
+		if(json.opt(MSG.OBSERVATION) != null){
+			carrierPacking.setComments(json.getString(MSG.OBSERVATION) + carrierPacking.getParams());
 		}
-	
+		if(json.opt(MSG.GROSS) != null){
+			carrierPacking.setGross(json.getDouble(MSG.GROSS));
+		}
+		if(json.opt(MSG.TARE) != null){
+			carrierPacking.setTare(json.getDouble(MSG.TARE));
+		}
+		if(json.opt(MSG.NET) != null){
+			carrierPacking.setNet(json.getDouble(MSG.NET));
+		}
+		if(json.opt(MSG.RECEPTION_START_DATE) != null){
+			carrierPacking.setReceptionStartDate(AonDateUtils.dateTimeParse(json.getString(MSG.RECEPTION_START_DATE)));
+		}
+		if(json.opt(MSG.RECEPTION_END_DATE) != null){
+			carrierPacking.setReceptionEndDate(AonDateUtils.dateTimeParse(json.getString(MSG.RECEPTION_END_DATE)));
+		}
 		return carrierPacking;
 	}
 	
