@@ -194,11 +194,11 @@ public class ProjectReservationConexFlow implements Serializable {
 
 	public String onCreateToken() {
 		ConexFlowConnection connection = DBConsults.getConection(getDomain());
-		String customerId = getReservation().getCustomer().getId().toString();
+		String code = getReservation().getCode();
 		String token = null;
 		if (connection.isActive()) {
 			Query createTokenQuery = ConexFlowUtils.getConexFlowCreateTokenQuery(getReservation().getHrCreditCardNumber(), connection, 
-					getReservation().getHrCreditCardExpirationMonth() + getReservation().getHrCreditCardExpirationYear(), customerId);
+					getReservation().getHrCreditCardExpirationMonth() + getReservation().getHrCreditCardExpirationYear(), code);
 			ConexFlow cfT = ConexFlowPost.execute(connection, ConexFlowConstant.CREATE_TOKEN_OP, createTokenQuery);
 			if (cfT == null) {
 				conexFlowError("Error al crear el Token.");
@@ -210,7 +210,7 @@ public class ProjectReservationConexFlow implements Serializable {
 				} else {
 					Double amount = 0.01;
 					if (isAmex(getReservation().getHrCreditCardNumber())) {
-						Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, (Double) 0.01, customerId, null);
+						Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, (Double) 0.01, code, null);
 						ConexFlow cfV = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
 						conexFlowOk = cfV.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 						if (!conexFlowOk) {
@@ -227,13 +227,13 @@ public class ProjectReservationConexFlow implements Serializable {
 							DBConsults.insertConexFlow(getDomain(), getLogin(), cfV, getReservation().getId(), description);
 
 							// REEMBOLSAR CARGO DE CHECKEO
-							query = ConexFlowUtils.getConexFlowRefundQuery(connection, token, amount.toString(), customerId);
+							query = ConexFlowUtils.getConexFlowRefundQuery(connection, token, amount.toString(), code, getReservation().getId());
 							ConexFlowPost.execute(connection, ConexFlowConstant.REFUND_OP, query);
 							// NO SE INSERTA EN LA BASE DE DATOS
 						}
 					}
 					else {
-						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection, customerId, token, (Double) 0.01);
+						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection, code, token, (Double) 0.01, getReservation().getId());
 						ConexFlow cfP = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						conexFlowOk = cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 						if (!conexFlowOk) {
@@ -252,7 +252,7 @@ public class ProjectReservationConexFlow implements Serializable {
 							// CANCELAR PREAUTHORIZACION DE CHECKEO.
 							query = ConexFlowUtils.getConexFlowCancelationQuery(connection, ConexFlowConstant.PREAUTHORIZATION_OP, (Double) 0.01
 									, (Double) 0.01, cfP.getRespuesta().getAutorizacion(), cfP.getRespuesta().getRefClient()
-									, cfP.getRespuesta().getIdOperacion(), cfP.getRespuesta().getFecha());
+									, cfP.getRespuesta().getIdOperacion(), cfP.getRespuesta().getFecha(), getReservation().getId());
 							ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query);
 							// NO SE INSERTA EN LA BASE DE DATOS
 						}
@@ -312,9 +312,9 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 
 	private void preauthorizationOperation(ConexFlowConnection connection) {
-		String customerId = getReservation().getCustomer().getId().toString();
+		String code = getReservation().getCode();
 		String token = getReservation().getToken();
-		Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection, customerId, token, getAmount());
+		Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection, code, token, getAmount(), getReservation().getId());
 		ConexFlow cfP = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query); 
 		if (cfP == null) {
 			conexFlowError("Error al realizar la operación.");
@@ -331,9 +331,9 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 
 	private void saleOperation(ConexFlowConnection connection) {
-		String customerId = getReservation().getCustomer().getId().toString();
+		String code = getReservation().getCode();
 		String token = getReservation().getToken();
-		Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, getAmount(), customerId, null);
+		Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, getAmount(), code, null);
 		ConexFlow cfV = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
 		if (cfV == null) {
 			conexFlowError("Error al realizar la operación.");
@@ -352,13 +352,13 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 
 	private void confirmPreauthorizationOperation(ConexFlowConnection connection) {
-		String customerId = getReservation().getCustomer().getId().toString();
+		String code = getReservation().getCode();
 		String token = getReservation().getToken();
 		ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, ConexFlowStatus.PREAUTHORIZATION);
 		
-		Query query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, customerId, token, getAmount()
+		Query query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, code, token, getAmount()
 				, Double.parseDouble(cfP.getRespuesta().getImporte()), cfP.getRespuesta().getCF_ExpirationDate()
-				, cfP.getRespuesta().getAutorizacion(), cfP.getRespuesta().getFecha(), cfP.getRespuesta().getIdOperacion());
+				, cfP.getRespuesta().getAutorizacion(), cfP.getRespuesta().getFecha(), cfP.getRespuesta().getIdOperacion(), getReservation().getId());
 		ConexFlow cfC = ConexFlowPost.execute(connection, ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, query);
 		if (cfC == null) {
 			conexFlowError("Error al realizar la operación.");
@@ -379,7 +379,7 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 
 	private void cancelOperation(ConexFlowConnection connection) {
-		String customerId = getReservation().getCustomer().getId().toString();
+		String code = getReservation().getCode();
 		String token = getReservation().getToken();
 		ConexFlowStatus subStatus = ConexFlowStatus.valueOfName(getConexflowOperationCancelation());
 		ConexFlow cf = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, subStatus);
@@ -387,8 +387,8 @@ public class ProjectReservationConexFlow implements Serializable {
 			conexFlowError("Error al realizar la operación, No existe operación cancelable");
 		} else {
 			Query query = ConexFlowUtils.getConexFlowCancelationQuery(connection, cf.getRespuesta().getOperacion(), getAmount()
-					, Double.parseDouble(cf.getRespuesta().getImporte()), cf.getRespuesta().getAutorizacion(), customerId
-					, cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
+					, Double.parseDouble(cf.getRespuesta().getImporte()), cf.getRespuesta().getAutorizacion(), code
+					, cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha(), getReservation().getId());
 			ConexFlow cfA = ConexFlowPost.execute(connection, ConexFlowStatus.CANCEL.getName(), query);
 			if (cfA == null) {
 				conexFlowError("Error al realizar la operación.");
@@ -440,9 +440,9 @@ public class ProjectReservationConexFlow implements Serializable {
 
 	private void refundOperation(ConexFlowConnection connection) {
 		//TODO TENER ENCUENTA EL CARGO O LA CONFIRM PREAUTHO..
-		String customerId = getReservation().getCustomer().getId().toString();
+		String code = getReservation().getCode();
 		String token = getReservation().getToken();
-		Query query = ConexFlowUtils.getConexFlowRefundQuery(connection, token, getAmount().toString(), customerId);
+		Query query = ConexFlowUtils.getConexFlowRefundQuery(connection, token, getAmount().toString(), code, getReservation().getId());
 		ConexFlow cfD = ConexFlowPost.execute(connection, ConexFlowConstant.REFUND_OP, query);
 		if (cfD == null) {
 			conexFlowError("Error al realizar la operación.");
@@ -484,13 +484,13 @@ public class ProjectReservationConexFlow implements Serializable {
 	public void checkPreauthorization() {
 		ConexFlowConnection connection = DBConsults.getConection(getDomain());
 		if (connection.isActive()) {
-			String customerId = getReservation().getCustomer().getId().toString();
+			String code = getReservation().getCode();
 			String token = getReservation().getToken();
 			ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, ConexFlowStatus.PREAUTHORIZATION);
 			if (cfP != null) { // CANCEL
 				Query query = ConexFlowUtils.getConexFlowCancelationQuery(connection, cfP.getRespuesta().getOperacion(), getAmount()
-					, Double.parseDouble(cfP.getRespuesta().getImporte()), cfP.getRespuesta().getAutorizacion(), customerId
-					, cfP.getRespuesta().getIdOperacion(), cfP.getRespuesta().getFecha());
+					, Double.parseDouble(cfP.getRespuesta().getImporte()), cfP.getRespuesta().getAutorizacion(), code
+					, cfP.getRespuesta().getIdOperacion(), cfP.getRespuesta().getFecha(), getReservation().getId());
 				ConexFlow cfA = ConexFlowPost.execute(connection, ConexFlowStatus.CANCEL.getName(), query);
 				if (cfA != null) {
 					Boolean ok = cfA.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
@@ -504,7 +504,7 @@ public class ProjectReservationConexFlow implements Serializable {
 				}
 			}
 			Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection, getReservation().getHotelReservation().getId().toString(), 
-					token, getReservation().getPenaltyAmount()); 
+					token, getReservation().getPenaltyAmount(), getReservation().getId()); 
  			cfP = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query);
  			if (cfP != null) {
  				Boolean ok = cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
@@ -524,7 +524,7 @@ public class ProjectReservationConexFlow implements Serializable {
 	public boolean executeCancellationSale(Double penaltyAmount) {
 		ConexFlowConnection connection = DBConsults.getConection(getDomain());
 		if (connection.isActive()) {
-			String customerId = getReservation().getCustomer().getId().toString();
+			String code = getReservation().getCode();
 			String token = getReservation().getToken();
 			ConexFlow cfC = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), reservation.getId(), token, ConexFlowStatus.CONFIRM_PREAUTHORIZATION);
 			ConexFlow cfV = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), reservation.getId(), token, ConexFlowStatus.SALE);
@@ -535,9 +535,9 @@ public class ProjectReservationConexFlow implements Serializable {
 				cfC = null;
 				ConexFlow cfP = DBConsults.getConexFlowLastStatusX(getDomain(), getLogin(), getReservation().getId(), token, ConexFlowStatus.PREAUTHORIZATION);
 				if (cfP != null && Double.parseDouble(cfP.getRespuesta().getImporte()) >= penaltyAmount) {
-					Query query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, customerId, token, penaltyAmount, 
+					Query query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, code, token, penaltyAmount, 
 							Double.parseDouble(cfP.getRespuesta().getImporte()), cfP.getRespuesta().getFecha(),
-							cfP.getRespuesta().getAutorizacion(), cfP.getRespuesta().getFechaOriginal(), cfP.getRespuesta().getOperacion());
+							cfP.getRespuesta().getAutorizacion(), cfP.getRespuesta().getFechaOriginal(), cfP.getRespuesta().getOperacion(), getReservation().getId());
 					cfC = ConexFlowPost.execute(connection, ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, query);
 
 					Boolean ok = CONEXFLOW_RESULT_OK.equals(cfC.getRespuesta().getResultado());
@@ -554,7 +554,7 @@ public class ProjectReservationConexFlow implements Serializable {
 				}
 
 				if (cfC == null || (!CONEXFLOW_RESULT_OK.equals(cfC.getRespuesta().getResultado()))) {
-					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, penaltyAmount, customerId, null);
+					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, penaltyAmount, code, null);
 					cfV = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
 					
 					Boolean ok = CONEXFLOW_RESULT_OK.equals(cfV.getRespuesta().getResultado());

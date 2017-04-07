@@ -87,7 +87,7 @@ public class Preauthorization {
 					if(!dryRun){
 						ConexFlowConnection connection = DBConsults.getConection(d);
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-								, r.getHotelReservation().toString(), r.getToken(), 0.01);
+								, r.getCode(), r.getToken(), 0.01, r.getProject());
 					
 						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
@@ -106,8 +106,8 @@ public class Preauthorization {
 							Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
 									, conexFlow.getRespuesta().getOperacion(), Double.parseDouble(conexFlow.getRespuesta().getImporte())
 									, Double.parseDouble(conexFlow.getRespuesta().getImporte()) 
-									, conexFlow.getRespuesta().getAutorizacion(), r.getHotelReservation().toString()
-									, conexFlow.getRespuesta().getIdOperacion(), conexFlow.getRespuesta().getFecha());
+									, conexFlow.getRespuesta().getAutorizacion(), r.getCode()
+									, conexFlow.getRespuesta().getIdOperacion(), conexFlow.getRespuesta().getFecha(), r.getProject());
 							ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
 						}
 						String projectName = DBConsults.getProjectName(d, login, r.getProject());
@@ -115,7 +115,7 @@ public class Preauthorization {
 					} else {
 						ConexFlowConnection connection = getTestConnection();
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-								, r.getHotelReservation().toString(), r.getToken(), 0.01);
+								, r.getCode(), r.getToken(), 0.01, r.getProject());
 						
 						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
@@ -165,8 +165,8 @@ public class Preauthorization {
 							Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
 									, p.getRespuesta().getOperacion(), Double.parseDouble(p.getRespuesta().getImporte())
 									, Double.parseDouble(p.getRespuesta().getImporte()) 
-									, p.getRespuesta().getAutorizacion(), r.getHotelReservation().toString()
-									, p.getRespuesta().getIdOperacion(), p.getRespuesta().getFecha());
+									, p.getRespuesta().getAutorizacion(), r.getCode()
+									, p.getRespuesta().getIdOperacion(), p.getRespuesta().getFecha(), r.getProject());
 							ConexFlow cancelConexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
 							
 							Boolean ok = cancelConexFlow.getRespuesta().getResultado().equals("000");
@@ -181,7 +181,7 @@ public class Preauthorization {
 						}
 					
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-								, r.getHotelReservation().toString(), r.getToken(), r.getPenaltyAmount());
+								, r.getCode(), r.getToken(), r.getPenaltyAmount(), r.getProject());
 						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
 						conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
@@ -235,8 +235,8 @@ public class Preauthorization {
 							Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
 									, cf.getRespuesta().getOperacion(), Double.parseDouble(cf.getRespuesta().getImporte())
 									, Double.parseDouble(cf.getRespuesta().getImporte()) 
-									, cf.getRespuesta().getAutorizacion(), r.getHotelReservation().toString()
-									, cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
+									, cf.getRespuesta().getAutorizacion(), r.getCode()
+									, cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha(), r.getProject());
 							ConexFlow cancelConexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
 					
 							Boolean ok = cancelConexFlow.getRespuesta().getResultado().equals("000");
@@ -251,7 +251,7 @@ public class Preauthorization {
 						}
 					
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-								, r.getHotelReservation().toString(), r.getToken(), r.getPenaltyAmount());
+								, r.getCode(), r.getToken(), r.getPenaltyAmount(), r.getProject());
 						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
 						conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);
@@ -297,8 +297,8 @@ public class Preauthorization {
 						Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
 							, p.getRespuesta().getOperacion(), Double.parseDouble(p.getRespuesta().getImporte())
 							, Double.parseDouble(p.getRespuesta().getImporte()) 
-							, p.getRespuesta().getAutorizacion(), r.getHotelReservation().toString()
-							, p.getRespuesta().getIdOperacion(), p.getRespuesta().getFecha());
+							, p.getRespuesta().getAutorizacion(), r.getCode()
+							, p.getRespuesta().getIdOperacion(), p.getRespuesta().getFecha(), r.getProject());
 						ConexFlow cancelConexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
 
 						Boolean ok = cancelConexFlow.getRespuesta().getResultado().equals("000");
@@ -312,7 +312,7 @@ public class Preauthorization {
 						DBConsults.updateConexFlowDescription(d, login, p.getId(), description2);
 		
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-							, r.getHotelReservation().toString(), r.getToken(), r.getPenaltyAmount());
+							, r.getCode(), r.getToken(), r.getPenaltyAmount(), r.getProject());
 						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						Boolean ok3 = conexFlow.getRespuesta().getResultado().equals("000");
 						conexFlow.setStatus(ok3 ? ConexFlowStatus.PREAUTHORIZATION : ConexFlowStatus.PREAUTHORIZATION_FAIL);

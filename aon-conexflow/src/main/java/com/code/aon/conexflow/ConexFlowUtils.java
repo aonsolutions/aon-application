@@ -30,14 +30,12 @@ public class ConexFlowUtils {
 	protected static final String VOUCHER = "voucher";
 	//******************* Card Payment
 
-	public static Query getConexFlowCardPaymentQuery(ConexFlowConnection connection, String token, Double amount, String cliente, String cvv) {
+	public static Query getConexFlowCardPaymentQuery(ConexFlowConnection connection, String token, Double amount, String cliente, Integer reservationId) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
 		Long c = Math.round(cent);
 		Integer importe = (eur * 100) + c.intValue(); 
-		
-		if(cvv == null) cvv = "";
-		
+
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.SALE_OP);
 		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
@@ -53,7 +51,7 @@ public class ConexFlowUtils {
 		query.setPlazos("000");
 		query.setSecurityCode("");
 		query.setRefCliente(leftZeros(20, cliente));
-		query.setInfoAdicionalEntrada("");
+		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setCF_ReplyURLAuth("");
 		query.setFlagAltaToken("");
@@ -145,7 +143,7 @@ public class ConexFlowUtils {
 	}
 	//******************* Preauthorization Payment
 	
-	public static Query getConexFlowPreauthorizationPaymentQuery(ConexFlowConnection connection, String cliente, String token, Double amount) {
+	public static Query getConexFlowPreauthorizationPaymentQuery(ConexFlowConnection connection, String cliente, String token, Double amount, Integer reservationId) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
 		Long c = Math.round(cent);
@@ -166,7 +164,7 @@ public class ConexFlowUtils {
 		query.setPlazos("000");
 		query.setSecurityCode("");
 		query.setRefCliente(leftZeros(20, cliente));
-		query.setInfoAdicionalEntrada("");
+		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setCF_ReplyURLAuth("");
 		query.setFlagAltaToken("");
@@ -253,7 +251,7 @@ public class ConexFlowUtils {
 	
 	//******************* Refund
 	
-	public static Query getConexFlowRefundQuery(ConexFlowConnection connection, String token, String amount, String cliente) {
+	public static Query getConexFlowRefundQuery(ConexFlowConnection connection, String token, String amount, String cliente, Integer reservationId) {
 		Double d = Double.parseDouble(amount);
 		Integer eur = d.intValue();
 		Double cent = (d - eur.doubleValue()) * 100;
@@ -274,7 +272,7 @@ public class ConexFlowUtils {
 		query.setImporte(importe.toString());
 		query.setMoneda("EUR");
 		query.setRefCliente(leftZeros(20, cliente));
-		query.setInfoAdicionalEntrada("");
+		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
 		query.setCentroOriginal("");
@@ -365,7 +363,7 @@ public class ConexFlowUtils {
 	
 	//******************* Cancelation
 	
-	public static Query getConexFlowCancelationQuery(ConexFlowConnection connection, String cancelOperation, Double amount, Double amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal) {
+	public static Query getConexFlowCancelationQuery(ConexFlowConnection connection, String cancelOperation, Double amount, Double amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal, Integer reservationId) {
 		Double importeAux = amount * 100;
 		Integer importe = importeAux.intValue();
 		
@@ -386,7 +384,7 @@ public class ConexFlowUtils {
 		
 		query.setAutOriginal(autorizacion);
 		query.setRefCliente(leftZeros(20, cliente));
-		query.setInfoAdicionalEntrada("");
+		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
 		query.setCentroOriginal(leftZeros(4, connection.getCentro().toString()));
@@ -437,7 +435,7 @@ public class ConexFlowUtils {
 	
 	//******************* Confirm Preauthorization
 	
-	public static Query getConexFlowConfirmPreauthorizationQuery(ConexFlowConnection connection, String cliente, String token, Double amount, Double amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId) {
+	public static Query getConexFlowConfirmPreauthorizationQuery(ConexFlowConnection connection, String cliente, String token, Double amount, Double amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId, Integer reservationId) {
 		Double importeAux = amount * 100;
 		Integer importe = importeAux.intValue();
 		
@@ -461,7 +459,7 @@ public class ConexFlowUtils {
 		query.setAutOriginal(autorizacion);
 		query.setMoneda("EUR");
 		query.setRefCliente(leftZeros(20, cliente));
-		query.setInfoAdicionalEntrada("");
+		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
 		query.setCentroOriginal(leftZeros(4, connection.getCentro().toString()));
@@ -762,6 +760,9 @@ public class ConexFlowUtils {
 	
 	private static String leftZeros(Integer size, String code){
 		Integer length = code.length();
+		if(code.length()> size){
+			return code.substring(0, size);
+		}
 		return generateZeros(size - length) + code;
 	}
 	
