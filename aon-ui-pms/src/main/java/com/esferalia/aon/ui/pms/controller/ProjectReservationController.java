@@ -1055,6 +1055,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			getAdvanceInvoiceTo().setIssueDate(new Date());
 			getAdvanceInvoiceTo().setItem(advanceItem);
 			getAdvanceInvoiceTo().setAmount(reservation.getAdvance());
+			getAdvanceInvoiceTo().setConexFlowPayMethod(getReservationUtils().obtainConexFlowPayMethod());
 			getAdvanceInvoiceTo().setFinanceDate(getAdvanceInvoiceTo().getIssueDate());
 			getAdvanceInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 			fillInvoiceData(reservation);
