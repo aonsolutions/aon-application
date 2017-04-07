@@ -159,7 +159,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		table.setWidget(row,0,new InlineLabel(AON.MSG.titularType()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		type.addKeyUpHandler( keyUpHandler);
-		type.setValue(AccountingRegistryType.CREDITOR);
+		type.setValue( reg.getType() );
 		type.setEnabled(reg.getId() == null);
 		table.setWidget(row,1,type);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
