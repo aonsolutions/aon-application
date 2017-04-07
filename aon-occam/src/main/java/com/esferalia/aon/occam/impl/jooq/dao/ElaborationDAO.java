@@ -49,10 +49,12 @@ public class ElaborationDAO {
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.NUMBER);}
 		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION.DATE);}
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.ITEM);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.DESCRIPTION);}
 		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.WAREHOUSE);}
 		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(ELABORATION.QUANTITY);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ELABORATION.STATUS);}
 		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.REMARKS);}
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(ELABORATION.SOURCE);}
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.SOURCE_ID);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.CREATION_USER);}
@@ -154,8 +156,9 @@ public class ElaborationDAO {
 				.insertInto(ELABORATION, ELABORATION.DOMAIN,
 						ELABORATION.SERIES, ELABORATION.NUMBER,
 						ELABORATION.DATE, ELABORATION.ITEM,
-						ELABORATION.WAREHOUSE, ELABORATION.QUANTITY,
-						ELABORATION.STATUS, ELABORATION.COMMENTS,
+						ELABORATION.DESCRIPTION, ELABORATION.WAREHOUSE,
+						ELABORATION.QUANTITY, ELABORATION.STATUS,
+						ELABORATION.COMMENTS, ELABORATION.REMARKS,
 						ELABORATION.SOURCE, ELABORATION.SOURCE_ID,
 						ELABORATION.CREATION_USER, ELABORATION.CREATION_DATE,
 						ELABORATION.MODIFICATION_USER,
@@ -165,13 +168,15 @@ public class ElaborationDAO {
 						number,
 						new Timestamp(elaboration.getDate().getTime()),
 						elaboration.getItem().getId(),
+						elaboration.getDescription(),
 						elaboration.getWarehouse() != null ? elaboration
 								.getWarehouse().getId() : null,
 						elaboration.getQuantity(), elaboration.getStatus(),
-						elaboration.getComments(), elaboration.getSource(),
-						elaboration.getSourceId(), ctx.getUser(), creationDate,
-						ctx.getUser(), modificationDate)
-				.returning(ELABORATION.ID).fetchOne().getId();
+						elaboration.getComments(), elaboration.getRemarks(),
+						elaboration.getSource(), elaboration.getSourceId(),
+						ctx.getUser(), creationDate, ctx.getUser(),
+						modificationDate).returning(ELABORATION.ID).fetchOne()
+				.getId();
 	}
 
 	public static Elaboration updateElaboration(AONContext ctx,
@@ -188,12 +193,14 @@ public class ElaborationDAO {
 				.set(ELABORATION.DATE,
 						new Timestamp(elaboration.getDate().getTime()))
 				.set(ELABORATION.ITEM, elaboration.getItem().getId())
+				.set(ELABORATION.DESCRIPTION, elaboration.getDescription())
 				.set(ELABORATION.WAREHOUSE,
 						elaboration.getWarehouse() != null ? elaboration
 								.getWarehouse().getId() : null)
 				.set(ELABORATION.QUANTITY, elaboration.getQuantity())
 				.set(ELABORATION.STATUS, elaboration.getStatus())
 				.set(ELABORATION.COMMENTS, elaboration.getComments())
+				.set(ELABORATION.REMARKS, elaboration.getRemarks())
 				.set(ELABORATION.SOURCE, elaboration.getSource())
 				.set(ELABORATION.SOURCE_ID, elaboration.getSourceId())
 				.set(ELABORATION.MODIFICATION_USER, ctx.getUser())
@@ -515,12 +522,14 @@ public class ElaborationDAO {
 					.setNumber(r.getValue(ELABORATION.NUMBER))
 					.setDate(r.getValue(ELABORATION.DATE))
 					.setItem(new Item().setId(r.getValue(ELABORATION.ITEM)))
+					.setDescription(r.getValue(ELABORATION.DESCRIPTION))
 					.setWarehouse(
 							new Warehouse().setId(r
 									.getValue(ELABORATION.WAREHOUSE)))
 					.setQuantity(r.getValue(ELABORATION.QUANTITY))
 					.setStatus(r.getValue(ELABORATION.STATUS))
 					.setComments(r.getValue(ELABORATION.COMMENTS))
+					.setRemarks(r.getValue(ELABORATION.REMARKS))
 					.setSource(r.getValue(ELABORATION.SOURCE))
 					.setSourceId(r.getValue(ELABORATION.SOURCE_ID))
 					.setCreationDate(r.getValue(ELABORATION.CREATION_DATE))

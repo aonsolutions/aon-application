@@ -12,10 +12,12 @@ public interface ElaborationProperties {
 	Property<Integer> getNumberProperty();
 	Property<Timestamp> getDateProperty();
 	Property<Integer> getItemProperty();
+	Property<String> getDescriptionProperty();
 	Property<Integer> getWarehouseProperty();
 	Property<Double> getQuantityProperty();
 	Property<Byte> getStatusProperty();
 	Property<String> getCommentsProperty();
+	Property<String> getRemarksProperty();
 	Property<Byte> getSourceProperty();
 	Property<Integer> getSourceIdProperty();
 	Property<String> getCreationUserProperty();

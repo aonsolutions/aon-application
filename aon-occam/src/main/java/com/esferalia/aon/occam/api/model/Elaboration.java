@@ -20,10 +20,12 @@ public class Elaboration implements Serializable {
 	private int number;
 	private Date date;
 	private Item item;
+	private String description;
 	private Warehouse warehouse;
 	private double quantity;
 	private Byte status;
 	private String comments;
+	private String remarks;
 	private Byte source;
 	private Integer sourceId;
 	private String creationUser;
@@ -77,6 +79,13 @@ public class Elaboration implements Serializable {
 		this.item = item;
 		return this;
 	}
+	public String getDescription() {
+		return description;
+	}
+	public Elaboration setDescription(String description) {
+		this.description = description;
+		return this;
+	}
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
@@ -103,6 +112,13 @@ public class Elaboration implements Serializable {
 	}
 	public Elaboration setComments(String comments) {
 		this.comments = comments;
+		return this;
+	}
+	public String getRemarks() {
+		return remarks;
+	}
+	public Elaboration setRemarks(String remarks) {
+		this.remarks = remarks;
 		return this;
 	}
 	public Byte getSource() {

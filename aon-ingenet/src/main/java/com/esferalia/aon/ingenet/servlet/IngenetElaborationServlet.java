@@ -141,12 +141,11 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
 					ElaborationDAO.updateElaboration(ctx, elaboration);
 				});
-				
-				// TODO 
+				 
 //				String subject = "[AON] Recuperación automática de elaboraciones";
 //				String content = fillResponseMessage(elaborationList);
 //				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
-				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
+//				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
 			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
 				if(params.getELABORACIONES()!=null 
 						&& params.getELABORACIONES().getREFERENCIAS()!=null 

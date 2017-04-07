@@ -582,11 +582,12 @@ public class WarehouseDAO {
 						carrier.getType()).returning().fetch().stream()
 				.map(new RegistryFiller()).findFirst().orElse(new Registry());
 
-		ctx
-				.getDslContext()
+		ctx.getDslContext()
 				.insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.SCOPE,
-						CARRIER.REGISTRY)
-				.values(carrier.getDomain(), carrier.getScope(), registry.getId()).execute();
+						CARRIER.REGISTRY, CARRIER.STATUS)
+				.values(carrier.getDomain(), carrier.getScope(),
+						registry.getId(), carrier.getStatus().value())
+				.execute();
 		return registry.getId();
 	}
 	

@@ -275,6 +275,7 @@ public class SalesUtils {
 		elaboration.setNumber(number);
 		elaboration.setDate(new Date());
 		elaboration.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(salesDetail.getItem().getId()));
+		elaboration.setDescription(salesDetail.getDescription());
 		elaboration.setWarehouse(null);
 		elaboration.setQuantity(salesDetail.getQuantity());
 		elaboration.setStatus(ElaborationStatus.PENDING.value());

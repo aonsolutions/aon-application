@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 
 public class Carrier extends Registry implements Serializable{
 
@@ -12,6 +12,7 @@ public class Carrier extends Registry implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private Integer scope;
+	private CarrierStatus status;
 
 	public Integer getScope() {
 		return scope;
@@ -21,4 +22,14 @@ public class Carrier extends Registry implements Serializable{
 		this.scope = scope;
 		return this;
 	}
+	
+	public CarrierStatus getStatus() {
+		return status;
+	}
+
+	public Carrier setStatus(CarrierStatus status) {
+		this.status = status;
+		return this;
+	}
+	
 }
