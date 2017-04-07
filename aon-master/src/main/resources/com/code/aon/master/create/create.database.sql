@@ -1,5 +1,5 @@
 # Database : aon_master
-# Version: 8.96.0
+# Version: 8.98.1
 # Created by: girazu
 # Creation Date: 17/03/2017 14:00
 
@@ -2420,6 +2420,7 @@ CREATE TABLE `carrier` (
   `registry` int(4) NOT NULL COMMENT 'Registro de la Agencia de Transporte',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `status` tinyint(2) DEFAULT NULL COMMENT 'Estado de la Agencia de Transporte',
   PRIMARY KEY (`registry`),
   KEY `IDX_CARRIER_DOMAIN` (`domain`),
   KEY `IDX_CARRIER_SCOPE` (`scope`),
@@ -2447,6 +2448,11 @@ CREATE TABLE `carrier_packing` (
   `driver_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del conductor',
   `driver_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de documento del conductor',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Observaciones carrier packing',
+  `gross` double default NULL COMMENT 'Bruto',
+  `tare` double default NULL COMMENT 'Tara',
+  `net` double default NULL COMMENT 'Neto',
+  `reception_start_date` datetime default NULL COMMENT 'Fecha entrada transporte, recepcion',
+  `reception_end_date` datetime default NULL COMMENT 'Fecha salida transporte, recepcion',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -4133,10 +4139,12 @@ CREATE TABLE `elaboration` (
   `number` int(4) NOT NULL DEFAULT '0' COMMENT 'Numero de la elaboracion',
   `date` datetime DEFAULT NULL COMMENT 'Fecha de elaboracion',
   `item` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del articulo base a elaborar',
+  `description` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `warehouse` int(4) DEFAULT NULL COMMENT 'Identificador del almacen',
   `quantity` double(15,3) DEFAULT '0.000' COMMENT 'Cantidad a elaborar',
   `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Indica el estado de la elaboracion',
-  `comments` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Comentarios',
+  `comments` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Comentarios',
+  `remarks` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Observaciones',
   `source` tinyint(2) DEFAULT '0' COMMENT 'Origen',
   `source_id` int(4) DEFAULT '0' COMMENT 'Identificador del origen',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
@@ -8358,7 +8366,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.96.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.98.1');
 
 COMMIT;
 
