@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -616,7 +617,10 @@ public class EmployeeCalendarDraftObjectData {
 	@SuppressWarnings("deprecation")
 	private void changeEndDate(StringVariable v, Date endDate) {
 		Date endDateAux = DateUtils.copyDateOnly(v.getEndDate());
-		while (endDateAux.getDay() != 0 || endDateAux.equals(endDate)){
+		while (endDateAux.getDay() != 0){
+			if(endDateAux.equals(endDate))
+				break;
+			
 			DateUtils.addDays2Date(endDateAux, 1);
 		}
 		v.setEndDate(endDateAux);
@@ -625,7 +629,10 @@ public class EmployeeCalendarDraftObjectData {
 	@SuppressWarnings("deprecation")
 	private void changeStartDate(StringVariable v, Date startDate) {
 		Date startDateAux = DateUtils.copyDateOnly(v.getStartDate());
-		while (startDateAux.getDay() != 1 || startDateAux.equals(startDate)){
+		while (startDateAux.getDay() != 1){
+			if(startDateAux.equals(startDate))
+				break;
+			
 			DateUtils.addDays2Date(startDateAux, -1);
 		}
 		v.setStartDate(startDateAux);

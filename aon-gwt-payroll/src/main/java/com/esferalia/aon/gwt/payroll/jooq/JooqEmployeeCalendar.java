@@ -340,7 +340,7 @@ public class JooqEmployeeCalendar {
 					DateUtils.addDays2Date(date, 7);
 				}
 				
-				Date sqlstartDateHour = new Date(startDateHour.getTime());
+				Date sqlstartDateHour =  new Date(auxstartDateHour.getTime());
 				Date sqlendDateHour;
 				
 				if(realEndDate == null)
