@@ -93,18 +93,17 @@ public class DBWarehouse {
 		ElaborationDetail detail = getElaborationDetail(domain, login, json, new ElaborationDetail());
 		Elaboration elaboration = AON.getFullElaboration(domain.getName(), domain.getId(), login, detail.getElaboration().getId());
 		
-		// create serialized item
 		Integer baseItemId = elaboration.getItem().getId();
 		Item item = elaboration.getItem();
-		item.setId(null);
-		item.setBarcode(null);
-		item.setSerialDate(new java.sql.Date(detail.getDate().getTime()));
 		if (json.opt(MSG.NUMBER) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.NUMBER))) {
+			// create serialized item
 			item.setSerialNumber(json.getString(MSG.NUMBER));
+			item.setSerialDate(new java.sql.Date(detail.getDate().getTime()));
+			item.setBarcode(null);
+			int itemId = AON.insertItem(domain.getName(), domain.getId(), login, item).getId();
+			item.setId(itemId);
 		}
-		int itemId = AON.insertItem(domain.getName(), domain.getId(), login, item).getId();
-		item.setId(itemId);
 		
 		detail.setItem(item);
 		Integer detailId = AON.insertElaborationDetail(domain.getName(), domain.getId(), login, detail);
