@@ -651,8 +651,8 @@ public class EmployeeCalendarDraftObjectData {
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> ITDaysList = result.getcontractITDayTypeList();
 				ArrayList<Byte> nonWorkingList = result.getContractNonWorkingDaysList();
 				HashMap<java.util.Date, String> festivesList = result.getContractFestiveDaysList();
-				initializeHoursMap(hoursList);
 				initializeNonWorkingsDaysTypeMap(nonWorkingList);
+				initializeHoursMap(hoursList);
 				initializeTypesMap(typesList);
 				initializeFestivesDaysTypeMap(festivesList);
 				initializeITDaysTypeMap(ITDaysList);
@@ -698,6 +698,15 @@ public class EmployeeCalendarDraftObjectData {
 						Date date = DateUtils.copyDateOnly(auxDate);
 						DateUtils.resetTime(date);
 						mapDaysHour.put(date, hour);
+						
+						if(-1 == hour){
+							Date dateType = DateUtils.copyDateOnly(auxDate);
+							mapDaysType.put(dateType, DayType.NOWORKINGDAY);
+						}else{
+							Date dateType = DateUtils.copyDateOnly(auxDate);
+							mapDaysType.put(dateType, DayType.NOTYPEDAY);
+						}
+							
 						DateUtils.addDays2Date(auxDate, 7);
 					}
 				}

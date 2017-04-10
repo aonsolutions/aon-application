@@ -737,6 +737,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		//#endif
 		
 		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
+		//saveButton.setVisible(true);
 	}
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
@@ -770,13 +771,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			return;
 		
 		//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
-		if (cellsType[row][col].getType().equals(DayType.BAJAIT))
+		if (cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.FREEDAY))
 			return;
 	
 		//Pulsacion celda con CTRL
 		if (event.isControlKeyDown()) { 
 			//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
-			if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
+			if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.FREEDAY)))
 				cells[row][col].select(row, col);
 		
 		//Pulsacion celda con SHIFT
@@ -793,7 +794,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				
 				while (initialPosition != endPosition){
 					//TODO: poner este codigo para bloquear no laborables -> || cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))
-					if (!cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.BAJAIT)){
+					if (!(cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.BAJAIT)
+							|| cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.FREEDAY))){
 						cells[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)]
 								.select(calculatePositionRow(initialPosition+1), calculatePositionCol(initialPosition+1));
 					}
@@ -820,11 +822,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if (isMonth(row, col)){
 				for(int i = 1; i<38; i++)
 					//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][i].getType().equals(DayType.NOWORKINGDAY))
-					if (!cellsType[row][i].getType().equals(DayType.BAJAIT))
+					if (!(cellsType[row][i].getType().equals(DayType.BAJAIT) || cellsType[row][i].getType().equals(DayType.FREEDAY)))
 						cells[row][i].select(row, i);
 			}else
 				//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
-				if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
+				if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.FREEDAY)))
 					cells[row][col].select(row, col);
 			
 			oldHourSelected = pos;
@@ -1377,6 +1379,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.reductionStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.nonWorkingStyle());
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 			}
 		}
@@ -1777,7 +1780,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				int col = calculatePositionCol(pos);
 				int row = calculatePositionRow(pos);
 				//if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)))
-				if (!cellsType[row][col].getType().equals(DayType.BAJAIT))
+				if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.FREEDAY)))
 					cells[row][col].select(row, col);
 				else
 					if(selectedDates.isSelected(date))
@@ -1817,8 +1820,39 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	private void cleanSelectedDates() {
 		if(!selectedDates.getSelectedList().isEmpty())
-			cleanStyles(selectedDates.getSelectedList());
+			setWorkingStyles(selectedDates.getSelectedList());
+		
+		hourMenuItem.setEnabled(false);
+		hourButton.setDisabled(true);
 		selectedDates.clear();
+		changeYear(0);
+	}
+
+	private void setWorkingStyles(List<Date> selectedList) {
+		HashMap<Date, Double> compositeH = new HashMap<Date, Double>();
+		HashMap<Date, DayType> compositeT = new HashMap<Date, DayType>();
+		for (Date date : selectedList) {
+			int pos = calculateDatePosition(date);
+			if(pos != -1){
+				int col = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
+				calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.sundayStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.holidayStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.dropStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.strikeStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.ereStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.nonWorkingStyle());
+				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
+				Double hour = calendarEmployeeInfo.getHourByDay(date);
+				if (-1 == hour)
+					hour = 0.0;
+				compositeH.put(date, hour);
+				compositeT.put(date, DayType.NOTYPEDAY);
+			}
+		}
+		calendarEmployeeInfo.setHourByDay(compositeH);
+		calendarEmployeeInfo.setTypeByDay(compositeT);
 	}
 
 	@Override
