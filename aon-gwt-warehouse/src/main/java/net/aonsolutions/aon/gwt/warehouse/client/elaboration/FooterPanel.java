@@ -132,9 +132,11 @@ public class FooterPanel extends Composite {
 				sourcePanel.add(new Label("Origen Compras: " + js.getSource() + ". " + js.getSourceId()));
 				break;
 			default:
-				sourcePanel.add(new Label("La elaboraci\u00F3n se ha creado manualmente, no tiene origen. "));
+				sourcePanel.add(new Label("Origen desconocido. "));
 				break;
 			}
+		} else {
+			sourcePanel.add(new Label("La elaboraci\u00F3n se ha creado manualmente, no tiene origen. "));
 		}
 		
 	}

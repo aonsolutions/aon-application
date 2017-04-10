@@ -267,7 +267,7 @@ public class MainElaboration extends AonTemplate {
 				+ ",\"number\":\"" + main.number.getValue()+ "\""
 				+ ",\"date\":\"" + (main.date.getValue() != null ? main.date.getValue().getTime() : "")+ "\""
 				+ ",\"quantity\":\"" + main.quantity.getValue()+ "\""
-				+ ",\"item\":\"" + main.pBox.getId()+ "\""
+				+ ",\"item\":\"" + main.itemBox.getId()+ "\""
 				+ ",\"warehouse\":\"" + main.warehouse.getSelectedValue()+ "\""
 				+ ",\"comments\":\"" + (comments!=null && !"".equals(comments.trim())?comments:"") + "\""
 				+ "}";

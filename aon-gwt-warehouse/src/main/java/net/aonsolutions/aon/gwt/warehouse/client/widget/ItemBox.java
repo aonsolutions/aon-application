@@ -121,15 +121,19 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	}
 	 
 	public ItemBox(API API) {
-		this(null,-1);
+		this(API, true);
+	}
+	
+	public ItemBox(API API, boolean showDescription) {
+//		this(null,-1);
 		this.API = API;
-	}
+//	}
 	
-	public ItemBox(final String domainName, final int domain) {
-		this(domainName,domain,null,true);
-	}
+//	public ItemBox(final String domainName, final int domain) {
+//		this(domainName,domain,null,true);
+//	}
 	
-	public ItemBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
+//	public ItemBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
