@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.ErrorPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -55,6 +56,7 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -67,14 +69,17 @@ import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -82,6 +87,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AccountEntryModule extends MainEntryPoint {
@@ -167,6 +173,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	Button search;
 	@UiField
 	Button audit;
+	@UiField
+	Button duplicate;
 	@UiField
 	SimpleLayoutPanel wizardPanel;
 	@UiField
@@ -512,6 +520,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		entryType.setEnabled(canEdit);
 		accept.setEnabled(canEdit);
 		remove.setEnabled(canRemove);
+		duplicate.setEnabled(!isNew());
 		
 		styleCommentsButton();
 		errors = new ErrorPanel();
@@ -1087,4 +1096,144 @@ public class AccountEntryModule extends MainEntryPoint {
 		extraInfoContainer.scrollToTop();
 	}
 	
+	@UiHandler("duplicate")
+	public void onDuplicate(ClickEvent event) {
+		final AccountEntry orig = wizardContent.getMainEntry();
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setCaption(AON.MSG.duplicate());
+		SimplePanel duplicatePanel = new SimplePanel(); 
+		FlowPanel rootPanel = new FlowPanel();
+		FlowPanel tablePanel = new FlowPanel();
+		tablePanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		FlexTable table = new FlexTable();
+		table.setStyleName(AON.AON_CSS.aonPanelGrid());
+		table.addStyleName(AON.AON_CSS.aonWidthAll());
+		int row = 0;
+		
+		if (orig.getEntryType() != AccountEntryType.MANUAL) {
+			table.setWidget(row,0,new Label(AON.MSG.manualEntryGeneration()));
+			table.getFlexCellFormatter().setColSpan(row, 0, 2);
+			table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonColorRed());
+			table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+			row++;
+		}
+		
+		table.setWidget(row,0,new InlineLabel(AON.MSG.period()));
+		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		AccountPeriodBox period = new AccountPeriodBox();
+		period.fill(configuration.getPeriods());
+		period.select(orig.getPeriod());
+		table.setWidget(row,1,period);
+		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+
+		table.setWidget(row,0,new InlineLabel(AON.MSG.accountEntryDate()));
+		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		final DateBoxEx issueDate = new DateBoxEx();
+		issueDate.setValue(orig.getEntryDate());
+		table.setWidget(row,1,issueDate);
+		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+
+		table.setWidget(row,0,new InlineLabel(AON.MSG.concept()));
+		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		final TextBox concept = new TextBox();
+		concept.setStyleName(AON.AON_CSS.aonInputText());
+		concept.setMaxLength(32);
+		concept.setValue(orig.getDetails().get(0).getConcept());
+		table.setWidget(row,1,concept);
+		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+		
+		table.setWidget(row,0,new InlineLabel(AON.MSG.document()));
+		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		final TextBox document = new TextBox();
+		document.setStyleName(AON.AON_CSS.aonInputText());
+		document.setMaxLength(32);
+		document.setValue(orig.getDetails().get(0).getDocumentNumber());
+		table.setWidget(row,1,document);
+		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+
+		table.setWidget(row,1,new Label());
+		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		final CheckBox invert = new CheckBox( AON.MSG.invertData());
+		table.setWidget(row,1,invert);
+		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+		tablePanel.add( table );
+		rootPanel.add( tablePanel );
+		
+		FlowPanel buttons = new FlowPanel();
+    	buttons.setStyleName(AON.AON_CSS.aonTextCenter());
+    	
+    	final Button okButton = new Button();
+    	okButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+    	okButton.setText( AON.MSG.accept());
+    	okButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
+				AccountEntry dupl = new AccountEntry() 
+					.setPeriod(period.getValue())
+					.setDomain(orig.getDomain())
+					.setEntryDate(issueDate.getValue())
+					.setEntryType(AccountEntryType.MANUAL)
+					.setActivity(orig.getActivity())
+					.setSecurityLevel(orig.getSecurityLevel());
+				for (AccountEntryDetail aed : orig.getDetails()){
+					dupl.addDetail(
+					new AccountEntryDetail()
+						.setDomain(aed.getDomain())
+						.setAccount(aed.getAccount())
+						.setAccountCode(aed.getAccountCode())
+						.setAccountDescription(aed.getAccountDescription())
+						.setLine(aed.getLine())
+						.setConcept(concept.getValue())
+						.setDebit(invert.getValue()?aed.getCredit():aed.getDebit())
+						.setCredit(invert.getValue()?aed.getDebit():aed.getCredit())
+						.setBalancingAccount(aed.getBalancingAccount())
+						.setBalancingAccountCode(aed.getBalancingAccountCode())
+						.setBalancingAccountDescription(aed.getBalancingAccountDescription())
+						.setDocumentNumber(document.getValue())
+							);
+				}
+				AccountEntryWrapper wrp = new AccountEntryWrapper(dupl);
+				selectEntry(null, wrp);
+					
+					dialog.hide();
+				}
+			});
+    	
+    	buttons.add(okButton);
+    	
+    	final Button cancelButton = new Button();
+    	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
+    	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    	cancelButton.setText( AON.MSG.cancelAction());
+    	cancelButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				cancelButton.setEnabled(false);
+				dialog.hide();
+			}
+		});
+    	buttons.add(cancelButton);
+    	rootPanel.add(buttons);
+		
+		duplicatePanel.setWidget(rootPanel);
+		dialog.add( duplicatePanel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(new Command() {
+	        public void execute() {
+	        	issueDate.setFocus(true);
+	        }
+	    });		
+		
+	}
 }

@@ -342,6 +342,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar")
 	String deleteAction();
 	
+	@DefaultMessage("Duplicar")
+	String duplicate();
+
 	@DefaultMessage("Seleccionar")
 	String selectAction();
 	
@@ -3273,4 +3276,11 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Existen {0,number} registros con ese documento.")
 	@AlternateMessage({"=1", "Existe un registro con ese documento"})
 	String existingRegistryWarning(@PluralCount int registryCount);
+
+	@DefaultMessage("Invertir saldos entre debe y haber")
+	String invertData();
+	
+	@DefaultMessage("Aviso: Se generar\u00E1 un apunte manual")
+	String manualEntryGeneration();
+	
 }
