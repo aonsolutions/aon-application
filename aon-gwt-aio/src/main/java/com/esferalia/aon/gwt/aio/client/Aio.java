@@ -16,6 +16,7 @@ import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import net.aonsolutions.aon.gwt.udapa.client.Udapa;
 import net.aonsolutions.aon.gwt.warehouse.client.Warehouse;
 
 public class Aio implements EntryPoint {
@@ -138,6 +139,20 @@ public class Aio implements EntryPoint {
 				public void onSuccess() {
 					com.esferalia.aon.gwt.dump.client.MainEntryPoint dump = new com.esferalia.aon.gwt.dump.client.MainEntryPoint();
 					dump.onModuleLoad();
+				}
+			});		
+			break;
+		case Modules.UDAPA:
+			GWT.runAsync(com.esferalia.aon.gwt.dump.client.MainEntryPoint.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new Udapa(aonData).onModuleLoad();
 				}
 			});		
 			break;

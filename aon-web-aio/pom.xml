@@ -299,6 +299,13 @@
 		<scope>runtime</scope>
 	</dependency>
 	
+		<dependency>
+		<groupId>net.aonsolutions</groupId>
+		<artifactId>aon.gwt.udapa</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
+	
 	<dependency>
 		<groupId>net.aonsolutions.polymer</groupId>
 		<artifactId>aon.gwt.polymer</artifactId>
