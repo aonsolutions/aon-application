@@ -63,9 +63,7 @@ public class CarrierPacking extends AonTemplate2{
 				PaperFabElement.SRC,
 				PaperInputElement.SRC,
 				PaperToggleButtonElement.SRC
-		));
-		
-		Polymer.whenReady(o -> {
+		), o -> {
 			super.onModuleLoad();
 			startApplication();
 			return null;
