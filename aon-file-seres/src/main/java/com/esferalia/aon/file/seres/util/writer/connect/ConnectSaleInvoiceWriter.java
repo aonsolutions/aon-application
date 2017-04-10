@@ -323,7 +323,7 @@ public class ConnectSaleInvoiceWriter {
 		SINCP sincp = new SINCP();
 		sincp.setCalificadorDelInterlocutor(type.getValue());
 		sincp.setCodigoInterlocutor(ediCode);
-		sincp.setTipoInterlocutor_J_Persa_Juridica_F_Persa_Fisica_9_EDI_(SINCP.SINCP_41.PERSONA_JURIDICA_J.getValue());
+		sincp.setTipoInterlocutor_J_Persa_Juridica_F_Persa_Fisica_9_EDI_(SINCP.SINCP_41.CODIGO_EAN_9.getValue());
 		sincp.setNombre1(null);
 		sincp.setNombre1(registry.getRegistry().getName());
 		sincp.setNombre2(null);
