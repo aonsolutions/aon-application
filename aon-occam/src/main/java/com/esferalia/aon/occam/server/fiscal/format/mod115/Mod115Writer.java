@@ -387,7 +387,7 @@ public class Mod115Writer {
 			
 			Element e1 = doc.createElement(DATO);
 			e1.setAttribute(NOMBRE, MODELO_ATT);
-			e1.setAttribute(VALOR, mod115.getPeriod().isMonthPeriod()?"115":"110");
+			e1.setAttribute(VALOR, mod115.getPeriod().isMonthPeriod()?"115":"115");
 			datos.appendChild(e1);
 			Element e3 = doc.createElement(DATO);
 			e3.setAttribute(NOMBRE,EJERCICIO);
