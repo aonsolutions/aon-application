@@ -210,7 +210,7 @@ public class ProjectReservationConexFlow implements Serializable {
 				} else {
 					Double amount = 0.01;
 					if (isAmex(getReservation().getHrCreditCardNumber())) {
-						Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, (Double) 0.01, code, null);
+						Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, (Double) 0.01, code, getReservation().getId());
 						ConexFlow cfV = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
 						conexFlowOk = cfV.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 						if (!conexFlowOk) {
@@ -333,7 +333,7 @@ public class ProjectReservationConexFlow implements Serializable {
 	private void saleOperation(ConexFlowConnection connection) {
 		String code = getReservation().getCode();
 		String token = getReservation().getToken();
-		Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, getAmount(), code, null);
+		Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, getAmount(), code, getReservation().getId());
 		ConexFlow cfV = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
 		if (cfV == null) {
 			conexFlowError("Error al realizar la operación.");
@@ -554,7 +554,7 @@ public class ProjectReservationConexFlow implements Serializable {
 				}
 
 				if (cfC == null || (!CONEXFLOW_RESULT_OK.equals(cfC.getRespuesta().getResultado()))) {
-					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, penaltyAmount, code, null);
+					Query query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, penaltyAmount, code, getReservation().getId());
 					cfV = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
 					
 					Boolean ok = CONEXFLOW_RESULT_OK.equals(cfV.getRespuesta().getResultado());
