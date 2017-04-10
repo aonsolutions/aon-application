@@ -56,6 +56,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.vaadin.polymer.paper.widget.PaperInput;
+import com.vaadin.polymer.paper.widget.event.ChangeEvent;
+import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
 public class ElaborationSelect extends Composite{
 	
@@ -84,7 +86,6 @@ public class ElaborationSelect extends Composite{
 	private MainElaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
-//	private JsElaborationDetail jsElaborationDetail;
 	
 	public ElaborationSelect(MainElaboration elaboration) {
 		compositionDataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
@@ -134,7 +135,6 @@ public class ElaborationSelect extends Composite{
 		panel.add(removeDetailButton);
 		
 		loadSelectable();
-		loadSelected(true);
 		westPanel.add(panel);
 		westPanel.add(detailList);
 	}
@@ -143,23 +143,41 @@ public class ElaborationSelect extends Composite{
 		VerticalPanel panel = new VerticalPanel();
 	
 		PaperInput inputNumber = new PaperInput();
-		inputNumber.setLabel("Numero");
+		PaperInput inputDate = new PaperInput();
+		PaperInput inputQuantity = new PaperInput();
+		AonComboBox inputWarehouse = new AonComboBox();
+		
+		inputNumber.setLabel("N\u00FAmero de lote");
+		inputNumber.addChangeHandler(new ChangeEventHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				if(inputNumber.getValue()!=null 
+						&& !"".equals(inputNumber.getValue())){
+					inputDate.setVisible(true);
+					inputDate.setFocused(true);
+				} else {
+					inputDate.setVisible(false);
+					inputQuantity.setFocused(true);
+				}
+			}
+		});
 		panel.add(inputNumber);
 		
-		PaperInput inputDate = new PaperInput();
-		inputDate.setLabel("Fecha");
+		inputDate.setLabel("Fecha de lote");
 		inputDate.setValue(getJsElaboration().getDate());
 		inputDate.setMaxlength(10);
+		inputDate.setVisible(false);
 		panel.add(inputDate);
 
-		PaperInput inputQuantity = new PaperInput();
 		inputQuantity.setLabel("Cantidad");
 		inputQuantity.setValue(getJsElaboration().getQuantity()+"");
 		inputQuantity.setMaxlength(10);
+		inputQuantity.setRequired(true);
+		inputQuantity.setErrorMessage("Valor requerido");;
 		panel.add(inputQuantity);
 	
-		AonComboBox inputWarehouse = new AonComboBox();
-		inputWarehouse.setLabel("Almacen");
+		inputWarehouse.setLabel("Almac\u00E9n");
 		inputWarehouse.setItemLabelPath("name");
 		inputWarehouse.setItemValuePath("name");
 		API.getWarehouse().getWarehouses(new AsyncCallback<JSON<JsWarehouse>>() {
@@ -186,11 +204,14 @@ public class ElaborationSelect extends Composite{
 				String quantity = inputQuantity.getValue();
 				JsWarehouse js = (JsWarehouse) inputWarehouse.getSelectedItem();
 				
-				String requestData = "{\"number\":\""+ number +"\","
+				String requestData = "{"
+						+ (number!=null && !"".equals(number)?"\"number\":\""+ number +"\",":"")
 						+ "\"elaboration\":\""+ getJsElaboration().getId() +"\","
 						+ "\"date\":\""+ date +"\","
 						+ "\"quantity\":\""+ quantity +"\","
-						+ "\"warehouse\":\"" + js.getId() + "\"" + "}";
+						+ "\"warehouse\":\"" + js.getId()+ "\"" 
+						+ "}";
+				
 				API.getWarehouse().insertElaborationDetail(requestData, new AsyncCallback<JsElaborationDetail>() {
 					
 					@Override
@@ -206,6 +227,7 @@ public class ElaborationSelect extends Composite{
 				});
 				hide();
 			}
+
 		};
 		dialog.addAutoHidePartner(inputWarehouse.getElementById("overlay"));
 		dialog.setAutoHideEnabled(true);
@@ -248,7 +270,6 @@ public class ElaborationSelect extends Composite{
 		loadSelectable();
 		westPanel.remove(1);
 		westPanel.add(detailList);
-		loadSelected(false);
 	}
 	
 	private void loadSelectable() {
@@ -262,14 +283,6 @@ public class ElaborationSelect extends Composite{
 		selectableItems(map);
 		detailList.addClickHandler(selectableClickHandler());
 		selectedItems(0, true);
-	}
-	
-	private void loadSelected(Boolean isCreate) {
-//		HashMap<String, LinkedList<String>> map2 = new HashMap<>();
-//		LinkedList<String> list = new LinkedList<>();
-//		list.add(jsElaboration.getId() + "");
-//		map2.put("elaboration", list);
-//		selectedItems(jsElaborationDetail.getId(), isCreate);
 	}
 	
 	private void selectedItems(Integer detailId, Boolean isCreate){
@@ -289,22 +302,37 @@ public class ElaborationSelect extends Composite{
 		});
 	}
 	
-	private void selectableItems(HashMap<String, LinkedList<String>> map){
-		API.getWarehouse().getElaborationDetail(jsElaboration.getId(),new AsyncCallback<JSON<JsElaborationDetail>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsElaborationDetail> result) {
-				detailList.clear();
-				result.getData().stream().forEach(js -> detailList
-						.addItem(js.getQuantity() + " uds. ("+js.getItem().getSerialNumber()+") " + js.getDate(), js.getId() + ""));
-				if (result.getData().length() == 1) {
-					selectDetail(0);
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+	private void selectableItems(HashMap<String, LinkedList<String>> map) {
+		API.getWarehouse().getElaborationDetail(jsElaboration.getId(),
+				new AsyncCallback<JSON<JsElaborationDetail>>() {
+
+					@Override
+					public void onSuccess(JSON<JsElaborationDetail> result) {
+						detailList.clear();
+						result.getData()
+								.stream()
+								.forEach(
+										js -> {
+											String serial = js.getItem()
+													.getSerialNumber();
+											String label = js.getQuantity()
+													+ " uds. "
+													+ (serial != null ? "(#"
+															+ serial + ") "
+															: "")
+													+ js.getDate();
+											detailList.addItem(label,
+													js.getId() + "");
+										});
+						if (result.getData().length() == 1) {
+							selectDetail(0);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
 	}
 	
 	private void selectDetail(int idx){
