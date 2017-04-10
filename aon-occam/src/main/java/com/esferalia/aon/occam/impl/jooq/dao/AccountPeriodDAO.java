@@ -44,6 +44,16 @@ public class AccountPeriodDAO {
 			);
 		
 	}
+	public static AccountPeriod getPeriod(AONContext ctx, Date entryDate) {
+		ctx.checkRead();
+		return getPeriods(ctx,
+					p -> p.getDomainProperty().eq(ctx.getDomainId())
+						.and(p.getInitiationDateProperty().le(entryDate) )
+						.and(p.getDeadlineProperty().ge(entryDate) )
+						)
+				.findFirst()
+				.orElse(null);
+	}
 	public static AccountPeriod getActivePeriod(AONContext ctx, Date entryDate) {
 		ctx.checkRead();
 		return getPeriods(ctx,
