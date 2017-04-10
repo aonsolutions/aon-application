@@ -1,0 +1,33 @@
+package net.aonsolutions.aon.gwt.udapa.shared.quality;
+
+import java.util.LinkedList;
+
+public enum CulinaryAptitude {
+	FIVE("5"),
+	SIX("6"),
+	SERVEN("7"),
+	EIGHT("8")
+	;
+	
+	String name;
+	
+	private CulinaryAptitude(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public static LinkedList<String> valueLinkedList(){
+		LinkedList<String> list = new LinkedList<>();
+		for(Integer i = 0; i < values().length; i++){
+			list.add(values()[i].getName());
+		}
+		return list;
+	}
+}

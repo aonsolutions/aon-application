@@ -53,6 +53,7 @@ import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.resources.bean.CustomizeController;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -445,6 +446,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	
 	public boolean isBetaDomain() {
 		return isSnapshotVersion() || isBetaUser();
+	}
+	
+	public boolean isUdapa() {
+	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParamenter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.UDAPA);
+		return ud != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("udapa");
 	}
 
 	public static DomainType getDomainType(Integer domainId) {

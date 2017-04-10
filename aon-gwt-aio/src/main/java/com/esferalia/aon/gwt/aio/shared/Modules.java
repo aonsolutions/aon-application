@@ -8,5 +8,6 @@ public interface Modules {
 	public static final String TEMPLATE = "template";
 	public static final String STAT = "stat";
 	public static final String WAREHOUSE = "warehouse";
+	public static final String UDAPA = "udapa";
 
 }

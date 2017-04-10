@@ -173,6 +173,8 @@ public enum AppParam {
 	,CALL_CENTER_GITHUB_USERNAME
 	,CALL_CENTER_GITHUB_REPOSITORY
 	,CALL_CENTER_GITHUB_TOKEN
+	
+	,UDAPA
 	;
 	
 	public String getValue() {
