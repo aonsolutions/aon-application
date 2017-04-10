@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
@@ -722,8 +723,13 @@ public class AccountingInvoiceDAO {
 	public static AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
 		AccountingInvoice ai = getAccountingInvoiceFromInvoice(ctx, invoiceId);
 		RectificationType oldRectificationType = ai.getInvoice().getRectificationType();
+		AccountPeriod ap = AccountPeriodDAO.getPeriod(ctx, data.getIssueDate());
+		if (ap == null) {
+			throw new AonCoreException("No hay un ejercicio contable v\u00E1lido para la fecha indicada"); 
+		}
 		ai.getAccountEntry().setEntryDate(data.getIssueDate());
 		ai.getAccountEntry().setId(null);
+		ai.getAccountEntry().setPeriod(ap.getId());
 		ai.getAccountEntry().setJournal(null);
 		ai.getAccountEntry().setComments(data.getCause());
 		InvoiceDAO.mergeRecitificationData(ai.getInvoice(), data);
