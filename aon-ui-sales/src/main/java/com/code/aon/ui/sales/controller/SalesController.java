@@ -996,23 +996,16 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public void onManufacture(ActionEvent event) {
 		Sales sales = (Sales) this.getTo();
 		SalesUtils utils = new SalesUtils();
-		List<SalesDetail> manufacturableList = utils.getManufacturableList(sales);
+		List<SalesDetail> manufacturableList = utils.getElaborableList(sales);
 		if (manufacturableList.size() <= 0) {
 			AonUtil.addErrorMessage("No hay ninguna elaboración pendiente");
 			throw new AbortProcessingException(
 					"No hay ninguna elaboración pendiente");
 		} else {
-			manufacture(sales);
 			manufacturableList.forEach(salesDetail -> {
 				utils.createElaboration(salesDetail);
 			});
 		}
-	}
-	
-	@Deprecated
-	private void manufacture(Sales sales) {
-		SalesUtils utils = new SalesUtils();
-		utils.createManufacturingOrder(sales);
 	}
 	
 	

@@ -64,8 +64,8 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		SalesDetail salesDetail = (SalesDetail)event.getController().getTo();
 		SalesUtils utils = new SalesUtils();
-		if(utils.isManufactureDone(salesDetail)){
-			throw new ControllerListenerException("No se puede borrar, el producto está en elaboración.");
+		if(utils.isElaborationDone(salesDetail)){
+			throw new ControllerListenerException("No se puede borrar, el producto está en proceso de elaboración.");
 		}
 	}
 	

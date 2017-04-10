@@ -51,6 +51,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
@@ -292,7 +293,28 @@ public class SalesUtils {
 		
 	}
 	
+	public List<SalesDetail> getElaborableList(Sales sales) {
+		return sales
+				.getDetailList()
+				.stream()
+				.map(to -> (SalesDetail) to)
+				.filter(detail -> detail.getItem().getProduct()
+						.isManufactured()
+						&& !isElaborationDone(detail))
+						.collect(Collectors.toList());
+	}
+	
+	public boolean isElaborationDone(SalesDetail detail) {
+		List<Elaboration> list = AON.getElaborationList(
+				AonUtil.getDomainName(), detail.getDomain(),
+				AonUtil.getRemoteUser(),
+				f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
+						.and(f.getSourceIdProperty().eq(detail.getId())));
+		return list != null && !list.isEmpty();
+	}
+	
 
+	@Deprecated
 	public List<SalesDetail> getManufacturableList(Sales sales) {
 		return sales
 				.getDetailList()
@@ -383,6 +405,7 @@ public class SalesUtils {
 						});
 	}
 	
+	@Deprecated
 	public boolean isManufactureDone(SalesDetail detail) {
 		AONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), detail.getDomain(), AonUtil.getRemoteUser());
