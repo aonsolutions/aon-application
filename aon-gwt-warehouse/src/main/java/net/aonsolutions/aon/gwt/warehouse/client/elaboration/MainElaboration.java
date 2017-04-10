@@ -47,13 +47,12 @@ public class MainElaboration extends AonTemplate {
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(IronIconsElement.SRC, AonComboBoxElement.SRC, PaperButtonElement.SRC,
-				PaperRadioButtonElement.SRC, PaperItemElement.SRC));
-
-		Polymer.whenReady(o -> {
-			super.onModuleLoad();
-			load();
-			return null;
-		});
+				PaperRadioButtonElement.SRC, PaperItemElement.SRC)
+			,o -> {
+				super.onModuleLoad();
+				load();
+				return null;
+			});
 	}
 
 	private void load() {
