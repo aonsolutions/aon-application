@@ -34,7 +34,7 @@
 					<g:HTMLPanel>
 						<i:IronIcon icon="speaker-notes"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Observaciones"
+						<g:InlineLabel text="Comentarios"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>

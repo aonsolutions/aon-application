@@ -49,6 +49,10 @@ public class JsElaboration extends JavaScriptObject {
 											return this.item;
 											}-*/;
 
+	public final native String getDescription() /*-{
+												return this.description;
+												}-*/;
+
 	public final native Double getQuantity() /*-{
 												return this.quantity;
 												}-*/;
@@ -62,8 +66,8 @@ public class JsElaboration extends JavaScriptObject {
 												}-*/;
 
 	public final native JsObject getSource() /*-{
-											return this.source;
-											}-*/;
+												return this.source;
+												}-*/;
 
 	public final native Integer getSourceId() /*-{
 												return this.source_id;

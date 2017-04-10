@@ -32,7 +32,7 @@
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}" />
 					<g:Button ui:field="remove" text="{msg.deleteAction}"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-					<g:Button ui:field="download" text="{msg.download}"
+					<g:Button ui:field="download" text="{msg.print}"
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>

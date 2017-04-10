@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -40,7 +41,6 @@ public class ElaborationPanel extends Composite {
 	@UiField
 	DateBoxEx date;
 	@UiField
-//	ListBox item;
 	HorizontalPanel itemPanel;
 	@UiField
 	ListBox warehouse;
@@ -52,6 +52,7 @@ public class ElaborationPanel extends Composite {
 	private MainElaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
+	ItemBox itemBox;
 
 	public ElaborationPanel(MainElaboration me) {
 		initWidget(binder.createAndBindUi(this));
@@ -69,7 +70,6 @@ public class ElaborationPanel extends Composite {
 		load();
 	}
 	
-	ItemBox pBox;
 
 	private void load() {
 
@@ -96,11 +96,21 @@ public class ElaborationPanel extends Composite {
 				
 				@Override
 				public void onSuccess(JSON<JsItem> result) {
-					pBox = new ItemBox(API);
+					if(jsElaboration.getDescription()==null)
+						itemBox = new ItemBox(API);
+					else
+						itemBox = new ItemBox(API, false);
 					if(result!=null){
-						pBox.set(result.getOneData());
+						itemBox.set(result.getOneData());
 					}
-					itemPanel.add(pBox);
+					itemPanel.add(itemBox);
+					if(jsElaboration.getDescription()!=null){
+						InlineLabel descriptionLabel = new InlineLabel();
+						descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
+						descriptionLabel.addStyleName(AON.AON_CSS.aonBold());
+						descriptionLabel.setText(jsElaboration.getDescription());
+						itemPanel.add(descriptionLabel);
+					}
 				}
 				
 				@Override
@@ -108,8 +118,8 @@ public class ElaborationPanel extends Composite {
 				}
 			});
 		} else {
-			pBox = new ItemBox(API);
-			itemPanel.add(pBox);
+			itemBox = new ItemBox(API);
+			itemPanel.add(itemBox);
 		}
 		
 

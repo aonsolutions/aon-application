@@ -179,7 +179,7 @@ public class Warehouse extends Methods{
 	public void updateElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update/"+id, requestData, callback);
 	}
-	public void updateElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
+	public void updateElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaborationDetail> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/update/"+id, requestData, callback);
 	}
 	
