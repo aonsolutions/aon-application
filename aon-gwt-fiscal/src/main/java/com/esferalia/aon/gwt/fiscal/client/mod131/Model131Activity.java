@@ -439,6 +439,21 @@ public class Model131Activity extends DockLayoutPanel {
 		,"iin","dia"})
 
 	void onFieldChange(ChangeEvent event) {
+		if (com.getValue() == null) com.setValue(0.0,false); 
+		if (tem.getValue() == null) tem.setValue(0,false);
+		if (nue.getValue() == null) nue.setValue(0,false);
+		if (veh.getValue() == null) veh.setValue(0,false);
+		if (emp.getValue() == null) emp.setValue(0,false);
+		if (prc.getValue() == null) prc.setValue(0.0,false);
+		if (value0.getValue() == null) value0.setValue(0.0,false);
+		if (value1.getValue() == null) value1.setValue(0.0,false);
+		if (value2.getValue() == null) value2.setValue(0.0,false);
+		if (value3.getValue() == null) value3.setValue(0.0,false);
+		if (value4.getValue() == null) value4.setValue(0.0,false);
+		if (value5.getValue() == null) value5.setValue(0.0,false);
+		if (value6.getValue() == null) value6.setValue(0.0,false);
+		if (iin.getValue() == null) iin.setValue(0.0,false);
+		if (dia.getValue() == null) dia.setValue(0,false);
 		this.callback.getActivity().setCom(com.getValue());
 		this.callback.getActivity().setTem(tem.getValue());
 		this.callback.getActivity().setNue(nue.getValue());

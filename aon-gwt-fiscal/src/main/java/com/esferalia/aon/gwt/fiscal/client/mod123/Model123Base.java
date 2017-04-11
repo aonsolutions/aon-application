@@ -208,6 +208,7 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				if (event.getValue() == null) input.setValue(0.0, false);
 				double result = callback.getFiscalModel().getResultAmount(key);
 				double adjust = callback.getFiscalModel().getAdjustAmount(key);
 				double amount = input.getValue();
