@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
+import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -42,6 +43,32 @@ public class AccountingInvoiceCalculationTest {
 	}
 	
 	@Test
+	public void test0() throws IOException {
+		fail = 0;
+		registries = 0;
+		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountCodeProperty().eq("430000001"))
+			.forEach( reg -> doTest0(reg.getId(), reg.getType().getInvoiceType() ));
+	}	
+	private void doTest0(Integer registry, InvoiceType type)  {
+		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, type, registry, null, new Date());
+		InvoiceVAT vat = ai.getFirstVat();
+
+		
+		vat.setBase(31.75);
+		vat.setPercentage(10.00);
+		vat.setQuota(3.17);
+		double gap = InvoiceCalculator.getQuotaGap(vat, 3.17);
+		
+		System.out.println( "vat : " + vat.getQuota());
+		System.out.println( "gap  : " + gap );
+		vat.setQuotaEdited(AonMathUtils.isNotZero(gap));
+		InvoiceCalculator.calculate(ai, vat);
+		System.out.println( "vat : " + vat.getQuota());
+		
+		
+	}	
+
+	//	@Test
 	public void test1() throws IOException {
 		fail = 0;
 		registries = 0;

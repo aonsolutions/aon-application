@@ -116,21 +116,21 @@ public class InvoiceCalculator {
 	}
 	public static double getQuotaGap(InvoiceVAT vat, Double quota) {
 		if (quota == null) quota = 0.0;
-		return AonMathUtils.absRounded(quota - (vat.getBase() * vat.getPercentage() / 100 ));		
+		return AonMathUtils.round(quota - AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 )); 		
 	}
 	public static double getSurchargeQuota(InvoiceVAT vat) {
 		return AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 );		
 	}
 	public static double getSurchargeQuotaGap(InvoiceVAT vat, Double surchargeQuota) {
 		if (surchargeQuota == null) surchargeQuota = 0.0;
-		return AonMathUtils.absRounded(surchargeQuota - (vat.getBase() * vat.getSurcharge() / 100 ));		
+		return AonMathUtils.round(surchargeQuota - AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100));		
 	}
 	public static double getDeductibleQuota(InvoiceVAT vat) {
 		return AonMathUtils.round( (vat.getBase() * vat.getPercentage() / 100) * vat.getDeductiblePercent() / 100 );		
 	}
 	public static double getDeductibleQuotaGap(InvoiceVAT vat, Double deductibleQuota) {
 		if (deductibleQuota == null) deductibleQuota = 0.0;
-		return AonMathUtils.absRounded(deductibleQuota - (vat.getQuota() * vat.getDeductiblePercent() / 100));		
+		return AonMathUtils.round(deductibleQuota - AonMathUtils.round(vat.getQuota() * vat.getDeductiblePercent() / 100));		
 	}
 	
 
