@@ -37,6 +37,14 @@
 						<f:selectItem itemLabel="#{bundle.conexflow_refund_fail}" itemValue="8" />		
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="ProjectReservation_conexFlowAmount" 
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="ProjectReservation_conexFlowAmount"
+						value="#{searchController.conexFlowAmount}"
+						size="10" maxlength="8">
+						<f:validateDoubleRange />
+					</aon:inputText>
+
 					<aon:outputLabel value="#{bundle.aon_operation_date}" />
 					<aon:div>
 						<aon:outputLabel for="ProjectReservation_conexFlowDate-From"

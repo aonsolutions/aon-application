@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -35,6 +37,7 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener imple
 	private Customer agency;
 	private Tariff tariff;
 	private Integer conexFlowOperation;
+	private String conexFlowAmount;
 	private Date conexFlowDateFrom;
 	private Date conexFlowDateTo;
 
@@ -74,6 +77,14 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener imple
 		this.conexFlowOperation = conexFlowOperation;
 	}
 
+	public String getConexFlowAmount() {
+		return conexFlowAmount;
+	}
+
+	public void setConexFlowAmount(String conexFlowAmount) {
+		this.conexFlowAmount = conexFlowAmount;
+	}
+
 	public Date getConexFlowDateFrom() {
 		return conexFlowDateFrom;
 	}
@@ -97,6 +108,7 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener imple
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setTariff((Tariff)BeanManager.getManagerBean(Tariff.class).createNewTo());
 		setConexFlowOperation(null);
+		setConexFlowAmount(null);
 		setConexFlowDateFrom(null);
 		setConexFlowDateTo(null);
 
@@ -176,6 +188,17 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener imple
 					}
 				}
 			}
+		}
+		if (StringUtils.isNotBlank(getConexFlowAmount())) {
+			String alias = getController().resolveAlias("ProjectReservation.attachments.description");
+			if (getConexFlowAmount().contains(".")) {
+				if (getConexFlowAmount().endsWith("0") && !getConexFlowAmount().endsWith(".0")) {
+					setConexFlowAmount(StringUtils.substring(getConexFlowAmount(), 0, getConexFlowAmount().indexOf(".")+1));
+				}
+			} else {
+				setConexFlowAmount(getConexFlowAmount() + ".0");
+			}
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "%#" + getConexFlowAmount() + "%"));
 		}
 		if (getConexFlowDateFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachDate"), getConexFlowDateFrom());

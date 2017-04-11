@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
@@ -46,6 +47,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 	private ReservationCheckStatus[] reservationCheckStatuses;
 	private ReservationStatus[] reservationStatuses;
 	private Integer conexFlowOperation;
+	private String conexFlowAmount;
 	private Date conexFlowDateFrom;
 	private Date conexFlowDateTo;
 
@@ -137,6 +139,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		this.conexFlowOperation = conexFlowOperation;
 	}
 
+	public String getConexFlowAmount() {
+		return conexFlowAmount;
+	}
+
+	public void setConexFlowAmount(String conexFlowAmount) {
+		this.conexFlowAmount = conexFlowAmount;
+	}
+
 	public Date getConexFlowDateFrom() {
 		return conexFlowDateFrom;
 	}
@@ -166,6 +176,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		setReservationCheckStatuses(null);
 		setReservationStatuses(null);
 		setConexFlowOperation(null);
+		setConexFlowAmount(null);
 		setConexFlowDateFrom(null);
 		setConexFlowDateTo(null);
 	}
@@ -266,6 +277,17 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 					}
 				}
 			}
+		}
+		if (StringUtils.isNotBlank(getConexFlowAmount())) {
+			String alias = getController().resolveAlias("ProjectReservation.attachments.description");
+			if (getConexFlowAmount().contains(".")) {
+				if (getConexFlowAmount().endsWith("0") && !getConexFlowAmount().endsWith(".0")) {
+					setConexFlowAmount(StringUtils.substring(getConexFlowAmount(), 0, getConexFlowAmount().indexOf(".")+1));
+				}
+			} else {
+				setConexFlowAmount(getConexFlowAmount() + ".0");
+			}
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(alias, "%#" + getConexFlowAmount() + "%"));
 		}
 		if (getConexFlowDateFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getController().resolveAlias("ProjectReservation.attachments.attachDate"), getConexFlowDateFrom());
