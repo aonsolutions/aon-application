@@ -347,6 +347,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		accept.setVisible(false);
 		remove.setVisible(false);
 		audit.setVisible(false);
+		duplicate.setVisible(false);
 	}
 
 	public static native String getCurrentDomainName()
