@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.code.aon.AonVersion;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.PosShift;
 import com.code.aon.product.Item;
 import com.code.aon.registry.RegistryBank;
@@ -100,6 +101,10 @@ public class AdvanceInvoiceTo implements Serializable {
 	}
 	public void setPosShift(PosShift posShift) {
 		this.posShift = posShift;
+	}
+
+	public double getCashAmount() {
+		return (getPayMethod() != null && getPayMethod().getType() == PayMethodType.CASH_BASIS) ? amount : 0;
 	}
 
 }

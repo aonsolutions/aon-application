@@ -42,9 +42,11 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.TariffAddInfo;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -548,6 +550,21 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_VAT_QUOTA));
 		Object result = invoiceBean.getUniqueResult(projection, criteria);
 		return (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
+	}
+
+	public double getDailyRegistryFinanceCashAmount(Date date, Registry registry) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), Boolean.FALSE);
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE), date);
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_REGISTRY_DOCUMENT), registry.getDocument());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_REGISTRY_DOCUMENT_TYPE), registry.getDocumentType());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_REGISTRY_DOCUMENT_COUNTRY), registry.getDocumentCountry());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
+		Projection projection = Projection.sum(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT));
+		Object result = financeBean.getUniqueResult(projection, criteria);
+		return (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
+		
 	}
 
 	public double getReservationCalculatedTaxableBase(ProjectReservation reservation) {
@@ -1602,6 +1619,14 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_PAY_METHOD, domain);
 		if (appParam != null && StringUtils.isNotBlank(appParam.getValue())) {
 			return (PayMethod)BeanManager.getManagerBean(PayMethod.class).get(Integer.parseInt(appParam.getValue()));
+		}
+		return null;
+	}
+
+	public Double obtainDailyCashLimit() {
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.PMS_DAILY_CASH_LIMIT, domain);
+		if (appParam != null && NumberUtils.isNumber(appParam.getValue())) {
+			return NumberUtils.toDouble(appParam.getValue());
 		}
 		return null;
 	}

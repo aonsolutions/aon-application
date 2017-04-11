@@ -228,6 +228,13 @@
 					<f:selectItems value="#{configCollections.salesTariffs}" />
 				</aon:selectOneMenu>
 
+				<aon:outputLabel for="PMS_Daily_Cash_Limit"
+					value="#{bundle.pms_daily_cash_limit}" />
+				<aon:inputText id="PMS_Daily_Cash_Limit"
+					value="#{pmsParams.dailyCashLimit}" size="10" maxlength="8">
+					<f:validateDoubleRange />
+				</aon:inputText>
+
 				<aon:outputLabel for="PMS_Clean_Days"
 					value="#{bundle.pms_room_clean_check_days}" />
 				<rich:inputNumberSpinner id="PMS_Clean_Days"

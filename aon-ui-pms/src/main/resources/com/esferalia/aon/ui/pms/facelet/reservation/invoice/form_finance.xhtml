@@ -76,7 +76,7 @@
 					<aon:outputText value="&#160;" />
 					<aon:outputText value="#{bundle.pms_total_finances}:" styleClass="aon-bold" />
 					<aon:div>
-						<aon:outputText value="#{controller.financesAmount}" styleClass="aon-bold">
+						<aon:outputText value="#{controller.reservationInvoiceTo.financesAmount}" styleClass="aon-bold">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 						<aon:outputText value=" €" styleClass="aon-bold" />

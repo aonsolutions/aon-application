@@ -70,6 +70,7 @@ import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
@@ -80,6 +81,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoiceController.class);
 
+	private ReservationUtils reservationUtils;
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
 	private Invoice invoiceToRectify;
@@ -88,6 +90,13 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	
 	private IControllerListener currentReservationFilter;
 	
+	public ReservationUtils getReservationUtils() {
+		if (reservationUtils == null) {
+			reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		}
+		return reservationUtils;
+	}
+
 	public ReservationInvoiceTo getReservationInvoiceTo() {
 		return reservationInvoiceTo;
 	}
@@ -476,7 +485,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	public void onNewFinance(ActionEvent event) {
 		Finance finance = new Finance();
-		finance.setAmount(CommonUtil.round(getServicesAmount() - getFinancesAmount()));
+		finance.setAmount(CommonUtil.round(getServicesAmount() - getReservationInvoiceTo().getFinancesAmount()));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -491,17 +500,9 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
         previousFinance.setAmount(CommonUtil.round(previousFinance.getAmount() + financeToRemove.getAmount()));
 	}
 
-	public double getFinancesAmount() {
-		double amount = 0;
-		for (Finance finance : getReservationInvoiceTo().getFinances()) {
-			amount += CommonUtil.round(finance.getAmount());
-		}
-		return CommonUtil.round(amount);
-	}
-
 	public void onInvoice(ActionEvent event) {
-		if (validateInvoice()) {
-			try {
+		try {
+			if (validateInvoice()) {
 				ProjectReservation reservation = null;
 				if (getReservationInvoiceTo().getRoom() != null) {
 					reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
@@ -511,19 +512,19 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				getReservationInvoiceTo().setComments(obtainInvoiceComments(getReservationInvoiceTo().getServices()));
 				getReservationInvoiceTo().setDirectCustomer(true);
 				getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
-
+		
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
-
+		
 				onEditSearch(event);
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
 				onSearch(event);
 				getModel().setRowIndex(0);
 				onSelect(event);
-			} catch (ManagerBeanException ex) {
-				AonUtil.addErrorMessage(ex.getMessage());
-				throw new AbortProcessingException(ex.getMessage(), ex);
 			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 
@@ -537,24 +538,36 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		return comments;
 	}
 
-	private boolean validateInvoice() {
+	private boolean validateInvoice() throws ManagerBeanException {
 		if (!isFinancesAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
 		if (!isPayMethodOk()) {
 			String msg = "La Forma de Pago es obligatoria.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+		Double dailyCashLimit = getReservationUtils().obtainDailyCashLimit();
+		if (dailyCashLimit != null) {
+			double cashAmount = getReservationInvoiceTo().getFinancesCashAmount();
+			if (cashAmount != 0) {
+				Registry registry = getReservationInvoiceTo().getRegistry();
+				cashAmount += getReservationUtils().getDailyRegistryFinanceCashAmount(getReservationInvoiceTo().getIssueDate(), registry);
+				if (cashAmount > dailyCashLimit) {
+					String msg = "No se puede Facturar. El importe en Efectivo supera el límite diario.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
 		}
 
 		return isServicesDatesOk();
 	}
 
 	public boolean isFinancesAmountOk() {
-		return CommonUtil.round(getServicesAmount() - getFinancesAmount()) == 0;
+		return CommonUtil.round(getServicesAmount() - getReservationInvoiceTo().getFinancesAmount()) == 0;
 	}
 
 	public boolean isPayMethodOk() {

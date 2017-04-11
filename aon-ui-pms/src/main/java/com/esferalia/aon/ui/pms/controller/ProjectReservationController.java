@@ -83,6 +83,7 @@ import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
@@ -1117,6 +1118,19 @@ public class ProjectReservationController extends BasicController implements IPm
 				throw new AbortProcessingException(msg);
 			}
 		}
+		Double dailyCashLimit = getReservationUtils().obtainDailyCashLimit();
+		if (dailyCashLimit != null) {
+			double cashAmount = getAdvanceInvoiceTo().getCashAmount();
+			if (cashAmount != 0) {
+				Registry registry = getReservationInvoiceTo().getRegistry();
+				cashAmount += getReservationUtils().getDailyRegistryFinanceCashAmount(getAdvanceInvoiceTo().getIssueDate(), registry);
+				if (cashAmount > dailyCashLimit) {
+					String msg = "No se puede generar Anticipo. El importe en Efectivo supera el límite diario.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
+		}
 		return true;
 	}
 
@@ -1442,7 +1456,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				finance.setPayMethod(payMethod.getPayment());
 			}
 		}
-		finance.setAmount(CommonUtil.round(getReservationTotal(reservation) - reservation.getAdvancedAmount() - getFinancesAmount()));
+		finance.setAmount(CommonUtil.round(getReservationTotal(reservation) - reservation.getAdvancedAmount() - getReservationInvoiceTo().getFinancesAmount()));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -1463,14 +1477,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		} else {
 			return getReservationUtils().getReservationCalculatedTotal(reservation);
 		}
-	}
-
-	public double getFinancesAmount() {
-		double amount = 0;
-		for (Finance finance : getReservationInvoiceTo().getFinances()) {
-			amount += CommonUtil.round(finance.getAmount());
-		}
-		return CommonUtil.round(amount);
 	}
 
 	public void onInvoice(ActionEvent event) {
@@ -1509,17 +1515,28 @@ public class ProjectReservationController extends BasicController implements IPm
 				throw new AbortProcessingException(msg);
 			}
 		}
-
 		if (!isFinancesAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
 		if (!isPayMethodOk()) {
 			String msg = "La Forma de Pago es obligatoria.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+		Double dailyCashLimit = getReservationUtils().obtainDailyCashLimit();
+		if (dailyCashLimit != null) {
+			double cashAmount = getReservationInvoiceTo().getFinancesCashAmount();
+			if (cashAmount != 0) {
+				Registry registry = getReservationInvoiceTo().getRegistry();
+				cashAmount += getReservationUtils().getDailyRegistryFinanceCashAmount(getReservationInvoiceTo().getIssueDate(), registry);
+				if (cashAmount > dailyCashLimit) {
+					String msg = "No se puede Facturar. El importe en Efectivo supera el límite diario.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
 		}
 
 		return true;
@@ -1527,7 +1544,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public boolean isFinancesAmountOk() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		return CommonUtil.round(getReservationTotal(reservation) - reservation.getAdvancedAmount() - getFinancesAmount()) == 0;
+		return CommonUtil.round(getReservationTotal(reservation) - reservation.getAdvancedAmount() - getReservationInvoiceTo().getFinancesAmount()) == 0;
 	}
 
 	public boolean isPayMethodOk() {

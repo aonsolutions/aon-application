@@ -9,6 +9,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.PosShift;
@@ -247,6 +248,23 @@ public class ReservationInvoiceTo implements Serializable {
 	public Finance getLastFinance() {
 		return getFinances().get(getFinancesCount()-1);
 	}
+	public double getFinancesAmount() {
+		double amount = 0;
+		for (Finance finance : getFinances()) {
+			amount += CommonUtil.round(finance.getAmount());
+		}
+		return CommonUtil.round(amount);
+	}
+	public double getFinancesCashAmount() {
+		double amount = 0;
+		for (Finance finance : getFinances()) {
+			if (finance.getPayMethod() != null && finance.getPayMethod().getType() == PayMethodType.CASH_BASIS) {
+				amount += CommonUtil.round(finance.getAmount());
+			}
+		}
+		return CommonUtil.round(amount);
+	}
+
 
 	public static class HotelService implements ICalculable, Serializable {
 		

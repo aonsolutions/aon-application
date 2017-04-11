@@ -53,6 +53,7 @@ public class PmsParamsController implements Serializable {
 	private String productionReportOpenHour;
 	private String productionReportCloseHour;
 	private Tariff undefinedTariff;
+	private String dailyCashLimit;
 	private String cleanDays;
 	private String policeCount;
 
@@ -180,13 +181,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_UNDEFINED_ROOM_ITEM, appParam);
 	}
 	private void initializeUndefinedRoomItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_UNDEFINED_ROOM_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setUndefinedRoomItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setUndefinedRoomItem(null);
-			}
+		try {
+			setUndefinedRoomItem(obtainItem(getParameters().get(AppParam.PMS_UNDEFINED_ROOM_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setUndefinedRoomItem(null);
 		}
 	}
 
@@ -204,13 +202,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_UNDEFINED_SERVICE_ITEM, appParam);
 	}
 	private void initializeUndefinedServiceItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_UNDEFINED_SERVICE_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setUndefinedServiceItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setUndefinedServiceItem(null);
-			}
+		try {
+			setUndefinedServiceItem(obtainItem(getParameters().get(AppParam.PMS_UNDEFINED_SERVICE_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setUndefinedServiceItem(null);
 		}
 	}
 
@@ -228,13 +223,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_ADVANCE_ITEM, appParam);
 	}
 	private void initializeAdvanceItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_ADVANCE_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setAdvanceItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setAdvanceItem(null);
-			}
+		try {
+			setAdvanceItem(obtainItem(getParameters().get(AppParam.PMS_ADVANCE_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setAdvanceItem(null);
 		}
 	}
 
@@ -252,13 +244,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_EARLY_CHECKOUT_ITEM, appParam);
 	}
 	private void initializeEarlyCheckOutItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_EARLY_CHECKOUT_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setEarlyCheckOutItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setEarlyCheckOutItem(null);
-			}
+		try {
+			setEarlyCheckOutItem(obtainItem(getParameters().get(AppParam.PMS_EARLY_CHECKOUT_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setEarlyCheckOutItem(null);
 		}
 	}
 
@@ -276,13 +265,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_NOSHOW_ITEM, appParam);
 	}
 	private void initializeNoShowItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NOSHOW_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setNoShowItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setNoShowItem(null);
-			}
+		try {
+			setNoShowItem(obtainItem(getParameters().get(AppParam.PMS_NOSHOW_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setNoShowItem(null);
 		}
 	}
 
@@ -300,13 +286,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_CANCELLATION_ITEM, appParam);
 	}
 	private void initializeCancellationItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_CANCELLATION_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setCancellationItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setCancellationItem(null);
-			}
+		try {
+			setCancellationItem(obtainItem(getParameters().get(AppParam.PMS_CANCELLATION_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setCancellationItem(null);
 		}
 	}
 
@@ -324,13 +307,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_TOURIST_TAX_ITEM, appParam);
 	}
 	private void initializeTouristTaxItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_TOURIST_TAX_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setTouristTaxItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setTouristTaxItem(null);
-			}
+		try {
+			setTouristTaxItem(obtainItem(getParameters().get(AppParam.PMS_TOURIST_TAX_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setTouristTaxItem(null);
 		}
 	}
 
@@ -348,13 +328,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_BEST_PRICE_DISCOUNT_ITEM, appParam);
 	}
 	private void initializeBestPriceItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_BEST_PRICE_DISCOUNT_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setBestPriceItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setBestPriceItem(null);
-			}
+		try {
+			setBestPriceItem(obtainItem(getParameters().get(AppParam.PMS_BEST_PRICE_DISCOUNT_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setBestPriceItem(null);
 		}
 	}
 
@@ -372,13 +349,10 @@ public class PmsParamsController implements Serializable {
 		getParameters().put(AppParam.PMS_AUTO_DISCOUNT_ITEM, appParam);
 	}
 	private void initializeAutoDiscountItem() {
-		ApplicationParameter appParam = getParameters().get(AppParam.PMS_AUTO_DISCOUNT_ITEM);
-		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
-			try {
-				setAutoDiscountItem(getReservationUtils().obtainItem(appParam.getValue()));
-			} catch (ManagerBeanException ex) {
-				setAutoDiscountItem(null);
-			}
+		try {
+			setAutoDiscountItem(obtainItem(getParameters().get(AppParam.PMS_AUTO_DISCOUNT_ITEM)));
+		} catch (ManagerBeanException ex) {
+			setAutoDiscountItem(null);
 		}
 	}
 
@@ -530,6 +504,26 @@ public class PmsParamsController implements Serializable {
 		}
 	}
 
+	public String getDailyCashLimit() {
+		return dailyCashLimit;
+	}
+	public void setDailyCashLimit(String dailyCashLimit) {
+		this.dailyCashLimit = dailyCashLimit;
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_DAILY_CASH_LIMIT);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_DAILY_CASH_LIMIT.getValue());
+		}
+		appParam.setValue(dailyCashLimit);
+		getParameters().put(AppParam.PMS_DAILY_CASH_LIMIT, appParam);
+	}
+	private void initializeDailyCashLimit() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_DAILY_CASH_LIMIT);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			setDailyCashLimit(appParam.getValue());
+		}
+	}
+
 	public String getCleanDays() {
 		return cleanDays;
 	}
@@ -613,11 +607,20 @@ public class PmsParamsController implements Serializable {
 		initializeProductionReportOpenHour();
 		initializeProductionReportCloseHour();
 		initializeUndefinedTariff();
+		initializeDailyCashLimit();
 		initializeCleanDays();
 		initializePoliceCount();
 	}
 
-	public void onAccept(ActionEvent event) throws ManagerBeanException{
+	private Item obtainItem(ApplicationParameter appParam) throws ManagerBeanException {
+		Item item = null;
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			item = getReservationUtils().obtainItem(appParam.getValue());
+		}
+		return (item != null) ? item : (Item)BeanManager.getManagerBean(Item.class).createNewTo();
+	}
+
+	public void onAccept(ActionEvent event) throws ManagerBeanException {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		for (ApplicationParameter param : getParameters().values()) {
 			appParamBean.insertOrUpdate(param);
