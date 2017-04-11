@@ -1,6 +1,7 @@
 package com.code.aon.ui.sales.event;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -129,10 +130,10 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 		Integer[] ids = sales.getDetailList().stream()
 				.map(to -> (SalesDetail) to).mapToInt(SalesDetail::getId)
 				.boxed().toArray(Integer[]::new);
-		List<Elaboration> list = AON.getElaborationList(AonUtil.getDomainName(), sales.getDomain(),
+		List<Elaboration> list = AON.getElaborationStream(AonUtil.getDomainName(), sales.getDomain(),
 				AonUtil.getRemoteUser(),
 				f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
-						.and(f.getSourceIdProperty().in(ids)));
+						.and(f.getSourceIdProperty().in(ids))).collect(Collectors.toList());
 		if(list!=null && list.size()>0){
 			throw new ControllerListenerException("No se puede borrar, hay productos que están en proceso de elaboración.");
 		}

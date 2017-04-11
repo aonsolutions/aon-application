@@ -151,6 +151,9 @@ public class DBWarehouse {
 		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
 			elaboration.setItem(new Item().setId(json.getInt(MSG.ITEM)));
 		}
+		if (json.opt(MSG.DESCRIPTION) != null && !MSG.EMPTY.equals(json.opt(MSG.DESCRIPTION))) {
+			elaboration.setDescription(json.getString(MSG.DESCRIPTION));
+		}
 		if (json.opt(MSG.QUANTITY) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {
 			elaboration.setQuantity(json.getDouble(MSG.QUANTITY));
@@ -167,6 +170,9 @@ public class DBWarehouse {
 		}
 		if (json.opt(MSG.COMMENTS) != null) {
 			elaboration.setComments(json.getString(MSG.COMMENTS));
+		}
+		if (json.opt(MSG.REMARKS) != null) {
+			elaboration.setRemarks(json.getString(MSG.REMARKS));
 		}
 
 		return elaboration;

@@ -3,8 +3,9 @@ package com.esferalia.aon.occam.api.model;
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.AuditProperties;
 
-public interface ElaborationDetailProperties {
+public interface ElaborationDetailProperties extends AuditProperties {
 
 	Property<Integer> getIdProperty();
 	Property<Integer> getDomainProperty();
@@ -14,10 +15,5 @@ public interface ElaborationDetailProperties {
 	Property<Double> getQuantityProperty();
 	Property<Integer> getWarehouseProperty();
 	Property<String> getAddInfoProperty();
-	Property<String> getCreationUserProperty();
-	Property<Timestamp> getCreationDateProperty();
-	Property<String> getModificationUserProperty();
-	Property<Timestamp> getModificationDateProperty();
-	
 	
 }

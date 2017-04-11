@@ -596,8 +596,10 @@ public class WarehouseServlet extends HttpServlet{
     
     private JSONArray getElaborationList(Domain domain,String login, Map<String, String[]> map){
     	JSONArray array = new JSONArray();
-    	AON.getFullElaborationList(domain.getName(), domain.getId(), login, f -> elaborationFilter(domain, map, f))
-    		.forEach(elaboration -> array.put(ToJSON.elaborationToJSON(elaboration)));
+    	AON.getElaborationStream(domain.getName(), domain.getId(), login, f -> elaborationFilter(domain, map, f))
+    			.forEach(elaboration -> {
+    				array.put(ToJSON.elaborationToJSON(elaboration));
+				});
     	return array;
     }
     
@@ -673,6 +675,16 @@ public class WarehouseServlet extends HttpServlet{
 				fwh = fwh.or(f.getWarehouseProperty().eq(Integer.parseInt(filterMap.get(MSG.WAREHOUSE)[i])));
 			}
 			filter = filter.and(fwh);
+		}
+		if(filterMap.containsKey("per_page")){
+			String per_page = filterMap.get("per_page")[0];
+			Integer perPage = Integer.parseInt(per_page);
+			filter.perPage(perPage);
+		}
+		if(filterMap.containsKey("page")){
+			String page_str = filterMap.get("page")[0];
+			Integer page = Integer.parseInt(page_str);
+			filter.page(page);
 		}
 
 		return filter;

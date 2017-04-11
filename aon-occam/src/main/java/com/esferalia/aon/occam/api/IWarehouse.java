@@ -130,7 +130,7 @@ public interface IWarehouse {
 	// 	****************************** ELABORATION ****
 	// 	***********************************************
 	Elaboration getElaboration(AONContext ctx, Integer id);
-	List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter);
+	Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter);
 	ElaborationDetail getElaborationDetail(AONContext ctx, Integer id);
 	List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
