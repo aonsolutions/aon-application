@@ -53,6 +53,7 @@ public class ElaborationPanel extends Composite {
 	private API API;
 	private JsElaboration jsElaboration;
 	ItemBox itemBox;
+	InlineLabel descriptionLabel = new InlineLabel();
 
 	public ElaborationPanel(MainElaboration me) {
 		initWidget(binder.createAndBindUi(this));
@@ -101,11 +102,13 @@ public class ElaborationPanel extends Composite {
 					else
 						itemBox = new ItemBox(API, false);
 					if(result!=null){
-						itemBox.set(result.getOneData());
+						JsItem jsItem = result.getOneData();
+						itemBox.set(jsItem);
+						descriptionLabel.setText(jsItem.getName());
 					}
 					itemPanel.add(itemBox);
-					if(jsElaboration.getDescription()!=null){
-						InlineLabel descriptionLabel = new InlineLabel();
+					if(jsElaboration.getDescription()!=null
+						&& !"".equals(jsElaboration.getDescription())){
 						descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
 						descriptionLabel.addStyleName(AON.AON_CSS.aonBold());
 						descriptionLabel.setText(jsElaboration.getDescription());

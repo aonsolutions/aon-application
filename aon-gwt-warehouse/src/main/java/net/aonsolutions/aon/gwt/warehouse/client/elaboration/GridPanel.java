@@ -5,13 +5,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,9 +28,11 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -47,16 +55,56 @@ public class GridPanel extends Composite {
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) DataGrid<JsElaboration> dataGrid; 
+	@UiField(provided = true) CustomDataGrid<JsElaboration> dataGrid; 
 	
 	MainElaboration elaboration;
 	API API;
+	Integer cont = 0;
+	
 	public GridPanel(MainElaboration elaboration, LinkedList<JsElaboration> list) {
 		this.elaboration = elaboration;
 		this.API = elaboration.API; 
 		
-		dataGrid = new DataGrid<JsElaboration>(Integer.MAX_VALUE, resources,
+		dataGrid = new CustomDataGrid<JsElaboration>(Integer.MAX_VALUE, resources,
 				JsElaboration.PROVIDES_KEY);
+		
+		ScrollPanel scrollPanel = dataGrid.getScrollPanel();
+		scrollPanel.addScrollHandler(new ScrollHandler() {
+			
+			@Override
+			public void onScroll(ScrollEvent event) {
+				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
+					Integer page = 2;
+					if(elaboration.getFilterMap().containsKey("page")){
+						page = Integer.parseInt(elaboration.getFilterMap().get("page").get(0)) + 1;
+					}
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page +"");
+					elaboration.getFilterMap().put("page", list);
+					API.getWarehouse().getElaborationList(elaboration.getFilterMap(), new AsyncCallback<JSON<JsElaboration>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsElaboration> result) {
+							dataProvider.getList().addAll(result.getData().toLinkedList());
+							dataGrid.redraw();
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});	
+				}
+			}
+		});
+		
+		dataGrid.addHandler(new MouseOverHandler() {
+			
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				if(cont < 2){
+					dataGrid.redraw();
+					cont++;
+				}
+			}
+		}, MouseOverEvent.getType());
 	
 		initWidget(binder.createAndBindUi(this));
 
@@ -126,7 +174,7 @@ public class GridPanel extends Composite {
 
 			@Override
 			public String getValue(JsElaboration object) {
-				return object.getSeries() + "/" + object.getNumber();
+				return (object.getSeries()!=null?object.getSeries():"") + "/" + object.getNumber();
 			}
 		
 		};
@@ -136,28 +184,29 @@ public class GridPanel extends Composite {
 			
 			@Override
 			public int compare(JsElaboration o1, JsElaboration o2) {
-				String a = o1.getSeries() + "/" + o1.getNumber(); 
-				String b = o2.getSeries() + "/" + o2.getNumber(); 
+				String a = (o1.getSeries()!=null?o1.getSeries():"") + "/" + o1.getNumber(); 
+				String b = (o2.getSeries()!=null?o2.getSeries():"") + "/" + o2.getNumber(); 
 				return a.compareTo(b);
 			}
 		});
 
-		/** Item Column **/
-		Column<JsElaboration,String> itemColumn = new Column<JsElaboration, String>(new TextCell()) {
+		/** Description Column **/
+		Column<JsElaboration,String> descriptionColumn = new Column<JsElaboration, String>(new TextCell()) {
 			
 			@Override
 			public String getValue(JsElaboration object) {
-				return object.getItem() != null ? object.getItem().getName() : "";
+				return (object.getDescription()!=null && !"".equals(object.getDescription())) 
+					? object.getDescription() : object.getItem().getName();
 			}
 		};
 		
-		itemColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		itemColumn.setSortable(true); 
-		sortHandler.setComparator(itemColumn,new Comparator<JsElaboration>() {
+		descriptionColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		descriptionColumn.setSortable(true); 
+		sortHandler.setComparator(descriptionColumn,new Comparator<JsElaboration>() {
 			
 			@Override
 			public int compare(JsElaboration o1, JsElaboration o2) {
-				return o1.getItem().getName().compareTo(o2.getItem().getName());
+				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
 		
@@ -240,24 +289,18 @@ public class GridPanel extends Composite {
 		});
 
 		dataGrid.addColumn(nameColumn, AON.MSG.series() + "/" + AON.MSG.number());
-		dataGrid.addColumn(itemColumn, "Producto");
+		dataGrid.addColumn(descriptionColumn, AON.MSG.description());
 		dataGrid.addColumn(quantityColumn, AON.MSG.quantity());
 		dataGrid.addColumn(warehouseColumn, "Almacen");
 		dataGrid.addColumn(dateColumn, AON.MSG.date());
 		dataGrid.addColumn(statusColumn, AON.MSG.status());
 		
-		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
-		dataGrid.setColumnWidth(itemColumn, 40, Unit.PCT);
+		dataGrid.setColumnWidth(nameColumn, 10, Unit.PCT);
+		dataGrid.setColumnWidth(descriptionColumn, 40, Unit.PCT);
 		dataGrid.setColumnWidth(quantityColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(warehouseColumn, 15, Unit.PCT);
+		dataGrid.setColumnWidth(warehouseColumn, 20, Unit.PCT);
 		dataGrid.setColumnWidth(dateColumn, 10, Unit.PCT);
 		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
-				
-		dataGrid.getColumnSortList().push(nameColumn);
-		dataGrid.getColumnSortList().push(itemColumn);
-		dataGrid.getColumnSortList().push(quantityColumn);
-		dataGrid.getColumnSortList().push(warehouseColumn);
-		dataGrid.getColumnSortList().push(statusColumn);
-		dataGrid.getColumnSortList().push(dateColumn);
+		
 	}
 }

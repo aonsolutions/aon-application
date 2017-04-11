@@ -234,15 +234,15 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public ElaborationDetail getElaborationDetail(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDAO.getElaborationDetail(ctx, id));
+			ElaborationDAO.getElaborationDetail(ctx, id));
 	}
 
 	
 	
 	@Override
-	public List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter){
+	public Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-		ElaborationDAO.getElaborationList(ctx, filter));
+			ElaborationDAO.getElaborationStream(ctx, filter));
 	}
 	@Override
 	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id){

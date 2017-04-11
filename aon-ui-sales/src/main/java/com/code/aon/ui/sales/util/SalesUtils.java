@@ -305,14 +305,15 @@ public class SalesUtils {
 	}
 	
 	public boolean isElaborationDone(SalesDetail detail) {
-		List<Elaboration> list = AON.getElaborationList(
-				AonUtil.getDomainName(), detail.getDomain(),
+		List<Elaboration> list = AON.getElaborationStream(
+				AonUtil.getDomainName(),
+				detail.getDomain(),
 				AonUtil.getRemoteUser(),
 				f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
-						.and(f.getSourceIdProperty().eq(detail.getId())));
+						.and(f.getSourceIdProperty().eq(detail.getId())))
+				.collect(Collectors.toList());
 		return list != null && !list.isEmpty();
 	}
-	
 
 	@Deprecated
 	public List<SalesDetail> getManufacturableList(Sales sales) {

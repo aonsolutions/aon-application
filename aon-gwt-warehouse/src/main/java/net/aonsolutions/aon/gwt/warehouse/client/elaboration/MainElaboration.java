@@ -126,6 +126,12 @@ public class MainElaboration extends AonTemplate {
 
 	public void loadContent() {
 		setContent(null);
+		LinkedList<String> list = new LinkedList<>();
+		list.add("1");
+		getFilterMap().put("page", list);
+		list = new LinkedList<>();
+		list.add("40");
+		getFilterMap().put("per_page", list);
 		API.getWarehouse().getElaborationList(filterMap, new AsyncCallback<JSON<JsElaboration>>() {
 
 			@Override
@@ -268,6 +274,7 @@ public class MainElaboration extends AonTemplate {
 				+ ",\"date\":\"" + (main.date.getValue() != null ? main.date.getValue().getTime() : "")+ "\""
 				+ ",\"quantity\":\"" + main.quantity.getValue()+ "\""
 				+ ",\"item\":\"" + main.itemBox.getId()+ "\""
+				+ ",\"description\":\"" + main.descriptionLabel.getText()+ "\""
 				+ ",\"warehouse\":\"" + main.warehouse.getSelectedValue()+ "\""
 				+ ",\"comments\":\"" + (comments!=null && !"".equals(comments.trim())?comments:"") + "\""
 				+ "}";

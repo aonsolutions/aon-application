@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
@@ -85,13 +86,15 @@ public class ElaborationDownload extends HttpServlet {
 
 		List<Elaboration> elaborationList = null;
 		if (elaborationId != null) {
-			elaborationList = AON.getFullElaborationList(domain.getName(),
+			elaborationList = AON.getElaborationStream(domain.getName(),
 					domain.getId(), login,
-					f -> f.getIdProperty().eq(elaborationId));
+					f -> f.getIdProperty().eq(elaborationId)).collect(
+					Collectors.toList());
 		} else {
-			elaborationList = AON.getElaborationList(domain.getName(),
+			elaborationList = AON.getElaborationStream(domain.getName(),
 					domain.getId(), login,
-					f -> f.getDomainProperty().eq(domain.getId()));
+					f -> f.getDomainProperty().eq(domain.getId())).collect(
+					Collectors.toList());
 		}
 
 		Company company = AON.getCompanyForDomain(domain.getName(),

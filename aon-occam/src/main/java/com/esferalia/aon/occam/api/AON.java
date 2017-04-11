@@ -2795,36 +2795,12 @@ public class AON {
 	
 	// ------------------ ELABORATION
 	
-	public static List<Elaboration> getElaborationList(String domainName, Integer domainId, String login,
+	public static Stream<Elaboration> getElaborationStream(String domainName, Integer domainId, String login,
 			ElaborationFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getElaborationList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static List<Elaboration> getFullElaborationList(String domainName,
-			Integer domainId, String login, ElaborationFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			List<Elaboration> list = getWarehouse().getElaborationList(ctx,
-					filter);
-			for (Elaboration elaboration : list) {
-				elaboration.setItem(getItem(domainName, domainId, login,
-						elaboration.getItem().getId()));
-				elaboration.setWarehouse(getWarehouse(
-						domainName,
-						domainId,
-						login,
-						f -> f.getIdProperty().eq(
-								elaboration.getWarehouse().getId())));
-			}
-			return list;
+			return getWarehouse().getElaborationStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
