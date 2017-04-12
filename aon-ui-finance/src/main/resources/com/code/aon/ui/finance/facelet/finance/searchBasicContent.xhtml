@@ -182,8 +182,11 @@
 		</aon:selectOneRadio>				
 	</aon:if>
 
-	<aon:outputText value="#{bundle.aon_status}" />
-	<aon:selectManyCheckbox value="#{searchController.financeStatuses}">
+	<aon:outputLabel for="Finance_status"
+		value="#{bundle.aon_status}" />
+	<aon:selectManyCheckbox id="Finance_status"
+		value="#{searchController.financeStatuses}"
+		required="#{searchController.exportMode}" >
 		<f:selectItems value="#{searchController.financeStatusList}" />
 	</aon:selectManyCheckbox>							
 

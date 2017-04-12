@@ -19,6 +19,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.finance.InvoiceExportType;
+import com.code.aon.ui.finance.controller.ExporterController;
 import com.code.aon.ui.finance.controller.FinanceCollectionsController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.IFinanceController;
@@ -36,20 +38,11 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	private PayMethod[] payMethods;
 	private boolean skipPayrollFilter;
 	private boolean nullInvoice;
-	private boolean skipBatched;
+	private boolean exportMode;
 	
-	public boolean isSkipBatched() {
-		return skipBatched;
-	}
-
-	public void setSkipBatched(boolean skipBatched) {
-		this.skipBatched = skipBatched;
-	}
-
 	public Registry getRegistry() {
 		return registry;
 	}
-
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
@@ -57,7 +50,6 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
-
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
 	}
@@ -68,7 +60,6 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		}	
 		return payMethods;
 	}
-
 	public void setPayMethods(PayMethod[] payMethods) {
 		this.payMethods = payMethods;
 	}
@@ -76,7 +67,6 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	public boolean isSkipPayrollFilter() {
 		return skipPayrollFilter;
 	}
-
 	public void setSkipPayrollFilter(boolean skipPayrollFilter) {
 		this.skipPayrollFilter = skipPayrollFilter;
 	}
@@ -84,27 +74,19 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	public boolean isNullInvoice() {
 		return nullInvoice;
 	}
-
 	public void setNullInvoice(boolean nullInvoice) {
 		this.nullInvoice = nullInvoice;
 	}
 
-	public int getPayMethodsSize() {
-		return ArrayUtils.getLength(payMethods);
-	}	
-
-	public List<Integer> getPayMethodsIds() {
-		List<Integer> ids = new LinkedList<Integer>();
-		for (PayMethod payMethod : getPayMethods()) {
-			if ((payMethod != null) && (payMethod.getId() != null)) {
-				ids.add(payMethod.getId());
-			}
-		}
-		return ids;
+	public boolean isExportMode() {
+		return exportMode;
+	}
+	public void setExportMode(boolean exportMode) {
+		this.exportMode = exportMode;
 	}
 
-	public PayMethod getEmptyPayMethod() {
-		return EMPTY_PAYMETHOD;
+	private IFinanceController getFinanceController() {
+		return (IFinanceController)getController();
 	}
 
 	@Override
@@ -113,7 +95,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 
 		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
 		setFinanceStatuses(defaultFinanceStatus);
-		setSkipBatched(false);
+		setExportMode(false);
 	}
 
 	public void initData() throws ManagerBeanException {
@@ -123,10 +105,6 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 		setSkipPayrollFilter(getFinanceController().isPayment() && !getFinanceController().isPayroll() && AonUtil.getRoleManager().isPayroll());
 		setNullInvoice(false);
-	}
-
-	private IFinanceController getFinanceController() {
-		return (IFinanceController)getController();
 	}
 
 	@Override
@@ -148,13 +126,20 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		if (isNullInvoice()) {
 			criteria.addNullExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_ID));
 		}
+		if (isExportMode()) {
+			criteria.addNullExpression(getController().resolveAlias("Finance.batchDetails<id"));
+
+			ExporterController exporter = (ExporterController)AonUtil.getRegisteredBean(IFinanceConstants.EXPORTER_CONTROLLER_NAME);
+			if (exporter.getConfiguration().getType() == InvoiceExportType.A3) {
+				criteria.addNotNullExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_ID));
+			}
+		}
 		super.completeCriteria(criteria);
 	}
 
 	public void onAddPayMethod(ActionEvent event) {
 		this.payMethods = (PayMethod[]) ArrayUtils.add(this.payMethods, EMPTY_PAYMETHOD);
 	}
-
 	public void onRemovePayMethod(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));
@@ -163,20 +148,35 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 			setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 		}
 	}
+	public int getPayMethodsSize() {
+		return ArrayUtils.getLength(payMethods);
+	}	
+	public List<Integer> getPayMethodsIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for (PayMethod payMethod : getPayMethods()) {
+			if ((payMethod != null) && (payMethod.getId() != null)) {
+				ids.add(payMethod.getId());
+			}
+		}
+		return ids;
+	}
+	public PayMethod getEmptyPayMethod() {
+		return EMPTY_PAYMETHOD;
+	}
 
 	public List<SelectItem> getFinanceStatusList() {
-		FinanceCollectionsController fcc = (FinanceCollectionsController) AonUtil.getRegisteredBean(IFinanceConstants.COLLECTIONS_CONTROLLER_NAME);
-		List<SelectItem> list = fcc.getFinanceStatuses();
-		if ( isSkipBatched() ) {
-			List<SelectItem> newList = new LinkedList<SelectItem>();
-			for( SelectItem item : list ) {
-				if (! ObjectUtils.equals(item.getValue(), FinanceStatus.BATCHED) ) {
-					newList.add(item);
+		FinanceCollectionsController collections = (FinanceCollectionsController) AonUtil.getRegisteredBean(IFinanceConstants.COLLECTIONS_CONTROLLER_NAME);
+		List<SelectItem> statusList = collections.getFinanceStatuses();
+		if (isExportMode()) {
+			List<SelectItem> newStatusList = new LinkedList<SelectItem>();
+			for (SelectItem item : statusList) {
+				if (ObjectUtils.equals(item.getValue(), FinanceStatus.PAID) || ObjectUtils.equals(item.getValue(), FinanceStatus.RETURNED)) {
+					newStatusList.add(item);
 				}
 			}
-			return newList;
+			return newStatusList;
 		}
-		return list;
+		return statusList;
 	}	
-	
+
 }

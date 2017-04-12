@@ -1,9 +1,12 @@
 package com.code.aon.finance;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -39,7 +42,9 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	private RegistryDocument registryFullDocument;
 	private boolean skipCheckPosShift;
 
-    public Finance() {
+	private Set<FinanceBatchDetail> batchDetails = new HashSet<FinanceBatchDetail>();
+
+	public Finance() {
 		setDueDate(new Date());
 		setSkipCheckPosShift(false);
 	}
@@ -77,6 +82,14 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	}
 	public void setSkipCheckPosShift(boolean skipCheckPosShift) {
 		this.skipCheckPosShift = skipCheckPosShift;
+	}
+
+	@OneToMany(mappedBy = "finance")
+	public Set<FinanceBatchDetail> getBatchDetails() {
+		return this.batchDetails;
+	}
+	public void setBatchDetails(Set<FinanceBatchDetail> batchDetails) {
+		this.batchDetails = batchDetails;
 	}
 
 	@Transient

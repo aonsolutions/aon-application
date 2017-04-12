@@ -28,8 +28,9 @@
 							<aon:outputLabel for="Finance_payment"
 								value="#{bundle.aon_type}" />
 							<aon:selectOneMenu id="Finance_payment"
-								reRender="financeExporterForm"
-								value="#{controller.payment}">
+								styleClass="aon-width-80"
+								value="#{controller.payment}"
+								reRender="financeExporterForm">
 								<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="#{false}" />
 								<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="#{true}" />
 							</aon:selectOneMenu>										

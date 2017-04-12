@@ -59,7 +59,7 @@ public class FinanceExporterController extends BasicController implements IFinan
 		FinanceSearchListener searchListener = (FinanceSearchListener)AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_SEARCH_LISTENER_NAME);
 		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.RETURNED, FinanceStatus.PAID};
 		searchListener.setFinanceStatuses(defaultFinanceStatus);
-		searchListener.setSkipBatched(true);
+		searchListener.setExportMode(true);
 	}
 
 	public void onStart( ActionEvent event ) {
