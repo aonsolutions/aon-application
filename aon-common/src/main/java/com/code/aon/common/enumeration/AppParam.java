@@ -362,7 +362,7 @@ public enum AppParam {
 	,CALL_CENTER_GITHUB_REPOSITORY
 	,CALL_CENTER_GITHUB_TOKEN
 	
-	,UDAPA
+	,AON_ADHOC_EXTENSION
 	;
 
 	public String getValue() {

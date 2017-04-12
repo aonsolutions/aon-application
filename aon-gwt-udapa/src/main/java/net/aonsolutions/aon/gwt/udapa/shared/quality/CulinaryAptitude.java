@@ -3,10 +3,9 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality;
 import java.util.LinkedList;
 
 public enum CulinaryAptitude {
-	FIVE("5"),
-	SIX("6"),
-	SERVEN("7"),
-	EIGHT("8")
+	ALTA("Alta"),
+	MEDIA("Media"),
+	BAJA("Baja")
 	;
 	
 	String name;
