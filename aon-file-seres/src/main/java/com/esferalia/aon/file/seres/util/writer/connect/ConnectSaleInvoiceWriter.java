@@ -531,8 +531,10 @@ public class ConnectSaleInvoiceWriter {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
 				if (deliveryDetail != null && deliveryDetail.getId()!=null) {
-					SalesDetail salesDetail = deliveryDetail.getSalesDetail();
-					return salesDetail.getSales().getPurchaseReference();
+					if (deliveryDetail.getSalesDetail()!=null) {
+						SalesDetail salesDetail = deliveryDetail.getSalesDetail();
+						return salesDetail.getSales().getPurchaseReference();
+					}
 				}
 				return null;
 			}
