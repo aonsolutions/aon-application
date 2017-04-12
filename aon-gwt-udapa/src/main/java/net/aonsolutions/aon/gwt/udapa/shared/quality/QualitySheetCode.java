@@ -1,0 +1,218 @@
+package net.aonsolutions.aon.gwt.udapa.shared.quality;
+
+import java.util.LinkedList;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public enum QualitySheetCode implements IsSerializable{
+
+	// DATOS PRODUCTO
+	
+	/** DATOS PRODUCTO - DESTINO */
+	UFQDP1("ufqdp1"),
+	
+	// ANALISIS CALIDAD
+	
+	/** ANALISIS CALIDAD - TEMPERATURA */
+	UFQAC1("ufqac1"), 
+	
+	/** ANALISIS CALIDAD - APTITUD CULINARIA PARA FRITURA */
+	UFQAC2("ufqac2"),
+	
+	/** ANALISIS CALIDAD - LIMPIEZA */
+	UFQAC3("ufqac3"), 
+	
+	/** ANALISIS CALIDAD - APTITUD CULINARIA PARA COCIDO */
+	UFQAC4("ufqac4"), 
+	
+	/** ANALISIS CALIDAD - PLAGA */
+	UFQAC5("ufqac5"),
+	
+	/** ANALISIS CALIDAD - APTITUD LIMPIEZA */
+	UFQAC6("ufqac6"),
+	
+	/** ANALISIS CALIDAD - MATERIA SECA */
+	UFQAC7("ufqac7"),
+	
+	// CONTROL CALIBRES
+	
+	/** CONTROL CALIBRES - PESO MUESTRA */
+	UFQCC01("ufqcc01"), 
+	
+	/** CONTROL CALIBRES - PESO CALIBRE < 45 */
+	UFQCC02("ufqcc02"),
+	
+	/** CONTROL CALIBRES - % CALIBRE < 45 */
+	UFQCC021("ufqcc021"),
+	
+	/** CONTROL CALIBRES - PESO CALIBRE SIEMBRA 28-35 */
+	UFQCC03("ufqcc03"), 
+	
+	/** CONTROL CALIBRES - % CALIBRE SIEMBRA 28-35 */
+	UFQCC031("ufqcc031"), 
+	
+	/** CONTROL CALIBRES - PESO CALIBRE 45-50 */
+	UFQCC04("ufqcc04"),
+	
+	/** CONTROL CALIBRES - % CALIBRE 45-50 */
+	UFQCC041("ufqcc041"),
+	
+	/** CONTROL CALIBRES - PESO CALIBRE SIEMBRA 35-45 */
+	UFQCC05("ufqcc05"),
+	
+	/** CONTROL CALIBRES - % CALIBRE SIEMBRA 35-45 */
+	UFQCC051("ufqcc051"),
+	
+	/** CONTROL CALIBRES - PESO CALIBRE > 80 */
+	UFQCC06("ufqcc06"), 
+	
+	/** CONTROL CALIBRES - % CALIBRE > 80 */
+	UFQCC061("ufqcc061"), 
+	
+	/** CONTROL CALIBRES - PESO CALIBRE SIEMBRA 45-50 */
+	UFQCC07("ufqcc07"), 
+
+	/** CONTROL CALIBRES - % CALIBRE SIEMBRA 45-50 */
+	UFQCC071("ufqcc071"), 
+
+	/** CONTROL CALIBRES - PESO SIN CALIBRAR */
+	UFQCC08("ufqcc08"), 
+	
+	/** CONTROL CALIBRES - % SIN CALIBRAR */
+	UFQCC081("ufqcc081"), 
+	
+	/** CONTROL CALIBRES - PESO CALIBRE SIEMBRA 50-55 */
+	UFQCC09("ufqcc09"),
+	
+	/** CONTROL CALIBRES - % CALIBRE SIEMBRA 50-55 */
+	UFQCC091("ufqcc091"),
+	
+	/** CONTROL CALIBRES - PESO TIERRA PIEDRA */
+	UFQCC10("ufqcc10"), 
+	
+	/** CONTROL CALIBRES - % TIERRA PIEDRA */
+	UFQCC101("ufqcc101"), 
+	
+	/** CONTROL CALIBRES - PESO CALIBRE SIEMBRA >55 */
+	UFQCC11("ufqcc11"),
+	
+	/** CONTROL CALIBRES - % CALIBRE SIEMBRA >55 */
+	UFQCC111("ufqcc111"),
+	
+	/** CONTROL CALIBRES - PESO SIN CALIBRAR SIEMBRA */
+	UFQCC12("ufqcc12"), 
+	
+	/** CONTROL CALIBRES - % SIN CALIBRAR SIEMBRA */
+	UFQCC121("ufqcc121"), 
+	
+	/** CONTROL CALIBRES - PESO TIERRA PIEDRA SIEMBRA */
+	UFQCC13("ufqcc13"), 
+
+	/** CONTROL CALIBRES - % TIERRA PIEDRA SIEMBRA */
+	UFQCC131("ufqcc131"), 
+	
+	/** CONTROL CALIBRES - PESO TOTAL CALIBRE */
+	UFQCC14("ufqcc14"), 
+
+	/** CONTROL CALIBRES - % TOTAL CALIBRE */
+	UFQCC141("ufqcc141"),
+	
+	/** CONTROL CALIBRES - PESO TOTAL CALIBRE SIEMBRA */
+	UFQCC15("ufqcc15"), 
+
+	/** CONTROL CALIBRES - % TOTAL CALIBRE SIEMBRA*/
+	UFQCC151("ufqcc151"),
+
+	//CONTROL DEFECTOS
+	
+	/** CONTROL DEFECTOS - PESO MUESTRA */
+	UFQCD01("ufqcd01"),
+	
+	/** CONTROL DEFECTOS - PESO ALFILERILLO */
+	UFQCD02("ufqcd02"),
+	
+	/** CONTROL DEFECTOS - % ALFILERILLO */
+	UFQCD021("ufqcd021"),
+	
+	/** CONTROL DEFECTOS - PESO GOLPES EXTERNOS */
+	UFQCD03("ufqcd03"),
+	
+	/** CONTROL DEFECTOS - % GOLPES EXTERNOS */
+	UFQCD031("ufqcd031"),
+
+	/** CONTROL DEFECTOS - PESO GOLPES INTERNOS */
+	UFQCD04("ufqcd04"),
+
+	/** CONTROL DEFECTOS - % GOLPES INTERNOS */
+	UFQCD041("ufqcd041"),
+
+	/** CONTROL DEFECTOS - PESO HUECAS */
+	UFQCD05("ufqcd05"),
+	
+	/** CONTROL DEFECTOS - % HUECAS */
+	UFQCD051("ufqcd051"),
+
+	/** CONTROL DEFECTOS - PESO LIMACO */
+	UFQCD06("ufqcd06"),
+	
+	/** CONTROL DEFECTOS - % LIMACO */
+	UFQCD061("ufqcd061"),
+	
+	/** CONTROL DEFECTOS - PESO MANCHAS HIERRO */
+	UFQCD07("ufqcd07"),
+
+	/** CONTROL DEFECTOS - % MANCHAS HIERRO */
+	UFQCD071("ufqcd071"),
+
+	/** CONTROL DEFECTOS - PESO RIZOCTONIA */
+	UFQCD08("ufqcd08"),
+	
+	/** CONTROL DEFECTOS - % RIZOCTONIA */
+	UFQCD081("ufqcd081"),
+
+	/** CONTROL DEFECTOS - PESO SARNA */
+	UFQCD09("ufqcd09"),
+	
+	/** CONTROL DEFECTOS - % SARNA */
+	UFQCD091("ufqcd091"),
+
+	/** CONTROL DEFECTOS - PESO VERDES */
+	UFQCD10("ufqcd10"),
+	
+	/** CONTROL DEFECTOS - % VERDES */
+	UFQCD101("ufqcd101"),
+	
+	/** CONTROL CALIBRES - PESO TOTAL CALIBRE SIEMBRA */
+	UFQCD11("ufqcd11"), 
+
+	/** CONTROL CALIBRES - % TOTAL CALIBRE SIEMBRA*/
+	UFQCD111("ufqcd111"),
+	
+	// OBSERVACIONES
+	
+	/** OBSERVACIONES */
+	UFQO("ufqo"),
+	;
+	
+	String name;
+	
+	private QualitySheetCode(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public static LinkedList<String> valueLinkedList(){
+		LinkedList<String> list = new LinkedList<>();
+		for(Integer i = 0; i < values().length; i++){
+			list.add(values()[i].getName());
+		}
+		return list;
+	}
+}

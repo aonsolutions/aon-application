@@ -3,9 +3,10 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality;
 import java.util.LinkedList;
 
 public enum CleanAptitude {
-	ALTA("Alta"),
-	MEDIA("Media"),
-	BAJA("Baja")
+	FIVE("5"),
+	SIX("6"),
+	SERVEN("7"),
+	EIGHT("8")
 	;
 	
 	String name;

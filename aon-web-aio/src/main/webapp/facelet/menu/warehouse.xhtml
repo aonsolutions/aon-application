@@ -176,7 +176,6 @@
 									</aon:div>
 								</aon:if>
 								
-								<!-- condicion is udapa domain -->
 								<aon:if test="#{domainSwitcher.udapa}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_udapa"
@@ -185,6 +184,18 @@
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
 												style="margin-left: 5px; padding-left: 20px;" 
 												value="Ficha de Calidad (Udapa)" />												
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
+								
+								<aon:if test="#{domainSwitcher.paturpat}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_paturpat"
+											action="gwt_paturpat"
+											title="Ficha de Calidad (Paturpat)">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="Ficha de Calidad (Paturpat)" />												
 										</aon:commandLink>
 									</aon:div>
 								</aon:if>

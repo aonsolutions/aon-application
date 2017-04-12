@@ -16,21 +16,6 @@
 			<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
 				<table class="{aonResources.css.aonWidthAll}">
 				
-					<!-- DATOS TRANSPORTE -->
-					
-					<tr>
-						<td>
-							<div class="{aonResources.css.aonGroup}">
-								<div class="{aonResources.css.aonGroupTitle}">
-									<g:InlineLabel text="Datos Transporte" />
-								</div>
-								<div class="{aonResources.css.aonGroupBody}">
-									<g:FlexTable ui:field="transportData" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>
-								</div>
-							</div>
-						</td>
-					</tr>
-				
 					<!-- DATOS PRODUCTO -->
 					
 					<tr>
@@ -41,6 +26,21 @@
 								</div>
 								<div class="{aonResources.css.aonGroupBody}">
 									<g:FlexTable ui:field="productData" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>
+								</div>
+							</div>
+						</td>
+					</tr>
+				
+					<!-- DATOS TRANSPORTE -->
+					
+					<tr>
+						<td>
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="Datos Transporte" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<g:FlexTable ui:field="transportData" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>
 								</div>
 							</div>
 						</td>
@@ -75,7 +75,7 @@
 						</td>
 					</tr>
 					
-					<!-- CONTROL DEFECTOS -->
+					<!-- CONTROL DEFECTOS 
 					<tr>
 						<td>
 							<div class="{aonResources.css.aonGroup}">
@@ -88,6 +88,7 @@
 							</div>
 						</td>
 					</tr>
+					-->
 					<!-- OBSERVACIONES -->
 					<tr>
 						<td>
@@ -96,7 +97,7 @@
 									<g:InlineLabel text="Observaciones" />
 								</div>
 								<div class="{aonResources.css.aonGroupBody}">
-									<g:TextArea ui:field="observations" height="50px" styleName="{aonResources.css.aonWidthAll}"></g:TextArea>	
+									<g:FlexTable ui:field="observation" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>
 								</div>
 							</div>
 						</td>
