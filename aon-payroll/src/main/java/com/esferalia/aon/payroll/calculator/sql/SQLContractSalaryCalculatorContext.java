@@ -2709,6 +2709,28 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+	private boolean isNotWorkingDay(Calendar day) {
+		Date date = day.getTime();
+		
+		ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
+		ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
+		if (hours == null)
+			return false;
+
+		try {
+			Period period = hours.getPeriod();
+			Object value = hours.getValue(period);
+			if ( value == null )
+				return true;
+			
+			return Double.parseDouble(value.toString()) == -1;
+
+		} catch (Error e) {
+			return false;
+		}
+
+	}
+
 	private int getWeekDaysOf(DayType dayType) {
 		int days = 0;
 
@@ -2740,7 +2762,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		day.setTime(startDate);
 		while (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			if (isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day)) {
+			if (isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day) && !isNotWorkingDay(day)) {
 				days++;
 			}
 			day.add(Calendar.DATE, 1);
@@ -3375,6 +3397,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		List<Period> agreeementHours = ctx.getPeriods(AGREEMENT_HOURS);
 
+		Collections.sort(contractHours);
+		Collections.sort(agreeementHours);
+		
 		List<Period> intersects = Period.intersect(contractHours, agreeementHours);
 		intersects = Period.intersect(intersects, contract);
 
