@@ -50,6 +50,11 @@
 	
 	<table-filter match-name="carrier_packing" exclude="true" />
 
+	<table-filter match-name="data_response" exclude="true" />
+	<table-filter match-name="data_response_detail" exclude="true" />
+	<table-filter match-name="data_attach" exclude="true" />
+
+
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
 	<!--  ***************** -->
