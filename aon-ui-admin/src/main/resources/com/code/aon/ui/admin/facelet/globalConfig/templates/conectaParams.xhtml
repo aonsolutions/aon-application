@@ -95,11 +95,13 @@
 				</aon:if>												
 
 				<aon:if test="#{exporter.configuration.type == 'DSI_GESTION'}">
+<!-- 
 					<aon:outputLabel for="Dsi_defaultPortfolio"
 						value="#{bundle.finance_exporter_portfolio_default}" />
 					<aon:inputText id="Dsi_defaultPortfolio"
 						size="3" maxlength="3" required="true"
 						value="#{exporter.configuration.generalJournal}" />	
+ -->
 					<aon:outputLabel for="Dsi_chargesPortfolio"
 						value="#{bundle.finance_exporter_portfolio_charges}" />
 					<aon:inputText id="Dsi_chargesPortfolio"

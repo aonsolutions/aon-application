@@ -343,7 +343,16 @@ public abstract class BasicExporter implements Serializable {
 	public boolean isSales() {
 		return this.invoiceType == InvoiceType.SALES;
 	}
-	
+	public boolean isPurchase() {
+		return this.invoiceType == InvoiceType.PURCHASE;
+	}
+	public boolean isExpenses() {
+		return this.invoiceType == InvoiceType.EXPENSES;
+	}
+	public boolean isUndeductible() {
+		return this.invoiceType == InvoiceType.UNDEDUCTIBLE;
+	}
+
 	public boolean isWithholding() {
 		return withholding;
 	}

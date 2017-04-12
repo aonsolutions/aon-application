@@ -272,7 +272,7 @@ public class DsiWriter extends BasicExporter {
 		for( AccountEntryDetail aed : getDetails() ) {
 			if ( amountCount < 8 ) {
 				// Total importes (20,3)
-				double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
+				double amount = (isSales()) ? (aed.getCredit() - aed.getDebit()) : (aed.getDebit() - aed.getCredit());
 				data[amountIndex+amountCount++] = amount;
 				// Cuenta importes (12)
 				data[amountIndex+amountCount++] = getString(aed.getAccount().getCode(), 12);				
@@ -458,7 +458,7 @@ public class DsiWriter extends BasicExporter {
 		// 5 - CUENTA CHAR(12), Cuenta contable de ingresos
 		data[4] = getString(aed.getAccount().getCode(), 12);
 		// 6 - IMPORTE NUMERIC(20,3), Importe
-		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
+		double amount = (isSales()) ? (aed.getCredit() - aed.getDebit()) : (aed.getDebit() - aed.getCredit());
 		data[5] = amount;
 		// 7 - RETENSN CHAR(1), Retencion S/N
 		data[6] = retention ? "S" : "N";
@@ -498,7 +498,7 @@ public class DsiWriter extends BasicExporter {
 	}
 
 	private String getCarteraPagos() {
-		String cartera = getConfiguration().getExpensesJournal();
+		String cartera = getConfiguration().getPurchaseJournal();
 		if ( StringUtils.isEmpty(cartera) ) {
 			cartera = getCarteraPorDefecto();
 		}
@@ -509,7 +509,7 @@ public class DsiWriter extends BasicExporter {
 		Object[] data = new Object[12];
 		
 		// 1 - REGIST CHAR(5), Numero de orden de iva soportado
-		data[0] = getInteger(getInvoice().getNumber(), 5);
+		data[0] = !isUndeductible() ? getInteger(getInvoice().getNumber(), 5) : "";
 		// 2 - LINEA CHAR(4), Numero de Linea
 		data[1] = getInteger(line++, 4);
 		// 3 - TIVA CHAR(2), Codigo Tipo de Iva
@@ -517,7 +517,7 @@ public class DsiWriter extends BasicExporter {
 		// 4 - CUENTA CHAR(12), Cuenta contable de Gastos
 		data[3] = getString(aed.getAccount().getCode(), 12);
 		// 5 - IMPORTE NUMERIC(20,3), Importe
-		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
+		double amount = (isSales()) ? (aed.getCredit() - aed.getDebit()) : (aed.getDebit() - aed.getCredit());
 		data[4] = amount;
 		// 6 - SUBDEP CHAR(4), Subdepartamento
 		data[5] = "";
@@ -541,9 +541,9 @@ public class DsiWriter extends BasicExporter {
 		Object[] data = new Object[67];
 		
 		// 1 - REGIST CHAR(5), Numero de orden de iva soportado
-		data[0] = getInteger(getInvoice().getNumber(), 5);
+		data[0] = !isUndeductible() ? getInteger(getInvoice().getNumber(), 5) : "";
 		// 2 - FRA CHAR(10), Numero de Factura del Proveedor
-		data[1] = getString(getReferenceCode(), 10);
+		data[1] = getString(getReferenceCode(), 15);
 		// 3 - FECHA_F CHAR(10), Fecha Factura
 		data[2] = getDate(getDate());
 		// 4 - FECHA_A CHAR(10), Fecha Asiento
@@ -843,7 +843,7 @@ public class DsiWriter extends BasicExporter {
 	private DBFField[] getFacturasRecibidasFields() throws AonException {
 		return new DBFField[] {
 				new DBFField("REGIST", 'C', 5, 0),
-				new DBFField("FRA", 'C', 10, 0),
+				new DBFField("FRA", 'C', 15, 0),
 				new DBFField("FECHA_F", 'C', 10, 0),
 				new DBFField("FECHA_A", 'C', 10, 0),
 				new DBFField("CUENTA", 'C', 12, 0),
