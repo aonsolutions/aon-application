@@ -647,7 +647,7 @@ public class Mod111Writer {
 			datos.appendChild(e1);
 			e1 = doc.createElement(DATO);
 			e1.setAttribute(NOMBRE,NUMIBAN);
-			e1.setAttribute(VALOR, EMPTY);
+			e1.setAttribute(VALOR, mod111.getFinanceIban());
 			datos.appendChild(e1);
 			e1 = doc.createElement(DATO);
 			e1.setAttribute(NOMBRE,NUMBIC);

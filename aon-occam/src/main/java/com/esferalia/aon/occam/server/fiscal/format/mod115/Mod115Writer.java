@@ -387,7 +387,7 @@ public class Mod115Writer {
 			
 			Element e1 = doc.createElement(DATO);
 			e1.setAttribute(NOMBRE, MODELO_ATT);
-			e1.setAttribute(VALOR, mod115.getPeriod().isMonthPeriod()?"115":"115");
+			e1.setAttribute(VALOR, "115A");
 			datos.appendChild(e1);
 			Element e3 = doc.createElement(DATO);
 			e3.setAttribute(NOMBRE,EJERCICIO);
@@ -501,7 +501,7 @@ public class Mod115Writer {
 			datos.appendChild(e1);
 			e1 = doc.createElement(DATO);
 			e1.setAttribute(NOMBRE,NUMIBAN);
-			e1.setAttribute(VALOR, EMPTY);
+			e1.setAttribute(VALOR, mod115.getFinanceIban());
 			datos.appendChild(e1);
 			e1 = doc.createElement(DATO);
 			e1.setAttribute(NOMBRE,NUMBIC);
@@ -537,13 +537,14 @@ public class Mod115Writer {
 					e = doc.createElement(CLAVE);
 					e.setAttribute(NUMERO, AonNumberUtils.toString( key.getBox()) );
 					if (key == Mod115Key.AR_909
-					 || key == Mod115Key.AR_C01) {
+					 || key == Mod115Key.AR_C01
+					 || key == Mod115Key.AR_C04) {
 						e.setAttribute(VALOR, Integer.toString( (int) mod115.getAmount(key)) );	
 					} else if (key == Mod115Key.AR_907) {
 						e.setAttribute(VALOR, mod115.getAmount(key) == 1?TRUE:FALSE );
 					} else if (key == Mod115Key.AR_908) {
 						e.setAttribute(VALOR, mod115.getDescription(key));
-					} else {
+					} else {	
 						e.setAttribute(VALOR, formatNumber(mod115.getAmount(key)) );
 					}
 							
