@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -401,6 +402,21 @@ public class EmployeeCalendarDraftObjectData {
 			undos.add(new SetEreEdit(oldCE, ce, day));
 		}
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
+	public void setWorkingDays(HashMap<Date, Double> compositeH, HashMap<Date, DayType> compositeT) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Map.Entry<Date, Double> entry : compositeH.entrySet()) {
+			DateUtils.resetTime(entry.getKey());
+			Double old = draftMapDaysHour.put(entry.getKey(), entry.getValue());
+			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
+		}
+		for (Map.Entry<Date, DayType> entry : compositeT.entrySet()) {
+			DayType old = draftMapDaysType.put(entry.getKey(), entry.getValue());
+			undos.add(new SetTypeEdit(old, entry.getValue(), entry.getKey()));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+		
 	}
 
 	// ---------------------------------------------- METHODS VARIABLES SYNC SALARYDRAFT ---------------------------------------------

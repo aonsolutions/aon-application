@@ -365,10 +365,12 @@
 							<g:MenuItem ui:field="eraseEventMenuItem" text="Borrar evento(s)" />
 						</g:MenuBar>
 					</g:MenuItem>
-					<g:MenuItem text="Edicion">
+					<g:MenuItem text="Seleccionar">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="selectAllDaysMenuItem" text="Seleccionar todo" />
 							<g:MenuItem ui:field="selectUntillMenuItem" text="Seleccionar hasta" />
+							<g:MenuItem ui:field="selectAllSaturdaysMenuItem" text="Seleccionar sábados" />
+							<g:MenuItem ui:field="selectAllSundaysMenuItem" text="Seleccionar domingos" />
 						</g:MenuBar>
 					</g:MenuItem>
 					<g:MenuItem ui:field="hourMenuItem" text="Horas">

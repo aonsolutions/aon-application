@@ -327,6 +327,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	MenuItem selectUntillMenuItem;
 	
 	@UiField
+	MenuItem selectAllSaturdaysMenuItem;
+	
+	@UiField
+	MenuItem selectAllSundaysMenuItem;
+	
+	@UiField
 	PaperDialog dialogUntill;
 	
 	@UiField
@@ -659,6 +665,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
+				selectedDates.getSelectedList().clear();
 				selectAll();
 			}
 
@@ -688,9 +695,68 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
+				selectedDates.getSelectedList().clear();
 				dialogUntill.open();
 				addDates();
 				
+			}
+		});
+		
+		selectAllSaturdaysMenuItem.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				selectedDates.getSelectedList().clear();
+				selectAllSaturdays();	
+			}
+
+			private void selectAllSaturdays() {
+				Date startDate = DateUtils.copyDateOnly(calendarEmployeeInfo.getStartDateContract());
+				Date endDate;
+				if(null == calendarEmployeeInfo.getEndDateContract() && 0 == calendarEmployeeInfo.getMapSize()){
+					Integer actualYear = new Date().getYear();
+					endDate = new Date(actualYear+1,11,31);
+				} else if(null == calendarEmployeeInfo.getEndDateContract()){
+					endDate = calendarEmployeeInfo.getLastMapDate();
+				}else
+					endDate = DateUtils.copyDateOnly(calendarEmployeeInfo.getEndDateContract());
+				
+				while (startDate.before(endDate) || startDate.equals(endDate)) {
+					if(startDate.getDay() == 6)
+						selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
+					DateUtils.addDays2Date(startDate, 1);
+				}
+				paintAllDates(selectedDates.getSelectedList());
+				hourButton.setDisabled(false);
+			}
+		});
+		
+		selectAllSundaysMenuItem.setScheduledCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				selectedDates.getSelectedList().clear();
+				selectAllSundays();	
+			}
+
+			private void selectAllSundays() {
+				Date startDate = DateUtils.copyDateOnly(calendarEmployeeInfo.getStartDateContract());
+				Date endDate;
+				if(null == calendarEmployeeInfo.getEndDateContract() && 0 == calendarEmployeeInfo.getMapSize()){
+					Integer actualYear = new Date().getYear();
+					endDate = new Date(actualYear+1,11,31);
+				} else if(null == calendarEmployeeInfo.getEndDateContract()){
+					endDate = calendarEmployeeInfo.getLastMapDate();
+				}else
+					endDate = DateUtils.copyDateOnly(calendarEmployeeInfo.getEndDateContract());
+				
+				while (startDate.before(endDate) || startDate.equals(endDate)) {
+					if(startDate.getDay() == 0)
+						selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
+					DateUtils.addDays2Date(startDate, 1);
+				}
+				paintAllDates(selectedDates.getSelectedList());
+				hourButton.setDisabled(false);
 			}
 		});
 		
@@ -1851,8 +1917,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				compositeT.put(date, DayType.NOTYPEDAY);
 			}
 		}
-		calendarEmployeeInfo.setHourByDay(compositeH);
-		calendarEmployeeInfo.setTypeByDay(compositeT);
+		calendarEmployeeInfo.setWorkingDays(compositeH, compositeT);
+//		calendarEmployeeInfo.setHourByDay(compositeH);
+//		calendarEmployeeInfo.setTypeByDay(compositeT);
 	}
 
 	@Override
