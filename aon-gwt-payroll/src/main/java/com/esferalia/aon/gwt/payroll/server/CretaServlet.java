@@ -934,7 +934,7 @@ public class CretaServlet extends HttpServlet
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, 3);
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -3);
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from)
@@ -949,7 +949,7 @@ public class CretaServlet extends HttpServlet
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, 3);
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -3);
 
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
