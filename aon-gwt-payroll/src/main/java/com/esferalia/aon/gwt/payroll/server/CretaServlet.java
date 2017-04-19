@@ -933,8 +933,11 @@ public class CretaServlet extends HttpServlet
 		String login = AonServletUtils.getRequestUser(req);
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, 3);
+		
 		return
-		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA)
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from)
 		.map(attach-> unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, attach.getData()))
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
@@ -945,8 +948,11 @@ public class CretaServlet extends HttpServlet
 		String login = AonServletUtils.getRequestUser(req);
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, 3);
+
 		return
-		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS)
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
 		.map(attach-> unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
@@ -1019,14 +1025,16 @@ public class CretaServlet extends HttpServlet
 
 	}
 	
-	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type ) {
+	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from ) {
 		return  AON.getAttachList(
 				domainName, 
 				domainId, 
 				login,
 				p -> 
 				p.getDomainProperty().eq(domainId)
-				.and(p.getTypeProperty().eq((byte)type.ordinal())), 
+				.and(p.getTypeProperty().eq((byte)type.ordinal()))
+				.and(p.getAttachDateProperty().ge(new java.sql.Date(from.getTime())))
+				,
 				AttachType.REGISTRY
 				)
 				.stream()
