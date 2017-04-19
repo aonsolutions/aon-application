@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
@@ -1347,6 +1348,56 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
+	protected static void __sync(final AsyncCallback<Void> cb) {
+
+		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
+		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
+
+		ArrayList<JsFile> jsFiles = new ArrayList<JsFile>(respuestas.length + trabajadoresYTramos.length);
+		Collections.addAll(jsFiles, respuestas);
+		Collections.addAll(jsFiles, trabajadoresYTramos);
+
+		Map<String, Collection<String>> options = Collections.emptyMap();
+
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.TRABAJADORES_TRAMOS, options, jsFiles,
+				new ReadyStateChangeHandler() {
+					@Override
+					public void onReadyStateChange(XMLHttpRequest xhr) {
+						try {
+							int state = xhr.getReadyState();
+							if (state != XMLHttpRequest.DONE)
+								return;
+							// TODO: Errors !!!
+							String html = xhr.getResponseText();
+							RegExp regExp = RegExp.compile(
+									"parent.__onTrabajadoresYTramos\\s*\\(\\s*(\\[(.|[\\r\\n])*\\])\\s*,\\s*(\\[(.|[\\r\\n])*\\])\\s*\\)",
+									"gim");
+							MatchResult matchResult = regExp.exec(html);
+							JsArray<JsFile> trabajadoresYTramosArr = eval("("+matchResult.getGroup(1)+")");
+	
+							JsFile trabajadoresYTramos [] = new JsFile[trabajadoresYTramosArr.length()];
+							for ( int i = 0; i < trabajadoresYTramos.length; i++ )
+								trabajadoresYTramos[i] = trabajadoresYTramosArr.get(i);
+							MainCreta.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
+							
+							JsArray<JsFile> respuestasArr = eval("("+matchResult.getGroup(3)+")");
+							JsFile respuestas [] = new JsFile[respuestasArr.length()];
+							
+							for ( int i = 0; i < respuestas.length; i++ )
+								respuestas[i] = respuestasArr.get(i);
+							
+							MainCreta.add(File.RESPUESTA, respuestas);
+							
+							cb.onSuccess(null);
+						} catch ( Throwable caught) {
+							cb.onFailure(caught);
+						}
+					}
+
+				});
+
+	}
+	
 	protected static void sync(final AsyncCallback<Void> cb) {
 
 		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
@@ -1362,32 +1413,37 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				new ReadyStateChangeHandler() {
 					@Override
 					public void onReadyStateChange(XMLHttpRequest xhr) {
-						int state = xhr.getReadyState();
-						if (state != XMLHttpRequest.DONE)
-							return;
-						// TODO: Errors !!!
-						String html = xhr.getResponseText();
-						RegExp regExp = RegExp.compile(
-								"parent.__onTrabajadoresYTramos\\s*\\(\\s*(\\[(.|[\\r\\n])*\\])\\s*,\\s*(\\[(.|[\\r\\n])*\\])\\s*\\)",
-								"gim");
-						MatchResult matchResult = regExp.exec(html);
-						
-						
-						JsArray<JsFile> trabajadoresYTramosArr = eval("("+matchResult.getGroup(1)+")");
-						JsFile trabajadoresYTramos [] = new JsFile[trabajadoresYTramosArr.length()];
-						for ( int i = 0; i < trabajadoresYTramos.length; i++ )
-							trabajadoresYTramos[i] = trabajadoresYTramosArr.get(i);
-						MainCreta.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
-						
-						JsArray<JsFile> respuestasArr = eval("("+matchResult.getGroup(3)+")");
-						JsFile respuestas [] = new JsFile[respuestasArr.length()];
-						
-						for ( int i = 0; i < respuestas.length; i++ )
-							respuestas[i] = respuestasArr.get(i);
-						
-						MainCreta.add(File.RESPUESTA, respuestas);
-						
-						cb.onSuccess(null);
+						try {
+							int state = xhr.getReadyState();
+							if (state != XMLHttpRequest.DONE)
+								return;
+							// TODO: Errors !!!
+							String html = xhr.getResponseText();
+							
+							int open = html.indexOf('[', 0);
+							int close = html.indexOf(']', open+1);
+							JsArray<JsFile> trabajadoresYTramosArr = eval("("+html.substring(open, close+1)+")");
+	
+							JsFile trabajadoresYTramos [] = new JsFile[trabajadoresYTramosArr.length()];
+							for ( int i = 0; i < trabajadoresYTramos.length; i++ )
+								trabajadoresYTramos[i] = trabajadoresYTramosArr.get(i);
+							MainCreta.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
+							
+							open = html.indexOf('[', close+1);
+							close = html.indexOf(')', open+1);
+							JsArray<JsFile> respuestasArr = eval("("+html.substring(open, close)+")");
+							JsFile respuestas [] = new JsFile[respuestasArr.length()];
+							
+							for ( int i = 0; i < respuestas.length; i++ )
+								respuestas[i] = respuestasArr.get(i);
+							
+							MainCreta.add(File.RESPUESTA, respuestas);
+							
+							cb.onSuccess(null);
+						} catch ( Throwable caught) {
+							Window.alert(caught.getMessage());
+							cb.onFailure(caught);
+						}
 					}
 
 				});
@@ -1540,8 +1596,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			map.put(t.getId(), t);
 		}
-
-		set(key, map.values());
+		
+		try {
+			set(key, map.values());
+		} catch ( Throwable caught){
+		}
 
 		return Collections.unmodifiableMap(map);
 	}
@@ -1694,8 +1753,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		for (T t : ts)
 			map.put(t.getId(), t);
-
-		set(key, map.values());
+		try {
+			set(key, map.values());
+		} catch ( Throwable caught ) {
+			
+		}
 
 		return Collections.unmodifiableMap(map);
 	}
