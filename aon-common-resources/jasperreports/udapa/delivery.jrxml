@@ -39,6 +39,18 @@
 			<variableExpression><![CDATA[]]></variableExpression>
 			<initialValueExpression><![CDATA[]]></initialValueExpression>
 		</variable>
+		<variable name="itemFormat" class="com.code.aon.product.Item">
+			<variableExpression><![CDATA[($F{item}.getPackFormatTag()==null
+    && $F{item}.getPackMeasurementTag()==null
+    && $F{item}.getPackUnitsTag()==null)
+?$F{item}.getProduct().getBaseItem()
+:$F{item}]]></variableExpression>
+			<initialValueExpression><![CDATA[($F{item}.getPackFormatTag().getName()==null
+    && $F{item}.getPackMeasurementTag().getName()==null
+    && $F{item}.getPackUnitsTag().getName()==null)
+?$F{item}.getProduct().getBaseItem()
+:$F{item}]]></initialValueExpression>
+		</variable>
 		<filterExpression><![CDATA[!$F{item}.getProduct().isPrepayment()
 && !($F{item}.getProduct().getType()==ProductType.AUXILIARY)]]></filterExpression>
 		<group name="salesDetailGroup">
@@ -990,8 +1002,8 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									<reportElement uuid="d57f9082-e854-4c1e-9194-aaae6fe0ab22" key="textField-6" x="0" y="0" width="80" height="12">
 										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0
     || $F{price}.doubleValue()>0.0)
-    && !$F{item}.getPackFormatTag().getName().equals(
-        $F{item}.getPackUnitsTag().getName()))]]></printWhenExpression>
+    && !$V{itemFormat}.getPackFormatTag().getName().equals(
+        $V{itemFormat}.getPackUnitsTag().getName()))]]></printWhenExpression>
 									</reportElement>
 									<box rightPadding="2">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1003,12 +1015,12 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 										<font size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{IntegerFormater}.format($F{quantity}
-    / $F{item}.getPackMeasurement()
-    / $F{item}.getPackUnits())
-+ " " + $F{item}.getPackFormatTag().getName()
-+ "\n(" + $V{IntegerFormater}.format($F{item}.getPackUnits())
-+ " " + $F{item}.getPackUnitsTag().getName()
-+ "/" + $F{item}.getPackFormatTag().getName() + ")"]]></textFieldExpression>
+    / $V{itemFormat}.getPackMeasurement()
+    / $V{itemFormat}.getPackUnits())
++ " " + $V{itemFormat}.getPackFormatTag().getName()
++ "\n(" + $V{IntegerFormater}.format($V{itemFormat}.getPackUnits())
++ " " + $V{itemFormat}.getPackUnitsTag().getName()
++ "/" + $V{itemFormat}.getPackFormatTag().getName() + ")"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1043,11 +1055,11 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$V{IntegerFormater}.format($F{quantity} / $F{item}.getPackMeasurement())
-+ " " + $F{item}.getPackUnitsTag().getName()
-+ "\n(" + $V{IntegerFormater}.format($F{item}.getPackMeasurement())
-+ " " + $F{item}.getPackMeasurementTag().getName()
-+ "/" + $F{item}.getPackUnitsTag().getName() + ")"]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$V{IntegerFormater}.format($F{quantity} / $V{itemFormat}.getPackMeasurement())
++ " " + $V{itemFormat}.getPackUnitsTag().getName()
++ "\n(" + $V{IntegerFormater}.format($V{itemFormat}.getPackMeasurement())
++ " " + $V{itemFormat}.getPackMeasurementTag().getName()
++ "/" + $V{itemFormat}.getPackUnitsTag().getName() + ")"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1082,7 +1094,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$V{PriceFormater}.format($F{price} * $F{item}.getPackMeasurement())
+									<textFieldExpression><![CDATA[$V{PriceFormater}.format($F{price} * $V{itemFormat}.getPackMeasurement())
 + ($F{discountExpression}.getDiscountExpr().matches("0\\.?0?")
     ?"":"\n("+$F{discountExpression}.getDiscountExpr()+"%)")]]></textFieldExpression>
 								</textField>
@@ -1120,8 +1132,8 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 										<font size="7"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$V{DoubleFormater}.format($F{quantity})
-+ ($F{item}.getPackMeasurementTag()!=null
-    ?" " + $F{item}.getPackMeasurementTag().getName()
++ ($V{itemFormat}.getPackMeasurementTag()!=null
+    ?" " + $V{itemFormat}.getPackMeasurementTag().getName()
     :"")]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
