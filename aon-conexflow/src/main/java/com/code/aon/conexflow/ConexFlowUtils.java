@@ -364,11 +364,15 @@ public class ConexFlowUtils {
 	//******************* Cancelation
 	
 	public static Query getConexFlowCancelationQuery(ConexFlowConnection connection, String cancelOperation, Double amount, Double amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal, Integer reservationId) {
-		Double importeAux = amount * 100;
-		Integer importe = importeAux.intValue();
+		Integer eur = amount.intValue();
+		Double cent = (amount - eur.doubleValue()) * 100;
+		Long c = Math.round(cent);
+		Integer importe = (eur * 100) + c.intValue();
 		
-		Double importeOriginalAux = amountOriginal * 100;
-		Integer importeOriginal = importeOriginalAux.intValue();
+		Integer eurOriginal = amountOriginal.intValue();
+		Double centOriginal = (amountOriginal - eurOriginal.doubleValue()) * 100;
+		Long cOriginal = Math.round(centOriginal);
+		Integer importeOriginal = (eurOriginal * 100) + cOriginal.intValue();
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.CANCELATION_OP);
@@ -436,13 +440,17 @@ public class ConexFlowUtils {
 	//******************* Confirm Preauthorization
 	
 	public static Query getConexFlowConfirmPreauthorizationQuery(ConexFlowConnection connection, String cliente, String token, Double amount, Double amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId, Integer reservationId) {
-		Double importeAux = amount * 100;
-		Integer importe = importeAux.intValue();
+		Integer eur = amount.intValue();
+		Double cent = (amount - eur.doubleValue()) * 100;
+		Long c = Math.round(cent);
+		Integer importe = (eur * 100) + c.intValue();
 		
 		Integer importeOriginal = null;
 		if(amountOriginal!=null){
-			Double importeOriginalAux = amountOriginal * 100;
-			importeOriginal = importeOriginalAux.intValue();
+			Integer eurOriginal = amountOriginal.intValue();
+			Double centOriginal = (amountOriginal - eurOriginal.doubleValue()) * 100;
+			Long cOriginal = Math.round(centOriginal);
+			importeOriginal = (eurOriginal * 100) + cOriginal.intValue();
 		}
 		
 		Query query = new Query();
