@@ -11,11 +11,45 @@
 		field="aonResources"></ui:with>
 
 
+<g:SplitLayoutPanel ui:field="contentSplitLayoutPanel">
+	<g:center>
+
 	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
 		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
 			<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+				<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
+					<tr>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Almacen"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="warehouse"></g:Label>
+						</td>
+						
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="{msg.number}"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="number"></g:Label>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="{msg.issueDate}"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="date"></g:Label>
+						</td>
+						
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Hora"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="hour"></g:Label>
+						</td>
+					</tr>
+				</table>
 				<table class="{aonResources.css.aonWidthAll}">
-				
 					<!-- DATOS PRODUCTO -->
 					
 					<tr>
@@ -108,6 +142,10 @@
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:ScrollPanel>
-
+</g:center>
+<g:south size="30">
+	<g:SimpleLayoutPanel ui:field="southContent" />
+</g:south>
+</g:SplitLayoutPanel>
 
 </ui:UiBinder>

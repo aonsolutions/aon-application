@@ -76,7 +76,7 @@ public class AttachmentTest {
 	public void testInsert() {
 		Date now = new Date();
 		getAttachList().stream().forEach(attach ->{
-			attach.setId(AON.insert(DOMAIN_NAME, DOMAIN_ID, LOGIN, attach));
+			attach.setId(AON.insertAttach(DOMAIN_NAME, DOMAIN_ID, LOGIN, attach));
 			System.out.println("Insert File -- ID: "+ attach.getId());
 		});
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
@@ -100,7 +100,7 @@ public class AttachmentTest {
 	public void testUpdate() {
 		Date now = new Date();
 		getAttachList().stream().forEach(attach ->{
-			AON.update(DOMAIN_NAME, DOMAIN_ID, LOGIN, attach);
+			AON.updateAttach(DOMAIN_NAME, DOMAIN_ID, LOGIN, attach);
 			System.out.println("Update File -- ID: "+ attach.getId());
 		});
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
@@ -111,7 +111,7 @@ public class AttachmentTest {
 	public void testDelete() {
 		Date now = new Date();
 		getAttachList().stream().forEach(attach ->{
-			AON.delete(DOMAIN_NAME, DOMAIN_ID, LOGIN,
+			AON.deleteAttach(DOMAIN_NAME, DOMAIN_ID, LOGIN,
 					filter -> filter.getIdProperty().eq(attach.getId())
 					, attach.getAttachType());
 			System.out.println("Delete File -- ID: "+ attach.getId());

@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATT
 import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
+import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -306,5 +307,40 @@ public class AttachPropertiesDAO {
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return new FilterDAO.PropertyDAO<Integer>(SEPE_BATCH_ATTACH.SOURCE_BATCH);}
 		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(SEPE_BATCH_ATTACH.SOURCE_TYPE);}
+	}
+	
+	protected static class DataAttachPropertiesDAO implements AttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(AttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(DATA_ATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(DATA_ATTACH.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.TYPE);}
+		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return null;}
+		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(DATA_ATTACH.DATA);}
+		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(DATA_ATTACH.DRIVE_ID);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.MIMETYPE);}
+		@Override public Property<Integer> getAttachModuleProperty() {return null;}
+		@Override public Property<Integer> getScopeProperty() {return null;}
+		@Override public Property<Byte> getSecurityLevelProperty() {return null;}
+		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<Integer> getCategoryProperty() {return null;}
+		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
+		@Override public Property<String> getCreationUserProperty() {return null;}
+		@Override public Property<String> getDparentIdProperty() {return null;}
+		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
+		@Override public Property<String> getModificationUserProperty() {return null;}
+		@Override public Property<Integer> getSourceBatchProperty() {return new FilterDAO.PropertyDAO<Integer>(DATA_ATTACH.SOURCE_ID);}
+		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.SOURCE);}
+		@Override public Property<String> getDescriptionProperty() {return null;}
 	}
 }

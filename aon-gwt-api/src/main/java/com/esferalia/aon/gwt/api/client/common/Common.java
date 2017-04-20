@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.api.client.common;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -53,6 +56,21 @@ public class Common extends Methods{
 	
 	public void deleteAppParam(String requestData, AsyncCallback<JsAppParam> callback){
 		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/app_param/delete", requestData, callback);
+	}
+	
+	// ------------------- DATA RESPONSE (data_response)
+	
+	public void getDataResponse(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDataResponse>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "common/"+getDomainName()+"/"+getUserName()+"/data_response" + filter, callback);
+	}
+	
+	public void insertDataResponse(String requestData, AsyncCallback<JsDataResponse> callback){
+		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/data_response", requestData, callback);
+	}
+	
+	public void insertDataResponseDetail(String requestData){
+		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/data_response/detail", requestData);
 	}
 	
 }

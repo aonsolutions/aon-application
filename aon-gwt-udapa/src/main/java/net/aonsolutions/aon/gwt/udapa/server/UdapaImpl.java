@@ -21,7 +21,6 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
 	
 	public HashMap<String, String> getValues(){
 		// TODO GET VALUES TO BD

@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
@@ -314,5 +316,15 @@ public interface Filter {
 	@FunctionalInterface
 	public interface IncomeDetailFilter{
 		Filter filter(IncomeDetailProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface DataResponseFilter{
+		Filter filter(DataResponseProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface DataResponseDetailFilter{
+		Filter filter(DataResponseDetailProperties properties);
 	}
 }

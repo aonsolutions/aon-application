@@ -5,14 +5,13 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event;
@@ -25,7 +24,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -63,19 +63,22 @@ public class QualitySheet extends Composite{
 	@UiField(provided = true) FlexTable caliberControl;
 	@UiField(provided = true) FlexTable observation;
 	
+	@UiField SplitLayoutPanel contentSplitLayoutPanel;
+	@UiField SimpleLayoutPanel southContent;
+	
 	
 	public API getAPI() {
 		return parent.getAPI();
 	}
-
-	public QualitySheet(UdapaQuality parent) {
+	
+	public QualitySheet(UdapaQuality parent, JsDataResponse dataResponse) {
 		this.parent = parent;
 		transportData = new FlexTable();
 		productData = new FlexTable();
 		qualityTest = new FlexTable();
 		caliberControl = new FlexTable();
 		observation = new FlexTable();
-		
+				
 		Event.addNativePreviewHandler(new NativePreviewHandler() {
 			@Override
 			public void onPreviewNativeEvent(NativePreviewEvent event) {
@@ -134,6 +137,8 @@ public class QualitySheet extends Composite{
 		});
 		
 		initWidget(binder.createAndBindUi(this));
+		southContent.setWidget(new FootPanel(this));
+
 	}
 	
 	private void transportData() {
@@ -177,13 +182,17 @@ public class QualitySheet extends Composite{
 		
 		productData.setWidget(2, 0, new Label("Origen"));
 		productData.setWidget(2, 1, new Label("c/ madre vedruna"));
-		productData.setWidget(2, 4, new Label("Rechazado"));
-		productData.setWidget(2, 5, new CheckBox());
-
+		productData.setWidget(2, 4, new Label("Tipo"));
+		LinkedList<String> list = new LinkedList<>();
+		list.add("Consumo");
+		list.add("Siembra");
+		productData.setWidget(2, 5, listBox(list, QualitySheetCode.UFQDP3));
 		
 		productData.setWidget(3, 0, new Label(""));
 		productData.setWidget(3, 1, new Label("vitoria 01008"));
 		productData.getFlexCellFormatter().setColSpan(3, 1, 3);
+		productData.setWidget(3, 4, new Label("Rechazado"));
+		productData.setWidget(3, 5, new CheckBox());
 	}
 	
 	private void qualityTest() {
@@ -213,41 +222,8 @@ public class QualitySheet extends Composite{
 	private void caliberControl() {
 		caliberControl.setWidth("1000px");
 		caliberControl.setWidget(0, 0, new Label("Peso Muestra"));
-		 
-		RadioButton consumo = new RadioButton("Consumo");
-		consumo.setText("Consumo");
-		consumo.getElement().getStyle().setPaddingLeft(25, Unit.PX);
-		consumo.setValue(true);
-		RadioButton siembra = new RadioButton("Siembra");
-		siembra.setValue(false);
-		siembra.setText("Siembra");
-		consumo.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				siembra.setValue(!event.getValue());
-				if(event.getValue()){
-					calibresConsumo();
-				} else calibresSiembra();
-			}
-		});
 		
-		siembra.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				consumo.setValue(!event.getValue());
-				if(event.getValue()){
-					calibresSiembra();
-				} else calibresConsumo();
-			}
-		});
-		
-		HorizontalPanel hp0 = new HorizontalPanel();
-		hp0.add(doubleBox(QualitySheetCode.UFQCC01));
-		hp0.add(consumo);
-		hp0.add(siembra);
-		caliberControl.setWidget(0, 1, hp0);
+		caliberControl.setWidget(0, 1, doubleBox(QualitySheetCode.UFQCC01));
 		
 		caliberControl.setWidget(1, 0, new Label(""));	setWidth(caliberControl, 1, 0, "200px");
 		HorizontalPanel hp1 =  new HorizontalPanel();
@@ -268,8 +244,12 @@ public class QualitySheet extends Composite{
 		hp2.add(lpeso2);
 		hp2.add(lpercent2);
 		caliberControl.setWidget(1, 3, hp2); setWidth(caliberControl, 1, 3, "300px");
+	
+		Boolean consumo = map.containsKey(QualitySheetCode.UFQDP3.getName()) &&  
+				(map.get(QualitySheetCode.UFQDP3.getName()).equals("1")
+				|| map.get(QualitySheetCode.UFQDP3.getName()).equals("0"));
 		
-		if(consumo.getValue()){
+		if(consumo){
 			calibresConsumo();
 		} else calibresSiembra();
 		
@@ -467,6 +447,13 @@ public class QualitySheet extends Composite{
 				ws.setPrevValue(prevIndex);
 				ws.setValue(listBox.getSelectedIndex());
 				undo.push(ws);
+				if(QualitySheetCode.UFQDP3.equals(code)){
+					Boolean consumo = listBox.getSelectedItemText().equals("Consumo")
+									|| listBox.getSelectedItemText().equals("-");
+					if(consumo){
+			 			calibresConsumo();	
+					} else calibresSiembra();
+				}
 			}
 		});
 		
@@ -534,5 +521,9 @@ public class QualitySheet extends Composite{
 			}
 		});
 		return doubleBox;
+	}
+	
+	public void southContentSize(Double value) {
+		contentSplitLayoutPanel.setWidgetSize(southContent, value);	
 	}
 }

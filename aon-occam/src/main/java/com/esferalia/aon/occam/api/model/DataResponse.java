@@ -1,0 +1,83 @@
+package com.esferalia.aon.occam.api.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class DataResponse implements Serializable {
+
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private Integer id;
+	private Integer domain;
+	private String number;
+	private Date issueDate;
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
+		  
+		
+	
+	
+	public Integer getId() {
+		return id;
+	}
+	public DataResponse setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	public Integer getDomain() {
+		return domain;
+	}
+	public DataResponse setDomain(Integer domain) {
+		this.domain = domain;
+		return this;
+	}
+	public String getNumber() {
+		return number;
+	}
+	public DataResponse setNumber(String number) {
+		this.number = number;
+		return this;
+	}
+	public Date getIssueDate() {
+		return issueDate;
+	}
+	public DataResponse setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
+		return this;
+	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public DataResponse setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public DataResponse setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public DataResponse setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public DataResponse setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	
+}

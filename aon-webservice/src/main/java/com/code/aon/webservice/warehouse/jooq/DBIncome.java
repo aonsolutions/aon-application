@@ -14,6 +14,7 @@ import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -46,6 +47,13 @@ public class DBIncome {
     	return incomeToJSON(income);
     }
 
+	public static JSONArray getIncomeDetails(Domain domain,String login, Map<String, String[]> map){
+		JSONArray array = new JSONArray();
+		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> incomeDetailFilter(domain, map, f))
+			.forEach(detail -> array.put(incomeDetailToJSON(detail)));
+		return array;
+	}
+    
 	public static JSONArray getIncomeDetails(Domain domain,String login, Integer incomeId){
 	    JSONArray array = new JSONArray();
 	    AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(incomeId))
@@ -104,6 +112,26 @@ public class DBIncome {
 		
 		return filter;
 	}
+	
+	public static Filter incomeDetailFilter(Domain domain, Map<String, String[]> filterMap, IncomeDetailProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey("income")){
+			Integer income = Integer.parseInt(filterMap.get("income")[0]);
+			filter = filter.and(f.getIncomeProperty().eq(income));
+		}
+		
+		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
+			Integer[] array = AON.getIncomeStream(domain.getName(), domain.getId(), "", h -> 
+				h.getCarrierPackingProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0])))
+			.map(i -> i.getId()).toArray(Integer[]::new);
+			Filter fcarrierPacking = f.getIncomeProperty().in(array); 
+			filter = filter.and(fcarrierPacking);
+		}
+		
+		return filter;
+	}
+
 	
 	public static JSONObject insertIncomeDetail(Domain domain,String login, JSONObject json){
 		Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getInt("item")));

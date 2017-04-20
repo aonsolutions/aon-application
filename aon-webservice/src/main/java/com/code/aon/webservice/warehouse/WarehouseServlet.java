@@ -75,7 +75,7 @@ public class WarehouseServlet extends HttpServlet{
 					}
 				} else if(MSG.PURCHASE.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if("detail".equalsIgnoreCase(pathInfo[4])){
+						if(MSG.DETAIL.equalsIgnoreCase(pathInfo[4])){
 							object = DBPurchase.getPurchaseDetails(domain, userName, req.getParameterMap());
 						}else if(pathInfo.length > 5){
 							object = DBPurchase.getPurchaseDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
@@ -83,7 +83,7 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = DBPurchase.getPurchases(domain, userName, req.getParameterMap());
 				} else if(MSG.DELIVERY.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if("detail".equalsIgnoreCase(pathInfo[4])){
+						if(MSG.DETAIL.equalsIgnoreCase(pathInfo[4])){
 							object = DBDelivery.getDeliveryDetails(domain, userName, req.getParameterMap());
 						} else if(pathInfo.length > 5){
 							object = getDeliveryDetailList(domain, userName, Integer.parseInt(pathInfo[4]));
@@ -91,7 +91,9 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = getDeliveryList(domain, userName, req.getParameterMap());
 				} else if(MSG.INCOME.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if("last_lote".equalsIgnoreCase(pathInfo[4])){
+						if(MSG.DETAIL.equalsIgnoreCase(pathInfo[4])){
+							object = DBIncome.getIncomeDetails(domain, userName, req.getParameterMap());
+						} else if("last_lote".equalsIgnoreCase(pathInfo[4])){
 							object = DBIncome.getIncomeLastLote(domain, userName, pathInfo[5]);
 						} else if(pathInfo.length > 5){
 							object = DBIncome.getIncomeDetails(domain, userName, Integer.parseInt(pathInfo[4]));

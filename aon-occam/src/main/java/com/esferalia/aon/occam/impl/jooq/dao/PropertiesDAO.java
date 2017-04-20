@@ -17,6 +17,8 @@ import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -31,6 +33,8 @@ import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
@@ -48,6 +52,8 @@ import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
@@ -599,5 +605,57 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.WITHHOLDING);}
 		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.E_INVOICE);}
+	}
+	
+	protected static class DataResponsePropertiesDAO implements DataResponseProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, DataResponseFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(DataResponseFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.DOMAIN);}
+		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.NUMBER);}
+		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.ISSUE_DATE);}
+		
+		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
+		@Override public Property<String> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.VALUE);}
+	}
+	
+	protected static class DataResponseDetailPropertiesDAO implements DataResponseDetailProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, DataResponseDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(DataResponseDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getDataResponseProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_RESPONSE);}
+		@Override public Property<String> getDataVariableProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
+		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.VALUE);}
 	}
 }
