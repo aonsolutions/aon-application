@@ -267,7 +267,7 @@ public class Bases {
 				DatoBuilder datoBuilder = new DatoBuilder();
 				datoBuilder.setCodigo(datoSolicitado.getCodigo());
 				datoBuilder.setTipo(datoSolicitado.getTipoDato());
-				datoBuilder.setHoras((int) Math.round(newValue));
+				datoBuilder.setHoras((int)newValue); // truncate decimal points
 				tramoBuilder.addDato(datoBuilder.create());
 
 			} catch (NoSuchVariableException e) {
