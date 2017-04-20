@@ -15,6 +15,8 @@ public interface IAttachment {
 	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter);
 	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter);
 	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter);
+
 	
 	public Integer insertContractAttach(AONContext ctx, Attach attach);
 	public Integer insertItemAttach(AONContext ctx, Attach attach);
@@ -24,6 +26,8 @@ public interface IAttachment {
 	public Integer insertProjectAttach(AONContext ctx, Attach attach);
 	public Integer insertRegistryAttach(AONContext ctx, Attach attach);
 	public Integer insertSepeAttach(AONContext ctx, Attach attach);
+	public Integer insertDataAttach(AONContext ctx, Attach attach);
+	
 	
 	public void updateContractAttach(AONContext ctx, Attach attach);
 	public void updateItemAttach(AONContext ctx, Attach attach);
@@ -33,6 +37,7 @@ public interface IAttachment {
 	public void updateProjectAttach(AONContext ctx, Attach attach);
 	public void updateRegistryAttach(AONContext ctx, Attach attach);
 	public void updateSepeAttach(AONContext ctx, Attach attach);
+	public void updateDataAttach(AONContext ctx, Attach attach);
 	
 	public void updateContractAttachData(AONContext ctx, Attach attach);
 	public void updateItemAttachData(AONContext ctx, Attach attach);
@@ -60,6 +65,7 @@ public interface IAttachment {
 	public void deleteProjectAttach(AONContext ctx, AttachFilter filter);
 	public void deleteRegistryAttach(AONContext ctx, AttachFilter filter);
 	public void deleteSepeAttach(AONContext ctx, AttachFilter filter);
+	public void deleteDataAttach(AONContext ctx, AttachFilter filter);
 	
 	public Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId);
 	public void deleteRegistryAttachTag(AONContext ctx, Integer rattachId);

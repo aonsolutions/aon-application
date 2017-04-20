@@ -47,8 +47,13 @@ public class AttachmentImpl implements IAttachment{
 	}
 	@Override
 	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
+		return ctx.getDslContext().transactionResult(
 				configuration -> AttachmentDAO.getSepeAttachStream(ctx, filter));
+	}
+	@Override
+	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getDataAttachStream(ctx, filter));
 	}
 	
 	@Override
@@ -99,7 +104,12 @@ public class AttachmentImpl implements IAttachment{
 			AttachmentDAO.insertSepeAttach(ctx, attach));
 	}
 
-	
+	@Override
+	public Integer insertDataAttach(AONContext ctx, Attach attach) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			AttachmentDAO.insertDataAttach(ctx, attach));
+	}
+
 	//-------------------- FULL UPDATE
 	
 	@Override
@@ -148,6 +158,12 @@ public class AttachmentImpl implements IAttachment{
 	public void updateSepeAttach(AONContext ctx, Attach attach) {
 		ctx.getDslContext().transaction(configuration -> 
 			AttachmentDAO.updateSepeAttach(ctx, attach));
+	}
+	
+	@Override
+	public void updateDataAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateDataAttach(ctx, attach));		
 	}
 
 	//-------------------- DATA UPDATE
@@ -307,6 +323,13 @@ public class AttachmentImpl implements IAttachment{
 			AttachmentDAO.deleteSepeAttach(ctx, filter);
 		} );
 	}
+
+	@Override
+	public void deleteDataAttach(AONContext ctx, AttachFilter filter) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteDataAttach(ctx, filter);
+		} );		
+	}	
 	
 	@Override
 	public Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId){
@@ -319,5 +342,5 @@ public class AttachmentImpl implements IAttachment{
 		ctx.getDslContext().transaction(configuration -> {
 			AttachmentDAO.deleteRegistryAttachTag(ctx, rattachId);
 		} );
-	}	
+	}
 }

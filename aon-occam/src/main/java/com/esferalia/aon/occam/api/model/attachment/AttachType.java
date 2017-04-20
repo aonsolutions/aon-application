@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.api.model.attachment;
 
-public enum AttachType {
+import java.io.Serializable;
+
+public enum AttachType  implements Serializable {
+	
 	REGISTRY("registry")
 	,CONTRACT("contract")
 	,ITEM("item")
@@ -12,7 +15,8 @@ public enum AttachType {
 	,MOD111("mod111")
 	,MOD115("mod115")
 	,MOD123("mod123")
-	,PAYSHEET("paysheet");
+	,PAYSHEET("paysheet")
+	,DATA("data");
 	
 	private String name;
 	

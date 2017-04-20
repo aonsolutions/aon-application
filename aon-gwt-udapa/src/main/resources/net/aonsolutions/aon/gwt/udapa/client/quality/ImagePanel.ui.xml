@@ -1,0 +1,138 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"	
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
+	xmlns:a="urn:import:com.esferalia.aon.gwt.issues.client"
+	>
+
+<ui:style>
+
+
+
+</ui:style>
+<g:HTMLPanel addStyleNames="iron-list-issue"> 
+
+	<style is="custom-style">
+		:host {
+          display: block;
+          @apply(--paper-font-common-base);
+        }
+        app-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 1;
+          background-color: #4285f4;
+          color: white;
+        }
+        iron-list {
+          margin-top: 90px;
+          padding-bottom: 16px;
+        }
+        .photoContent {
+          @apply(--layout);
+          background-color: #ddd;
+          position: relative;
+          width: 300px;
+          height: 300px;
+          margin: 8px;
+        }
+        .photoContent:hover .detail{
+          opacity: 1;
+        }
+        .photoContent > iron-image {
+          @apply(--layout-flex);
+        }
+        .photoContent > .detail {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+          color: white;
+          font-size: 20px;
+          font-weight: 100;
+          padding: 20px;
+          opacity: 0;
+          transition: opacity 0.1s;
+        }
+        .searchInput {
+          @apply(--layout-flex);
+          font-size: 18px;
+          padding: 10px 20px;
+          border: none;
+          background-color: rgba(255, 255, 255, 0.2);
+          color: white;
+          -webkit-appearance: none;
+          border-radius: 0px;
+        }
+        .searchInput:hover {
+          background-color: rgba(255, 255, 255, 0.3);
+        }
+        .searchInput:focus {
+          background-color: white;
+          outline: none;
+          color: black;
+        }
+        .loadingIndicator {
+          font-size: 16px;
+          text-align: center;
+          height: 60px;
+        }
+        .loadingIndicator paper-spinner {
+          margin-right: 20px;
+          vertical-align: middle;
+        }
+        @media (max-width: 800px) {
+          .photoContainer {
+            width: calc(50% - 16px);
+          }
+          .photoContent {
+            width: auto;
+          }
+        }
+        @media (max-width: 400px) {
+          iron-list {
+            margin-top: 72px;
+          }
+          .photoContainer {
+            width: 100%;
+          }
+          .photoContent > .detail {
+            opacity: 1;
+          }
+        }
+        ::-webkit-input-placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+        ::-moz-placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+        :-ms-input-placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+        ::-ms-input-placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+    
+    <iron-list ui:field="imgList" as="photo">
+        <template>
+          <div class="photoContainer">
+            <div class="photoContent" tabindex$="[[tabIndex]]">
+              <iron-image sizing="cover"
+                  src="[[photo.url]]">
+              </iron-image>
+              <div class="detail">[[photo.title]]</div>
+            </div>
+          </div>
+        </template>
+      </iron-list>
+  	</g:HTMLPanel>
+</ui:UiBinder>

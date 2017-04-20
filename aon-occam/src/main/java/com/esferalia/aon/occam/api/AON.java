@@ -24,6 +24,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
@@ -39,6 +41,8 @@ import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
@@ -1852,15 +1856,21 @@ public class AON {
 				return getAttachment().getProjectAttachStream(ctx, filter);
 			else if (attachType.equals(AttachType.SEPE))
 				return getAttachment().getSepeAttachStream(ctx, filter);
+			else if (attachType.equals(AttachType.DATA))
+				return getAttachment().getDataAttachStream(ctx, filter);
 			return null;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
+	
+	@Deprecated
+	public static Integer insert(String domainName, Integer domainId, String login, Attach attach){
+		return insertAttach(domainName, domainId, login, attach);
+	}
 
-	public static Integer insert(String domainName, Integer domainId,
-			String login, Attach attach) {
+	public static Integer insertAttach(String domainName, Integer domainId, String login, Attach attach) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1881,14 +1891,21 @@ public class AON {
 				return getAttachment().insertProjectAttach(ctx, attach);
 			else if (attach.getAttachType().equals(AttachType.SEPE))
 				return getAttachment().insertSepeAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.DATA))
+				return getAttachment().insertDataAttach(ctx, attach);
 			return null;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-
-	public static void update(String domainName, Integer domainId, String login,
+	
+	@Deprecated
+	public static void update(String domainName, Integer domainId, String login, Attach attach) {
+		updateAttach(domainName, domainId, login, attach);
+	}
+	
+	public static void updateAttach(String domainName, Integer domainId, String login,
 			Attach attach) {
 		AONContext ctx = null;
 		try {
@@ -1910,6 +1927,8 @@ public class AON {
 				getAttachment().updateProjectAttach(ctx, attach);
 			else if (attach.getAttachType().equals(AttachType.SEPE))
 				getAttachment().updateSepeAttach(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.DATA))
+				getAttachment().updateDataAttach(ctx, attach);
 
 		} finally {
 			if (ctx != null)
@@ -1952,37 +1971,34 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-
 			if (attachType.equals(AttachType.REGISTRY))
-				getAttachment().updateRegistryAttachDriveId(ctx, attachId,
-						driveId);
+				getAttachment().updateRegistryAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.CONTRACT))
-				getAttachment().updateContractAttachDriveId(ctx, attachId,
-						driveId);
+				getAttachment().updateContractAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.INVOICE))
-				getAttachment().updateInvoiceAttachDriveId(ctx, attachId,
-						driveId);
+				getAttachment().updateInvoiceAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.ITEM))
 				getAttachment().updateItemAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.OFFER))
-				getAttachment().updateOfferAttachDriveId(ctx, attachId,
-						driveId);
+				getAttachment().updateOfferAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.PAYROLL))
-				getAttachment().updatePayrollAttachDriveId(ctx, attachId,
-						driveId);
+				getAttachment().updatePayrollAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.PROJECT))
-				getAttachment().updateProjectAttachDriveId(ctx, attachId,
-						driveId);
+				getAttachment().updateProjectAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.SEPE))
 				getAttachment().updateSepeAttachDriveId(ctx, attachId, driveId);
-
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static void delete(String domainName, Integer domainId, String login,
+	@Deprecated
+	public static void delete(String domainName, Integer domainId, String login, AttachFilter filter, AttachType attachType) {
+		deleteAttach(domainName, domainId, login, filter, attachType);
+	}
+	
+	public static void deleteAttach(String domainName, Integer domainId, String login,
 			AttachFilter filter, AttachType attachType) {
 		AONContext ctx = null;
 		try {
@@ -2004,7 +2020,9 @@ public class AON {
 				getAttachment().deleteProjectAttach(ctx, filter);
 			else if (attachType.equals(AttachType.SEPE))
 				getAttachment().deleteSepeAttach(ctx, filter);
-
+			else if (attachType.equals(AttachType.DATA))
+				getAttachment().deleteDataAttach(ctx, filter);
+			
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -4170,6 +4188,86 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getRegistry().getRegistryProfileStream(ctx, registry, question);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<DataResponse> getDataResponseStream(String domainName, Integer domainId, String login, DataResponseFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDataResponseStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static DataResponse insertDataResponse(String domainName, Integer domainId, String login, DataResponse dataResponse){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().insertDataResponse(ctx, dataResponse);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static DataResponse updateDataResponse(String domainName, Integer domainId, String login, DataResponse dataResponse, DataResponseFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().updateDataResponse(ctx, dataResponse, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static DataResponse deleteDataResponse(String domainName, Integer domainId, String login, DataResponseFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().deleteDataResponse(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<DataResponseDetail> getDataResponseDetailStream(String domainName, Integer domainId, String login, DataResponseDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDataResponseDetailStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static DataResponseDetail insertDataResponseDetail(String domainName, Integer domainId, String login, DataResponseDetail dataResponseDetail){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().insertDataResponseDetail(ctx, dataResponseDetail);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static DataResponseDetail updateDataResponseDetail(String domainName, Integer domainId, String login, DataResponseDetail dataResponseDetail, DataResponseDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().updateDataResponseDetail(ctx, dataResponseDetail, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static DataResponseDetail deleteDataResponseDetail(String domainName, Integer domainId, String login, DataResponseDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().deleteDataResponseDetail(ctx, filter);
 		} finally {
 			if (ctx != null) ctx.close();
 		}

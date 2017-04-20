@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
+import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -17,6 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record7;
 import org.jooq.SelectConditionStep;
@@ -31,6 +33,7 @@ import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.jooq.tables.records.SepeBatchAttachRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -49,7 +52,8 @@ public class AttachmentDAO {
 	private static final AttachPropertiesDAO.PayrollAttachPropertiesDAO PAYROLL_ATTACH_PROPERTIES = new AttachPropertiesDAO.PayrollAttachPropertiesDAO();
 	private static final AttachPropertiesDAO.ProjectAttachPropertiesDAO PROJECT_ATTACH_PROPERTIES = new AttachPropertiesDAO.ProjectAttachPropertiesDAO();
 	private static final AttachPropertiesDAO.SepeAttachPropertiesDAO SEPE_ATTACH_PROPERTIES = new AttachPropertiesDAO.SepeAttachPropertiesDAO();
-	
+	private static final AttachPropertiesDAO.DataAttachPropertiesDAO DATA_ATTACH_PROPERTIES = new AttachPropertiesDAO.DataAttachPropertiesDAO();
+
 	//-------------------- GETS 
 	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter){	
@@ -98,6 +102,12 @@ public class AttachmentDAO {
 		return SEPE_ATTACH_PROPERTIES.build(ctx.getDslContext()
 				.select().from(SEPE_BATCH_ATTACH), filter)
 			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx));
+	}
+	
+	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter){	
+		return DATA_ATTACH_PROPERTIES.build(ctx.getDslContext()
+				.select().from(DATA_ATTACH), filter)
+			.fetchInto(DATA_ATTACH).stream().map(new FullDataAttachFiller());
 	}
 	
 	public static Attach getRattachWithoutData(AONContext ctx, Condition condition){
@@ -239,6 +249,17 @@ public class AttachmentDAO {
 		.returning(SEPE_BATCH_ATTACH.ID).fetchOne().getId();
 	}
 	
+	public static Integer insertDataAttach(AONContext ctx, Attach attach){
+		ctx.checkWrite();
+		return ctx.getDslContext().insertInto(DATA_ATTACH, DATA_ATTACH.DOMAIN,
+				DATA_ATTACH.DATA, DATA_ATTACH.DRIVE_ID, DATA_ATTACH.MIMETYPE,
+				DATA_ATTACH.SOURCE_ID, DATA_ATTACH.SOURCE, DATA_ATTACH.TYPE)
+			.values(attach.getDomain().getId(), attach.getData(), attach.getDriveId(),
+				(byte) attach.getMimeType().ordinal(), attach.getSourceBatch(), 
+				(byte) attach.getSourceType(), (byte) attach.getType())
+		.returning(DATA_ATTACH.ID).fetchOne().getId();
+	}
+	
 	public static Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId){
 		ctx.checkWrite();
 		return ctx.getDslContext().insertInto(RATTACH_TAG, RATTACH_TAG.DOMAIN, RATTACH_TAG.RATTACH, RATTACH_TAG.TAG)
@@ -367,6 +388,19 @@ public class AttachmentDAO {
 			.set(SEPE_BATCH_ATTACH.SOURCE_TYPE, (byte) attach.getSourceType())
 			.set(SEPE_BATCH_ATTACH.TYPE, (byte) attach.getType())
 		.where(SEPE_BATCH_ATTACH.ID.eq(attach.getId()))
+		.execute();
+	}
+	
+	public static void updateDataAttach(AONContext ctx, Attach attach){
+		ctx.getDslContext().update(DATA_ATTACH)
+			.set(DATA_ATTACH.DATA, attach.getData())
+			.set(DATA_ATTACH.DOMAIN, attach.getDomain().getId())
+			.set(DATA_ATTACH.DRIVE_ID, attach.getDriveId()) 	
+			.set(DATA_ATTACH.MIMETYPE, (byte)attach.getMimeType().ordinal())
+			.set(DATA_ATTACH.SOURCE_ID, attach.getSourceBatch())
+			.set(DATA_ATTACH.SOURCE, (byte) attach.getSourceType())
+			.set(DATA_ATTACH.TYPE, (byte) attach.getType())
+		.where(DATA_ATTACH.ID.eq(attach.getId()))
 		.execute();
 	}
 
@@ -522,6 +556,10 @@ public class AttachmentDAO {
 
 	public static void deleteSepeAttach(AONContext ctx, AttachFilter filter){
 		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter)).execute();
+	}
+	
+	public static void deleteDataAttach(AONContext ctx, AttachFilter filter){
+		ctx.getDslContext().delete(DATA_ATTACH).where(DATA_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 	
 	public static void deleteRegistryAttachTag(AONContext ctx, Integer rattachId){
@@ -767,6 +805,22 @@ public class AttachmentDAO {
 							.setScope(r.getScope())
 							.setSourceBatch(r.getSourceBatch())
 							.setSourceType(r.getSourceType());		
+		}
+	}
+	
+	private static class FullDataAttachFiller implements Function<Record, Attach> {
+		
+		@Override
+		public Attach apply(Record r) {
+			return new Attach().setAttachType(AttachType.SEPE)
+							.setData(r.getValue(DATA_ATTACH.DATA))
+							.setDomain(new Domain().setId(r.getValue(DATA_ATTACH.DOMAIN)))
+							.setDriveId(r.getValue(DATA_ATTACH.DRIVE_ID))
+							.setId(r.getValue(DATA_ATTACH.ID))
+							.setMimeType(MimeType.values()[r.getValue(DATA_ATTACH.MIMETYPE)])
+							.setSourceBatch(r.getValue(DATA_ATTACH.SOURCE_ID))
+							.setSourceType(r.getValue(DATA_ATTACH.SOURCE))
+							.setType(r.getValue(DATA_ATTACH.TYPE));		
 		}
 	}
 	

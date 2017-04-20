@@ -1,6 +1,10 @@
 package com.code.aon.webservice.common;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -14,7 +18,11 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CommonServlet", urlPatterns = { "/common/*",
@@ -38,22 +46,25 @@ public class CommonServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
-				case MSG.WORKPLACE: // PRODUCT CATEGPRY
+				case MSG.WORKPLACE:
 					object = getWorkplaceList(domain, userName);
 					break;
-				case MSG.MAIL_ACCOUNT: // PRODUCT CATEGPRY
+				case MSG.MAIL_ACCOUNT: 
 					object = getMailAccountList(domain, userName);
 					break;
-				case MSG.SIGNATURE: // PRODUCT CATEGPRY
+				case MSG.SIGNATURE: 
 					object = getSignatureList(domain, userName);
 					break;
-				case "app_param": // PRODUCT CATEGPRY
+				case MSG.APP_PARAM: 
 					String param = req.getParameter("param");
 					JSONArray array = new JSONArray();
 					AON.getApplicationParameterStream(domain.getName(), domain.getId(), userName, f -> 
 						f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().like(param+"%")))
 					.forEach(app -> array.put(ToJSON.applicationParameterToJSON(app)));
 					object = array;
+					break;
+				case MSG.DATA_RESPONSE: 
+					object = getDataResponseList(domain, userName, req.getParameterMap());
 					break;
 				default:
 					break;
@@ -87,6 +98,14 @@ public class CommonServlet extends HttpServlet{
 				} else {
 					object = insertAppParam(domain, userName, json);
 				}	
+			} else if(MSG.DATA_RESPONSE.equals(pathInfo[3])){
+				if(pathInfo.length > 4){
+					if(MSG.DETAIL.equals(pathInfo[4])){
+						object = insertDataResponseDetail(domain, userName, json);
+					}
+				} else {
+					object = insertDataResponse(domain, userName, json);
+				}
 			}
 			
 			resp.setContentType("application/json;charset=UTF-8");
@@ -98,6 +117,44 @@ public class CommonServlet extends HttpServlet{
 		}
 	}
 
+	private JSONArray getDataResponseList(Domain domain, String login, Map<String,String[]> map){
+		JSONArray array = new JSONArray();
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login,  
+				f -> dataResponseFilter(domain, map, f))
+		.forEach(dr -> array.put(ToJSON.dataResponseToJSON(dr)));
+	    return array;
+	}
+	
+	public static Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.NUMBER)){
+			Filter fnumber = f.getNumberProperty().eq(filterMap.get(MSG.NUMBER)[0]);
+			for(Integer i = 1; i < filterMap.get(MSG.NUMBER).length ; i++){
+				fnumber = fnumber.or(f.getNumberProperty().eq(filterMap.get(MSG.NUMBER)[i]));
+			}
+			filter = filter.and(fnumber);
+		} 
+		
+		if(filterMap.containsKey("source")){
+			Filter fsourceValue = f.getTypeProperty().eq("source").and(f.getSourceProperty().like(filterMap.get("source")[0] + "@%"));				
+			for(Integer i = 1; i < filterMap.get("source").length ; i++){
+				fsourceValue = fsourceValue.or(f.getTypeProperty().eq("source").and(f.getSourceProperty().like(filterMap.get("source")[i] + "@%")));
+			}
+			filter = filter.and(fsourceValue);
+		}
+		
+		if(filterMap.containsKey("type")){
+			Filter ftypeValue = f.getTypeProperty().eq("type").and(f.getSourceProperty().eq(filterMap.get("type")[0]));				
+			for(Integer i = 1; i < filterMap.get("type").length ; i++){
+				ftypeValue = ftypeValue.or(f.getTypeProperty().eq("type").and(f.getSourceProperty().like(filterMap.get("type")[i])));
+			}
+			filter = filter.and(ftypeValue);
+		}
+		
+		return filter;
+	}
+	
     private JSONArray getWorkplaceList(Domain domain, String login){
     	JSONArray array = new JSONArray();
     	AON.getWorkplaceList(domain.getName(), domain.getId(), login, 
@@ -134,6 +191,40 @@ public class CommonServlet extends HttpServlet{
 		String parameter = json.getString("parameter");
 		String value = json.getString("value");
 		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, parameter, value);
+		return new JSONObject();
+	}
+	
+	private JSONObject insertDataResponse(Domain domain, String login, JSONObject json) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		Date date = new Date();
+		/*try { TODO 
+			date = dateFormat.parse(json.getString("issue_date"));
+		} catch (JSONException | ParseException e) {
+			e.printStackTrace();
+		}*/
+		DataResponse dataResponse = new DataResponse()
+				.setNumber(json.getString("number"))
+				.setDomain(domain.getId())
+				.setIssueDate(date);
+		
+		DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dataResponse);
+		return ToJSON.dataResponseToJSON(dr);
+	}
+	
+	private JSONObject insertDataResponseDetail(Domain domain, String login, JSONObject json) {
+		Integer dataResponseId = json.getInt("data_response");
+		Iterator<String> it = json.keys();
+		while(it.hasNext()){
+			String key = it.next();
+			if(!key.equals("data_response")){
+				DataResponseDetail drd = new DataResponseDetail()
+						.setDomain(domain.getId())
+						.setDataResponse(dataResponseId)
+						.setDataVariable(key)
+						.setValue(json.getString(key));
+				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
+			}
+		}
 		return new JSONObject();
 	}
 }

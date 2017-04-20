@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
@@ -24,6 +26,8 @@ import org.jooq.Record;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -571,6 +575,38 @@ public class FillerDAO {
 					.setQuantity(r.getValue(INCOME_DETAIL.QUANTITY))
 					.setWarehouse(r.getValue(INCOME_DETAIL.WAREHOUSE));
 		}
-
+	}
+	
+	public static class DataResponseFiller implements Function<Record, DataResponse> {
+		
+		@Override
+		public DataResponse apply(Record r) {
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE));
+			dataResponse.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER));
+			dataResponse.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE));
+			dataResponse.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER));
+			return dataResponse.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
+					.setId(r.getValue(DATA_RESPONSE.ID))
+					.setIssueDate(r.getValue(DATA_RESPONSE.ISSUE_DATE))
+					.setNumber(r.getValue(DATA_RESPONSE.NUMBER));
+		}
+	}
+	
+	public static class DataResponseDetailFiller implements Function<Record, DataResponseDetail> {
+		
+		@Override
+		public DataResponseDetail apply(Record r) {
+			DataResponseDetail dataResponseDetail = new DataResponseDetail();
+			dataResponseDetail.setCreationDate(r.getValue(DATA_RESPONSE_DETAIL.CREATION_DATE));
+			dataResponseDetail.setCreationUser(r.getValue(DATA_RESPONSE_DETAIL.CREATION_USER));
+			dataResponseDetail.setModificationDate(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_DATE));
+			dataResponseDetail.setModificationUser(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_USER));
+			return dataResponseDetail.setDomain(r.getValue(DATA_RESPONSE_DETAIL.DOMAIN))
+					.setId(r.getValue(DATA_RESPONSE_DETAIL.ID))
+					.setDataResponse(r.getValue(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
+					.setDataVariable(r.getValue(DATA_RESPONSE_DETAIL.DATA_VARIABLE))
+					.setValue(r.getValue(DATA_RESPONSE_DETAIL.VALUE));
+		}
 	}
 }

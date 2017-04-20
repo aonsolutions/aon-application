@@ -776,5 +776,23 @@ public interface Properties {
 		Property<String> getDiscountExprProperty();
 		Property<Integer> getPurchaseDetailProperty();
 	}
+	
+	public interface DataResponseProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNumberProperty();
+		Property<Date> getIssueDateProperty();
+
+		Property<String> getTypeProperty();
+		Property<String> getSourceProperty();
+	}
+	
+	public interface DataResponseDetailProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getDataResponseProperty();
+		Property<String> getDataVariableProperty();
+		Property<String> getValueProperty();
+	}
 
 }

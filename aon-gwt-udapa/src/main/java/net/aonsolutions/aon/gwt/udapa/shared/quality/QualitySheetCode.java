@@ -11,6 +11,12 @@ public enum QualitySheetCode implements IsSerializable{
 	/** DATOS PRODUCTO - DESTINO */
 	UFQDP1("ufqdp1"),
 	
+	/** DATOS PRODUCTO - RECHAZADO */
+	UFQDP2("ufqdp2"),
+	
+	/** DATOS PRODUCTO - TIPO */
+	UFQDP3("ufqdp3"),
+	
 	// ANALISIS CALIDAD
 	
 	/** ANALISIS CALIDAD - TEMPERATURA */

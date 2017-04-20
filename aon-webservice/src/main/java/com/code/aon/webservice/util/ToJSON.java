@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
@@ -411,6 +413,35 @@ public class ToJSON {
 				.put(MSG.ID, detail.getStatus() != null ? detail.getStatus().ordinal() : "")
 				.put(MSG.NAME, detail.getStatus() != null ? SalesDetailStatus.values()[detail.getStatus().ordinal()].getName(): ""))
 		.put("delivered", detail.getDelivered())
+		;
+	}
+	
+	public static JSONObject dataResponseToJSON(DataResponse dr) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		return new JSONObject()
+				.put(MSG.ID, dr.getId())
+				.put(MSG.DOMAIN, dr.getDomain())
+				.put(MSG.NUMBER, dr.getNumber())
+				.put(MSG.ISSUE_DATE, dr.getIssueDate() != null ? dateFormat.format(dr.getIssueDate()) : "")
+				.put(MSG.CREATION_USER, dr.getCreationUser())
+				.put(MSG.ISSUE_DATE, dr.getCreationDate() != null ? dateFormat.format(dr.getCreationDate()) : "")
+				.put(MSG.MODIFICATION_USER, dr.getModificationUser())
+				.put(MSG.MODIFICATION_DATE, dr.getModificationDate() != null ? dateFormat.format(dr.getModificationDate()) : "")
+		;
+	}
+	
+	public static JSONObject dataResponseDetailToJSON(DataResponseDetail drd) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		return new JSONObject()
+				.put(MSG.ID, drd.getId())
+				.put(MSG.DOMAIN, drd.getDomain())
+				.put(MSG.DATA_RESPONSE, drd.getDataResponse())
+				.put(MSG.DATA_VARIABLE, drd.getDataVariable())
+				.put(MSG.VALUE, drd.getValue())
+				.put(MSG.CREATION_USER, drd.getCreationUser())
+				.put(MSG.ISSUE_DATE, dateFormat.format(drd.getCreationDate()))
+				.put(MSG.MODIFICATION_USER, drd.getModificationUser())
+				.put(MSG.MODIFICATION_DATE, dateFormat.format(drd.getModificationDate()))
 		;
 	}
 	

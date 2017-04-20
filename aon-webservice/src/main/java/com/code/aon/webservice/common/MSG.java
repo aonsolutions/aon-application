@@ -7,6 +7,7 @@ public class MSG {
 	public static final String ADD = "add";
 	public static final String ADDRESS = "address";
 	public static final String ASSIGNEE = "assignee";
+	public static final String APP_PARAM = "app_param";
 	public static final String BANK_ACCOUNT = "bank_account";
 	public static final String BANK_ALIAS = "bank_alias";
 	public static final String BIC = "bic";
@@ -26,6 +27,9 @@ public class MSG {
 	public static final String CREATION_DATE = "creation_date";
 	public static final String CREATION_USER = "creation_user";
 	public static final String CUSTOMER = "customer";	
+	public static final String DATA_RESPONSE = "data_response";
+	public static final String DATA_RESPONSE_DETAIL = "data_response_detail";
+	public static final String DATA_VARIABLE = "data_variable";
 	public static final String DATE = "date";
 	public static final String DATE_OPTIONS = "date_options";
 	public static final String DAYS_BETWEEN_PYMNTS = "days_between_pymnts";
@@ -112,6 +116,7 @@ public class MSG {
 	public static final String TYPES = "types";
 	public static final String UPDATE = "update";
 	public static final String USER = "user";
+	public static final String VALUE = "value";
 	public static final String WAREHOUSE = "warehouse";
 	public static final String WORKGROUP = "workgroup";
 	public static final String WORKPLACE = "workplace";
