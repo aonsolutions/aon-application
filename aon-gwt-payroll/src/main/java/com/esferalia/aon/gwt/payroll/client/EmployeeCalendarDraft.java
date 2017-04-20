@@ -665,7 +665,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				selectedDates.getSelectedList().clear();
+				cleanCalendarSelectedDates();
 				selectAll();
 			}
 
@@ -695,7 +695,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				selectedDates.getSelectedList().clear();
+				cleanCalendarSelectedDates();
 				dialogUntill.open();
 				addDates();
 				
@@ -706,7 +706,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				selectedDates.getSelectedList().clear();
+				cleanCalendarSelectedDates();
 				selectAllSaturdays();	
 			}
 
@@ -735,7 +735,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				selectedDates.getSelectedList().clear();
+				cleanCalendarSelectedDates();
 				selectAllSundays();	
 			}
 
@@ -871,17 +871,20 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		//Pulsacion una sola celda	
 		} else { 
-			for (Date date : selectedDates.getSelectedList()) {
-				int posicion = calculateDatePosition(date);
-				if(posicion != -1){
-					int colSelect = calculatePositionCol(posicion);
-					int filSelect = calculatePositionRow(posicion);
-					cells[filSelect][colSelect].unSelect(filSelect, colSelect);
+//			for (Date date : selectedDates.getSelectedList()) {
+//				int posicion = calculateDatePosition(date);
+//				if(posicion != -1){
+//					int colSelect = calculatePositionCol(posicion);
+//					int filSelect = calculatePositionRow(posicion);
+//					cells[filSelect][colSelect].unSelect(filSelect, colSelect);
+//			
+//				}
+//			}
+//			
+//			selectedDates.clear();
 			
-				}
-			}
+			cleanCalendarSelectedDates();
 			
-			selectedDates.clear();
 			cells[calculatePositionRow(oldHourSelected)][calculatePositionCol(oldHourSelected)]
 					.unSelect(calculatePositionRow(oldHourSelected), calculatePositionCol(oldHourSelected));
 			
@@ -898,6 +901,20 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			oldHourSelected = pos;
 		}
 	
+	}
+
+	private void cleanCalendarSelectedDates() {
+		for (Date date : selectedDates.getSelectedList()) {
+			int posicion = calculateDatePosition(date);
+			if(posicion != -1){
+				int colSelect = calculatePositionCol(posicion);
+				int filSelect = calculatePositionRow(posicion);
+				cells[filSelect][colSelect].unSelect(filSelect, colSelect);
+		
+			}
+		}
+		
+		selectedDates.clear();	
 	}
 
 	@UiHandler("hourDialogOk")

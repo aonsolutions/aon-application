@@ -299,61 +299,64 @@ public class JooqEmployeeCalendar {
 						.fetchOne().value1();
 		
 		HashMap<java.util.Date, Double> updateHoursMap = updateInfo.getDaysHourMap();
+		Boolean fullTimeEmployee = updateInfo.getFullTimeEmployee();
 		
-		if (!updateHoursMap.isEmpty()){
-			
-			java.util.Date startDateHour = new java.util.Date();
-			java.util.Date endDateHour = new java.util.Date();
-			
-			for (Entry<java.util.Date, Double> entry : updateHoursMap.entrySet()) {
-				if (entry.getKey().before(startDateHour))
-					startDateHour = DateUtils.copyDateOnly(entry.getKey());
+		if(!fullTimeEmployee){
+			if (!updateHoursMap.isEmpty()){
 				
-				if (entry.getKey().after(endDateHour))
-					endDateHour = DateUtils.copyDateOnly(entry.getKey());
-			}
-			
-			for (int i=0; i<7; i++){
-				java.util.Date  date = DateUtils.copyDateOnly(startDateHour);
-				DateUtils.addDays2Date(date, i);
-	
-				String dayOfWeek = calculateDayOfWeek(date.getDay());
+				java.util.Date startDateHour = new java.util.Date();
+				java.util.Date endDateHour = new java.util.Date();
 				
-				java.util.Date auxstartDateHour = DateUtils.copyDateOnly(date);
-				Double startHour = updateHoursMap.get(auxstartDateHour);
-				
-				while (date.before(endDateHour) && updateHoursMap.containsKey(date)){
-					if(!startHour.equals(updateHoursMap.get(date))){
-						Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
-						Date sqlendDateHour = new Date(date.getTime());
-						
-						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-								CONTRACT_DATA.END_DATE)
-								.values(domain, dayOfWeek, contract, Double.toString(startHour), 
-										sqlstartDateHour, sqlendDateHour).execute();
+				for (Entry<java.util.Date, Double> entry : updateHoursMap.entrySet()) {
+					if (entry.getKey().before(startDateHour))
+						startDateHour = DateUtils.copyDateOnly(entry.getKey());
 					
-						startHour = updateHoursMap.get(date);
-						auxstartDateHour = DateUtils.copyDateOnly(date);
-					}
-					
-					DateUtils.addDays2Date(date, 7);
+					if (entry.getKey().after(endDateHour))
+						endDateHour = DateUtils.copyDateOnly(entry.getKey());
 				}
 				
-				Date sqlstartDateHour =  new Date(auxstartDateHour.getTime());
-				Date sqlendDateHour;
-				
-				if(realEndDate == null)
-					sqlendDateHour = null;
-				else
-					sqlendDateHour = new Date(realEndDate.getTime());
-				
-				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-						CONTRACT_DATA.END_DATE)
-						.values(domain, dayOfWeek, contract, Double.toString(startHour), 
-								sqlstartDateHour, sqlendDateHour).execute();
-
+				for (int i=0; i<7; i++){
+					java.util.Date  date = DateUtils.copyDateOnly(startDateHour);
+					DateUtils.addDays2Date(date, i);
+		
+					String dayOfWeek = calculateDayOfWeek(date.getDay());
+					
+					java.util.Date auxstartDateHour = DateUtils.copyDateOnly(date);
+					Double startHour = updateHoursMap.get(auxstartDateHour);
+					
+					while (date.before(endDateHour) && updateHoursMap.containsKey(date)){
+						if(!startHour.equals(updateHoursMap.get(date))){
+							Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
+							Date sqlendDateHour = new Date(date.getTime());
+							
+							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+									CONTRACT_DATA.END_DATE)
+									.values(domain, dayOfWeek, contract, Double.toString(startHour), 
+											sqlstartDateHour, sqlendDateHour).execute();
+						
+							startHour = updateHoursMap.get(date);
+							auxstartDateHour = DateUtils.copyDateOnly(date);
+						}
+						
+						DateUtils.addDays2Date(date, 7);
+					}
+					
+					Date sqlstartDateHour =  new Date(auxstartDateHour.getTime());
+					Date sqlendDateHour;
+					
+					if(realEndDate == null)
+						sqlendDateHour = null;
+					else
+						sqlendDateHour = new Date(realEndDate.getTime());
+					
+					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+							CONTRACT_DATA.END_DATE)
+							.values(domain, dayOfWeek, contract, Double.toString(startHour),
+									sqlstartDateHour, sqlendDateHour).execute();
+	
+				}
 			}
 		}
 		

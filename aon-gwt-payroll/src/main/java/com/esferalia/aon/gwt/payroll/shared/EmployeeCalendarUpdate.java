@@ -12,17 +12,19 @@ public class EmployeeCalendarUpdate implements Serializable {
 	private HashMap<java.util.Date, DayType> daysTypesMap;
 	private HashMap<java.util.Date, Double> daysHoursMap;
 	private Double ereCoefficient;
+	private Boolean fullTimeEmployee;
 	
 	public EmployeeCalendarUpdate() {
 		super();
 	}
 
 	public EmployeeCalendarUpdate(HashMap<java.util.Date, DayType> daysTypesMap, HashMap<java.util.Date, Double> daysHoursMap,
-			Double ereCoefficient) {
+			Double ereCoefficient, Boolean fullTimeEmployee) {
 		super();
 		this.daysTypesMap = daysTypesMap;
 		this.daysHoursMap = daysHoursMap;
 		this.ereCoefficient = ereCoefficient;
+		this.fullTimeEmployee = fullTimeEmployee;
 		
 	}
 
@@ -52,6 +54,15 @@ public class EmployeeCalendarUpdate implements Serializable {
 
 	public EmployeeCalendarUpdate setEreCoefficient(Double ereCoefficient) {
 		this.ereCoefficient = ereCoefficient;
+		return this;
+	}
+	
+	public Boolean getFullTimeEmployee() {
+		return this.fullTimeEmployee;
+	}
+
+	public EmployeeCalendarUpdate setFullTimeEmployee(Boolean fullTimeEmployee) {
+		this.fullTimeEmployee = fullTimeEmployee;
 		return this;
 	}
 	

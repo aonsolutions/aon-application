@@ -854,6 +854,7 @@ public class EmployeeCalendarDraftObjectData {
 		
 		updateInfo.setDaysHourMap(createUpdateHoursMap(mapDaysHour, draftMapDaysHour));
 		updateInfo.setDaysTypeMap(createUpdateTypesMap(mapDaysType, draftMapDaysType));
+		updateInfo.setFullTimeEmployee(this.fullTimeEmployee);
 		
 		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
 
