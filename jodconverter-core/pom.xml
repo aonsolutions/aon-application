@@ -183,4 +183,18 @@
     </plugins>
   </reporting>
 
+        <distributionManagement>
+                <repository>
+                        <id>inhouse</id>
+                        <name>Inhouse Internal Release Repository</name>
+                        <url>scp://dev.esferalia.net/var/www/maven2_repositories/external_free</url>
+                </repository>
+                <snapshotRepository>
+                        <id>inhouse_snapshot</id>
+                        <name>Inhouse Internal Snapshot Repository</name>
+                        <url>scp://dev.esferalia.net/var/www/maven2_repositories/external_free</url>
+                        <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+        </distributionManagement>
+
 </project>
