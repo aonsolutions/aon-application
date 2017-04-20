@@ -21,7 +21,7 @@ import javax.faces.event.AbortProcessingException;
 import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record4;
+import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -46,6 +46,7 @@ import com.esferalia.aon.file.payroll.cra.data.TRB;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ss.T84;
 import com.esferalia.aon.payroll.util.PayrollUtils;
 
 public class CRAWriter {
@@ -90,22 +91,24 @@ public class CRAWriter {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			for (EnterpriseCCC ccc: cccs) {
 				DDE dde = createDDERecord(year, month, PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc());
-				Result<Record4<Byte, Double, String, Integer>> paymentsRecord = getSalaryPaymentSelect(connection, ccc, startCal.getTime(), endCal.getTime() );
+				Result<Record5<Byte, Double, Double, String, Integer>> paymentsRecord = getSalaryPaymentSelect(connection, ccc, startCal.getTime(), endCal.getTime() );
 				TRB trb = null;
 				String previousType = "";
-				for (Record4<Byte, Double, String, Integer> step : paymentsRecord) {
+				for (Record5<Byte, Double, Double, String, Integer> step : paymentsRecord) {
 					Byte type = step.value1();
 					Double amount = step.value2();
-					String concept = step.value3();
-					Integer contractId = step.value4();
-					if(amount!=0.0d && !isSSDelegatePayment(connection, startCal.getTime(), endCal.getTime(), concept, amount, contractId)){
+					Double quote = step.value3();
+					String concept = step.value4();
+					Integer contractId = step.value5();
+					if(amount!=0.0d && quote!=0.0d 
+							&& !isSSDelegatePayment(connection, startCal.getTime(), endCal.getTime(), concept, amount, contractId)){
 						Contract contract = (Contract) contractBean.get(contractId);
 						if(trb==null || !contract.getPerson().getSocialSecurityNumber().equals(trb.getNaf())){
 							trb = createTRBRecord(contract.getPerson().getSocialSecurityNumber());
 							dde.getTrbList().add(trb);
 							previousType = "";
 						}
-						CRE cre = createCRERecord(String.valueOf(type), amount, previousType.equals(String.valueOf(type)));
+						CRE cre = createCRERecord(String.valueOf(type), amount, quote, previousType.equals(String.valueOf(type)));
 						previousType = String.valueOf(type);
 						if(cre!=null){
 							trb.getCreList().add(cre);
@@ -175,23 +178,24 @@ public class CRAWriter {
 	/**
 	 * CRE - Conceptos REtributivos
 	 * 
+	 * IndicativoConcepto - Valores posibles: (E=concepto excluido de la base; I=concepto incluido de la base;)
+	 * 
+	 * IndicativoTipoActuacion - Valores posibles: (M=modificación; C=complementario; B=baja;)
+	 * 
 	 * @param to
 	 * @return
 	 */
-	private CRE createCRERecord(String code, Double amount, boolean repeated) {
-		// TODO
-		if(amount!=0.0d){
+	private CRE createCRERecord(String code, Double amount, Double quote, boolean repeated) {
+		if(amount!=0.0d && quote!=0.0d){
 			CRE cre = new CRE();
-			cre.setConcepto(autoComplete(code, 4, "0", true));		
-//			Valores posibles: (IndicativoConcepto)
-//			E=concepto excluido de la base; 
-//			I=concepto incluido de la base.
+			cre.setConcepto(autoComplete(code, 4, "0", true));
 			cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
-			cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
-//			Valores posibles: (IndicativoTipoActuacion)
-//			M=modificación; 
-//			C=complementario; 
-//			B=baja. 
+			if(Integer.parseInt(T84.T84_0004.getCode())==Integer.parseInt(code)
+				|| Integer.parseInt(T84.T84_0005.getCode())==Integer.parseInt(code)){
+				cre.setImporte(String.valueOf((int)(CommonUtil.round(quote, 2)*100)));
+			} else {
+				cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
+			}
 			cre.setIndicativoTipoActuacion(repeated?"C":"");
 			return cre;
 		}
@@ -226,10 +230,10 @@ public class CRAWriter {
 		return null;
 	}
 	
-	private Result<Record4<Byte, Double, String, Integer>> getSalaryPaymentSelect(Connection connection, EnterpriseCCC ccc, Date startDate, Date endDate ) {
+	private Result<Record5<Byte, Double, Double, String, Integer>> getSalaryPaymentSelect(Connection connection, EnterpriseCCC ccc, Date startDate, Date endDate ) {
 		DSLContext ctx = DSL.using(connection, getDefaultSettings());
 			
-		Result<Record4<Byte, Double, String, Integer>> record = ctx.select(SALARY_PAYMENT.TYPE, SALARY_PAYMENT.AMOUNT, SALARY_PAYMENT.PAYMENT_CONCEPT, SALARY.CONTRACT)
+		Result<Record5<Byte, Double, Double, String, Integer>> record = ctx.select(SALARY_PAYMENT.TYPE, SALARY_PAYMENT.AMOUNT, SALARY_PAYMENT.QUOTE, SALARY_PAYMENT.PAYMENT_CONCEPT, SALARY.CONTRACT)
 			.from(SALARY_PAYMENT)
 			.leftOuterJoin(SALARY).onKey()
 			.where(SALARY.END_DATE.between(toSqlDate(startDate)).and(toSqlDate(endDate)))
