@@ -32,7 +32,6 @@ import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperRadioButton;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
-import com.vaadin.polymer.vaadin.VaadinGridElement;
 
 import net.aonsolutions.aon.gwt.warehouse.client.IWarehouse;
 import net.aonsolutions.aon.gwt.warehouse.client.IWarehouseAsync;
@@ -53,6 +52,8 @@ public class CarrierPacking extends AonTemplate2{
 	
 	@Override
 	public void onModuleLoad() {
+		super.onModuleLoad();
+
 		Polymer.importHref(Arrays.asList(
 				IronIconsElement.SRC,
 				"iron-icons/maps-icons.html",
@@ -63,8 +64,9 @@ public class CarrierPacking extends AonTemplate2{
 				PaperFabElement.SRC,
 				PaperInputElement.SRC,
 				PaperToggleButtonElement.SRC
-		), o -> {
-			super.onModuleLoad();
+		));
+		
+		Polymer.whenReady( o -> {
 			startApplication();
 			return null;
 		});

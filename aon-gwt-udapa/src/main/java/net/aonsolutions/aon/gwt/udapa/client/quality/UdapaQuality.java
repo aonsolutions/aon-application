@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
-import com.esferalia.aon.gwt.api.client.common.JsDataResponseDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
@@ -20,10 +19,8 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
@@ -39,12 +36,8 @@ import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
-import net.aonsolutions.polymer.aon.widget.event.ChangeEvent;
-import net.aonsolutions.polymer.aon.widget.event.ChangeEventHandler;
 import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent;
 import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler;
-import net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent;
-import net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler;
 
 public class UdapaQuality extends AonTemplate2{
 
@@ -73,6 +66,7 @@ public class UdapaQuality extends AonTemplate2{
 	
 	@Override
 	public void onModuleLoad() {
+		super.onModuleLoad();
 		Polymer.importHref(Arrays.asList(
 			IronIconsElement.SRC,
 			"iron-icons/image-icons.html",
@@ -83,8 +77,9 @@ public class UdapaQuality extends AonTemplate2{
 			PaperFabElement.SRC,
 			PaperInputElement.SRC,
 			PaperToggleButtonElement.SRC
-		), o -> {
-			super.onModuleLoad();
+		));
+		
+		Polymer.whenReady(o -> {
 			startApplication();
 			return null;
 		});
