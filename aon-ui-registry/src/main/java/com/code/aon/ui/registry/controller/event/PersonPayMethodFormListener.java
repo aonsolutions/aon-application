@@ -1,6 +1,9 @@
 package com.code.aon.ui.registry.controller.event;
 
 import java.util.Iterator;
+import java.util.List;
+
+import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -17,11 +20,25 @@ import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	@Override
+	public boolean isShowCompanyBanks() {
+		return false;
+	}
+	
+	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
+		RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+		Person person = (Person) this.getController().getTo();
+		return c.getActiveRegistryBanks(person.getRegistry());
+	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
@@ -69,35 +86,25 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	}
 
 	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		try {
-			updateRegistryLines( getRegistry(event) );
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
-		}
-	}
-
-	@Override
 	protected void updateRegistryLines(Registry registry) throws ManagerBeanException {
-		super.updateRegistryBank(registry);
+		if(getRegistryBank()!=null && getRegistryBank().getId()!=null){
+			super.updateRegistryBank(registry);
+		}
 		super.updateRegistryPayMethod(registry);
 	}	
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		super.beforeBeanAdded(event);
-		checkRegistryBank();
 	}
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		super.beforeBeanUpdated(event);
 		try {
 			IManagerBean rPayBean = event.getController().getManagerBean();
 			rPayBean.restoreNullSubPOJOs(getRegistryPayMethod());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
-		checkRegistryBank();
 	}
 	
 
