@@ -831,7 +831,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		int row = calendarGrid.getCellForEvent(event).getRowIndex();
 		int col = calendarGrid.getCellForEvent(event).getCellIndex();
-		int pos = (row * 38) + col;
+		int pos = (row * 39) + col;
 		
 		if (null != cellsDates[row][col] && calendarEmployeeInfo.getStartDateContract().after(cellsDates[row][col]))
 			return;
@@ -1210,13 +1210,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	private void initializeCellsCalendar() {
 		for (int row = 0; row < 25; row++)
-			for (int column = 0; column < 38; column++)
+			for (int column = 0; column < 39; column++)
 				cells[row][column] = NoneCell.NONE_CELL;
 	}
 	
 	private void initializeCellsTypeCalendar() {
 		for (int row = 0; row < 25; row++)
-			for (int column = 0; column < 38; column++)
+			for (int column = 0; column < 39; column++)
 				cellsType[row][column] = new DayTypeCell(DayType.NOTYPEDAY);
 	}
 	
@@ -1276,6 +1276,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void showCalendar(int row, int year) {
 		// Mostrar días del mes
 		int contDays = 1;
+		double monthHours = 0;
 		int firstDayOfMonth = calcutaNumberDayOfWeek(1, month, year);
 		int lastDayOfMonth = calculateLastDayOfMonth(month, year);
 
@@ -1302,7 +1303,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					textHour.setValue("-");
 				}else{
 					doubleHour.setEnabled(false);
-					doubleHour.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+					double hourByDay = calendarEmployeeInfo.getHourByDay(actualDay);
+					doubleHour.setValue(hourByDay);
+					monthHours += hourByDay;
 					doubleHour.setEnabled(false);
 				}
 				
@@ -1378,7 +1381,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				textHour.setValue("-");
 			}else{
 				doubleHour.setEnabled(false);
-				doubleHour.setValue(calendarEmployeeInfo.getHourByDay(actualDay));
+				double hourByDay = calendarEmployeeInfo.getHourByDay(actualDay);
+				doubleHour.setValue(hourByDay);
+				monthHours += hourByDay;
 				doubleHour.setEnabled(false);
 			}
 			
@@ -1431,8 +1436,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}
 
 		if ((actualDayOfWeek) < 30) {
-			for (int i = 7 + actualDayOfWeek; i < 38; i++) {
-				Label labelDay = new Label("");
+			for (int i = 7 + actualDayOfWeek; i < 39; i++) {
+				Label labelDay = new Label();
+				
+				if(i == 38)
+					labelDay.setText(Double.toString(monthHours));
+				else
+					labelDay.setText("");
+				
 				labelDay.setStyleName(style.cellStyle());
 				calendarGrid.setWidget(row, i, labelDay);
 				cells[row][i] = new NoneCell();
@@ -1494,7 +1505,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	private void cleanStyleChanges() {
 		for (int i = 1; i < 25; i++)
-			for (int j = 1; j < 38; j++){
+			for (int j = 1; j < 39; j++){
 				cells[i][j].eraseOnChange(i, j);
 				if (null != calendarGrid.getWidget(i, j))
 					calendarGrid.getCellFormatter().removeStyleName(i, j, style.setOutOfContractStyle());
@@ -1503,7 +1514,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	private void cleanCalendar() {
 		for (int i = 1; i < 25; i++)
-			for (int j = 1; j < 38; j++)
+			for (int j = 1; j < 39; j++)
 				calendarGrid.clearCell(i, j);
 	}
 	
@@ -1514,7 +1525,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void paintMadeHourChanges(Set<Entry<Date, Double>> hourChanges) {
 		for (Entry<Date,Double> e : hourChanges){
 			for (int i = 1; i < 25; i++)
-				for (int j = 1; j < 38; j++){
+				for (int j = 1; j < 39; j++){
 					if (e.getKey().equals(cellsDates[i][j]))
 						cells[i+1][j].setOnChange(i+1, j);
 				}		
@@ -1524,7 +1535,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void paintMadeTypeChanges(Set<Entry<Date, DayType>> typeChanges) {
 		for (Entry<Date,DayType> e : typeChanges){
 			for (int i = 1; i < 25; i++)
-				for (int j = 1; j < 38; j++){
+				for (int j = 1; j < 39; j++){
 					if (e.getKey().equals(cellsDates[i][j]))
 						cellsType[i][j].setStyle(i, j);
 				}		
@@ -1537,11 +1548,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 
 	private int calculatePositionCol(int pos) {
-		return pos % 38;
+		return pos % 39;
 	}
 
 	private int calculatePositionRow(int pos) {
-		return pos / 38;
+		return pos / 39;
 	}
 	
 	private boolean isMonth(int row, int col) {
@@ -1783,7 +1794,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	private void blockBeforeOutOfContractDays(Date startDateContract) {
 		for (int row = 1; row < 25; row+=2)
-			for (int column = 1; column < 38; column++){
+			for (int column = 1; column < 39; column++){
 				if (null != cellsDates[row][column] && 
 						(startDateContract.after(cellsDates[row][column]))){
 					calendarGrid.getCellFormatter().addStyleName(row, column, style.setOutOfContractStyle());
@@ -1797,7 +1808,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	private void blockAfterOutOfContractDays(Date endDateContract) {
 		for (int row = 1; row < 25; row+=2)
-			for (int column = 1; column < 38; column++){
+			for (int column = 1; column < 39; column++){
 				if (null != cellsDates[row][column] && 
 						(endDateContract.before(cellsDates[row][column]))){
 					calendarGrid.getCellFormatter().addStyleName(row, column, style.setOutOfContractStyle());
@@ -1818,9 +1829,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private Integer calculateDatePosition(Date date){
 		int row = calculateMonthRow(date.getMonth());
 		int pos = -1;
-		for(int col = 1; col < 38; col++){
+		for(int col = 1; col < 39; col++){
 			if(date.equals(cellsDates[row][col])){
-				pos = (row * 38) + col;
+				pos = (row * 39) + col;
 				return pos;
 			}
 		}

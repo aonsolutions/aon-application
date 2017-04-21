@@ -779,6 +779,9 @@
 							<g:customCell styleName="{style.cabeceraStyle}">
 								<g:Label>M</g:Label>
 							</g:customCell>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label>Horas Mensuales</g:Label>
+							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
 							<g:customCell styleName="{style.cabeceraStyle} {style.pointer}">
