@@ -1476,7 +1476,8 @@ public class ContractUtils implements Serializable {
 		hours = hoursList.stream()
 				.filter(sd -> (sd.getStartDate().before(date) || sd.getStartDate().equals(date))
 						&& (sd.getEndDate() == null || sd.getEndDate().after(date) || sd.getEndDate().equals(date)))
-						.map(o -> o.getExpression()).mapToDouble(NumberUtils::toDouble).sum();
+				.filter(sd -> NumberUtils.toDouble(sd.getExpression())>0)
+				.map(o -> o.getExpression()).mapToDouble(NumberUtils::toDouble).sum();
 		return hours;
 	}
 
