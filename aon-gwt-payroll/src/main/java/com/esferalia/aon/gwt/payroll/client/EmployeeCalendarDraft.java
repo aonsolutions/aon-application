@@ -1436,20 +1436,21 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}
 
 		if ((actualDayOfWeek) < 30) {
-			for (int i = 7 + actualDayOfWeek; i < 39; i++) {
+			for (int i = 7 + actualDayOfWeek; i < 38; i++) {
 				Label labelDay = new Label();
-				
-				if(i == 38)
-					labelDay.setText(Double.toString(monthHours));
-				else
-					labelDay.setText("");
-				
+				labelDay.setText("");
 				labelDay.setStyleName(style.cellStyle());
 				calendarGrid.setWidget(row, i, labelDay);
 				cells[row][i] = new NoneCell();
 			}
 		}
-
+		
+		Label labelDay = new Label();
+		labelDay.setText(Double.toString(monthHours));
+		labelDay.setStyleName(style.cellStyle());
+		calendarGrid.setWidget(row, 38, labelDay);
+		cells[row][38] = new NoneCell();
+		
 		month++;
 	}
 	
