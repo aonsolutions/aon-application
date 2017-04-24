@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api.model.warehouse;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class CarrierPacking {
+@SuppressWarnings("serial")
+public class CarrierPacking implements Serializable{
 
 	private Integer id;
 	private Integer domain;

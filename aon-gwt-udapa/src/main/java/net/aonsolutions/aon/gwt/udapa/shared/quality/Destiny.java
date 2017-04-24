@@ -12,7 +12,8 @@ public enum Destiny {
 	GRANEL_EROSKI("Granel Eroski"),
 	GRANEL_NATUR("Granel Natur"),
 	MERCADOS("Mercados"),
-	MIRALOBUENO("Miralobueno")
+	MIRALOBUENO("Miralobueno"),
+	SIEMBRA("Siembra")
 	;
 	
 	String name;

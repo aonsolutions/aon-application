@@ -48,6 +48,7 @@ public class QualitySheet extends Composite{
 	interface Binder extends UiBinder<Widget, QualitySheet> {}
 	private static final Binder binder = GWT.create(Binder.class);
 	private UdapaQuality parent;
+	private JsDataResponse dataResponse;
 	final IUdapaAsync impl = GWT.create(IUdapa.class);
 	// hashMap || jsonobject
 	HashMap<String, String> map = new HashMap<>();
@@ -56,6 +57,12 @@ public class QualitySheet extends Composite{
 	Stack<WidgetStack> redo = new Stack<>();
 	
 	LinkedList<WidgetStack> calculated = new LinkedList<>();
+
+	@UiField Label warehouse;
+	@UiField Label number;
+	@UiField Label date;
+	@UiField Label hour;
+	
 	// ---------- DATOS TRANSPORTE
 	@UiField(provided = true) FlexTable transportData;
 	@UiField(provided = true) FlexTable productData;
@@ -73,12 +80,15 @@ public class QualitySheet extends Composite{
 	
 	public QualitySheet(UdapaQuality parent, JsDataResponse dataResponse) {
 		this.parent = parent;
+		this.dataResponse = dataResponse;
 		transportData = new FlexTable();
 		productData = new FlexTable();
 		qualityTest = new FlexTable();
 		caliberControl = new FlexTable();
 		observation = new FlexTable();
 				
+		String id = dataResponse.getId() + "";
+		
 		Event.addNativePreviewHandler(new NativePreviewHandler() {
 			@Override
 			public void onPreviewNativeEvent(NativePreviewEvent event) {
@@ -102,7 +112,9 @@ public class QualitySheet extends Composite{
 								db.setValue(ws.getDoublePrevValue());
 							}
 							redo.add(ws);
-							impl.updateValue(ws.getCode(),ws.getValue(), map, new AsyncCallback<HashMap<String, String>>() {
+							String domainName = parent.getAonData().getDomain().getName();
+							Integer domainId = parent.getAonData().getDomain().getId();
+							impl.updateValue(domainName, domainId, Integer.parseInt(id), ws.getCode(),ws.getValue(), map, new AsyncCallback<HashMap<String, String>>() {
 
 								@Override public void onFailure(Throwable caught) {}
 
@@ -120,12 +132,23 @@ public class QualitySheet extends Composite{
 			}
 		});
 		
-		impl.getValues(new AsyncCallback<HashMap<String,String>>() {
+		
+		
+		String domainName = parent.getAonData().getDomain().getName();
+		Integer domainId = parent.getAonData().getDomain().getId();
+		
+		impl.getValues(domainName, domainId, Integer.parseInt(id), new AsyncCallback<HashMap<String,String>>() {
 			
 			@Override
 			public void onSuccess(HashMap<String, String> result) {		
 				map = result;
 				
+				warehouse.setText(map.get("warehouse"));
+				number.setText(dataResponse.getNumber());
+			//	Date issueDate = Utils.parseTime(dataResponse.getIssueDate());
+			//	date.setText(Utils.formatDate(issueDate));
+			//	hour.setText(Utils.formatTime(issueDate));
+
 				transportData();
 				productData();
 				qualityTest();
@@ -133,9 +156,10 @@ public class QualitySheet extends Composite{
 				observation();
 			}
 			
-			@Override public void onFailure(Throwable caught) {}
+			@Override public void onFailure(Throwable caught) {
+				//Window.alert(caught.getMessage());
+			}
 		});
-		
 		initWidget(binder.createAndBindUi(this));
 		southContent.setWidget(new FootPanel(this));
 
@@ -143,23 +167,23 @@ public class QualitySheet extends Composite{
 	
 	private void transportData() {
 		transportData.setWidget(0, 0, new Label("Agencia"));
-		transportData.setWidget(0, 1, new Label("SEUR"));
+		transportData.setWidget(0, 1, new Label(map.get("transport_carrier")));
 		transportData.getFlexCellFormatter().setColSpan(0, 1, 3);
 		transportData.setWidget(0, 2, new Label("Bruto"));
-		transportData.setWidget(0, 3, new Label("XXXXX"));
+		transportData.setWidget(0, 3, new Label(map.get("bruto")));
 		
 		transportData.setWidget(1, 0, new Label("Conductor"));
-		transportData.setWidget(1, 1, new Label("Juan Benito Martinez"));
+		transportData.setWidget(1, 1, new Label(map.get("transport_driver_name")));
 		transportData.getFlexCellFormatter().setColSpan(1, 1, 3);
 		transportData.setWidget(1, 2, new Label("Tara"));
-		transportData.setWidget(1, 3, new Label("YYYYY"));
+		transportData.setWidget(1, 3, new Label(map.get("tara")));
 		
 		transportData.setWidget(2, 0, new Label("DNI")); setWidth(transportData, 2, 0);
-		transportData.setWidget(2, 1, new Label("12345678-X")); setWidth(transportData, 2, 1);
+		transportData.setWidget(2, 1, new Label(map.get("transport_driver_document"))); setWidth(transportData, 2, 1);
 		transportData.setWidget(2, 2, new Label("Matricula"));setWidth(transportData, 2, 2);
-		transportData.setWidget(2, 3, new Label("VI-5678-X"));setWidth(transportData, 2, 3); 
+		transportData.setWidget(2, 3, new Label(map.get("transport_number_plate")));setWidth(transportData, 2, 3); 
 		transportData.setWidget(2, 4, boldLabel("Peso Neto"));setWidth(transportData, 2, 4);
-		transportData.setWidget(2, 5, boldLabel("ZZZZZ")); setWidth(transportData, 2, 5);
+		transportData.setWidget(2, 5, boldLabel(map.get("neto"))); setWidth(transportData, 2, 5);
 	}
 	
 	private void productData() {
@@ -171,17 +195,17 @@ public class QualitySheet extends Composite{
 		setWidth(productData, 0, 5);
 		
 		productData.setWidget(0, 0, new Label("Producto"));
-		productData.setWidget(0, 1, boldLabel("Descripcion... #123124"));
+		productData.setWidget(0, 1, boldLabel(map.get("product_description")));
 		productData.setWidget(0, 4, new Label("Cantidad"));
-		productData.setWidget(0, 5, new Label("XXXXX"));
+		productData.setWidget(0, 5, new Label(map.get("product_quantity")));
 	
 		productData.setWidget(1, 0, new Label("Proveedor"));
-		productData.setWidget(1, 1, new Label("PACO DELICIAS"));
+		productData.setWidget(1, 1, new Label(map.get("product_supplier")));
 		productData.setWidget(1, 4, new Label("Destino"));
 		productData.setWidget(1, 5, listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1));
 		
 		productData.setWidget(2, 0, new Label("Origen"));
-		productData.setWidget(2, 1, new Label("c/ madre vedruna"));
+		productData.setWidget(2, 1, new Label(map.get("full_address")));
 		productData.setWidget(2, 4, new Label("Tipo"));
 		LinkedList<String> list = new LinkedList<>();
 		list.add("Consumo");
@@ -189,10 +213,9 @@ public class QualitySheet extends Composite{
 		productData.setWidget(2, 5, listBox(list, QualitySheetCode.UFQDP3));
 		
 		productData.setWidget(3, 0, new Label(""));
-		productData.setWidget(3, 1, new Label("vitoria 01008"));
-		productData.getFlexCellFormatter().setColSpan(3, 1, 3);
-		productData.setWidget(3, 4, new Label("Rechazado"));
-		productData.setWidget(3, 5, new CheckBox());
+		productData.setWidget(3, 1, new Label(map.get("end_address")));
+		productData.setWidget(2, 4, new Label("Rechazado"));
+		productData.setWidget(2, 5, new CheckBox());
 	}
 	
 	private void qualityTest() {
@@ -245,13 +268,13 @@ public class QualitySheet extends Composite{
 		hp2.add(lpercent2);
 		caliberControl.setWidget(1, 3, hp2); setWidth(caliberControl, 1, 3, "300px");
 	
-		Boolean consumo = map.containsKey(QualitySheetCode.UFQDP3.getName()) &&  
-				(map.get(QualitySheetCode.UFQDP3.getName()).equals("1")
-				|| map.get(QualitySheetCode.UFQDP3.getName()).equals("0"));
 		
-		if(consumo){
-			calibresConsumo();
-		} else calibresSiembra();
+		Boolean siembra = map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
+				map.get(QualitySheetCode.UFQDP1.getName()).equals(Destiny.SIEMBRA.ordinal());
+				
+		if(siembra){
+			calibresSiembra();
+		} else calibresConsumo();
 		
 		defectControl();	
 	}
@@ -447,13 +470,25 @@ public class QualitySheet extends Composite{
 				ws.setPrevValue(prevIndex);
 				ws.setValue(listBox.getSelectedIndex());
 				undo.push(ws);
-				if(QualitySheetCode.UFQDP3.equals(code)){
-					Boolean consumo = listBox.getSelectedItemText().equals("Consumo")
-									|| listBox.getSelectedItemText().equals("-");
-					if(consumo){
-			 			calibresConsumo();	
-					} else calibresSiembra();
+				if(QualitySheetCode.UFQDP1.equals(code)){
+					Boolean siembra = listBox.getSelectedItemText().equals("Siembra");
+					if(siembra){
+						calibresSiembra();
+					} else calibresConsumo();	
 				}
+				
+				String id = dataResponse.getId() + "";
+				String domainName = parent.getAonData().getDomain().getName();
+				Integer domainId = parent.getAonData().getDomain().getId();
+				impl.updateValue(domainName, domainId,Integer.parseInt(id), code, Integer.toString(listBox.getSelectedIndex()), map, new AsyncCallback<HashMap<String, String>>() {
+
+					@Override public void onFailure(Throwable caught) {}
+
+					@Override
+					public void onSuccess(HashMap<String, String> result) {
+						
+					}
+				});
 			}
 		});
 		
@@ -474,7 +509,10 @@ public class QualitySheet extends Composite{
 				ws.setPrevValue(prevValue);
 				ws.setValue(value);
 				undo.push(ws);
-				impl.updateValue(code, value, map, new AsyncCallback<HashMap<String, String>>() {
+				String id = dataResponse.getId() + "";
+				String domainName = parent.getAonData().getDomain().getName();
+				Integer domainId = parent.getAonData().getDomain().getId();
+				impl.updateValue(domainName, domainId,Integer.parseInt(id), code, value, map, new AsyncCallback<HashMap<String, String>>() {
 
 					@Override public void onFailure(Throwable caught) {}
 
@@ -508,7 +546,10 @@ public class QualitySheet extends Composite{
 				ws.setPrevValue(prevValue);
 				ws.setValue(value);
 				undo.push(ws);
-				impl.updateValue(code, value.toString(), map, new AsyncCallback<HashMap<String, String>>() {
+				String id = dataResponse.getId() + "";
+				String domainName = parent.getAonData().getDomain().getName();
+				Integer domainId = parent.getAonData().getDomain().getId();
+				impl.updateValue(domainName, domainId, Integer.parseInt(id), code, value.toString(), map, new AsyncCallback<HashMap<String, String>>() {
 
 					@Override public void onFailure(Throwable caught) {}
 
