@@ -4,8 +4,14 @@ import java.util.HashMap;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
-import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.Income;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -22,17 +28,54 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public HashMap<String, String> getValues(){
-		// TODO GET VALUES TO BD
+	public HashMap<String, String> getValues(String domainName, Integer domainId, Integer drId){
+		String login = "";
+		
 		HashMap<String, String> map = new HashMap<>();
 		QualitySheetCode.valueLinkedList().stream()
-			.forEach(key -> map.put(key, "0.0"));
+		.forEach(key -> map.put(key, "0.0"));
 		map.put(QualitySheetCode.UFQO.getName(), "");
+		
+		AON.getDataResponseDetailStream(domainName, domainId, login, 
+				f -> f.getDataResponseProperty().eq(drId))
+		.forEach(drd -> {
+			map.put(drd.getDataVariable(), drd.getValue());
+		});
+		String source = map.get("source");
+		String[] arr = source.split("@");
+		IncomeDetail id = AON.getIncomeDetail(domainName, domainId, login, f-> f.getIdProperty().eq(Integer.parseInt(arr[1]))).get();
+		
+		Warehouse w = AON.getWarehouse(domainName, domainId, login, f -> f.getIdProperty().eq(id.getWarehouse()));
+		Income i = AON.getIncome(domainName, domainId, login, f -> f.getIdProperty().eq(id.getIncome().getId())).get();
+		CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
+		RAddress addr = AON.getRAddres(domainName, domainId, login, i.getSupplier());
+		
+		map.put("full_address", addr.getFullAddress());
+		map.put("end_address", addr.getZip() + " " + addr.getCity() + " " + addr.getGeozoneName());
+		
+		map.put("warehouse", w.getName());
+		map.put("product_description", id.getDescription());
+		map.put("product_supplier", i.getSupplierName());
+		map.put("product_quantity", id.getQuantity() + "");
+		map.put("transposrt_carrier", cp.getCarrierName());
+		map.put("transport_driver_name", cp.getDriverName());
+		map.put("transport_driver_document", cp.getDriverDocument());
+		map.put("transport_number_plate", cp.getNumberPlate());
+		map.put("bruto", cp.getGross() != null ? cp.getGross().toString() : "-");
+		map.put("tara", cp.getTare() != null ? cp.getTare().toString() : "-");
+		map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "-");
+		
 		return compute(map);
 	}
 	
-	public HashMap<String, String> updateValue(QualitySheetCode code, String value, HashMap<String, String> map){
-		// TODO UPDATE VALUE IN BD
+	public HashMap<String, String> updateValue(String domainName, Integer domainId, Integer drId, QualitySheetCode code, String value, HashMap<String, String> map){
+		String login = "";
+		DataResponseDetail drd = new DataResponseDetail();
+		drd.setDomain(domainId);
+		drd.setDataResponse(drId);
+		drd.setDataVariable(code.getName());
+		drd.setValue(value);
+		AON.insertDataResponseDetail(domainName, domainId, login, drd);
 		map.put(code.getName(), value);
 		return compute(map);
 	}

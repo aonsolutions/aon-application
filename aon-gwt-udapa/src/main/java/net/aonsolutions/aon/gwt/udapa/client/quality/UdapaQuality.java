@@ -31,6 +31,7 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
+import com.vaadin.polymer.vaadin.widget.VaadinDatePicker;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
@@ -45,10 +46,14 @@ public class UdapaQuality extends AonTemplate2{
 	private API API;
 	private UdapaQuality me = this;
 	HashMap<String, LinkedList<String>> filterMap;
-	
+	private AonData aonData;
 	
 	public API getAPI() {
 		return API;
+	}
+	
+	public AonData getAonData() {
+		return aonData;
 	}
 	
 	public HashMap<String, LinkedList<String>> getFilterMap() {
@@ -60,13 +65,13 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
 	public UdapaQuality(AonData aonData) {
+		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getUser().getLogin());
 	}
 	
 	@Override
 	public void onModuleLoad() {
-		super.onModuleLoad();
 		Polymer.importHref(Arrays.asList(
 			IronIconsElement.SRC,
 			"iron-icons/image-icons.html",
@@ -80,6 +85,7 @@ public class UdapaQuality extends AonTemplate2{
 		));
 		
 		Polymer.whenReady(o -> {
+			super.onModuleLoad();
 			startApplication();
 			return null;
 		});
@@ -114,7 +120,9 @@ public class UdapaQuality extends AonTemplate2{
 			protected void email() {}
 			
 			@Override
-			protected void back() {}
+			protected void back() {
+				startApplication();
+			}
 			
 			@Override
 			protected void ant() {}
@@ -135,6 +143,8 @@ public class UdapaQuality extends AonTemplate2{
 	
 	public void sheetContent(JsDataResponse js, HashMap<String, LinkedList<String>> map) {
 		this.filterMap = map;
+		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+		toolbar.setBackVisible(true);
 		setContent(new QualitySheet(this, js));
 	}
 
@@ -172,6 +182,10 @@ public class UdapaQuality extends AonTemplate2{
 		detailBox.setItemLabelPath("description");
 		detailBox.setItemValuePath("description");
 		panel.add(detailBox);
+	
+		VaadinDatePicker dateBox = new VaadinDatePicker();
+		dateBox.setLabel("Fecha");
+		panel.add(dateBox);
 		
 		incomeBox.addSelectedItemChangedHandler(new SelectedItemChangedEventHandler() {
 			
@@ -202,10 +216,11 @@ public class UdapaQuality extends AonTemplate2{
 			@Override 
 			protected void onAccept() {
 				JsOrderDetail orderDetail = (JsOrderDetail) detailBox.getSelectedItem();
-				
+				JsOrder order = (JsOrder) incomeBox.getSelectedItem();
+
 				JSONObject dataResponse = new JSONObject();
-				dataResponse.put("number", new JSONString("XXX"));				
-				dataResponse.put("issue_date", new JSONString("xxx"));
+				dataResponse.put("number", new JSONString(order.getReferenceCode()));				
+				dataResponse.put("issue_date", new JSONString(dateBox.getValue()));
 				
 				getAPI().getCommon().insertDataResponse(JsonUtils.stringify(dataResponse.getJavaScriptObject()), new AsyncCallback<JsDataResponse>() {
 					
@@ -248,4 +263,5 @@ public class UdapaQuality extends AonTemplate2{
 		}
 		return order;
 	}
+
 }
