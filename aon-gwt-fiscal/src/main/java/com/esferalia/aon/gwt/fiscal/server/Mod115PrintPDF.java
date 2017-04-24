@@ -12,12 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.artofsolving.jodconverter.OfficeDocumentConverter;
-import org.artofsolving.jodconverter.document.DefaultDocumentFormatRegistry;
-import org.artofsolving.jodconverter.document.DocumentFormatRegistry;
-import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
-import org.artofsolving.jodconverter.office.OfficeManager;
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -32,8 +26,6 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 @WebServlet(name = "Mod115 PDF Print", urlPatterns = { "/aon_gwt_fiscal/Model115PrintPDF" })
 public class Mod115PrintPDF extends HttpServlet {
 
-	private static final int DEFAULT_OFFICE_PORT = 2002;
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setAttribute("doget", "doget");
@@ -45,7 +37,6 @@ public class Mod115PrintPDF extends HttpServlet {
 		Boolean doget = req.getAttribute("doget") != null;
 		File inputFile = null;
 		File outputFile = null;
-		OfficeManager officeManager = null;
 		try {
 			int id = Integer.parseInt(req.getParameter("mod115"));
 			String domainName = req.getParameter("domainName");
@@ -73,14 +64,7 @@ public class Mod115PrintPDF extends HttpServlet {
 			inputFileOs.close();
 			
 			outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
-			DocumentFormatRegistry formatRegistry = new DefaultDocumentFormatRegistry();
-			officeManager = new DefaultOfficeManagerConfiguration()
-					.setPortNumber(DEFAULT_OFFICE_PORT)
-					.buildOfficeManager();
-			officeManager.start();
-			OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager, formatRegistry);
-			converter.convert(inputFile, outputFile);
-
+			JODConverterUtils.process(inputFile, outputFile);
 			resp.setContentType(MimeType.PDF.getName());
 			if(doget) resp.setHeader("Content-disposition", "inline; filename=\"" + fileName + ".pdf\";");
 			else resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
@@ -93,9 +77,8 @@ public class Mod115PrintPDF extends HttpServlet {
 			// TODO REMOVE AND CLOSE EVERYTHING
 			if (inputFile != null && inputFile.canWrite()) inputFile.delete();
 			if (outputFile != null && outputFile.canWrite()) outputFile.delete();
-			if (officeManager != null) officeManager.stop();
 		}
 
 	}
-
+	
 }
