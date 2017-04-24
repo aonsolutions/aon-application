@@ -225,6 +225,11 @@ public class ElaborationSelect extends Composite{
 						Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
 					}
 				});
+				
+				if(number!=null && number.equals(getJsElaboration().getQuantity()+"")){
+					parent.closeElaboration(getJsElaboration());
+				}
+				
 				hide();
 			}
 

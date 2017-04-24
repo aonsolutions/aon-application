@@ -31,6 +31,7 @@
 						-->
 						<g:InlineLabel ui:field="status" 
 							styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonNowrap}" />
+						<g:Button ui:field="closeButton" />
 					</g:HorizontalPanel>
 				</td>
 
