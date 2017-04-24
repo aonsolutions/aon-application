@@ -165,8 +165,8 @@ public class DBWarehouse {
 		}
 		if (json.opt(MSG.STATUS) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.STATUS))) {
-			elaboration.setStatus(ElaborationStatus.values()[json
-					.getInt(MSG.STATUS)].value());
+			elaboration.setStatus(ElaborationStatus.valueOf(json
+					.getString(MSG.STATUS)).value());
 		}
 		if (json.opt(MSG.COMMENTS) != null) {
 			elaboration.setComments(json.getString(MSG.COMMENTS));

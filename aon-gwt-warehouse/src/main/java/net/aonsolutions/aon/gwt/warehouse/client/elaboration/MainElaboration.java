@@ -199,6 +199,23 @@ public class MainElaboration extends AonTemplate {
 		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), value);	
 	}
 	
+	protected void closeElaboration(JsElaboration jsElaboration) {
+		API.getWarehouse().updateElaboration(jsElaboration.getId(), getCloseData(), new AsyncCallback<JsElaboration>() {
+			
+			@Override
+			public void onSuccess(JsElaboration result) {
+				ElaborationPanel panel = (ElaborationPanel) getNorthContent().getWidget();
+				panel.setJsElaboration(result);
+				onSelectElaboration(panel.getJsElaboration());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+			}
+		});
+	}
+	
 	private void updateElaboration(JsElaboration jsElaboration) {
 		API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(), new AsyncCallback<JsElaboration>() {
 
@@ -279,6 +296,11 @@ public class MainElaboration extends AonTemplate {
 				+ ",\"warehouse\":\"" + main.warehouse.getSelectedValue()+ "\""
 				+ ",\"comments\":\"" + (comments!=null && !"".equals(comments.trim())?comments:"") + "\""
 				+ "}";
+		return data;
+	}
+	
+	private String getCloseData() {
+		String data = "{\"status\":\"CLOSED\"}";
 		return data;
 	}
 	

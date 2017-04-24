@@ -14,12 +14,15 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -38,6 +41,8 @@ public class ElaborationPanel extends Composite {
 	TextBox series;
 	@UiField
 	TextBox number;
+	@UiField
+	Button closeButton;
 	@UiField
 	DateBoxEx date;
 	@UiField
@@ -163,6 +168,18 @@ public class ElaborationPanel extends Composite {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				// TODO date::onValueChange
+			}
+		});
+		
+//		closeButton.setText("Nuevo elaborado");
+		closeButton.setTitle("Cerrar");
+		closeButton.setStyleName(AON.AON_CSS.aonIconPointRed());
+		closeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		closeButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		closeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				parent.closeElaboration(getJsElaboration());
 			}
 		});
 		
