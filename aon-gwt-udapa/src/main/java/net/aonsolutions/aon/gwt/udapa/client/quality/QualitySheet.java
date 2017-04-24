@@ -293,8 +293,8 @@ public class QualitySheet extends Composite{
 			caliberControl.setWidget(2+c, 0, new Label(calibresConsumo[c]));
 			HorizontalPanel hp = new HorizontalPanel();
 			DoubleBox db = doubleBox(QualitySheetConstants.CALIBER[i]);
-			Label label = new Label(map.containsKey(QualitySheetConstants.CALIBER[i + 1])
-					? map.get(QualitySheetConstants.CALIBER[i + 1]) : "0.0");
+			Label label = new Label(map.containsKey(QualitySheetConstants.CALIBER[i + 1].getName())
+					? map.get(QualitySheetConstants.CALIBER[i + 1].getName()) : "0.0");
 			label.getElement().getStyle().setPaddingLeft(25, Unit.PX);
 			WidgetStack ws = new WidgetStack(label, QualitySheetConstants.CALIBER[i + 1]);
 			calculated.add(ws);
@@ -342,8 +342,8 @@ public class QualitySheet extends Composite{
 			Integer c = j/2;
 			caliberControl.setWidget(2+c, 0,  new Label(calibresSiembra[c]));
 			DoubleBox db = doubleBox(QualitySheetConstants.CALIBER_SIEMBRA[j]);
-			Label label = new Label(map.containsKey(QualitySheetConstants.CALIBER_SIEMBRA[j+1])
-					? map.get(QualitySheetConstants.CALIBER_SIEMBRA[j+1]) : "0.0");
+			Label label = new Label(map.containsKey(QualitySheetConstants.CALIBER_SIEMBRA[j+1].getName())
+					? map.get(QualitySheetConstants.CALIBER_SIEMBRA[j+1].getName()) : "0.0");
 			label.getElement().getStyle().setPaddingLeft(25, Unit.PX);
 			WidgetStack ws =new WidgetStack(label, QualitySheetConstants.CALIBER_SIEMBRA[j + 1]);
 			calculated.add(ws);
@@ -379,8 +379,8 @@ public class QualitySheet extends Composite{
 			Integer c = i/2;
 			caliberControl.setWidget(2+c, 2, new Label(Defects.values()[c].getName()));
 			
-			Label label = new Label(map.containsKey(QualitySheetConstants.DEFECTS[i+1])
-					 ? map.get(QualitySheetConstants.DEFECTS[i+1]) :  "0.0");
+			Label label = new Label(map.containsKey(QualitySheetConstants.DEFECTS[i+1].getName())
+					 ? map.get(QualitySheetConstants.DEFECTS[i+1].getName()) :  "0.0");
 			label.getElement().getStyle().setPaddingLeft(25, Unit.PX);
 			WidgetStack ws =new WidgetStack(label, QualitySheetConstants.DEFECTS[i + 1]);
 			calculated.add(ws);
