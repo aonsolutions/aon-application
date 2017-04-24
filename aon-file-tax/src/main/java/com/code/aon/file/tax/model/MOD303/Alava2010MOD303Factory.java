@@ -186,6 +186,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		
 		addClave(mod,370,gr.getBaseModifications());
 		addClave(mod,371,gr.getQuotaModifications());
+		
 		addClave(mod,372,gr.getBaseInvPasive());
 		addClave(mod,373,gr.getQuotaInvPasive());
 		
@@ -213,13 +214,13 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 				addClave(mod,++k,bd.getPercent());
 				addClave(mod,++k,bd.getQuota());
 			}
-			bd = gr.getInvPasive().get(percents[i]);
-			if (bd != null) {
-				int k = keys[i];
-				addClave(mod,k,bd.getTaxableBase());
-				addClave(mod,++k,bd.getPercent());
-				addClave(mod,++k,bd.getQuota());
-			}
+//			bd = gr.getInvPasive().get(percents[i]);
+//			if (bd != null) {
+//				int k = keys[i];
+//				addClave(mod,k,bd.getTaxableBase());
+//				addClave(mod,++k,bd.getPercent());
+//				addClave(mod,++k,bd.getQuota());
+//			}
 			
 		}
 		// Añadir rectificacion de base y quotas intracomunitarias.
