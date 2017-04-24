@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -86,10 +87,10 @@ public class ElaborationDownload extends HttpServlet {
 
 		List<Elaboration> elaborationList = null;
 		if (elaborationId != null) {
-			elaborationList = AON.getElaborationStream(domain.getName(),
+			elaborationList = new LinkedList<>();
+			elaborationList.add(AON.getFullElaboration(domain.getName(),
 					domain.getId(), login,
-					f -> f.getIdProperty().eq(elaborationId)).collect(
-					Collectors.toList());
+					elaborationId));
 		} else {
 			elaborationList = AON.getElaborationStream(domain.getName(),
 					domain.getId(), login,
@@ -354,10 +355,14 @@ public class ElaborationDownload extends HttpServlet {
 		quantity.setBorder(PdfPCell.NO_BORDER);
 		header.addCell(quantity);
 		header.addCell(new Phrase(String.valueOf(elaboration.getQuantity()),getFont2()));
+		
 		PdfPCell item = new PdfPCell(new Phrase("Producto",getFont1()));
 		item.setBorder(PdfPCell.NO_BORDER);
 		header.addCell(item);
-		header.addCell(new Phrase(String.valueOf(elaboration.getItem().getProduct()!=null?elaboration.getItem().getProduct().getName():""),getFont2()));
+		String description = elaboration.getDescription();
+		description = description!=null && !"".equals(description)?description
+				:(elaboration.getItem().getProduct()!=null?elaboration.getItem().getProduct().getName():"");
+		header.addCell(new Phrase(description,getFont2()));
 		
 		PdfPCell warehouse = new PdfPCell(new Phrase("Almacén",getFont1()));
 		warehouse.setBorder(PdfPCell.NO_BORDER);
