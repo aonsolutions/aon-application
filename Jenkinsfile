@@ -124,7 +124,19 @@ def parameters(text) {
 @NonCPS
 def getKeys(def json) {
     def objects = new groovy.json.JsonSlurper().parseText(json)
-    objects.Contents.sort{it.LastModified}
+
+    for ( int i=0; i <  objects.Contents.size() -1; i++ ) {
+        min = i
+	
+        for ( int j=i+1; j <  objects.Contents.size(); j++ )
+            if (  objects.Contents[j].LastModified <  objects.Contents[min].LastModified )
+                min = j 
+
+        def temp =  objects.Contents[i]
+        objects.Contents[i] =  objects.Contents[min]
+        objects.Contents[min] = temp
+    }
+    
     def keys = new String[objects.Contents.size()]
     for (int i = 0; i < objects.Contents.size(); i++)
        keys[i]=objects.Contents[i].Key
