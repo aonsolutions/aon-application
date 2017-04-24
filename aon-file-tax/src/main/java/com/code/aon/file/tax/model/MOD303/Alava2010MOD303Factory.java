@@ -91,6 +91,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 			}
 			
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
+//			outformat.setEncoding(ENCODING);
 			XMLWriter writer = new XMLWriter(out, outformat);
 			writer.write(doc);
 			writer.flush();
