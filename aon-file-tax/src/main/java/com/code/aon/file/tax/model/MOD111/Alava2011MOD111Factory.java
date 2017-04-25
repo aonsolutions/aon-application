@@ -95,6 +95,7 @@ public class Alava2011MOD111Factory implements IMOD111Factory {
 			}
 			
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
+			outformat.setEncoding(ENCODING);
 			XMLWriter writer = new XMLWriter(out, outformat);
 			writer.write(doc);
 			writer.flush();

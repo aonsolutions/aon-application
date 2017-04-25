@@ -93,6 +93,7 @@ public class Alava2011MOD123Factory implements IMOD123Factory {
 			}
 			
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
+			outformat.setEncoding(ENCODING);
 			XMLWriter writer = new XMLWriter(out, outformat);
 			writer.write(doc);
 			writer.flush();
