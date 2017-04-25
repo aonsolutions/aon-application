@@ -16,7 +16,7 @@
 					<tr>
 						<td class="{aonResources.css.aonFindingTitle}">
 							<g:FlowPanel styleName="{aonResources.css.aonFindingTitleInternal}">
-								<g:Label text="{msg.retentionAccount}" />
+								<g:Label text="Modelo 130" />
 							</g:FlowPanel>
 						</td>
 						<td>

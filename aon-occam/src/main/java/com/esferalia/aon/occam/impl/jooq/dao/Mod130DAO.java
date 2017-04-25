@@ -44,7 +44,8 @@ public class Mod130DAO extends FiscalModelDAO {
 	private static interface IModelInfoProvider {
 		String obtain(AONContext ctx, Mod130 mod,IModelScript<Mod130Key> script,Mod130KeyDAO keyDAO);
 	}
-
+	private static int LIMITE_GASTOS_DIF_JUST = 2000;
+	
 	private static final String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
 	private static final String NONE_INFO = "No hay datos";
 	private static enum Mod130KeyInfoDAO {
@@ -104,8 +105,13 @@ public class Mod130DAO extends FiscalModelDAO {
 					+"<li>Al ser el rendimiento neto previo menor que cero, no se aplican los gastos de dif\u00EDcil justificaci\u00F3n</li>"
 				+"@else{}"
 					+"@code{c02a=com.esferalia.aon.watson.util.AonMathUtils.round(c02p * 5 / 100)}"
+					+"<li>5% de @{c02p} --> @{c02a}</li>"
+					+"@if{ c02a > LMT_GDJ }"
+						+"<li>Se supera el l\u00EDmite de @{LMT_GDJ} euros. Se aplica el l\u00EDmite.</li>"
+						+"@code{c02a=LMT_GDJ}"
+					+"@end{}"
 					+"@code{c02b=com.esferalia.aon.watson.util.AonMathUtils.round(c02a + RAW_C02)}"
-					+"<li>5% de @{c02p} --> @{c02a} sumado a @{RAW_C02} --> @{c02b}</li>"
+					+"<li>@{RAW_C02} m\u00E1s @{c02a} es igual a @{c02b}</li>"
 				+"@end{}"
 			+"@end{}"
 			+"<li>Porcentaje de participaci\u00F3n: <b>@{P1}%</b></li>"
@@ -458,6 +464,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		mvelCtx.put("RAW_C01", getRawC01(ctx, mod130));
 		mvelCtx.put("RAW_C02", getRawC02(ctx, mod130));
 		mvelCtx.put("RAW_C08", getRawC08(ctx, mod130));
+		mvelCtx.put("LMT_GDJ", LIMITE_GASTOS_DIF_JUST);
 		mvelCtx.put("yearStartDate", IRPFFormatter.FMT.format(AonDateUtils.getYearFirstDay(mod130.getYear())));
 		mvelCtx.put("periodStartDate",IRPFFormatter.FMT.format(FiscalUtils.getPeriodStart(mod130)));
 		mvelCtx.put("periodEndDate",IRPFFormatter.FMT.format(FiscalUtils.getPeriodEnd(mod130)));
@@ -552,9 +559,10 @@ public class Mod130DAO extends FiscalModelDAO {
 			.filter( br -> (!br.hasActivity() || (!br.isFarmer() && (br.isNormalRegime() || br.isSimplifiedRegime())) ));
 	}
 	private static double getRawC01(AONContext ctx, final Mod130 mod) {
-		return getInitialBaseC01(ctx, mod)
+		double rawC01 = getInitialBaseC01(ctx, mod)
 				.mapToDouble(br -> br.getCreditBalance())
-				.sum();  
+				.sum();
+		return AonMathUtils.round(rawC01);
 	}
 	private static double getInitialC01(AONContext ctx, final Mod130 mod) {
 		double c01 = getRawC01(ctx, mod);  
@@ -615,13 +623,18 @@ public class Mod130DAO extends FiscalModelDAO {
 				.mapToDouble(br -> br.getDebitBalance())
 				.sum();
 	}
+	
 	private static double getInitialC02(AONContext ctx, final Mod130 mod) {
 		double c02 = getRawC02(ctx, mod);
 		if (mod.getRegime() != null && mod.getRegime() == IRPFRegime.SIMPLIFIED) { 
 			double c01 = getRawC01(ctx, mod);
 			double c02_ = AonMathUtils.round( c01 - c02);
 			if (c02_ > 0 ) {
-				c02 = AonMathUtils.round( c02 + (c02_*5/100) ); 
+				double dif = (c02_*5/100);
+				if (dif > LIMITE_GASTOS_DIF_JUST ) {
+					dif = LIMITE_GASTOS_DIF_JUST;
+				}
+				c02 = AonMathUtils.round( c02 + dif ); 
 			}
 		}
 		double percent = mod.getAmount(Mod130Key.P1);
