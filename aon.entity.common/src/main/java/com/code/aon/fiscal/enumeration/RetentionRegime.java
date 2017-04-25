@@ -7,9 +7,10 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum RetentionRegime implements IResourceable {
 
-	NORMAL_DIRECT_EVALUATION,
-	SIMPLIFIED_DIRECT_EVALUATION,
-	OBJECTIVE_EVALUATION;
+	 NORMAL_DIRECT_EVALUATION
+	,SIMPLIFIED_DIRECT_EVALUATION
+	,OBJECTIVE_EVALUATION
+	,EXEMPT;
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_retention_regime_";

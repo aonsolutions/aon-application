@@ -4,9 +4,10 @@ import java.io.Serializable;
 
 public enum IRPFRegime implements Serializable {
 
-	 NORMAL ("Estimaci\u00F3n directa normal"			,"Est. Normal")
+	 NORMAL 	("Estimaci\u00F3n directa normal"		,"Est. Normal")
 	,SIMPLIFIED ("Estimaci\u00F3n directa simplificada"	,"Est. Simpl.")
-	,OBJECTIVE ("Estimaci\u00F3n objetiva"				,"Est. Objet.")	
+	,OBJECTIVE 	("Estimaci\u00F3n objetiva"				,"Est. Objet.")	
+	,EXEMPT 	("Exento"								,"Exento")
 	;
 	
 	private String name;
