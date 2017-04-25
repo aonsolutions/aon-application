@@ -510,6 +510,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	SuggestBox sundayOpt;
 	
 	@UiField
+	Label totalHours;
+	
+	@UiField
 	ScrollPanel scrollInfo;
 	
 // ------------------------------------------------------------ VARIABLES DE LA CLASE ----------------------------------------------------
@@ -1166,6 +1169,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		int actualYear = this.year+1900;
 		this.yearLabel.setText(Integer.toString(actualYear));
 		
+		if(this.fullTimeJourney)
+			totalHours.setText("Horas Extras");
+		else{
+			totalHours.setText("Horas Mensuales");
+		}
+		
 		cleanStyleChanges();
 		cleanCalendar();
 		initializeCellsCalendar();
@@ -1445,15 +1454,21 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 		}
 		
+		//Poner horas totales mensuales en la ultima columna
+		if(0 != monthHours)
+			setMonthHours(row, monthHours);
+		
+		month++;
+	}
+	
+	private void setMonthHours(int row, double monthHours) {
 		Label labelDay = new Label();
 		labelDay.setText(Double.toString(monthHours));
 		labelDay.setStyleName(style.cellStyle());
 		calendarGrid.setWidget(row, 38, labelDay);
 		cells[row][38] = new NoneCell();
-		
-		month++;
 	}
-	
+
 	/**
 	 * Bloque para limpiar estilos de todas las posiciones seleccionas, de una sola posicion,
 	 * limpiar estilo de seleccion de las posiciones seleccionadas , limpiar estilo fuera de

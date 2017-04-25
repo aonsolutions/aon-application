@@ -780,7 +780,7 @@
 								<g:Label>M</g:Label>
 							</g:customCell>
 							<g:customCell styleName="{style.cabeceraStyle}">
-								<g:Label>Horas Mensuales</g:Label>
+								<g:Label ui:field="totalHours">Horas Mensuales</g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row styleName="{style.mesesImparesStyle}">
