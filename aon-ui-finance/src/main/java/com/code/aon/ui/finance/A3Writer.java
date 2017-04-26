@@ -134,7 +134,7 @@ public class A3Writer extends BasicExporter {
 		// Tipo de Registro
 		if (! isInvoiceExport() ) {
 			setInteger( 0, 14, 1);
-		} else if ( isRectifier() || (getTotal()<0) ) {
+		} else if ( isRectifier() || getTotal()<0 ) {
 			setInteger( 2, 14, 1);
 		} else {
 			setInteger( 1, 14, 1);	
@@ -175,7 +175,7 @@ public class A3Writer extends BasicExporter {
 	private String getTipoDeImporte( AccountEntryDetail aed ) {
 		String result = "C";
 		if ( aed.getDebit() != 0 ) {
-			if ( isRectifier() ) {
+			if ( isRectifier() || getTotal()<0 ) {
 				if ( isFacturaRecibida() ) {
 					result = "A";
 				}
@@ -185,7 +185,7 @@ public class A3Writer extends BasicExporter {
 				}
 			}
 		} else {
-			if ( isRectifier() ) {
+			if ( isRectifier() || getTotal()<0 ) {
 				if ( isFacturaEmitida() ) {
 					result = "A";
 				}
@@ -289,18 +289,18 @@ public class A3Writer extends BasicExporter {
 		// Porcentaje de IVA
 		setPercent( taxPercent, 115 );
 		// Cuota de IVA
-		setNumber( taxQuota, 120, 14 );
+		setNumber( Math.abs(taxQuota), 120, 14 );
 		if ( surchargeQuota!=0 || surchargePercent!=0 ) {
 			// Porcentaje de Recargo
 			setPercent( surchargePercent, 134 );
 			// Cuota de Recargo
-			setNumber( surchargeQuota, 139, 14 );
+			setNumber( Math.abs(surchargeQuota), 139, 14 );
 		}
 		if ( retentionIncluded ) {
 			// Porcentaje de Retencion
 			setPercent( retentionPercent, 153 );
 			// Cuota de Retencion
-			setNumber( retentionQuota, 158, 14 );
+			setNumber( Math.abs(retentionQuota), 158, 14 );
 		}
 		// Operacion sujeta a IVA
 		setString( vatIncluded ? "S" : "N", 174, 1);				
@@ -350,7 +350,7 @@ public class A3Writer extends BasicExporter {
 			// Subtipo de factura (01 a 07)
 			setString( getSubtipoDeFactura(tbd.getVatDeductionType()), 99, 2);					
 			// Base imponible
-			setNumber( tbd.getBase(), 101, 14);			
+			setNumber( Math.abs(tbd.getBase()), 101, 14);			
 			writeLine();
 			lineWritten = true;
 		}
