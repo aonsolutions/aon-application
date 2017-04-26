@@ -21,11 +21,33 @@
 
 			<aon:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">
 				<aon:outputLabel for="RegistryBank_id" value="#{bundle.aon_bank}" />
-				<aon:selectOneMenu id="RegistryBank_id"
-					value="#{controllerLookupListener.registryBank}">
-					<f:selectItem value="#{null}" />
-					<f:selectItems value="#{controllerLookupListener.activeBanks}" />
-				</aon:selectOneMenu>
+				<aon:if test="#{controllerLookupListener.showCompanyBanks}">
+					<aon:selectOneMenu id="RegistryBank_id"
+						value="#{controllerLookupListener.registryBank}">
+						<f:selectItem value="#{null}" />
+						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+					</aon:selectOneMenu>
+				</aon:if>
+				<aon:if test="#{!controllerLookupListener.showCompanyBanks}">
+					<aon:div>
+						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
+							<ui:param name="bankAccountController" value="#{controllerLookupListener.accountHelper}" />
+							<ui:param name="bankAccountPrefix" value="#{controllerLookupListener.controller.beanName}" />
+							<ui:param name="bankCodeChangeReRender" value="RegistryBank_alias,RegistryBank_bic" />
+						</ui:include>
+					</aon:div>
+
+					<aon:outputLabel for="RegistryBank_alias" value="#{bundle.aon_description} #{bundle.aon_bank}" />
+					<aon:inputText id="RegistryBank_alias"
+						value="#{controllerLookupListener.registryBank.bankAlias}" 
+						size="25" maxlength="25" required="#{true}" />
+
+					<aon:outputLabel for="RegistryBank_bic" value="#{bundle.aon_bic}" />
+					<aon:inputText id="RegistryBank_bic" validator="BICValidator"
+						value="#{controllerLookupListener.registryBank.bic}" 
+						size="12" maxlength="11" required="#{true}">
+					</aon:inputText>
+				</aon:if>			
 			</aon:if>			
 		</aon:panelGrid>
 	</aon:div>

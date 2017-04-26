@@ -36,8 +36,8 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	
 	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
 		RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
-		Person person = (Person) this.getController().getTo();
-		return c.getActiveRegistryBanks(person.getRegistry());
+		Registry registry = getRegistryPayMethod().getRegistry();
+		return c.getActiveRegistryBanks(registry);
 	}
 	
 	@Override

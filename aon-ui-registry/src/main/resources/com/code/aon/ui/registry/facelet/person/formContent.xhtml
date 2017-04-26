@@ -130,9 +130,60 @@
 	</aon:panelGrid>
 
 	<aon:if test="#{!skipPersonPayMethodForm}">
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
-			<ui:param name="controllerLookupListener" value="#{personPayMethodForm}"/>
-		</ui:include>
+		<aon:div id="Registry-PayMethodDiv" styleClass="aon-margin-top"> 
+			<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
+		
+				<aon:outputLabel for="RegistryPayMethod_payment" 
+					value="#{bundle.finance_payMethod}" />
+				<aon:selectOneMenu id="RegistryPayMethod_payment"
+					value="#{personPayMethodForm.registryPayMethod.payment}"
+					valueChangeListener="#{personPayMethodForm.onPayMethodChanged}"
+					reRender="Registry-PayMethodDiv,Registry-PayMethodDiv2">
+					<f:selectItem value="#{null}" />
+					<f:selectItems value="#{configCollections.payMethods}" />
+				</aon:selectOneMenu>				
+	
+				<aon:if test="#{personPayMethodForm.registryPayMethod.payment.type != null}">
+					<aon:outputLabel for="RegistryBank_id" value="#{bundle.aon_bank}" />
+					<aon:selectOneMenu id="RegistryBank_id"
+						value="#{personPayMethodForm.registryBank}">
+						<f:selectItem value="#{null}" />
+						<f:selectItems value="#{personPayMethodForm.activeBanks}" />
+					</aon:selectOneMenu>
+				</aon:if>			
+			</aon:panelGrid>
+		</aon:div>
+	
+		<aon:div id="Registry-PayMethodDiv2"  styleClass="aon-margin-top">
+			<aon:panelGrid columns="4" 
+				columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-160,
+					aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-160">
+						
+				<aon:if test="#{personPayMethodForm.registryPayMethod.payment.type != null}">				
+					<aon:outputLabel for="RegistryPayMethod_numberOfPayments" 
+						value="#{bundle.registry_number_of_payments}" />
+					<aon:inputText id="RegistryPayMethod_numberOfPayments"
+						value="#{personPayMethodForm.registryPayMethod.numberOfPayments}" required="true" size="5" >
+						<f:validateLongRange minimum="1" />
+					</aon:inputText>	
+					
+					<aon:outputLabel for="RegistryPayMethod_daysToFirstPayment" 
+						value="#{bundle.registry_days_to_first_payment}" />
+					<aon:inputText id="RegistryPayMethod_daysToFirstPayment"
+						value="#{personPayMethodForm.registryPayMethod.daysToFirstPayment}" required="true" size="5" />
+				
+					<aon:outputLabel for="RegistryPayMethod_daysBetweenPayments" 
+						value="#{bundle.registry_days_between_payments}" />
+					<aon:inputText id="RegistryPayMethod_daysBetweenPayments"
+						value="#{personPayMethodForm.registryPayMethod.daysBetweenPayments}" required="true" size="5" />
+				
+					<aon:outputLabel for="RegistryPayMethod_paymentDays" 
+						value="#{bundle.registry_payment_days}" />
+					<aon:inputText id="RegistryPayMethod_paymentDays"
+						value="#{personPayMethodForm.registryPayMethod.paymentDays}" size="5" />
+				</aon:if>
+			</aon:panelGrid>
+		</aon:div>
 	</aon:if>
 	
 </ui:composition>
