@@ -135,6 +135,19 @@ public class DBWarehouse {
 		AON.deleteElaborationDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(detailId));
 		return new JSONObject();
 	}
+
+	public static JSONObject insertElaborationDetailComposition(Domain domain, String login, JSONObject json) {
+		ElaborationDetailComposition composition = getElaborationDetailComposition(domain, login, json, new ElaborationDetailComposition());
+		Integer id = AON.insertElaborationDetailComposition(domain.getName(), domain.getId(), login, composition);
+		composition.setId(id);
+		return ToJSON.elaborationDetailCompositionToJSON(composition);
+	}
+	
+	public static JSONObject deleteElaborationDetailComposition(Domain domain, String login, int detailId) {
+		AON.deleteElaborationDetailComposition(domain.getName(), domain.getId(), login,
+				f -> f.getIdProperty().eq(detailId));
+		return new JSONObject();
+	}
 	
 	private static Elaboration getElaboration(Domain domain, String login,
 			JSONObject json, Elaboration elaboration) {
@@ -203,5 +216,26 @@ public class DBWarehouse {
 		}
 
 		return detail;
+	}
+
+	private static ElaborationDetailComposition getElaborationDetailComposition(Domain domain,
+			String login, JSONObject json, ElaborationDetailComposition composition) {
+		if (json.opt("elaboration_detail") != null && !MSG.EMPTY.equals(json.opt("elaboration_detail"))) {
+			composition.setElaborationDetail(new ElaborationDetail().setId(json.getInt("elaboration_detail")));
+		}
+		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
+			composition.setItem(new Item().setId(json.getInt(MSG.ITEM)));
+		}
+		if (json.opt(MSG.QUANTITY) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {
+			composition.setQuantity(json.getDouble(MSG.QUANTITY));
+		}
+		if (json.opt(MSG.WAREHOUSE) != null
+				&& !MSG.EMPTY.equals(json.opt(MSG.WAREHOUSE))) {
+			composition.setWarehouse(new Warehouse().setId(json
+					.getInt(MSG.WAREHOUSE)));
+		}
+		
+		return composition;
 	}
 }

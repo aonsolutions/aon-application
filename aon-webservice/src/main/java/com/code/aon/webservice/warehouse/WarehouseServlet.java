@@ -199,6 +199,15 @@ public class WarehouseServlet extends HttpServlet{
 							object = DBWarehouse.insertElaborationDetail(domain, userName, json);
 						}
 					} else if(MSG.DETAIL_COMPOSITION.equalsIgnoreCase(pathInfo[4])){
+						if(pathInfo.length > 5){
+							if(MSG.UPDATE.equals(pathInfo[5])){
+								
+							} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[5])){
+								object = DBWarehouse.deleteElaborationDetailComposition(domain, userName, Integer.parseInt(pathInfo[6]));
+							}
+						} else {
+							object = DBWarehouse.insertElaborationDetailComposition(domain, userName, json);
+						}
 					}
 				} else {
 					object = DBWarehouse.insertElaboration(domain, userName, json);
