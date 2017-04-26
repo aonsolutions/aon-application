@@ -49,7 +49,10 @@ public class MainElaboration extends AonTemplate {
 		super.onModuleLoad();
 		Polymer.importHref(Arrays.asList(IronIconsElement.SRC, AonComboBoxElement.SRC, PaperButtonElement.SRC,
 				PaperRadioButtonElement.SRC, PaperItemElement.SRC)
-			);
+		,o -> {
+			load();
+			return null;
+		});
 		Polymer.whenReady(o -> {
 			load();
 			return null;

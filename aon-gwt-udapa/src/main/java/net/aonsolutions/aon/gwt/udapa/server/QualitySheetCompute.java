@@ -42,7 +42,7 @@ public class QualitySheetCompute {
 
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD11.getName(),"Qufqcd02+Qufqcd03+Qufqcd04"
 				 + "+Qufqcd05+Qufqcd06+Qufqcd07+Qufqcd08+Qufqcd09+Qufqcd10");
-		COMPUTE_MAP.put(QualitySheetCode.UFQCD111.getName(),"(Qufqcd15/Qufqcd01)*100");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD111.getName(),"(Qufqcd11/Qufqcd01)*100");
 	}
 	
 	

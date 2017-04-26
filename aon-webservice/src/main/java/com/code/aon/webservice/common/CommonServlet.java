@@ -1,6 +1,7 @@
 package com.code.aon.webservice.common;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.util.ToJSON;
@@ -197,11 +199,12 @@ public class CommonServlet extends HttpServlet{
 	private JSONObject insertDataResponse(Domain domain, String login, JSONObject json) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		Date date = new Date();
-		/*try { TODO 
+		try {
 			date = dateFormat.parse(json.getString("issue_date"));
 		} catch (JSONException | ParseException e) {
 			e.printStackTrace();
-		}*/
+		}
+		
 		DataResponse dataResponse = new DataResponse()
 				.setNumber(json.getString("number"))
 				.setDomain(domain.getId())

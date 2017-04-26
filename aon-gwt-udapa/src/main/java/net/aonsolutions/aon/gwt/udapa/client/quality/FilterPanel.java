@@ -67,9 +67,55 @@ public class FilterPanel extends Composite {
     public FilterPanel(QualityPrincipal parent) {
     	this.parent = parent;
     	initWidget(binder.createAndBindUi(this));       
+    	
+		panel.add(datePanel());
 
-		panel.add(new Label(""));
     }
+    
+    private HorizontalPanel datePanel() {
+    	HorizontalPanel datePanel = new HorizontalPanel(); 
+    	datePanel.addStyleName(AON.AON_CSS.aonMarginTop());  
+    	InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
+    	fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+    	fromLabel.setWidth("20px");
+		datePanel.add(fromLabel);
+		
+		
+		final DateBoxEx from = new DateBoxEx();
+		from.getElement().getStyle().setBorderColor("#dedede");
+		from.getElement().getStyle().setHeight(16, Unit.PX);;
+		from.setWidth("70px");
+		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(Long.toString(from.getValue().getTime()));
+				onChange("issue_date", list);
+			}
+		});
+		datePanel.add(from);
+		
+		InlineLabel toLabel = new InlineLabel(AON.MSG.to());
+		toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		toLabel.setWidth("20px");
+		datePanel.add(toLabel);
+
+		final DateBoxEx to = new DateBoxEx();
+		to.setWidth("70px");
+		to.getElement().getStyle().setBorderColor("#dedede");
+		to.getElement().getStyle().setHeight(16, Unit.PX);;
+
+		to.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(Long.toString(to.getValue().getTime()));
+				onChange("delivery_date", list);	
+			}
+		});
+		datePanel.add(to);
+		return datePanel;
+	}
     
     private PaperButton filterButton(String title) {
 		PaperButton button = new PaperButton();

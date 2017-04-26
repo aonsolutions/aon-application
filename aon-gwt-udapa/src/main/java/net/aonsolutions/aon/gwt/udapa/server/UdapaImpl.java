@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.gwt.udapa.server;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import javax.servlet.annotation.WebServlet;
@@ -57,7 +58,10 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		map.put("product_description", id.getDescription());
 		map.put("product_supplier", i.getSupplierName());
 		map.put("product_quantity", id.getQuantity() + "");
-		map.put("transposrt_carrier", cp.getCarrierName());
+		map.put("transport_carrier", cp.getCarrierName());
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		map.put("transport_delivery_date", dateFormat.format(cp.getDeliveryDate()));
 		map.put("transport_driver_name", cp.getDriverName());
 		map.put("transport_driver_document", cp.getDriverDocument());
 		map.put("transport_number_plate", cp.getNumberPlate());
