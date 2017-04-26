@@ -188,6 +188,9 @@ public class Warehouse extends Methods{
 	public void insertElaborationDetail(String requestData, AsyncCallback<JsElaborationDetail> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail", requestData, callback);
 	}
+	public void insertElaborationDetailComposition(String requestData, AsyncCallback<JsElaborationDetailComposition> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition", requestData, callback);
+	}
 	
 	public void updateElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update/"+id, requestData, callback);
@@ -201,6 +204,9 @@ public class Warehouse extends Methods{
 	}
 	public void deleteElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaborationDetail> callback) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/delete/"+id, requestData, callback);
+	}
+	public void deleteElaborationDetailComposition(Integer id, String requestData, AsyncCallback<JsElaborationDetailComposition> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/delete/"+id, requestData, callback);
 	}
 	
 	public void downloadElaboration(Integer id){
