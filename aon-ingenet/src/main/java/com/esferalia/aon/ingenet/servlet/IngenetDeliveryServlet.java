@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -87,7 +88,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
 		
-		String subject = "[AON] Recepcion automatica de albaranes";
+		String subject = "Recepcion automatica de albaranes";
 		String content = "Se ha detectado una nueva comunicación para albaranes";
 		sendEmail(subject, content, "delivery", _xml, RECIPIENTS_TO_LOG);
 		saveToDisk("delivery", "delivery", _xml!=null?_xml:"");
@@ -146,7 +147,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		} else {
 			httpResponse.setStatus(HttpServletResponse.SC_OK);
 			if (!test) {
-				subject = "[AON] Recepcion automatica de albaranes";
+				subject = "Recepcion automatica de albaranes";
 				content = fillSuccessMessage(deliveryList.getDATOSALBARANES());
 				sendEmail(subject, content, null, null, RECIPIENTS_TO_SUCCESS);
 			}
@@ -161,7 +162,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		});
 		String xml = IngenetXmlValidator.convertToXml(deliveryList, ALBARANES.class);
 		
-		String subject = "[AON] Recepcion automatica de albaranes";
+		String subject = "Recepcion automatica de albaranes";
 		String content = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
 		sendEmail(subject, content, "albaranes", xml, RECIPIENTS_TO_FAILURES);
 		
@@ -455,7 +456,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				linea.getDATOSELABORACIONORIGEN());
 		if (elaboration != null && elaboration.getId() != null) {
 			elaboration.setStatus(ElaborationStatus.FAIL.value());
-			elaboration.setComments(StringUtils.mid(cause, 0, 128));
+			elaboration.setRemarks(StringUtils.mid(cause, 0, 128));
 			ElaborationDAO.updateElaboration(ctx, elaboration);
 		}
 	}
@@ -542,6 +543,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				carrier.setNationality(Country.safeValueOf("ES"));
 				carrier.setSecurityLevel(SecurityLevel.OFFICIAL);
 				carrier.setType((byte)1);
+				carrier.setStatus(CarrierStatus.ACTIVE);
 				int id = WarehouseDAO.insertCarrier(ctx, carrier);
 				carrier.setId(id);
 			}
