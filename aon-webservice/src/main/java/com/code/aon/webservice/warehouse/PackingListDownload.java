@@ -60,7 +60,6 @@ public class PackingListDownload extends HttpServlet{
 				AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() : "");
 		json.put("carrier_packing", cpJSON);
 		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
-		company.getDocument();
 		JSONObject addressJSON = ToJSON.raddressToJSON(
 			AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
 		addressJSON.put("document", company.getDocument() != null ? 

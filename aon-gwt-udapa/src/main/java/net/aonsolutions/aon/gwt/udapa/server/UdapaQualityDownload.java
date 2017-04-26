@@ -1,0 +1,111 @@
+package net.aonsolutions.aon.gwt.udapa.server;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
+
+@WebServlet(name = "udapaQualistyDownload", urlPatterns = {"/aon_gwt_aio/download_udapa_quality/*"})
+public class UdapaQualityDownload extends HttpServlet{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {	       
+		HashMap<String, String> parameters = getParameters(req.getPathInfo().substring(1));
+		String domainName = parameters.get("domain");
+		String login = parameters.get("login");
+		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));	
+		String dataResponseIdStr = parameters.get("id");
+		Integer dataResponseId = Integer.parseInt(dataResponseIdStr);
+		
+		UdapaImpl udp = new UdapaImpl();
+		HashMap<String, String> map = udp.getValues(domain.getName(), domain.getId(), dataResponseId);
+		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(dataResponseId));
+		map.put("number", dr.getNumber());
+		
+		
+		// TODO AÑADIR DATOS K FALTAN!
+		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
+		RAddress raddress = AON.getRAddres(domain.getName(), domain.getId(), login, company.getId());
+		map.put("registry_document", company.getDocument());
+		map.put("registry_name", company.getName());
+		map.put("registry_full_address", raddress.getFullAddress());
+		map.put("registry_end_address", raddress.getZip() + " " + raddress.getCity() + " " + raddress.getGeozoneName());
+
+		LinkedList<RegistryMedia> list = AON.getRMediaList(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(company.getId()));
+		String phone = list.stream().filter(a -> a.getMedia() == MediaType.FIXED_PHONE.value()).map(r -> r.getValue()).findFirst().orElse("-");
+		String fax = list.stream().filter(a -> a.getMedia() == MediaType.FAX.value()).map(r -> r.getValue()).findFirst().orElse("-");
+		String mail = list.stream().filter(a -> a.getMedia() == MediaType.EMAIL.value()).map(r -> r.getValue()).findFirst().orElse("-");
+		String web = list.stream().filter(a -> a.getMedia() == MediaType.WEB.value()).map(r -> r.getValue()).findFirst().orElse("-");
+		
+		map.put("phone", phone);
+		map.put("fax", fax);
+		map.put("mail", mail);
+		map.put("web", web);
+		
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, 
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+					.and(f.getDomainProperty().eq(domain.getId())),
+				AttachType.REGISTRY);
+		
+		File file = printQuality.createPdf(map, attach.getData());
+		
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+	    resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+	    resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+	    resp.addHeader("Access-Control-Max-Age", "1728000");
+        resp.setContentType(MimeType.PDF.getName());
+		resp.setHeader("Content-disposition", "inline; filename=\"" + file.getName() + ".pdf\";");
+		FileInputStream fileInpurOs =  new FileInputStream(file);
+		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
+		resp.flushBuffer();
+
+		fileInpurOs.close();
+	}
+	
+	public HashMap<String, String> getParameters(String value){
+		HashMap<String, String> map = new HashMap<String, String>();
+		String[] parameters = decode(value.getBytes()).split("&");
+		for(String parameter : parameters){
+			String[] values = parameter.split("=");
+			map.put(values[0], values[1]);
+		}
+		return map;
+	}
+	
+	public String decode(byte[] value){
+		String decode = "";
+		try{
+			decode = new String(Base64.getDecoder().decode(value), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return decode;
+	}
+
+}

@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.gwt.udapa.client.quality;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,8 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
+
+import net.aonsolutions.aon.gwt.udapa.client.Utils;
 
 public class GridPanel extends ResizeComposite implements RequiresResize {
 
@@ -168,7 +171,12 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public String getValue(JsDataResponse object) {
-				return object.getIssueDate() != null ? object.getIssueDate() : "";
+				if(object.getIssueDate() != null && !"".equals(object.getIssueDate())){
+					Date date = Utils.parseDateTime(object.getIssueDate());
+					String dateStr = Utils.formatDate(date);
+					return dateStr;
+				}
+				return "-";
 			}
 		};
 		
@@ -183,10 +191,10 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		});
 		dataGrid.getColumnSortList().push(issueDateColumn);
 		dataGrid.addColumn(issueDateColumn, AON.MSG.issueDate());
-		dataGrid.setColumnWidth(issueDateColumn, 15, Unit.PCT);
+		dataGrid.setColumnWidth(issueDateColumn, 5, Unit.PCT);
 
 		
-		/** Serie/Number Column **/
+		/** Number Column **/
 		Column<JsDataResponse, String> nameColumn = new Column<JsDataResponse, String>(new TextCell()) {
 
 			@Override
@@ -209,6 +217,30 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(nameColumn);
 		dataGrid.addColumn(nameColumn, AON.MSG.number());
 		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
+		
+		/** Number Column **/
+		Column<JsDataResponse, String> productColumn = new Column<JsDataResponse, String>(new TextCell()) {
+
+			@Override
+			public String getValue(JsDataResponse object) {
+				return "PRODUCT DESCRIPTION";
+			}
+		
+		};
+		productColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		productColumn.setSortable(false); 
+		sortHandler.setComparator(productColumn,new Comparator<JsDataResponse>() {
+			
+			@Override
+			public int compare(JsDataResponse o1, JsDataResponse o2) {
+				String a = o1.getNumber(); 
+				String b = o2.getNumber(); 
+				return a.compareTo(b);
+			}
+		});
+		dataGrid.getColumnSortList().push(productColumn);
+		dataGrid.addColumn(productColumn, "Producto");
+		dataGrid.setColumnWidth(productColumn, 15, Unit.PCT);
 		
 	}
 	

@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.gwt.udapa.client.quality;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -12,6 +13,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event;
@@ -32,6 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
+import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Clean;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.CleanAptitude;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.CulinaryAptitude;
@@ -76,6 +80,10 @@ public class QualitySheet extends Composite{
 	
 	public API getAPI() {
 		return parent.getAPI();
+	}
+	
+	public JsDataResponse getDataResponse() {
+		return dataResponse;
 	}
 	
 	public QualitySheet(UdapaQuality parent, JsDataResponse dataResponse) {
@@ -145,9 +153,12 @@ public class QualitySheet extends Composite{
 				
 				warehouse.setText(map.get("warehouse"));
 				number.setText(dataResponse.getNumber());
-			//	Date issueDate = Utils.parseTime(dataResponse.getIssueDate());
-			//	date.setText(Utils.formatDate(issueDate));
-			//	hour.setText(Utils.formatTime(issueDate));
+				String transportDate =  map.get("transport_delivery_date");
+				if(transportDate != null && !"".equals(transportDate)){
+					Date issueDate = Utils.parseDateTime(transportDate);
+					date.setText(Utils.formatDate(issueDate));
+					hour.setText(Utils.formatTime(issueDate));
+				}
 
 				transportData();
 				productData();
@@ -206,16 +217,13 @@ public class QualitySheet extends Composite{
 		
 		productData.setWidget(2, 0, new Label("Origen"));
 		productData.setWidget(2, 1, new Label(map.get("full_address")));
-		productData.setWidget(2, 4, new Label("Tipo"));
-		LinkedList<String> list = new LinkedList<>();
-		list.add("Consumo");
-		list.add("Siembra");
-		productData.setWidget(2, 5, listBox(list, QualitySheetCode.UFQDP3));
+		productData.setWidget(2, 4, new Label("Rechazado"));
+		productData.setWidget(2, 5, checkBox(QualitySheetCode.UFQDP2));	
 		
 		productData.setWidget(3, 0, new Label(""));
 		productData.setWidget(3, 1, new Label(map.get("end_address")));
-		productData.setWidget(2, 4, new Label("Rechazado"));
-		productData.setWidget(2, 5, new CheckBox());
+		productData.getFlexCellFormatter().setColSpan(3, 1, 3);
+
 	}
 	
 	private void qualityTest() {
@@ -434,6 +442,15 @@ public class QualitySheet extends Composite{
 				ws.setPrevValue(prevValue);
 				ws.setValue(value);
 				undo.push(ws);
+				
+				String id = dataResponse.getId() + "";
+				String domainName = parent.getAonData().getDomain().getName();
+				Integer domainId = parent.getAonData().getDomain().getId();
+				
+				impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQO,ta.getValue(), map, new AsyncCallback<HashMap<String, String>>() {
+					@Override public void onFailure(Throwable caught) {}
+					@Override public void onSuccess(HashMap<String, String> result) {}
+				});
 			}
 		});
 		observation.setWidget(0, 0, ta);
@@ -450,6 +467,29 @@ public class QualitySheet extends Composite{
 		Label label = new Label(name);
 		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		return label;
+	}
+	
+	private CheckBox checkBox(QualitySheetCode code){
+		CheckBox cb = new CheckBox();
+		if(map.containsKey(code.getName())){
+			String val = map.get(code.getName());
+			cb.setValue("1".equals(val) || "1.0".equals(val));
+		}
+		cb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				String id = dataResponse.getId() + "";
+				String domainName = parent.getAonData().getDomain().getName();
+				Integer domainId = parent.getAonData().getDomain().getId();
+				
+				impl.updateValue(domainName, domainId, Integer.parseInt(id), code, cb.getValue() ? "1" : "0", map, new AsyncCallback<HashMap<String, String>>() {
+					@Override public void onFailure(Throwable caught) {}
+					@Override public void onSuccess(HashMap<String, String> result) {}
+				});
+			}
+		});
+		return cb;
 	}
 	
 	private ListBox listBox(LinkedList<String> options, QualitySheetCode code){

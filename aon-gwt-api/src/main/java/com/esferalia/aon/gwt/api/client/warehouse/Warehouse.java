@@ -141,6 +141,19 @@ public class Warehouse extends Methods{
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	public void downloadUdapaQuality(Integer id){
+		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id;
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_udapa_quality/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
 
 	public void sendPackingList(String requestData){
 		post(getUrl() + "packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);

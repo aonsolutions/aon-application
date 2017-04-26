@@ -102,5 +102,12 @@
  			<version>${project.version}</version> 
   			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+    		<groupId>com.itextpdf</groupId>
+    		<artifactId>itextpdf</artifactId>
+    		<version>5.0.6</version>
+			<scope>compile</scope>
+	    </dependency>
 	</dependencies>
 </project>

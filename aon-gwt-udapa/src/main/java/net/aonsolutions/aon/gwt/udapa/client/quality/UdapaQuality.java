@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.gwt.udapa.client.quality;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -21,6 +22,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
@@ -32,9 +34,11 @@ import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.vaadin.widget.VaadinDatePicker;
+import com.vaadin.polymer.vaadin.widget.VaadinDatePickerLight;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
+import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 import net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent;
@@ -82,7 +86,10 @@ public class UdapaQuality extends AonTemplate2{
 			PaperFabElement.SRC,
 			PaperInputElement.SRC,
 			PaperToggleButtonElement.SRC
-		));
+		), o -> {
+			startApplication();
+			return null;
+		});
 		
 		Polymer.whenReady(o -> {
 			super.onModuleLoad();
@@ -111,7 +118,9 @@ public class UdapaQuality extends AonTemplate2{
 			protected void remove() {}
 			
 			@Override
-			protected void print() {}
+			protected void print() {
+				printQuality();
+			}
 			
 			@Override
 			protected void next() {}
@@ -145,6 +154,7 @@ public class UdapaQuality extends AonTemplate2{
 		this.filterMap = map;
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.setBackVisible(true);
+		toolbar.setPrintVisible(true);
 		setContent(new QualitySheet(this, js));
 	}
 
@@ -154,6 +164,11 @@ public class UdapaQuality extends AonTemplate2{
 		list.add("quality");
 		filterMap.put("type", list);
 		return filterMap;
+	}
+	
+	private void printQuality() {
+		QualitySheet sheet = (QualitySheet) getContent().getWidget();
+		getAPI().getWarehouse().downloadUdapaQuality(sheet.getDataResponse().getId());
 	}
 	
 	private void resetQuality() {
@@ -219,8 +234,11 @@ public class UdapaQuality extends AonTemplate2{
 				JsOrder order = (JsOrder) incomeBox.getSelectedItem();
 
 				JSONObject dataResponse = new JSONObject();
-				dataResponse.put("number", new JSONString(order.getReferenceCode()));				
-				dataResponse.put("issue_date", new JSONString(dateBox.getValue()));
+				dataResponse.put("number", new JSONString(order.getReferenceCode()));	
+
+				Date date = Utils.parse("yyyy-MM-dd", dateBox.getValue());
+				String dateTime = Utils.formatDateTime(date);
+				dataResponse.put("issue_date", new JSONString(dateTime));
 				
 				getAPI().getCommon().insertDataResponse(JsonUtils.stringify(dataResponse.getJavaScriptObject()), new AsyncCallback<JsDataResponse>() {
 					

@@ -424,7 +424,7 @@ public class ToJSON {
 				.put(MSG.NUMBER, dr.getNumber())
 				.put(MSG.ISSUE_DATE, dr.getIssueDate() != null ? dateFormat.format(dr.getIssueDate()) : "")
 				.put(MSG.CREATION_USER, dr.getCreationUser())
-				.put(MSG.ISSUE_DATE, dr.getCreationDate() != null ? dateFormat.format(dr.getCreationDate()) : "")
+				.put(MSG.CREATION_DATE, dr.getCreationDate() != null ? dateFormat.format(dr.getCreationDate()) : "")
 				.put(MSG.MODIFICATION_USER, dr.getModificationUser())
 				.put(MSG.MODIFICATION_DATE, dr.getModificationDate() != null ? dateFormat.format(dr.getModificationDate()) : "")
 		;
