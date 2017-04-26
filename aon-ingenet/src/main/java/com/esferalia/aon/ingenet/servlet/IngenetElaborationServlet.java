@@ -142,7 +142,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					ElaborationDAO.updateElaboration(ctx, elaboration);
 				});
 				 
-//				String subject = "[AON] Recuperación automática de elaboraciones";
+//				String subject = "Recuperación automática de elaboraciones";
 //				String content = fillResponseMessage(elaborationList);
 //				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
 //				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
@@ -158,7 +158,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					httpResponse.setStatus(HttpServletResponse.SC_OK);					
 				}
 				
-				String subject = "[AON] Cancelación automática de elaboraciones";
+				String subject = "Cancelación automática de elaboraciones";
 				String content = fillCancellationMessage(params.getELABORACIONES().getREFERENCIAS());
 				sendEmail(subject, content, "cancelar", _xml, RECIPIENTS_TO_LOG);
 				saveToDisk("elaboration", "elaboration-cancellation", _xml!=null?_xml:"");
@@ -186,7 +186,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					series, number);
 			if(elaboration.getStatus()==ElaborationStatus.IN_PROGRESS.value()){
 				elaboration.setStatus(ElaborationStatus.REOPEN.value());
-				elaboration.setComments(StringUtils.mid(ref.getOBSERVACIONES(), 0, 128));
+				elaboration.setRemarks(StringUtils.mid(ref.getOBSERVACIONES(), 0, 128));
 				elaborationList.add(elaboration);
 			}
 		});
@@ -241,7 +241,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		});
 		String xml = IngenetXmlValidator.convertToXml(respuesta, RESPUESTAELABORACIONES.class);
 		
-		String subject = "[AON] Envío automático de elaboraciones";
+		String subject = "Envío automático de elaboraciones";
 		String content = fillErrorMessage(respuesta.getERRORES(), errorList);
 		sendEmail(subject, content, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
 		

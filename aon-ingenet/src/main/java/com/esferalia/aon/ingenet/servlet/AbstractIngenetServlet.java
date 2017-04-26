@@ -260,6 +260,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 				String recipientsTo = "";
 				if (isDevEnabled()) {
 					recipientsTo = "eagirrezabal@aonsolutions.es";
+					subject = "[AON/Test] " + subject;
 					LOGGER.info("*** RUNNING TEST ENVIRONMENT, AVOID SPAM RECIPIENTS TO.");
 				} else {
 					if (recipients != null) {
@@ -269,6 +270,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 							recipientsTo += to;
 						}
 					}
+					subject = "[AON] " + subject;
 				}
 				json.put("mailAccountId", mail.getId())
 						.put("recipientsTo", recipientsTo)
