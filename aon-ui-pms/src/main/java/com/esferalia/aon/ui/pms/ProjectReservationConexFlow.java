@@ -236,6 +236,13 @@ public class ProjectReservationConexFlow implements Serializable {
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection, code, token, (Double) 0.01, getReservation().getId());
 						ConexFlow cfP = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						conexFlowOk = cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
+						
+						if(!conexFlowOk){
+							query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection, code, token, (Double) 1.00, getReservation().getId());
+							cfP = ConexFlowPost.execute(connection, ConexFlowConstant.PREAUTHORIZATION_OP, query);
+							conexFlowOk = cfP.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
+						}
+						
 						if (!conexFlowOk) {
 							conexFlowError("Error " + cfP.getRespuesta().getResultado() + ": " + cfP.getRespuesta().getDesResultado() + ".");
 						} else {

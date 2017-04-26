@@ -85,12 +85,29 @@ public class Preauthorization {
 				};
 				if(!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)){
 					if(!dryRun){
+						Double amount = 0.01;
 						ConexFlowConnection connection = DBConsults.getConection(d);
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-								, r.getCode(), r.getToken(), 0.01, r.getProject());
+								, r.getCode(), r.getToken(), amount, r.getProject());
 					
 						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
 						Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
+						
+						if(!ok){
+							// Como ha fallado intentar cobro de 0.01 (AMEX)
+							query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), amount, r.getCode(), r.getProject());
+							conexFlow = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
+							ok = conexFlow.getRespuesta().getResultado().equals("000");
+							if(!ok){
+								// Como ha fallado intentar preauthorizacion de 1.00
+								amount = 1.00;
+								query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
+										, r.getCode(), r.getToken(), amount, r.getProject());
+								conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
+								ok = conexFlow.getRespuesta().getResultado().equals("000");
+							}
+						}
+						
 						conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION_CHECK : ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
 						String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
 								+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte();
