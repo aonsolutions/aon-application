@@ -98,9 +98,17 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			// Establish context
 			dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
-			Result<Record4<Integer, String, String, String>> domainsResult = dslContext
-					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.SUBDOMAINSUFFIX).from(DOMAIN)
-					.where(DOMAIN.PARENT.eq(idDomain).or(DOMAIN.ID.eq(idDomain))).fetch();
+			Result<Record4<Integer, String, String, String>> domainsResult = null;
+			
+			if (idDomain == 0){
+				domainsResult = dslContext.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.SUBDOMAINSUFFIX)
+						.from(DOMAIN).fetch();
+			}else{
+				domainsResult = dslContext.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION, DOMAIN.SUBDOMAINSUFFIX)
+						.from(DOMAIN)
+						.where(DOMAIN.PARENT.eq(idDomain).or(DOMAIN.ID.eq(idDomain))).fetch();
+
+			}
 
 			domainsResult.forEach(d -> listDomains.add(new Domain().setId(d.getValue(DOMAIN.ID))
 					.setName(d.getValue(DOMAIN.NAME)).setDescription(d.getValue(DOMAIN.DESCRIPTION))
