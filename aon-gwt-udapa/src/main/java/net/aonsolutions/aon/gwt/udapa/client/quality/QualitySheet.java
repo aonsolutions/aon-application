@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -80,6 +81,10 @@ public class QualitySheet extends Composite{
 	
 	public API getAPI() {
 		return parent.getAPI();
+	}
+	
+	public AonData getAonData() {
+		return parent.getAonData();
 	}
 	
 	public JsDataResponse getDataResponse() {

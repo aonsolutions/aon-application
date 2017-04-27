@@ -85,7 +85,8 @@ public class UdapaQuality extends AonTemplate2{
 			PaperItemElement.SRC,
 			PaperFabElement.SRC,
 			PaperInputElement.SRC,
-			PaperToggleButtonElement.SRC
+			PaperToggleButtonElement.SRC,
+			"vaadin-mock-xhr"
 		), o -> {
 			startApplication();
 			return null;
