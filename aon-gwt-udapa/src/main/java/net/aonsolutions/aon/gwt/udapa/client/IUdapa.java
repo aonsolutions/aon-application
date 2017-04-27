@@ -11,4 +11,7 @@ import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 public interface IUdapa extends RemoteService{
 	public HashMap<String, String> getValues(String domainName, Integer domainId, Integer drId);
 	public HashMap<String, String> updateValue(String domainName, Integer domainId, Integer drId, QualitySheetCode code, String value, HashMap<String, String> map);
+	
+	public void deleteQuality(String domainName, Integer domainId, Integer drId);
+
 }

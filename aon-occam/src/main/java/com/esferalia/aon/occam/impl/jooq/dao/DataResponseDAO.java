@@ -2,9 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Task.TASK;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.stream.Stream;
 
@@ -45,6 +43,7 @@ public class DataResponseDAO {
 	}
 	
 	public static DataResponse deleteDataResponse(AONContext ctx, DataResponseFilter filter){	
+		ctx.getDslContext().delete(DATA_RESPONSE).where(DATA_RESPONSE_PROPERTIES.getConditions(filter)).execute();
 		return new DataResponse();
 	}
 	
@@ -66,10 +65,21 @@ public class DataResponseDAO {
 	}
 	
 	public static DataResponseDetail updateDataResponseDetail(AONContext ctx, DataResponseDetail dataResponseDetail, DataResponseDetailFilter filter){	
+		ctx.getDslContext().update(DATA_RESPONSE_DETAIL)
+			.set(DATA_RESPONSE_DETAIL.DATA_RESPONSE, dataResponseDetail.getDataResponse())
+			.set(DATA_RESPONSE_DETAIL.DATA_VARIABLE, dataResponseDetail.getDataVariable())
+			.set(DATA_RESPONSE_DETAIL.DOMAIN, dataResponseDetail.getDomain())
+			.set(DATA_RESPONSE_DETAIL.VALUE, dataResponseDetail.getValue())
+			.set(DATA_RESPONSE_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(DATA_RESPONSE_DETAIL.MODIFICATION_USER, ctx.getUser())
+			.where(DATA_RESPONSE_DETAIL_PROPERTIES.getConditions(filter))
+			.execute();
+		
 		return new DataResponseDetail();
 	}
 	
 	public static DataResponseDetail deleteDataResponseDetail(AONContext ctx, DataResponseDetailFilter filter){	
+		ctx.getDslContext().delete(DATA_RESPONSE_DETAIL).where(DATA_RESPONSE_DETAIL_PROPERTIES.getConditions(filter)).execute();
 		return new DataResponseDetail();
 	}
 }

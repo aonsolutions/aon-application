@@ -4252,6 +4252,16 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
+
+	public static Optional<DataResponseDetail> getDataResponseDetail(String domainName, Integer domainId, String login, DataResponseDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDataResponseDetailStream(ctx, filter).findFirst();
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	
 	public static DataResponseDetail insertDataResponseDetail(String domainName, Integer domainId, String login, DataResponseDetail dataResponseDetail){
 		AONContext ctx = null;

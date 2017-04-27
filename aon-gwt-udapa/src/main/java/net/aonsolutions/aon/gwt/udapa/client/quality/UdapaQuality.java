@@ -22,8 +22,8 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
@@ -34,7 +34,6 @@ import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.vaadin.widget.VaadinDatePicker;
-import com.vaadin.polymer.vaadin.widget.VaadinDatePickerLight;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
@@ -116,7 +115,9 @@ public class UdapaQuality extends AonTemplate2{
 			}
 			
 			@Override
-			protected void remove() {}
+			protected void remove() {
+				removeQuality();
+			}
 			
 			@Override
 			protected void print() {
@@ -156,6 +157,7 @@ public class UdapaQuality extends AonTemplate2{
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.setBackVisible(true);
 		toolbar.setPrintVisible(true);
+		toolbar.setRemoveVisible(true);
 		setContent(new QualitySheet(this, js));
 	}
 
@@ -170,6 +172,38 @@ public class UdapaQuality extends AonTemplate2{
 	private void printQuality() {
 		QualitySheet sheet = (QualitySheet) getContent().getWidget();
 		getAPI().getWarehouse().downloadUdapaQuality(sheet.getDataResponse().getId());
+	}
+	
+	private void removeQuality() {
+		Label label = new Label("Est\u00e1 seguro que quiere borrar el Carrier Packing ");
+		
+		AonDialog dialog = new AonDialog("Borrar Carrier Packing", label) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {	
+				QualitySheet sheet = (QualitySheet) getContent().getWidget();
+				String idStr = sheet.getDataResponse().getId() + "";
+				Integer id = Integer.parseInt(idStr);
+				impl.deleteQuality(getAonData().getDomain().getName(), getAonData().getDomain().getId(),
+					id, new AsyncCallback<Void>() {
+					
+					@Override public void onSuccess(Void result) {
+						hide();
+						startApplication();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});							
+			}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
+		
+		
+		
 	}
 	
 	private void resetQuality() {

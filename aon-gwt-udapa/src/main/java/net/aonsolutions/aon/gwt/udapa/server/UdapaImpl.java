@@ -53,7 +53,6 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			IncomeDetail id = idOptional.get();
 			Warehouse w = AON.getWarehouse(domainName, domainId, login, f -> f.getIdProperty().eq(id.getWarehouse()));
 			Income i = AON.getIncome(domainName, domainId, login, f -> f.getIdProperty().eq(id.getIncome().getId())).get();
-			CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
 			RAddress addr = AON.getRAddres(domainName, domainId, login, i.getSupplier());
 		
 			map.put("full_address", addr.getFullAddress());
@@ -63,16 +62,19 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			map.put("product_description", id.getDescription());
 			map.put("product_supplier", i.getSupplierName());
 			map.put("product_quantity", id.getQuantity() + "");
-			map.put("transport_carrier", cp.getCarrierName());
-		
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-			map.put("transport_delivery_date", cp.getDeliveryDate() != null ? dateFormat.format(cp.getDeliveryDate()) : "-");
-			map.put("transport_driver_name", cp.getDriverName());
-			map.put("transport_driver_document", cp.getDriverDocument());
-			map.put("transport_number_plate", cp.getNumberPlate());
-			map.put("bruto", cp.getGross() != null ? cp.getGross().toString() : "-");
-			map.put("tara", cp.getTare() != null ? cp.getTare().toString() : "-");
-			map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "-");
+
+			if(i.getCarrierPacking() != null){
+				CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
+				map.put("transport_carrier", cp.getCarrierName());
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				map.put("transport_delivery_date", cp.getDeliveryDate() != null ? dateFormat.format(cp.getDeliveryDate()) : "-");
+				map.put("transport_driver_name", cp.getDriverName() != null ? cp.getDriverName() : "-");
+				map.put("transport_driver_document", cp.getDriverDocument() != null ? cp.getDriverDocument() : "-");
+				map.put("transport_number_plate", cp.getNumberPlate() != null ? cp.getNumberPlate() : "-");
+				map.put("bruto", cp.getGross() != null ? cp.getGross().toString() : "-");
+				map.put("tara", cp.getTare() != null ? cp.getTare().toString() : "-");
+				map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "-");
+			}
 		}
 		return compute(map);
 	}
@@ -84,7 +86,11 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		drd.setDataResponse(drId);
 		drd.setDataVariable(code.getName());
 		drd.setValue(value);
-		AON.insertDataResponseDetail(domainName, domainId, login, drd);
+		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domainName, domainId, login, f ->
+			f.getDomainProperty().eq(domainId).and(f.getDataVariableProperty().eq(code.getName())));
+		if(opt.isPresent()){			
+			AON.updateDataResponseDetail(domainName, domainId, login, drd, f -> f.getIdProperty().eq(opt.get().getId()));
+		} else AON.insertDataResponseDetail(domainName, domainId, login, drd);
 		map.put(code.getName(), value);
 		return compute(map);
 	}
@@ -122,5 +128,12 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			}
 		}
 		return map;
+	}
+
+	@Override
+	public void deleteQuality(String domainName, Integer domainId, Integer drId) {
+		//AON.deleteAttach(domainName, domainId, "", f -> f.getAttachModuleProperty().eq(drId), AttachType.DATA);
+		AON.deleteDataResponseDetail(domainName, domainId, "", f -> f.getDataResponseProperty().eq(drId));
+		AON.deleteDataResponse(domainName, domainId, "", f -> f.getIdProperty().eq(drId));
 	}
 }
