@@ -100,8 +100,7 @@ public class CRAWriter {
 					Double quote = step.value3();
 					String concept = step.value4();
 					Integer contractId = step.value5();
-					if(amount!=0.0d && quote!=0.0d 
-							&& !isSSDelegatePayment(connection, startCal.getTime(), endCal.getTime(), concept, amount, contractId)){
+					if(!isSSDelegatePayment(connection, startCal.getTime(), endCal.getTime(), concept, amount, contractId)){
 						Contract contract = (Contract) contractBean.get(contractId);
 						if(trb==null || !contract.getPerson().getSocialSecurityNumber().equals(trb.getNaf())){
 							trb = createTRBRecord(contract.getPerson().getSocialSecurityNumber());
@@ -186,12 +185,11 @@ public class CRAWriter {
 	 * @return
 	 */
 	private CRE createCRERecord(String code, Double amount, Double quote, boolean repeated) {
-		if(amount!=0.0d && quote!=0.0d){
+		if(amount!=0.0d || (isExtraPayment(code) && quote!=0.0d)){
 			CRE cre = new CRE();
 			cre.setConcepto(autoComplete(code, 4, "0", true));
 			cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
-			if(Integer.parseInt(T84.T84_0004.getCode())==Integer.parseInt(code)
-				|| Integer.parseInt(T84.T84_0005.getCode())==Integer.parseInt(code)){
+			if(isExtraPayment(code)){
 				cre.setImporte(String.valueOf((int)(CommonUtil.round(quote, 2)*100)));
 			} else {
 				cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
@@ -200,6 +198,11 @@ public class CRAWriter {
 			return cre;
 		}
 		return null;
+	}
+	
+	private boolean isExtraPayment(String code) {
+		return Integer.parseInt(T84.T84_0004.getCode())==Integer.parseInt(code)
+				|| Integer.parseInt(T84.T84_0005.getCode())==Integer.parseInt(code);
 	}
 	
 	//////////////////////////
