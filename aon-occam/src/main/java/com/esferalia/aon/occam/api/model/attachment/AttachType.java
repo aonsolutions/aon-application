@@ -55,6 +55,8 @@ public enum AttachType  implements Serializable {
 			return MOD115;
 		else if(name.equals(MOD123.getName()))
 			return MOD123;
+		else if(DATA.getName().equalsIgnoreCase(name))
+			return DATA;
 		return null;
 	}
 	
