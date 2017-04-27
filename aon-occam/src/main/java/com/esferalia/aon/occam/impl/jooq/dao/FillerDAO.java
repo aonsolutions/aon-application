@@ -588,8 +588,8 @@ public class FillerDAO {
 			dataResponse.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER));
 			return dataResponse.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
 					.setId(r.getValue(DATA_RESPONSE.ID))
-					.setIssueDate(r.getValue(DATA_RESPONSE.ISSUE_DATE))
-					.setNumber(r.getValue(DATA_RESPONSE.NUMBER));
+					.setIssueDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+					.setNumber(r.getValue(DATA_RESPONSE.CODE));
 		}
 	}
 	
@@ -606,7 +606,7 @@ public class FillerDAO {
 					.setId(r.getValue(DATA_RESPONSE_DETAIL.ID))
 					.setDataResponse(r.getValue(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
 					.setDataVariable(r.getValue(DATA_RESPONSE_DETAIL.DATA_VARIABLE))
-					.setValue(r.getValue(DATA_RESPONSE_DETAIL.VALUE));
+					.setValue(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
 		}
 	}
 }

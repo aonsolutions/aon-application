@@ -627,11 +627,11 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.MODIFICATION_DATE);}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.DOMAIN);}
-		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.NUMBER);}
-		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.ISSUE_DATE);}
+		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CODE);}
+		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.RESPONSE_DATE);}
 		
 		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
-		@Override public Property<String> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.VALUE);}
+		@Override public Property<String> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
 	}
 	
 	protected static class DataResponseDetailPropertiesDAO implements DataResponseDetailProperties{
@@ -656,6 +656,6 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DOMAIN);}
 		@Override public Property<Integer> getDataResponseProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_RESPONSE);}
 		@Override public Property<String> getDataVariableProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
-		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.VALUE);}
+		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
 	}
 }
