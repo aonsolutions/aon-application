@@ -2,6 +2,7 @@ package net.aonsolutions.aon.gwt.udapa.server;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Optional;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -43,32 +44,36 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			map.put(drd.getDataVariable(), drd.getValue());
 		});
 		String source = map.get("source");
+		System.out.println(source);
 		String[] arr = source.split("@");
-		IncomeDetail id = AON.getIncomeDetail(domainName, domainId, login, f-> f.getIdProperty().eq(Integer.parseInt(arr[1]))).get();
+		System.out.println(arr);
+		Optional<IncomeDetail> idOptional = AON.getIncomeDetail(domainName, domainId, login, f-> f.getIdProperty().eq(Integer.parseInt(arr[1])));
+	
+		if(idOptional.isPresent()){
+			IncomeDetail id = idOptional.get();
+			Warehouse w = AON.getWarehouse(domainName, domainId, login, f -> f.getIdProperty().eq(id.getWarehouse()));
+			Income i = AON.getIncome(domainName, domainId, login, f -> f.getIdProperty().eq(id.getIncome().getId())).get();
+			CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
+			RAddress addr = AON.getRAddres(domainName, domainId, login, i.getSupplier());
 		
-		Warehouse w = AON.getWarehouse(domainName, domainId, login, f -> f.getIdProperty().eq(id.getWarehouse()));
-		Income i = AON.getIncome(domainName, domainId, login, f -> f.getIdProperty().eq(id.getIncome().getId())).get();
-		CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
-		RAddress addr = AON.getRAddres(domainName, domainId, login, i.getSupplier());
+			map.put("full_address", addr.getFullAddress());
+			map.put("end_address", addr.getZip() + " " + addr.getCity() + " " + addr.getGeozoneName());
 		
-		map.put("full_address", addr.getFullAddress());
-		map.put("end_address", addr.getZip() + " " + addr.getCity() + " " + addr.getGeozoneName());
+			map.put("warehouse", w.getName());
+			map.put("product_description", id.getDescription());
+			map.put("product_supplier", i.getSupplierName());
+			map.put("product_quantity", id.getQuantity() + "");
+			map.put("transport_carrier", cp.getCarrierName());
 		
-		map.put("warehouse", w.getName());
-		map.put("product_description", id.getDescription());
-		map.put("product_supplier", i.getSupplierName());
-		map.put("product_quantity", id.getQuantity() + "");
-		map.put("transport_carrier", cp.getCarrierName());
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		map.put("transport_delivery_date", dateFormat.format(cp.getDeliveryDate()));
-		map.put("transport_driver_name", cp.getDriverName());
-		map.put("transport_driver_document", cp.getDriverDocument());
-		map.put("transport_number_plate", cp.getNumberPlate());
-		map.put("bruto", cp.getGross() != null ? cp.getGross().toString() : "-");
-		map.put("tara", cp.getTare() != null ? cp.getTare().toString() : "-");
-		map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "-");
-		
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+			map.put("transport_delivery_date", cp.getDeliveryDate() != null ? dateFormat.format(cp.getDeliveryDate()) : "-");
+			map.put("transport_driver_name", cp.getDriverName());
+			map.put("transport_driver_document", cp.getDriverDocument());
+			map.put("transport_number_plate", cp.getNumberPlate());
+			map.put("bruto", cp.getGross() != null ? cp.getGross().toString() : "-");
+			map.put("tara", cp.getTare() != null ? cp.getTare().toString() : "-");
+			map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "-");
+		}
 		return compute(map);
 	}
 	
