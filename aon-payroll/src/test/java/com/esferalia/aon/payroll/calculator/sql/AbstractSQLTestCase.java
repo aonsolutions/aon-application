@@ -1004,10 +1004,22 @@ public abstract class AbstractSQLTestCase {
 		addPayment(aonContext, contract, startDate, expression, SalaryType.SALARY);
 	}
 
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,Date endDate,
+			String expression) {
+		addPayment(aonContext, contract, startDate, endDate, expression, SalaryType.SALARY);
+	}
+
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,
 			String expression, SalaryType salaryType) {
 
 		addPayment(aonContext, contract, null, expression, "_P", "_P", PaymentType.CRA_0001, salaryType);
+
+	}
+
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,
+			Date endDate, String expression, SalaryType salaryType) {
+
+		addPayment(aonContext, contract, startDate, endDate, null, expression, "_P", "_P", PaymentType.CRA_0001, salaryType);
 
 	}
 
@@ -1024,6 +1036,21 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate()).set(CONTRACT_PAYMENT.DESCRIPTION, description)
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression).set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression).set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal()).execute();
+
+	}
+
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, String description,
+			String expression, String irpfExpression, String quoteExpression, PaymentType type, SalaryType salaryType) {
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+				.set(CONTRACT_PAYMENT.START_DATE, startDate)
+				.set(CONTRACT_PAYMENT.END_DATE, endDate)
+				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal()).execute();
 
 	}

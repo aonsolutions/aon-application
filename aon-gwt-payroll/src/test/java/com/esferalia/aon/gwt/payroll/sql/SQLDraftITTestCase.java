@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.sql;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
@@ -35,9 +37,11 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLITTestCase;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -70,6 +74,24 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 				draft, null);
 	};
 
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord contract,
+			IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
+
+		Employee employee = new Employee();
+		employee.setId(contract.getId());
+
+		SalaryDraft draft = new SalaryDraft();
+		draft.setEmployee(employee);
+		draft.setStartDate(startDate);
+		draft.setEndDate(endDate);
+		draft.setIssueDate(issueDate);
+		
+		return EmployeesServiceHelper.getSalaryCalculatorContext(connection,
+				draft, listener);
+		
+		
+	}
 
 	@Test
 	public void testPaternityITII() throws ExpressionException, SQLException,
