@@ -55,6 +55,8 @@
     	<mapping class="com.code.aon.finance.BankStatement"/>
     	<mapping class="com.code.aon.finance.BankStatementLink"/>
     	<mapping class="com.code.aon.finance.Finance"/>
+    	<mapping class="com.code.aon.finance.FinanceBatch"/>
+    	<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
     	<mapping class="com.code.aon.finance.FinanceTracking"/>
     	<mapping class="com.code.aon.finance.Invoice"/>
     	<mapping class="com.code.aon.finance.InvoiceAddress"/>
