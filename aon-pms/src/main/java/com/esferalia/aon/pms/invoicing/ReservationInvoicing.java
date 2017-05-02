@@ -573,6 +573,7 @@ public class ReservationInvoicing implements IReservationConstants {
 					finance.setDueDate(invoice.getIssueDate());
 					finance.setScope(invoice.getScope());
 					finance.setFinanceStatus(FinanceStatus.PENDING);
+					finance.setBatchDetails(null);
 					financeBean.insert(finance);
 					financesAmount = CommonUtil.round(financesAmount + finance.getAmount());
 				}

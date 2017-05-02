@@ -477,6 +477,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			refreshGuests(event);
 			refreshRooms(event);
 			refreshAttachments(event);
+			setInvoiceModel(null);
 			synchronizeAddedPojo();
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
