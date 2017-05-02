@@ -156,11 +156,13 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void checkInvoice(Invoice invoice, Company company) throws ManagerBeanVetoListenerException {
 		checkLimitDate(invoice);
 		checkInvoiceYear(invoice);
-		if (StringUtils.isEmpty(invoice.getRegistryName())) {
-			invoice.setRegistryName(invoice.getRegistry().getFullName());
-		}
-		if (StringUtils.isEmpty(invoice.getRegistryDocument())) {
-			invoice.setRegistryDocument(invoice.getRegistry().getDocument());
+		if (!invoice.isRectifier()) {
+			if (StringUtils.isEmpty(invoice.getRegistryName())) {
+				invoice.setRegistryName(invoice.getRegistry().getFullName());
+			}
+			if (StringUtils.isEmpty(invoice.getRegistryDocument())) {
+				invoice.setRegistryDocument(invoice.getRegistry().getDocument());
+			}
 		}
 		if (invoice.isDefaultTaxInfo()) {
 			fillDefaultTaxInfo(invoice, company);

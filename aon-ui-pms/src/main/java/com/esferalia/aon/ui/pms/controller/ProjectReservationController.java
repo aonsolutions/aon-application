@@ -1716,7 +1716,6 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private void fillInvoiceModificationData(Invoice invoice) throws ManagerBeanException {
 		getReservationInvoiceTo().setDirectCustomer(true);
-		getReservationInvoiceTo().setRegistry(invoice.getRegistry());
 		getReservationInvoiceTo().getRegistry().setName(invoice.getRegistryName());
 		getReservationInvoiceTo().getRegistry().setDocumentType(invoice.getRegistryDocumentType());
 		getReservationInvoiceTo().getRegistry().setDocumentCountry(invoice.getRegistryDocumentCountry());
