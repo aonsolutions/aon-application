@@ -161,23 +161,41 @@ public class ConnectDeliveryWriter {
 		List<SEH1P> list = new ArrayList<>();
 		
 		delivery.getDetailList().stream()
-		.map(to -> (DeliveryDetail)to)
-		.sorted((o1, o2) -> Double.compare(o1.getQuantity(),o2.getQuantity()))
-		.forEach(
-				to -> {
+				.map(to -> (DeliveryDetail)to)
+				.sorted((o1, o2) -> Double.compare(o1.getQuantity(),o2.getQuantity()))
+				.forEach( to -> {
 					DeliveryDetail detail = (DeliveryDetail) to;
 					if(isPackageItem(detail.getItem())){
 						list.add(createSEH1PRecord(detail, list.size()+1));
 					}
 				});
-		SEH1P mainPackage = list.stream().filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201")).findFirst().orElse(null);
-		if(mainPackage!=null){
-			list.stream()
-			.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
-			.forEach(o -> {
-				o.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
-			});
+		
+		SEH1P mainPackage = list.stream()
+				.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
+				.findFirst().orElse(null);
+		
+		if(mainPackage!=null) {
+			int packageCount = list.stream()
+					.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
+					.mapToInt(SEH1P::getNumeroDePaquetes)
+					.sum();
+			mainPackage.setNumeroDePaquetes(packageCount);
+			
+			List<SEH1P> list2 = list.stream()
+					.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
+					.collect(Collectors.toList());
+			list2.add(0, mainPackage);
+			
+			list2.stream()
+					.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
+					.forEach(o -> {
+						Integer line = Integer.parseInt(o.getNumeroDeJerarquiaDeEmbalaje());
+						o.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(line-packageCount+1));
+						o.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+					});
+			return list2;
 		}
+		
 		return list;
 	}
 
@@ -261,15 +279,14 @@ public class ConnectDeliveryWriter {
 //		08 - Pallet no retornable
 //		201 - Pallet ISO 1 - 1/1 EURO Pallet
 		try {
+			if(detail.getItem().getProduct().getName()!=null){
+				format = detail.getItem().getProduct().getName();
+			}
 			if(detail.getItem().getProduct().getBaseItem().getPackFormatTag()!=null){
 				format = detail.getItem().getProduct().getBaseItem().getPackFormatTag().getName();
 			}
 		} catch (ManagerBeanException e) {
 			// nada
-		}
-		
-		if(detail.getQuantity()==1){
-			format = "palet";
 		}
 		
 		if(format.toLowerCase().contains("bolsa")){
@@ -288,10 +305,14 @@ public class ConnectDeliveryWriter {
 			format = "CT";
 		}
 		
+		return createSEH1PRecord(lineNumber, (int)detail.getQuantity(), format);
+	}
+		
+	private SEH1P createSEH1PRecord(int lineNumber, int quantity, String format) {
 		SEH1P record = new SEH1P();
 		record.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
 		record.setNumeroDeJerarquiaPadreDeEmbalaje(null);
-		record.setNumeroDePaquetes((int)detail.getQuantity());
+		record.setNumeroDePaquetes(quantity);
 		record.setInformacionSobreElEmbalaje_Codificado(null);
 		record.setTerminosYCondicionesDelEmbalaje_Codificado(null);
 		record.setTipoDeEmbalaje_Codificado(format);
