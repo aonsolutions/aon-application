@@ -866,6 +866,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		
 		
+		
 	}
 
 	/**
@@ -2544,8 +2545,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public double getIrpf() {
 				return 0.00;
 			}
+			
+			
 		};
-		ctx.leaveLoader = leaveLoader;
+		ctx.leaveLoader = new SQLContractLeaveLoader(this.startDate, this.getEnd()); //leaveLoader; 
 		return ctx;
 	}
 
