@@ -1,31 +1,77 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client' 
+	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
 	<ui:style>
-		.editor {
-			
-		}
-		
-		.vertical-space {
-			height: 20px;
-		}
-		
-		.document {
-			margin-top: 5px;
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 15px;
-		}
-		
-		.edit-cells td {
-			color: #000000 !important;
-		}
-		
-		.edit-cells td:hover {
+
+		/* ESTILOS TABLA */
+
+		.tableStyle {
+			border-collapse: collapse;
 			cursor: pointer;
-			background-color: #E2F1F5;
+			margin-left: 0.8em;
+			width: 100%;
+		}
+		
+		.tableStyle td {
+			text-align: center;
+			border-bottom: 1px solid #ddd;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 10px;
+		}
+		
+		.cabeceraFirstStyle {
+			width: 16em;
+			font-weight: bold;
+		}
+
+		.cabeceraFirstStyleHide {
+			width: 16em;
+			visibility: hidden;
+			font-weight: bold;
+		}
+
+		.cabeceraStyle {
+			width: 5.5em;
+			font-weight: bold;
+		}
+
+		.cabeceraStyleHide {
+			width: 5.5em;
+			visibility: hidden;
+			font-weight: bold;
+		}
+
+		.filasImparesStyle {
+			background-color: #eee;
+		}
+
+		/* ESTILOS CAMBIO DE AÑO */		
+
+		.year {
+			font-size: 30px;
+			color: #FF704D;
+			padding-left: 28px;
+			padding-top: 2px;
+		}
+		
+		.optionButtons {
+			width: 30px;
+			height: 25px;
+			cursor: pointer;
+			border: none;
+		}
+		
+		.optionButtonsLeft {
+			margin-top: 8px;
+			margin-left: 8px;
+		}
+		
+		.optionButtonsRight {
+			margin-top: 8px;
 		}
 		
 	</ui:style>
@@ -34,9 +80,30 @@
 
 	<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
 		<g:north size="72">
-
+	
+		    <!-- BARRA SUPERIOR -->
 			<g:FlowPanel>
-
+			    
+			    <!-- MENU BAR -->
+				<g:MenuBar>
+					<g:MenuItem text="Archivo">
+						<g:MenuBar vertical="true">
+							<!-- g:MenuItem ui:field="diaFestivo" text="Añadir día(s) festivos" />
+							<g:MenuItem styleName="gwt-MenuItemSeparator">
+								<div class="menuSeparatorInner"></div>
+							</g:MenuItem>
+							<g:MenuItem ui:field="eraseEventMenuItem" text="Borrar evento(s)" / -->
+						</g:MenuBar>
+					</g:MenuItem>
+					<g:MenuItem text="Visualización" ui:field="viewMenuItem">
+						<g:MenuBar vertical="true">
+							<g:MenuItem ui:field="showMonthMenuItem" text="Mensual"/>
+							<g:MenuItem ui:field="showHYearMenuItem" text="Anual"/>
+						</g:MenuBar>
+					</g:MenuItem>
+				</g:MenuBar>
+				
+				<!-- EVENTOS: GUARDAR -->
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
@@ -56,77 +123,204 @@
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
-				</g:FlowPanel>
-
-			</g:FlowPanel>
-
+				</g:FlowPanel>		
+			</g:FlowPanel>	
 		</g:north>
+		
 		<g:center>
-			<g:SimplePanel styleName="{style.editor}">
-				<g:VerticalPanel styleName="{style.document}">
-	
-					<g:HorizontalPanel styleName="aon-dataScroller2 aon-width-all"
-						verticalAlignment="ALIGN_MIDDLE">
-	
-						<g:Button ui:field='previousDateRangeButton'
-							styleName='aon-dataScroller2-button aon-dataScroller2-button-previous' />
-	
-						<g:cell horizontalAlignment="ALIGN_CENTER">
-							<g:InlineLabel ui:field='dateRangeLabel'
-								styleName="aon-dataScroller2-selected aon-nowrap"
-								text="15 – 21 de abr de	2013" />
-						</g:cell>
-	
-						<g:Button ui:field='nextDateRangeButton'
-							styleName='aon-dataScroller2-button aon-dataScroller2-button-next' />
-	
-						<!-- fill remain space -->
-						<g:cell width="100%">
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-	
-						<g:cell>
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-
-						<g:cell>
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-
-						<g:cell>
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-	
-						<g:cell>
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-						<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border" text="VISTA: "/>
-						<g:ListBox ui:field="dateRangeListBox">
-							<!--  g:item value="0">Semana</g:item>
-							<g:item value="1">Mes</g:item>
-							<g:item value="2">A&ntilde;o</g:item> -->
-						</g:ListBox>
-	
-					</g:HorizontalPanel>
-	
-					<g:HTML styleName="{style.vertical-space}" />
-	
-					<g:ScrollPanel ui:field="eventsTableScrollPane">
-						<g:FlexTable ui:field="eventsTable"
-							styleName="aon-dataTable {style.edit-cells}" />
-					</g:ScrollPanel>
-	
-					<g:HTML styleName="{style.vertical-space}" />
-	
-				</g:VerticalPanel>
-			</g:SimplePanel> 
-
+		    <!--g:HTMLPanel-->
+		        
+		        <!-- PANEL CAMBIO DE AÑO
+		        <g:HorizontalPanel>
+					<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
+					<g:Button
+						styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous"
+						ui:field="lastYearButton" />
+					<g:Button
+						styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next"
+						ui:field="nextYearButton" />
+				</g:HorizontalPanel>
+		         -->
+		        
+			    <g:DockLayoutPanel
+				    unit="EM">
+			        
+				    <!-- DataGrid. -->
+				    <g:north size="1">
+				        <g:Grid width="99%" styleName="{style.tableStyle}">
+				   		    <g:row>
+							    <g:customCell styleName="{style.cabeceraFirstStyleHide}">
+									<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
+								</g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>ENERO</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>FEBRERO</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>MARZO</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>ABRIL</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>MAYO</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>JUNIO</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>JULIO</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>AGOSTO</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>SEPTIEMBRE</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>OCTUBRE</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>NOVIEMBRE</g:Label>
+							    </g:customCell>
+							    <g:customCell styleName="{style.cabeceraStyle}">
+							      <g:Label>DICIEMBRE</g:Label>
+							    </g:customCell>
+	 						 </g:row>
+				 		</g:Grid>
+				    </g:north>
+				    <g:center>
+				        <g:ScrollPanel>
+					   		<g:Grid ui:field="eventsGrid" width="99%" styleName="{style.tableStyle}">
+				   		    	<!-- PARTE OCULTA PARA REDIMENSIONAR LA TABLA -->
+				   		    	<g:row>
+									<g:customCell styleName="{style.cabeceraFirstStyleHide}">
+										<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
+									</g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>ENERO</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>FEBRERO</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>MARZO</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>ABRIL</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>MAYO</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>JUNIO</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>JULIO</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>AGOSTO</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>SEPTIEMBRE</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>OCTUBRE</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>NOVIEMBRE</g:Label>
+								    </g:customCell>
+								    <g:customCell styleName="{style.cabeceraStyleHide}">
+								      <g:Label>DICIEMBRE</g:Label>
+								    </g:customCell>
+								</g:row>
+				   		    	<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_TRABAJADOS</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_EFECTIVOS</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_ERE</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_HUELGA</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_AUSENCIA</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>HORAS_TRABAJADAS</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>HORAS_COMPLEMENTARIAS</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_PECNORTA</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_MANUTENCION</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_PECNORTA_EXTRAJERO</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>KMS</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>DIAS_VACACIONES</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>JORNADAS_REALES</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row styleName="{style.filasImparesStyle}">
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>HORAS_EXTRAS</g:Label>
+									</g:customCell>
+								</g:row>
+								<g:row>
+		 						     <g:customCell styleName="{style.cabeceraFirstStyle}">
+										<g:Label>HORAS_EXTRAS_FZA</g:Label>
+									</g:customCell>
+								</g:row>						
+					   		</g:Grid>
+					   	</g:ScrollPanel>  
+				    </g:center>
+				</g:DockLayoutPanel>	
+			 <!--/g:HTMLPanel-->
 		</g:center>
 	</g:DockLayoutPanel>
-
 </ui:UiBinder>
