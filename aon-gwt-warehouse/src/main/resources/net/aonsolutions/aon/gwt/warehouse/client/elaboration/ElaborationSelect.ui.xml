@@ -13,6 +13,9 @@
 			<g:VerticalPanel ui:field="westPanel" />
 		</g:west>
 		<g:center>
+			<!--  
+			<g:VerticalPanel ui:field="centerPanel" />
+			-->
 			<c:DataGrid ui:field='compositionDataGrid' visible="true" />
 		</g:center>
 	</g:DockLayoutPanel>

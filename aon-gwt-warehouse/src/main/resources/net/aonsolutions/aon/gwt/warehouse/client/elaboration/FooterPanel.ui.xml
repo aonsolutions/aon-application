@@ -41,6 +41,18 @@
 				<g:ScrollPanel ui:field="commentsPanel"
 					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="speaker-notes"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Observaciones"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:ScrollPanel ui:field="remarksPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
+			</g:tab>
 		</g:TabLayoutPanel>
 	</aon:MinimizePanel>
 

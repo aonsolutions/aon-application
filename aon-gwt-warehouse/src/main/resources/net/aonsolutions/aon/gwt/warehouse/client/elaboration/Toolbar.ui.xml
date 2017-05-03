@@ -1,7 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
 		field="msg"></ui:with>
@@ -19,7 +20,7 @@
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="aon-finding-subtitle">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
-					<g:Label ui:field="subtitle "/>
+					<g:Label ui:field="subtitle " />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
@@ -34,6 +35,15 @@
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
 					<g:Button ui:field="download" text="{msg.print}"
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
+
+					<p:PaperIconButton ui:field="backward" noink="true"
+						visible="false"
+						style="margin:0px;padding:0px;height:20px;right:40px;position:absolute;"
+						icon="chevron-left" />
+					<p:PaperIconButton ui:field="forward" noink="true"
+						visible="false"
+						style="margin:0px;padding:0px;height:20px;right:0px;position:absolute;"
+						icon="chevron-right" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HorizontalPanel>

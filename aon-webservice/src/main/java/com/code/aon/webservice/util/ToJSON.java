@@ -262,6 +262,7 @@ public class ToJSON {
 				.put(MSG.ID, elaboration.getWarehouse() != null ? elaboration.getWarehouse().getId() : "")
 				.put(MSG.NAME, elaboration.getWarehouse() != null ? elaboration.getWarehouse().getName(): ""))
 			.put(MSG.COMMENTS, elaboration.getComments() != null ? elaboration.getComments() : " ")
+			.put(MSG.REMARKS, elaboration.getRemarks() != null ? elaboration.getRemarks() : " ")
 			.put("source", new JSONObject()
 					.put(MSG.ID, elaboration.getSource() != null ? elaboration.getSource().intValue() : "")
 					.put(MSG.NAME, elaboration.getSource() != null ? ElaborationSource.values()[elaboration.getSource()].getName(): ""))

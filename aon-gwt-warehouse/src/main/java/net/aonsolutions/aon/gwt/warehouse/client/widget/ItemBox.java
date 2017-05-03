@@ -7,12 +7,9 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -20,10 +17,8 @@ import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -32,7 +27,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -119,21 +113,52 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		}
 		
 	}
-	 
+	
 	public ItemBox(API API) {
 		this(API, true);
 	}
 	
 	public ItemBox(API API, boolean showDescription) {
-//		this(null,-1);
 		this.API = API;
-//	}
+
+		MultiWordSuggestOracle oracle = createSuggestOracle();
+		
+		itemTextBox = new TextBox();
+		suggestionDisplay =  new ItemSuggestionDisplay();
+		item = new SuggestBox(oracle,itemTextBox,suggestionDisplay);
+		itemTextBox.setStyleName(AON.AON_CSS.aonInputText());
+		itemTextBox.setVisibleLength(9);
+		itemTextBox.setMaxLength(9);
+		descriptionLabel = new InlineLabel();
+		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
+		descriptionLabel.addStyleName(AON.AON_CSS.aonBold());
+		descriptionLabel.setVisible(showDescription);
+		
+		item.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				ItemSuggestion selected = (ItemSuggestion) event.getSelectedItem();
+				select( selected.getItem() );
+			}
+		});
+		item.addValueChangeHandler( new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if ( AonStringUtils.isBlank( item.getValue() )) {
+					select( null );	
+				}
+			}
+		});
+		rooPanel = new FlowPanel();
+		rooPanel.setStyleName(AON.AON_CSS.aonNowrap() );
+		rooPanel.addStyleName(AON.AON_CSS.aonInline() );
+		rooPanel.add(item);
+		rooPanel.add(descriptionLabel);
+		initWidget(rooPanel);
+	}
 	
-//	public ItemBox(final String domainName, final int domain) {
-//		this(domainName,domain,null,true);
-//	}
-	
-//	public ItemBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
+	private MultiWordSuggestOracle createSuggestOracle(){
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -145,6 +170,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 					HashMap<String,LinkedList<String>> map = new HashMap<>();
 					map.put("description", new LinkedList<>());
 					map.get("description").add(request.getQuery());
+					
 					API.getProduct().getItemList(map, new AsyncCallback<JSON<JsItem>>() {
 						
 						@Override
@@ -174,56 +200,9 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 				}
 			}
 		};
-		itemTextBox = new TextBox();
-		suggestionDisplay =  new ItemSuggestionDisplay();
-		item = new SuggestBox(oracle,itemTextBox,suggestionDisplay);
-		itemTextBox.setStyleName(AON.AON_CSS.aonInputText());
-		itemTextBox.setVisibleLength(9);
-		itemTextBox.setMaxLength(9);
-		descriptionLabel = new InlineLabel();
-		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
-		descriptionLabel.addStyleName(AON.AON_CSS.aonBold());
-		descriptionLabel.setVisible(showDescription);
-		
-		item.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
-				ItemSuggestion selected = (ItemSuggestion) event.getSelectedItem();
-				select( selected.getItem() );
-			}
-		});
-//		item.addKeyUpHandler( new KeyUpHandler() {
-//			
-//			@Override
-//			public void onKeyUp(KeyUpEvent event) {
-//				if ( config != null &&	(isControlF3(event) || isPlusKeyAlone(event))) {
-//					showDialog(domainName,domain,config);
-//				}
-//			}
-//		});
-		item.addValueChangeHandler( new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if ( AonStringUtils.isBlank( item.getValue() )) {
-					select( null );	
-				}
-			}
-		});
-		rooPanel = new FlowPanel();
-		rooPanel.setStyleName(AON.AON_CSS.aonNowrap() );
-		rooPanel.addStyleName(AON.AON_CSS.aonInline() );
-		rooPanel.add(item);
-		rooPanel.add(descriptionLabel);
-		initWidget(rooPanel);
+		return oracle;
 	}
 	
-	private boolean isControlF3(KeyUpEvent event) {
-		return (event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3);
-	}
-	private boolean isPlusKeyAlone(KeyUpEvent event) {
-		return event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS && AonStringUtils.PLUS.equals(itemTextBox.getValue());
-	}
 	
 	public void set(JsItem item) {
 		itemTextBox.setText(item.getCode());
@@ -234,7 +213,8 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		if (item != null) {
 			itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 			id = item.getId();
-			descriptionLabel.setText(item.getName());
+			description = item.getName();
+			descriptionLabel.setText(description);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
 			id = null;
@@ -243,7 +223,8 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 			} else {
 				itemTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 			}
-			descriptionLabel.setText(null);
+			description = null;
+			descriptionLabel.setText(description);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		}
 		SelectionEvent.fire(ItemBox.this, item );
@@ -384,19 +365,11 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	}
 	
 	private static String decorate(JsItem item, String query) {
-//		String text = AccountingRegistry.getFullDescription(accountingRegistry);
 		String text = item.getCode() + " - " + item.getName();
 
-//		String icon = AON.AON_CSS.aonLetterCGreenIcon();
-//		if (accountingRegistry.getType() == AccountingRegistryType.SUPPLIER) {
-//			icon = AON.AON_CSS.aonLetterPBlueIcon();
-//		} else if (accountingRegistry.getType() == AccountingRegistryType.CREDITOR) {
-//			icon = AON.AON_CSS.aonLetterAOrangeIcon();
-//		}
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();
 		bld.appendHtmlConstant("<span class=\"" 
-//				+ icon 
 				+ AonStringUtils.SPACE
 				+ AON.AON_CSS.aonPaddingLeft20()
 				+ "\" >");
@@ -423,42 +396,5 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		item.setEnabled(enabled);
 	}
 	
-	// TODO showDialog
-	private void showDialog(final String domainName, final int domain, final AonConfiguration config) {
-		final CustomDialog dialog = new CustomDialog();
-		dialog.setCaption(AON.MSG.titular());
-//		final AccountingRegistryPanel accountPanel = new AccountingRegistryPanel( domainName, domain
-//				, id
-//				,config, new AccountingRegistryPanelCallback() {
-//			
-//			@Override
-//			public void onCancel() {
-//				dialog.hide();
-//				setFocus(true);
-//			}
-//			
-//			@Override
-//			public void onAccept(AccountingRegistry registry) {
-//				dialog.hide();
-//				setValue(registry,false);
-//				select(registry);
-//			}
-//
-//			@Override
-//			public void setFocus(boolean b) {
-//				ItemBox.this.setFocus(b);
-//			}
-//		});
-		
-//		dialog.add( accountPanel );
-		dialog.center();
-		dialog.show();
-		
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-//	        	accountPanel.setFocus(true);
-	        }
-	    });		
-	}
 	
 }

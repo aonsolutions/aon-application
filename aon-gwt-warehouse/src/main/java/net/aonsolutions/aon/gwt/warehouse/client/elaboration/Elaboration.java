@@ -4,176 +4,195 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
+
 import com.esferalia.aon.gwt.api.client.API;
-import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
-import com.esferalia.aon.gwt.api.client.warehouse.JsElaborationDetail;
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
-import com.esferalia.aon.gwt.common.client.polymer.AonTemplate;
-import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
+import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
-import com.vaadin.polymer.paper.widget.PaperInput;
 
-import net.aonsolutions.polymer.aon.AonComboBoxElement;
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
+public class Elaboration extends AonTemplate2 {
 
-public class Elaboration extends AonTemplate {
+	protected API API;
+	private HashMap<String, LinkedList<String>> filterMap;
+	private Elaboration me = this;
 
-//	protected API API;
-//	private HashMap<String, LinkedList<String>> filterMap;
-//	private Elaboration me = this;
-//
 //	public Elaboration(AonData aonData, Boolean future) {
 //		this(aonData);
 //	}
-//
-//	public Elaboration(AonData aonData) {
+
+	public Elaboration(AonData aonData) {
 //		filterMap = new HashMap<>();
-//		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(), aonData.getDomain().getName(),
-//				aonData.getUser().getLogin());
-//	}
-//
-//	@Override
-//	public void onModuleLoad() {
-//		Polymer.importHref(Arrays.asList(IronIconsElement.SRC, AonComboBoxElement.SRC, PaperButtonElement.SRC,
-//				PaperRadioButtonElement.SRC, PaperItemElement.SRC));
-//
-//		Polymer.whenReady(o -> {
-//			super.onModuleLoad();
-//			load();
-//			return null;
-//		});
-//	}
-//
-//	private void load() {
-//		loadToolbar();
+		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(), aonData.getDomain().getName(),
+				aonData.getUser().getLogin());
+	}
+
+	@Override
+	public void onModuleLoad() {
+		super.onModuleLoad();
+		Polymer.importHref(Arrays.asList(IronIconsElement.SRC, AonComboBoxElement.SRC, PaperButtonElement.SRC,
+				PaperRadioButtonElement.SRC, PaperItemElement.SRC)
+		,o -> {
+			load();
+			return null;
+		});
+		Polymer.whenReady(o -> {
+			load();
+			return null;
+		});
+	}
+
+	private void load() {
+		loadToolbar();
 //		loadWestContent();
 //		loadNorthContent();
-//		loadContent();
+		loadContent();
 //		loadSouthContent();
-//	}
-//
-//	private void loadToolbar() {
-////		if (future) {
-////			AonToolbar toolbar = new AonToolbar("Elaboration") {
-////
-////				@Override
-////				protected void onTitleClick() {
-////				}
-////
-////				@Override
-////				protected void onStatsButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onRefreshButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onMoreOptionButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onMenuButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onInfoButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onFastFilterButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onEditButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onDownloadButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onDeleteButtonClick() {
-////				}
-////
-////				@Override
-////				protected void onAddButtonClick() {
-////					AonDialog dialog = createAddDialog();
-////					dialog.getElement().getStyle().setWidth(310, Unit.PX);
-////					dialog.center();
-////				}
-////			}.setVisibleAllButton(false).setVisibleAddButton(true);
-////			setToolbar(toolbar);
-////		} else {
-//			getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-//			Toolbar toolbar = new Toolbar() {
-//
-//				@Override
-//				protected void reset() {
-//					Toolbar toolbar = (Toolbar) getToolbar().getWidget();
-//					toolbar.back.setVisible(true);
-//					toolbar.remove.setVisible(true);
-//					getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
-//					setNorthContent(new ElaborationPanel(me));
-//					setContent(new Label(""));
-//				}
-//
-//				@Override
-//				protected void remove() {
-//					ElaborationPanel w = (ElaborationPanel) getNorthContent().getWidget();
-//					// TODO Toolbar::remove
-//					// API.getWarehouse().deleteCarrierPacking(w.getJsCarrierPacking().getId());
-//					load();
-//				}
-//
-//				@Override
-//				protected void back() {
-//					load();
-//				}
-//
-//				@Override
-//				protected void download() {
-//					ElaborationPanel w = (ElaborationPanel) getNorthContent().getWidget();
-//					// TODO Toolbar::download
-////					API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
-//					Window.alert("desarrollo en curso");
-//				}
-//			};
-//			setToolbar(toolbar);
-////		}
-//	}
-//
-//	private void loadWestContent() {
-//
-//	}
-//
-//	private void loadNorthContent() {
+	}
+
+	private void loadToolbar() {
+		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
+		Toolbar toolbar = new Toolbar() {
+			
+			@Override
+			protected void accept() {
+				this.download.setVisible(true);
+				JsElaboration js = getJsElaboration();
+				if(js.getId()!=null){
+					updateElaboration(js);
+				} else {
+					insertElaboration(js);
+				}
+			}
+
+			@Override
+			protected void reset() {
+				this.accept.setVisible(true);
+				this.back.setVisible(true);
+				this.remove.setVisible(false);
+				this.reset.setVisible(false);
+				this.download.setVisible(false);
+				this.setBackwardVisible(false);
+				this.setForwardVisible(false);
+				this.subtitle.setText("Nuevo");
+				resetElaboration();
+			}
+
+			@Override
+			protected void remove() {
+				deleteElaboration(getJsElaboration().getId());
+			}
+
+			@Override
+			protected void back() {
+				this.accept.setVisible(false);
+				load();
+			}
+
+			@Override
+			protected void download() {
+				downloadElaboration(getJsElaboration().getId());
+			}
+			
+			// TODO toolbar::backward() {
+			@Override
+			protected void backward() {
+				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				if(page > 1 ){
+					page = page - 1;
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page.toString());
+					filterMap.put("page", list);
+					list = new LinkedList<>();
+					list.add("1");
+					filterMap.put("per_page", list);
+				
+//					API.getWarehouse().getElaboration(filterMap, new AsyncCallback<JSON<JsElaboration>>() {
+//					
+//						@Override
+//						public void onSuccess(JSON<JsElaboration> result) {
+//							setContent(new CarrierPackingDetail(me, result.getData().get(0)));
+//						}
+//						
+//						@Override public void onFailure(Throwable caught) {}
+//					});
+				}
+			}
+
+			// TODO toolbar::forward()
+			@Override
+			protected void forward() {
+				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				page = page + 1;
+				LinkedList<String> list = new LinkedList<>();
+				list.add(page.toString());
+				filterMap.put("page", list);
+				list = new LinkedList<>();
+				list.add("1");
+				filterMap.put("per_page", list);
+				
+//				API.getWarehouse().getElaboration(filterMap, new AsyncCallback<JSON<JsElaboration>>() {
+//					
+//					@Override
+//					public void onSuccess(JSON<JsElaboration> result) {
+//						if(result.getData().length() == 0){
+//							Integer page = Integer.parseInt(filterMap.get("page").get(0));
+//							page = page < 2 ? 1 : page - 1;
+//							LinkedList<String> list = new LinkedList<>();
+//							list.add(page.toString());
+//							filterMap.put("page", list);
+//						}
+//						setContent(new CarrierPackingDetail(me, result.getData().get(0)));					}
+//					
+//					@Override public void onFailure(Throwable caught) {}
+//				});
+			}
+		};
+		
+		toolbar.back.setVisible(false);
+		toolbar.accept.setVisible(false);
+		toolbar.remove.setVisible(false);
+		toolbar.download.setVisible(false);
+		toolbar.setBackwardVisible(false);
+		toolbar.setForwardVisible(false);
+		toolbar.title.setText("Elaboraciones");
+		toolbar.subtitle.setText("Lista");
+		setToolbar(toolbar);
+	}
+
+	private void loadWestContent() {
+
+	}
+
+	private void loadNorthContent() {
 //		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 85);
 //		setNorthContent(new FilterPanel(this));
-//	}
-//
-////	public void setSelectContent(JsElaboration js) {
-////		setContent(new ElaborationSelect(me, js));
-////	}
-//
-//	public void loadContent() {
+	}
+
+	public void loadContent() {
+		setContent(new MainElaboration(this, filterMap));
+//		loadContent(null);
+		
+		
+//		setContent(null);
+//		LinkedList<String> list = new LinkedList<>();
+//		list.add("1");
+//		getFilterMap().put("page", list);
+//		list = new LinkedList<>();
+//		list.add("40");
+//		getFilterMap().put("per_page", list);
 //		API.getWarehouse().getElaborationList(filterMap, new AsyncCallback<JSON<JsElaboration>>() {
 //
 //			@Override
@@ -185,130 +204,255 @@ public class Elaboration extends AonTemplate {
 //			public void onFailure(Throwable caught) {
 //			}
 //		});
+	}
+//	public void loadContent(HashMap<String, LinkedList<String>> filterMap) {
+//		setContent(new MainElaboration(this, filterMap));
 //	}
-//
-//	public void loadSouthContent() {
-//		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);
-//	}
-//
-//	public void southContent(JsElaboration js, AonJsArray<JsElaborationDetail> details) {
-//		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 300);
-////		if (js.getType().getName().equalsIgnoreCase(CarrierPackingType.SHIPMENT_REQUEST.getName())) {
-//			// TODO setSouthContent(new CarrierPackingSouth2(me, js, p, details));
-////		} else {
-//			// TODO setSouthContent(new CarrierPackingSouth(p, details));
-////		}
-//		setSouthContent(new ElaborationCommentsSouth(me, js));
-//		
-////		FootPanel footPanel = (FootPanel) getSouthContent().getWidget();
-////		footPanel.openFootPanel();
-////		footPanel.getTabLayout().selectTab(0);		
-////		if(js.getType().getName().equalsIgnoreCase(CarrierPackingType.SHIPMENT_REQUEST.getName())){
-////			FlowPanel fp = new CarrierPackingSouth2(me, js, p, details).getFlowPanel(p, details);
-////			footPanel.getSelectionPanel().setWidget(fp);
-////		} else {
-////			FlowPanel fp = new CarrierPackingSouth(me, p, details).getFlowPanel(p, details);
-////			footPanel.getSelectionPanel().setWidget(fp);
-////		}
-//	}
-//	
-//	public void onSelectElaboration(JsElaboration js) {
-//		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
-//		toolbar.back.setVisible(true);
-////		toolbar.remove.setVisible(true);
-//		toolbar.download.setVisible(true);
-////		toolbar.packingList.setVisible(true);
-////		toolbar.sendPackingList.setVisible(true);
-//		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 120);
-//		setNorthContent(new ElaborationPanel(me,js));
-//		setContent(new ElaborationSelect(me, js));
-//		setSouthContent(new ElaborationCommentsSouth(me, js));
-////		setParameterPanel(js);
-////		isMainScreem = false;
-//	}
-//
-//	private AonDialog createAddDialog() {
-//		VerticalPanel v = new VerticalPanel();
-//
-//		HorizontalPanel hp = new HorizontalPanel();
-//
-//		PaperInput series = new PaperInput();
-//		series.setLabel(AON.MSG.series());
-//		hp.add(series);
-//
-//		hp.add(new Label("-"));
-//
-//		PaperInput number = new PaperInput();
-//		number.setLabel(AON.MSG.number());
-//		hp.add(number);
-//
-//		v.add(hp);
-//
-//		AonComboBox type = new AonComboBox();
-//		type.setLabel(AON.MSG.type());
-//		type.setItemLabelPath("name");
-//		type.setItemValuePath("name");
-//		v.add(type);
-//
-//		AonComboBox status = new AonComboBox();
-//		status.setLabel(AON.MSG.status());
-//		status.setItemLabelPath("name");
-//		status.setItemValuePath("name");
-//		v.add(status);
-//
-//		PaperInput carrier = new PaperInput();
-//		carrier.setLabel(AON.MSG.carrier());
-//		v.add(carrier);
-//
-//		HorizontalPanel hp2 = new HorizontalPanel();
-//
-//		PaperInput issueDate = new PaperInput();
-//		issueDate.setLabel("Fecha de Solicitud");
-//		hp2.add(issueDate);
-//
-//		hp2.add(new Label("-"));
-//
-//		PaperInput deliveryDate = new PaperInput();
-//		deliveryDate.setLabel("Fecha de Entrega");
-//		hp2.add(deliveryDate);
-//
-//		v.add(hp2);
-//
-//		return new AonDialog("Nueva elaboracion", v) {
-//			@Override
-//			protected void onCancel() {
-//				hide();
-//			}
-//
-//			@Override
-//			protected void onAccept() {
-//				hide();
-//			}
-//		};
-//	}
-//
-//	public HashMap<String, LinkedList<String>> getFilterMap() {
-//		return filterMap;
-//	}
-//
-//	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
-//		this.filterMap = filterMap;
-//	}
-//
-//	public void setEnableType(Boolean enable) {
-////		ElaborationPanel cpp = (ElaborationPanel) getNorthContent().getWidget();
-////		cpp.type.setEnabled(enable);
-//	}
-//
-//	public void refreshSelect() {
-//		 ElaborationSelect cps = (ElaborationSelect)
-//		 getContent().getWidget();
-//		 cps.refresh();
-//	}
-//
-//	public void refreshSouth(JsElaboration elaboration) {
-//		ElaborationCommentsSouth ecs = (ElaborationCommentsSouth)
-//		getSouthContent().getWidget();
-//		ecs.refresh(elaboration);
-//	}
+
+	public void loadSouthContent() {
+//		FooterPanel fp = new FooterPanel(this);
+//		setSouthContent(fp);
+//		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);		
+	}
+
+	public void onSelectElaboration(JsElaboration js) {
+		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+		toolbar.accept.setVisible(true);
+		toolbar.back.setVisible(true);
+		toolbar.remove.setVisible(true);
+		toolbar.download.setVisible(true);
+		toolbar.subtitle.setText("Edicion");
+		
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		main.contentDockLayoutPanel.setWidgetSize(main.northContent, 120);
+		
+		main.northContent.setWidget(new ElaborationPanel(me, js));
+//		main.content.setWidget(new ElaborationSelect(me, js));
+		main.content.setWidget(new SelectionPanel(API, js));
+		main.southContent.setWidget(new FooterPanel(me, js));
+	}
+	
+	private void resetElaboration() {
+		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+		toolbar.accept.setVisible(true);
+		toolbar.back.setVisible(true);
+		toolbar.remove.setVisible(false);
+		toolbar.download.setVisible(false);
+		
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		
+		main.contentDockLayoutPanel.setWidgetSize(main.northContent, 120);
+				
+		API.getWarehouse().createElaboration(new AsyncCallback<JSON<JsElaboration>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsElaboration> result) {
+				JsElaboration js = result.getOneData();
+				ElaborationPanel panel = new ElaborationPanel(me, js);
+				main.northContent.setWidget(panel);
+				main.content.setWidget(new Label(""));
+				main.loadSouthContent();
+				main.southContent.setWidget(new FooterPanel(me, js));
+				main.contentDockLayoutPanel.setWidgetSize(main.southContent, 30);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error resetear. \n"+caught.getMessage());
+			}
+		});
+	}
+	
+	public void changeSouthContentSize(Double value) {
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		main.contentSplitLayoutPanel.setWidgetSize(main.southContent, value);	
+	}
+	
+	protected void closeElaboration(JsElaboration jsElaboration) {
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		
+		API.getWarehouse().updateElaboration(jsElaboration.getId(), getCloseData(), new AsyncCallback<JsElaboration>() {
+			
+			@Override
+			public void onSuccess(JsElaboration result) {
+				ElaborationPanel panel = (ElaborationPanel) main.northContent.getWidget();
+				panel.setJsElaboration(result);
+				onSelectElaboration(panel.getJsElaboration());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+			}
+		});
+	}
+
+	protected void reopenElaboration(JsElaboration jsElaboration) {
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		
+		API.getWarehouse().updateElaboration(jsElaboration.getId(), getReopenData(), new AsyncCallback<JsElaboration>() {
+			
+			@Override
+			public void onSuccess(JsElaboration result) {
+				ElaborationPanel panel = (ElaborationPanel) main.northContent.getWidget();
+				panel.setJsElaboration(result);
+				onSelectElaboration(panel.getJsElaboration());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+			}
+		});
+	}
+	
+	private void updateElaboration(JsElaboration jsElaboration) {
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		
+		API.getWarehouse().updateElaboration(jsElaboration.getId(), getData(), new AsyncCallback<JsElaboration>() {
+
+			@Override
+			public void onSuccess(JsElaboration result) {
+				ElaborationPanel panel = (ElaborationPanel) main.northContent.getWidget();
+				panel.setJsElaboration(result);
+				onSelectElaboration(panel.getJsElaboration());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+			}
+		});
+	}
+	
+	private void deleteElaboration(Integer elaboratinId) {
+		AonDialog dialog = new AonDialog("Solicitud de confirmaci\u00f3n", new Label("\u00bfBorrar\u003f")) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {	
+				API.getWarehouse().deleteElaboration(elaboratinId, getData(), new AsyncCallback<JsElaboration>() {
+					
+					@Override
+					public void onSuccess(JsElaboration result) {
+						hide();
+						Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+						toolbar.back();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Ha ocurrido algun error al eliminar. \n"+caught.getMessage());
+					}
+				});
+			}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();		
+	}
+	
+	private void insertElaboration(JsElaboration jsElaboration) {
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		
+		API.getWarehouse().insertElaboration(getData(), new AsyncCallback<JsElaboration>() {
+
+			@Override
+			public void onSuccess(JsElaboration result) {
+				ElaborationPanel panel = (ElaborationPanel) main.northContent.getWidget();
+				panel.setJsElaboration(result);
+				onSelectElaboration(panel.getJsElaboration());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+			}
+		});
+	}
+	
+	protected void downloadElaboration(Integer elaboratinId) {
+		API.getWarehouse().downloadElaboration(getJsElaboration().getId());
+	}
+	
+	private String getData() {
+//		String data = JsonUtils.stringify(getJsElaboration());
+//		ElaborationPanel main = getElaborationPanel();
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		ElaborationPanel panel = main.getElaborationPanel();
+//		FooterPanel footer = getFooterPanel();
+		FooterPanel footer = main.getFooterPanel();
+		String description = panel.descriptionLabel.getText();
+		description = (description!=null && !"".equals(description)
+				? description : panel.itemBox.getDescription());
+		String comments = footer!=null?footer.comments.getValue():""; 
+		String remarks = footer!=null?footer.remarks.getValue():""; 
+		String data = "{\"series\":\"" + panel.series.getValue()+ "\""
+				+ ",\"number\":\"" + panel.number.getValue()+ "\""
+				+ ",\"date\":\"" + (panel.date.getValue() != null ? panel.date.getValue().getTime() : "")+ "\""
+				+ ",\"quantity\":\"" + panel.quantity.getValue()+ "\""
+				+ ",\"item\":\"" + panel.itemBox.getId()+ "\""
+				+ ",\"description\":\"" + description + "\""
+				+ ",\"warehouse\":\"" + panel.warehouse.getSelectedValue()+ "\""
+				+ ",\"comments\":\"" + (comments!=null && !"".equals(comments.trim())?comments:"") + "\""
+				+ ",\"remarks\":\"" + (remarks!=null && !"".equals(remarks.trim())?remarks:"") + "\""
+				+ "}";
+		return data;
+	}
+	
+	private String getCloseData() {
+		String data = "{\"status\":\"CLOSED\"}";
+		return data;
+	}
+
+	private String getReopenData() {
+		String data = "{\"status\":\"PENDING\"}";
+		return data;
+	}
+	
+	private ElaborationPanel getElaborationPanel() {
+		ElaborationPanel panel = (ElaborationPanel) getContent().getWidget();
+		return panel;
+	}
+	
+	private FooterPanel getFooterPanel() {
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		FooterPanel panel = (FooterPanel) main.southContent.getWidget();
+		return panel;
+	}
+
+	public HashMap<String, LinkedList<String>> getFilterMap() {
+		return filterMap;
+	}
+
+	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
+		this.filterMap = filterMap;
+	}
+
+	public void refreshSelect() {
+		 ElaborationSelect cps = (ElaborationSelect)
+		 getContent().getWidget();
+		 cps.refresh();
+	}
+
+	public API getAPI() {
+		return API;
+	}
+	
+	public JsElaboration getJsElaboration(){ 
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		return main.getJsElaboration();
+	}
+	
+	public void setJsElaboration(JsElaboration js){ 
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		main.setJsElaboration(js);
+	}
+	
+	protected boolean isElaborationCLosed(){
+		MainElaboration main = (MainElaboration) getContent().getWidget();
+		return main.isElaborationCLosed();
+	}
+	
 }

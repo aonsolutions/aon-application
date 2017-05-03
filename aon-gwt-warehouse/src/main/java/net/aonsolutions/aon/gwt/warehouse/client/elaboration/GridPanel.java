@@ -55,15 +55,16 @@ public class GridPanel extends Composite {
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) CustomDataGrid<JsElaboration> dataGrid; 
+	@UiField(provided = true)
+	CustomDataGrid<JsElaboration> dataGrid; 
 	
-	MainElaboration elaboration;
+	Elaboration elaboration;
 	API API;
 	Integer cont = 0;
 	
-	public GridPanel(MainElaboration elaboration, LinkedList<JsElaboration> list) {
+	public GridPanel(Elaboration elaboration, LinkedList<JsElaboration> list) {
 		this.elaboration = elaboration;
-		this.API = elaboration.API; 
+		this.API = elaboration.getAPI(); 
 		
 		dataGrid = new CustomDataGrid<JsElaboration>(Integer.MAX_VALUE, resources,
 				JsElaboration.PROVIDES_KEY);
@@ -195,8 +196,7 @@ public class GridPanel extends Composite {
 			
 			@Override
 			public String getValue(JsElaboration object) {
-				return (object.getDescription()!=null && !"".equals(object.getDescription())) 
-					? object.getDescription() : object.getItem().getName();
+				return object.getDescription();
 			}
 		};
 		

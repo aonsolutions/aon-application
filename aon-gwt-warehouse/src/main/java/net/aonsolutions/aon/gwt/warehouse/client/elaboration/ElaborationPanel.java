@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -44,6 +45,8 @@ public class ElaborationPanel extends Composite {
 	@UiField
 	Button closeButton;
 	@UiField
+	Button reopenButton;
+	@UiField
 	DateBoxEx date;
 	@UiField
 	HorizontalPanel itemPanel;
@@ -54,24 +57,24 @@ public class ElaborationPanel extends Composite {
 	@UiField
 	InlineLabel status;
 
-	private MainElaboration parent;
+	private Elaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
 	ItemBox itemBox;
 	InlineLabel descriptionLabel = new InlineLabel();
 
-	public ElaborationPanel(MainElaboration me) {
+	public ElaborationPanel(Elaboration e) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = me.API;
-		this.parent = me;
+		this.API = e.getAPI();
+		this.parent = e;
 		this.jsElaboration = parent.getJsElaboration();
 		load();
 	}
 
-	public ElaborationPanel(MainElaboration me, JsElaboration jsElaboration) {
+	public ElaborationPanel(Elaboration e, JsElaboration jsElaboration) {
 		initWidget(binder.createAndBindUi(this));
-		this.API = me.API;
-		this.parent = me;
+		this.API = e.getAPI();
+		this.parent = e;
 		this.jsElaboration = jsElaboration;
 		load();
 	}
@@ -160,9 +163,10 @@ public class ElaborationPanel extends Composite {
 
 			@Override
 			public void onChange(ChangeEvent event) {
-				loadNumberBySeries(getJsElaboration().getSeries());
+				// TODO series::onChange
 			}
 		});
+		
 		date.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
 			@Override
@@ -171,8 +175,7 @@ public class ElaborationPanel extends Composite {
 			}
 		});
 		
-//		closeButton.setText("Nuevo elaborado");
-		closeButton.setTitle("Cerrar");
+		closeButton.setTitle(AON.MSG.finish());
 		closeButton.setStyleName(AON.AON_CSS.aonIconPointRed());
 		closeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
 		closeButton.addStyleName(AON.AON_CSS.aonMarginLeft());
@@ -183,32 +186,34 @@ public class ElaborationPanel extends Composite {
 			}
 		});
 		
+		reopenButton.setTitle(AON.MSG.reopen());
+		reopenButton.setStyleName(AON.AON_CSS.aonIconPointGreen());
+		reopenButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		reopenButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		reopenButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				parent.reopenElaboration(getJsElaboration());
+			}
+		});
+		
+		
+		if(isElaborationCLosed()){
+			series.setEnabled(false);
+			number.setEnabled(false);
+			date.setEnabled(false);
+//			itemBox.setEnabled(false);
+			warehouse.setEnabled(false);
+			quantity.setEnabled(false);
+			closeButton.setVisible(false);
+			reopenButton.setVisible(true);
+		} else {
+			closeButton.setVisible(true);
+			reopenButton.setVisible(false);
+		}
+		
 	}
 	
-	// TODO recover next free number
-	private void loadNumberBySeries(String series) {
-//		API.getWarehouse().getElaborationSeriesNumber(new AsyncCallback<JSON<JsObject>>() {
-//			
-//			@Override
-//			public void onSuccess(JSON<JsObject> result) {
-//				result.getData().stream()
-//				.forEach(w -> warehouse.addItem(w.getName(), w.getId() + ""));
-//				
-//				if (jsElaboration != null && jsElaboration.getWarehouse() != null) {
-//					for (Integer i = 0; i < warehouse.getItemCount(); i++) {
-//						if (jsElaboration.getWarehouse() != null
-//								& jsElaboration.getWarehouse().getName().equals(warehouse.getItemText(i))) {
-//							warehouse.setSelectedIndex(i);
-//						}
-//					}
-//				}
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//		});
-	}
 
 	public JsElaboration getJsElaboration() {
 		return jsElaboration;
@@ -216,4 +221,8 @@ public class ElaborationPanel extends Composite {
 	public void setJsElaboration(JsElaboration jsElaboration) {
 		this.jsElaboration = jsElaboration;
 	}
+	protected boolean isElaborationCLosed(){
+		return getJsElaboration().getStatus().getId()==new Integer(ElaborationStatus.CLOSED.ordinal());
+	}
+	
 }
