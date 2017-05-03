@@ -41,15 +41,18 @@ public class FooterPanel extends Composite {
 	public static final String TAB_INDEX_PENDING = "PENDING";
 	public static final String TAB_INDEX_SOURCE = "SOURCE";
 	public static final String TAB_INDEX_COMMENTS = "COMMENTS";
+	public static final String TAB_INDEX_REMARKS = "REMARKS";
 	public static final String[] TAB_INDEX = {
 //			TAB_INDEX_PENDING,
 			TAB_INDEX_SOURCE,
-			TAB_INDEX_COMMENTS
+			TAB_INDEX_COMMENTS,
+			TAB_INDEX_REMARKS
 			};
 
 	private API API;
 	
-	private MainElaboration parent;
+	private Elaboration parent;
+	private JsElaboration jsElaboration;
 
 	@UiField
 	MinimizePanel footerPanel;
@@ -57,21 +60,25 @@ public class FooterPanel extends Composite {
 	TabLayoutPanel tabPanel;
 
 	/* TABS CONTENT */
+	// TODO tab for pendingOrderPanel
 //	@UiField
 //	ScrollPanel pendingOrderPanel;
 	@UiField
 	ScrollPanel sourcePanel;
 	@UiField
 	ScrollPanel commentsPanel;
+	@UiField
+	ScrollPanel remarksPanel;
 	
 		
-	public FooterPanel(MainElaboration parent) {
+	public FooterPanel(Elaboration parent) {
 		this(parent, null);
 	}
 	
-	public FooterPanel(MainElaboration parent, JsElaboration jsElaboration) {
+	public FooterPanel(Elaboration parent, JsElaboration jsElaboration) {
 		this.parent = parent;
-		API = parent.API;
+		this.API = parent.getAPI();
+		this.jsElaboration = jsElaboration;
 		
 		initWidget(binder.createAndBindUi(this));
 		
@@ -84,6 +91,7 @@ public class FooterPanel extends Composite {
 			
 			loadSourceTab(jsElaboration);
 			loadCommetsTab(jsElaboration);
+			loadRemarksTab(jsElaboration);
 			
 		} else {
 //			tabPanel.remove(TAB_INDEX_SOURCE);
@@ -101,6 +109,8 @@ public class FooterPanel extends Composite {
 				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_SOURCE){
 					openFooterPanel();
 				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_COMMENTS){
+					openFooterPanel();
+				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_REMARKS){
 					openFooterPanel();
 				}
 			}
@@ -161,6 +171,29 @@ public class FooterPanel extends Composite {
 		}
 
 		commentsPanel.add(comments);
+		
+	}
+	
+	TextArea remarks;
+	protected void loadRemarksTab(JsElaboration js){
+		remarks = new TextArea();
+		remarks.setWidth("95%");
+		remarks.setHeight("100px");
+		remarks.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				parent.setJsElaboration(js);
+			}
+		});
+		
+		if (js.getRemarks() != null && !"".equals(js.getRemarks().trim())) {
+			remarks.setValue(js.getRemarks());
+			openFooterPanel();
+			selectTab(TAB_INDEX_REMARKS);
+		}
+		
+		remarksPanel.add(remarks);
 		
 	}
 	

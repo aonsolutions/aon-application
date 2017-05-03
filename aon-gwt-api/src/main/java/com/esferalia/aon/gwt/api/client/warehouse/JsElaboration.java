@@ -64,6 +64,10 @@ public class JsElaboration extends JavaScriptObject {
 	public final native String getComments() /*-{
 												return this.comments;
 												}-*/;
+	
+	public final native String getRemarks() /*-{
+												return this.remarks;
+												}-*/;
 
 	public final native JsObject getSource() /*-{
 												return this.source;

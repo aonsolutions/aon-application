@@ -56,11 +56,13 @@ public class FilterPanel extends Composite {
 	@UiField
 	PaperIconButton cleanFilter;
 
-	MainElaboration elaboration;
+	Elaboration elaboration;
+	HashMap<String, LinkedList<String>> filterMap;
 	API API;
 
-	public FilterPanel(MainElaboration elaboration) {
+	public FilterPanel(Elaboration elaboration, HashMap<String, LinkedList<String>> filterMap) {
 		this.elaboration = elaboration;
+		this.filterMap = filterMap;
 		API = elaboration.API;
 		initWidget(binder.createAndBindUi(this));
 
@@ -162,8 +164,10 @@ public class FilterPanel extends Composite {
 		LinkedList<String> from = new LinkedList<>();
 		from.add(Long.toString(new Date().getTime()));
 		map.put("from", from);
-		elaboration.setFilterMap(map);
-		elaboration.loadContent();
+//		elaboration.setFilterMap(map);
+//		elaboration.loadContent();
+		filterMap = map;
+		onFilterChanged();
 	}
 
 	private String key;
@@ -178,29 +182,34 @@ public class FilterPanel extends Composite {
 		} else if (AON.MSG.status().equals(label)) {
 			key = "status";
 		}
-		LinkedList<String> filterList = elaboration.getFilterMap().containsKey(key)
-				? elaboration.getFilterMap().get(key) : new LinkedList<>();
+		LinkedList<String> filterList = filterMap.containsKey(key)
+				? filterMap.get(key) : new LinkedList<>();
 		AonFilterDialog sw = new AonFilterDialog(pb, label, "", filterList, result.getData().cast()) {
 
 			@Override
 			protected void onSelect(JavaScriptObject o, Boolean apply) {
 				JsObject js = o.cast();
 				if (apply) {
-					if (elaboration.getFilterMap().containsKey(key)) {
-						elaboration.getFilterMap().get(key).add(js.getId() + "");
+					if (filterMap.containsKey(key)) {
+						filterMap.get(key).add(js.getId() + "");
 					} else {
 						LinkedList<String> list = new LinkedList<>();
 						list.add(js.getId() + "");
-						elaboration.getFilterMap().put(key, list);
+						filterMap.put(key, list);
 					}
 				} else {
-					if (elaboration.getFilterMap().containsKey(key)) {
-						elaboration.getFilterMap().get(key).remove(js.getId() + "");
+					if (filterMap.containsKey(key)) {
+						filterMap.get(key).remove(js.getId() + "");
 					}
 				}
-				elaboration.loadContent();
+//				elaboration.loadContent();
+				onFilterChanged();
 			}
 		};
 		sw.show();
+	}
+	
+	private void onFilterChanged() {
+		elaboration.loadContent();
 	}
 }

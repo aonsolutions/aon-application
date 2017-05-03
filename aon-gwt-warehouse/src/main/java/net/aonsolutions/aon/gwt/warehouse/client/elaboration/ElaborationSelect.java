@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.aonsolutions.aon.gwt.warehouse.client.widget.ItemBox;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 import com.esferalia.aon.gwt.api.client.API;
@@ -70,6 +71,8 @@ public class ElaborationSelect extends Composite{
 	DockLayoutPanel splitLayoutPanel;
 	@UiField
 	VerticalPanel westPanel;
+//	@UiField
+//	VerticalPanel centerPanel;
 	@UiField(provided = true)
 	DataGrid<JsElaborationDetailComposition> compositionDataGrid;
 
@@ -81,61 +84,101 @@ public class ElaborationSelect extends Composite{
 	}
 	
 	ListBox detailList;
-	Button newDetailButton;
-	Button removeDetailButton;
-	private MainElaboration parent;
+//	DataGrid<JsElaborationDetailComposition> compositionDataGrid;
+	private Elaboration parent;
 	private API API;
 	private JsElaboration jsElaboration;
 	
-	public ElaborationSelect(MainElaboration elaboration) {
+	public ElaborationSelect(Elaboration elaboration) {
 		compositionDataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
 				JsElaborationDetailComposition.PROVIDES_KEY);
 		initWidget(binder.createAndBindUi(this));
-		this.API = elaboration.API;
+		this.API = elaboration.getAPI();
 		this.parent = elaboration;
 		this.jsElaboration = parent.getJsElaboration();
-		load();
+		loadSelectablePanel();
+		loadCompositionListPanel();
 	}
 
-	public ElaborationSelect(MainElaboration elaboration, JsElaboration jsElaboration) {
+	public ElaborationSelect(Elaboration elaboration, JsElaboration jsElaboration) {
 		compositionDataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
 				JsElaborationDetailComposition.PROVIDES_KEY);
 		initWidget(binder.createAndBindUi(this));
-		this.API = elaboration.API;
+		this.API = elaboration.getAPI();
 		this.parent = elaboration;
 		this.jsElaboration = jsElaboration;
-		load();
+		loadSelectablePanel();
+		loadCompositionListPanel();
 	}
 	
-	private void load() {
-		HorizontalPanel panel = new HorizontalPanel();
-		newDetailButton = new Button();
-		newDetailButton.setText("Nuevo elaborado");
-		newDetailButton.setStyleName(AON.AON_CSS.aonIconReset());
-		newDetailButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		newDetailButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				clickAddDetail();
-			}
-		});
-		panel.add(newDetailButton);
+	private void loadCompositionListPanel() {
+//		compositionDataGrid = new DataGrid<JsElaborationDetailComposition>(Integer.MAX_VALUE, resources,
+//				JsElaborationDetailComposition.PROVIDES_KEY);
 		
-		removeDetailButton = new Button();
-		removeDetailButton.setText("Borrar seleccionado");
-		removeDetailButton.setStyleName(AON.AON_CSS.aonIconDelete());
-		removeDetailButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		removeDetailButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		removeDetailButton.addClickHandler(new ClickHandler() {
+		HorizontalPanel compositionPanel = new HorizontalPanel();
+		Button newCompositionButton = new Button();
+		newCompositionButton.setText("Composici\u00F3n");
+		newCompositionButton.setStyleName(AON.AON_CSS.aonIconReset());
+		newCompositionButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		newCompositionButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				clickRemoveDetail();
+				clickAddComposition();
 			}
 		});
-		panel.add(removeDetailButton);
+		compositionPanel.add(newCompositionButton);
+		
+		Button removeCompositionButton = new Button();
+		removeCompositionButton.setText("Borrar");
+		removeCompositionButton.setStyleName(AON.AON_CSS.aonIconDelete());
+		removeCompositionButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		removeCompositionButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		removeCompositionButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				clickRemoveComposition();
+			}
+		});
+		compositionPanel.add(removeCompositionButton);
+		
+//		centerPanel.add(compositionPanel);
+//		centerPanel.add(new Label("compositionDataGrid"));
+//		centerPanel.add(compositionDataGrid);
+	}
+	
+	private void loadSelectablePanel() {
+		if(!parent.isElaborationCLosed()){
+			HorizontalPanel detailPanel = new HorizontalPanel();
+			Button newDetailButton = new Button();
+			newDetailButton.setText("Nuevo elaborado");
+			newDetailButton.setStyleName(AON.AON_CSS.aonIconReset());
+			newDetailButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+			newDetailButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					clickAddDetail();
+				}
+			});
+			detailPanel.add(newDetailButton);
+			
+			Button removeDetailButton = new Button();
+			removeDetailButton.setText("Borrar seleccionado");
+			removeDetailButton.setStyleName(AON.AON_CSS.aonIconDelete());
+			removeDetailButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+			removeDetailButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+			removeDetailButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					clickRemoveDetail();
+				}
+			});
+			detailPanel.add(removeDetailButton);
+			
+			westPanel.add(detailPanel);
+		}
+		
 		
 		loadSelectable();
-		westPanel.add(panel);
 		westPanel.add(detailList);
 	}
 	
@@ -256,6 +299,118 @@ public class ElaborationSelect extends Composite{
 						public void onSuccess(JsElaborationDetail result) {
 							hide();
 							selectableItems(null);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+						}
+					});
+				}
+			};
+			dialog.setAutoHideEnabled(true);
+			dialog.getElement().getStyle().setWidth(310, Unit.PX);
+			dialog.center();
+		}		
+	}
+	
+	private void clickAddComposition(){
+		VerticalPanel panel = new VerticalPanel();
+	
+		AonComboBox inputWarehouse = new AonComboBox();
+		ItemBox itemBox = new ItemBox(API);
+		PaperInput inputQuantity = new PaperInput();
+		
+
+		inputQuantity.setLabel("Cantidad");
+		inputQuantity.setValue(getJsElaboration().getQuantity()+"");
+		inputQuantity.setMaxlength(10);
+		inputQuantity.setRequired(true);
+		inputQuantity.setErrorMessage("Valor requerido");;
+		panel.add(inputQuantity);
+		
+		itemBox.setTitle("no seleccionado");
+		panel.add(itemBox);
+	
+		inputWarehouse.setLabel("Almac\u00E9n");
+		inputWarehouse.setItemLabelPath("name");
+		inputWarehouse.setItemValuePath("name");
+		API.getWarehouse().getWarehouses(new AsyncCallback<JSON<JsWarehouse>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsWarehouse> result) {
+				inputWarehouse.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		panel.add(inputWarehouse);
+		
+		AonDialog dialog = new AonDialog("Nueva composici\u00F3n", panel) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				String quantity = inputQuantity.getValue();
+				JsWarehouse js = (JsWarehouse) inputWarehouse.getSelectedItem();
+				
+				String value = detailList.getSelectedValue();
+				Integer detailId = Integer.parseInt(value);
+				
+				String requestData = "{"
+						+ "\"elaboration_detail\":\""+ detailId +"\","
+						+ "\"quantity\":\""+ quantity +"\","
+						+ "\"item\":\""+ itemBox.getId() +"\","
+						+ "\"warehouse\":\"" + js.getId()+ "\"" 
+						+ "}";
+				
+				API.getWarehouse().insertElaborationDetailComposition(requestData, new AsyncCallback<JsElaborationDetailComposition>() {
+					
+					@Override
+					public void onSuccess(JsElaborationDetailComposition result) {
+//						selectableItems(null);
+//						selectDetail(detailList.getItemCount());
+						// TODO
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Ha ocurrido algun error al guardar. \n"+caught.getMessage());
+					}
+				});
+				hide();
+			}
+
+		};
+		dialog.addAutoHidePartner(inputWarehouse.getElementById("overlay"));
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
+	}
+
+	private void clickRemoveComposition(){		
+		SingleSelectionModel<JsElaborationDetailComposition> selectionModel = 
+				(SingleSelectionModel<JsElaborationDetailComposition>) compositionDataGrid.getSelectionModel();
+		JsElaborationDetailComposition selected = selectionModel.getSelectedObject();
+		
+		if(selected!=null){
+			AonDialog dialog = new AonDialog("Solicitud de confirmaci\u00f3n", new Label("\u00bfBorrar\u003f")) {
+				
+				@Override protected void onCancel() {hide();}
+				
+				@Override 
+				protected void onAccept() {	
+//					Integer id = Integer.parseInt(value);
+					Integer id = selected.getId();
+					API.getWarehouse().deleteElaborationDetailComposition(id, null, new AsyncCallback<JsElaborationDetailComposition>() {
+						
+						@Override
+						public void onSuccess(JsElaborationDetailComposition result) {
+							hide();
+//							selectableItems(null);
+							String value = detailList.getSelectedValue();
+							selectedItems(Integer.parseInt(value), false);
 						}
 						
 						@Override
