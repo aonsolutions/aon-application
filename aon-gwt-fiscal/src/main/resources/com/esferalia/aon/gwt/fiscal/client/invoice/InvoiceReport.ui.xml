@@ -69,6 +69,12 @@
 										<g:CheckBox ui:field="offerStatusRefused" text="{msg.refused}"/>
 										<g:CheckBox ui:field="offerStatusBlocked" text="{msg.blocked}"/>
 										<g:CheckBox ui:field="offerStatusInvoiced" text="{msg.invoiced}"/>
+										
+										<g:CheckBox ui:field="orderStatusPending" text="{msg.pending}"/>
+										<g:CheckBox ui:field="orderStatusBlocked" text="{msg.blocked}"/>
+										<g:CheckBox ui:field="orderStatusServed" text="{msg.served}"/>
+										<g:CheckBox ui:field="orderStatusClosed" text="{msg.closed}"/>
+										<g:CheckBox ui:field="orderStatusInvoiced" text="{msg.invoiced}"/>
 
 									</td>
 								</tr>

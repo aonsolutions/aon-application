@@ -31,6 +31,13 @@ public interface IRequestParamsNames {
 	String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
 	String OFFER_STATUS_INVOICED = "offerStatusInvoiced";
 	
+	String ORDER_STATUS_PENDING = "orderStatusPending";
+	String ORDER_STATUS_BLOCKED = "orderStatusBlocked";
+	String ORDER_STATUS_SERVED = "orderStatusServed";
+	String ORDER_STATUS_CLOSED = "orderStatusClosed";
+	String ORDER_STATUS_INVOICED = "orderStatusInvoiced";
+	
+	
 	String INVOICE_TYPES = "invoiceTypes";
 	String CATEGORY_IDS = "categoryIds";
 	String WORKPLACE_IDS = "workplaceIds";

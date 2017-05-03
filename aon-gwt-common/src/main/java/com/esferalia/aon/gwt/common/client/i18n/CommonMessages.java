@@ -460,6 +460,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Rechazado")
 	String refused();
 	
+	@DefaultMessage("Servido")
+	String served();
+	
+	@DefaultMessage("Cerrado")
+	String closed();
+	
 	@DefaultMessage("Bloqueado")
 	String blocked();
 

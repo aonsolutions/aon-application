@@ -3,22 +3,22 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
-import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
-import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
-import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
-import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.Seller.SELLER;
-import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
-import static com.esferalia.aon.jooq.tables.Income.INCOME;
-import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
-import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
+import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
+import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
+import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
+import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
@@ -58,6 +59,7 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
@@ -65,8 +67,6 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
-import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
-import com.esferalia.aon.occam.api.model.management.PurchaseDetailProperties;
 
 public class PropertiesDAO {
 	
@@ -342,7 +342,13 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
 
 		@Override public Property<Integer> getSupplierProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.SUPPLIER);}
+
 		
+		// TODO
+		@Override public Property<Integer> getScopeProperty() {return null;}
+		@Override public Property<Byte> getConfidentialProperty() {return null;}
+
+
 	}
 	
 	protected static class PurchasePropertiesDAO implements PurchaseProperties {
@@ -404,6 +410,9 @@ public class PropertiesDAO {
 		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 
+		@Override public Property<Date> getStartIssueDateProperty() {return null;}
+		@Override public Property<Date> getEndIssueDateProperty() {return null;}
+		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	protected static class DeliveryPropertiesDAO implements DeliveryProperties {

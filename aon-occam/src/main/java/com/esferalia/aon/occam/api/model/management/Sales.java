@@ -50,6 +50,10 @@ public class Sales implements Serializable {
 	private String shippingContact;
 	private Integer shippingPeriod;
 	
+	private String scopeName;
+	private String workplaceName;
+	private String projectName;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -309,6 +313,29 @@ public class Sales implements Serializable {
 		this.shippingPeriod = shippingPeriod;
 		return this;
 	}
+	public String getScopeName() {
+		return scopeName;
+	}
+	public Sales setScopeName(String scopeName) {
+		this.scopeName = scopeName;
+		return this;
+	}
+	public String getWorkplaceName() {
+		return workplaceName;
+	}
+	public Sales setWorkplaceName(String workplaceName) {
+		this.workplaceName = workplaceName;
+		return this;
+	}
+	public String getProjectName() {
+		return projectName;
+	}
+	public Sales setProjectName(String projectName) {
+		this.projectName = projectName;
+		return this;
+	}
+	
+	
 	
 }
 
