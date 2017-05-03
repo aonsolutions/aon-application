@@ -20,6 +20,7 @@ public abstract class AonDialog extends PopupPanel  {
 
 	@UiField Label title;
 	@UiField HTMLPanel content;
+	@UiField PaperButton close;
 	@UiField PaperButton accept;
 	@UiField PaperButton cancel;
 
@@ -46,6 +47,18 @@ public abstract class AonDialog extends PopupPanel  {
 		this.content.add(widget);
 	}
 	
+	public PaperButton getAccept(){
+		return accept;
+	}
+	
+	public PaperButton getCancel(){
+		return cancel;
+	}
+	
+	public PaperButton getClose(){
+		return close;
+	}
+	
 	@UiHandler("accept")
 	void acceptClick(ClickEvent event) {
     	onAccept();
@@ -54,6 +67,11 @@ public abstract class AonDialog extends PopupPanel  {
 	@UiHandler("cancel")
 	void cancelClick(ClickEvent event) {
     	onCancel();
+    }
+	
+	@UiHandler("close")
+	void closeClick(ClickEvent event) {
+    	hide();
     }
 	
 }

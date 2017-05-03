@@ -6,16 +6,23 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.Attachment;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
@@ -26,7 +33,11 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
+import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
+import com.vaadin.polymer.vaadin.widget.VaadinUpload;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class Documental implements EntryPoint {
 	
@@ -123,7 +134,9 @@ public class Documental implements EntryPoint {
 			@Override protected void onMoreOptionButtonClick() {}
 			@Override protected void onEditButtonClick() {}
 			@Override protected void onDeleteButtonClick() {}
-			@Override protected void onAddButtonClick() {}
+			@Override protected void onAddButtonClick() {
+				addFileClick();
+			}
 			@Override protected void onInfoButtonClick() {}
 			@Override protected void onStatsButtonClick() {}
 			@Override protected void onFastFilterButtonClick() {}
@@ -136,6 +149,69 @@ public class Documental implements EntryPoint {
 		.setVisibleMoreOptionButton(false)
 		.setVisibleInfoButton(false)
 		.setVisibleStatsButton(false));
+	}
+	
+	void addFileClick() {
+		AonComboBox categoryBox = new AonComboBox();
+		categoryBox.setLabel("Categor\u00eda");
+		categoryBox.setWidth("100%");
+		AonComboBox tagBox = new AonComboBox();
+		tagBox.setWidth("100%");
+		tagBox.setLabel("Etiqueta");
+		AonComboBox scopeBox = new AonComboBox();
+		scopeBox.setWidth("100%");
+		scopeBox.setLabel("\u00c1mbito");
+		
+		HorizontalPanel hp = new HorizontalPanel();
+		Label confidentialLabel = new Label("Confidencial");
+		confidentialLabel.getElement().getStyle().setPaddingTop(20, Unit.PX);
+		confidentialLabel.getElement().getStyle().setPaddingRight(10, Unit.PX);
+		confidentialLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
+		hp.add(confidentialLabel);
+				
+		PaperToggleButton confidential = new PaperToggleButton();
+		confidential.getElement().getStyle().setPaddingTop(13, Unit.PX);
+		hp.add(confidential);
+		
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+		vp.add(categoryBox);
+		vp.add(tagBox);
+		vp.add(scopeBox);
+		vp.add(hp);
+		AonDialog dialog = new AonDialog("Nuevo Archivo", vp) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override
+			protected void onAccept() {
+			//	JsObject category = (JsObject) categoryBox.getSelectedItem();
+			//	JsObject tag = (JsObject) tagBox.getSelectedItem();
+			//	JsObject scope = (JsObject) scopeBox.getSelectedItem();
+				for(Integer i = vp.getWidgetCount() - 1 ; i >= 0; i--){
+					vp.getWidget(i).removeFromParent();
+				}
+				VaadinUpload upload = new VaadinUpload();
+				String dataRequest = "?domain_name="+ aonData.getDomain().getName() 
+						+ "&domain_id="+ aonData.getDomain().getId()
+						+ "&login="+ "system"
+				//		+ "&category="+ category.getId()
+				//		+ "&tag=" + tag.getId()
+				//		+ "&scope=" + scope.getId()
+						+ "&confidential=" + confidential.getChecked();
+				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumental"+ dataRequest);
+				ScrollPanel scroll = new ScrollPanel();
+				scroll.setHeight("300px");
+				scroll.add(upload);
+				this.getAccept().setVisible(false);
+				this.getCancel().setVisible(false);
+				this.getClose().setVisible(true);
+				vp.add(scroll);
+			}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
 	}
 	
 	private void createSearchPanel(){

@@ -164,6 +164,13 @@
 		</dependency>
 		
 		<dependency>
+ 			<groupId>net.aonsolutions.polymer</groupId>
+ 			<artifactId>aon.gwt.polymer</artifactId>
+ 			<version>${project.version}</version> 
+  			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.pool</artifactId>
 			<version>${project.version}</version>

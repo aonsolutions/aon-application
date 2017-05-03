@@ -23,8 +23,9 @@
     	<g:HTMLPanel ui:field="content" />
     </div>
     <div class="{issuesResources.css.buttonsPopupIssues}">
-       	<p:PaperButton ui:field="cancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-    	<p:PaperButton ui:field="accept" attributes="dialog-confirm">OK</p:PaperButton>
+	    <p:PaperButton ui:field="close" visible="false">Cerrar</p:PaperButton>
+       	<p:PaperButton ui:field="cancel" attributes="dialog-dismiss">Cancelar</p:PaperButton>
+    	<p:PaperButton ui:field="accept" attributes="dialog-confirm">Aceptar</p:PaperButton>
 	</div>
 </g:HTMLPanel>
 </ui:UiBinder>
