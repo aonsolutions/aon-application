@@ -24,6 +24,7 @@ public interface ISQLConstants {
 	String ASSET = "asset";
 
 	String PLAYASOL = "playasol";
+	String PSOL = "psol";
 	String APARTAMENTOS = "apartamentos";
 	String APTOS = "aptos";
 	String APTS = "apts";

@@ -20,11 +20,13 @@ public class Hotel extends HotelDB implements IScopable, ISQLConstants {
 	public String getAlias() {
 		String alias = getWorkPlace().getDescription();
 		alias = alias.replaceAll("(?i)" + PLAYASOL, "");
+		alias = alias.replaceAll("(?i)" + PSOL, "");
 		alias = alias.replaceAll("(?i)" + APARTAMENTOS, "");
 		alias = alias.replaceAll("(?i)" + APTOS, "");
 		alias = alias.replaceAll("(?i)" + APTS, "");
 		alias = alias.replaceAll("(?i)" + APTHOTEL, "");
 		alias = alias.replaceAll("(?i)" + HOTEL, "");
+		alias = alias.replaceAll("  ", " ");
 		return alias.trim();
 	}
 

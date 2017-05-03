@@ -6,26 +6,47 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_POS_SHIFT_IMBALANCE
 import static com.code.aon.ui.common.ICommonMessages.TICKET;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceBatch;
+import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
+import com.code.aon.finance.enumeration.FinanceBatchStatus;
+import com.code.aon.finance.enumeration.FinanceBatchType;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.Shift;
 import com.code.aon.finance.invoicing.PosInvoicing;
 import com.code.aon.finance.util.PosBalanceUtils;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosClosingController implements IFinanceConstants, Serializable {
 	
@@ -153,15 +174,8 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 					getPosShift().setRemarks(ticketInfo + "\n" + getPosShift().getRemarks());
 				}
 				onSave(event);
-
-				if (getPosShift().getPos().isInvoiceable()) {
-	                PosInvoicing posInvoicing = new PosInvoicing();
-	                Invoice invoice = posInvoicing.completeInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()), ticketInfo);
-					onSave(event);
-	
-	        		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
-	        		entryWriter.recordAndUpdateInvoice(invoice);
-	            }
+				onInvoice(ticketInfo);
+				onAutoFbatch();
 			}
 		} catch (ManagerBeanException ex) {
 			String msg = "Error en el proceso de Cierre de Caja. " + ex.getMessage();
@@ -188,6 +202,112 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+
+	public void onInvoice(String ticketInfo) throws ManagerBeanException {
+		if (getPosShift().getPos().isInvoiceable()) {
+            PosInvoicing posInvoicing = new PosInvoicing();
+            Invoice invoice = posInvoicing.completeInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()), ticketInfo);
+			onSave(null);
+
+    		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
+    		entryWriter.recordAndUpdateInvoice(invoice);
+        }
+	}
+
+	public void onAutoFbatch() throws ManagerBeanException {
+		RegistryBank rBank = null;
+		ApplicationParameter autoFBatchBankParam = AppParamUtil.getParameter(AppParam.PMS_AUTO_FBATCH_BANK);
+		if (autoFBatchBankParam != null && StringUtils.isNotBlank(autoFBatchBankParam.getValue())) {
+			rBank = (RegistryBank)BeanManager.getManagerBean(RegistryBank.class).get(Integer.parseInt(autoFBatchBankParam.getValue()));
+		}
+
+		if (rBank != null) {
+			PosFinanceController posFinanceController = (PosFinanceController)AonUtil.getRegisteredBean(IFinanceConstants.POS_FINANCE_CONTROLLER_NAME);
+			Date issueDate = obtainClosingDate();
+
+			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+			Criteria criteria = new Criteria();
+			PayMethodType[] payMethodTypes = new PayMethodType[]{PayMethodType.CASH_BASIS, PayMethodType.DEBIT_CARD, PayMethodType.CREDIT_CARD};
+			criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), payMethodTypes));
+			criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE));
+			criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
+			for (ITransferObject ito : payMethodBean.getList(criteria)) {
+				PayMethod payMethod = (PayMethod)ito;
+				FinanceBatch financeBatch = null;
+
+				criteria = new Criteria();
+				criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), payMethod.getId());
+				criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+				criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_ID), getPosShift().getId());
+				for (ITransferObject itr : financeBean.getList(criteria)) {
+					Finance finance = (Finance)itr;
+					if (financeBatch == null) {
+						String description = posFinanceController.obtainFbatchDescription(issueDate, payMethod, getPosShift().getPos().getWorkPlace());
+						financeBatch = obtainFinanceBatch(rBank, description, issueDate);
+					}
+
+					FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
+					fBatchDetail.setFinance(finance);
+					fBatchDetail.setFinanceBatch(financeBatch);
+					fBatchDetail.setAmount(finance.getTotalAmount());
+					fBatchDetail.setStatus(FinanceStatus.BATCHED);
+					fBatchDetailBean.insert(fBatchDetail);
+				}
+			}
+		}
+	}
+
+	private Date obtainClosingDate() {
+		ApplicationParameter closeHourParam = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_CLOSE_HOUR);
+		String closeHour = (closeHourParam!=null && StringUtils.isNotBlank(closeHourParam.getValue())) ? closeHourParam.getValue() : "00:00:00";
+		Date limitDate = DateUtils.truncate(getPosShift().getEndTime(), Calendar.DATE);
+		limitDate = DateUtils.addHours(limitDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[0]));
+		limitDate = DateUtils.addMinutes(limitDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[1]));
+		limitDate = DateUtils.addSeconds(limitDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[2]));
+
+		Date issueDate = DateUtils.truncate(getPosShift().getEndTime(), Calendar.DATE);
+		if (!getPosShift().getEndTime().after(limitDate)) {
+			issueDate = DateUtils.addDays(issueDate, -1);
+		}
+		return issueDate;
+	}
+
+	private FinanceBatch obtainFinanceBatch(RegistryBank rBank, String description, Date issueDate) throws ManagerBeanException {
+		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getLikeExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_DESCRIPTION), description + "%"));
+		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), issueDate);
+		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), Boolean.FALSE);
+		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_TYPE), FinanceBatchType.NONE);
+		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_REGISTRY_BANK_ID), rBank.getId());
+		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_DESCRIPTION));
+		for (ITransferObject ito : fBatchBean.getList(criteria)) {
+			FinanceBatch fBatch = (FinanceBatch)ito;
+			if (fBatch.isTodo()) {
+				return fBatch;
+			} else {
+				String suffix = StringUtils.substring(fBatch.getDescription(), fBatch.getDescription().length()-2);
+				if (StringUtils.substring(suffix, 0, 1).equals("_") && NumberUtils.isNumber(StringUtils.substring(suffix, -1))) {
+					description = fBatch.getDescription() + "_" + (NumberUtils.toInt(StringUtils.substring(suffix, -1)) + 1);
+				} else {
+					description = fBatch.getDescription() + "_2";
+				}
+			}
+		}
+
+		FinanceBatch financeBatch = new FinanceBatch();
+		financeBatch.setDescription(description);
+		financeBatch.setIssueDate(issueDate);
+		financeBatch.setPayment(false);
+		financeBatch.setFinanceBatchType(FinanceBatchType.NONE);
+		financeBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+		financeBatch.setRegistryBank(rBank);
+		financeBatch.setConfidential(false);
+		financeBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
+		return (FinanceBatch)fBatchBean.insert(financeBatch);
 	}
 
 

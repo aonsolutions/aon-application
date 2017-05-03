@@ -228,6 +228,14 @@
 					<f:selectItems value="#{configCollections.salesTariffs}" />
 				</aon:selectOneMenu>
 
+				<aon:outputLabel for="PMS_Auto_Fbatch_Bank"
+					value="#{bundle.pms_auto_fbatch_bank}" />
+				<aon:selectOneMenu id="PMS_Auto_Fbatch_Bank"
+					value="#{pmsParams.autoFbatchBank}">
+					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
+				</aon:selectOneMenu>
+
 				<aon:outputLabel for="PMS_Daily_Cash_Limit"
 					value="#{bundle.pms_daily_cash_limit}" />
 				<aon:inputText id="PMS_Daily_Cash_Limit"

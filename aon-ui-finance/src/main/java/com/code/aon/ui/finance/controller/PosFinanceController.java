@@ -21,6 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -79,20 +80,18 @@ public class PosFinanceController extends FinanceListController implements IFina
 
 	private FinanceBatch createFinanceBatch() {
 		PosFinanceSearchListener searchListener = (PosFinanceSearchListener)AonUtil.getRegisteredBean(POS_FINANCE_SEARCH_LISTENER_NAME);
-		String date = new SimpleDateFormat(AonUtil.getMessage(SIMPLE_DATE2_PATTERN)).format(new Date());
-		String payMethod = searchListener.getPayMethod().getName();
-		String workPlace = obtainWorkPlaceDescription(searchListener.getWorkPlace());
-		if ((payMethod + workPlace).length() > 22) {
-			if (payMethod.length() > 8) {
-				payMethod = payMethod.substring(0, 8);
-			}
-			workPlace = StringUtils.substring(workPlace, 0, 22 - payMethod.length());
-		}
-
+		Date issueDate = new Date();
 		FinanceBatch fBatch = new FinanceBatch();
-		fBatch.setDescription(date + "_" + payMethod + "_" + workPlace);
-		fBatch.setIssueDate(new Date());
+		fBatch.setDescription(obtainFbatchDescription(issueDate, searchListener.getPayMethod(), searchListener.getWorkPlace()));
+		fBatch.setIssueDate(issueDate);
 		return fBatch;
+	}
+
+	public String obtainFbatchDescription(Date issueDate, PayMethod payMethod, WorkPlace workPlace) {
+		String date = new SimpleDateFormat(AonUtil.getMessage(SIMPLE_DATE2_PATTERN)).format(issueDate);
+		String payMethodName = StringUtils.substring(payMethod.getName(), 0, 8);
+		String workPlaceName = obtainWorkPlaceDescription(workPlace);
+		return (date + "_" + payMethodName + "_" + workPlaceName);
 	}
 
 	private String obtainWorkPlaceDescription(WorkPlace workPlace) {
@@ -108,7 +107,7 @@ public class PosFinanceController extends FinanceListController implements IFina
 			description = (hotel != null) ? hotel.getAlias() : description;
 		} catch(ManagerBeanException ex) {
 		}
-		return description;
+		return StringUtils.substring(description, 0, 14).trim();
 	}
 	
 	public List<SelectItem> getFinanceBatchList() throws ManagerBeanException {

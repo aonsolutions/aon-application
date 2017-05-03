@@ -22,6 +22,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
@@ -53,6 +54,7 @@ public class PmsParamsController implements Serializable {
 	private String productionReportOpenHour;
 	private String productionReportCloseHour;
 	private Tariff undefinedTariff;
+	private RegistryBank autoFbatchBank;
 	private String dailyCashLimit;
 	private String cleanDays;
 	private String policeCount;
@@ -504,6 +506,30 @@ public class PmsParamsController implements Serializable {
 		}
 	}
 
+	public RegistryBank getAutoFbatchBank() {
+		return autoFbatchBank;
+	}
+	public void setAutoFbatchBank(RegistryBank autoFbatchBank) {
+		this.autoFbatchBank = autoFbatchBank;
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_AUTO_FBATCH_BANK);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_AUTO_FBATCH_BANK.getValue());
+		}
+		appParam.setValue((autoFbatchBank != null) ? autoFbatchBank.getId().toString() : null);
+		getParameters().put(AppParam.PMS_AUTO_FBATCH_BANK, appParam);
+	}
+	private void initializeAutoFbatchBank() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_AUTO_FBATCH_BANK);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			try {
+				setAutoFbatchBank((RegistryBank)BeanManager.getManagerBean(RegistryBank.class).get(Integer.parseInt(appParam.getValue())));
+			} catch (ManagerBeanException ex) {
+				setAutoFbatchBank(null);
+			}
+		}
+	}
+
 	public String getDailyCashLimit() {
 		return dailyCashLimit;
 	}
@@ -607,6 +633,7 @@ public class PmsParamsController implements Serializable {
 		initializeProductionReportOpenHour();
 		initializeProductionReportCloseHour();
 		initializeUndefinedTariff();
+		initializeAutoFbatchBank();
 		initializeDailyCashLimit();
 		initializeCleanDays();
 		initializePoliceCount();

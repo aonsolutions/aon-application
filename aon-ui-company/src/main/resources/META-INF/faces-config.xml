@@ -314,6 +314,10 @@
 			<value>true</value>
 		</managed-property>				
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryBank_active desc,RegistryBank_alias</value>
+		</managed-property>						
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>

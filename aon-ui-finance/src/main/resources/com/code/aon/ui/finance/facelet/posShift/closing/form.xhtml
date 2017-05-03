@@ -19,7 +19,9 @@
 						styleClass="aon-finding-toolbar-item #{(posClosing.posShift.closed) ? ('aon-icon-accept') : ('aon-icon-safeBox')}"
 						value="#{(posClosing.posShift.closed) ? (bundle.aon_save) : (bundle.finance_pos_to_close)}"
 						actionListener="#{posClosing.onConfirmClose}"
-						reRender="aonContent" />
+						reRender="aonContent"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:htmlCommandLink id="posShift_report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{bundle.finance_count}"

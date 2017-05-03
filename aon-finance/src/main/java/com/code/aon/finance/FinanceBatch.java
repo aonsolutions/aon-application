@@ -19,6 +19,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
+import com.code.aon.finance.enumeration.FinanceBatchStatus;
+import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -86,4 +88,23 @@ public class FinanceBatch extends FinanceBatchDB implements IAuditable {
 		}
 		return new Double(0);
 	}
+
+	@Transient
+    public boolean isTodo() {
+        return FinanceBatchStatus.TODO == getFinanceBatchStatus();
+    }
+	@Transient
+    public boolean isDone() {
+        return FinanceBatchStatus.DONE == getFinanceBatchStatus();
+    }
+	@Transient
+    public boolean isRecorded() {
+        return FinanceBatchStatus.RECORDED == getFinanceBatchStatus();
+    }
+
+	@Transient
+    public boolean isDiskMode() {
+        return FinanceBatchType.NONE != getFinanceBatchType();
+    }
+
 }

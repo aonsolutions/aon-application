@@ -164,19 +164,19 @@ public class FBatchController extends BasicController implements ICollectionProv
 	}
 
     public boolean isTodo() {
-        return FinanceBatchStatus.TODO == ((FinanceBatch)this.getTo()).getFinanceBatchStatus();
+        return ((FinanceBatch)this.getTo()).isTodo();
     }
 
     public boolean isDone() {
-        return FinanceBatchStatus.DONE == ((FinanceBatch)this.getTo()).getFinanceBatchStatus();
+        return ((FinanceBatch)this.getTo()).isDone();
     }
 
     public boolean isRecorded() {
-        return FinanceBatchStatus.RECORDED == ((FinanceBatch)this.getTo()).getFinanceBatchStatus();
+        return ((FinanceBatch)this.getTo()).isRecorded();
     }
 
     public boolean isDiskMode() {
-        return FinanceBatchType.NONE != ((FinanceBatch)this.getTo()).getFinanceBatchType();
+        return ((FinanceBatch)this.getTo()).isDiskMode();
     }
 
     public boolean isInStatement() {
