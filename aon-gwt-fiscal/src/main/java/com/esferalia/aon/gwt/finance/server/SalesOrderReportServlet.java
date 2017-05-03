@@ -25,7 +25,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Sales Order Report (excel)", urlPatterns = { "/aon_gwt_fiscal/SalesOrderReport" })
+@WebServlet(name = "Sales Order Report (excel)", urlPatterns = { "/aon_gwt_fiscal/SalesOrderReport",
+																 "/aon_gwt_aio/SalesOrderReport" })
 public class SalesOrderReportServlet extends HttpServlet {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");

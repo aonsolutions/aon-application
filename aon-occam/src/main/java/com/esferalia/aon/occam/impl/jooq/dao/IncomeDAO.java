@@ -1,9 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -15,12 +21,18 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeDetailFiller;
@@ -29,6 +41,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeRegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomeDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class IncomeDAO {
 	
@@ -241,5 +254,104 @@ public class IncomeDAO {
 							r.getValue(INCOME_DETAIL.QUANTITY) != null ? r.getValue(INCOME_DETAIL.QUANTITY) : 0.0);
 		}
 
+	}
+	
+	
+	private static Result<Record> getFullIncomes(AONContext ctx, IncomeFilter filter) {
+		ctx.checkRead();
+
+		return ctx.getDslContext()
+			.select(
+				 INCOME.ID
+				,INCOME.DOMAIN
+				,INCOME.STATUS
+				,INCOME.REFERENCE_CODE
+				,INCOME.ISSUE_TIME
+				,REGISTRY.DOCUMENT
+				,REGISTRY.DOCUMENT_TYPE
+				,REGISTRY.DOCUMENT_COUNTRY
+				,REGISTRY.NAME
+				,SCOPE.DESCRIPTION
+				,PROJECT.NAME
+				,INCOME_DETAIL.LINE
+				,INCOME_DETAIL.ITEM
+				,PCATEGORY.NAME
+				,PRODUCT.ID
+				,PRODUCT.NAME
+				,PRODUCT.CODE
+				,ITEM.DETAIL
+				,ITEM.DETAIL2
+				,ITEM.DETAIL3
+				,ITEM.DESCRIPTION
+				,INCOME_DETAIL.DESCRIPTION
+				,INCOME_DETAIL.QUANTITY
+				,INCOME_DETAIL.PRICE
+				,INCOME_DETAIL.DISCOUNT_EXPR
+				,WORKPLACE.DESCRIPTION
+			)
+			.from(INCOME)
+			.join(INCOME_DETAIL).on(INCOME_DETAIL.INCOME.equal(INCOME.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(INCOME.SUPPLIER))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(INCOME.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(INCOME.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INCOME_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INCOME.WORKPLACE))
+			.where(INCOME_PROPERTIES.getConditions(filter))
+			.orderBy(INCOME.ISSUE_TIME,INCOME.REFERENCE_CODE,INCOME_DETAIL.LINE)
+			.fetch();
+	}
+	
+	public static Stream<IncomeDetail> getIncomeDetails(AONContext ctx, IncomeFilter filter) {
+		return getFullIncomes(ctx, filter)
+			.stream()
+			.map(new FullIncomeDetailFiller2());
+	}
+	
+	private static class FullIncomeDetailFiller2  implements Function<Record,IncomeDetail> {
+
+		@Override
+		public IncomeDetail apply(Record record) {
+			Supplier supplier = new Supplier();
+			supplier.setDocument(record.getValue(REGISTRY.DOCUMENT));
+			supplier.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
+									record.getValue(REGISTRY.DOCUMENT_TYPE)));
+			supplier.setDocumentCountry(Country.safeValueOf(record
+									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
+			supplier.setName(record.getValue(REGISTRY.NAME));
+			
+			return new IncomeDetail()
+				.setIncome(new Income()
+					.setId(record.getValue(INCOME.ID))
+					.setDomain(record.getValue(INCOME.DOMAIN))
+					.setStatus(AonEnumUtils.enumValue(IncomeStatus.class,
+									record.getValue(INCOME.STATUS)))
+					.setReferenceCode(record.getValue(INCOME.REFERENCE_CODE))
+					.setIssueDate(record.getValue(INCOME.ISSUE_TIME))
+					.setSupplier2(supplier)
+					.setScopeName(record.getValue(SCOPE.DESCRIPTION))	
+					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
+
+					)
+				.setProject( new Project().setName(record.getValue( PROJECT.NAME )))
+				.setLine(record.getValue(INCOME_DETAIL.LINE))
+				.setDescription(record.getValue( INCOME_DETAIL.DESCRIPTION ))
+				.setQuantity(record.getValue(INCOME_DETAIL.QUANTITY))
+				.setPrice(record.getValue(INCOME_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(INCOME_DETAIL.DISCOUNT_EXPR))
+				.setItem((record.getValue(INCOME_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(INCOME_DETAIL.ITEM))
+						.setCategory( record.getValue( PCATEGORY.NAME ) )
+						.setProductId( record.getValue( PRODUCT.ID ) )
+						.setName( record.getValue( PRODUCT.NAME ) )
+						.setCode(record.getValue( PRODUCT.CODE ) )
+						.setDetail(record.getValue( ITEM.DETAIL ))
+						.setDetail2(record.getValue( ITEM.DETAIL2 ))
+						.setDetail3(record.getValue( ITEM.DETAIL3 ))
+						.setDescription(record.getValue( ITEM.DESCRIPTION )));
+		}
 	}
 }

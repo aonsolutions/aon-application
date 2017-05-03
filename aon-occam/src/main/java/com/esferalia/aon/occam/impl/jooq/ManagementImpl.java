@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IManagement;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
@@ -18,7 +19,9 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
@@ -141,6 +144,20 @@ public class ManagementImpl implements IManagement {
 	public Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryDetailFilter filter) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> DeliveryDAO.getDeliveryDetailStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<DeliveryDetail> getDeliveryDetails(AONContext ctx, DeliveryFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DeliveryDAO.getDeliveryDetails(ctx, filter));
+	}
+
+	// ------------------ INCOME DETAIL
+	
+	@Override
+	public Stream<IncomeDetail> getIncomeDetails(AONContext ctx, IncomeFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> IncomeDAO.getIncomeDetails(ctx, filter));
 	}
 
 }

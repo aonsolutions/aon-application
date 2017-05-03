@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 
 public interface IManagement {
 	
@@ -53,6 +55,11 @@ public interface IManagement {
 	Delivery updateDelivery(AONContext ctx, Delivery delivery, DeliveryFilter filter);
 	void deleteDelivery(AONContext ctx, DeliveryFilter filter);
 	
+	Stream<DeliveryDetail> getDeliveryDetails(AONContext ctx, DeliveryFilter filter);
+	
 	// -------------------- DELIVERY DETAIL
 	Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryDetailFilter filter);
+
+	// -------------------- INCOME DETAIL
+	Stream<IncomeDetail> getIncomeDetails(AONContext ctx, IncomeFilter filter);
 }

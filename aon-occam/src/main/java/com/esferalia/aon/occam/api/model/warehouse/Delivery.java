@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.warehouse;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 
@@ -18,6 +19,7 @@ public class Delivery implements Serializable {
 	private String series;
 	private int number;
 	private Integer customer;
+	private Customer customer2;
 	private String customerName;
 	private Integer address;
 	private Date issueTime;
@@ -27,7 +29,9 @@ public class Delivery implements Serializable {
 	private String comments;
 	private String remarks;
 	private Integer workplace;
+	private String workplaceName;
 	private Integer scope;
+	private String scopeName;
 	private short numberOfPymnts;
 	private short daysToFirstPymnt;
 	private short daysBetweenPymnt;
@@ -145,6 +149,14 @@ public class Delivery implements Serializable {
 		this.scope = scope;
 		return this;
 	}
+	
+	public String getScopeName() {
+		return scopeName;
+	}
+	public Delivery setScopeName(String scopeName) {
+		this.scopeName = scopeName;
+		return this;
+	}
 	public short getNumberOfPymnts() {
 		return numberOfPymnts;
 	}
@@ -232,6 +244,14 @@ public class Delivery implements Serializable {
 		this.customer = customer;
 		return this;
 	}
+	
+	public Customer getCustomer2() {
+		return customer2;
+	}
+	public Delivery setCustomer2(Customer customer2) {
+		this.customer2 = customer2;
+		return this;
+	}
 	public DeliveryStatus getStatus() {
 		return status;
 	}
@@ -244,6 +264,14 @@ public class Delivery implements Serializable {
 	}
 	public Delivery setWorkplace(Integer workplace) {
 		this.workplace = workplace;
+		return this;
+	}
+	
+	public String getWorkplaceName() {
+		return workplaceName;
+	}
+	public Delivery setWorkplaceName(String workplaceName) {
+		this.workplaceName = workplaceName;
 		return this;
 	}
 	public Integer getCarrier() {

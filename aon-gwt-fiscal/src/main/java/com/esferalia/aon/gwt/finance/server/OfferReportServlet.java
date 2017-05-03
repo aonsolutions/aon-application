@@ -24,7 +24,8 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Offer Report (excel)", urlPatterns = { "/aon_gwt_fiscal/OfferReport" })
+@WebServlet(name = "Offer Report (excel)", urlPatterns = { "/aon_gwt_fiscal/OfferReport",
+														   "/aon_gwt_aio/OfferReport" })
 public class OfferReportServlet extends HttpServlet {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");

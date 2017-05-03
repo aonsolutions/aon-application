@@ -18,16 +18,16 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Purchase Order Report (excel)", urlPatterns = { "/aon_gwt_fiscal/PurchaseOrderReport",
-																 	"/aon_gwt_aio/PurchaseOrderReport" })
-public class PurchaseOrderReportServlet extends HttpServlet {
+@WebServlet(name = "Income Report (excel)", urlPatterns = { "/aon_gwt_fiscal/IncomeReport",
+															"/aon_gwt_aio/IncomeReport" })
+public class IncomeReportServlet extends HttpServlet {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -49,7 +49,7 @@ public class PurchaseOrderReportServlet extends HttpServlet {
 
 			String login = AonServletUtils.getRequestUser(req);
 			
-			PurchaseOrderExcelAction action = new PurchaseOrderExcelAction();
+			IncomeExcelAction action = new IncomeExcelAction();
 			List<String> tags = AON.getProductTags(domainName, domainId, login);
 			Map<Integer,String[]> productTags = null;
 			if (tags != null && tags.size() > 0) {
@@ -57,24 +57,15 @@ public class PurchaseOrderReportServlet extends HttpServlet {
 			}
 			action.setTags(tags);
 			action.setProductTags(productTags);
-			action.initialize("PEDIDOS DE COMPRA");
+			action.initialize("ALBARANES DE COMPRA");
 
 			List<Byte> typesList = new LinkedList<Byte>();
 		
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.ORDER_STATUS_PENDING))) {
-				typesList.add(PurchaseStatus.PENDING.value());
+			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.DELIVERY_STATUS_PENDING))) {
+				typesList.add(IncomeStatus.PENDING.value());
 			}
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.ORDER_STATUS_BLOCKED))) {
-				typesList.add(PurchaseStatus.BLOCKED.value());
-			}
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.ORDER_STATUS_SERVED))) {
-				typesList.add(PurchaseStatus.SERVED.value());
-			}
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.ORDER_STATUS_CLOSED))) {
-				typesList.add(PurchaseStatus.CLOSED.value());
-			}
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.ORDER_STATUS_INVOICED))) {
-				typesList.add(PurchaseStatus.INVOICED.value());
+			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.DELIVERY_STATUS_INVOICED))) {
+				typesList.add(IncomeStatus.INVOICED.value());
 			}
 			Byte[] typ = new Byte[typesList.size()]; 
 			final Byte[] types = typesList.toArray(typ);
@@ -88,20 +79,20 @@ public class PurchaseOrderReportServlet extends HttpServlet {
 				sec[1] = 1;	
 			}
 			
-			AON.getPurchaseDetails(domainName, domainId, login,
+			AON.getIncomeDetails(domainName, domainId, login,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(p.getStatusProperty().in(types))
-							.and(p.getIssueDateProperty().ge(AonDateUtils.toSql(fromDate)))
-							.and(p.getIssueDateProperty().le(AonDateUtils.toSql(toDate)));
+							.and(p.getIssueTimeProperty().ge(AonDateUtils.toSql(fromDate)))
+							.and(p.getIssueTimeProperty().le(AonDateUtils.toSql(toDate)));
 						f = scopes == null?f:f.and(p.getScopeProperty().in( scopes ));
-						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value()));	
+						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq(SecurityLevel.OFFICIAL.value()));	
 						
 						return f;
 					}
 				).forEach(action);
 						
-			String fileName = "Pedidos de Compra";
+			String fileName = "Albaranes de Compra";
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\""
 					+ fileName + ".xlsx\";");

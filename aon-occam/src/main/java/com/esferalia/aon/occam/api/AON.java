@@ -1465,6 +1465,18 @@ public class AON {
 	
 	// ------------------ DELIVERY
 	
+	public static Stream<DeliveryDetail> getDeliveryDetails(String domainName,
+			Integer domainId, String login, DeliveryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getDeliveryDetails(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Stream<Delivery> getDeliveryStream(String domainName,
 			Integer domainId, String login, DeliveryFilter filter) {
 		AONContext ctx = null;
@@ -2112,6 +2124,18 @@ public class AON {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getWarehouseStream(ctx, filter)
 					.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<IncomeDetail> getIncomeDetails(String domainName,
+			Integer domainId, String login, IncomeFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getIncomeDetails(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

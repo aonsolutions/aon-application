@@ -86,6 +86,11 @@ public class InvoiceReport extends MainEntryPoint {
 	@UiField
 	CheckBox orderStatusInvoiced;
 	
+	@UiField
+	CheckBox deliveryStatusPending;
+	@UiField
+	CheckBox deliveryStatusInvoiced;
+	
 	
 	private int domain;
 	private int enterprise;
@@ -130,8 +135,8 @@ public class InvoiceReport extends MainEntryPoint {
 		SelectElement select = entity.getElement().cast();
 		//select.getOptions().getItem(2).setDisabled(true);
 		//select.getOptions().getItem(3).setDisabled(true);
-		select.getOptions().getItem(4).setDisabled(true);
-		select.getOptions().getItem(5).setDisabled(true);
+		//select.getOptions().getItem(4).setDisabled(true);
+		//select.getOptions().getItem(5).setDisabled(true);
 
 		fromDate.getTextBox().setName(IRequestParamsNames.FROM_DATE);
 		toDate.getTextBox().setName(IRequestParamsNames.TO_DATE);
@@ -172,6 +177,11 @@ public class InvoiceReport extends MainEntryPoint {
 		orderStatusClosed.setValue(true);
 		orderStatusInvoiced.setValue(true);
 
+		deliveryStatusPending.setName(IRequestParamsNames.DELIVERY_STATUS_PENDING);
+		deliveryStatusInvoiced.setName(IRequestParamsNames.DELIVERY_STATUS_INVOICED);
+
+		deliveryStatusPending.setValue(true);		
+		deliveryStatusInvoiced.setValue(true);
 		
 		Date date = new Date();
 		CalendarUtil.setToFirstDayOfMonth(date);
@@ -207,6 +217,8 @@ public class InvoiceReport extends MainEntryPoint {
 		boolean offer = (entity.getSelectedIndex() == 1);
 		boolean purchase = (entity.getSelectedIndex() == 2);
 		boolean sale = (entity.getSelectedIndex() == 3);
+		boolean income = (entity.getSelectedIndex() == 4);
+		boolean delivery = (entity.getSelectedIndex() == 5);
 		
 		invoiceTypeSales.setVisible(invoice);
 		invoiceTypePurchases.setVisible(invoice);
@@ -224,6 +236,9 @@ public class InvoiceReport extends MainEntryPoint {
 		orderStatusServed.setVisible(purchase || sale);
 		orderStatusClosed.setVisible(purchase || sale);
 		orderStatusInvoiced.setVisible(purchase || sale);
+		
+		deliveryStatusPending.setVisible(income || delivery);
+		deliveryStatusInvoiced.setVisible(income || delivery);
 	}
 
 	@UiHandler("generateFileButton")
