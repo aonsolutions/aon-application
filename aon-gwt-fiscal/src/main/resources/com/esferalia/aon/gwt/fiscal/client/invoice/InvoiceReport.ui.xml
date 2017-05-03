@@ -10,6 +10,10 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+		<g:center>
+			<g:DockLayoutPanel>
+				
+	
 		<g:north size="26">
 			<g:FlowPanel ui:field="toolbarPanel" height="100%"
 				styleName="aon-finding-title-toolbar aon-width-all">
@@ -76,6 +80,9 @@
 										<g:CheckBox ui:field="orderStatusClosed" text="{msg.closed}"/>
 										<g:CheckBox ui:field="orderStatusInvoiced" text="{msg.invoiced}"/>
 
+										<g:CheckBox ui:field="deliveryStatusPending" text="{msg.pending}"/>
+										<g:CheckBox ui:field="deliveryStatusInvoiced" text="{msg.invoiced}"/>
+
 									</td>
 								</tr>
 										
@@ -97,6 +104,10 @@
 					<g:Hidden ui:field="domainName"/>
 				</g:HTMLPanel>
 			</g:FormPanel>
+		</g:center>
+
+
+			</g:DockLayoutPanel>	
 		</g:center>
 		
 		<g:south size="0">

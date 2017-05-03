@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Audit;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
@@ -18,7 +19,7 @@ public class Income extends Audit implements Serializable {
 	private String referenceCode;
 	private Integer supplier;
 	private String supplierName;
-	
+	private Supplier supplier2;
 	private Integer address;
 	private Date issueDate;
 	private Integer payMethod;
@@ -27,7 +28,9 @@ public class Income extends Audit implements Serializable {
 	private String comments;
 	private String remarks;
 	private Integer workplace;
+	private String workplaceName;
 	private Integer scope;
+	private String scopeName;
 	private Integer numberOfPymnts;
 	private Integer daysToFirstPymnt;
 	private Integer daysBetweenPymnt;
@@ -120,6 +123,13 @@ public class Income extends Audit implements Serializable {
 		this.scope = scope;
 		return this;
 	}
+	public String getScopeName() {
+		return scopeName;
+	}
+	public Income setScopeName(String scopeName) {
+		this.scopeName = scopeName;
+		return this;
+	}
 	public Integer getNumberOfPymnts() {
 		return numberOfPymnts;
 	}
@@ -180,6 +190,14 @@ public class Income extends Audit implements Serializable {
 		this.supplier = supplier;
 		return this;
 	}
+
+	public Supplier getSupplier2() {
+		return supplier2;
+	}
+	public Income setSupplier2(Supplier supplier2) {
+		this.supplier2 = supplier2;
+		return this;
+	}
 	public IncomeStatus getStatus() {
 		return status;
 	}
@@ -192,6 +210,14 @@ public class Income extends Audit implements Serializable {
 	}
 	public Income setWorkplace(Integer workplace) {
 		this.workplace = workplace;
+		return this;
+	}
+	
+	public String getWorkplaceName() {
+		return workplaceName;
+	}
+	public Income setWorkplaceName(String workplaceName) {
+		this.workplaceName = workplaceName;
 		return this;
 	}
 	public Integer getCarrierPacking() {

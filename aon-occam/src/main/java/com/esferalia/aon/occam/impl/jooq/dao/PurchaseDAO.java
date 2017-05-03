@@ -137,7 +137,7 @@ public class PurchaseDAO {
 					.setIssueDate(record.getValue(PURCHASE.ISSUE_DATE))
 					.setSupplier(supplier)
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
-					
+					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
 					
 					)
 				.setProjectName(record.getValue( PROJECT.NAME ))

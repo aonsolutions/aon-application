@@ -306,6 +306,8 @@ public interface Properties {
 		Property<String> getRegistryNameProperty();
 		Property<String> getRegistryDocumentProperty();
 		
+		
+		Property<Byte> getConfidentialProperty();
 	}
 	
 	public interface DeliveryDetailProperties extends AuditProperties{
@@ -792,6 +794,8 @@ public interface Properties {
 		Property<String> getBankAliasProperty();
 		Property<String> getBicProperty();
 		Property<Integer> getCarrierPackingProperty();
+		
+		Property<Byte> getConfidentialProperty();
 	}
 
 	public interface IncomeDetailProperties extends AuditProperties{

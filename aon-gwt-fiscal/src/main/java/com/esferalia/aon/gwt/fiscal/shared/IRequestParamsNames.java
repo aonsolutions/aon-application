@@ -37,6 +37,8 @@ public interface IRequestParamsNames {
 	String ORDER_STATUS_CLOSED = "orderStatusClosed";
 	String ORDER_STATUS_INVOICED = "orderStatusInvoiced";
 	
+	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
+	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	
 	String INVOICE_TYPES = "invoiceTypes";
 	String CATEGORY_IDS = "categoryIds";

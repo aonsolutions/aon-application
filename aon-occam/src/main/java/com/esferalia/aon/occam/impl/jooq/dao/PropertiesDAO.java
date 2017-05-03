@@ -459,6 +459,9 @@ public class PropertiesDAO {
 		
 		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+
+		@Override
+		public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	protected static class DeliveryDetailPropertiesDAO implements DeliveryDetailProperties {
@@ -531,6 +534,8 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
+
+		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	protected static class IncomeDetailPropertiesDAO implements IncomeDetailProperties {

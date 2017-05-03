@@ -3,16 +3,30 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.Record;
+import org.jooq.Result;
+
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
@@ -22,6 +36,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RDeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 
 public class DeliveryDAO {
@@ -205,4 +220,105 @@ public class DeliveryDAO {
 		ctx.getDslContext().delete(DELIVERY_DETAIL).where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter));
 	}
 
+	private static Result<Record> getFullDeliveries(AONContext ctx, DeliveryFilter filter) {
+		ctx.checkRead();
+
+		return ctx.getDslContext()
+			.select(
+				 DELIVERY.ID
+				,DELIVERY.DOMAIN
+				,DELIVERY.STATUS
+				,DELIVERY.SERIES
+				,DELIVERY.NUMBER
+				,DELIVERY.ISSUE_TIME
+				,REGISTRY.DOCUMENT
+				,REGISTRY.DOCUMENT_TYPE
+				,REGISTRY.DOCUMENT_COUNTRY
+				,REGISTRY.NAME
+				,SCOPE.DESCRIPTION
+				,PROJECT.NAME
+				,DELIVERY_DETAIL.LINE
+				,DELIVERY_DETAIL.ITEM
+				,PCATEGORY.NAME
+				,PRODUCT.ID
+				,PRODUCT.NAME
+				,PRODUCT.CODE
+				,ITEM.DETAIL
+				,ITEM.DETAIL2
+				,ITEM.DETAIL3
+				,ITEM.DESCRIPTION
+				,DELIVERY_DETAIL.DESCRIPTION
+				,DELIVERY_DETAIL.QUANTITY
+				,DELIVERY_DETAIL.PRICE
+				,DELIVERY_DETAIL.DISCOUNT_EXPR
+				,WORKPLACE.DESCRIPTION
+			)
+			.from(DELIVERY)
+			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.equal(DELIVERY.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(DELIVERY.CUSTOMER))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(DELIVERY.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(DELIVERY.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(DELIVERY.WORKPLACE))
+			.where(DELIVERY_PROPERTIES.getConditions(filter))
+			.orderBy(DELIVERY.ISSUE_TIME,DELIVERY.SERIES,DELIVERY.NUMBER,DELIVERY_DETAIL.LINE)
+			.fetch();
+	}
+	
+	public static Stream<DeliveryDetail> getDeliveryDetails(AONContext ctx, DeliveryFilter filter) {
+		return getFullDeliveries(ctx, filter)
+			.stream()
+			.map(new FullDeliveryDetailFiller2());
+	}
+	
+	private static class FullDeliveryDetailFiller2  implements Function<Record,DeliveryDetail> {
+
+		@Override
+		public DeliveryDetail apply(Record record) {
+			Customer customer = new Customer();
+			customer.setDocument(record.getValue(REGISTRY.DOCUMENT));
+			customer.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
+									record.getValue(REGISTRY.DOCUMENT_TYPE)));
+			customer.setDocumentCountry(Country.safeValueOf(record
+									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
+			customer.setName(record.getValue(REGISTRY.NAME));
+			
+			return new DeliveryDetail()
+				.setDelivery(new Delivery()
+					.setId(record.getValue(DELIVERY.ID))
+					.setDomain(record.getValue(DELIVERY.DOMAIN))
+					.setStatus(AonEnumUtils.enumValue(DeliveryStatus.class,
+									record.getValue(DELIVERY.STATUS)))
+					.setSeries(record.getValue(DELIVERY.SERIES))
+					.setNumber(record.getValue(DELIVERY.NUMBER))
+					.setIssueTime(record.getValue(DELIVERY.ISSUE_TIME))
+					.setCustomer2(customer)
+					.setScopeName(record.getValue(SCOPE.DESCRIPTION))	
+					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
+					.setProject(new Project()
+							.setName(record.getValue(PROJECT.NAME)))
+					)
+				
+				.setLine(record.getValue(DELIVERY_DETAIL.LINE))
+				.setDescription(record.getValue( DELIVERY_DETAIL.DESCRIPTION ))
+				.setQuantity(record.getValue(DELIVERY_DETAIL.QUANTITY))
+				.setPrice(record.getValue(DELIVERY_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
+				.setItem((record.getValue(DELIVERY_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(DELIVERY_DETAIL.ITEM))
+						.setCategory( record.getValue( PCATEGORY.NAME ) )
+						.setProductId( record.getValue( PRODUCT.ID ) )
+						.setName( record.getValue( PRODUCT.NAME ) )
+						.setCode(record.getValue( PRODUCT.CODE ) )
+						.setDetail(record.getValue( ITEM.DETAIL ))
+						.setDetail2(record.getValue( ITEM.DETAIL2 ))
+						.setDetail3(record.getValue( ITEM.DETAIL3 ))
+						.setDescription(record.getValue( ITEM.DESCRIPTION )));
+		}
+	}
+	
 }
