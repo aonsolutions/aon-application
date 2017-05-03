@@ -3,11 +3,14 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -23,20 +26,24 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Result;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
+import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.management.SalesDetailFilter;
-import com.esferalia.aon.occam.api.model.management.SalesDetailProperties;
-import com.esferalia.aon.occam.api.model.management.SalesFilter;
-import com.esferalia.aon.occam.api.model.management.SalesProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SalesDAO {
 	
@@ -85,6 +92,7 @@ public class SalesDAO {
 		@Override public Property<String> getShippingAlternativeRecipientProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_ALTERNATIVE_RECIPIENT);}
 		@Override public Property<String> getShippingContactProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_CONTACT);}
 		@Override public Property<Byte> getShippingPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(SALES.SHIPPING_PERIOD);}
+		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	protected static class SalesDetailPropertiesDAO implements SalesDetailProperties {
@@ -399,6 +407,109 @@ public class SalesDAO {
 						description, economicAgreement, scope).execute();
 	}
 	
+	
+	private static Result<Record> getFullSales(AONContext ctx, SalesFilter filter) {
+		ctx.checkRead();
+
+		return ctx.getDslContext()
+			.select(
+				 SALES.ID
+				,SALES.DOMAIN
+				,SALES.STATUS
+				,SALES.SERIES
+				,SALES.NUMBER
+				,SALES.DOCUMENT_TYPE
+				,SALES.ISSUE_DATE
+				,REGISTRY.DOCUMENT
+				,REGISTRY.DOCUMENT_TYPE
+				,REGISTRY.DOCUMENT_COUNTRY
+				,REGISTRY.NAME
+				,SCOPE.DESCRIPTION
+				,PROJECT.NAME
+				,SALES_DETAIL.LINE
+				,SALES_DETAIL.ITEM
+				,PCATEGORY.NAME
+				,PRODUCT.ID
+				,PRODUCT.NAME
+				,PRODUCT.CODE
+				,ITEM.DETAIL
+				,ITEM.DETAIL2
+				,ITEM.DETAIL3
+				,ITEM.DESCRIPTION
+				,SALES_DETAIL.DESCRIPTION
+				,SALES_DETAIL.QUANTITY
+				,SALES_DETAIL.PRICE
+				,SALES_DETAIL.DISCOUNT_EXPR
+				,WORKPLACE.DESCRIPTION
+			)
+			.from(SALES)
+			.join(SALES_DETAIL).on(SALES_DETAIL.SALES.equal(SALES.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(SALES.CUSTOMER))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(SALES.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(SALES.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(SALES_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
+			.where(SALES_PROPERTIES.getConditions(filter))
+			.orderBy(SALES.ISSUE_DATE,SALES.SERIES,SALES.NUMBER,SALES_DETAIL.LINE)
+			.fetch();
+	}
+	
+	public static Stream<SalesDetail> getSalesDetails(AONContext ctx, SalesFilter filter) {
+		return getFullSales(ctx, filter)
+			.stream()
+			.map(new FullSaleDetailFiller2());
+	}
+	
+	private static class FullSaleDetailFiller2  implements Function<Record,SalesDetail> {
+
+		@Override
+		public SalesDetail apply(Record record) {
+			Customer customer = new Customer();
+			customer.setDocument(record.getValue(REGISTRY.DOCUMENT));
+			customer.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
+									record.getValue(REGISTRY.DOCUMENT_TYPE)));
+			customer.setDocumentCountry(Country.safeValueOf(record
+									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
+			customer.setName(record.getValue(REGISTRY.NAME));
+			
+			return new SalesDetail()
+				.setSales(new Sales()
+					.setId(record.getValue(SALES.ID))
+					.setDomain(record.getValue(SALES.DOMAIN))
+					.setDocumentType(record.getValue(SALES.DOCUMENT_TYPE))
+					.setStatus(AonEnumUtils.enumValue(SalesStatus.class,
+									record.getValue(SALES.STATUS)))
+					.setSeries(record.getValue(SALES.SERIES))
+					.setNumber(record.getValue(SALES.NUMBER))
+					.setIssueDate(record.getValue(SALES.ISSUE_DATE))
+					.setCustomer(customer)
+					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
+					
+					.setProjectName(record.getValue(PROJECT.NAME))
+					)
+				
+				.setLine(record.getValue(SALES_DETAIL.LINE))
+				.setDescription(record.getValue(SALES_DETAIL.DESCRIPTION))
+				.setQuantity(record.getValue(SALES_DETAIL.QUANTITY))
+				.setPrice(record.getValue(SALES_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(SALES_DETAIL.DISCOUNT_EXPR))
+				.setItem((record.getValue(SALES_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(SALES_DETAIL.ITEM))
+						.setCategory(record.getValue(PCATEGORY.NAME))
+						.setProductId(record.getValue(PRODUCT.ID))
+						.setName(record.getValue(PRODUCT.NAME))
+						.setCode(record.getValue(PRODUCT.CODE))
+						.setDetail(record.getValue(ITEM.DETAIL))
+						.setDetail2(record.getValue(ITEM.DETAIL2))
+						.setDetail3(record.getValue(ITEM.DETAIL3))
+						.setDescription(record.getValue(ITEM.DESCRIPTION)));
+		}
+	}
+
 
 	
 	private static class FullSalesFiller implements Function<Record, Sales> {

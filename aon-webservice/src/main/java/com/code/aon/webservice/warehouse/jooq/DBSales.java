@@ -11,9 +11,9 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.management.SalesDetailProperties;
-import com.esferalia.aon.occam.api.model.management.SalesProperties;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBSales {

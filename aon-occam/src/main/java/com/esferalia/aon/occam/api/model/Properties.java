@@ -697,9 +697,41 @@ public interface Properties {
 		Property<Byte> getShippingPeriodProperty();
 		Property<Integer> getCarrierPackingProperty();
 		
+		// VALUE OF PURCHASE TABLE
+		Property<Date> getStartIssueDateProperty();
+		Property<Date> getEndIssueDateProperty();
+		Property<Byte> getConfidentialProperty();
+		
 		// REGISTRY
 		Property<String> getRegistryNameProperty();
 		Property<String> getRegistryDocumentProperty();
+		
+	}
+	
+	public interface PurchaseDetailProperties{
+		
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getPurchaseProperty();
+		Property<Integer> getProjectProperty();
+		Property<Integer> getItemProperty();
+		Property<Short> getLineProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getDiscountExpressionProperty();
+		Property<Double> getTaxesProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getProposalDetailProperty();
+		Property<Byte> getSourceProperty();
+		Property<Integer> getSourceIdProperty();
+		Property<Double> getDeliveredProperty();
+		Property<Integer> getCarrierPackingProperty();
+		
+		// VALUE OF PURCHASE TABLE
+		Property<Integer> getScopeProperty();
+		Property<Byte> getConfidentialProperty();
+		Property<Integer> getSupplierProperty();
 		
 	}
 	
@@ -795,4 +827,59 @@ public interface Properties {
 		Property<String> getValueProperty();
 	}
 
+	public interface SalesProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<Integer> getCustomerProperty();
+		Property<String> getSeriesProperty();
+		Property<Integer> getNumberProperty();
+		Property<String> getPurchaseReferenceProperty();
+		Property<Integer> getShippingAddressProperty();
+		Property<Integer> getSellerProperty();
+		Property<String> getDiscountExprProperty();
+		Property<Date> getIssueDateProperty();
+		Property<Integer> getPayMethodProperty();
+		Property<Byte> getDocumentTypeProperty();
+		Property<Byte> getSecurityLevelProperty();
+		Property<Byte> getStatusProperty();
+		Property<String> getCommentsProperty();
+		Property<String> getRemarksProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Integer> getScopeProperty();
+		Property<Byte> getConfidentialProperty();
+		Property<Short> getNumberOfPymntsProperty();
+		Property<Short> getDaysToFirstPymntProperty();
+		Property<Short> getDaysBetweenPymntsProperty();
+		Property<String> getPymntDaysProperty();
+		Property<String> getBankAccountProperty();
+		Property<String> getBankAliasProperty();
+		Property<String> getBicProperty();		
+		Property<Byte> getPurchaseGeneratedProperty();
+		Property<Integer> getCarrierProperty();
+		Property<String> getShippingAlternativeAddressProperty();
+		Property<String> getShippingAlternativeAddress2Property();
+		Property<String> getShippingAlternativeZipProperty();
+		Property<String> getShippingAlternativeCityProperty();
+		Property<String> getShippingAlternativePhoneProperty();
+		Property<String> getShippingAlternativeRecipientProperty();
+		Property<String> getShippingContactProperty();
+		Property<Byte> getShippingPeriodProperty();
+	}
+	
+	public interface SalesDetailProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getSalesProperty();
+		Property<Integer> getItemProperty();
+		Property<Short> getLineProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getdiscountExpressionProperty();
+		Property<Double> getTaxesProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getOfferDetailProperty();
+		Property<Double> getDeliveredProperty();
+	}
 }

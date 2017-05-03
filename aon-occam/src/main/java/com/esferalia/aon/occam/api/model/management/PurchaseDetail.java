@@ -19,6 +19,7 @@ public class PurchaseDetail implements Serializable {
 	private int purchaseId;
 	private Purchase purchase;
 	private Integer project;
+	private String projectName;
 	private int item;
 	private Item item2; // TODO sustituir por el de arriba!
 	private Integer line;
@@ -79,6 +80,13 @@ public class PurchaseDetail implements Serializable {
 	}
 	public PurchaseDetail setProject(Integer project) {
 		this.project = project;
+		return this;
+	}
+	public String getProjectName() {
+		return projectName;
+	}
+	public PurchaseDetail setProjectName(String projectName) {
+		this.projectName = projectName;
 		return this;
 	}
 	public int getItem() {
@@ -189,51 +197,59 @@ public class PurchaseDetail implements Serializable {
 	public Date getDeliveryDate() {
 		return deliveryDate;
 	}
-	public void setDeliveryDate(Date deliveryDate) {
+	public PurchaseDetail setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+		return this;
 	}
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public PurchaseDetail setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public void setCreationUser(String creationUser) {
+	public PurchaseDetail setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
+		return this;
 	}
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public void setModificationDate(Date modificationDate) {
+	public PurchaseDetail setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
 	}
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public void setModificationUser(String modificationUser) {
+	public PurchaseDetail setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
+		return this;
 	}
 	public Integer getCarrier() {
 		return carrier;
 	}
-	public void setCarrier(Integer carrier) {
+	public PurchaseDetail setCarrier(Integer carrier) {
 		this.carrier = carrier;
+		return this;
 	}
 	public Integer getProductId() {
 		return productId;
 	}
-	public void setProductId(Integer productId) {
+	public PurchaseDetail setProductId(Integer productId) {
 		this.productId = productId;
+		return this;
 	}
 	
 	public Item getItem2() { // TODO SUSTITUIR POR getItem()
 		return item2;
 	}
-	public void setItem2(Item item2) {// TODO SUSTITUIR POR setItem()
+	public PurchaseDetail setItem2(Item item2) {// TODO SUSTITUIR POR setItem()
 		this.item2 = item2;
+		return this;
 	}
 	
 

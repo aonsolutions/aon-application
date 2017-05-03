@@ -3,12 +3,12 @@ package com.esferalia.aon.occam.api.model.management;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class Purchase implements Serializable {
-	
 	
 	/**
 	 * 
@@ -18,8 +18,9 @@ public class Purchase implements Serializable {
 	private Integer id;
 	private int domain;
 	private Integer project;
-	private int supplier;
+	private int supplierId;
 	private String supplierName;
+	private Supplier supplier;
 	private String series;
 	private Integer number;
 	private String purchaseReference;
@@ -33,8 +34,11 @@ public class Purchase implements Serializable {
 	private String comments;
 	private String remarks;
 	private int workplace;
+	private String workplaceName;
+	
 	private Integer warehouse;
 	private Integer scope;
+	private String scopeName;
 	private int numberOfPymnts;
 	private int daysToFirstPymnt;
 	private int daysBetweenPymnts;
@@ -81,12 +85,21 @@ public class Purchase implements Serializable {
 		return this;
 	}
 	public int getSupplier() {
-		return supplier;
+		return supplierId;
 	}
 	public Purchase setSupplier(int supplier) {
+		this.supplierId = supplier;
+		return this;
+	}
+	
+	public Supplier getSupplier2() {
+		return supplier;
+	}
+	public Purchase setSupplier(Supplier supplier) {
 		this.supplier = supplier;
 		return this;
 	}
+	
 	public String getSupplierName() {
 		return supplierName;
 	}
@@ -190,6 +203,13 @@ public class Purchase implements Serializable {
 		this.workplace = workplace;
 		return this;
 	}
+	public String getWorkplaceName() {
+		return workplaceName;
+	}
+	public Purchase setWorkplaceName(String workplaceName) {
+		this.workplaceName = workplaceName;
+		return this;
+	}
 	public Integer getWarehouse() {
 		return warehouse;
 	}
@@ -202,6 +222,13 @@ public class Purchase implements Serializable {
 	}
 	public Purchase setScope(Integer scope) {
 		this.scope = scope;
+		return this;
+	}
+	public String getScopeName() {
+		return scopeName;
+	}
+	public Purchase setScopeName(String scopeName) {
+		this.scopeName = scopeName;
 		return this;
 	}
 	public int getNumberOfPymnts() {

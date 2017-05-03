@@ -75,6 +75,17 @@ public class InvoiceReport extends MainEntryPoint {
 	@UiField
 	CheckBox offerStatusInvoiced;
 	
+	@UiField
+	CheckBox orderStatusPending;
+	@UiField
+	CheckBox orderStatusBlocked;
+	@UiField
+	CheckBox orderStatusServed;
+	@UiField
+	CheckBox orderStatusClosed;
+	@UiField
+	CheckBox orderStatusInvoiced;
+	
 	
 	private int domain;
 	private int enterprise;
@@ -117,8 +128,8 @@ public class InvoiceReport extends MainEntryPoint {
 		onChangeEntity(null);
 		
 		SelectElement select = entity.getElement().cast();
-		select.getOptions().getItem(2).setDisabled(true);
-		select.getOptions().getItem(3).setDisabled(true);
+		//select.getOptions().getItem(2).setDisabled(true);
+		//select.getOptions().getItem(3).setDisabled(true);
 		select.getOptions().getItem(4).setDisabled(true);
 		select.getOptions().getItem(5).setDisabled(true);
 
@@ -149,6 +160,19 @@ public class InvoiceReport extends MainEntryPoint {
 		offerStatusBlocked.setValue(true);
 		offerStatusInvoiced.setValue(true);
 
+		orderStatusPending.setName(IRequestParamsNames.ORDER_STATUS_PENDING);
+		orderStatusBlocked.setName(IRequestParamsNames.ORDER_STATUS_BLOCKED);
+		orderStatusServed.setName(IRequestParamsNames.ORDER_STATUS_SERVED);
+		orderStatusClosed.setName(IRequestParamsNames.ORDER_STATUS_CLOSED);
+		orderStatusInvoiced.setName(IRequestParamsNames.ORDER_STATUS_INVOICED);
+		
+		orderStatusPending.setValue(true);
+		orderStatusBlocked.setValue(true);
+		orderStatusServed.setValue(true);
+		orderStatusClosed.setValue(true);
+		orderStatusInvoiced.setValue(true);
+
+		
 		Date date = new Date();
 		CalendarUtil.setToFirstDayOfMonth(date);
 		fromDate.setValue(date);
@@ -181,6 +205,8 @@ public class InvoiceReport extends MainEntryPoint {
 	void onChangeEntity(ChangeEvent event) {
 		boolean invoice = (entity.getSelectedIndex() == 0); 
 		boolean offer = (entity.getSelectedIndex() == 1);
+		boolean purchase = (entity.getSelectedIndex() == 2);
+		boolean sale = (entity.getSelectedIndex() == 3);
 		
 		invoiceTypeSales.setVisible(invoice);
 		invoiceTypePurchases.setVisible(invoice);
@@ -193,6 +219,11 @@ public class InvoiceReport extends MainEntryPoint {
 		offerStatusBlocked.setVisible(offer);
 		offerStatusInvoiced.setVisible(offer);
 		
+		orderStatusPending.setVisible(purchase || sale);
+		orderStatusBlocked.setVisible(purchase || sale);
+		orderStatusServed.setVisible(purchase || sale);
+		orderStatusClosed.setVisible(purchase || sale);
+		orderStatusInvoiced.setVisible(purchase || sale);
 	}
 
 	@UiHandler("generateFileButton")
@@ -215,7 +246,7 @@ public class InvoiceReport extends MainEntryPoint {
 			} else if (entity.getSelectedIndex() == 2) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/PurchaseOrderReport");
 			} else if (entity.getSelectedIndex() == 3) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/SaleOrderReport");
+				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/SalesOrderReport");
 			} else if (entity.getSelectedIndex() == 4) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/IncomeReport");
 			} else if (entity.getSelectedIndex() == 5) {

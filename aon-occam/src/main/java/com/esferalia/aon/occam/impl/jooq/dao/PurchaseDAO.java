@@ -1,13 +1,17 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -22,30 +26,140 @@ import java.util.stream.Stream;
 import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.PurchaseDetailRecord;
 import com.esferalia.aon.jooq.tables.records.PurchaseRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchaseDetailPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PurchaseDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PurchaseDetailItemFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchaseDetailPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 
 public class PurchaseDAO {
 	
 	private static final PurchaseDetailPropertiesDAO PURCHASE_DETAIL_PROPERTIES = new PurchaseDetailPropertiesDAO();
 	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
+
+	
+	private static Result<Record> getFullPurchases(AONContext ctx, PurchaseFilter filter) {
+		ctx.checkRead();
+
+		return ctx.getDslContext()
+			.select(
+				 PURCHASE.ID
+				,PURCHASE.DOMAIN
+				,PURCHASE.STATUS
+				,PURCHASE.SERIES
+				,PURCHASE.NUMBER
+				,PURCHASE.DOCUMENT_TYPE
+				,PURCHASE.ISSUE_DATE
+				,REGISTRY.DOCUMENT
+				,REGISTRY.DOCUMENT_TYPE
+				,REGISTRY.DOCUMENT_COUNTRY
+				,REGISTRY.NAME
+				,SCOPE.DESCRIPTION
+				,PROJECT.NAME
+				,PURCHASE_DETAIL.LINE
+				,PURCHASE_DETAIL.ITEM
+				,PCATEGORY.NAME
+				,PRODUCT.ID
+				,PRODUCT.NAME
+				,PRODUCT.CODE
+				,ITEM.DETAIL
+				,ITEM.DETAIL2
+				,ITEM.DETAIL3
+				,ITEM.DESCRIPTION
+				,PURCHASE_DETAIL.DESCRIPTION
+				,PURCHASE_DETAIL.QUANTITY
+				,PURCHASE_DETAIL.PRICE
+				,PURCHASE_DETAIL.DISCOUNT_EXPR
+				,WORKPLACE.DESCRIPTION
+			)
+			.from(PURCHASE)
+			.join(PURCHASE_DETAIL).on(PURCHASE_DETAIL.PURCHASE.equal(PURCHASE.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(PURCHASE.SUPPLIER))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(PURCHASE.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(PURCHASE_DETAIL.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(PURCHASE_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(PURCHASE.WORKPLACE))
+			.where(PURCHASE_PROPERTIES.getConditions(filter))
+			.orderBy(PURCHASE.ISSUE_DATE,PURCHASE.SERIES,PURCHASE.NUMBER,PURCHASE_DETAIL.LINE)
+			.fetch();
+	}
+	
+	public static Stream<PurchaseDetail> getPurchaseDetails(AONContext ctx, PurchaseFilter filter) {
+		return getFullPurchases(ctx, filter)
+			.stream()
+			.map(new FullPurchaseDetailFiller2());
+	}
+	
+	private static class FullPurchaseDetailFiller2  implements Function<Record,PurchaseDetail> {
+
+		@Override
+		public PurchaseDetail apply(Record record) {
+			Supplier supplier = new Supplier();
+			supplier.setDocument(record.getValue(REGISTRY.DOCUMENT));
+			supplier.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
+									record.getValue(REGISTRY.DOCUMENT_TYPE)));
+			supplier.setDocumentCountry(Country.safeValueOf(record
+									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
+			supplier.setName(record.getValue(REGISTRY.NAME));
+			
+			return new PurchaseDetail()
+				.setPurchase(new Purchase()
+					.setId(record.getValue(PURCHASE.ID))
+					.setDomain(record.getValue(PURCHASE.DOMAIN))
+					.setDocumentType(AonEnumUtils.enumValue(PurchaseType.class,
+									record.getValue(PURCHASE.DOCUMENT_TYPE)))
+					.setStatus(AonEnumUtils.enumValue(PurchaseStatus.class,
+									record.getValue(PURCHASE.STATUS)))
+					.setSeries(record.getValue(PURCHASE.SERIES))
+					.setNumber(record.getValue(PURCHASE.NUMBER))
+					.setIssueDate(record.getValue(PURCHASE.ISSUE_DATE))
+					.setSupplier(supplier)
+					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
+					
+					
+					)
+				.setProjectName(record.getValue( PROJECT.NAME ))
+				.setLine((int) record.getValue(PURCHASE_DETAIL.LINE))
+				.setDescription(record.getValue( PURCHASE_DETAIL.DESCRIPTION ))
+				.setQuantity(record.getValue(PURCHASE_DETAIL.QUANTITY))
+				.setPrice(record.getValue(PURCHASE_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR))
+				.setItem2((record.getValue(PURCHASE_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(PURCHASE_DETAIL.ITEM))
+						.setCategory( record.getValue( PCATEGORY.NAME ) )
+						.setProductId( record.getValue( PRODUCT.ID ) )
+						.setName( record.getValue( PRODUCT.NAME ) )
+						.setCode(record.getValue( PRODUCT.CODE ) )
+						.setDetail(record.getValue( ITEM.DETAIL ))
+						.setDetail2(record.getValue( ITEM.DETAIL2 ))
+						.setDetail3(record.getValue( ITEM.DETAIL3 ))
+						.setDescription(record.getValue( ITEM.DESCRIPTION )));
+		}
+	}
 
 	// ------------------- PURCHASE
 	
