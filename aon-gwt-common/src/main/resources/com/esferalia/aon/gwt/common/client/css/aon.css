@@ -2850,3 +2850,9 @@ right
 		background: transparent !important;
 	}
 	
+	.aon-documental-title{
+		font-family: "Roboto", "Noto", sans-serif !important;
+	    font-size: 14px !important;
+	    line-height: 24px !important;
+	    color: #212121 !important;
+	}	

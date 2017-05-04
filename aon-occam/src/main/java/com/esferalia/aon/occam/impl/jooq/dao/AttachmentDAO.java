@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
+import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.OfferAttach.OFFER_ATTACH;
@@ -10,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
-import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -22,6 +22,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record7;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectField;
 
 import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
 import com.esferalia.aon.jooq.tables.records.IattachRecord;
@@ -56,9 +57,15 @@ public class AttachmentDAO {
 
 	//-------------------- GETS 
 	
-	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter){	
-		return RATTACH_PROPERTIES.build( ctx.getDslContext()
-				.select().from(RATTACH), filter)
+	// WD -> Without Data
+	private static SelectField[] rattachWD = {RATTACH.ID, RATTACH.DOMAIN, RATTACH.REGISTRY, RATTACH.MIMETYPE, RATTACH.DESCRIPTION,
+													   RATTACH.TYPE, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,
+													   RATTACH.DPARENT_ID, RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER,
+													   RATTACH.MODIFICATION_DATE};
+	
+	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter){		
+		return RATTACH_PROPERTIES.build(ctx.getDslContext()
+				.select(rattachWD).from(RATTACH), filter)
 			.fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
 	}
 	

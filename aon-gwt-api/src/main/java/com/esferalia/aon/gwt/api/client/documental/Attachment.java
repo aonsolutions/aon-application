@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.api.client.documental;
 
-import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -12,24 +11,12 @@ public class Attachment extends Methods{
 	String userName;
 	String domainName;
 	
-	public Attachment(AonUrlApi url, String accessToken) {
-		this.url = url.getUrl();
-		this.accessToken = accessToken;
-	}
 	
-	public Attachment(AonUrlApi url, String accesToken, String userName, String domainName) {
-		this.url = url.getUrl() + "aon-aio/";
-		this.userName = userName;
-		this.domainName = domainName;
+	public Attachment(String url, String accesToken, String domainName, String userName) {
+		this.url = url;
 		this.accessToken = accesToken;
-		this.scheme = url.getUrl().contains("https") ? "https" : "http";
-	}
-	
-	public Attachment(String url, String accesToken, String userName, String domainName) {
-		this.url = url + "aon-aio/";
-		this.userName = userName;
 		this.domainName = domainName;
-		this.accessToken = accesToken;
+		this.userName = userName;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
@@ -38,7 +25,7 @@ public class Attachment extends Methods{
 	}
 	
 	public void getAttachList( AsyncCallback<JSON<JsAttach>> callback){
-			get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/", callback);
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/files", callback);
 	}
 	
 	//---------------------- Métodos Get & Set

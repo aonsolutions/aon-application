@@ -1150,5 +1150,9 @@ public interface AonCSS extends CssResource {
 	
 	@ClassName("aon-invoice-label")
 	String aonInvoiceLabel();
+
+	@ClassName("aon-documental-title")
+	String aonDocumentalTitle();
+	
 	
 }

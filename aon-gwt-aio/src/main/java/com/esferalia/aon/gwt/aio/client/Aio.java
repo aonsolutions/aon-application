@@ -25,6 +25,7 @@ public class Aio implements EntryPoint {
 
 	private Issues issues;
 	private Documents documents;
+	//private Documental documental;
 	
 	public static native String getCurrentDomainName()
 	/*-{

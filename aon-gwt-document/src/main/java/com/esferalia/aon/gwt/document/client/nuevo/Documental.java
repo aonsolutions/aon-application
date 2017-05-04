@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.document.client.nuevo;
 
 import java.util.Arrays;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.Attachment;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
@@ -16,6 +17,7 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -37,6 +39,7 @@ import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class Documental implements EntryPoint {
@@ -53,8 +56,17 @@ public class Documental implements EntryPoint {
 	@UiField HTMLPanel searchContent;
 	@UiField HTMLPanel content;
 	
+	private API API;
 	private AonData aonData;
 	private Attachment attachment;
+	
+	public API getAPI() {
+		return API;
+	}
+	
+	public AonData getAonData() {
+		return aonData;
+	}
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -68,6 +80,8 @@ public class Documental implements EntryPoint {
 	
 	public Documental(AonData aonData) {
 		this.aonData = aonData;
+		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
+				aonData.getDomain().getName(), aonData.getUser().getLogin());
 	}
 	
 	@Override
@@ -81,7 +95,8 @@ public class Documental implements EntryPoint {
 				PaperIconButtonElement.SRC,
 				IronListElement.SRC,
 				PaperToggleButtonElement.SRC,
-				PaperSliderElement.SRC
+				PaperSliderElement.SRC,
+				AonComboBoxElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
@@ -219,6 +234,15 @@ public class Documental implements EntryPoint {
 	}
 	
 	private void createAttachListPanel() {
-		content.add(new AttachListPanel2());
+		getAPI().getAttachment().getAttachList(new AsyncCallback<JSON<JsAttach>>() {
+				
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				Window.alert("" + result.getData().toLinkedList().size());
+				content.add(new AttachListPanel2(result.getData()));
+			}
+				
+			@Override public void onFailure(Throwable caught) {}
+		});   
 	}
 }

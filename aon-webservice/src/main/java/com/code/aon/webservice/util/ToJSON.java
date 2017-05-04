@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -45,6 +46,13 @@ public class ToJSON {
 	private static final SimpleDateFormat dateFormat_YYYY_MM_DD = new SimpleDateFormat("yyyy/MM/dd");
 	private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+	public static JSONObject attachToJSON(Attach attach){	
+		return new JSONObject()
+			.put("id", attach.getId())
+			.put("domain", attach.getDomain().getId())
+			.put("title", attach.getDescription());
+	}
+	
 	public static JSONObject applicationParameterToJSON(ApplicationParameter appParam){	
 		return new JSONObject()
 			.put("id",appParam.getId())
