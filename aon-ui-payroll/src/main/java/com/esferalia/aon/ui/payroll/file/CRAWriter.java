@@ -185,6 +185,9 @@ public class CRAWriter {
 	 * @return
 	 */
 	private CRE createCRERecord(String code, Double amount, Double quote, boolean repeated) {
+		if(code == null){
+			code = "1";
+		}
 		if(amount!=0.0d || (isExtraPayment(code) && quote!=0.0d)){
 			CRE cre = new CRE();
 			cre.setConcepto(autoComplete(code, 4, "0", true));
