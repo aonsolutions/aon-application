@@ -101,7 +101,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 					}
 				});
 
-		final EmployeeEventsDraft employeeEventsDraft = new EmployeeEventsDraft();
+		final EmployeeEventsDraft_COPIA employeeEventsDraft = new EmployeeEventsDraft_COPIA();
 		// employeeEventsDraft
 		employeeEventsDraft.setEventsDraftObject(employeeDraftObject);
 
@@ -128,7 +128,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 	}
 
-	private void checkRangeDates(EmployeeEventsDraft employeeEventsDraft) {
+	private void checkRangeDates(EmployeeEventsDraft_COPIA employeeEventsDraft) {
 		
 		Date startDate = null;
 		Date endDate = null;
