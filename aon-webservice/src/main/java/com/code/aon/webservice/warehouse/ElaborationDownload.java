@@ -37,6 +37,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -70,15 +72,20 @@ public class ElaborationDownload extends HttpServlet {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private Integer elaborationId = null;
+	
+	private String domainName;
+	private Integer domainId;
+	private String login;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		HashMap<String, String> parameters = SecurityUtils.getInstance()
 				.getParameters(req.getPathInfo().substring(1));
-		String domainName = parameters.get("domain");
-		String login = parameters.get("login");
-		Domain domain = AON.getDomain(domainName, 1, login, f -> f
+		domainName = parameters.get("domain");
+		login = parameters.get("login");
+		domainId = 1;
+		Domain domain = AON.getDomain(domainName, domainId, login, f -> f
 				.getNameProperty().eq(domainName));
 		String _id = parameters.get("id");
 		if (_id != null && !"".equals(_id)) {
@@ -167,7 +174,7 @@ public class ElaborationDownload extends HttpServlet {
 	/*
 	 * PDF METHODS
 	 */
-	public static File createPdf(Elaboration elaboration, 
+	public File createPdf(Elaboration elaboration, 
 			List<ElaborationDetail> elaborationDetailList,
 			Map<Integer, List<ElaborationDetailComposition>> compositionMap,
 			Sales sales, Customer customer, Company company, RAddress address,
@@ -201,9 +208,17 @@ public class ElaborationDownload extends HttpServlet {
 				document.add(new Paragraph(" "));
 			}
 			
-			Paragraph elaborationDetailParagraph = getElaborationDetailParagraph(elaborationDetailList, compositionMap);
-			document.add(elaborationDetailParagraph);
+			List<ItemComposition> compositionList = AON.getItemCompositionList(domainName, domainId, login, elaboration.getItem().getId());
+			
+			Paragraph compositionParagraph = getCompositionParagraph(elaboration, compositionList);
+			document.add(compositionParagraph);
 			document.add(new Paragraph(" "));
+			
+			if(elaborationDetailList!=null && !elaborationDetailList.isEmpty()){
+				Paragraph elaborationDetailParagraph = getElaborationDetailParagraph(elaborationDetailList, compositionMap);
+				document.add(elaborationDetailParagraph);
+				document.add(new Paragraph(" "));
+			}
 
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -398,26 +413,30 @@ public class ElaborationDownload extends HttpServlet {
 		return paragraph;
 	}
 	
-	private static Paragraph getElaborationDetailParagraph(
-			List<ElaborationDetail> elaborationDetailList,
-			Map<Integer, List<ElaborationDetailComposition>> compositionMap) {
+	private Paragraph getCompositionParagraph(
+			Elaboration elaboration,
+			List<ItemComposition> compositionList) {
 		Paragraph paragraph = new Paragraph();
 		
 		PdfPTable tableM = new PdfPTable(1);
 		tableM.setWidthPercentage(100);
 		
-		elaborationDetailList.forEach(elaborationDetail -> {
-			String groupHeader = elaborationDetail.getQuantity() + " uds. ";
-			groupHeader += "(" + elaborationDetail.getItem().getSerialNumber() + ") ";
-			groupHeader += dateFormat.format(elaborationDetail.getDate());
-			tableM.addCell(new Phrase(groupHeader,getFont2()));
+		
+		String groupHeader = " COMPOSICION:  ";
+		groupHeader += elaboration.getItem().getProduct().getName();
+		tableM.addCell(new Phrase(groupHeader,getFont2()));
 
-			PdfPTable table = new PdfPTable(1);
-			table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-			table.setWidthPercentage(100);
-			
-			List<ElaborationDetailComposition> list = compositionMap.get(elaborationDetail.getId());
-			list.forEach(composition -> {
+		PdfPTable table = new PdfPTable(1);
+		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		table.setWidthPercentage(100);
+		
+		if(compositionList==null || compositionList.isEmpty()){
+			PdfPCell label = new PdfPCell(new Phrase("Composicion no definida",getFont2()));
+			table.addCell(label);
+		} else {
+			compositionList.forEach(composition -> {
+				Item compositionItem = AON.getItem(domainName, domainId, login, composition.getItemId());
+				
 				PdfPTable detail = new PdfPTable(6);
 				detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 				float[] medidaCeldas = {0.5f, 0.5f, 0.5f, 2.5f, 0.5f, 1.5f};
@@ -435,20 +454,135 @@ public class ElaborationDownload extends HttpServlet {
 				PdfPCell item = new PdfPCell(new Phrase("Producto",getFont1()));
 				item.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(item);
-				detail.addCell(new Phrase(String.valueOf(composition.getItem().getProduct()!=null?composition.getItem().getProduct().getName():""),getFont2()));
+				detail.addCell(new Phrase(String.valueOf(compositionItem.getProduct()!=null?compositionItem.getProduct().getName():""),getFont2()));
 				
-				PdfPCell warehouse = new PdfPCell(new Phrase("Almacén",getFont1()));
+				PdfPCell warehouse = new PdfPCell(new Phrase("",getFont1()));
 				warehouse.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(warehouse);
-				detail.addCell(new Phrase(composition.getWarehouse()!=null?composition.getWarehouse().getName():"",getFont2()));
+				detail.addCell(new Phrase("",getFont2()));
 				
 				table.addCell(detail);
 			});
-			
-			tableM.addCell(table);
-		});
+		}
+		tableM.addCell(table);
+		
 		
 		paragraph.add(tableM);
+		return paragraph;
+	}
+	
+	private static Paragraph getElaborationDetailParagraph(
+			ElaborationDetail elaborationDetail,
+			List<ElaborationDetailComposition> compositionList) {
+		Paragraph paragraph = new Paragraph();
+		
+		PdfPTable tableM = new PdfPTable(1);
+		tableM.setWidthPercentage(100);
+		
+		
+		String groupHeader = "ELABORADO: " + elaborationDetail.getQuantity() + " uds. ";
+		groupHeader += "(" + elaborationDetail.getItem().getSerialNumber() + ") ";
+		groupHeader += dateFormat.format(elaborationDetail.getDate());
+		tableM.addCell(new Phrase(groupHeader,getFont2()));
+		
+		PdfPTable table = new PdfPTable(1);
+		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		table.setWidthPercentage(100);
+		
+		compositionList.forEach(composition -> {
+			PdfPTable detail = new PdfPTable(6);
+			detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+			float[] medidaCeldas = {0.5f, 0.5f, 0.5f, 2.5f, 0.5f, 1.5f};
+			try {
+				detail.setWidths(medidaCeldas);
+			} catch (DocumentException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+			
+			PdfPCell quantity = new PdfPCell(new Phrase("Cantidad",getFont1()));
+			quantity.setBorder(PdfPCell.NO_BORDER);
+			detail.addCell(quantity);
+			detail.addCell(new Phrase(String.valueOf(composition.getQuantity()),getFont2()));
+			
+			PdfPCell item = new PdfPCell(new Phrase("Producto",getFont1()));
+			item.setBorder(PdfPCell.NO_BORDER);
+			detail.addCell(item);
+			detail.addCell(new Phrase(String.valueOf(composition.getItem().getProduct()!=null?composition.getItem().getProduct().getName():""),getFont2()));
+			
+			PdfPCell warehouse = new PdfPCell(new Phrase("Almacén",getFont1()));
+			warehouse.setBorder(PdfPCell.NO_BORDER);
+			detail.addCell(warehouse);
+			detail.addCell(new Phrase(composition.getWarehouse()!=null?composition.getWarehouse().getName():"",getFont2()));
+			
+			table.addCell(detail);
+		});
+		
+		tableM.addCell(table);
+		
+		paragraph.add(tableM);
+		return paragraph;
+	}
+	
+	private static Paragraph getElaborationDetailParagraph(
+			List<ElaborationDetail> elaborationDetailList,
+			Map<Integer, List<ElaborationDetailComposition>> compositionMap) {
+		
+		Paragraph paragraph = new Paragraph();
+		
+		elaborationDetailList.forEach(elaborationDetail -> {
+			List<ElaborationDetailComposition> compositionList = compositionMap.get(elaborationDetail.getId());
+			paragraph.add(
+					getElaborationDetailParagraph(elaborationDetail, compositionList)
+					);
+		});
+		
+		
+//		PdfPTable tableM = new PdfPTable(1);
+//		tableM.setWidthPercentage(100);
+//		
+//		elaborationDetailList.forEach(elaborationDetail -> {
+//			String groupHeader = elaborationDetail.getQuantity() + " uds. ";
+//			groupHeader += "(" + elaborationDetail.getItem().getSerialNumber() + ") ";
+//			groupHeader += dateFormat.format(elaborationDetail.getDate());
+//			tableM.addCell(new Phrase(groupHeader,getFont2()));
+//
+//			PdfPTable table = new PdfPTable(1);
+//			table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+//			table.setWidthPercentage(100);
+//			
+//			List<ElaborationDetailComposition> list = compositionMap.get(elaborationDetail.getId());
+//			list.forEach(composition -> {
+//				PdfPTable detail = new PdfPTable(6);
+//				detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+//				float[] medidaCeldas = {0.5f, 0.5f, 0.5f, 2.5f, 0.5f, 1.5f};
+//				try {
+//					detail.setWidths(medidaCeldas);
+//				} catch (DocumentException e) {
+//					LOGGER.log(Level.SEVERE, e.getMessage());
+//				}
+//				
+//				PdfPCell quantity = new PdfPCell(new Phrase("Cantidad",getFont1()));
+//				quantity.setBorder(PdfPCell.NO_BORDER);
+//				detail.addCell(quantity);
+//				detail.addCell(new Phrase(String.valueOf(composition.getQuantity()),getFont2()));
+//				
+//				PdfPCell item = new PdfPCell(new Phrase("Producto",getFont1()));
+//				item.setBorder(PdfPCell.NO_BORDER);
+//				detail.addCell(item);
+//				detail.addCell(new Phrase(String.valueOf(composition.getItem().getProduct()!=null?composition.getItem().getProduct().getName():""),getFont2()));
+//				
+//				PdfPCell warehouse = new PdfPCell(new Phrase("Almacén",getFont1()));
+//				warehouse.setBorder(PdfPCell.NO_BORDER);
+//				detail.addCell(warehouse);
+//				detail.addCell(new Phrase(composition.getWarehouse()!=null?composition.getWarehouse().getName():"",getFont2()));
+//				
+//				table.addCell(detail);
+//			});
+//			
+//			tableM.addCell(table);
+//		});
+//		
+//		paragraph.add(tableM);
 		return paragraph;
 	}
 	
@@ -529,6 +663,11 @@ public class ElaborationDownload extends HttpServlet {
 		paragraph.add(tableM);
 		return paragraph;
 	}
+	
+	
+	/*
+	 * 
+	 */
 	
 	
 	/*
