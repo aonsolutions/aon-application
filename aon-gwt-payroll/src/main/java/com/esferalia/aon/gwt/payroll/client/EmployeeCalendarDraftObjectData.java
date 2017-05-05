@@ -18,8 +18,10 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -40,6 +42,7 @@ public class EmployeeCalendarDraftObjectData {
 	private EmployeesServiceAsync employeesService;
 	
 	private boolean fullTimeEmployee;
+	private int fullTimeEmployeeDraft = -1;
 	
 	public UndoManager<Undoable> undoManager;
 	
@@ -310,6 +313,14 @@ public class EmployeeCalendarDraftObjectData {
 	}
 	
 	public boolean isFullTimeJourney(){
+		if (fullTimeEmployee)
+			if (fullTimeEmployeeDraft == 0)
+				return false;
+		
+		if (!fullTimeEmployee)
+			if (fullTimeEmployeeDraft == 1)
+				return true;
+		
 		return fullTimeEmployee;
 	}
 	
@@ -673,6 +684,8 @@ public class EmployeeCalendarDraftObjectData {
 				initializeFestivesDaysTypeMap(festivesList);
 				initializeITDaysTypeMap(ITDaysList);
 				fullTimeEmployee = result.isFullTimeJourney();
+				if (fullTimeEmployeeDraft == -1)
+					fullTimeEmployeeDraft = result.isFullTimeJourney() ? 1 : 0;
 				
 				success.accept(result);
 				
@@ -968,6 +981,18 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		return updateTypesMap;
+	}
+
+	public void getSalaryDraftChanged(SalaryDraft salaryDraft) {
+		for (Variable var : salaryDraft.getDraftContext()){
+			if(var.getName().equals("TIEMPO_COMPLETO"))
+				if (var.getExpression().equals("false"))
+					this.fullTimeEmployeeDraft = 0;
+				else
+					this.fullTimeEmployeeDraft = 1;
+				
+		}
+		
 	}
 
 	

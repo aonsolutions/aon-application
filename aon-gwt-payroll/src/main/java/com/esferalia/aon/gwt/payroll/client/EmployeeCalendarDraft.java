@@ -1147,8 +1147,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		});
 		
 		calendar.initializeDBCalendar(
-				r -> { this.showHours = r.isFullTimeJourney();
-					   this.fullTimeJourney = r.isFullTimeJourney();
+				r -> { this.showHours = calendarEmployeeInfo.isFullTimeJourney();
+					   this.fullTimeJourney = calendarEmployeeInfo.isFullTimeJourney();
 					   initCalendar();
 					 }, t -> {});
 	}
