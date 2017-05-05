@@ -290,12 +290,27 @@ public class MOD303Writer {
 			gr.setBaseSurchrageModifications( taxableBase );
 			gr.setQuotaSurchrageModifications( quota );
 		} else if (key == VatTaxKey.A3 ) {
+			if (gr.getIntracommunitary().containsKey((mapKey))) {
+				Breakdown old = gr.getIntracommunitary().get(mapKey);
+				bd.setTaxableBase( CommonUtil.round(bd.getTaxableBase() + old.getTaxableBase()) ); 
+				bd.setQuota( CommonUtil.round(bd.getQuota() + old.getQuota()) ); 
+				bd.setDeductibleQuota( CommonUtil.round(bd.getDeductibleQuota() + old.getDeductibleQuota()) ); 
+			}
 			gr.getIntracommunitary().put(mapKey, bd);
 			gr.setBaseIntracommunitary( CommonUtil.round(gr.getBaseIntracommunitary() +taxableBase,2));
 			gr.setQuotaIntracommunitary( CommonUtil.round(gr.getQuotaIntracommunitary() +quota,2));
 			gr.setBaseIntracommunitaryCT( CommonUtil.round(gr.getBaseIntracommunitaryCT() +taxableBase,2));
 			gr.setQuotaIntracommunitaryCT( CommonUtil.round(gr.getQuotaIntracommunitaryCT() +quota,2));
 		} else if (key == VatTaxKey.A31 ) {
+			if (gr.getIntracommunitary().containsKey((mapKey))) {
+				Breakdown old = gr.getIntracommunitary().get(mapKey);
+				bd.setTaxableBase( CommonUtil.round(bd.getTaxableBase() + old.getTaxableBase()) ); 
+				bd.setQuota( CommonUtil.round(bd.getQuota() + old.getQuota()) ); 
+				bd.setDeductibleQuota( CommonUtil.round(bd.getDeductibleQuota() + old.getDeductibleQuota()) ); 
+			}
+			gr.getIntracommunitary().put(mapKey, bd);
+			gr.setBaseIntracommunitary( CommonUtil.round(gr.getBaseIntracommunitary() +taxableBase,2));
+			gr.setQuotaIntracommunitary( CommonUtil.round(gr.getQuotaIntracommunitary() +quota,2));
 			gr.setBaseIntracommunitaryCT( CommonUtil.round(gr.getBaseIntracommunitaryCT() +taxableBase,2));
 			gr.setQuotaIntracommunitaryCT( CommonUtil.round(gr.getQuotaIntracommunitaryCT() +quota,2));
 		} else if (key == VatTaxKey.A4) {

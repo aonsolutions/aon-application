@@ -231,7 +231,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		addClave(mod,31,gr.getInnerInvestmentOperationsQuota());
 		addClave(mod,32,gr.getImportedCommonOperationsQuota());
 		addClave(mod,33,gr.getImportedInvestmentOperationsQuota());
-		addClave(mod,34,gr.getIntracommunitaryCommonOperationsQuota());
+		addClave(mod,34,gr.getIntracommunitaryCommonOperationsQuota() + gr.getIntracommunitaryExpensesOperationsQuota( ) );
 		addClave(mod,35,gr.getIntracommunitaryInvestmentOperationsQuota());
 		addClave(mod,36,gr.getAgriculturalRegimeCompensation());
 		addClave(mod,37,gr.getInvestmentNormalization());
