@@ -20,8 +20,12 @@
 	<stylesheet src="codemirror/theme/aon.css"/>
 	<!-- stylesheets merge them -->
 	<stylesheet src="codemirror/addon/merge/merge.css"/>
-	<!-- stylesheets fold them -->
+	<!-- stylesheets fold gutter -->
 	<stylesheet src="codemirror/addon/fold/foldgutter.css"/>
+	<!-- stylesheets dialog  -->
+	<stylesheet src="codemirror/addon/dialog/dialog.css"/>
+	<!-- stylesheets search on scrollbar  -->
+	<stylesheet src="codemirror/addon/search/matchesonscrollbar.css"/>
 
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>
