@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
+import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
@@ -50,6 +51,12 @@ public class RegistryImpl implements IRegistry{
 	public LinkedList<Category> getCategoryList(AONContext ctx) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getCategoryList(ctx));
+	}
+	
+	@Override
+	public Stream<Category> getCategoryStream(AONContext ctx, CategoryFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getCategoryStream(ctx, filter));
 	}
 
 	// ------------------------------------- CREDITOR

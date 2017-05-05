@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
+import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
@@ -344,5 +345,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface SalesDetailFilter{
 		Filter filter(SalesDetailProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface CategoryFilter{
+		Filter filter(CategoryProperties properties);
 	}
 }

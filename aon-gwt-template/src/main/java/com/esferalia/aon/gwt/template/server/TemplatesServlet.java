@@ -2563,7 +2563,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return AON.getAttachStream(domain.getName(), domain.getId(), getUser().getLogin(), 
 				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())),
-				AttachType.REGISTRY).map(r -> r.getDescription())
+				AttachType.REGISTRY, false).map(r -> r.getDescription())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	

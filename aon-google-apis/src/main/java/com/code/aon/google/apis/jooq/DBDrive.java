@@ -50,7 +50,7 @@ public class DBDrive {
 				.and(f.getDataProperty().isNotNull())
 				.and(f.getMimeTypeProperty().isNotNull())
 				.page(page).perPage(perPage),
-				attachType).map(new AttachToFileInfo())
+				attachType, true).map(new AttachToFileInfo())
 				.collect(Collectors.toCollection(Vector::new));
 	}	
 	
@@ -246,7 +246,7 @@ public class DBDrive {
 			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
 					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getDataProperty().isNotNull()),
-					AttachType.REGISTRY).map(new  AttachToFileInfo())
+					AttachType.REGISTRY, true).map(new  AttachToFileInfo())
 					.collect(Collectors.toCollection(Vector::new)));
 			return attachs;
 		}
@@ -351,15 +351,6 @@ public class DBDrive {
 			
 		}
 	//CONTRACT ATTACH
-		
-		public static Vector<FileInfo> getContractAttach(Domain domain,Vector<FileInfo> attachs) {
-			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getDataProperty().isNotNull()),
-					AttachType.CONTRACT).map(new  AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new)));
-			return attachs;
-		}
 
 		public static FileInfo getEmailsContractAttach(Domain domain,FileInfo fileInfo){
 			AONContext ctx = null;
@@ -477,15 +468,6 @@ public class DBDrive {
 	
 	//ITEM ATTACH
 		
-		public static Vector<FileInfo> getItemAttach(Domain domain,Vector<FileInfo> attachs) {
-			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getDataProperty().isNotNull()),
-					AttachType.ITEM).map(new  AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new)));
-			return attachs;
-		}
-		
 		public static void setDriveIdIattach(Domain domain,FileInfo fileInfo) {
 			AONContext ctx = null;
 			try {
@@ -571,15 +553,6 @@ public class DBDrive {
 		}
 		
 	//INVOICE ATTACH
-		
-		public static Vector<FileInfo> getInvoiceAttach(Domain domain,Vector<FileInfo> attachs) {
-			attachs.addAll( AON.getAttachStream(domain.getName(), domain.getId(), "",
-					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getDataProperty().isNotNull()),
-					AttachType.INVOICE).map(new  AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new)));
-			return attachs;
-		}
 		
 		public static FileInfo getEmailsInvoiceAttach(Domain domain,FileInfo fileInfo){
 			AONContext ctx = null;
@@ -696,15 +669,6 @@ public class DBDrive {
 		
 	//OFFER ATTACH
 		
-		public static Vector<FileInfo> getOfferAttach(Domain domain,Vector<FileInfo> attachs) {
-			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getDataProperty().isNotNull()),
-					AttachType.OFFER).map(new  AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new)));
-			return attachs;
-		}
-		
 		public static void setDriveIdOfferAttach(Domain domain,FileInfo fileInfo){
 			AONContext ctx = null;
 			try {
@@ -791,16 +755,6 @@ public class DBDrive {
 		}
 		
 	//PAYROLL BATCH ATTACH
-		
-		
-		public static Vector<FileInfo> getPayrollAttach(Domain domain,Vector<FileInfo> attachs) {
-			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getDataProperty().isNotNull()),
-					AttachType.PAYROLL).map(new  AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new)));
-			return attachs;
-		}
 		
 		public static void setDriveIdPayrollAttach(Domain domain,FileInfo fileInfo){
 			AONContext ctx = null;
@@ -889,15 +843,6 @@ public class DBDrive {
 		}
 		
 	//PROJECT ATTACH
-		
-		public static Vector<FileInfo> getProjectAttach(Domain domain,Vector<FileInfo> attachs) {
-			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getDataProperty().isNotNull()),
-					AttachType.PROJECT).map(new  AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new)));
-			return attachs;
-		}
 		
 		public static FileInfo getEmailsProjectAttach(Domain domain,FileInfo fileInfo){
 			AONContext ctx = null;
@@ -1012,15 +957,6 @@ public class DBDrive {
 		}
 		
 		//SEPE BATCH ATTACH
-		
-		public static Vector<FileInfo> getSepeAttach(Domain domain,Vector<FileInfo> attachs) {
-			attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getDataProperty().isNotNull()),
-					AttachType.SEPE).map(new  AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new)));
-			return attachs;
-		}
 
 		public static void setDriveIdSepeAttach(Domain domain,FileInfo fileInfo) {
 			AONContext ctx = null;

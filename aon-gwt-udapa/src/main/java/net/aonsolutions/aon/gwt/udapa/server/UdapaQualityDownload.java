@@ -73,7 +73,14 @@ public class UdapaQualityDownload extends HttpServlet{
 					.and(f.getDomainProperty().eq(domain.getId())),
 				AttachType.REGISTRY);
 		
-		File file = printQuality.createPdf(map, attach.getData());
+		LinkedList<byte[]> images = new LinkedList<>();
+		AON.getAttachStream(domain.getName(), domain.getId(), login, 
+				f-> f.getDomainProperty().eq(domain.getId())
+				.and(f.getSourceTypeProperty().eq((byte)0))
+				.and(f.getSourceBatchProperty().eq(dataResponseId)),
+				AttachType.DATA, true).forEach(d -> images.add(d.getData()));
+		
+		File file = printQuality.createPdf(map, attach.getData(), images);
 		
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 	    resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");

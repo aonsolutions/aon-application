@@ -129,17 +129,6 @@ public class DBConsults {
 		AON.updateAttachData(domain.getName(), domain.getId(), user.getLogin(), attach);
 	}
 	
-	//REGISTRY ATTACH
-	
-	public static Vector<FileInfo> getRAttachFilesInDrive(Domain domain,Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.REGISTRY).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 	
 	public static void deleteRegistryAttachTags(Domain domain, User user, Integer rattachId) {
 		AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), user.getLogin(), rattachId);
@@ -184,16 +173,6 @@ public class DBConsults {
 		}
 	}
 	//CONTRACT ATTACH
-	
-	public static Vector<FileInfo> getContractAttachFilesInDrive(Domain domain,Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.CONTRACT).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 
 	public static FileInfo getDataContractAttach(Domain domain, User user, FileInfo fileInfo){
 		AONContext ctx = null;
@@ -282,16 +261,6 @@ public class DBConsults {
 	}
 
 	//ITEM ATTACH
-	
-	public static Vector<FileInfo> getIattachFilesInDrive(Domain domain,Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.ITEM).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 
 	public static FileInfo getDataIattach(Domain domain, User user, FileInfo fileInfo){
 		AONContext ctx = null;
@@ -354,16 +323,6 @@ public class DBConsults {
 	}
 	
 	//INVOICE ATTACH
-	
-	public static Vector<FileInfo> getInvoiceAttachFilesInDrive(Domain domain,Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.INVOICE).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 
 	public static FileInfo getDataInvoiceAttach(Domain domain, User user,FileInfo fileInfo){
 		AONContext ctx = null;
@@ -452,16 +411,6 @@ public class DBConsults {
 	}
 	
 	//OFFER ATTACH
-	
-	public static Vector<FileInfo> getOfferAttachFilesInDrive(Domain domain, Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.OFFER).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 
 	public static FileInfo getDataOfferAttach(Domain domain,User user, FileInfo fileInfo){
 		AONContext ctx = null;
@@ -528,16 +477,6 @@ public class DBConsults {
 	}
 	
 	//PAYROLL BATCH ATTACH
-	
-	public static Vector<FileInfo> getPayrollAttachFilesInDrive(Domain domain,Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.PAYROLL).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 
 	public static FileInfo getDataPayrollAttach(Domain domain, User user, FileInfo fileInfo){
 		AONContext ctx = null;
@@ -606,16 +545,6 @@ public class DBConsults {
 	}
 	
 	//PROJECT ATTACH
-	
-	public static Vector<FileInfo> getProjectAttachFilesInDrive(Domain domain,Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.PROJECT).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 	
 	public static FileInfo getDataProjectAttach(Domain domain, User user,FileInfo fileInfo){
 		AONContext ctx = null;
@@ -709,16 +638,6 @@ public class DBConsults {
 	}
 
 	//SEPE BATCH ATTACH
-	
-	public static Vector<FileInfo> getSepeAttachFilesInDrive(Domain domain,Vector<FileInfo> attachs) {
-		attachs.addAll(AON.getAttachStream(domain.getName(), domain.getId(), "",
-				f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-				.and(f.getDataProperty().isNull())
-				.and(f.getDriveIdProperty().isNotNull()),
-				AttachType.SEPE).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new)));
-		return attachs;
-	}
 
 	public static FileInfo getDataSepeAttach(Domain domain, User user, FileInfo fileInfo){
 		AONContext ctx = null;
@@ -845,7 +764,7 @@ public class DBConsults {
 
 	public static Vector<FileInfo> getRattach(Domain domain, User user){
 		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
-				f -> f.getDomainProperty().eq(domain.getId()), AttachType.REGISTRY)
+				f -> f.getDomainProperty().eq(domain.getId()), AttachType.REGISTRY, false)
 				.map(new AttachToFileInfo()).collect(Collectors.toCollection(Vector::new));
 	}
 	

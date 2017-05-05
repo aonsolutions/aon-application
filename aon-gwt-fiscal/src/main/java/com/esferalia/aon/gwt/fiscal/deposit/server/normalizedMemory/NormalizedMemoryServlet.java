@@ -221,7 +221,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return AON.getAttachStream(domain, domainId, getUserLogin(),
 				f -> f.getDomainProperty().eq(domainId)
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.D2_DEPOSIT.value())),
-			AttachType.REGISTRY).map(r -> new MemoryTemplate()
+			AttachType.REGISTRY, true).map(r -> new MemoryTemplate()
 										.setId(r.getId())
 										.setName(r.getDescription())
 										.setD2Deposit2014(getD2DepositTreeObject(r.getId(), year, r.getData())))

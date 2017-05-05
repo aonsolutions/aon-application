@@ -26,8 +26,6 @@ public interface IDocumentAsync {
 
 	void getAllFiles(Domain domain, AsyncCallback<Document> callback);
 
-	void getServiConveniosFiles(Domain domain, AsyncCallback<Vector<FileInfo>> callback);
-
 	void searchFile(String searchStr, Vector<FileInfo> files,
 			AsyncCallback<Vector<FileInfo>> callback);
 

@@ -178,14 +178,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		
 		return docs;
 	}
-	
-	public Vector<FileInfo> getServiConveniosFiles(Domain domain){
-		System.out.println("DOMAIN ID --> "+domain.getId());
-		System.out.println("DOMAIN NAME --> "+domain.getName());
-		System.out.println("");
-		return DBConsults.getServiConvenios(domain, getUser());
-	}
-	
+
 	public Vector<String> getTypes(){
 		Locale locale = AonUtil.getCurrentLocale();
 		Vector<String> vector = new Vector<String>();

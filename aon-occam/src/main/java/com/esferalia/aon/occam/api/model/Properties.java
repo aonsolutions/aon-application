@@ -886,4 +886,15 @@ public interface Properties {
 		Property<Integer> getOfferDetailProperty();
 		Property<Double> getDeliveredProperty();
 	}
+	
+	public interface CategoryProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getDescriptionProperty();
+		Property<String> getUrlProperty();
+		Property<Integer> getRattachProperty();
+	}
 }

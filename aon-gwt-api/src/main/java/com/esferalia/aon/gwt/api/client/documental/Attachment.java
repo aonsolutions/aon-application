@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.api.client.documental;
 
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
+import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -28,6 +29,13 @@ public class Attachment extends Methods{
 		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/files", callback);
 	}
 	
+	public void getCategories(AsyncCallback<JSON<JsLabel>> callback){
+		get(url + "attachment/"+ getDomainName()+"/"+getUserName()+"/category",callback);
+	}	
+	
+	public void getTags(AsyncCallback<JSON<JsLabel>> callback){
+		get(url + "attachment/"+ getDomainName()+"/"+getUserName()+"/tag",callback);
+	}	
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

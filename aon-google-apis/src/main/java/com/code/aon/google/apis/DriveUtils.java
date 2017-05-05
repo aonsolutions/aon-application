@@ -1339,28 +1339,7 @@ public class DriveUtils implements IBlobManager {
 		// REGISTRY ATTACH
 		Vector<FileInfo> rattach = DBDrive.getRegistryAttach(domain, dd.getAttachs());
 		dd.setAttachs(rattach);
-		/*
-		 * //CONTRACT ATTACH dd.setAttachs(DBConsults.getContractAttach(domain,
-		 * dd.getAttachs()));
-		 * 
-		 * //INCOME ATTACH dd.setAttachs(DBConsults.getIattach(domain,
-		 * dd.getAttachs()));
-		 * 
-		 * //INVOICE ATTACH dd.setAttachs(DBConsults.getInvoiceAttach(domain,
-		 * dd.getAttachs()));
-		 * 
-		 * //OFFER ATTACH dd.setAttachs(DBConsults.getOfferAttach(domain,
-		 * dd.getAttachs()));
-		 * 
-		 * //PAYROLL ATTACH dd.setAttachs(DBConsults.getPayrollAttach(domain,
-		 * dd.getAttachs()));
-		 * 
-		 * //PROJECT ATTACH dd.setAttachs(DBConsults.getProjectAttach(domain,
-		 * dd.getAttachs()));
-		 * 
-		 * //SEPE ATTACH dd.setAttachs(DBConsults.getSepeAttach(domain,
-		 * dd.getAttachs()));
-		 */
+		
 		return dd;
 	}
 

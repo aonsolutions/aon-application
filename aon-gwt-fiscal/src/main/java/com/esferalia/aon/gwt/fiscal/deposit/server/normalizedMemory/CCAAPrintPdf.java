@@ -14,13 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.artofsolving.jodconverter.OfficeDocumentConverter;
-import org.artofsolving.jodconverter.document.DefaultDocumentFormatRegistry;
-import org.artofsolving.jodconverter.document.DocumentFormatRegistry;
-import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
-import org.artofsolving.jodconverter.office.OfficeManager;
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.fiscal.server.JODConverterUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
@@ -33,7 +28,6 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 @WebServlet(name = "CCAAPrintPdf", urlPatterns = { "/aon_gwt_deposit/CCAAPrintPdf" })
 public class CCAAPrintPdf extends HttpServlet {
 
-	private static final int DEFAULT_OFFICE_PORT = 2002;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -46,7 +40,6 @@ public class CCAAPrintPdf extends HttpServlet {
 		Boolean doget = req.getAttribute("doget") != null;
 		File inputFile = null;
 		File outputFile = null;
-		OfficeManager officeManager = null;
 		try {
 			Integer id = Integer.parseInt(req.getParameter("schemaId"));
 			String domainName = req.getParameter("domainName");
@@ -106,13 +99,7 @@ public class CCAAPrintPdf extends HttpServlet {
 			inputFileOs.close();
 			
 			outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
-			DocumentFormatRegistry formatRegistry = new DefaultDocumentFormatRegistry();
-			officeManager = new DefaultOfficeManagerConfiguration()
-					.setPortNumber(DEFAULT_OFFICE_PORT)
-					.buildOfficeManager();
-			officeManager.start();
-			OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager, formatRegistry);
-			converter.convert(inputFile, outputFile);
+			JODConverterUtils.process(inputFile, outputFile);
 
 			resp.setContentType(MimeType.PDF.getName());
 			if(doget) resp.setHeader("Content-disposition", "inline; filename=\"" + fileName + ".pdf\";");
@@ -126,7 +113,6 @@ public class CCAAPrintPdf extends HttpServlet {
 			// TODO REMOVE AND CLOSE EVERYTHING
 			if (inputFile != null && inputFile.canWrite()) inputFile.delete();
 			if (outputFile != null && outputFile.canWrite()) outputFile.delete();
-			if (officeManager != null) officeManager.stop();
 		}
 	}
 

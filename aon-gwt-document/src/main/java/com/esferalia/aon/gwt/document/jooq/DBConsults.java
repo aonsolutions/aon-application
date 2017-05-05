@@ -70,7 +70,7 @@ public class DBConsults {
 			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 					f -> f.getDomainProperty().eq(domain.getId())
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
-					, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()))
+					, AttachType.REGISTRY, false).map(new AttachToFileInfo(user, domain.getId()))
 					.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential())) 
 					.collect(Collectors.toCollection(LinkedList::new));
 		
@@ -84,7 +84,7 @@ public class DBConsults {
 					f -> f.getDomainProperty().eq(domain.getId())
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
 					.and(f.getScopeProperty().in(userScopeArray).or(f.getScopeProperty().isNull()))
-					, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()))
+					, AttachType.REGISTRY, false).map(new AttachToFileInfo(user, domain.getId()))
 					.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			filesGwt.addAll(s);
@@ -99,7 +99,7 @@ public class DBConsults {
 								f -> f.getDomainProperty().eq(domain.getParentId())
 								.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
 								.and(f.getScopeProperty().in(userScopeArray).or(f.getScopeProperty().isNull()))
-								, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()))
+								, AttachType.REGISTRY, false).map(new AttachToFileInfo(user, domain.getId()))
 					.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential())) 
 					.collect(Collectors.toCollection(LinkedList::new));
 			filesGwt.addAll(s);
@@ -110,7 +110,7 @@ public class DBConsults {
 			Stream<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), 
 					f -> f.getDomainProperty().in(sonsDomainArray)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()))
-					, AttachType.REGISTRY).map(new AttachToFileInfo(user, domain.getId()));
+					, AttachType.REGISTRY, false).map(new AttachToFileInfo(user, domain.getId()));
 			filesGwt.addAll(s.filter(fi -> !fi.getConfidential() || (confidential && fi.getConfidential())) 
 					.collect(Collectors.toCollection(LinkedList::new)));
 		}
@@ -699,8 +699,6 @@ public class DBConsults {
 			t.setIsSon(true);
 			if(record.value3() !=null) 
 				t.setDomain(record.value3());
-			//long i = vector.stream().filter(cat -> cat.getName().equals(t.getName())).count();
-			//if(i==0) 
 				vector.add(t);			
 		}
 		tl.setList(vector);
@@ -715,7 +713,6 @@ public class DBConsults {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			
 			Result<Record2<String, Integer>> category = ctx.getDslContext().select(CATEGORY.NAME,CATEGORY.ID)
 					.from(CATEGORY).join(DOMAIN)
 					.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
@@ -1257,7 +1254,7 @@ public class DBConsults {
 		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), 
 				f-> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SYSTEM_MESSAGE.value()))
-				,AttachType.REGISTRY)
+				,AttachType.REGISTRY, false)
 			.map(new AttachToFileInfo(user, domain.getId()))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -1266,7 +1263,7 @@ public class DBConsults {
 		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), 
 				f-> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SYSTEM_MESSAGE.value()))
-				,AttachType.REGISTRY)
+				,AttachType.REGISTRY, false)
 				.count() > 0;
 	}
 }

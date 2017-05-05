@@ -2466,54 +2466,7 @@ public class Documents implements EntryPoint {
 	Boolean conf;
 	PopupPanel pop;
 	
-	private void serviconveniosClickAction(){
-		pop = new PopupPanel();
-		pop.setStyleName("aon-outputConnectionStatus-start");
-		pop.setPopupPosition(25, 5);
-		pop.show();
-		newFile.setVisible(false); sConvenios.setVisible(true);
-		gestionLote.setVisible(false);
-		gestionDocs.setVisible(true);
-		editFile.setVisible(false);
-		delFile.setVisible(false);
-		optionFile.setVisible(false);
-		isServiconvenios= true;
-		isLote = false;
-		removeFilterItems();
-		if(docs.getServiconvenios().isEmpty()){
-			idoc.getServiConveniosFiles(getDomain(),new AsyncCallback<Vector<FileInfo>>() {
-			
-			@Override
-			public void onSuccess(Vector<FileInfo> result) {
-				pop.hide();
-				docs.setServiconvenios(result);
-
-				/*for(FileInfo f : dataProvider.getList()){
-					dataGrid.getSelectionModel().setSelected(f, false);
-				}*/
-				dataProvider = new ListDataProvider<FileInfo>(result);
-				dataProvider.addDataDisplay(dataGrid);
-				updateDatagridColumns();
-				dataGrid.redraw();
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {}
-		});}
-		else{
-			pop.hide();
-			for(FileInfo f : dataProvider.getList()){
-				dataGrid.getSelectionModel().setSelected(f, false);
-			}
-			dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
-			dataProvider.addDataDisplay(dataGrid);
-			updateDatagridColumns();
-
-			dataGrid.redraw();
-		}
-
-		docs.setFilter(docs.getServiconvenios());
-	}
+	
 
 	private void initTableColumns(
 			final SelectionModel<FileInfo> selectionModel,

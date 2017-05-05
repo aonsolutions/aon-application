@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,7 +58,7 @@ public class printQuality {
 	    throw new IllegalAccessError("Utility class");
 	}
 	
-	public static File createPdf(HashMap<String, String> map, byte [] image) {
+	public static File createPdf(HashMap<String, String> map, byte[] logo,  LinkedList<byte[]> images) {
 		File archivoPDF = null;
 		try {
 			archivoPDF = File.createTempFile("quality", "pdf");
@@ -70,7 +71,7 @@ public class printQuality {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
 			
 			document.open();			
-			document.add(getHeader(map, image));
+			document.add(getHeader(map, logo));
 			document.add(new Paragraph(" "));
 			document.add(getSubHeader(map));
 			document.add(new Paragraph(" "));
@@ -84,8 +85,9 @@ public class printQuality {
 			document.add(caliberTable(map));
 			document.add(new Paragraph(" "));
 			document.add(observationTable(map));
-			
-			//document.add(images());
+			document.add(new Paragraph(" "));
+
+			document.add(imageTable(images));
 
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -436,7 +438,8 @@ public class printQuality {
 		content.addCell(c55);
 			
 		Double index = Double.parseDouble(map.get(QualitySheetCode.UFQDP1.getName())) - 1;
-		PdfPCell c66 = new PdfPCell(new Phrase(Destiny.values()[index.intValue()].getName(),getFont2()));
+		String str = (index >= 0.0) ? Destiny.values()[index.intValue()].getName() : "-";
+		PdfPCell c66 = new PdfPCell(new Phrase(str,getFont2()));
 		c66.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c66);
 		
@@ -495,7 +498,8 @@ public class printQuality {
 		content.addCell(c3);
 
 		Double index = Double.parseDouble(map.get(QualitySheetCode.UFQAC2.getName())) - 1;
-		PdfPCell c4 = new PdfPCell(new Phrase(CulinaryAptitude.values()[index.intValue()].getName(),getFont2()));
+		String str1 = (index >= 0.0) ? CulinaryAptitude.values()[index.intValue()].getName() : "-";
+		PdfPCell c4 = new PdfPCell(new Phrase(str1,getFont2()));
 		c4.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c4);
 
@@ -504,7 +508,8 @@ public class printQuality {
 		content.addCell(c11);
 			
 		index = Double.parseDouble(map.get(QualitySheetCode.UFQAC5.getName())) - 1;
-		PdfPCell c22 = new PdfPCell(new Phrase(Plague.values()[index.intValue()].getName(),getFont2()));
+		String str2 = (index >= 0.0) ? Plague.values()[index.intValue()].getName() : "-";
+		PdfPCell c22 = new PdfPCell(new Phrase(str2,getFont2()));
 		c22.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c22);
 		
@@ -513,7 +518,8 @@ public class printQuality {
 		content.addCell(c33);
 
 		index = Double.parseDouble(map.get(QualitySheetCode.UFQAC4.getName())) - 1;
-		PdfPCell c44 = new PdfPCell(new Phrase(CulinaryAptitude.values()[index.intValue()].getName(),getFont2()));
+		String str3 = (index >= 0.0) ? CulinaryAptitude.values()[index.intValue()].getName() : "-";
+		PdfPCell c44 = new PdfPCell(new Phrase(str3,getFont2()));
 		c44.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c44);
 		
@@ -522,7 +528,8 @@ public class printQuality {
 		content.addCell(c111);
 			
 		index = Double.parseDouble(map.get(QualitySheetCode.UFQAC3.getName())) - 1;
-		PdfPCell c222 = new PdfPCell(new Phrase(Clean.values()[index.intValue()].getName(),getFont2()));
+		String str4 = (index >= 0.0) ? Clean.values()[index.intValue()].getName() : "-";
+		PdfPCell c222 = new PdfPCell(new Phrase(str4,getFont2()));
 		c222.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c222);
 		
@@ -531,7 +538,8 @@ public class printQuality {
 		content.addCell(c333);
 
 		index = Double.parseDouble(map.get(QualitySheetCode.UFQAC6.getName())) - 1;
-		PdfPCell c444 = new PdfPCell(new Phrase(CleanAptitude.values()[index.intValue()].getName(),getFont2()));
+		String str5 = (index >= 0.0) ? CleanAptitude.values()[index.intValue()].getName() : "-";
+		PdfPCell c444 = new PdfPCell(new Phrase(str5,getFont2()));
 		c444.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c444);
 		
@@ -796,6 +804,25 @@ public class printQuality {
     	return table;
     }
 
+    public static PdfPTable imageTable(LinkedList<byte[]> images){
+    	PdfPTable content = new PdfPTable(4);
+    	
+    	for(Integer i = 0; i < images.size(); i++){
+    		try {
+				content.addCell(getHeaderLogo(images.get(i)));
+			} catch (BadElementException | IOException e) {
+				e.printStackTrace();
+			}  
+    	}
+    	Integer j = 4 - (images.size() % 4);
+    	for(Integer i = 0 ; i < j; i++){
+    		PdfPCell cell = new PdfPCell();
+    		cell.setBorder(PdfPCell.NO_BORDER);
+    		content.addCell(cell);
+    	}
+    	
+    	return content;
+    }
 	private static Paragraph getSeparator(){
 		Paragraph separator = new Paragraph();
 		LineSeparator line = new LineSeparator();

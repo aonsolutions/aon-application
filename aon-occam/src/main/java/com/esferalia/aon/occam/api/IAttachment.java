@@ -7,15 +7,15 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 public interface IAttachment {
 
-	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter);
-	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter);
+	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 
 	
 	public Integer insertContractAttach(AONContext ctx, Attach attach);

@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -31,6 +32,7 @@ import org.jooq.SelectJoinStep;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
@@ -51,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
+import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
@@ -182,6 +185,29 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TRANSACTION);}
 		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
 		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.ACCOUNT);}
+	}
+	
+	public static class CategoryPropertiesDAO implements CategoryProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, CategoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(CategoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) {
+				return new Condition[0];
+			}
+			return new Condition[] {filterDAO.getCondition()};
+		}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.ID);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.NAME);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.TYPE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.SCOPE);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.DESCRIPTION);}
+		@Override public Property<String> getUrlProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.URL);}
+		@Override public Property<Integer> getRattachProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.RATTACH);}
 	}
 	
 	public static class CarrierPackingPropertiesDAO implements CarrierPackingProperties {

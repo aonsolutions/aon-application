@@ -63,7 +63,7 @@ public class DBMarketplace {
 		AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getTypeProperty().eq((RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())))
-				, AttachType.REGISTRY)
+				, AttachType.REGISTRY, true)
 		.forEach(attach ->{
 			try {
 				EcommerceProduct ep = XMLUtils.readXml(attach.getData());

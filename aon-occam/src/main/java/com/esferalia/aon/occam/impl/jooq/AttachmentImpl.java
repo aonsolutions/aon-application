@@ -11,49 +11,49 @@ import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 public class AttachmentImpl implements IAttachment{
 
 	@Override
-	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getRegistryAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getRegistryAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getContractAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getContractAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getInvoiceAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getInvoiceAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getItemAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getItemAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getOfferAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getOfferAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getPayrollAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getPayrollAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getProjectAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getProjectAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getSepeAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getSepeAttachStream(ctx, filter, withData));
 	}
 	@Override
-	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter) {
+	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> AttachmentDAO.getDataAttachStream(ctx, filter));
+				configuration -> AttachmentDAO.getDataAttachStream(ctx, filter, withData));
 	}
 	
 	@Override

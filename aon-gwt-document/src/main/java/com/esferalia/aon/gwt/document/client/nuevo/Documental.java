@@ -35,11 +35,13 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
+import net.aonsolutions.polymer.aon.AonIconsElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class Documental implements EntryPoint {
@@ -59,6 +61,7 @@ public class Documental implements EntryPoint {
 	private API API;
 	private AonData aonData;
 	private Attachment attachment;
+	private Documental me = this;;
 	
 	public API getAPI() {
 		return API;
@@ -96,7 +99,10 @@ public class Documental implements EntryPoint {
 				IronListElement.SRC,
 				PaperToggleButtonElement.SRC,
 				PaperSliderElement.SRC,
-				AonComboBoxElement.SRC
+				AonComboBoxElement.SRC,
+				AonIconsElement.SRC,
+				"aon-icons/aon-documental-icons.html",
+				"iron-icons/maps-icons.html"
 		));
 		
 		Polymer.whenReady(o -> {
@@ -110,21 +116,7 @@ public class Documental implements EntryPoint {
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
-		attachment = new Attachment(GWT.getModuleBaseURL(), "amigo", "user", "zuremoto.aibanez.net");
 		
-		attachment.getAttachList(new AsyncCallback<JSON<JsAttach>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsAttach> arg0) {
-				
-			}
-			
-			@Override
-			public void onFailure(Throwable arg0) {
-				
-			}
-		});
 		createAonToolbar();
 		createSearchPanel();
 		createAttachListPanel();
@@ -136,7 +128,7 @@ public class Documental implements EntryPoint {
 
 			@Override protected void onMenuButtonClick() {
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
-					configurationPanel.add(new ConfigurationPanel());
+					configurationPanel.add(new ConfigurationPanel(me));
 					dockLayoutPanel.setWidgetSize(configurationPanel, 350);
 				}
 				else {
@@ -239,7 +231,7 @@ public class Documental implements EntryPoint {
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {
 				Window.alert("" + result.getData().toLinkedList().size());
-				content.add(new AttachListPanel2(result.getData()));
+				content.add(new AttachListPanel2(me, result.getData()));
 			}
 				
 			@Override public void onFailure(Throwable caught) {}

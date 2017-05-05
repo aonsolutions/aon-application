@@ -27,8 +27,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface IDocument extends RemoteService{
 
 	public Document getAllFiles(Domain domain);
-
-	public Vector<FileInfo> getServiConveniosFiles(Domain domain);
 	
 	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files);
 	

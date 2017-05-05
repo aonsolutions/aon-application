@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
+import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
@@ -35,6 +36,7 @@ public interface IRegistry {
 	
 	public Category getCategory(AONContext ctx, Integer categoryId);
 	public LinkedList<Category> getCategoryList(AONContext ctx);
+	public Stream<Category> getCategoryStream(AONContext ctx, CategoryFilter filter);
 	
 	public Stream<Creditor> getBasicCreditors(AONContext ctx, CreditorFilter filter);
 	

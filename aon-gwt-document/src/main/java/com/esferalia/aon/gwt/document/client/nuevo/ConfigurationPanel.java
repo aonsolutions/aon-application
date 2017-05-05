@@ -29,7 +29,7 @@ public class ConfigurationPanel extends Composite {
     private static final String ZERO = "0";
     private static final String ONE = "1";
 
-    public ConfigurationPanel() {
+    public ConfigurationPanel(Documental parent) {
     	initWidget(binder.createAndBindUi(this));
     	tabs.setSelected("0");
         tabs.addIronSelectHandler(new IronSelectEventHandler() {
@@ -51,7 +51,7 @@ public class ConfigurationPanel extends Composite {
 				});
 				if(tabs.getSelected().toString().equals(ZERO)
 					|| tabs.getSelected().toString() == ZERO){
-					sp.add(new DocumentsConfigurationPanel());
+					sp.add(new DocumentsConfigurationPanel(parent));
 				} else if(tabs.getSelected().toString().equals(ONE)
 					|| tabs.getSelected().toString() == ONE){
 					sp.add(new DriveConfigurationPanel());					

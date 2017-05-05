@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -1857,43 +1858,52 @@ public class AON {
 	// ****************************** ATTACHMENT **
 	// ********************************************
 
-	public static Attach getAttach(String domainName, Integer domainId,
-			String login, AttachFilter filter, AttachType attachType) {
-		return getAttachStream(domainName, domainId, login, filter, attachType)
+	public static Attach getAttach(String domainName, Integer domainId, String login, AttachFilter filter, AttachType attachType) {
+		return getAttachStream(domainName, domainId, login, filter, attachType, true)
 				.findFirst().orElse(new Attach());
 	}
-
+	
+	public static Attach getAttach(String domainName, Integer domainId,
+			String login, AttachFilter filter, AttachType attachType, Boolean withData) {
+		return getAttachStream(domainName, domainId, login, filter, attachType, withData)
+				.findFirst().orElse(new Attach());
+	}
+	public static LinkedList<Attach> getAttachList(String domainName, Integer domainId, String login, AttachFilter filter, AttachType attachType) {
+		return getAttachList(domainName, domainId, login, filter, attachType, true);
+	}
+	
 	public static LinkedList<Attach> getAttachList(String domainName,
-			Integer domainId, String login, AttachFilter filter, AttachType attachType) {
-		return getAttachStream(domainName, domainId, login, filter, attachType)
+			Integer domainId, String login, AttachFilter filter, 
+			AttachType attachType, Boolean withData) {
+		return getAttachStream(domainName, domainId, login, filter, attachType, withData)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static Stream<Attach> getAttachStream(String domainName,
 			Integer domainId, String login, AttachFilter filter,
-			AttachType attachType) {
+			AttachType attachType, Boolean withData) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 
 			if (attachType.equals(AttachType.REGISTRY))
-				return getAttachment().getRegistryAttachStream(ctx, filter);
+				return getAttachment().getRegistryAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.CONTRACT))
-				return getAttachment().getContractAttachStream(ctx, filter);
+				return getAttachment().getContractAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.INVOICE))
-				return getAttachment().getInvoiceAttachStream(ctx, filter);
+				return getAttachment().getInvoiceAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.ITEM))
-				return getAttachment().getItemAttachStream(ctx, filter);
+				return getAttachment().getItemAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.OFFER))
-				return getAttachment().getOfferAttachStream(ctx, filter);
+				return getAttachment().getOfferAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.PAYROLL))
-				return getAttachment().getPayrollAttachStream(ctx, filter);
+				return getAttachment().getPayrollAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.PROJECT))
-				return getAttachment().getProjectAttachStream(ctx, filter);
+				return getAttachment().getProjectAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.SEPE))
-				return getAttachment().getSepeAttachStream(ctx, filter);
+				return getAttachment().getSepeAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.DATA))
-				return getAttachment().getDataAttachStream(ctx, filter);
+				return getAttachment().getDataAttachStream(ctx, filter, withData);
 			return null;
 		} finally {
 			if (ctx != null)
@@ -3156,6 +3166,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getRegistry().getCategory(ctx, categoryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<Category> getCategoryStream(String domainName, Integer domainId, String login, CategoryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCategoryStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

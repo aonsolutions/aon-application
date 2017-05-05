@@ -19,6 +19,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.type.CategoryType;
+import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DocumentalServlet", urlPatterns = { "/aon_gwt_aio/attachment/*" })
@@ -48,6 +50,12 @@ public class DocumentalServlet extends HttpServlet{
 				case "files":
 					object = getAttachJSON(domain, userName);
 					break;
+				case "category":
+					object = getCategoryJSON(domain, userName);
+					break;
+				case "tag":
+					object = getTagJSON(domain, userName);
+					break;
 				default:
 						break;
 				}
@@ -69,9 +77,26 @@ public class DocumentalServlet extends HttpServlet{
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
 				.page(1)
 				.perPage(30)
-			), AttachType.REGISTRY).forEach(a -> {
+			), AttachType.REGISTRY, false).forEach(a -> {
 				array.put(ToJSON.attachToJSON(a));
 			});
+		return array;
+	}
+	
+	private JSONArray getCategoryJSON(Domain domain, String login) {
+		JSONArray array = new JSONArray();
+		AON.getCategoryStream(domain.getName(), domain.getId(), login, 
+				f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(CategoryType.REGISTRY_ATTACHMENT.value())
+			)).forEach(a -> array.put(ToJSON.categoryToJSON(a)));
+		return array;
+	}
+	private JSONArray getTagJSON(Domain domain, String login) {
+		JSONArray array = new JSONArray();
+		AON.getTagStream(domain.getName(), domain.getId(), login, 
+				f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(TagType.RATTACH.value())
+			)).forEach(a -> array.put(ToJSON.tagToJSON(a)));
 		return array;
 	}
 }

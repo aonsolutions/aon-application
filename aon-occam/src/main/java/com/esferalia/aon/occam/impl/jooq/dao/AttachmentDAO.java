@@ -23,6 +23,7 @@ import org.jooq.Record1;
 import org.jooq.Record7;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectField;
+import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
 import com.esferalia.aon.jooq.tables.records.IattachRecord;
@@ -58,63 +59,102 @@ public class AttachmentDAO {
 	//-------------------- GETS 
 	
 	// WD -> Without Data
+	@SuppressWarnings("rawtypes")
 	private static SelectField[] rattachWD = {RATTACH.ID, RATTACH.DOMAIN, RATTACH.REGISTRY, RATTACH.MIMETYPE, RATTACH.DESCRIPTION,
-													   RATTACH.TYPE, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,
-													   RATTACH.DPARENT_ID, RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER,
-													   RATTACH.MODIFICATION_DATE};
+		RATTACH.TYPE, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID, RATTACH.DPARENT_ID,
+		RATTACH.CREATION_USER, RATTACH.CREATION_DATE, RATTACH.MODIFICATION_USER, RATTACH.MODIFICATION_DATE};
+
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] contractAttachWD = {CONTRACT_ATTACH.ID, CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.CONTRACT,
+		CONTRACT_ATTACH.MIMETYPE, CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE, CONTRACT_ATTACH.SCOPE,
+		CONTRACT_ATTACH.SECURITY_LEVEL, CONTRACT_ATTACH.ATTACH_DATE, CONTRACT_ATTACH.DRIVEID};
 	
-	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter){		
-		return RATTACH_PROPERTIES.build(ctx.getDslContext()
-				.select(rattachWD).from(RATTACH), filter)
-			.fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] invoiceAttachWD = {INVOICE_ATTACH.ID, INVOICE_ATTACH.DOMAIN, INVOICE_ATTACH.INVOICE,
+			INVOICE_ATTACH.MIMETYPE, INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.TYPE, INVOICE_ATTACH.ATTACH_DATE, INVOICE_ATTACH.DRIVEID};
+	
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] iAttachWD = {IATTACH.ID, IATTACH.DOMAIN, IATTACH.ITEM,
+			IATTACH.MIMETYPE, IATTACH.DESCRIPTION, IATTACH.TYPE, IATTACH.DRIVEID};
+	
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] offerAttachWD = {OFFER_ATTACH.ID, OFFER_ATTACH.DOMAIN, OFFER_ATTACH.OFFER,
+			OFFER_ATTACH.MIMETYPE, OFFER_ATTACH.DESCRIPTION, OFFER_ATTACH.DRIVEID};
+	
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] payrollAttachWD = {PAYROLL_BATCH_ATTACH.ID, PAYROLL_BATCH_ATTACH.DOMAIN, PAYROLL_BATCH_ATTACH.SOURCE_BATCH,
+			PAYROLL_BATCH_ATTACH.SOURCE_TYPE,PAYROLL_BATCH_ATTACH.MIMETYPE, PAYROLL_BATCH_ATTACH.DESCRIPTION, PAYROLL_BATCH_ATTACH.TYPE,
+			PAYROLL_BATCH_ATTACH.SCOPE, PAYROLL_BATCH_ATTACH.ATTACH_DATE, PAYROLL_BATCH_ATTACH.DRIVEID};
+
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] projectAttachWD = {PROJECT_ATTACH.ID, PROJECT_ATTACH.DOMAIN, PROJECT_ATTACH.PROJECT,
+			PROJECT_ATTACH.MIMETYPE, PROJECT_ATTACH.DESCRIPTION, PROJECT_ATTACH.SECURITY_LEVEL, PROJECT_ATTACH.ATTACH_DATE,
+			PROJECT_ATTACH.ATTACH_TYPE, PROJECT_ATTACH.DRIVEID, PROJECT_ATTACH.CREATION_DATE, PROJECT_ATTACH.CREATION_USER,
+			PROJECT_ATTACH.MODIFICATION_DATE, PROJECT_ATTACH.MODIFICATION_USER};
+	
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] sepeAttachWD = {SEPE_BATCH_ATTACH.ID, SEPE_BATCH_ATTACH.DOMAIN, SEPE_BATCH_ATTACH.SOURCE_BATCH,
+			SEPE_BATCH_ATTACH.SOURCE_TYPE,SEPE_BATCH_ATTACH.MIMETYPE, SEPE_BATCH_ATTACH.DESCRIPTION, SEPE_BATCH_ATTACH.TYPE,
+			SEPE_BATCH_ATTACH.SCOPE, SEPE_BATCH_ATTACH.ATTACH_DATE, SEPE_BATCH_ATTACH.DRIVEID};
+	
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] dataAttachWD = {DATA_ATTACH.ID, DATA_ATTACH.DOMAIN, DATA_ATTACH.SOURCE,
+			DATA_ATTACH.SOURCE_ID,DATA_ATTACH.MIMETYPE,/* DATA_ATTACH.DESCRIPTION,*/ DATA_ATTACH.TYPE,
+			DATA_ATTACH.DRIVE_ID, DATA_ATTACH.CREATION_DATE, DATA_ATTACH.CREATION_USER,
+			DATA_ATTACH.MODIFICATION_DATE, DATA_ATTACH.MODIFICATION_USER};
+
+	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){		
+		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH);
+		if(withData) select = ctx.getDslContext().select().from(RATTACH);
+		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
 	}
 	
-	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter){
-		return CONTRACT_ATTACH_PROPERTIES.build(ctx.getDslContext()
-				.select().from(CONTRACT_ATTACH), filter)
-			.fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller(ctx));		
+	public static Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){
+		SelectJoinStep<Record> select = ctx.getDslContext().select(contractAttachWD).from(CONTRACT_ATTACH);
+		if(withData) select = ctx.getDslContext().select().from(CONTRACT_ATTACH);
+		return CONTRACT_ATTACH_PROPERTIES.build(select, filter).fetchInto(CONTRACT_ATTACH).stream().map(new FullContractAttachFiller(ctx));		
 	}
 	
-	public static Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter){	
-		return INVOICE_ATTACH_PROPERTIES.build(ctx.getDslContext()
-				.select().from(INVOICE_ATTACH), filter)
-			.fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller(ctx));
+	public static Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select(invoiceAttachWD).from(INVOICE_ATTACH);
+		if(withData) select = ctx.getDslContext().select().from(INVOICE_ATTACH);
+		return INVOICE_ATTACH_PROPERTIES.build(select, filter).fetchInto(INVOICE_ATTACH).stream().map(new FullInvoiceAttachFiller(ctx));
 	}
 	
-	public static Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter){	
-		return IATTACH_PROPERTIES.build(ctx.getDslContext()
-				.select().from(IATTACH), filter)
-			.fetchInto(IATTACH).stream().map(new FullItemAttachFiller(ctx));
+	public static Stream<Attach> getItemAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select(iAttachWD).from(IATTACH);
+		if(withData) select = ctx.getDslContext().select().from(IATTACH);
+		return IATTACH_PROPERTIES.build(select, filter).fetchInto(IATTACH).stream().map(new FullItemAttachFiller(ctx));
 	}
 	
-	public static Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter){	
-		return OFFER_ATTACH_PROPERTIES.build( ctx.getDslContext()
-				.select().from(OFFER_ATTACH), filter)
-			.fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller(ctx));
+	public static Stream<Attach> getOfferAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select(offerAttachWD).from(OFFER_ATTACH);
+		if(withData) select = ctx.getDslContext().select().from(OFFER_ATTACH);
+		return OFFER_ATTACH_PROPERTIES.build(select, filter).fetchInto(OFFER_ATTACH).stream().map(new FullOfferAttachFiller(ctx));
 	}
 	
-	public static Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter){	
-		return PAYROLL_ATTACH_PROPERTIES.build( ctx.getDslContext()
-				.select().from(PAYROLL_BATCH_ATTACH), filter)
-			.fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller(ctx));
+	public static Stream<Attach> getPayrollAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select(payrollAttachWD).from(PAYROLL_BATCH_ATTACH);
+		if(withData) select = ctx.getDslContext().select().from(PAYROLL_BATCH_ATTACH);
+		return PAYROLL_ATTACH_PROPERTIES.build(select, filter).fetchInto(PAYROLL_BATCH_ATTACH).stream().map(new FullPayrollAttachFiller(ctx));
 	}
 	
-	public static Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter){	
-		return PROJECT_ATTACH_PROPERTIES.build(ctx.getDslContext()
-				.select().from(PROJECT_ATTACH), filter)
-			.fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller(ctx));
+	public static Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select(projectAttachWD).from(PROJECT_ATTACH);
+		if(withData) select = ctx.getDslContext().select().from(PROJECT_ATTACH);
+		return PROJECT_ATTACH_PROPERTIES.build(select, filter).fetchInto(PROJECT_ATTACH).stream().map(new FullProjectAttachFiller(ctx));
 	}
 	
-	public static Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter){	
-		return SEPE_ATTACH_PROPERTIES.build(ctx.getDslContext()
-				.select().from(SEPE_BATCH_ATTACH), filter)
-			.fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx));
+	public static Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select(sepeAttachWD).from(SEPE_BATCH_ATTACH);
+		if(withData) select = ctx.getDslContext().select().from(SEPE_BATCH_ATTACH);
+		return SEPE_ATTACH_PROPERTIES.build(select, filter).fetchInto(SEPE_BATCH_ATTACH).stream().map(new FullSepeAttachFiller(ctx));
 	}
 	
-	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter){	
-		return DATA_ATTACH_PROPERTIES.build(ctx.getDslContext()
-				.select().from(DATA_ATTACH), filter)
-			.fetchInto(DATA_ATTACH).stream().map(new FullDataAttachFiller());
+	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select(dataAttachWD).from(DATA_ATTACH);
+		if(withData) select = ctx.getDslContext().select().from(DATA_ATTACH);
+		return DATA_ATTACH_PROPERTIES.build(select, filter).fetchInto(DATA_ATTACH).stream().map(new FullDataAttachFiller());
 	}
 	
 	public static Attach getRattachWithoutData(AONContext ctx, Condition condition){

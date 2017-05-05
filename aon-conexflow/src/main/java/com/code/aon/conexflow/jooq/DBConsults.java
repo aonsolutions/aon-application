@@ -64,7 +64,7 @@ public class DBConsults {
 		return AON.getAttachStream(domain.getName(), domain.getId(), login,
 				f -> f.getDescriptionProperty().like(description)
 					//.and(f.getTypeProperty().eq(ProjectAttachmentType.CONEXFLOW.value()))
-				, AttachType.PROJECT).map( r-> {
+				, AttachType.PROJECT, true).map( r-> {
 					if(r.getData() == null && r.getDriveId() != null){
 						r.setData(DriveUtils.getByteFile(domain.getName(), domain.getId(), login,
 								r.getDriveId(), r.getId()));
@@ -88,7 +88,7 @@ public class DBConsults {
 				f -> f.getDescriptionProperty().like(description)
 					.and(f.getDomainProperty().eq(domain.getId()))
 					//.and(f.getTypeProperty().eq(ProjectAttachmentType.CONEXFLOW.value()))
-				, AttachType.PROJECT).map( r-> {
+				, AttachType.PROJECT, false).map( r-> {
 					return new ConexFlow()
 					 	.setId(r.getId())
 					 	.setDate(r.getDate())
@@ -99,7 +99,7 @@ public class DBConsults {
 	
 	public static Boolean hasConexFlow(Domain domain, String login, Integer project, String[] descriptions){
 		Optional<Attach> attach = AON.getAttachStream(domain.getName(), domain.getId(), login,
-				f ->  hasConexFlowFilter(project, descriptions, f), AttachType.PROJECT).findFirst();
+				f ->  hasConexFlowFilter(project, descriptions, f), AttachType.PROJECT, false).findFirst();
 		return attach.isPresent();
 	}
 	
@@ -126,7 +126,7 @@ public class DBConsults {
 				f -> f.getAttachModuleProperty().eq(project)
 				.and(f.getDescriptionProperty().like(description))
 				//.and(f.getTypeProperty().eq(ProjectAttachmentType.CONEXFLOW.value()))
-				, AttachType.PROJECT)
+				, AttachType.PROJECT, true)
 			.sorted((a1, a2) -> a2.getDate().compareTo(a1.getDate())).findFirst();
 		if(attach.isPresent()){
 			if(attach.get().getData() == null && attach.get().getDriveId() != null){
@@ -151,7 +151,7 @@ public class DBConsults {
 		Optional<Attach> attach = AON.getAttachStream(domain.getName(), domain.getId(), login,
 				f -> f.getAttachModuleProperty().eq(project)
 				.and(f.getDescriptionProperty().like(description))
-				, AttachType.PROJECT)
+				, AttachType.PROJECT, false)
 			.sorted((a1, a2) -> a2.getDate().compareTo(a1.getDate())).findFirst();
 		if(attach.isPresent()){
 			return new ConexFlow()

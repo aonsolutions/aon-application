@@ -22,10 +22,12 @@ import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -51,6 +53,27 @@ public class ToJSON {
 			.put("id", attach.getId())
 			.put("domain", attach.getDomain().getId())
 			.put("title", attach.getDescription());
+	}
+	
+	public static JSONObject categoryToJSON(Category category){	
+		return new JSONObject()
+			.put("id",category.getId())
+			.put("domain", category.getDomain())
+			.put("name", category.getName())
+			.put("type", category.getType())
+			.put("scope", category.getScope())
+			.put("url", category.getUrl())
+			.put("description", category.getDescription())
+			.put("rattach", category.getRattach());
+	}
+	
+	public static JSONObject tagToJSON(Tag tag){	
+		return new JSONObject()
+			.put("id",tag.getId())
+			.put("domain", tag.getDomain())
+			.put("name", tag.getName())
+			.put("type", tag.getType())
+			.put("color", tag.getColor());
 	}
 	
 	public static JSONObject applicationParameterToJSON(ApplicationParameter appParam){	
