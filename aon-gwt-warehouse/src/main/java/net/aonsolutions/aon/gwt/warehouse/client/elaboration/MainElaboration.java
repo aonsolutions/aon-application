@@ -19,10 +19,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MainElaboration extends Composite {
 
-	/*
-	 */
 	interface Binder extends UiBinder<Widget, MainElaboration> {}
-//	public static final AonGwtIssuesCSS I_CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
+	
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
@@ -44,12 +42,6 @@ public class MainElaboration extends Composite {
 		return parent.getAPI();
 	}
 	
-
-//	public MainElaboration(AonData aonData, Boolean future) {
-//		this(aonData);
-//		
-//		load();
-//	}
 
 	public MainElaboration(Elaboration elaboration, HashMap<String, LinkedList<String>> filterMap) {
 		initWidget(binder.createAndBindUi(this));
@@ -81,7 +73,7 @@ public class MainElaboration extends Composite {
 		loadWestContent();
 		loadNorthContent();
 		loadContent();
-//		loadSouthContent();
+		loadSouthContent();
 	}
 
 
@@ -115,9 +107,9 @@ public class MainElaboration extends Composite {
 	}
 
 	public void loadSouthContent() {
-		FooterPanel fp = new FooterPanel(parent);
+		FooterPanel fp = new FooterPanel(this);
 		southContent.setWidget(fp);
-		contentSplitLayoutPanel.setWidgetSize(southContent, 0);		
+		fp.hideFooterPanel();		
 	}
 	
 	
@@ -129,6 +121,10 @@ public class MainElaboration extends Composite {
 	public FooterPanel getFooterPanel() {
 		FooterPanel panel = (FooterPanel) southContent.getWidget();
 		return panel;
+	}
+	
+	public void changeSouthContentSize(Double value) {
+		contentSplitLayoutPanel.setWidgetSize(southContent, value);	
 	}
 
 	public HashMap<String, LinkedList<String>> getFilterMap() {
@@ -158,6 +154,11 @@ public class MainElaboration extends Composite {
 	protected boolean isElaborationCLosed(){
 		ElaborationPanel w = (ElaborationPanel) northContent.getWidget();
 		return w.isElaborationCLosed();
+	}
+
+	protected boolean isElaborationCLosed(JsElaboration elaboration){
+		ElaborationPanel w = (ElaborationPanel) northContent.getWidget();
+		return w.isElaborationCLosed(elaboration);
 	}
 	
 }

@@ -56,10 +56,7 @@ public class Elaboration extends AonTemplate2 {
 
 	private void load() {
 		loadToolbar();
-//		loadWestContent();
-//		loadNorthContent();
 		loadContent();
-//		loadSouthContent();
 	}
 
 	private void loadToolbar() {
@@ -172,56 +169,19 @@ public class Elaboration extends AonTemplate2 {
 		setToolbar(toolbar);
 	}
 
-	private void loadWestContent() {
-
-	}
-
-	private void loadNorthContent() {
-//		getContentDockLayoutPanel().setWidgetSize(getNorthContent(), 85);
-//		setNorthContent(new FilterPanel(this));
-	}
-
 	public void loadContent() {
 		setContent(new MainElaboration(this, filterMap));
-//		loadContent(null);
-		
-		
-//		setContent(null);
-//		LinkedList<String> list = new LinkedList<>();
-//		list.add("1");
-//		getFilterMap().put("page", list);
-//		list = new LinkedList<>();
-//		list.add("40");
-//		getFilterMap().put("per_page", list);
-//		API.getWarehouse().getElaborationList(filterMap, new AsyncCallback<JSON<JsElaboration>>() {
-//
-//			@Override
-//			public void onSuccess(JSON<JsElaboration> result) {
-//				setContent(new GridPanel(me, result.getData().toLinkedList()));
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//		});
-	}
-//	public void loadContent(HashMap<String, LinkedList<String>> filterMap) {
-//		setContent(new MainElaboration(this, filterMap));
-//	}
-
-	public void loadSouthContent() {
-//		FooterPanel fp = new FooterPanel(this);
-//		setSouthContent(fp);
-//		getContentSplitLayoutPanel().setWidgetSize(getSouthContent(), 0);		
 	}
 
+
+	
 	public void onSelectElaboration(JsElaboration js) {
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.accept.setVisible(true);
 		toolbar.back.setVisible(true);
 		toolbar.remove.setVisible(true);
 		toolbar.download.setVisible(true);
-		toolbar.subtitle.setText("Edicion");
+		toolbar.subtitle.setText("Edici\u00F3n");
 		
 		MainElaboration main = (MainElaboration) getContent().getWidget();
 		main.contentDockLayoutPanel.setWidgetSize(main.northContent, 120);
@@ -229,7 +189,12 @@ public class Elaboration extends AonTemplate2 {
 		main.northContent.setWidget(new ElaborationPanel(me, js));
 //		main.content.setWidget(new ElaborationSelect(me, js));
 		main.content.setWidget(new SelectionPanel(API, js));
-		main.southContent.setWidget(new FooterPanel(me, js));
+		main.southContent.setWidget(new FooterPanel(main, js));
+		
+		if(isElaborationCLosed()){
+			toolbar.accept.setVisible(false);
+			toolbar.remove.setVisible(false);
+		}
 	}
 	
 	private void resetElaboration() {
@@ -252,7 +217,7 @@ public class Elaboration extends AonTemplate2 {
 				main.northContent.setWidget(panel);
 				main.content.setWidget(new Label(""));
 				main.loadSouthContent();
-				main.southContent.setWidget(new FooterPanel(me, js));
+				main.southContent.setWidget(new FooterPanel(main, js));
 				main.contentDockLayoutPanel.setWidgetSize(main.southContent, 30);
 			}
 			
@@ -263,10 +228,6 @@ public class Elaboration extends AonTemplate2 {
 		});
 	}
 	
-	public void changeSouthContentSize(Double value) {
-		MainElaboration main = (MainElaboration) getContent().getWidget();
-		main.contentSplitLayoutPanel.setWidgetSize(main.southContent, value);	
-	}
 	
 	protected void closeElaboration(JsElaboration jsElaboration) {
 		MainElaboration main = (MainElaboration) getContent().getWidget();
@@ -378,16 +339,14 @@ public class Elaboration extends AonTemplate2 {
 	
 	private String getData() {
 //		String data = JsonUtils.stringify(getJsElaboration());
-//		ElaborationPanel main = getElaborationPanel();
 		MainElaboration main = (MainElaboration) getContent().getWidget();
 		ElaborationPanel panel = main.getElaborationPanel();
-//		FooterPanel footer = getFooterPanel();
 		FooterPanel footer = main.getFooterPanel();
 		String description = panel.descriptionLabel.getText();
 		description = (description!=null && !"".equals(description)
 				? description : panel.itemBox.getDescription());
-		String comments = footer!=null?footer.comments.getValue():""; 
-		String remarks = footer!=null?footer.remarks.getValue():""; 
+		String comments = footer!=null?footer.getCommentsValue():""; 
+		String remarks = footer!=null?footer.getRemarksValue():""; 
 		String data = "{\"series\":\"" + panel.series.getValue()+ "\""
 				+ ",\"number\":\"" + panel.number.getValue()+ "\""
 				+ ",\"date\":\"" + (panel.date.getValue() != null ? panel.date.getValue().getTime() : "")+ "\""
@@ -411,17 +370,7 @@ public class Elaboration extends AonTemplate2 {
 		return data;
 	}
 	
-	private ElaborationPanel getElaborationPanel() {
-		ElaborationPanel panel = (ElaborationPanel) getContent().getWidget();
-		return panel;
-	}
 	
-	private FooterPanel getFooterPanel() {
-		MainElaboration main = (MainElaboration) getContent().getWidget();
-		FooterPanel panel = (FooterPanel) main.southContent.getWidget();
-		return panel;
-	}
-
 	public HashMap<String, LinkedList<String>> getFilterMap() {
 		return filterMap;
 	}

@@ -222,7 +222,10 @@ public class ElaborationPanel extends Composite {
 		this.jsElaboration = jsElaboration;
 	}
 	protected boolean isElaborationCLosed(){
-		return getJsElaboration().getStatus().getId()==new Integer(ElaborationStatus.CLOSED.ordinal());
+		return isElaborationCLosed(getJsElaboration());
+	}
+	protected boolean isElaborationCLosed(JsElaboration elaboration){
+		return elaboration!=null && elaboration.getStatus().getId()==new Integer(ElaborationStatus.CLOSED.ordinal());
 	}
 	
 }

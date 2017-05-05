@@ -240,7 +240,7 @@ public class ElaborationDownload extends HttpServlet {
 		header.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		header.setWidthPercentage(100);
 
-		header.addCell(getHeaderLogo(image));
+		header.addCell(image!=null?getHeaderLogo(image):new PdfPCell());
 		header.addCell(getHeaderCompany(company, address));
 		header.addCell(getHeaderElaboration(elaboration));
 		return header;

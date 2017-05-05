@@ -20,6 +20,20 @@
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Pedidos pendientes"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="pendingOrderPanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
+			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="receipt"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Origen"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>

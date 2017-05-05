@@ -37,7 +37,7 @@ public class JsElaborationDetail extends JavaScriptObject {
 												return this.quantity;
 												}-*/;
 
-	public final native JsObject getWarehouse() /*-{
+	public final native JsWarehouse getWarehouse() /*-{
 												return this.warehouse;
 												}-*/;
 

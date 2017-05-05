@@ -235,8 +235,9 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		String serial = detail.getItem().getSerialNumber();
 		
 		String label = detail.getQuantity()
-				+ " uds. "
-				+ (serial != null ? "(#" + serial + ") " : "")
+				+ " uds. ("
+				+ (serial != null ? "#" + serial : "S/N")
+				+ ") "
 				+ detail.getDate();
 		String title = (label);
 	    
@@ -335,17 +336,21 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	// -------------------- COMPOSITION PANEL
 	
 	private void buildCompositionPanel(JsElaborationDetail detail) {
-		
 		String description = "";
-		if(compositionVerticalPanel==null){
-			// TODO load base item composition in readOnly mode
+		if(compositionVerticalPanel==null) {
 			compositionVerticalPanel = new VerticalPanel();
 			description = ("("+getElaboration().getDescription()+")");
 		} else {
 			compositionVerticalPanel.clear();
-			if(detail!=null && detail.getItem()!=null){
-				description = ("(#" + detail.getItem().getSerialNumber() + ")");
+			description += detail.getQuantity();
+			description += " uds. (";
+			if(detail!=null && detail.getItem()!=null && detail.getItem().getSerialNumber()!=null){
+				description += ("#" + detail.getItem().getSerialNumber());
+			} else {
+				description += ("S/N");
 			}
+			description += ") ";
+			description += detail.getDate();
 		}
 		compositionVerticalPanel.addStyleName(AON.AON_CSS.aonWidthAll());
 		Label label = new Label("Composici\u00F3n " + description);
@@ -354,7 +359,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(label);
 		
-		if(isDetailSelected() && !isClosed()){
+		if(isDetailSelected() && !isClosed()) {
 			Button newCompositionButton = new Button();
 			newCompositionButton.setTitle("Nueva Composici\u00F3n");
 			newCompositionButton.setStyleName(AON.AON_CSS.aonIconReset());
@@ -369,7 +374,12 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		}
 	
 		compositionVerticalPanel.add(hp);
-		compositionVerticalPanel.add(compositionItems(detail));	
+		if(compositionVerticalPanel==null) {
+			// TODO load base item composition in readOnly mode
+			compositionVerticalPanel.add(compositionItems(detail));	
+		} else {
+			compositionVerticalPanel.add(compositionItems(detail));	
+		}
 	}
 
 	
@@ -549,6 +559,9 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onSuccess(JSON<JsWarehouse> result) {
 				inputWarehouse.setItems(result.getData());
+				if(jsElaboration.getWarehouse()!=null){
+					inputWarehouse.setValue(jsElaboration.getWarehouse().getName());
+				}
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -663,6 +676,9 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onSuccess(JSON<JsWarehouse> result) {
 				inputWarehouse.setItems(result.getData());
+				if(selectedDetail.getWarehouse()!=null){
+					inputWarehouse.setValue(selectedDetail.getWarehouse().getName());
+				}
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

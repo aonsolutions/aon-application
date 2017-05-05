@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -38,44 +39,43 @@ public class FooterPanel extends Composite {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	public static final String TAB_INDEX_PENDING = "PENDING";
-	public static final String TAB_INDEX_SOURCE = "SOURCE";
-	public static final String TAB_INDEX_COMMENTS = "COMMENTS";
-	public static final String TAB_INDEX_REMARKS = "REMARKS";
-	public static final String[] TAB_INDEX = {
-//			TAB_INDEX_PENDING,
-			TAB_INDEX_SOURCE,
-			TAB_INDEX_COMMENTS,
-			TAB_INDEX_REMARKS
-			};
+	enum FooterTabs {
+		PENDING,
+		SOURCE,
+		COMMENTS,
+		REMARKS;
+	}
 
 	private API API;
 	
-	private Elaboration parent;
+	private MainElaboration parent;
 	private JsElaboration jsElaboration;
+	
+	private TextArea commentsTextArea;
+	private TextArea remarksTextArea;
 
+	
 	@UiField
 	MinimizePanel footerPanel;
 	@UiField
 	TabLayoutPanel tabPanel;
 
 	/* TABS CONTENT */
-	// TODO tab for pendingOrderPanel
-//	@UiField
-//	ScrollPanel pendingOrderPanel;
+	@UiField
+	ScrollPanel pendingOrderPanel;
 	@UiField
 	ScrollPanel sourcePanel;
 	@UiField
 	ScrollPanel commentsPanel;
 	@UiField
 	ScrollPanel remarksPanel;
-	
+
 		
-	public FooterPanel(Elaboration parent) {
+	public FooterPanel(MainElaboration parent) {
 		this(parent, null);
 	}
 	
-	public FooterPanel(Elaboration parent, JsElaboration jsElaboration) {
+	public FooterPanel(MainElaboration parent, JsElaboration jsElaboration) {
 		this.parent = parent;
 		this.API = parent.getAPI();
 		this.jsElaboration = jsElaboration;
@@ -85,32 +85,34 @@ public class FooterPanel extends Composite {
 		closeFooterPanel();
 		
 		if(jsElaboration!=null){
-//			tabPanel.remove(TAB_INDEX_PENDING);
-//			tabPanel.getTabWidget(TAB_INDEX_SOURCE).setVisible(true);
-//			tabPanel.getTabWidget(TAB_INDEX_COMMENTS).setVisible(true);
-			
-			loadSourceTab(jsElaboration);
-			loadCommetsTab(jsElaboration);
-			loadRemarksTab(jsElaboration);
-			
+			tabPanel.getTabWidget(FooterTabs.PENDING.ordinal()).getParent().setVisible(false);
+			loadSourceTab();
+			loadCommetsTab();
+			loadRemarksTab();
 		} else {
-//			tabPanel.remove(TAB_INDEX_SOURCE);
-//			tabPanel.remove(TAB_INDEX_COMMENTS);
-//			tabPanel.getTabWidget(TAB_INDEX_PENDING).setVisible(true);
+			tabPanel.getTabWidget(FooterTabs.PENDING.ordinal()).getParent().setVisible(false);
+			tabPanel.getTabWidget(FooterTabs.SOURCE.ordinal()).getParent().setVisible(false); 
+			tabPanel.getTabWidget(FooterTabs.COMMENTS.ordinal()).getParent().setVisible(false); 
+			tabPanel.getTabWidget(FooterTabs.REMARKS.ordinal()).getParent().setVisible(false); 
 			loadPendingOrderTab();
+		}
+		
+		if(isElaborationCLosed(jsElaboration)){
+			commentsTextArea.setEnabled(false);
+			remarksTextArea.setEnabled(false);
 		}
 		
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
-				if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_PENDING){
+				if(FooterTabs.values()[event.getSelectedItem()]==FooterTabs.PENDING){
 					openFooterPanel();
-				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_SOURCE){
+				} else if(FooterTabs.values()[event.getSelectedItem()]==FooterTabs.SOURCE){
 					openFooterPanel();
-				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_COMMENTS){
+				} else if(FooterTabs.values()[event.getSelectedItem()]==FooterTabs.COMMENTS){
 					openFooterPanel();
-				} else if(TAB_INDEX[event.getSelectedItem()]==TAB_INDEX_REMARKS){
+				} else if(FooterTabs.values()[event.getSelectedItem()]==FooterTabs.REMARKS){
 					openFooterPanel();
 				}
 			}
@@ -118,16 +120,16 @@ public class FooterPanel extends Composite {
 	}
 	
 	// TODO loadPendingOrderTab
-	protected void loadPendingOrderTab(){
-		
+	protected void loadPendingOrderTab() {
+		pendingOrderPanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
-	protected void loadSourceTab(JsElaboration js){
+	protected void loadSourceTab(){
 		
-		if (js.getSource()!=null && js.getSourceId()!=null) {
-			switch (js.getSource().getName()) {
+		if (jsElaboration.getSource()!=null && jsElaboration.getSourceId()!=null) {
+			switch (jsElaboration.getSource().getName()) {
 			case "SALES":
-				API.getWarehouse().getSalesDetail(js.getSourceId(), new AsyncCallback<JSON<JsSalesDetail>>() {
+				API.getWarehouse().getSalesDetail(jsElaboration.getSourceId(), new AsyncCallback<JSON<JsSalesDetail>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsSalesDetail> result) {
@@ -139,7 +141,7 @@ public class FooterPanel extends Composite {
 				});
 				break;
 			case "PURCHASE":
-				sourcePanel.add(new Label("Origen Compras: " + js.getSource() + ". " + js.getSourceId()));
+				sourcePanel.add(new Label("Origen Compras: " + jsElaboration.getSource() + ". " + jsElaboration.getSourceId()));
 				break;
 			default:
 				sourcePanel.add(new Label("Origen desconocido. "));
@@ -151,61 +153,44 @@ public class FooterPanel extends Composite {
 		
 	}
 	
-	TextArea comments;
-	protected void loadCommetsTab(JsElaboration js){
-		comments = new TextArea();
-		comments.setWidth("95%");
-		comments.setHeight("100px");
-		comments.addValueChangeHandler(new ValueChangeHandler<String>() {
+	protected void loadCommetsTab(){
+		commentsTextArea = new TextArea();
+		commentsTextArea.setWidth("95%");
+		commentsTextArea.setHeight("100px");
+		commentsTextArea.addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				parent.setJsElaboration(js);
+				parent.setJsElaboration(jsElaboration);
 			}
 		});
-		
-		if (js.getComments() != null && !"".equals(js.getComments().trim())) {
-			comments.setValue(js.getComments());
+		if (jsElaboration.getComments() != null && !"".equals(jsElaboration.getComments().trim())) {
+			commentsTextArea.setValue(jsElaboration.getComments());
 			openFooterPanel();
-			selectTab(TAB_INDEX_COMMENTS);
+			tabPanel.selectTab(FooterTabs.COMMENTS.ordinal());
 		}
-
-		commentsPanel.add(comments);
-		
+		commentsPanel.add(commentsTextArea);
 	}
 	
-	TextArea remarks;
-	protected void loadRemarksTab(JsElaboration js){
-		remarks = new TextArea();
-		remarks.setWidth("95%");
-		remarks.setHeight("100px");
-		remarks.addValueChangeHandler(new ValueChangeHandler<String>() {
+	protected void loadRemarksTab(){
+		remarksTextArea = new TextArea();
+		remarksTextArea.setWidth("95%");
+		remarksTextArea.setHeight("100px");
+		remarksTextArea.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				parent.setJsElaboration(js);
+				parent.setJsElaboration(jsElaboration);
 			}
 		});
-		
-		if (js.getRemarks() != null && !"".equals(js.getRemarks().trim())) {
-			remarks.setValue(js.getRemarks());
+		if (jsElaboration.getRemarks() != null && !"".equals(jsElaboration.getRemarks().trim())) {
+			remarksTextArea.setValue(jsElaboration.getRemarks());
 			openFooterPanel();
-			selectTab(TAB_INDEX_REMARKS);
+			tabPanel.selectTab(FooterTabs.REMARKS.ordinal());
 		}
-		
-		remarksPanel.add(remarks);
-		
+		remarksPanel.add(remarksTextArea);
 	}
 	
-	private void selectTab(String tabConts){
-		int idx = -1;
-		for(int i=0; i<TAB_INDEX.length; i++){
-			if(TAB_INDEX[i].equals(tabConts)){
-				idx = i;
-			}
-		}
-		tabPanel.selectTab(idx);
-	}
 	
 	protected FlowPanel createSourcePanel(JsSalesDetail jsDetail){
 		final FlowPanel p = new FlowPanel("pre");
@@ -312,7 +297,19 @@ public class FooterPanel extends Composite {
 		
 		return p;
 	}
+	
+	public String getCommentsValue(){
+		return commentsTextArea.getValue();
+	}
 
+	public String getRemarksValue(){
+		return remarksTextArea.getValue();
+	}
+	
+	protected boolean isElaborationCLosed(JsElaboration elaboration){
+		return elaboration!=null && elaboration.getStatus().getId()==new Integer(ElaborationStatus.CLOSED.ordinal());
+	}
+	
 	@UiHandler("footerPanel")
 	void onFooterMinimize(MinimizeEvent event) {
 		closeFooterPanel();
@@ -335,4 +332,9 @@ public class FooterPanel extends Composite {
 	public void closeFooterPanel() {
 		parent.changeSouthContentSize(30.0);
 	}
+	
+	public void hideFooterPanel() {
+		parent.changeSouthContentSize(0.0);
+	}
+	
 }
