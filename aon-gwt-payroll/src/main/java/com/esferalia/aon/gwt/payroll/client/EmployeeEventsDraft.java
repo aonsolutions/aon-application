@@ -1,8 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
@@ -16,7 +19,17 @@ public class EmployeeEventsDraft extends Composite {
 	}
 	
 	@UiField
+	Label yearLabel;
+
+	@UiField
+	Button lastYearButton;
+
+	@UiField
+	Button nextYearButton;
+	
+	@UiField
 	Grid eventsGrid;
+	
 	
 	public EmployeeEventsDraft() {
 		//Inicializamos la vista del gestor de incidencias
@@ -25,14 +38,37 @@ public class EmployeeEventsDraft extends Composite {
 		fillCellsEvents();
 	}
 
+	/**
+	 * UIHANDLERS
+	 */
+	
+	@UiHandler("lastYearButton")
+	public void onLastYearClick(ClickEvent event) {
+		changeYear(-1);
+	}
+
+	@UiHandler("nextYearButton")
+	public void onNextYearClick(ClickEvent event) {
+		changeYear(1);
+	}
+	
+
+	/**
+	 * METEDOS AUXILIARES
+	 */
+	
 	private void fillCellsEvents() {
 		for (int row = 1; row < 17; row ++)
 			for (int col = 1; col < 13; col ++){
-				Label labelEvent = new Label("3.33");
+				Label labelEvent = new Label("333.333");
 				eventsGrid.setWidget(row, col, labelEvent);
-			}
-
-		
+			}	
 	}
-
+	
+	private void changeYear(int change) {
+		int actualYear = Integer.parseInt(yearLabel.getText());
+		int newYear = actualYear + change;
+		yearLabel.setText(Integer.toString(newYear));
+	}
+	
 }

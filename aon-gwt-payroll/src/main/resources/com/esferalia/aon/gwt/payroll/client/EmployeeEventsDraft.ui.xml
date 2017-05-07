@@ -20,12 +20,13 @@
 			text-align: center;
 			border-bottom: 1px solid #ddd;
 			font-family: Arial, Helvetica, sans-serif;
-			font-size: 10px;
+			font-size: 11px;
 		}
 		
 		.cabeceraFirstStyle {
 			width: 16em;
 			font-weight: bold;
+			padding: 3px;
 		}
 
 		.cabeceraFirstStyleHide {
@@ -50,6 +51,9 @@
 		}
 
 		/* ESTILOS CAMBIO DE AÑO */		
+		.paddingHorizontalPanel{
+			padding-bottom: 30px;
+		}
 
 		.year {
 			font-size: 30px;
@@ -128,10 +132,10 @@
 		</g:north>
 		
 		<g:center>
-		    <!--g:HTMLPanel-->
+		    <g:HTMLPanel>
 		        
-		        <!-- PANEL CAMBIO DE AÑO
-		        <g:HorizontalPanel>
+		        <!-- PANEL CAMBIO DE AÑO-->
+		        <g:HorizontalPanel styleName="{style.paddingHorizontalPanel}">
 					<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
 					<g:Button
 						styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous"
@@ -140,10 +144,10 @@
 						styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next"
 						ui:field="nextYearButton" />
 				</g:HorizontalPanel>
-		         -->
+		         
 		        
 			    <g:DockLayoutPanel
-				    unit="EM">
+				    unit="EM" height="90%">
 			        
 				    <!-- DataGrid. -->
 				    <g:north size="1">
@@ -320,7 +324,7 @@
 					   	</g:ScrollPanel>  
 				    </g:center>
 				</g:DockLayoutPanel>	
-			 <!--/g:HTMLPanel-->
+			 </g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder>
