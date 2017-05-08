@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.102</version>
+		<version>8.102.1</version>
 	</parent>
 	<artifactId>aon.pool</artifactId>
 	<name>AON SQL CONNECTION POOL</name>
