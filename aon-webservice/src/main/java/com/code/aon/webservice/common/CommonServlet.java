@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -25,6 +26,8 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CommonServlet", urlPatterns = { "/common/*",
@@ -123,12 +126,38 @@ public class CommonServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
 		AON.getDataResponseStream(domain.getName(), domain.getId(), login,  
 				f -> dataResponseFilter(domain, map, f))
-		.forEach(dr -> array.put(ToJSON.dataResponseToJSON(dr)));
+		.forEach(dr -> {
+			String source = AON.getDataResponseDetail(domain.getName(), domain.getId(), login,
+					f -> f.getDataResponseProperty().eq(dr.getId())
+					.and(f.getDataVariableProperty().eq("source"))).get().getValue();
+			String[] s = source.split("@");
+			if("income_detail".equals(s[0])){
+				Integer id =Integer.parseInt(s[1]);
+				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f2 -> f2.getIdProperty().eq(id));	
+				JSONObject o = ToJSON.dataResponseToJSON(dr);
+				o.put("product", incomeDetail.get().getDescription());
+				array.put(o);
+			}
+		});
 	    return array;
 	}
 	
 	public static Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey("from")){
+			String from = filterMap.get(MSG.FROM)[0];
+			Date d = new Date(Long.parseLong(from));
+			Filter fDate = f.getIssueDateProperty().ge(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
+		
+		if(filterMap.containsKey("to")){
+			String to = filterMap.get(MSG.TO)[0];
+			Date d = new Date(Long.parseLong(to));
+			Filter fDate = f.getIssueDateProperty().le(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
 		
 		if(filterMap.containsKey(MSG.NUMBER)){
 			Filter fnumber = f.getNumberProperty().eq(filterMap.get(MSG.NUMBER)[0]);

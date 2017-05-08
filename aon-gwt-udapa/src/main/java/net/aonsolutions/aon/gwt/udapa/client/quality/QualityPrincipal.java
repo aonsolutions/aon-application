@@ -28,21 +28,18 @@ public class QualityPrincipal extends Composite{
 	@UiField SimpleLayoutPanel content;
 	
 	private UdapaQuality parent;
-	private HashMap<String, LinkedList<String>> filterMap;
 	private QualityPrincipal me;
 	
 	public API getAPI() {
 		return parent.getAPI();
 	}
-
-	public QualityPrincipal(UdapaQuality parent, HashMap<String, LinkedList<String>> filterMap) {
-		initWidget(binder.createAndBindUi(this));
-		this.parent = parent;
-		this.me = this;
-		this.filterMap = filterMap;
-		
-		filterContent();
-		gridContent();
+	
+	public HashMap<String, LinkedList<String>> getFilterMap(){
+		return parent.getFilterMap();
+	}
+	
+	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap){
+		parent.setFilterMap(filterMap);
 	}
 	
 	public QualityPrincipal(UdapaQuality parent) {
@@ -80,17 +77,9 @@ public class QualityPrincipal extends Composite{
 	
 	
 	public void selectDataResponse(JsDataResponse js){
-		parent.sheetContent(js, filterMap);
+		parent.sheetContent(js, getFilterMap());
 	}
 
-	public HashMap<String, LinkedList<String>> getFilterMap() {
-		return filterMap;
-	}
-
-	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
-		this.filterMap = filterMap;
-	}
-	
 	public void initializeFilterMap(){
     	setFilterMap(parent.initializeFilterMap());
 	}

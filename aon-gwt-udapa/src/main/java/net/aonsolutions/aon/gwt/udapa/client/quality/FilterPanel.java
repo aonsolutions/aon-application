@@ -3,33 +3,22 @@ package net.aonsolutions.aon.gwt.udapa.client.quality;
 import java.util.Date;
 import java.util.LinkedList;
 
-import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
-import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -90,7 +79,7 @@ public class FilterPanel extends Composite {
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(from.getValue().getTime()));
-				onChange("issue_date", list);
+				onChange("from", list);
 			}
 		});
 		datePanel.add(from);
@@ -110,7 +99,7 @@ public class FilterPanel extends Composite {
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(to.getValue().getTime()));
-				onChange("delivery_date", list);	
+				onChange("to", list);	
 			}
 		});
 		datePanel.add(to);

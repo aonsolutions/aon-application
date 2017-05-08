@@ -148,7 +148,7 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
 	private void principalContent() {
-		setContent(new QualityPrincipal(me, getFilterMap()));
+		setContent(new QualityPrincipal(me));
 	}
 	
 	

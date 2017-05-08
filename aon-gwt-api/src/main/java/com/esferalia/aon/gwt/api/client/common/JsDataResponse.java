@@ -46,4 +46,8 @@ public class JsDataResponse extends JavaScriptObject {
 		return this.modification_date;
 	}-*/;
 
+	public final native String getProduct() /*-{
+		return this.product;
+	}-*/;
+
 }

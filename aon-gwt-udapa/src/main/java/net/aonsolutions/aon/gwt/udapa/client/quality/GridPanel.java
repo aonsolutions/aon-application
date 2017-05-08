@@ -223,7 +223,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 
 			@Override
 			public String getValue(JsDataResponse object) {
-				return "PRODUCT DESCRIPTION";
+				return object.getProduct();
 			}
 		
 		};
