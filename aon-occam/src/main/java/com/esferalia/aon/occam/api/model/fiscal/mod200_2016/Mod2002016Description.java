@@ -15,7 +15,7 @@ public class Mod2002016Description {
 	public static EnumMap<Mod2002016Key,String> DESCRIPTION_MAP = new EnumMap<Mod2002016Key,String>(Mod2002016Key.class);
 
 	static {		
-		DESCRIPTION_MAP.put(Mod2002016Key.X0000, "tipo de ejercicio");
+		DESCRIPTION_MAP.put(Mod2002016Key.X0000, "Tipo de ejercicio");
 		
 		DESCRIPTION_MAP.put(Mod2002016Key.C0001,"Entidad sin \u00E1nimo de lucro acogida r\u00E9gimen fiscal T\u00EDtulo II Ley 49/2002");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0002,"Entidad parcialmente exenta");

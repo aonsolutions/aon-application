@@ -64,12 +64,12 @@
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>
+		<g:north size="55">
+			<g:SimplePanel ui:field="headerPanel"/>
+		</g:north>
 		<g:center>
 			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-				<g:north size="55">
-					<g:SimplePanel ui:field="headerPanel"/>
-				</g:north>
-				<g:south size="0">
+				<g:south size="30">
 					<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
 						<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
 							<g:tab>
@@ -79,6 +79,12 @@
 										text="Notificaciones" />
 								</g:customHeader>
 								<aon:ResultsPanel ui:field="resultsPanel" />
+							</g:tab>
+							<g:tab>
+								<g:customHeader>
+									<g:Label ui:field="fiscalInformationLabel" text="{msg.fiscalInformation}" />
+								</g:customHeader>
+								<g:ScrollPanel ui:field="infoContainer" styleName="{aonResources.css.aonScrollArea}"/>
 							</g:tab>
 						</g:TabLayoutPanel>
 					</aon:MinimizePanel>

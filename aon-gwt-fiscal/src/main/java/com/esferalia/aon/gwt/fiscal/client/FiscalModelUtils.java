@@ -2,9 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -292,6 +294,15 @@ public class FiscalModelUtils {
 		}
 	}
 	
+	public static FlowPanel getAnchorPanel(IFiscalModel model, String label, String href) {
+		FlowPanel p = new FlowPanel();
+		p.setStyleName(AON.AON_CSS.aonPadding2());
+		Anchor a = new Anchor(label,href,"_blank");
+		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		a.addStyleName(FiscalModelUtils.getAdministrationIcon(model.getAdministration()));
+		p.add(a);
+		return p;
+	}
 }
 
 

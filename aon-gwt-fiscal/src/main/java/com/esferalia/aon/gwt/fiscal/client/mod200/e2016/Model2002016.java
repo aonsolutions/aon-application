@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -15,6 +16,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.ValidationMessage201
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,12 +37,17 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model2002016 extends ResizeComposite  {
 	
+	final static int NOTIFICATIONS_TAB = 0;
+	final static int INFORMATION_TAB = 1;
+
 	interface Model2002016Binder extends
 			UiBinder<Widget, Model2002016> {
 	}
@@ -121,9 +129,15 @@ public class Model2002016 extends ResizeComposite  {
 	FlowPanel linkContainer;
 	
 	@UiField
+	TabLayoutPanel tabLayout;
+	@UiField
 	ResultsPanel resultsPanel;
 	@UiField
 	MinimizePanel footPanel;
+	@UiField
+	Label fiscalInformationLabel;
+	@UiField
+	ScrollPanel infoContainer;
 
 	@UiField
 	Panel formContainer;
@@ -140,10 +154,19 @@ public class Model2002016 extends ResizeComposite  {
 		initWidget(ui);
 		
 		fillLinkContainer();
-		
 		errorPage = new ErrorPage();
 		errorPage.addSelectionListener(this);
 		
+		tabLayout.setAnimationDuration(300);
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
+		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				openFootPanelIfNeeded();
+			}
+		});
+
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		FlowPanel formFlowPanel = new FlowPanel();
@@ -158,6 +181,25 @@ public class Model2002016 extends ResizeComposite  {
 		
 	}
 	
+	private void fillInfo() {
+		fiscalInformationLabel.setStyleName(AON.AON_CSS.aonPaddingRight());
+		fiscalInformationLabel.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+		fiscalInformationLabel.addStyleName(FiscalModelUtils.getAdministrationIconBW(mod200Object.getMod200().getAdministration()));
+		
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.add(FiscalModelUtils.getAnchorPanel( mod200Object.getMod200()
+				,"Tr\u00E1mites."
+				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GE04.shtml"));
+		panel.add(FiscalModelUtils.getAnchorPanel( mod200Object.getMod200()
+				,"Informaci\u00F3n general." 
+				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/GE04.shtml"));
+		panel.add(FiscalModelUtils.getAnchorPanel(mod200Object.getMod200()
+				,"Ficha."
+				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GE04.shtml"));
+		infoContainer.setWidget(panel);
+	}
+
 	public DeckLayoutPanel getDeckPanel() {
 		return deckPanel;
 	}
@@ -282,6 +324,7 @@ public class Model2002016 extends ResizeComposite  {
 	
 	public void startModel(final Mod2002016Object modObject ) {
 		mod200Object = modObject;
+		fillInfo();
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
 		label.addStyleName(AON.AON_CSS.aonTimer());
@@ -425,6 +468,7 @@ public class Model2002016 extends ResizeComposite  {
 
 
 	// -------------------------------------------------------------- UiHandler
+	/*
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
 		closeFootPanel();
@@ -437,11 +481,6 @@ public class Model2002016 extends ResizeComposite  {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
-	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-	}
-/*
 	private void maximizeFootPanel() {
 		dockLayoutPanel.setWidgetSize(footPanel, 0);
 	}
@@ -635,6 +674,36 @@ public class Model2002016 extends ResizeComposite  {
 		linkContainer.add(new WestFocusPanel("13.- " + AON.MSG.incomeDistribution() , page12, true));
 		linkContainer.add(new WestFocusPanel("14.- " + AON.MSG.deducibleLimitation(), page13, true));
 		linkContainer.add(new WestFocusPanel("15.- " + AON.MSG.idDocument()			, page14, true));
+	}
+	
+	private void showResultsPanel() {
+		openFootPanel();
+	}
+
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+
+	@UiHandler("footPanel")
+	void onFootMaximize(MaximizeEvent event) {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		splitLayoutPanel.animate(500);
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
+	}
+	
+	private void openFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.animate(500);
+	}
+	private void openFootPanelIfNeeded() {
+		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
+			openFootPanel();
+		}
 	}
 	
 }
