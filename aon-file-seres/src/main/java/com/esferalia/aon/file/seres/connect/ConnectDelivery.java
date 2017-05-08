@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
@@ -16,7 +17,6 @@ import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1B;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1D;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1G;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1L;
-import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1P;
 
 public class ConnectDelivery extends AbstractFileFiller {
 	
@@ -29,13 +29,15 @@ public class ConnectDelivery extends AbstractFileFiller {
 	private static String SEH1B = "SEH1B";
 	
 	private RECTL rectl;
+	private Map<Integer, List<Integer>> seh1pMap;
 	
-	public ConnectDelivery(RECTL rectl, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+	public ConnectDelivery(RECTL rectl, Map<Integer, List<Integer>> seh1pMap, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
 		super(writer);
 		if (rectl == null)  {
 			throw new IllegalArgumentException("El registro RECTL no puede ser nulo!");
 		}
 		this.rectl = rectl;
+		this.seh1pMap = seh1pMap;
 		
 		InputStream input = null;
 		input = ConnectDelivery.class.getResourceAsStream("/com/esferalia/aon/file/seres/connect/delivery/v4/xml/RECTL.xml");
@@ -79,27 +81,68 @@ public class ConnectDelivery extends AbstractFileFiller {
 					createLine(SEH1D, properties);
 				}
 			}
+			
 			if(rectl.seh1pList==null || rectl.seh1pList.isEmpty()) {
 				Fd0Exception e = new Fd0Exception( "SEH1P", "Secuencia de embalajes. La entidad 'SEH1P' es obligatoria");
 				exceptions.add (e);
 			} else {
-				for (SEH1P value: rectl.seh1pList) {
-					properties.put(SEH1P, value);
-					createLine(SEH1P, properties);
-				}
-			}if(rectl.seh1lList==null || rectl.seh1lList.isEmpty()) {
-				Fd0Exception e = new Fd0Exception( "SEH1L", "Línea de artículos. La entidad 'SEH1L' es obligatoria");
-				exceptions.add (e);
-			} else {
-				for (SEH1L value: rectl.seh1lList) {
-					properties.put(SEH1L, value);
-					createLine(SEH1L, properties);
-				}
+				if(seh1pMap==null || seh1pMap.isEmpty()) {
+					Fd0Exception e = new Fd0Exception( "SEH1P", "Secuencia de embalajes. La entidad 'SEH1P' es obligatoria");
+					exceptions.add (e);
+				} else {
+//					System.out.println(seh1pMap);
+					List<Integer> containerList = new ArrayList<>();
+					containerList.addAll(seh1pMap.keySet());
+					
+					seh1pMap.keySet().stream().sorted().forEach(key -> {
+						List<Integer> list = seh1pMap.get(key);
+						containerList.removeAll(list);	
+					});
+//					System.out.println(containerList);
+					
+					
+//					SEH1P palet = rectl.seh1pList.stream()
+//						.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
+//						.findFirst().orElse(null);
+//					
+//					List<SEH1P> embases = rectl.seh1pList.stream()
+//							.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
+//							.collect(Collectors.toList());
+					
+					
+//					properties.put(SEH1P, palet);
+//					createLine(SEH1P, properties);
+					
+					int linesCount = rectl.seh1lList.size();
+					containerList.stream().sorted().forEach(containerKey -> {
+						
+						int index = containerKey - linesCount;
+						properties.put(SEH1P, rectl.seh1pList.get(index-1));
+						createLine(SEH1P, properties);
+						
+						seh1pMap.get(containerKey).stream().sorted().forEach(containerKey2 -> {
+							int index2 = containerKey2 - linesCount;
+							
+							properties.put(SEH1P, rectl.seh1pList.get(index2-1));
+//							properties.put(SEH1P, embases.get(index2-1));
+							createLine(SEH1P, properties);
+							
+							for (Integer index3: seh1pMap.get(containerKey2)) {
+								SEH1L value = rectl.seh1lList.get(index3-1);
+								properties.put(SEH1L, value);
+								createLine(SEH1L, properties);
+							}
+						});
+						
+					});
+				}				
 			}
+			
 			for (SEH1G value: rectl.seh1gList) {
 				properties.put(SEH1G, value);
 				createLine(SEH1G, properties);
 			}
+			
 			for (SEH1B value: rectl.seh1bList) {
 				properties.put(SEH1B, value);
 				createLine(SEH1B, properties);
