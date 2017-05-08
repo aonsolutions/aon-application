@@ -314,12 +314,16 @@ public class EmployeeCalendarDraftObjectData {
 	
 	public boolean isFullTimeJourney(){
 		if (fullTimeEmployee)
-			if (fullTimeEmployeeDraft == 0)
+			if (fullTimeEmployeeDraft == 0){
+				//Window.alert("FullTimeEmployee = FALSE");
 				return false;
+			}
 		
 		if (!fullTimeEmployee)
-			if (fullTimeEmployeeDraft == 1)
+			if (fullTimeEmployeeDraft == 1){
+				//Window.alert("FullTimeEmployee = TRUE");
 				return true;
+			}
 		
 		return fullTimeEmployee;
 	}
