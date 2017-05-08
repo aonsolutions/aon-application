@@ -6,7 +6,12 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,9 +56,10 @@ public class ConnectDeliveryWriter {
 			UnsupportedEncodingException {
 		RECTL rectl = createRECTLRecord(delivery, companyEdiCode,
 				customerEdiCode, deliveryPointEdiCode);
+		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
-		FileFiller filler = new ConnectDelivery(rectl, writer);
+		FileFiller filler = new ConnectDelivery(rectl, seh1pMap, writer);
 		FileOutput output = new FileOutput();
 		output.setErrors(filler.create());
 		output.setContent(outputStream.toString().getBytes(SeresUtils.DEFAULT_CHARSET_ENC));
@@ -519,6 +525,62 @@ public class ConnectDeliveryWriter {
 	private boolean isPackageItem(Item item) {
 		return item != null && item.getSerialNumber() == null
 				&& item.getSerialDate() == null;
+	}
+	
+
+	private Map<Integer, List<Integer>> obtainSeh1pMap(Delivery delivery) {
+		String remarks = delivery.getRemarks();
+		
+		if(remarks!=null && !"".equals(remarks)){
+			Map<Integer, List<Integer>> seh1pMap = new HashMap<Integer, List<Integer>>();
+			
+			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(CONT=\\d{1,3})\\]");
+			Matcher matcher = pattern.matcher(remarks);
+			while (matcher.find()) {	
+				String value1 = matcher.group(1).replaceFirst("ENV=", "");
+				String value2 = matcher.group(2).replaceFirst("CONT=", "");
+				Integer key = Integer.parseInt(value2);
+				Integer value = Integer.parseInt(value1);
+				List<Integer> list = new LinkedList<>();
+				list.add(value);
+				if(seh1pMap.containsKey(key))
+					seh1pMap.get(key).addAll(list);
+				else
+					seh1pMap.put(key, list);
+			}
+			
+			pattern = Pattern.compile("\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]");
+			matcher = pattern.matcher(remarks);
+			while (matcher.find()) {
+				String value1 = matcher.group(1).replaceFirst("ENV=", "");
+				String value2 = matcher.group(2).replaceFirst("LIN=", "");
+				Integer key = Integer.parseInt(value1);
+				Integer value = Integer.parseInt(value2);
+				List<Integer> list = new LinkedList<>();
+				list.add(value);
+				if(seh1pMap.containsKey(key))
+					seh1pMap.get(key).addAll(list);
+				else
+					seh1pMap.put(key, list);
+			}
+			
+//			String[] split = remarks.split("\\[\\]?");
+//			for(String value: split){
+//				value = value.replaceAll("\r", "").replaceAll("\n", "").replaceAll("]", "");
+//				if(value.matches("ENV.*LIN.*")){
+//					Integer key = Integer.parseInt(value.split(";")[0].replace("ENV=", ""));
+//					List<Integer> list = new LinkedList<>();
+//					list.add(Integer.parseInt(value.split(";")[1].replace("LIN=", "")));
+//					if(seh1pMap.containsKey(key))
+//						seh1pMap.get(key).addAll(list);
+//					else
+//						seh1pMap.put(key, list);
+//				}
+//			}
+			
+			return seh1pMap;
+		}
+		return null;
 	}
 
 }
