@@ -1771,6 +1771,8 @@ public interface CommonMessages extends Messages {
 	String doubleContributionNational2014();
 	@DefaultMessage("Deducciones doble imposici\u00F3n interna 2015")
 	String doubleContributionNational2015();
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna 2016")
+	String doubleContributionNational2016();
 	
 	@DefaultMessage("Deducci\u00F3n pendiente/generada")
 	String pendingDeduction();
@@ -1784,6 +1786,8 @@ public interface CommonMessages extends Messages {
 	String pendingDeduction2014();
 	@DefaultMessage("2015 deducci\u00F3n pendiente")
 	String pendingDeduction2015();
+	@DefaultMessage("2016 deducci\u00F3n pendiente")
+	String pendingDeduction2016();
 	
 	@DefaultMessage("Deducci\u00F3n aplicada en esta liquidaci\u00F3n")
 	String appliedDeduction();
@@ -1800,6 +1804,8 @@ public interface CommonMessages extends Messages {
 	String doubleContributionInternational2014();
 	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2015")
 	String doubleContributionInternational2015();
+	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2016")
+	String doubleContributionInternational2016();
 
 	@DefaultMessage("Base de deducci\u00F3n")
 	String deductionTaxablebase();
@@ -2315,7 +2321,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Conversi\u00F3n")
 	String liquiMsg5();
 	
-	@DefaultMessage("Importar Fichero BOE - 2013")
+	@DefaultMessage("Importar Fich. Ej. Ant.")
+	String importLastYear();
+
+	@DefaultMessage("Importar Fich. 2013")
 	String import2013();
 
 	@DefaultMessage("Fichero oficial del Ejercicio 2013")
@@ -3288,5 +3297,8 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Aviso: Se generar\u00E1 un apunte manual")
 	String manualEntryGeneration();
+
+	@DefaultMessage("El ejericio de la declaraci\u00F3n no est\u00E1 soportado")
+	String noModuleForYear();
 	
 }

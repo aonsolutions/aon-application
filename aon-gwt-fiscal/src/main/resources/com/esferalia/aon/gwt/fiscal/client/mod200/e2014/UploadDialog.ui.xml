@@ -1,0 +1,21 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:HTMLPanel>
+		<div>
+			<g:Label ui:field="label"/>
+		</div>
+		<div>
+			<g:FlexTable ui:field="flex_table" />
+		</div>
+		<div class="{aonResources.css.aonMarginTop} {aonResources.css.aonTextCenter}">
+			<g:Button ui:field="cancel_button"></g:Button>
+			<g:Button ui:field="accept_button"></g:Button>
+		</div>
+	
+	</g:HTMLPanel>
+
+</ui:UiBinder>

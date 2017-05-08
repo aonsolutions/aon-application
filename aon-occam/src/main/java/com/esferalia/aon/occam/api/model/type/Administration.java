@@ -25,4 +25,13 @@ public enum Administration implements Serializable {
 		return (byte) ordinal();
 	}
 	
+	public static Administration safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static Administration safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= Administration.values().length) return null;
+		return Administration.values()[i];
+	}
 }

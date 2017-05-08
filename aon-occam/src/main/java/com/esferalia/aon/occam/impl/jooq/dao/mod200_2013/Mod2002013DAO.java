@@ -830,5 +830,13 @@ public class Mod2002013DAO  {
 		} catch (JAXBException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}				
+	}
+
+	public static Mod2002013 createNewMod200(AONContext ctx, int year) {
+		Mod2002013 mod200 = new Mod2002013();
+		mod200.setDomain(ctx.getDomainId());
+		mod200.setYear(year);
+		initializeNewMod200(ctx,mod200);
+		return mod200;
 	}	
 }

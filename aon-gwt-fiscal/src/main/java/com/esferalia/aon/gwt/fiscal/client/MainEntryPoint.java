@@ -15,9 +15,9 @@ import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
+import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -30,7 +30,6 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	//    ================================================================== FISCAL
 	//
-	private static final String FS_FISCAL_PANEL = "FiscalPanel";
 	private static final String FS_MOD111_ENTRY_POINT = "Model111";
 	private static final String FS_MOD115_ENTRY_POINT = "Model115";
 	private static final String FS_MOD123_ENTRY_POINT = "Model123";
@@ -61,22 +60,7 @@ public class MainEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
-		if ( entryPoint.equalsIgnoreCase(FS_FISCAL_PANEL)) {
-			GWT.runAsync(FiscalTree.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					FiscalTree panel = new FiscalTree();
-					panel.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
+		if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
 			GWT.runAsync(Model140.class, new RunAsyncCallback() {
 
 				@Override
@@ -178,6 +162,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					Model202 model202 = new Model202();
 					model202.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
+			GWT.runAsync(Model200.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model200 model200 = new Model200();
+					model200.onModuleLoad();
 				}
 				
 			});

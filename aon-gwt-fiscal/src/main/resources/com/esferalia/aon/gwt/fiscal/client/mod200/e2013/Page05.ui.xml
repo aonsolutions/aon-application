@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+			<g:SimplePanel ui:field="headerPanel"/>
+			<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+				<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.pyg}"/>
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table class="aon-width-all aon-margin-bottom">
+								<tr>
+									<td>
+										<g:FlexTable ui:field="table" styleName="aon-width-all"/>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

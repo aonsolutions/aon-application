@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
@@ -31,6 +32,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -49,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
@@ -57,6 +60,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.Mod2002015DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2016.Mod2002016DAO;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 
 public class FiscalImpl implements IFiscal {
@@ -670,7 +674,19 @@ public class FiscalImpl implements IFiscal {
 		return Mod202DAO.getMod202Info(ctx,mod202,script,infoKey);
 	}
 
+	// ----------------------------------------------------------- [MODELO 200]
+	@Override
+	public LinkedList<Mod200> getMod200s(AONContext ctx, int domain) {
+		LinkedList<Mod200> list = new LinkedList<Mod200>();
+		Mod200DAO.getMod200s(ctx, domain)
+			.forEach(list::add);
+		return list;
+	}
 	// ----------------------------------------------------------- [MODELO 200 - 2013]
+	@Override
+	public Mod2002013 createMod2002013(AONContext ctx, int year) {
+		return Mod2002013DAO.createNewMod200(ctx,year);
+	}
 	@Override
 	public Mod2002013 initializeNewMod2002013(AONContext ctx, Mod2002013 mod200) {
 		return Mod2002013DAO.initializeNewMod200(ctx,mod200);
@@ -819,6 +835,61 @@ public class FiscalImpl implements IFiscal {
 	public Mod2002015 importMod2002014(AONContext ctx, Mod2002015 mod200) {
 		return Mod2002015DAO.importMod2002014(ctx,mod200);
 	}
+	
+	// ----------------------------------------------------------- [MODELO 200 - 2016]
+	@Override
+	public Mod2002016 createMod2002016(AONContext ctx, int year) {
+		return Mod2002016DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002016 initializeNewMod2002016(AONContext ctx, Mod2002016 mod200) {
+		return Mod2002016DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002016 initializeMod2002016(AONContext ctx, Mod2002016 mod200) {
+		return Mod2002016DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002016 getMod2002016ByYear(AONContext ctx, int year) {
+		return Mod2002016DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002016 getMod2002016ById(AONContext ctx, int id) {
+		return Mod2002016DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002016 calculateMod2002016(Mod2002016 mod200) {
+		return Mod2002016DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002016 validateMod2002016(Mod2002016 mod200) {
+		return Mod2002016DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002016 saveMod2002016(AONContext ctx, Mod2002016 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002016DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002016(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002016DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002016(Mod2002016 mod200) {
+		return Mod2002016DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002016 importMod2002015(AONContext ctx, Mod2002016 mod200) {
+		return Mod2002016DAO.importMod2002015(ctx,mod200);
+	}
+	
+	
 	@Override
 	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, VatParams params) {
 		return VATDAO.getVatSummary(ctx, params.getFromDate()

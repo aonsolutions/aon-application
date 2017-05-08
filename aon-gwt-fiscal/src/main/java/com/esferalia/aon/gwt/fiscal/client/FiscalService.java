@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
@@ -41,9 +42,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
@@ -205,44 +203,8 @@ public interface FiscalService extends RemoteService {
 	Mod202 createMod202(String domainName, int domain, Mod202 mod202) throws AonCoreException;
 	String getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
-	// ---------------------------------------------------------------MODELO 200 - 2013
-	Mod2002013 initializeNewMod2002013(String domainName,int domain,Mod2002013 mod200) throws AonCoreException;
-	Mod2002013 initializeMod2002013(String domainName,int domain,Mod2002013 mod200) throws AonCoreException;
-	Mod2002013 getMod2002013ByYear(String domainName,int domain, int year) throws AonCoreException;
-	Mod2002013 getMod2002013ById(String domainName,int domain, int id) throws AonCoreException;
-	Mod2002013 calculateMod2002013(Mod2002013 mod200) throws AonCoreException;
-	Mod2002013 saveMod2002013(String domainName,int domain,Mod2002013 mod200) throws AonCoreException;
-	Mod2002013 validateMod2002013(Mod2002013 mod200) throws AonCoreException;
-	void deleteMod2002013(String domainName,int domain,int id) throws AonCoreException;
-	String dumpAEATMod2002013(Mod2002013 mod200) throws AonCoreException;
-
-	// ---------------------------------------------------------------MODELO 200 - 2014
-	Mod2002014 createMod2002014(String domainName,int domain,int year) throws AonCoreException;
-	Mod2002014 initializeNewMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
-	Mod2002014 initializeMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
-	Mod2002014 getMod2002014ByYear(String domainName,int domain, int year) throws AonCoreException;
-	Mod2002014 getMod2002014ById(String domainName,int domain, int id) throws AonCoreException;
-	Mod2002014 calculateMod2002014(Mod2002014 mod200) throws AonCoreException;
-	Mod2002014 saveMod2002014(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
-	Mod2002014 validateMod2002014(Mod2002014 mod200) throws AonCoreException;
-	void deleteMod2002014(String domainName,int domain,int id) throws AonCoreException;
-	String dumpAEATMod2002014(Mod2002014 mod200) throws AonCoreException;
-	Mod2002014 importMod2002013(String domainName,int domain,Mod2002014 mod200) throws AonCoreException;
-	Mod2002014 fillMod2002014AccountingData(Mod2002014 mod200) throws AonCoreException;
-
-	// ---------------------------------------------------------------MODELO 200 - 2015
-	Mod2002015 createMod2002015(String domainName,int domain,int year) throws AonCoreException;
-	Mod2002015 initializeNewMod2002015(String domainName,int domain,Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 initializeMod2002015(String domainName,int domain,Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 getMod2002015ByYear(String domainName,int domain, int year) throws AonCoreException;
-	Mod2002015 getMod2002015ById(String domainName,int domain, int id) throws AonCoreException;
-	Mod2002015 calculateMod2002015(Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 saveMod2002015(String domainName,int domain,Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 validateMod2002015(Mod2002015 mod200) throws AonCoreException;
-	void deleteMod2002015(String domainName,int domain,int id) throws AonCoreException;
-	String dumpAEATMod2002015(Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 importMod2002014(String domainName,int domain,Mod2002015 mod200) throws AonCoreException;
-	Mod2002015 fillMod2002015AccountingData(Mod2002015 mod200) throws AonCoreException;
+	// ---------------------------------------------------------------MODELO 200 
+	LinkedList<Mod200> getMod200s(String currentDomainName, int currentDomain) throws AonCoreException;
 
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	Memory readMemory(Memory memory) throws AonCoreException;

@@ -1,0 +1,123 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+			<g:SimplePanel ui:field="headerPanel"/>
+			<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+	
+				<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.secretaryData}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<table class="aon-width-all aon-margin-bottom">
+							<tr>
+								<td style="width: 100px;">
+									<g:Label text="{msg.document}"  />	
+								</td>
+								<td style="width: 130px;">
+									<aon:DocumentTextBox ui:field="secretaryDocument"
+										styleName="{aonResources.css.aonInputText}"/>	
+								</td>
+								<td style="width: 100px;">
+									<g:Label text="{msg.name}"  />	
+								</td>
+								<td>
+									<g:TextBox ui:field="secretaryName" visibleLength="40" maxLength="25"
+										styleName="{aonResources.css.aonInputText}"/>
+								</td>
+								<td style="width: 100px;">
+									<g:Label text="{msg.irnrDate}"  />	
+								</td>
+								<td>
+									<aon:DateBoxEx  ui:field="irnr"
+										styleName="{aonResources.css.aonInputText}"/>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>				
+	
+				<g:HTMLPanel ui:field="fiscalGroupPanel" styleName="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.fiscalGroupLabel}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<table class="aon-width-all aon-margin-bottom">
+							<tr>
+								<td style="width: 250px;">
+									<g:Label text="{msg.fiscalGroup}"  />	
+								</td>
+								<td>
+									<g:TextBox ui:field="fiscalGroup" visibleLength="8" maxLength="7"
+										styleName="{aonResources.css.aonInputText}"/>
+								</td>
+								<td style="width: 250px;">
+									<g:Label text="{msg.dominantDocument}"  />	
+								</td>
+								<td>
+									<aon:DocumentTextBox ui:field="dominantDocument"
+										styleName="{aonResources.css.aonInputText}"/>	
+								</td>
+							</tr>
+						</table>
+					</div>
+				</g:HTMLPanel>				
+	
+				<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.legalRepresentativeData}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<table class="aon-width-all aon-margin-bottom">
+							<tr>
+								<td>
+									<cell:CellTable ui:field="table1"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Button ui:field="newLegalRepresentative"
+										styleName="aon-icon-reset {aonResources.css.aonBorderNone}">
+										&#160;
+									</g:Button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>				
+	
+				<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.administratorList}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<table class="aon-width-all aon-margin-bottom">
+							<tr>
+								<td>
+									<cell:CellTable ui:field="table2"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Button ui:field="newAdministrator"
+										styleName="aon-icon-reset {aonResources.css.aonBorderNone}">
+										&#160;
+									</g:Button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>				
+			</g:HTMLPanel>
+			<g:FlexTable ui:field="table" styleName="aon-width-all"/>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

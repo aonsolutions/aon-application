@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
@@ -41,9 +42,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
@@ -203,44 +201,8 @@ public interface FiscalServiceAsync {
 	void createMod202(String domainName, int domain, Mod202 mod202, AsyncCallback<Mod202> callback);
 	void getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
 
-	// ---------------------------------------------------------------MODELO 200 - 2013
-	void initializeNewMod2002013(String domainName, int domain, Mod2002013 mod200, AsyncCallback<Mod2002013> callback);
-	void initializeMod2002013(String domainName, int domain, Mod2002013 mod200,AsyncCallback<Mod2002013> callback);
-	void getMod2002013ByYear(String domainName, int domain, int year,AsyncCallback<Mod2002013> callback);
-	void calculateMod2002013(Mod2002013 mod200, AsyncCallback<Mod2002013> callback);
-	void deleteMod2002013(String domainName, int domain, int id,AsyncCallback<Void> callback);
-	void dumpAEATMod2002013(Mod2002013 mod200, AsyncCallback<String> callback);
-	void getMod2002013ById(String domainName, int domain, int id,AsyncCallback<Mod2002013> callback);
-	void saveMod2002013(String domainName, int domain, Mod2002013 mod200,AsyncCallback<Mod2002013> callback);
-	void validateMod2002013(Mod2002013 mod200, AsyncCallback<Mod2002013> callback);
-	
-	// ---------------------------------------------------------------MODELO 200 - 2014
-	void createMod2002014(String domainName, int domain, int year,AsyncCallback<Mod2002014> callback);
-	void initializeNewMod2002014(String domainName, int domain, Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
-	void initializeMod2002014(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
-	void getMod2002014ByYear(String domainName, int domain, int year,AsyncCallback<Mod2002014> callback);
-	void calculateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
-	void deleteMod2002014(String domainName, int domain, int id,AsyncCallback<Void> callback);
-	void dumpAEATMod2002014(Mod2002014 mod200, AsyncCallback<String> callback);
-	void getMod2002014ById(String domainName, int domain, int id,AsyncCallback<Mod2002014> callback);
-	void saveMod2002014(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
-	void validateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
-	void importMod2002013(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
-	void fillMod2002014AccountingData(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
-
-	// ---------------------------------------------------------------MODELO 200 - 2015
-	void createMod2002015(String domainName, int domain, int year,AsyncCallback<Mod2002015> callback);
-	void initializeNewMod2002015(String domainName, int domain, Mod2002015 mod200, AsyncCallback<Mod2002015> callback);
-	void initializeMod2002015(String domainName, int domain, Mod2002015 mod200,AsyncCallback<Mod2002015> callback);
-	void getMod2002015ByYear(String domainName, int domain, int year,AsyncCallback<Mod2002015> callback);
-	void calculateMod2002015(Mod2002015 mod200, AsyncCallback<Mod2002015> callback);
-	void deleteMod2002015(String domainName, int domain, int id,AsyncCallback<Void> callback);
-	void dumpAEATMod2002015(Mod2002015 mod200, AsyncCallback<String> callback);
-	void getMod2002015ById(String domainName, int domain, int id,AsyncCallback<Mod2002015> callback);
-	void saveMod2002015(String domainName, int domain, Mod2002015 mod200,AsyncCallback<Mod2002015> callback);
-	void validateMod2002015(Mod2002015 mod200, AsyncCallback<Mod2002015> callback);
-	void importMod2002014(String domainName, int domain, Mod2002015 mod200,AsyncCallback<Mod2002015> callback);
-	void fillMod2002015AccountingData(Mod2002015 mod200, AsyncCallback<Mod2002015> callback);
+	// ---------------------------------------------------------------MODELO 200 
+	void getMod200s(String currentDomainName, int currentDomain, AsyncCallback<LinkedList<Mod200>> asyncCallback);
 
 	// --------------------------------------------------------------- NORMALIZED MEMORY
 	void readMemory(Memory memory, AsyncCallback<Memory> callback);
@@ -314,8 +276,4 @@ public interface FiscalServiceAsync {
 	void save(String currentDomainName, int currentDomain, FinanceEntry financeEntry,
 			AsyncCallback<FinanceEntry> asyncCallback);
 
-
-
-
-	
 }

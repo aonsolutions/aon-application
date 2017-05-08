@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
@@ -49,6 +48,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
@@ -59,9 +59,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod115.Model115ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123ScriptProvider;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
@@ -79,15 +76,8 @@ import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.MOD2002015;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.XMLtoMod2002015;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002015Import2014;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
@@ -707,243 +697,10 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		
 	}
 
-	// ---------------------------------------------------------------MODELO 200 - 2013
+	// ---------------------------------------------------------------MODELO 200
 	@Override
-	public Mod2002013 initializeNewMod2002013(String domainName, int domain, Mod2002013 mod200) {
-		return FISCAL.initializeNewMod2002013(domainName,domain,this.getUserLogin(),mod200);
-	}
-	
-	@Override
-	public Mod2002013 initializeMod2002013(String domainName, int domain, Mod2002013 mod200) {
-		return FISCAL.initializeMod2002013(domainName,domain,this.getUserLogin(),mod200);
-	}
-
-	@Override
-	public Mod2002013 getMod2002013ByYear(String domainName, int domain, int year)
-			throws AonCoreException {
-		return FISCAL.getMod2002013ByYear(domainName,domain,this.getUserLogin(),year);
-	}
-
-	@Override
-	public Mod2002013 getMod2002013ById(String domainName, int domain, int id)
-			throws AonCoreException {
-		return FISCAL.getMod2002013ById(domainName,domain,this.getUserLogin(),id);
-	}
-
-	@Override
-	public Mod2002013 calculateMod2002013(Mod2002013 mod200) throws AonCoreException {
-		return FISCAL.calculateMod2002013(mod200);
-	}
-
-	@Override
-	public Mod2002013 saveMod2002013(String domainName, int domain, Mod2002013 mod200)
-			throws AonCoreException {
-		return FISCAL.saveMod2002013(domainName,domain,this.getUserLogin(),mod200);
-	}
-
-	@Override
-	public Mod2002013 validateMod2002013(Mod2002013 mod200) throws AonCoreException {
-		return FISCAL.validateMod2002013(mod200);
-	}
-
-	@Override
-	public void deleteMod2002013(String domainName, int domain, int id)
-			throws AonCoreException {
-		FISCAL.deleteMod2002013(domainName,domain,this.getUserLogin(),id);
-	}
-
-	@Override
-	public String dumpAEATMod2002013(Mod2002013 mod200) throws AonCoreException {
-		return FISCAL.dumpAEATMod2002013(mod200);
-	}
-	
-	// ---------------------------------------------------------------MODELO 200 - 2014
-
-	@Override
-	public Mod2002014 createMod2002014(String domainName, int domain, int year)
-			throws AonCoreException {
-		return FISCAL.createMod2002014(domainName,domain,this.getUserLogin(),year);
-	}
-
-	@Override
-	public Mod2002014 initializeNewMod2002014(String domainName, int domain, Mod2002014 mod200) {
-		return FISCAL.initializeNewMod2002014(domainName,domain,this.getUserLogin(),mod200);
-	}
-	
-	@Override
-	public Mod2002014 initializeMod2002014(String domainName, int domain, Mod2002014 mod200) {
-		HttpServletRequest request = getThreadLocalRequest();
-		try {
-			Mod2002013 mod2002013 = (Mod2002013) request.getSession().getAttribute("Mod2002013Import");
-			if (mod2002013 != null) {
-				if (!AonStringUtils.equals( mod2002013.getDocument(), mod200.getDocument())) {
-					throw new AonCoreException("El NIF del documento importado no coincide");
-				}
-				Mod2002014Import2013.import2013(mod200, mod2002013);
-				mod200.setInitializedFromLastYear(true);
-			}
-			return FISCAL.initializeMod2002014(domainName,domain,this.getUserLogin(),mod200);
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002013Import");
-		}
-	}
-
-	@Override
-	public Mod2002014 getMod2002014ByYear(String domainName, int domain, int year)
-			throws AonCoreException {
-		return FISCAL.getMod2002014ByYear(domainName,domain,this.getUserLogin(),year);
-	}
-
-	@Override
-	public Mod2002014 getMod2002014ById(String domainName, int domain, int id)
-			throws AonCoreException {
-		return FISCAL.getMod2002014ById(domainName,domain,this.getUserLogin(),id);
-	}
-
-	@Override
-	public Mod2002014 calculateMod2002014(Mod2002014 mod200) throws AonCoreException {
-		return FISCAL.calculateMod2002014(mod200);
-	}
-
-	@Override
-	public Mod2002014 saveMod2002014(String domainName, int domain, Mod2002014 mod200)
-			throws AonCoreException {
-		return FISCAL.saveMod2002014(domainName,domain,this.getUserLogin(),mod200);
-	}
-
-	@Override
-	public Mod2002014 validateMod2002014(Mod2002014 mod200) throws AonCoreException {
-		return FISCAL.validateMod2002014(mod200);
-	}
-
-	@Override
-	public void deleteMod2002014(String domainName, int domain, int id)
-			throws AonCoreException {
-		FISCAL.deleteMod2002014(domainName,domain,this.getUserLogin(),id);
-	}
-
-	@Override
-	public String dumpAEATMod2002014(Mod2002014 mod200) throws AonCoreException {
-		return FISCAL.dumpAEATMod2002014(mod200);
-	}
-
-	@Override
-	public Mod2002014 importMod2002013(String domainName, int domain,
-			Mod2002014 mod200) throws AonCoreException {
-		return FISCAL.importMod2002013(domainName, domain,this.getUserLogin(), mod200);
-	}
-	
-	@Override
-	public Mod2002014 fillMod2002014AccountingData(Mod2002014 mod200)
-			throws AonCoreException {
-		HttpServletRequest request = getThreadLocalRequest();
-		try {
-			MOD2002014 mod = (MOD2002014) request.getSession().getAttribute("Mod2002014Accounting");
-			if (mod200 != null) {
-				XMLtoMod2002014.fillMod2002014(mod, mod200);
-			}
-			return mod200; 
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002014Accounting");
-		}
-	}
-
-	// ---------------------------------------------------------------MODELO 200 - 2015
-	@Override
-	public Mod2002015 createMod2002015(String domainName, int domain, int year)
-			throws AonCoreException {
-		return FISCAL.createMod2002015(domainName,domain,this.getUserLogin(),year);
-	}
-
-	@Override
-	public Mod2002015 initializeNewMod2002015(String domainName, int domain, Mod2002015 mod200) {
-		return FISCAL.initializeNewMod2002015(domainName,domain,this.getUserLogin(),mod200);
-	}
-	
-	@Override
-	public Mod2002015 initializeMod2002015(String domainName, int domain, Mod2002015 mod200) {
-		HttpServletRequest request = getThreadLocalRequest();
-		try {
-			Mod2002014 mod2002014 = (Mod2002014) request.getSession().getAttribute("Mod2002014Import");
-			if (mod2002014 != null) {
-				if (!AonStringUtils.equals( mod2002014.getDocument(), mod200.getDocument())) {
-					throw new AonCoreException("El NIF del documento importado no coincide");
-				}
-				Mod2002015Import2014.import2014(mod200, mod2002014);
-				mod200.setInitializedFromLastYear(true);
-			}
-			return FISCAL.initializeMod2002015(domainName,domain,this.getUserLogin(),mod200);
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002013Import");
-		}
-	}
-
-	@Override
-	public Mod2002015 getMod2002015ByYear(String domainName, int domain, int year)
-			throws AonCoreException {
-		return FISCAL.getMod2002015ByYear(domainName,domain,this.getUserLogin(),year);
-	}
-
-	@Override
-	public Mod2002015 getMod2002015ById(String domainName, int domain, int id)
-			throws AonCoreException {
-		return FISCAL.getMod2002015ById(domainName,domain,this.getUserLogin(),id);
-	}
-
-	@Override
-	public Mod2002015 calculateMod2002015(Mod2002015 mod200) throws AonCoreException {
-		return FISCAL.calculateMod2002015(mod200);
-	}
-
-	@Override
-	public Mod2002015 saveMod2002015(String domainName, int domain, Mod2002015 mod200)
-			throws AonCoreException {
-		return FISCAL.saveMod2002015(domainName,domain,this.getUserLogin(),mod200);
-	}
-
-	@Override
-	public Mod2002015 validateMod2002015(Mod2002015 mod200) throws AonCoreException {
-		return FISCAL.validateMod2002015(mod200);
-	}
-
-	@Override
-	public void deleteMod2002015(String domainName, int domain, int id)
-			throws AonCoreException {
-		FISCAL.deleteMod2002015(domainName,domain,this.getUserLogin(),id);
-	}
-
-	@Override
-	public String dumpAEATMod2002015(Mod2002015 mod200) throws AonCoreException {
-		return FISCAL.dumpAEATMod2002015(mod200);
-	}
-
-	@Override
-	public Mod2002015 importMod2002014(String domainName, int domain,
-			Mod2002015 mod200) throws AonCoreException {
-		return FISCAL.importMod2002014(domainName, domain,this.getUserLogin(), mod200);
-	}
-	
-	@Override
-	public Mod2002015 fillMod2002015AccountingData(Mod2002015 mod200)
-			throws AonCoreException {
-		HttpServletRequest request = getThreadLocalRequest();
-		try {
-			MOD2002015 mod = (MOD2002015) request.getSession().getAttribute("Mod2002015Accounting");
-			if (mod200 != null) {
-				XMLtoMod2002015.fillMod2002015(mod, mod200);
-			}
-			return mod200; 
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002015Accounting");
-		}
+	public LinkedList<Mod200> getMod200s(String domainName,int domain) throws AonCoreException {
+		return FISCAL.getMod200s(domainName, domain,this.getUserLogin());
 	}
 	
 	// --------------------------------------------------------------- NORMALIZED MEMORY

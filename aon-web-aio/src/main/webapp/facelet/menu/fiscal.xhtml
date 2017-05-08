@@ -290,9 +290,9 @@
 										</aon:commandLink>
 									</aon:div>
 
-									<!-- *********************** [MODELO 200] -->
+									<!-- *********************** [MODELO 200 - ARBOL] 
 									<aon:div rendered="#{fiscalParams.aeat}">									
-										<aon:commandLink id="gwt_mod200-new" action="gwt_fiscalPanel-mod200new" 
+										<aon:commandLink id="gwt_mod200-old" action="gwt_fiscalPanel-mod200new" 
 											title="#{bundle.fiscal_model_200_module}" styleClass="aon-menu-fiscal">
 											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="200"/>
 											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
@@ -302,7 +302,26 @@
 											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_200_module}" />
 										</aon:commandLink>
 									</aon:div>
-
+									-->
+									
+									<!-- *********************** [MODELO 200 - NEW ] -->
+									<aon:if test="#{domainSwitcher.snapshotVersion}">
+										<aon:div rendered="#{fiscalParams.aeat}">									
+											<aon:commandLink id="gwt_mod200-new" action="gwt_mod200" 
+												title="#{bundle.fiscal_model_200_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="200"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="&#160;"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="&#160;"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="&#160;"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label"
+													value="&#160;" />
+												<aon:outputText styleClass="aon-icon-beta-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="#{bundle.fiscal_model_200_module}" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
 									<!-- *********************** [MODELO 193] -->
 									<aon:div>									
 										<aon:commandLink id="gwt_mod193-new" action="gwt_mod193-new" 

@@ -12,14 +12,13 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
-import com.esferalia.aon.occam.api.model.fiscal.IMod200;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class Mod2002013 implements IFiscalModel, IMod200 {
+public class Mod2002013 implements IFiscalModel {
 	
 	private static final long serialVersionUID = 4332206787096572914L;
 	

@@ -1,0 +1,66 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
+			<g:SimplePanel ui:field="headerPanel"/>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.liquidacion}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<g:FlexTable ui:field="table"/>				
+				</div>
+			</div>
+	
+		 	<g:HTMLPanel ui:field="devPanel" styleName="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.payBack}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<div>
+						<g:RadioButton ui:field="devTypeR" name="devTypeButton" text="{msg.payBackRefuse}"/>
+						<g:RadioButton ui:field="devTypeT" name="devTypeButton" text="{msg.payBackTransfer}"/>
+					</div>
+					<g:InlineLabel text="{msg.amount}" />
+					<aon:DoubleBox ui:field="amountD" enabled="false" 
+						styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonInputText}"/>
+					<g:InlineLabel text="{msg.iban}" styleName="{aonResources.css.aonMarginLeft}"/>
+					<aon:IbanTextBox ui:field="ibanD" styleName="{aonResources.css.aonMarginLeft}"/>
+				</div>
+			</g:HTMLPanel>
+	
+		 	<g:HTMLPanel ui:field="payPanel" styleName="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.deposit}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<div>
+						<g:RadioButton ui:field="payTypeE" name="devTypeButton" text="{msg.cash}"/>
+						<g:RadioButton ui:field="payTypeU" name="devTypeButton" text="{msg.directDebit}"/>
+					</div>
+					<g:InlineLabel text="{msg.amount}"/>
+					<aon:DoubleBox ui:field="amountP" enabled="false" 
+						styleName="{aonResources.css.aonMarginLeft}  {aonResources.css.aonInputText}"/>
+					<g:InlineLabel text="{msg.iban}" styleName="{aonResources.css.aonMarginLeft}"/>
+					<aon:IbanTextBox ui:field="ibanP" styleName="{aonResources.css.aonMarginLeft}"/>
+				</div>
+			</g:HTMLPanel>
+	
+	
+		 	<g:HTMLPanel ui:field="zeroPanel" styleName="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.zeroQuota}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<g:CheckBox ui:field="zeroQuota" text="{msg.zeroQuota}"/>
+				</div>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>
