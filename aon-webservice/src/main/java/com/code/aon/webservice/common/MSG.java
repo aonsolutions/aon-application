@@ -55,6 +55,7 @@ public class MSG {
 	public static final String FAQS = "faqs";
 	public static final String FEE = "fee";	
 	public static final String FEE_PROJECTION = "fee_projection";
+	public static final String FROM = "from";
 	public static final String GROSS = "gross";
 	public static final String GITHUB = "github";
 	public static final String ID = "id";
@@ -112,6 +113,7 @@ public class MSG {
 	public static final String TAG  = "tag";
 	public static final String TARE = "tare";
 	public static final String TITLE = "title";
+	public static final String TO = "to";
 	public static final String TYPE = "type";
 	public static final String TYPES = "types";
 	public static final String UPDATE = "update";
