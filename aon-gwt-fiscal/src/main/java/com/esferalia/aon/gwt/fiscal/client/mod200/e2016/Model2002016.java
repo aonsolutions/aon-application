@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.ValidationMessage2016;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -126,7 +127,7 @@ public class Model2002016 extends ResizeComposite  {
 	Page14 page14;
 
 	@UiField
-	FlowPanel linkContainer;
+	ScrollPanel linkList;
 	
 	@UiField
 	TabLayoutPanel tabLayout;
@@ -620,14 +621,27 @@ public class Model2002016 extends ResizeComposite  {
 	
 	private class WestFocusPanel extends FocusPanel {
 		
-		public WestFocusPanel(String label, final PageAbs content, final boolean check) {
+		public WestFocusPanel(int page, String label, final PageAbs content, final boolean check) {
 			super();
 			setStyleName(AON.AON_CSS.aonLinkItem());
-			FlowPanel fp = new FlowPanel();
-			fp.setStyleName(AON.AON_CSS.aonLinkListItem());
-			InlineLabel lb = new  InlineLabel(label);
-			fp.add(lb);
-			setWidget(fp);
+			FlexTable focTab = new FlexTable();
+			focTab.setCellPadding(0);
+			focTab.setCellSpacing(0);
+			focTab.setStyleName(AON.AON_CSS.aonWidthAll());
+			focTab.getColumnFormatter().setWidth(0, "30px");
+			focTab.getColumnFormatter().setWidth(1, "auto");
+			
+			focTab.setWidget(0, 0, new InlineLabel(AonNumberUtils.toString(page)));
+			focTab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonLinkListItem());
+			focTab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonTextCenter());
+			focTab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonColorWhite());
+			focTab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+			
+			focTab.setWidget(0, 1, new InlineLabel(label));
+			focTab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonLinkListItem());
+			focTab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonColorWhite());
+			
+			setWidget(focTab);
 			addClickHandler( new  ClickHandler() {
 				
 				@Override
@@ -642,8 +656,9 @@ public class Model2002016 extends ResizeComposite  {
 			});
 		}
 		private void showPage(PageAbs content) {
-			for (int i = 0 ; i < linkContainer.getWidgetCount(); i ++) {
-				linkContainer.getWidget(i).removeStyleName(AON.AON_CSS.aonLinkItemSelected());
+			FlowPanel parent = 	(FlowPanel) getParent();
+			for (int i = 0 ; i < parent.getWidgetCount(); i ++) {
+				parent.getWidget(i).removeStyleName(AON.AON_CSS.aonLinkItemSelected());
 			}
 			deckPanel.showWidget(deckPanel.getWidgetIndex(content));
 			addStyleName(AON.AON_CSS.aonLinkItemSelected());
@@ -659,21 +674,27 @@ public class Model2002016 extends ResizeComposite  {
 
 
 	private void fillLinkContainer() {
-		linkContainer.add(new WestFocusPanel("1.- "  + AON.MSG.identification()		, page00, false));
-		linkContainer.add(new WestFocusPanel("2.- "  + AON.MSG.administratorPage()	, page01, true));
-		linkContainer.add(new WestFocusPanel("3.- "  + AON.MSG.participations()		, page02, true));
-		linkContainer.add(new WestFocusPanel("4.- "  + AON.MSG.balanceActivo()		, page03, true));
-		linkContainer.add(new WestFocusPanel("5.- "  + AON.MSG.balancePasivo()		, page04, true));
-		linkContainer.add(new WestFocusPanel("6.- "  + AON.MSG.pyg() 				, page05, true));
-		linkContainer.add(new WestFocusPanel("7.- "  + AON.MSG.patrimonioIngresos() , page06, true));
-		linkContainer.add(new WestFocusPanel("8.- "  + AON.MSG.patrimonioCambios()	, page07, true));
-		linkContainer.add(new WestFocusPanel("9.- "  + AON.MSG.liquidacionI()		, page08, true));
-		linkContainer.add(new WestFocusPanel("10.- " + AON.MSG.liquidacionII()		, page09, true));
-		linkContainer.add(new WestFocusPanel("11.- " + AON.MSG.liquidacionIII()		, page10, true));
-		linkContainer.add(new WestFocusPanel("12.- " + AON.MSG.liquidacionIV() 		, page11, true));
-		linkContainer.add(new WestFocusPanel("13.- " + AON.MSG.incomeDistribution() , page12, true));
-		linkContainer.add(new WestFocusPanel("14.- " + AON.MSG.deducibleLimitation(), page13, true));
-		linkContainer.add(new WestFocusPanel("15.- " + AON.MSG.idDocument()			, page14, true));
+		FlowPanel linkContainer = new FlowPanel();
+		linkContainer.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		linkContainer.setStyleName(AON.AON_CSS.aonPaddingRight());
+		// En el método showPage, hay un cast a FlowPanel. Cuidado con la estrutura. 
+		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification()	, page00, false));
+		linkContainer.add(new WestFocusPanel( 2,AON.MSG.administratorPage()	, page01, true));
+		linkContainer.add(new WestFocusPanel( 3,AON.MSG.participations()	, page02, true));
+		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()		, page03, true));
+		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()		, page04, true));
+		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg() 				, page05, true));
+		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresos(), page06, true));
+		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()	, page07, true));
+		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI()		, page08, true));
+		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII()		, page09, true));
+		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII()	, page10, true));
+		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() 	, page11, true));
+		linkContainer.add(new WestFocusPanel(13,AON.MSG.incomeDistribution() , page12, true));
+		linkContainer.add(new WestFocusPanel(14,AON.MSG.deducibleLimitation(), page13, true));
+		linkContainer.add(new WestFocusPanel(15,AON.MSG.idDocument()		, page14, true));
+		
+		linkList.setWidget( linkContainer );
 	}
 	
 	private void showResultsPanel() {

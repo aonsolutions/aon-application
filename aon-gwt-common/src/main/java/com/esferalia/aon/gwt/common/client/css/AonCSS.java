@@ -375,6 +375,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-color-green")
 	String aonColorGreen();
 
+	@ClassName("aon-color-white")
+	String aonColorWhite();
+	
 	@ClassName("aon-color-red")
 	String aonColorRed();
 
@@ -509,7 +512,7 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-link-panel")
 	String aonLinkPanel();
-
+	
 	@ClassName("aon-link-container")
 	String aonLinkContainer();
 
@@ -1037,6 +1040,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-drop-button")
 	String aonDropButton();
 	
+	@ClassName("aon-padding-top")
+	String aonPaddingTop();
+
 	@ClassName("aon-padding2-top")
 	String aonPadding2Top();
 	

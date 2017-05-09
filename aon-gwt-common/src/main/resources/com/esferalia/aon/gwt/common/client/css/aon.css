@@ -426,6 +426,9 @@ input[type="checkbox"]:focus + label {
 .aon-color-red {
 	color: red;
 }
+.aon-color-white {
+	color: white;
+}
 
 .aon-text-center {
 	text-align: center;
@@ -588,12 +591,12 @@ input[type="checkbox"]:focus + label {
 }
 
 .aon-link-item:hover {
-	background-color: #c4dbed;
+	background-color: #63a0cf;
 	color: black;
 }
 
 .aon-link-item-selected {
-	background-color: #c4dbed;
+	background-color: #63a0cf;
 	color: black;
 }
 
@@ -601,6 +604,7 @@ input[type="checkbox"]:focus + label {
 	font-size: 0.9em;
 	height: auto;
 	overflow: hidden;
+	color: white;
 	padding-left: 8px;
 	padding-right: 10px;
 	text-transform: uppercase;
@@ -2304,7 +2308,7 @@ input:disabled+label {
 }
 
 .aon-fiscal-model-table-header-image {
-	width: 48px;
+	width: 54px;
 	background-color: white;
 	text-align: center;
 }
@@ -2764,6 +2768,10 @@ right
 
 .aon-drop-button:hover {
 	color: #000000;
+}
+
+.aon-padding-top {
+	padding-top: 1em;
 }
 
 .aon-padding2-top {
