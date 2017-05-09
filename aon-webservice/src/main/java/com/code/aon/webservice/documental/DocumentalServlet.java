@@ -50,6 +50,9 @@ public class DocumentalServlet extends HttpServlet{
 				case "files":
 					object = getAttachJSON(domain, userName);
 					break;
+				case "quality":
+					object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
+					break;
 				case "category":
 					object = getCategoryJSON(domain, userName);
 					break;
@@ -78,6 +81,20 @@ public class DocumentalServlet extends HttpServlet{
 				.page(1)
 				.perPage(30)
 			), AttachType.REGISTRY, false).forEach(a -> {
+				array.put(ToJSON.attachToJSON(a));
+			});
+		return array;
+	}
+	
+	private JSONArray getQualityImagesJSON(Domain domain, String login, String idStr) {
+		Integer id = Integer.parseInt(idStr);
+		JSONArray array = new JSONArray();
+		AON.getAttachStream(domain.getName(), domain.getId(), login, 
+				f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getSourceTypeProperty().eq((byte)0)).and(f.getSourceBatchProperty().eq(id))
+				.page(1)
+				.perPage(30)
+			, AttachType.DATA, false).forEach(a -> {
 				array.put(ToJSON.attachToJSON(a));
 			});
 		return array;

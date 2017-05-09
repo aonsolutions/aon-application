@@ -36,6 +36,10 @@ public class Attachment extends Methods{
 	public void getTags(AsyncCallback<JSON<JsLabel>> callback){
 		get(url + "attachment/"+ getDomainName()+"/"+getUserName()+"/tag",callback);
 	}	
+
+	public void getQualityImages(Integer id,AsyncCallback<JSON<JsAttach>> callback){
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/quality?id="+id, callback);
+	}
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

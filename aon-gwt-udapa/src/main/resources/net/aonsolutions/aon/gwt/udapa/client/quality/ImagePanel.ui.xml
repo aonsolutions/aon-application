@@ -2,13 +2,13 @@
 <!DOCTYPE html [
     <!ENTITY nbsp "&#160;"> 
 ]>
-<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"	
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client"  
+	xmlns:b="http://java.sun.com/jstl/core"	
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
-	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
-	xmlns:a="urn:import:com.esferalia.aon.gwt.issues.client"
-	>
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
 
 <ui:style>
 
@@ -32,15 +32,15 @@
           color: white;
         }
         iron-list {
-          margin-top: 90px;
+          margin-top: 10px;
           padding-bottom: 16px;
         }
         .photoContent {
           @apply(--layout);
           background-color: #ddd;
           position: relative;
-          width: 300px;
-          height: 300px;
+          width: 150px;
+          height: 150px;
           margin: 8px;
         }
         .photoContent:hover .detail{
@@ -56,7 +56,7 @@
           right: 0;
           background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
           color: white;
-          font-size: 20px;
+          font-size: 10px;
           font-weight: 100;
           padding: 20px;
           opacity: 0;
@@ -99,7 +99,7 @@
         }
         @media (max-width: 400px) {
           iron-list {
-            margin-top: 72px;
+            margin-top: 10px;
           }
           .photoContainer {
             width: 100%;
@@ -122,10 +122,10 @@
         }
     </style>
     
-    <iron-list ui:field="imgList" as="photo">
+    <i:IronList ui:field="imgList" as="photo">
         <template>
           <div class="photoContainer">
-            <div class="photoContent" tabindex$="[[tabIndex]]">
+            <div class="photoContent" >
               <iron-image sizing="cover"
                   src="[[photo.url]]">
               </iron-image>
@@ -133,6 +133,6 @@
             </div>
           </div>
         </template>
-      </iron-list>
+      </i:IronList>
   	</g:HTMLPanel>
 </ui:UiBinder>
