@@ -18,7 +18,7 @@
 						<g:InlineLabel text="Imagenes" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:SimpleLayoutPanel ui:field="imgPanel" styleName="{aonResources.css.aonTextCenter}"/>
+				<g:ScrollPanel ui:field="imgPanel" styleName="{aonResources.css.aonTextCenter}"/>
 			</g:tab>
 		</g:TabLayoutPanel>
 	</aon:MinimizePanel>

@@ -193,13 +193,22 @@ public class QualitySheet extends Composite{
 		transportData.getFlexCellFormatter().setColSpan(1, 1, 3);
 		transportData.setWidget(1, 2, new Label("Tara"));
 		transportData.setWidget(1, 3, new Label(map.get("tara")));
-		
+	
 		transportData.setWidget(2, 0, new Label("DNI")); setWidth(transportData, 2, 0);
 		transportData.setWidget(2, 1, new Label(map.get("transport_driver_document"))); setWidth(transportData, 2, 1);
 		transportData.setWidget(2, 2, new Label("Matricula"));setWidth(transportData, 2, 2);
-		transportData.setWidget(2, 3, new Label(map.get("transport_number_plate")));setWidth(transportData, 2, 3); 
-		transportData.setWidget(2, 4, boldLabel("Peso Neto"));setWidth(transportData, 2, 4);
-		transportData.setWidget(2, 5, boldLabel(map.get("neto"))); setWidth(transportData, 2, 5);
+		transportData.setWidget(2, 3, new Label(map.get("transport_number_plate")));setWidth(transportData, 2, 3);
+		transportData.setWidget(2, 4, new Label("Tara Adiconal"));
+		transportData.setWidget(2, 5, doubleBox(QualitySheetCode.UFQDT1));
+		
+		transportData.setWidget(3, 0, new Label(""));
+		transportData.setWidget(3, 1, new Label(""));
+		transportData.setWidget(3, 2, new Label(""));
+		transportData.setWidget(3, 3, new Label(""));
+		transportData.setWidget(3, 4, boldLabel("Peso Neto"));setWidth(transportData, 3, 4);
+		Label label = boldLabel(map.get(QualitySheetCode.UFQDT2.getName()));
+		calculated.add(new WidgetStack(label, QualitySheetCode.UFQDT2));
+		transportData.setWidget(3, 5, label); setWidth(transportData, 3, 5);
 	}
 	
 	private void productData() {

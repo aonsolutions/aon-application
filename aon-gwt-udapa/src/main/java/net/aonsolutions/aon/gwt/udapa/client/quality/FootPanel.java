@@ -1,6 +1,8 @@
 package net.aonsolutions.aon.gwt.udapa.client.quality;
 
 import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -12,9 +14,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
@@ -42,31 +46,42 @@ public class FootPanel extends Composite {
 			public void onSelection(SelectionEvent<Integer> event) {
 				Integer value  = event.getSelectedItem();
 				if(value == 0){
-					openFootPanel();
 					imgPanel();
+					openFootPanel();
 				}
 			}
 		});
 	}
-	
+
 	public void imgPanel() {
-		
-		VaadinUpload upload = new VaadinUpload();
-		String dataRequest = "?domain_name="+parent.getAonData().getDomain().getName() 
-				+ "&domain_id="+ parent.getAonData().getDomain().getId()
-				+ "&login="+ parent.getAonData().getUser().getLogin()
-				+ "&id="+ parent.getDataResponse().getId()
-				+ "&attach_type=" + AttachType.DATA.getName();
-		upload.setTarget(GWT.getModuleBaseURL() + "uploadImages"+ dataRequest);
-		upload.setAccept("image/*");
-		
-		
-		imgPanel.setWidget(upload); //new ImagePanel(parent));
+		getAPI().getAttachment().getQualityImages(parent.getDataResponse().getId(), new AsyncCallback<JSON<JsAttach>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				VerticalPanel vp = new VerticalPanel();
+				vp.setWidth("100%");
+				VaadinUpload upload = new VaadinUpload();
+				String dataRequest = "?domain_name="+parent.getAonData().getDomain().getName() 
+						+ "&domain_id="+ parent.getAonData().getDomain().getId()
+						+ "&login="+ parent.getAonData().getUser().getLogin()
+						+ "&id="+ parent.getDataResponse().getId()
+						+ "&attach_type=" + AttachType.DATA.getName();
+				upload.setTarget(GWT.getModuleBaseURL() + "uploadImages"+ dataRequest);
+				upload.setAccept("image/*");
+
+				vp.add(upload);
+				
+				//vp.add(new ImagePanel(result.getData()));
+				imgPanel.setWidget(vp);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 
 	@UiField MinimizePanel footPanel;
 	@UiField TabLayoutPanel tabPanel;
-	@UiField SimpleLayoutPanel imgPanel;
+	@UiField ScrollPanel imgPanel;
 	
 	public TabLayoutPanel getTabPanel() {
 		return tabPanel;

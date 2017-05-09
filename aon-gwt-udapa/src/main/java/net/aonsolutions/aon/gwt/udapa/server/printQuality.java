@@ -384,13 +384,29 @@ public class printQuality {
 		cell.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(cell);
 
-	   	PdfPCell c555 = new PdfPCell(new Phrase("Peso Neto:",getFont1()));
+		PdfPCell c555 = new PdfPCell(new Phrase("Tara Adicional:",getFont2()));
 		c555.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c555);
 			
-		PdfPCell c666 = new PdfPCell(new Phrase(map.get("neto"),getFont1()));
+		PdfPCell c666 = new PdfPCell(new Phrase(map.get(QualitySheetCode.UFQDT1.getName()),getFont2()));
 		c666.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c666);
+
+	   	PdfPCell c1111 = new PdfPCell(new Phrase("",getFont1()));
+	   	c1111.setBorder(PdfPCell.NO_BORDER);
+		content.addCell(c1111);
+			
+		PdfPCell c2222 = new PdfPCell(new Phrase("",getFont1()));
+		c2222.setBorder(PdfPCell.NO_BORDER);
+		content.addCell(c2222);
+		
+	   	PdfPCell c5555 = new PdfPCell(new Phrase("Peso Neto:",getFont1()));
+	   	c5555.setBorder(PdfPCell.NO_BORDER);
+		content.addCell(c5555);
+			
+		PdfPCell c6666 = new PdfPCell(new Phrase(map.get(QualitySheetCode.UFQDT2.getName()),getFont1()));
+		c6666.setBorder(PdfPCell.NO_BORDER);
+		content.addCell(c6666);
 		
     	PdfPTable table = new PdfPTable(1);
     	table.setWidthPercentage(90);
