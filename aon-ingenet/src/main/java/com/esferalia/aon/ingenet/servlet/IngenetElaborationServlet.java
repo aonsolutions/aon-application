@@ -510,8 +510,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 										DateUtils.setMinutes(
 												DateUtils.setHours(date, 23), 59),
 												59).getTime());
-						return p.getStatusProperty()
-								.in(statuses)
+						return p.getDomainProperty().eq(ctx.getDomainId())
+								.and(p.getStatusProperty().in(statuses))
 								.and(date != null ? p.getDateProperty().between(
 										start, end) : p.getDateProperty()
 										.isNotNull());
