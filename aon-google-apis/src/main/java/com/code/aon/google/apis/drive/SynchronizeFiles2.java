@@ -53,7 +53,7 @@ public class SynchronizeFiles2 {
 	}
 	
 	private static Drive getDriveConnection(String domainName, Integer domainId){
-		DomainGserviceaccount g = DBConsults.getGeneralServiceAccount(domainName, domainId);
+		DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, "");
 		Drive drive = null;
 		if(g.getClientId() == null)
 			LOGGER.info("No service account found ");
@@ -79,14 +79,14 @@ public class SynchronizeFiles2 {
 		}
 		
 		if (map.containsKey("registry")) {
-			Integer size = 10;
-			Integer firstId = 0;
-			while(size == 10){
-				Vector<FileInfo> v = DBDrive.getRegistryAttachLimit(domain, getUser(), rats, firstId);
+			Integer perPage = 10;
+			Integer page = 1;
+			while(perPage == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.REGISTRY, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
-				size = v.size();
-				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
+				perPage = v.size();
+				page++;
 			}
 		}
 		if (map.containsKey("contract")){
