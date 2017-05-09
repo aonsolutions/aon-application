@@ -1409,6 +1409,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("C.N.A.E. actividad principal")
 	String mainActivityCNAE();
 
+	@DefaultMessage("CNAE Act. Prin.")
+	String mainActivityCNAEAbbr();
+
 	@DefaultMessage("Caracteres de la declaraci\u00F3n")
 	String declarationCharacters();
 	

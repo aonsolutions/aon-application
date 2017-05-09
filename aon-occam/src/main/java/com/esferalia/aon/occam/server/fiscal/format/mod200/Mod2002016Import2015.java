@@ -131,7 +131,7 @@ public class Mod2002016Import2015 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0012, mod200old.getDoubleValue(Mod2002015Key.C0012))  // SOCIMI [012]
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0057, mod200old.getDoubleValue(Mod2002015Key.C0057))  // Entidades que aplican el régimen especial Ley 11/2009 (excepto SOCIMI) [057]
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0020, mod200old.getDoubleValue(Mod2002015Key.C0020))  // Otros regímenes especiales [020]
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0056, mod200old.getDoubleValue(Mod2002015Key.C0056))  // Tipo gravamen reducido mant.o creación empleo [056]
+//			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0056, mod200old.getDoubleValue(Mod2002015Key.C0056))  // Tipo gravamen reducido mant.o creación empleo [056]
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0007, mod200old.getDoubleValue(Mod2002015Key.C0007))  // Inclusión en base imponible rentas positivas art. 107 L.I.S. [007]
 //			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0008, mod200old.getDoubleValue(Mod2002015Key.C0008))  // Opción art. 107.6 L.I.S. [008]
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0009, mod200old.getDoubleValue(Mod2002015Key.C0009))  // Sociedad dominante de grupo fiscal [009]

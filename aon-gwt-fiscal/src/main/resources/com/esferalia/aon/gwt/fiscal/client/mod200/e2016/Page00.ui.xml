@@ -19,33 +19,56 @@
 								<div class="{aonResources.css.aonGroupBody}">
 									<table class="{aonResources.css.aonWidthAll}">
 										<tr>
-											<td>
+											<td style="width:150px;">
 												<g:Label text="{msg.nif}" styleName="{aonResources.css.aonInnerLabel}"/>
+											</td>
+											<td style="width:350px;">
+												<g:Label text="{msg.companyName}" styleName="{aonResources.css.aonInnerLabel}"/>
+											</td>
+											<td style="width:110px;">
+												<g:Label text="{msg.phone} 1" styleName="{aonResources.css.aonInnerLabel}"/>
+											</td>
+											<td style="width: auto;">
+												<g:Label text="{msg.phone} 2" styleName="{aonResources.css.aonInnerLabel}"/>
+											</td>
+										</tr>
+										<tr>
+											<td>
 												<aon:DocumentTextBox ui:field="nif" visibleLength="9" maxLength="9"/>
 											</td>
 											<td>
-												<g:Label text="{msg.companyName}" styleName="{aonResources.css.aonInnerLabel}"/>
-												<g:TextBox ui:field="companyName" visibleLength="30" maxLength="55"
+												<g:TextBox ui:field="companyName" visibleLength="35" maxLength="45"
 													styleName="{aonResources.css.aonInputText}" />
 											</td>
 											<td>
-												<g:Label text="{msg.phone} 1" styleName="{aonResources.css.aonInnerLabel}"/>
 												<g:TextBox ui:field="phone1" visibleLength="9" maxLength="9"
 													styleName="{aonResources.css.aonInputText}"/>
 											</td>
 											<td>
-												<g:Label text="{msg.phone} 2" styleName="{aonResources.css.aonInnerLabel}"/>
 												<g:TextBox ui:field="phone2" visibleLength="9" maxLength="9"
 													styleName="{aonResources.css.aonInputText}"/>
 											</td>
 										</tr>
-									</table>
-									<table>
+										<tr>
+											<td>
+												<g:InlineLabel text="{msg.mainActivityCNAEAbbr}"
+												 	styleName="{aonResources.css.aonItalic}"/>
+											</td>
+											<td colspan="3">
+												<g:TextBox ui:field="cnae" visibleLength="6" maxLength="6"
+													styleName="{aonResources.css.aonInputText}"/>
+												<g:Button ui:field="showCnae"
+													styleName="{aonResources.css.aonIconLoupe} {aonResources.css.aonBorderNone}">
+													&#160;
+												</g:Button>
+												<g:InlineLabel ui:field="cnaeLabel" styleName="{aonResources.css.aonMarginLeft}"/>
+											</td>
+										</tr>
 										<tr>
 											<td>
 												<g:CheckBox ui:field="complementary" text="{msg.complementary}"/>
-											</td>
-											<td>
+											</td>	
+											<td colspan="3">	
 												<g:Label text="{msg.complementaryReceipt}" 
 													styleName="{aonResources.css.aonInnerLabel}"/>
 												<g:TextBox ui:field="complementaryReceipt" visibleLength="13" maxLength="13"
@@ -66,7 +89,7 @@
 								<div class="{aonResources.css.aonGroupBody}">
 									<table class="{aonResources.css.aonWidthAll}">
 										<colgroup>
-											<col class="{aonResources.css.aonWidth150}"/>
+											<col class="{aonResources.css.aonWidth180}"/>
 											<col class="{aonResources.css.aonWidth150}"/>
 											<col class="{aonResources.css.aonWidth150}"/>
 											<col class="{aonResources.css.aonWidthAuto}"/>
@@ -74,7 +97,7 @@
 										<tbody>
 										<tr>
 											<td>
-												<g:Label text="{msg.periodType}" styleName="{aonResources.css.aonInnerLabel}"/>
+												<g:Label text="{msg.periodType}"/>
 											</td>
 											<td colspan="3">
 												<g:ListBox ui:field="periodType"/>
@@ -94,21 +117,6 @@
 													<aon:DateBoxEx ui:field="periodEnd"
 														styleName="{aonResources.css.aonInputText}"/>
 												</g:FlowPanel>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<g:InlineLabel text="{msg.mainActivityCNAE}"
-												 	styleName="{aonResources.css.aonItalic}"/>
-											</td>
-											<td colspan="3">
-												<g:TextBox ui:field="cnae" visibleLength="6" maxLength="6"
-													styleName="{aonResources.css.aonInputText}"/>
-												<g:Button ui:field="showCnae"
-													styleName="{aonResources.css.aonIconLoupe} {aonResources.css.aonBorderNone}">
-													&#160;
-												</g:Button>
-												<g:InlineLabel ui:field="cnaeLabel" styleName="{aonResources.css.aonMarginLeft}"/>
 											</td>
 										</tr>
 										<tr>
@@ -161,38 +169,47 @@
 					</tr>
 					<tr>
 						<td>
-							<div class="{aonResources.css.aonGroup}">
-								<div class="{aonResources.css.aonGroupTitle}">
-									<g:InlineLabel text="{msg.declarationType}"/>
-								</div>
-								<div class="{aonResources.css.aonGroupBody}">
-									<g:FlexTable ui:field="charactersTable1" styleName="{aonResources.css.aonWidthAll}"/>
-								</div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="{aonResources.css.aonGroup}">
-								<div class="{aonResources.css.aonGroupTitle}">
-									<g:InlineLabel text="{msg.availableRegimes}"/>
-								</div>
-								<div class="{aonResources.css.aonGroupBody}">
-									<g:FlexTable ui:field="charactersTable2" styleName="{aonResources.css.aonWidthAll}"/>
-								</div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="{aonResources.css.aonGroup}">
-								<div class="{aonResources.css.aonGroupTitle}">
-									<g:InlineLabel text="{msg.otherCharacters}"/>
-								</div>
-								<div class="{aonResources.css.aonGroupBody}">
-									<g:FlexTable ui:field="charactersTable3" styleName="aon-width-all"/>
-								</div>
-							</div>
+							<table class="{aonResources.css.aonWidthAll}">
+								<colgroup>
+									<col style="width: 33%;"/>
+									<col style="width: 33%;"/>
+									<col class="width: auto;"/>
+								</colgroup>
+								<tbody>
+								<tr>
+									<td class="{aonResources.css.aonVerticalAlignTop}">
+										<div class="{aonResources.css.aonGroup}">
+											<div class="{aonResources.css.aonGroupTitle}">
+												<g:InlineLabel text="{msg.declarationType}"/>
+											</div>
+											<div class="{aonResources.css.aonGroupBody}">
+												<g:FlexTable ui:field="charactersTable1" styleName="{aonResources.css.aonWidthAll}"/>
+											</div>
+										</div>
+									</td>
+									<td class="{aonResources.css.aonVerticalAlignTop}">
+										<div class="{aonResources.css.aonGroup}">
+											<div class="{aonResources.css.aonGroupTitle}">
+												<g:InlineLabel text="{msg.availableRegimes}"/>
+											</div>
+											<div class="{aonResources.css.aonGroupBody}">
+												<g:FlexTable ui:field="charactersTable2" styleName="{aonResources.css.aonWidthAll}"/>
+											</div>
+										</div>
+									</td>
+									<td class="{aonResources.css.aonVerticalAlignTop}">
+										<div class="{aonResources.css.aonGroup}">
+											<div class="{aonResources.css.aonGroupTitle}">
+												<g:InlineLabel text="{msg.otherCharacters}"/>
+											</div>
+											<div class="{aonResources.css.aonGroupBody}">
+												<g:FlexTable ui:field="charactersTable3" styleName="aon-width-all"/>
+											</div>
+										</div>
+									</td>
+								</tr>
+								</tbody>
+							</table>
 						</td>
 					</tr>
 				</table>

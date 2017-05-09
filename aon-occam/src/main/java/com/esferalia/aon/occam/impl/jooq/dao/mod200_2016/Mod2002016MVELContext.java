@@ -24,7 +24,6 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0047;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0048;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0049;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0056;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0057;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0058;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0063;
@@ -104,7 +103,7 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0017) ) return round(getValue(LQ558));
 		if ( isChecked(C0018) ) return round(getValue(LQ558));
 		if ( isChecked(C0019) ) return round(getValue(LQ558));
-		if ( isChecked(C0006) && isChecked(C0056)) return 25.0;
+		if ( isChecked(C0006) ) return 25.0;
 		if ( isChecked(C0006) && isChecked(C0057) && !isChecked(C0034)) return 25.0;
 		if ( isChecked(C0006) && isChecked(C0034)) return 33.0;
 		if ( isChecked(C0006) && !isChecked(C0034)) return 25.0;
@@ -116,7 +115,6 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0038) ) return 28.0;
 		if ( isChecked(C0048) ) return 0.0;
 		if ( isChecked(C0049) ) return round(getValue(LQ558));
-		if ( isChecked(C0056) ) return 25.0;
 		if ( isChecked(C0057) ) return 28.0;
 		if ( isChecked(C0058) ) return 25.0;
 		
@@ -164,7 +162,7 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 		if (isChecked(C0071)) {
 			return round(lq1330 * lq558 / 100);
 		}
-		if (isChecked(C0022) &&  (isChecked(C0006) ||isChecked(C0013) || isChecked(C0056) || isChecked(C0063))) {
+		if (isChecked(C0022) &&  (isChecked(C0006) ||isChecked(C0013) || isChecked(C0063))) {
 			return getValue(LQ562);
 		}
 		if (isChecked(C0006) && isChecked(C0034)) {
@@ -207,9 +205,6 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 				return round((lq1330 -lq521)* lq558 /100);
 			}
 			return 0;
-		}
-		if (isChecked(C0056)) {
-			return round(lq1330 * lq558 / 100);			
 		}
 		return round(lq1330 * lq558 / 100);
 	}
@@ -287,13 +282,6 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 			}
 			if (isChecked(C0030) || isChecked(C0047)) {
 				return round(getValue(LQ560));
-			}
-			if (isChecked(C0056)) {
-				if (lq552<=getLimit(LIM_1)){
-					return round( lq552*20/100);			
-				} else {
-					return (getLimit(LIM_1)*20/100) + (lq552 - getLimit(LIM_1))*25/100;				
-				}
 			}
 			if (isChecked(C0063)) {
 				if (lq552<=getLimit(LIM_1)){

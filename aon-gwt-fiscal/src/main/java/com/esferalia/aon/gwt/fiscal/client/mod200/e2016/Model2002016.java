@@ -46,9 +46,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model2002016 extends ResizeComposite  {
 	
+	public static final int BOX_LENGTH = 5;
+	
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
 
+	
 	interface Model2002016Binder extends
 			UiBinder<Widget, Model2002016> {
 	}

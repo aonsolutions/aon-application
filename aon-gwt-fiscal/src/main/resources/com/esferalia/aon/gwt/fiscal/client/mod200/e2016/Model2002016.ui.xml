@@ -90,7 +90,7 @@
 					</aon:MinimizePanel>
 				</g:south>
 				<g:west size="200">
-					<g:ScrollPanel ui:field="linkList" styleName="{aonResources.css.aonMarginLeft5} {aonResources.css.aonMarginRight5} {aonResources.css.aonFiscalAeatBg} {aonResources.css.aonPaddingTop}"/>
+					<g:ScrollPanel ui:field="linkList" styleName="{aonResources.css.aonMarginLeft5} {aonResources.css.aonFiscalAeatBg} {aonResources.css.aonPaddingTop}"/>
 				</g:west>
 				<g:center>
 					<g:DeckLayoutPanel ui:field="deckPanel">

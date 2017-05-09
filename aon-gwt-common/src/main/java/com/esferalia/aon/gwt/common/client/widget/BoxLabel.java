@@ -7,20 +7,25 @@ import com.google.gwt.user.client.ui.Label;
 
 public class BoxLabel extends Label {
 	
-	private static final int TEXT_SIZE = 3;
-
+	private static final int DEFAULT_TEXT_SIZE = 3;
+	private int textSize;
+	
 	public BoxLabel() {
-		super();
+		this(null,DEFAULT_TEXT_SIZE);
+	}
+	public BoxLabel(String text) {
+		this(text,DEFAULT_TEXT_SIZE);
+	}
+	public BoxLabel(int text) {
+		this(AonNumberUtils.toString(text),DEFAULT_TEXT_SIZE);
+	}
+	
+	public BoxLabel(String text, int textSize) {
 		this.setStyleName(AON.AON_CSS.aonFiscalBox());
+		this.textSize = textSize;
+		setText(text);
 	}
 
-	public BoxLabel(String text) {
-		super(text);
-		this.setStyleName(AON.AON_CSS.aonFiscalBox());
-	}
-	public BoxLabel(int number) {
-		this(AonNumberUtils.toString(number));
-	}
 	
 	public void removeErrorState() {
 		removeStyleName(AON.AON_CSS.aonFiscalBoxError());
@@ -34,8 +39,8 @@ public class BoxLabel extends Label {
 	
 	@Override
 	public void setText(String text) {
-		if (text != null && text.length() < TEXT_SIZE) {
-			text = AonStringUtils.leftPad(text, TEXT_SIZE, '0');
+		if (text != null && text.length() < textSize) {
+			text = AonStringUtils.leftPad(text, textSize, '0');
 		}
 		super.setText(text);
 	}

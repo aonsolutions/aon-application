@@ -37,7 +37,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -63,7 +62,7 @@ public class Page00 extends PageAbs {
 		,Mod2002016Key.C0005,Mod2002016Key.C0021,Mod2002016Key.C0048
 		,Mod2002016Key.C0011,Mod2002016Key.C0023,Mod2002016Key.C0058
 		,Mod2002016Key.C0013,Mod2002016Key.C0024,Mod2002016Key.C0060
-		,null				,null				,Mod2002016Key.C0066
+		,Mod2002016Key.C0066
 	};
 
 	public static final Mod2002016Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002016Key[] {
@@ -72,16 +71,15 @@ public class Page00 extends PageAbs {
 		,Mod2002016Key.C0022,Mod2002016Key.C0033,Mod2002016Key.C0064
 		,Mod2002016Key.C0028,Mod2002016Key.C0034,Mod2002016Key.C0057
 		,Mod2002016Key.C0047,Mod2002016Key.C0038,Mod2002016Key.C0020
-		,Mod2002016Key.C0035,null				,Mod2002016Key.C0062
+		,Mod2002016Key.C0035,Mod2002016Key.C0062
 	};
 	
 	public static final Mod2002016Key[] DECLARATION_CHARACTERS_BLOCK3 = new Mod2002016Key[] {
-		 Mod2002016Key.C0056,Mod2002016Key.C0027,Mod2002016Key.C0069
-		,Mod2002016Key.C0007,Mod2002016Key.C0030,Mod2002016Key.C0045
-		,Mod2002016Key.C0009,Mod2002016Key.C0039,Mod2002016Key.C0063
-		,Mod2002016Key.C0010,Mod2002016Key.C0043,Mod2002016Key.C0071
-		,Mod2002016Key.C0016,Mod2002016Key.C0067,Mod2002016Key.C0059
-		,Mod2002016Key.C0026,Mod2002016Key.C0068,Mod2002016Key.C0065
+			Mod2002016Key.C0007,Mod2002016Key.C0027,Mod2002016Key.C0063
+			,Mod2002016Key.C0009,Mod2002016Key.C0030,Mod2002016Key.C0071
+			,Mod2002016Key.C0010,Mod2002016Key.C0039,Mod2002016Key.C0059
+			,Mod2002016Key.C0016,Mod2002016Key.C0043,Mod2002016Key.C0065
+			,Mod2002016Key.C0026,Mod2002016Key.C0045,Mod2002016Key.C0067
 	};
 	
 	private Map<Mod2002016Key, CheckBox> inputs = new HashMap<Mod2002016Key, CheckBox>();
@@ -183,6 +181,7 @@ public class Page00 extends PageAbs {
 		phone2.setValue(this.mod200Object.getMod200().getEnterprisePhone2());
 		complementary.setValue(this.mod200Object.getMod200().isComplementary());
 		complementaryReceipt.setValue(this.mod200Object.getMod200().getComplementaryReceipt());
+		complementaryReceipt.setEnabled(complementary.getValue());
 		periodType.setSelectedIndex(mod200Object.getMod200().getPeriodType() - 1 );
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
 		periodStart.setValue(mod200Object.getMod200().getPeriodStart() );
@@ -245,48 +244,39 @@ public class Page00 extends PageAbs {
 
 	private int initializeBlock(FlexTable table,int row, Mod2002016Key[] declarationCharatersBlock) {
 		initializeTable(table);
-		int col = 0;
 		Administration adm = mod200Object==null?Administration.COMMON_TERRITORY:mod200Object.getAdministration();
 		for (final Mod2002016Key key : declarationCharatersBlock ) {
-			if (col == 6) {
-				++row;
-				col = 0;
-			}
-			if (key != null) {
-				BoxLabel l = new BoxLabel( key.getCode( adm ) );
-				table.setWidget(row, col++, l);
-				
-				final CheckBox check = new CheckBox(key.getDescription() 
-						+ (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
-				check.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
-							Window.alert(AON.MSG.unsupportedCharacter(key.getDescription()));
-							check.setValue(false);
-						} else {
-							changeAvailability(key);
-							if (key == Mod2002016Key.C0067 && check.getValue()) {
-								if (inputs.get(Mod2002016Key.C0009).getValue()
-								 || inputs.get(Mod2002016Key.C0010).getValue()
-								 || inputs.get(Mod2002016Key.C0021).getValue()
-								 || inputs.get(Mod2002016Key.C0039).getValue()) {
-									// OK
-								} else {
-									Window.alert("El caracter 67 no se puede marcar si no se se marca algunos de los siguientes: 009, 010, 21 o 39");		
-								}
+			BoxLabel l = new BoxLabel( key.getCode( adm ) , Model2002016.BOX_LENGTH );
+			table.setWidget(row, 0, l);
+			
+			final CheckBox check = new CheckBox(key.getDescription() 
+					+ (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
+			check.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
+						Window.alert(AON.MSG.unsupportedCharacter(key.getDescription()));
+						check.setValue(false);
+					} else {
+						changeAvailability(key);
+						if (key == Mod2002016Key.C0067 && check.getValue()) {
+							if (inputs.get(Mod2002016Key.C0009).getValue()
+							 || inputs.get(Mod2002016Key.C0010).getValue()
+							 || inputs.get(Mod2002016Key.C0021).getValue()
+							 || inputs.get(Mod2002016Key.C0039).getValue()) {
+								// OK
+							} else {
+								Window.alert("El caracter 67 no se puede marcar si no se se marca algunos de los siguientes: 009, 010, 21 o 39");		
 							}
 						}
 					}
-					
-				});
-				inputs.put(key, check);
-				check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
-				table.setWidget(row, col++, check);
-			} else {
-				table.setWidget(row, col++, new Label());
-				table.setWidget(row, col++, new Label());
-			}
+				}
+				
+			});
+			inputs.put(key, check);
+			check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
+			table.setWidget(row, 1, check);
+			row++;
 		}
 		return row++;
 	}
@@ -318,17 +308,14 @@ public class Page00 extends PageAbs {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		ColumnFormatter cf = table.getColumnFormatter();
-		cf.setStyleName(0, AON.AON_CSS.aonWidth30());
-		cf.setStyleName(1, AON.AON_CSS.aonWidth250());
-		cf.setStyleName(2, AON.AON_CSS.aonWidth30());
-		cf.setStyleName(3, AON.AON_CSS.aonWidth250());
-		cf.setStyleName(4, AON.AON_CSS.aonWidth30());
-		cf.setStyleName(5, AON.AON_CSS.aonWidthAuto());
+		cf.setStyleName(0, AON.AON_CSS.aonWidth40());
+		cf.setStyleName(1, AON.AON_CSS.aonWidthAuto());
 	}
 	
 	@UiHandler("complementary")
 	void onChangeComplementary(ClickEvent event) {
 		mod200Object.getMod200().setComplementary(complementary.getValue());
+		complementaryReceipt.setEnabled(complementary.getValue());
 	}
 
 	@UiHandler("showCnae")

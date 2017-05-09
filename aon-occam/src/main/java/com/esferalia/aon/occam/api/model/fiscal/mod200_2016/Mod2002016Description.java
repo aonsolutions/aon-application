@@ -58,7 +58,6 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.C0020,"Otros reg\u00EDmenes especiales");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0062,"R\u00E9g. fiscal de operaciones de aportaci\u00F3n de activos a sociedades para la gesti\u00F3n de activos (Ley 8/2012)");
 		
-		DESCRIPTION_MAP.put(Mod2002016Key.C0056,"Tipo gravamen reducido mant. o creaci\u00F3n empleo (DT 22 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0007,"Inclusi\u00F3n en base imp. rentas positivas art. 100.8 LIS");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0009,"Sociedad dominante de grupo fiscal");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0010,"Sociedad dependiente de grupo fiscal");
@@ -68,9 +67,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.C0030,"Transmisi\u00F3n elementos patrimoniales arts. 27.2.d) y 77.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0039,"Entidad que forma parte de un grupo mercantil (art. 42 del C\u00F3d. Comercio)");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0067,"Obligaci\u00F3n informaci\u00F3n art. 14 RIS");
-		DESCRIPTION_MAP.put(Mod2002016Key.C0068,"Documento normalizado art. 16.4 RIS");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0043,"Obligaci\u00F3n informaci\u00F3n DT 5a RIS");
-		DESCRIPTION_MAP.put(Mod2002016Key.C0069,"Obligaci\u00F3n informaci\u00F3n operaciones vinculadas (art. 13.4 RIS)");		
 		DESCRIPTION_MAP.put(Mod2002016Key.C0045,"Inversiones anticipadas-reserva inversiones en Canarias (art. 27.11 Ley 19/1994)");		 
 		DESCRIPTION_MAP.put(Mod2002016Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (DT 22a LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.C0071,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (art. 29.1 LIS)");
