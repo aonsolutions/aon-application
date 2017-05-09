@@ -2585,6 +2585,39 @@ public class AON {
 	// ******************************* Warehouse **
 	// ********************************************
 
+	public static Double addStock(Domain domain, String login, Integer item, Double quantity, Integer warehouse){
+		return stock(domain, login, item, quantity, warehouse);
+	}
+	
+	public static Double substractStock(Domain domain, String login, Integer item, Double quantity, Integer warehouse){
+		return stock(domain, login, item, -quantity, warehouse);
+	}
+	
+	private static Double stock(Domain domain, String login, Integer item, Double quantity, Integer warehouse) {
+		Double q = quantity;
+		Optional<Stock> stockOptional = getStockStream(domain.getName(), domain.getId(), login, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getItemProperty().eq(item))
+				.and(f.getWarehouseProperty().eq(warehouse))).findFirst();
+		if(stockOptional.isPresent()){
+			Stock stock = stockOptional.get();
+			q = stock.getQuantity() + quantity;
+			if(q == 0.0){
+				AON.deleteStock(domain.getName(), domain.getId(), login, stock.getId());
+			} else {
+				stock.setQuantity(q);
+				AON.updateStock(domain.getName(), domain.getId(), login, stock);
+			}
+		} else {
+			Stock stock = new Stock().setDomain(domain.getId())
+					.setItem(item)
+					.setQuantity(quantity)
+					.setWarehouse(warehouse);
+			AON.insertStock(domain.getName(), domain.getId(), login, stock);
+		}
+		return q;
+	}
+
 	public static LinkedList<Stock> getStockList(String domainName, Integer domainId, String login, 
 			StockFilter filter){
 		return getStockStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
