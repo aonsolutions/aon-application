@@ -19,6 +19,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ICommonConstants;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -254,6 +255,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 					fBatchDetail.setFinanceBatch(financeBatch);
 					fBatchDetail.setAmount(finance.getTotalAmount());
 					fBatchDetail.setStatus(FinanceStatus.BATCHED);
+					fBatchDetail.setCreationUser(ICommonConstants.SYSTEM_USER);
 					fBatchDetailBean.insert(fBatchDetail);
 				}
 			}
@@ -307,6 +309,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 		financeBatch.setRegistryBank(rBank);
 		financeBatch.setConfidential(false);
 		financeBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
+		financeBatch.setCreationUser(ICommonConstants.SYSTEM_USER);
 		return (FinanceBatch)fBatchBean.insert(financeBatch);
 	}
 
