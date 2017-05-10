@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -183,8 +184,8 @@ public class AonFiscalFileUtils {
 		 return "  ";
 	}
 	
-	public static String getFileName(FiscalModel fs) {
-		String name = (fs.isEntity())
+	public static String getFileName(IFiscalModel fs) {
+		String name = AonDocumentUtil.isEntity(fs.getDocument())
 				?AonStringUtils.trimToEmpty( fs.getName() )
 				:AonStringUtils.defaultIfBlank(
 						AonStringUtils.defaultIfBlank(fs.getName(), AonStringUtils.EMPTY)

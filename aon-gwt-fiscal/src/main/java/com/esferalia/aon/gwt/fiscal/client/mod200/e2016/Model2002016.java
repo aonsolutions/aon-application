@@ -27,7 +27,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -87,16 +86,16 @@ public class Model2002016 extends ResizeComposite  {
 	Button cancelButton;
 	@UiField
 	Button validateButton;
-	@UiField
-	Button calculateButton;
+//	@UiField
+//	Button calculateButton;
 	@UiField
 	Button aeatAccountingFileButton;
 	@UiField
 	Button aeatFileButton;
 	@UiField
 	Button aeatPrintButton;
-	@UiField
-	CheckBox calculateCheck;
+//	@UiField
+//	CheckBox calculateCheck;
 
 	@UiField
 	SimplePanel page;
@@ -314,9 +313,10 @@ public class Model2002016 extends ResizeComposite  {
 		removeButton.setVisible(mod200Object.getMod200().getId() != null);
 		cancelButton.setVisible(true);
 		validateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-		calculateCheck.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-		calculateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null 
-								&& !calculateCheck.isVisible());
+//		calculateCheck.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+//		calculateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null 
+//								&& !calculateCheck.isVisible()
+//								);
 		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
@@ -339,7 +339,7 @@ public class Model2002016 extends ResizeComposite  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		paintHeaderTable(mod200Object.getMod200());				
-		calculateCheck.setValue(mod200Object.isAuthomaticCalculation());
+//		calculateCheck.setValue(mod200Object.isAuthomaticCalculation());
 		deckPanel.showWidget(deckPanel.getWidgetIndex(page00));
 		if (mod200Object.getMod200().getId() == null) {
 			page00.enableCharacters( true );
@@ -547,60 +547,93 @@ public class Model2002016 extends ResizeComposite  {
 
 	@UiHandler("aeatAccountingFileButton")
 	void onAeatAccountingFileButtonClick(ClickEvent event) {
-		MessageDialog.error("Se va a proceder a la generaci\u00F3n de un fichero\n"
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm("Se va a proceder a la generaci\u00F3n de un fichero\n"
 				+ "con los datos contables, para su importaci\u00F3n en\n"
 				+ "el programa de ayuda de la Agencia Tributaria.\n\n"
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "El fichero se genera a partir de los datos guardados.");
-		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model2002016AccountingFile");
-		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-		domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
-		domainNameHidden.setValue(Model200.getCurrentDomainName());
-		diskForm.submit();
+				+ "El fichero se genera a partir de los datos guardados.",
+			new ConfirmDialogCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					diskForm.setAction(GWT.getHostPageBaseURL()
+							+ "/aon_gwt_fiscal/Model2002016AccountingFile");
+					modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
+					domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
+					domainNameHidden.setValue(Model200.getCurrentDomainName());
+					diskForm.submit();
+				}
+			}
+		);
 	}
 
 	@UiHandler("aeatFileButton")
 	void onAeatFileButtonClick(ClickEvent event) {
-		MessageDialog.error("Se va a proceder a la generaci\u00F3n de un fichero\n"
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm("Se va a proceder a la generaci\u00F3n de un fichero\n"
 				+ "con los datos de la declaraci\u00F3n, para su \n"
 				+ "presentaci\u00F3n en la web de la Agencia Tributaria.\n\n"
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "El fichero se genera a partir de los datos guardados.");
-		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model2002016File");
-		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-		domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
-		domainNameHidden.setValue(Model200.getCurrentDomainName());
-		diskForm.submit();
+				+ "El fichero se genera a partir de los datos guardados.",
+			new ConfirmDialogCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					diskForm.setAction(GWT.getHostPageBaseURL()
+							+ "/aon_gwt_fiscal/Model2002016File");
+					modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
+					domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
+					domainNameHidden.setValue(Model200.getCurrentDomainName());
+					diskForm.submit();
+				}
+			}
+		);
 	}
 
 	@UiHandler("aeatPrintButton")
 	void onAeatPrintButtonClick(ClickEvent event) {
-		MessageDialog.error("Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm("Se va a proceder a la validaci\u00F3n en los servidores de la \n"
 				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
 				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "La petici\u00F3n se genera a partir de los datos guardados.");
-		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model2002016Print");
-		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-		domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
-		domainNameHidden.setValue(Model200.getCurrentDomainName());
-		diskForm.submit();
+				+ "La petici\u00F3n se genera a partir de los datos guardados.",
+			new ConfirmDialogCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					diskForm.setAction(GWT.getHostPageBaseURL()
+							+ "/aon_gwt_fiscal/Model2002016Print");
+					modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
+					domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
+					domainNameHidden.setValue(Model200.getCurrentDomainName());
+					diskForm.submit();
+				}
+			}
+		);
 	}
 
-	@UiHandler("calculateButton")
-	void onCalculateButtonClick(ClickEvent event) {
-		mod200Object.calculate();
-	}
-	@UiHandler("calculateCheck")
-	void onCalculateCheckClick(ClickEvent event) {
-		mod200Object.setAuthomaticCalculation(calculateCheck.getValue());
-		calculateButton.setVisible(!calculateCheck.getValue());
-		if (calculateCheck.getValue())
-			mod200Object.calculate();
-	}
+//	@UiHandler("calculateButton")
+//	void onCalculateButtonClick(ClickEvent event) {
+//		mod200Object.calculate();
+//	}
+//	@UiHandler("calculateCheck")
+//	void onCalculateCheckClick(ClickEvent event) {
+//		mod200Object.setAuthomaticCalculation(calculateCheck.getValue());
+//		calculateButton.setVisible(!calculateCheck.getValue());
+//		if (calculateCheck.getValue())
+//			mod200Object.calculate();
+//	}
 	
 	@UiHandler("importAccountingButton")
 	void onImportAccountingButtonClick(ClickEvent event) {

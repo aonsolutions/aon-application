@@ -38,10 +38,6 @@
 							<g:Button ui:field="validateButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconValidate}" 
 								text="{msg.validateAction}" />
-							<g:Button ui:field="calculateButton"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCalculator}" 
-								text="{msg.calculateAction}" />
-							<g:CheckBox ui:field="calculateCheck" text="{msg.authomaticCalculation}"/>
 							<g:Button ui:field="aeatFileButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}" 
 								text="{msg.generateFile}"
@@ -57,7 +53,7 @@
 							<g:Button ui:field="aeatAccountingFileButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeatBW}"
 								title="{msg.aeatAccountingFile}" 
-								text="{msg.aeatAccountingFileAbr}" />
+								text="{msg.aeatAccountingFile}" />
 						</g:HTMLPanel>
 						<g:FlowPanel ui:field="formContainer" />
 					</g:HorizontalPanel>
