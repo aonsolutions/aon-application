@@ -5,8 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
@@ -32,7 +35,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
@@ -219,7 +221,7 @@ public class Page01 extends PageAbs {
 		    public void update(int index, LegalRepresentative lr, String value) {
 		    	if (!AonStringUtils.isEmpty(value)) {
 		    		if (value.length() > 20) {
-		    			Window.alert("Este dato admite 20 caracteres de longitud");
+		    			MessageDialog.error("Este dato admite 20 caracteres de longitud");
 		    			value = AonStringUtils.substring(value, 0, 19);
 		    		}
 		    	}
@@ -249,7 +251,7 @@ public class Page01 extends PageAbs {
 		    		try {
 		    			notaryDate = format.parse(value);
 		    		} catch (IllegalArgumentException ex) {
-		    			Window.alert("Formato de fecha incorrecto (dd/MM/yyyy)");
+		    			MessageDialog.error("Formato de fecha incorrecto (dd/MM/yyyy)");
 		    		}
 		    	}
 		    	dataProvider1.getList().get(index).setNotaryDate(notaryDate);
@@ -257,7 +259,7 @@ public class Page01 extends PageAbs {
 		});		
 		table1.addColumn(col, AON.MSG.notaryDate());
 		col.setCellStyleNames(AON.AON_CSS.aonTextLeft());
-		table1.setColumnWidth(col, 100, Unit.PX);
+		table1.setColumnWidth(col, 120, Unit.PX);
 	}
 
 	private void addLegalRemoveColumn() {
@@ -277,10 +279,20 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
 		    public void update(int index, LegalRepresentative lr, String value) {
-		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-		    		dataProvider1.getList().remove(index);
-		    		table1.redraw();
-		    	}
+		    	ConfirmDialog cd = new ConfirmDialog();
+		    	cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {}
+					
+					@Override
+					public void onAccept() {
+			    		mod200Object.getMod200().getRepresentatives().remove(index);
+			    		dataProvider1 = new ListDataProvider<LegalRepresentative>(mod200Object.getMod200().getRepresentatives());
+			    		dataProvider1.addDataDisplay(table1);
+			    		table1.redraw();
+					}
+				});
 		    }
 		});		
 		table1.addColumn(col);
@@ -420,12 +432,22 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
 		    public void update(int index, CompanyAdministrator ca, String value) {
-		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-		    		dataProvider2.getList().remove(index);
-		    		table2.redraw();
-		    	}
+		    	ConfirmDialog cd = new ConfirmDialog();
+		    	cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {}
+				
+					@Override
+					public void onAccept() {
+			    		mod200Object.getMod200().getAdministrators().remove(index);
+			    		dataProvider2 = new ListDataProvider<CompanyAdministrator>(mod200Object.getMod200().getAdministrators());
+			    		dataProvider2.addDataDisplay(table2);
+			    		table2.redraw();
+					}
+		    	});
 		    }
-		});		
+	    });
 		table2.addColumn(col);
 		table2.setColumnWidth(col, 20, Unit.PX);
 		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());

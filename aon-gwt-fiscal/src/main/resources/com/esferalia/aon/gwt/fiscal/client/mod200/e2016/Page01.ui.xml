@@ -29,14 +29,14 @@
 								<td style="width: 100px;">
 									<g:Label text="{msg.name}"  />	
 								</td>
-								<td>
+								<td style="width: auto;">
 									<g:TextBox ui:field="secretaryName" visibleLength="40" maxLength="25"
 										styleName="{aonResources.css.aonInputText}"/>
 								</td>
 								<td style="width: 100px;">
 									<g:Label text="{msg.irnrDate}"  />	
 								</td>
-								<td>
+								<td style="width: 110px;">
 									<aon:DateBoxEx  ui:field="irnr"
 										styleName="{aonResources.css.aonInputText}"/>
 								</td>
