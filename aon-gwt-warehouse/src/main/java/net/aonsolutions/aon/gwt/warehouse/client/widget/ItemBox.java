@@ -43,9 +43,9 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ItemBox extends ResizeComposite implements HasValue<String>
-	, HasDescription, Focusable, HasSelectionHandlers<JsItem>, HasAllFocusHandlers
-	,HasAllKeyHandlers, HasEnabled {
+public class ItemBox extends ResizeComposite implements HasValue<String>,
+	HasDescription, Focusable, HasSelectionHandlers<JsItem>, HasAllFocusHandlers,
+	HasAllKeyHandlers, HasEnabled {
 
 	private API API;
 	
@@ -119,9 +119,13 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	}
 	
 	public ItemBox(API API, boolean showDescription) {
+		this(API, true, false);
+	}
+	
+	public ItemBox(API API, boolean showDescription, boolean isOnlyBaseItem) {
 		this.API = API;
 
-		MultiWordSuggestOracle oracle = createSuggestOracle();
+		MultiWordSuggestOracle oracle = createSuggestOracle(isOnlyBaseItem);
 		
 		itemTextBox = new TextBox();
 		suggestionDisplay =  new ItemSuggestionDisplay();
@@ -158,7 +162,7 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 		initWidget(rooPanel);
 	}
 	
-	private MultiWordSuggestOracle createSuggestOracle(){
+	private MultiWordSuggestOracle createSuggestOracle(boolean isOnlyBaseItem){
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -170,6 +174,8 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 					HashMap<String,LinkedList<String>> map = new HashMap<>();
 					map.put("description", new LinkedList<>());
 					map.get("description").add(request.getQuery());
+					map.put("only_base_item", new LinkedList<>());
+					map.get("only_base_item").add(String.valueOf(isOnlyBaseItem));
 					
 					API.getProduct().getItemList(map, new AsyncCallback<JSON<JsItem>>() {
 						
@@ -365,7 +371,8 @@ public class ItemBox extends ResizeComposite implements HasValue<String>
 	}
 	
 	private static String decorate(JsItem item, String query) {
-		String text = item.getCode() + " - " + item.getName();
+		String text = item.getCode() + " - " + item.getName()
+				+ (item.getSerialNumber()!=null?" #("+item.getSerialNumber()+")":"");
 
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();

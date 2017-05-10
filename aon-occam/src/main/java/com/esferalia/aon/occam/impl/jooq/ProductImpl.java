@@ -123,7 +123,7 @@ public class ProductImpl implements IProduct{
 	}
 	
 	@Override
-	public Stream<Item> getFullItemStream(AONContext ctx, ProductFilter filter){
+	public Stream<Item> getFullItemStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
 				ProductDAO.getFullItemStream(ctx, filter));			
 	}

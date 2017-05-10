@@ -106,9 +106,9 @@ public class ElaborationPanel extends Composite {
 				@Override
 				public void onSuccess(JSON<JsItem> result) {
 					if(jsElaboration.getDescription()==null)
-						itemBox = new ItemBox(API);
+						itemBox = new ItemBox(API, true, true);
 					else
-						itemBox = new ItemBox(API, false);
+						itemBox = new ItemBox(API, false, true);
 					if(result!=null){
 						JsItem jsItem = result.getOneData();
 						itemBox.set(jsItem);
@@ -129,7 +129,7 @@ public class ElaborationPanel extends Composite {
 				}
 			});
 		} else {
-			itemBox = new ItemBox(API);
+			itemBox = new ItemBox(API, true, true);
 			itemPanel.add(itemBox);
 		}
 		
