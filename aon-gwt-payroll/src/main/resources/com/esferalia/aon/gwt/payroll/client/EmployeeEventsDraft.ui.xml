@@ -5,7 +5,7 @@
 	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraft.MyStyle">
 
 		/* ESTILOS TABLA */
 
@@ -50,7 +50,35 @@
 			background-color: #eee;
 		}
 
-		/* ESTILOS CAMBIO DE AÑO */		
+		/* ESTILOS CELDA TABLA */
+		
+		.cellFormat{
+			width: 40px;
+    		text-align: center;
+			border: none;
+			cursor: pointer;
+		}
+
+		.cellOddFormat{
+			background-color: #eee;
+			width: 40px;
+    		text-align: center;
+			border: none;
+			cursor: pointer;
+		}
+
+		.isSelectedCell{
+			background-color: #166ef3 !important;
+    		color: #ffffff !important;
+    		border-radius: 9px !important;
+			width: 40px;
+   			text-align: center;
+    		border: none;
+			cursor: pointer;
+		}
+
+		/* ESTILOS CAMBIO DE AÑO */	
+	
 		.paddingHorizontalPanel{
 			padding-bottom: 30px;
 		}
