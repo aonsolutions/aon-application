@@ -212,6 +212,13 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 		}
 	}
 
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getModel().getRowData();
+
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
+		reservationController.onLoad(event, reservation.getId(), NO_SHOW_INVOICE_LIST_NAME, NO_SHOW_INVOICE_CONTROLLER_NAME + ".onSearch");
+	}
+
 
 	private ArrayList<Integer> checks = new ArrayList<Integer>();
 

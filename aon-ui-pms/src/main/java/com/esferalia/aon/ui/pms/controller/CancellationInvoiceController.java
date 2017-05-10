@@ -212,6 +212,13 @@ public class CancellationInvoiceController extends BasicController implements IP
 		}
 	}
 
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getModel().getRowData();
+
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
+		reservationController.onLoad(event, reservation.getId(), CANCELLATION_INVOICE_LIST_NAME, CANCELLATION_INVOICE_CONTROLLER_NAME + ".onSearch");
+	}
+
 
 	private ArrayList<Integer> checks = new ArrayList<Integer>();
 
