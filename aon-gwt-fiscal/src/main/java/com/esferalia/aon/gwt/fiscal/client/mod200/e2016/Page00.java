@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object.IMod200ChangeListener;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
@@ -30,7 +31,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -255,7 +255,7 @@ public class Page00 extends PageAbs {
 				@Override
 				public void onClick(ClickEvent event) {
 					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
-						Window.alert(AON.MSG.unsupportedCharacter(key.getDescription()));
+						MessageDialog.show(AON.MSG.unsupportedCharacter(key.getDescription()));
 						check.setValue(false);
 					} else {
 						changeAvailability(key);
@@ -266,7 +266,8 @@ public class Page00 extends PageAbs {
 							 || inputs.get(Mod2002016Key.C0039).getValue()) {
 								// OK
 							} else {
-								Window.alert("El caracter 67 no se puede marcar si no se se marca algunos de los siguientes: 009, 010, 21 o 39");		
+								MessageDialog.show("El caracter [00067] no se puede marcar si no se "
+									+ "marca algunos de los siguientes: [00009], [00010], [00021] \u00F3 [00039]");
 							}
 						}
 					}
@@ -335,7 +336,7 @@ public class Page00 extends PageAbs {
 		} else {
 			CNAE2009 c = CNAE2009.valueOfCode(cnae.getText()); 
 			if (c == null) {
-				Window.alert("CNAE no encontrado");
+				MessageDialog.show("CNAE no encontrado");
 				cnaeLabel.setText(AonStringUtils.EMPTY);
 			} else {
 				cnaeLabel.setText(c.getDescription());
