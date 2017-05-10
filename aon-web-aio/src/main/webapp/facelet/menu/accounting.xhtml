@@ -69,17 +69,15 @@
 											actionListener="#{vatReport.onReset}"
 											value="#{bundle.finance_vat_report_module}" />
 									</aon:div>
-									<aon:if test="#{domainSwitcher.snapshotVersion}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_vatReport"
-												action="gwt_vatReport-deposit"
-												title="Control IVA">
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="Control IVA" />												
-											</aon:commandLink>
-										</aon:div>
-									</aon:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_vatReport"
+											action="gwt_vatReport-deposit"
+											title="Control IVA">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="Control IVA" />												
+										</aon:commandLink>
+									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="operation_report"
 											action="operationReport_search"
