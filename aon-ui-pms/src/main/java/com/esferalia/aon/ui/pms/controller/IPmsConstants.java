@@ -42,6 +42,7 @@ public interface IPmsConstants {
 	String RESERVATION_LIST_NAME = "reservation_list";
 	String RESERVATION_FORM_NAME = "reservation_form";
 	String RESERVATION_REQUEST_FORM_NAME = "reservationRequest_form";
+	String ADVANCE_INVOICE_LIST_NAME = "advanceInvoice_list";
 	String WEBPOL_EXPORTER_LIST_NAME = "webpolExporter_list";
 
 	// ************************************************************

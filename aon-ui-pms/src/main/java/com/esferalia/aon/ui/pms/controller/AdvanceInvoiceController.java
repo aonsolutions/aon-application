@@ -26,7 +26,7 @@ import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.event.AdvanceInvoiceSearchListener;
 
-public class AdvanceInvoiceController extends BasicController{
+public class AdvanceInvoiceController extends BasicController implements IPmsConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -187,6 +187,13 @@ public class AdvanceInvoiceController extends BasicController{
 	private PayMethod obtainConexFlowPayMethod() throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
 		return reservationUtils.obtainConexFlowPayMethod();
+	}
+
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getModel().getRowData();
+
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
+		reservationController.onLoad(event, reservation.getId(), ADVANCE_INVOICE_LIST_NAME, ADVANCE_INVOICE_CONTROLLER_NAME + ".onSearch");
 	}
 
 
