@@ -300,6 +300,7 @@ public class SalesUtils {
 				.map(to -> (SalesDetail) to)
 				.filter(detail -> detail.getItem().getProduct()
 						.isManufactured()
+						&& detail.getItem().getSerialNumber()==null
 						&& !isElaborationDone(detail))
 						.collect(Collectors.toList());
 	}
