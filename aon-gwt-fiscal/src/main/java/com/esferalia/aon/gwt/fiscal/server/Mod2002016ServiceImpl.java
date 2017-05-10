@@ -100,6 +100,9 @@ public class Mod2002016ServiceImpl extends AonRemoteServiceServlet implements Mo
 		HttpServletRequest request = getThreadLocalRequest();
 		try {
 			MOD2002016 mod = (MOD2002016) request.getSession().getAttribute("Mod2002016Accounting");
+			if (mod == null) {
+				throw new AonCoreException("El fichero no se ha recibido correctamente");	
+			}
 			if (mod200 != null) {
 				XMLtoMod2002016.fillMod2002016(mod, mod200);
 			}

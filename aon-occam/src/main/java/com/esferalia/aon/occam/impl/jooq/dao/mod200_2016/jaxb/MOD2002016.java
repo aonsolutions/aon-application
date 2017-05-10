@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
     "sociedadGarantia",
     "institucionesInversionColectiva"
 })
-@XmlRootElement(name = "MOD2002015")
+@XmlRootElement(name = "MOD2002016")
 public class MOD2002016 {
 
     @XmlElement(name = "Normal")

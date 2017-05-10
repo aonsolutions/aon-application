@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -309,7 +311,7 @@ public class Model2002016 extends ResizeComposite  {
 		initializeButton.setVisible(!mod200Object.isInitialized());
 		importAccountingButton.setVisible(mod200Object.isInitialized());
 		saveButton.setVisible(mod200Object.isInitialized());
-		removeButton.setVisible(mod200Object.isInitialized());
+		removeButton.setVisible(mod200Object.getMod200().getId() != null);
 		cancelButton.setVisible(true);
 		validateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		calculateCheck.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
@@ -360,9 +362,7 @@ public class Model2002016 extends ResizeComposite  {
 			@Override
 			public void onFailure(Throwable caught) {
 				super.onFailure(caught);
-				Window.alert("No se han podido guardar los datos. \n"
-						+"Causa: \n" 
-						+ caught.getMessage());
+				MessageDialog.error("No se han podido guardar los datos.");
 			}
 		};
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -379,48 +379,62 @@ public class Model2002016 extends ResizeComposite  {
 		} catch (IllegalArgumentException e) {
 			refreshButtonsVisibility();
 			popup.hide();
-			DialogMessages.alertErrorWidget(e.getMessage()).center();
+			MessageDialog.error(e.getMessage());
 		}
 	}
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
-		if (Window.confirm(AON.MSG.cancelAction())) {
-			mod200Callback.canceled();
-		}
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm(AON.MSG.cancelAction(), new ConfirmDialogCallback() {
+			@Override 
+			public void onCancel() {}		
+			
+			@Override 
+			public void onAccept() {
+				mod200Callback.canceled();
+			}
+		});
 	}
 	
 	@UiHandler("removeButton")
 	void onRemoveButtonClick(ClickEvent event) {
-		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-			final PopupPanel popup = new PopupPanel(false, true);
-			Label label = new Label(AON.MSG.processing());
-			label.addStyleName(AON.AON_CSS.aonTimer());
-			popup.add(label);
-			popup.setGlassEnabled(true);
-			popup.setAnimationEnabled(true);
-			popup.center();
-			try {
-				mod200Object.delete(new AsyncCallback<Void>() {
-					
-					@Override
-					public void onSuccess(Void result) {
-						popup.hide();
-						mod200Callback.removed();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						popup.hide();
-						Window.alert("No se han podido borrar los datos. \n"
-								+"Causa: \n" 
-								+ caught.getMessage());
-					}
-				});
-			} catch (IllegalArgumentException e) {
-				popup.hide();
-				DialogMessages.alertErrorWidget(e.getMessage()).center();
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+
+			@Override
+			public void onCancel() {
 			}
-		}
+
+			@Override
+			public void onAccept() {
+				final PopupPanel popup = new PopupPanel(false, true);
+				Label label = new Label(AON.MSG.processing());
+				label.addStyleName(AON.AON_CSS.aonTimer());
+				popup.add(label);
+				popup.setGlassEnabled(true);
+				popup.setAnimationEnabled(true);
+				popup.center();
+				try {
+					mod200Object.delete(new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							popup.hide();
+							mod200Callback.removed();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							MessageDialog.error("No se han podido borrar los datos.");
+						}
+					});
+				} catch (IllegalArgumentException e) {
+					popup.hide();
+					MessageDialog.error("No se han podido borrar los datos.");
+				}
+			}
+		});
 	}
 
 	private void populatePages(Mod2002016Object mod200Object) {
@@ -442,7 +456,7 @@ public class Model2002016 extends ResizeComposite  {
 					resultsPanel.setWidget(errorPage);
 					showResultsPanel();
 				} else {
-					Window.alert(AON.MSG.noValidationMessages() );
+					MessageDialog.error(AON.MSG.noValidationMessages());
 				}
 			}
 
@@ -533,8 +547,7 @@ public class Model2002016 extends ResizeComposite  {
 
 	@UiHandler("aeatAccountingFileButton")
 	void onAeatAccountingFileButtonClick(ClickEvent event) {
-		Window.alert(
-				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
+		MessageDialog.error("Se va a proceder a la generaci\u00F3n de un fichero\n"
 				+ "con los datos contables, para su importaci\u00F3n en\n"
 				+ "el programa de ayuda de la Agencia Tributaria.\n\n"
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
@@ -549,8 +562,7 @@ public class Model2002016 extends ResizeComposite  {
 
 	@UiHandler("aeatFileButton")
 	void onAeatFileButtonClick(ClickEvent event) {
-		Window.alert(
-				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
+		MessageDialog.error("Se va a proceder a la generaci\u00F3n de un fichero\n"
 				+ "con los datos de la declaraci\u00F3n, para su \n"
 				+ "presentaci\u00F3n en la web de la Agencia Tributaria.\n\n"
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
@@ -565,8 +577,7 @@ public class Model2002016 extends ResizeComposite  {
 
 	@UiHandler("aeatPrintButton")
 	void onAeatPrintButtonClick(ClickEvent event) {
-		Window.alert(
-				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+		MessageDialog.error("Se va a proceder a la validaci\u00F3n en los servidores de la \n"
 				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
 				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
@@ -670,7 +681,7 @@ public class Model2002016 extends ResizeComposite  {
 			if (mod200Object.isInitialized()) {
 				showPage(content);
 			} else {
-				Window.alert( AON.MSG.mustInitialzeMod200());
+				MessageDialog.warning(AON.MSG.mustInitialzeMod200());
 			}
 		}
 	}

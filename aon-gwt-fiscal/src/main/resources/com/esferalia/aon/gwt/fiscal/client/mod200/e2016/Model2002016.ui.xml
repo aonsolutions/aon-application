@@ -52,7 +52,7 @@
 								title="{msg.printViaAeat}" />
 							<g:Button ui:field="importAccountingButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconMoveUp}"
-								text="{msg.importAccountingAbr}" 
+								text="{msg.importAccounting}" 
 								title="{msg.importAccounting}" />
 							<g:Button ui:field="aeatAccountingFileButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeatBW}"

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,17 +49,28 @@ public class MessageDialog extends CustomDialog {
 		return INSTANCE;
 	}
 	
+	public static void error(String msg) {
+		show(AON.MSG.error(),msg);
+	}
+	public static void warning (final String msg) {
+		show(AON.MSG.warning(),msg);
+	}
+	
     public static void show(String msg) {
-    	show(msg, null);
+    	show(msg, (String) null);
     }
 	
+    public static void show(String header,String msg) {
+    	show(header,msg, null);
+    }
+
     public static void show(String msg, final MessageDialogCallback callback) {
-    	show("Mensaje", msg, callback);
+    	show(null, msg, callback);
     }
     
 	public static void show(String header,String msg, final MessageDialogCallback callback) {
 		final MessageDialog md = getInstance();
-		md.setCaption(header);
+		md.setCaption( AonStringUtils.defaultIfBlank(header, "Mensaje"));
     	FlowPanel panel = new FlowPanel();
     	Label label = new Label(msg);
     	label.setStyleName(AON.AON_CSS.aonConfirmDialogMsg());
