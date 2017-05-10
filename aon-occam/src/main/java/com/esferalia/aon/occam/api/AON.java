@@ -864,7 +864,7 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<Item> getFullItemList(String domainName, Integer domainId, String login, ProductFilter filter) {
+	public static LinkedList<Item> getFullItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);

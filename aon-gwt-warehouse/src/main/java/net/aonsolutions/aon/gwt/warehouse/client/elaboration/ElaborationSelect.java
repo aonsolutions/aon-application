@@ -318,7 +318,7 @@ public class ElaborationSelect extends Composite{
 		VerticalPanel panel = new VerticalPanel();
 	
 		AonComboBox inputWarehouse = new AonComboBox();
-		ItemBox itemBox = new ItemBox(API);
+		ItemBox itemBox = new ItemBox(API, true, false);
 		PaperInput inputQuantity = new PaperInput();
 		
 

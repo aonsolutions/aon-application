@@ -18,8 +18,10 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ProductServlet", urlPatterns = { "/product/*",
@@ -106,23 +108,47 @@ public class ProductServlet extends HttpServlet{
     
     private JSONArray getElaborableItemList(Domain domain, String login, Map<String, String[]> map){
     	JSONArray array = new JSONArray();
+    	
+    	Integer[] productIds = AON.getProductList(domain.getName(), domain.getId(), login,
+    			f -> elaborableProductFilter(domain, map, f))
+    			.stream().mapToInt(Product::getId).boxed().toArray(Integer[]::new);
+    			
     	AON.getFullItemList(domain.getName(), domain.getId(), login,
-    			f -> elaborableItemFilter(domain, map, f))
+    			f -> elaborableItemFilter(domain, map, f, productIds))
     			.forEach(i -> array.put(ToJSON.itemToJSON(i)));
     	return array;
     }
     
-    private Filter elaborableItemFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+	private Filter elaborableProductFilter(Domain domain,
+			Map<String, String[]> filterMap, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter = filter.and(f.getManufacturedProperty().eq((byte) 1));
 
-		if(filterMap.containsKey(MSG.DESCRIPTION)){
-			filter = filter.and(f.getCodeProperty().like("%"+filterMap.get(MSG.DESCRIPTION)[0]+"%")
-					.or(f.getNameProperty().like("%"+filterMap.get(MSG.DESCRIPTION)[0]+"%")));
+		if (filterMap.containsKey(MSG.DESCRIPTION)) {
+			filter = filter.and(f
+					.getCodeProperty()
+					.like("%" + filterMap.get(MSG.DESCRIPTION)[0] + "%")
+					.or(f.getNameProperty().like(
+							"%" + filterMap.get(MSG.DESCRIPTION)[0] + "%")));
 		}
-		
 		return filter;
-    }
+	}
+    
+	private Filter elaborableItemFilter(Domain domain,
+			Map<String, String[]> filterMap, ItemProperties f,
+			Integer[] productIds) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+
+		if (filterMap.containsKey("only_base_item")) {
+			boolean isOnlyBaseItem = new Boolean(filterMap.get("only_base_item")[0]);
+			if (isOnlyBaseItem)
+				filter = filter.and(f.getSerialNumberProperty().isNull());
+		}
+		if(productIds!=null){
+			filter = filter.and(f.getProductProperty().in(productIds));
+		}
+		return filter;
+	}
     
     
     private JSONObject insertItem(Domain domain, String login, JSONObject json) {

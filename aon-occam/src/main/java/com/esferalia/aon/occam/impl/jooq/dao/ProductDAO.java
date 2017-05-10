@@ -548,14 +548,12 @@ public class ProductDAO {
 			//TODO aplicar BasicItemFiller ¿?
 	}
 	
-	public static Stream<Item> getFullItemStream(AONContext ctx, ProductFilter filter){
+	public static Stream<Item> getFullItemStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().select(ITEM.fields())
 				.from ( ITEM )
 				.join( PRODUCT ).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.fetch()
-				.stream()
-				.map(new FullItemFiller(ctx));
+				.where(ITEM_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new FullItemFiller(ctx));
 	}
 
 	@Deprecated
