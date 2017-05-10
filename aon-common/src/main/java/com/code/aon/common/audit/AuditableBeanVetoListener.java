@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.ICommonConstants;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -20,28 +21,18 @@ public class AuditableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
 	private IAuthPrincipalProvider authPrincipalProvider;
 
-	@SuppressWarnings("unchecked")
-	public IAuthPrincipalProvider getAuthPrincipalProvider() {
-		if (authPrincipalProvider == null) {
-			String className = System.getProperty(IAuditable.AUTH_PRINCIPAL_PROVIDER);
-			try {
-				Class<IAuthPrincipalProvider> _class = ClassUtils.getClass(className);
-				authPrincipalProvider = _class.newInstance();
-			} catch (Throwable th) {
-				LOGGER.error("Error creating AuthPrincipalProvider " + className, th);
-			}
-		}
-		return authPrincipalProvider;
-	}
-
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		IAuditable pojo = (IAuditable)evt.getTo();
-		String loggedUser = getLoggedUser();
-		if (loggedUser != null) {
-			pojo.setCreationUser(loggedUser);
+		if (pojo.getCreationUser() == null || !pojo.getCreationUser().equals(ICommonConstants.SYSTEM_USER)) {
+			String loggedUser = getLoggedUser();
+			if (loggedUser != null) {
+				pojo.setCreationUser(loggedUser);
+			}
 		}
 		pojo.setCreationDate(new Date());
+		pojo.setModificationUser(null);
+		pojo.setModificationDate(null);
 	}
 	
 	@Override
@@ -62,6 +53,20 @@ public class AuditableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public IAuthPrincipalProvider getAuthPrincipalProvider() {
+		if (authPrincipalProvider == null) {
+			String className = System.getProperty(IAuditable.AUTH_PRINCIPAL_PROVIDER);
+			try {
+				Class<IAuthPrincipalProvider> _class = ClassUtils.getClass(className);
+				authPrincipalProvider = _class.newInstance();
+			} catch (Throwable th) {
+				LOGGER.error("Error creating AuthPrincipalProvider " + className, th);
+			}
+		}
+		return authPrincipalProvider;
 	}
 
 }
