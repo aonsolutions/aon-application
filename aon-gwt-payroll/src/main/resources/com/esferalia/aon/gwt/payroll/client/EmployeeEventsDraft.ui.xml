@@ -3,7 +3,10 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client' 
 	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared"
+	xmlns:i="urn:import:com.vaadin.polymer.iron.widget"
+	xmlns:p="urn:import:com.vaadin.polymer.paper.widget"
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraft.MyStyle">
 
@@ -105,6 +108,14 @@
 		.optionButtonsRight {
 			margin-top: 8px;
 		}
+
+		/* ESTILO PAPER DAILOG */
+
+		.marginTopCloseDialog{
+			margin-top: 1px !important;
+			padding-left: 0px;
+			padding-right: 0px;
+		}
 		
 	</ui:style>
 
@@ -129,8 +140,8 @@
 					</g:MenuItem>
 					<g:MenuItem text="Visualización" ui:field="viewMenuItem">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="showMonthMenuItem" text="Mensual"/>
-							<g:MenuItem ui:field="showHYearMenuItem" text="Anual"/>
+							<!-- g:MenuItem ui:field="showMonthMenuItem" text="Mensual"/ -->
+							<g:MenuItem ui:field="showHYearMenuItem" styleName="aon-MenuItemCheckYes" text="Anual"/>
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
@@ -163,6 +174,22 @@
 		
 		<g:center>
 		    <g:HTMLPanel>
+		  		
+		        <!-- DIALOG PARA AÑADIR UN NUEVO VALOR -->
+			    <p:PaperDialog ui:field="newValueDialog" modal="true" entryAnimation="scale-up-animation" 
+			        exitAnimation="fade-out-animation" withBackdrop="true">
+					<a:CustomDialogBar ui:field="customDialogBarHour" styleName="{style.marginTopCloseDialog}" 
+					    caption="Nuevo valor"/>
+					<g:HTMLPanel ui:field="confirmErepContent"></g:HTMLPanel>
+					<HTMLPanel>
+					    <i:IronLabel ui:field="nameVariableDialog"/>
+					    <g:DoubleBox ui:field="newValueBox"/>
+			        </HTMLPanel>
+			        <HTMLPanel class="buttons">
+						<p:PaperButton ui:field="newValueDialogCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
+						<p:PaperButton ui:field="newValueDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
+					</HTMLPanel>
+			    </p:PaperDialog>
 		        
 		        <!-- PANEL CAMBIO DE AÑO-->
 		        <g:HorizontalPanel styleName="{style.paddingHorizontalPanel}">

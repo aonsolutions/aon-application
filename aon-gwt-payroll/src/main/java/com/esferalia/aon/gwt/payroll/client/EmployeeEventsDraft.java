@@ -11,8 +11,12 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
+import com.vaadin.polymer.iron.widget.IronLabel;
+import com.vaadin.polymer.paper.widget.PaperButton;
+import com.vaadin.polymer.paper.widget.PaperDialog;
 
 public class EmployeeEventsDraft extends Composite {
 
@@ -36,6 +40,18 @@ public class EmployeeEventsDraft extends Composite {
 	
 	@UiField
 	Label yearLabel;
+	
+	@UiField
+	PaperDialog newValueDialog;
+	
+	@UiField
+	IronLabel nameVariableDialog;
+	
+	@UiField
+	DoubleBox newValueBox;
+	
+	@UiField
+	PaperButton newValueDialogOk;
 
 	@UiField
 	Button lastYearButton;
@@ -58,6 +74,22 @@ public class EmployeeEventsDraft extends Composite {
 	 * UIHANDLERS
 	 */
 	
+	@UiHandler("newValueButton")
+	public void onNewValueClick(ClickEvent event) {
+		newValueDialog.open();
+		int row = calculateRow(selectedPositions.getSelectedList().get(0));
+		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+		nameVariableDialog.getElement().setInnerText(variableName+" : ");
+	}
+	
+	@UiHandler("newValueDialogOk")
+	public void onNewValueDialogOkClick(ClickEvent event) {
+		addValueSelectedPositions(newValueBox.getValue());
+		newValueBox.setText("");
+		eraseSelectedPositions();
+		newValueDialog.close();
+	}
+
 	@UiHandler("lastYearButton")
 	public void onLastYearClick(ClickEvent event) {
 		changeYear(-1);
@@ -120,13 +152,24 @@ public class EmployeeEventsDraft extends Composite {
 	private void fillCellsEvents() {
 		for (int row = 1; row < 17; row ++)
 			for (int col = 1; col < 13; col ++){
-				DoubleBox eventValue = new DoubleBox();
+				TextBox eventValue = new TextBox();
 				eventValue.setStyleName(style.cellFormat());
 				if (row % 2 == 1)
 					eventValue.setStyleName(style.cellOddFormat());
-				eventValue.setValue(row*col*1.00);
+				eventValue.setValue(row*col*1.00+"");
 				eventsGrid.setWidget(row, col, eventValue);
 			}	
+	}
+	
+	private void addValueSelectedPositions(Double newValue) {
+		for (Integer position : selectedPositions.getSelectedList()){
+			int row = calculateRow(position);
+			int col = calculateCol(position);
+			
+			TextBox widget = (TextBox) eventsGrid.getWidget(row, col);
+			widget.setValue(newValue.toString());
+		}
+		
 	}
 	
 	private void changeYear(int change) {
