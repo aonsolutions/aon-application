@@ -43,7 +43,6 @@ public class Mod2002016toMOD2002016 {
 		pagina03.setT00107(getKey(mod200,Mod2002016Key.BA107));
 		pagina03.setT00108(getKey(mod200,Mod2002016Key.BA108));
 		pagina03.setT00700(getKey(mod200,Mod2002016Key.BA700));
-		pagina03.setT00701(getKey(mod200,Mod2002016Key.BA701));
 		pagina03.setT00109(getKey(mod200,Mod2002016Key.BA109));
 		pagina03.setT00110(getKey(mod200,Mod2002016Key.BA110));
 		pagina03.setT00111(getKey(mod200,Mod2002016Key.BA111));
@@ -81,6 +80,7 @@ public class Mod2002016toMOD2002016 {
 		pagina03.setT00146(getKey(mod200,Mod2002016Key.BA146));
 		pagina03.setT00147(getKey(mod200,Mod2002016Key.BA147));
 		pagina03.setT00148(getKey(mod200,Mod2002016Key.BA148));
+		pagina03.setT00701(getKey(mod200,Mod2002016Key.BA701));		
 		return pagina03;
 	}
 

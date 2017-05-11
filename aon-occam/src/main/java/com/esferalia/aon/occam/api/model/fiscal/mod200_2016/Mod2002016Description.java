@@ -109,7 +109,6 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BA107,"Aplicaciones inform\u00E1ticas (N)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA108,"Investigaci\u00F3n (N)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA700,"Propiedad intelectual (N)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BA701,"Derechos de emisi\u00F3n de gases de efecto invernadero (N)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA109,"Otro inmovilizado intangible (N)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA110,"Resto (A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA111,"Inmovilizado material (N, A, P)");
@@ -150,6 +149,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BA146,"De ciclo corto de producci\u00F3n (N)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA147,"Subproductos, residuos y materiales recuperados (N)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA148,"Anticipos a proveedores (N)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BA701,"Derechos de emisi\u00F3n de gases de efecto invernadero (N)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA149,"Deudores comerciales y otras cuentas a cobrar (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA150,"Clientes por ventas y prestaciones de servicios (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA151,"Clientes por ventas y prestaciones de servicios a largo plazo (N, A, P)");
