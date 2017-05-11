@@ -25,6 +25,7 @@ import com.vaadin.polymer.paper.PaperIconButtonElement;
 import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperMenuElement;
+import com.vaadin.polymer.paper.PaperProgressElement;
 import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
@@ -62,7 +63,8 @@ public class MainEntryPoint implements EntryPoint {
 				IronLabelElement.SRC,
 				PaperDropdownMenuElement.SRC,
 				PaperMenuElement.SRC,
-				PaperItemElement.SRC
+				PaperItemElement.SRC,
+				PaperProgressElement.SRC
 		)
 		);
 		

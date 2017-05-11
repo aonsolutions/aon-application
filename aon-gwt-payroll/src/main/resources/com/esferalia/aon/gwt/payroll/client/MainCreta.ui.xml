@@ -3,7 +3,8 @@
 	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
 	<ui:style>
 	
 	.stackHeader {
@@ -15,6 +16,8 @@
 	     gwt-image: 'enterprisesgroup';
 	     float: left;
 	   }
+	 
+	 
 	 
 	</ui:style>
 
@@ -46,8 +49,8 @@
 		</g:center>
 
 		<g:south size="0">
-			<common:MinimizePanel ui:field="footPanel" >
-				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
+			<common:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
+				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" />
 			</common:MinimizePanel>
 		</g:south>
 

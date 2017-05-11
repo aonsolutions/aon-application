@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.css.images;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.CssResource.ClassName;
 import com.google.gwt.user.client.ui.Tree;
 
 /**
@@ -176,5 +177,7 @@ public interface Images extends ClientBundle, Tree.Resources {
 	@Source("aon-icon-title.png")
 	ImageResource aon_icon_issue_title();
 
+	@Source("aon-icon-progress-bar.png")
+	ImageResource aonIconProgressBar();
 
 }

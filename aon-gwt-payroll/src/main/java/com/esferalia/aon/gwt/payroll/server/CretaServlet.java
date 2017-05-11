@@ -17,8 +17,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +41,8 @@ import javax.xml.stream.XMLStreamWriter;
 import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -79,6 +81,7 @@ import net.aonsolutions.tgss.creta.jaxb.Utils;
 import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
 import net.aonsolutions.tgss.creta.jaxb.dcl.LineaDCL;
+import net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -298,7 +301,10 @@ public class CretaServlet extends HttpServlet
 					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, part))
 					.filter(optional -> optional.isPresent())
 					.map(optional -> optional.get())
-					.peek(t -> {saveTrabajadoresYTramos(req, t);}),
+					.peek(t -> {saveTrabajadoresYTramos(req, t);})
+					.peek(t -> os.printf("//MESSAGE %s %s %s (%s) Guardado\r\n", File.TRABAJADORES_TRAMOS.getFilename(), t.getLiquidacion().getTipo(), Province.getName(t.getLiquidacion().getCcc().getProvincia()), t.getLiquidacion().getCcc().getNumero()))
+					.peek(t -> os.flush())
+					,
 					findTrabajadoresYTramos(req)
 				)
 				.filter(t -> t.getLiquidacion() != null)
@@ -308,7 +314,10 @@ public class CretaServlet extends HttpServlet
 					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, part))
 					.filter(optional -> optional.isPresent())
 					.map(optional -> optional.get())
-					.peek(r -> {saveRespuesta(req, r);}),
+					.peek(r -> {saveRespuesta(req, r);})
+					.peek(r -> os.printf("//MESSAGE %s %s Guardada\r\n", File.RESPUESTA.getFilename(), r.getReferenciaExterna()))
+					.peek(r -> os.flush())
+					,
 					findRespuestas(req)
 				)
 				.filter(r -> r.getLiquidacion() != null && r.getLiquidacion().size() > 0 )
@@ -1045,32 +1054,49 @@ public class CretaServlet extends HttpServlet
 	private static void __onTrabajadoresYTramos (PrintWriter os, 
 			Stream<net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts,
 			Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta> rs) {
-
+		
 			os.println("parent.__onTrabajadoresYTramos(");
-
-			os.println(
+			os.println("[");
+			os.println("//BEGIN_TRABAJADORES_TRAMOS");
+			os.flush();
+			
 			// @formatter:off
-						ts
-						.sorted(CretaServlet::compare)
-						.map(t -> String.format("{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n",CretaService.File.TRABAJADORES_TRAMOS, toJSON(t.getLiquidacion()), marshallAndEncode(t)))
-						.collect(Collectors.joining(",", "[", "]"))
+			Iterator<net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> tsIt = ts.sorted(CretaServlet::compare).iterator();
+			String sep = "";
+			while ( tsIt.hasNext() ){
+				net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t = tsIt.next();
+				os.printf("%s\r\n{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, toJSON(t.getLiquidacion()), marshallAndEncode(t));
+				os.flush();
+				sep = ",";
+			}
 			// @formatter:on
-			);
 
+			os.println("//END_TRABAJADORES_TRAMOS");
+			os.flush();
+			os.println("]");
+			
 			os.println(",");
 
 			os.println("[");
-			os.println(
+			os.println("//BEGIN_RESPUESTAS");
+			os.flush();
 			// @formatter:off
-				rs
-				.map(r -> r.getLiquidacion().stream()
-						.map(l -> String.format("{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",CretaService.File.RESPUESTA, toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(r)))
-						.collect(Collectors.joining(","))
-					)
-				.filter(s-> AonStringUtils.isNotBlank(s))
-				.collect(Collectors.joining(","))
+			Iterator<Respuesta> rsIt = rs.iterator();
+			sep = "";
+			while ( rsIt.hasNext() ){
+				Respuesta r = rsIt.next();
+				List<net.aonsolutions.tgss.creta.jaxb.respuesta.Liquidacion> liquidacion = r.getLiquidacion();
+				for  (net.aonsolutions.tgss.creta.jaxb.respuesta.Liquidacion l : liquidacion ){
+					os.printf("%s\r\n{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(r));
+					os.flush();
+					sep = ",";
+					
+				}
+			}
 			// @formatter:on
-			);
+
+			os.println("//END_RESPUESTAS");
+			os.flush();
 			os.println("]");
 
 			os.println(");");
@@ -1189,6 +1215,11 @@ public class CretaServlet extends HttpServlet
 
 		return calendar.getTime();
 		
+	}
+	
+	private static String getParameter (HttpServletRequest req, CretaService.Parameter param, String def) {
+		String value = req.getParameter(param.name());
+		return value != null ? value : def;
 	}
 	
 	

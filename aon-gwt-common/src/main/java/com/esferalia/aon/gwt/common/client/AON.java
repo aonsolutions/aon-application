@@ -164,6 +164,7 @@ public class AON {
 	public static final String AON_ICON_OKWARNING = AON_CSS.aonIconOkWarning(); // "aon-icon-okwarning";
 	public static final String AON_ICON_CHECK_NO = AON_CSS.aonIconCheckNo();
 	public static final String AON_ICON_CHECK_YES = AON_CSS.aonIconCheckYes();
+	public static final String AON_ICON_PROGRESS_BAR = AON_CSS.aonIconProgressBar();
 	
 	public static final String AON_CALENDAR_STATAL_HOLIDAY = Calendar_CSS.statalHoliday();
 	public static final String AON_CALENDAR_AUTONOMI_HOLIDAY = Calendar_CSS.autonomiHoliday();

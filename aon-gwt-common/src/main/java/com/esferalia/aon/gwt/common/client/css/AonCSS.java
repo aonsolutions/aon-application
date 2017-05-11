@@ -1075,6 +1075,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-letter-p-blue-icon")
 	String aonLetterPBlueIcon();
+	
+	@ClassName("aon-icon-progress-bar")
+	String aonIconProgressBar();
 
 	/*
 	 *********************************************

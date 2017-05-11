@@ -6,13 +6,18 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperProgress;
 
 public class ProgressPanel extends ResizeComposite implements ProvidesResize {
@@ -89,38 +94,51 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 		
 		int row = flexTable.getRowCount();
 		
-		flexTable.insertRow(row);
-		flexTable.setText(row, 0, indeterminateTask.getDescription());
+		int descriptionRow = row;
+		flexTable.insertRow(descriptionRow);
+		flexTable.setText(descriptionRow, 0, indeterminateTask.getDescription());
 		
-		flexTable.insertRow(++row);
+		int progressRow = row + 1;
+		flexTable.insertRow(progressRow);
 		PaperProgress paperProgress = new PaperProgress();
+		paperProgress.setMax(100.00);
 		paperProgress.setIndeterminate(true);
 		paperProgress.addStyleName(AON.AON_WIDTH_ALL);
 		
-		flexTable.setWidget(row, 0, paperProgress);
+		Button cleanButton = new Button();
+		cleanButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		cleanButton.addStyleName(AON.AON_ICON_DELETE);
+		cleanButton.addClickHandler(e -> cleanTask(row));
+		
+		flexTable.setWidget(progressRow, 0, paperProgress);
+		flexTable.setWidget(progressRow, 1, cleanButton);
+		flexTable.getColumnFormatter().addStyleName(0, AON.AON_WIDTH_ALL);
 		
 		
-		flexTable.insertRow(++row);
+		int messageRow = row + 2;
+		flexTable.insertRow(messageRow);
 		indeterminateTask.addTaskListener( new TaskListener() {
 			
 			@Override
 			public void finished() {
-				int index = tasks.indexOf(indeterminateTask);
-				Window.alert("finished " + index );
-				flexTable.removeRow(( index * 3 )+2);
-				flexTable.removeRow(( index * 3 )+1);
-				flexTable.removeRow(( index * 3 )+0);
+				paperProgress.setIndeterminate(false);
+				paperProgress.setValue(paperProgress.getMax());
 			}
 			
 			@Override
 			public void messageChanged(String message) {
-				int index = tasks.indexOf(indeterminateTask);
-				flexTable.setText(( index * 3 )+2, 0, message);
+				flexTable.setText(messageRow, 0, message);
 			}
 		});
 	}
 
 	// ------------------------------------------------------------- UIHandlers
+	
+	private void cleanTask( int row) {
+		flexTable.removeRow(row + 2);
+		flexTable.removeRow(row + 1);
+		flexTable.removeRow(row + 0);
+	}
 	
 	
 

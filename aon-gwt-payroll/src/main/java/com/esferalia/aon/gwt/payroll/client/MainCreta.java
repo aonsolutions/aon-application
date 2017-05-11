@@ -12,8 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -21,6 +21,8 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseCretaRequestCommand;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseDBACommand;
@@ -51,7 +53,6 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -76,7 +77,7 @@ import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
-
+	
 	public static <T extends JsFile> T[] get(File file, T[] ts) {
 		Map<String, T> map = get(file.name());
 		return map.values().toArray(ts);
@@ -85,15 +86,114 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	public static <T extends JsFile> Map<String, T> add(File file, T ts[]) {
 		return add(file.name(), ts);
 	}
+	
+	private final class MainCretaSyncCallback implements SyncCallback {
+
+		private IndeterminateTask syncTask ;
+		private List<JsRespuesta> jsRespuestas;
+		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss ;
+		
+		public MainCretaSyncCallback(IndeterminateTask syncTask) {
+			this.syncTask = syncTask;
+			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
+			this.jsTrabajadoresYTramoss = new ArrayList<JsTrabajadoresYTramos>(5);
+		}
+		
+		@Override
+		public void onEnd() {
+			syncTask.messageChanged("Sincronizaci\u00F3n completada");
+			syncTask.finished();
+			MainCreta.this.closeFootPanel();
+			
+			if ( !jsRespuestas.isEmpty() )
+				MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[jsRespuestas.size()]));
+			if ( !jsTrabajadoresYTramoss.isEmpty() )
+				MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[jsTrabajadoresYTramoss.size()]));
+			
+			jsRespuestas.clear();
+			jsTrabajadoresYTramoss.clear();
+			
+			MainCreta.this.enterprisesCretaDetail.onTrabajadoresYTramos();
+			
+		}
+
+		@Override
+		public void onBegin() {
+			syncTask.setDescription("Sincronizando mensajes");
+		}
+
+		@Override
+		public void onMsg(String msg) {
+			syncTask.messageChanged(msg);
+		}
+
+		@Override
+		public void onError(Throwable caught) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onRespuesta(JsRespuesta jsRespuesta ){
+			syncTask.messageChanged(
+					File.RESPUESTA.getFilename()
+					+ " " + jsRespuesta.getDate()
+					+ " " + jsRespuesta.getType() 
+					+ " " + Province.getName(jsRespuesta.getCCC().substring(4, 6))
+					+ " (" + jsRespuesta.getCCC().substring(6) + ")"
+					+ " Sincronizado"
+					) ;
+
+			jsRespuestas.add(jsRespuesta);
+			if ( jsRespuestas.size() < 5) 
+				return;
+			
+			MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[5]));
+			jsRespuestas.clear();
+		
+		}
+
+		@Override
+		public void onTrabajadoresYTramos(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
+			syncTask.messageChanged(
+					File.TRABAJADORES_TRAMOS.getFilename()
+					+ " " + jsTrabajadoresYTramos.getDate()
+					+ " " + jsTrabajadoresYTramos.getType() 
+					+ " " + Province.getName(jsTrabajadoresYTramos.getCCC().substring(4, 6))
+					+ " (" + jsTrabajadoresYTramos.getCCC().substring(6) + ")"
+					+ " Sincronizado"
+					) ;
+
+			jsTrabajadoresYTramoss.add(jsTrabajadoresYTramos);
+			if ( jsTrabajadoresYTramoss.size() < 5) 
+				return;
+			
+			MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[5]));
+			jsTrabajadoresYTramoss.clear();
+		}
+	}
 
 	static interface Binder extends UiBinder<Widget, MainCreta> {
 	}
-
+	
+	public static interface SyncCallback {
+		void onEnd();
+		void onBegin();
+		void onMsg(String msg);
+		void onError(Throwable caught);
+		void onRespuesta(JsRespuesta respuesta);
+		void onTrabajadoresYTramos(JsTrabajadoresYTramos trabajadoresYTramos);
+	}
+	
+	@SuppressWarnings("serial")
+	private static final Map<String,Map<String,JsFile>> BACKUP_STORAGE = 
+			new HashMap<String,Map<String,JsFile>>(2);
+	
 	private static final Binder binder = GWT.create(Binder.class);
 
 	private static final String AGREEMENT = "c-agreement";
 
 	private ResultsPanel resultsPanel;
+	private ProgressPanel progressPanel;
 
 	@UiField
 	MinimizePanel footPanel;
@@ -136,6 +236,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		root.add(ui);
 
 		resultsPanel = new ResultsPanel();
+		progressPanel = new ProgressPanel();
 
 		enterprises.addListener(this);
 
@@ -143,18 +244,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		activityCretaDetail = new ActivityCretaDetail();
 		enterpriseCretaDetail = new EnterpriseCretaDetail();
 		enterprisesCretaDetail = new EnterprisesCretaDetail();
-
-		sync(new AsyncCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {
-				MainCreta.this.enterprisesCretaDetail.onTrabajadoresYTramos();
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+		
+		progressPanel.addAttachHandler(e ->  {
+			// Synchronize cret@ messages. 
+			IndeterminateTask syncTask = new IndeterminateTask();
+			progressPanel.showIndeterminateTask(syncTask);
+			sync( new MainCretaSyncCallback(syncTask));
 		});
+		showProgressPanel();
+		
+		footPanel.addMinimizeHandler(e -> closeFootPanel());
+		footPanel.addMaximizeHandler(e -> maximizeFootPanel());
+		
+		MainCreta.this.enterprisesCretaDetail.addAttachHandler( e -> MainCreta.this.enterprisesCretaDetail.onTrabajadoresYTramos());
 	}
 
 	// --------------------------------------------------- Enterprises.Listener
@@ -245,14 +347,29 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, splitLayoutPanel.getOffsetHeight());
+	}
+
 	private void showResultsPanel() {
 
 		InlineLabel tab = new InlineLabel("Resultados");
 		tab.addStyleName(AON.AON_ICON_TIME);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		footTabPanel.add(resultsPanel, tab);
+		footTabPanel.selectTab(resultsPanel);
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 	}
+
+	private void showProgressPanel() {
+		InlineLabel tab = new InlineLabel("Progreso");
+		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		footTabPanel.add(progressPanel, tab);
+		footTabPanel.selectTab(progressPanel);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+	}
+
 
 	public static boolean hasTrabajadoresYTramos(JsRespuesta jsRespuesta) {
 		JsEmployee jsEmployees[] = jsRespuesta.getEmployees();
@@ -1449,6 +1566,146 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				});
 
 	}
+
+	protected static void sync(final SyncCallback cb) {
+
+		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
+		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
+
+		ArrayList<JsFile> jsFiles = new ArrayList<JsFile>(respuestas.length + trabajadoresYTramos.length);
+		Collections.addAll(jsFiles, respuestas);
+		Collections.addAll(jsFiles, trabajadoresYTramos);
+
+		cb.onBegin();
+
+		Map<String, Collection<String>> options = Collections.emptyMap();
+
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.TRABAJADORES_TRAMOS, options, jsFiles,
+				new ReadyStateChangeHandler() {
+					
+					private int read = 0;
+					private Consumer<String> consumer = this::beginTrabajadoresYTramos;
+					
+					@Override
+					public void onReadyStateChange(XMLHttpRequest xhr) {
+						int state = xhr.getReadyState();
+						if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
+							String responseText = xhr.getResponseText();
+							try {
+								
+								String line = readLine(responseText);
+								while ( null != line ) {
+									consumer.accept(line);
+									line = readLine(responseText);
+								}
+
+							} catch (Throwable caught) {
+								cb.onError(caught);
+							}
+						}
+					}
+					
+					private void end(String line) {
+					}
+
+
+					private void respuestas(String line){
+						if ( line == null)
+							return;
+						if ( line.isEmpty())
+							return;
+						if ( line.startsWith(","))
+							return;
+						
+						if ( line.startsWith("//MESSAGE ")){
+							cb.onMsg(line.substring(10));
+						}
+						else if ( line.startsWith("//END_RESPUESTAS")){
+							consumer = this::end;
+							cb.onEnd();
+						}
+						else {
+							try {
+								JsRespuesta respuesta = eval("("+line+")");
+								cb.onRespuesta(respuesta);
+							} catch ( Throwable t ) {
+								cb.onError(t);
+							}
+						}
+					}
+
+					private void trabajadoresYTramos(String line){
+						if ( line == null)
+							return;
+						if ( line.isEmpty())
+							return;
+						if ( line.startsWith(","))
+							return;
+						
+						if ( line.startsWith("//MESSAGE ")){
+							cb.onMsg(line.substring(10));
+						}
+						else if ( line.startsWith("//END_TRABAJADORES_TRAMOS")){
+							consumer = this::beginRespuestas;
+						}
+						else { 
+							try {
+								JsTrabajadoresYTramos trabajadoresYTramos = eval("("+line+")");
+								cb.onTrabajadoresYTramos(trabajadoresYTramos);
+							} catch ( Throwable t) {
+								cb.onError(t);
+							}
+						}
+					}
+					
+					private void beginRespuestas(String line) {
+						if ( line.startsWith("//BEGIN_RESPUESTAS"))
+							consumer = this::respuestas;
+					}
+
+					private void beginTrabajadoresYTramos(String line) {
+						if ( line.startsWith("//BEGIN_TRABAJADORES_TRAMOS"))
+							consumer = this::trabajadoresYTramos;
+					}
+					
+					private String readLine( String responseText ) {
+						StringBuffer line = new StringBuffer();
+						
+						for ( int start = read;  start < responseText.length(); start++){
+							char ch = responseText.charAt(start);
+							
+							if ( ch == '\r'){ 
+								skipCRLF(start++, responseText);
+								return line.toString();
+							}
+							else if ( ch == '\n'){
+								skipCRLF(start++, responseText);
+								return line.toString();
+							}
+							else {
+								line.append(ch);
+							}
+						}
+						
+						return null ;
+					}
+					
+					private void skipCRLF(int last, String responseText) {
+						for ( read = last;  read < responseText.length(); read++){
+							char ch = responseText.charAt(read);
+							if ( ch == '\r'){
+								continue;
+							}
+							else if ( ch == '\n'){
+								continue;
+							}
+							return;
+						}
+					}
+
+				});
+
+	}
 	
 	protected void bases(JsFile jsFile, Consumer<JsBasesResult> onBases) {
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
@@ -1471,6 +1728,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 	
 	// ------------------------------------------------------------------------
+
 
 	private static String getDescription(CCC ccc, String fullccc) {
 		String province = fullccc.substring(4, 6);
@@ -1599,18 +1857,47 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		try {
 			set(key, map.values());
-		} catch ( Throwable caught){
+		} catch ( Throwable caught){ // QuotaExceededError
 		}
 
 		return Collections.unmodifiableMap(map);
 	}
+	
 
 	private static <T extends JsFile> Map<String, T> get(String key) {
+		Map<String, T> map ;
+		try {
+			map = getFromBackup(key);
+		} catch ( Exception backupException ) {
+			try {
+				map = getFromLocalStorage(key);
+			} catch ( Exception storageException ) {
+				map = new HashMap<String,T>();
+			}
+			saveAtBackup(key, map);
+		}
+		
+		return map;
+	}
 
+	private static <T extends JsFile> void saveAtBackup(String key, Map<String, T>  map) {
+		BACKUP_STORAGE.put(key,(Map<String, JsFile>) map); 
+	}
+
+	private static <T extends JsFile> Map<String, T> getFromBackup(String key) {
+		if ( BACKUP_STORAGE.containsKey(key)) 
+		 return (Map<String, T>) BACKUP_STORAGE.get(key) ;
+		throw new UnsupportedOperationException();
+	}
+
+	private static <T extends JsFile> Map<String, T> getFromLocalStorage(String key) {
+		
+		
 		Storage localStorage = Storage.getLocalStorageIfSupported();
 		if (localStorage == null)
 			throw new UnsupportedOperationException();
 
+		
 		String json = localStorage.getItem(key);
 
 		if (AonStringUtils.isBlank(json))
@@ -1629,6 +1916,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			return new HashMap<String, T>();
 		}
 	}
+	
 
 	public static class JsFileComparator<T extends JsFile> implements Comparator<T> {
 
@@ -1772,5 +2060,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		return compare < 0;
 	}
+
+	// ------------------------------------------------------------------------
 
 }
