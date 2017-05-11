@@ -27,18 +27,18 @@ public class ProjectCollectionsController implements Serializable {
 	
 	public List<SelectItem> getProjects(Integer registryId) throws ManagerBeanException {
 		List<SelectItem> projects = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(Project.class);
-		Criteria criteria = new Criteria();
 		if (registryId != null) {
+			IManagerBean bean = BeanManager.getManagerBean(Project.class);
+			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), registryId);
-		}
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
-		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
-		List<ITransferObject> list = bean.getList(criteria);
-		for (ITransferObject to:list) {
-			Project project = (Project) to;
-			SelectItem item = new SelectItem(project, project.getName());
-			projects.add(item);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
+			List<ITransferObject> list = bean.getList(criteria);
+			for (ITransferObject to:list) {
+				Project project = (Project) to;
+				SelectItem item = new SelectItem(project, project.getName());
+				projects.add(item);
+			}
 		}
 		return projects;
 	}
