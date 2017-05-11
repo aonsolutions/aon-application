@@ -110,42 +110,6 @@ public class Mod2002016Object implements Serializable {
 		});
 	}
 	
-//	public void getMod200ById(final AsyncCallback<Mod2002016> callback) {
-//		Model200.getMod2002016Service().getMod2002016ById(domainName,mod200.getDomain(), getId(), new AsyncCallback<Mod2002016>() {
-//			
-//			@Override
-//			public void onSuccess(Mod2002016 result) {
-//				mod200 = result;
-//				initialized = mod200.getId()!=null;
-//				callback.onSuccess(result);
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				initialized = false;
-//				callback.onFailure(caught);
-//			}
-//		});
-//	}
-//
-//	public void createMod200(final AsyncCallback<Mod2002016> callback) {
-//		Model200.getMod2002016Service().createMod2002016(domainName,mod200.getDomain(), mod200.getYear(), new AsyncCallback<Mod2002016>() {
-//			
-//			@Override
-//			public void onSuccess(Mod2002016 result) {
-//				mod200 = result;
-//				initialized = false;
-//				callback.onSuccess(result);
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				initialized = false;
-//				callback.onFailure(caught);
-//			}
-//		});
-//	}
-	
 	public void fillMod2002016AccountingData(final AsyncCallback<Mod2002016> callback) {
 		Model200.getMod2002016Service().fillMod2002016AccountingData(mod200, new AsyncCallback<Mod2002016>() {
 			

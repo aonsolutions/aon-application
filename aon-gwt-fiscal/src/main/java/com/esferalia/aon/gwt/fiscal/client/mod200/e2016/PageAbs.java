@@ -40,6 +40,10 @@ public abstract class PageAbs extends ResizeComposite {
 		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
 		SafeHtml render(String option);
 	}
+	interface SelectButtonTemplate extends SafeHtmlTemplates {
+		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-row-selector\" style=\"border: medium none !important;\">")
+		SafeHtml render(String option);
+	}
 	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -48,6 +52,26 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	};
 	
+	static class SelectButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
+
+		private static SelectButtonTemplate template;
+
+		protected SelectButtonSafeHtmlTemplates() {
+			template = GWT.create(SelectButtonTemplate.class);
+		}
+		
+		@Override
+		public SafeHtml render(String object) {
+			return template.render(object);
+		}
+
+		@Override
+		public void render(String object, SafeHtmlBuilder builder) {
+			builder.append( template.render(object) );
+		}
+		
+	}
+
 	static class DeleteButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
 
 		private static DeleteButtonTemplate template;
@@ -181,7 +205,7 @@ public abstract class PageAbs extends ResizeComposite {
 			// Nothing;
 		}
 		if (show) {
-			BoxLabel code = new BoxLabel(codeId);
+			BoxLabel code = new BoxLabel(codeId, Model2002016.BOX_LENGTH);
 			getLabels().put(key, code);
 			panel.add(code);
 		}

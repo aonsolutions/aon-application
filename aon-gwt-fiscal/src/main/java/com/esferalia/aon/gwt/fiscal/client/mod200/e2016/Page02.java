@@ -4,11 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.ParticipationPanel.ParticipationPanelCallback;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -28,24 +33,22 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Page02 extends PageAbs {
 
+	
 	interface Page2Binder extends UiBinder<Widget, Page02> {}
 
 	private static final Page2Binder page2Binder = GWT.create(Page2Binder.class);
 
 	private ListDataProvider<CompanyParticipation> dataProviderIn;
 	private ListDataProvider<CompanyParticipation> dataProviderOut;
-	private NoSelectionModel<CompanyParticipation> modelOut;
 	
 	ParticipationPanel participationPanel;
 	
@@ -60,8 +63,33 @@ public class Page02 extends PageAbs {
 	@UiField
 	Button newParticipationIn;
 
+	@UiField(provided = true)
+	FlexTable table1;
+
 	public Page02() {
-		participationPanel = new ParticipationPanel();
+		table1 = new FlexTable();
+		
+		participationPanel = new ParticipationPanel( new ParticipationPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				tableOut.redraw();
+			}
+			
+			@Override
+			public void onAccept(int index, CompanyParticipation cp) {
+				if (index < 0) {
+					mod200Object.getMod200().getParticipationsOut().add(cp);
+					dataProviderOut.getList().add(cp);
+				} else {
+					mod200Object.getMod200().getParticipationsOut().set(index, cp);
+					dataProviderOut.getList().set(index,cp);
+				}
+				tableOut.redraw();
+				mod200Object.doubleValueChanged(Mod2002016Key.P1501,
+					mod200Object.getDoubleValue(Mod2002016Key.P1501));
+			}
+		});
 		
 		tableIn = new CellTable<CompanyParticipation>(25,Model200Table.TABLE_STYLE);
 		
@@ -84,21 +112,12 @@ public class Page02 extends PageAbs {
 		
 		tableOut.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE); 
 		tableOut.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
-		modelOut = new NoSelectionModel<CompanyParticipation>();
-		modelOut.addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				participationPanel.dump(modelOut.getLastSelectedObject());
-				participationPanel.center();
-				participationPanel.show();
-			}
-		});
-		tableOut.setSelectionModel(modelOut);		
 		
 		tableOut.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 		dataProviderOut = new ListDataProvider<CompanyParticipation>();
 		dataProviderOut.addDataDisplay(tableOut);
 
+		addOutSelectionColumn();
 		addOutDocumentColumn();
 		addOutDescriptionColumn();
 		addOutPercentColumn();
@@ -107,10 +126,10 @@ public class Page02 extends PageAbs {
 		
 		Widget ui = page2Binder.createAndBindUi(this);
 		initWidget(ui);
-		participationPanel.setTable( tableOut );		
 	}
 
 	public void dump(Mod2002016Object mod200Object) {
+		super.dump(mod200Object);
 		this.mod200Object = mod200Object;
 		dataProviderIn = this.mod200Object.getMod200().getParticipationsIn() == null
 			?new ListDataProvider<CompanyParticipation>()
@@ -124,9 +143,8 @@ public class Page02 extends PageAbs {
 			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
 		dataProviderOut.addDataDisplay(tableOut);
 		tableOut.redraw();
-		initializeTable();
 	}
-
+	
 	private void addInDocumentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
 		Column<CompanyParticipation, String> documentColumn = new Column<CompanyParticipation, String>(
@@ -244,7 +262,7 @@ public class Page02 extends PageAbs {
 		    		double p = Double.parseDouble(value);
 		    		dataProviderIn.getList().get(index).setPercent(p);
 		    	} catch (NumberFormatException e) {
-		    		Window.alert("Porcentaje no v\u00E1lido.");
+		    		MessageDialog.error("Porcentaje no v\u00E1lido.");
 		    	}
 		    }
 		});		
@@ -268,12 +286,12 @@ public class Page02 extends PageAbs {
 		    		double p = Double.parseDouble(value);
 		    		dataProviderIn.getList().get(index).setNominalValue(p);
 		    	} catch (NumberFormatException e) {
-		    		Window.alert("Porcentaje no v\u00E1lido.");
+		    		MessageDialog.error("N\u00FAmero no v\u00E1lido.");
 		    	}
 		    }
 		});		
 		tableIn.addColumn(nominalValueColumn, AON.MSG.nominalValue());
-		tableIn.setColumnWidth(nominalValueColumn, 120, Unit.PX);
+		tableIn.setColumnWidth(nominalValueColumn, 100, Unit.PX);
 		nominalValueColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
@@ -292,11 +310,22 @@ public class Page02 extends PageAbs {
 		  }
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+			
 		    public void update(int index, CompanyParticipation ca, String value) {
-		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-		    		dataProviderIn.getList().remove(index);
-		    		tableIn.redraw();
-		    	}
+		    	ConfirmDialog cd = new ConfirmDialog();
+		    	cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {}
+					
+					@Override
+					public void onAccept() {
+						mod200Object.getMod200().getParticipationsIn().remove(index);
+						dataProviderIn = new ListDataProvider<CompanyParticipation>(mod200Object.getMod200().getParticipationsIn());
+						dataProviderIn.addDataDisplay(tableIn);
+			    		tableIn.redraw();
+					}
+				});
 		    }
 		});		
 		tableIn.addColumn(col);
@@ -310,6 +339,33 @@ public class Page02 extends PageAbs {
 		tableIn.redraw();		    		
 	}
 	
+	private void addOutSelectionColumn() {
+		ButtonCell selectButton = new ButtonCell( new SelectButtonSafeHtmlTemplates())  {
+			  @Override
+			  public void render(Context context, SafeHtml data, SafeHtmlBuilder sb) {
+			    if (data != null) {
+			      sb.append(data);
+			    }
+			  }
+		};
+		Column<CompanyParticipation,String> col = new Column<CompanyParticipation,String>(selectButton) {
+		  public String getValue(CompanyParticipation object) {
+		    return AON.MSG.selectAction();
+		  }
+		};
+		col.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+			
+		    public void update(int index, CompanyParticipation ca, String value) {
+				participationPanel.dump(index,dataProviderOut.getList().get(index));
+				participationPanel.center();
+				participationPanel.show();
+		    }
+		});		
+		tableOut.addColumn(col);
+		tableOut.setColumnWidth(col, 20, Unit.PX);
+		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+	}
+
 	private void addOutDocumentColumn() {
 		Column<CompanyParticipation, String> documentColumn = new Column<CompanyParticipation, String>(
 				new TextCell()) {
@@ -318,13 +374,8 @@ public class Page02 extends PageAbs {
 				return object.getDocument();
 			}
 		};
-		documentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
-		    	dataProviderOut.getList().get(index).setDocument(value);
-		    }
-		});		
 		tableOut.addColumn(documentColumn, AON.MSG.document());
-		documentColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+		documentColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 		tableOut.setColumnWidth(documentColumn, 100, Unit.PX);
 	}
 
@@ -336,11 +387,6 @@ public class Page02 extends PageAbs {
 				return ca.getName();
 			}
 		};
-		descriptionColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
-		    	dataProviderOut.getList().get(index).setName(value);
-		    }
-		});		
 		tableOut.addColumn(descriptionColumn, AON.MSG.companyName());
 		descriptionColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
@@ -353,19 +399,9 @@ public class Page02 extends PageAbs {
 				return Double.toString( ca.getPercent() );
 			}
 		};
-		percentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
-		    	try {
-		    		double p = Double.parseDouble(value);
-		    		dataProviderOut.getList().get(index).setPercent(p);
-		    	} catch (NumberFormatException e) {
-		    		Window.alert("Porcentaje no v\u00E1lido.");
-		    	}
-		    }
-		});		
 		tableOut.addColumn(percentColumn, "%");
 		tableOut.setColumnWidth(percentColumn, 50, Unit.PX);
-		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 
 	private void addOutNominalValueColumn() {
@@ -376,19 +412,9 @@ public class Page02 extends PageAbs {
 				return Double.toString( ca.getNominalValue() );
 			}
 		};
-		nominalValueColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
-		    	try {
-		    		double p = Double.parseDouble(value);
-		    		dataProviderOut.getList().get(index).setNominalValue(p);
-		    	} catch (NumberFormatException e) {
-		    		Window.alert("Porcentaje no v\u00E1lido.");
-		    	}
-		    }
-		});		
 		tableOut.addColumn(nominalValueColumn, AON.MSG.nominalValue());
-		tableOut.setColumnWidth(nominalValueColumn, 80, Unit.PX);
-		nominalValueColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+		tableOut.setColumnWidth(nominalValueColumn, 100, Unit.PX);
+		nominalValueColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 	}
 
 	private void addOutRemoveColumn() {
@@ -407,10 +433,21 @@ public class Page02 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
 		    public void update(int index, CompanyParticipation ca, String value) {
-		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-		    		dataProviderOut.getList().remove(index);
-		    		tableOut.redraw();
-		    	}
+		    	ConfirmDialog cd = new ConfirmDialog();
+		    	cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+					}
+					
+					@Override
+					public void onAccept() {
+						mod200Object.getMod200().getParticipationsOut().remove(index);
+						dataProviderOut = new ListDataProvider<CompanyParticipation>(mod200Object.getMod200().getParticipationsOut());
+						dataProviderOut.addDataDisplay(tableOut);
+			    		tableOut.redraw();
+					}
+				});
 		    }
 		});		
 		tableOut.addColumn(col);
@@ -421,8 +458,7 @@ public class Page02 extends PageAbs {
 	@UiHandler("newParticipationOut")
 	void onNewParticipationOut(ClickEvent event) {
 		CompanyParticipation cp = new CompanyParticipation();
-		dataProviderOut.getList().add(cp);
-		participationPanel.dump(cp);
+		participationPanel.dump(-1,cp);
 		participationPanel.center();
 		participationPanel.show();
 	}
@@ -434,8 +470,18 @@ public class Page02 extends PageAbs {
 		
 		ColumnFormatter cf = table.getColumnFormatter();
 		cf.setWidth(1, "250px");
-		paintKey(Mod2002016Key.POR51,0);
-		paintKey(Mod2002016Key.PORES,1);
+		int row = 0;
+		for (final Mod2002016Key key : Mod2002016Constants.PARTICIPATION_KEYS) {
+			if (mod200Object.isVisible(key)) {
+				row = paintKey(key,row);
+			}
+		}
+		
+		table1.setWidth("100%");
+		table1.setCellSpacing(0);
+		table1.getColumnFormatter().setWidth(1, "250px");
+		paintKey(table1,Mod2002016Key.POR51,0);
+		paintKey(table1,Mod2002016Key.PORES,1);
 	}
 
 	public void populate(Mod2002016Object obj) {

@@ -769,6 +769,10 @@ input[type="checkbox"]:focus + label {
 @sprite .aon-icon-enterprise {
 	gwt-image: "aonIconEnterprise";
 }
+@sprite .aon-icon-row-selector {
+	width: auto;
+	gwt-image: "aonIconRowSelector";
+}
 
 @sprite .aon-table-row-link {
 	gwt-image: "aonIconRowSelector";

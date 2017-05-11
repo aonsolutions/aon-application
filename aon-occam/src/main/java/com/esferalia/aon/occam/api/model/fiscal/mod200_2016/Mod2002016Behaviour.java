@@ -11,6 +11,18 @@ public class Mod2002016Behaviour {
 	// Elemento 0 ---> isTitle?    : Hace que aparezca en negrita y la casilla desplazada a la derecha
 	// Elemento 1 ---> isDisabled? : Hace que la casilla esté deshabilitada
 
+	// PARTICIPACIONES
+	static {
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1501.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1502.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1503.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1504.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1505.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1506.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1507.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.P1508.toString(),new Boolean[]{FALSE,TRUE});
+	}
+	
 	static { // BALANCE: ACTIVO
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BA101.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BA102.toString(),new Boolean[]{TRUE,TRUE});

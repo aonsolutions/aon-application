@@ -7,8 +7,34 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 	
 	<g:HTMLPanel styleName="{aonResources.css.aonPadding2}">
-		<g:Label text="{msg.partMsg1}"/>
-		
+		<g:HTMLPanel height="100%" 
+				styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+			<table cellpadding="0" cellspacing="0" class="{aonResources.css.aonWidthAll}">				
+				<tr>
+					<td class="{aonResources.css.aonFindingTitle}">
+						<g:FlowPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+							<g:Label text="{msg.participationsOut}"/>
+						</g:FlowPanel>
+					</td>
+					<td>
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+							<g:Label/>
+						</g:HTMLPanel>
+					</td>
+					<td class="{aonResources.css.aonFindingToolbar}">
+						<g:FlowPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+							<g:Button ui:field="acceptButton"  text="{msg.accept}" 
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}"/>
+							<g:Button ui:field="cancelButton" text="{msg.cancelAction}" 
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
+						</g:FlowPanel>
+					</td>
+				</tr>
+			</table>
+		</g:HTMLPanel>
+		<div class="{aonResources.css.aonBold} {aonResources.css.aonMargin}">
+			<g:Label text="{msg.partMsg1}"/>
+		</div>
 		<div class="{aonResources.css.aonGroup}">
 			<div class="{aonResources.css.aonGroupTitle}">
 				<g:InlineLabel text="{msg.partMsg2}"/>

@@ -43,6 +43,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.LQ561;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.LQ562;
 
+import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
@@ -294,6 +295,94 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 				return round( ((lq552 - lq521) * lq558 / 100) + (lq554 * 30 / 100) + (lq521 *0));
 			}
 			return round( (lq553 * lq558 / 100) );			
+		}
+		return 0.0;
+	}
+	
+	public double computeP1501() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getNominalValue();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
+
+	public double computeP1502() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getBookValue();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
+
+	public double computeP1503() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getIncomes();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
+
+	public double computeP1504() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getaValue();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
+
+	public double computeP1505() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getbValue();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
+
+	public double computeP1506() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getccValue();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
+
+	public double computeP1507() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getcValue();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
+
+	public double computeP1508() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getdValue();
+			}
+			return round( x ); 
 		}
 		return 0.0;
 	}

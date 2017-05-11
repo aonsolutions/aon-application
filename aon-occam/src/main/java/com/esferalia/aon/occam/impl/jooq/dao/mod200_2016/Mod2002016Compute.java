@@ -8,6 +8,18 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 public class Mod2002016Compute {
 	public static Map<String,String> COMPUTE_EXPRESSION_MAP = new LinkedHashMap<String,String>();
 
+	// PARTICIPACIONES
+	static {
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1501.toString(),"computeP1501()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1502.toString(),"computeP1502()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1503.toString(),"computeP1503()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1504.toString(),"computeP1504()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1505.toString(),"computeP1505()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1506.toString(),"computeP1506()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1507.toString(),"computeP1507()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.P1508.toString(),"computeP1508()");
+	}
+
 	static {	// BALANCE: ACTIVO
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BA101.toString(),"BA102+BA111+BA115+BA118+BA126+BA134+BA135");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BA102.toString(),"C0050"

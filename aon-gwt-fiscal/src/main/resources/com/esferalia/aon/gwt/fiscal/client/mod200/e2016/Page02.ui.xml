@@ -18,10 +18,18 @@
 					<div class="{aonResources.css.aonGroupBody}">
 						<cell:CellTable ui:field="tableOut"/>
 						<g:Button ui:field="newParticipationOut"
-							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone}">
+							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone} {aonResources.css.aonMarginTop}">
 							&#160;
 						</g:Button>
-					</div>
+						<div class="{aonResources.css.aonGroup} {aonResources.css.aonMarginTop}">
+							<div class="{aonResources.css.aonGroupTitle}">
+								<g:InlineLabel text="{msg.totals}" />
+							</div>
+							<div class="{aonResources.css.aonGroupBody}">	
+								<g:FlexTable ui:field="table" styleName="{aonResources.css.aonWidthAll}"/>
+							</div>
+						</div>
+					</div> 
 				</div>				
 				<div class="{aonResources.css.aonGroup} {aonResources.css.aonMarginTop}">
 					<div class="{aonResources.css.aonGroupTitle}">
@@ -30,12 +38,12 @@
 					<div class="{aonResources.css.aonGroupBody}">
 						<cell:CellTable ui:field="tableIn"/>
 						<g:Button ui:field="newParticipationIn"
-							styleName="aon-icon-reset {aonResources.css.aonBorderNone}">
+							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone} {aonResources.css.aonMarginTop}">
 							&#160;
 						</g:Button>
 					</div>
 				</div>
-				<g:FlexTable ui:field="table" styleName="{aonResources.css.aonWidthAll}"/>
+				<g:FlexTable ui:field="table1" styleName="{aonResources.css.aonWidthAll}"/>
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:ScrollPanel>

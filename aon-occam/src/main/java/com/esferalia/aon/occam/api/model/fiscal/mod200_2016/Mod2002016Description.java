@@ -87,6 +87,18 @@ public class Mod2002016Description {
 		
 	}
 	
+	// PARTICIPACIONES
+	static {
+		DESCRIPTION_MAP.put(Mod2002016Key.P1501,"Valor nominal total de la participaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1502,"Valor en libros (en el activo de la declarante) de la participaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1503,"Ingresos por Dividendos recibidos en el ejercicio declarado");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1504,"Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del ejercicio");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1505,"Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16a LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1506,"Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1507,"Efecto de la correcci\u00F3n valorativa en la BI del ejercicio");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1508,"Saldo de correcciones fi scales (art. 12.3 RDL 4/2004) pendientes a fi n de ejercicio");
+	}
+
 	static {
 		DESCRIPTION_MAP.put(Mod2002016Key.BA101,"ACTIVO NO CORRIENTE (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BA102,"Inmovilizado intangible (N, A, P)");

@@ -86,16 +86,12 @@ public class Model2002016 extends ResizeComposite  {
 	Button cancelButton;
 	@UiField
 	Button validateButton;
-//	@UiField
-//	Button calculateButton;
 	@UiField
 	Button aeatAccountingFileButton;
 	@UiField
 	Button aeatFileButton;
 	@UiField
 	Button aeatPrintButton;
-//	@UiField
-//	CheckBox calculateCheck;
 
 	@UiField
 	SimplePanel page;
@@ -313,10 +309,6 @@ public class Model2002016 extends ResizeComposite  {
 		removeButton.setVisible(mod200Object.getMod200().getId() != null);
 		cancelButton.setVisible(true);
 		validateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-//		calculateCheck.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-//		calculateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null 
-//								&& !calculateCheck.isVisible()
-//								);
 		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
@@ -339,7 +331,6 @@ public class Model2002016 extends ResizeComposite  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		paintHeaderTable(mod200Object.getMod200());				
-//		calculateCheck.setValue(mod200Object.isAuthomaticCalculation());
 		deckPanel.showWidget(deckPanel.getWidgetIndex(page00));
 		if (mod200Object.getMod200().getId() == null) {
 			page00.enableCharacters( true );
@@ -484,50 +475,6 @@ public class Model2002016 extends ResizeComposite  {
 		mod200Object.validate(callback);
 	}
 
-
-	// -------------------------------------------------------------- UiHandler
-	/*
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
-	}
-
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private void maximizeFootPanel() {
-		dockLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return dockLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
-	
-	private void cleanErrorMessage() {
-		resultsPanel.clearFlowPanel();
-		resultsPanel.setWidget(new SimplePanel());
-		closeFootPanel();
-	}
-
-	private void showErrorMessage(String msg) {
-		showResultsPanel();
-		addErrorMessage(msg);
-	}
-
-	private void addErrorMessage(String msg) {
-		SimplePanel panel = new SimplePanel();
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		panel.add(label);
-		resultsPanel.setWidget(panel);
-	}
-*/
 	public void validationMessageSelected(ValidationMessage2016 msg) {
 		if ( msg.getPage() >= 0 ) {
 			deckPanel.showWidget(msg.getPage() + 1);
@@ -623,18 +570,6 @@ public class Model2002016 extends ResizeComposite  {
 		);
 	}
 
-//	@UiHandler("calculateButton")
-//	void onCalculateButtonClick(ClickEvent event) {
-//		mod200Object.calculate();
-//	}
-//	@UiHandler("calculateCheck")
-//	void onCalculateCheckClick(ClickEvent event) {
-//		mod200Object.setAuthomaticCalculation(calculateCheck.getValue());
-//		calculateButton.setVisible(!calculateCheck.getValue());
-//		if (calculateCheck.getValue())
-//			mod200Object.calculate();
-//	}
-	
 	@UiHandler("importAccountingButton")
 	void onImportAccountingButtonClick(ClickEvent event) {
 		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(),GWT.getModuleBaseURL() +"Mod2002016AccountingUpload") {

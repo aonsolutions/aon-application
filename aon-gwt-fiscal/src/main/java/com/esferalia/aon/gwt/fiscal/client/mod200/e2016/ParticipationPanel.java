@@ -1,9 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
@@ -11,20 +10,33 @@ import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ParticipationPanel extends CustomDialog {
+	
+	public static interface ParticipationPanelCallback {
+		void onAccept(int index, CompanyParticipation cp);
+		void onCancel();
+		default void onClose() {
+			this.onCancel();
+		}
+	}
 
 	interface ParticipationPanelBinder extends UiBinder<Widget, ParticipationPanel> {
 	}
 	private static final ParticipationPanelBinder participationPanelBinder = GWT
 			.create(ParticipationPanelBinder.class);
 
-	private CompanyParticipation companyParticipation;
+	@UiField
+	Button acceptButton;
+	@UiField
+	Button cancelButton;
 	
 	@UiField
 	TextBox document;
@@ -62,30 +74,22 @@ public class ParticipationPanel extends CustomDialog {
 	@UiField
 	DoubleBox result;
 
-	private CellTable<CompanyParticipation> table;
+	private ParticipationPanelCallback callback;
+	private int index;
 
-	public ParticipationPanel() {
+	public ParticipationPanel( ParticipationPanelCallback callback) {
+		this.callback = callback;
 		setVisible(false);
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		setModal(true);
 		setCaption(AON.MSG.participationsOut());
-		
-		
-		List<String> options = new LinkedList<String>();
-		for (Province prov : Province.values()) {
-			options.add( prov.getName()  );
-		}
 		Widget ui = participationPanelBinder.createAndBindUi(this);
 		setWidget(ui);
 	}
 
-	protected void setTable(CellTable<CompanyParticipation> tableOut) {
-		this.table = tableOut;
-	}	
-
-	public void dump(CompanyParticipation cp) {
-		this.companyParticipation = cp;
+	public void dump(int index, CompanyParticipation companyParticipation) {
+		this.index = index;
 		this.document.setValue(companyParticipation.getDocument());
 		this.name.setValue(companyParticipation.getName());
 		int idx = companyParticipation.getProvince();
@@ -112,8 +116,37 @@ public class ParticipationPanel extends CustomDialog {
 		this.result.setValue(companyParticipation.getResult());
 	}
 
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent event) {
+		onAccept();
+	}
+	@UiHandler("cancelButton")
+	void onCancelButtonClick(ClickEvent event) {
+		onCancel();
+	}
+	
 	@Override
 	public void onClose() {
+		onCancel();	
+	}
+	
+	public void onCancel() {
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm(AON.MSG.cancelAction(), new ConfirmDialogCallback() {
+			
+			@Override
+			public void onCancel() {}
+			
+			@Override
+			public void onAccept() {
+				callback.onCancel();
+				hide();
+			}
+		});
+	}
+	
+	public void onAccept() {
+		CompanyParticipation companyParticipation = new CompanyParticipation();
 		companyParticipation.setDocument(this.document.getValue());
 		companyParticipation.setName(this.name.getValue());
 		if (this.province.getSelectedIndex() < Province.values().length) {
@@ -135,8 +168,7 @@ public class ParticipationPanel extends CustomDialog {
 		companyParticipation.setReserve(this.reserve.getValue());
 		companyParticipation.setOtherAmounts(this.otherAmounts.getValue());
 		companyParticipation.setResult(this.result.getValue());
-		
-		table.redraw();
+		callback.onAccept(index,companyParticipation);
 		this.hide();
 	}
 

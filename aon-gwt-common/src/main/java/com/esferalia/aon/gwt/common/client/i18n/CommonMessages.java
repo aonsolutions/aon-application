@@ -729,9 +729,11 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cta. Ajustes")
 	String adjAccount();
 
-	
 	@DefaultMessage("Total")
 	String total();
+
+	@DefaultMessage("Totales")
+	String totals();
 
 	@DefaultMessage("Porcentaje")
 	String percent();

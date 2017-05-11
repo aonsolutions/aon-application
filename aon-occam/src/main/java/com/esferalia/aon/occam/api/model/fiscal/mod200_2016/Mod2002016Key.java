@@ -80,7 +80,16 @@ public enum Mod2002016Key implements IMod200Key {
 	,C0041(41)
 	,C0042(42)
 	
-	// PARTICIPACIONES 
+	// PARTICIPACIONES
+	,P1501(1501)
+	,P1502(1502)
+	,P1503(1503)
+	,P1504(1504)
+	,P1505(1505)
+	,P1506(1506)
+	,P1507(1507)
+	,P1508(1508)
+	
 	,POR51(-1 ) // Suma de porcentajes de participación de personas o entidades en el capital de la declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado
 	,PORES(-2 ) // Suma de porcentajes de participaciones en situaciones especiales 
 	
