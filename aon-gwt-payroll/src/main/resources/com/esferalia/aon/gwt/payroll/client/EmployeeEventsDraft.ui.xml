@@ -149,9 +149,11 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='acceptButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
+						    <g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							    <g:Button ui:field='newValueButton' styleName='aon-finding-toolbar-item aon-icon-reset' 
+							        text="NUEVO VALOR" enabled="false"/>
+								<g:Button ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-accept'
+									text="GUARDAR" enabled="false"/>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>

@@ -30,6 +30,10 @@ public class EmployeeEventsDraft extends Composite {
 		String isSelectedCell();
 	}
 	
+	
+	@UiField
+	Button newValueButton;
+	
 	@UiField
 	Label yearLabel;
 
@@ -68,6 +72,8 @@ public class EmployeeEventsDraft extends Composite {
 	public void onEventsGridClick(ClickEvent event) {
 		
 		event.preventDefault();
+		
+		newValueButton.setEnabled(true);
 		
 		int row = eventsGrid.getCellForEvent(event).getRowIndex();
 		int col = eventsGrid.getCellForEvent(event).getCellIndex();
