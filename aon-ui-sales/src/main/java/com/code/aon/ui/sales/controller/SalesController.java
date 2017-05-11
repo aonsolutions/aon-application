@@ -96,6 +96,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private PurchaseGeneratorManager purchaseGenerator;
 	private boolean showPurchaseWindow;
 	private boolean showDeliveryWindow;
+	private boolean showElaborationWindow;
 	private String deliverySeries;
 	private int deliveryNumber;
 	private Date deliveryDate;
@@ -121,6 +122,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaImporter;
 	
 	private FtpSalesDownloadHandler ftpEdiDownloader;
+	
+	private SalesElaborationProcess elaborationProcess;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -182,6 +185,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 
 	public void setShowPurchaseWindow(boolean showPurchaseWindow) {
 		this.showPurchaseWindow = showPurchaseWindow;
+	}
+	
+	public boolean isShowElaborationWindow() {
+		return showElaborationWindow;
+	}
+	
+	public void setShowElaborationWindow(boolean value) {
+		this.showElaborationWindow = value;
 	}
 
 	public boolean isShowDeliveryWindow() {
@@ -348,6 +359,13 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			ftpEdiDownloader = new FtpSalesDownloadHandler(this);
 		}
 		return ftpEdiDownloader;
+	}
+	
+	public SalesElaborationProcess getElaborationProcess() {
+		if(elaborationProcess==null){
+			elaborationProcess = new SalesElaborationProcess(this);
+		}
+		return elaborationProcess;
 	}
 
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
@@ -736,7 +754,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		setDeliveryDate(new Date());
 		setDeliveryWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
 	}
-
+	
 	private void validate(Sales sales) {
 		try {
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
@@ -856,6 +874,10 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private void loadInvoice(ActionEvent event, Integer id ) throws ManagerBeanException {
 		BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onLoad(event, id, SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");		
+	}
+	
+	public void onElaborationShow(ActionEvent event) throws ManagerBeanException {
+		getElaborationProcess().setDate(new Date());
 	}
 	
 	public void onPurchaseGenerationShow(ActionEvent event) throws ManagerBeanException {
@@ -991,21 +1013,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		SalesInvoiceProcess sip = new SalesInvoiceProcess(this);
 		LongProcessThread thread = new LongProcessThread(sip); 
 		thread.start();		
-	}
-	
-	public void onManufacture(ActionEvent event) {
-		Sales sales = (Sales) this.getTo();
-		SalesUtils utils = new SalesUtils();
-		List<SalesDetail> manufacturableList = utils.getElaborableList(sales);
-		if (manufacturableList.size() <= 0) {
-			AonUtil.addErrorMessage("No hay ninguna elaboración pendiente");
-			throw new AbortProcessingException(
-					"No hay ninguna elaboración pendiente");
-		} else {
-			manufacturableList.forEach(salesDetail -> {
-				utils.createElaboration(salesDetail);
-			});
-		}
 	}
 	
 	

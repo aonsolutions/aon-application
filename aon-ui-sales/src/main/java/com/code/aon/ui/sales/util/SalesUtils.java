@@ -261,7 +261,7 @@ public class SalesUtils {
 		}
 	}
 	
-	public void createElaboration(SalesDetail salesDetail) {
+	public void createElaboration(SalesDetail salesDetail, Date date, Integer warehouseId) {
 //		TODO method:createManufacture
 		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(),
 				salesDetail.getDomain(), AonUtil.getRemoteUser());
@@ -274,10 +274,10 @@ public class SalesUtils {
 		elaboration.setDomain(salesDetail.getDomain());
 		elaboration.setSeries(series);
 		elaboration.setNumber(number);
-		elaboration.setDate(new Date());
+		elaboration.setDate(date);
 		elaboration.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(salesDetail.getItem().getId()));
 		elaboration.setDescription(salesDetail.getDescription());
-		elaboration.setWarehouse(null);
+		elaboration.setWarehouse(new com.esferalia.aon.occam.api.model.warehouse.Warehouse().setId(warehouseId));
 		elaboration.setQuantity(salesDetail.getQuantity());
 		elaboration.setStatus(ElaborationStatus.PENDING.value());
 		elaboration.setComments(salesDetail.getSales().getComments());
@@ -303,6 +303,12 @@ public class SalesUtils {
 						&& detail.getItem().getSerialNumber()==null
 						&& !isElaborationDone(detail))
 						.collect(Collectors.toList());
+	}
+	
+	public boolean isElaborable(SalesDetail detail) {
+		return detail.getItem().getProduct().isManufactured()
+				&& detail.getItem().getSerialNumber()==null
+				&& !isElaborationDone(detail);
 	}
 	
 	public boolean isElaborationDone(SalesDetail detail) {

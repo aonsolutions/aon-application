@@ -66,14 +66,15 @@
 						</aon:if>
 						<aon:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="manufacture"
-								value="#{bundle.warehouse_manufacturing_order}"
+								value="#{bundle.warehouse_manufacture}"
 								immediate="#{true}" rendered="#{sales.manufacturable}"
 								disabled="#{!sales.manufacturePending}"
 								iconClass="aon-icon-task"
-								actionListener="#{sales.onManufacture}"
-								action="sales_form"
-								onclick="if (!confirm('#{bundle.aon_confirm_title}')) {return false;} else {Richfaces.showModalPanel('waitProccess');}"
-								oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+								actionListener="#{sales.onElaborationShow}"
+								reRender="showElaborationWindow">
+								<f:setPropertyActionListener target="#{sales.showElaborationWindow}"
+									value="#{true}" />
+							 </aon:menuItem>
 						</aon:if>
 						<aon:menuItem id="purchaseGeneration"
 							value="#{bundle.sales_to_purchase}"
@@ -512,6 +513,7 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalDelivery.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalElaboration.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalPurchase.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalSerialNumber.xhtml">
