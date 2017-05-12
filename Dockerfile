@@ -30,6 +30,7 @@ ENV COMMONS_COLLECTIONS_URL=http://central.maven.org/maven2/commons-collections/
 ENV SPY_MEMCACHED_URL=http://central.maven.org/maven2/net/spy/spymemcached/2.11.1/spymemcached-2.11.1.jar
 ENV MEMCACHED_SESSION_MANAGER_URL=http://central.maven.org/maven2/de/javakaffee/msm/memcached-session-manager/2.1.1/memcached-session-manager-2.1.1.jar
 ENV MEMCACHED_SESSION_MANAGER_TC9_URL=http://dev.esferalia.net/maven2_repositories/external_free/de/javakaffee/msm/memcached-session-manager-tc9/2.1.1/memcached-session-manager-tc9-2.1.1.jar
+ENV IZENPESIGNER_APPLET=http://dev.esferalia.net/maven2_repositories/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
 
 RUN set -x \
 	\
@@ -50,6 +51,7 @@ RUN set -x \
 ENV TOMCAT_BINDIR $CATALINA_HOME/bin
 ENV TOMCAT_CONFDIR $CATALINA_HOME/conf
 ENV AON_AIO_CONF /etc/aon-aio
+ENV AON_AIO_COMMON /home/COMMON-RESOURCES
 
 
 WORKDIR $CATALINA_HOME/webapps
@@ -61,6 +63,23 @@ RUN set -x \
 	&& rm -rf manager \
 	&& rm -rf host-manager
 
+
+RUN mkdir -p "$AON_AIO_COMMON"
+RUN mkdir -p "$AON_AIO_COMMON/aon-report"
+WORKDIR $AON_AIO_COMMON/aon-report
+
+RUN set -x \
+	&& wget -O aon-common-resources-templates.jar $AON_MAVEN_REPOSITORY_URL/aon-common-resources/$AON_VERSION/aon-common-resources-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon-common-resources/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)"`-templates.jar  \
+	&& unzip aon-common-resources-templates.jar -x META-INF/* \
+	&& rm aon-common-resources-templates.jar 
+
+RUN mkdir -p "$AON_AIO_COMMON/aon-ui-sign"
+WORKDIR $AON_AIO_COMMON/aon-ui-sign
+
+RUN set -x \
+	&& wget $IZENPESIGNER_APPLET
+
+RUN ln -s izenpesigner-applet-*.jar izenpesigner-applet.jar 
 
 RUN mkdir -p "$AON_AIO_HOME"
 WORKDIR $AON_AIO_HOME
