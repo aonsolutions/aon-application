@@ -141,7 +141,7 @@
 					<g:MenuItem text="Visualización" ui:field="viewMenuItem">
 						<g:MenuBar vertical="true">
 							<!-- g:MenuItem ui:field="showMonthMenuItem" text="Mensual"/ -->
-							<g:MenuItem ui:field="showHYearMenuItem" styleName="aon-MenuItemCheckYes" text="Anual"/>
+							<g:MenuItem ui:field="showYearMenuItem" text="Anual"/>
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>

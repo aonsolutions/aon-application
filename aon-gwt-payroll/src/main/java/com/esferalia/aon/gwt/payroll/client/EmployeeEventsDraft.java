@@ -2,15 +2,19 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
@@ -18,7 +22,7 @@ import com.vaadin.polymer.iron.widget.IronLabel;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperDialog;
 
-public class EmployeeEventsDraft extends Composite {
+public class EmployeeEventsDraft extends Composite implements ContextMenuHandler {
 
 	private static EmployeeEventsDraftUiBinder uiBinder = GWT.create(EmployeeEventsDraftUiBinder.class);
 
@@ -34,6 +38,8 @@ public class EmployeeEventsDraft extends Composite {
 		String isSelectedCell();
 	}
 	
+	@UiField
+	MenuItem showYearMenuItem;
 	
 	@UiField
 	Button newValueButton;
@@ -67,6 +73,10 @@ public class EmployeeEventsDraft extends Composite {
 	public EmployeeEventsDraft() {
 		//Inicializamos la vista del gestor de incidencias
 		initWidget(uiBinder.createAndBindUi(this));
+		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
+		
+		showYearMenuItem.setStyleName("aon-MenuItemCheckYes", true);
+		
 		fillCellsEvents();
 	}
 
@@ -76,10 +86,7 @@ public class EmployeeEventsDraft extends Composite {
 	
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
-		newValueDialog.open();
-		int row = calculateRow(selectedPositions.getSelectedList().get(0));
-		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
-		nameVariableDialog.getElement().setInnerText(variableName+" : ");
+		openNewValueDialog();
 	}
 	
 	@UiHandler("newValueDialogOk")
@@ -161,6 +168,13 @@ public class EmployeeEventsDraft extends Composite {
 			}	
 	}
 	
+	private void openNewValueDialog(){
+		newValueDialog.open();
+		int row = calculateRow(selectedPositions.getSelectedList().get(0));
+		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+		nameVariableDialog.getElement().setInnerText(variableName+" : ");
+	}
+	
 	private void addValueSelectedPositions(Double newValue) {
 		for (Integer position : selectedPositions.getSelectedList()){
 			int row = calculateRow(position);
@@ -212,4 +226,25 @@ public class EmployeeEventsDraft extends Composite {
 		return position / 13;
 	}
 	
+	/**
+	 * METODO PARA GESTIONAR BOTON DERECHO RATON
+	 */
+	
+	@Override
+	public void onContextMenu(ContextMenuEvent event) {
+		event.preventDefault();
+		event.stopPropagation();
+		if(!selectedPositions.getSelectedList().isEmpty()){
+			ContextMenu menu = new  ContextMenu();
+			menu.addItem("A"+String.valueOf("\u00f1")+"adir nuevo valor", new Command() {
+				@Override
+				public void execute() {
+					openNewValueDialog();
+				}
+			});
+			
+			menu.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
+		    menu.show();
+		}
+	}
 }
