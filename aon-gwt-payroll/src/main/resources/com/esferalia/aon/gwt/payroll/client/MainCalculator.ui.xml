@@ -4,7 +4,8 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
 
-
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
 	<ui:style>
 		.monthListBox-item {
 			padding-left: 16px;
@@ -139,8 +140,8 @@
 		</g:center>
 
 		<g:south size="0">
-			<aon:MinimizePanel ui:field="footPanel">
-				<g:TabLayoutPanel barHeight="26" barUnit="PX" addStyleNames="aon-pointer-events-auto" >
+			<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
+				<g:TabLayoutPanel barHeight="26" barUnit="PX" >
 					<g:tab>
 						<g:header>
 							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
