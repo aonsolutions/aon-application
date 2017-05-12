@@ -63,6 +63,33 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+                        <!-- Adds Jaspers built  -->
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-jar-plugin</artifactId>
+                                <!--version>2.4</version-->
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>templates</classifier>
+							<classesDirectory>${project.build.directory}/templates</classesDirectory>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+							</archive>
+							<includes>
+								<include>**/*.jasper</include>
+							</includes>
+							<!--excludes>
+								<exclude>**/pom.xml</exclude>
+							</excludes-->
+						</configuration>
+					</execution>
+				</executions>
+                        </plugin>
 		</plugins>
 	</build>
 
