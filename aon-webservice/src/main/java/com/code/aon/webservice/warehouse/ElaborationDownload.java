@@ -435,7 +435,7 @@ public class ElaborationDownload extends HttpServlet {
 			table.addCell(label);
 		} else {
 			compositionList.forEach(composition -> {
-				Item compositionItem = AON.getItem(domainName, domainId, login, composition.getItemId());
+				Item compositionItem = AON.getItem(domainName, domainId, login, composition.getCompositionItemId());
 				
 				PdfPTable detail = new PdfPTable(6);
 				detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
