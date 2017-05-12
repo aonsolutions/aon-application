@@ -36,6 +36,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -1269,8 +1270,10 @@ public class DashboardController implements Serializable {
 							String driveId = record.value5();
 							drc.setDriveId(driveId);
 							if (driveId != null) {
-								Integer size = Integer
-										.parseInt(record.value7());
+								Integer size = 0;
+								if (NumberUtils.isNumber(record.value7())) {
+									size = Integer.parseInt(record.value7());
+								}
 								drc.setsize(size.longValue());
 							} else {
 								drc.setsize(record.value6().longValue());
