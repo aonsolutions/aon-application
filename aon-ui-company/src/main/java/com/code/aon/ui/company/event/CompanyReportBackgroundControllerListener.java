@@ -107,7 +107,6 @@ public class CompanyReportBackgroundControllerListener extends ControllerAdapter
 	
 	private void updateAttach(AonFile aonFile, Company company, RegistryAttachment attach, String name) throws ControllerListenerException {
 		if ((aonFile != null) && aonFile.isDirty() ) {
-			checkAonFile(aonFile);
 			try {
 				if (attach == null) {
 					attach = new RegistryAttachment();
