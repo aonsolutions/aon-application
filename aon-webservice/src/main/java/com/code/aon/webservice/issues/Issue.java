@@ -100,10 +100,13 @@ public class Issue {
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
 		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
 		this.principal = principal;
-		Long day =AonDateUtils.getDaysBetweenDates(task.getStartDate(), new Date());
-		if(day == 0) this.days = "(Hoy)";
-		else if(day == 1) this.days = "(Ayer)"; 
-		else this.days = "(hace " + day+ ((day == 1) ? " d\u00EDa)" : " d\u00EDas)");
+		
+		if(task.getStartDate().compareTo(new Date()) <= 0){
+			Long day =AonDateUtils.getDaysBetweenDates(task.getStartDate(), new Date());
+			if(day == 0) this.days = "(Hoy)";
+			else if(day == 1) this.days = "(Ayer)"; 
+			else this.days = "(hace " + day+ ((day == 1) ? " d\u00EDa)" : " d\u00EDas)");	
+		} else days = "-";
 		String ass = "";
 		if(workgroup.getDescription() != null || assignee.getName() != null) ass = ass + ", asignado a "; 
 		if(workgroup.getDescription() != null ) ass = ass + workgroup.getDescription();
