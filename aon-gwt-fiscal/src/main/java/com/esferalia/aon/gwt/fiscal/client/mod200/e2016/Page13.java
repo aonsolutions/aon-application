@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.google.gwt.core.client.GWT;
@@ -25,8 +26,8 @@ public class Page13 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table4;
 	
-	public Page13() {
-		super();
+	public Page13( Model200PageCallback callback ) {
+		super(callback);
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
@@ -42,7 +43,7 @@ public class Page13 extends PageAbs {
 		table.getColumnFormatter().setWidth(1, "200px");
 		int row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_1) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table,key,row);
 			}
 		}
@@ -97,7 +98,7 @@ public class Page13 extends PageAbs {
 		
 		for (int i = 0; i < Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_2.length; i++) {
 			Mod2002016Key key = Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_2[i];
-			if (key == null || mod200Object.isVisible(key)) {
+			if (key == null || callback.getMod200Object().isVisible(key)) {
 				int col = i % 5;
 				if (col == 0) {
 					++row;
@@ -133,7 +134,7 @@ public class Page13 extends PageAbs {
 		//++row;
 		for (int i = 0; i < Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_3.length; i++) {
 			Mod2002016Key key = Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_3[i];
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				int col = i%3;
 				if (col == 0) {
 					++row;
@@ -172,8 +173,8 @@ public class Page13 extends PageAbs {
 //		++row;
 		for (int i = 0; i < Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_4.length; i++) {
 			Mod2002016Key key = Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_4[i];
-			if (mod200Object.isVisible(key)) {
-				if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
+				if (callback.getMod200Object().isVisible(key)) {
 					int col = i%4;
 					if (col == 0) {
 						++row;
@@ -191,10 +192,12 @@ public class Page13 extends PageAbs {
 		table4.getColumnFormatter().setWidth(1, "250px");
 		row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_5) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table4,key,row);
 			}
 		}
 	}
 
+	@Override
+	protected void populate() {}
 }

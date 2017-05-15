@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
@@ -11,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.ParticipationPanel.ParticipationPanelCallback;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
@@ -66,7 +66,8 @@ public class Page02 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table1;
 
-	public Page02() {
+	public Page02( Model200PageCallback callback ) {
+		super(callback);
 		table1 = new FlexTable();
 		
 		participationPanel = new ParticipationPanel( new ParticipationPanelCallback() {
@@ -79,15 +80,15 @@ public class Page02 extends PageAbs {
 			@Override
 			public void onAccept(int index, CompanyParticipation cp) {
 				if (index < 0) {
-					mod200Object.getMod200().getParticipationsOut().add(cp);
+					callback.getMod200Object().getMod200().getParticipationsOut().add(cp);
 					dataProviderOut.getList().add(cp);
 				} else {
-					mod200Object.getMod200().getParticipationsOut().set(index, cp);
+					callback.getMod200Object().getMod200().getParticipationsOut().set(index, cp);
 					dataProviderOut.getList().set(index,cp);
 				}
 				tableOut.redraw();
-				mod200Object.doubleValueChanged(Mod2002016Key.P1501,
-					mod200Object.getDoubleValue(Mod2002016Key.P1501));
+				callback.getMod200Object().doubleValueChanged(Mod2002016Key.P1501,
+						callback.getMod200Object().getDoubleValue(Mod2002016Key.P1501));
 			}
 		});
 		
@@ -128,23 +129,6 @@ public class Page02 extends PageAbs {
 		initWidget(ui);
 	}
 
-	public void dump(Mod2002016Object mod200Object) {
-		super.dump(mod200Object);
-		this.mod200Object = mod200Object;
-		dataProviderIn = this.mod200Object.getMod200().getParticipationsIn() == null
-			?new ListDataProvider<CompanyParticipation>()
-			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsIn());
-
-		dataProviderIn.addDataDisplay(tableIn);
-		tableIn.redraw();
-
-		dataProviderOut = this.mod200Object.getMod200().getParticipationsOut() == null
-			?new ListDataProvider<CompanyParticipation>()
-			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
-		dataProviderOut.addDataDisplay(tableOut);
-		tableOut.redraw();
-	}
-	
 	private void addInDocumentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
 		Column<CompanyParticipation, String> documentColumn = new Column<CompanyParticipation, String>(
@@ -201,7 +185,7 @@ public class Page02 extends PageAbs {
 	}
 
 	private void addInProvinceColumn() {
-		final List<String> options = new LinkedList<String>();
+		final LinkedList<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
 			options.add( prov.getName() );
 		}
@@ -320,8 +304,9 @@ public class Page02 extends PageAbs {
 					
 					@Override
 					public void onAccept() {
-						mod200Object.getMod200().getParticipationsIn().remove(index);
-						dataProviderIn = new ListDataProvider<CompanyParticipation>(mod200Object.getMod200().getParticipationsIn());
+						callback.getMod200Object().getMod200().getParticipationsIn().remove(index);
+						dataProviderIn = new ListDataProvider<CompanyParticipation>(
+								callback.getMod200Object().getMod200().getParticipationsIn());
 						dataProviderIn.addDataDisplay(tableIn);
 			    		tableIn.redraw();
 					}
@@ -442,8 +427,9 @@ public class Page02 extends PageAbs {
 					
 					@Override
 					public void onAccept() {
-						mod200Object.getMod200().getParticipationsOut().remove(index);
-						dataProviderOut = new ListDataProvider<CompanyParticipation>(mod200Object.getMod200().getParticipationsOut());
+						callback.getMod200Object().getMod200().getParticipationsOut().remove(index);
+						dataProviderOut = new ListDataProvider<CompanyParticipation>(
+								callback.getMod200Object().getMod200().getParticipationsOut());
 						dataProviderOut.addDataDisplay(tableOut);
 			    		tableOut.redraw();
 					}
@@ -464,6 +450,23 @@ public class Page02 extends PageAbs {
 	}
 	
 	@Override
+	public void dump() {
+		super.dump();
+		dataProviderIn = callback.getMod200Object().getMod200().getParticipationsIn() == null
+			?new ListDataProvider<CompanyParticipation>()
+			:new ListDataProvider<CompanyParticipation>(callback.getMod200Object().getMod200().getParticipationsIn());
+
+		dataProviderIn.addDataDisplay(tableIn);
+		tableIn.redraw();
+
+		dataProviderOut = callback.getMod200Object().getMod200().getParticipationsOut() == null
+			?new ListDataProvider<CompanyParticipation>()
+			:new ListDataProvider<CompanyParticipation>(callback.getMod200Object().getMod200().getParticipationsOut());
+		dataProviderOut.addDataDisplay(tableOut);
+		tableOut.redraw();
+	}
+
+	@Override
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
@@ -472,7 +475,7 @@ public class Page02 extends PageAbs {
 		cf.setWidth(1, "250px");
 		int row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.PARTICIPATION_KEYS) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(key,row);
 			}
 		}
@@ -484,18 +487,19 @@ public class Page02 extends PageAbs {
 		paintKey(table1,Mod2002016Key.PORES,1);
 	}
 
-	public void populate(Mod2002016Object obj) {
-		List<CompanyParticipation> listIn = new LinkedList<CompanyParticipation>();
+	@Override
+	public void populate() {
+		LinkedList<CompanyParticipation> listIn = new LinkedList<CompanyParticipation>();
 		for (CompanyParticipation cp : dataProviderIn.getList()) {
 			listIn.add(cp);
 		}
-		this.mod200Object.getMod200().setParticipationsIn(listIn);
+		callback.getMod200Object().getMod200().setParticipationsIn(listIn);
 		
-		List<CompanyParticipation> listOut = new LinkedList<CompanyParticipation>();
+		LinkedList<CompanyParticipation> listOut = new LinkedList<CompanyParticipation>();
 		for (CompanyParticipation cp : dataProviderOut.getList()) {
 			listOut.add(cp);
 		}
-		this.mod200Object.getMod200().setParticipationsOut(listOut);
+		callback.getMod200Object().getMod200().setParticipationsOut(listOut);
 	}
 
 }

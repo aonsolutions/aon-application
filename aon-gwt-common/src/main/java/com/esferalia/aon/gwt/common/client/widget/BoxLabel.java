@@ -40,7 +40,7 @@ public class BoxLabel extends Label {
 	@Override
 	public void setText(String text) {
 		if (text != null && text.length() < textSize) {
-			text = AonStringUtils.leftPad(text, textSize, '0');
+			text = AonStringUtils.leftPad(text, textSize, AonStringUtils.ZERO);
 		}
 		super.setText(text);
 	}

@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
@@ -14,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
@@ -78,7 +78,8 @@ public class Page01 extends PageAbs {
 	@UiField
 	Button newAdministrator;
 
-	public Page01() {
+	public Page01( Model200PageCallback callback ) {
+		super(callback);
 
 		table1 = new CellTable<LegalRepresentative>(50, Model200Table.TABLE_STYLE);
 		table1.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
@@ -109,29 +110,30 @@ public class Page01 extends PageAbs {
 		initWidget(ui);
 	}
 
-	public void dump(Mod2002016Object mod200Object) {
-		this.mod200Object = mod200Object;
-		dataProvider1 = new ListDataProvider<LegalRepresentative>(this.mod200Object.getMod200().getRepresentatives());
+	@Override
+	public void dump() {
+		super.dump();
+		dataProvider1 = new ListDataProvider<LegalRepresentative>(callback.getMod200Object().getMod200().getRepresentatives());
 		dataProvider1.addDataDisplay(table1);
 		table1.redraw();
 
-		dataProvider2 = new ListDataProvider<CompanyAdministrator>(this.mod200Object.getMod200().getAdministrators());
+		dataProvider2 = new ListDataProvider<CompanyAdministrator>(callback.getMod200Object().getMod200().getAdministrators());
 		dataProvider2.addDataDisplay(table2);
 		table2.redraw();
 		
 		
-		this.fiscalGroup.setValue( this.mod200Object.getMod200().getFiscalGroup());
+		this.fiscalGroup.setValue( callback.getMod200Object().getMod200().getFiscalGroup());
 		this.fiscalGroup.setEnabled( 
-				 this.mod200Object.getMod200().isChecked(Mod2002016Key.C0009) 
-			  || this.mod200Object.getMod200().isChecked(Mod2002016Key.C0010));	
-		this.dominantDocument.setValue(this.mod200Object.getMod200().getDominantDocument());
+				callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0009) 
+			  || callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0010));	
+		this.dominantDocument.setValue(callback.getMod200Object().getMod200().getDominantDocument());
 		this.dominantDocument.setEnabled( 
-				 this.mod200Object.getMod200().isChecked(Mod2002016Key.C0009) 
-			  || this.mod200Object.getMod200().isChecked(Mod2002016Key.C0010));	
-		this.dominantIdentificationNumber.setValue(this.mod200Object.getMod200().getDominantIdentificationNumber());
-		this.dominantIdentificationNumber.setEnabled(this.mod200Object.getMod200().isChecked(Mod2002016Key.C0010));	
+				callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0009) 
+			  || callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0010));	
+		this.dominantIdentificationNumber.setValue(callback.getMod200Object().getMod200().getDominantIdentificationNumber());
+		this.dominantIdentificationNumber.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0010));	
 
-		Secretary secretary = this.mod200Object.getMod200().getSecretary();
+		Secretary secretary = callback.getMod200Object().getMod200().getSecretary();
 		if (secretary != null) {
 			this.secretaryDocument.setValue(secretary.getDocument());
 			this.secretaryName.setValue(secretary.getName());
@@ -143,31 +145,33 @@ public class Page01 extends PageAbs {
 		}
 		
 	}
-	public void populate(Mod2002016Object obj) {
-		Secretary secretary = this.mod200Object.getMod200().getSecretary();
+	
+	@Override
+	public void populate() {
+		Secretary secretary = callback.getMod200Object().getMod200().getSecretary();
 		if (secretary == null) {
 			secretary = new Secretary();
-			this.mod200Object.getMod200().setSecretary(secretary);	
+			callback.getMod200Object().getMod200().setSecretary(secretary);	
 		}
 		secretary.setDocument(this.secretaryDocument.getValue());
 		secretary.setName(this.secretaryName.getValue());
 		secretary.setIrnr(this.irnr.getValue());
 		
-		this.mod200Object.getMod200().setFiscalGroup(this.fiscalGroup.getValue());
-		this.mod200Object.getMod200().setDominantDocument(this.dominantDocument.getValue());
-		this.mod200Object.getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
+		callback.getMod200Object().getMod200().setFiscalGroup(this.fiscalGroup.getValue());
+		callback.getMod200Object().getMod200().setDominantDocument(this.dominantDocument.getValue());
+		callback.getMod200Object().getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
 		
-		List<LegalRepresentative> list1 = new LinkedList<LegalRepresentative>();
+		LinkedList<LegalRepresentative> list1 = new LinkedList<LegalRepresentative>();
 		for (LegalRepresentative lr : dataProvider1.getList()) {
 			list1.add(lr);
 		}
-		this.mod200Object.getMod200().setRepresentatives(list1);
+		callback.getMod200Object().getMod200().setRepresentatives(list1);
 		
-		List<CompanyAdministrator> list2 = new LinkedList<CompanyAdministrator>();
+		LinkedList<CompanyAdministrator> list2 = new LinkedList<CompanyAdministrator>();
 		for (CompanyAdministrator cp : dataProvider2.getList()) {
 			list2.add(cp);
 		}
-		this.mod200Object.getMod200().setAdministrators(list2);
+		callback.getMod200Object().getMod200().setAdministrators(list2);
 	}
 	
 	private void addLegalDocumentColumn() {
@@ -287,8 +291,8 @@ public class Page01 extends PageAbs {
 					
 					@Override
 					public void onAccept() {
-			    		mod200Object.getMod200().getRepresentatives().remove(index);
-			    		dataProvider1 = new ListDataProvider<LegalRepresentative>(mod200Object.getMod200().getRepresentatives());
+						callback.getMod200Object().getMod200().getRepresentatives().remove(index);
+			    		dataProvider1 = new ListDataProvider<LegalRepresentative>(callback.getMod200Object().getMod200().getRepresentatives());
 			    		dataProvider1.addDataDisplay(table1);
 			    		table1.redraw();
 					}
@@ -383,7 +387,7 @@ public class Page01 extends PageAbs {
 	}
 
 	private void addAdmProvinceColumn() {
-		final List<String> options = new LinkedList<String>();
+		final LinkedList<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
 			options.add( prov.getName() );
 		}
@@ -440,8 +444,8 @@ public class Page01 extends PageAbs {
 				
 					@Override
 					public void onAccept() {
-			    		mod200Object.getMod200().getAdministrators().remove(index);
-			    		dataProvider2 = new ListDataProvider<CompanyAdministrator>(mod200Object.getMod200().getAdministrators());
+						callback.getMod200Object().getMod200().getAdministrators().remove(index);
+			    		dataProvider2 = new ListDataProvider<CompanyAdministrator>(callback.getMod200Object().getMod200().getAdministrators());
 			    		dataProvider2.addDataDisplay(table2);
 			    		table2.redraw();
 					}

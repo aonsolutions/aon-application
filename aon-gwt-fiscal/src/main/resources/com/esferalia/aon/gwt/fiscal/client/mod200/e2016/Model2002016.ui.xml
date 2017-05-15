@@ -89,8 +89,9 @@
 					<g:ScrollPanel ui:field="linkList" styleName="{aonResources.css.aonMarginLeft5} {aonResources.css.aonFiscalAeatBg} {aonResources.css.aonPaddingTop}"/>
 				</g:west>
 				<g:center>
+					<g:SimpleLayoutPanel ui:field="pageContainer" />
+<!-- 				
 					<g:DeckLayoutPanel ui:field="deckPanel">
-						<g:SimplePanel ui:field="page"/>
 						<mod200:Page00 ui:field="page00"/>
 						<mod200:Page01 ui:field="page01"/>
 						<mod200:Page02 ui:field="page02"/>
@@ -107,6 +108,7 @@
 						<mod200:Page13 ui:field="page13"/>
 						<mod200:Page14 ui:field="page14"/>
 					</g:DeckLayoutPanel>
+-->
 				</g:center>
 			</g:SplitLayoutPanel>
 		</g:center>

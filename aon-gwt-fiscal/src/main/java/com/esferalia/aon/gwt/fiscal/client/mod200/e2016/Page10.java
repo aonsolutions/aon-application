@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016BN082Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016BN1040Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016BN1041Key;
@@ -57,8 +58,8 @@ public class Page10 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table1;
 	
-	public Page10() {
-		super();
+	public Page10( Model200PageCallback callback ) {
+		super(callback);
 		table1 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
@@ -74,7 +75,7 @@ public class Page10 extends PageAbs {
 	protected void initializeTable() {
 		int row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.LIQUIDATION_III_KEYS_1) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table,key,row);
 				if (key == Mod2002016Key.BN1280) {
 					table.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
@@ -110,7 +111,7 @@ public class Page10 extends PageAbs {
 		row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.LIQUIDATION_III_KEYS_2) {
 			row = paintKey(table1,key,row);
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				if (key == Mod2002016Key.BN585) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002016Key.BN585.getDescription()
 							,Mod2002016BN585Key.values(),HEADERS_2);
@@ -147,4 +148,6 @@ public class Page10 extends PageAbs {
 		}
 	}
 	
+	@Override
+	protected void populate() {}
 }

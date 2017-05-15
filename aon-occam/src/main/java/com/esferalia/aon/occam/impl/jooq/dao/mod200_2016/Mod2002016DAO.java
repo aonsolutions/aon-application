@@ -9,8 +9,6 @@ import static com.esferalia.aon.occam.impl.jooq.dao.mod200_2016.Mod2002016Valida
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -132,7 +130,7 @@ public class Mod2002016DAO  {
 	}
 	
 	private static void insertAdministrator(AONContext ctx,Mod2002016 mod200) {
-		List<FsModel200RegistryRecord> list = new LinkedList<FsModel200RegistryRecord>();
+		LinkedList<FsModel200RegistryRecord> list = new LinkedList<FsModel200RegistryRecord>();
 		FsModel200RegistryRecord detail = null;
 		if (mod200.getAdministrators() != null) {
 			for ( CompanyAdministrator ca : mod200.getAdministrators() ) {
@@ -208,7 +206,7 @@ public class Mod2002016DAO  {
 	}
 
 	private static void insertDetail(AONContext ctx, Mod2002016 mod200) {
-		List<FsModel200DetailRecord> list = new LinkedList<FsModel200DetailRecord>();
+		LinkedList<FsModel200DetailRecord> list = new LinkedList<FsModel200DetailRecord>();
 		FsModel200DetailRecord detail = null;
 		for (Mod2002016Key k : Mod2002016Key.values()) {
 			DoubleVariable2016 dv = null;	
@@ -392,7 +390,7 @@ public class Mod2002016DAO  {
 	
 	private static void fillDetail(Mod2002016 mod200,AONContext ctx) {
 		
-		Map<String,Double> map = new HashMap<String,Double>();
+		HashMap<String,Double> map = new HashMap<String,Double>();
 		Result<FsModel200DetailRecord> result = ctx.getDslContext()
 				.selectFrom(FS_MODEL200_DETAIL)
 			 	.where(	FS_MODEL200_DETAIL.FS_MODEL200.equal(mod200.getId()))
@@ -524,7 +522,7 @@ public class Mod2002016DAO  {
 	
 	public static Mod2002016 initializeMod200(AONContext ctx, Mod2002016 mod200) {
 		if (!mod200.isInitializedFromLastYear()) {
-			List<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
+			LinkedList<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
 			if ( adms != null && adms.size() > 0 ) {
 				for (CompanyAdministrator ca : adms ) {
 					if (ca.isAdministrator()) {
@@ -730,7 +728,7 @@ public class Mod2002016DAO  {
 	}
 	
 	public static Mod2002016 validate(Mod2002016 mod200) {
-		List<ValidationMessage2016> list = new LinkedList<ValidationMessage2016>();
+		LinkedList<ValidationMessage2016> list = new LinkedList<ValidationMessage2016>();
 		validateComplementary(list,mod200);
 		validateDocument(list,mod200);
 		validateCNAE(list,mod200);
@@ -751,6 +749,10 @@ public class Mod2002016DAO  {
 		}
 		mod200.setMessages(null);	
 		for (ValidationMessage2016 validation : VALIDATION_EXPRESSION_LIST) {
+			if (validation.getKey() == Mod2002016Key.ID653) {
+				System.out.println( "ID653 ..: " + ctx.get(Mod2002016Key.ID653.toString()) );
+				System.out.println( "ID666 ..: " + ctx.get(Mod2002016Key.ID666.toString()) );
+			}
 			Boolean valid = (Boolean) ctx.evaluateExpression(validation.getKey().toString(),validation.getExpression());
 			if (!valid) {
 				list.add(validation);
@@ -767,7 +769,7 @@ public class Mod2002016DAO  {
 	private static final int PAGE02 = 2;
 	
 	
-	private static void validateComplementary(List<ValidationMessage2016> list, Mod2002016 mod200) {
+	private static void validateComplementary(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
 		if (mod200.isComplementary() ) {
 			if (AonStringUtils.isEmpty(mod200.getComplementaryReceipt() )) {
 				list.add(new ValidationMessage2016(PAGE00,"Si marca Decl. Complementaria, debe indicar un n. de justificante anterior."));
@@ -785,20 +787,20 @@ public class Mod2002016DAO  {
 		}
 	}
 
-	private static void validateDocument(List<ValidationMessage2016> list, Mod2002016 mod200) {
+	private static void validateDocument(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
 		if (!AonDocumentUtil.isValid(mod200.getEnterpriseDocument())) {
 			list.add(new ValidationMessage2016(PAGE00,"NIF de la declaraci\u00F3n incorrecto."));
 		}
 		
 	}
-	private static void validateCNAE(List<ValidationMessage2016> list, Mod2002016 mod200) {
+	private static void validateCNAE(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
 		if (AonStringUtils.isEmpty(mod200.getCnae())) {
 			list.add(new ValidationMessage2016(PAGE00,"Rellene el CNAE de la empresa."));
 		} else if (CNAE2009.valueOfCode(mod200.getCnae()) == null) {
 			list.add(new ValidationMessage2016(PAGE00,"CNAE de la empresa, no válido."));	
 		}
 	}
-	private static void validateAdministrators(List<ValidationMessage2016> list,Mod2002016 mod200) {
+	private static void validateAdministrators(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
 		if (mod200.getAdministrators() == null || mod200.getAdministrators().size() == 0 ) {
 			list.add(new ValidationMessage2016(PAGE01,"Debe rellenar al menos un administrador."));
 		} else {
@@ -814,7 +816,7 @@ public class Mod2002016DAO  {
 		}
 	}
 	
-	private static void validateSecretary(List<ValidationMessage2016> list, Mod2002016 mod200) {
+	private static void validateSecretary(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
 		if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getSecretary() == null) {
 				list.add(new ValidationMessage2016(PAGE01,"Para personas jur\u00EDdicas, debe rellenar los datos del secretario"));
@@ -834,7 +836,7 @@ public class Mod2002016DAO  {
 		}
 	}
 
-	private static void validateRepresentatives(List<ValidationMessage2016> list,Mod2002016 mod200) {
+	private static void validateRepresentatives(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
 		if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getRepresentatives() == null || mod200.getRepresentatives().size() == 0 ) {
 				list.add(new ValidationMessage2016(PAGE01,"Para personas jur\u00EDdicas, debe rellenar al menos un representante."));
@@ -860,10 +862,10 @@ public class Mod2002016DAO  {
 		}
 	}
 	
-	private static void validateParticipationsIn(List<ValidationMessage2016> list,Mod2002016 mod200) {
+	private static void validateParticipationsIn(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
 		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())
 			&& !AonDocumentUtil.isCulturalAssociation(mod200.getEnterpriseDocument())) {
-			 List<CompanyParticipation> participations = mod200.getParticipationsIn();
+			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsIn();
 			if (participations == null || participations.size() == 0) {
 				list.add(new ValidationMessage2016(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
 			} else {
@@ -883,9 +885,9 @@ public class Mod2002016DAO  {
 		}
 	}
 	
-	private static void validateParticipationsOut(List<ValidationMessage2016> list,Mod2002016 mod200) {
+	private static void validateParticipationsOut(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
 		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
-			 List<CompanyParticipation> participations = mod200.getParticipationsOut();
+			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsOut();
 			if (participations == null || participations.size() == 0) {
 			} else {
 				for (int i = 0; i < participations.size(); i++ ) {

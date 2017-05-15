@@ -5,25 +5,38 @@ import java.io.Serializable;
 public class ValidationMessage2016 implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static enum MessageType {
+		ERROR
+		,WARNING
+		,INFO
+	}
+	
 
 	int page;
 	String message;
 	Mod2002016Key key;
 	String expression;
+	MessageType type;
 
 	public ValidationMessage2016() {
 	}
 
 	public ValidationMessage2016(int page, Mod2002016Key key, String message,
-			String expression) {
+			String expression, MessageType type) {
 		this.message = message;
 		this.page = page;
 		this.key = key;
 		this.expression = expression;
+		this.type = type;
+	}
+	public ValidationMessage2016(int page, Mod2002016Key key, String message,
+			String expression) {
+		this(page,key,message,expression, MessageType.ERROR);
 	}
 
 	public ValidationMessage2016(int page, String message) {
-		this(page,null,message,null);
+		this(page,null,message,null, MessageType.ERROR);
 	}
 
 	public String getMessage() {
@@ -56,5 +69,11 @@ public class ValidationMessage2016 implements Serializable {
 
 	public void setExpression(String expression) {
 		this.expression = expression;
+	}
+	public MessageType getMessageType() {
+		return type;
+	}
+	public void setMessageType(MessageType type) {
+		this.type = type;
 	}
 }

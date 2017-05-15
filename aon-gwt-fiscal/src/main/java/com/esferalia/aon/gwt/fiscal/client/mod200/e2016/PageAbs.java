@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object.IMod200ChangeListener;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
@@ -48,7 +49,7 @@ public abstract class PageAbs extends ResizeComposite {
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			mod200Object.mathExpression(expression,callback);
+			PageAbs.this.callback.getMod200Object().mathExpression(expression,callback);
 		}
 	};
 	
@@ -92,8 +93,6 @@ public abstract class PageAbs extends ResizeComposite {
 		
 	}
 
-	protected Mod2002016Object mod200Object;
-
 	private HashMap<Mod2002016Key, DoubleBox> inputs = new HashMap<Mod2002016Key, DoubleBox>();
 	private HashMap<Mod2002016Key, BoxLabel> labels = new HashMap<Mod2002016Key, BoxLabel>();
 
@@ -103,13 +102,12 @@ public abstract class PageAbs extends ResizeComposite {
 	@UiField(provided = true)
 	FlexTable table;
 	
-	public PageAbs() {
-		table = new FlexTable();
-	}
+	protected Model200PageCallback callback;
 	
-	public void dump(Mod2002016Object mod200Object) {
-		this.mod200Object = mod200Object;
-		this.mod200Object.register( new IMod200ChangeListener() {
+	public PageAbs( Model200PageCallback callback) {
+		this.callback = callback;
+		table = new FlexTable();
+		callback.getMod200Object().register( new IMod200ChangeListener() {
 			
 			@Override
 			public void mod200Changed(Mod2002016 mod200) {
@@ -130,19 +128,6 @@ public abstract class PageAbs extends ResizeComposite {
 			}
 			
 		});
-		initializeTable();
-		refreshDraftMap(this.mod200Object.getMod200());
-	}
-	
-	private void refreshDraftMap(Mod2002016 mod200) {
-		for (Mod2002016Key key : mod200.getDraftMap().keySet()) {
-			if (inputs.containsKey(key)) {
-				DoubleBox input = inputs.get(key);
-				DoubleVariable2016 var = mod200.getDraftMap().get(key);
-				input.setValue(var.getValue()); ;
-				input.addStyleName(AON.AON_CSS.aonChanged());
-			}
-		}
 	}
 	
 	public Map<Mod2002016Key, DoubleBox> getInputs() {
@@ -197,7 +182,7 @@ public abstract class PageAbs extends ResizeComposite {
 		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
-		String codeId = key.getCode( mod200Object.getAdministration());
+		String codeId = key.getCode( callback.getMod200Object().getAdministration());
 		boolean show = true;
 		try {
 			show = Integer.parseInt(codeId) > 0;
@@ -222,13 +207,13 @@ public abstract class PageAbs extends ResizeComposite {
 					}
 					Double d = text.getValueOrThrow();
 					text.addStyleName(AON.AON_CSS.aonChanged());
-					mod200Object.doubleValueChanged(key, d );
+					callback.getMod200Object().doubleValueChanged(key, d );
 				} catch (ParseException e) {
 					// nothing.
 				}
 			}
 		});
-		text.setValue(mod200Object.getDoubleValue(key));
+		text.setValue(callback.getMod200Object().getDoubleValue(key));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		text.setEnabled(!disabled);
@@ -328,7 +313,23 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	
-	
+	protected abstract void populate();
 	protected abstract void initializeTable();
+	
+	protected void dump() {
+		initializeTable();
+		refreshDraftMap(callback.getMod200Object().getMod200());
+	};
+	
+	private void refreshDraftMap(Mod2002016 mod200) {
+		for (Mod2002016Key key : mod200.getDraftMap().keySet()) {
+			if (inputs.containsKey(key)) {
+				DoubleBox input = inputs.get(key);
+				DoubleVariable2016 var = mod200.getDraftMap().get(key);
+				input.setValue(var.getValue()); ;
+				input.addStyleName(AON.AON_CSS.aonChanged());
+			}
+		}
+	}
 	
 }

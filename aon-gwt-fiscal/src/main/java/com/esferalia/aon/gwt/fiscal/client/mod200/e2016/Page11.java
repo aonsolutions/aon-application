@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.google.gwt.core.client.GWT;
@@ -24,8 +25,8 @@ public class Page11 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table3;
 	
-	public Page11() {
-		super();
+	public Page11( Model200PageCallback callback ) {
+		super(callback);
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
@@ -41,7 +42,7 @@ public class Page11 extends PageAbs {
 		
 		int row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.LIQUIDATION_IV_KEYS_1) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table,key,row);
 			}
 		}
@@ -52,7 +53,7 @@ public class Page11 extends PageAbs {
 		table1.getColumnFormatter().setWidth(2, "200px");
 		for (int i = 0; i < Mod2002016Constants.LIQUIDATION_IV_KEYS_2.length; i++) {
 			Mod2002016Key key = Mod2002016Constants.LIQUIDATION_IV_KEYS_2[i];
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				if (i%2 == 0) {
 					paintKey(table1,key, (i/2));
 				} else {
@@ -68,11 +69,11 @@ public class Page11 extends PageAbs {
 		for (int i = 0; i < Mod2002016Constants.LIQUIDATION_IV_KEYS_3.length; i++) {
 			Mod2002016Key key = Mod2002016Constants.LIQUIDATION_IV_KEYS_3[i];
 			if (i%2 == 0) {
-				if (mod200Object.isVisible(key)) {
+				if (callback.getMod200Object().isVisible(key)) {
 					paintKey(table2,key,(i/2));
 				}
 			} else {
-				if (key != null && mod200Object.isVisible(key)) {
+				if (key != null && callback.getMod200Object().isVisible(key)) {
 					paintKeyField(table2,key,(i/2),2);
 				}
 			}
@@ -80,4 +81,6 @@ public class Page11 extends PageAbs {
 		
 	}
 
+	@Override
+	protected void populate() {}
 }

@@ -5,6 +5,7 @@ import java.text.ParseException;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -64,14 +65,6 @@ public class Page07 extends PageAbs {
 			return pymes;
 		}
 	}
-	
-//	private static final String[] COLS = new String[] {"",
-//			AON.MSG.ecpnMsg1(),AON.MSG.ecpnMsg2(),AON.MSG.ecpnMsg3(),
-//			AON.MSG.ecpnMsg4(),AON.MSG.ecpnMsg5(),AON.MSG.ecpnMsg6(),
-//			AON.MSG.ecpnMsg7(),AON.MSG.ecpnMsg8(),AON.MSG.ecpnMsg9(),
-//			AON.MSG.ecpnMsg10(),AON.MSG.ecpnMsg11(),AON.MSG.ecpnMsg12(),
-//			AON.MSG.ecpnMsg14(),AON.MSG.ecpnMsg14()
-//	};
 	
 	private static enum Page7Row {
 		 ROW1 (""             ,false,true ,true ,true ,null )
@@ -133,21 +126,22 @@ public class Page07 extends PageAbs {
 		}
 	}
 
-	public Page07() {
-		super();
+	public Page07( Model200PageCallback callback ) {
+		super(callback);
 		Widget ui = page7Binder.createAndBindUi(this);
 		initWidget(ui);
 	}
-	
+
+	@Override
 	protected void initializeTable() {
 		table.setCellSpacing(0);
 		Label label = null;
 		int tableCol = 0;
 		for (int col = 0; col < Page7Column.values().length; col++) {
 			boolean colVisible  = (
-					   (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL && Page7Column.values()[col].isNormal())
-					|| (mod200Object.getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Column.values()[col].isAbbreviate())
-					|| (mod200Object.getMod200().getBalanceType() == BalanceType.PYMES && Page7Column.values()[col].isPymes())
+					   (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL && Page7Column.values()[col].isNormal())
+					|| (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Column.values()[col].isAbbreviate())
+					|| (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.PYMES && Page7Column.values()[col].isPymes())
 					);
 			if (colVisible) {
 				label = new Label(Page7Column.values()[col].getName());
@@ -157,19 +151,12 @@ public class Page07 extends PageAbs {
 				++tableCol;
 			}
 		}
-//		for (int col = 0; col < COLS.length; col++) {
-//			label = new Label(COLS[col]);
-//			table.setWidget(0, col, label);
-//			table.getColumnFormatter().setWidth(col, (col == 0)?"150px":"100px");
-//			table.getFlexCellFormatter().addStyleName(0, col, tableStyle.cellTableStyle().cellTableHeader());
-//			table.getFlexCellFormatter().addStyleName(0, col, AON.AON_CSS.aonTextCenter());	
-//		}
 		
 		for (int row = 1; row < Page7Row.values().length; row++) {
 			boolean rowVisible  = (
-				   (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL && Page7Row.values()[row].isNormal())
-				|| (mod200Object.getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Row.values()[row].isAbbreviate())
-				|| (mod200Object.getMod200().getBalanceType() == BalanceType.PYMES && Page7Row.values()[row].isPymes())
+				   (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL && Page7Row.values()[row].isNormal())
+				|| (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Row.values()[row].isAbbreviate())
+				|| (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.PYMES && Page7Row.values()[row].isPymes())
 				);
 			if (rowVisible) {
 				table.setWidget(row, 0, new Label(Page7Row.values()[row].getName()));
@@ -180,16 +167,16 @@ public class Page07 extends PageAbs {
 				tableCol = 1;
 				for (int col = 1; col < Page7Column.values().length; col++) {
 					boolean colVisible  = (
-							   (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL && Page7Column.values()[col].isNormal())
-							|| (mod200Object.getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Column.values()[col].isAbbreviate())
-							|| (mod200Object.getMod200().getBalanceType() == BalanceType.PYMES && Page7Column.values()[col].isPymes())
+							   (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL && Page7Column.values()[col].isNormal())
+							|| (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.ABREVIADO && Page7Column.values()[col].isAbbreviate())
+							|| (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.PYMES && Page7Column.values()[col].isPymes())
 							);
 					if (colVisible) {
 						FlowPanel panel = new FlowPanel();
 						panel.setStyleName(AON.AON_CSS.aonNowrap());
 						final Mod2002016Key key = Page7Row.values()[row].getKeys()[col - 1];
 						if (key != null) {
-							BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
+							BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 							panel.add(code);
 							getLabels().put(key, code);
 							
@@ -203,13 +190,13 @@ public class Page07 extends PageAbs {
 										}
 										Double d = text.getValueOrThrow();
 										text.addStyleName(AON.AON_CSS.aonChanged());
-										mod200Object.doubleValueChanged(key, d);
+										callback.getMod200Object().doubleValueChanged(key, d);
 									} catch (ParseException e) {
 										// nothing.
 									}
 								}
 							});
-							text.setValue(mod200Object.getDoubleValue(key));
+							text.setValue(callback.getMod200Object().getDoubleValue(key));
 							text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 							text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 							text.setEnabled( !isDisabled(key) );
@@ -225,7 +212,10 @@ public class Page07 extends PageAbs {
 				}
 			}
 		}
-		
 	}
+	
+	@Override
+	protected void populate() {}
+	
 	
 }

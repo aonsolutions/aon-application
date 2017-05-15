@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
@@ -45,12 +46,13 @@ public class Page09 extends PageAbs {
 		 	,"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
 		};
 	
-	public Page09() {
-		super();
+	public Page09( Model200PageCallback callback ) {
+		super(callback);
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
 	
+	@Override
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
@@ -61,7 +63,7 @@ public class Page09 extends PageAbs {
 		int row = 0;
 		boolean margin = false;
 		for (Mod2002016Key key : Mod2002016Constants.LIQUIDATION_II_KEYS) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				if (key == Mod2002016Key.LQ578) {
 					paintDescription(table, "Entidades navieras en r\u00E9gimen de tributaci\u00F3n en funci\u00F3n del tonelaje", row,0, true);
 					row++;
@@ -238,4 +240,6 @@ public class Page09 extends PageAbs {
 		return ++row;
 	}
 	
+	@Override
+	protected void populate() {}
 }

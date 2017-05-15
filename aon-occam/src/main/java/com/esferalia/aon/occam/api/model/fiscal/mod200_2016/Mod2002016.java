@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
@@ -58,10 +57,10 @@ public class Mod2002016 implements IFiscalModel {
 	private BalanceType pygType;
 	
 	private Secretary secretary = new Secretary();
-	private List<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();
-	private List<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
-	private List<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
-	private List<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>();
+	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();
+	private LinkedList<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
+	private LinkedList<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
+	private LinkedList<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>();
 	
 	private String resultType;
 	private String devType;
@@ -81,7 +80,7 @@ public class Mod2002016 implements IFiscalModel {
 	private EnumMap<Mod2002016Key,DoubleVariable2016> draftMap = new EnumMap<Mod2002016Key,DoubleVariable2016>(Mod2002016Key.class);
 	private EnumMap<Mod2002016Key,Boolean> visibleMap = new EnumMap<Mod2002016Key,Boolean>(Mod2002016Key.class);
 
-	private List<ValidationMessage2016> messages;
+	private LinkedList<ValidationMessage2016> messages;
 
 	public boolean isInitializedFromLastYear() {
 		return initializedFromLastYear;
@@ -228,28 +227,28 @@ public class Mod2002016 implements IFiscalModel {
 	public void setSecretary(Secretary secretary) {
 		this.secretary = secretary;
 	}
-	public List<LegalRepresentative> getRepresentatives() {
+	public LinkedList<LegalRepresentative> getRepresentatives() {
 		return representatives;
 	}
-	public void setRepresentatives(List<LegalRepresentative> representatives) {
+	public void setRepresentatives(LinkedList<LegalRepresentative> representatives) {
 		this.representatives = representatives;
 	}
-	public List<CompanyAdministrator> getAdministrators() {
+	public LinkedList<CompanyAdministrator> getAdministrators() {
 		return administrators;
 	}
-	public void setAdministrators(List<CompanyAdministrator> administrators) {
+	public void setAdministrators(LinkedList<CompanyAdministrator> administrators) {
 		this.administrators = administrators;
 	}
-	public List<CompanyParticipation> getParticipationsIn() {
+	public LinkedList<CompanyParticipation> getParticipationsIn() {
 		return participationsIn;
 	}
-	public void setParticipationsIn(List<CompanyParticipation> participationsIn) {
+	public void setParticipationsIn(LinkedList<CompanyParticipation> participationsIn) {
 		this.participationsIn = participationsIn;
 	}
-	public List<CompanyParticipation> getParticipationsOut() {
+	public LinkedList<CompanyParticipation> getParticipationsOut() {
 		return participationsOut;
 	}
-	public void setParticipationsOut(List<CompanyParticipation> participationsOut) {
+	public void setParticipationsOut(LinkedList<CompanyParticipation> participationsOut) {
 		this.participationsOut = participationsOut;
 	}
 	public EnumMap<Mod2002016Key, DoubleVariable2016> getKeysMap() {
@@ -312,10 +311,10 @@ public class Mod2002016 implements IFiscalModel {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	public List<ValidationMessage2016> getMessages() {
+	public LinkedList<ValidationMessage2016> getMessages() {
 		return messages;
 	}
-	public void setMessages(List<ValidationMessage2016> messages) {
+	public void setMessages(LinkedList<ValidationMessage2016> messages) {
 		this.messages = messages;
 	}
 	public DoubleVariable2016 getKey(Mod2002016Key key) {

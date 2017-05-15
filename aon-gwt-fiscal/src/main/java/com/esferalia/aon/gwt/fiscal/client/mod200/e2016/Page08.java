@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 import java.io.Serializable;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016CorrectionKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
@@ -65,8 +66,8 @@ public class Page08 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table1;
 
-	public Page08() {
-		super();
+	public Page08( Model200PageCallback callback ) {
+		super(callback);
 		table1 = new FlexTable();
 		Widget ui = page8Binder.createAndBindUi(this);
 		initWidget(ui);
@@ -182,4 +183,6 @@ public class Page08 extends PageAbs {
 		}
 	}
 	
+	@Override
+	protected void populate() {}
 }

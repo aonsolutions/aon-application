@@ -1,10 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP;
-
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
@@ -18,7 +17,8 @@ public class Page05 extends PageAbs {
 
 	private static final Page5Binder page5Binder = GWT.create(Page5Binder.class);
 	
-	public Page05() {
+	public Page05( Model200PageCallback callback ) {
+		super(callback);
 		Widget ui = page5Binder.createAndBindUi(this);
 		initWidget(ui);
 	}
@@ -32,13 +32,18 @@ public class Page05 extends PageAbs {
 
 		int row = 0;
 		for (Mod2002016Key key : Mod2002016Constants.PYG_KEYS) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(key,row);
 			}
 		}
 	}
+	
+	@Override
+	protected void populate() {}
+	
+	@Override
 	protected boolean isDisabled(Mod2002016Key key) {
-		if (mod200Object.getMod200().getPygType() == BalanceType.NORMAL) {
+		if (callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL) {
 			if (key == Mod2002016Key.PG255
 			  ||key == Mod2002016Key.PG279
 			  ||key == Mod2002016Key.PG309
@@ -46,7 +51,6 @@ public class Page05 extends PageAbs {
 				return true;
 			}
 		}
-		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
-		return behaviour != null && behaviour[1];
+		return super.isDisabled(key);
 	}
 }

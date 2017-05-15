@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object.IMod200ChangeListener;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
@@ -68,13 +69,20 @@ public class Page14 extends PageAbs {
 	IbanTextBox ibanP;
 	
 	
-	public Page14() {
-		super();
+	public Page14( Model200PageCallback callback ) {
+		super(callback);
 		ibanD = new IbanTextBox(getSuggestOracle(),true);
 		ibanP = new IbanTextBox(getSuggestOracle(),true);
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		
+		callback.getMod200Object().register( new IMod200ChangeListener() {
+			
+			@Override
+			public void mod200Changed(Mod2002016 mod200) {
+				dumpPay(mod200);
+			}
+		});
 	}
 
 	@Override
@@ -89,10 +97,10 @@ public class Page14 extends PageAbs {
 		table.setWidget(0, 0, desc);
 		table.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalBorderBottom());
 		FlowPanel panel = new FlowPanel();
-		BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
+		BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 		panel.add(code);
 		DoubleBox text = new DoubleBox();
-		text.setValue(mod200Object.getDoubleValue(key));
+		text.setValue(callback.getMod200Object().getDoubleValue(key));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		text.setEnabled(false);
@@ -109,10 +117,10 @@ public class Page14 extends PageAbs {
 		table.setWidget(1, 0, desc);
 		table.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalBorderBottom());
 		panel = new FlowPanel();
-		code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
+		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 		panel.add(code);
 		text = new DoubleBox();
-		text.setValue(mod200Object.getDoubleValue(key));
+		text.setValue(callback.getMod200Object().getDoubleValue(key));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		text.setEnabled(false);
@@ -129,10 +137,10 @@ public class Page14 extends PageAbs {
 		table.setWidget(2, 0, desc);
 		table.getFlexCellFormatter().setStyleName(2, 0, AON.AON_CSS.aonFiscalBorderBottom());
 		panel = new FlowPanel();
-		code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
+		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 		panel.add(code);
 		text = new DoubleBox();
-		text.setValue(mod200Object.getDoubleValue(key));
+		text.setValue(callback.getMod200Object().getDoubleValue(key));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		text.setEnabled(false);
@@ -144,18 +152,9 @@ public class Page14 extends PageAbs {
 	}
 
 	@Override
-	public void dump(Mod2002016Object mod200) {
-		super.dump(mod200);
-		
-		this.mod200Object.register( new IMod200ChangeListener() {
-			
-			@Override
-			public void mod200Changed(Mod2002016 mod200) {
-				dumpPay(mod200);
-			}
-		});
-		
-		dumpPay(mod200.getMod200());
+	public void dump() {
+		super.dump();
+		dumpPay(callback.getMod200Object().getMod200());
 	}
 	
 	private void dumpPay(Mod2002016 mod200) {
@@ -245,7 +244,8 @@ public class Page14 extends PageAbs {
 		@Override
 		public void requestSuggestions(final Request request,
 				final Callback callback) {
-			mod200Object.getCompanyBanks ( 
+			
+			Page14.this.callback.getMod200Object().getCompanyBanks ( 
 					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {
@@ -292,4 +292,6 @@ public class Page14 extends PageAbs {
 		}
 	}
 
+	@Override
+	protected void populate() {}
 }

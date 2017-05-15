@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object.IMod200ChangeListener;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
@@ -144,8 +145,8 @@ public class Page00 extends PageAbs {
 	@UiField
 	DoubleBox c042;
 	
-	public Page00() {
-		
+	public Page00( Model200PageCallback callback ) {
+		super(callback);
 		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
 			@Override
 			public void onSelect(CNAE2009 selected) {
@@ -171,56 +172,8 @@ public class Page00 extends PageAbs {
 		initWidget(ui);
 		
 		initializeTable();
-	}
-
-	public void dump(Mod2002016Object mod200Object) {
-		this.mod200Object = mod200Object;
-		nif.setValue(this.mod200Object.getMod200().getEnterpriseDocument());
-		companyName.setValue(this.mod200Object.getMod200().getEnterpriseName());
-		phone1.setValue(this.mod200Object.getMod200().getEnterprisePhone1());
-		phone2.setValue(this.mod200Object.getMod200().getEnterprisePhone2());
-		complementary.setValue(this.mod200Object.getMod200().isComplementary());
-		complementaryReceipt.setValue(this.mod200Object.getMod200().getComplementaryReceipt());
-		complementaryReceipt.setEnabled(complementary.getValue());
-		periodType.setSelectedIndex(mod200Object.getMod200().getPeriodType() - 1 );
-		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
-		periodStart.setValue(mod200Object.getMod200().getPeriodStart() );
-		periodEnd.setValue(mod200Object.getMod200().getPeriodEnd() );
-		int index = this.mod200Object.getMod200().getBalanceType().ordinal();
-		balanceSheetType.setSelectedIndex(index);
-		index = this.mod200Object.getMod200().getPygType().ordinal();
-		profitAndLossType.setSelectedIndex(index);
-		DoubleVariable2016 dv = this.mod200Object.getMod200().getKeysMap().get(Mod2002016Key.C0041);
-		Double value = 0.0;
-		if (dv != null) {
-			value = dv.getValue();
-		}
-		c041.setValue(value);
 		
-		dv = this.mod200Object.getMod200().getKeysMap().get(Mod2002016Key.C0042);
-		value = 0.0;
-		if (dv != null) {
-			value = dv.getValue();
-		}
-		c042.setValue(value);
-		
-		for (CheckBox check : inputs.values()) {
-			check.setValue(false);
-		}
-		for (Mod2002016Key key : CHARACTERS_KEYS) {
-			DoubleVariable2016 sv = this.mod200Object.getMod200().getKeysMap().get(key);
-			if (sv != null && inputs.containsKey( key )) {
-				boolean checked = AonMathUtils.equals(sv.getValue() , 1.0);
-				inputs.get( key ).setValue( checked);
-			}
-		}
-		cnaeLabel.setText(null);
-		cnae.setValue(this.mod200Object.getMod200().getCnae());
-		if (!AonStringUtils.isEmpty(this.mod200Object.getMod200().getCnae())) {
-			CNAE2009 cnae = CNAE2009.valueOfCode(this.mod200Object.getMod200().getCnae());
-			cnaeLabel.setText(cnae==null?null:cnae.getDescription());	
-		}
-		this.mod200Object.register( new IMod200ChangeListener() {
+		callback.getMod200Object().register( new IMod200ChangeListener() {
 			
 			@Override
 			public void mod200Changed(Mod2002016 mod200) {
@@ -232,6 +185,117 @@ public class Page00 extends PageAbs {
 		});
 	}
 	
+	
+	@Override
+	public void dump() {
+		super.dump();
+		nif.setValue(callback.getMod200Object().getMod200().getEnterpriseDocument());
+		companyName.setValue(callback.getMod200Object().getMod200().getEnterpriseName());
+		phone1.setValue(callback.getMod200Object().getMod200().getEnterprisePhone1());
+		phone2.setValue(callback.getMod200Object().getMod200().getEnterprisePhone2());
+		complementary.setValue(callback.getMod200Object().getMod200().isComplementary());
+		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getComplementaryReceipt());
+		complementaryReceipt.setEnabled(complementary.getValue());
+		periodType.setSelectedIndex(callback.getMod200Object().getMod200().getPeriodType() - 1 );
+		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
+		periodStart.setValue(callback.getMod200Object().getMod200().getPeriodStart() );
+		periodEnd.setValue(callback.getMod200Object().getMod200().getPeriodEnd() );
+		int index = callback.getMod200Object().getMod200().getBalanceType().ordinal();
+		balanceSheetType.setSelectedIndex(index);
+		index = callback.getMod200Object().getMod200().getPygType().ordinal();
+		profitAndLossType.setSelectedIndex(index);
+		DoubleVariable2016 dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002016Key.C0041);
+		Double value = 0.0;
+		if (dv != null) {
+			value = dv.getValue();
+		}
+		c041.setValue(value);
+		
+		dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002016Key.C0042);
+		value = 0.0;
+		if (dv != null) {
+			value = dv.getValue();
+		}
+		c042.setValue(value);
+		
+		for (CheckBox check : inputs.values()) {
+			check.setValue(false);
+		}
+		for (Mod2002016Key key : CHARACTERS_KEYS) {
+			DoubleVariable2016 sv = callback.getMod200Object().getMod200().getKeysMap().get(key);
+			if (sv != null && inputs.containsKey( key )) {
+				boolean checked = AonMathUtils.equals(sv.getValue() , 1.0);
+				inputs.get( key ).setValue( checked);
+			}
+		}
+		cnaeLabel.setText(null);
+		cnae.setValue(callback.getMod200Object().getMod200().getCnae());
+		if (!AonStringUtils.isEmpty(callback.getMod200Object().getMod200().getCnae())) {
+			CNAE2009 cnae = CNAE2009.valueOfCode(callback.getMod200Object().getMod200().getCnae());
+			cnaeLabel.setText(cnae==null?null:cnae.getDescription());	
+		}
+	}
+
+	@Override
+	protected void populate() {
+		callback.getMod200Object().getMod200().setEnterpriseDocument(nif.getValue());
+		callback.getMod200Object().getMod200().setEnterpriseName(companyName.getValue());
+		callback.getMod200Object().getMod200().setEnterprisePhone1(phone1.getValue());
+		callback.getMod200Object().getMod200().setEnterprisePhone2(phone2.getValue());
+		callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
+		callback.getMod200Object().getMod200().setComplementaryReceipt(complementaryReceipt.getValue());
+		callback.getMod200Object().getMod200().setPeriodType(periodType.getSelectedIndex() + 1 );
+		callback.getMod200Object().getMod200().setPeriodStart( periodStart.getValue() );
+		callback.getMod200Object().getMod200().setPeriodEnd( periodEnd.getValue() );
+		callback.getMod200Object().getMod200().setBalanceType( balanceSheetType.getSelectedIndex() );
+		callback.getMod200Object().getMod200().setPygType( profitAndLossType.getSelectedIndex() );
+		callback.getMod200Object().getMod200().setCnae(cnae.getValue());
+		DoubleVariable2016 bv = null;
+		for (Mod2002016Key key : inputs.keySet()) {
+			bv = new DoubleVariable2016( key );
+			bv.setValue(inputs.get(key).getValue());
+			callback.getMod200Object().getMod200().addVariable(bv);
+		}
+		
+		bv = new DoubleVariable2016( Mod2002016Key.C0061 );
+		bv.setValue( c061.getValue() );
+		callback.getMod200Object().getMod200().addVariable(bv);
+		
+		bv = new DoubleVariable2016( Mod2002016Key.C0050 );
+		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL));
+		callback.getMod200Object().getMod200().addVariable(bv);
+		
+		bv = new DoubleVariable2016( Mod2002016Key.C0051 );
+		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.ABREVIADO));
+		callback.getMod200Object().getMod200().addVariable(bv);
+		
+		bv = new DoubleVariable2016( Mod2002016Key.C0052 );
+		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.PYMES));
+		callback.getMod200Object().getMod200().addVariable(bv);
+			
+		bv = new DoubleVariable2016( Mod2002016Key.C0053 );
+		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL));
+		callback.getMod200Object().getMod200().addVariable(bv);
+		
+		bv = new DoubleVariable2016( Mod2002016Key.C0054 );
+		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.ABREVIADO));
+		callback.getMod200Object().getMod200().addVariable(bv);
+		
+		bv = new DoubleVariable2016( Mod2002016Key.C0055 );
+		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.PYMES));
+		callback.getMod200Object().getMod200().addVariable(bv);
+		
+		bv = new DoubleVariable2016( Mod2002016Key.C0041 );
+		bv.setValue( c041.getValue() );
+		callback.getMod200Object().getMod200().addVariable(bv);
+
+		bv = new DoubleVariable2016( Mod2002016Key.C0042 );
+		bv.setValue( c042.getValue() );
+		callback.getMod200Object().getMod200().addVariable(bv);
+		
+	}
+
+	@Override
 	protected void initializeTable() {
 		c061.setText(Mod2002016Key.C0061.getDescription());
 		inputs.put(Mod2002016Key.C0061, c061);
@@ -244,7 +308,10 @@ public class Page00 extends PageAbs {
 
 	private int initializeBlock(FlexTable table,int row, Mod2002016Key[] declarationCharatersBlock) {
 		initializeTable(table);
-		Administration adm = mod200Object==null?Administration.COMMON_TERRITORY:mod200Object.getAdministration();
+		
+		Administration adm = (callback.getMod200Object()==null)
+				?Administration.COMMON_TERRITORY
+				:callback.getMod200Object().getAdministration();
 		for (final Mod2002016Key key : declarationCharatersBlock ) {
 			BoxLabel l = new BoxLabel( key.getCode( adm ) , Model2002016.BOX_LENGTH );
 			table.setWidget(row, 0, l);
@@ -315,7 +382,7 @@ public class Page00 extends PageAbs {
 	
 	@UiHandler("complementary")
 	void onChangeComplementary(ClickEvent event) {
-		mod200Object.getMod200().setComplementary(complementary.getValue());
+		callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
 		complementaryReceipt.setEnabled(complementary.getValue());
 	}
 
@@ -344,65 +411,7 @@ public class Page00 extends PageAbs {
 		}
 		
 	}
-
-	public void populate(Mod2002016Object obj) {
-		obj.getMod200().setEnterpriseDocument(nif.getValue());
-		obj.getMod200().setEnterpriseName(companyName.getValue());
-		obj.getMod200().setEnterprisePhone1(phone1.getValue());
-		obj.getMod200().setEnterprisePhone2(phone2.getValue());
-		obj.getMod200().setComplementary(complementary.getValue());
-		obj.getMod200().setComplementaryReceipt(complementaryReceipt.getValue());
-		obj.getMod200().setPeriodType(periodType.getSelectedIndex() + 1 );
-		obj.getMod200().setPeriodStart( periodStart.getValue() );
-		obj.getMod200().setPeriodEnd( periodEnd.getValue() );
-		obj.getMod200().setBalanceType( balanceSheetType.getSelectedIndex() );
-		obj.getMod200().setPygType( profitAndLossType.getSelectedIndex() );
-		obj.getMod200().setCnae(cnae.getValue());
-		DoubleVariable2016 bv = null;
-		for (Mod2002016Key key : inputs.keySet()) {
-			bv = new DoubleVariable2016( key );
-			bv.setValue(inputs.get(key).getValue());
-			obj.getMod200().addVariable(bv);
-		}
-		
-		bv = new DoubleVariable2016( Mod2002016Key.C0061 );
-		bv.setValue( c061.getValue() );
-		obj.getMod200().addVariable(bv);
-		
-		bv = new DoubleVariable2016( Mod2002016Key.C0050 );
-		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.NORMAL));
-		obj.getMod200().addVariable(bv);
-		
-		bv = new DoubleVariable2016( Mod2002016Key.C0051 );
-		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.ABREVIADO));
-		obj.getMod200().addVariable(bv);
-		
-		bv = new DoubleVariable2016( Mod2002016Key.C0052 );
-		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.PYMES));
-		obj.getMod200().addVariable(bv);
-			
-		bv = new DoubleVariable2016( Mod2002016Key.C0053 );
-		bv.setValue((obj.getMod200().getPygType() == BalanceType.NORMAL));
-		obj.getMod200().addVariable(bv);
-		
-		bv = new DoubleVariable2016( Mod2002016Key.C0054 );
-		bv.setValue((obj.getMod200().getPygType() == BalanceType.ABREVIADO));
-		obj.getMod200().addVariable(bv);
-		
-		bv = new DoubleVariable2016( Mod2002016Key.C0055 );
-		bv.setValue((obj.getMod200().getPygType() == BalanceType.PYMES));
-		obj.getMod200().addVariable(bv);
-		
-		bv = new DoubleVariable2016( Mod2002016Key.C0041 );
-		bv.setValue( c041.getValue() );
-		obj.getMod200().addVariable(bv);
-
-		bv = new DoubleVariable2016( Mod2002016Key.C0042 );
-		bv.setValue( c042.getValue() );
-		obj.getMod200().addVariable(bv);
-		
-	}
-
+	
 	protected void enableCharacters( boolean enabled) {
 		periodType.setEnabled(enabled);
 		balanceSheetType.setEnabled(enabled);

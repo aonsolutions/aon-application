@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.google.gwt.core.client.GWT;
@@ -29,8 +30,8 @@ public class Page12 extends PageAbs {
 	TextBox nrsAnexoIV;
 	TextBox nrsAnexoV;
 
-	public Page12() {
-		super();
+	public Page12( Model200PageCallback callback ) {
+		super(callback);
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		
@@ -61,7 +62,7 @@ public class Page12 extends PageAbs {
 		table.getColumnFormatter().setWidth(1, "200px");
 		int row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.INCOME_DISTRIBUTION_KEYS_1) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table,key,row);
 			}
 		}
@@ -71,7 +72,7 @@ public class Page12 extends PageAbs {
 		table1.getColumnFormatter().setWidth(1, "200px");
 		row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.INCOME_DISTRIBUTION_KEYS_2) {
-			if (mod200Object.isVisible(key)) {
+			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table1,key,row);
 				if (key == Mod2002016Key.ID1270 || key == Mod2002016Key.ID1271) {
 					table1.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
@@ -95,19 +96,19 @@ public class Page12 extends PageAbs {
 	}
 
 	@Override
-	public void dump(Mod2002016Object mod200) {
-		super.dump(mod200);
-		nrsAnexoIII.setValue( mod200Object.getMod200().getNrsAnexoIII());
-		justCanarias.setValue( mod200Object.getMod200().getJustCanarias());
-		nrsAnexoIV.setValue( mod200Object.getMod200().getNrsAnexoIV());
-		nrsAnexoV.setValue( mod200Object.getMod200().getNrsAnexoV());
+	public void dump() {
+		super.dump();
+		nrsAnexoIII.setValue( callback.getMod200Object().getMod200().getNrsAnexoIII());
+		justCanarias.setValue( callback.getMod200Object().getMod200().getJustCanarias());
+		nrsAnexoIV.setValue( callback.getMod200Object().getMod200().getNrsAnexoIV());
+		nrsAnexoV.setValue( callback.getMod200Object().getMod200().getNrsAnexoV());
 	}
-	
-	public void populate(Mod2002016Object mod200Object) {
-		mod200Object.getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
-		mod200Object.getMod200().setJustCanarias(justCanarias.getValue());
-		mod200Object.getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());
-		mod200Object.getMod200().setNrsAnexoV(nrsAnexoV.getValue());
+	@Override
+	public void populate() {
+		callback.getMod200Object().getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
+		callback.getMod200Object().getMod200().setJustCanarias(justCanarias.getValue());
+		callback.getMod200Object().getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());
+		callback.getMod200Object().getMod200().setNrsAnexoV(nrsAnexoV.getValue());
 	}
 
 }
