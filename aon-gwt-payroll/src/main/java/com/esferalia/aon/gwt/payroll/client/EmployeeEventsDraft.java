@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 import com.vaadin.polymer.iron.widget.IronLabel;
 import com.vaadin.polymer.paper.widget.PaperButton;
+import com.vaadin.polymer.paper.widget.PaperCheckbox;
 import com.vaadin.polymer.paper.widget.PaperDialog;
 
 public class EmployeeEventsDraft extends Composite implements ContextMenuHandler {
@@ -33,10 +34,65 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String ocultarFila();
 		String cellFormat();
 		String cellOddFormat();
 		String isSelectedCell();
 	}
+	
+	@UiField
+	MenuItem showVariablesMenuItem;
+	
+	@UiField
+	PaperCheckbox dtCheckBox1;
+	
+	@UiField
+	PaperCheckbox deCheckBox2;
+	
+	@UiField
+	PaperCheckbox deCheckBox3;
+	
+	@UiField
+	PaperCheckbox dhCheckBox4;
+	
+	@UiField
+	PaperCheckbox daCheckBox5;
+	
+	@UiField
+	PaperCheckbox htCheckBox6;
+	
+	@UiField
+	PaperCheckbox hcCheckBox7;
+	
+	@UiField
+	PaperCheckbox dpCheckBox8;
+	
+	@UiField
+	PaperCheckbox dmCheckBox9;
+	
+	@UiField
+	PaperCheckbox dpeCheckBox10;
+	
+	@UiField
+	PaperCheckbox dmeCheckBox11;
+	
+	@UiField
+	PaperCheckbox kmCheckBox12;
+	
+	@UiField
+	PaperCheckbox dvCheckBox13;
+	
+	@UiField
+	PaperCheckbox jrCheckBox14;
+	
+	@UiField
+	PaperCheckbox heCheckBox15;
+	
+	@UiField
+	PaperCheckbox hefCheckBox16;
+	
+	@UiField
+	PaperButton showVariablesDialogOk;
 	
 	@UiField
 	MenuItem showYearMenuItem;
@@ -46,6 +102,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiField
 	Label yearLabel;
+	
+	@UiField
+	PaperDialog showVariablesDialog;
 	
 	@UiField
 	PaperDialog newValueDialog;
@@ -73,10 +132,21 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	public EmployeeEventsDraft() {
 		//Inicializamos la vista del gestor de incidencias
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
 		showYearMenuItem.setStyleName("aon-MenuItemCheckYes", true);
 		
+		//Boton para analizar que variables se quieren mostrar
+		showVariablesMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				showVariablesDialog.open();
+			}
+		});
+		
+		//Pintar la tabla
 		fillCellsEvents();
 	}
 
@@ -84,6 +154,19 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	 * UIHANDLERS
 	 */
 	
+	@UiHandler("showVariablesDialogOk")
+	public void onShowVariableDialogOkClick(ClickEvent event) {
+		Boolean showingVar[] = new Boolean[16];
+		fillShowingVarList(showingVar);
+		for (int i = 0; i < 16; i++){
+			if (showingVar[i]){
+				eventsGrid.getRowFormatter().removeStyleName(i+1, style.ocultarFila());
+			}else{
+				eventsGrid.getRowFormatter().addStyleName(i+1, style.ocultarFila());
+			}		
+		}
+	}
+
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
 		openNewValueDialog();
@@ -168,6 +251,25 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}	
 	}
 	
+	private void fillShowingVarList(Boolean[] showingVar) {
+		showingVar[0] = dtCheckBox1.getChecked();
+		showingVar[1] = deCheckBox2.getChecked();
+		showingVar[2] = deCheckBox3.getChecked();
+		showingVar[3] = dhCheckBox4.getChecked();
+		showingVar[4] = daCheckBox5.getChecked();
+		showingVar[5] = htCheckBox6.getChecked();
+		showingVar[6] = hcCheckBox7.getChecked();
+		showingVar[7] = dpCheckBox8.getChecked();
+		showingVar[8] = dmCheckBox9.getChecked();
+		showingVar[9] = dpeCheckBox10.getChecked();
+		showingVar[10] = dmeCheckBox11.getChecked();
+		showingVar[11] = kmCheckBox12.getChecked();
+		showingVar[12] = dvCheckBox13.getChecked();
+		showingVar[13] = jrCheckBox14.getChecked();
+		showingVar[14] = heCheckBox15.getChecked();
+		showingVar[15] = hefCheckBox16.getChecked();
+	}
+	
 	private void openNewValueDialog(){
 		newValueDialog.open();
 		int row = calculateRow(selectedPositions.getSelectedList().get(0));
@@ -236,6 +338,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		event.stopPropagation();
 		if(!selectedPositions.getSelectedList().isEmpty()){
 			ContextMenu menu = new  ContextMenu();
+			
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir nuevo valor", new Command() {
 				@Override
 				public void execute() {
