@@ -359,7 +359,7 @@ public class DBConsults {
 	//-------------------- INSERTS
 	
 	public static ConexFlow insertConexFlow(Domain domain, String login, ConexFlow conexFlow, Integer project, String description){		
-		Integer id = AON.insert(domain.getName(), domain.getId(), login, new Attach(AttachType.PROJECT)
+		Integer id = AON.insertAttach(domain.getName(), domain.getId(), login, new Attach(AttachType.PROJECT)
 				.setAttachModule(project)
 				.setDomain(domain)
 				.setMimeType(MimeType.XML)

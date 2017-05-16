@@ -59,25 +59,26 @@ public class Sale {
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
 				
+				String[] checkDescriptions = {
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK)
+				};
+				
 				String[] differenceDescriptions = {
 					"CONEXFLOW%ANT_TNR",
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL)
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL)
 				};
 				
 				String[] descriptions = {
 					"CONEXFLOW%ANT_TNR",
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CANCEL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_REFUND)
-					
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_REFUND)	
 				};
 			
-				if(!DBConsults.hasConexFlow(d, login, r.getProject(), difference ? differenceDescriptions : descriptions)){
+				if(!DBConsults.hasConexFlow(d, login, r.getProject(), difference ? differenceDescriptions : descriptions)
+						&& DBConsults.hasConexFlow(domain, login, r.getProject(), checkDescriptions)){
 					Double amount = difference ? getDiference(d, login, r.getToken()) : r.getAdvance();
 					if(amount != 0.0){
 						ConexFlowConnection connection = DBConsults.getConection(d);

@@ -85,50 +85,7 @@ public class Preauthorization {
 				};
 				if(!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)){
 					if(!dryRun){
-						Double amount = 0.01;
-						ConexFlowConnection connection = DBConsults.getConection(d);
-						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-								, r.getCode(), r.getToken(), amount, r.getProject());
-					
-						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
-						Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
-						
-						if(!ok){
-							// Como ha fallado intentar cobro de 0.01 (AMEX)
-							query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), amount, r.getCode(), r.getProject());
-							conexFlow = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
-							ok = conexFlow.getRespuesta().getResultado().equals("000");
-							if(!ok){
-								// Como ha fallado intentar preauthorizacion de 1.00
-								amount = 1.00;
-								query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-										, r.getCode(), r.getToken(), amount, r.getProject());
-								conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
-								ok = conexFlow.getRespuesta().getResultado().equals("000");
-							}
-						}
-						
-						conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION_CHECK : ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
-						String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
-								+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte();
-						DBConsults.insertConexFlow(d, login, conexFlow, r.getProject(), description);
-						
-						String msg = "";
-						if (!ok){
-							msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
-						} else {
-							msg = "PREAUTHORIZATION OK";
-					
-							// CANCELAR PREAUTHORIZACION 001
-							Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
-									, conexFlow.getRespuesta().getOperacion(), Double.parseDouble(conexFlow.getRespuesta().getImporte())
-									, Double.parseDouble(conexFlow.getRespuesta().getImporte()) 
-									, conexFlow.getRespuesta().getAutorizacion(), r.getCode()
-									, conexFlow.getRespuesta().getIdOperacion(), conexFlow.getRespuesta().getFecha(), r.getProject());
-							ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
-						}
-						String projectName = DBConsults.getProjectName(d, login, r.getProject());
-						View.preauthorized(projectName, r.getProject(), msg, 0.01);
+						pre001(d, login, r);
 					} else {
 						ConexFlowConnection connection = getTestConnection();
 						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
@@ -147,8 +104,80 @@ public class Preauthorization {
 					}
 					cont[0]++;
 				}
+				
+				String[] checkDescriptions = {
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK)
+				};
+				
+				String[] checkFailDescriptions = {
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL)
+				};
+				
+				if(!DBConsults.hasConexFlow(d, login, r.getProject(), checkDescriptions)	
+						&& DBConsults.hasConexFlow(d, login, r.getProject(), checkFailDescriptions)){				
+					ConexFlow cf = DBConsults.getConexFlowLastStatusWD(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
+					if(cf != null && cf.getId() != null && cf.getDate() != null &&
+							AonDateUtils.getDaysBetweenDates(cf.getDate(), new java.util.Date()) > 6){
+						pre001(d, login, r);
+					} else {
+						cf = DBConsults.getConexFlowLastStatusWD(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL);
+						if(cf != null && cf.getId() != null && cf.getDate() != null &&
+								AonDateUtils.getDaysBetweenDates(cf.getDate(), new java.util.Date()) > 6){
+							pre001(d, login, r);
+						}
+					}
+ 				}
 			}
 		});
+	}
+	
+	private static void pre001(Domain domain, String login, ProjectReservation r){
+		Double amount = 0.01;
+		ConexFlowConnection connection = DBConsults.getConection(domain);
+		Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
+				, r.getCode(), r.getToken(), amount, r.getProject());
+	
+		ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
+		Boolean ok = conexFlow.getRespuesta().getResultado().equals("000");
+		
+		if(!ok){
+			// Como ha fallado intentar cobro de 0.01 (AMEX)
+			query = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, r.getToken(), amount, r.getCode(), r.getProject());
+			conexFlow = ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, query);
+			ok = conexFlow.getRespuesta().getResultado().equals("000");
+			if(!ok){
+				// Como ha fallado intentar preauthorizacion de 1.00
+				amount = 1.00;
+				query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
+						, r.getCode(), r.getToken(), amount, r.getProject());
+				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query);
+				ok = conexFlow.getRespuesta().getResultado().equals("000");
+			}
+		}
+		
+		conexFlow.setStatus(ok ? ConexFlowStatus.PREAUTHORIZATION_CHECK : ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
+		String description = "CONEXFLOW_(" + r.getToken().substring(r.getToken().length()-5) + ")_"
+				+ conexFlow.getStatus().getName() + "#" + conexFlow.getRespuesta().getImporte();
+		DBConsults.insertConexFlow(domain, login, conexFlow, r.getProject(), description);
+		
+		String msg = "";
+		if (!ok){
+			msg = "Error " + conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".";
+		} else {
+			msg = "PREAUTHORIZATION OK";
+	
+			// CANCELAR PREAUTHORIZACION 001
+			Query cancelQuery = ConexFlowUtils.getConexFlowCancelationQuery(connection
+					, conexFlow.getRespuesta().getOperacion(), Double.parseDouble(conexFlow.getRespuesta().getImporte())
+					, Double.parseDouble(conexFlow.getRespuesta().getImporte()) 
+					, conexFlow.getRespuesta().getAutorizacion(), r.getCode()
+					, conexFlow.getRespuesta().getIdOperacion(), conexFlow.getRespuesta().getFecha(), r.getProject());
+			ConexFlowPost.execute(connection,ConexFlowConstant.CANCELATION_OP, cancelQuery);
+		}
+		String projectName = DBConsults.getProjectName(domain, login, r.getProject());
+		View.preauthorized(projectName, r.getProject(), msg, amount);
 	}
 	
 	public static void preauthorizationPenalty(Domain domain,  String login){
@@ -162,17 +191,23 @@ public class Preauthorization {
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);		
 				ConexFlow p = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION);
 
+				String[] checkDescriptions = {
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK)
+				};
+				
 				String[] descriptions = {
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL)
 				};
 				
 				java.util.Date date2 = AonDateUtils.addDays(new java.util.Date(), -7);
-				if((!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)) ||  (p != null && p.getDate().compareTo(date2) <= 1  && 
+				if((!DBConsults.hasConexFlow(d, login, r.getProject(), descriptions)
+						&& DBConsults.hasConexFlow(d, login, r.getProject(), checkDescriptions)) 
+					||  (p != null && p.getDate().compareTo(date2) <= 1  && 
 						Double.parseDouble(p.getRespuesta().getImporte()) < r.getPenaltyAmount())){
 					if(!dryRun){
 						ConexFlowConnection connection = DBConsults.getConection(d);
@@ -238,11 +273,12 @@ public class Preauthorization {
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);		
 				ConexFlow cf = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION);
 				ConexFlow pFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.CONFIRM_PREAUTHORIZATION_FAIL);
-				ConexFlow pcFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL);
+				ConexFlow pc = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK);
+				ConexFlow sc = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_CHECK);
 				ConexFlow sale = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE);
 				ConexFlow sFail = DBConsults.getConexFlowLastStatusX(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_FAIL);
 				java.util.Date date2 = AonDateUtils.addDays(new java.util.Date(), -7);
-				if((cf == null && pFail == null && pcFail == null && sale == null && sFail == null) ||  (cf != null && cf.getDate().compareTo(date2) <= 1  && 
+				if((cf == null && pFail == null && (pc != null  || sc != null) && sale == null && sFail == null) ||  (cf != null && cf.getDate().compareTo(date2) <= 1  && 
 						Double.parseDouble(cf.getRespuesta().getImporte()) < r.getPenaltyAmount())){
 					if(!dryRun){
 						ConexFlowConnection connection = DBConsults.getConection(d);
