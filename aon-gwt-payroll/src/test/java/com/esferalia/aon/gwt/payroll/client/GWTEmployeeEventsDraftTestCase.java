@@ -14,7 +14,7 @@ import org.junit.Before;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.Callback;
+import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject_COPIA.Callback;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -70,7 +70,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				.setSocialSecurity("SOCIAL_SECURITY");
 		//@formatter:on
 
-		EmployeeEventsDraftObject employeeDraftObject = new EmployeeEventsDraftObject(
+		EmployeeEventsDraftObject_COPIA employeeDraftObject = new EmployeeEventsDraftObject_COPIA(
 				employee, employeesServiceAsync, new EventMetaData(
 						"DIAS_TRABAJADOS", DateField.DAY),
 				new AbstractEventsDraftObject.BooleanEventMetaData(

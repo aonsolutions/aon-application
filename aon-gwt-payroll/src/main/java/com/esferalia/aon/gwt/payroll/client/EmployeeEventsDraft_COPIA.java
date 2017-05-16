@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.SaveCallback;
+import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject_COPIA.SaveCallback;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events.Event;
 import com.google.gwt.cell.client.Cell;
@@ -225,7 +225,7 @@ public class EmployeeEventsDraft_COPIA extends AbstractEventsDraft {
 
 	private boolean waitingForEvents;
 
-	private EmployeeEventsDraftObject employeeDraftObject;
+	private EmployeeEventsDraftObject_COPIA employeeDraftObject;
 
 	private Td editingTd;
 	private MultiSelectionModel<Td> selectionModel;
@@ -243,7 +243,7 @@ public class EmployeeEventsDraft_COPIA extends AbstractEventsDraft {
 	// ------------------------------------------
 
 	public void setEventsDraftObject(
-			EmployeeEventsDraftObject employeeDraftObject) {
+			EmployeeEventsDraftObject_COPIA employeeDraftObject) {
 		this.employeeDraftObject = employeeDraftObject;
 		fillDateRangeList();
 		syncWithDateRange();
@@ -288,7 +288,7 @@ public class EmployeeEventsDraft_COPIA extends AbstractEventsDraft {
 		CalendarUtil.addDaysToDate(endDate, -1);
 
 		employeeDraftObject.setPeriod(startDate, endDate,
-				new EmployeeEventsDraftObject.Callback() {
+				new EmployeeEventsDraftObject_COPIA.Callback() {
 
 					@Override
 					public void onSucces() {
@@ -323,7 +323,7 @@ public class EmployeeEventsDraft_COPIA extends AbstractEventsDraft {
 		Date startDate = dateRange.getPrevious(endDate);
 		
 		employeeDraftObject.setPeriod(startDate, endDate,
-				new EmployeeEventsDraftObject.Callback() {
+				new EmployeeEventsDraftObject_COPIA.Callback() {
 
 					@Override
 					public void onSucces() {
@@ -628,7 +628,7 @@ public class EmployeeEventsDraft_COPIA extends AbstractEventsDraft {
 	}
 
 	private void syncWithDateRange() {		
-		syncWithDateRange(new EmployeeEventsDraftObject.Callback() {
+		syncWithDateRange(new EmployeeEventsDraftObject_COPIA.Callback() {
 
 			@Override
 			public void onSucces() {				
@@ -645,7 +645,7 @@ public class EmployeeEventsDraft_COPIA extends AbstractEventsDraft {
 		});
 	}
 
-	private void syncWithDateRange(EmployeeEventsDraftObject.Callback cb) {		
+	private void syncWithDateRange(EmployeeEventsDraftObject_COPIA.Callback cb) {		
 		DateRange dateRange = getDateRange();
 		Date startDate = dateRange.getStart(employeeDraftObject.getStartDate());
 		Date endDate = dateRange.getNext(startDate);
