@@ -134,9 +134,11 @@ public class CommonServlet extends HttpServlet{
 			if("income_detail".equals(s[0])){
 				Integer id =Integer.parseInt(s[1]);
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f2 -> f2.getIdProperty().eq(id));	
-				JSONObject o = ToJSON.dataResponseToJSON(dr);
-				o.put("product", incomeDetail.get().getDescription());
-				array.put(o);
+				if(incomeDetail.isPresent()){
+					JSONObject o = ToJSON.dataResponseToJSON(dr);
+					o.put("product", incomeDetail.get().getDescription());
+					array.put(o);
+				}
 			}
 		});
 	    return array;
