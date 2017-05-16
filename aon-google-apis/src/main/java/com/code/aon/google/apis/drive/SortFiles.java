@@ -5,7 +5,6 @@ import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
@@ -23,7 +22,6 @@ import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DBSync;
-import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -57,22 +55,12 @@ public class SortFiles {
 		folder = drive.files().insert(folder).execute();
 		return folder;
 	}
-
-	 public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
-		try {
-			map =  DBSync.getDomainMap();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		return map;
-	}
 	
 	public static void main(String[] args) throws IOException, GeneralSecurityException {
 		parse(args);
 		
 		if (!domain.equals("")) {
-			Map<String, Integer> domainMap = initializeDomainMap();
+			Map<String, Integer> domainMap = DBSync.getDomainMap();
 			Domain domainAux = AON.getDomain(domain, domainMap.get(domain), getUser().getLogin());
 			DomainGserviceaccount g = DBConsults.getServiceAccount(domainAux, getUser());
 			Drive drive = DriveUtils.serviceInitialize(g);

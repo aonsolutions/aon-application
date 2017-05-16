@@ -3,6 +3,7 @@ package com.code.aon.google.apis.jooq;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,53 +22,62 @@ public class DBSync {
 		}
 	}
 	
-	public static Map<String, String> getDomains() throws AonConnectionException {
-		ConnectionInfo connectionInfo = ConnectionInfo
-				.getDefaultConnectionInfo();
-		return  connectionInfo.getDomains();
-	}
-	
-	public static Map<String, Integer> getDomainMap() throws AonConnectionException {
-		ConnectionInfo connectionInfo = ConnectionInfo
-				.getDefaultConnectionInfo();
-		return  connectionInfo.getDomainMap();
-	}
-	
-	public static List<String> getSchemas() throws AonConnectionException {
-		ConnectionInfo connectionInfo = ConnectionInfo
-				.getDefaultConnectionInfo();
-		return  connectionInfo.getSchemas();
-	}
-	
-	public static List<String> getSchemaDomains(String schema) throws AonConnectionException {
-		ConnectionInfo connectionInfo = ConnectionInfo
-				.getDefaultConnectionInfo();
-		return  connectionInfo.getSchemaDomains(schema);
-	}
-	
-	public static String getSchemaFirstDomain(String schema) throws AonConnectionException {
-		ConnectionInfo connectionInfo = ConnectionInfo
-				.getDefaultConnectionInfo();
-		return  connectionInfo.getSchemaFirstDomain(schema);
-	}
-	
-	public static Map<String, String> initializeDomains(){
+	public static Map<String, String> getDomains(){
 		Map<String, String> map  = new HashMap<String, String>();
 		try {
-			map =  DBSync.getDomains();
+			ConnectionInfo connectionInfo = ConnectionInfo
+					.getDefaultConnectionInfo();
+			map = connectionInfo.getDomains();
 		} catch (AonConnectionException e) {
 			e.printStackTrace();
 		}
 		return map;
 	}
-	
-	public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
+	public static Map<String, Integer> getDomainMap(){
+		Map<String, Integer> domainMap = new HashMap<String, Integer>();
 		try {
-			map =  DBSync.getDomainMap();
+			ConnectionInfo connectionInfo = ConnectionInfo
+					.getDefaultConnectionInfo();
+			domainMap = connectionInfo.getDomainMap();
 		} catch (AonConnectionException e) {
 			e.printStackTrace();
 		}
-		return map;
+		return  domainMap;
+	}
+	
+	public static List<String> getSchemas(){
+		List<String> list = new LinkedList<String>();
+		try {
+			ConnectionInfo connectionInfo = ConnectionInfo
+					.getDefaultConnectionInfo();
+			list = connectionInfo.getSchemas();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public static List<String> getSchemaDomains(String schema){
+		List<String> list = new LinkedList<String>();
+		try {
+			ConnectionInfo connectionInfo = ConnectionInfo
+					.getDefaultConnectionInfo();
+			list = connectionInfo.getSchemaDomains(schema);
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public static String getSchemaFirstDomain(String schema){
+		String firstDomain = "";
+		try {
+			ConnectionInfo connectionInfo = ConnectionInfo
+					.getDefaultConnectionInfo();
+			firstDomain = connectionInfo.getSchemaFirstDomain(schema);
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		}
+		return firstDomain;
 	}
 }

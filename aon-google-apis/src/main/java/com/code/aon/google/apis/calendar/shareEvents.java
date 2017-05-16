@@ -66,10 +66,10 @@ public class shareEvents {
 	
 	public static void main(String[] args) throws NumberFormatException, KeyStoreException, IOException, NamingException, GeneralSecurityException, SQLException, AonConnectionException {
 		parse(args);
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		if( domains[0].equals("all")){
 			// Obtiene todos los dominios de la BD.
-			Map<String, String> domains = DBSync.initializeDomains();
+			Map<String, String> domains = DBSync.getDomains();
 			
 			// Ordena los dominios por orden alfabetico.
 			List<String> list = new ArrayList<String>(domains.keySet());

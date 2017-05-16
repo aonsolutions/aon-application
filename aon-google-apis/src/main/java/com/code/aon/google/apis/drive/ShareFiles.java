@@ -6,7 +6,6 @@ import java.security.KeyStoreException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -87,7 +86,7 @@ public class ShareFiles {
     
     public static void main(String[] args) throws IOException, KeyStoreException, SQLException, GeneralSecurityException, AonConnectionException {
 		parse(args);
-		Map<String, Integer> domainMap = initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		if(emails.length != 0){
 			if( domains[0].equals("all")){
 				// Obtiene todos los dominios de la BD.
@@ -113,17 +112,6 @@ public class ShareFiles {
 		}
 		else View.error4();
     }
-    
-    
-    public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
-		try {
-			map =  DBSync.getDomainMap();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		return map;
-	}
 	
 	public static String types [] = {"all"};
 	private static String domains[] = {"all"};

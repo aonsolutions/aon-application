@@ -87,10 +87,10 @@ public class DeleteEvents {
 	
 	public static void main(String[] args) throws IOException, GeneralSecurityException {
 		parse(args);
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		if( domains[0].equals("all")){
 			// Obtiene todos los dominios de la BD.
-			Map<String, String> domains1=DBSync.initializeDomains();
+			Map<String, String> domains1=DBSync.getDomains();
 			
 			// Ordena los dominios por orden alfabetico.
 			List<String> list = new ArrayList<String>(domains1.keySet());

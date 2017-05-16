@@ -17,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -262,7 +261,7 @@ public class ServiconveniosSynchronize {
 
 	public static void main(String[] args) {
 		parse(args);
-		Map<String, Integer> domainMap = initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		try {
 			ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
 			List<String> schemas;
@@ -287,16 +286,6 @@ public class ServiconveniosSynchronize {
 			e1.printStackTrace();
 		}
 		
-	}
-	
-	public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
-		try {
-			map =  DBSync.getDomainMap();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		return map;
 	}
 	
 	private static String server;

@@ -6,7 +6,6 @@ import java.security.KeyStoreException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -257,7 +256,7 @@ public class SearchFiles {
 	
 	public static void main(String[] args) throws IOException, SQLException, KeyStoreException, GeneralSecurityException, AonConnectionException {
 		parse(args);
-		Map<String, Integer> domainMap = initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		if( domains[0].equals("all")){
 			// Obtiene todos los dominios de la BD.
 			Map<String, String> domains = DBSync.getDomains();
@@ -278,16 +277,6 @@ public class SearchFiles {
 				act(domain);
 			}
 		}
-	}
-	
-	public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
-		try {
-			map =  DBSync.getDomainMap();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		return map;
 	}
 	
 	public static boolean esta(Map<String,String> schemas, String schema) {

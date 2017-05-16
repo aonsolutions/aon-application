@@ -162,7 +162,7 @@ public class DBCalendar {
 	
 	// getCommercialTrackingAll
 	public static Map<Integer,LinkedList<CommercialTracking>> getCommercialTrackingAll(User user){
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		Map<Integer, LinkedList<CommercialTracking>> map = new HashMap<Integer, LinkedList<CommercialTracking>>();
 		for (String domainName : domainMap.keySet()) {
 			LinkedList<CommercialTracking> list = AON.getCommercialTrackingList(domainName, domainMap.get(domainName), user.getLogin(),

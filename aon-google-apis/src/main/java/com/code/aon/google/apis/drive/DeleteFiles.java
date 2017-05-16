@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
@@ -34,16 +33,6 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Property;
 
 public class DeleteFiles {
-	
-	public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
-		try {
-			map =  DBSync.getDomainMap();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		return map;
-	}
 	
 	private static void deleteDriveIds(File f, Domain domain, Integer id){
 		String aonType = null;
@@ -224,7 +213,7 @@ public class DeleteFiles {
 
 	public static void main(String[] args) throws  IOException, GeneralSecurityException, AonConnectionException {
 		parse(args);
-		Map<String, Integer> domainMap = initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		
 		if(id != -1){
 			Map<String, String> domains1=DBSync.getDomains();

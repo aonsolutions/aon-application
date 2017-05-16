@@ -5,7 +5,6 @@ import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -29,19 +28,9 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class UpSize {
 	
-	public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
-		try {
-			map =  DBSync.getDomainMap();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		return map;
-	}
-	
 	public static void main(String[] args) throws AonConnectionException, SQLException  {
 		parse(args);
-		Map<String, Integer> domainMap = initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		if( domains[0].equals("all")){
 			// Obtiene todos los dominios de la BD.
 			Map<String, String> domains = DBSync.getDomains();

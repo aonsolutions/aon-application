@@ -610,8 +610,8 @@ public class CalendarUtils {
 	// CREA CALENDARIOS PARA TODOS LOS DOMINIOS.
 	public static void synchronize() throws IOException, GeneralSecurityException, NamingException{
 		// Obtiene todos los dominios de la BD.
-		Map<String, String> domains = DBSync.initializeDomains();
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, String> domains = DBSync.getDomains();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		User user = new User().setLogin(""); //TODO GET USER
 		
 		// Ordena los dominios por orden alfabetico.
@@ -654,8 +654,8 @@ public class CalendarUtils {
 	
 	// CREA CALENDARIOS PARA TODOS LOS DOMINIOS PADRE.
 	public static void synchronize2(User user) throws IOException, KeyStoreException, GeneralSecurityException, NamingException {
-		Map<String, String> domains= DBSync.initializeDomains();//obtiene todos los dominios de la BD
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, String> domains= DBSync.getDomains();//obtiene todos los dominios de la BD
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 
 		Hashtable<String,String> schemas = new Hashtable<String, String>();
 		

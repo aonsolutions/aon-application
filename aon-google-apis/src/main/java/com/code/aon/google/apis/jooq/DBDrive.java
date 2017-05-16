@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record1;
@@ -31,7 +32,6 @@ import org.jooq.Record6;
 import org.jooq.Result;
 
 import com.code.aon.google.apis.FileInfo;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -53,6 +53,15 @@ public class DBDrive {
 				attachType, true).map(new AttachToFileInfo())
 				.collect(Collectors.toCollection(Vector::new));
 	}	
+	
+	public static Stream<Attach> getAttachStreamLimit(Domain domain, User user, AttachType attachType, Integer page, Integer perPage){
+		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
+				f -> f.getDriveIdProperty().isNull()
+				.and(f.getDataProperty().isNotNull())
+				.and(f.getMimeTypeProperty().isNotNull())
+				.page(page).perPage(perPage),
+				attachType, true);
+	}
 	
 	public static Vector<FileInfo> getRegistryAttachLimit(Domain domain, User user, Vector<RegistryAttachmentType> rats,Integer firstId ){
 		
@@ -132,17 +141,10 @@ public class DBDrive {
 
 		String domainName = "";
 		Integer domainId = 0;
-		Map<String, Integer> domains;
-		try {
-			domains = DBSync.getDomainMap();
-			Vector<String> d = new Vector<String>(domains.keySet());
-			domainName = d.get(0);
-			domainId = domains.get(domainName);
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		
-			
+		Map<String, Integer> domains = DBSync.getDomainMap();
+		Vector<String> d = new Vector<String>(domains.keySet());
+		domainName = d.get(0);
+		domainId = domains.get(domainName);
 		
 		AONContext ctx = null;
 		try {
@@ -219,8 +221,8 @@ public class DBDrive {
 			fileInfo.setTitle(a.getDescription());
 			fileInfo.setMimetype(a.getMimeType().value());
 			fileInfo.setFileId(a.getId());
-			fileInfo.setDomainId(a.getDomain().getId());
-			fileInfo.setDomain(a.getDomain().getName());
+			fileInfo.setDomainId(a.getDomain() != null && a.getDomain().getId() != null ? a.getDomain().getId() : null);
+			fileInfo.setDomain(a.getDomain() != null && a.getDomain().getName() != null ? a.getDomain().getName() : null);
 			return fileInfo;
 		}
 	}

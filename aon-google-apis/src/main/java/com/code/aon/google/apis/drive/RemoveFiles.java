@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -20,8 +18,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import com.code.aon.google.apis.jooq.DBSync;
-import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
@@ -53,16 +49,6 @@ public class RemoveFiles {
 	public static void setPrivateKey() throws IOException{
 		 //PRIVATE_KEY = Files.readAllBytes(Paths.get("novus.p12"));/home/aibanez/Descargas/AON SOLUTIONS-52faf5279077.p12
 		PRIVATE_KEY = new FileInputStream(pkeyPath);
-	}
-	
-	public static Map<String, Integer> initializeDomainMap(){
-		Map<String, Integer> map  = new HashMap<String, Integer>();
-		try {
-			map =  DBSync.getDomainMap();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
-		}
-		return map;
 	}
 		
 	public static Drive oldService() throws KeyStoreException, IOException, GeneralSecurityException{

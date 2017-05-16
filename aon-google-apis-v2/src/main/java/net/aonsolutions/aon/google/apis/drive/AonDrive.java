@@ -159,7 +159,9 @@ public class AonDrive extends DriveUtils{
 					|| attach.getType() == RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()
 				)) 
 			|| (AttachType.PROJECT.equals(attach.getAttachType())
-				&& attach.getType() == ProjectAttachmentType.CONEXFLOW.value());
+				&& (attach.getType() == ProjectAttachmentType.CONEXFLOW.value()
+					|| attach.getType() == ProjectAttachmentType.PAYSLIP.value() 
+				));
 	}
 	
 	public void updateDriveId(Attach attach){

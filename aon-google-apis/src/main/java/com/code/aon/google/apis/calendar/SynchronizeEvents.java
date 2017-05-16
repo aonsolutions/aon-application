@@ -32,7 +32,7 @@ public class SynchronizeEvents {
 	
 	public static void main(String[] args) throws KeyStoreException, IOException, SQLException, AonConnectionException, GeneralSecurityException, NamingException {
 		parse(args);		
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
  		if (domains==null || domains.length==0 || domains[0].equals("TODOS")){
 			CalendarUtils.synchronize2(getUser());
 		}

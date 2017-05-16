@@ -103,9 +103,8 @@ public class DriveUtils implements IBlobManager {
 		PrivateKey serviceAccountPrivateKey = SecurityUtils
 				.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(),
 						keyStream, "notasecret", "privatekey", "notasecret");
-		GoogleCredential credential;
 
-			credential = new GoogleCredential.Builder()
+		GoogleCredential credential = new GoogleCredential.Builder()
 			.setTransport(HTTP_TRANSPORT)
 			.setJsonFactory(JSON_FACTORY)
 			.setServiceAccountId(SERVICE_ACCOUNT_ID)
@@ -1051,11 +1050,13 @@ public class DriveUtils implements IBlobManager {
 					}
 					return true;
 				} else if(type.equals("project")){
-					return file.getType() != ProjectAttachmentType.CONEXFLOW.value();
+					return file.getType() != ProjectAttachmentType.CONEXFLOW.value()
+						|| file.getType() != ProjectAttachmentType.PAYSLIP.value();
 				}
 			}
 		} else if("project".equals(file.getAonType())){
-			return file.getType() != ProjectAttachmentType.CONEXFLOW.value();
+			return file.getType() != ProjectAttachmentType.CONEXFLOW.value()
+				|| file.getType() != ProjectAttachmentType.PAYSLIP.value();
 		} else{
 			return true;
 		}
@@ -1157,7 +1158,6 @@ public class DriveUtils implements IBlobManager {
 				}
 				
 			} else {
-
 				if (fileInfo.getData() == null) {
 					//LOGGER.debug("Skip '{}': No new data.", fileInfo.getTitle());
 					return false;
@@ -1314,8 +1314,8 @@ public class DriveUtils implements IBlobManager {
 	public static void synchronize() throws IOException, KeyStoreException,
 			GeneralSecurityException {
 		// Obtiene todos los dominios de la BD.
-		Map<String, String> domains = DBSync.initializeDomains();
-		Map<String, Integer> domainMap = DBSync.initializeDomainMap();
+		Map<String, String> domains = DBSync.getDomains();
+		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		// Ordena los dominios por orden alfabetico.
 		List<String> list = new ArrayList<String>(domains.keySet());
 		Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));

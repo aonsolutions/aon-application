@@ -2,13 +2,13 @@ package com.code.aon.google.apis.drive;
 
 import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -18,161 +18,74 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DBSync;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
-public class SynchronizeFiles2 {
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(SynchronizeFiles2.class.getName());
+public class SynchronizeFiles {
+
+	private static final Logger LOGGER  = Logger.getLogger(SynchronizeFiles.class.getName());
 
 	static int numero = 0;
 	
 	private static Drive getDriveConnection(String domainName, Integer domainId){
-		DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, "");
+		DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, "rpm");
 		Drive drive = null;
-		if(g.getClientId() == null){
-			LOGGER.info("No service account found ");
-		}else{
-			drive = DriveUtils.serviceInitialize(g);
-			LOGGER.info("Connected to Drive: {}", g.getEmailAddress());
+		if(g.getClientId() == null)
+			LOGGER.log(Level.INFO, "No service account found ");
+		else{
+			drive = AonDrive.getInstace().serviceInitialize(g);
+			LOGGER.log(Level.INFO, "Connected to Drive: " + g.getEmailAddress());
 		}
 		return drive;
 	}
 	
-	private static void synchronizeSF(Domain domain, Drive drive) throws  IOException, GeneralSecurityException{
-		LOGGER.info("domain: {}", domain.getName());
-		HashMap<String, String> map = new HashMap<String, String>();
-		Vector<RegistryAttachmentType> rats = new Vector<RegistryAttachmentType>();
-		for (String s : types) {
-			try {
-				RegistryAttachmentType rat = Enum.valueOf(RegistryAttachmentType.class, s);
-				rats.add(rat);
-				map.put("registry", "registry");
-			} catch (IllegalArgumentException e) {
-				map.put(s, s);
-			}
-		}
+	private static void synchronizeSF(Domain domain, Drive drive) {
+		LOGGER.log(Level.INFO, "domain: "+ domain.getName());
 		
-		if (map.containsKey("registry")) {
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.REGISTRY, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}
-		if (map.containsKey("contract")){
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}
-		if (map.containsKey("item")){
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}
-		if (map.containsKey("invoice")){
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}
-		if (map.containsKey("offer")){
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}	
-		if (map.containsKey("payroll")){
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}
-		if (map.containsKey("project")){
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}
-		if (map.containsKey("sepe")){
-			Integer perPage = 10;
-			Integer page = 1;
-			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
-				if (numero >= num) return;
-				perPage = v.size();
-				page++;
-			}
-		}
-		if(numero == 0){
-			LOGGER.info("No documents/files found for domain: '{}'", domain.getName());
-		}
+		HashMap<String, String> map = new HashMap<String, String>();
+		for (String s : types) map.put(s, s);
+		
+		if (map.containsKey("registry")) sync(drive, domain, AttachType.REGISTRY);
+		if (map.containsKey("contract")) sync(drive, domain, AttachType.CONTRACT);
+		if (map.containsKey("item")) sync(drive, domain, AttachType.ITEM);
+		if (map.containsKey("invoice")) sync(drive, domain, AttachType.INVOICE); 
+		if (map.containsKey("offer")) sync(drive, domain, AttachType.OFFER); 	
+		if (map.containsKey("payroll")) sync(drive, domain, AttachType.PAYROLL);
+		if (map.containsKey("project")) sync(drive, domain, AttachType.PROJECT);
+		if (map.containsKey("sepe")) sync(drive, domain, AttachType.SEPE);
+		
+		if(numero == 0) LOGGER.log(Level.INFO, "No documents/files found for domain: '"+domain.getName()+"'");
 	}
 
-	public static void sync(Drive drive, Domain domain, Vector<FileInfo> vector){
-		vector.stream().forEach(f->{
-			try {
-				if (DriveUtils.sync2(drive, domain, getUser(), f)) {
-					numero++;
-				}
+	public static void sync(Drive drive, Domain domain, AttachType attachType){
+		AonDrive aonDrive = AonDrive.getInstace();
+		Integer perPage = 10;
+		Integer page = 0;
+		while(perPage == 10){
+			Stream<Attach> v = DBDrive.getAttachStreamLimit(domain, getUser(), attachType, page, perPage);
+			perPage = new Long(v.count()).intValue();
+			page++;
+			v.forEach(attach -> {
+				aonDrive.sync(drive, getUser(), attach, dryRun);
+				numero++;
 				if (numero >= num) return;
-			} catch (Exception e) {e.printStackTrace();}
-		});
+			});
+			if (numero >= num) return;
+		}
 	}
 	
-	public static void main(String[] args) throws AonConnectionException, IOException, GeneralSecurityException{
+	public static void main(String[] args){
 		if (!parse(args))
 			return;
 		if(types[0].equals("all")){
@@ -187,26 +100,20 @@ public class SynchronizeFiles2 {
 			t[7] = "sepe";
 			types = t;
 		}
-		
-		DriveUtils.types = types;
-		DriveUtils.domains = domains;
-		DriveUtils.dryRun = dryRun;
-		
+
 		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		if (domains == null || domains.length == 0 || domains[0].equals("ALL")) {
-			for (String schema : DBSync.getSchemas()) {
+			DBSync.getSchemas().stream().forEach(schema ->{
 				String domainName = DBSync.getSchemaFirstDomain(schema);
 				if(domainName != null && !domainName.equals("")){
 					Drive drive = getDriveConnection(domainName, domainMap.get(domainName));
 					if(drive != null){
 						LinkedList<Domain> list = DBConsults.getDriveDomainList(domainName, domainMap.get(domainName));
 						Collections.sort(list, (Domain s1, Domain s2) -> s1.getName().compareTo(s2.getName()));
-						for (Domain domain : list){
-							synchronizeSF(domain, drive);
-						}
+						list.stream().forEach(domain -> synchronizeSF(domain, drive));
 					}
 				}
-			}
+			});
 		} else {
 			for (String domainName : domains) {
 				Drive drive = getDriveConnection(domainName, domainMap.get(domainName));
