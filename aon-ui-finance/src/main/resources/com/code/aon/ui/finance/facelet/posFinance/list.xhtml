@@ -156,6 +156,8 @@
 										actionListener="#{posFinance.onLoadReservation}"
 										reRender="aonContent">
 									</aon:commandLink>
+									<aon:outputText value="(#{posFinance.reservationCode})" 
+										rendered="#{to.invoice.project.id != null and to.invoice.project.reservation}" />
 								</aon:column>
 							</aon:if>
 	

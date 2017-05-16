@@ -557,9 +557,9 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		List<?> resultList = reservationGuestBean.getList(new ProjectionList(prjName, prjSurname, prjSurname2), criteria);
 		if (resultList.size() > 0 && resultList.get(0) != null) {
 			Object[] result = (Object[])resultList.get(0);
-	    	String guestName = (result[0] == null) ? "" : result[0].toString() + " ";
-	    	guestName += (result[1] == null) ? "" : result[1].toString() + " ";
-	    	guestName += (result[2] == null) ? "" : result[2].toString();
+	    	String guestName = (result[0] == null || StringUtils.isBlank(result[0].toString())) ? "" : result[0].toString().trim() + " ";
+	    	guestName += (result[1] == null || StringUtils.isBlank(result[1].toString())) ? "" : result[1].toString().trim() + " ";
+	    	guestName += (result[2] == null || StringUtils.isBlank(result[2].toString())) ? "" : result[2].toString().trim();
 			return guestName;
 		}
 		return null;

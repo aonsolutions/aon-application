@@ -29,11 +29,15 @@ import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.finance.event.PosFinanceSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class PosFinanceController extends FinanceListController implements IFinanceConstants {
 	
@@ -158,6 +162,23 @@ public class PosFinanceController extends FinanceListController implements IFina
 		}
 
 		onLoadFinanceBatch(event);
+	}
+
+	public String getReservationCode() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			Finance finance = (Finance)getModel().getRowData();
+			if (finance.getInvoice() != null && finance.getInvoice().getProject() != null && finance.getInvoice().getProject().getId() != null) {
+				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), finance.getInvoice().getProject().getId());
+				Projection prjCode = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE));
+				List<?> resultList = reservationBean.getList(new ProjectionList(prjCode), criteria);
+				if (resultList.size() > 0 && resultList.get(0) != null) {
+					return (String)resultList.get(0);
+				}
+			}
+		}
+		return null;
 	}
 
 	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
