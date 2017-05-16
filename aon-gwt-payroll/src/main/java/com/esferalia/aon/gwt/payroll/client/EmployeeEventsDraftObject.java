@@ -1,394 +1,253 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
-import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.gwt.payroll.shared.Events;
-import com.esferalia.aon.gwt.payroll.shared.Events.Event;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EmployeeEventsDraftObject extends AbstractEventsDraftObject {
+public class EmployeeEventsDraftObject {
 	
-	private static final int ALL_EMPLOYE_ID = -1;
-
-	static interface Callback {
-
-		void onSucces();
-
-		void onFailure(Throwable throwable);
-
-	}
-
-	static interface SaveCallback {
-
-		void onSaveSucces();
-
-		void onSaveFailure(Throwable throwable);
-
-	}
-
-	static interface GetCallback {
-
-		void onEventsFailure(Throwable throwable);
-
-		void onEventsSucces(List<Employee> employees);
-
-	}
-
-	static interface CopyCallback {
-
-		void onCopySucces();
-
-		void onCopyFailure(Throwable throwable);
-
-	}
-
-	static interface Listener {
-		void onEventAdded(Event event);
-	}
-
-	static class EmployeeDraftEvents {
-
-		Map<Integer, Map<String, List<Event>>> eventsMap = new HashMap<Integer, Map<String, List<Event>>>();
-
-		public EmployeeDraftEvents() {
-			add(ALL_EMPLOYE_ID);
-		}
-
-		public Map<String, List<Event>> add(Integer id) {
-			Map<String, List<Event>> employeeEventsMap = eventsMap.get(id);
-			if (employeeEventsMap == null) {
-				eventsMap.put(id,
-						employeeEventsMap = new HashMap<String, List<Event>>());
-			}
-			return employeeEventsMap;
-		}
-
-		public void addAll(List<Employee> employees) {
-			for (Employee employee : employees) {
-				Map<String, List<Event>> employeeEventsMap = add(employee
-						.getId());
-				copyAllEmployeeEventsMap(employeeEventsMap);
-			}
-
-		}
-
-		public void copyAllEmployeeEventsMap(
-				Map<String, List<Event>> employeeEventsMap) {
-			Map<String, List<Event>> allEventsMap = eventsMap
-					.get(ALL_EMPLOYE_ID);
-			for (Entry<String, List<Event>> entry : allEventsMap.entrySet()) {
-				List<Event> events = employeeEventsMap.get(entry.getKey());
-				if (events == null) {
-					employeeEventsMap.put(entry.getKey(),
-							events = new LinkedList<Event>());
-				}
-				events.addAll(0, entry.getValue());
-			}
-		}
-
-		public void addEvent(Event event) {
-			for (Integer id : eventsMap.keySet())
-				addEvent(id, event);
-		}
-
-		public void addEvent(Integer id, Event event) {
-			Map<String, List<Event>> employeeEventMap = eventsMap.get(id);
-			List<Event> eventsList = employeeEventMap.get(event.getName());
-			if (eventsList == null) {
-				eventsList = new LinkedList<Event>();
-				employeeEventMap.put(event.getName(), eventsList);
-			}
-			eventsList.add(0, event); // at the front, first of all others...
-		}
-
-		public void setEvents(Integer id, String name, List<Event> events) {
-			Map<String, List<Event>> employeeEventMap = eventsMap.get(id);
-			if (employeeEventMap == null) {
-				eventsMap.put(id,
-						employeeEventMap = new HashMap<String, List<Event>>());
-			}
-			if (events == null || events.isEmpty())
-				return;
-
-			List<Event> eventsList = employeeEventMap.get(name);
-			if (eventsList == null || eventsList.isEmpty()) {
-				employeeEventMap.put(name, events);
-			} else {
-				eventsList.addAll(0, events);
-			}
-		}
-
-		public Event getEvent(int id, String name, Date day) {
-			Map<String, List<Event>> employeeEventMap = eventsMap.get(id);
-			if (employeeEventMap == null || employeeEventMap.isEmpty())
-				return null;
-
-			List<Event> eventsList = employeeEventMap.get(name);
-			if (eventsList == null || eventsList.isEmpty())
-				return null;
-
-			for (Event event : eventsList) {
-				if (event.isAt(day)) {
-					return event;
-				}
-			}
-
-			return null;
-		}
-
-		public List<Event> getFinalEvents(int id, String name, Date startDate,
-				Date endDate) {
-			Map<String, List<Event>> eventMap = eventsMap.get(id);
-			if (eventMap == null || eventMap.isEmpty())
-				return Collections.<Event> emptyList();
-
-			List<Event> eventsRawList = eventMap.get(name);
-			if (eventsRawList == null || eventsRawList.isEmpty())
-				return Collections.<Event> emptyList();
-
-			List<Event> eventsList = new LinkedList<Event>();
-
-			for (Event event : eventsRawList) {
-				if (event.isBetween(startDate, endDate))
-					eventsList.addAll(Events.diff(eventsList, event));
-			}
-
-			return eventsList;
-		}
-
-		public Event getEvent(int id, String name, Date start, Date end) {
-			Map<String, List<Event>> employeeEventMap = eventsMap.get(id);
-			if (employeeEventMap == null || employeeEventMap.isEmpty())
-				return null;
-
-			List<Event> eventsList = employeeEventMap.get(name);
-			if (eventsList == null || eventsList.isEmpty())
-				return null;
-
-			for (Event event : eventsList) {
-
-				if (event.isAt(start)) {
-
-					if (event.isAt(end))
-						return event;
-
-					Event nextEvent = getEvent(id, name,
-							DateUtils.getNextDay(event.getEndDate()), end);
-
-					if (nextEvent == null)
-						return null;
-
-					if (StringUtils.equals(event.getValue(),
-							nextEvent.getValue()))
-						return Event.clone(event, event.getStartDate(),
-								nextEvent.getEndDate());
-					else
-						return null;
-				}
-			}
-
-			return null;
-		}
-	}
-
-	private Date endDate;
-	private Date startDate;
-	private Employee employee;
-
-	private Events events;
-	private EmployeeDraftEvents draftEvents;
-
-	private List<Listener> listeners;
-
-	private EmployeesServiceAsync employeesServiceAsync;
-	
-	private Map<String, EventMetaData> eventsMetaDataMap;
-	private Map<String, EventMetaData> userEventsMetaDataMap;
-
-	public EmployeeEventsDraftObject(Employee employee,
-			EmployeesServiceAsync employeesServiceAsync,
-			EventMetaData... eventsMetaData) {
-		this.events = new Events();
-		this.draftEvents = new EmployeeDraftEvents();
-		this.employee = employee;
-		this.employeesServiceAsync = employeesServiceAsync;
+	public interface EVENTimedVariable<V> {
 		
-		this.userEventsMetaDataMap = new HashMap<String, EventMetaData>();
-		for (EventMetaData eventMetaData : eventsMetaData)			
-			this.userEventsMetaDataMap.put(eventMetaData.getName(), eventMetaData);		
-	}
+		public Date getStartDate();
+		public Date getEndDate();
+		public V getValue();
 
-	public Date getStartDate() {
-		return startDate != null ? startDate : DateUtils.getFirstDayOfMonth(new Date());
-	}
-
-	public Date getEndDate() {
-		return endDate != null ? endDate : DateUtils.getLastDayOfMonth(new Date());
-	}
-
-	public void setPeriod(Date startDate, Date endDate, Callback cb) {
-		this.events.clear();
-		this.eventsMetaDataMap = null;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		fillEventsMetaData(cb);	
-	}
-
-	public void addListener(Listener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeListener(Listener listener) {
-		listeners.remove(listener);
-	}
-
-	public void save(String event, final SaveCallback callback) {
-		final Events dirtyEvents = getEvents(event);
-		employeesServiceAsync.saveEvents(dirtyEvents, startDate, endDate,
-				new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onSaveFailure(caught);
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						callback.onSaveSucces();
-					}
-				});
 	}
 	
-	public void getEmployeeEvents(final int offset, final int limit, final GetCallback getCallback) {
+	public class EmployeeEventsVariable implements EVENTimedVariable<Double>{
+
+		private Date startDate;
+		private Date endDate;
+		private Double value;
 		
-	}
-
-	// -------------------------------------------------------------------------
-	//
-	// -------------------------------------------------------------------------
-
-	public List<Employee> getEmployees() {
-		return events.getEmployees();
-	}
-
-	public int getEmployeeCount() {
-		return events.getEmployees().size();
-	}
-
-	public Set<String> getEventsNames() {		
-		return eventsMetaDataMap.keySet();
-	}
-
-	public Cell<Event> getEventEditCell(String name) {		
-		return eventsMetaDataMap.get(name).getEditCell();
-	}
-
-	public Cell<Event> getEventDisplayCell(String name) {
-		return eventsMetaDataMap.get(name).getDisplayCell();
-	}
-
-	public String getEventLabel(String name) {
-		return eventsMetaDataMap.get(name).getLabel();
-	}
-
-	public String getEventDescription(String name) {
-		return eventsMetaDataMap.get(name).getDescription();
-	}
-
-	public Event getEvent(Employee employee, String name, Date day) {
-		Event event = null;
-		// event = draftEvents.getEvent(ALL_EMPLOYE_ID, name, day);
-		// if (event != null)
-		// return event;
-		event = draftEvents.getEvent(employee.getId(), name, day);
-		if (event != null)
-			return event;
-		return events.getEvent(employee.getId(), name, day);
-	}
-
-	public Event getEvent(Employee employee, String name, Date start, Date end) {
-		Event event = null;
-		event = draftEvents.getEvent(employee.getId(), name, start, end);
-		if (event != null)
-			return event;
-		return events.getEvent(employee.getId(), name, start, end);
-	}
-	
-	public boolean employeeEventAccept(String name, DateField dateField) {
-		return eventsMetaDataMap.get(name).accept(dateField);
-	}
-
-	// -------------------------------------------------------------------------
-	// Draft related
-
-	public void addDraftEvent(Event event) {
-		draftEvents.addEvent(event);
-	}
-
-	public void addDraftEvent(Employee employee, Event event) {
-		draftEvents.addEvent(employee.getId(), event);
-	}
-
-	// -------------------------------------------------------------------------
-	//
-	// -------------------------------------------------------------------------
-
-	private void fillEventsMetaData (final Callback cb) {
+		public EmployeeEventsVariable(Date startDate, Date endDate, Double value) {
+			this.startDate = startDate;
+			this.endDate = endDate;
+			this.value = value;
+		}
 		
-		if (eventsMetaDataMap == null)
-			eventsMetaDataMap = new HashMap<String, EventMetaData>(userEventsMetaDataMap);		
-
-			cb.onSucces();
-	}
-	
-	private Events getEvents(String name) {
-		Events oneEvents = new Events();
-		
-
-		for (Integer employeId : events.getEmployeeIds()) {
-			Map<String, List<Event>> eventsMap = new HashMap<String, List<Event>>();
-			eventsMap.put(name, getEvents(employeId, name));
-			oneEvents.setEvents(employeId, eventsMap);
+		@Override
+		public Date getStartDate() {
+			return this.startDate;
 		}
 
-		List<Event> all = draftEvents.getFinalEvents(ALL_EMPLOYE_ID, name,
-				startDate, endDate);
-		if (!all.isEmpty()) {
-			Map<String, List<Event>> eventsMap = new HashMap<String, List<Event>>();
-			eventsMap.put(name, all);
-			oneEvents.setEvents(-1, eventsMap);
+		@Override
+		public Date getEndDate() {
+			return this.endDate;
 		}
 
-		return oneEvents;
-	}
-
-	private List<Event> getEvents(int id, String name) {
-		List<Event> dbList = events.getFinalEvents(id, name);
-		List<Event> draftList = draftEvents.getFinalEvents(id, name, startDate,
-				endDate);
-		List<Event> newList = Events.diff(draftList, dbList);
-		newList.addAll(draftList);
-
-		return newList;
+		@Override
+		public Double getValue() {
+			return this.value;
+		}
+		
 	}
 	
-	private void getEventsImp(int offset, int limit, final GetCallback getCallback) {
+	// --------------------------------------------- INTERFACE REDO/UNDO -----------------------------------------------
+	
+	private class CompositeUndoable<T extends Undoable > implements Undoable {
+
+		private Collection<T> undos;
+
+		public CompositeUndoable(Collection<T> undos) {
+			this.undos = undos;
+		}
+
+		@Override
+		public void redo() {
+			for (T undo : undos)
+				undo.redo();
+		}
+
+		@Override
+		public void undo() {
+			for (T undo : undos){
+				undo.undo();
+			}
+		}
+
+	}
 		
-		String names[] = eventsMetaDataMap.keySet().toArray(new String[eventsMetaDataMap.size()]);
+	class SetVariableEdit implements Undoable {
+
+		private EmployeeEventsVariable oldEmployeeEventsVariable;
+		private EmployeeEventsVariable newEmployeeEventsVariable;
+		private String variable;
 		
-	//	employeesServiceAsync.getEvents(workplaceId, startDate, endDate, offset, limit, names, callback);
+		public SetVariableEdit(EmployeeEventsVariable oldEmployeeEventsVariable, EmployeeEventsVariable newEmployeeEventsVariable, 
+							String variable) {
+			this.oldEmployeeEventsVariable = oldEmployeeEventsVariable;
+			this.newEmployeeEventsVariable = newEmployeeEventsVariable;
+			this.variable = variable;
+		}
+		
+		@Override
+		public void undo() {
+			if (oldEmployeeEventsVariable == null)
+				draftMapEventsVar.get(this.variable).remove(oldEmployeeEventsVariable);
+			else{
+				ArrayList<EmployeeEventsVariable> list = new ArrayList<EmployeeEventsVariable>();
+				list.add(this.oldEmployeeEventsVariable);
+				draftMapEventsVar.put(this.variable, list);
+			}
+		}
+		
+		@Override
+		public void redo() {
+			draftMapEventsVar.get(this.variable).add(this.newEmployeeEventsVariable);
+		}
+		
+	}
+		
+	
+	/**
+	 * DECLARACION DE VARIABLES Y CONSTRUCTOR
+	 */
+	
+	private Map<String, ArrayList<EmployeeEventsVariable>> mapEventsVar;
+	private Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar;
+	private Integer idEmployee;
+	
+	public EmployeeEventsDraftObject(Integer idEmployee, EmployeesServiceAsync employeesService) {
+		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
+		crearMapaEmployeeEvents();
+		this.draftMapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
+		this.idEmployee = idEmployee;
+	}
+
+	/**
+	 * GETTERS / SETTERS
+	 */
+	
+	public Map<String, ArrayList<EmployeeEventsVariable>> getMapEventsVar() {
+		return mapEventsVar;
+	}
+
+	public void setMapEventsVar(Map<String, ArrayList<EmployeeEventsVariable>> mapEventsVar) {
+		this.mapEventsVar = mapEventsVar;
+	}
+
+	public Map<String, ArrayList<EmployeeEventsVariable>> getDraftMapEventsVar() {
+		return draftMapEventsVar;
+	}
+
+	public void setDraftMapEventsVar(Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar) {
+		this.draftMapEventsVar = draftMapEventsVar;
+	}
+
+	public Integer getIdEmployee() {
+		return idEmployee;
+	}
+
+	/**
+	 * METODO GETTERS Y SETTERS AUXILIARES
+	 * @return 
+	 */
+	
+	public ArrayList<EmployeeEventsVariable> getListEmployeeEventsVaribales (String varName){
+		if (null != draftMapEventsVar.get(varName))
+			return draftMapEventsVar.get(varName);
+		else
+			return mapEventsVar.getOrDefault(varName, null);
+	}
+	
+	/**
+	 * METODOS PARA BORRAR
+	 */
+	
+	public void crearMapaEmployeeEvents(){
+		ArrayList<EmployeeEventsVariable> dtList = new ArrayList<EmployeeEventsVariable>();
+		rellenarLista(dtList);
+		mapEventsVar.put("DIAS_TRABAJADOS", dtList);
+		
+		ArrayList<EmployeeEventsVariable> deList = new ArrayList<EmployeeEventsVariable>();
+		rellenarLista(deList);
+		mapEventsVar.put("DIAS_EFECTIVOS", deList);
+		
+		ArrayList<EmployeeEventsVariable> daList = new ArrayList<EmployeeEventsVariable>();
+		rellenarListaCaso1(daList);
+		mapEventsVar.put("DIAS_AUSENCIA", daList);
+		
+		ArrayList<EmployeeEventsVariable> htList = new ArrayList<EmployeeEventsVariable>();
+		rellenarListaCaso2(htList);
+		sortListByStartDate(htList);
+		mapEventsVar.put("HORAS_TRABAJADAS", htList);
+		
+		ArrayList<EmployeeEventsVariable> dmList = new ArrayList<EmployeeEventsVariable>();
+		rellenarListaCaso3(dmList);
+		sortListByStartDate(dmList);
+		mapEventsVar.put("DIAS_MANUTENCION", dmList);
+		                  
+	}
+
+	private void rellenarLista(ArrayList<EmployeeEventsVariable> list) {
+		for (int i = 0; i<12; i++){
+			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
+			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
+			Double value = i*1.00;
+			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
+			list.add(info);
+		}
+	}
+	
+	private void rellenarListaCaso1(ArrayList<EmployeeEventsVariable> list) {
+		for (int i = 0; i<12; i++){
+			if(i== 0 || i == 5){
+				list.add(null);
+				continue;
+			}
+			
+			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
+			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
+			Double value = i*1.00;
+			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
+			list.add(info);
+		}
+	}
+	
+	private void rellenarListaCaso2(ArrayList<EmployeeEventsVariable> list) {
+		for (int i = 11; i>=0; i--){
+			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
+			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
+			Double value = i*1.00;
+			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
+			list.add(info);
+		}	
+	}
+	
+	private void rellenarListaCaso3(ArrayList<EmployeeEventsVariable> list) {
+		for (int i = 11; i>=0; i--){
+			if(i== 1 || i == 6){
+				list.add(null);
+				continue;	
+			}
+			
+			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
+			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
+			Double value = i*1.00;
+			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
+			list.add(info);
+		}	
+		
+	}
+	
+	private void sortListByStartDate(ArrayList<EmployeeEventsVariable> list){
+		Collections.sort(list, new Comparator<EmployeeEventsVariable>(){
+			public int compare(EmployeeEventsVariable variable1, EmployeeEventsVariable variable2){
+				if (variable1.getStartDate() == null || variable2.getStartDate() == null)
+			        return 0;
+			     
+				return variable1.getStartDate().compareTo(variable2.getStartDate());
+			}
+		});
 	}
 
 }
+

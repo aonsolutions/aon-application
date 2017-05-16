@@ -262,6 +262,7 @@ public class SalaryDraftObject implements IContextProvider {
 	private SalaryDraft salaryDraft;
 	private UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData;
+	private EmployeeEventsDraftObject employeeEventsDraftObject;
 	private EmployeesServiceAsync employeesServiceAsync;
 
 	public SalaryDraftObject(SalaryDraft salaryDraft, ITDataObject dataObject,
@@ -1131,6 +1132,14 @@ public class SalaryDraftObject implements IContextProvider {
 	
 	public EmployeeCalendarDraftObjectData getEmployeeCalendarDraftObjectData() {
 		return employeeCalendarDraftObjectData;
+	}
+	
+	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraftObject) {
+		this.employeeEventsDraftObject = employeeEventsDraftObject;
+	}
+	
+	public EmployeeEventsDraftObject getEmployeeEventsDraftObjecta() {
+		return employeeEventsDraftObject;
 	}
 
 }

@@ -1814,7 +1814,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@Override
 	public void onEmployeeEventsDraftSelected(EmployeeEventsDraftObject employeeEventsDraft) {
 		employeeDetail.setWidget(getEmployeeEventsDraft());
-		//getEmployeeEventsDraft().setEventsDraftObject(employeeEventsDraft);
+		getEmployeeEventsDraft().setEmployeeEventsDraftObject(employeeEventsDraft);
 	}
 
 	@Override

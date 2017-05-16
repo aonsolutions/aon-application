@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+
+import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -9,6 +12,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -128,6 +132,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	Grid eventsGrid;
 	
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
+	private EmployeeEventsDraftObject employeeEventsDraft;
 	
 	public EmployeeEventsDraft() {
 		//Inicializamos la vista del gestor de incidencias
@@ -146,8 +151,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}
 		});
 		
-		//Pintar la tabla
-		fillCellsEvents();
 	}
 
 	/**
@@ -239,16 +242,64 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	 * METEDOS AUXILIARES
 	 */
 	
+	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraft) {
+		
+		this.employeeEventsDraft = employeeEventsDraft;
+		
+		Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
+		
+		//Pintar la tabla
+		fillCellsEvents();
+		
+	}
+	
 	private void fillCellsEvents() {
-		for (int row = 1; row < 17; row ++)
+		for (int row = 1; row < 17; row ++){
+			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+			ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
+			
 			for (int col = 1; col < 13; col ++){
+			
 				TextBox eventValue = new TextBox();
 				eventValue.setStyleName(style.cellFormat());
 				if (row % 2 == 1)
 					eventValue.setStyleName(style.cellOddFormat());
-				eventValue.setValue(row*col*1.00+"");
+				
+				if(null == varList){
+					eventValue.setValue("-");
+					eventsGrid.setWidget(row, col, eventValue);
+					continue;
+				}
+				
+				EmployeeEventsVariable varMonth = varList.get(col-1);
+				
+				if(null == varMonth){
+					eventValue.setValue("-");
+					eventsGrid.setWidget(row, col, eventValue);
+					continue;
+				}
+				
+				int month = varMonth.getStartDate().getMonth();				
+				if (month == col-1){
+					eventValue.setValue(varList.get(col-1).getValue().toString());
+				}else{
+					eventValue.setValue("-");
+				}
+				
 				eventsGrid.setWidget(row, col, eventValue);
 			}	
+		}
+		
+
+//		for (int row = 1; row < 17; row ++)
+//			for (int col = 1; col < 13; col ++){
+//				TextBox eventValue = new TextBox();
+//				eventValue.setStyleName(style.cellFormat());
+//				if (row % 2 == 1)
+//					eventValue.setStyleName(style.cellOddFormat());
+//				eventValue.setValue(row*col*1.00+"");
+//				eventsGrid.setWidget(row, col, eventValue);
+//			}	
 	}
 	
 	private void fillShowingVarList(Boolean[] showingVar) {
@@ -350,4 +401,5 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		    menu.show();
 		}
 	}
+
 }
