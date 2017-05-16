@@ -207,12 +207,14 @@ public class printQuality {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		String date = "-";
 		String hour = "-";
-		try {
-			Date deliveryDate = dateTimeFormat.parse(ware.get("transport_delivery_date"));
-			date = dateFormat.format(deliveryDate);
-			hour = timeFormat.format(deliveryDate);
-		} catch (ParseException e) {
-			e.printStackTrace();
+		if(!"-".equals(ware.get("transport_delivery_date"))){
+			try {
+				Date deliveryDate = dateTimeFormat.parse(ware.get("transport_delivery_date"));
+				date = dateFormat.format(deliveryDate);
+				hour = timeFormat.format(deliveryDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		PdfPTable header3 = new PdfPTable(2);
