@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -18,23 +20,28 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Record;
 import org.jooq.Record3;
 import org.jooq.Result;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
 
 public class Main {
 	
 	private static AonDump aonDump;
 	
+	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, NoSuchFieldException,
 			SecurityException, IOException {
-
-		/**
-		 * CONTROL DE ERRORES DE PARAMETROS DE ENTRADA
-		 */
+		
 		Option hostNameOpt = OptionBuilder
-				.withArgName("name")
 				.hasArg()
+				.withArgName("name")
 				.isRequired(true)
 				.withLongOpt("host")
 				.withDescription("Host name which we want to connect to.")
@@ -72,23 +79,25 @@ public class Main {
 				.withDescription("Password for connecting to server.")
 				.create();
 
-		Option nameDomainOpt = OptionBuilder
-				.withArgName("name")
+		Option domainOpt = OptionBuilder
 				.hasArg()
-				.withLongOpt("domainDump")
-				.withDescription("Domains' name for dump.")
+				.isRequired(true)
+				.withArgName("name")
+				.withLongOpt("domain")
+				.withDescription("Domain's name for dump.")
 				.create();
 
-		Option newNameDomainOpt = OptionBuilder
-				.withArgName("name")
+		Option nameOpt = OptionBuilder
 				.hasArg()
-				.withLongOpt("newNameDomain")
+				.isRequired(true)
+				.withArgName("name")
+				.withLongOpt("name")
 				.withDescription("Select how to rename domain. For example: \"Copy_of_{domain}\".")
 				.create();
 
 		Option renameNIF = OptionBuilder
-				.withArgName("name")
 				.hasArg()
+				.withArgName("name")
 				.withLongOpt("nif")
 				.withDescription("Select how to raname nif. For example: \"Copy_of_{nif}\".")
 				.create();
@@ -141,6 +150,18 @@ public class Main {
 				.withDescription("Download domain Stand Alone version. Default option is Sibling")
 				.create();
 		
+		Option recursiveOpt = OptionBuilder
+				.withLongOpt("recursive")
+				.withDescription("Dump domains recursively.")
+				.create('r');
+
+		Option includeOpt = OptionBuilder
+				.hasArg()
+				.withArgName("name")
+				.withLongOpt("include")
+				.withDescription("Include only following domain.")
+				.create('i');
+
 		Option listDomains = OptionBuilder
 				.withLongOpt("list")
 				.withDescription("List all the domains you have access.")
@@ -151,11 +172,34 @@ public class Main {
 				.withDescription("Shows help for entrys arguments.")
 				.create();
 
-		Options options = new Options().addOption(hostNameOpt).addOption(portOpt).addOption(dataBaseOpt)
-				.addOption(userOpt).addOption(passwordOpt).addOption(nameDomainOpt).addOption(newNameDomainOpt)
-				.addOption(renameNIF).addOption(executeOpt).addOption(zipOpt).addOption(sqlOpt)
-				.addOption(eraseUsers).addOption(renameLogin).addOption(renamePass).addOption(commentsOpt)
-				.addOption(standAloneOpt).addOption(listDomains).addOption(helpOpt);
+		Option verboseOpt = OptionBuilder
+				.withLongOpt("verbose")
+				.withDescription("Print info about the various stages.")
+				.create('v');
+		
+		//@formatter:off
+		Options options = new Options()
+				.addOption(hostNameOpt)
+				.addOption(portOpt)
+				.addOption(dataBaseOpt)
+				.addOption(userOpt)
+				.addOption(passwordOpt)
+				.addOption(domainOpt)
+				.addOption(nameOpt)
+				.addOption(renameNIF)
+				.addOption(executeOpt)
+				.addOption(zipOpt)
+				.addOption(sqlOpt)
+				.addOption(eraseUsers)
+				.addOption(renameLogin)
+				.addOption(renamePass)
+				.addOption(commentsOpt)
+				.addOption(standAloneOpt)
+				.addOption(listDomains)
+				.addOption(recursiveOpt)
+				.addOption(includeOpt)
+				.addOption(helpOpt);
+		//@formatter:on
 
 		// Parser create
 		CommandLineParser parser = new GnuParser();
@@ -182,8 +226,8 @@ public class Main {
 
 			String url = "jdbc:mysql://" + hostName + ":" + port + "/" + database;
 
-			String domain = cmd.getOptionValue(nameDomainOpt.getLongOpt());
-			String newDomain = cmd.getOptionValue(newNameDomainOpt.getLongOpt());
+			String domain = cmd.getOptionValue(domainOpt.getLongOpt());
+			String name = cmd.getOptionValue(nameOpt.getLongOpt());
 
 			String nif = cmd.getOptionValue(renameNIF.getLongOpt());
 
@@ -201,9 +245,9 @@ public class Main {
 			// Create an AonDump object in order to start our library
 			aonDump = new AonDump(url, user, password);
 			
-			PrintStream out = null;
-			ZipOutputStream zos = null;
 			Integer idDomain = 0;
+			ZipOutputStream zos = null;
+			PrintStream out = System.out;
 			
 			if (cmd.hasOption(listDomains.getLongOpt())){
 				listDomains(aonDump.dslContext, System.err);
@@ -247,8 +291,10 @@ public class Main {
 				cb = new DomainSiblingCallBackDump(cb);
 			
 			cb = new IndexUniqueCallBackDump(cb);
-			cb = new ModifyDataCallBack(cb, newDomain, "domain", "name");
-			cb = new ConsoleInformationCallBack(cb, System.out, aonDump, 0, 0); //MIRAR ESTO
+			cb = new ModifyDataCallBack(cb, name, "domain", "name");
+			
+			if (cmd.hasOption(verboseOpt.getLongOpt())) //TODO:
+				cb = new ConsoleInformationCallBack(cb, System.out, aonDump, 0, 0); 
 			
 			if (cmd.hasOption(renameNIF.getLongOpt()))
 				cb = new ModifyDataCallBack(cb, nif, "registry", "document");
@@ -261,10 +307,40 @@ public class Main {
 			if (cmd.hasOption(eraseUsers.getLongOpt()))
 				cb = new EraseUser(cb, aonDump.dslContext, pass, login);
 
-			System.out.println("DUMP INICIADO:");
-			System.out.println();
+			IdsMap parentIdsMap = aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, hostName, database, domain);
 			
-			aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, hostName, database, domain);
+			cb = new AbstractChaimCallbackDump(cb) {
+				@Override
+				public void header(Schema schema, String hostName, Map<Table<?>, Integer> domainTables,
+						DSLContext dslContext, int id, IdsMap idsMap) {
+					super.header(schema, hostName, domainTables, dslContext, id, idsMap);
+				}
+				
+				@Override
+				public Field<Integer> onErrFk(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump,
+						IdsMap idsMap, CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
+					
+					Table<?> tableReference = fk.getKey().getTable();
+					String fieldNameId = fk.getKey().getFields().get(0).getName();
+					String tableReferenceName = fieldNameId.equals("id") ? tableReference.getName() : fieldNameId;
+					try {
+						Field<Integer> parentOrder = parentIdsMap.getOrder(tableReferenceName,
+								((Integer) r.getValue(fk.getFields().get(0), Integer.class)));
+						if ( parentOrder != null )
+							return parentOrder;
+					} catch ( Exception e ) {
+						
+					}
+					
+					return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
+				}
+			};
+			
+			if ( cmd.hasOption(recursiveOpt.getLongOpt())) {
+				for( String d : cmd.getOptionValues(includeOpt.getLongOpt()))
+						aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, hostName, database, d + "-" + domain);
+			}
+			
 			
 			// Close our file
 			if (zos != null)
@@ -272,8 +348,6 @@ public class Main {
 			
 			out.close();
 			
-			System.out.println();
-			System.out.println("FIN DEL PROGRAMA.");
 
 		} catch (ParseException e) {
 
@@ -291,6 +365,19 @@ public class Main {
 				.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION).from(DOMAIN).fetch();
 		
 		domainsResult.forEach(d -> err.println(d.getValue(DOMAIN.NAME)));
+		
+	}
+
+	private static String[] getChildDomains(DSLContext dslContext, String parent) {
+
+		return  
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.where(DOMAIN.PARENT.in(DSL.select(DOMAIN.ID).from(DOMAIN).where(DOMAIN.NAME.eq(parent))))
+		.fetch(DOMAIN.NAME)
+		.toArray(new String[]{});
+		
 		
 	}
 }

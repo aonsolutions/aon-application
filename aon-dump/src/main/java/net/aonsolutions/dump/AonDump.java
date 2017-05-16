@@ -32,23 +32,28 @@ import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
+import org.jooq.conf.RenderKeywordStyle;
+import org.jooq.conf.RenderMapping;
+import org.jooq.conf.RenderNameStyle;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Scope;
 
 public class AonDump {
 
-	/**
-	 * Variables globales
-	 */
-	public Connection connection;
-	private Settings settings;
-	public DSLContext dslContext;
 	public static PrintStream out;
-	public static Map<Table<?>, Field<byte[]>> tablasAttach;
 	public static FKSpecificMap fkSpecificMap;
+	public static Map<Table<?>, Field<byte[]>> tablasAttach;
+
+	private Settings settings;
+	public Connection connection;
+	public DSLContext dslContext;
 	public Stack<Integer> stackContId;
+	
+	private List<Table<?>> tables ;
+
 
  	public AonDump(String url, String usr, String password) throws SQLException {
 		// Create a connection to our DataBase
@@ -57,6 +62,11 @@ public class AonDump {
 		// Establish settings
 		settings = new Settings();
 		settings.setRenderSchema(false);
+		
+		//settings.setRenderFormatted(true);
+		settings.setRenderNameStyle(RenderNameStyle.QUOTED);
+		settings.setRenderKeywordStyle(RenderKeywordStyle.UPPER);
+
 		settings.setParamType(ParamType.INLINED);
 
 		// Establish context
@@ -80,7 +90,7 @@ public class AonDump {
 		stackContId = new Stack<Integer>();
 	}
 
-	public void findDomainInTables(Connection connection, DSLContext dslContext, CallbackDump cb, String hostName,
+	public IdsMap findDomainInTables(Connection connection, DSLContext dslContext, CallbackDump cb, String hostName,
 			String dataBase, String domain) throws FileNotFoundException {
 
 		IdsMap idsMap;
@@ -93,8 +103,9 @@ public class AonDump {
 		// Get the Schema code and filter it to find our DataBase
 		Optional<Schema> schema = DSL.using(connection, SQLDialect.MARIADB).meta().getSchemas().stream()
 				.filter(s -> s.getName().equals(dataBase)).findFirst();
-
-		List<Table<?>> tables = schema.get().getTables();
+		
+		if ( tables == null )
+			tables = schema.get().getTables();
 
 		int idDomain = dslContext.select(DOMAIN.ID).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
 		int idParent = dslContext.select(DSL.ifnull(DOMAIN.PARENT, -666)).from(DOMAIN).where((DOMAIN.NAME).equal(domain)).fetchOne().value1();
@@ -158,7 +169,8 @@ public class AonDump {
 		gestionAttachs(cb, dslContext, tablasAttach, idDomain, idsMap);
 
 		cb.footer();
-
+		
+		return idsMap;
 	}
 
 	private void tablesWontDownload(List<String> tablesNotToDownload) {
@@ -171,17 +183,28 @@ public class AonDump {
 
 		// Map <Table, Number of lines we are going to download>
 		Map<Table<?>, Integer> dumpTables = new HashMap<Table<?>, Integer>();
-
-		Map<Table<?>, Integer> domainTables = tables.stream().filter(t -> t.field("domain") != null)
-				.collect(Collectors.toMap(t -> t, t -> dslContext.select(DSL.count()).from(t)
-						.where((((Field<Integer>) t.field("domain")).eq(id))
-								.or(((Field<Integer>) t.field("domain")).eq(idParent))).fetchOne(DSL.count())));
+		
+		//formatter:off
+		Map<Table<?>, Integer> domainTables = 
+				tables.stream()
+				.filter(t -> t.field("domain") != null)
+				.collect(Collectors.toMap(t -> t, t -> dslContext
+									.select(DSL.count())
+									.from(t)
+									.where((((Field<Integer>) t.field("domain")).eq(id))
+											.or(((Field<Integer>) t.field("domain")).eq(idParent))
+									).fetchOne(DSL.count())
+								)
+						);
+		//formatter:on
 
 		domainTables.forEach((t, k) -> {
 			if (k != 0)
 				dumpTables.put(t, k);
 		});
-
+		//formatter:on
+		
+		
 		return dumpTables;
 	}
 
