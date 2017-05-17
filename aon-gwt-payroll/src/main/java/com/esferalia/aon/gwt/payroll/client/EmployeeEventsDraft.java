@@ -246,7 +246,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		this.employeeEventsDraft = employeeEventsDraft;
 		
-		Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
+		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
 		
 		//Pintar la tabla
 		fillCellsEvents();
@@ -255,6 +255,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private void fillCellsEvents() {
 		for (int row = 1; row < 17; row ++){
+			Integer actualMonth = 0;
 			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
 			ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
 			
@@ -271,35 +272,21 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					continue;
 				}
 				
-				EmployeeEventsVariable varMonth = varList.get(col-1);
+				EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(variableName, actualMonth);
 				
-				if(null == varMonth){
+				if (null == varMonth){
 					eventValue.setValue("-");
 					eventsGrid.setWidget(row, col, eventValue);
+					actualMonth++;
 					continue;
 				}
 				
-				int month = varMonth.getStartDate().getMonth();				
-				if (month == col-1){
-					eventValue.setValue(varList.get(col-1).getValue().toString());
-				}else{
-					eventValue.setValue("-");
-				}
-				
+				eventValue.setValue(varMonth.getValue().toString());
 				eventsGrid.setWidget(row, col, eventValue);
+				actualMonth++;
 			}	
 		}
 		
-
-//		for (int row = 1; row < 17; row ++)
-//			for (int col = 1; col < 13; col ++){
-//				TextBox eventValue = new TextBox();
-//				eventValue.setStyleName(style.cellFormat());
-//				if (row % 2 == 1)
-//					eventValue.setStyleName(style.cellOddFormat());
-//				eventValue.setValue(row*col*1.00+"");
-//				eventsGrid.setWidget(row, col, eventValue);
-//			}	
 	}
 	
 	private void fillShowingVarList(Boolean[] showingVar) {

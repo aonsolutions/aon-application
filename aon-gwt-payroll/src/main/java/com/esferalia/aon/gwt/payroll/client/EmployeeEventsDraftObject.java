@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.google.gwt.user.client.Window;
 
 public class EmployeeEventsDraftObject {
 	
@@ -33,6 +34,12 @@ public class EmployeeEventsDraftObject {
 			this.value = value;
 		}
 		
+		public EmployeeEventsVariable() {
+			this.startDate = null;
+			this.endDate = null;
+			this.value = null;
+		}
+
 		@Override
 		public Date getStartDate() {
 			return this.startDate;
@@ -158,6 +165,22 @@ public class EmployeeEventsDraftObject {
 			return mapEventsVar.getOrDefault(varName, null);
 	}
 	
+	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month){
+		if (null != draftMapEventsVar.get(varName))
+			for (EmployeeEventsVariable e : draftMapEventsVar.get(varName)){
+				if (month == e.getStartDate().getMonth())
+					return e;
+			}
+		
+		if (null != mapEventsVar.get(varName))
+			for (EmployeeEventsVariable e : mapEventsVar.get(varName)){
+				if (month == e.getStartDate().getMonth())
+					return e;
+			}
+		
+		return null;
+	}
+	
 	/**
 	 * METODOS PARA BORRAR
 	 */
@@ -180,11 +203,10 @@ public class EmployeeEventsDraftObject {
 		sortListByStartDate(htList);
 		mapEventsVar.put("HORAS_TRABAJADAS", htList);
 		
-		ArrayList<EmployeeEventsVariable> dmList = new ArrayList<EmployeeEventsVariable>();
-		rellenarListaCaso3(dmList);
-		sortListByStartDate(dmList);
-		mapEventsVar.put("DIAS_MANUTENCION", dmList);
-		                  
+		ArrayList<EmployeeEventsVariable> hcList = new ArrayList<EmployeeEventsVariable>();
+		rellenarListaCaso3(hcList);
+		sortListByStartDate(hcList);
+		mapEventsVar.put("HORAS_COMPLEMENTARIAS", hcList);                  
 	}
 
 	private void rellenarLista(ArrayList<EmployeeEventsVariable> list) {
@@ -200,7 +222,6 @@ public class EmployeeEventsDraftObject {
 	private void rellenarListaCaso1(ArrayList<EmployeeEventsVariable> list) {
 		for (int i = 0; i<12; i++){
 			if(i== 0 || i == 5){
-				list.add(null);
 				continue;
 			}
 			
@@ -225,7 +246,6 @@ public class EmployeeEventsDraftObject {
 	private void rellenarListaCaso3(ArrayList<EmployeeEventsVariable> list) {
 		for (int i = 11; i>=0; i--){
 			if(i== 1 || i == 6){
-				list.add(null);
 				continue;	
 			}
 			
@@ -234,14 +254,14 @@ public class EmployeeEventsDraftObject {
 			Double value = i*1.00;
 			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
 			list.add(info);
-		}	
-		
+		}
+				
 	}
 	
 	private void sortListByStartDate(ArrayList<EmployeeEventsVariable> list){
 		Collections.sort(list, new Comparator<EmployeeEventsVariable>(){
 			public int compare(EmployeeEventsVariable variable1, EmployeeEventsVariable variable2){
-				if (variable1.getStartDate() == null || variable2.getStartDate() == null)
+				if (null == variable1.getStartDate() || null == variable2.getStartDate())
 			        return 0;
 			     
 				return variable1.getStartDate().compareTo(variable2.getStartDate());
