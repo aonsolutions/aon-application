@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP;
 
 import java.text.ParseException;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -93,8 +93,8 @@ public abstract class PageAbs extends ResizeComposite {
 		
 	}
 
-	private HashMap<Mod2002016Key, DoubleBox> inputs = new HashMap<Mod2002016Key, DoubleBox>();
-	private HashMap<Mod2002016Key, BoxLabel> labels = new HashMap<Mod2002016Key, BoxLabel>();
+	private EnumMap<Mod2002016Key, DoubleBox> inputs = new EnumMap<Mod2002016Key, DoubleBox>(Mod2002016Key.class);
+	private EnumMap<Mod2002016Key, BoxLabel> labels = new EnumMap<Mod2002016Key, BoxLabel>(Mod2002016Key.class);
 
 	@UiField
 	Panel basePanel;
@@ -111,22 +111,21 @@ public abstract class PageAbs extends ResizeComposite {
 			
 			@Override
 			public void mod200Changed(Mod2002016 mod200) {
-				for (Mod2002016Key key : mod200.getDraftMap().keySet()) {
-					if (inputs.containsKey(key)) {
+				for ( Mod2002016Key key : inputs.keySet() ) {
+					DoubleVariable2016 var = mod200.getDraftMap().get(key);
+					if (var != null && !var.isChangedByUser()) {
 						DoubleBox input = inputs.get(key);
-						DoubleVariable2016 var = mod200.getDraftMap().get(key);
-						if (!var.isChangedByUser()) {
-							input.setValue(var.getValue(),false,true); ;
-						}
+						input.setValue(var.getValue(),false,true); ;
 						input.addStyleName(AON.AON_CSS.aonChanged());
 					}
-					if (labels.containsKey(key)) {
-						BoxLabel label = labels.get(key);
+				}
+				for ( Mod2002016Key key : labels.keySet() ) {
+					BoxLabel label = labels.get(key);
+					if (label != null) {
 						label.removeErrorState();
 					}
 				}
 			}
-			
 		});
 	}
 	

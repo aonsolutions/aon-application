@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 
+@Deprecated //Use ProvinceListBox or ProvinceCountryListBox
 public class MunicipalityListBox extends ListBox {
 
 	private static final CommonMessages MSGS = GWT.create(CommonMessages.class);

@@ -12,15 +12,19 @@ import org.junit.Test;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016CorrectionKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2016.Mod2002016DAO;
 
 
 public class Mod200Test {
 
 	private static AONContext ctx;
-	private static String DOMAIN_NAME = "planconsulting.ecastellano.dev";
-	private static int DOMAIN_ID = 4079;
-	private static String LOGIN = "jvarona";
+	private static String DOMAIN_NAME = "proorgan-masdemar.ecastellano.dev";
+	private static int DOMAIN_ID = 804;
+	private static String LOGIN = "luis";
 	
 
 	@BeforeClass
@@ -31,18 +35,26 @@ public class Mod200Test {
 	
 	@Test
 	public void testInitialize() throws IOException {
-		Mod2002015 mod200 = new Mod2002015();
-		mod200.setYear(2015);
-		mod200.setDomain(DOMAIN_ID);
-		mod200 = FISCAL.initializeNewMod2002015(DOMAIN_NAME, DOMAIN_ID, LOGIN, mod200);
-		FISCAL.initializeMod2002015(DOMAIN_NAME, DOMAIN_ID, LOGIN, mod200);
-		for (int i = 0 ; i < 5 ; i++) {
+		Mod2002016 mod200 = FISCAL.getMod2002016ByYear(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2016);
+//		for (int i = 0 ; i < 25 ; i++) {
 			Date start = new Date();
-			FISCAL.calculateMod2002015(mod200);
+			for (Mod2002016CorrectionKey ck : Mod2002016CorrectionKey.values()) {
+				if (ck.getIncrease() != null) {
+					DoubleVariable2016 dv = new DoubleVariable2016(ck.getIncrease());	
+					dv.setValue(1.0);
+					mod200.getKeysMap().put(ck.getIncrease(), dv);
+				}
+				if (ck.getDecrease() != null) {
+					DoubleVariable2016 dv = new DoubleVariable2016(ck.getDecrease());	
+					dv.setValue(1.0);
+					mod200.getKeysMap().put(ck.getDecrease(), dv);
+				}
+			}
+			Mod2002016DAO.calculate(mod200,false);
 			Date end = new Date();
 			long ms = (end.getTime() - start.getTime());
-			System.out.println(i + " - " + ms + " ms.");
-		}
+			System.out.println(  ms + " ms.");
+//		}
 	}
 		
 	@AfterClass

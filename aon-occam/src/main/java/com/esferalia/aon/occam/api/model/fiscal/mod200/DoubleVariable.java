@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod200;
 
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Variable;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 
 public class DoubleVariable<K extends IMod200Key> extends Variable<K,Double> {
@@ -28,6 +29,10 @@ public class DoubleVariable<K extends IMod200Key> extends Variable<K,Double> {
 
 	public void setValue(Boolean value) {
 		this.value = value?1.0:0.0;
+	}
+
+	public Boolean getBooleanValue() {
+		return (this.value != null && AonMathUtils.equals(this.value,1));
 	}
 
 	@Override

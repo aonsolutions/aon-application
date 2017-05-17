@@ -81,7 +81,6 @@ public interface CommonMessages extends Messages {
 			"Valladolid", "ZAMORA", "Zamora", "ZARAGOZA", "Zaragoza",
 
 			"NO_RESIDENTE", "No residente" })
-	@Deprecated
 	String provinceName(@Select Province province);
 
 	@DefaultMessage("{0}")

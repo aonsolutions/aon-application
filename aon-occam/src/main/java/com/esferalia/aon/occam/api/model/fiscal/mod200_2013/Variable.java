@@ -24,9 +24,9 @@ public abstract class Variable<K extends IMod200Key,T> implements Serializable {
 	public void setKey(K key) {
 		this.key = key;
 	}
-	public String getDescription() {
-		return getKey().getDescription();
-	}
+//	public String getDescription() {
+//		return getKey().getDescription();
+//	}
 	public boolean isChangedByUser() {
 		return changedByUser;
 	}

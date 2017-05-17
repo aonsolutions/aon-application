@@ -59,7 +59,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod2002016DAO  {
-
 	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
 		
 		@Override
@@ -560,11 +559,11 @@ public class Mod2002016DAO  {
 		addCharacters(mvelCtx,mod200);
 		addBalanceCharacters(mvelCtx,mod200);
 		DoubleVariable2016 dv = null;
-		for (String stringKey : INITIALIZE_EXPRESSION_MAP.keySet()) {
-			Mod2002016Key k = Mod2002016Key.valueOf(stringKey.toString());
-			String expression = INITIALIZE_EXPRESSION_MAP.get(stringKey);
+		for (Mod2002016Key k : INITIALIZE_EXPRESSION_MAP.keySet()) {
+			String stringKey = k.toString();
+			String expression = INITIALIZE_EXPRESSION_MAP.get(k);
 			mvelCtx.put(stringKey, 0.0 );
-			Object ret = mvelCtx.evaluateExpression(stringKey,expression);
+			Object ret = mvelCtx.evaluateExpression(k,expression);
 			mvelCtx.put(stringKey, ret );
 			if (ret instanceof Double ) {
 				dv = new DoubleVariable2016( k );
@@ -628,12 +627,12 @@ public class Mod2002016DAO  {
 			}
 			
 			DoubleVariable2016 v = null;
-			for (String stringKey : Mod2002016Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
-				Mod2002016Key k = Mod2002016Key.valueOf(stringKey.toString());
+			for (Mod2002016Key k : Mod2002016Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
+				String stringKey = k.toString();
 				DoubleVariable2016 existingVariable = mod200.getVariable(k);
 				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
 				ctx.put(stringKey, existingValue);
-				Object ret = ctx.evaluateExpression(stringKey,Mod2002016Compute.COMPUTE_EXPRESSION_MAP.get(stringKey));
+				Object ret = ctx.evaluateExpression(k,Mod2002016Compute.COMPUTE_EXPRESSION_MAP.get(k));
 				if (ret instanceof Double) {
 					Double calculated = (Double) ret;
 					ctx.put(stringKey, calculated);
@@ -680,7 +679,6 @@ public class Mod2002016DAO  {
 		 
 		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, mod200.getYear());
 		if (period == null) {
-//			throw new AonCoreException("Ejercicio '"+mod200.getYear()+"' no encontrado.");
 			return null;
 		}
 //		if (!period.isClosed()) {
@@ -694,9 +692,8 @@ public class Mod2002016DAO  {
 
 	private static void addCharacters(Mod2002016MVELContext ctx, Mod2002016 mod200) {
 		for (Mod2002016Key key : Mod2002016Character.CHARACTERS_KEYS) {
-			ctx.put(key.toString(), 
-					(mod200.getKeysMap().containsKey(key) 
-				 && (AonMathUtils.equals(mod200.getKeysMap().get(key).getValue(),1.0))));	
+			DoubleVariable2016 dv = mod200.getKeysMap().get(key);
+			ctx.put(key.toString(), (dv != null && dv.getBooleanValue() )); 
 		}
 	}
 	
@@ -706,7 +703,7 @@ public class Mod2002016DAO  {
 		addCharacters(ctx,mod200);
 		addBalanceCharacters(ctx,mod200);
 		for (Mod2002016Key key : Mod2002016Key.values() ) {
-			if (Mod2002016Activation.ACTIVE_EXPRESSION_MAP.containsKey(key.toString()) ) {
+			if (Mod2002016Activation.ACTIVE_EXPRESSION_MAP.containsKey(key) ) {
 				Object ret = ctx.get( key.toString() );
 				if (ret instanceof Boolean && ((Boolean) ret) ) {
 					mod200.getVisibleMap().put(key,true);
@@ -741,19 +738,17 @@ public class Mod2002016DAO  {
 		for (DoubleVariable2016 dv : mod200.getKeysMap().values()) {
 			ctx.put(dv.getKey().toString(), dv.getValue());
 		}
-		addCharacters(ctx,mod200);
 		DoubleVariable2016 d = null;
 		for (Mod2002016Key key : mod200.getDraftMap().keySet() ) {
 			d = mod200.getDraftMap().get(key);
 			ctx.put(key.toString(), d.getValue());
 		}
+		addCharacters(ctx,mod200);
+		addBalanceCharacters(ctx,mod200);
 		mod200.setMessages(null);	
 		for (ValidationMessage2016 validation : VALIDATION_EXPRESSION_LIST) {
-			if (validation.getKey() == Mod2002016Key.ID653) {
-				System.out.println( "ID653 ..: " + ctx.get(Mod2002016Key.ID653.toString()) );
-				System.out.println( "ID666 ..: " + ctx.get(Mod2002016Key.ID666.toString()) );
-			}
-			Boolean valid = (Boolean) ctx.evaluateExpression(validation.getKey().toString(),validation.getExpression());
+			Object o = ctx.evaluateExpression(validation.getKey(),validation.getExpression());
+			Boolean valid = (Boolean) o;
 			if (!valid) {
 				list.add(validation);
 			}

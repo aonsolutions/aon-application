@@ -24,6 +24,8 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0047;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0048;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0049;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0050;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0051;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0057;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0058;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0063;
@@ -43,16 +45,34 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.LQ561;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.LQ562;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+
+import org.mvel2.MVEL;
+
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
-import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod2002016MVELContext extends AccMiningMVELContext {
+public class Mod2002016MVELContext implements Map<String, Object> { // extends AccMiningMVELContext {
+	
+	
+	private Map<String, AccountBalance> accounts;
+	private Map<String, Object> context;
+	private EnumMap<Mod2002016Key,String> expressionMap;
+	private IAccMiningKeyAccept resolver;
+	private Stack<Mod2002016Key> stack = new Stack<Mod2002016Key>();
+
 	
 	private static final int LIM_1 = 300000;
 	private static final int LIM_2 = 1000000;
@@ -61,9 +81,131 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 	private Mod2002016 mod200;
 	
 	public Mod2002016MVELContext(Mod2002016 mod200,IAccMiningKeyAccept resolver) {
-		super(resolver);
+		this.context = new HashMap<String, Object>();
+		this.accounts = new HashMap<String, AccountBalance>();
+		this.resolver = resolver;
 		this.mod200 = mod200;
 	}
+	
+	public Map<String, AccountBalance> getAccounts() {
+		return accounts;
+	}
+	
+	public void setAccounts(Map<String, AccountBalance> accounts) {
+		this.accounts = accounts;
+	}
+	
+	public EnumMap<Mod2002016Key,String> getExpressionMap() {
+		return expressionMap;
+	}
+
+	public void setExpressionMap(EnumMap<Mod2002016Key,String> expressionMap) {
+		this.expressionMap = expressionMap;
+	}
+	
+	// ***********************************************************************
+	// java.util.Map inherited methods.
+	// ***********************************************************************
+	
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean containsKey(Object key) {
+		return this.context.containsKey( key ) || resolver.acceptKey(key);
+	}
+	
+	@Override
+	public boolean containsValue(Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		return this.context.entrySet();
+	}
+
+	@Override
+	public Object get(Object keyObject) {
+		Mod2002016Key key = Mod2002016Key.valueOf((String) keyObject);
+		return getContainsKey(key) ? context.get(keyObject) : evaluate(key);
+	}
+	
+	private Boolean getContainsKey(Mod2002016Key key) {
+//		return this.context.containsKey(key.toString()) && (!expressionMap.containsKey(key) || stack.contains(key));
+		return this.context.containsKey(key.toString()) || stack.contains(key);
+	}
+	
+	public Object evaluate(Mod2002016Key key) {
+		if (expressionMap != null) {
+			String exp = expressionMap.get(key);
+			if (AonStringUtils.isNotEmpty(exp)) {
+				Object ret =  mvelEval(key,exp);
+				if (ret != null) {
+					put(key.toString(), ret);
+					return ret;
+				}
+			}
+		}
+		return new Double(0);
+	}
+	
+	public Object evaluateExpression(Mod2002016Key key,String expression) {
+		return mvelEval(key,expression);
+	}
+	
+	private Object mvelEval(Mod2002016Key key,String expression) {
+		try {
+			stack.push(key);
+			return MVEL.eval( expression , this , this);
+		} finally {
+			stack.pop();
+		}
+	}
+
+	@Override
+	public boolean isEmpty() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return this.context.keySet();
+	}
+
+	@Override
+	public Object put(String key, Object d) {
+		return this.context.put(key, d);
+	}
+	
+	@Override
+	public void putAll(Map<? extends String,? extends  Object> m) {
+		this.context.putAll(m);
+	}
+
+	@Override
+	public Double remove(Object key) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int size() {
+		return this.context.size();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		context = null;
+		super.finalize();
+	}
+
 	
 	protected Boolean isChecked(Mod2002016Key key) {
 		return (Boolean) get(key.toString());
@@ -76,11 +218,22 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 	protected Double round(Mod2002016Key key) {
 		return AonMathUtils.round(getValue(key));
 	}
+	
 	private int getDays() {
 		if ( mod200.getPeriodType() == 3) {
 			return (int) AonDateUtils.getDaysBetweenDates(mod200.getPeriodStart(), mod200.getPeriodEnd());
 		}
 		return 365;
+	}
+	
+	protected Boolean isBalNormal() {
+		return (Boolean) get( C0050 );
+	}
+	protected Boolean isBalAbreviado() {
+		return (Boolean) get( C0051 );
+	}
+	protected Boolean isBalPymes() {
+		return (Boolean) get( C0050 );
 	}
 
 	public double computeLQ558() throws AonCoreException {
@@ -387,4 +540,7 @@ public class Mod2002016MVELContext extends AccMiningMVELContext {
 		return 0.0;
 	}
 	
+	public double round(double value) throws AonCoreException {
+		return AonMathUtils.round(value); 
+	}
 }

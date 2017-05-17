@@ -49,7 +49,7 @@ public class Mod2002016Validation {
 	private static final String MUST_NEGATIVE_EXP = "round({0}) <= 0.0";
 	private static final String MUST_POSITIVE_EXP = "round({0}) >= 0.0";
 	
-	private static final String INV_BOX_MSG = "Casilla \"{0}\" no v\u00E1lida sin el caracter \"{1}\".";
+	private static final String INV_BOX_MSG = "Casilla \"[{0}]\" no v\u00E1lida sin el caracter \"{1}\".";
 	private static final String INV_BOX_EXP = "round({0}) == 0.0 || (round({0}) > 0.0 && {1})";
 	
 	private static final String INCOMPATIBLE_MSG = "Casilla \"{0}\" incompatible con \"{1}\"";
@@ -201,125 +201,106 @@ public class Mod2002016Validation {
 				,MessageFormat.format(MUST_POSITIVE_EXP,D0418.toString())));
 		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0391
-				,MessageFormat.format(INV_BOX_MSG,I0391.getDescription(),C0001.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0391.getCode(),C0001.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0391.toString(),C0001.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0392
-				,MessageFormat.format(INV_BOX_MSG,D0392.getDescription(),C0001.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0392.getCode(),C0001.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0392.toString(),C0001.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0389
-//				,MessageFormat.format(INV_BOX_MSG,D0392.getDescription(),C0002.getDescription())
-//				,MessageFormat.format(INV_BOX_EXP,D0392.toString(),C0002.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0390
-//				,MessageFormat.format(INV_BOX_MSG,D0390.getDescription(),C0002.getDescription())
-//				,MessageFormat.format(INV_BOX_EXP,D0390.toString(),C0002.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0371
-				,MessageFormat.format(INV_BOX_MSG,I0371.getDescription(),C0003.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0371.getCode(),C0003.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0371.toString(),C0003.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0311
-				,MessageFormat.format(INV_BOX_MSG,I0311.getDescription(),C0006.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0311.getCode(),C0006.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0311.toString(),C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0313
-				,MessageFormat.format(INV_BOX_MSG,I0313.getDescription(),C0006.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0313.getCode(),C0006.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0313.toString(),C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0323
-				,MessageFormat.format(INV_BOX_MSG,I0323.getDescription(),C0006.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0323.getCode(),C0006.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0323.toString(),C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0312
-				,MessageFormat.format(INV_BOX_MSG,D0312.getDescription(),C0006.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0312.getCode(),C0006.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0312.toString(),C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0314
-				,MessageFormat.format(INV_BOX_MSG,D0314.getDescription(),C0006.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0314.getCode(),C0006.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0314.toString(),C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0324
-				,MessageFormat.format(INV_BOX_MSG,D0324.getDescription(),C0006.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0324.getCode(),C0006.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0324.toString(),C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0387
-				,MessageFormat.format(INV_BOX_MSG,I0387.getDescription(),C0007.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0387.getCode(),C0007.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0387.toString(),C0007.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0388
-				,MessageFormat.format(INV_BOX_MSG,D0388.getDescription(),C0007.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0388.getCode(),C0007.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0388.toString(),C0007.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0396
-				,MessageFormat.format(INV_BOX_MSG,D0396.getDescription(),C0005.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0396.getCode(),C0005.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0396.toString(),C0005.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0385
-				,MessageFormat.format(INV_BOX_MSG,I0385.getDescription(),C0011.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0385.getCode(),C0011.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0385.toString(),C0011.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0386
-				,MessageFormat.format(INV_BOX_MSG,D0386.getDescription(),C0011.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0386.getCode(),C0011.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0386.toString(),C0011.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0397
-				,MessageFormat.format(INV_BOX_MSG,I0397.getDescription(),C0022.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0397.getCode(),C0022.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0397.toString(),C0022.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0398
-				,MessageFormat.format(INV_BOX_MSG,D0398.getDescription(),C0022.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0398.getCode(),C0022.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0398.toString(),C0022.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0373
-				,MessageFormat.format(INV_BOX_MSG,I0373.getDescription(),C0024.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0373.getCode(),C0024.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0373.toString(),C0024.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0374
-				,MessageFormat.format(INV_BOX_MSG,D0374.getDescription(),C0024.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0374.getCode(),C0024.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0374.toString(),C0024.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0403
-				,MessageFormat.format(INV_BOX_MSG,I0403.getDescription(),C0029.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0403.getCode(),C0029.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0403.toString(),C0029.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0404
-				,MessageFormat.format(INV_BOX_MSG,D0404.getDescription(),C0029.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0404.getCode(),C0029.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0404.toString(),C0029.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0383
-				,MessageFormat.format(INV_BOX_MSG,I0383.getDescription(),C0034.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0383.getCode(),C0034.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0383.toString(),C0034.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0384
-				,MessageFormat.format(INV_BOX_MSG,D0384.getDescription(),C0034.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0384.getCode(),C0034.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0384.toString(),C0034.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0368
-				,MessageFormat.format(INV_BOX_MSG,D0368.getDescription(),C0036.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0368.getCode(),C0036.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0368.toString(),C0036.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0409
-				,MessageFormat.format(INV_BOX_MSG,I0409.getDescription(),C0046.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0409.getCode(),C0046.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0409.toString(),C0046.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0410
-				,MessageFormat.format(INV_BOX_MSG,D0410.getDescription(),C0046.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0410.getCode(),C0046.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0410.toString(),C0046.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0411
-				,MessageFormat.format(INV_BOX_MSG,I0411.getDescription(),C0047.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,I0411.getCode(),C0047.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,I0411.toString(),C0047.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0412
-				,MessageFormat.format(INV_BOX_MSG,D0412.getDescription(),C0047.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,D0412.getCode(),C0047.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0412.toString(),C0047.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0400
-			,MessageFormat.format(INV_BOX_MSG,D0400.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,D0400.getCode(),
 				  C0017.getDescription()+"\" ni \"" 
 				+ C0018.getDescription()+"\" \"ni \"" 
 				+ C0019.getDescription())
-			,"round(D0400) == 0.0 || (round(D0400) > 0.0 && (C0017 || C0018 || C0019))"));
-
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0379
-//			,MessageFormat.format(INV_BOX_MSG,I0379.getDescription(),
-//				C0020.getDescription()+"\" ni \"" 
-//				+ C0035.getDescription()+"\" \"ni \"" 
-//				+ C0037.getDescription())
-//			,"round(I0379) == 0.0 || (round(I0379) > 0.0 && (C0020 || C0035 || C0037))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0380
-//			,MessageFormat.format(INV_BOX_MSG,D0380.getDescription(),
-//				C0020.getDescription()+"\" ni \"" 
-//				+ C0035.getDescription()+"\" \"ni \"" 
-//				+ C0037.getDescription())
-//			,"round(D0380) == 0.0 || (round(D0380) > 0.0 && (C0020 || C0035 || C0037))"));
+			,"(round(D0400) == 0.0) || (round(D0400) > 0.0 && (C0017 || C0018 || C0019))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0377
-			,MessageFormat.format(INV_BOX_MSG,I0377.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,I0377.getCode(),
 				C0031.getDescription()+"\" \"ni \"" + C0032.getDescription())
 			,"round(I0377) == 0.0 || (round(I0377) > 0.0 && (C0031 || C0032))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0378
-			,MessageFormat.format(INV_BOX_MSG,D0378.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,D0378.getCode(),
 				C0031.getDescription()+"\" \"ni \"" + C0032.getDescription())
 			,"round(D0378) == 0.0 || (round(D0378) > 0.0 && (C0031 || C0032))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0381
-			,MessageFormat.format(INV_BOX_MSG,I0381.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,I0381.getCode(),
 				C0033.getDescription()+"\" \"ni \"" + C0034.getDescription())
 			,"round(I0381) == 0.0 || (round(I0381) > 0.0 && (C0033 || C0034))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0382
-			,MessageFormat.format(INV_BOX_MSG,D0382.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,D0382.getCode(),
 				C0033.getDescription()+"\" \"ni \"" + C0034.getDescription())
 			,"round(D0382) == 0.0 || (round(D0382) > 0.0 && (C0033 || C0034))"));
 		
@@ -380,10 +361,10 @@ public class Mod2002016Validation {
 	
 	static {	// PAGE 09
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ578
-				,MessageFormat.format(INV_BOX_MSG,LQ578.getDescription(),C0022.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,LQ578.getCode(),C0022.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,LQ578.toString(),C0022.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ579
-				,MessageFormat.format(INV_BOX_MSG,LQ579.getDescription(),C0022.getDescription())
+				,MessageFormat.format(INV_BOX_MSG,LQ579.getCode(),C0022.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,LQ579.toString(),C0022.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ631
 				,MessageFormat.format(EQUAL_GREATER_MSG,LQ631.getDescription(),LQ632.getDescription())
