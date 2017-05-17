@@ -72,7 +72,13 @@ public class Preauthorization {
 		final int[] cont = {0};
 		Date currentDate = new Date(new java.util.Date().getTime());
 		Stream<ProjectReservation> stream = DBConsults.getProjectReservationStream(domain, login,
-			f -> f.getStartDateProperty().ge(currentDate).and(f.getTokenProperty().isNotNull())); 
+			f -> f.getStartDateProperty().ge(currentDate).and(f.getTokenProperty().isNotNull())
+				.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
+					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))
+					.or(f.getStatusProperty().eq(ReservationStatus.CANCELLED.value())
+							.and(f.getCheckStatusProperty().ne((byte) 4))
+							.and(f.getCheckStatusProperty().ne((byte) 6)))
+				)); 
 		stream.forEach(r -> {
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
@@ -184,8 +190,13 @@ public class Preauthorization {
 		final int[] cont = {0};
 		DBConsults.getProjectReservationStream(domain, login, f ->
 				f.getPenaltyDateProperty().le(new Timestamp(new java.util.Date().getTime()))
-				.and(f.getTokenProperty().isNotNull()).and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
-				.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))))
+				.and(f.getTokenProperty().isNotNull())
+				.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
+				.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))
+				.or(f.getStatusProperty().eq(ReservationStatus.CANCELLED.value())
+						.and(f.getCheckStatusProperty().ne((byte) 4))
+						.and(f.getCheckStatusProperty().ne((byte) 6)))
+				))
 		.forEach(r ->{
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);		
@@ -266,8 +277,13 @@ public class Preauthorization {
 		Date date = new Date(calendar.getTime().getTime());
 		Stream<ProjectReservation> stream = DBConsults.getProjectReservationStream(domain, login,
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getStartDateProperty().le(date))
-			.and(f.getTokenProperty().isNotNull()).and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
-					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value())))); 
+			.and(f.getTokenProperty().isNotNull())
+			.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
+					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))
+					.or(f.getStatusProperty().eq(ReservationStatus.CANCELLED.value())
+							.and(f.getCheckStatusProperty().ne((byte) 4))
+							.and(f.getCheckStatusProperty().ne((byte) 6)))
+					)); 
 		stream.forEach(r -> {
 			if(number == -1 || cont[0] <= number){
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);		
