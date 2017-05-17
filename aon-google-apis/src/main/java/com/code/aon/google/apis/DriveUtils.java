@@ -1051,12 +1051,12 @@ public class DriveUtils implements IBlobManager {
 					return true;
 				} else if(type.equals("project")){
 					return file.getType() != ProjectAttachmentType.CONEXFLOW.value()
-						|| file.getType() != ProjectAttachmentType.PAYSLIP.value();
+						&& file.getType() != ProjectAttachmentType.PAYSLIP.value();
 				}
 			}
 		} else if("project".equals(file.getAonType())){
 			return file.getType() != ProjectAttachmentType.CONEXFLOW.value()
-				|| file.getType() != ProjectAttachmentType.PAYSLIP.value();
+				&& file.getType() != ProjectAttachmentType.PAYSLIP.value();
 		} else{
 			return true;
 		}
