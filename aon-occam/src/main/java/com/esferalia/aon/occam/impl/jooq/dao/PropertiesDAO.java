@@ -19,7 +19,11 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -34,6 +38,8 @@ import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
@@ -41,6 +47,8 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
@@ -55,6 +63,8 @@ import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
+import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
@@ -62,6 +72,8 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
@@ -185,6 +197,38 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TRANSACTION);}
 		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
 		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.ACCOUNT);}
+	}
+	
+	public static class PersonPropertiesDAO implements PersonProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, PersonFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(PersonFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) {
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PERSON.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(PERSON.REGISTRY);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
+		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<Date> getBirthDateProperty() {return new FilterDAO.PropertyDAO<>(PERSON.BIRTH_DATE);}
+		@Override public Property<Byte> getGenderProperty() {return new FilterDAO.PropertyDAO<>(PERSON.GENDER);}
+		@Override public Property<Byte> getMaritalStatusProperty() {return new FilterDAO.PropertyDAO<>(PERSON.MARITAL_STATUS);}
+		@Override public Property<String> getSocialSecurityNumProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
+		@Override public Property<String> getFirstNameProperty() {return new FilterDAO.PropertyDAO<>(PERSON.NAME);}
+		@Override public Property<String> getFirstSurnameProperty() {return new FilterDAO.PropertyDAO<>(PERSON.FIRST_SURNAME);}
+		@Override public Property<String> getSecondSurnameProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SECOND_SURNAME);}
 	}
 	
 	public static class CategoryPropertiesDAO implements CategoryProperties {
@@ -697,5 +741,102 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDataResponseProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_RESPONSE);}
 		@Override public Property<String> getDataVariableProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
+	}
+	
+	protected static class ContractPropertiesDAO implements ContractProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, ContractFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ContractFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.DOMAIN);}
+		@Override public Property<Integer> getPersonProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.PERSON);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.WORKPLACE);}
+		@Override public Property<Integer> getEnterpriseCCCProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.ENTERPRISE_CCC);}
+		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.START_DATE);}
+		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.END_DATE);}
+		@Override public Property<Integer> getCalendarProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.CALENDAR);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.DESCRIPTION);}
+		@Override public Property<Byte> getSepeStatusProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SEPE_STATUS);}
+		@Override public Property<Integer> getRegistrationProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.REGISTRATION);}
+		@Override public Property<Date> getSeniorityDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SENIORITY_DATE);}
+		@Override public Property<Integer> getEnterpriseActivityProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.ENTERPRISE_ACTIVITY);}
+		@Override public Property<Byte> getSSRegimeProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SS_REGIME);}
+		@Override public Property<Integer> getAgreementLevelCategoryProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.AGREEMENT_LEVEL_CATEGORY);}
+		@Override public Property<Byte> getModelProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.MODEL);}
+		@Override public Property<String> getCategoryDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.CATEGORY_DESCRIPTION);}
+		@Override public Property<Byte> getSSStatusProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SS_STATUS);}
+	}
+	
+	protected static class ContractDataPropertiesDAO implements ContractDataProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, ContractDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ContractDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.NAME);}
+		@Override public Property<Integer> getContractProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.CONTRACT);}
+		@Override public Property<String> getExpressionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.EXPRESSION);}
+		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.START_DATE);}
+		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.END_DATE);}
+	}
+	
+	protected static class IrpfDataPropertiesDAO implements IrpfDataProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, IrpfDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(IrpfDataFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DOMAIN);}
+		@Override public Property<Integer> getContractProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.CONTRACT);}
+		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.START_DATE);}
+		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.END_DATE);}
+		@Override public Property<Byte> getFamilySituationProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.FAMILY_SITUATION);}
+		@Override public Property<String> getSpouseDocumentProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.SPOUSE_DOCUMENT);}
+		@Override public Property<Byte> getDisabiltyLevelProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DISABILITY_LEVEL);}
+		@Override public Property<Byte> getDependenceProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DEPENDENCE);}
+		@Override public Property<Date> getMovingDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.MOVING_DATE);}
+		@Override public Property<Byte> getLabourProlongationProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.LABOUR_PROLONGATION);}
+		@Override public Property<Byte> getDescendientCountProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DESCENDIENT_COUNT);}
+		@Override public Property<Byte> getFiscalExclusionProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.FISCAL_EXCLUSION);}
+		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.ISSUE_DATE);}
+		@Override public Property<Double> getAnnualRemunerationProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.ANNUAL_REMUNERATION);}
+		@Override public Property<Double> getIrregular182ReductionProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.IRREGULAR_18_2_REDUCTION);}
+		@Override public Property<Double> getIrregular183ReductionProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.IRREGULAR_18_3_REDUCTION);}
+		@Override public Property<Double> getDeducciblesExpensesProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DEDUCCIBLES_EXPENSES);}
+		@Override public Property<Double> getSpousalSupportProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.SPOUSAL_SUPPORT);}
+		@Override public Property<Double> getFoodAnnuityProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.FOOD_ANNUITY);}
+		@Override public Property<Byte> getDeductHomeLoanProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DEDUCT_HOME_LOAN);}
+		@Override public Property<Double> getRequestIrpfProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.REQUEST_IRPF);}
+		@Override public Property<Byte> getContractTypeProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.CONTRACT_TYPE);}
+		@Override public Property<Byte> getCeutaMelillaProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.CEUTA_MELILLA);}
 	}
 }

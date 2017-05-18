@@ -18,6 +18,10 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 
 import java.util.function.Function;
 
@@ -28,7 +32,11 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.payroll.Contract;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -40,14 +48,19 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.type.ContractModel;
+import com.esferalia.aon.occam.api.model.type.ContractStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
+import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
+import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -173,6 +186,32 @@ public class FillerDAO {
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
 					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER));				
+		}
+	}
+	
+	public static class PersonFiller implements Function<Record, Person> {
+		@Override
+		public Person apply(Record r) {
+			Person person = new Person();
+			person.setAlias(r.getValue(REGISTRY.ALIAS));
+			person.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
+			person.setDocument(r.getValue(REGISTRY.DOCUMENT));
+			person.setDocumentCountry(null); // TODO
+			person.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			person.setDomain(r.getValue(REGISTRY.DOMAIN));
+			person.setId(r.getValue(REGISTRY.ID));
+			person.setName(r.getValue(REGISTRY.NAME));
+			person.setNationality(null); // TODO
+			person.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			person.setType(r.getValue(REGISTRY.TYPE));
+			return person.setBirthDate(r.getValue(PERSON.BIRTH_DATE))
+					.setDomain(r.getValue(PERSON.DOMAIN))
+					.setFirstName(r.getValue(PERSON.NAME))
+					.setFirstSurname(r.getValue(PERSON.FIRST_SURNAME))
+					.setSecondSurname(r.getValue(PERSON.SECOND_SURNAME))
+					.setGender(Gender.values()[r.getValue(PERSON.GENDER)])
+					.setMaritalStatus(MaritalStatus.values()[r.getValue(PERSON.MARITAL_STATUS)])
+					.setSocialSecurityNum(r.getValue(PERSON.SOCIAL_SECURITY_NUM));				
 		}
 	}
 	
@@ -607,6 +646,59 @@ public class FillerDAO {
 					.setDataResponse(r.getValue(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
 					.setDataVariable(r.getValue(DATA_RESPONSE_DETAIL.DATA_VARIABLE))
 					.setValue(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
+		}
+	}
+	
+	public static class ContractFiller implements Function<Record, Contract> {
+		
+		@Override
+		public Contract apply(Record r) {
+			return new Contract()
+					.setId(r.getValue(CONTRACT.ID))
+					.setDomain(r.getValue(CONTRACT.DOMAIN))
+					.setPerson(r.getValue(CONTRACT.PERSON))
+					.setWorkplace(r.getValue(CONTRACT.WORKPLACE))
+					.setEnterpriseCCC(r.getValue(CONTRACT.ENTERPRISE_CCC))
+					.setStartDate(r.getValue(CONTRACT.START_DATE))
+					.setEndDate(r.getValue(CONTRACT.END_DATE))
+					.setCalendar(r.getValue(CONTRACT.CALENDAR))
+					.setDescription(r.getValue(CONTRACT.DESCRIPTION))
+				//TODO	.setSepeStatus(ContractStatus.values()[r.getValue(CONTRACT.SEPE_STATUS)])
+					.setRegistration(r.getValue(CONTRACT.REGISTRATION))
+					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
+					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
+					.setSsRegime(SSRegimeType.values()[r.getValue(CONTRACT.SS_REGIME)])
+					.setAgreementLevelCategory(r.getValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY))
+				//TODO	.setModel(ContractModel.values()[r.getValue(CONTRACT.MODEL)])
+					.setCategoryDescription(r.getValue(CONTRACT.CATEGORY_DESCRIPTION));
+				//TODO	.setSsStatus(ContractStatus.values()[r.getValue(CONTRACT.SS_STATUS)]);
+		}
+	}
+	
+	public static class ContractDataFiller implements Function<Record, ContractData> {
+		
+		@Override
+		public ContractData apply(Record r) {
+			return new ContractData()
+					.setId(r.getValue(CONTRACT_DATA.ID))
+					.setDomain(r.getValue(CONTRACT_DATA.DOMAIN))
+					.setName(r.getValue(CONTRACT_DATA.NAME))
+					.setContract(r.getValue(CONTRACT_DATA.CONTRACT))
+					.setExpression(r.getValue(CONTRACT_DATA.EXPRESSION))
+					.setStartDate(r.getValue(CONTRACT_DATA.START_DATE))
+					.setEndDate(r.getValue(CONTRACT_DATA.END_DATE));
+		}
+	}
+	
+public static class IrpfDataFiller implements Function<Record, IrpfData> {
+		
+		@Override
+		public IrpfData apply(Record r) {
+			return new IrpfData()
+					.setId(r.getValue(IRPF_DATA.ID))
+					.setDomain(r.getValue(IRPF_DATA.DOMAIN))
+					.setDisability(r.getValue(IRPF_DATA.DISABILITY_LEVEL));
+			// TODO AÑADIR LOS PARÁMETROS QUE FALTAN.
 		}
 	}
 }

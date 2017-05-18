@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
+import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
@@ -19,8 +21,10 @@ import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
+import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductTagProperties;
@@ -313,6 +317,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface PersonFilter{
+		Filter filter(PersonProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ProductTagFilter{
 		Filter filter(ProductTagProperties properties);
 	}
@@ -350,5 +359,20 @@ public interface Filter {
 	@FunctionalInterface
 	public interface CategoryFilter{
 		Filter filter(CategoryProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ContractFilter{
+		Filter filter(ContractProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ContractDataFilter{
+		Filter filter(ContractDataProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface IrpfDataFilter{
+		Filter filter(IrpfDataProperties properties);
 	}
 }

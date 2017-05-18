@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 
 public interface IModelScript<T extends IFiscalModelKey> {

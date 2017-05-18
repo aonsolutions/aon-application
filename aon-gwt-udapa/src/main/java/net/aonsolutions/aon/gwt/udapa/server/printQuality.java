@@ -207,9 +207,10 @@ public class printQuality {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		String date = "-";
 		String hour = "-";
-		if(!"-".equals(ware.get("transport_delivery_date"))){
+		String transportDeliveryDate = ware.get("transport_delivery_date");
+		if(transportDeliveryDate != null && !"-".equals(transportDeliveryDate)){
 			try {
-				Date deliveryDate = dateTimeFormat.parse(ware.get("transport_delivery_date"));
+				Date deliveryDate = dateTimeFormat.parse(transportDeliveryDate);
 				date = dateFormat.format(deliveryDate);
 				hour = timeFormat.format(deliveryDate);
 			} catch (ParseException e) {

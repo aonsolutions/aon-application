@@ -6,15 +6,32 @@ public class IrpfData implements Serializable {
 	
 	private static final long serialVersionUID = 3767479902944582762L;
 	
+	private Integer id;
+	private Integer domain;
+	
 	private boolean ceutaMelilla;
 	private int birthYear;
 	private byte familySituation;
 	private String spouseDocument;
-	private byte disability;
+	private Byte disability;
 	private byte contract;
 	private boolean workActivityExtension;
 	private boolean geographicMobility;
-
+	
+	public Integer getId() {
+		return id;
+	}
+	public IrpfData setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	public Integer getDomain() {
+		return domain;
+	}
+	public IrpfData setDomain(Integer domain) {
+		this.domain = domain;
+		return this;
+	}
 	public boolean isCeutaMelilla() {
 		return ceutaMelilla;
 	}
@@ -44,10 +61,10 @@ public class IrpfData implements Serializable {
 		this.spouseDocument = spouseDocument;
 		return this;
 	}
-	public byte getDisability() {
+	public Byte getDisability() {
 		return disability;
 	}
-	public IrpfData setDisability(byte disability) {
+	public IrpfData setDisability(Byte disability) {
 		this.disability = disability;
 		return this;
 	}

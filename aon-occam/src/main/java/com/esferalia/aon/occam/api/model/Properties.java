@@ -764,6 +764,17 @@ public interface Properties {
 		
 	}
 	
+	public interface PersonProperties extends RegistryProperties{
+		Property<Integer> getDomainProperty();
+		Property<Date> getBirthDateProperty();
+		Property<Byte> getGenderProperty();
+		Property<Byte> getMaritalStatusProperty();
+		Property<String> getSocialSecurityNumProperty();
+		Property<String> getFirstNameProperty();
+		Property<String> getFirstSurnameProperty();
+		Property<String> getSecondSurnameProperty();
+	}
+	
 	public interface ProductTagProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -896,5 +907,63 @@ public interface Properties {
 		Property<String> getDescriptionProperty();
 		Property<String> getUrlProperty();
 		Property<Integer> getRattachProperty();
+	}
+	
+	public interface ContractProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getPersonProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Integer> getEnterpriseCCCProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Integer> getCalendarProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getSepeStatusProperty();
+		Property<Integer> getRegistrationProperty();
+		Property<Date> getSeniorityDateProperty();
+		Property<Integer> getEnterpriseActivityProperty();
+		Property<Byte> getSSRegimeProperty();
+		Property<Integer> getAgreementLevelCategoryProperty();
+		Property<Byte> getModelProperty();
+		Property<String> getCategoryDescriptionProperty();
+		Property<Byte> getSSStatusProperty();
+	}
+	
+	public interface ContractDataProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Integer> getContractProperty();
+		Property<String> getExpressionProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+	}
+	
+	public interface IrpfDataProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getContractProperty();
+		Property<Byte> getFamilySituationProperty();
+		Property<String> getSpouseDocumentProperty();
+		Property<Byte> getDisabiltyLevelProperty();
+		Property<Byte> getDependenceProperty();
+		Property<Date> getMovingDateProperty();
+		Property<Byte> getLabourProlongationProperty();
+		Property<Byte> getDescendientCountProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Byte> getFiscalExclusionProperty();
+		Property<Date> getIssueDateProperty();
+		Property<Double> getAnnualRemunerationProperty();
+		Property<Double> getIrregular182ReductionProperty();
+		Property<Double> getIrregular183ReductionProperty();
+		Property<Double> getDeducciblesExpensesProperty();
+		Property<Double> getSpousalSupportProperty();
+		Property<Double> getFoodAnnuityProperty();
+		Property<Byte> getDeductHomeLoanProperty();
+		Property<Double> getRequestIrpfProperty();
+		Property<Byte> getContractTypeProperty();
+		Property<Byte> getCeutaMelillaProperty();
 	}
 }
