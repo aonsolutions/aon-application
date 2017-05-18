@@ -60,6 +60,7 @@ import com.code.aon.project.Project;
 import com.code.aon.project.ProjectAttachment;
 import com.code.aon.project.enumeration.ProjectAttachmentType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.seller.Seller;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -224,6 +225,7 @@ public class ReservationManager implements IReservationConstants {
 				throw new ReservationException("Invalid Check-in Date", reservationCrsCode, 381);
 			}
 			SourceType sellerSource = findPosSource(posType.getSourceArray(), CRO_SOURCE);
+			Seller seller = getReservationUtils().obtainSeller(sellerSource);
 			ProfileInfo agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, SOLRES);
 			if (agencyInfo == null) {
 				agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
@@ -248,7 +250,7 @@ public class ReservationManager implements IReservationConstants {
 			String token = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), TOKEN_CONEX_FLOW, null);
 			String remarks =  findComments(reservationType.getResGlobalInfo());
 			List<String> tariffList = getTariffList(reservationType.getRoomStays());
-			boolean prepay = isTariffPrepaid(reservationType.getResGlobalInfo(), tariffList);
+			boolean prepay = isTariffPrepaid(reservationType.getResGlobalInfo(), tariffList) && !isTariffPrepaidException(tariffList, seller, agency, company);
 			String bankTransaction = findPrepayInfo(reservationType.getResGlobalInfo(), BANK_TRANSACTION);
 			if (bankTransaction == null && StringUtils.indexOf(remarks, BANK_TRANSACTION_COMMENT) >= 0) {
 				bankTransaction = StringUtils.substringBetween(remarks, BANK_TRANSACTION_COMMENT + "-", "_");
@@ -276,7 +278,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setEndDate(DateUtils.truncate(checkOut, Calendar.DATE));
 			reservation.setStartTime(DateUtils.addHours(reservation.getStartDate(), 14));
 			reservation.setEndTime(DateUtils.addHours(reservation.getEndDate(), 12));
-			reservation.setSeller(getReservationUtils().obtainSeller(sellerSource));
+			reservation.setSeller(seller);
 			reservation.setAgency(agency);
 			reservation.setAgencyCommissionPercent(agencyCommissionPercent);
 			reservation.setAgencyCommissionAmount(agencyCommissionAmount);
@@ -1040,6 +1042,10 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 		return value;
+	}
+
+	private boolean isTariffPrepaidException(List<String> tariffList, Seller seller, Customer agency, Customer company) throws ManagerBeanException {
+		return getReservationUtils().isTariffPrepaidException(tariffList, seller, agency, company);
 	}
 
 	private boolean isGuaranteeVoucher(ResGlobalInfoType resGlobalInfoType) {

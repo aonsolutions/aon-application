@@ -1140,6 +1140,29 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return false;
 	}
 
+	public boolean isTariffPrepaidException(List<String> tariffList, Seller seller, Customer agency, Customer company) throws ManagerBeanException {
+		for (String tariffCode : tariffList) {
+			if (isTariffPrepaidException(tariffCode, seller, agency, company)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isTariffPrepaidException(String tariffCode, Seller seller, Customer agency, Customer company) throws ManagerBeanException {
+		Tariff tariff = obtainTariff(tariffCode);
+		if (tariff != null) {
+			if (seller != null && obtainTariffAddInfo(tariff, PREPAID_EXCEPTION_SELLER, seller.getId().toString()) != null) {
+				return true;
+			} else if (agency != null && obtainTariffAddInfo(tariff, PREPAID_EXCEPTION_AGENCY, agency.getId().toString()) != null) {
+				return true;
+			} else if (company != null && obtainTariffAddInfo(tariff, PREPAID_EXCEPTION_COMPANY, company.getId().toString()) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean isTariffNoRefundable(List<String> tariffList) throws ManagerBeanException {
 		for (String tariffCode : tariffList) {
 			if (isTariffNoRefundable(tariffCode)) {
