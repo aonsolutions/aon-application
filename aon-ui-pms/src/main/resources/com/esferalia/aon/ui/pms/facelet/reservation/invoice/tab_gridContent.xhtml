@@ -135,9 +135,10 @@
 				title="#{bundle.aon_report}"
 				actionListener="#{controller.onPrintInvoice}"
 				action="#{saleInvoiceSigner.onReport}">
-				<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+				<aon:actionListener method="#{printParams.onInit}" />
+				<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
 				<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
-					value="#{company.saleInvoiceTemplateValue}" />
+					value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
 			</aon:htmlCommandLink>
 		</aon:if>
 	</aon:column>
