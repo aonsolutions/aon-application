@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal.mod200_2016;
 
 import java.io.Serializable;
 
+// Desglose Casilla 082
 // Deducciones I + D + i excluidas de límite. Opción art. 39.2 LIS
 public enum Mod2002016BN082Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1
@@ -17,9 +18,11 @@ public enum Mod2002016BN082Key implements Serializable, IMod200KeysProvider {
 	 ,C02(new Mod2002016Key[]{Mod2002016Key.BN589 ,Mod2002016Key.BN976 ,Mod2002016Key.BN977 ,Mod2002016Key.BN978 },"2013: Innovaci\u00F3n tecnol\u00F3gica (ITE)")
 	 ,C03(new Mod2002016Key[]{Mod2002016Key.BN822 ,Mod2002016Key.BN823 ,Mod2002016Key.BN824 ,Mod2002016Key.BN231 },"2014: Investigaci\u00F3n y desarrollo (CTE)")
 	 ,C04(new Mod2002016Key[]{Mod2002016Key.BN232 ,Mod2002016Key.BN233 ,Mod2002016Key.BN850 ,Mod2002016Key.BN851 },"2014: Innovaci\u00F3n tecnol\u00F3gica (ITE)")
-	 ,C05(new Mod2002016Key[]{Mod2002016Key.BN1123,Mod2002016Key.BN1124,Mod2002016Key.BN1125,Mod2002016Key.BN1126},"2015(*): Investigaci\u00F3n y desarrollo (CTE)")
-	 ,C06(new Mod2002016Key[]{Mod2002016Key.BN1127,Mod2002016Key.BN1128,Mod2002016Key.BN1129,Mod2002016Key.BN1130},"2015(*): Innovaci\u00F3n tecnol\u00F3gica (ITE)")
-	 ,C07(new Mod2002016Key[]{Mod2002016Key.BN517 ,Mod2002016Key.BN081 ,null /* BN082 */    ,Mod2002016Key.BN1234},"Total")
+	 ,C05(new Mod2002016Key[]{Mod2002016Key.BN1123,Mod2002016Key.BN1124,Mod2002016Key.BN1125,Mod2002016Key.BN1126},"2015: Investigaci\u00F3n y desarrollo (CTE)")
+	 ,C06(new Mod2002016Key[]{Mod2002016Key.BN1127,Mod2002016Key.BN1128,Mod2002016Key.BN1129,Mod2002016Key.BN1130},"2015: Innovaci\u00F3n tecnol\u00F3gica (ITE)")
+	 ,C07(new Mod2002016Key[]{Mod2002016Key.BN1426,Mod2002016Key.BN1427,Mod2002016Key.BN1428,Mod2002016Key.BN1429},"2016(*): Investigaci\u00F3n y desarrollo (CTE)")
+	 ,C08(new Mod2002016Key[]{Mod2002016Key.BN1430,Mod2002016Key.BN1431,Mod2002016Key.BN1432,Mod2002016Key.BN1433},"2016(*): Innovaci\u00F3n tecnol\u00F3gica (ITE)")
+	 ,C09(new Mod2002016Key[]{Mod2002016Key.BN517 ,Mod2002016Key.BN081 ,null /* BN082 */    ,Mod2002016Key.BN1234},"Total")
 	;
 	 
     private String description;

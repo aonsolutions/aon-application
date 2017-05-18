@@ -75,6 +75,7 @@ public class Mod2002016 implements IFiscalModel {
 	private String justCanarias;
 	private String nrsAnexoIV;
 	private String nrsAnexoV;
+	private String justActivos;
 	
 	private EnumMap<Mod2002016Key,DoubleVariable2016> keysMap = new EnumMap<Mod2002016Key,DoubleVariable2016>(Mod2002016Key.class);
 	private EnumMap<Mod2002016Key,DoubleVariable2016> draftMap = new EnumMap<Mod2002016Key,DoubleVariable2016>(Mod2002016Key.class);
@@ -451,6 +452,12 @@ public class Mod2002016 implements IFiscalModel {
 	}
 	public void setNrsAnexoV(String nrsAnexoV) {
 		this.nrsAnexoV = nrsAnexoV;
+	}
+	public String getJustActivos() {
+		return justActivos;
+	}
+	public void setJustActivos(String justActivos) {
+		this.justActivos = justActivos;
 	}
 	
 }

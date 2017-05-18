@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal.mod200_2016;
 
 import java.io.Serializable;
 
+// Desglose Casilla 1041
 // Deducción por reversión de medidas temporales (D.T. 37ª.2 LIS)
 public enum Mod2002016BN1041Key implements Serializable, IMod200KeysProvider  {
 	// Á --> \u00C1 á --> \u00E1
@@ -13,9 +14,10 @@ public enum Mod2002016BN1041Key implements Serializable, IMod200KeysProvider  {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 
-	 C01(new Mod2002016Key[]{Mod2002016Key.BN1174,Mod2002016Key.BN1175,Mod2002016Key.BN1176,Mod2002016Key.BN1177},"2015(*)")
-	,C02(new Mod2002016Key[]{Mod2002016Key.BN1178,Mod2002016Key.BN1179,Mod2002016Key.BN1180,Mod2002016Key.BN1181},"2015")
-	,C03(new Mod2002016Key[]{Mod2002016Key.BN1182,Mod2002016Key.BN1183,null /* BN1041 */   ,Mod2002016Key.BN1185},"Total")
+	 C01(new Mod2002016Key[]{Mod2002016Key.BN1178,Mod2002016Key.BN1179,Mod2002016Key.BN1446,Mod2002016Key.BN1181},"2015")
+	,C02(new Mod2002016Key[]{Mod2002016Key.BN1447,Mod2002016Key.BN1448,Mod2002016Key.BN1449,Mod2002016Key.BN1450},"2016(*)")
+	,C03(new Mod2002016Key[]{Mod2002016Key.BN1451,Mod2002016Key.BN1452,Mod2002016Key.BN1453,Mod2002016Key.BN1454},"2016")
+	,C04(new Mod2002016Key[]{Mod2002016Key.BN1182,Mod2002016Key.BN1183,null /* BN1041 */   ,Mod2002016Key.BN1185},"Total")
 	;
 	 
     private String description;

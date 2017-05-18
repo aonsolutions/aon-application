@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal.mod200_2016;
 
 import java.io.Serializable;
 
-// Reserva de nivelación
+// Reserva de nivelación - Dotación de la reserva
 public enum Mod2002016LQ1033_2Key implements Serializable, IMod200KeysProvider  {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
@@ -13,14 +13,10 @@ public enum Mod2002016LQ1033_2Key implements Serializable, IMod200KeysProvider  
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 
-	// FALTA  por ver como serán los calculos de este desglose, para ver si puedo poner	
-	// los dos apartados en el mismo enumerado o es necesario poner dos enumerados
-	
-	// Dotación de la reserva                
-	 C01(new Mod2002016Key[]{Mod2002016Key.LQ1150,Mod2002016Key.LQ1151,Mod2002016Key.LQ1152,Mod2002016Key.LQ1153},"2015(*)")
-	,C02(new Mod2002016Key[]{Mod2002016Key.LQ1154,Mod2002016Key.LQ1155,Mod2002016Key.LQ1156,Mod2002016Key.LQ1157},"2015")
-	,C03(new Mod2002016Key[]{Mod2002016Key.LQ1158,Mod2002016Key.LQ1159,Mod2002016Key.LQ1160,Mod2002016Key.LQ1161},"Total")
-	
+	 C01(new Mod2002016Key[]{Mod2002016Key.LQ1150,Mod2002016Key.LQ1151,Mod2002016Key.LQ1152,Mod2002016Key.LQ1153},"2015")
+	,C02(new Mod2002016Key[]{Mod2002016Key.LQ1154,Mod2002016Key.LQ1155,Mod2002016Key.LQ1156,Mod2002016Key.LQ1157},"2016(*)")
+	,C03(new Mod2002016Key[]{Mod2002016Key.LQ1458,Mod2002016Key.LQ1459,Mod2002016Key.LQ1460,Mod2002016Key.LQ1461},"2016")
+	,C04(new Mod2002016Key[]{Mod2002016Key.LQ1158,Mod2002016Key.LQ1159,Mod2002016Key.LQ1160,Mod2002016Key.LQ1161},"Total")
 	;
 	 
     private String description;

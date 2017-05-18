@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal.mod200_2016;
 
 import java.io.Serializable;
 
-// Reserva de nivelación
+// Reserva de nivelación - Reducción en base imponible
 public enum Mod2002016LQ1033_1Key implements Serializable, IMod200KeysProvider  {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
@@ -13,13 +13,10 @@ public enum Mod2002016LQ1033_1Key implements Serializable, IMod200KeysProvider  
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 
-	// FALTA  por ver como serán los calculos de este desglose, para ver si puedo poner	
-	// los dos apartados en el mismo enumerado o es necesario poner dos enumerados
-	
-	// Reducción en base imponible
-	 C01(new Mod2002016Key[]{Mod2002016Key.LQ1141,Mod2002016Key.LQ1142,Mod2002016Key.LQ1143},"2015(*)")
-	,C02(new Mod2002016Key[]{Mod2002016Key.LQ1144,Mod2002016Key.LQ1145,Mod2002016Key.LQ1146},"2015")
-	,C03(new Mod2002016Key[]{Mod2002016Key.LQ1147,Mod2002016Key.LQ1148,Mod2002016Key.LQ1149},"Total")
+	 C01(new Mod2002016Key[]{Mod2002016Key.LQ1141,Mod2002016Key.LQ1142,Mod2002016Key.LQ1143},"2015")
+	,C02(new Mod2002016Key[]{Mod2002016Key.LQ1144,Mod2002016Key.LQ1145,Mod2002016Key.LQ1146},"2016(*)")
+	,C03(new Mod2002016Key[]{Mod2002016Key.LQ1455,Mod2002016Key.LQ1456,Mod2002016Key.LQ1457},"2016")	
+	,C04(new Mod2002016Key[]{Mod2002016Key.LQ1147,Mod2002016Key.LQ1148,Mod2002016Key.LQ1149},"Total")
 	;
 	 
     private String description;

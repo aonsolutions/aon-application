@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal.mod200_2016;
 
 import java.io.Serializable;
 
-// Deducciones disposición transitoria 24ª.1 LIS y octava RDL 4/2004
+// Deducciones disposición transitoria 24ª.1 LIS
 public enum Mod2002016BN584Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
@@ -13,14 +13,14 @@ public enum Mod2002016BN584Key implements Serializable, IMod200KeysProvider {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 	
-	 C01(new Mod2002016Key[]{Mod2002016Key.BN749,Mod2002016Key.BN750,null               },"2010: Periodificaci\u00F3n")
-	,C02(new Mod2002016Key[]{Mod2002016Key.BN752,Mod2002016Key.BN753,Mod2002016Key.BN754},"2011: Periodificaci\u00F3n")
-	,C03(new Mod2002016Key[]{Mod2002016Key.BN755,Mod2002016Key.BN756,Mod2002016Key.BN757},"2012: Periodificaci\u00F3n")
-	,C04(new Mod2002016Key[]{Mod2002016Key.BN758,Mod2002016Key.BN759,Mod2002016Key.BN760},"2013: Periodificaci\u00F3n")
-	,C05(new Mod2002016Key[]{Mod2002016Key.BN761,Mod2002016Key.BN762,Mod2002016Key.BN763},"2014: Periodificaci\u00F3n")
-	,C06(new Mod2002016Key[]{Mod2002016Key.BN744,Mod2002016Key.BN745,Mod2002016Key.BN746},"2015: Periodificaci\u00F3n(*)")
-	,C07(new Mod2002016Key[]{Mod2002016Key.BN779,Mod2002016Key.BN783,Mod2002016Key.BN784},"2015: Periodificaci\u00F3n")
-	,C08(new Mod2002016Key[]{Mod2002016Key.BN764,null /* BN584 */   ,Mod2002016Key.BN765},"Total deducciones disposici\u00F3n transitoria octava LIS") 
+	 C01(new Mod2002016Key[]{Mod2002016Key.BN749,Mod2002016Key.BN750,null               },"2011: Periodificaci\u00F3n")
+	,C02(new Mod2002016Key[]{Mod2002016Key.BN752,Mod2002016Key.BN753,Mod2002016Key.BN754},"2012: Periodificaci\u00F3n")
+	,C03(new Mod2002016Key[]{Mod2002016Key.BN755,Mod2002016Key.BN756,Mod2002016Key.BN757},"2013: Periodificaci\u00F3n")
+	,C04(new Mod2002016Key[]{Mod2002016Key.BN758,Mod2002016Key.BN759,Mod2002016Key.BN760},"2014: Periodificaci\u00F3n")
+	,C05(new Mod2002016Key[]{Mod2002016Key.BN761,Mod2002016Key.BN762,Mod2002016Key.BN763},"2015: Periodificaci\u00F3n")
+	,C06(new Mod2002016Key[]{Mod2002016Key.BN744,Mod2002016Key.BN745,Mod2002016Key.BN746},"2016: Periodificaci\u00F3n(*)")
+	,C07(new Mod2002016Key[]{Mod2002016Key.BN779,Mod2002016Key.BN783,Mod2002016Key.BN784},"2016: Periodificaci\u00F3n")
+	,C08(new Mod2002016Key[]{Mod2002016Key.BN764,null /* BN584 */   ,Mod2002016Key.BN765},"Total") 
 	;
 	 
     private String description;

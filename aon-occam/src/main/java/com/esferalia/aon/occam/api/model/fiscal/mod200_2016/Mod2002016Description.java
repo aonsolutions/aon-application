@@ -526,6 +526,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.ID654,"A reservas");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID1270,"Reservas de capitalizaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID1271,"Reservas de nivelaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002016Key.ID1522,"Otras reservas");		
 		DESCRIPTION_MAP.put(Mod2002016Key.ID655,"Intereses aportaciones al capital (Cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID656,"A dividendos");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID658,"A dotaci\u00F3n O.S. (Cajas de ahorro)");

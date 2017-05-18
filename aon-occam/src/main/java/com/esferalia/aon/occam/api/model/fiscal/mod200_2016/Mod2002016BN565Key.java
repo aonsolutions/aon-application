@@ -13,19 +13,19 @@ public enum Mod2002016BN565Key implements Serializable, IMod200KeysProvider {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 	
-	 C01(new Mod2002016Key[]{Mod2002016Key.BN929,Mod2002016Key.BN930,null               },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2005") 
-	,C02(new Mod2002016Key[]{Mod2002016Key.BN942,Mod2002016Key.BN943,Mod2002016Key.BN944},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2006")
-	,C03(new Mod2002016Key[]{Mod2002016Key.BN294,Mod2002016Key.BN295,Mod2002016Key.BN296},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2007")
-	,C04(new Mod2002016Key[]{Mod2002016Key.BN066,Mod2002016Key.BN074,Mod2002016Key.BN084},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2008")
-	,C05(new Mod2002016Key[]{Mod2002016Key.BN008,Mod2002016Key.BN009,Mod2002016Key.BN010},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2009")
-	,C06(new Mod2002016Key[]{Mod2002016Key.BN034,Mod2002016Key.BN035,Mod2002016Key.BN036},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2010")
-	,C07(new Mod2002016Key[]{Mod2002016Key.BN201,Mod2002016Key.BN202,Mod2002016Key.BN203},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2011")
-	,C08(new Mod2002016Key[]{Mod2002016Key.BN904,Mod2002016Key.BN905,Mod2002016Key.BN906},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2012")
-	,C09(new Mod2002016Key[]{Mod2002016Key.BN990,Mod2002016Key.BN991,Mod2002016Key.BN992},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2013")
-	,C10(new Mod2002016Key[]{Mod2002016Key.BN997,Mod2002016Key.BN998,Mod2002016Key.BN999},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2014")
-	,C11(new Mod2002016Key[]{Mod2002016Key.BN246,Mod2002016Key.BN247,Mod2002016Key.BN248},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2015(*)")
-	,C12(new Mod2002016Key[]{Mod2002016Key.BN993,Mod2002016Key.BN994,Mod2002016Key.BN995},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2015")
-	,C13(new Mod2002016Key[]{Mod2002016Key.BN598,null /* BN565 */   ,Mod2002016Key.BN895},"Total donaciones a entidades sin fines de lucro (Ley 49/2002)")
+	 C01(new Mod2002016Key[]{Mod2002016Key.BN942 ,Mod2002016Key.BN943 ,null                },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2006")
+	,C02(new Mod2002016Key[]{Mod2002016Key.BN294 ,Mod2002016Key.BN295 ,Mod2002016Key.BN296 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2007")
+	,C03(new Mod2002016Key[]{Mod2002016Key.BN066 ,Mod2002016Key.BN074 ,Mod2002016Key.BN084 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2008")
+	,C04(new Mod2002016Key[]{Mod2002016Key.BN008 ,Mod2002016Key.BN009 ,Mod2002016Key.BN010 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2009")
+	,C05(new Mod2002016Key[]{Mod2002016Key.BN034 ,Mod2002016Key.BN035 ,Mod2002016Key.BN036 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2010")
+	,C06(new Mod2002016Key[]{Mod2002016Key.BN201 ,Mod2002016Key.BN202 ,Mod2002016Key.BN203 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2011")
+	,C07(new Mod2002016Key[]{Mod2002016Key.BN904 ,Mod2002016Key.BN905 ,Mod2002016Key.BN906 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2012")
+	,C08(new Mod2002016Key[]{Mod2002016Key.BN990 ,Mod2002016Key.BN991 ,Mod2002016Key.BN992 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2013")
+	,C09(new Mod2002016Key[]{Mod2002016Key.BN997 ,Mod2002016Key.BN998 ,Mod2002016Key.BN999 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2014")
+	,C10(new Mod2002016Key[]{Mod2002016Key.BN246 ,Mod2002016Key.BN247 ,Mod2002016Key.BN248 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2015")
+	,C11(new Mod2002016Key[]{Mod2002016Key.BN993 ,Mod2002016Key.BN994 ,Mod2002016Key.BN995 },"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2016(*)")
+	,C12(new Mod2002016Key[]{Mod2002016Key.BN1434,Mod2002016Key.BN1435,Mod2002016Key.BN1436},"Donaciones a entidades sin fines de lucro (Ley 49/2002) 2016")
+	,C13(new Mod2002016Key[]{Mod2002016Key.BN598,null /* BN565 */   ,Mod2002016Key.BN895},"Total")
 	,C14(new Mod2002016Key[]{Mod2002016Key.BN974,null               ,null               },"Donaciones del per\u00EDodo impositivo efectuadas a entidades sin fines de lucro (Ley 49/2002)")
 	;
 	 

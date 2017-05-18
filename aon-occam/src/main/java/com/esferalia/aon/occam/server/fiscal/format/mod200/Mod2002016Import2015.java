@@ -487,8 +487,8 @@ public class Mod2002016Import2015 {
 		,PAG18 ( new IPropertyFiller[] {
 
 			// Deducción donativos a entidades sin fines de lucro
-			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN929, mod200old.getDoubleValue(Mod2002015Key.BN944))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN942, mod200old.getDoubleValue(Mod2002015Key.BN296))
+			// (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN929, mod200old.getDoubleValue(Mod2002015Key.BN944))
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN942, mod200old.getDoubleValue(Mod2002015Key.BN296))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN294, mod200old.getDoubleValue(Mod2002015Key.BN084))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN066, mod200old.getDoubleValue(Mod2002015Key.BN010))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN008, mod200old.getDoubleValue(Mod2002015Key.BN036))
