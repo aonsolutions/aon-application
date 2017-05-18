@@ -44,11 +44,15 @@ import com.google.api.services.drive.model.Property;
 
 public class DBDrive {
 	
-	public static Vector<FileInfo> getAttachLimit(Domain domain, User user, AttachType attachType, Integer page, Integer perPage){
+	
+	public static Vector<FileInfo> getAttachLimit(Domain domain, User user, AttachType attachType,
+			Byte[] types, Integer page, Integer perPage){
+		
 		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getDriveIdProperty().isNull()
 				.and(f.getDataProperty().isNotNull())
 				.and(f.getMimeTypeProperty().isNotNull())
+				.and(f.getTypeProperty().in(types))
 				.page(page).perPage(perPage),
 				attachType, true).map(new AttachToFileInfo())
 				.collect(Collectors.toCollection(Vector::new));

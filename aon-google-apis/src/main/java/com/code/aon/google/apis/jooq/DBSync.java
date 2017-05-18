@@ -33,6 +33,7 @@ public class DBSync {
 		}
 		return map;
 	}
+	
 	public static Map<String, Integer> getDomainMap(){
 		Map<String, Integer> domainMap = new HashMap<String, Integer>();
 		try {
@@ -80,4 +81,5 @@ public class DBSync {
 		}
 		return firstDomain;
 	}
+
 }

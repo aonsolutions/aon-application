@@ -99,18 +99,14 @@ public class SearchFiles {
 	}
 
 	public static FileList searchFilesMimetypeAndTitle(Drive drive, String searcher1, String searcher2) throws IOException{
-		
 		FileList fl = drive.files().list().setQ("mimetype = '"+searcher1+"' and title = '"+searcher2+"'").execute();
 		System.out.println(fl);
 		return fl;
-		
 	}
 
 	public static FileList searchFilesMimetype(Drive drive, String searcher) throws IOException{
-		
 		FileList fl = drive.files().list().setQ("mimetype contains '"+searcher+"'").execute();
 		return fl;
-		
 	}
 
 	public static FileList searchFilesAll(Drive drive) throws IOException{

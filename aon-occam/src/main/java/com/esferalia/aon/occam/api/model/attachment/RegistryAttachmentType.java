@@ -33,4 +33,17 @@ public enum RegistryAttachmentType {
 	public String getName(){
 		return this.toString();
 	}
+	
+	public static Byte[] drive(){
+		return new Byte[]{
+			ADDITIONAL_IMAGE.value(), BANNER.value(),
+			CORPORATE_IDENTITY.value(), DIGITAL_CERTIFICATE.value(),
+			DOCUMENT.value(), FISCAL_TEMPLATES.value(),
+			FISCAL_REPORTS.value(), SIGNATURE.value(),
+			INVOICE_FOOTER_TEXT.value(), MARKETING_TEMPLATE.value(),
+			ENTERPRISE_CONTRACT_CLAUSES.value(), POS_INVOICE_FOOTER_TEXT.value(),
+			REPORT_BACKGROUND.value(), SYSTEM_MESSAGE.value()
+		};
+	}
+	
 }

@@ -303,6 +303,7 @@
 											<include>com.code.aon:aon.oauth2:${project.version}</include>
 											<include>com.esferalia.aon:aon.occam:${project.version}</include>
 											<include>com.esferalia.aon:aon.watson:${project.version}</include>
+											<include>net.aonsolutions:aon.google.apis.v2:${project.version}</include>
 											
 											<!-- Google -->
 											<include>com.google.api-client:google-api-client:1.21.0</include>
@@ -338,6 +339,12 @@
 											<location>src/main/scripts</location>
 											<includes>
 												<include>aon-google-drive.sh</include>
+											</includes>
+										</source>
+										<source>
+											<location>src/main/scripts</location>
+											<includes>
+												<include>aon-google-drive-v2.sh</include>
 											</includes>
 										</source>
 										<source>

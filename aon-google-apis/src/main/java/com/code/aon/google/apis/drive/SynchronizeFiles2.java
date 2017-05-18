@@ -27,11 +27,17 @@ import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DBSync;
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.ContractAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.PayrollBatchAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.SepeBatchAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -72,7 +78,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.REGISTRY, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.REGISTRY, RegistryAttachmentType.drive(), page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();
@@ -83,7 +89,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, ContractAttachmentType.drive(), page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();
@@ -94,7 +100,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, ItemAttachmentType.drive(), page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();
@@ -105,7 +111,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, InvoiceAttachmentType.drive(),page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();
@@ -116,7 +122,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, new Byte[]{}, page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();
@@ -127,7 +133,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, PayrollBatchAttachmentType.drive(), page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();
@@ -138,7 +144,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, ProjectAttachmentType.drive(), page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();
@@ -149,7 +155,7 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, page, perPage);
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, SepeBatchAttachmentType.drive(), page, perPage);
 				if(v.size() != 0) sync(drive, domain, v);
 				if (numero >= num) return;
 				perPage = v.size();

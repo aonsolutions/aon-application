@@ -1,13 +1,12 @@
 package com.esferalia.aon.occam.api.model.attachment;
 
-public enum ProjectAttachmentType {
+public enum ItemAttachmentType {
 
+	THUMBNAIL,
+    IMAGE,
 	DOCUMENT,
-	CRS,
-	CONEXFLOW,
-	PAYSLIP
-	;
-	
+	ECOMMERCE_PRODUCT;
+
 	public byte value() {
 		return (byte) this.ordinal();
 	}
@@ -17,6 +16,9 @@ public enum ProjectAttachmentType {
 	}
 	
 	public static Byte[] drive(){
-		return new Byte[]{DOCUMENT.value(), CRS.value()};
+		return new Byte[]{
+			THUMBNAIL.value(), IMAGE.value(),
+			DOCUMENT.value(), ECOMMERCE_PRODUCT.value()
+		};
 	}
 }

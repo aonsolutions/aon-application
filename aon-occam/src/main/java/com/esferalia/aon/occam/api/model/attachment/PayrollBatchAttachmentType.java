@@ -1,12 +1,9 @@
 package com.esferalia.aon.occam.api.model.attachment;
 
-public enum ProjectAttachmentType {
+public enum PayrollBatchAttachmentType {
 
-	DOCUMENT,
-	CRS,
-	CONEXFLOW,
-	PAYSLIP
-	;
+	GENERATED_DOCUMENT,
+	RETURN_DOCUMENT;
 	
 	public byte value() {
 		return (byte) this.ordinal();
@@ -17,6 +14,8 @@ public enum ProjectAttachmentType {
 	}
 	
 	public static Byte[] drive(){
-		return new Byte[]{DOCUMENT.value(), CRS.value()};
+		return new Byte[]{
+			GENERATED_DOCUMENT.value(), RETURN_DOCUMENT.value()
+		};
 	}
 }
