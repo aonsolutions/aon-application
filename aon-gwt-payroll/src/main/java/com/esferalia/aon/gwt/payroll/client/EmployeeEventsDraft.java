@@ -102,6 +102,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	MenuItem showYearMenuItem;
 	
 	@UiField
+	Button undoAllButton;
+	
+	@UiField
+	Button undoButton;
+	
+	@UiField
+	Button redoButton;
+	
+	@UiField
 	Button newValueButton;
 	
 	@UiField
@@ -181,6 +190,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		newValueBox.setText("");
 		eraseSelectedPositions();
 		newValueDialog.close();
+		changeYear(0);
 	}
 
 	@UiHandler("lastYearButton")
@@ -236,6 +246,25 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		}
 		
 	}
+	
+	@UiHandler("undoButton")
+	void onUndoButtonClick(ClickEvent event) {
+		this.employeeEventsDraft.undoManager.undo();
+		fillCellsEvents();
+	}
+
+	@UiHandler("redoButton")
+	void onRedoButtonClick(ClickEvent event) {
+		this.employeeEventsDraft.undoManager.redo();
+		fillCellsEvents();
+	}
+	
+	@UiHandler("undoAllButton")
+	void onUndoAllButtonClick(ClickEvent event) {
+		while (this.employeeEventsDraft.undoManager.canUndo())
+			this.employeeEventsDraft.undoManager.undo();
+		fillCellsEvents();
+	}
 
 
 	/**
@@ -247,6 +276,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		this.employeeEventsDraft = employeeEventsDraft;
 		
 		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
+		
+		this.employeeEventsDraft.undoManager.addListener(new UndoManager.Listener() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void onChange(UndoManager undoManager) {
+				undoAllButton.setEnabled(undoManager.canUndo());
+				undoButton.setEnabled(undoManager.canUndo());
+				redoButton.setEnabled(undoManager.canRedo());
+				//saveButton.setEnabled(undoManager.canUndo());
+			}
+		});
 		
 		//Pintar la tabla
 		fillCellsEvents();
@@ -261,13 +301,13 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			for (int col = 1; col < 13; col ++){
 			
-				TextBox eventValue = new TextBox();
+				Label eventValue = new Label();
 				eventValue.setStyleName(style.cellFormat());
 				if (row % 2 == 1)
 					eventValue.setStyleName(style.cellOddFormat());
 				
 				if(null == varList){
-					eventValue.setValue("-");
+					eventValue.setText("-");
 					eventsGrid.setWidget(row, col, eventValue);
 					continue;
 				}
@@ -275,13 +315,13 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(variableName, actualMonth);
 				
 				if (null == varMonth){
-					eventValue.setValue("-");
+					eventValue.setText("-");
 					eventsGrid.setWidget(row, col, eventValue);
 					actualMonth++;
 					continue;
 				}
 				
-				eventValue.setValue(varMonth.getValue().toString());
+				eventValue.setText(varMonth.getValue().toString());
 				eventsGrid.setWidget(row, col, eventValue);
 				actualMonth++;
 			}	
@@ -313,23 +353,35 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		int row = calculateRow(selectedPositions.getSelectedList().get(0));
 		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
 		nameVariableDialog.getElement().setInnerText(variableName+" : ");
+		//TODO: PORQUE NO FUNCIONA!!!
+		newValueBox.setFocus(true);
 	}
 	
 	private void addValueSelectedPositions(Double newValue) {
+		ArrayList<Integer> months = new ArrayList<Integer>();
+		int variableRow = calculateRow(selectedPositions.getSelectedList().get(0));
+		String variableName = eventsGrid.getWidget(variableRow, 0).getElement().getInnerText();
+		
 		for (Integer position : selectedPositions.getSelectedList()){
-			int row = calculateRow(position);
 			int col = calculateCol(position);
+			Integer month = calculateMonthByColumn(col);
 			
-			TextBox widget = (TextBox) eventsGrid.getWidget(row, col);
-			widget.setValue(newValue.toString());
+			months.add(month);
 		}
+
+		this.employeeEventsDraft.setValueByMonths(variableName, months, newValue);
 		
 	}
 	
+	private Integer calculateMonthByColumn(int col) {
+		return col-1;
+	}
+
 	private void changeYear(int change) {
 		int actualYear = Integer.parseInt(yearLabel.getText());
 		int newYear = actualYear + change;
 		yearLabel.setText(Integer.toString(newYear));
+		fillCellsEvents();	
 	}
 	
 	private void selectPosition(int row, int col) {

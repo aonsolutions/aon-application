@@ -8,6 +8,8 @@
 	xmlns:p="urn:import:com.vaadin.polymer.paper.widget"
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraft.MyStyle">
 
 		/* ESTILOS TABLA */
@@ -57,10 +59,21 @@
 			display: none;
 		}
 
+		.noselect {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently
+				                                  supported by Chrome and Opera */
+		}
+
 		/* ESTILOS CELDA TABLA */
 		
 		.cellFormat{
 			width: 40px;
+			margin-left: 8px;
     		text-align: center;
 			border: none;
 			cursor: pointer;
@@ -69,6 +82,7 @@
 		.cellOddFormat{
 			background-color: #eee;
 			width: 40px;
+			margin-left: 8px;
     		text-align: center;
 			border: none;
 			cursor: pointer;
@@ -79,6 +93,7 @@
     		color: #ffffff !important;
     		border-radius: 9px !important;
 			width: 40px;
+			margin-left: 8px;
    			text-align: center;
     		border: none;
 			cursor: pointer;
@@ -175,6 +190,17 @@
 								<g:Label styleName="aon-outputText"></g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button debugId='undoAllButton' ui:field='undoAllButton'
+									styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}'
+									enabled="false" />
+								<g:Button ui:field="undoButton"
+									styleName='aon-finding-toolbar-item aon-icon-undo' enabled="false" />
+								<g:Button ui:field='redoButton'
+									styleName="aon-finding-toolbar-item aon-icon-redo" enabled="false" />
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 						    <g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							    <g:Button ui:field='newValueButton' styleName='aon-finding-toolbar-item aon-icon-reset' 
@@ -348,7 +374,7 @@
 				    </g:north>
 				    <g:center>
 				        <g:ScrollPanel>
-					   		<g:Grid ui:field="eventsGrid" width="99%" styleName="{style.tableStyle}">
+					   		<g:Grid ui:field="eventsGrid" width="99%" styleName="{style.tableStyle} {style.noselect}">
 				   		    	<!-- PARTE OCULTA PARA REDIMENSIONAR LA TABLA -->
 				   		    	<g:row>
 									<g:customCell styleName="{style.cabeceraFirstStyleHide}">

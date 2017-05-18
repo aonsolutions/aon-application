@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
@@ -121,12 +122,18 @@ public class EmployeeEventsDraftObject {
 	private Map<String, ArrayList<EmployeeEventsVariable>> mapEventsVar;
 	private Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar;
 	private Integer idEmployee;
+	private EmployeesServiceAsync employeesService;
+	public UndoManager<Undoable> undoManager;
 	
 	public EmployeeEventsDraftObject(Integer idEmployee, EmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
 		crearMapaEmployeeEvents();
 		this.draftMapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
+		
 		this.idEmployee = idEmployee;
+		this.employeesService = employeesService;
+		
+		this.undoManager = new UndoManager<>();
 	}
 
 	/**
@@ -165,6 +172,7 @@ public class EmployeeEventsDraftObject {
 			return mapEventsVar.getOrDefault(varName, null);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month){
 		if (null != draftMapEventsVar.get(varName))
 			for (EmployeeEventsVariable e : draftMapEventsVar.get(varName)){
@@ -181,6 +189,50 @@ public class EmployeeEventsDraftObject {
 		return null;
 	}
 	
+	@SuppressWarnings("deprecation")
+	public void setValueByMonth(String variableName, Integer month, Double newValue) {
+		EmployeeEventsVariable oldVar = null;
+		for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
+			if(month == e.getStartDate().getMonth())
+				oldVar = e;
+		}
+		
+		EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue);
+		
+		this.undoManager.add(new SetVariableEdit(oldVar, newVar, variableName));
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void setValueByMonths(String variableName, ArrayList<Integer> months, Double newValue) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		
+		for (Integer month : months){
+			EmployeeEventsVariable oldVar = null;
+			if (null != draftMapEventsVar.get(variableName))
+				for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
+					if(month == e.getStartDate().getMonth())
+						oldVar = e;
+				}
+			else{
+				draftMapEventsVar.put(variableName, new ArrayList<EmployeeEventsVariable>());
+			}
+			
+			EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue);
+			draftMapEventsVar.get(variableName).add(newVar);
+			undos.add(new SetVariableEdit(oldVar, newVar, variableName));
+		}
+		this.undoManager.add(new CompositeUndoable<Undoable>(undos));
+		
+	}
+	
+	@SuppressWarnings("deprecation")
+	private EmployeeEventsVariable createEmployeeEventsVariable(Integer month, Double newValue) {
+		Date startDate = new Date(117, month, DateUtils.getFirstDayOfMonth(new Date(117, month, month)).getDate());
+		Date endDate = new Date(117, month, DateUtils.getLastDayOfMonth(new Date(117, month, month)).getDate());
+		
+		return new EmployeeEventsVariable(startDate, endDate, newValue);
+	}
+
 	/**
 	 * METODOS PARA BORRAR
 	 */
