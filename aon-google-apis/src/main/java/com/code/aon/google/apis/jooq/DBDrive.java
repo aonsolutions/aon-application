@@ -58,11 +58,12 @@ public class DBDrive {
 				.collect(Collectors.toCollection(Vector::new));
 	}	
 	
-	public static Stream<Attach> getAttachStreamLimit(Domain domain, User user, AttachType attachType, Integer page, Integer perPage){
+	public static Stream<Attach> getAttachStreamLimit(Domain domain, User user, AttachType attachType, Byte[] types, Integer page, Integer perPage){
 		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getDriveIdProperty().isNull()
 				.and(f.getDataProperty().isNotNull())
 				.and(f.getMimeTypeProperty().isNotNull())
+				.and(f.getTypeProperty().in(types))
 				.page(page).perPage(perPage),
 				attachType, true);
 	}

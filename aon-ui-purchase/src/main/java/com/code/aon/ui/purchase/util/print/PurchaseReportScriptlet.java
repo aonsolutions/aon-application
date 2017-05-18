@@ -31,7 +31,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
 
 public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Serializable {
 	
@@ -118,7 +118,7 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 				AonUtil.getDomainName(),
 				DomainManager.getCurrentDomain(),
 				UserUtils.getInstance().getLoggedUser().getLogin(),
-				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value()) 
+				filter -> filter.getTypeProperty().eq(ItemAttachmentType.ECOMMERCE_PRODUCT.value()) 
 					.and(filter.getAttachModuleProperty().eq(item.getId())), 
 				AttachType.ITEM);
 		return list;

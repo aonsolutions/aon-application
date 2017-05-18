@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.product.Item;
 
@@ -50,7 +50,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
         String domainName = AonServletUtils.getRequestDomainName(p_request);
         
 		LinkedList<Attach> iattachList = AON.getAttachList(domainName, domainId, login,
-				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value())
+				filter -> filter.getTypeProperty().eq(ItemAttachmentType.ECOMMERCE_PRODUCT.value())
 				.and(filter.getDescriptionProperty().eq(description))
 				.and(filter.getDomainProperty().eq(domainId)),
 				AttachType.ITEM);
@@ -207,7 +207,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 	
 	public String getItemImageUrl(String domainName, Integer domainId, String login, Integer itemId, Integer i) {
 		LinkedList<Attach> attach = AON.getAttachList(domainName, domainId, login,
-				f -> f.getAttachModuleProperty().eq(itemId).and(f.getTypeProperty().eq(AttachmentType.IMAGE.value())), AttachType.ITEM);
+				f -> f.getAttachModuleProperty().eq(itemId).and(f.getTypeProperty().eq(ItemAttachmentType.IMAGE.value())), AttachType.ITEM);
 		if(attach != null && i<attach.size())
 			return domainName+"/aonItemImage/"+attach.get(i).getId()+"."+attach.get(i).getMimeType().getExtension();
 		else return "";

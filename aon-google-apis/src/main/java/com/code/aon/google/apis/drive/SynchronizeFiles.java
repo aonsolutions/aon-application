@@ -27,6 +27,13 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.ContractAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.PayrollBatchAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.SepeBatchAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 
@@ -56,24 +63,24 @@ public class SynchronizeFiles {
 		HashMap<String, String> map = new HashMap<String, String>();
 		for (String s : types) map.put(s, s);
 		
-		if (map.containsKey("registry")) sync(drive, domain, AttachType.REGISTRY);
-		if (map.containsKey("contract")) sync(drive, domain, AttachType.CONTRACT);
-		if (map.containsKey("item")) sync(drive, domain, AttachType.ITEM);
-		if (map.containsKey("invoice")) sync(drive, domain, AttachType.INVOICE); 
-		if (map.containsKey("offer")) sync(drive, domain, AttachType.OFFER); 	
-		if (map.containsKey("payroll")) sync(drive, domain, AttachType.PAYROLL);
-		if (map.containsKey("project")) sync(drive, domain, AttachType.PROJECT);
-		if (map.containsKey("sepe")) sync(drive, domain, AttachType.SEPE);
+		if (map.containsKey("registry")) sync(drive, domain, AttachType.REGISTRY, RegistryAttachmentType.drive());
+		if (map.containsKey("contract")) sync(drive, domain, AttachType.CONTRACT, ContractAttachmentType.drive());
+		if (map.containsKey("item")) sync(drive, domain, AttachType.ITEM, ItemAttachmentType.drive());
+		if (map.containsKey("invoice")) sync(drive, domain, AttachType.INVOICE, InvoiceAttachmentType.drive()); 
+		if (map.containsKey("offer")) sync(drive, domain, AttachType.OFFER, new Byte[]{}); 	
+		if (map.containsKey("payroll")) sync(drive, domain, AttachType.PAYROLL, PayrollBatchAttachmentType.drive());
+		if (map.containsKey("project")) sync(drive, domain, AttachType.PROJECT, ProjectAttachmentType.drive());
+		if (map.containsKey("sepe")) sync(drive, domain, AttachType.SEPE, SepeBatchAttachmentType.drive());
 		
 		if(numero == 0) LOGGER.log(Level.INFO, "No documents/files found for domain: '"+domain.getName()+"'");
 	}
 
-	public static void sync(Drive drive, Domain domain, AttachType attachType){
+	public static void sync(Drive drive, Domain domain, AttachType attachType, Byte[] types){
 		AonDrive aonDrive = AonDrive.getInstace();
 		Integer perPage = 10;
 		Integer page = 0;
 		while(perPage == 10){
-			Stream<Attach> v = DBDrive.getAttachStreamLimit(domain, getUser(), attachType, page, perPage);
+			Stream<Attach> v = DBDrive.getAttachStreamLimit(domain, getUser(), attachType, types, page, perPage);
 			perPage = new Long(v.count()).intValue();
 			page++;
 			v.forEach(attach -> {

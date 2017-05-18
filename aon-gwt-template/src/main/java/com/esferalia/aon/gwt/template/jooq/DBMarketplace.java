@@ -41,7 +41,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -387,7 +387,7 @@ public class DBMarketplace {
 	
 	public static String getItemImageUrl(Domain domain, String login, Integer itemId, Integer i) {
 		LinkedList<Attach> attach = AON.getAttachList(domain.getName(), domain.getId(), login,
-				f -> f.getAttachModuleProperty().eq(itemId).and(f.getTypeProperty().eq(AttachmentType.IMAGE.value())), AttachType.ITEM);
+				f -> f.getAttachModuleProperty().eq(itemId).and(f.getTypeProperty().eq(ItemAttachmentType.IMAGE.value())), AttachType.ITEM);
 		if(attach != null && i<attach.size())
 			return domain.getName()+"/aonItemImage/"+attach.get(i).getId()+"."+attach.get(i).getMimeType().getExtension();
 		else return "";
@@ -455,7 +455,7 @@ public class DBMarketplace {
 			attach.setDescription(templateName);
 			attach.setAttachType(AttachType.ITEM);
 			attach.setAttachModule(item.getId());
-			attach.setType(AttachmentType.ECOMMERCE_PRODUCT.value());
+			attach.setType(ItemAttachmentType.ECOMMERCE_PRODUCT.value());
 			attach.setConfidential(false);
 			attach.setData(data);
 			if(attach.getId()==null){
