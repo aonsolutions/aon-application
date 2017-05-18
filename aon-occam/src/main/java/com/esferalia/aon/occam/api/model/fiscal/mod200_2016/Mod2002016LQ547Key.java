@@ -31,9 +31,10 @@ public enum Mod2002016LQ547Key implements Serializable, IMod200KeysProvider  {
 	,C16(Mod2002016Key.LQ725 ,Mod2002016Key.LQ726 ,Mod2002016Key.LQ727 ,"Compensaci\u00F3n de base a\u00F1o 2012")
 	,C17(Mod2002016Key.LQ534 ,Mod2002016Key.LQ535 ,Mod2002016Key.LQ536 ,"Compensaci\u00F3n de base a\u00F1o 2013")
 	,C18(Mod2002016Key.LQ607 ,Mod2002016Key.LQ675 ,Mod2002016Key.LQ699 ,"Compensaci\u00F3n de base a\u00F1o 2014")
-	,C19(Mod2002016Key.LQ1045,Mod2002016Key.LQ1046,Mod2002016Key.LQ1047,"Compensaci\u00F3n de base a\u00F1o 2015(*)")
-	,C20(Mod2002016Key.LQ670 ,null  /* LQ547 */   ,Mod2002016Key.LQ671 ,"Total")
-	,C21(Mod2002016Key.LQ1048,null                ,Mod2002016Key.LQ1049,"Compensaci\u00F3n de base a\u00F1o 2015")
+	,C19(Mod2002016Key.LQ1045,Mod2002016Key.LQ1046,Mod2002016Key.LQ1047,"Compensaci\u00F3n de base a\u00F1o 2015")
+	,C20(Mod2002016Key.LQ1519,Mod2002016Key.LQ1520,Mod2002016Key.LQ1521,"Compensaci\u00F3n de base a\u00F1o 2016(*)")
+	,C21(Mod2002016Key.LQ670 ,null  /* LQ547 */   ,Mod2002016Key.LQ671 ,"Total")
+	,C22(Mod2002016Key.LQ1048,null                ,Mod2002016Key.LQ1049,"Compensaci\u00F3n de base a\u00F1o 2016")
 	;
 	 
     private String description;

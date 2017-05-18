@@ -477,7 +477,7 @@ public enum Mod2002016Key implements IMod200Key {
 	,I0413(413)		,D0414(414)
 	,I0417(417)     ,D0418(418)	
 		
-	//  Entidades navieras en reÇµimen de tributaciÃ³n en funciÃ³n del tonelaje
+	// Entidades navieras en regimen de tributacion en funcion del tonelaje
 	,LQ578(578)
 	,LQ579(579)
 		,LQ0N1("0N1")
@@ -485,7 +485,7 @@ public enum Mod2002016Key implements IMod200Key {
 		,LQ631(631)
 		,LQ632(632)
 	
-	// Entidades que forman parte de grupos de consolidación fi scal
+	// Entidades que forman parte de grupos de consolidación fiscal
 	,LQ1029(1029)
 	,LQ1030(1030)
 	,LQ1031(1031)
@@ -517,7 +517,8 @@ public enum Mod2002016Key implements IMod200Key {
 		,LQ725(725)   ,LQ726(726)   ,LQ727(727)
 		,LQ534(534)   ,LQ535(535)   ,LQ536(536)
 		,LQ607(607)   ,LQ675(675)   ,LQ699(699)
-		,LQ1045(1045) ,LQ1046(1046) ,LQ1047(1047)		
+		,LQ1045(1045) ,LQ1046(1046) ,LQ1047(1047)
+		,LQ1519(1519) ,LQ1520(1520) ,LQ1521(1521)
 		,LQ670(670)                 ,LQ671(671)
 		,LQ1048(1048)               ,LQ1049(1049)		
 				
@@ -551,20 +552,27 @@ public enum Mod2002016Key implements IMod200Key {
 		,CPC11("C11")	,CPE11("E11")
 		,CPC12("553")	,CPE12("554")
 		
-	// Agrupaciones interÃ©s econÃ³mico y UTE's
+	// Agrupaciones interés económico y UTE's
 	,LQ555(555)
 	,LQ556(556)
+	
 	// Entidades ZEC
 	,LQ559(559)
 	,LQ1035(1035)
-	// Solo SOCIMI
+	
+	// Solo SOCIMIS
 	,LQ520(520)
 	,LQ521(521)
-	// Quitas por acuerdos con acreedores no vinculados
+	
+	// Rentas que no limitan las compensación de bases imponibles y cuotas negativas
 	,LQ545(545)
 	,LQ593(593)
+	,LQ1509(1509)
+	,LQ1510(1510)
+	
 	// Tipo de Gravamen
 	,LQ558(558)
+	
 	// Sólo cooperativas
 	,LQ560(560)
 	,LQ210(210)		,LQ480(480)
@@ -605,7 +613,7 @@ public enum Mod2002016Key implements IMod200Key {
 	,BN569(569)
 	,BN103(103) // Tipo de gravamen 2015, para desgloses de doble imposicion interna e internacional
 	,BN570(570) // DI interna de periodos anteriores aplicada en el ejercicio (art.30 RDL 4/2004)		
-		,BN104(104)		,BN105(105)		,BN846(846)		,BN847(847)		//,BN848(848)
+		,BN104(104)		,BN105(105)		,BN846(846)		,BN847(847)		,BN848(848)
 		,BN106(106)		,BN107(107)		,BN282(282)		,BN283(283)		,BN284(284)
 		,BN108(108)		,BN109(109)		,BN702(702)		,BN703(703)		,BN707(707)
 		,BN110(110)		,BN111(111)		,BN071(71)		,BN187(187)		,BN300(300)
@@ -613,9 +621,18 @@ public enum Mod2002016Key implements IMod200Key {
 		,BN114(114)		,BN115(115)		,BN714(714)		,BN715(715)		,BN716(716)
 		,BN735(735)		,BN920(920)		,BN736(736)		,BN737(737)		,BN738(738)
 		,BN116(116)						,BN117(117)						,BN118(118)
-	,BN1280(1280)
+		
+	,BN1344(1344) // DI interna de periodos anteriores aplicada en el ejercicio (DT 23ª.1 LIS)
+	    ,BN101(101)		,BN102(102)		,BN119(119)		,BN120(120)		,BN121(121)
+		,BN122(122)		,BN123(123)		,BN124(124)		,BN125(125)		,BN126(126)
+		,BN1342(1342)			        ,BN1343(1343)				    ,BN1345(1345)
+		
+	,BN1280(1280) // DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)
+	    ,BN127(127)		,BN128(128)		,BN129(129)
+		,BN1346(1346)				    ,BN1347(1347)
+	
 	,BN572(572) // DI internacional de periodos anteriores aplicada en el ejercicio (art.31 y 32 RDL 4/2004)		
-		,BN153(153)		,BN728(728)		,BN637(637)		,BN638(638)		
+		,BN153(153)		,BN728(728)		,BN637(637)		,BN638(638)		,BN639(639)
 		,BN154(154)		,BN729(729)		,BN849(849)		,BN894(894)		,BN197(197)
 		,BN155(155)		,BN730(730)		,BN285(285)		,BN286(286)		,BN287(287)
 		,BN156(156)		,BN731(731)		,BN825(825)		,BN826(826)		,BN827(827)
@@ -797,7 +814,7 @@ public enum Mod2002016Key implements IMod200Key {
 	    ,BN232(232)	    ,BN233(233)	    ,BN850(850)	    ,BN851(851)	    
 	    ,BN1123(1123)	,BN1124(1124)	,BN1125(1125)	,BN1126(1126)
 	    ,BN1127(1127)	,BN1128(1128)	,BN1129(1129)	,BN1130(1130)	    
-	    ,BN517(517)		,BN081(81)		/* BN082 */		,BN1234(1234)
+	    ,BN517(517)		,BN081(81)		/* BN082 */		/*,BN1234(1234)*/
 	,BN592(592)   // Cuota líquida positiva
 	
 	// Cuota del ejercicio al ingresar o a devolver
@@ -817,14 +834,11 @@ public enum Mod2002016Key implements IMod200Key {
 	,BN633(633)		,BN642(642)
 	,BN617(617)		,BN618(618)
 	,BN619(619)		,BN620(620)
-	,BN083(83) 		,BN1332(1332)
-	,BN1200(1200)		
-	,BN1042(1042)	,BN1333(1333)
+	,BN1234(1234)   ,BN083(83) 		,BN1332(1332)
+	,BN1200(1200)	,BN1042(1042)	,BN1333(1333)
 	,BN621(621)		,BN622(622)
-	,BN1020(1020)	,BN1043(1043)
-	,BN1021(1021)	,BN1044(1044)
-	//,BN150(150)		,BN1043(1043)
-	//,BN506(506)		,BN1044(1044)
+	,LM150(150)     ,BN1020(1020)	,BN1043(1043)
+	,LM506(506)     ,BN1021(1021)	,BN1044(1044)	
 		
 	// APLICACION DE RESULTADOS 
 	,ID650(650)
@@ -912,7 +926,7 @@ public enum Mod2002016Key implements IMod200Key {
 	,LM1220(1220)	,LM1221(1221)	,LM1222(1222)	,LM1223(1223)
 	,LM953(953)		,LM344(344)		,LM985(985)		,LM954(954)
 	
-	,LM393(393)	,LM150(150)	,LM506(506)
+	,LM393(393)	/*,LM150(150)	,LM506(506)*/
 	
 	// TRIBUTACION CONJUNTA AL ESTADO Y A LAS ADMINISTRACIONES FORALES DEL PAIS VASCO Y NAVARRA	
 	// Aplicación del concierto económico con la Comunidad Autónoma del País Vasco y del Convenio Económico entre el Estado y la Comunidad Foral de Navarra

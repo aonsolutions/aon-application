@@ -420,8 +420,10 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ520,"Parte de la base imponible del periodo impositivo que tributa al tipos general");
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ521,"Parte de la base imponible del periodo impositivo que tributa al tipo del 0%");
 		
-		DESCRIPTION_MAP.put(Mod2002016Key.LQ545,"Rentas correspondientes a quitas por acuerdo con acreedores no vinculados (art. 2. Segundo. Dos Ley 16/2013, de 29 de octubre)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ545,"Rentas correspondientes a quitas por acuerdo con acreedores no vinculados (art. 26.1 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ593,"Rentas correspondientes a quitas por acuerdo con acreedores no vinculados de cooperativas (a nivel de cuota)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ1509,"Rentas correspondientes a la reversi\u00F3n de deterioros (DT 16ª.8 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ1510,"Rentas correspondientes a la reversi\u00F3n de deterioros cooperativas (a nivel cuota) (DT 16ª.8 LIS)");
 		
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ558,"Tipo de gravamen");
 		
@@ -448,7 +450,8 @@ public class Mod2002016Description {
 		
 
 		DESCRIPTION_MAP.put(Mod2002016Key.BN570,"DI interna de per\u00EDodos anteriores aplicada en el ejercicio (art. 30 RDL 4/2004)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN1280,"DI interna (DT 23a.1 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1344,"DI interna de per\u00EDodos anteriores aplicada en el ejercicio (DT 23ª.1 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1280,"DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN572,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN571,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN573,"DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)");
@@ -463,7 +466,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BN588,"Deducciones con l\u00EDmite del Cap\u00EDtulo IV T\u00EDtulo VI RDL 4/2004 y LIS");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1039,"Deducciones por producciones cinematogr\u00E1fi cas extranjeras (art. 36.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN565,"Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN590,"Deducciones Inversi\u00F3n Canarias (Ley 20/1991)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN590,"Deducciones Inversi\u00F3n Canarias");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN399,"Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1040,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1041,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.2 LIS");
@@ -495,13 +498,19 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BN618,"Intereses de demora (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN619,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN620,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (D. Forales / Navarra)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1234,"Abono de deducciones I+D+i por insuficiencia de cuota (opción art. 39.2 LIS). TOTAL");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN083,"Abono de deducciones I+D+i por insuficiencia de cuota (opción art. 39.2 LIS). (Estado)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1332,"Abono de deducciones I+D+i por insuficiencia de cuota (opción art. 39.2 LIS). (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1200,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). TOTAL");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1042,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1333,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (D. Forales / Navarra)");
+		
 		DESCRIPTION_MAP.put(Mod2002016Key.BN621,"L\u00EDquido a ingresar o a devolver (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN622,"L\u00EDquido a ingresar o a devolver (D. Forales / Navarra)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LM150,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (TOTAL)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1020,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1043,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (D. Forales / Navarra)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LM506,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (TOTAL)");		
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1021,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (Estado)");		
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1044,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (D. Forales / Navarra)");
 	}
