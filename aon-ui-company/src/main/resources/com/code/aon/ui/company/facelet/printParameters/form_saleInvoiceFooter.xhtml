@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:panel id="saleInvoice_footer-panel">
+		<f:facet name="header">
+			<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
+				<aon:selectBooleanCheckbox id="Company_print_saleInvoice_footer"
+					value="#{printParams.saleInvoiceFooter.printSaleInvoiceFooter}" >
+					<a4j:support event="onclick" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="Company_print_saleInvoice_footer"
+					value="#{bundle.company_saleInvoice_footer_text}" />
+			</aon:div>
+		</f:facet>
+		<h:panelGrid columns="1" rendered="#{printParams.saleInvoiceFooter.printSaleInvoiceFooter}">
+			<aon:inputTextarea id="SaleInvoice_footer_text"
+				cols="130" rows="6"
+				value="#{printParams.saleInvoiceFooter.text}"/>
+			<aon:div styleClass="aon-width-all aon-text-right">
+				<aon:commandButton id="saleInvoice_footer_text-importLOPD"
+					title="#{bundle.company_create_LOPD_text}"
+					value="#{bundle.company_invoice_footer_text_generate}" reRender="saleInvoice_footer-panel"
+					actionListener="#{printParams.saleInvoiceFooter.createLOPD}"
+					styleClass="aon-commandButton" />
+			</aon:div>
+		</h:panelGrid>
+		<aon:div rendered="#{!printParams.saleInvoiceFooter.printSaleInvoiceFooter 
+			and printParams.saleInvoiceFooter.garageDomainType
+			and printParams.saleInvoiceFooter.garageSaleInvoiceTemplate}" >
+			<aon:outputText value="#{bundle.gta_footer_text_default}: " styleClass="aon-italic aon-underline" />
+			<br />
+			<aon:outputText value="#{printParams.saleInvoiceFooter.gtaDefaultText}" styleClass="aon-italic" />
+		</aon:div>
+		<aon:div rendered="#{!printParams.saleInvoiceFooter.printSaleInvoiceFooter 
+			and printParams.saleInvoiceFooter.hotelDomainType
+			and printParams.saleInvoiceFooter.hotelSaleInvoiceTemplate}" >
+			<aon:outputText value="#{bundle.hotel_footer_text_default}: " styleClass="aon-italic aon-underline" />
+			<br />
+			<aon:outputText value="#{printParams.saleInvoiceFooter.hotelDefaultText}" styleClass="aon-italic" />
+		</aon:div>
+	</aon:panel>
+	
+</ui:composition>

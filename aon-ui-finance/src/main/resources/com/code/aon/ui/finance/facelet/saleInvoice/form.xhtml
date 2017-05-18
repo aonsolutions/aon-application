@@ -37,8 +37,8 @@
 								rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 								action="#{report.onExecute}"
 								styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border"
-								actionListener="#{companySaleInvoiceFooter.onSearch}">
-								<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+								actionListener="#{printParams.onInit}">
+								<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
 								<f:param name="outputFormat" value="DOCX" />
 							</aon:htmlCommandLink>
 						</aon:if>
@@ -48,8 +48,8 @@
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf"
-							actionListener="#{companySaleInvoiceFooter.onSearch}">
-							<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+							actionListener="#{printParams.onInit}">
+							<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="saleInvoice-facturae"
 							value="#{bundle.finance_facturae}" target="_blank" 

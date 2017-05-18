@@ -47,6 +47,7 @@ import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.company.controller.PrintParametersController;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
@@ -361,8 +362,10 @@ public class SaleInvoiceController extends InvoiceController {
 
 	@Override
 	public SignerController getSignerController() {
+		PrintParametersController controller = (PrintParametersController) AonUtil
+				.getRegisteredBean(ICompanyConstants.PRINT_PARAMETERS_CONTROLLER_NAME);
 		SignerController signer = super.getSignerController();
-		signer.setReportKey(getCompanyController().getSaleInvoiceTemplateValue());
+		signer.setReportKey(controller.getSaleInvoiceParams().getSaleInvoiceTemplateValue());
 		return signer;
 	}
 	

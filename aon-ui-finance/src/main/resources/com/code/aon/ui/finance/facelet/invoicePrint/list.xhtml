@@ -34,11 +34,11 @@
 							value="&#160;" target="_new" 
 							action="#{report.onExecute}"
 							styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border"
-							actionListener="#{companySaleInvoiceFooter.onSearch}">
-							<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+							actionListener="#{printParams.onInit}">
+							<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
 							<f:param name="outputFormat" value="DOCX" />
 							<f:setPropertyActionListener target="#{report.reportKey}"
-								value="#{company.invoicePrintTemplateValue}" />
+								value="#{printParams.saleInvoiceParams.invoicePrintTemplateValue}" />
 						</aon:htmlCommandLink>
 					</aon:if>															
 					<aon:htmlCommandLink id="invoicePrint-report"
@@ -46,10 +46,10 @@
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}"
-						actionListener="#{companySaleInvoiceFooter.onSearch}">
-						<f:param name="reportKey" value="#{company.invoicePrintTemplateValue}" />
+						actionListener="#{printParams.onInit}">
+						<f:param name="reportKey" value="#{printParams.saleInvoiceParams.invoicePrintTemplateValue}" />
 						<f:setPropertyActionListener target="#{report.reportKey}"
-							value="#{company.invoicePrintTemplateValue}" />
+							value="#{printParams.saleInvoiceParams.invoicePrintTemplateValue}" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="receipt-report"
 						value="#{bundle.finance_receipts}" target="_blank"

@@ -3,8 +3,6 @@ package com.code.aon.ui.company.controller;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ItemTagTemplate;
-import com.code.aon.company.enumeration.ReportPrintOption;
-import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Tag;
 import com.code.aon.registry.RegistryAddress;
@@ -20,12 +18,7 @@ public interface ICompanyController extends IController {
 	boolean isPrintRecordData();
 	void setPrintRecordData(boolean printRecordData);
 	
-	SaleInvoiceTemplate getSaleInvoiceTemplate();
-	void setSaleInvoiceTemplate(SaleInvoiceTemplate saleInvoiceTemplate);
 
-	boolean isPrintDiscountPriceApplied();
-	void setPrintDiscountPriceApplied(boolean PrintDiscountPriceApplied);
-	
 	FinancePaymentTemplate getFinancePaymentTemplate();
 	void setFinancePaymentTemplate(FinancePaymentTemplate FinancePaymentTemplate);
 	
@@ -49,28 +42,10 @@ public interface ICompanyController extends IController {
 	
 	boolean isPrintProductVatPercent();
 	void setPrintProductVatPercent(boolean printProductTaxType);
-
-	boolean isPrintReferenceCode();
-	void setPrintReferenceCode(boolean printReferenceCode);
 	
 	boolean isPrintProject();
 	void setPrintProject(boolean printReferenceCode);
-	
-	ReportPrintOption getPrintName();
-	void setPrintName(ReportPrintOption printName);
-	
-	ReportPrintOption getPrintNif();
-	void setPrintNif(ReportPrintOption printNif);
-	
-	ReportPrintOption getPrintAddress();
-	void setPrintAddress(ReportPrintOption printAddress);
-	
-	ReportPrintOption getPrintInternetData();
-	void setPrintInternetData(ReportPrintOption printInternetData);
-	
-	boolean isPrintSaleInvoiceFooter();
-	void setPrintSaleInvoiceFooter(boolean printSaleInvoiceFooter);
-	
+
 	boolean isSmartCard();
 	void setSmartCard(boolean smartCard);
 
@@ -88,25 +63,16 @@ public interface ICompanyController extends IController {
 	
 	boolean obtainPrintHeader() throws ManagerBeanException;
 	boolean obtainPrintRecordData() throws ManagerBeanException;
-	SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException;
-	boolean obtainPrintDiscountPriceApplied() throws ManagerBeanException;
 	FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException;
 	ItemTagTemplate obtainItemTagTemplate() throws ManagerBeanException;
 	String obtainItemTagDefaultText() throws ManagerBeanException;
 	String obtainItemTagBarcodePattern() throws ManagerBeanException;
 	Tag obtainManufacturingOrderTemplateTag() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
-	boolean obtainPrintReferenceCode() throws ManagerBeanException;
 	boolean obtainPrintProject() throws ManagerBeanException;
 	boolean obtainPrintProductCode() throws ManagerBeanException;
 	boolean obtainPrintProductVatPercent() throws ManagerBeanException;
-	ReportPrintOption obtainPrintName() throws ManagerBeanException;
-	ReportPrintOption obtainPrintNif() throws ManagerBeanException;
-	ReportPrintOption obtainPrintAddress() throws ManagerBeanException;
-	ReportPrintOption obtainPrintInternetData() throws ManagerBeanException;
-	boolean obtainPrintSaleInvoiceFooter() throws ManagerBeanException;
 	boolean obtainSmartCard() throws ManagerBeanException;
-	void searchCustomReportTemplate() throws ManagerBeanException;
 	boolean obtainHelpdeskEnabled() throws ManagerBeanException;
 	boolean obtainDsiLoaderEnabled() throws ManagerBeanException;
 

@@ -1,13 +1,8 @@
 package com.code.aon.ui.company.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
@@ -21,18 +16,14 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.common.util.ImageUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -44,20 +35,12 @@ public class CompanyController extends CompanyParentController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyController.class.getName());
 	
-	private final int BACKGROUND_WIDTH = 535;
-	
-	private final int BACKGROUND_HEIGHT = 802;
 
 	/** The uploaded logo file. */
 	private AonFile logoFile;
 
 	/** The uploaded signature file. */
 	private AonFile signatureFile;
-	
-	private AonFile saleInvoiceBackgroundFile;
-	private AonFile deliveryBackgroundFile;
-	private AonFile salesBackgroundFile;
-	private AonFile offerBackgroundFile;
 	
 	private String ediSupport;
 	private String ediCompanyCode;
@@ -130,42 +113,6 @@ public class CompanyController extends CompanyParentController {
 		this.signatureFile = signatureFile;
 	}
 
-	public AonFile getSaleInvoiceBackgroundFile() {
-		return saleInvoiceBackgroundFile;
-	}
-	public void setSaleInvoiceBackgroundFile(AonFile saleInvoiceBackgroundFile) {
-		if ( this.saleInvoiceBackgroundFile != null ) {
-			this.saleInvoiceBackgroundFile.clean();	
-		}
-		this.saleInvoiceBackgroundFile = saleInvoiceBackgroundFile;
-	}
-	public AonFile getDeliveryBackgroundFile() {
-		return deliveryBackgroundFile;
-	}
-	public void setDeliveryBackgroundFile(AonFile deliveryBackgroundFile) {
-		if ( this.deliveryBackgroundFile != null ) {
-			this.deliveryBackgroundFile.clean();	
-		}
-		this.deliveryBackgroundFile = deliveryBackgroundFile;
-	}
-	public AonFile getSalesBackgroundFile() {
-		return salesBackgroundFile;
-	}
-	public void setSalesBackgroundFile(AonFile salesBackgroundFile) {
-		if ( this.salesBackgroundFile != null ) {
-			this.salesBackgroundFile.clean();	
-		}
-		this.salesBackgroundFile = salesBackgroundFile;
-	}
-	public AonFile getOfferBackgroundFile() {
-		return offerBackgroundFile;
-	}
-	public void setOfferBackgroundFile(AonFile offerBackgroundFile) {
-		if ( this.offerBackgroundFile != null ) {
-			this.offerBackgroundFile.clean();	
-		}
-		this.offerBackgroundFile = offerBackgroundFile;
-	}
 	
 	public void logoFileUploaded(UploadEvent event) {
 		setLogoFile(AttachmentUtil.fileUploaded(event));
@@ -173,42 +120,6 @@ public class CompanyController extends CompanyParentController {
 
 	public void signatureFileUploaded(UploadEvent event) {
 		setSignatureFile(AttachmentUtil.fileUploaded(event));
-	}
-	
-	public void saleInvoiceBackgroundFileUploaded(UploadEvent event) {
-		AonFile aonFile = AttachmentUtil.fileUploaded(event);
-		adjustImage(aonFile);
-		setSaleInvoiceBackgroundFile(aonFile);
-	}
-	public void deliveryBackgroundFileUploaded(UploadEvent event) {
-		AonFile aonFile = AttachmentUtil.fileUploaded(event);
-		adjustImage(aonFile);
-		setDeliveryBackgroundFile(aonFile);
-	}
-	public void salesBackgroundFileUploaded(UploadEvent event) {
-		AonFile aonFile = AttachmentUtil.fileUploaded(event);
-		adjustImage(aonFile);
-		setSalesBackgroundFile(aonFile);
-	}
-	public void offerBackgroundFileUploaded(UploadEvent event) {
-		AonFile aonFile = AttachmentUtil.fileUploaded(event);
-		adjustImage(aonFile);
-		setOfferBackgroundFile(aonFile);
-	}
-	
-	private void adjustImage(AonFile aonFile) {
-		if ((aonFile != null) && aonFile.isDirty() ) {
-			BufferedImage image = ImageUtil.getBufferedImage( aonFile.getData() );
-			BufferedImage newImage = ImageUtil.scale(image, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			try {
-				ImageIO.write(newImage, aonFile.getMimeType().getExtension(), baos);
-				aonFile.setData(baos.toByteArray());
-			} catch (IOException e) {
-				LOGGER.error("Error when trying to adjust report background image", e);
-			}
-		}
 	}
 
 	/**
@@ -250,94 +161,7 @@ public class CompanyController extends CompanyParentController {
 			out.write(getSignatureFile().getData());
 		}
 	}
-	
-	public void createSaleInvoiceBackgroundContent(OutputStream out, Object data) throws IOException {
-		if (getSaleInvoiceBackgroundFile() != null && (getSaleInvoiceBackgroundFile().getSize() >0)) {
-			out.write(getSaleInvoiceBackgroundFile().getData());
-		}
-	}
-	public void createDeliveryBackgroundContent(OutputStream out, Object data) throws IOException {
-		if (getDeliveryBackgroundFile() != null && (getDeliveryBackgroundFile().getSize() >0)) {
-			out.write(getDeliveryBackgroundFile().getData());
-		}
-	}
-	public void createSalesBackgroundContent(OutputStream out, Object data) throws IOException {
-		if (getSalesBackgroundFile() != null && (getSalesBackgroundFile().getSize() >0)) {
-			out.write(getSalesBackgroundFile().getData());
-		}
-	}
-	public void createOfferBackgroundContent(OutputStream out, Object data) throws IOException {
-		if (getOfferBackgroundFile() != null && (getOfferBackgroundFile().getSize() >0)) {
-			out.write(getOfferBackgroundFile().getData());
-		}
-	}
-	
-	public String clearSaleInvoiceBackgroundUploadData() {
-		cleanBackground(getSaleInvoiceBackgroundFile(), ICompanyConstants.SALE_INVOICE_REPORT_KEY);
-		return null;
-	}
-	public String clearDeliveryBackgroundUploadData() {
-		cleanBackground(getDeliveryBackgroundFile(), ICompanyConstants.DELIVERY_REPORT_KEY);
-		return null;
-	}
-	public String clearSalesBackgroundUploadData() {
-		cleanBackground(getSalesBackgroundFile(), ICompanyConstants.SALES_REPORT_KEY);
-		return null;
-	}
-	public String clearOfferBackgroundUploadData() {
-		cleanBackground(getOfferBackgroundFile(), ICompanyConstants.OFFER_REPORT_KEY);
-		return null;
-	}
-	private void cleanBackground(AonFile aonFile, String reportKey){
-		if ( aonFile != null ) {
-			aonFile.clean();	
-		}
-		try {
-			RegistryAttachment attach = obtainReportBackground(reportKey);
-			if(attach.getDriveId()!=null){
-				DriveUtils.getInstace().deleteBlobs(attach);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error when trying to delete background image from Drive", e);
-		}
-	}
-	
-	public RegistryAttachment obtainSaleInvoiceBackground()
-			throws ManagerBeanException {
-		return obtainReportBackground(ICompanyConstants.SALE_INVOICE_REPORT_KEY);
-	}
 
-	public RegistryAttachment obtainOfferBackground()
-			throws ManagerBeanException {
-		return obtainReportBackground(ICompanyConstants.OFFER_REPORT_KEY);
-	}
-
-	public RegistryAttachment obtainDeliveryBackground()
-			throws ManagerBeanException {
-		return obtainReportBackground(ICompanyConstants.DELIVERY_REPORT_KEY);
-	}
-
-	public RegistryAttachment obtainSalesBackground()
-			throws ManagerBeanException {
-		return obtainReportBackground(ICompanyConstants.SALES_REPORT_KEY);
-	}
-
-	public RegistryAttachment obtainReportBackground(String name) 
-			throws ManagerBeanException {
-		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
-		criteria.addEqualExpression(alias, ((Company)this.getTo()).getId());
-		alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
-		criteria.addEqualExpression(alias, RegistryAttachmentType.REPORT_BACKGROUND);
-		alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION);
-		criteria.addEqualExpression(alias, name);
-		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryAttachment)iter.next();
-		}
-		return null;
-	}
 
 	public static Enterprise addEnterprise(Company company, Scope scope) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);

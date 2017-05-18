@@ -124,6 +124,7 @@
 								<aon:commandLink id="printParameters" 
 									reRender="configPanelBar,configContent"
 									action="globalConfig_form"
+									actionListener="#{printParams.onInit}"
 									value="#{bundle.admin_global_print_parameters_short}" />
 							</aon:div>
 							<aon:if test="#{actionDenied.moduleEnabled['hotel']}">

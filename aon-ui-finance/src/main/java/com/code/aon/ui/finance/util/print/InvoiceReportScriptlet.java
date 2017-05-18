@@ -37,24 +37,24 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	}
 	
 	public ReportPrintOption getPrintName() {
-		return getCompanyController().getPrintName();
+		return getPrintParamsController().getSaleInvoiceParams().getPrintName();
 	}
 	
 	public ReportPrintOption getPrintNif() {
-		return getCompanyController().getPrintNif();
+		return getPrintParamsController().getSaleInvoiceParams().getPrintNif();
 	}
 	
 	public ReportPrintOption getPrintAddress() {
-		return getCompanyController().getPrintAddress();
+		return getPrintParamsController().getSaleInvoiceParams().getPrintAddress();
 	}
 	
 	public ReportPrintOption getPrintInternetData() {
-		return getCompanyController().getPrintInternetData();
+		return getPrintParamsController().getSaleInvoiceParams().getPrintInternetData();
 	}
 	
 	public String getInvoiceFooterText() {
 		try {
-			if(getCompanyController().isPrintSaleInvoiceFooter()){
+			if(getPrintParamsController().getSaleInvoiceFooter().isPrintSaleInvoiceFooter()){
 				return (String) getParameterValue(INVOICE_FOOTER_TEXT);
 			}
 		} catch (JRScriptletException e) {
@@ -64,7 +64,7 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	}
 	
 	public boolean isPrintDiscountPriceApplied() {
-		return getCompanyController().isPrintDiscountPriceApplied();
+		return getPrintParamsController().getSaleInvoiceParams().isPrintDiscountPriceApplied();
 	}
 	
 	public String getLeftSideText(){

@@ -6,27 +6,16 @@ import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_BARCODE_PARA
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_TEXT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_MANUFACT_TEMPLATE_TAG_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_VAT_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PROJECT_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTER_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
-import static com.code.aon.ui.company.controller.ICompanyConstants.INVOICE_PRINT_REPORT_KEY;
-import static com.code.aon.ui.company.controller.ICompanyConstants.SALE_INVOICE_REPORT_KEY;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -42,7 +31,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +46,6 @@ import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ItemTagTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
-import com.code.aon.company.enumeration.SaleInvoiceTemplate;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Tag;
@@ -80,6 +66,8 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.company.controller.PrintParametersController.SaleInvoiceFooter;
+import com.code.aon.ui.company.controller.PrintParametersController.SaleInvoiceParams;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
@@ -136,32 +124,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean printRecordData;
 	
-	private SaleInvoiceTemplate saleInvoiceTemplate;
-	
-	private ApplicationParameter customSaleInvoiceTemplateParam;
-	
-	private boolean printDiscountPriceApplied;
-	
 	private boolean printLogo;
 
 	private boolean printProductCode;
 	
 	private boolean printProductVatPercent;
 	
-	private boolean printReferenceCode;
-	
 	private boolean printProject;
 	
-	private ReportPrintOption printName;
-	
-	private ReportPrintOption printNif;
-	
-	private ReportPrintOption printAddress;
-	
-	private ReportPrintOption printInternetData;
-	
-	private boolean printSaleInvoiceFooter;
-
 	private FinancePaymentTemplate financePaymentTemplate;
 	
 	private ItemTagTemplate itemTagTemplate;
@@ -173,8 +143,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	private Tag manufacturingOrderTemplateTag;
 	
 	private boolean smartCard;
-	
-	private boolean customReportTemplate;
 	
 	private boolean helpdeskEnabled;
 	
@@ -750,67 +718,6 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printRecordData = printRecordData;
 	}
 	
-	public SaleInvoiceTemplate getSaleInvoiceTemplate(){
-		return saleInvoiceTemplate;
-	}
-	
-	public void setSaleInvoiceTemplate(SaleInvoiceTemplate saleInvoiceTemplate){
-		this.saleInvoiceTemplate = saleInvoiceTemplate;
-	}
-	
-	public String getSaleInvoiceTemplateValue(){
-		return saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue();
-	}
-	
-	public String getInvoicePrintTemplateValue(){
-		return saleInvoiceTemplate==null?INVOICE_PRINT_REPORT_KEY:saleInvoiceTemplate.getValue().replaceFirst(SALE_INVOICE_REPORT_KEY, INVOICE_PRINT_REPORT_KEY);
-	}
-	
-	public ApplicationParameter getCustomSaleInvoiceTemplateParam() {
-		if(customSaleInvoiceTemplateParam==null){
-			customSaleInvoiceTemplateParam = new ApplicationParameter();
-			customSaleInvoiceTemplateParam.setName(AppParam.REPORT_saleInvoice.getValue());
-			customSaleInvoiceTemplateParam.setSystemParameter(false);
-		}
-		return customSaleInvoiceTemplateParam;
-	}
-
-	public void setCustomSaleInvoiceTemplateParam(
-			ApplicationParameter customSaleInvoiceTemplateParam) {
-		this.customSaleInvoiceTemplateParam = customSaleInvoiceTemplateParam;
-	}
-
-	public String getCustomSaleInvoiceTemplateName() {
-		return getCustomSaleInvoiceTemplateParam().getValue();
-	}
-	
-	public void setCustomSaleInvoiceTemplateName(
-			String customSaleInvoiceTemplateName) {
-		getCustomSaleInvoiceTemplateParam().setValue(customSaleInvoiceTemplateName);
-	}
-	
-	public List<SelectItem> getCustomSaleInvoiceTemplateNames(){
-		String REPORT_PATH = "/home/COMMON-RESOURCES/aon-report";
-		File customDirectory = new File( REPORT_PATH );
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		if ( customDirectory.exists() && customDirectory.canRead() ) {
-			for(File file: customDirectory.listFiles()){
-				if(file.isDirectory()){
-					list.add(new SelectItem(file.getName(), file.getName()));
-				}
-			}
-		}
-		return list;
-	}
-
-	public boolean isPrintDiscountPriceApplied() {
-		return printDiscountPriceApplied;
-	}
-
-	public void setPrintDiscountPriceApplied(boolean printDiscountPriceApplied) {
-		this.printDiscountPriceApplied = printDiscountPriceApplied;
-	}
-
 	public boolean isPrintLogo() {
 		return printLogo;
 	}
@@ -834,15 +741,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setPrintProductVatPercent(boolean printProductVatPercent) {
 		this.printProductVatPercent = printProductVatPercent;
 	}
-
-	public boolean isPrintReferenceCode() {
-		return printReferenceCode;
-	}
-
-	public void setPrintReferenceCode(boolean printReferenceCode) {
-		this.printReferenceCode = printReferenceCode;
-	}
-
+	
 	public boolean isPrintProject() {
 		return printProject;
 	}
@@ -850,47 +749,59 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setPrintProject(boolean printProject) {
 		this.printProject = printProject;
 	}
+	
+	// TODO remove
+	@Deprecated
+	public boolean isPrintReferenceCode() {
+		return getSaleInvoiceParams().isPrintReferenceCode();
+	}
 
+	// TODO remove
+	@Deprecated
 	public ReportPrintOption getPrintName() {
-		return printName;
+		return getSaleInvoiceParams().getPrintName();
 	}
 
-	public void setPrintName(ReportPrintOption printName) {
-		this.printName = printName;
-	}
-
+	// TODO remove
+	@Deprecated
 	public ReportPrintOption getPrintNif() {
-		return printNif;
+		return getSaleInvoiceParams().getPrintNif();
 	}
 
-	public void setPrintNif(ReportPrintOption printNif) {
-		this.printNif = printNif;
-	}
-
+	// TODO remove
+	@Deprecated
 	public ReportPrintOption getPrintAddress() {
-		return printAddress;
+		return getSaleInvoiceParams().getPrintAddress();
 	}
 
-	public void setPrintAddress(ReportPrintOption printAddress) {
-		this.printAddress = printAddress;
-	}
-
+	// TODO remove
+	@Deprecated
 	public ReportPrintOption getPrintInternetData() {
-		return printInternetData;
-	}
-
-	public void setPrintInternetData(ReportPrintOption printInternetData) {
-		this.printInternetData = printInternetData;
+		return getSaleInvoiceParams().getPrintInternetData();
 	}
 	
+	// TODO remove
+	@Deprecated
 	public boolean isPrintSaleInvoiceFooter() {
-		return printSaleInvoiceFooter;
+		return getSaleInvoiceFooter().isPrintSaleInvoiceFooter();
+	}
+	
+	// TODO remove
+	@Deprecated
+	private SaleInvoiceFooter getSaleInvoiceFooter() {
+		PrintParametersController controller = (PrintParametersController) AonUtil
+				.getRegisteredBean(ICompanyConstants.PRINT_PARAMETERS_CONTROLLER_NAME);
+		return controller.getSaleInvoiceFooter();
+	}
+	// TODO remove
+	@Deprecated
+	private SaleInvoiceParams getSaleInvoiceParams() {
+		PrintParametersController controller = (PrintParametersController) AonUtil
+				.getRegisteredBean(ICompanyConstants.PRINT_PARAMETERS_CONTROLLER_NAME);
+		return controller.getSaleInvoiceParams();
 	}
 
-	public void setPrintSaleInvoiceFooter(boolean printSaleInvoiceFooter) {
-		this.printSaleInvoiceFooter = printSaleInvoiceFooter;
-	}
-
+	
 	public FinancePaymentTemplate getFinancePaymentTemplate() {
 		return financePaymentTemplate;
 	}
@@ -940,14 +851,6 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.smartCard = smartCard;
 	}
 	
-	public boolean isCustomReportTemplate() {
-		return customReportTemplate;
-	}
-
-	public void setCustomReportTemplate(boolean customReportTemplate) {
-		this.customReportTemplate = customReportTemplate;
-	}
-	
 	public boolean isHelpdeskEnabled() {
 		return helpdeskEnabled;
 	}
@@ -984,15 +887,6 @@ public class CompanyParentController extends BasicController implements ICompany
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_RECORD_DATA_PARAM);
 	}
 	
-	public SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException {
-		String value = AppParamUtil.getValue(APP_SALE_INVOICE_TEMPLATE_PARAM);
-		return (value == null?null:SaleInvoiceTemplate.getEnumByValue(value));
-	}
-
-	public boolean obtainPrintDiscountPriceApplied() throws ManagerBeanException {
-		return AppParamUtil.getValueAsBoolean(APP_PRINT_DISCOUNT_PRICE_APPLIED);
-	}
-	
 	public FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(APP_FPAYMENT_TEMPLATE_PARAM);
 		return (value == null?null:FinancePaymentTemplate.getEnumByValue(value));
@@ -1025,10 +919,6 @@ public class CompanyParentController extends BasicController implements ICompany
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_LOGO_PARAM);
 	}
 	
-	public boolean obtainPrintReferenceCode() throws ManagerBeanException {
-		return AppParamUtil.getValueAsBoolean(APP_PRINT_REFERENCE_CODE_PARAM);
-	}
-	
 	public boolean obtainPrintProject() throws ManagerBeanException {
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_PROJECT_PARAM);
 	}
@@ -1041,33 +931,8 @@ public class CompanyParentController extends BasicController implements ICompany
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_VAT_PARAM);
 	}
 	
-	public ReportPrintOption obtainPrintName() throws ManagerBeanException {
-		return getReportPrintOptionValue(APP_PRINT_NAME_PARAM);
-	}
-	
-	public ReportPrintOption obtainPrintNif() throws ManagerBeanException {
-		return getReportPrintOptionValue(APP_PRINT_NIF_PARAM);
-	}
-	
-	public ReportPrintOption obtainPrintAddress() throws ManagerBeanException {
-		return getReportPrintOptionValue(APP_PRINT_ADDRESS_PARAM);
-	}
-	
-	public ReportPrintOption obtainPrintInternetData() throws ManagerBeanException {
-		return getReportPrintOptionValue(APP_PRINT_INTERNET_DATA_PARAM);
-	}
-	
-	public boolean obtainPrintSaleInvoiceFooter() throws ManagerBeanException {
-		return AppParamUtil.getValueAsBoolean(APP_PRINT_S_INVOICE_FOOTER_PARAM);
-	}
-	
 	public boolean obtainSmartCard() throws ManagerBeanException {
 		return AppParamUtil.getValueAsBoolean(APP_SMART_CARD_PARAM);
-	}
-	
-	public void searchCustomReportTemplate() throws ManagerBeanException {
-		customSaleInvoiceTemplateParam = AppParamUtil.getParameter(AppParam.REPORT_saleInvoice);
-		setCustomReportTemplate( customSaleInvoiceTemplateParam!=null && StringUtils.isNotBlank(customSaleInvoiceTemplateParam.getValue()) );
 	}
 	
 	public boolean obtainHelpdeskEnabled() throws ManagerBeanException {
@@ -1076,14 +941,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public boolean obtainDsiLoaderEnabled() throws ManagerBeanException {
 		return AppParamUtil.getValueAsBoolean(AppParam.AON_DSI_LOADER_ENABLED);
-	}
-
-	private ReportPrintOption getReportPrintOptionValue(AppParam appParam) {
-		Integer value = AppParamUtil.getValueAsInteger(appParam);
-		if ( value != null ) {
-			return ReportPrintOption.values()[value];
-		}
-		return null;
 	}
 
 	public boolean isEInvoice() {

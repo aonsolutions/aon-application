@@ -19,7 +19,7 @@
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" >
 					<aon:actionListener method="#{company.accept}" />
-					<aon:actionListener method="#{companySaleInvoiceFooter.accept}" />
+					<aon:actionListener method="#{printParams.accept}" />
 				</aon:commandButton>
 			</ui:define>				
 		</ui:decorate>
@@ -31,10 +31,10 @@
 				</f:facet>
 				<h:panelGrid columns="2" columnClasses="aon-vertical-align-top, aon-vertical-align-top">
 					<aon:panelGrid columns="2" style="width:350px">
-						<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_general1.xhtml" />
+						<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_general1.xhtml" />
 					</aon:panelGrid>
 					<aon:panelGrid columns="2" style="width:350px">
-						<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_general2.xhtml" />
+						<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_general2.xhtml" />
 					</aon:panelGrid>
 				</h:panelGrid>
 			</aon:panel>
@@ -49,7 +49,7 @@
 						<f:facet name="header">
 							<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
 								<aon:selectBooleanCheckbox id="Sale_invoice_customReportTemplate"
-									value="#{company.customReportTemplate}" 
+									value="#{printParams.saleInvoiceParams.customReportTemplate}" 
 									reRender="SaleInvoice-params-panel"/>
 								<aon:outputLabel for="Sale_invoice_customReportTemplate"
 									value="#{bundle.company_custom_template}" />
@@ -57,10 +57,10 @@
 						</f:facet>
 						<aon:div style="white-space: nowrap;">
 							<aon:outputText value="Directorio de la plantilla: " />
-							<aon:selectOneMenu value="#{company.customSaleInvoiceTemplateName}"
-								disabled="#{!company.customReportTemplate}">
+							<aon:selectOneMenu value="#{printParams.saleInvoiceParams.customSaleInvoiceTemplateName}"
+								disabled="#{!printParams.saleInvoiceParams.customReportTemplate}">
 								<f:selectItem itemLabel=" - " itemValue="#{null}" />
-								<f:selectItems value="#{company.customSaleInvoiceTemplateNames}" />
+								<f:selectItems value="#{printParams.saleInvoiceParams.customSaleInvoiceTemplateNames}" />
 							</aon:selectOneMenu>
 						</aon:div>
 					</aon:panel>
@@ -71,67 +71,30 @@
 						<aon:outputLabel for="Sale_invoice_template"
 							value="#{bundle.company_saleInvoice_template}" />
 						<aon:div>
-							<aon:if test="#{!company.customReportTemplate}">
+							<aon:if test="#{!printParams.saleInvoiceParams.customReportTemplate}">
 								<aon:selectOneMenu id="Sale_invoice_template"
-									value="#{company.saleInvoiceTemplate}" >
+									value="#{printParams.saleInvoiceParams.saleInvoiceTemplate}" >
 									<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
 									<a4j:support event="onchange" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
 								</aon:selectOneMenu>
 							</aon:if>
-							<aon:if test="#{company.customReportTemplate}">
+							<aon:if test="#{printParams.saleInvoiceParams.customReportTemplate}">
 								<aon:outputText id="Company_invoice_template"
 									value="#{bundle.company_custom_template}" />
 							</aon:if>
 						</aon:div>
-						<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_sales1.xhtml" />
+						<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_sales1.xhtml" />
 					</aon:panelGrid>
 					<aon:panelGrid columns="2" style="width:350px;">
-						<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_sales2.xhtml" />
+						<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_sales2.xhtml" />
 					</aon:panelGrid>
 				</h:panelGrid>
 				
 			</aon:panel>
 			
-			<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_background.xhtml" />
-				
-			<aon:panel id="saleInvoice_footer-panel">
-				<f:facet name="header">
-					<aon:div style="margin: -15px 0 0 5px; background-color: white; display: inline;">
-						<aon:selectBooleanCheckbox id="Company_print_saleInvoice_footer"
-							value="#{company.printSaleInvoiceFooter}" >
-							<a4j:support event="onclick" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
-						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="Company_print_saleInvoice_footer"
-							value="#{bundle.company_saleInvoice_footer_text}" />
-					</aon:div>
-				</f:facet>
-				<h:panelGrid columns="1" rendered="#{company.printSaleInvoiceFooter}">
-					<aon:inputTextarea id="SaleInvoice_footer_text"
-						cols="130" rows="6"
-						value="#{companySaleInvoiceFooter.text}"/>
-					<aon:div styleClass="aon-width-all aon-text-right">
-						<aon:commandButton id="saleInvoice_footer_text-importLOPD"
-							title="#{bundle.company_create_LOPD_text}"
-							value="#{bundle.company_invoice_footer_text_generate}" reRender="saleInvoice_footer-panel"
-							actionListener="#{companySaleInvoiceFooter.createLOPD}"
-							styleClass="aon-commandButton" />
-					</aon:div>
-				</h:panelGrid>
-				<aon:div rendered="#{!company.printSaleInvoiceFooter 
-					and companySaleInvoiceFooter.garageDomainType
-					and companySaleInvoiceFooter.garageSaleInvoiceTemplate}" >
-					<aon:outputText value="#{bundle.gta_footer_text_default}: " styleClass="aon-italic aon-underline" />
-					<br />
-					<aon:outputText value="#{companySaleInvoiceFooter.gtaDefaultText}" styleClass="aon-italic" />
-				</aon:div>
-				<aon:div rendered="#{!company.printSaleInvoiceFooter 
-					and companySaleInvoiceFooter.hotelDomainType
-					and companySaleInvoiceFooter.hotelSaleInvoiceTemplate}" >
-					<aon:outputText value="#{bundle.hotel_footer_text_default}: " styleClass="aon-italic aon-underline" />
-					<br />
-					<aon:outputText value="#{companySaleInvoiceFooter.hotelDefaultText}" styleClass="aon-italic" />
-				</aon:div>
-			</aon:panel>
+			<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_reportBackground.xhtml" />
+			
+			<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_saleInvoiceFooter.xhtml" />
 			
 			<aon:panel>
 				<f:facet name="header">
@@ -196,115 +159,7 @@
 			
 		</aon:div>
 	</aon:form>
-
-
-
-	<rich:modalPanel id="saleInvoiceBackground-modal" autosized="true">
-		<f:facet name="header">
-			<aon:div styleClass="aon-popupWindow-title">
-				<aon:outputText value="#{bundle.aon_preview}" />
-				<aon:outputText value=" - " />
-				<aon:outputText value="#{bundle.finance_sale_invoice_management_module}" />
-			</aon:div>
-		</f:facet>
-		<f:facet name="controls">
-			<aon:form>
-				<aon:commandButton id="saleInvoiceBackground-hidelink" type="button"
-					styleClass="aon-popupWindow-close" immediate="true">
-					<rich:componentControl for="saleInvoiceBackground-modal"
-						attachTo="saleInvoiceBackground-hidelink" operation="hide"
-						event="onclick" />
-					<aon:actionHotKey key="esc" />
-				</aon:commandButton>
-			</aon:form>
-		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{company.createSaleInvoiceBackgroundContent}"
-				value="#{company.saleInvoiceBackgroundFile.key}"
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
-	</rich:modalPanel>
-
-	<rich:modalPanel id="offerBackground-modal" autosized="true">
-		<f:facet name="header">
-			<aon:div styleClass="aon-popupWindow-title">
-				<aon:outputText value="#{bundle.aon_preview}" />
-				<aon:outputText value=" - " />
-				<aon:outputText value="#{bundle.aon_invoice_offer}" />
-			</aon:div>
-		</f:facet>
-		<f:facet name="controls">
-			<aon:form>
-				<aon:commandButton id="offerBackground-hidelink" type="button"
-					styleClass="aon-popupWindow-close" immediate="true">
-					<rich:componentControl for="offerBackground-modal"
-						attachTo="offerBackground-hidelink" operation="hide"
-						event="onclick" />
-					<aon:actionHotKey key="esc" />
-				</aon:commandButton>
-			</aon:form>
-		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{company.createOfferBackgroundContent}"
-				value="#{company.offerBackgroundFile.key}" 
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
-	</rich:modalPanel>
-
-	<rich:modalPanel id="deliveryBackground-modal" autosized="true">
-		<f:facet name="header">
-			<aon:div styleClass="aon-popupWindow-title">
-				<aon:outputText value="#{bundle.aon_preview}" />
-				<aon:outputText value=" - " />
-				<aon:outputText value="#{bundle.warehouse_delivery}" />
-			</aon:div>
-		</f:facet>
-		<f:facet name="controls">
-			<aon:form>
-				<aon:commandButton id="deliveryBackground-hidelink" type="button"
-					styleClass="aon-popupWindow-close" immediate="true">
-					<rich:componentControl for="deliveryBackground-modal"
-						attachTo="deliveryBackground-hidelink" operation="hide"
-						event="onclick" />
-					<aon:actionHotKey key="esc" />
-				</aon:commandButton>
-			</aon:form>
-		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{company.createDeliveryBackgroundContent}"
-				value="#{company.deliveryBackgroundFile.key}"
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
-	</rich:modalPanel>
-
-	<rich:modalPanel id="salesBackground-modal" autosized="true">
-		<f:facet name="header">
-			<aon:div styleClass="aon-popupWindow-title">
-				<aon:outputText value="#{bundle.aon_preview}" />
-				<aon:outputText value=" - " />
-				<aon:outputText value="#{bundle.sales_module}" />
-			</aon:div>
-		</f:facet>
-		<f:facet name="controls">
-			<aon:form>
-				<aon:commandButton id="salesBackground-hidelink" type="button"
-					styleClass="aon-popupWindow-close" immediate="true">
-					<rich:componentControl for="salesBackground-modal"
-						attachTo="salesBackground-hidelink" operation="hide"
-						event="onclick" />
-					<aon:actionHotKey key="esc" />
-				</aon:commandButton>
-			</aon:form>
-		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{company.createSalesBackgroundContent}"
-				value="#{company.salesBackgroundFile.key}" 
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
-	</rich:modalPanel>
-
+	
+	<ui:include src="/com/code/aon/ui/company/facelet/printParameters/modal_reportBackground.xhtml" />
+	
 </ui:composition>
