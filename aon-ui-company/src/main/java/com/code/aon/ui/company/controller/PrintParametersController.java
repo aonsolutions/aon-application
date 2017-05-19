@@ -92,6 +92,7 @@ public class PrintParametersController implements Serializable {
 	public SaleInvoiceFooter getSaleInvoiceFooter() {
 		if(saleInvoiceFooter==null){
 			saleInvoiceFooter = new SaleInvoiceFooter();
+			saleInvoiceFooter.init();
 		}
 		return saleInvoiceFooter;
 	}
@@ -99,6 +100,7 @@ public class PrintParametersController implements Serializable {
 	public ReportBackground getReportBackground() {
 		if(reportBackground==null){
 			reportBackground = new ReportBackground();
+			reportBackground.init();
 		}
 		return reportBackground;
 	}
@@ -420,6 +422,10 @@ public class PrintParametersController implements Serializable {
 		}
 
 		private void completeAttachInfo(byte[] data) {
+			attach.setDomain(new Domain().setId(getDomainId()));
+			attach.setConfidential(false);
+			attach.setAttachType(AttachType.REGISTRY);
+			attach.setAttachModule(getCompany().getId());
 			attach.setData(data);
 			attach.setType(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value());
 			attach.setDescription(AonUtil.getMessage(COMPANY_SALE_INVOICE_FOOTER_TEXT));
