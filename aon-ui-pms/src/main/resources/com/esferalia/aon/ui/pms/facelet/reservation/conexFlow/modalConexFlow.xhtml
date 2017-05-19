@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showConexFlowWindow">
 		<aon:if test="#{controller.showConexFlowWindow}">
-			<rich:modalPanel id="conexFlowModalPanel" minHeight="250" minWidth="525" 
+			<rich:modalPanel id="conexFlowModalPanel" minHeight="275" minWidth="525" 
 				rendered="#{controller.showConexFlowWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -125,6 +125,18 @@
 												<f:selectItems value="#{controller.creditCardYears}" />
 											</aon:selectOneMenu>
 										</aon:div>
+
+										<aon:outputLabel for="CreditCard_type"
+											value="#{bundle.aon_type}" />
+										<aon:outputText value="#{controller.to.creditCardType}" 
+											rendered="#{!reservation.reservationPermission.creditCardDataEditable}"	
+											styleClass="aon-bold" />
+										<aon:selectOneMenu id="CreditCard_type"
+											value="#{controller.to.creditCardType}" required="true"
+											rendered="#{reservation.reservationPermission.creditCardDataEditable}">
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
+											<f:selectItems value="#{pmsCollections.creditCardTypes}" />
+										</aon:selectOneMenu>
 
 									</aon:panelGrid>
 

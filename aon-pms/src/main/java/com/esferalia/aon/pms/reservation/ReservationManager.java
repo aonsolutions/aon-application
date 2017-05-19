@@ -69,6 +69,7 @@ import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
+import com.esferalia.aon.pms.enumeration.CreditCardType;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -303,6 +304,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setCreditCardNumber((creditCard != null) ? creditCard.getCardNumber() : null);
 			reservation.setCreditCardExpirationMonth((creditCard != null) ? StringUtils.substring(creditCard.getExpireDate(), 0, 2) : null);
 			reservation.setCreditCardExpirationYear((creditCard != null) ? StringUtils.substring(creditCard.getExpireDate(), -2) : null);
+			reservation.setCreditCardType((creditCard != null) ? CreditCardType.valueOf(creditCard.getCardType()) : null);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 

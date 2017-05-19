@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.99.0
+# Version: 8.104.0
 # Created by: girazu
-# Creation Date: 27/04/2017 15:10
+# Creation Date: 18/05/2017 17:05
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2180,6 +2180,7 @@ CREATE TABLE `project_reservation` (
   `credit_card_number` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Ultimos 4 numeros de la tarjeta de credito',
   `credit_card_expiration_month` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mes de expiracion de la tarjeta de credito',
   `credit_card_expiration_year` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Año de expiracion de la tarjeta de credito',
+  `credit_card_type` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Tipo de tarjeta de credito',
   `token` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token de preautorizacion de cobro',
   `penalty_value` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Valor de penalizacion (patron)',
   `penalty_amount` double(15,2) DEFAULT '0.00' COMMENT 'Importe de penalizacion',
@@ -3830,8 +3831,9 @@ CREATE TABLE `daily_tracking` (
 CREATE TABLE `data_attach` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `source` tinyint(2) DEFAULT NULL COMMENT 'Origen',
+  `source` tinyint(2) NOT NULL COMMENT 'Origen',
   `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del origen',
+  `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Archivo Adjunto',
   `mimeType` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
@@ -3854,7 +3856,7 @@ CREATE TABLE `data_response` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `code` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo de referencia',
   `response_date` date DEFAULT NULL COMMENT 'Fecha',
-  `source` tinyint(2) DEFAULT '0' COMMENT 'Origen',
+  `source` tinyint(2) NOT NULL COMMENT 'Origen',
   `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del Origen',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
@@ -8429,7 +8431,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.99.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.104.0');
 
 COMMIT;
 

@@ -37,7 +37,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class PosFinanceController extends FinanceListController implements IFinanceConstants {
 	

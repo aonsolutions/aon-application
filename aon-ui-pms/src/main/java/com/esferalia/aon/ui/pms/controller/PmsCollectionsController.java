@@ -38,6 +38,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.CreditCardType;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -54,6 +55,7 @@ public class PmsCollectionsController implements Serializable {
 	private List<SelectItem> bookingHolders;
 	private List<SelectItem> personDocumentTypes;
 	private List<SelectItem> touristTaxFreeCauses;
+	private List<SelectItem> creditCardTypes;
 
 	public Hotel getHotel() {
 		return null;
@@ -497,6 +499,19 @@ public class PmsCollectionsController implements Serializable {
 			}
 		}
 		return touristTaxFreeCauses;
+	}
+
+	public List<SelectItem> getCreditCardTypes() {
+		if (creditCardTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			creditCardTypes = new LinkedList<SelectItem>();
+			for (CreditCardType type : CreditCardType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				creditCardTypes.add(item);
+			}
+		}
+		return creditCardTypes;
 	}
 
 	public List<SelectItem> getYearItems() throws ManagerBeanException {

@@ -39,6 +39,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -111,6 +112,7 @@ public class WsPosInvoicing {
 		invoice.setScope(pos.getWorkPlace().getScope());
 		invoice.setService(false);
 		invoice.setComments(comments);
+		invoice.setRectificationType(RectificationType.NONE);
 		invoice.setPosShift(posShift);
 		invoice.setTaxableBase(taxableBase);
 		invoice.setVatQuota(vatQuota);

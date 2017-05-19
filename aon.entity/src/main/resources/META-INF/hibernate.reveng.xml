@@ -50,10 +50,6 @@
 	
 	<table-filter match-name="carrier_packing" exclude="true" />
 
-	<table-filter match-name="data_response" exclude="true" />
-	<table-filter match-name="data_response_detail" exclude="true" />
-	<table-filter match-name="data_attach" exclude="true" />
-
 
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
@@ -490,6 +486,17 @@
 
 	<table name="daily_tracking">
 		<column name="comments" type="text"/>
+	</table>
+
+	<table name="data_attach" class="com.esferalia.aon.entity.master.DataAttachment">
+		<column name="source" property="dataAttachmentSource" type="com.code.aon.data.enumeration.DataAttachmentSource" />
+		<column name="type" property="dataAttachmentType" type="com.code.aon.data.enumeration.DataAttachmentType" />
+		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />
+	</table>
+
+	<table name="data_response" class="com.esferalia.aon.entity.master.DataResponse">
+		<column name="source" property="dataAttachmentSource" type="com.code.aon.data.enumeration.DataResponseSource" />
 	</table>
 
 	<table name="deduction_concept">
@@ -1242,6 +1249,7 @@
 		</primary-key>
 		<column name="booking_holder" type="com.esferalia.aon.pms.enumeration.BookingHolder"/>
 		<column name="source" type="com.esferalia.aon.pms.enumeration.ReservationSource"/>
+		<column name="credit_card_type" type="com.esferalia.aon.pms.enumeration.CreditCardType"/>
 		<column name="tourist_tax_free" type="com.esferalia.aon.pms.enumeration.TouristTaxFreeCause"/>
 		<column name="check_status" type="com.esferalia.aon.pms.enumeration.ReservationCheckStatus"/>
 		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
