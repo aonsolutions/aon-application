@@ -172,14 +172,9 @@
 		<collection provider="#{saleInvoice}" forceRefresh="true" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="pmsInvoicePrinter" value="#{pmsInvoicePrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 		</params>
 	</report>
 	
@@ -189,14 +184,9 @@
 		<criteria provider="#{invoicePrint}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="pmsInvoicePrinter" value="#{pmsInvoicePrinter.getInstance}" />
-			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
-			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 		</params>
 	</report>
 	
