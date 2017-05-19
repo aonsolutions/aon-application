@@ -86,6 +86,8 @@ public class Preauthorization {
 				String[] descriptions = {
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK_FAIL),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK),
+					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_FAIL)
 				};
@@ -127,11 +129,13 @@ public class Preauthorization {
 					if(cf != null && cf.getId() != null && cf.getDate() != null &&
 							AonDateUtils.getDaysBetweenDates(cf.getDate(), new java.util.Date()) > 6){
 						pre001(d, login, r);
+						cont[0]++;
 					} else {
 						cf = DBConsults.getConexFlowLastStatusWD(d, login, r.getProject(), r.getToken(), ConexFlowStatus.SALE_CHECK_FAIL);
 						if(cf != null && cf.getId() != null && cf.getDate() != null &&
 								AonDateUtils.getDaysBetweenDates(cf.getDate(), new java.util.Date()) > 6){
 							pre001(d, login, r);
+							cont[0]++;
 						}
 					}
  				}
