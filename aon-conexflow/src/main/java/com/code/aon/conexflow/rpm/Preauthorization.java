@@ -112,7 +112,7 @@ public class Preauthorization {
 					}
 					cont[0]++;
 				}
-				
+				/*
 				String[] checkDescriptions = {
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
 					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK)
@@ -139,6 +139,7 @@ public class Preauthorization {
 						}
 					}
  				}
+				*/
 			}
 		});
 	}
