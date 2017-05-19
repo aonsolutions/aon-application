@@ -311,6 +311,11 @@ public class AonExporter extends GenericExporter{
 		map.put("Customer","com.code.aon.customer.Customer");
 		map.put("InvoicingGroup","com.code.aon.customer.InvoicingGroup");
 		
+		//AON DATA 
+		map.put("DataAttachment","com.code.aon.data.DataAttachment");    
+		map.put("DataResponse","com.code.aon.data.DataResponse");    
+		map.put("DataResponseDetail","com.code.aon.data.DataResponseDetail");    
+
 		//AON FINANCE 
 		map.put("BankConcept","com.code.aon.finance.BankConcept");
 		map.put("BankStatement","com.code.aon.finance.BankStatement");
