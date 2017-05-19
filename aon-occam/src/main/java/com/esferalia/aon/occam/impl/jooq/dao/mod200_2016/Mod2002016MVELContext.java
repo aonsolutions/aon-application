@@ -69,7 +69,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	
 	private Map<String, AccountBalance> accounts;
 	private Map<String, Object> context;
-	private EnumMap<Mod2002016Key,String> expressionMap;
+	private EnumMap<Mod2002016Key,String> expressionMap = new EnumMap<Mod2002016Key,String>(Mod2002016Key.class);
 	private IAccMiningKeyAccept resolver;
 	private Stack<Mod2002016Key> stack = new Stack<Mod2002016Key>();
 
@@ -134,8 +134,11 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	}
 	
 	private Boolean getContainsKey(Mod2002016Key key) {
-//		return this.context.containsKey(key.toString()) && (!expressionMap.containsKey(key) || stack.contains(key));
-		return this.context.containsKey(key.toString()) || stack.contains(key);
+		boolean a = this.context.containsKey(key.toString());
+		boolean b = !expressionMap.containsKey(key);
+		boolean c = stack.contains(key);
+		return a && (b || c);
+//		return this.context.containsKey(key.toString()) || stack.contains(key);
 	}
 	
 	public Object evaluate(Mod2002016Key key) {
@@ -155,11 +158,18 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	public Object evaluateExpression(Mod2002016Key key,String expression) {
 		return mvelEval(key,expression);
 	}
-	
+	public boolean validateExpression(Mod2002016Key key,String expression) {
+		if (!this.context.containsKey(key.toString())) this.context.put(key.toString(), 0.0);
+		return (Boolean) mvelEval(key,expression);
+	}
+		
 	private Object mvelEval(Mod2002016Key key,String expression) {
 		try {
 			stack.push(key);
 			return MVEL.eval( expression , this , this);
+		} catch (Throwable t) {
+			System.out.println("ERROR key: " + key  + " exp: " + expression);
+			throw t;
 		} finally {
 			stack.pop();
 		}
@@ -207,15 +217,19 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	}
 
 	
-	protected Boolean isChecked(Mod2002016Key key) {
+	public Boolean isChecked(Mod2002016Key key) {
 		return (Boolean) get(key.toString());
 	}
 	
-	protected Double getValue(Mod2002016Key key) {
-		return (Double) get(key.toString());
+	public Double getValue(Mod2002016Key key) {
+		Object o = get(key.toString());
+		if (o == null) {
+			return 0.0;
+		}
+		return (Double) o;
 	}
 	
-	protected Double round(Mod2002016Key key) {
+	private Double roundKey(Mod2002016Key key) {
 		return AonMathUtils.round(getValue(key));
 	}
 	
@@ -226,19 +240,19 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return 365;
 	}
 	
-	protected Boolean isBalNormal() {
+	public Boolean isBalNormal() {
 		return (Boolean) get( C0050 );
 	}
-	protected Boolean isBalAbreviado() {
+	public Boolean isBalAbreviado() {
 		return (Boolean) get( C0051 );
 	}
-	protected Boolean isBalPymes() {
+	public Boolean isBalPymes() {
 		return (Boolean) get( C0050 );
 	}
 
 	public double computeLQ558() throws AonCoreException {
-		if ( isChecked(C0030) ) return round(getValue(LQ558));
-		if ( isChecked(C0047) ) return round(getValue(LQ558));
+		if ( isChecked(C0030) ) return roundKey(LQ558);
+		if ( isChecked(C0047) ) return roundKey(LQ558);
 		
 		if ( isChecked(C0024)) return 28.0;
 		if ( isChecked(C0063) ) return 15.0;
@@ -254,9 +268,9 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		if ( isChecked(C0004) ) return 1.0;
 		if ( isChecked(C0005) ) return 25.0;
 		
-		if ( isChecked(C0017) ) return round(getValue(LQ558));
-		if ( isChecked(C0018) ) return round(getValue(LQ558));
-		if ( isChecked(C0019) ) return round(getValue(LQ558));
+		if ( isChecked(C0017) ) return roundKey(LQ558);
+		if ( isChecked(C0018) ) return roundKey(LQ558);
+		if ( isChecked(C0019) ) return roundKey(LQ558);
 		if ( isChecked(C0006) ) return 25.0;
 		if ( isChecked(C0006) && isChecked(C0057) && !isChecked(C0034)) return 25.0;
 		if ( isChecked(C0006) && isChecked(C0034)) return 33.0;
@@ -268,7 +282,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		if ( isChecked(C0036) ) return 25.0;
 		if ( isChecked(C0038) ) return 28.0;
 		if ( isChecked(C0048) ) return 0.0;
-		if ( isChecked(C0049) ) return round(getValue(LQ558));
+		if ( isChecked(C0049) ) return roundKey(LQ558);
 		if ( isChecked(C0057) ) return 28.0;
 		if ( isChecked(C0058) ) return 25.0;
 		
@@ -288,15 +302,15 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		}
 	}
 	public double computeLQ562() throws AonCoreException {
-		double lq521 = round(getValue(LQ521));
-		double lq558 = round(getValue(LQ558));
-		double lq559 = round(getValue(LQ559));
-		double lq1035 = round(getValue(Mod2002016Key.LQ1035));
-		double lq560 = round(getValue(LQ560));
-		double lq210 = round(getValue(LQ210));
-		double lq480 = round(getValue(LQ480));
-		double lq561 = round(getValue(LQ561));
-		double lq1330 = round(getValue(Mod2002016Key.LQ1330));
+		double lq521 = roundKey(LQ521);
+		double lq558 = roundKey(LQ558);
+		double lq559 = roundKey(LQ559);
+		double lq1035 = roundKey(Mod2002016Key.LQ1035);
+		double lq560 = roundKey(LQ560);
+		double lq210 = roundKey(LQ210);
+		double lq480 = roundKey(LQ480);
+		double lq561 = roundKey(LQ561);
+		double lq1330 = roundKey(Mod2002016Key.LQ1330);
 		
 		if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019)) {
 			double lq562 = round(lq560+lq210-lq480-lq561);
@@ -349,7 +363,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		}
 	
 		if (isChecked(C0012) || isChecked(C0064)) {
-			double lq520 = round(getValue(LQ520));
+			double lq520 = roundKey(LQ520);
 			if (lq520>0) return round(lq520 * lq558 /100);
 			return 0;
 		}
@@ -364,14 +378,14 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	}
 	
 	public double computeLQ550()  throws AonCoreException {
-		double lq501 = round(getValue(Mod2002016Key.LQ501));
-		double i0417 = round(getValue(Mod2002016Key.I0417));
-		double d0418 = round(getValue(Mod2002016Key.D0418));
-		double lq578 = round(getValue(Mod2002016Key.LQ578));
-		double lq579 = round(getValue(Mod2002016Key.LQ579));
-		double lq1029 = round(getValue(Mod2002016Key.LQ1029));
-		double lq1030 = round(getValue(Mod2002016Key.LQ1030));
-		double lq1031 = round(getValue(Mod2002016Key.LQ1031));
+		double lq501 = roundKey(Mod2002016Key.LQ501);
+		double i0417 = roundKey(Mod2002016Key.I0417);
+		double d0418 = roundKey(Mod2002016Key.D0418);
+		double lq578 = roundKey(Mod2002016Key.LQ578);
+		double lq579 = roundKey(Mod2002016Key.LQ579);
+		double lq1029 = roundKey(Mod2002016Key.LQ1029);
+		double lq1030 = roundKey(Mod2002016Key.LQ1030);
+		double lq1031 = roundKey(Mod2002016Key.LQ1031);
 		
 		if(!isChecked(C0022) && !isChecked(Mod2002016Key.C0009) && !isChecked(Mod2002016Key.C0010))
 			return lq501 + i0417 - d0418;
@@ -392,15 +406,16 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		}
 		return lq501 + i0417 - d0418;
 	}
+	
 	public double computeLM1249() throws AonCoreException {
-		double lm1250 = round(getValue(Mod2002016Key.LM1250)); 
-		double lm1251 = round(getValue(Mod2002016Key.LM1251));
-		double lm1252 = round(getValue(Mod2002016Key.LM1252));
-		double lm1253 = round(getValue(Mod2002016Key.LM1253));
-		double lm1254 = round(getValue(Mod2002016Key.LM1254));
-		double lm1256 = round(getValue(Mod2002016Key.LM1256));
-		double lm1258 = round(getValue(Mod2002016Key.LM1258));
-		double lm1259 = round(getValue(Mod2002016Key.LM1259));
+		double lm1250 = roundKey(Mod2002016Key.LM1250); 
+		double lm1251 = roundKey(Mod2002016Key.LM1251);
+		double lm1252 = roundKey(Mod2002016Key.LM1252);
+		double lm1253 = roundKey(Mod2002016Key.LM1253);
+		double lm1254 = roundKey(Mod2002016Key.LM1254);
+		double lm1256 = roundKey(Mod2002016Key.LM1256);
+		double lm1258 = roundKey(Mod2002016Key.LM1258);
+		double lm1259 = roundKey(Mod2002016Key.LM1259);
 		double lm1249 = round( (lm1250 - lm1251 - lm1252 - lm1253 + lm1254) * 0.30);
 		if ( (lm1256 + lm1258 + lm1259) >= getLimit(LIM_2)) {
 		 return lm1249>getLimit(LIM_2)?lm1249:getLimit(LIM_2);
@@ -409,11 +424,11 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	}
 	
 	public double computeLQ560() throws AonCoreException {
-		double lq521 = round(getValue(LQ521));
-		double lq552 = round(getValue(LQ552));
-		double lq553 = round(getValue(LQ553));
-		double lq554 = round(getValue(LQ554));
-		double lq558 = round(getValue(LQ558));
+		double lq521 = roundKey(LQ521);
+		double lq552 = roundKey(LQ552);
+		double lq553 = roundKey(LQ553);
+		double lq554 = roundKey(LQ554);
+		double lq558 = roundKey(LQ558);
 		if (isChecked(C0017) || isChecked(C0018)) {
 			if (isChecked(C0057) && !isChecked(C0063)) {
 				return round( (lq553 * lq558 / 100) + (lq554 * 30 / 100) + (lq521 * 0));		
@@ -435,7 +450,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 				}
 			}
 			if (isChecked(C0030) || isChecked(C0047)) {
-				return round(getValue(LQ560));
+				return roundKey(LQ560);
 			}
 			if (isChecked(C0063)) {
 				if (lq552<=getLimit(LIM_1)){
@@ -540,7 +555,228 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return 0.0;
 	}
 	
+	// ***********************************************************************
+	// Métodos disponibles en las expresiones MVEL.
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) del sumatorio de las cuentas indicadas en <i>accounts</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sab(int[] accounts  ) throws AonCoreException {
+		return getCreditBalance(accounts);
+	}
+
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sabPositivo(int[] accounts) throws AonCoreException {
+		double d = sab(accounts); 
+		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sab(int account) throws AonCoreException {
+		return getCreditBalance(new int[]{account});
+	}
+	
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sabPositivo(int account) throws AonCoreException {
+		double d = sab(account); 
+		return d>0?d:0;
+	}
+
+	/**
+	 * Saldo Deudor (Debe - Haber) del sumatorio de las cuentas indicadas en <i>accounts</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdb(int[] accounts) throws AonCoreException {
+		return getDebitBalance(accounts);
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdbPositivo(int[] accounts) throws AonCoreException {
+		double d = sdb(accounts); 
+		return d>0?d:0;
+	}
+	/**
+	 * Saldo Deudor (Debe - Haber) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdb(int account) throws AonCoreException {
+		return getDebitBalance(new int[]{account});
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdbPositivo(int account) throws AonCoreException {
+		double d = sdb(account); 
+		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sap(int[] accounts) throws AonCoreException {
+		return getCreditPyG(accounts);
+	}
+
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sapPositivo(int[]  accounts) throws AonCoreException {
+		double d = sap(accounts); 
+		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sap(int account) throws AonCoreException {
+		return getCreditPyG(new int[]{account});
+	}
+	
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sapPositivo(int account) throws AonCoreException {
+		double d = sap(account); 
+		return d>0?d:0;
+	}
+
+	/**
+	 * Saldo Deudor (Debe - Haber) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdp(int[]  accounts  ) throws AonCoreException {
+		return getDebitPyG(accounts);
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdpPositivo(int[] accounts) throws AonCoreException {
+		double d = sdp(accounts); 
+		return d>0?d:0;
+	}
+	/**
+	 * Saldo Deudor (Debe - Haber) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdp(int account) throws AonCoreException {
+		return getDebitPyG(new int[]{account});
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdpPositivo(int account) throws AonCoreException {
+		double d = sdp(account); 
+		return d>0?d:0;
+	}
+	/**
+	 * Redondeo a dos decimales.
+	 * @param value
+	 * @return El dato a redondear.
+	 * @throws AonCoreException
+	 */
 	public double round(double value) throws AonCoreException {
 		return AonMathUtils.round(value); 
 	}
+
+	//------------------------------------------------------------------------------------------
+	
+	private double getCreditBalance(int[] accounts  ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getCreditBalance();
+			}
+		}
+		return d;
+	}
+	
+	private double getDebitBalance(int[] accounts ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getDebitBalance();
+			}
+		}
+		return d;
+	}
+	
+	private double getCreditPyG(int[] accounts  ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getCreditPyG();
+			}
+		}
+		return d;
+	}
+	
+	private double getDebitPyG(int[] accounts ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getDebitPyG();
+			}
+		}
+		return d;
+	}
+	
 }

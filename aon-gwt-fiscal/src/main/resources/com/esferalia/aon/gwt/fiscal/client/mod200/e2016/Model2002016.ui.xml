@@ -8,7 +8,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
-		<g:north size="26">
+		<g:north size="40"> <!-- size="26"> -->
 			<g:FlowPanel styleName="{aonResources.css.aonFindingTitleToolbar}">
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
@@ -57,6 +57,9 @@
 						</g:HTMLPanel>
 						<g:FlowPanel ui:field="formContainer" />
 					</g:HorizontalPanel>
+					<g:FlowPanel styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonTextCenter} {aonResources.css.aonFontBig} {aonResources.css.aonColorRed}">
+						<g:Label text="M&#243;dulo en desarrollo" />
+					</g:FlowPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>

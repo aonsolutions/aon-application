@@ -52,42 +52,13 @@ public class Model2002016 extends ResizeComposite  {
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
 
-	@FunctionalInterface private static interface IPageGetter  { PageAbs get(Model200PageCallback cbk); }
-	private enum Page {
-		 PAGE00(cbk -> new Page00(cbk))
-		,PAGE01(cbk -> new Page01(cbk))
-		,PAGE02(cbk -> new Page02(cbk))
-		,PAGE03(cbk -> new Page03(cbk))
-		,PAGE04(cbk -> new Page04(cbk))
-		,PAGE05(cbk -> new Page05(cbk))
-		,PAGE06(cbk -> new Page06(cbk))
-		,PAGE07(cbk -> new Page07(cbk))
-		,PAGE08(cbk -> new Page08(cbk))
-		,PAGE09(cbk -> new Page09(cbk))
-		,PAGE10(cbk -> new Page10(cbk))
-		,PAGE11(cbk -> new Page11(cbk))
-		,PAGE12(cbk -> new Page12(cbk))
-		,PAGE13(cbk -> new Page13(cbk))
-		,PAGE14(cbk -> new Page14(cbk))
-		;
-		
-		private PageAbs pageAbs;
-		private IPageGetter getter;
-		
-		private Page(IPageGetter getter) {
-			this.getter = getter;
-		}
-		PageAbs get() {
-			return pageAbs;
-		}
-		PageAbs ensure(Model200PageCallback cbk) {
-			if (pageAbs == null) {
-				pageAbs = getter.get(cbk);
-			}
-			return pageAbs;
-		}
+	protected interface Model200PageCallback {
+		public Mod2002016Object getMod200Object();
 	}
-
+	
+	private PageAbs[] PAGES = new PageAbs[15];
+	private int P00 = 0;
+	
 	interface Model2002016Binder extends
 			UiBinder<Widget, Model2002016> {
 	}
@@ -152,10 +123,6 @@ public class Model2002016 extends ResizeComposite  {
 
 	ErrorPage errorPage;
 	
-	protected interface Model200PageCallback {
-		public Mod2002016Object getMod200Object();
-	}
-	
 	public Model2002016(Model200Callback mod200Callback) {
 //		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 //			public void onUncaughtException(Throwable e) {
@@ -177,8 +144,8 @@ public class Model2002016 extends ResizeComposite  {
 			public void onSelection(SelectionEvent<ValidationMessage2016> event) {
 				ValidationMessage2016 msg = event.getSelectedItem();
 				if ( msg.getPage() >= 0 ) {
-					boolean mustDump = (Page.values()[msg.getPage()].get() == null);
-					PageAbs page = Page.values()[msg.getPage()].ensure(new Model200PageCallback(){
+					boolean mustDump = getPage(msg.getPage()) == null;
+					PageAbs page = ensurePage(msg.getPage(), new Model200PageCallback(){
 
 						@Override
 						public Mod2002016Object getMod200Object() {
@@ -324,7 +291,7 @@ public class Model2002016 extends ResizeComposite  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Page.PAGE00.get().populate( );
+		getPage(P00).populate( );
 		mod200Object.initializeMod200(new AsyncCallback<Mod2002016>() {
 			@Override
 			public void onSuccess(Mod2002016 result) {
@@ -341,7 +308,7 @@ public class Model2002016 extends ResizeComposite  {
 	}
 
 	private void dump( boolean charactersEnabled) {
-		Page.PAGE00.ensure(new Model200PageCallback(){
+		ensurePage(P00,new Model200PageCallback(){
 
 			@Override
 			public Mod2002016Object getMod200Object() {
@@ -349,9 +316,9 @@ public class Model2002016 extends ResizeComposite  {
 			}
 			
 		}).dump();
-		pageContainer.setWidget(Page.PAGE00.get());
+		pageContainer.setWidget(getPage(P00));
 		refreshButtonsVisibility();
-		((Page00) Page.PAGE00.get()).enableCharacters( charactersEnabled );
+		((Page00) getPage(P00)).enableCharacters( charactersEnabled );
 	}
 	
 	private void refreshButtonsVisibility() {
@@ -364,6 +331,12 @@ public class Model2002016 extends ResizeComposite  {
 		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
+
+		saveButton.setVisible(false);
+		removeButton.setVisible(false);
+		aeatFileButton.setVisible(false);
+		aeatPrintButton.setVisible(false);
+		
 	}
 	
 	protected void raiseException(Throwable t) {
@@ -459,8 +432,8 @@ public class Model2002016 extends ResizeComposite  {
 	}
 
 	private void populatePages() {
-		for (Page page : Page.values()) {
-			if (page.get() != null) page.get().populate();
+		for (PageAbs page : PAGES) {
+			if (page != null) page.populate();
 		}
 	}
 	
@@ -616,7 +589,7 @@ public class Model2002016 extends ResizeComposite  {
 	
 	private class WestFocusPanel extends FocusPanel {
 		
-		public WestFocusPanel(int pag, String label, Page page, final boolean check) {
+		public WestFocusPanel(int pag, String label) {
 			super();
 			setStyleName(AON.AON_CSS.aonLinkItem());
 			FlexTable focTab = new FlexTable();
@@ -641,21 +614,22 @@ public class Model2002016 extends ResizeComposite  {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					if (check) {
-						checkAndShowPage(page);	
+					int realPag = (pag - 1);
+					if (realPag > 0) {
+						checkAndShowPage(realPag);	
 					} else {
-						showPage(page);
+						showPage(realPag);
 					}
 					
 				}
 			});
 		}
-		private void showPage(Page page) {
+		private void showPage(int page) {
 			FlowPanel parent = 	(FlowPanel) getParent();
 			for (int i = 0 ; i < parent.getWidgetCount(); i ++) {
 				parent.getWidget(i).removeStyleName(AON.AON_CSS.aonLinkItemSelected());
 			}
-			PageAbs pageAbs = page.ensure(
+			PageAbs pageAbs = ensurePage(page, 
 					new Model200PageCallback(){
 						@Override 
 						public Mod2002016Object getMod200Object() {
@@ -667,9 +641,14 @@ public class Model2002016 extends ResizeComposite  {
 			addStyleName(AON.AON_CSS.aonLinkItemSelected());
 		}
 		
-		private void checkAndShowPage(Page page) {
+		private void checkAndShowPage(int page) {
+
 			if (mod200Object.isInitialized()) {
-				showPage(page);
+				if (page > 8) {
+					MessageDialog.warning("No disponible");
+				} else {
+					showPage(page);
+				}
 			} else {
 				MessageDialog.warning(AON.MSG.mustInitialzeMod200());
 			}
@@ -682,21 +661,21 @@ public class Model2002016 extends ResizeComposite  {
 		linkContainer.setStyleName(AON.AON_CSS.aonPaddingLeft());
 		linkContainer.setStyleName(AON.AON_CSS.aonPaddingRight());
 		// En el método showPage, hay un cast a FlowPanel. Cuidado con la estrutura. 
-		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification()	 , Page.PAGE00, false));
-		linkContainer.add(new WestFocusPanel( 2,AON.MSG.administratorPage()	 , Page.PAGE01, true));
-		linkContainer.add(new WestFocusPanel( 3,AON.MSG.participations()	 , Page.PAGE02, true));
-		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()		 , Page.PAGE03, true));
-		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()		 , Page.PAGE04, true));
-		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg() 				 , Page.PAGE05, true));
-		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresos() , Page.PAGE06, true));
-		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()	 , Page.PAGE07, true));
-		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI()		 , Page.PAGE08, true));
-		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII()		 , Page.PAGE09, true));
-		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII()	 , Page.PAGE10, true));
-		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() 	 , Page.PAGE11, true));
-		linkContainer.add(new WestFocusPanel(13,AON.MSG.incomeDistribution() , Page.PAGE12, true));
-		linkContainer.add(new WestFocusPanel(14,AON.MSG.deducibleLimitation(), Page.PAGE13, true));
-		linkContainer.add(new WestFocusPanel(15,AON.MSG.idDocument()		 , Page.PAGE14, true));
+		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification()	 ));
+		linkContainer.add(new WestFocusPanel( 2,AON.MSG.administratorPage()	 ));
+		linkContainer.add(new WestFocusPanel( 3,AON.MSG.participations()	 ));
+		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()		 ));
+		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()		 ));
+		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg() 				 ));
+		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresos() ));
+		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()	 ));
+		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI()		 ));
+		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII()		 ));
+		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII()	 ));
+		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() 	 ));
+		linkContainer.add(new WestFocusPanel(13,AON.MSG.incomeDistribution() ));
+		linkContainer.add(new WestFocusPanel(14,AON.MSG.deducibleLimitation()));
+		linkContainer.add(new WestFocusPanel(15,AON.MSG.idDocument()		 ));
 		linkList.setWidget( linkContainer );
 	}
 	
@@ -728,6 +707,30 @@ public class Model2002016 extends ResizeComposite  {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
 			openFootPanel();
 		}
+	}
+
+	private PageAbs getPage( int i) {
+		return PAGES[i];
+	}
+	private PageAbs ensurePage(int i,Model200PageCallback cbk) {
+		if (PAGES[i] == null) {
+			if (i ==  0) PAGES[ 0] = new Page00(cbk); 
+			if (i ==  1) PAGES[ 1] = new Page01(cbk); 
+			if (i ==  2) PAGES[ 2] = new Page02(cbk); 
+			if (i ==  3) PAGES[ 3] = new Page03(cbk); 
+			if (i ==  4) PAGES[ 4] = new Page04(cbk); 
+			if (i ==  5) PAGES[ 5] = new Page05(cbk); 
+			if (i ==  6) PAGES[ 6] = new Page06(cbk); 
+			if (i ==  7) PAGES[ 7] = new Page07(cbk); 
+			if (i ==  8) PAGES[ 8] = new Page08(cbk); 
+			if (i ==  9) PAGES[ 9] = new Page09(cbk); 
+			if (i == 10) PAGES[10] = new Page10(cbk); 
+			if (i == 11) PAGES[11] = new Page11(cbk); 
+			if (i == 12) PAGES[12] = new Page12(cbk); 
+			if (i == 13) PAGES[13] = new Page13(cbk); 
+			if (i == 14) PAGES[14] = new Page14(cbk); 
+		}
+		return getPage(i);
 	}
 
 }

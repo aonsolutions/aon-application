@@ -44,7 +44,10 @@ public class Page03 extends PageAbs {
 	@Override	
 	protected boolean isDisabled(Mod2002016Key key) {
 		if (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL) {
-			if ( key == Mod2002016Key.BA138 || key == Mod2002016Key.BA177 ) {
+			if (key == Mod2002016Key.BA111
+			 || key == Mod2002016Key.BA115
+			 || key == Mod2002016Key.BA138 
+			 || key == Mod2002016Key.BA177 ) {
 				return true;
 			}
 		}

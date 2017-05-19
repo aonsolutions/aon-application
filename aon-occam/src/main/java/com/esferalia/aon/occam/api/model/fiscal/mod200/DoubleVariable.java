@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod200;
 
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Variable;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 

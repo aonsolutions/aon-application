@@ -1,8 +1,6 @@
-package com.esferalia.aon.occam.api.model.fiscal.mod200_2013;
+package com.esferalia.aon.occam.api.model.fiscal.mod200;
 
 import java.io.Serializable;
-
-import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 
 public abstract class Variable<K extends IMod200Key,T> implements Serializable {
 

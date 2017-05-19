@@ -667,7 +667,7 @@ public class Mod2002016DAO  {
 			}
 			return mod200;
 		} catch (Throwable e) {
-//			e.printStackTrace();
+			System.out.println( "*** ERROR " + e.getMessage());
 			throw new AonCoreException(e);
 		}
 	}
@@ -695,6 +695,7 @@ public class Mod2002016DAO  {
 			DoubleVariable2016 dv = mod200.getKeysMap().get(key);
 			ctx.put(key.toString(), (dv != null && dv.getBooleanValue() )); 
 		}
+		
 	}
 	
 	private static void initializeActiveMap(Mod2002016 mod200) {
@@ -744,11 +745,10 @@ public class Mod2002016DAO  {
 			ctx.put(key.toString(), d.getValue());
 		}
 		addCharacters(ctx,mod200);
-		addBalanceCharacters(ctx,mod200);
+//		addBalanceCharacters(ctx,mod200);
 		mod200.setMessages(null);	
 		for (ValidationMessage2016 validation : VALIDATION_EXPRESSION_LIST) {
-			Object o = ctx.evaluateExpression(validation.getKey(),validation.getExpression());
-			Boolean valid = (Boolean) o;
+			boolean valid = ctx.validateExpression(validation.getKey(),validation.getExpression());
 			if (!valid) {
 				list.add(validation);
 			}

@@ -193,7 +193,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BP190,"Prima de emisi\u00F3n (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BP191,"Reservas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BP192,"Legal y estatutarias (N)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BP193,"Otras reservas (N)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BP193,"Otras reservas (N, A, P))");
 		DESCRIPTION_MAP.put(Mod2002016Key.BP702,"Reserva de revalorizaci\u00F3n (Ley 16/2012 de 27 de diciembre) (N)");		
 		DESCRIPTION_MAP.put(Mod2002016Key.BP1001,"Reserva de capitalizaci\u00F3n (N,A,P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BP1002,"Reserva de nivelaci\u00F3n (N,A,P)");
@@ -277,8 +277,8 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.PG262,"Consumo de materias primas y otras materias consumibles (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG762,"Compras de materias primas y otras materias consumibles (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG763,"Variaci\u00F3n de materias primas y otras materias consumibles (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002016Key.PG263,"Trabajos realizados por otras empresas (N)");
-		DESCRIPTION_MAP.put(Mod2002016Key.PG264,"Deterioro de mercader\u00EDas, materias primas y otros aprovisionamientos (N)");
+		DESCRIPTION_MAP.put(Mod2002016Key.PG263,"Trabajos realizados por otras empresas (N, A, P))");
+		DESCRIPTION_MAP.put(Mod2002016Key.PG264,"Deterioro de mercader\u00EDas, materias primas y otros aprovisionamientos (N, A, P))");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG265,"Otros ingresos de explotaci\u00F3n (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG266,"Ingresos accesorios y otros de gesti\u00F3n corriente (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG267,"Ingresos por arrendamientos (N, A, P)");
@@ -308,7 +308,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.PG291,"Resultados por enajenaciones y otras (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG292,"Beneficios (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG293,"P\u00E9rdidas (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002016Key.PG710,"Deterioro y resultados por enajenaciones del inmovilizado de las sociedades holding (N)");
+		DESCRIPTION_MAP.put(Mod2002016Key.PG710,"Deterioro y resultados por enajenaciones del inmovilizado de las sociedades holding (N, A, P))");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG294,"Diferencia negativa de combinaciones de negocio (N, A)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG295,"Otros resultados (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002016Key.PG296,"RESULTADO DE EXPLOTACI\u00D3N (N, A, P)");
