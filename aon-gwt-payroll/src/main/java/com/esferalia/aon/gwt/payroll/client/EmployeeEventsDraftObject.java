@@ -11,7 +11,6 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.google.gwt.user.client.Window;
 
 public class EmployeeEventsDraftObject {
 	
@@ -98,17 +97,17 @@ public class EmployeeEventsDraftObject {
 		
 		@Override
 		public void undo() {
-			if (oldEmployeeEventsVariable == null)
-				draftMapEventsVar.get(this.variable).remove(oldEmployeeEventsVariable);
-			else{
-				ArrayList<EmployeeEventsVariable> list = new ArrayList<EmployeeEventsVariable>();
-				list.add(this.oldEmployeeEventsVariable);
-				draftMapEventsVar.put(this.variable, list);
+			draftMapEventsVar.get(this.variable).remove(newEmployeeEventsVariable);
+			if (oldEmployeeEventsVariable != null){
+				draftMapEventsVar.get(this.variable).add(oldEmployeeEventsVariable);
 			}
 		}
 		
 		@Override
 		public void redo() {
+			if (oldEmployeeEventsVariable != null)
+				draftMapEventsVar.get(this.variable).remove(this.oldEmployeeEventsVariable);
+			
 			draftMapEventsVar.get(this.variable).add(this.newEmployeeEventsVariable);
 		}
 		
@@ -173,15 +172,19 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month){
+	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month, Integer year){
 		if (null != draftMapEventsVar.get(varName))
 			for (EmployeeEventsVariable e : draftMapEventsVar.get(varName)){
+				if(year != e.getStartDate().getYear())
+					continue;
 				if (month == e.getStartDate().getMonth())
 					return e;
 			}
 		
 		if (null != mapEventsVar.get(varName))
 			for (EmployeeEventsVariable e : mapEventsVar.get(varName)){
+				if(year != e.getStartDate().getYear())
+					continue;
 				if (month == e.getStartDate().getMonth())
 					return e;
 			}
@@ -190,34 +193,38 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void setValueByMonth(String variableName, Integer month, Double newValue) {
+	public void setValueByMonth(String variableName, Integer month, Double newValue, Integer year) {
 		EmployeeEventsVariable oldVar = null;
 		for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
 			if(month == e.getStartDate().getMonth())
 				oldVar = e;
 		}
 		
-		EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue);
+		EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue, year);
 		
 		this.undoManager.add(new SetVariableEdit(oldVar, newVar, variableName));
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void setValueByMonths(String variableName, ArrayList<Integer> months, Double newValue) {
+	public void setValueByMonths(String variableName, ArrayList<Integer> months, Double newValue, Integer year) {
 		List<Undoable> undos = new ArrayList<Undoable>();
 		
 		for (Integer month : months){
 			EmployeeEventsVariable oldVar = null;
 			if (null != draftMapEventsVar.get(variableName))
 				for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
-					if(month == e.getStartDate().getMonth())
+					if (year != e.getStartDate().getYear())
+						continue;
+					if(month == e.getStartDate().getMonth()){
 						oldVar = e;
+					}
 				}
 			else{
 				draftMapEventsVar.put(variableName, new ArrayList<EmployeeEventsVariable>());
 			}
 			
-			EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue);
+			EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue, year);
+			draftMapEventsVar.get(variableName).remove(oldVar);
 			draftMapEventsVar.get(variableName).add(newVar);
 			undos.add(new SetVariableEdit(oldVar, newVar, variableName));
 		}
@@ -226,11 +233,18 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private EmployeeEventsVariable createEmployeeEventsVariable(Integer month, Double newValue) {
-		Date startDate = new Date(117, month, DateUtils.getFirstDayOfMonth(new Date(117, month, month)).getDate());
-		Date endDate = new Date(117, month, DateUtils.getLastDayOfMonth(new Date(117, month, month)).getDate());
+	private EmployeeEventsVariable createEmployeeEventsVariable(Integer month, Double newValue, Integer year) {
+		Date startDate = new Date(year, month, DateUtils.getFirstDayOfMonth(new Date(year, month, month)).getDate());
+		Date endDate = new Date(year, month, DateUtils.getLastDayOfMonth(new Date(year, month, month)).getDate());
 		
 		return new EmployeeEventsVariable(startDate, endDate, newValue);
+	}
+	
+	public boolean hasChanged(String variableName, EmployeeEventsVariable varMonth) {
+		if (null == draftMapEventsVar.get(variableName))
+			return false;
+		
+		return draftMapEventsVar.get(variableName).contains(varMonth);
 	}
 
 	/**
@@ -258,7 +272,12 @@ public class EmployeeEventsDraftObject {
 		ArrayList<EmployeeEventsVariable> hcList = new ArrayList<EmployeeEventsVariable>();
 		rellenarListaCaso3(hcList);
 		sortListByStartDate(hcList);
-		mapEventsVar.put("HORAS_COMPLEMENTARIAS", hcList);                  
+		mapEventsVar.put("HORAS_COMPLEMENTARIAS", hcList);
+		
+		ArrayList<EmployeeEventsVariable> dmList = new ArrayList<EmployeeEventsVariable>();
+		rellenarListaCaso4(dmList);
+		sortListByStartDate(dmList);
+		mapEventsVar.put("DIAS_MANUTENCION", dmList);
 	}
 
 	private void rellenarLista(ArrayList<EmployeeEventsVariable> list) {
@@ -308,6 +327,16 @@ public class EmployeeEventsDraftObject {
 			list.add(info);
 		}
 				
+	}
+	
+	private void rellenarListaCaso4(ArrayList<EmployeeEventsVariable> list) {
+		for (int i = 11; i>=0; i--){
+			Date startDate = new Date(116, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
+			Date endDate = new Date(116, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
+			Double value = i*1.00;
+			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
+			list.add(info);
+		}	
 	}
 	
 	private void sortListByStartDate(ArrayList<EmployeeEventsVariable> list){

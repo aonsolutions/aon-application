@@ -99,6 +99,10 @@
 			cursor: pointer;
 		}
 
+		.onChange {
+			background-color: rgba(255, 255, 0, 0.38);
+		}
+
 		/* ESTILOS CAMBIO DE AÑO */	
 	
 		.paddingHorizontalPanel{
@@ -108,7 +112,8 @@
 		.year {
 			font-size: 30px;
 			color: #FF704D;
-			padding-left: 28px;
+			padding-left: 8px;
+			padding-right: 8px;
 			padding-top: 2px;
 		}
 		
@@ -121,7 +126,7 @@
 		
 		.optionButtonsLeft {
 			margin-top: 8px;
-			margin-left: 8px;
+			margin-left: 18px;
 		}
 		
 		.optionButtonsRight {
@@ -313,10 +318,10 @@
 		        
 		        <!-- PANEL CAMBIO DE AÑO-->
 		        <g:HorizontalPanel styleName="{style.paddingHorizontalPanel}">
-					<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
 					<g:Button
 						styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous"
 						ui:field="lastYearButton" />
+					<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
 					<g:Button
 						styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next"
 						ui:field="nextYearButton" />

@@ -12,14 +12,12 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 import com.vaadin.polymer.iron.widget.IronLabel;
@@ -42,6 +40,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String cellFormat();
 		String cellOddFormat();
 		String isSelectedCell();
+		String onChange();
 	}
 	
 	@UiField
@@ -294,6 +293,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
 	private void fillCellsEvents() {
+		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
 		for (int row = 1; row < 17; row ++){
 			Integer actualMonth = 0;
 			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
@@ -312,7 +312,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					continue;
 				}
 				
-				EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(variableName, actualMonth);
+				EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(variableName, actualMonth, actualYear);
 				
 				if (null == varMonth){
 					eventValue.setText("-");
@@ -320,6 +320,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					actualMonth++;
 					continue;
 				}
+				
+				if (this.employeeEventsDraft.hasChanged(variableName, varMonth))
+					eventValue.setStyleName(style.onChange());
+				else
+					eventValue.removeStyleName(style.onChange());
 				
 				eventValue.setText(varMonth.getValue().toString());
 				eventsGrid.setWidget(row, col, eventValue);
@@ -361,6 +366,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		ArrayList<Integer> months = new ArrayList<Integer>();
 		int variableRow = calculateRow(selectedPositions.getSelectedList().get(0));
 		String variableName = eventsGrid.getWidget(variableRow, 0).getElement().getInnerText();
+		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
 		
 		for (Integer position : selectedPositions.getSelectedList()){
 			int col = calculateCol(position);
@@ -369,7 +375,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			months.add(month);
 		}
 
-		this.employeeEventsDraft.setValueByMonths(variableName, months, newValue);
+		this.employeeEventsDraft.setValueByMonths(variableName, months, newValue, actualYear);
 		
 	}
 	
@@ -381,7 +387,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		int actualYear = Integer.parseInt(yearLabel.getText());
 		int newYear = actualYear + change;
 		yearLabel.setText(Integer.toString(newYear));
-		fillCellsEvents();	
+		fillCellsEvents();
+		newValueButton.setEnabled(false);
 	}
 	
 	private void selectPosition(int row, int col) {
