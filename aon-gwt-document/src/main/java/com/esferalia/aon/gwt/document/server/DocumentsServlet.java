@@ -102,18 +102,9 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 
 	private static InputStream file;
 	private static String mimetype;
-	public static Boolean serviconvenios;
 	public static byte[] out;
 	Boolean confidential;
 	
-	public static Boolean getServiconvenios() {
-		return serviconvenios;
-	}
-
-	public static void setServiconvenios(Boolean serviconvenios) {
-		DocumentsServlet.serviconvenios = serviconvenios;
-	}
-
 	public static String getMimetype() {
 		return mimetype;
 	}
@@ -138,7 +129,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 
 
 	protected void initFacesContext() {
-		setServiconvenios(GoogleDriveController.serviconvenios);
 		ServletContext context = getServletContext();
 		HttpServletRequest request = getThreadLocalRequest();
 		HttpServletResponse response = getThreadLocalResponse();
@@ -170,12 +160,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	public Document getAllFiles(Domain domain){
 		Domain actualDomain = AON.getDomain(domain.getName(), domain.getId(), getUser().getLogin());
 		Document docs  = DBConsults.getAllRattachNew(actualDomain, getUser(), domain.getName(), confidential);
-		if(serviconvenios != null && getServiconvenios())
-			docs.setServiconvenios(DBConsults.getServiConvenios(domain, getUser()));
-	
-		docs.setDomain(domain.getName());
-		docs.setIsServiconvenios(getServiconvenios());
-		
+		docs.setDomain(domain.getName());		
 		return docs;
 	}
 

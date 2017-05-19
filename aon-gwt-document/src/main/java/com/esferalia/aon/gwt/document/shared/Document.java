@@ -7,32 +7,15 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class Document implements IsSerializable{
 	
 	Vector<FileInfo> files = new Vector<FileInfo>();
-	Vector<FileInfo> serviconvenios = new Vector<FileInfo>();
 	Vector<FileInfo> filter = new Vector<FileInfo>();
 	Vector<FileInfo> efiles = new Vector<FileInfo>();
 	String domain;
-	Boolean isServiconvenios;
 	
-	public Boolean getIsServiconvenios() {
-		return isServiconvenios;
-	}
-	public Document setIsServiconvenios(Boolean isServiconvenios) {
-		this.isServiconvenios = isServiconvenios;
-		return this;
-	}
 	public Vector<FileInfo> getFiles() {
 		return files;
 	}
 	public Document setFiles(Vector<FileInfo> files) {
 		this.files = files;
-		return this;
-	}
-	
-	public Vector<FileInfo> getServiconvenios() {
-		return serviconvenios;
-	}
-	public Document setServiconvenios(Vector<FileInfo> serviconvenios) {
-		this.serviconvenios = serviconvenios;
 		return this;
 	}
 	public Vector<FileInfo> getFilter() {

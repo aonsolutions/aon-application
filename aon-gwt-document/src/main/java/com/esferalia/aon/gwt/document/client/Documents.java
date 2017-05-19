@@ -842,7 +842,7 @@ public class Documents implements EntryPoint {
 					|| KeyCodes.KEY_UP == event.getNativeEvent().getKeyCode()){
 
 			    	FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-			    	if(!isServiconvenios && !isLote && !object.getIsParent() && documentManager){
+			    	if(!isLote && !object.getIsParent() && documentManager){
 						editFile.setVisible(true);
 						delFile.setVisible(true);
 						optionFile.setVisible(true);
@@ -859,7 +859,7 @@ public class Documents implements EntryPoint {
 				    Integer subrow = event.getContext().getSubIndex();
 				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
 			    	FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-			    	if(!isServiconvenios && !isLote && !object.getIsParent() && documentManager){
+			    	if(!isLote && !object.getIsParent() && documentManager){
 						editFile.setVisible(true);
 						delFile.setVisible(true);
 						optionFile.setVisible(true);
@@ -909,7 +909,7 @@ public class Documents implements EntryPoint {
 					}
 					
 					if(selFiles.size() == 1) object = selFiles.get(0);
-			    	DocumentContextMenu contextMenu = new DocumentContextMenu(par,lot,object ,isLote || isServiconvenios || object.getIsParent() || !documentManager);
+			    	DocumentContextMenu contextMenu = new DocumentContextMenu(par,lot,object ,isLote || object.getIsParent() || !documentManager);
 
 			    	Integer heigth = contextMenu.getHeigth();
 			    	Integer width = contextMenu.getWidth();
@@ -946,12 +946,7 @@ public class Documents implements EntryPoint {
 		dataGrid.setAutoHeaderRefreshDisabled(false);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
 		
-		if(docs.getIsServiconvenios()){
-			//
-			dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
-			dataProvider.addDataDisplay(dataGrid);
-		}
-		else addDataDisplay(dataGrid);
+		addDataDisplay(dataGrid);
 		
 		ListHandler<FileInfo> sortHandler = getSortHandler();
 				//docs.getFil());
@@ -1019,11 +1014,6 @@ public class Documents implements EntryPoint {
 			stack1.getHeaderWidget(1).setVisible(false);
 			stack1.getWidget(1).setVisible(false);
 		}		
-		if(docs.getIsServiconvenios()){
-			isServiconvenios = true;
-			newFile.setVisible(false); 
-			sConvenios.setVisible(true);
-		}
 	}
 	
 	private ListHandler<FileInfo> getSortHandler() {
@@ -1089,7 +1079,7 @@ public class Documents implements EntryPoint {
 		FileInfo fi;
 		if(selFiles.size() == 1) fi = selFiles.get(0);
 		else fi= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-		if(!fi.getIsDrive() && !fi.getIsParent() && !isServiconvenios && !isLote){
+		if(!fi.getIsDrive() && !fi.getIsParent() && !isLote){
 			Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Grabar", true,son);
 			d.setLists(lists);
 			d.setFileInfo(fi);
@@ -1327,7 +1317,7 @@ public class Documents implements EntryPoint {
 			}
 		}
 		if(selFiles.size() == 1) object = selFiles.get(0);
-    	DocumentContextMenu contextMenu = new DocumentContextMenu(par,lot,object ,isLote || isServiconvenios || object.getIsParent() || !documentManager);
+    	DocumentContextMenu contextMenu = new DocumentContextMenu(par,lot,object ,isLote || object.getIsParent() || !documentManager);
     	NativeEvent nativeEvent = event.getNativeEvent();
 			if(nativeEvent.getClientY()>590){
 					if(nativeEvent.getClientX()>994)
@@ -1364,7 +1354,7 @@ public class Documents implements EntryPoint {
 		FileInfo fi;
 		if(selFiles.size() == 1) fi = selFiles.get(0);
 		else fi= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-		if(!fi.getIsParent() && !isServiconvenios && !isLote){
+		if(!fi.getIsParent() && !isLote){
 		Dialog d = new Dialog("delete", "Borrar Archivo", "Cancelar", true, "Borrar", true,son);
 		d.setFileInfo(fi);
 		d.setIsNextButton(false);
@@ -2288,8 +2278,7 @@ public class Documents implements EntryPoint {
 		
  		String searchStr = searchBox.getText();
  		Vector<FileInfo> vaux = new Vector<FileInfo>();
- 		if(isServiconvenios) vaux = docs.getServiconvenios();
- 		else if(isLote) vaux = lote;
+ 		if(isLote) vaux = lote;
  		else vaux = docs.getFilter();
  		//dataProvider.getList().stream().forEach(f-> vaux.add(f));
  		idoc.searchFile(searchStr, vaux,
@@ -2330,7 +2319,6 @@ public class Documents implements EntryPoint {
 				gestionDocs.setVisible(true);
 				docs.setEfiles(result);
 				docs.setFilter(result);
-				isServiconvenios =false;
 				isLote = false;
 				searchs = result;
 				for(FileInfo f : dataProvider.getList()){
@@ -2435,7 +2423,6 @@ public class Documents implements EntryPoint {
 						dataGrid.getSelectionModel().setSelected(f, false);
 					}
 					addDataDisplay(dataGrid);
-					isServiconvenios=false;
 					isLote = false;
 					updateDatagridColumns();
 					dataGrid.redraw();
@@ -2454,7 +2441,6 @@ public class Documents implements EntryPoint {
 				showMorePager.setRangeLimited(false);
 				
 			}
-			isServiconvenios=false;
 			isLote = false;
 			updateDatagridColumns();
 			dataGrid.redraw();
@@ -2462,7 +2448,6 @@ public class Documents implements EntryPoint {
 		docs.setFilter(docs.getEfiles());		
 	}
 
-	Boolean isServiconvenios=false;
 	Boolean conf;
 	PopupPanel pop;
 	
@@ -2739,7 +2724,6 @@ public class Documents implements EntryPoint {
 		d.setSearchDomain(searchDomain);
 		d.setIsNextButton(false);
 		d.setConfidentialUser(confidentialUser);
-		d.setIsServiconvenios(isServiconvenios);
 		popup2 = new DocumentsDialog(d) {
 			@Override
 			protected void onCancel() {
@@ -2751,7 +2735,7 @@ public class Documents implements EntryPoint {
 			protected void onAccept() {	
 				removeFilterItems();
 				SearchInfo si = new SearchInfo();
-				if(getSons().size()!=1 && !isServiconvenios){
+				if(getSons().size()!=1){
 					SuggestBox tb0 = (SuggestBox) grid.getWidget(0, 1);
 					if ("".equals(tb0.getText()))
 						si.setDomain(null);
@@ -2869,9 +2853,7 @@ public class Documents implements EntryPoint {
 				else
 					si.setScope(s3);
 				Vector<FileInfo> vaux = new Vector<FileInfo>();
-				if (isServiconvenios)
-					vaux = docs.getServiconvenios();
-				else if(isLote)
+				if(isLote)
 					vaux = lote;
 				else
 					vaux = docs.getEfiles();
@@ -2879,7 +2861,7 @@ public class Documents implements EntryPoint {
 
 					@Override
 					public void onSuccess(Vector<FileInfo> result) {
-						if(!isServiconvenios && !result.isEmpty() && !docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
+						if(!result.isEmpty() && !docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
 							idoc.eSearchFile(docs.getFiles(), result.get(0).getDomain(), new AsyncCallback<Vector<FileInfo>>() {
 								
 								@Override
@@ -3948,7 +3930,6 @@ public class Documents implements EntryPoint {
 		delFile.setVisible(false);
 		optionFile.setVisible(false);
 		isLote= true;
-		isServiconvenios = false;
 		removeFilterItems();
 		for(FileInfo f : dataProvider.getList()){
 			dataGrid.getSelectionModel().setSelected(f, false);
@@ -4181,7 +4162,6 @@ public class Documents implements EntryPoint {
 						}
 						dataProvider = new ListDataProvider<FileInfo>(searchs);
 						dataProvider.addDataDisplay(dataGrid);
-						isServiconvenios=false;
 						isLote = false;
 						updateDatagridColumns();
 						dataGrid.redraw();
@@ -4238,7 +4218,6 @@ public class Documents implements EntryPoint {
 						}
 						dataProvider = new ListDataProvider<FileInfo>(searchs);
 						dataProvider.addDataDisplay(dataGrid);
-						isServiconvenios=false;
 						isLote = false;
 						updateDatagridColumns();
 						dataGrid.redraw();

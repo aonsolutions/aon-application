@@ -83,10 +83,9 @@ public abstract class DocumentsDialog extends CustomDialogB {
 	String domainSon;
 	Integer num;
 	Boolean confidentialUserDialog = null;
-	Boolean isServiconvenios = false;
 	public DocumentsDialog(Dialog dialog) {
 		setWindowCode(PasswordGenerator.getPassword(10));
-		if(dialog.getIsServiconvenios()!= null) isServiconvenios = dialog.getIsServiconvenios();
+		
 		if(dialog.getConfidentialUser()!= null) confidentialUserDialog = dialog.getConfidentialUser();
 		num = 0;
 		tree();
@@ -774,43 +773,33 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			}
 		}
 
-		if(dialog.getIsServiconvenios()){
-			for(Tag t : lists2.getTagListDomainZero().getList()){
-				lb2.addItem(t.getName());
-			}
-			for(Category c : lists2.getCategoryListDomainZero()){
-				lb1.addItem(c.getName());
-			}
+		for (Tag t : lists2.getTagList().getList()) {
+			if(t.getIsParent())
+				lb2.addItem(Character.toString((char)9650)+t.getName());
+			else if(t.getIsSon())
+				lb2.addItem(Character.toString((char)9660)+t.getName());
+			else lb2.addItem(t.getName());
 		}
-		else{
-			for (Tag t : lists2.getTagList().getList()) {
-				if(t.getIsParent())
-					lb2.addItem(Character.toString((char)9650)+t.getName());
-				else if(t.getIsSon())
+		if(dialog.getSon()){
+			for(Tag t : lists2.getTagListSon().getList()){
+				if(t.getDomain().equals(dialog.getSearchDomain()))
 					lb2.addItem(Character.toString((char)9660)+t.getName());
-				else lb2.addItem(t.getName());
-			}
-			if(dialog.getSon()){
-				for(Tag t : lists2.getTagListSon().getList()){
-					if(t.getDomain().equals(dialog.getSearchDomain()))
-						lb2.addItem(Character.toString((char)9660)+t.getName());
-				}
-			}
-			for (Category c : lists2.getCategoryList()) {
-				if(c.getIsParent())
-					lb1.addItem(Character.toString((char)9650)+c.getName());
-				else if(c.getIsSon())
-					lb1.addItem(Character.toString((char)9660)+c.getName());
-				else lb1.addItem(c.getName());
-			}
-			if(dialog.getSon()){
-				for(Category c : lists2.getCategoryListSon()){
-					if(c.getDomain().equals(dialog.getSearchDomain()))
-						lb1.addItem(Character.toString((char)9660)+c.getName());
-				}
 			}
 		}
-
+		for (Category c : lists2.getCategoryList()) {
+			if(c.getIsParent())
+				lb1.addItem(Character.toString((char)9650)+c.getName());
+			else if(c.getIsSon())
+				lb1.addItem(Character.toString((char)9660)+c.getName());
+			else lb1.addItem(c.getName());
+		}
+		if(dialog.getSon()){
+			for(Category c : lists2.getCategoryListSon()){
+				if(c.getDomain().equals(dialog.getSearchDomain()))
+					lb1.addItem(Character.toString((char)9660)+c.getName());
+			}
+		}
+		
 		lb2.addChangeHandler(OneHandler());
 		
 		/********************************/
@@ -821,7 +810,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		grid.setWidth("400px");
 		grid.setBorderWidth(1);
 		grid.setCellSpacing(0);
-		if(dialog.getSons().size() != 1 && !dialog.getIsServiconvenios()){
+		if(dialog.getSons().size() != 1){
 			SuggestBox tb0 = new SuggestBox(Utils.createOracle(dialog.getSons()));
 			tb0.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 				@Override
@@ -1304,24 +1293,15 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			@Override
 			public void onClick(ClickEvent event) {
 				ListBox lb2 = new ListBox();
-				
-				
-				
 				lb2.addItem("-");
-				if(isServiconvenios){
-					for(Tag t : lists2.getTagListDomainZero().getList()){
-						lb2.addItem(t.getName());
-					}
+				for (Tag t : lists2.getTagList().getList()) {
+					if(t.getIsParent())
+						lb2.addItem(Character.toString((char)9650)+t.getName());
+					else if(t.getIsSon())
+						lb2.addItem(Character.toString((char)9660)+t.getName());
+					else lb2.addItem(t.getName());
 				}
-				else{
-					for (Tag t : lists2.getTagList().getList()) {
-						if(t.getIsParent())
-							lb2.addItem(Character.toString((char)9650)+t.getName());
-						else if(t.getIsSon())
-							lb2.addItem(Character.toString((char)9660)+t.getName());
-						else lb2.addItem(t.getName());
-					}
-				}
+				
 				
 				//TODO				
 				if(son1){
@@ -1374,19 +1354,13 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			public void onClick(ClickEvent event) {
 				ListBox lb2 = new ListBox();
 				lb2.addItem("-");
-				if(isServiconvenios){
-					for(Category category : lists2.getCategoryListDomainZero()){
-						lb2.addItem(category.getName());
-					}
-				}
-				else{
-					for (Category category : lists2.getCategoryList()) {
-						if(category.getIsParent())
-							lb2.addItem(Character.toString((char)9650)+category.getName());
-						else if(category.getIsSon())
-							lb2.addItem(Character.toString((char)9660)+category.getName());
-						else lb2.addItem(category.getName());
-					}
+				
+				for (Category category : lists2.getCategoryList()) {
+					if(category.getIsParent())
+						lb2.addItem(Character.toString((char)9650)+category.getName());
+					else if(category.getIsSon())
+						lb2.addItem(Character.toString((char)9660)+category.getName());
+					else lb2.addItem(category.getName());
 				}
 				
 				//TODO				

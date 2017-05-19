@@ -32,7 +32,6 @@ public class Dialog {
 	Boolean multiple;
 	Integer num;
 	Boolean confidentialUser;
- 	Boolean isServiconvenios;
 	public Dialog(String type,String title,String cancelButtonName,Boolean isCancelButton,String acceptButtonName,Boolean isAcceptButton,Boolean son){
 		this.type = type;
 		this.title = title;
@@ -201,14 +200,6 @@ public class Dialog {
 
 	public void setConfidentialUser(Boolean confidentialUser) {
 		this.confidentialUser = confidentialUser;
-	}
-
-	public Boolean getIsServiconvenios() {
-		return isServiconvenios;
-	}
-
-	public void setIsServiconvenios(Boolean isServiconvenios) {
-		this.isServiconvenios = isServiconvenios;
 	}
 
 	public Attach getAttach() {

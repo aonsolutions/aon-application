@@ -120,7 +120,7 @@
 			<aon:commandLink id="menu_document" 
 				value="#{bundle.aon_module_document}"
 				action="gwt_documents"
-				actionListener="#{serviconvenios.onNotServiconvenios}"
+				actionListener="#{gwtSelectedMenu.onDocumental}"
 				immediate="true"
 				styleClass="aon-top-menu-item" />
 		</aon:if>
@@ -156,7 +156,7 @@
 			<aon:if test="#{!selectedMenu.issues}">
 				<aon:commandLink id="menu_call_center" 
 					action="gwt_issues"
-					actionListener="#{serviconvenios.onIssues}"
+					actionListener="#{gwtSelectedMenu.onIssues}"
 					title="C.A.U. POLYMER" 
 					value="&#160;"
 					inmediate="true"

@@ -17,7 +17,6 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -35,7 +34,6 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
-import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
@@ -230,7 +228,6 @@ public class Documental implements EntryPoint {
 				
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {
-				Window.alert("" + result.getData().toLinkedList().size());
 				content.add(new AttachListPanel2(me, result.getData()));
 			}
 				

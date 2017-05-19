@@ -15,7 +15,6 @@ import org.richfaces.event.UploadEvent;
 import com.code.aon.AonVersion;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.Utils;
 import com.code.aon.oauth2.google.GoogleUser;
 import com.code.aon.oauth2.sessionInfo.SessionInfo;
 import com.code.aon.ui.util.AonUtil;
@@ -42,15 +41,6 @@ public class GoogleDriveController implements Serializable {
 	public static GoogleUser uconnection;
 	
 	// pasarela a gwt Document.
-	public static Boolean serviconvenios;
-	
-	public static Boolean getServiconvenios() {
-		return serviconvenios;
-	}
-
-	public static void setServiconvenios(Boolean serviconvenios) {
-		GoogleDriveController.serviconvenios = serviconvenios;
-	}
 
 	public Drive getClientSession(){
 		Drive drive=null;
