@@ -80,7 +80,6 @@ public class ContractServlet extends HttpServlet{
 			f.getDomainProperty().eq(domainId)
 			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(AonDateUtils.toSql(ejInitDate))))
 		).forEach(contract -> {
-			JSONObject json = new JSONObject();
 			LinkedList<ContractData> list = PAYROLL.getContractDataList(domainName, domainId, login, g -> 
 				g.getContractProperty().eq(contract.getId()));
 			LinkedList<Double> fixedDoubleList = new LinkedList<>();fixedDoubleList.add(0.0);
@@ -125,23 +124,27 @@ public class ContractServlet extends HttpServlet{
 			
 			Date start = AonDateUtils.getYear(contract.getStartDate()) == year ? contract.getStartDate() : ejInitDate;
 			Date end = contract.getEndDate() != null && AonDateUtils.getYear(contract.getEndDate()) == year ? contract.getEndDate() : ejFinalDate;
-
-			json.put("quotation_group", qg.isPresent() ? qg.get().getExpression() : "-"); 
-			json.put("name", person.isPresent() ? person.get().getName() : "-");
-			json.put("document", person.isPresent() ? person.get().getDocument() : "-");
-			json.put("start_date", dateTimeFormat.format(start)); // TODO FORMAT
-			json.put("end_date", dateTimeFormat.format(end)); // TODO  FORMAT
-			json.put("gender", ToJSON.objectToJSON(person.get().getGender().ordinal(), person.get().getGender().getName()));
-			Double fixed = fixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
-			Double unfixed = unfixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
-			json.put("fixed", AonMathUtils.round(fixed));
-			json.put("unfixed", AonMathUtils.round(unfixed));
 			
-			Integer disabilityId = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? irpfData.get().getDisability().intValue() : -1;
-			String disabilityName = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? DisabiltyLevel.values()[disabilityId].getName() : "-"; 
-			json.put("disability", ToJSON.objectToJSON(disabilityId, disabilityName));
+			if(qg.isPresent()){
+				JSONObject json = new JSONObject();
+			
+				json.put("quotation_group",qg.get().getExpression()); 
+				json.put("name", person.isPresent() ? person.get().getName() : "-");
+				json.put("document", person.isPresent() ? person.get().getDocument() : "-");
+				json.put("start_date", dateTimeFormat.format(start));
+				json.put("end_date", dateTimeFormat.format(end));
+				json.put("gender", ToJSON.objectToJSON(person.get().getGender().ordinal(), person.get().getGender().getName()));
+				Double fixed = fixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
+				Double unfixed = unfixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
+				json.put("fixed", AonMathUtils.round(fixed));
+				json.put("unfixed", AonMathUtils.round(unfixed));
+			
+				Integer disabilityId = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? irpfData.get().getDisability().intValue() : -1;
+				String disabilityName = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? DisabiltyLevel.values()[disabilityId].getName() : "-"; 
+				json.put("disability", ToJSON.objectToJSON(disabilityId, disabilityName));
 				
-			array.put(json);
+				array.put(json);
+			}
 		});
 		return array;
 	}

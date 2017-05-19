@@ -23,18 +23,23 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
+import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "PrintContractMediaList", urlPatterns = {"/aon_gwt_aio/print_contract_media_list/*"})
@@ -54,10 +59,16 @@ public class printContractMediaList extends HttpServlet{
 		Integer year =  2016;//Integer.parseInt(parameters.get("year"));
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));	
 		
+		JSONObject json = new JSONObject();
 		JSONArray array = ContractServlet.getContractMediaList(domain, login, year);
+		json.put("contract", array);
 		
-		
-		File file = createPdf(array, year);
+		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
+		JSONObject jsonCompany = ToJSON.objectToJSON(company.getId(), company.getName());
+		jsonCompany.put("document", company.getDocument());
+		json.put("company", jsonCompany);
+		json.put("year", year);
+		File file = createPdf(json);
 		
         Utils.addCorsHeader(resp);
         resp.setContentType(MimeType.PDF.getName());
@@ -74,10 +85,10 @@ public class printContractMediaList extends HttpServlet{
 		LOGGER.log(Level.INFO, "Print Salaried Staff - POST METHOD");
 	}
 	
-	public static File createPdf(JSONArray array, Integer year) {
+	public static File createPdf(JSONObject json) {
 		File archivoPDF = null;
 		try {
-			archivoPDF = File.createTempFile("Listado Media contratos " + year, "pdf");
+			archivoPDF = File.createTempFile("Listado Media contratos " + json.getInt("year"), "pdf");
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -86,6 +97,41 @@ public class printContractMediaList extends HttpServlet{
 		try {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
 			document.open();
+			
+			PdfPTable table0 = new PdfPTable(2);
+			table0.setWidthPercentage(100);
+
+			float[] medidaCeldas0 = {1f, 9f};
+			try {
+				table0.setWidths(medidaCeldas0);
+			} catch (DocumentException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+			JSONObject company = json.getJSONObject("company");
+			
+			PdfPCell c010 = new PdfPCell(new Phrase("Empresa",getFont1()));
+			c010.setBorder(PdfPCell.NO_BORDER);
+			table0.addCell(c010);
+			
+			PdfPCell c019 = new PdfPCell(new Phrase(company.getString("name"),getFont2()));
+			c019.setBorder(PdfPCell.NO_BORDER);
+			table0.addCell(c019);
+			
+			PdfPCell c018 = new PdfPCell(new Phrase("C.I.F.",getFont1()));
+			c018.setBorder(PdfPCell.NO_BORDER);
+			table0.addCell(c018);
+			
+			PdfPCell c017 = new PdfPCell(new Phrase(company.getString("document"),getFont2()));
+			c017.setBorder(PdfPCell.NO_BORDER);
+			table0.addCell(c017);
+			
+			document.add(table0);
+			
+			Paragraph order = new Paragraph(" ");
+			order.add(getSeparator());
+			document.add(order);
+			
+			document.add(new Paragraph(" "));
 			
 			PdfPTable table1 = new PdfPTable(8);
 			
@@ -184,59 +230,157 @@ public class printContractMediaList extends HttpServlet{
 			c7.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(c7);
 			
+			JSONArray array = json.getJSONArray("contract");
+			
+			Double totalManFixed = 0.0, totalWomanFixed = 0.0, totalManUnfixed = 0.0, totalWomanUnfixed = 0.0, totalDiscap = 0.0;
+			
 			for(Integer i = 0 ; i < array.length(); i++){
-				JSONObject json = array.getJSONObject(i);
 				
-				PdfPCell c00 = new PdfPCell(new Phrase(json.getString("document"),getFont2()));
+				JSONObject contract = array.getJSONObject(i);
+				
+				PdfPCell c00 = new PdfPCell(new Phrase(contract.getString("document"),getFont2()));
 				c00.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c00);
 				
-				PdfPCell c11 = new PdfPCell(new Phrase(json.getString("name"),getFont2()));
+				PdfPCell c11 = new PdfPCell(new Phrase(contract.getString("name"),getFont2()));
 				c11.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c11);
 				
-				Date sd = dateTimeFormat.parse(json.getString("start_date"));
+				Date sd = dateTimeFormat.parse(contract.getString("start_date"));
 				PdfPCell c22 = new PdfPCell(new Phrase(dateFormat.format(sd),getFont2()));
 				c22.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c22);
 				
-				Date ed = dateTimeFormat.parse(json.getString("end_date"));
+				Date ed = dateTimeFormat.parse(contract.getString("end_date"));
 				PdfPCell c33 = new PdfPCell(new Phrase(dateFormat.format(ed),getFont2()));
 				c33.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c33);
 				
-				PdfPCell c44 = new PdfPCell(new Phrase(json.getString("quotation_group"),getFont2()));
+				PdfPCell c44 = new PdfPCell(new Phrase(contract.getString("quotation_group"),getFont2()));
 				c44.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c44);
 				
-				Double manFixed = json.getJSONObject("gender").getInt("id") != 1 ? json.getDouble("fixed") : 0.0;
+				Double manFixed = contract.getJSONObject("gender").getInt("id") != 1 ? contract.getDouble("fixed") : 0.0;
+				totalManFixed = totalManFixed + manFixed;
 				PdfPCell c55 = new PdfPCell(new Phrase(Double.toString(manFixed),getFont2()));
 				c55.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c55);
 				
-				Double womanFixed = json.getJSONObject("gender").getInt("id") == 1 ? json.getDouble("fixed") : 0.0;
+				Double womanFixed = contract.getJSONObject("gender").getInt("id") == 1 ? contract.getDouble("fixed") : 0.0;
+				totalWomanFixed = totalWomanFixed + womanFixed;
 				PdfPCell c552 = new PdfPCell(new Phrase(Double.toString(womanFixed),getFont2()));
 				c552.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c552);
 
-				Double manUnfixed = json.getJSONObject("gender").getInt("id") != 1 ? json.getDouble("unfixed") : 0.0;
+				Double manUnfixed = contract.getJSONObject("gender").getInt("id") != 1 ? contract.getDouble("unfixed") : 0.0;
+				totalManUnfixed = totalManUnfixed + manUnfixed;
 				PdfPCell c66 = new PdfPCell(new Phrase(Double.toString(manUnfixed),getFont2()));
 				c66.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c66);
 				
-				Double womanUnfixed = json.getJSONObject("gender").getInt("id") == 1 ? json.getDouble("unfixed") : 0.0;
+				Double womanUnfixed = contract.getJSONObject("gender").getInt("id") == 1 ? contract.getDouble("unfixed") : 0.0;
+				totalWomanUnfixed = totalWomanUnfixed + womanUnfixed;
 				PdfPCell c662 = new PdfPCell(new Phrase(Double.toString(womanUnfixed),getFont2()));
 				c662.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c662);
 				
-				Double discap = json.getJSONObject("disability").getInt("id") != -1 ? json.getDouble("fixed") + json.getDouble("unfixed") : 0.0;
+				Double discap = contract.getJSONObject("disability").getInt("id") != -1 ? contract.getDouble("fixed") + contract.getDouble("unfixed") : 0.0;
 				PdfPCell c77 = new PdfPCell(new Phrase(Double.toString(discap),getFont2()));
 				c77.setBorder(PdfPCell.NO_BORDER);
 				table.addCell(c77);
-				
 			}
 			
 			document.add(table);
+	
+			Paragraph order2 = new Paragraph(" ");
+			order2.add(getSeparator());
+			document.add(order2);
+			
+			document.add(new Paragraph(" "));
+			
+			PdfPTable tableN1 = new PdfPTable(7);
+			tableN1.setWidthPercentage(100);
+			float[] medidaCeldasN1 = {6f, 1f, 0.5f, 0.5f, 0.5f, 0.5f ,1f};
+			try {
+				tableN1.setWidths(medidaCeldasN1);
+			} catch (DocumentException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+			
+			tableN1.addCell(emptyCell());
+			
+			PdfPCell total = new PdfPCell(new Phrase("TOTAL",getFont1()));
+			total.setBorder(PdfPCell.NO_BORDER);
+			tableN1.addCell(total);
+			
+			
+			PdfPCell tmf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalManFixed)),getFont1()));
+			tmf.setBorder(PdfPCell.NO_BORDER);
+			tableN1.addCell(tmf);
+			
+			PdfPCell twf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalWomanFixed)),getFont1()));
+			twf.setBorder(PdfPCell.NO_BORDER);
+			tableN1.addCell(twf);
+
+			PdfPCell tmu = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalManUnfixed)),getFont1()));
+			tmu.setBorder(PdfPCell.NO_BORDER);
+			tableN1.addCell(tmu);
+			
+			PdfPCell twu = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalWomanUnfixed)),getFont1()));
+			twu.setBorder(PdfPCell.NO_BORDER);
+			tableN1.addCell(twu);
+			
+			PdfPCell td = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalDiscap)),getFont1()));
+			td.setBorder(PdfPCell.NO_BORDER);
+			tableN1.addCell(td);
+
+			document.add(tableN1);
+			PdfPTable tableN = new PdfPTable(3);
+			tableN.setWidthPercentage(100);
+
+			float[] medidaCeldasN = {7f, 2f, 1f};
+			try {
+				tableN.setWidths(medidaCeldasN);
+			} catch (DocumentException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+		
+			tableN.addCell(emptyCell());
+			
+			PdfPCell tf1 = new PdfPCell(new Phrase("Total Fijo",getFont1()));
+			tf1.setBorder(PdfPCell.NO_BORDER);
+			tableN.addCell(tf1);
+			
+			Double totalFixed = totalManFixed + totalWomanFixed;
+			PdfPCell tf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalFixed)),getFont1()));
+			tf.setBorder(PdfPCell.NO_BORDER);
+			tableN.addCell(tf);
+			
+			tableN.addCell(emptyCell());
+			
+			PdfPCell tnf1 = new PdfPCell(new Phrase("Total No Fijo",getFont1()));
+			tnf1.setBorder(PdfPCell.NO_BORDER);
+			tableN.addCell(tnf1);
+			
+			Double totalUnfixed = totalManUnfixed + totalWomanUnfixed;
+			PdfPCell tnf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalUnfixed)),getFont1()));
+			tnf.setBorder(PdfPCell.NO_BORDER);
+			tableN.addCell(tnf);
+			
+			tableN.addCell(emptyCell());
+			
+			PdfPCell te1 = new PdfPCell(new Phrase("Total Empresa",getFont1()));
+			te1.setBorder(PdfPCell.NO_BORDER);
+			tableN.addCell(te1);
+			
+			Double totalCompany = totalFixed + totalUnfixed;
+			PdfPCell te = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalCompany)),getFont1()));
+			te.setBorder(PdfPCell.NO_BORDER);
+			tableN.addCell(te);
+
+			document.add(tableN);
+			
+			
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		} catch (JSONException e) {
@@ -248,6 +392,11 @@ public class printContractMediaList extends HttpServlet{
 		return archivoPDF;
 	}
 	
+	private static PdfPCell emptyCell() {
+		PdfPCell cell = new PdfPCell(new Phrase("",getFont2()));
+		cell.setBorder(PdfPCell.NO_BORDER);
+		return cell;
+	}
 	
 	private static Font getFont1(){
 		Font font1 = new Font();
@@ -260,5 +409,13 @@ public class printContractMediaList extends HttpServlet{
 		Font font2 = new Font();
 		font2.setSize(8);
 		return font2;
+	}
+	
+	private static Paragraph getSeparator(){
+		Paragraph separator = new Paragraph();
+		LineSeparator line = new LineSeparator();
+        line.setOffset(-2);
+        separator.add(line);
+        return separator;
 	}
 }
