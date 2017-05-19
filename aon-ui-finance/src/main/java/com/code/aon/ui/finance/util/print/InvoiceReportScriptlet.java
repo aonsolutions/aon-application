@@ -14,6 +14,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
@@ -30,7 +31,12 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	
 	private static final String FIELD_ID = "id";
 	
-	private static final String INVOICE_FOOTER_TEXT = "invoiceFooterText";
+
+	@Override
+	public Company getCompany() {
+		return super.getCompany();
+	}
+	
 	
 	public InputStream getBackgroundFile(){
 		return this.getSaleInvoiceBackgroundFile();
@@ -53,14 +59,7 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	}
 	
 	public String getInvoiceFooterText() {
-		try {
-			if(getPrintParamsController().getSaleInvoiceFooter().isPrintSaleInvoiceFooter()){
-				return (String) getParameterValue(INVOICE_FOOTER_TEXT);
-			}
-		} catch (JRScriptletException e) {
-			LOGGER.error( e.getMessage(), e);
-		}
-		return null;
+		return getPrintParamsController().getSaleInvoiceFooter().getText();
 	}
 	
 	public boolean isPrintDiscountPriceApplied() {
@@ -69,6 +68,10 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	
 	public String getLeftSideText(){
 		return getLeftSideText(true);
+	}
+	
+	public String getFooterSideText(){
+		return getFooterSideText(true);
 	}
 	
 	public String getLeftSideText(boolean printDirStaff){

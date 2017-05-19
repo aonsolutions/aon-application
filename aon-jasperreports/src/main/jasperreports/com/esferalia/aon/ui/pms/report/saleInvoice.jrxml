@@ -57,20 +57,55 @@
 		<field name="invoiceDetail" class="com.code.aon.finance.InvoiceDetail"/>
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
-	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="logoImageFile" class="java.io.InputStream"/>
+    
 	<parameter name="nestedReports" class="java.util.Map"/>
-	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="printLogo" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="printName" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="printNif" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
+    <parameter name="company" class="com.code.aon.company.Company" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getCompany()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logoImageFile" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLogoFile()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getAddress()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="phone" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPhone()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getFax()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getEmail()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getWeb()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintHeader()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintRecordData()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printLogo" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintLogo()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printName" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintName()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printNif" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintNif()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintAddress()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintInternetData()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="invoiceFooterText" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></defaultValueExpression>
+	</parameter>
 	<parameter name="pmsInvoicePrinter" class="com.esferalia.aon.ui.pms.print.PmsInvoicePrinter" isForPrompting="false"/>
-	<parameter name="invoiceFooterText" class="java.lang.String" isForPrompting="false"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
@@ -368,7 +403,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{invoiceFooterText}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="d7e829cf-074a-4222-8a1e-87384ca91664" key="textField-48" x="20" y="35" width="48" height="13"/>

@@ -65,6 +65,14 @@ public class ReportScriptlet extends JRDefaultScriptlet implements Serializable 
 		return getCompanyController().obtainFax();
 	}
 	
+	public RegistryMedia getEmail() throws ManagerBeanException {
+		return getCompanyController().obtainEmail();
+	}
+	
+	public RegistryMedia getWeb() throws ManagerBeanException {
+		return getCompanyController().obtainWeb();
+	}
+	
 	public InputStream getLogoFile() {
 		try {
 			return getCompanyController().getAttachAsInputStream();

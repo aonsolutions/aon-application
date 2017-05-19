@@ -86,13 +86,30 @@
 	</subDataset>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
-	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
-	<parameter name="logoImageFile" class="java.io.InputStream"/>
-	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false"/>
-	<parameter name="phone" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
-	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
+
+<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getCompany()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logoImageFile" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLogoFile()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getAddress()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="phone" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPhone()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getFax()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getEmail()]]></defaultValueExpression>
+	</parameter>
+    <parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getWeb()]]></defaultValueExpression>
+	</parameter>
 	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintHeader()]]></defaultValueExpression>
 	</parameter>
@@ -120,6 +137,7 @@
 	<parameter name="printDiscountPriceApplied" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintDiscountPriceApplied()]]></defaultValueExpression>
 	</parameter>
+
 	<field name="id" class="java.lang.Integer"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="issueDate" class="java.util.Date"/>

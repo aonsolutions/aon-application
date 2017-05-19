@@ -91,23 +91,7 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<!-- Params for custom templates -->
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printProject" value="#{company.isPrintProject}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -142,13 +126,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />			
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -158,13 +135,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />						
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
@@ -178,13 +148,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFootertText}" />						
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
@@ -198,13 +161,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />						
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -214,13 +170,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />						
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -230,13 +179,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />						
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -246,13 +188,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />						
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -262,15 +197,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 		<nested-report report="invoiceDetailGta"/>
@@ -337,8 +263,6 @@
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="companyController" value="#{saleInvoice.getCompanyController}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
@@ -432,22 +356,7 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
-			<!-- Params for custom templates -->
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -461,13 +370,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -478,13 +380,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
@@ -499,13 +394,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
@@ -520,13 +408,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -537,13 +418,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -554,13 +428,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -571,13 +438,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 	</report>
@@ -588,20 +448,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
-			<param id="printLogo" value="#{company.isPrintLogo}" />
-			<param id="printName" value="#{company.getPrintName}" />
-			<param id="printNif" value="#{company.getPrintNif}" />
-			<param id="printAddress" value="#{company.getPrintAddress}" />
-			<param id="printInternetData" value="#{company.getPrintInternetData}" />
-			<param id="invoiceFooterText" value="#{printParams.getSaleInvoiceFooterText}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
 		<nested-report report="invoiceDetailGta"/>
