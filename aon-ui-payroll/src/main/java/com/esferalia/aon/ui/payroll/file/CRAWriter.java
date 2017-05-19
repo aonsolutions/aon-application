@@ -19,6 +19,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record5;
@@ -185,7 +186,7 @@ public class CRAWriter {
 	 * @return
 	 */
 	private CRE createCRERecord(String code, Double amount, Double quote, boolean repeated) {
-		if(code == null){
+		if(!NumberUtils.isNumber(code)){
 			code = "1";
 		}
 		if(amount!=0.0d || (isExtraPayment(code) && quote!=0.0d)){
