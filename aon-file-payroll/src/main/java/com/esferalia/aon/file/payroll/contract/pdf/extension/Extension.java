@@ -308,7 +308,12 @@ public class Extension extends AbstractContractExtension {
 			}
 			
 			getPdfFieldsMap().get(PE191_CONTRACT_START_DATE).setValue(dateFormatter.format(contract.getStartDate()));
-			Double contractDurationInMonths = getMonthsBetweenDates(contratoParams.getStartDate(), prorrogaParams.getFechaInicio());
+			Double contractDurationInMonths;
+			if(contratoParams.getEndDate()!=null){
+				contractDurationInMonths = getMonthsBetweenDates(contratoParams.getStartDate(), contratoParams.getEndDate());
+			} else {
+				contractDurationInMonths = getMonthsBetweenDates(contratoParams.getStartDate(), prorrogaParams.getFechaFin(), (-1) );
+			}
 			if(contractDurationInMonths==null){
 				contractDurationInMonths = 0.0;
 			}
@@ -406,11 +411,15 @@ public class Extension extends AbstractContractExtension {
 	}
 
 	private Double getMonthsBetweenDates(Date startDate, Date endDate) {
+		return getMonthsBetweenDates(startDate, endDate, 0);
+	}
+	
+	private Double getMonthsBetweenDates(Date startDate, Date endDate, int increaseEnd) {
 		Calendar startCal = Calendar.getInstance();
 		startCal.setTime(startDate);
 		Calendar endCal = Calendar.getInstance();
 		endCal.setTime(endDate);
-		endCal.add(Calendar.DAY_OF_MONTH, 1);
+		endCal.add(Calendar.DAY_OF_MONTH, 1+increaseEnd);
 	
 		LocalDate startLocalDate = LocalDate.ofYearDay(startCal.get(Calendar.YEAR), startCal.get(Calendar.DAY_OF_YEAR));
 		LocalDate endLocalDate = LocalDate.ofYearDay(endCal.get(Calendar.YEAR), endCal.get(Calendar.DAY_OF_YEAR));
