@@ -198,12 +198,14 @@ public class ContractLeaveLoader {
 			String dailyRegBase, final ExpressionContext exprCtx)
 			throws ExpressionException {
 
+		
+		
 		final Date start = Period.max(leaveStart, startDate);
-		final Date end = Period.min(leaveEnd, endDate);
+		
+		final ITimedVariable<?> contractEnd = exprCtx.getVariable(ContextVariable.CONTRACT_END, startDate, endDate);
+		final Date end = Period.min(leaveEnd, (Date) contractEnd.getValue(contractEnd.getPeriod()));
 
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
-		
-		
 
 		exprCtx.setVariable(ContextVariable.IT_START, leaveStart, start, end);
 

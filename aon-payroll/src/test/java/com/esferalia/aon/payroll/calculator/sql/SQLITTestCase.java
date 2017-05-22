@@ -2473,5 +2473,64 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testProfessionalDiseaseITOutOfBoundsI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startContrat = getFirstDayOfMonth(getToday());
+		Date endContract =  add(startContrat, DAY_OF_MONTH,15);
+
+		//@formatter:off
+		ContractRecord contract = newContract
+				(aonContext,
+				startContrat,
+				endContract,
+				new HashMap<String,String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s",  OCCUPATIONAL_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endITDate = add(startITDate, DAY_OF_MONTH,30);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				endITDate, null);
+
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		Assert.assertEquals(( 1750.00/ 30.00 ) * (10 + 6 * 0.75) , salary.getTotalPayment());
+
+	}
+	
 
 }
