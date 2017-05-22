@@ -489,14 +489,14 @@
 	</table>
 
 	<table name="data_attach" class="com.esferalia.aon.entity.master.DataAttachment">
-		<column name="source" property="dataAttachmentSource" type="com.code.aon.data.enumeration.DataAttachmentSource" />
-		<column name="type" property="dataAttachmentType" type="com.code.aon.data.enumeration.DataAttachmentType" />
+		<column name="source" type="com.code.aon.data.enumeration.DataAttachmentSource" />
+		<column name="type" type="com.code.aon.data.enumeration.DataAttachmentType" />
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 		<column name="data" exclude="true" />
 	</table>
 
 	<table name="data_response" class="com.esferalia.aon.entity.master.DataResponse">
-		<column name="source" property="dataAttachmentSource" type="com.code.aon.data.enumeration.DataResponseSource" />
+		<column name="source" type="com.code.aon.data.enumeration.DataResponseSource" />
 	</table>
 
 	<table name="deduction_concept">

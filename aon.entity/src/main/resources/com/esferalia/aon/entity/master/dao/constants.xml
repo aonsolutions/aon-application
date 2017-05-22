@@ -151,6 +151,21 @@
 		<hibernate names="active,domain,id,login,name,password,registry,enterprise"/>
 	</bean>
 			
+	<bean class="com.code.aon.data.DataAttachment">
+		<alias names="id,domain,source,sourceId,description,data,type,mimeType,driveId,creationUser,creationDate,modificationUser,modificationDate"/>
+		<hibernate names="id,domain,source,sourceId,description,data,type,mimeType,driveId,creationUser,creationDate,modificationUser,modificationDate"/>
+	</bean>
+			
+	<bean class="com.code.aon.data.DataResponse">
+		<alias names="id,domain,code,responseDate,source,sourceId,creationUser,creationDate,modificationUser,modificationDate"/>
+		<hibernate names="id,domain,code,responseDate,source,sourceId,creationUser,creationDate,modificationUser,modificationDate"/>
+	</bean>
+			
+	<bean class="com.code.aon.data.DataResponseDetail">
+		<alias names="id,domain,dataResponse_id,dataResponse_source,dataResponse_sourceId,dataVariable,dataValue,creationUser,creationDate,modificationUser,modificationDate"/>
+		<hibernate names="id,domain,dataResponse.id,dataResponse.source,dataResponse.sourceId,dataVariable,dataValue,creationUser,creationDate,modificationUser,modificationDate"/>
+	</bean>
+			
 	<!-- ** AON CUSTOMER  **************************************************** -->
 	<bean class="com.code.aon.customer.Customer">
 		<alias names="id,domain,registry_id,status,surcharge,tariff_id,registry_name,registry_alias,registry_document,withholding,transaction,scope_id,eInvoice,invoicingGroup,invoicingGroup_id,projectGrouped,deliveryGrouped,deliveryValuated,account,account_id,account_code"/>

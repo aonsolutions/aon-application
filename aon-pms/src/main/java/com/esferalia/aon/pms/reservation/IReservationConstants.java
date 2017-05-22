@@ -7,12 +7,16 @@ public interface IReservationConstants {
 	String OPERATION_TIME_STAMP = "OperationTimeStamp";
 	String DATE = "Date";
 	String TIME = "Time";
+	String CODE = "Code";
+	String NAME = "Name";
 	String DESCRIPTION = "Description";
 	String MEAL_PLAN_CODES = "MealPlanCodes";
 	String DISCOUNT_MODE = "DiscountMode";
 	String DISCOUNT = "Discount";
 	String PERCENT = "Percent";
 	String AMOUNT = "Amount";
+	String AMOUNT_BEFORE_TAX = "AmountBeforeTax";
+	String AMOUNT_AFTER_TAX = "AmountAfterTax";
 	String BOOKING_HOLDER = "BookingHolder";
 	String TOKEN_CONEX_FLOW = "TokenConexFlow";
 	String VAT_TAX = "IVA";
@@ -20,6 +24,8 @@ public interface IReservationConstants {
 	String BANK_TRANSACTION_COMMENT = "bank transaction";
 	String BANK_TRANSACTION = "BankTransaction";
 	String PAYMENT_TRANSACTION = "PaymentTransaction";
+	String PROMOTION = "PROMOTION";
+	String PROMOTION_CODE = "PromotionCode";
 
 	String ADD_RESERVATION = "A";
 	String MODIFY_RESERVATION = "M";

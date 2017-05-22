@@ -52,6 +52,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.data.DataResponse;
+import com.code.aon.data.DataResponseDetail;
+import com.code.aon.data.enumeration.DataResponseSource;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -168,6 +171,7 @@ public class ReservationManager implements IReservationConstants {
 					if (isReservationRoomAssigned(reservation)) {
 						removeReservationRoomDetail(reservation, true);
 					}
+					removeReservationPromotion(reservation);
 					removeReservationService(reservation);
 					removeReservationRoom(reservation);
 					removeReservationGuest(reservation);
@@ -331,11 +335,13 @@ public class ReservationManager implements IReservationConstants {
 			createReservationGuest(reservationType, reservation);
 			createReservationRoom(reservationType, reservation);
 			createReservationService(reservationType, reservation);
+			createReservationPromotion(reservationType, reservation);
 
 			reservation = finalizeReservation(reservation);
 		} catch (Exception ex) {
 			if (isNewReservation && reservation.getId() != null) {
 				try {
+					removeReservationPromotion(reservation);
 					removeReservationAttach(reservation);
 					removeReservationService(reservation);
 					removeReservationRoom(reservation);
@@ -576,6 +582,61 @@ public class ReservationManager implements IReservationConstants {
 		}
 	}
 
+	private void createReservationPromotion(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException {
+		Node promotionNode = findNode(reservationType.getTPAExtensions().getDomNode(), PROMOTION_CODE, true);
+		if (promotionNode != null) {
+			IManagerBean dataResponseBean = BeanManager.getManagerBean(DataResponse.class);
+			DataResponse dataResponse = new DataResponse();
+			dataResponse.setDomain(reservation.getDomain());
+			dataResponse.setCode(PROMOTION);
+			dataResponse.setResponseDate(new Date());
+			dataResponse.setSource(DataResponseSource.PROJECT);
+			dataResponse.setSourceId(reservation.getId());
+			dataResponse.setCreationUser(CRS);
+			dataResponse.setCreationDate(new Date());
+			dataResponse = (DataResponse)dataResponseBean.insert(dataResponse);
+
+			IManagerBean dataResponseDetailBean = BeanManager.getManagerBean(DataResponseDetail.class);
+			DataResponseDetail dataResponseDetail = new DataResponseDetail();
+			dataResponseDetail.setDomain(reservation.getDomain());
+			dataResponseDetail.setDataResponse(dataResponse);
+			dataResponseDetail.setDataVariable(CODE);
+			dataResponseDetail.setDataValue(findAttribute(promotionNode, NAME).getNodeValue());
+			dataResponseDetail.setCreationUser(CRS);
+			dataResponseDetail.setCreationDate(new Date());
+			dataResponseDetailBean.insert(dataResponseDetail);
+
+			Node discountNode = promotionNode.getFirstChild();
+			if (discountNode != null) {
+				dataResponseDetail = new DataResponseDetail();
+				dataResponseDetail.setDomain(reservation.getDomain());
+				dataResponseDetail.setDataResponse(dataResponse);
+				dataResponseDetail.setDataVariable(DESCRIPTION);
+				dataResponseDetail.setDataValue(findAttribute(discountNode, DESCRIPTION).getNodeValue());
+				dataResponseDetail.setCreationUser(CRS);
+				dataResponseDetail.setCreationDate(new Date());
+				dataResponseDetailBean.insert(dataResponseDetail);
+
+				Node percentNode = findAttribute(discountNode, PERCENT);
+				if (percentNode != null) {
+					dataResponseDetail.setDataVariable(DISCOUNT + PERCENT);
+					dataResponseDetail.setDataValue(percentNode.getNodeValue());
+				}
+				Node amountBeforeTaxNode = findAttribute(discountNode, AMOUNT_BEFORE_TAX);
+				if (amountBeforeTaxNode != null) {
+					dataResponseDetail.setDataVariable(DISCOUNT + AMOUNT_BEFORE_TAX);
+					dataResponseDetail.setDataValue(amountBeforeTaxNode.getNodeValue());
+				}
+				Node amountAfterTaxNode = findAttribute(discountNode, AMOUNT_AFTER_TAX);
+				if (amountAfterTaxNode != null) {
+					dataResponseDetail.setDataVariable(DISCOUNT + AMOUNT_AFTER_TAX);
+					dataResponseDetail.setDataValue(amountAfterTaxNode.getNodeValue());
+				}
+				dataResponseDetailBean.insert(dataResponseDetail);
+			}
+		}
+	}
+
 	private ProjectReservation finalizeReservation(ProjectReservation reservation) throws ManagerBeanException{
 		if (reservation.isPrepay() || reservation.isNotRefundable()) {
 			reservation.setAdvance((reservation.getAdvance() != 0) ? reservation.getAdvance() : reservation.getTotal());
@@ -790,6 +851,25 @@ public class ReservationManager implements IReservationConstants {
 		for (ITransferObject ito : projectAttachBean.getList(criteria)) {
 			ProjectAttachment projectAttachment = (ProjectAttachment)ito;
 			projectAttachBean.remove(projectAttachment);
+		}
+	}
+
+	private void removeReservationPromotion(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean dataResponseDetailBean = BeanManager.getManagerBean(DataResponseDetail.class);
+		IManagerBean dataResponseBean = BeanManager.getManagerBean(DataResponse.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(dataResponseBean.getFieldName(IEntityAlias.DATA_RESPONSE_SOURCE), DataResponseSource.PROJECT);
+		criteria.addEqualExpression(dataResponseBean.getFieldName(IEntityAlias.DATA_RESPONSE_SOURCE_ID), reservation.getId());
+		criteria.addEqualExpression(dataResponseBean.getFieldName(IEntityAlias.DATA_RESPONSE_CODE), PROMOTION);
+		for (ITransferObject ito : dataResponseBean.getList(criteria)) {
+			DataResponse dataResponse = (DataResponse)ito;
+			criteria = new Criteria();
+			criteria.addEqualExpression(dataResponseDetailBean.getFieldName(IEntityAlias.DATA_RESPONSE_DETAIL_DATA_RESPONSE_ID), dataResponse.getId());
+			for (ITransferObject itr : dataResponseDetailBean.getList(criteria)) {
+				DataResponseDetail dataResponseDetail = (DataResponseDetail)itr;
+				dataResponseDetailBean.remove(dataResponseDetail);
+			}
+			dataResponseBean.remove(dataResponse);
 		}
 	}
 

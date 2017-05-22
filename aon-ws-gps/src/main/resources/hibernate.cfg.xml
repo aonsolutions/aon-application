@@ -51,6 +51,8 @@
     	<mapping class="com.code.aon.config.TaxDetail"/>
     	<mapping class="com.code.aon.customer.Customer"/>
     	<mapping class="com.code.aon.customer.InvoicingGroup"/>
+    	<mapping class="com.code.aon.data.DataResponse"/>
+    	<mapping class="com.code.aon.data.DataResponseDetail"/>
     	<mapping class="com.code.aon.finance.BankStatement"/>
     	<mapping class="com.code.aon.finance.BankStatementLink"/>
     	<mapping class="com.code.aon.finance.Finance"/>
