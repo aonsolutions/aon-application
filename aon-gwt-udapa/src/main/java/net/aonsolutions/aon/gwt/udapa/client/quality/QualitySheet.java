@@ -290,10 +290,8 @@ public class QualitySheet extends Composite{
 		hp2.add(lpercent2);
 		caliberControl.setWidget(1, 3, hp2); setWidth(caliberControl, 1, 3, "300px");
 	
-		
 		Boolean siembra = map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-				map.get(QualitySheetCode.UFQDP1.getName()).equals(Destiny.SIEMBRA.ordinal());
-				
+				map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.SIEMBRA.ordinal() + 1));
 		if(siembra){
 			calibresSiembra();
 		} else calibresConsumo();

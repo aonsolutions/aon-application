@@ -589,7 +589,7 @@ public class printQuality {
     	
     	Double index = Double.parseDouble(map.get(QualitySheetCode.UFQDP1.getName())) - 1;
 		String str = (index >= 0.0) ? Destiny.values()[index.intValue()].getName() : "-";
-    	if(Destiny.SIEMBRA.equals(str)){
+		if(Destiny.SIEMBRA.getName().equalsIgnoreCase(str)){
     		PdfPCell c1 = new PdfPCell(caliberSiembraTable(map));
     		c1.setBorder(PdfPCell.NO_BORDER);
     		content.addCell(c1);
