@@ -139,10 +139,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				.setLogin(getUserLogin())
 				.setDomain(getUserDomainID());
 	}
-
-	public void initAux(){
-	
-	}
 	
 	public TemplateList getTemplates(Domain domain){
 		TemplateList tl = null;

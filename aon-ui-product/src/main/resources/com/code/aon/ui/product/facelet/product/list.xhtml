@@ -30,7 +30,7 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<ui:include
-						src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+						src="/com/esferalia/aon/gwt/aio/facelet/templates/silent.xhtml" />
 							
 					<aon:commandLink id="product-export" value="#{bundle.account_export}"
 						onclick="productx('#{productExport.code}','#{productExport.name}','#{productExport.category.id}','#{productExport.tagsStr}','#{productExport.brand.id}','#{productExport.vat.id}','#{productExport.retention.id}','#{productExport.purchaseAccount.id}','#{productExport.salesAccount.id}','#{productExport.serializable}','#{productExport.inventoriable}','#{productExport.manufactured}','#{productExport.composition}', '#{productExport.statusesStr}','#{productExport.typesStr}'
@@ -38,7 +38,7 @@
 											,'#{productExport.creationUser}','#{productExport.creationDate1}','#{productExport.creationDate2}','#{productExport.modificationUser}','#{productExport.modificationDate1}','#{productExport.modificationDate2}')"
 						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 					</aon:commandLink>
-					
+			
 				</ui:define>
 			</ui:decorate>
 			

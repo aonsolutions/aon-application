@@ -36,7 +36,6 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -57,7 +56,7 @@ public class printContractMediaResume extends HttpServlet{
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
 		String domainName = parameters.get("domain");
 		String login = parameters.get("login");
-		Integer year =  2016;//Integer.parseInt(parameters.get("year"));
+		Integer year = Integer.parseInt(parameters.get("year"));
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));	
 		
 		JSONObject json = new JSONObject();

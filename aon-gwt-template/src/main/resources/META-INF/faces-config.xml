@@ -7,28 +7,28 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_templates</from-outcome>
+			<from-outcome>gwt_templates111</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/template/facelet/templates.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_consumption_templates</from-outcome>
+			<from-outcome>gwt_consumption_templates111</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/template/facelet/consumption_templates.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_marketplace</from-outcome>
+			<from-outcome>gwt_marketplace111</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/template/facelet/marketplace.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_download_amazon_delivery</from-outcome>
+			<from-outcome>gwt_download_amazon_delivery111</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/template/facelet/download_amazon_delivery1.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

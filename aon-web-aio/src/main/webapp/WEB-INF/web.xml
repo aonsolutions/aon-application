@@ -334,7 +334,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>TemplateGwtServlet</servlet-name>
-		<url-pattern>/aon_gwt_template/gwt_template</url-pattern>
+		<url-pattern>/aon_gwt_aio/gwt_template</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -343,7 +343,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UploadProducts</servlet-name>
-		<url-pattern>/aon_gwt_template/gwt_upload</url-pattern>
+		<url-pattern>/aon_gwt_aio/gwt_upload</url-pattern>
 	</servlet-mapping>
 
 	<!-- Aon GWT Marketplace -->
@@ -354,7 +354,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MarketplaceGwtServlet</servlet-name>
-		<url-pattern>/aon_gwt_template/gwt_marketplace</url-pattern>
+		<url-pattern>/aon_gwt_aio/gwt_marketplace</url-pattern>
 	</servlet-mapping>
 
 	<!-- Aon GWT Document -->

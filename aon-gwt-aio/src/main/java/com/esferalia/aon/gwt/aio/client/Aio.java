@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.document.client.Documents;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
+import com.esferalia.aon.gwt.template.client.Templates;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -26,6 +27,7 @@ public class Aio implements EntryPoint {
 	private Issues issues;
 	private Documents documents;
 	//private Documental documental;
+	
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -154,6 +156,20 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new Udapa(aonData).onModuleLoad();
+				}
+			});		
+			break;
+		case Modules.TEMPLATES:
+			GWT.runAsync(Templates.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new Templates(aonData).onModuleLoad(getSubEntryPoint());
 				}
 			});		
 			break;

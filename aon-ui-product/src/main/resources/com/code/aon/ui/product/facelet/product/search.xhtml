@@ -9,26 +9,26 @@
 
 	<ui:define name="content">
 		<ui:include
-			src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
-		
+			src="/com/esferalia/aon/gwt/aio/facelet/templates/silent.xhtml" />
+
 		<aon:form id="productSearch" onload="#{productExport.initialize}">				
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">	
 				<ui:param name="toolbarTitle" value="#{bundle.aon_role_product}" />
 				<ui:param name="controller" value="#{product}" />
-				
+			
 				<ui:define name="additionalToolbarContent">
-					<!-- aon:if test="#{salesAppParam.activeMarketPlace}"-->
-							<aon:commandLink id="product-import" value="#{bundle.aon_import}"
-								onclick="product()"
-								styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
-							</aon:commandLink>
-							<aon:commandLink id="product-export" value="#{bundle.account_export}"
-								onclick="productx()"
-								styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
-							</aon:commandLink>
-					<!-- /aon:if-->
+					<aon:commandLink id="product-import" value="#{bundle.aon_import}"
+						onclick="product()"
+						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+					<aon:commandLink id="product-export" value="#{bundle.account_export}"
+						onclick="productx()"
+						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+					</aon:commandLink>
+			
 				</ui:define>
+			
 			</ui:decorate>
 			
 

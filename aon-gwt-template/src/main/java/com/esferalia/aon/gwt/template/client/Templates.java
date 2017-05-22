@@ -2,20 +2,20 @@ package com.esferalia.aon.gwt.template.client;
 
 
 
-import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplaceAsync;
 import com.esferalia.aon.gwt.template.client.marketplace.Marketplace;
+import com.esferalia.aon.gwt.template.client.payroll.ContractMediaPage;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -49,6 +49,7 @@ public class Templates extends Composite implements EntryPoint {
 	private static final String CONSUMPTION = "consumption";
 	private static final String TEMPLATES = "templates";
 	private static final String DOWNLOAD_AMAZON_DELIVERY = "download_amazon_delivery";
+	private static final String CONTRACT_MEDIA = "contract_media";
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
 	final IMarketplaceAsync mpimpl = GWT.create(IMarketplace.class);
@@ -68,46 +69,15 @@ public class Templates extends Composite implements EntryPoint {
 	ExportInfo eiAux;
 	Boolean closeInventoryAux;	
 	TemplateInfo tiAux;
+
+	AonData aonData;
+	API API;
+	Templates me = this;
 	
-	public Templates() {
-		pagesPanel = new FlowPanel();
-		item.initAux(new AsyncCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {
-				item.getTemplates(getDomain(),new AsyncCallback<TemplateList>() {
-					
-					@Override
-					public void onSuccess(TemplateList result) {
-						template_list = result;						
-						String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
-						if(entryPoint.equals(TEMPLATES)){
-							Widget w = new TemplatesPage(template_list);
-							pagesPanel.add(w);
-						}
-						else if(entryPoint.equals(SILENT)){
-							//NOTHING
-						}
-						else if(entryPoint.equals(MARKETPLACE)){
-							Marketplace marketplace = new Marketplace(template_list.getLogin());		
-					 		pagesPanel.add(marketplace);
-						}
-						else if(entryPoint.equals(CONSUMPTION)){
-							ConsumptionPage cp = new ConsumptionPage(template_list);		
-					 		pagesPanel.add(cp);
-						}
-						else if(entryPoint.equals(DOWNLOAD_AMAZON_DELIVERY)){
-							deliveryx();
-						}
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {print(caught);}
-				});
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+	public Templates(AonData aonData){
+		this.aonData = aonData;
+		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
+				aonData.getDomain().getName(), aonData.getUser().getLogin());
 	}
 
 	Vector<Warehouse> ws;
@@ -115,39 +85,75 @@ public class Templates extends Composite implements EntryPoint {
 	String closedAux, inventoryIdAux, warehouseAux, warehouse2Aux, initialDateAux, finalDateAux, initialIdAux,
 			finalIdAux, onlyNegativeAux, detailAux, w, wAux, incomeId, seriesAux, commentsAux;
 	
+	public void onModuleLoad(String entryPoint){
+		if(CONTRACT_MEDIA.equals(entryPoint)){
+			new ContractMediaPage(aonData).onModuleLoad();
+		} else {
+			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+			pagesPanel = new FlowPanel();
+			if (SILENT.equals(entryPoint)){
+				item.getTemplates(getDomain(),new AsyncCallback<TemplateList>() {		
+					@Override
+					public void onSuccess(TemplateList result) {
+						template_list = result;
+						exportEcommerce(me);
+						exportEcommercex(me);
+						exportProduct(me);
+						exportStock(me);
+						exportTransferStock(me);
+						exportFee(me);
+						exportProductx(me);
+						exportStockx(me);
+						exportStockx2(me);
+						exportTransferStockx(me);
+						exportFeex(me);
+						exportCataloguex(me);
+						exportProposal(me);
+						exportProposalx(me);	
+						exportInventoryx(me);
+						exportIncomex(me);
+						exportDeliveryx(me);
+					}
+					@Override
+					public void onFailure(Throwable caught) {print(caught);}
+				});
+			} else if(DOWNLOAD_AMAZON_DELIVERY.equals(entryPoint)){
+				deliveryx();
+			} else {
+				item.getTemplates(getDomain(),new AsyncCallback<TemplateList>() {		
+					@Override
+					public void onSuccess(TemplateList result) {
+						template_list = result;						
+						if(entryPoint.equals(TEMPLATES)){
+							Widget w = new TemplatesPage(template_list);
+							pagesPanel.add(w);
+						} else if(entryPoint.equals(MARKETPLACE)){
+							Marketplace marketplace = new Marketplace(template_list.getLogin());		
+							pagesPanel.add(marketplace);
+						} else if(entryPoint.equals(CONSUMPTION)){
+							ConsumptionPage cp = new ConsumptionPage(template_list);		
+				 			pagesPanel.add(cp);
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {print(caught);}
+				});
+			}
+		
+			Widget ui = binder.createAndBindUi(this);
+			RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+			root.add(ui);	
+		}
+	}
+	
 	@Override
 	public void onModuleLoad() {
-		
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
-		if (entryPoint.equals(SILENT)){
-			exportEcommerce(this);
-			exportEcommercex(this);
-			exportProduct(this);
-			exportStock(this);
-			exportTransferStock(this);
-			exportFee(this);
-			exportProductx(this);
-			exportStockx(this);
-			exportStockx2(this);
-			exportTransferStockx(this);
-			exportFeex(this);
-			exportCataloguex(this);
-			exportProposal(this);
-			exportProposalx(this);	
-			exportInventoryx(this);
-			exportIncomex(this);
-			exportDeliveryx(this);
-		}
-		
-		Widget ui = binder.createAndBindUi(this);
-		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		root.add(ui);	
+		String entryPoint = "templates";
+		onModuleLoad(entryPoint);
 	}	
-
 	
 //------------------------------ Utils	
 	Boolean ignoreInactiveClientAux;

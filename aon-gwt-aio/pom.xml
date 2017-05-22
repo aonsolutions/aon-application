@@ -32,6 +32,7 @@
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.warehouse</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.udapa</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>  
+					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.templates</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
 				</configuration>
@@ -176,6 +177,19 @@
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.document</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.template</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.template</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 			<classifier>sources</classifier>

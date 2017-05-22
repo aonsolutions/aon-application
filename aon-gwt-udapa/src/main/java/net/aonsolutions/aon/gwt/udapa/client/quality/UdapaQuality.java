@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
+import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -107,7 +108,7 @@ public class UdapaQuality extends AonTemplate2{
 	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar() {
+		Toolbar toolbar = new Toolbar("Ficha de calidad") {
 			
 			@Override
 			protected void reset() {

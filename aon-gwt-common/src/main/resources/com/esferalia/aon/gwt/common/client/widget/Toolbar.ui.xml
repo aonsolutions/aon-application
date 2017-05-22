@@ -13,7 +13,7 @@
 		<g:HorizontalPanel >
 			<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
-					<g:Label text="Ficha de Calidad" />
+					<g:Label text="" ui:field="label" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="aon-finding-subtitle">

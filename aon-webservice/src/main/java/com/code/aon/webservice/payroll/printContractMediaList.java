@@ -56,7 +56,7 @@ public class printContractMediaList extends HttpServlet{
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
 		String domainName = parameters.get("domain");
 		String login = parameters.get("login");
-		Integer year =  2016;//Integer.parseInt(parameters.get("year"));
+		Integer year = Integer.parseInt(parameters.get("year"));
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));	
 		
 		JSONObject json = new JSONObject();

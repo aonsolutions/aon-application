@@ -24,8 +24,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("gwt_template")
 public interface ITemplate extends RemoteService{
-
-	public void initAux();
 	
 	public TemplateList getTemplates(Domain domain);
 	

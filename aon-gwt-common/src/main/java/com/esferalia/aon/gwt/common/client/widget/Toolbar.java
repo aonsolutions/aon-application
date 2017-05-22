@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.udapa.client.quality;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 
@@ -17,6 +18,8 @@ public abstract class Toolbar extends Composite {
 
 	private static final ToolbarBinder binder = GWT.create(ToolbarBinder.class);
 	
+	@UiField Label label;
+	
 	@UiField Button back;
 	@UiField Button reset;
 	@UiField Button remove;
@@ -25,8 +28,9 @@ public abstract class Toolbar extends Composite {
 	@UiField PaperIconButton ant;
 	@UiField PaperIconButton next;
 	
-	public Toolbar() {
+	public Toolbar(String title) {
 		initWidget(binder.createAndBindUi(this));
+		label.setText(title);
 	}
 
 	// -------------------------------------------------------------- UiHandler

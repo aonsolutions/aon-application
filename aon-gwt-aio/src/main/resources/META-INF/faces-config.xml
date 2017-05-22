@@ -70,5 +70,43 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- AON GWT TEMPLATE -->
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_templates</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/templates.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_consumption_templates</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/consumption.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_marketplace</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/marketplace.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_download_amazon_delivery</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/download_amazon_delivery.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_contract_media</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/payroll/contract_media.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+
 </faces-config>
 		

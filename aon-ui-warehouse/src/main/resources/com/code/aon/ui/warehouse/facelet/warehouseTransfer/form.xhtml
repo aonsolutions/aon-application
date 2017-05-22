@@ -34,7 +34,7 @@
 						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 					<aon:if test="#{!warehouseTransfer.nevv and !warehouseTransfer.readOnly}">
 						<ui:include
-							src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" />
+							src="/com/esferalia/aon/gwt/aio/facelet/templates/silent.xhtml" />
 						<aon:commandLink id="transfer-stock-import" value="#{bundle.aon_import}"
 							onclick="transferStock('#{warehouseTransfer.to.sourceWarehouse.name}','#{warehouseTransfer.to.targetWarehouse.name}','#{warehouseTransfer.to.series}','#{warehouseTransfer.to.number}')"
 							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">

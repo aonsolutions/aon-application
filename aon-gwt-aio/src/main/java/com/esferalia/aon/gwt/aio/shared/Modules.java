@@ -9,5 +9,6 @@ public interface Modules {
 	public static final String STAT = "stat";
 	public static final String WAREHOUSE = "warehouse";
 	public static final String UDAPA = "udapa";
+	public static final String TEMPLATES = "templates";
 
 }

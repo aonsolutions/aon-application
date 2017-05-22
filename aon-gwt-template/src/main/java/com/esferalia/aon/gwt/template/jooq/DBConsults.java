@@ -88,12 +88,14 @@ public class DBConsults {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					ti.sethasWarehouse(aux.gethasWarehouse());
-					ti.setColumns(aux.getColumns());
-					ti.setType(aux.getType());
-					ti.setIsParent(false);
-					ti.setDomainId(domain.getId());
-					v.add(ti);
+					if(aux != null){
+						ti.sethasWarehouse(aux.gethasWarehouse());
+						ti.setColumns(aux.getColumns());
+						ti.setType(aux.getType());
+						ti.setIsParent(false);
+						ti.setDomainId(domain.getId());
+						v.add(ti);
+					}
 				});
 				
 				recordParent.stream().forEach(r -> {

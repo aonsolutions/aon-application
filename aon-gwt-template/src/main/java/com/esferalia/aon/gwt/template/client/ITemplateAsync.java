@@ -28,8 +28,6 @@ public interface ITemplateAsync {
 
 	void getTemplates(Domain domain, AsyncCallback<TemplateList> callback);
 
-	void initAux(AsyncCallback<Void> callback);
-
 	void editTemplate(Domain domain, TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
 
 	void deleteTemplate(Domain domain, TemplateInfo ti, AsyncCallback<Void> callback);

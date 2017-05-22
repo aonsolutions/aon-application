@@ -12,6 +12,7 @@
 	<inherits name='com.esferalia.aon.gwt.document.DocumentAio' />
 	<inherits name='com.esferalia.aon.gwt.stat.StatAio' />
 	<inherits name='com.esferalia.aon.gwt.dump.DumpAio' />
+	<inherits name='com.esferalia.aon.gwt.template.TemplateAio' />
 	<inherits name="com.google.gwt.resources.Resources" />
 	<inherits name="com.vaadin.polymer.Elements"/>
 	<inherits name='net.aonsolutions.aon.gwt.warehouse.WarehouseAio' />

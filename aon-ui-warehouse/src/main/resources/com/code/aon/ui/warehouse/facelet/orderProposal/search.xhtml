@@ -8,7 +8,6 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<!-- ui:include src="/com/esferalia/aon/gwt/template/facelet/silent_templates.xhtml" /-->
 		<aon:form id="stockReportSearch">
 
 			<ui:decorate
@@ -17,13 +16,6 @@
 				<ui:param name="controller" value="#{orderProposal}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
-				
-				<!-- ui:define name="additionalToolbarContent">
-						<aon:commandLink id="proposal-import" value="Importar"
-							onclick="proposalx()"
-							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
-						</aon:commandLink>
-				</ui:define-->
 			</ui:decorate>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
