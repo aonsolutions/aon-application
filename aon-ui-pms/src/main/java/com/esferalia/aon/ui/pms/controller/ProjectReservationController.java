@@ -463,8 +463,14 @@ public class ProjectReservationController extends BasicController implements IPm
 	@Override
 	public Object getSelectedTO() {
 		try {
-			return getManagerBean().get(((ProjectReservation)this.model.getRowData()).getId());
-		} catch (ManagerBeanException ex) {
+			if (getModel().isRowAvailable()) {
+				return getManagerBean().get(((ProjectReservation)getModel().getRowData()).getId());
+			} else {
+				String msg = "No se puede acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		} catch (Exception ex) {
 			String msg = "No se puede acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
