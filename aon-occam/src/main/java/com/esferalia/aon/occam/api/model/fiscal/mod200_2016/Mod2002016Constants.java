@@ -282,26 +282,59 @@ public class Mod2002016Constants {
 	public static String[] DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS1 = 
 			new String[] {"2012","2013","2014","2015","2016*","2016**","Total"};
 	
-	// DOTACIONES POR DETERIORO DE CRÉDITOS U OTROS ACTIVOS DERIVADOS DE LAS POSIBLES INSOLVENCIAS
-	// DE LOS DEUDORES NO VINCULADOS CON EL CONTRIBUYENTE Y OTRAS DEL ART. 11.12 LIS. 
+	// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
+    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
 	public static Mod2002016Key[] DEDUCIBLE_LIMITATION_KEYS_4 = new Mod2002016Key[] {
-		  Mod2002016Key.LM893,Mod2002016Key.LM173,Mod2002016Key.LM958,Mod2002016Key.LM898
-		 ,Mod2002016Key.LM899,Mod2002016Key.LM227,Mod2002016Key.LM959,Mod2002016Key.LM917
-		 ,Mod2002016Key.LM948,Mod2002016Key.LM291,Mod2002016Key.LM979,Mod2002016Key.LM949
-		 ,Mod2002016Key.LM950,Mod2002016Key.LM951,Mod2002016Key.LM980,Mod2002016Key.LM952
-		 ,Mod2002016Key.LM981,Mod2002016Key.LM982,Mod2002016Key.LM983,Mod2002016Key.LM984
-		 ,Mod2002016Key.LM1220,Mod2002016Key.LM1221,Mod2002016Key.LM1222,Mod2002016Key.LM1223
-		 ,Mod2002016Key.LM953,Mod2002016Key.LM344,Mod2002016Key.LM985,Mod2002016Key.LM954
+		  Mod2002016Key.LM1473,null                ,Mod2002016Key.LM1474,Mod2002016Key.LM1475,Mod2002016Key.LM1476,null
+         ,Mod2002016Key.LM1477,Mod2002016Key.LM1478,Mod2002016Key.LM1481,Mod2002016Key.LM1482,Mod2002016Key.LM1483,Mod2002016Key.LM1484
+		 ,Mod2002016Key.LM1485,Mod2002016Key.LM1486,Mod2002016Key.LM1487,Mod2002016Key.LM1488,Mod2002016Key.LM1489,Mod2002016Key.LM1490
+		 ,Mod2002016Key.LM1491,null                ,null                ,Mod2002016Key.LM1492,Mod2002016Key.LM1493,null
+		 ,Mod2002016Key.LM1494,Mod2002016Key.LM1495,Mod2002016Key.LM1496,Mod2002016Key.LM1497,Mod2002016Key.LM1498,Mod2002016Key.LM1499
 	};
 	
-	// Descripciones del apartado anterior
+	// Descripciones del apartado anterior (DEDUCIBLE_LIMITATION_KEYS_4)
 	public static String[] DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS2 = 
-			new String[] {"2011","2012","2013","2014","2015*","2015**","Total"};
+			new String[] {"2007 y anteriores","2008 a 2015","2016(*)","2016","Total"};
+
+	// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
+	// propios de entidades pendientes de reversión (DT 16ª LIS).
+	public static Mod2002016Key[] DEDUCIBLE_LIMITATION_KEYS_6 = new Mod2002016Key[] {
+		 Mod2002016Key.NUMPER,Mod2002016Key.LM1515,Mod2002016Key.LM1516,Mod2002016Key.LM1585,Mod2002016Key.LM1517
+	};
 	
-	// Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria
+	// CONVERSION DE ACTIVOS POR IMPUESTO DIFERIDO EN CREDITO EXIGIBLE FRENTE A LA ADMON. TRIBUTARIA (art. 130, DA 13ª Y DT 33ª LIS)
+	
+	// Activos por impuesto diferido (AID). DT 33ª y DA 13ª LIS
+	public static Mod2002016Key[] DEDUCIBLE_LIMITATION_KEYS_7 = new Mod2002016Key[] {
+		 Mod2002016Key.LM1524 ,null                 ,Mod2002016Key.LM1525 ,Mod2002016Key.LM1526 ,null                 ,Mod2002016Key.LM1527 ,null                 ,Mod2002016Key.LM1528
+		,Mod2002016Key.LM1529 ,Mod2002016Key.LM1530 ,Mod2002016Key.LM1590 ,Mod2002016Key.LM1591 ,Mod2002016Key.LM1531 ,Mod2002016Key.LM1532 ,Mod2002016Key.LM1533 ,Mod2002016Key.LM1534
+		,Mod2002016Key.LM1535 ,null                 ,Mod2002016Key.LM1536 ,Mod2002016Key.LM1537 ,Mod2002016Key.LM1538 ,Mod2002016Key.LM1539 ,Mod2002016Key.LM1540 ,Mod2002016Key.LM1541
+	};
+	
+	public static String[] DEDUCIBLE_LIMITATION_KEYS_7_DESCRIPTIONS =                  
+			new String[] {"2007 y anteriores","Total 2008 a 2015","Total"};
+	
+	// Activos por impuesto diferido (AID). Art. 130 LIS
+	public static Mod2002016Key[] DEDUCIBLE_LIMITATION_KEYS_8 = new Mod2002016Key[] {
+	 Mod2002016Key.LM1542, Mod2002016Key.LM1543, Mod2002016Key.LM1544, Mod2002016Key.LM1545, Mod2002016Key.LM1546, Mod2002016Key.LM1547, Mod2002016Key.LM1548, Mod2002016Key.LM1549, Mod2002016Key.LM1550, Mod2002016Key.LM1551
+	,Mod2002016Key.LM1552, Mod2002016Key.LM1553, Mod2002016Key.LM1554, Mod2002016Key.LM1555, Mod2002016Key.LM1556, null                , Mod2002016Key.LM1557, Mod2002016Key.LM1558, Mod2002016Key.LM1559, Mod2002016Key.LM1560
+	,Mod2002016Key.LM1561, Mod2002016Key.LM1562, Mod2002016Key.LM1563, Mod2002016Key.LM1564, Mod2002016Key.LM1565, Mod2002016Key.LM1566, Mod2002016Key.LM1567, Mod2002016Key.LM1568, Mod2002016Key.LM1569, Mod2002016Key.LM1570
+	};
+	
+	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria
 	public static Mod2002016Key[] DEDUCIBLE_LIMITATION_KEYS_5 = new Mod2002016Key[] {
 		 Mod2002016Key.LM393,Mod2002016Key.LM150,Mod2002016Key.LM506
 	};
+	
+	// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)
+	public static Mod2002016Key[] DEDUCIBLE_LIMITATION_KEYS_9 = new Mod2002016Key[] {
+	 Mod2002016Key.LM1571, Mod2002016Key.LM1572, Mod2002016Key.LM1573, Mod2002016Key.LM1574
+	,Mod2002016Key.LM1575, Mod2002016Key.LM1576, Mod2002016Key.LM1577, Mod2002016Key.LM1578
+	,Mod2002016Key.LM1579, Mod2002016Key.LM1580, Mod2002016Key.LM1581, Mod2002016Key.LM1582
+	};
+	
+	public static String[] DEDUCIBLE_LIMITATION_KEYS_8_9_DESCRIPTIONS =      
+			new String[] {"2016(*)","2016","Total"};
 	
 }
 

@@ -466,7 +466,15 @@ public enum Mod2002016Key implements IMod200Key {
 	,I0250(250)		,D0251(251)
 	,I0391(391)		,D0392(392)
 					,D0400(400)
-	,I0403(403)		,D0404(404)
+	,I0403(403)		,D0404(404)  // Reserva para inversiones en Canarias
+	    // Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)
+		,RC089(89) , RC094(94) , RC095(95) 
+		,RC097(97) , RC098(98) , RC047(47) , RC048(48)
+		,RC524(524), RC525(525), RC526(526), RC527(527)
+		,RC922(922), RC923(923), RC924(924), RC925(925)
+		,RC927(927), RC928(928), RC938(938), RC996(996)
+		           , RC020(020), RC021(021)
+		           
 	,I0518(518)		,D0519(519)
 	,I0510(510)		,D0512(512)
 	,I0329(329)		,D0330(330)
@@ -495,7 +503,8 @@ public enum Mod2002016Key implements IMod200Key {
 	,LQ1032(1032)  // Reserva de capitalizacion
 	    ,LQ1131(1131)   ,LQ1132(1132)   ,LQ1133(1133)
 	    ,LQ1134(1134)   ,LQ1135(1135)   ,LQ1136(1136)
-	    ,LQ1137(1137)  /*LQ1138(1138)*/ ,LQ1139(1139)
+	    ,LQ1470(1470)   ,LQ1471(1471)   ,LQ1472(1472)	    
+	    ,LQ1137(1137)  					,LQ1139(1139)
 	    ,LQ1140(1140)  
 	
 	,LQ547(547)  // Compensación de bases imponibles negativas periodos anteriores		
@@ -600,6 +609,7 @@ public enum Mod2002016Key implements IMod200Key {
 		,LQ907(907)		,LQ908(908)		,LQ909(909)
 		,LQ910(910)		,LQ911(911)		,LQ912(912)
 		,LQ935(935)		,LQ936(936)		,LQ937(937)
+		,LQ1511(1511)	,LQ1512(1512)	,LQ1513(1513)		
 		,LQ694(694)						,LQ695(695)
 		,LQ1225(1225)					,LQ1226(1226)
 	
@@ -939,7 +949,7 @@ public enum Mod2002016Key implements IMod200Key {
 	 									,LM1464(1464)	,LM1465(1465)		,LM1466(1466)
 	,LM1212(1212)		,LM1213(1213)	,LM1214(1214)	,LM1215(1215)		,LM1216(1216)	
 	
-	// PENDIENTE DE ADICIÓN POR LÍMITE BENEFICIO OPERATIVO NO APLICADO
+	// Pendiente de adición por límite beneficio operativo no aplicado
 	,LM890(890)		,LM891(891)		,LM892(892)
 	,LM503(503)		,LM522(522)		,LM523(523)
 	,LM273(273)		,LM274(274)		,LM537(537)
@@ -948,9 +958,9 @@ public enum Mod2002016Key implements IMod200Key {
 	,LM1467(1467)	,LM1468(1468)	,LM1469(1469)
 	,LM538(538)		,LM539(539)		,LM546(546)
 	
-	// DOTACIONES POR DETERIORO DE CRÉDITOS U OTROS ACTIVOS DERIVADOS DE LAS POSIBLES INSOLVENCIAS
-    // DE LOS DEUDORES NO VINCULADOS CON EL CONTRIBUYENTE Y OTRAS DEL ART. 11.12 LIS. CONVERSIÓN DE
-    // ACTIVOS POR IMPUESTO DIFERIDO EN CRÉDITO EXIGIBLE FRENTE A LA ADMÓN. TRIBUTARIA (ART. 130 LIS)	
+	// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
+    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
+/*	
 	,LM893(893)		,LM173(173)		,LM958(958)		,LM898(898)
 	,LM899(899)		,LM227(227)		,LM959(959)		,LM917(917)
 	,LM948(948)		,LM291(291)		,LM979(979)		,LM949(949)
@@ -958,8 +968,36 @@ public enum Mod2002016Key implements IMod200Key {
 	,LM981(981)		,LM982(982)		,LM983(983)		,LM984(984)
 	,LM1220(1220)	,LM1221(1221)	,LM1222(1222)	,LM1223(1223)
 	,LM953(953)		,LM344(344)		,LM985(985)		,LM954(954)
+*/
+	,LM1473(1473)					,LM1474(1474)	,LM1475(1475)	,LM1476(1476)	
+	,LM1477(1477)	,LM1478(1478)	,LM1481(1481)	,LM1482(1482)	,LM1483(1483)	,LM1484(1484)
+	,LM1485(1485)	,LM1486(1486)	,LM1487(1487)	,LM1488(1488)	,LM1489(1489)	,LM1490(1490)
+	,LM1491(1491)									,LM1492(1492)	,LM1493(1493)	            
+	,LM1494(1494)	,LM1495(1495)	,LM1496(1496)	,LM1497(1497)	,LM1498(1498)	,LM1499(1499)
 	
+	// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
+	// propios de entidades pendientes de reversión (DT 16ª LIS).	
+	,NUMPER(-3)	,LM1515(1515)	,LM1516(1516)	,LM1585(1585)	,LM1517(1517)	
+	
+	// CONVERSION DE ACTIVOS POR IMPUESTO DIFERIDO EN CREDITO EXIGIBLE FRENTE A LA ADMON. TRIBUTARIA (art. 130, DA 13ª Y DT 33ª LIS)
+	
+	// Activos por impuesto diferido (AID). DT 33ª y DA 13ª LIS
+	,LM1524(1524)               ,LM1525(1525) ,LM1526(1526)               ,LM1527(1527)               ,LM1528(1528)
+	,LM1529(1529) ,LM1530(1530) ,LM1590(1590) ,LM1591(1591) ,LM1531(1531) ,LM1532(1532) ,LM1533(1533) ,LM1534(1534)
+	,LM1535(1535)               ,LM1536(1536) ,LM1537(1537) ,LM1538(1538) ,LM1539(1539) ,LM1540(1540) ,LM1541(1541)
+	
+	// Activos por impuesto diferido (AID). Art. 130 LIS
+	,LM1542(1542) ,LM1543(1543) ,LM1544(1544) ,LM1545(1545) ,LM1546(1546) ,LM1547(1547) ,LM1548(1548) ,LM1549(1549) ,LM1550(1550) ,LM1551(1551)
+	,LM1552(1552) ,LM1553(1553) ,LM1554(1554) ,LM1555(1555) ,LM1556(1556)               ,LM1557(1557) ,LM1558(1558) ,LM1559(1559) ,LM1560(1560)
+	,LM1561(1561) ,LM1562(1562) ,LM1563(1563) ,LM1564(1564) ,LM1565(1565) ,LM1566(1566) ,LM1567(1567) ,LM1568(1568) ,LM1569(1569) ,LM1570(1570)
+	
+	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria
 	,LM393(393)	/*,LM150(150)	,LM506(506)*/
+	
+	// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)
+	,LM1571(1571) ,LM1572(1572) ,LM1573(1573) ,LM1574(1574)
+	,LM1575(1575) ,LM1576(1576) ,LM1577(1577) ,LM1578(1578)
+	,LM1579(1579) ,LM1580(1580) ,LM1581(1581) ,LM1582(1582)
 	
 	// TRIBUTACION CONJUNTA AL ESTADO Y A LAS ADMINISTRACIONES FORALES DEL PAIS VASCO Y NAVARRA	
 	// Aplicación del concierto económico con la Comunidad Autónoma del País Vasco y del Convenio Económico entre el Estado y la Comunidad Foral de Navarra
@@ -987,7 +1025,6 @@ public enum Mod2002016Key implements IMod200Key {
 	,TR486(486)	,TR487(487)	,TR488(488)	,TR489(489)	,TR618(618)
 	,TR490(490)	,TR491(491)	,TR492(492)	,TR493(493)	,TR620(620)
 	,TR494(494)	,TR495(495)	,TR496(496)	,TR497(497)	,TR622(622)
-	
 ;
 	
 	private String code;

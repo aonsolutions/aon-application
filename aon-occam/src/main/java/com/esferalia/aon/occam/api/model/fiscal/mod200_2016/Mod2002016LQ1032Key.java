@@ -13,10 +13,11 @@ public enum Mod2002016LQ1032Key implements Serializable, IMod200KeysProvider  {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 
-	 C01(new Mod2002016Key[]{Mod2002016Key.LQ1131,Mod2002016Key.LQ1132,Mod2002016Key.LQ1133},"2015(*)")
-	,C02(new Mod2002016Key[]{Mod2002016Key.LQ1134,Mod2002016Key.LQ1135,Mod2002016Key.LQ1136},"2015")
-	,C03(new Mod2002016Key[]{Mod2002016Key.LQ1137,null                ,Mod2002016Key.LQ1139},"Total")
-	,C04(new Mod2002016Key[]{Mod2002016Key.LQ1140,null                ,null                },"Reserva de capitalizaci\u00F3n dotada en el ejercicio")
+	 C01(new Mod2002016Key[]{Mod2002016Key.LQ1131,Mod2002016Key.LQ1132,Mod2002016Key.LQ1133},"2015")
+	,C02(new Mod2002016Key[]{Mod2002016Key.LQ1134,Mod2002016Key.LQ1135,Mod2002016Key.LQ1136},"2016(*)")
+	,C03(new Mod2002016Key[]{Mod2002016Key.LQ1470,Mod2002016Key.LQ1471,Mod2002016Key.LQ1472},"2016")	
+	,C04(new Mod2002016Key[]{Mod2002016Key.LQ1137,null                ,Mod2002016Key.LQ1139},"Total")
+	,C05(new Mod2002016Key[]{Mod2002016Key.LQ1140,null                ,null                },"Reserva de capitalizaci\u00F3n dotada en el ejercicio")
 	;
 	 
     private String description;

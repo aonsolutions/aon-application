@@ -56,11 +56,11 @@ public class Mod2002016 implements IFiscalModel {
 	private BalanceType balanceType;
 	private BalanceType pygType;
 	
-	private Secretary secretary = new Secretary();
-	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();
-	private LinkedList<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
-	private LinkedList<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
-	private LinkedList<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>();
+	private Secretary secretary = new Secretary(); // Secretario del Consejo de Administración, declarante o representante
+	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();     // Representantes legales de la entidad
+	private LinkedList<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();    // Administradores 
+	private LinkedList<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>(); // B.1. Participaciones declarante en otras entidades
+	private LinkedList<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();  // B.2. Participaciones de personas o entidades en la declarante	
 	
 	private String resultType;
 	private String devType;

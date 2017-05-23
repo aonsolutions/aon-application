@@ -259,12 +259,13 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ578.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ579.toString(),new Boolean[]{FALSE,TRUE});
 		
+		// Desglose Casilla 1032 (Reserva de capitalización)
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1133.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1136.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1472.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1137.toString(),new Boolean[]{FALSE,TRUE});
-		//BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1138.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1032.toString(),new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1139.toString(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1032.toString(),new Boolean[]{FALSE,TRUE});
 		
 		// Desglose Casillas 1033 y 1034 (Reserva de nivelación - Reducción en base imponible)		 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1143.toString(),new Boolean[]{FALSE,TRUE});
@@ -316,6 +317,7 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.CPC12.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.CPE12.toString(),new Boolean[]{TRUE,TRUE});
 		
+		// Desglose Casilla 561
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ561.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ678.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ681.toString(),new Boolean[]{FALSE,TRUE});
@@ -332,6 +334,7 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ909.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ912.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ937.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1513.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ694.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ695.toString(),new Boolean[]{FALSE,TRUE});
 		
@@ -678,7 +681,7 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.ID666.toString(),new Boolean[]{FALSE,TRUE});
 	}
 
-	static { // LIMITACIÓN EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS.
+	static { 
 //		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM175.toString(),new Boolean[]{FALSE,TRUE});
 //		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM176.toString(),new Boolean[]{FALSE,TRUE});
 //		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM177.toString(),new Boolean[]{FALSE,TRUE});
@@ -698,6 +701,15 @@ public class Mod2002016Behaviour {
 //		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM268.toString(),new Boolean[]{FALSE,TRUE});
 //		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM269.toString(),new Boolean[]{FALSE,TRUE});
 		
+		// Limitación en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir
+		// FALTA - Ver como se calculan determinadas casillas, para ver si se deshabilitan por 
+		// tener calculos automáticos. Por ahora solo están los totales
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1212.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1213.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1214.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1215.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1216.toString(),new Boolean[]{FALSE,TRUE});
+		
 		// Pendiente de adición por límite beneficio operativo no aplicado
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM892.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM523.toString(),new Boolean[]{FALSE,TRUE});
@@ -709,10 +721,64 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM539.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM546.toString(),new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM344.toString(),new Boolean[]{FALSE,TRUE});
+		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
+	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
+		// FALTA - Ver como se calculan determinadas casillas, para ver si se deshabilitan por 
+		// tener calculos automáticos. Por ahora solo están los totales
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1494.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1495.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1496.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1497.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1498.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1499.toString(),new Boolean[]{FALSE,TRUE});
+		
+		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
+		// propios de entidades pendientes de reversión (DT 16ª LIS).	
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1517.toString(),new Boolean[]{FALSE,TRUE});
+		
 	}
-
-
+	
+	static {	
+		// CONVERSION DE ACTIVOS POR IMPUESTO DIFERIDO EN CREDITO EXIGIBLE FRENTE A LA ADMON. TRIBUTARIA (art. 130, DA 13ª Y DT 33ª LIS)
+		// FALTA - Ver como se calculan determinadas casillas, para ver si se deshabilitan por 
+		// tener calculos automáticos. Por ahora solo están los totales
+		
+		// Activos por impuesto diferido (AID). DT 33ª y DA 13ª LIS
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1535.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1536.toString(),new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1537.toString(),new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1538.toString(),new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1539.toString(),new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1540.toString(),new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1541.toString(),new Boolean[]{FALSE,TRUE});
+	
+		// Activos por impuesto diferido (AID). Art. 130 LIS
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1561.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1562.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1563.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1564.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1565.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1566.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1567.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1568.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1569.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1570.toString(),new Boolean[]{FALSE,TRUE});
+		
+		// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1579.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1580.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1581.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1582.toString(),new Boolean[]{FALSE,TRUE});
+		
+	}
+	
+	static {
+		// Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC048.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC527.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC925.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC996.toString(),new Boolean[]{FALSE,TRUE});
+	}
 	
 }
 
