@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -235,8 +236,11 @@ public class CommonServlet extends HttpServlet{
 		} catch (JSONException | ParseException e) {
 			e.printStackTrace();
 		}
+		String idStr = json.getString("source").split("@")[1];
 		
 		DataResponse dataResponse = new DataResponse()
+				.setSource(DataResponseSource.QUALITY)// TODO 
+				.setSourceId(Integer.parseInt(idStr))
 				.setNumber(json.getString("number"))
 				.setDomain(domain.getId())
 				.setIssueDate(date);
