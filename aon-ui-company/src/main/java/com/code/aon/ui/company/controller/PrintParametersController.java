@@ -161,8 +161,8 @@ public class PrintParametersController implements Serializable {
 	/*
 	 * SALE INVOICE PARAMS
 	 */
-	public class SaleInvoiceParams {
-		
+	public class SaleInvoiceParams implements Serializable {
+
 		private final String CUSTOM_REPORT_TEMPLATE_PATH = "/home/COMMON-RESOURCES/aon-report";
 		
 		private SaleInvoiceTemplate saleInvoiceTemplate;
@@ -360,8 +360,8 @@ public class PrintParametersController implements Serializable {
 	/*
 	 * SALE INVOICE FOOTER
 	 */
-	public class SaleInvoiceFooter {
-		
+	public class SaleInvoiceFooter implements Serializable {
+
 		private boolean printSaleInvoiceFooter;
 		
 		private String text;
@@ -559,8 +559,8 @@ public class PrintParametersController implements Serializable {
 	/*
 	 * REPORT BACKGROUND
 	 */
-	public class ReportBackground {
-		
+	public class ReportBackground implements Serializable {
+
 		private final int BACKGROUND_WIDTH = 535;
 		
 		private final int BACKGROUND_HEIGHT = 802;
