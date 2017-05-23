@@ -25,6 +25,7 @@ public class ProjectReservation implements Serializable{
 	String creationUser;
 	String creditCardExpirationMonth;
 	String creditCardExpirationYear;
+	CreditCardType creditCardType;
 	String creditCardNumber;
 	String crsCode;
 	Double discountAmount;
@@ -388,6 +389,14 @@ public class ProjectReservation implements Serializable{
 		this.touristTaxFree = touristTaxFree;
 		return this;
 	}
+	public CreditCardType getCreditCardType() {
+		return creditCardType;
+	}
+	public ProjectReservation setCreditCardType(CreditCardType creditCardType) {
+		this.creditCardType = creditCardType;
+		return this;
+	}
+	
 	
 	
 }

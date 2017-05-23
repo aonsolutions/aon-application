@@ -121,6 +121,7 @@ public class ProjectDAO {
 		@Override public Property<Double> getPenaltyAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.PENALTY_AMOUNT);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.STATUS);}
 		@Override public Property<Timestamp> getPenaltyDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.PENALTY_DATE);}
+		@Override public Property<String> getCreditCardTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_TYPE);}
 	}
 
 	public static Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter){
