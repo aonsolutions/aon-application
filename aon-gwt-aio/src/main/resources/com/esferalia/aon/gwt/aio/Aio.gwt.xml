@@ -18,8 +18,6 @@
 	<inherits name='net.aonsolutions.aon.gwt.warehouse.WarehouseAio' />
 	<inherits name='net.aonsolutions.aon.gwt.udapa.UdapaAio' />
 	<inherits name="net.aonsolutions.polymer.Elements"/>
-
-	<!--inherits name='com.smartgwt.SmartGwt'/-->
 	
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 	

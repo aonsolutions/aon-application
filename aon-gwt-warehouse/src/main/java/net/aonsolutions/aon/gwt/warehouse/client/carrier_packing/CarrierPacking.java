@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
+import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
@@ -83,7 +84,7 @@ public class CarrierPacking extends AonTemplate2{
 
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar() {
+		Toolbar toolbar = new Toolbar("Carrier Packing") {
 			
 			@Override protected void reset() {
 				createCarrierPacking();
