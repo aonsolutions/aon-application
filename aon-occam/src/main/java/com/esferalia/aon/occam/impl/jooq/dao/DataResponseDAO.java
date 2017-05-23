@@ -31,9 +31,11 @@ public class DataResponseDAO {
 	public static DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse){	
 		return ctx.getDslContext().insertInto(DATA_RESPONSE, DATA_RESPONSE.DOMAIN,
 				DATA_RESPONSE.CODE, DATA_RESPONSE.RESPONSE_DATE, 
+				DATA_RESPONSE.SOURCE, DATA_RESPONSE.SOURCE_ID,
 				DATA_RESPONSE.CREATION_DATE, DATA_RESPONSE.CREATION_USER,
 				DATA_RESPONSE.MODIFICATION_DATE, DATA_RESPONSE.MODIFICATION_USER)
 		.values(dataResponse.getDomain(), dataResponse.getNumber(), AonDateUtils.toSql(dataResponse.getIssueDate()),
+				dataResponse.getSource().value(), dataResponse.getSourceId(),
 				AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser())
 		.returning().fetch().stream().map(new DataResponseFiller()).findFirst().orElse(dataResponse);
 	}
