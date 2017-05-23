@@ -17,6 +17,7 @@ import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1B;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1D;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1G;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1L;
+import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1P;
 
 public class ConnectDelivery extends AbstractFileFiller {
 	
@@ -29,15 +30,13 @@ public class ConnectDelivery extends AbstractFileFiller {
 	private static String SEH1B = "SEH1B";
 	
 	private RECTL rectl;
-	private Map<Integer, List<Integer>> seh1pMap;
 	
-	public ConnectDelivery(RECTL rectl, Map<Integer, List<Integer>> seh1pMap, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+	public ConnectDelivery(RECTL rectl, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
 		super(writer);
 		if (rectl == null)  {
 			throw new IllegalArgumentException("El registro RECTL no puede ser nulo!");
 		}
 		this.rectl = rectl;
-		this.seh1pMap = seh1pMap;
 		
 		InputStream input = null;
 		input = ConnectDelivery.class.getResourceAsStream("/com/esferalia/aon/file/seres/connect/delivery/v4/xml/RECTL.xml");
@@ -86,56 +85,20 @@ public class ConnectDelivery extends AbstractFileFiller {
 				Fd0Exception e = new Fd0Exception( "SEH1P", "Secuencia de embalajes. La entidad 'SEH1P' es obligatoria");
 				exceptions.add (e);
 			} else {
-				if(seh1pMap==null || seh1pMap.isEmpty()) {
-					Fd0Exception e = new Fd0Exception( "SEH1P", "Secuencia de embalajes. La entidad 'SEH1P' es obligatoria");
-					exceptions.add (e);
-				} else {
-//					System.out.println(seh1pMap);
-					List<Integer> containerList = new ArrayList<>();
-					containerList.addAll(seh1pMap.keySet());
-					
-					seh1pMap.keySet().stream().sorted().forEach(key -> {
-						List<Integer> list = seh1pMap.get(key);
-						containerList.removeAll(list);	
-					});
-//					System.out.println(containerList);
-					
-					
-//					SEH1P palet = rectl.seh1pList.stream()
-//						.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
-//						.findFirst().orElse(null);
-//					
-//					List<SEH1P> embases = rectl.seh1pList.stream()
-//							.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
-//							.collect(Collectors.toList());
-					
-					
-//					properties.put(SEH1P, palet);
-//					createLine(SEH1P, properties);
-					
-					int linesCount = rectl.seh1lList.size();
-					containerList.stream().sorted().forEach(containerKey -> {
-						
-						int index = containerKey - linesCount;
-						properties.put(SEH1P, rectl.seh1pList.get(index-1));
+				for (SEH1P value: rectl.seh1pList) {
+//					if(value.seh1lList==null || value.seh1lList.isEmpty()) {
+//						Fd0Exception e = new Fd0Exception( "SEH1L", "Linea de producto. La entidad 'SEH1L' es obligatoria");
+//						exceptions.add (e);
+//					} else {
+						properties.put(SEH1P, value);
 						createLine(SEH1P, properties);
-						
-						seh1pMap.get(containerKey).stream().sorted().forEach(containerKey2 -> {
-							int index2 = containerKey2 - linesCount;
-							
-							properties.put(SEH1P, rectl.seh1pList.get(index2-1));
-//							properties.put(SEH1P, embases.get(index2-1));
-							createLine(SEH1P, properties);
-							
-							for (Integer index3: seh1pMap.get(containerKey2)) {
-								SEH1L value = rectl.seh1lList.get(index3-1);
-								properties.put(SEH1L, value);
-								createLine(SEH1L, properties);
-							}
-						});
-						
-					});
-				}				
+						for (SEH1L valueL: value.seh1lList) {
+							properties.put(SEH1L, valueL);
+							createLine(SEH1L, properties);
+						}
+//					}
+				}
+				
 			}
 			
 			for (SEH1G value: rectl.seh1gList) {
