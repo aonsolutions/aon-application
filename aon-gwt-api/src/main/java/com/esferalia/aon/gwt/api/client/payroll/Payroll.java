@@ -74,5 +74,18 @@ public class Payroll extends Methods{
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	public void printContractMedia(Integer year, Boolean resume, Boolean detail){
+		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&year="+year + "&resume=" + resume + "&detail=" + detail;
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "print_contract_media/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
 
 }

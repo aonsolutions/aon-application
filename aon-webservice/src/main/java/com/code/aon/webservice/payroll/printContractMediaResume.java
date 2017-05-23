@@ -39,7 +39,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.draw.LineSeparator;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "PrintContractMediaResume", urlPatterns = {"/aon_gwt_aio/print_contract_media_resume/*"})
@@ -102,20 +101,7 @@ public class printContractMediaResume extends HttpServlet{
 
 			document.open();
 			
-			document.add(getTitle());
-			
-			document.add(new Paragraph(" "));
-			
-			JSONObject company = json.getJSONObject("company");
-			document.add(getCompany(company));
-			
-			document.add(new Paragraph(" "));
-			
-			document.add(getSalariedStaff(json));
-			
-			document.add(new Paragraph(" "));
-			
-			document.add(getSalariedStaffCategory(json));
+			writeDocument(document, json);
 			
 			
 			
@@ -126,6 +112,27 @@ public class printContractMediaResume extends HttpServlet{
 		} 
 		document.close();
 		return archivoPDF;
+	}
+	
+	public static void writeDocument(Document document, JSONObject json) throws DocumentException{
+		document.add(getTitle());
+		
+		document.add(new Paragraph(" "));
+		
+		JSONObject company = json.getJSONObject("company");
+		document.add(getCompany(company));
+		
+		document.add(new Paragraph(" "));
+		
+		document.add(getSalariedStaff(json));
+		
+		document.add(new Paragraph(" "));
+		
+		document.add(getSalariedStaffCategory(json));
+		
+		document.add(new Paragraph(" "));
+		
+		document.add(getSalariedStaffGC(json));
 	}
 	
 	private static PdfPTable getTitle(){
@@ -159,6 +166,8 @@ public class printContractMediaResume extends HttpServlet{
 	}
 	
 	private static PdfPTable getSalariedStaff(JSONObject json){
+		Integer yearAct = Integer.parseInt(json.getString("year"));
+		Integer yearAnt = yearAct - 1;
 		JSONArray arrayAct = json.getJSONArray("contract_act");
 		Double fixedAct = 0.0, fixedAnt = 0.0, unfixedAct = 0.0, unfixedAnt = 0.0, 
 			   fixedActH = 0.0, fixedAntH = 0.0, unfixedActH = 0.0, unfixedAntH = 0.0,
@@ -218,11 +227,11 @@ public class printContractMediaResume extends HttpServlet{
 		emptyCel.setColspan(2);
 		table3.addCell(emptyCel);
 		
-		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO ACTUAL",getFont1()));
+		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO " + yearAct ,getFont1()));
 		ejAct.setBorder(PdfPCell.NO_BORDER);
 		table3.addCell(ejAct);
 		
-		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO ANTERIOR",getFont1()));
+		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
 		ejAnt.setBorder(PdfPCell.NO_BORDER);
 		table3.addCell(ejAnt);
 		
@@ -280,12 +289,12 @@ public class printContractMediaResume extends HttpServlet{
 		
 		table5.addCell(emptyCell());
 		
-		PdfPCell ejAct5 = new PdfPCell(new Phrase("EJERCICIO ACTUAL",getFont1()));
+		PdfPCell ejAct5 = new PdfPCell(new Phrase("EJERCICIO " + yearAct,getFont1()));
 		ejAct5.setBorder(PdfPCell.NO_BORDER);
 		ejAct5.setColspan(2);
 		table5.addCell(ejAct5);
 		
-		PdfPCell ejAnt5 = new PdfPCell(new Phrase("EJERCICIO ANTERIOR",getFont1()));
+		PdfPCell ejAnt5 = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
 		ejAnt5.setBorder(PdfPCell.NO_BORDER);
 		ejAnt5.setColspan(2);
 		table5.addCell(ejAnt5);
@@ -350,8 +359,11 @@ public class printContractMediaResume extends HttpServlet{
 	}
 	
 	private static PdfPTable getSalariedStaffCategory(JSONObject json){
-		JSONArray arrayAct = json.getJSONArray("contract_act");
-		JSONArray arrayAnt = json.getJSONArray("contract_ant");
+		Integer yearAct = Integer.parseInt(json.getString("year"));
+		Integer yearAnt = yearAct - 1;
+		
+	//	JSONArray arrayAct = json.getJSONArray("contract_act");
+	//	JSONArray arrayAnt = json.getJSONArray("contract_ant");
 		
 		PdfPTable table = new PdfPTable(2);
 		table.setWidthPercentage(100);
@@ -374,10 +386,10 @@ public class printContractMediaResume extends HttpServlet{
 		PdfPCell a = new PdfPCell(new Phrase(x,getFont1()));
 		table1.addCell(a);
 		
-		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO ACTUAL",getFont1()));
+		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO "+ yearAct,getFont1()));
 		table1.addCell(ejAct);
 		
-		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO ANTERIOR",getFont1()));
+		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
 		table1.addCell(ejAnt);
 		
 		String x1 ="Directores generales y presidentes ejecutivos";
@@ -476,6 +488,232 @@ public class printContractMediaResume extends HttpServlet{
 		return table;
 	}
 	
+	private static PdfPTable getSalariedStaffGC(JSONObject json){
+		Integer yearAct = Integer.parseInt(json.getString("year"));
+		Integer yearAnt = yearAct - 1;
+		JSONArray arrayAct = json.getJSONArray("contract_act");
+		JSONArray arrayAnt = json.getJSONArray("contract_ant");
+		HashMap<String, Double> mapAct = new HashMap<>();
+		HashMap<String, Double> mapAnt = new HashMap<>();
+		for (int i = 0; i < arrayAct.length(); i++) {
+			JSONObject js = arrayAct.getJSONObject(i);
+			String qg = js.getString("quotation_group");
+			Double d = js.getDouble("fixed") + js.getDouble("unfixed");
+			if(mapAct.containsKey(qg)){
+ 				mapAct.put(qg, mapAct.get(qg) + AonMathUtils.round(d));
+			} else {
+				mapAct.put(qg, AonMathUtils.round(d));
+			}
+		}
+		for (int i = 0; i < arrayAnt.length(); i++) {
+			JSONObject js = arrayAnt.getJSONObject(i);
+			String qg = js.getString("quotation_group");
+			Double d = js.getDouble("fixed") + js.getDouble("unfixed");
+			if(mapAnt.containsKey(qg)){
+ 				mapAnt.put(qg, AonMathUtils.round(mapAnt.get(qg) + d));
+			} else {
+				mapAnt.put(qg, AonMathUtils.round(d));
+			}
+		}
+		
+		PdfPTable table = new PdfPTable(2);
+		table.setWidthPercentage(100);
+		PdfPCell empresa = new PdfPCell(new Phrase("PERSONAL ASALARIADO POR GRUPOS DE COTIZACIÓN",getFont1()));
+		empresa.setBackgroundColor(BaseColor.LIGHT_GRAY);
+		table.addCell(empresa);
+		
+		table.addCell(emptyCell());
+
+		PdfPTable table1 = new PdfPTable(3);
+		table1.setWidthPercentage(100);
+		float[] medidaCeldas1 = {3.8f, 1.1f, 1.1f};
+		try {
+			table1.setWidths(medidaCeldas1);
+		} catch (DocumentException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+		
+		String x ="Número medio de personas empleadas en el curso del ejercicio, por grupos de contización";
+		PdfPCell a = new PdfPCell(new Phrase(x,getFont1()));
+		table1.addCell(a);
+		
+		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO " + yearAct,getFont1()));
+		table1.addCell(ejAct);
+		
+		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
+		table1.addCell(ejAnt);
+		
+		String x1 ="Ingenieros y Licenciados.Personal de alta dirección no incluido en el artículo 1.3.c) del Estatuto de los Trabajadores";
+		PdfPCell a1 = new PdfPCell(new Phrase(x1,getFont2()));
+		a1.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a1);
+		
+		Double d = mapAct.containsKey("01") ? mapAct.get("01") : 0.0;
+		PdfPCell ejAct1 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct1);
+		
+		d = mapAnt.containsKey("01") ? mapAnt.get("01") : 0.0;
+		PdfPCell ejAnt1 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt1);
+		
+		String x2 ="Ingenieros Técnicos, Peritos y Ayudantes Titulados";
+		PdfPCell a2 = new PdfPCell(new Phrase(x2,getFont2()));
+		a2.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a2);
+		
+		d = mapAct.containsKey("02") ? mapAct.get("02") : 0.0;
+		PdfPCell ejAct2 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct2);
+		
+		d = mapAnt.containsKey("02") ? mapAnt.get("02") : 0.0;
+		PdfPCell ejAnt2 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt2);
+		
+		String x3 ="Jefes Administrativos y de Taller";
+		PdfPCell a3 = new PdfPCell(new Phrase(x3,getFont2()));
+		a3.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a3);
+		
+		d = mapAct.containsKey("03") ? mapAct.get("03") : 0.0;
+		PdfPCell ejAct3 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct3);
+		
+		d = mapAnt.containsKey("03") ? mapAnt.get("03") : 0.0;
+		PdfPCell ejAnt3 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt3);
+		
+		String x4 ="Ayudantes no Titulados";
+		PdfPCell a4 = new PdfPCell(new Phrase(x4,getFont2()));
+		a4.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a4);
+		
+		d = mapAct.containsKey("04") ? mapAct.get("04") : 0.0;
+		PdfPCell ejAct4 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct4);
+		
+		d = mapAnt.containsKey("04") ? mapAnt.get("04") : 0.0;
+		PdfPCell ejAnt4 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt4);
+		
+		String x5 ="Oficiales Administrativos";
+		PdfPCell a5 = new PdfPCell(new Phrase(x5,getFont2()));
+		a5.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a5);
+		
+		d = mapAct.containsKey("05") ? mapAct.get("05") : 0.0;
+		PdfPCell ejAct5 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct5);
+		
+		d = mapAnt.containsKey("05") ? mapAnt.get("05") : 0.0;
+		PdfPCell ejAnt5 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt5);
+		
+		String x6 ="Subalternos";
+		PdfPCell a6 = new PdfPCell(new Phrase(x6,getFont2()));
+		a6.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a6);
+		
+		d = mapAct.containsKey("06") ? mapAct.get("06") : 0.0;
+		PdfPCell ejAct6 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct6);
+		
+		d = mapAnt.containsKey("06") ? mapAnt.get("06") : 0.0;
+		PdfPCell ejAnt6 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt6);
+		
+		String x7 ="Auxiliares Administrativos";
+		PdfPCell a7 = new PdfPCell(new Phrase(x7,getFont2()));
+		a7.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a7);
+		
+		d = mapAct.containsKey("07") ? mapAct.get("07") : 0.0;
+		PdfPCell ejAct7 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct7);
+		
+		d = mapAnt.containsKey("07") ? mapAnt.get("07") : 0.0;
+		PdfPCell ejAnt7 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt7);
+		
+		String x8 ="Oficiales de primera y segunda";
+		PdfPCell a8 = new PdfPCell(new Phrase(x8,getFont2()));
+		a8.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a8);
+		
+		d = mapAct.containsKey("08") ? mapAct.get("08") : 0.0;
+		PdfPCell ejAct8 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct8);
+		
+		d = mapAnt.containsKey("08") ? mapAnt.get("08") : 0.0;
+		PdfPCell ejAnt8 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt8);
+		
+		String x9 ="Oficiales de tercera y Especialistas";
+		PdfPCell a9 = new PdfPCell(new Phrase(x9,getFont2()));
+		a9.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a9);
+		
+		d = mapAct.containsKey("09") ? mapAct.get("09") : 0.0;
+		PdfPCell ejAct9 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct9);
+		
+		d = mapAnt.containsKey("09") ? mapAnt.get("09") : 0.0;
+		PdfPCell ejAnt9 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt9);
+		
+		String x10 ="Peones";
+		PdfPCell a10 = new PdfPCell(new Phrase(x10,getFont2()));
+		a10.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a10);
+		
+		d = mapAct.containsKey("10") ? mapAct.get("10") : 0.0;
+		PdfPCell ejAct10 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct10);
+		
+		d = mapAnt.containsKey("10") ? mapAnt.get("10") : 0.0;
+		PdfPCell ejAnt10 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt10);
+		
+		String x11 ="Trabajadores menores de dieciocho años, cualquiera que sea su categoría profesional";
+		PdfPCell a11 = new PdfPCell(new Phrase(x11,getFont2()));
+		a11.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a11);
+		
+		d = mapAct.containsKey("11") ? mapAct.get("11") : 0.0;
+		PdfPCell ejAct11 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAct11);
+		
+		d = mapAnt.containsKey("11") ? mapAnt.get("11") : 0.0;
+		PdfPCell ejAnt11 = new PdfPCell(new Phrase(d.toString(),getFont2()));
+		table1.addCell(ejAnt11);
+		
+		String xN ="TOTAL EMPLEO MEDIO";
+		PdfPCell aN = new PdfPCell(new Phrase(xN,getFont1()));
+		table1.addCell(aN);
+		
+		Double totalAct = 0.0, totalAnt = 0.0;
+		for (String s : mapAct.keySet()) {
+			totalAct = totalAct +mapAct.get(s);
+		}
+	
+		for (String s : mapAnt.keySet()) {
+			totalAnt = totalAnt +mapAnt.get(s);
+		}
+			
+		PdfPCell ejActN = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalAct)),getFont1()));
+		table1.addCell(ejActN);
+		
+		PdfPCell ejAntN = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalAnt)),getFont1()));
+		table1.addCell(ejAntN);
+		
+		table1.addCell(emptyCell());
+		
+		PdfPCell c = new PdfPCell(table1);
+		c.setColspan(2);
+		table.addCell(c);
+		
+		return table;
+	}
+	
 	private static PdfPCell emptyCell() {
 		PdfPCell cell = new PdfPCell(new Phrase("",getFont2()));
 		cell.setBorder(PdfPCell.NO_BORDER);
@@ -502,11 +740,5 @@ public class printContractMediaResume extends HttpServlet{
 		return font;
 	}
 	
-	private static Paragraph getSeparator(){
-		Paragraph separator = new Paragraph();
-		LineSeparator line = new LineSeparator();
-        line.setOffset(-2);
-        separator.add(line);
-        return separator;
-	}
+
 }

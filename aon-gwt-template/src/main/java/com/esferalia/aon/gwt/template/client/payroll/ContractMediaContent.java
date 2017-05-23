@@ -6,8 +6,6 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -50,32 +48,13 @@ public class ContractMediaContent extends Composite {
 			Integer y = year-i;
 			yearList.addItem(y.toString(), y.toString());
 		}
-		
-		detailCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				resumeCheckBox.setValue(!detailCheckBox.getValue());
-			}
-		});
-		
-		resumeCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				detailCheckBox.setValue(!resumeCheckBox.getValue());
-			}
-		});
-		
 	}
 	
 	@UiHandler("downloadButton")
-	void excelAction(ClickEvent event) {
-		if(resumeCheckBox.getValue()){
-			API.getPayroll().printContractMediaResume(Integer.parseInt(yearList.getSelectedItemText()));
-		}else {
-			API.getPayroll().printContractMediaList(Integer.parseInt(yearList.getSelectedItemText()));
+	void downloadAction(ClickEvent event) {
+		if(resumeCheckBox.getValue() || detailCheckBox.getValue()){
+			API.getPayroll().printContractMedia(Integer.parseInt(yearList.getSelectedItemText()),
+				resumeCheckBox.getValue(), detailCheckBox.getValue());
 		}
-	}
-
+	}	
 }

@@ -79,7 +79,10 @@ public class ContractServlet extends HttpServlet{
 		PAYROLL.getContractStream(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(AonDateUtils.toSql(ejInitDate))))
-		).forEach(contract -> {
+		)
+		.sorted((a,b) ->  AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(a.getPerson())).get().getName().compareTo(
+				 AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(b.getPerson())).get().getName()))
+		.forEach(contract -> {
 			LinkedList<ContractData> list = PAYROLL.getContractDataList(domainName, domainId, login, g -> 
 				g.getContractProperty().eq(contract.getId()));
 			LinkedList<Double> fixedDoubleList = new LinkedList<>();fixedDoubleList.add(0.0);
@@ -122,17 +125,17 @@ public class ContractServlet extends HttpServlet{
 			Optional<IrpfData> irpfData = PAYROLL.getIrpfData(domainName, domainId, login, w -> w.getContractProperty().eq(contract.getId()));
 			Optional<Person> person = AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(contract.getPerson()));
 			
-			Date start = AonDateUtils.getYear(contract.getStartDate()) == year ? contract.getStartDate() : ejInitDate;
-			Date end = contract.getEndDate() != null && AonDateUtils.getYear(contract.getEndDate()) == year ? contract.getEndDate() : ejFinalDate;
+		//	Date start = AonDateUtils.getYear(contract.getStartDate()) == year ? contract.getStartDate() : ejInitDate;
+		//	Date end = contract.getEndDate() != null && AonDateUtils.getYear(contract.getEndDate()) == year ? contract.getEndDate() : ejFinalDate;
 			
 			if(qg.isPresent()){
 				JSONObject json = new JSONObject();
-			
-				json.put("quotation_group",qg.get().getExpression()); 
+				String q = qg.get().getExpression();
+				json.put("quotation_group",q.substring(1, q.length()-1)); 
 				json.put("name", person.isPresent() ? person.get().getName() : "-");
 				json.put("document", person.isPresent() ? person.get().getDocument() : "-");
-				json.put("start_date", dateTimeFormat.format(start));
-				json.put("end_date", dateTimeFormat.format(end));
+				json.put("start_date", dateTimeFormat.format(contract.getStartDate()));
+				json.put("end_date", contract.getEndDate() != null ? dateTimeFormat.format(contract.getEndDate()) : "-");
 				json.put("gender", ToJSON.objectToJSON(person.get().getGender().ordinal(), person.get().getGender().getName()));
 				Double fixed = fixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
 				Double unfixed = unfixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
