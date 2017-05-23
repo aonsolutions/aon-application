@@ -1,6 +1,7 @@
 package com.esferalia.aon.file.seres.connect.delivery.v4.data;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +73,8 @@ public class SEH1P {
 	private String numeroSerial2ONumeroDeIdentificacionSuperior;
 	private String numeroSerial3ONumeroDeIdentificacionInferior;
 	private String numeroSerial3ONumeroDeIdentificacionSuperior;
+	
+	public List<SEH1L> seh1lList;
 
 
 	private static Pattern PATTERN_SEH1P_numeroDeJerarquiaDeEmbalaje = Pattern.compile("^.{6}(.{12}).*");

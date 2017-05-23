@@ -38,7 +38,7 @@ public class RECTL {
 	public SEH1C seh1c;
 	public List<SEH1D> seh1dList;
 	public List<SEH1P> seh1pList;
-	public List<SEH1L> seh1lList;
+//	public List<SEH1L> seh1lList;
 	public List<SEH1G> seh1gList;
 	public List<SEH1B> seh1bList;
 

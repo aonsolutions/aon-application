@@ -56,10 +56,9 @@ public class ConnectDeliveryWriter {
 			UnsupportedEncodingException {
 		RECTL rectl = createRECTLRecord(delivery, companyEdiCode,
 				customerEdiCode, deliveryPointEdiCode);
-		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
-		FileFiller filler = new ConnectDelivery(rectl, seh1pMap, writer);
+		FileFiller filler = new ConnectDelivery(rectl, writer);
 		FileOutput output = new FileOutput();
 		output.setErrors(filler.create());
 		output.setContent(outputStream.toString().getBytes(SeresUtils.DEFAULT_CHARSET_ENC));
@@ -79,9 +78,10 @@ public class ConnectDeliveryWriter {
 				customerEdiCode, deliveryPointEdiCode);
 		rectl.seh1dList = createSEH1DList(delivery, companyEdiCode,
 				customerEdiCode, deliveryPointEdiCode);
-		rectl.seh1pList = createSEH1PList(delivery);
-		rectl.seh1lList = createSEH1LList(delivery, companyEdiCode,
+		rectl.seh1pList = createSEH1PList(delivery, companyEdiCode,
 				customerEdiCode);
+//		rectl.seh1lList = createSEH1LList(delivery, companyEdiCode,
+//				customerEdiCode);
 		rectl.seh1gList = createSEH1GList(delivery);
 		rectl.seh1bList = createSEH1BList(delivery);
 		
@@ -163,7 +163,8 @@ public class ConnectDeliveryWriter {
 		return list;
 	}
 
-	private List<SEH1P> createSEH1PList(Delivery delivery) {
+	private List<SEH1P> createSEH1PList(Delivery delivery, 
+			String companyEdiCode, String customerEdiCode) {
 		List<SEH1P> list = new ArrayList<>();
 		
 		delivery.getDetailList().stream()
@@ -199,10 +200,61 @@ public class ConnectDeliveryWriter {
 						o.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(line-packageCount+1));
 						o.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 					});
+			
+			
+			fillPackageLines(delivery, list2, companyEdiCode, customerEdiCode);
+			
 			return list2;
 		}
 		
 		return list;
+	}
+	
+	private void fillPackageLines(Delivery delivery, List<SEH1P> packageList,
+			String companyEdiCode, String customerEdiCode){
+		
+		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
+//		System.out.println(seh1pMap);
+		List<Integer> containerList = new ArrayList<>();
+		containerList.addAll(seh1pMap.keySet());
+		
+		seh1pMap.keySet().stream().sorted().forEach(key -> {
+			List<Integer> list = seh1pMap.get(key);
+			containerList.removeAll(list);	
+		});
+//		System.out.println(containerList);
+		
+		
+		SEH1P mainPalet = packageList.get(0);
+		mainPalet.seh1lList = new ArrayList<>();
+		
+		containerList.forEach(palet -> {
+			List<Integer> content = seh1pMap.get(palet);
+			content.forEach(contentIdx ->{
+				DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(contentIdx-1);
+				if(!isPackageItem(detail.getItem())){
+					mainPalet.seh1lList.add(createSEH1LRecord(detail,
+							companyEdiCode, customerEdiCode));
+				}
+			});
+		});
+		
+		for(int idx=1; idx<packageList.size();idx++){
+			SEH1P palet = packageList.get(idx);
+			palet.seh1lList = new ArrayList<>();
+			
+			List<Integer> content = seh1pMap.get(palet);
+			if(content!=null && !content.isEmpty()){
+				content.forEach(contentIdx ->{
+					DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(contentIdx-1);
+					if(!isPackageItem(detail.getItem())){
+						mainPalet.seh1lList.add(createSEH1LRecord(detail,
+								companyEdiCode, customerEdiCode));
+					}
+				});
+			}
+		}
+		
 	}
 
 	private List<SEH1L> createSEH1LList(Delivery delivery,
@@ -532,7 +584,7 @@ public class ConnectDeliveryWriter {
 		String remarks = delivery.getRemarks();
 		
 		if(remarks!=null && !"".equals(remarks)){
-			Map<Integer, List<Integer>> seh1pMap = new HashMap<Integer, List<Integer>>();
+			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
 			
 			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(CONT=\\d{1,3})\\]");
 			Matcher matcher = pattern.matcher(remarks);
@@ -564,23 +616,10 @@ public class ConnectDeliveryWriter {
 					seh1pMap.put(key, list);
 			}
 			
-//			String[] split = remarks.split("\\[\\]?");
-//			for(String value: split){
-//				value = value.replaceAll("\r", "").replaceAll("\n", "").replaceAll("]", "");
-//				if(value.matches("ENV.*LIN.*")){
-//					Integer key = Integer.parseInt(value.split(";")[0].replace("ENV=", ""));
-//					List<Integer> list = new LinkedList<>();
-//					list.add(Integer.parseInt(value.split(";")[1].replace("LIN=", "")));
-//					if(seh1pMap.containsKey(key))
-//						seh1pMap.get(key).addAll(list);
-//					else
-//						seh1pMap.put(key, list);
-//				}
-//			}
-			
 			return seh1pMap;
 		}
 		return null;
 	}
+	
 
 }
