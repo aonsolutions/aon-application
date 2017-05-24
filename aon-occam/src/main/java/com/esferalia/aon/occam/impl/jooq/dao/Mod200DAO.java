@@ -57,7 +57,7 @@ public class Mod200DAO extends FiscalModelDAO {
 				.setDocument(record.getValue(FS_MODEL200.DOCUMENT ))
 				.setName(record.getValue(FS_MODEL200.NAME))
 				.setResultType(record.getValue(FS_MODEL200.RESULT_TYPE))
-				.setResult(record.getValue(FS_MODEL200.AMOUNT))
+				.setResult(record.getValue(FS_MODEL200.AMOUNT) == null? 0.0 : record.getValue(FS_MODEL200.AMOUNT) )
 				
 				// TODO - Support
 				.setCreationUser(null)
