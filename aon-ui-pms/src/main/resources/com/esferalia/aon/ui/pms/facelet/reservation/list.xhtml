@@ -35,6 +35,7 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
+				<aon:methodParam name="rowSelectorActionListener" value="#{reservation.onSelectReservation}" type="actionListener" />
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{reservation}" />
 					<ui:param name="skipSelectButton" value="#{true}" />

@@ -145,6 +145,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private ProjectReservationServiceDetail newServiceDetail;
 	private ProjectReservationService newExtraPax;
 	private ProjectReservationServiceDetail newExtraPaxDetail;
+	private boolean rowSelected;
 	private boolean showConfirmWindow;
 	private boolean confirmNoShow;
 	private boolean showAuditInfoWindow;
@@ -318,6 +319,13 @@ public class ProjectReservationController extends BasicController implements IPm
 		setNewExtraPaxDetail(new ProjectReservationServiceDetail());
 	}
 
+	public boolean isRowSelected() {
+		return rowSelected;
+	}
+	public void setRowSelected(boolean rowSelected) {
+		this.rowSelected = rowSelected;
+	}
+
 	public boolean isShowConfirmWindow() {
 		return showConfirmWindow;
 	}
@@ -460,20 +468,30 @@ public class ProjectReservationController extends BasicController implements IPm
 		getReservationPermission().setReservation((ProjectReservation)getTo());
 	}
 
+	public void onSelectReservation(ActionEvent event) {
+		setRowSelected(true);
+		super.onSelect(event);
+		setRowSelected(false);
+	}
+
 	@Override
 	public Object getSelectedTO() {
-		try {
-			if (getModel().isRowAvailable()) {
-				return getManagerBean().get(((ProjectReservation)getModel().getRowData()).getId());
-			} else {
-				String msg = "No se puede acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
+		if (isRowSelected()) {
+			try {
+				if (getModel().isRowAvailable()) {
+					return getManagerBean().get(((ProjectReservation)getModel().getRowData()).getId());
+				} else {
+					String msg = "No se puede acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
+					AonUtil.addErrorMessage(msg);
+					return null;
+				}
+			} catch (Exception ex) {
+				String msg = "Error al acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-		} catch (Exception ex) {
-			String msg = "No se puede acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+		} else {
+			return super.getSelectedTO();
 		}
 	}
 
