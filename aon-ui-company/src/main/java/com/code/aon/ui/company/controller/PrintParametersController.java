@@ -40,8 +40,13 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ImageUtil;
 import com.code.aon.company.Company;
@@ -51,18 +56,16 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
 
@@ -129,28 +132,26 @@ public class PrintParametersController implements Serializable {
 	}	
 	
 	
-	private String getDomainName() {
-		return AonUtil.getDomainName();
-	}
-	private Integer getDomainId() {
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		return ds.getDomainId();
-	}
-	private String getUser() {
-		return AonUtil.getAuthPrincipal().getShortName();
-	}
-	
-	private byte[] getData(Attach attach) {
+	private byte[] getData(IAttachment attach) {
 		byte[] data;
 		if (attach != null && attach.getData() != null) {
 			data = attach.getData();
 		} else if(attach.getDriveId()!=null){
-			data = DriveUtils.getByteFile(getDomainName(), getDomainId(),
-					getUser(), attach.getDriveId(), attach.getId());
+			data = DriveUtils.getByteFile(AonUtil.getDomainName(),
+					attach.getDomain(), AonUtil.getAuthPrincipal().getShortName(),
+					attach.getDriveId(), attach.getId());
 		} else {
 			data = "".getBytes();
 		}
 		return data;
+	}
+	
+	private void deleteDriveData(IAttachment attach) {
+		if(attach.getDriveId()!=null && !"".equals(attach.getDriveId())){
+			DriveUtils.deleteFile(AonUtil.getDomainName(), 
+					attach.getDomain(), AonUtil.getAuthPrincipal().getShortName(),
+					attach.getDriveId());
+		}
 	}
 	
 	
@@ -162,6 +163,8 @@ public class PrintParametersController implements Serializable {
 	 * SALE INVOICE PARAMS
 	 */
 	public class SaleInvoiceParams implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
 
 		private final String CUSTOM_REPORT_TEMPLATE_PATH = "/home/COMMON-RESOURCES/aon-report";
 		
@@ -362,11 +365,13 @@ public class PrintParametersController implements Serializable {
 	 */
 	public class SaleInvoiceFooter implements Serializable {
 
+		private static final long serialVersionUID = 1L;
+		
 		private boolean printSaleInvoiceFooter;
 		
 		private String text;
 
-		private Attach attach;
+		private RegistryAttachment attach;
 		
 		public boolean isPrintSaleInvoiceFooter() {
 			return printSaleInvoiceFooter;
@@ -376,26 +381,36 @@ public class PrintParametersController implements Serializable {
 			this.printSaleInvoiceFooter = printSaleInvoiceFooter;
 		}
 		
-		public Attach getAttach() {
+		public RegistryAttachment getAttach() {
 			return attach;
 		}
 		
 		public void resetAttach() {
-			attach = new Attach();
+			attach = new RegistryAttachment();
 		}
 		
 		private void init() {
 			setPrintSaleInvoiceFooter(AppParamUtil.getValueAsBoolean(APP_PRINT_S_INVOICE_FOOTER_PARAM));
-			attach = AON.getAttach(
-					getDomainName(),
-					getDomainId(),
-					getUser(),
-					f -> f.getDomainProperty()
-							.eq(getDomainId())
-							.and(f.getTypeProperty().eq(
-									RegistryAttachmentType.INVOICE_FOOTER_TEXT
-											.value())), AttachType.REGISTRY);
-			setText(new String(getData(attach)));
+			
+			setText("");
+//			if(isPrintSaleInvoiceFooter()){
+//			}
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.INVOICE_FOOTER_TEXT);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(list!=null && !list.isEmpty()){
+					attach = (RegistryAttachment) list.get(0);
+					setText(new String(getData(attach)));
+				} else {
+					attach = new RegistryAttachment();
+					setText("");
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error on SaleInvoiceFooter -> init()");
+				LOGGER.error(e.getMessage());
+			}
 		}
 		
 		public void accept() {
@@ -408,11 +423,22 @@ public class PrintParametersController implements Serializable {
 				getSaleInvoiceFooter().setText("");
 			}
 			
-			if(attach.getId()==null){
-				Integer id = AON.insertAttach(getDomainName(), getDomainId(), getUser(), attach);
-				attach.setId(id);
-			} else {
-				AON.updateAttach(getDomainName(), getDomainId(), getUser(), attach);
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+				String text = getSaleInvoiceFooter().getText();
+				if(attach.getId()==null){
+					attach = (RegistryAttachment) bean.insert(attach);
+				} else {
+					if(text==null || "".equals(text)){
+						bean.remove(attach);
+					} else {
+						bean.update(attach);
+					}
+					deleteDriveData(attach);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error on SaleInvoiceFooter -> accept()");
+				LOGGER.error(e.getMessage());
 			}
 			
 		}
@@ -422,15 +448,13 @@ public class PrintParametersController implements Serializable {
 		}
 
 		private void completeAttachInfo(byte[] data) {
-			attach.setDomain(new Domain().setId(getDomainId()));
+			attach.setRegistry(getCompany());
+			attach.setAttachDate(new Date());
 			attach.setConfidential(false);
-			attach.setAttachType(AttachType.REGISTRY);
-			attach.setAttachModule(getCompany().getId());
 			attach.setData(data);
-			attach.setType(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value());
+			attach.setRegistryAttachmentType(RegistryAttachmentType.INVOICE_FOOTER_TEXT);
 			attach.setDescription(AonUtil.getMessage(COMPANY_SALE_INVOICE_FOOTER_TEXT));
-			attach.setDate(new Date());
-			attach.setMimeType(MimeType.TXT);
+			attach.setMimeType(MimeType.MIME_TXT);
 		}
 		
 		public String getText() {
@@ -561,6 +585,8 @@ public class PrintParametersController implements Serializable {
 	 */
 	public class ReportBackground implements Serializable {
 
+		private static final long serialVersionUID = 1L;
+		
 		private final int BACKGROUND_WIDTH = 535;
 		
 		private final int BACKGROUND_HEIGHT = 802;
@@ -570,10 +596,10 @@ public class PrintParametersController implements Serializable {
 		private AonFile salesBackgroundFile;
 		private AonFile offerBackgroundFile;
 		
-		private Attach saleInvoiceBackgroundAttach;
-		private Attach deliveryBackgroundAttach;
-		private Attach salesBackgroundAttach;
-		private Attach offerBackgroundAttach;
+		private IAttachment saleInvoiceBackgroundAttach;
+		private IAttachment deliveryBackgroundAttach;
+		private IAttachment salesBackgroundAttach;
+		private IAttachment offerBackgroundAttach;
 		
 		public AonFile getSaleInvoiceBackgroundFile() {
 			return saleInvoiceBackgroundFile;
@@ -713,28 +739,26 @@ public class PrintParametersController implements Serializable {
 			cleanBackground(getDeliveryBackgroundFile(), ICompanyConstants.DELIVERY_REPORT_KEY);
 			cleanBackground(getSalesBackgroundFile(), ICompanyConstants.SALES_REPORT_KEY);
 			cleanBackground(getOfferBackgroundFile(), ICompanyConstants.OFFER_REPORT_KEY);
-			saleInvoiceBackgroundAttach = new Attach();
-			offerBackgroundAttach = new Attach();
-			deliveryBackgroundAttach = new Attach();
-			salesBackgroundAttach = new Attach();
+			saleInvoiceBackgroundAttach = new RegistryAttachment();
+			offerBackgroundAttach = new RegistryAttachment();
+			deliveryBackgroundAttach = new RegistryAttachment();
+			salesBackgroundAttach = new RegistryAttachment();
 			
 			String[] reportKeys = { ICompanyConstants.SALE_INVOICE_REPORT_KEY,
 					ICompanyConstants.OFFER_REPORT_KEY,
 					ICompanyConstants.DELIVERY_REPORT_KEY,
 					ICompanyConstants.SALES_REPORT_KEY };
 		
-			AON.getAttachStream(
-					getDomainName(),
-					getDomainId(),
-					getUser(),
-					f -> f.getDomainProperty()
-						.eq(getDomainId())
-						.and(f.getTypeProperty()
-							.eq(RegistryAttachmentType.REPORT_BACKGROUND
-									.value())
-							.and(f.getDescriptionProperty().in(reportKeys))),
-					AttachType.REGISTRY, true)
-					.forEach(attach -> {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
+						RegistryAttachmentType.REPORT_BACKGROUND);
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION), reportKeys);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(list!=null && !list.isEmpty()){
+					list.forEach(to -> {
+						IAttachment attach =  (IAttachment) to;
 						AonFile file = selectAttach(attach);
 						if(attach.getDescription().equals(ICompanyConstants.SALE_INVOICE_REPORT_KEY)) {
 							saleInvoiceBackgroundAttach = attach;
@@ -750,6 +774,11 @@ public class PrintParametersController implements Serializable {
 							setSalesBackgroundFile(file);
 						}
 					});
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error on ReportBackground -> init()");
+				LOGGER.error(e.getMessage());
+			}
 					
 		}
 		
@@ -765,52 +794,54 @@ public class PrintParametersController implements Serializable {
 					ICompanyConstants.SALES_REPORT_KEY);
 		}
 		
-		private void acceptAttach(AonFile aonFile, Attach attach, String reportKey){
-			if(aonFile!=null){
-				if(aonFile.getData()==null){
-					if(attach.getId()!=null){
-						if(attach.getDriveId()!=null){
-							DriveUtils.deleteFile(getDomainName(), getDomainId(), getUser(), attach.getDriveId());
-						}
-						AON.deleteAttach(getDomainName(), getDomainId(), getUser(), f -> f.getIdProperty().eq(attach.getId()), AttachType.REGISTRY);
-					}
-				} else {
-					if(attach.getData()!=null){						
+		private void acceptAttach(AonFile aonFile, IAttachment attach, String reportKey){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);				
+				if(aonFile!=null){
+					if(aonFile.getData()==null){
 						if(attach.getId()!=null){
-							AON.updateAttach(getDomainName(), getDomainId(), getUser(), attach);
-							if(attach.getDriveId()!=null){
-								DriveUtils.deleteFile(getDomainName(), getDomainId(), getUser(), attach.getDriveId());
+							deleteDriveData(attach);
+							bean.remove(attach);
+						}
+					} else {
+						if(attach.getData()!=null){						
+							if(attach.getId()!=null){
+								attach = (IAttachment) bean.update(attach);
+								deleteDriveData(attach);
+							} else {
+								attach = fillAttach(aonFile, reportKey);
+								attach = (IAttachment) bean.insert(attach);
+								aonFile = selectAttach(attach);
 							}
-						} else {
-							insertAttach(aonFile, reportKey);
 						}
 					}
+					
 				}
-				
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error on ReportBackground -> acceptAttach()");
+				LOGGER.error(e.getMessage());
 			}
 		}
 		
 		
-		private void insertAttach(AonFile aonFile, String name) {
+		private IAttachment fillAttach(AonFile aonFile, String name) {
 			if ((aonFile != null) && aonFile.isDirty() ) {
 				checkAonFile(aonFile);
-				Attach attach = new Attach();
-				attach.setDomain(new Domain().setId(getDomainId()));
+				RegistryAttachment attach = new RegistryAttachment();
+				attach.setRegistry(getCompany().getRegistry());
+				attach.setAttachDate(new Date());
 				attach.setConfidential(false);
-				attach.setAttachType(AttachType.REGISTRY);
-				attach.setDate(new Date());
-				attach.setType(RegistryAttachmentType.REPORT_BACKGROUND.value());
+				attach.setRegistryAttachmentType(RegistryAttachmentType.REPORT_BACKGROUND);
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
 				attach.setDescription(name);
-				attach.setAttachModule(getCompany().getId());
 				attach.setMimeType(MimeType.getByExtension(aonFile.getMimeType().getExtension()));
-				AON.insertAttach(getDomainName(), getDomainId(), getUser(), attach);
-				aonFile = selectAttach(attach);
+				return attach;
 			}
+			return null;
 		}
 
-		private AonFile selectAttach(Attach attach) {
+		private AonFile selectAttach(IAttachment attach) {
 			if (attach != null && attach.getId()!=null) {
 				AonFile file = new AonFile();
 				file.setData(getData(attach));
