@@ -205,12 +205,17 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	
 	private void processData(List<ALBARANTYPE> list, boolean test){
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
-		ctx.getDslContext().transaction(configuration -> {
-			list.forEach(albaran -> {
-				Delivery delivery = createDelivery(ctx, albaran, test);
-				createCarrierPacking(ctx, albaran, delivery, test);
+		try {
+			ctx.getDslContext().transaction(configuration -> {
+				list.forEach(albaran -> {
+					Delivery delivery = createDelivery(ctx, albaran, test);
+					createCarrierPacking(ctx, albaran, delivery, test);
+				});
 			});
-		});
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	private void addError(ALBARANTYPE albaran, String msg){

@@ -491,14 +491,16 @@ public class ElaborationDAO {
 
 	
 	public static int getSerieMaxNumber(AONContext ctx, String series) {
-		try {
-			return ctx.getDslContext().select(DSL.max(ELABORATION.NUMBER))
-					.from(ELABORATION)
-					.where(ELABORATION.DOMAIN.eq(ctx.getDomainId())).fetchOne()
-					.value1();
-		} catch (NullPointerException e) {
-			return 0;
-		}
+		Integer next = ctx.getDslContext().select(DSL.max(ELABORATION.NUMBER))
+				.from(ELABORATION)
+				.where(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
+				.fetch() .stream()
+				.mapToInt(rec -> (rec != null && rec.getValue(DSL.max(ELABORATION.NUMBER)) != null) 
+						? rec.getValue(DSL.max(ELABORATION.NUMBER)) 
+						: 0)
+				.findFirst()
+				.orElse(0);
+		return ++next;
 	}
 	
 	// FIXME this is not the place for this method 
