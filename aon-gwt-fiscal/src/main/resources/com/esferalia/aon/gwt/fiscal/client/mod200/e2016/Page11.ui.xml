@@ -10,29 +10,10 @@
 			<g:SimplePanel ui:field="headerPanel"/>
 		 	<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.yearQuota}" />
+					<g:InlineLabel text="{msg.otherDeductions}" />
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
 					<g:FlexTable ui:field="table"/>
-				</div>
-			</div>
-		 	<div class="{aonResources.css.aonGroup}">
-				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.splittedPayments}" />
-				</div>
-				<div class="{aonResources.css.aonGroupBody}">
-					<g:FlexTable ui:field="table1"/>
-				</div>
-			</div>
-		 	<div class="{aonResources.css.aonGroup}">
-				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.netQuota}" />
-				</div>
-				<div class="{aonResources.css.aonGroupBody}">
-					<g:FlexTable ui:field="table2"/>
-				</div>
-				<div class="{aonResources.css.aonGroupBody}">
-					<g:FlexTable ui:field="table3"/>
 				</div>
 			</div>
 		</g:HTMLPanel>

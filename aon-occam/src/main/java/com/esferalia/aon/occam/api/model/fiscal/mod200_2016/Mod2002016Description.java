@@ -96,7 +96,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.P1505,"Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16a LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.P1506,"Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.P1507,"Efecto de la correcci\u00F3n valorativa en la BI del ejercicio");
-		DESCRIPTION_MAP.put(Mod2002016Key.P1508,"Saldo de correcciones fi scales (art. 12.3 RDL 4/2004) pendientes a fi n de ejercicio");
+		DESCRIPTION_MAP.put(Mod2002016Key.P1508,"Saldo de correcciones fiscales (art. 12.3 RDL 4/2004) pendientes a fin de ejercicio");
 	}
 
 	static {
@@ -428,8 +428,8 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ558,"Tipo de gravamen");
 		
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ560,"Cuota \u00EDntegra previa");
-		DESCRIPTION_MAP.put(Mod2002016Key.LQ210,"P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refi ere el art. 11.12 LIS (convertida en cuota). Aumentos");
-		DESCRIPTION_MAP.put(Mod2002016Key.LQ480,"P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refi ere el art. 11.12 LIS (convertida en cuota). Disminuciones");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ210,"P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refiere el art. 11.12 LIS (convertida en cuota). Aumentos");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ480,"P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refiere el art. 11.12 LIS (convertida en cuota). Disminuciones");
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ408 ,"Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS). Aumentos");
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ1037,"Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS). Disminuciones");
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ561 ,"Compensaci\u00F3n de cuotas por p\u00E9rdidas de cooperativas");
@@ -455,7 +455,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BN572,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN571,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN573,"DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN575,"Transparencia fi scal internacional (art. 100.11 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN575,"Transparencia fiscal internacional (art. 100.11 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN577,"DI interna intersocietaria al 5/10% (cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN581,"Bonificaciones empresas navieras en Canarias (art. 76 Ley 19/1994)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN582,"Cuota \u00EDntegra ajustada positiva");
@@ -464,7 +464,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BN585,"Deducci\u00F3n DT 24\u00AA.7 LIS, art. 42 RDL 4/2004 y art. 36 ter Ley 43/95");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN584,"Deducciones DT 24\u00AA.1 LIS y DT 8\u00AA RDL 4/2004");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN588,"Deducciones con l\u00EDmite del Cap\u00EDtulo IV T\u00EDtulo VI RDL 4/2004 y LIS");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN1039,"Deducciones por producciones cinematogr\u00E1fi cas extranjeras (art. 36.2 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1039,"Deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN565,"Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN590,"Deducciones Inversi\u00F3n Canarias");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN399,"Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
@@ -551,7 +551,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.LM1249,"i) L\u00EDmite a la deducci\u00F3n de gastos financieros netos (= 30%* [i1-i2-i3-i4+i5], m\u00EDnimo 1 mill\u00F3n de euros si gasto financiero neto >= 1 mill\u00F3n)");
 		DESCRIPTION_MAP.put(Mod2002016Key.LM1250,"i1) Resultado de explotaci\u00F3n (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002016Key.LM1251,"i2) Amortizaci\u00F3n del inmovilizado (signo igual a Cuenta de P\u00E9rd. y Gan.)");
-		DESCRIPTION_MAP.put(Mod2002016Key.LM1252,"i3) Imputaci\u00F3n de subvenciones de inmovilizado no fi nanciero y otras (signo igual a Cuenta de P\u00E9rd. y Gan.)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LM1252,"i3) Imputaci\u00F3n de subvenciones de inmovilizado no financiero y otras (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002016Key.LM1253,"i4) Deterioro y resultado por enajenaciones del inmovilizado (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002016Key.LM1254,"i5) Ingresos financieros de participaciones en instrumentos de patrimonio (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002016Key.LM1255,"j) Adici\u00F3n por l\u00EDmite beneficio operativo no aplicado en los cinco ejercicios anteriores");

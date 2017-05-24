@@ -20,7 +20,8 @@ public enum Mod2002016BN570Key implements Serializable, IMod200KeysProvider {
 	,C05(new Mod2002016Key[]{Mod2002016Key.BN112,Mod2002016Key.BN113,Mod2002016Key.BN025,Mod2002016Key.BN026,Mod2002016Key.BN027},"D.I. interna 2012")
 	,C06(new Mod2002016Key[]{Mod2002016Key.BN114,Mod2002016Key.BN115,Mod2002016Key.BN714,Mod2002016Key.BN715,Mod2002016Key.BN716},"D.I. interna 2013")
 	,C07(new Mod2002016Key[]{Mod2002016Key.BN735,Mod2002016Key.BN920,Mod2002016Key.BN736,Mod2002016Key.BN737,Mod2002016Key.BN738},"D.I. interna 2014")
-	,C08(new Mod2002016Key[]{Mod2002016Key.BN116,Mod2002016Key.BN103,Mod2002016Key.BN117,null /* BN570 */   ,Mod2002016Key.BN118},"Total")
+	,C08(new Mod2002016Key[]{Mod2002016Key.BN116,null				,Mod2002016Key.BN117,null /* BN570 */   ,Mod2002016Key.BN118},"Total")
+	,C09(new Mod2002016Key[]{null				,Mod2002016Key.BN103,null				,null				,null				},"Tipo de gravamen 2016")
 	;
 	 
     private String description;

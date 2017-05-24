@@ -16,14 +16,6 @@
 					<g:FlexTable ui:field="table"/>
 				</div>
 			</div>
-		 	<div class="{aonResources.css.aonGroup}">
-				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.otherDeductions}" />
-				</div>
-				<div class="{aonResources.css.aonGroupBody}">
-					<g:FlexTable ui:field="table1"/>
-				</div>
-			</div>
 		</g:HTMLPanel>
 	</g:ScrollPanel>
 </ui:UiBinder>

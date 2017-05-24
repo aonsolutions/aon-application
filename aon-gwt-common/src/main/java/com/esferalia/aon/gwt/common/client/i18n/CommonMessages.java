@@ -1648,6 +1648,8 @@ public interface CommonMessages extends Messages {
 	String liquidacionIII();
 	@DefaultMessage("Liquidaci\u00F3n (IV)")
 	String liquidacionIV();
+	@DefaultMessage("Liquidaci\u00F3n (V)")
+	String liquidacionV();
 
 	@DefaultMessage("Tipo Correcci\u00F3n")
 	String correctionType();
