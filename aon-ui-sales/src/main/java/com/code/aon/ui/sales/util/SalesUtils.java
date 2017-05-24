@@ -58,7 +58,7 @@ import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
+// TODO avoid using DAO class, use AON fackade instead
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
 public class SalesUtils {
@@ -262,13 +262,10 @@ public class SalesUtils {
 	}
 	
 	public void createElaboration(SalesDetail salesDetail, Date date, Integer warehouseId) {
-//		TODO method:createManufacture
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(),
-				salesDetail.getDomain(), AonUtil.getRemoteUser());
-		
 		String series = salesDetail.getSales().getSeries();
-		int number = ElaborationDAO.getSerieMaxNumber(ctx, series);
-		number++;
+
+		int number = AON.getElaborationNextNumber(AonUtil.getDomainName(),
+				salesDetail.getDomain(), AonUtil.getRemoteUser(), series);
 		
 		Elaboration elaboration = new Elaboration();
 		elaboration.setDomain(salesDetail.getDomain());
@@ -284,7 +281,9 @@ public class SalesUtils {
 		elaboration.setSource(ElaborationSource.SALES.value());
 		elaboration.setSourceId(salesDetail.getId());
 		
-		int elaborationId = ElaborationDAO.insertElaboration(ctx, elaboration);
+		int elaborationId = AON.insertElaboration(AonUtil.getDomainName(),
+				salesDetail.getDomain(), AonUtil.getRemoteUser(), elaboration);
+//		int elaborationId = ElaborationDAO.insertElaboration(ctx, elaboration);
 		
 		// TODO
 //		salesDetail.getItem().getCompositions().forEach(p -> {

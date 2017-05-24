@@ -144,6 +144,8 @@ public interface IWarehouse {
 	Integer insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition);
 	ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition composition);
 	ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx, ElaborationDetailCompositionFilter filter);
+	
+	Integer getElaborationNextNumber(AONContext ctx, String serie);
 
 	
 }

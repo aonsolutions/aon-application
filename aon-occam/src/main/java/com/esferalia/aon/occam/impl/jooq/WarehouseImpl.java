@@ -316,6 +316,14 @@ public class WarehouseImpl implements IWarehouse {
 			ElaborationDAO.deleteElaborationDetailComposition(ctx, filter));
 	}
 	
+	@Override
+	public Integer getElaborationNextNumber(AONContext ctx,
+			String series) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getSerieMaxNumber(ctx, series));
+	}
+	
+	
 	
 	// -------------------------- INCOME
 	@Override

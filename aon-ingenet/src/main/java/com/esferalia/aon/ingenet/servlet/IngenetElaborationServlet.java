@@ -104,7 +104,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			params.setACCION(ACCIONTYPE.RECUPERAR);
 		}
 		
-		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		Date date = null;
 		if(params.getFECHA()!=null){
 			try {
@@ -132,6 +131,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			}
 		}
 		
+		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		List<Elaboration> elaborationList = null;
 		try {
 			if(ACCIONTYPE.RECUPERAR==params.getACCION()) {
@@ -168,6 +168,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
 			errorList.add(e.toString());
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 		
 		if(errorList!=null && errorList.size()>0){

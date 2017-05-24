@@ -208,11 +208,17 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	}
 	
 	private Integer searchDomainId(String _domainName) {
-		AONContext ctx = AONContext.getAONContext(getDomain(), -1, getUser());
-		Domain domain = DomainDAO.getDomain(ctx, p -> {
-			return p.getNameProperty().eq(_domainName);
-		});
-		return domain.getId();
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(getDomain(), -1, getUser());
+			Domain domain = DomainDAO.getDomain(ctx, p -> {
+				return p.getNameProperty().eq(_domainName);
+			});
+			return domain.getId();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	
