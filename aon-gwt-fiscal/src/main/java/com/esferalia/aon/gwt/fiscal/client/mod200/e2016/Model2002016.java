@@ -332,10 +332,10 @@ public class Model2002016 extends ResizeComposite  {
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 
-		saveButton.setVisible(false);
-		removeButton.setVisible(false);
-		aeatFileButton.setVisible(false);
-		aeatPrintButton.setVisible(false);
+//		saveButton.setVisible(false);
+//		removeButton.setVisible(false);
+//		aeatFileButton.setVisible(false);
+//		aeatPrintButton.setVisible(false);
 		
 	}
 	
@@ -644,7 +644,7 @@ public class Model2002016 extends ResizeComposite  {
 		private void checkAndShowPage(int page) {
 
 			if (mod200Object.isInitialized()) {
-				if (page > 8) {
+				if (page > 9) {
 					MessageDialog.warning("No disponible");
 				} else {
 					showPage(page);

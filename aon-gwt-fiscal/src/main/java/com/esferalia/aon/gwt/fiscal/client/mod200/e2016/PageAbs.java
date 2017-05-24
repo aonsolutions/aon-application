@@ -302,6 +302,7 @@ public abstract class PageAbs extends ResizeComposite {
 				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonBold());
 				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonBorderBottom());
 				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonTextCenter());
+				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonFontSmall());
 				if (col>0) {
 					tableDetail.getColumnFormatter().setWidth(col, "140px");
 				}

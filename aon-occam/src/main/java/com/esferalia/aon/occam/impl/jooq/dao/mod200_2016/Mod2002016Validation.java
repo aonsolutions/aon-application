@@ -281,12 +281,12 @@ public class Mod2002016Validation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0412
 				,MessageFormat.format(INV_BOX_MSG,D0412.getCode(),C0047.getDescription())
 				,MessageFormat.format(INV_BOX_EXP,D0412.toString(),C0047.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0400
-			,MessageFormat.format(INV_BOX_MSG,D0400.getCode(),
-				  C0017.getDescription()+"\" ni \"" 
-				+ C0018.getDescription()+"\" \"ni \"" 
-				+ C0019.getDescription())
-			,"(round(D0400) == 0.0) || (round(D0400) > 0.0 && (C0017 || C0018 || C0019))"));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0400
+//			,MessageFormat.format(INV_BOX_MSG,D0400.getCode(),
+//				  C0017.getDescription()+"\" ni \"" 
+//				+ C0018.getDescription()+"\" \"ni \"" 
+//				+ C0019.getDescription())
+//			,"(round(D0400) == 0.0) || (round(D0400) > 0.0 && (C0017 || C0018 || C0019))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,I0377
 			,MessageFormat.format(INV_BOX_MSG,I0377.getCode(),
 				C0031.getDescription()+"\" \"ni \"" + C0032.getDescription())
@@ -338,22 +338,22 @@ public class Mod2002016Validation {
 				,MessageFormat.format(INCOMPATIBLE_MSG,D0278.getDescription()
 					,C0013.getDescription() +"\" y/o \"" + C0014.getDescription())
 				,"round(D0278) != 0.0?(C0013 || C0014):true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0400
-				, "S\u00F3lo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
-				+ "han sido excedentes despu\u00E9s de deducir las p\u00E9rdidas de ejercicios anteriores"
-				,"round(D0400) != 0.0"
-						+ "?(C0050"
-							+ "?((round(PG500) + (round(BP197)<0?round(BP197):0.0) - round(LQ326)) < 0)"
-							+ ":true)"
-						+ ":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0400
-				, "S\u00F3lo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
-				+ "han sido excedentes despu\u00E9s de deducir las p\u00E9rdidas de ejercicios anteriores"
-				,"round(D0400) != 0.0"
-						+ "?(C0051"
-							+ "?((round(PG500) + (round(BP195)<0?round(BP195):0.0) - round(LQ326)) < 0)"
-							+ ":true)"
-						+ ":true"));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0400
+//				, "S\u00F3lo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
+//				+ "han sido excedentes despu\u00E9s de deducir las p\u00E9rdidas de ejercicios anteriores"
+//				,"round(D0400) != 0.0"
+//						+ "?(isBalanceNormal()"
+//							+ "?((round(PG500) + (round(BP197)<0?round(BP197):0.0) - round(LQ326)) < 0)"
+//							+ ":true)"
+//						+ ":true"));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0400
+//				, "S\u00F3lo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
+//				+ "han sido excedentes despu\u00E9s de deducir las p\u00E9rdidas de ejercicios anteriores"
+//				,"round(D0400) != 0.0"
+//						+ "?(isBalanceAbreviado()"
+//							+ "?((round(PG500) + (round(BP195)<0?round(BP195):0.0) - round(LQ326)) < 0)"
+//							+ ":true)"
+//						+ ":true"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0404
 				,"Revise importe disminuciones RIC"
 				,"round(D0404) == 0.0 || round(D0404) >= round((LQ650 * 0.90))"));
@@ -372,6 +372,10 @@ public class Mod2002016Validation {
 //		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ552
 //				,LQ552.getDescription() + " debe ser cero con el caracter \"" + C0027.getDescription() + "\" marcado"
 //				,"C0027?LQ552<=0:LQ552>0"));
+		
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ1140
+				,MessageFormat.format(EQUAL_MSG,"Reserva de capitalizaci\u00F3n dotada en el ejercicio",BP1001.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LQ1140.toString(),BP1001.toString())));
 		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ641
 				,MessageFormat.format(EQUAL_LESS_MSG,LQ641.getDescription(),LQ640.getDescription())
@@ -427,6 +431,9 @@ public class Mod2002016Validation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ675
 				,MessageFormat.format(EQUAL_LESS_MSG,LQ675.getDescription(),LQ607.getDescription())
 				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ675.toString(),LQ607.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ1046
+				,MessageFormat.format(EQUAL_LESS_MSG,LQ1046.getDescription(),LQ1045.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ1046.toString(),LQ1045.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ547
 				,MessageFormat.format(EQUAL_LESS_MSG,LQ547.getDescription(),LQ670.getDescription())
 				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ547.toString(),LQ670.toString())));

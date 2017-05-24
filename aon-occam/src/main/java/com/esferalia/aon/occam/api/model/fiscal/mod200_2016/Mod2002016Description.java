@@ -421,9 +421,9 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ521,"Parte de la base imponible del periodo impositivo que tributa al tipo del 0%");
 		
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ545,"Rentas correspondientes a quitas por acuerdo con acreedores no vinculados (art. 26.1 LIS)");
-		DESCRIPTION_MAP.put(Mod2002016Key.LQ593,"Rentas correspondientes a quitas por acuerdo con acreedores no vinculados de cooperativas (a nivel de cuota)");
-		DESCRIPTION_MAP.put(Mod2002016Key.LQ1509,"Rentas correspondientes a la reversi\u00F3n de deterioros (DT 16ª.8 LIS)");
-		DESCRIPTION_MAP.put(Mod2002016Key.LQ1510,"Rentas correspondientes a la reversi\u00F3n de deterioros cooperativas (a nivel cuota) (DT 16ª.8 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ593,"Rentas correspondientes a quitas por acuerdo con acreedores no vinculados de cooperativas (a nivel de cuota) ((DT 8a Ley 20/1990))");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ1509,"Rentas correspondientes a la reversi\u00F3n de deterioros (DT 16\u00AA.8 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.LQ1510,"Rentas correspondientes a la reversi\u00F3n de deterioros cooperativas (a nivel cuota) (DT 16\u00AA.8 LIS)");
 		
 		DESCRIPTION_MAP.put(Mod2002016Key.LQ558,"Tipo de gravamen");
 		
@@ -450,8 +450,8 @@ public class Mod2002016Description {
 		
 
 		DESCRIPTION_MAP.put(Mod2002016Key.BN570,"DI interna de per\u00EDodos anteriores aplicada en el ejercicio (art. 30 RDL 4/2004)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN1344,"DI interna de per\u00EDodos anteriores aplicada en el ejercicio (DT 23ª.1 LIS)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN1280,"DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1344,"DI interna de per\u00EDodos anteriores aplicada en el ejercicio (DT 23\u00AA.1 LIS)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1280,"DI interna generada y aplicada en el ejercicio (DT 23\u00AA.1 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN572,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN571,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN573,"DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)");

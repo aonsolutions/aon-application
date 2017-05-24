@@ -100,7 +100,7 @@ public class Page09 extends PageAbs {
 					margin = true;
 				}
 				if (key == Mod2002016Key.LQ545) {
-					paintDescription(table, "Quitas por acuerdo con acreedores no vinculados", row,0, true);
+					paintDescription(table, "Rentas que no limitan la compensaci\u00F3n de bases imponibles y cuotas negativas", row,0, true);
 					row++;
 					margin = true;
 				}
@@ -117,7 +117,7 @@ public class Page09 extends PageAbs {
 				if (margin) {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft());
 				}
-				if (key == Mod2002016Key.LQ554) {
+/**/			if (key == Mod2002016Key.LQ554) {
 					row = paintKeyBreakdownLink(table,row,AON.MSG.cooperativeRegime()
 							,Mod2002016LQ554Key.values(),HEADERS_1);
 				}
@@ -125,19 +125,19 @@ public class Page09 extends PageAbs {
 					row = paintKeyBreakdownLink(table,row,Mod2002016Key.LQ561.getDescription()
 							,Mod2002016LQ561Key.values(),HEADERS_2);
 				}
-				if (key == Mod2002016Key.LQ579) {
+/**/			if (key == Mod2002016Key.LQ579) {
 					row = paintKeyBreakdownLink(table,row,Mod2002016Key.LQ579.getDescription()
 							,Mod2002016LQ579Key.values(),null);
 				}
-				if (key == Mod2002016Key.LQ1032) {
+/**/			if (key == Mod2002016Key.LQ1032) {
 					row = paintKeyBreakdownLink(table,row,Mod2002016Key.LQ1032.getDescription()
 							,Mod2002016LQ1032Key.values(),HEADERS_3);
 				}
-				if (key == Mod2002016Key.LQ547) {
+/**/			if (key == Mod2002016Key.LQ547) {
 					row = paintKeyBreakdownLink(table,row,Mod2002016Key.LQ547.getDescription()
 							,Mod2002016LQ547Key.values(),HEADERS_2);
 				}
-				if (key == Mod2002016Key.LQ1033) {
+/**/			if (key == Mod2002016Key.LQ1033) {
 					row = paintKeyBreakdownLinkLQ1033(table,row,Mod2002016Key.LQ1033.getDescription());
 				}
 

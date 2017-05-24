@@ -58,6 +58,7 @@ import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -220,6 +221,15 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	public Boolean isChecked(Mod2002016Key key) {
 		return (Boolean) get(key.toString());
 	}
+	public Boolean isCooperativa() {
+		return isChecked(C0017) || isChecked(C0018) || isChecked(C0019); 
+	}
+	public Boolean isBalanceNormal() {
+		return (mod200.getBalanceType() == BalanceType.NORMAL); 
+	}
+	public Boolean isBalanceAbreviado() {
+		return (mod200.getBalanceType() == BalanceType.ABREVIADO);
+	}
 	
 	public Double getValue(Mod2002016Key key) {
 		Object o = get(key.toString());
@@ -248,6 +258,11 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	}
 	public Boolean isBalPymes() {
 		return (Boolean) get( C0050 );
+	}
+
+	public double computeC0027() throws AonCoreException {
+		double lq552 = roundKey(LQ552);
+		return (AonMathUtils.isGreatherThanZero(lq552))?0.0:1.0;
 	}
 
 	public double computeLQ558() throws AonCoreException {
@@ -295,6 +310,9 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	}
 	public double computeD1004() throws AonCoreException {
 		double d1004 = getValue(Mod2002016Key.D1004);
+		if ( AonMathUtils.isZero(d1004)) {
+			return 0.0;
+		} 	
 		if (d1004>getLimit(LIM_3)){
 			return getLimit(LIM_3);			
 		} else {
@@ -778,5 +796,5 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		}
 		return d;
 	}
-	
+			
 }
