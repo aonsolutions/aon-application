@@ -411,7 +411,7 @@ public class Model200 extends MainEntryPoint {
 	}
 	protected void new2015() {
 		getMod2002015Service().createMod2002015(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2016
+		, getCurrentDomain(), 2015
 		, new AsyncCallback<Mod2002015>() {
 
 			@Override
