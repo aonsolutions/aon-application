@@ -73,7 +73,7 @@ public class Preauthorization {
 		Date currentDate = new Date(new java.util.Date().getTime());
 		Stream<ProjectReservation> stream = DBConsults.getProjectReservationStream(domain, login,
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getTokenProperty().isNotNull())
-				.and(f.getCreditCardTypeProperty().ne(ccType))
+				.and(f.getCreditCardTypeProperty().ne(ccType).or(f.getCreditCardTypeProperty().isNull()))
 				.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
 					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))
 					.or(f.getStatusProperty().eq(ReservationStatus.CANCELLED.value())
@@ -197,7 +197,7 @@ public class Preauthorization {
 		DBConsults.getProjectReservationStream(domain, login, f ->
 				f.getPenaltyDateProperty().le(new Timestamp(new java.util.Date().getTime()))
 				.and(f.getTokenProperty().isNotNull())
-				.and(f.getCreditCardTypeProperty().ne(ccType))
+				.and(f.getCreditCardTypeProperty().ne(ccType).or(f.getCreditCardTypeProperty().isNull()))
 				.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
 				.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))
 				.or(f.getStatusProperty().eq(ReservationStatus.CANCELLED.value())
@@ -286,7 +286,7 @@ public class Preauthorization {
 		Stream<ProjectReservation> stream = DBConsults.getProjectReservationStream(domain, login,
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getStartDateProperty().le(date))
 			.and(f.getTokenProperty().isNotNull())
-			.and(f.getCreditCardTypeProperty().ne(ccType))
+			.and(f.getCreditCardTypeProperty().ne(ccType).or(f.getCreditCardTypeProperty().isNull()))
 			.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
 					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))
 					.or(f.getStatusProperty().eq(ReservationStatus.CANCELLED.value())
