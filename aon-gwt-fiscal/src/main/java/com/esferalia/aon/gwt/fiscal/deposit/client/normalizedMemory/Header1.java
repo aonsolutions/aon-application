@@ -306,9 +306,9 @@ public class Header1 extends PageAbs {
 		if(type.equals("text")) {
 			TextBox t = (TextBox) w;
 			if(mapDraft.containsKey(key2)){
-				t.setValue(mapDraft.get(key2));
+				t.setValue(mapDraft.get(key2) != null ? mapDraft.get(key2) : "");
 				t.setEnabled(enable);
-				if(!map.get(key2).equals(mapDraft.get(key2))){
+				if(mapDraft.get(key2) != null && !map.get(key2).equals(mapDraft.get(key2))){
 					t.addStyleName(AON.AON_CSS.aonChanged());
 				}
 				else t.removeStyleName(AON.AON_CSS.aonChanged());

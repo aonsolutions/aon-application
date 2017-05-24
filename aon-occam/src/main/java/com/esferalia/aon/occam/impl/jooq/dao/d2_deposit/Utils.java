@@ -467,12 +467,12 @@ public class Utils {
 		
 		Clave c1023 = new Clave();
 		c1023.setCodigo(BigInteger.valueOf(1023));
-		c1023.setValor(enterprise.getCity());
+		c1023.setValor(enterprise.getCity() != null ? enterprise.getCity() : "");
 		keys.getClave().add(c1023);
 		
 		Clave c1024 = new Clave();
 		c1024.setCodigo(BigInteger.valueOf(1024));
-		c1024.setValor(enterprise.getZip());
+		c1024.setValor(enterprise.getZip() != null ? enterprise.getZip() : "");
 		keys.getClave().add(c1024);
 		
 		
@@ -485,12 +485,12 @@ public class Utils {
 		
 		Clave c1031 = new Clave();
 		c1031.setCodigo(BigInteger.valueOf(1031));
-		c1031.setValor(enterprise.getPhone());
+		c1031.setValor(enterprise.getPhone() != null ? enterprise.getPhone() : "");
 		keys.getClave().add(c1031);
 		
 		Clave c1037 = new Clave();
 		c1037.setCodigo(BigInteger.valueOf(1037));
-		c1037.setValor(enterprise.getEmail());
+		c1037.setValor(enterprise.getEmail() != null ? enterprise.getEmail() : "");
 		keys.getClave().add(c1037);
 		
 		//---------- //
