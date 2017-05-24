@@ -163,11 +163,7 @@
 				<g:MenuBar>
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
-							<!-- g:MenuItem ui:field="diaFestivo" text="Añadir día(s) festivos" />
-							<g:MenuItem styleName="gwt-MenuItemSeparator">
-								<div class="menuSeparatorInner"></div>
-							</g:MenuItem>
-							<g:MenuItem ui:field="eraseEventMenuItem" text="Borrar evento(s)" / -->
+						    <g:MenuItem ui:field="addNewValueMenuItem" text="Añadir nuevo valor"/>
 						</g:MenuBar>
 					</g:MenuItem>
 					<g:MenuItem text="Visualización" ui:field="viewMenuItem">

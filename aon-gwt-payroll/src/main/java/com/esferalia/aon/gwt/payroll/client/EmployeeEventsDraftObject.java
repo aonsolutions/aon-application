@@ -11,6 +11,8 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 
 public class EmployeeEventsDraftObject {
 	
@@ -247,6 +249,50 @@ public class EmployeeEventsDraftObject {
 		return draftMapEventsVar.get(variableName).contains(varMonth);
 	}
 
+	/**
+	 * METODOS SYNC BORRADOR
+	 */
+	
+	public static class EventVariable extends StringVariable{
+		private static final long serialVersionUID = 1L;
+	}
+	
+	public boolean isMine(com.esferalia.aon.gwt.payroll.shared.Variable v ){
+		return v instanceof EventVariable ;
+	}
+	
+	public ArrayList<StringVariable> getVariablesList(Date draftStartDate, Date draftEndDate) {
+		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		
+		EventVariable var = null;
+		
+		for (String name : draftMapEventsVar.keySet()){
+			if (null != draftMapEventsVar.get(name)){
+				for (EmployeeEventsVariable e : draftMapEventsVar.get(name)){
+					
+					if(e.getStartDate().before(draftStartDate))
+						continue;
+					if(e.getEndDate().after(draftEndDate))
+						continue;
+					
+					var = new EventVariable();
+					var.setImplicit(false);
+					var.setScope(Scope.SALARY); // DRAFT
+					var.setName(name);
+					var.setStartDate(e.getStartDate());
+					var.setEndDate(e.getEndDate());
+					var.setExpression(Double.toString(e.getValue()));
+					
+					variablesList.add(var);
+					
+					//Window.alert("EVENT VARIABLE = Name :"+var.getName()+", StartDate :"+ var.getStartDate()+", Exp :"+var.getExpression());
+				}
+			}
+		}
+		
+		return variablesList;
+	}
+	
 	/**
 	 * METODOS PARA BORRAR
 	 */

@@ -43,6 +43,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String onChange();
 	}
 	
+	
+	@UiField
+	MenuItem addNewValueMenuItem;
+	
 	@UiField
 	MenuItem showVariablesMenuItem;
 	
@@ -149,6 +153,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
+		//Boton para añadir un nuevo valor
+		addNewValueMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				openNewValueDialog();
+			}
+		});
+		
 		showYearMenuItem.setStyleName("aon-MenuItemCheckYes", true);
 		
 		//Boton para analizar que variables se quieren mostrar
@@ -208,6 +220,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		event.preventDefault();
 		
 		newValueButton.setEnabled(true);
+		addNewValueMenuItem.setEnabled(true);
 		
 		int row = eventsGrid.getCellForEvent(event).getRowIndex();
 		int col = eventsGrid.getCellForEvent(event).getCellIndex();
@@ -389,6 +402,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		yearLabel.setText(Integer.toString(newYear));
 		fillCellsEvents();
 		newValueButton.setEnabled(false);
+		addNewValueMenuItem.setEnabled(false);
 	}
 	
 	private void selectPosition(int row, int col) {

@@ -307,6 +307,7 @@ public class SalaryDraftObject implements IContextProvider {
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
+		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
 		employeeCalendarDraftObjectData.clearDraftHours();
 		
@@ -355,11 +356,14 @@ public class SalaryDraftObject implements IContextProvider {
 
 		setDraftType(salaryDraft);
 		removeCalendarDraft();
+		removeEventsDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
+		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		employeeCalendarDraftObjectData.getSalaryDraftChanged(salaryDraft);
+		
 		removeSalaryPart(salaryDraft);
 
 		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
@@ -1054,11 +1058,22 @@ public class SalaryDraftObject implements IContextProvider {
 		for ( Deduction d : draft.getDraftEmbargos() )
 			setDeductionType(d, draft.getType());
 	}
+	
 	private void removeCalendarDraft() {
 		List<Variable> draftContext = salaryDraft.getDraftContext();
 		for ( int i = draftContext.size()-1; i >= 0; i--) {
 			Variable var = draftContext.get(i);
 			if (employeeCalendarDraftObjectData.isMine(var)){
+				draftContext.remove(i);
+			}
+		}
+	}
+	
+	private void removeEventsDraft() {
+		List<Variable> draftContext = salaryDraft.getDraftContext();
+		for ( int i = draftContext.size()-1; i >= 0; i--) {
+			Variable var = draftContext.get(i);
+			if (employeeEventsDraftObject.isMine(var)){
 				draftContext.remove(i);
 			}
 		}
@@ -1079,6 +1094,12 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 	
 	private void addCalendarDraft(ArrayList<StringVariable> variablesList) {
+		for (StringVariable stringVariable : variablesList){
+			salaryDraft.addDraftVariable(stringVariable);
+		}
+	}
+	
+	private void addEventsDraft(ArrayList<StringVariable> variablesList) {
 		for (StringVariable stringVariable : variablesList){
 			salaryDraft.addDraftVariable(stringVariable);
 		}
