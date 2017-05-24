@@ -142,17 +142,11 @@ public class printContractMediaList extends HttpServlet{
 		PdfPCell c017 = new PdfPCell(new Phrase(company.getString("document"),getFont2()));
 		c017.setBorder(PdfPCell.NO_BORDER);
 		table0.addCell(c017);
-		
-		PdfPCell c0181 = new PdfPCell(new Phrase("Ejercicio",getFont1()));
-		c0181.setBorder(PdfPCell.NO_BORDER);
-		table0.addCell(c0181);
-		
-		PdfPCell c0171 = new PdfPCell(new Phrase(json.getString("year"),getFont2()));
-		c0171.setBorder(PdfPCell.NO_BORDER);
-		table0.addCell(c0171);
 
 		t.addCell(table0);
-		t.addCell(getTitle());
+		
+		t.addCell(getTitle(json.getString("year")));
+		
 		document.add(t);
 		
 		Paragraph order = new Paragraph(" ");
@@ -185,7 +179,6 @@ public class printContractMediaList extends HttpServlet{
 		table1.addCell(c21);
 		
 		PdfPCell c31 = new PdfPCell(new Phrase("CONTRATO",getFont1()));
-		c31.setHorizontalAlignment(Element.ALIGN_CENTER);
 		c31.setBorder(PdfPCell.NO_BORDER);
 		table1.addCell(c31);
 		
@@ -193,14 +186,11 @@ public class printContractMediaList extends HttpServlet{
 		c41.setBorder(PdfPCell.NO_BORDER);
 		table1.addCell(c41);
 		
-		PdfPCell c51 = new PdfPCell(new Phrase("FIJO",getFont1()));
-		
-		c51.setHorizontalAlignment(Element.ALIGN_CENTER);
+		PdfPCell c51 = new PdfPCell(new Phrase("FIJO",getFont1()));		
 		c51.setBorder(PdfPCell.NO_BORDER);
 		table1.addCell(c51);
 		
 		PdfPCell c61 = new PdfPCell(new Phrase("NO FIJO",getFont1()));
-		c61.setHorizontalAlignment(Element.ALIGN_CENTER);
 		c61.setBorder(PdfPCell.NO_BORDER);
 		table1.addCell(c61);
 
@@ -417,17 +407,21 @@ public class printContractMediaList extends HttpServlet{
 		document.add(tableN);
 	}
 	
-	private static PdfPTable getTitle(){
+	private static PdfPTable getTitle(String year){
 		String boeInfo = "INFORME DE PERSONAL ASALARIADO";
-		Paragraph title = new Paragraph(boeInfo, getTitleFont());
-		title.setAlignment(Element.ALIGN_CENTER);
-		title.setIndentationRight(20);
-		PdfPCell cell = new PdfPCell();
+
+		PdfPCell cell = new PdfPCell(new Paragraph(boeInfo, getTitleFont()));
+		cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		cell.setBorder(PdfPCell.NO_BORDER);
-		cell.addElement(title);
-		
+
 		PdfPTable titleTable = new PdfPTable(1);
 		titleTable.addCell(cell);
+		
+		PdfPCell c = new PdfPCell(new Phrase("Ejercicio " + year,getFont1()));
+		c.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		c.setBorder(PdfPCell.NO_BORDER);	
+		titleTable.addCell(c);
+	
 		return titleTable;
 	}
 	
