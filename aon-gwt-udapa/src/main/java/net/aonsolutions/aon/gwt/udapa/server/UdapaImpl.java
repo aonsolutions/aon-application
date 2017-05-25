@@ -77,7 +77,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				if(map.containsKey(QualitySheetCode.UFQDT1.getName())){
 					String str = map.get(QualitySheetCode.UFQDT1.getName());
 					Double dbl = Double.parseDouble(str);
-					net = AonMathUtils.round(net - dbl);
+					net = net != null && dbl!= null ? AonMathUtils.round(net - dbl) : 0.0;
 				}
 				map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "0.0");
 				map.put(QualitySheetCode.UFQDT2.getName(), net != null ? net.toString() : "0.0");
