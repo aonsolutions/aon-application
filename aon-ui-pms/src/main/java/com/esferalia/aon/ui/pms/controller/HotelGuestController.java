@@ -176,7 +176,7 @@ public class HotelGuestController extends DataScrollerState implements ICollecti
 		stmt.append(" LEFT JOIN room AS R ON R.asset = A.id");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
 		stmt.append(" AND PR.status <> " + ReservationStatus.CANCELLED.ordinal());
-		stmt.append(" AND PR.check_status = " + ReservationCheckStatus.CHECK_IN.ordinal());
+		stmt.append(" AND PR.check_status IN (" + ReservationCheckStatus.CHECK_IN.ordinal() + "," + ReservationCheckStatus.CHECK_OUT.ordinal() + ")");
 		stmt.append(" AND R.hotel = ?");
 		stmt.append(" AND AA.date = ?");
 		stmt.append(" ORDER BY " + ROOM_NUMBER + "," + GUEST_NAME);
@@ -280,6 +280,5 @@ public class HotelGuestController extends DataScrollerState implements ICollecti
 	public void onByCountry() throws IOException {
 		HotelGuestUtils.downloadHotelGuestByCountryExcel(hotel, date);
 	}
-	
 
 }
