@@ -10,8 +10,6 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
-import com.code.aon.purchase.PurchaseDetail;
-import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -97,16 +95,6 @@ public class IncomeDetailController extends LinesController implements IWarehous
 		return false;
 	}
 	
-	public boolean isManufactured() throws ManagerBeanException {
-		if(this.getModel().isRowAvailable()){
-			PurchaseDetail purchaseDetail = ((IncomeDetail)this.getModel().getRowData()).getPurchaseDetail();
-			return purchaseDetail != null && purchaseDetail.getPurchase() != null
-					&& purchaseDetail.getPurchase().getId() != null
-					&& purchaseDetail.getPurchase().getDocumentType() == PurchaseDocumentType.MANUFACTURE;
-		}
-		return false;
-	}
-
 	public boolean isModelEditable() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			return isEditable((IncomeDetail)this.getModel().getRowData());

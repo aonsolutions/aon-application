@@ -29,7 +29,7 @@
 			<aon:commandLink id="#{dataTableId}-selectButton"
 				styleClass="aon-table-row-link" value="&#160;"
 				immediate="true" ajaxSingle="true" requestDelay="100"
-				rendered="#{income.pending and aonRole.productOperator and !controller.manufactured}"
+				rendered="#{income.pending and aonRole.productOperator}"
 				actionListener="#{incomeDetail.onSelect}"
 				onkeyup="#{dataTableId}KeyUp(this)"
 				onfocus="#{dataTableId}SelectRow(this)"
