@@ -130,8 +130,6 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		if (!ArrayUtils.isEmpty(getPurchaseDocumentTypes())) {
 			String type = getController().resolveAlias(IEntityAlias.PURCHASE_DOCUMENT_TYPE);
 			addEnumToCriteria(criteria, type, getPurchaseDocumentTypes());
-		} else {
-			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PURCHASE_DOCUMENT_TYPE), PurchaseDocumentType.MANUFACTURE);
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Purchase.lines.item.id", getItem().getId());

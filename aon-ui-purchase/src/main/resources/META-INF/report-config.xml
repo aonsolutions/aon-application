@@ -133,28 +133,5 @@
 			<param id="printValue" value="#{purchaseReport.isValued}" />
 		</params>
 	</report>
-
-	<!--  *****  Impresion de la orden de elaboracion ****** -->
-	<report id="manufacturingOrder" description="Listado Detallado de la orden de elaboracion">
-		<template path="/com/code/aon/ui/purchase/report/manufacturingOrder.jasper" />
-		<collection provider="#{manufacturingOrder}" forceRefresh="true"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-		</params>
-		<nested-report report="manufacturingOrderDetail"/>
-	</report>
-	<report id="manufacturingOrderDetail" description="Detalle de la orden de elaboracion">
-		<template path="/com/code/aon/ui/purchase/report/manufacturingOrderDetail.jasper" />
-	</report>
 	
 </report-config>

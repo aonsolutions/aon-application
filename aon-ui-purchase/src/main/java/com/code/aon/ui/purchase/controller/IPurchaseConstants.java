@@ -6,9 +6,7 @@ public interface IPurchaseConstants {
 	// BEAN
 	// ************************************************************
 	String COLLECTIONS_CONTROLLER_NAME = "purchaseCollections";
-	String ELABORATION_ORDER_DETAIL_CONTROLLER_NAME = "elaborationOrderDetail";
 	String INCOME_CONTROLLER_NAME = "income";
-	String MANUFACTURING_ORDER_DETAIL_CONTROLLER_NAME = "manufacturingOrderDetail";
 	String PROPOSAL_CONTROLLER_NAME = "proposal";
 	String PROPOSAL_DETAIL_CONTROLLER_NAME = "proposalDetail";
 	String PURCHASE_CONTROLLER_NAME = "purchase";
@@ -27,7 +25,6 @@ public interface IPurchaseConstants {
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
-	String MANUFACTURING_ORDER_FORM_NAME = "manufacturingOrder_form";
 	String PURCHASE_FORM_NAME = "purchase_form";
 
 	

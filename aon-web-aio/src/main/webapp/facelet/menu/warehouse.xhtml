@@ -93,15 +93,6 @@
 								<aon:outputText value="#{bundle.warehouse_manufacture_module}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="manufacturing_order"
-										action="manufacturingOrder_search"
-										actionListener="#{manufacturingOrder.onEditSearch}"
-										title="#{bundle.warehouse_manufacturing_order}" >
-										<aon:outputText styleClass="aon-line-through"
-											value="#{bundle.warehouse_manufacturing_order}" />
-									</aon:commandLink>
-								</aon:div>
 								<aon:if test="#{domainSwitcher.betaDomain}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_elaboration"
