@@ -169,7 +169,6 @@ public class ConnectDeliveryWriter {
 		
 		delivery.getDetailList().stream()
 				.map(to -> (DeliveryDetail)to)
-				.sorted((o1, o2) -> Double.compare(o1.getQuantity(),o2.getQuantity()))
 				.forEach( to -> {
 					DeliveryDetail detail = (DeliveryDetail) to;
 					if(isPackageItem(detail.getItem())){
@@ -239,18 +238,21 @@ public class ConnectDeliveryWriter {
 			});
 		});
 		
-		for(int idx=1; idx<packageList.size();idx++){
+		
+		Map<Integer, List<Integer>> seh1lMap = obtainSeh1lMap(delivery);
+//		System.out.println(seh1lMap);
+		int containerCount = containerList.size();
+		int linesCount = seh1lMap.values().size();
+		for(int idx=1; idx<packageList.size(); idx++){
 			SEH1P palet = packageList.get(idx);
 			palet.seh1lList = new ArrayList<>();
 			
-			List<Integer> content = seh1pMap.get(palet);
+			List<Integer> content = seh1lMap.get(idx+containerCount+linesCount);
 			if(content!=null && !content.isEmpty()){
 				content.forEach(contentIdx ->{
 					DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(contentIdx-1);
-					if(!isPackageItem(detail.getItem())){
-						mainPalet.seh1lList.add(createSEH1LRecord(detail,
-								companyEdiCode, customerEdiCode));
-					}
+					palet.seh1lList.add(createSEH1LRecord(detail,
+							companyEdiCode, customerEdiCode));
 				});
 			}
 		}
@@ -601,8 +603,19 @@ public class ConnectDeliveryWriter {
 					seh1pMap.put(key, list);
 			}
 			
-			pattern = Pattern.compile("\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]");
-			matcher = pattern.matcher(remarks);
+			return seh1pMap;
+		}
+		return null;
+	}
+	
+	private Map<Integer, List<Integer>> obtainSeh1lMap(Delivery delivery) {
+		String remarks = delivery.getRemarks();
+		
+		if(remarks!=null && !"".equals(remarks)){
+			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
+			
+			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]");
+			Matcher matcher = pattern.matcher(remarks);
 			while (matcher.find()) {
 				String value1 = matcher.group(1).replaceFirst("ENV=", "");
 				String value2 = matcher.group(2).replaceFirst("LIN=", "");
