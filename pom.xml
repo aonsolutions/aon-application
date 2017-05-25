@@ -171,6 +171,7 @@
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
 		<module>aon-pms-api</module>
+		<module>aon-dex-api</module>
 		<module>aon-sepe-api</module>
 		<module>aon-ingenet-api</module>
 
