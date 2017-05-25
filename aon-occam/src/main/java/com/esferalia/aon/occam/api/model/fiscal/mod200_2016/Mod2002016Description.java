@@ -498,9 +498,9 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BN618,"Intereses de demora (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN619,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN620,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN1234,"Abono de deducciones I+D+i por insuficiencia de cuota (opción art. 39.2 LIS). TOTAL");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN083,"Abono de deducciones I+D+i por insuficiencia de cuota (opción art. 39.2 LIS). (Estado)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN1332,"Abono de deducciones I+D+i por insuficiencia de cuota (opción art. 39.2 LIS). (D. Forales / Navarra)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1234,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). TOTAL");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN083,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). (Estado)");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1332,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1200,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). TOTAL");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1042,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1333,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (D. Forales / Navarra)");
@@ -516,13 +516,13 @@ public class Mod2002016Description {
 	}
 	
 	static {
-		// Aplicación de resultados - Base de reparto 
+		// Aplicacion de resultados - Base de reparto 
 		DESCRIPTION_MAP.put(Mod2002016Key.ID650,"P\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID651,"Remanente");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID652,"Reservas");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID653,"Total");
 		
-		// Aplicación de resultados - Aplicación
+		// Aplicacion de resultados - Aplicacion
 		DESCRIPTION_MAP.put(Mod2002016Key.ID654,"A reservas");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID1270,"Reservas de capitalizaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002016Key.ID1271,"Reservas de nivelaci\u00F3n");

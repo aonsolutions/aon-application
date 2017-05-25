@@ -992,7 +992,7 @@ public enum Mod2002016Key implements IMod200Key {
 	,LM1561(1561) ,LM1562(1562) ,LM1563(1563) ,LM1564(1564) ,LM1565(1565) ,LM1566(1566) ,LM1567(1567) ,LM1568(1568) ,LM1569(1569) ,LM1570(1570)
 	
 	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria
-	,LM393(393)	/*,LM150(150)	,LM506(506)*/
+	,LM393(393)	
 	
 	// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)
 	,LM1571(1571) ,LM1572(1572) ,LM1573(1573) ,LM1574(1574)

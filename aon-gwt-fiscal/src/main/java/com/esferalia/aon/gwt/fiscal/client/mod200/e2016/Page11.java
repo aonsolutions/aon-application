@@ -54,7 +54,7 @@ public class Page11 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		int row = 0;
-		for (final Mod2002016Key key : Mod2002016Constants.LIQUIDATION_III_KEYS_2) {
+		for (final Mod2002016Key key : Mod2002016Constants.LIQUIDATION_IV_KEYS) {
 			row = paintKey(table,key,row);
 			if (callback.getMod200Object().isVisible(key)) {
 				if (key == Mod2002016Key.BN585) {

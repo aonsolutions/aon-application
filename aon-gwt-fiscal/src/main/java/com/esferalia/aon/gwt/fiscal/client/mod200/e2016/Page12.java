@@ -24,12 +24,15 @@ public class Page12 extends PageAbs {
 	FlexTable table2;
 	@UiField(provided = true)
 	FlexTable table3;
+	@UiField(provided = true)
+	FlexTable table4;
 	
 	public Page12( Model200PageCallback callback ) {
 		super(callback);
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
+		table4 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
@@ -41,43 +44,39 @@ public class Page12 extends PageAbs {
 		table.getColumnFormatter().setWidth(1, "200px");
 		
 		int row = 0;
-		for (final Mod2002016Key key : Mod2002016Constants.LIQUIDATION_IV_KEYS_1) {
+		for (final Mod2002016Key key : Mod2002016Constants.LIQUIDATION_V_KEYS_1) {
 			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table,key,row);
 			}
 		}
 		
-		table1.setWidth("100%");
-		table1.setCellSpacing(0);
-		table1.getColumnFormatter().setWidth(1, "200px");
-		table1.getColumnFormatter().setWidth(2, "200px");
-		for (int i = 0; i < Mod2002016Constants.LIQUIDATION_IV_KEYS_2.length; i++) {
-			Mod2002016Key key = Mod2002016Constants.LIQUIDATION_IV_KEYS_2[i];
-			if (callback.getMod200Object().isVisible(key)) {
-				if (i%2 == 0) {
-					paintKey(table1,key, (i/2));
-				} else {
-					paintKeyField(table1,key,(i/2),2);
+		paintTable(table1, Mod2002016Constants.LIQUIDATION_V_KEYS_2, 2);
+		paintTable(table2, Mod2002016Constants.LIQUIDATION_V_KEYS_3, 2);
+		paintTable(table3, Mod2002016Constants.LIQUIDATION_V_KEYS_4, 2);
+		paintTable(table4, Mod2002016Constants.LIQUIDATION_V_KEYS_5, 3);
+	}
+	
+	private void paintTable(FlexTable table, Mod2002016Key[][] liquidationKeys, int numCols) {
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		for (int i = 0; i < numCols; i++  ) {
+			table.getColumnFormatter().setWidth((i+1), "200px");	
+		}
+		int row = 0;
+		for (Mod2002016Key[] keys : liquidationKeys) {
+			boolean paintDescription = true;	
+			for (int i = 0; i< keys.length; i++) {
+				if (keys[i] != null && callback.getMod200Object().isVisible(keys[i])) {
+					if (paintDescription) {
+						paintKeyDescription(table, keys[i], row, 0);
+						paintDescription = false;
+					}
+					paintKeyField(table,keys[i],row, i+1);
 				}
 			}
+			row++;
 		}
-
-		table2.setWidth("100%");
-		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(1, "200px");
-		table2.getColumnFormatter().setWidth(2, "200px");
-		for (int i = 0; i < Mod2002016Constants.LIQUIDATION_IV_KEYS_3.length; i++) {
-			Mod2002016Key key = Mod2002016Constants.LIQUIDATION_IV_KEYS_3[i];
-			if (i%2 == 0) {
-				if (callback.getMod200Object().isVisible(key)) {
-					paintKey(table2,key,(i/2));
-				}
-			} else {
-				if (key != null && callback.getMod200Object().isVisible(key)) {
-					paintKeyField(table2,key,(i/2),2);
-				}
-			}
-		}
+		
 		
 	}
 

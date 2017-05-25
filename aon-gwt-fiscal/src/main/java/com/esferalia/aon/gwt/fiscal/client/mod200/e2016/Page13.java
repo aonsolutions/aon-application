@@ -29,6 +29,7 @@ public class Page13 extends PageAbs {
 	TextBox justCanarias;
 	TextBox nrsAnexoIV;
 	TextBox nrsAnexoV;
+	TextBox justActivos;
 
 	public Page13( Model200PageCallback callback ) {
 		super(callback);
@@ -51,6 +52,10 @@ public class Page13 extends PageAbs {
 		nrsAnexoV.setVisibleLength(20);
 		nrsAnexoV.setStyleName(AON.AON_CSS.aonInputText());
 		
+		justActivos = new TextBox();
+		justActivos.setVisibleLength(20);
+		justActivos.setStyleName(AON.AON_CSS.aonInputText());
+
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
@@ -74,7 +79,7 @@ public class Page13 extends PageAbs {
 		for (final Mod2002016Key key : Mod2002016Constants.INCOME_DISTRIBUTION_KEYS_2) {
 			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table1,key,row);
-				if (key == Mod2002016Key.ID1270 || key == Mod2002016Key.ID1271) {
+				if (key == Mod2002016Key.ID1270 || key == Mod2002016Key.ID1271 || key == Mod2002016Key.ID1522) {
 					table1.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
 				}
 				
@@ -83,15 +88,21 @@ public class Page13 extends PageAbs {
 
 		table2.setWidth("100%");
 		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(1, "300px");
+		table2.getColumnFormatter().setWidth(1, "200px");
 		paintDescription(table2, AON.MSG.nrsAnexoIII(), 0, 0, false);
 		table2.setWidget(0, 1, nrsAnexoIII);
-		paintDescription(table2, AON.MSG.justCanarias(), 1, 0, false);
-		table2.setWidget(1, 1, justCanarias);
-		paintDescription(table2, AON.MSG.nrsAnexoIV(), 2, 0, false);
-		table2.setWidget(2, 1, nrsAnexoIV);
-		paintDescription(table2, AON.MSG.nrsAnexoV(), 3, 0, false);
-		table2.setWidget(3, 1, nrsAnexoV);
+		
+		paintDescription(table2, AON.MSG.nrsAnexoIV(), 1, 0, false);
+		table2.setWidget(1, 1, nrsAnexoIV);
+		
+		paintDescription(table2, AON.MSG.nrsAnexoV(), 2, 0, false);
+		table2.setWidget(2, 1, nrsAnexoV);
+
+		paintDescription(table2, AON.MSG.justCanarias(), 3, 0, false);
+		table2.setWidget(3, 1, justCanarias);
+		
+		paintDescription(table2, AON.MSG.justActivos(), 4, 0, false);
+		table2.setWidget(4, 1, justActivos);
 		
 	}
 
@@ -102,6 +113,7 @@ public class Page13 extends PageAbs {
 		justCanarias.setValue( callback.getMod200Object().getMod200().getJustCanarias());
 		nrsAnexoIV.setValue( callback.getMod200Object().getMod200().getNrsAnexoIV());
 		nrsAnexoV.setValue( callback.getMod200Object().getMod200().getNrsAnexoV());
+		justActivos.setValue( callback.getMod200Object().getMod200().getJustActivos());
 	}
 	@Override
 	public void populate() {
@@ -109,6 +121,7 @@ public class Page13 extends PageAbs {
 		callback.getMod200Object().getMod200().setJustCanarias(justCanarias.getValue());
 		callback.getMod200Object().getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());
 		callback.getMod200Object().getMod200().setNrsAnexoV(nrsAnexoV.getValue());
+		callback.getMod200Object().getMod200().setJustActivos(justActivos.getValue());
 	}
 
 }

@@ -1705,16 +1705,19 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aplicaci\u00F3n de resultados")
 	String incomeDistribution();
 	
-	@DefaultMessage("Presentaci\u00F3n de documentaci\u00F3n previa en la sede electr\u00F3nica")
+	@DefaultMessage("Presentaci\u00F3n de documentaci\u00F3n previa en la sede electr\u00F3nica (consigne el N\u00FAmero de Referencia de Sociedades (NRS))")
 	String documentsElectronicSede();
-	@DefaultMessage("Consigne el N\u00FAmero de Referencia de Sociedades (NRS) de la documentaci\u00F3n presentada por el Anexo III (Ajustes y deducciones)")
+	
+	@DefaultMessage("Documentaci\u00F3n presentada por el Anexo III (Ajustes y deducciones)")
 	String nrsAnexoIII();
-	@DefaultMessage("Consigne el N\u00FAmero de justifi cante identifi cativo de la declaraci\u00F3n informativa de ayudas R\u00E9gimen Econ\u00F3mico y Fiscal de Canarias") 
-	String justCanarias();
-	@DefaultMessage("Consigne el N\u00FAmero de Referencia de Sociedades (NRS) de la documentaci\u00F3n presentada por el Anexo IV (Personal investigador)")
+	@DefaultMessage("Documentaci\u00F3n presentada por el Anexo IV (Personal investigador)")
 	String nrsAnexoIV();
-	@DefaultMessage("Consigne el N\u00FAmero de Referencia de Sociedades (NRS) del documento normalizado presentada por el Anexo V")
+	@DefaultMessage("Documento normalizado presentada por el Anexo V")
 	String nrsAnexoV();
+	@DefaultMessage("N\u00FAmero de justificante identificativo de la declaraci\u00F3n informativa de ayudas R\u00E9gimen Econ\u00F3mico y Fiscal de Canarias") 
+	String justCanarias();
+	@DefaultMessage("N\u00FAmero de justificante identificativo autoliquidaci\u00F3n de la prestaci\u00F3n patrimonial por conversi\u00F3n de activos (DA 13a LIS)")
+	String justActivos();
 	
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros.")
 	String deducibleLimitation();

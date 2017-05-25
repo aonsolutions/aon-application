@@ -572,9 +572,6 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN1433.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN517.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN081.toString(),new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN1234.toString(),new Boolean[]{FALSE,TRUE});
-		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN083.toString(),new Boolean[]{FALSE,TRUE});
 		
 		// Desglose Casilla 565
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN565.toString(),new Boolean[]{FALSE,TRUE});
@@ -631,14 +628,18 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN582.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN592.toString(),new Boolean[]{TRUE,TRUE});
 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN599.toString(),new Boolean[]{TRUE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN600.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN599.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN600.toString(),new Boolean[]{FALSE,TRUE});
 		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN611.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN612.toString(),new Boolean[]{FALSE,TRUE});
 		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN1234.toString(),new Boolean[]{FALSE,TRUE});
-		
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN1200.toString(),new Boolean[]{FALSE,TRUE});
+
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM150.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM506.toString(),new Boolean[]{FALSE,TRUE});
+
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN621.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN622.toString(),new Boolean[]{FALSE,TRUE});
 				

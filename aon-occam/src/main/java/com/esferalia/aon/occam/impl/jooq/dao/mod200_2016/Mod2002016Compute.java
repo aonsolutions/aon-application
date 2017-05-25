@@ -740,17 +740,32 @@ public class Mod2002016Compute {
 	}
 	
 	static { // LIQUIDACION V
-		
+		// Cuota del ejercicio a ingresar o a devolver (Estado)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN599,
-				"C0028?(TR625 / 100 * (BN592-BN595-BN596-BN597-BN083-BN1042)):(BN592-BN595-BN596-BN597-BN083-BN1042)");
+				"C0028"
+				+ "?((TR625/100) * (BN592-BN595-BN596-BN597))"
+				+ ":(BN592-BN595-BN596-BN597)");
+		
+		// Cuota del ejercicio a ingresar o a devolver (D. Forales / Navarra)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN600,
 				"(C0028 && TR625 != 0 && TR625 != 100)"
-				+ "?((TR626+TR627+TR628+TR629) / 100 * (BN592-BN595-BN596-BN597-BN083-BN1042))"
+				+ "?((TR626+TR627+TR628+TR629) / 100 * (BN592-BN595-BN596-BN597))"
 				+ ":(0.0)");
+		
+		// Cuota diferencial (Estado)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN611,"BN599-(BN601+BN603+BN605)");
+		
+		// Cuota diferencial (D. Forales / Navarra)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN612,"C0028?BN600-(BN602+BN604+BN606):0.0");
+		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN1234,"BN083 +BN1332");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN1200,"BN1042+BN1333");
+		
+		// Liquido a ingresar o a devolver (Estado)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN621,"BN611+BN615+BN633+BN617+BN619-BN083-BN1042");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN622,"C0028?BN612+BN616+BN642+BN618+BN620-BN1332-BN1333:0.0");
+		
+		// Liquido a ingresar o a devolver (D. Forales / Navarra)
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.BN622,"C0028?(BN612+BN616+BN642+BN618+BN620-BN1332-BN1333):0.0");
 	}
 	
 	static { // APLICACION DE RESULTADOS
