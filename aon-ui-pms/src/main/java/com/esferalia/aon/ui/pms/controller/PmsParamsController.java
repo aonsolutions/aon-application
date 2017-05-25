@@ -50,6 +50,11 @@ public class PmsParamsController implements Serializable {
 	private String simpleAvailabilityURL;
 	private String bookingURL;
 	private String hhgURL;
+	private String navSaleInvoiceURL;
+	private String navFinanceBatchURL;
+	private String navProductionURL;
+	private String navUsername;
+	private String navPassword;
 	private ProductCategory productionReportCategory;
 	private String productionReportOpenHour;
 	private String productionReportCloseHour;
@@ -418,6 +423,106 @@ public class PmsParamsController implements Serializable {
 		}
 	}
 
+	public String getNavSaleInvoiceURL() {
+		return navSaleInvoiceURL;
+	}
+	public void setNavSaleInvoiceURL(String navSaleInvoiceURL) {
+		this.navSaleInvoiceURL = navSaleInvoiceURL;
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_SALE_INVOICE_URL);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_NAV_SALE_INVOICE_URL.getValue());
+		}
+		appParam.setValue(navSaleInvoiceURL);
+		getParameters().put(AppParam.PMS_NAV_SALE_INVOICE_URL, appParam);
+	}
+	private void initializeNavSaleInvoiceURL() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_SALE_INVOICE_URL);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			setNavSaleInvoiceURL(appParam.getValue());
+		}
+	}
+
+	public String getNavFinanceBatchURL() {
+		return navFinanceBatchURL;
+	}
+	public void setNavFinanceBatchURL(String navFinanceBatchURL) {
+		this.navFinanceBatchURL = navFinanceBatchURL;
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_FINANCE_BATCH_URL);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_NAV_FINANCE_BATCH_URL.getValue());
+		}
+		appParam.setValue(navFinanceBatchURL);
+		getParameters().put(AppParam.PMS_NAV_FINANCE_BATCH_URL, appParam);
+	}
+	private void initializeNavFinanceBatchURL() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_FINANCE_BATCH_URL);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			setNavFinanceBatchURL(appParam.getValue());
+		}
+	}
+
+	public String getNavProductionURL() {
+		return navProductionURL;
+	}
+	public void setNavProductionURL(String navProductionURL) {
+		this.navProductionURL = navProductionURL;
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_PRODUCTION_URL);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_NAV_PRODUCTION_URL.getValue());
+		}
+		appParam.setValue(navProductionURL);
+		getParameters().put(AppParam.PMS_NAV_PRODUCTION_URL, appParam);
+	}
+	private void initializeNavProductionURL() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_PRODUCTION_URL);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			setNavProductionURL(appParam.getValue());
+		}
+	}
+
+	public String getNavUsername() {
+		return navUsername;
+	}
+	public void setNavUsername(String navUsername) {
+		this.navUsername = navUsername;
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_USERNAME);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_NAV_USERNAME.getValue());
+		}
+		appParam.setValue(navUsername);
+		getParameters().put(AppParam.PMS_NAV_USERNAME, appParam);
+	}
+	private void initializeNavUsername() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_USERNAME);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			setNavUsername(appParam.getValue());
+		}
+	}
+
+	public String getNavPassword() {
+		return navPassword;
+	}
+	public void setNavPassword(String navPassword) {
+		this.navPassword = navPassword;
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_PASSWORD);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_NAV_PASSWORD.getValue());
+		}
+		appParam.setValue(navPassword);
+		getParameters().put(AppParam.PMS_NAV_PASSWORD, appParam);
+	}
+	private void initializeNavPassword() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_NAV_PASSWORD);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			setNavPassword(appParam.getValue());
+		}
+	}
+
 	public ProductCategory getProductionReportCategory() {
 		return productionReportCategory;
 	}
@@ -629,6 +734,11 @@ public class PmsParamsController implements Serializable {
 		initializeSimpleAvailabilityURL();
 		initializeBookingURL();
 		initializeHhgURL();
+		initializeNavSaleInvoiceURL();
+		initializeNavFinanceBatchURL();
+		initializeNavProductionURL();
+		initializeNavUsername();
+		initializeNavPassword();
 		initializeProductionReportCategory();
 		initializeProductionReportOpenHour();
 		initializeProductionReportCloseHour();

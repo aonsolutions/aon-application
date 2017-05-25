@@ -5,6 +5,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="skipNewItemButtonEx" default="#{skipNewItemButton}"/>
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml">
 		<ui:param name="lookupInputValue" value="#{lookupTo.product.code}" />
 		<ui:param name="lookupInputSize" value="10" />
@@ -29,7 +31,8 @@
 		</ui:define>		
 
 		<ui:define name="afterLookupButtonContent">
-			<aon:if test="#{!skipNewButtonEx and lookupTo.product.id != null and (lookupTo.product.serializable or !empty lookupTo.product.category.detail)}">
+			<aon:if test="#{!skipNewButtonEx and !skipNewItemButtonEx and lookupTo.product.id != null and 
+							(lookupTo.product.serializable or !empty lookupTo.product.category.detail)}">
 				<aon:lookupButton 
 					windowTitle="#{newButtonTitle}"
 					styleClass="aon-icon-plus aon-noborder aon-vertical-align-top"
