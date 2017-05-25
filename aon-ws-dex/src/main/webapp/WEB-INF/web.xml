@@ -1,15 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.4">
+<web-app version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd 
+						http://xmlns.jcp.org/xml/ns/javaee 
+						http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
   <listener>
     <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
   </listener>
-  <servlet>
-    <servlet-name>DataLoadService</servlet-name>
-    <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DataLoadService</servlet-name>
-    <url-pattern>/DataLoadService</url-pattern>
-  </servlet-mapping>
+
+	<!-- WS Servlet -->
+	<servlet>
+		<servlet-name>DataLoadService</servlet-name>
+		<servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataLoadService</servlet-name>
+		<url-pattern>/DataLoadService</url-pattern>
+	</servlet-mapping>
+
+	<!-- NAV Invoice Unload Servlet -->
+	<servlet>
+        <servlet-name>NavInvoiceUnloadServlet</servlet-name>
+        <servlet-class>com.esferalia.aon.dex.servlet.nav.InvoiceUnloadServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NavInvoiceUnloadServlet</servlet-name>
+        <url-pattern>/NavInvoiceUnloadServlet</url-pattern>
+    </servlet-mapping>
+
 </web-app>
