@@ -454,6 +454,23 @@
 					</HTMLPanel>
 			    </p:PaperDialog>
 			    
+			    <!-- Dialogo para seleccionar el porcetaje de ERE que va a tener -->
+			    <p:PaperDialog ui:field="strikeDialog" styleName="{style.dialogBoxStyle}"
+					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
+					withBackdrop="true">
+					<a:CustomDialogBar ui:field="customDialogBarStrike" styleName="{style.marginTopCloseDialog}" caption="Porcentaje Huelga:"/>
+					<g:HTMLPanel ui:field="confirmStrikeContent"></g:HTMLPanel>
+					<HTMLPanel>
+					    <i:IronLabel>Porcentaje Huelga:</i:IronLabel>
+					    <g:DoubleBox ui:field="strikePercentBox" styleName="{style.widthDoubleEre}"></g:DoubleBox>
+					    <i:IronLabel>%</i:IronLabel>
+			        </HTMLPanel>
+			        <HTMLPanel class="buttons">
+						<p:PaperButton ui:field="dialogStrikeCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
+						<p:PaperButton ui:field="strikeDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
+					</HTMLPanel>
+			    </p:PaperDialog>
+			    
 				<!-- Dialogo para seleccionar fecha hasta... -->
 				<p:PaperDialog ui:field="dialogUntill" styleName="{style.dialogBoxStyle}"
 					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"

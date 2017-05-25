@@ -396,6 +396,15 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	PaperButton strikeDayButton;
 
 	@UiField
+	PaperDialog strikeDialog;
+	
+	@UiField
+	DoubleBox strikePercentBox;
+	
+	@UiField
+	PaperButton strikeDialogOk;
+	
+	@UiField
 	PaperButton ereDayButton;
 	
 	@UiField
@@ -632,7 +641,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				addStrikeDay();	
+				strikeDialog.open();	
 			}
 			
 		});
@@ -1004,8 +1013,17 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 	
 	@UiHandler("strikeDayButton")
-	public void onHuelgaClick(ClickEvent event) {
-		addStrikeDay();
+	public void onStrikeClick(ClickEvent event) {
+		//strikeDialog.open();
+		addStrikeDay(0);
+	}
+	
+	@UiHandler("strikeDialogOk")
+	public void onDialogStrikeClick(ClickEvent event) {
+		double cs = Double.parseDouble(strikePercentBox.getText());
+		//Window.alert("Porcentaje Huelga :"+cs);
+		strikeDialog.close();
+		addStrikeDay(cs);
 	}
 	
 	@UiHandler("ereDayButton")
@@ -1788,6 +1806,24 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		selectedDates.clear();
 	}
 	
+	private void applyStrikeDayTypeSelectedDates(double cs, DayType strikeDay) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> strikeDatesList = new LinkedList<Date>();
+		
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
+			if(pos != -1){
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(strikeDay, row, column);
+				strikeDatesList.add(cellsDates[row][column]);
+			}
+		}
+		calendarEmployeeInfo.setStrikeCoefficientDays(strikeDatesList, strikeDay, cs);
+		selectedDates.clear();
+	}
+	
 	private void changeYear(int change) {
 		int actualYear = Integer.parseInt(yearLabel.getText());
 		int newYear = actualYear + change;
@@ -1918,8 +1954,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void addNoWorkingDay() {
 		applyNonWorkingDayTypeSelectedDates(-1.00, DayType.NOWORKINGDAY);
 	}
-	private void addStrikeDay() {
-		applyDayTypeSelectedDates(DayType.STRIKEDAY);
+	private void addStrikeDay(double cs) {
+		applyStrikeDayTypeSelectedDates(cs, DayType.STRIKEDAY);
 	}
 	private void addEreDay(double ce) {
 		applyEREDayTypeSelectedDates(ce, DayType.EREDAY);
@@ -1987,7 +2023,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) huelga", new Command() {
 				@Override
 				public void execute() {
-					addStrikeDay();
+					strikeDialog.open();
 				}
 			});
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) ERE", new Command() {

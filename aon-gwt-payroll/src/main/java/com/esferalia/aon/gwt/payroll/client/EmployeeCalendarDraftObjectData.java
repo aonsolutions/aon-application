@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -32,6 +33,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date,Double> draftMapDaysHour;
 	private Map<Date, DayType> draftMapDaysType;
 	private Map<Date, Double> draftMapDaysCoefficientEre;
+	private Map<Date, Double> draftMapDaysCoefficientStrike;
 	
 	private Date startContract;
 	private Date endContract;
@@ -259,6 +261,35 @@ public class EmployeeCalendarDraftObjectData {
 		
 	}
 	
+	class SetStrikeEdit implements Undoable {
+
+		private Double oldStrike;
+		private Double newStrike;
+		private Date day;
+		
+		public SetStrikeEdit(Double oldT, Double newT, Date actualDay) {
+			this.oldStrike = oldT;
+			this.newStrike = newT;
+			this.day = actualDay;
+		}
+		
+		@Override
+		public void undo() {
+			if (oldStrike == null)
+				draftMapDaysCoefficientStrike.remove(day);
+			else
+				draftMapDaysCoefficientStrike.put(day, oldStrike);
+		}
+		
+		@Override
+		public void redo() {
+			draftMapDaysCoefficientStrike.put(day, newStrike);
+		}
+		
+	}
+	
+	
+	
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
 	public EmployeeCalendarDraftObjectData(Integer employeeId, Date startContract, Date endContract,
@@ -273,6 +304,8 @@ public class EmployeeCalendarDraftObjectData {
 		this.draftMapDaysHour = new HashMap<Date,Double>();
 		this.draftMapDaysType = new HashMap<Date,DayType>();
 		this.draftMapDaysCoefficientEre = new HashMap<Date,Double>();
+		this.draftMapDaysCoefficientStrike = new HashMap<Date,Double>();
+		
 		
 		this.startContract = startContract;
 		this.endContract = endContract;
@@ -417,6 +450,17 @@ public class EmployeeCalendarDraftObjectData {
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
 	
+	public void setStrikeCoefficientDays(List<Date> strikeDays, DayType strikeType, double cs) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Date day : strikeDays){
+			DayType oldType = draftMapDaysType.put(day, strikeType);
+			Double oldCS = draftMapDaysCoefficientStrike.put(day, cs);
+			undos.add(new SetTypeEdit(oldType, strikeType, day));
+			undos.add(new SetStrikeEdit(oldCS, cs, day));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
 	public void setWorkingDays(HashMap<Date, Double> compositeH, HashMap<Date, DayType> compositeT) {
 		List<Undoable> undos = new ArrayList<Undoable>();
 		for (Map.Entry<Date, Double> entry : compositeH.entrySet()) {
@@ -488,6 +532,58 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		return variablesList;
+	}
+	
+	public ArrayList<StringVariable> getVariablesListStrike(Date startDate, Date endDate) {
+
+		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		List<Date> orderedDraftDatesCS = draftMapDaysCoefficientStrike.keySet().stream().collect(Collectors.toList());
+		Collections.sort(orderedDraftDatesCS);
+		
+		CalendarVariable var = null;
+		Date dateBefore = null;
+		String name = "DIAS_HUELGA";
+		Integer contStrikeDays = 0;
+		
+		for(Date date : orderedDraftDatesCS){
+			
+			if(date.before(startDate))
+				continue;
+			if(date.after(endDate))
+				continue;
+			
+			if(isNext(date, dateBefore)){
+				contStrikeDays++;
+				var.setExpression(Integer.toString(contStrikeDays));
+				var.setEndDate(date);
+				dateBefore = DateUtils.copyDateOnly(date);
+				continue;
+			}else{
+				if(var != null){
+					variablesList.add(var);
+					contStrikeDays=0;
+				}	
+				
+				dateBefore = DateUtils.copyDateOnly(date);
+				contStrikeDays++;
+				
+				var = new CalendarVariable();
+				var.setImplicit(false);
+				var.setScope(Scope.SALARY); // DRAFT
+				var.setName(name);
+				var.setEndDate(date);
+				var.setStartDate(date);
+				var.setExpression(Integer.toString(contStrikeDays));
+			}	
+		}
+		
+		if(var != null){
+			//Window.alert(var.getName()+", StartDate :"+var.getStartDate()+", EndDate :"+var.getEndDate()+", Exp :"+var.getExpression());
+			variablesList.add(var);
+		}
+		
+		return variablesList;
+		
 	}
 	
 	public ArrayList<StringVariable> getVariablesListHolidays(Date startDate, Date endDate) {

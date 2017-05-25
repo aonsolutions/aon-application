@@ -306,6 +306,7 @@ public class SalaryDraftObject implements IContextProvider {
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListStrike(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
 		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		removeSalaryPart(salaryDraft);
@@ -360,6 +361,7 @@ public class SalaryDraftObject implements IContextProvider {
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListStrike(getDraftStartDate(), getDraftEndDate()));
 		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
 		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 		employeeCalendarDraftObjectData.getSalaryDraftChanged(salaryDraft);
