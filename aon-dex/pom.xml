@@ -17,6 +17,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.dex.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.pool</artifactId>
 			<version>${project.version}</version>

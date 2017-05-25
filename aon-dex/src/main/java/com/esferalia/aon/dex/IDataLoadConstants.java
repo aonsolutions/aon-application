@@ -20,4 +20,44 @@ public interface IDataLoadConstants {
 	String TO_MSG = "Hasta";
 	String WS_USER = "WebService";
 
+	String NAV_ACCOUNT = "CUENTA_NAV";
+	String NAME = "name";
+	String VALUE = "value";
+	String INVOICE = "invoice";
+	String SERIES = "series";
+	String NUMBER = "number";
+	String ISSUE_DATE = "issue_date";
+	String TOTAL = "total";
+	String RECTIFICATION_TYPE = "rectification_type";
+	String RECTIFICATION_INVOICE = "rectification_invoice";
+	String CUSTOMER = "customer";
+	String CUSTOMER_NAME = "customer_name";
+	String CUSTOMER_DOCUMENT = "customer_document";
+	String STREET_TYPE = "street_type";
+	String ADDRESS = "address";
+	String ADDRESS_NUMBER = "address_number";
+	String ADDRESS_EXT = "address_ext";
+	String ZIP = "zip";
+	String CITY = "city";
+	String PROVINCE = "province";
+	String COUNTRY = "country";
+	String RESERVATION = "reservation";
+	String CODE = "code";
+	String START_DATE = "start_date";
+	String END_DATE = "end_date";
+	String DETAIL = "detail";
+	String LINE = "line";
+	String DESCRIPTION = "description";
+	String ADVANCE = "advance";
+	String QUANTITY = "quantity";
+	String TAXABLE_BASE = "taxable_base";
+	String TAX = "tax";
+	String TAX_PERCENT = "tax_percent";
+	String TAX_QUOTA = "tax_quota";
+	String HOTEL = "hotel";
+
+	String EURO = "EUR";
+	String ANTICIPO = "ANTICIPO";
+	String SERVICIO = "SERVICIO";
+
 }
