@@ -25,11 +25,11 @@ import org.mvel2.util.MethodStub;
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.HideException;
@@ -39,7 +39,6 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -49,6 +48,7 @@ public class ContextFunctions {
 	private static final String _GROSS = "_BRUTO";
 	private static final String _SECTION = "_SECTION";
 	private static final String _PRORATION = "_PRORATION";
+	private static final String _FRACTIONATE = "_FRACTIONATE";
 	private static final String MONTHS_IMPL = "MESESIMPL";
 
 	public static class UselessGuaranteeException extends CheckException {
@@ -432,6 +432,7 @@ public class ContextFunctions {
 		};
 	}
 
+
 	public static Double proration(ExpressionContext context, Double amount) {
 		
 		Object payment = ExpressionContext.getCurrentBindings().get(PAYMENT_VARIABLE);
@@ -468,6 +469,33 @@ public class ContextFunctions {
 		return amount / extraMonths.size()  ;
 	}
 	
+	public static Double fractionate(Double amount) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.FRACTIONATE),
+						String.format("%s\\(%s,", _FRACTIONATE, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+
+	public static Double fractionate(ExpressionContext context, Double amount) {
+		double totalWorkedDays = 0.00;
+		for ( ITimedVariable<?> var: context.getVariables(ContextVariable.WORKED_DAYS) )
+			totalWorkedDays += ((Number) var.getValue(var.getPeriod())).doubleValue();
+		
+		if ( totalWorkedDays == 0.00 )
+			throw new ExpressionExceptionWrapper(new UndefinedContextVariablesException(ContextVariable.WORKED_DAYS));
+		
+		double currentWorkedDays = ((Number)ExpressionContext.getCurrentBindings().get(ContextVariable.WORKED_DAYS)).doubleValue();
+		
+		if ( currentWorkedDays == 0.00 )
+			throw new ExpressionExceptionWrapper(new UndefinedContextVariablesException(ContextVariable.WORKED_DAYS));
+
+		return amount * currentWorkedDays / totalWorkedDays;
+	}
+
 	private static Calendar parseExtraDate(String str, Date date) {
 		Matcher matcher =  Pattern.compile("(?<date>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?").matcher(str);
 		matcher.matches();
@@ -726,6 +754,23 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadFractionateFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		try {
+			Method _fractionate = ContextFunctions.class.getMethod("fractionate", ExpressionContext.class, Double.class);
+			MethodStub _FractionateStub = new MethodStub(_fractionate);
+			context.setVariable(_FRACTIONATE, _FractionateStub, startDate, endDate);
+			Method fractionate = ContextFunctions.class.getMethod("fractionate", Double.class);
+			MethodStub fractionateStub = new MethodStub(fractionate);
+			for ( Period p: context.getPeriods(ContextVariable.WORKED_DAYS))
+				context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, p.getStart(), p.getEnd());
+			
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+
+	}
+
 	public static void loadFunctions(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 		loadInputFunction(context, startDate, endDate);
@@ -742,6 +787,11 @@ public class ContextFunctions {
 		loadProrationFunction(context, startDate, endDate);
 	}
 	
+	public static void loadDaysFunctions(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		loadFractionateFunction(context, startDate, endDate);
+	}
+
 	public static void main(String[] args) throws Throwable {
 		Pattern pattern = Pattern.compile("(?<day>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?");
 		Matcher matcher =  pattern.matcher("1/12");
