@@ -159,7 +159,8 @@ public class QualitySheet extends Composite{
 				warehouse.setText(map.get("warehouse"));
 				number.setText(dataResponse.getNumber());
 				String transportDate =  map.get("transport_delivery_date");
-				if(transportDate != null && !"".equals(transportDate)){
+				if(transportDate != null && !"".equals(transportDate)
+						&& !"-".equals(transportDate)){
 					Date issueDate = Utils.parseDateTime(transportDate);
 					date.setText(Utils.formatDate(issueDate));
 					hour.setText(Utils.formatTime(issueDate));
