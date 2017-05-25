@@ -30,6 +30,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -715,6 +716,85 @@ public class SQLFunctionsTestCase extends
 	
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100.00, result.get(0).getValue());
+	}
+
+	
+	@Test
+	public void testFractionFunctionIX() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		Date startIT = add(startDate, DAY_OF_MONTH, 10);
+		Date endIT = add(startIT, DAY_OF_MONTH, 9);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, 
+				startIT, 
+				endIT, 
+				null);
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("FRACCIONAR(1000.00)", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(2, results.size());
+		
+		double monthDays = get(endDate, DAY_OF_MONTH);
+		double workedDays = monthDays - 10;
+		
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(add(startIT, DAY_OF_MONTH,-1), results.get(0).getPeriod().getEnd());
+		Assert.assertEquals(1000.00*10/workedDays, results.get(0).getValue());
+
+		Assert.assertEquals(add(endIT, DAY_OF_MONTH,1), results.get(1).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		Assert.assertEquals(1000.00*(monthDays-20)/workedDays, results.get(1).getValue());
+	}
+
+	@Test
+	public void testFractionFunctionX() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("FRACCIONAR(1000.00)", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(1, results.size());
+		
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		Assert.assertEquals(1000.00, results.get(0).getValue());
+
 	}
 	//------------------------------------------------------------------------
 	

@@ -149,6 +149,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
+import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.DomainPayments;
@@ -3380,6 +3381,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		// WEEK_HOURS, WORKED_DAYS and so on. These variables
 		//
 		loadDaysContextVariables(contractExpressionContext);
+		
+		ContextFunctions.loadDaysFunctions(contractExpressionContext, contractStartDate, contractEndDate);
 	}
 
 	protected ContractExpressionContext newContractExpressionContext(ExpressionContext expressionContext,
