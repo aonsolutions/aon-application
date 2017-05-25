@@ -1,17 +1,15 @@
 package com.code.aon.ui.sales.controller;
 
-import static com.code.aon.common.IProgression.FINISH_VALUE;
-
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.ui.common.ILongProcess;
-import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -21,8 +19,10 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 
-public class SalesElaborationProcess implements ILongProcess {
+public class SalesElaborationProcess implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private SalesController salesController;
 	
 	private SerializableListDataModel model;
@@ -59,6 +59,11 @@ public class SalesElaborationProcess implements ILongProcess {
 		return model;
 	}
 	
+	public void init() {
+		date = new Date();
+		model = null;
+	}
+	
 	public boolean isRowLineElaborable(){
 		if(getModel().isRowAvailable()){
 			SalesDetail detail = (SalesDetail) getModel().getRowData();
@@ -82,9 +87,8 @@ public class SalesElaborationProcess implements ILongProcess {
 		}
 		return null;
 	}
-
-	@Override
-	public void execute() {
+	
+	public void onFullExecute(ActionEvent event) {
 		Sales sales = (Sales) salesController.getTo();
 		SalesUtils utils = new SalesUtils();
 		List<SalesDetail> manufacturableList = utils.getElaborableList(sales);
@@ -96,14 +100,7 @@ public class SalesElaborationProcess implements ILongProcess {
 			manufacturableList.forEach(salesDetail -> {
 				utils.createElaboration(salesDetail, getDate(), getWarehouse().getId());
 			});
-			salesController.getProgressionState().setProgressionCurrentValue(FINISH_VALUE);
 		}
-	}
-	
-	public void onFullExecute(ActionEvent event) {
-		salesController.getProgressionState().start();
-		LongProcessThread thread = new LongProcessThread(this); 
-		thread.start();		
 	}
 
 	public void onExecute(ActionEvent event) {
