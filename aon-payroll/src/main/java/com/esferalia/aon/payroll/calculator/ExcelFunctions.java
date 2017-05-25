@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import org.mvel2.util.MethodStub;
 
@@ -206,4 +207,15 @@ public class ExcelFunctions {
 		}
 	}
 
+	public static Map<String, Object> load(Map<String, Object> context) {
+		for (Method method : ExcelFunctions.class.getDeclaredMethods()) {
+			Variable variable = method.getAnnotation(Variable.class);
+			if (variable != null) {
+				ContextVariable contextVariable = variable.value();
+				MethodStub methodStub = new MethodStub(method);
+				context.put(contextVariable.getName(), methodStub);
+			}
+		}
+		return context;
+	}
 }

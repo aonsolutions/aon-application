@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.tgss.creta;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
@@ -14,9 +16,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Month;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -35,7 +41,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -50,6 +58,9 @@ import net.aonsolutions.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
 import net.aonsolutions.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class TrabajadoresTramos {
+	
+	
+	
 
 	public TrabajadoresTramos() {
 		// TODO Auto-generated constructor stub
@@ -101,6 +112,8 @@ public class TrabajadoresTramos {
 		// create the parser
 		CommandLineParser parser = new GnuParser();
 
+		
+		
 		try {
 
 			// parse the command line arguments
@@ -237,10 +250,20 @@ public class TrabajadoresTramos {
 					
 					List<Period> cgcBasePeriods = new LinkedList<Period>();
 					
-					for ( ContextData cgcData: salary.getContextData().get(CGC_BASE.getName()) )
+					for ( ContextData cgcData: salary.getContextData().getOrDefault(CGC_BASE.getName(), Collections.emptyList()) )
 						cgcBasePeriods.add( new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+
+					Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
-					List<Period> periods = cgcBasePeriods;
+					for ( ContextData cgcData: salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList()) ) {
+						Period period = new Period(cgcData.getStartDate(), cgcData.getEndDate());
+						int insertionPoint = Collections.binarySearch(cgcBasePeriods, period);
+						if ( insertionPoint < 0 ) 
+							cgcBasePeriods.add((-(insertionPoint) - 1), period);
+					}
+
+					
+					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					for ( Period p: periods ) {
 						
 						TramoBuilder tramoBuilder  = new TramoBuilder();
@@ -253,9 +276,11 @@ public class TrabajadoresTramos {
 
 						Calendar end = Calendar.getInstance();
 						end.setTime(p.getEnd());
+						
 						tramoBuilder.setDiaHasta(end.get(Calendar.DATE));
 						tramoBuilder.setMesHasta(end.get(Calendar.MONTH)+1);
 						tramoBuilder.setAnhoHasta(end.get(Calendar.YEAR));
+						
 
 						Double diasCotizados = getContextData(salary, 
 										QUOTE_DAYS, 
@@ -266,11 +291,10 @@ public class TrabajadoresTramos {
 						
 						visit(salary, p.getStart(), p.getEnd(), new SalaryVisitor() {
 							DatoSolicitadoBuilder dataSolicitadoBuilder  = new DatoSolicitadoBuilder();
-
 							
 							@Override
 							public void visitTiempoCompletoNormal() {
-								// 2.1 Situaci√≥n de activo ‚Äúnormal‚Äù 
+								// 2.1 SituaciÛn de activo "normal" 
 								// 2.1.1 Trabajador a Tiempo Completo  
 
 								// Base de contingencias comunes
@@ -297,24 +321,29 @@ public class TrabajadoresTramos {
 							
 							@Override
 							public void visitTiempoParcialNormal() {
-								// 2.1 Situaci√≥n de activo ‚Äúnormal‚Äù 
+								// 2.1 SituaciÛn de activo "normal" 
 								visitTiempoCompletoNormal();
 								// 2.1.1 Trabajador a Tiempo Parcial
-								// N¬∫ horas realizadas  a tiempo parcial 
+								// N horas realizadas  a tiempo parcial 
 								dataSolicitadoBuilder.setTipo("H");
 								dataSolicitadoBuilder.setCodigo("01");
 								dataSolicitadoBuilder.setObligatorio(true);
-								// N¬∫ horas complementarias 
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas complementarias 
 								dataSolicitadoBuilder.setTipo("H");
 								dataSolicitadoBuilder.setCodigo("02");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de horas complementarias
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("537");
 								dataSolicitadoBuilder.setObligatorio(false);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
 							}
 							
 							@Override
 							public void visitGrupoCotizacionDiario() {
-								// Modalidad de Salario (Para grupos de cotizaci√≥n diario con retribuci√≥n mensual.)
+								// Modalidad de Salario (Para grupos de cotizaciÛn diario con retribuciÛn mensual.)
 								dataSolicitadoBuilder.setTipo("I");
 								dataSolicitadoBuilder.setCodigo("51");
 								dataSolicitadoBuilder.setObligatorio(false);
@@ -324,13 +353,13 @@ public class TrabajadoresTramos {
 							@Override
 							public void visitIncapacidadTemporal15PrimerosDias() {
 								// 2.2 Situaciones de Incapacidad Temporal  
-								// 2.2.1 Incapacidad Temporal 15 primeros d√≠as 
-								// Base de contingencias comunes en situaci√≥n de IT
+								// 2.2.1 Incapacidad Temporal 15 primeros dÌas 
+								// Base de contingencias comunes en situaciÛn de IT
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("500");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								// Base de Accidentes de Trabajo en situaci√≥n de IT
+								// Base de Accidentes de Trabajo en situaciÛn de IT
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("603");
 								dataSolicitadoBuilder.setObligatorio(true);
@@ -341,17 +370,17 @@ public class TrabajadoresTramos {
 							public void visitIncapacidadTemporalPagoDelegado() {
 								// 2.2 Situaciones de Incapacidad Temporal  
 								// 2.2.2 Incapacidad Temporal pago delegado 
-								// Base de contingencias comunes en situaci√≥n de IT
+								// Base de contingencias comunes en situaciÛn de IT
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("500");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								// Compensaci√≥n IT Contingencias Comunes
+								// CompensaciÛn IT Contingencias Comunes
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("563");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								// Base de Accidentes de Trabajo en situaci√≥n de IT
+								// Base de Accidentes de Trabajo en situaciÛn de IT
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("603");
 								dataSolicitadoBuilder.setObligatorio(true);
@@ -362,27 +391,109 @@ public class TrabajadoresTramos {
 							public void visitIncapacidadTemporalATEPPagoDelegado() {
 								// 2.2 Situaciones de Incapacidad Temporal  
 								// 2.2.3 Incapacidad Temporal de AT Y EP pago delegado 
-								// Base de contingencias comunes en situaci√≥n de IT
+								// Base de contingencias comunes en situaciÛn de IT
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("500");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								// Compensaci√≥n IT AT y EP
+								// CompensaciÛn IT AT y EP
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("663");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								// Base de Accidentes de Trabajo en situaci√≥n de IT
+								// Base de Accidentes de Trabajo en situaciÛn de IT
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("603");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
 							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoCompleto() {
+								// 2.3 Situaciones de Maternidad/Paternidad a 
+								//	   Tiempo Completo y Riesgos durante el
+								//	   embarazo/lactancia  
+								// 2.3.1 Maternidad/Paternidad Tiempo Completo 
+								// Base de contingencias comunes en situaciÛn de 
+								// Maternidad/Paternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("509");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situaciÛn de 
+								// Maternidad/Paternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("603");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitMaternidadPaternidadTiempoParcial() {
+								// 2.7 Reducciones de Jornada por Descanso por 
+								//	   Maternidad/Paternidad a Tiempo Parcial  
+								// 2.7.1 Maternidad/Paternidad Tiempo Parcial 
+
+								// N horas complementarias 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("02");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de horas complementarias
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("537");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de contingencias comunes 
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("500");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Horas Extras Fuerza Mayor
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("501");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("601");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas realizadas  a tiempo parcial 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("01");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas complementarias 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("02");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de horas complementarias
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("537");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								
+								// Base de contingencias comunes en situaciÛn de Maternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("535");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situaciÛn de Maternidad
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("635");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								
+							}
+							
+							
 						});
-						
 						
 						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd()));
 						tramoBuilder.setGrupoCotizacion(getContextData(QUOTE_GROUP.getName(), salary, p.getStart(), p.getEnd()));
+						
 						
 
 						trabajadorBuilder.addTramo(tramoBuilder.create());
@@ -396,6 +507,163 @@ public class TrabajadoresTramos {
 		;
 		
 		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMesBuilder.create());
+	}
+	
+	private static List<Period> merge(Salary salary, List<Period> periods) {
+		LinkedList<Period> cretaPeriods = new LinkedList<Period>();
+		
+		class Visitor implements  SalaryVisitor {
+			
+			SalaryVisitor standard = new SalaryVisitor(){
+				@Override
+				public void visitTiempoParcialNormal() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitTiempoCompletoNormal() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitGrupoCotizacionDiario() {
+					//cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitIncapacidadTemporal15PrimerosDias() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = it15PrimerosDias;
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegado() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegado() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoCompleto() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcial() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+			};
+
+			SalaryVisitor it15PrimerosDias = new SalaryVisitor(){
+				
+				private void visitOthers(){
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = standard;
+				}
+				
+				@Override
+				public void visitTiempoParcialNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitTiempoCompletoNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitGrupoCotizacionDiario() {
+					//visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporal15PrimerosDias() {
+					Period last = cretaPeriods.removeLast();
+					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegado() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegado() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoCompleto() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcial() {
+					visitOthers();
+				}
+			};
+			
+			private Period period ;
+			private SalaryVisitor state = standard;
+			
+			
+			public void setPeriod(Period period) {
+				this.period = period;
+			}
+
+			@Override
+			public void visitTiempoParcialNormal() {
+				state.visitTiempoParcialNormal();
+			}
+
+			@Override
+			public void visitTiempoCompletoNormal() {
+				state.visitTiempoCompletoNormal();
+			}
+
+			@Override
+			public void visitGrupoCotizacionDiario() {
+				state.visitGrupoCotizacionDiario();
+			}
+
+			@Override
+			public void visitIncapacidadTemporal15PrimerosDias() {
+				state.visitIncapacidadTemporal15PrimerosDias();
+			}
+
+			@Override
+			public void visitIncapacidadTemporalPagoDelegado() {
+				state.visitIncapacidadTemporalPagoDelegado();
+			}
+
+			@Override
+			public void visitIncapacidadTemporalATEPPagoDelegado() {
+				state.visitIncapacidadTemporalATEPPagoDelegado();
+			}
+			
+			@Override
+			public void visitMaternidadPaternidadTiempoCompleto() {
+				state.visitMaternidadPaternidadTiempoCompleto();
+			}
+			
+			@Override
+			public void visitMaternidadPaternidadTiempoParcial() {
+				state.visitMaternidadPaternidadTiempoParcial();
+			}
+		};
+		
+		Visitor visitor = new Visitor();
+
+		for ( Period p: periods ) {
+			visitor.setPeriod(p);
+			visit(salary, p.getStart(), p.getEnd(), visitor );
+		}
+		
+		return cretaPeriods;
+		
 	}
 	
 	
@@ -434,13 +702,16 @@ public class TrabajadoresTramos {
 		void visitIncapacidadTemporal15PrimerosDias();
 		void visitIncapacidadTemporalPagoDelegado();
 		void visitIncapacidadTemporalATEPPagoDelegado();
+		void visitMaternidadPaternidadTiempoCompleto();
+		void visitMaternidadPaternidadTiempoParcial();
 		
 	}
 	
 	private static void visit(Salary salary, Date startDate, Date endDate, SalaryVisitor visitor) {
 		String tc2 = getContextData(TC2.getName(),salary, startDate, endDate);
-
+		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
 		
+
 		boolean iT15primerosDias = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_1_3.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_4_15.getName(), salary, startDate, endDate) 
@@ -454,13 +725,37 @@ public class TrabajadoresTramos {
 		boolean atEPPagoDelegado = (
 		getSumContextData(ContextVariable.OCCUPATIONAL_DISEASE_DAYS.getName(), salary, startDate, endDate)
 		) > 0.00;
+		
+		boolean fullMaternity = 
+		getContextData(ContextVariable.MATERNITY_FACTOR.getName(), salary, startDate, endDate, 0.00)
+		 == 1.00;
 
-		boolean tiempoCompleto = ("14".indexOf(tc2.charAt(0)) != -1);
+		boolean fullPaternity = 
+		getContextData(ContextVariable.PATERNITY_FACTOR.getName(), salary, startDate, endDate, 0.00)
+		 == 1.00;
+
+		boolean partialMaternity = 
+		getContextData(ContextVariable.MATERNITY_FACTOR.getName(), salary, startDate, endDate, 1.00)
+		 < 1.00;
+
+		boolean partialPaternity = 
+		getContextData(ContextVariable.PATERNITY_FACTOR.getName(), salary, startDate, endDate, 1.00)
+		 < 1.00;
+
+		boolean tiempoCompleto = fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
 
 		if ( iT15primerosDias )
 			visitor.visitIncapacidadTemporal15PrimerosDias();
 		else if ( iTPagoDelegado )
 			visitor.visitIncapacidadTemporalPagoDelegado();
+		else if ( fullMaternity  )
+			visitor.visitMaternidadPaternidadTiempoCompleto();
+		else if ( fullPaternity  )
+			visitor.visitMaternidadPaternidadTiempoCompleto();
+		else if ( partialMaternity )
+			visitor.visitMaternidadPaternidadTiempoParcial();
+		else if ( partialPaternity )
+			visitor.visitMaternidadPaternidadTiempoParcial();
 		else if ( atEPPagoDelegado )
 			visitor.visitIncapacidadTemporalATEPPagoDelegado();
 		else if (tiempoCompleto)
@@ -469,6 +764,7 @@ public class TrabajadoresTramos {
 			visitor.visitTiempoParcialNormal();
 			
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(),salary, startDate, endDate);
+		//String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( Integer.parseInt(quoteGroup ) >= 8 )
 			visitor.visitGrupoCotizacionDiario();
 	}
@@ -492,4 +788,22 @@ public class TrabajadoresTramos {
 			data += Double.parseDouble(datas.get(i).getExpression());
 		return data;
 	}
+	
+	private static <T extends Object > T getContextData(String name, Salary salary, Date startDate, Date endDate, T def ) {
+		Map <String,Object> context = ExcelFunctions.load( new HashMap<String,Object>());
+		List<ContextData> datas= salary.getContextData(name, startDate, endDate);
+		T data = null;
+		for ( int i= 0; i < datas.size(); i++) {
+			try {
+				T nextData = (T) ExpressionContext.eval(datas.get(i).getExpression().trim(), context, def.getClass());
+				if ( data != null && !data.equals(nextData))
+					throw new RuntimeException();
+				data = nextData;
+			} catch ( Exception e  ) {
+				// Default?
+			}
+		}
+		return data == null ? def : data ;
+	}
+	
 }

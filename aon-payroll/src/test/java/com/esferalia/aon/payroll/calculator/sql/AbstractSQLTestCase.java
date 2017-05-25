@@ -963,6 +963,12 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
+			String expression, String quoteExpression, Byte month) {
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), concept, null, expression, "_P", quoteExpression, PaymentType.CRA_0004, month);
+	}
+
+
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
 			String expression, String quoteExpression, PaymentType type) {
 		addPayment(aonContext, contract, concept, null, expression, "_P", quoteExpression, type);
 	}
@@ -992,10 +998,41 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
 				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
 				.set(CONTRACT_PAYMENT.START_DATE, startDate)
-				.set(CONTRACT_PAYMENT.END_DATE, endDate).set(CONTRACT_PAYMENT.DESCRIPTION, description)
-				.set(CONTRACT_PAYMENT.EXPRESSION, expression).set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression).set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.END_DATE, endDate)
+				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal()).execute();
+
+	}
+
+	public static final void addPayment(AONContext aonContext, 
+			ContractRecord contract, 
+			Date startDate, 
+			Date endDate, 
+			PaymentConceptRecord concept,
+			String description, 
+			String expression, 
+			String irpfExpression, 
+			String quoteExpression, 
+			PaymentType type,
+			Byte month) {
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+				.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
+				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+				.set(CONTRACT_PAYMENT.START_DATE, startDate)
+				.set(CONTRACT_PAYMENT.END_DATE, endDate)
+				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
+				.set(CONTRACT_PAYMENT.MONTH, month )
+				.execute();
 
 	}
 

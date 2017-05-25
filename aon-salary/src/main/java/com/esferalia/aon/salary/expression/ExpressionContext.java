@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -285,6 +286,10 @@ public class ExpressionContext {
 
 	public static <T> T eval(String script, Class<T> type) {
 		return MVEL.eval(script, type);
+	}
+
+	public static <T> T eval(String script, Map<String,Object> context, Class<T> type) {
+		return MVEL.eval(script, context, type);
 	}
 
 	public static class ExpressionExceptionWrapper extends RuntimeException {
