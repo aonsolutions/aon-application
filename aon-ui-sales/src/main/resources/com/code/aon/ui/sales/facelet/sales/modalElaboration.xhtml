@@ -30,17 +30,19 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="ediFtpForm">
+				<aon:form id="elaborationForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="elaboration-accept"
-										value="#{bundle.aon_accept}"
-										actionListener="#{sales.onManufacture}"
+										value="#{bundle.warehouse_manufacture} #{bundle.aon_all}"
+										actionListener="#{sales.elaborationProcess.onFullExecute}"
 										reRender="showElaborationWindow"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+										oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<rich:componentControl for="elaborationModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener

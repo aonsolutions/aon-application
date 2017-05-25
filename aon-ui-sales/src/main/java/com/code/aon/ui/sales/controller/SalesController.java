@@ -877,7 +877,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	}
 	
 	public void onElaborationShow(ActionEvent event) throws ManagerBeanException {
-		getElaborationProcess().setDate(new Date());
+		getElaborationProcess().init();
 	}
 	
 	public void onPurchaseGenerationShow(ActionEvent event) throws ManagerBeanException {
