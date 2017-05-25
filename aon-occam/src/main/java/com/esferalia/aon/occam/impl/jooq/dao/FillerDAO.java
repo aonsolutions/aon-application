@@ -1,8 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
@@ -10,7 +13,9 @@ import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
@@ -18,10 +23,6 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
 
 import java.util.function.Function;
 
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -48,8 +50,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
-import com.esferalia.aon.occam.api.model.type.ContractModel;
-import com.esferalia.aon.occam.api.model.type.ContractStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -690,7 +690,7 @@ public class FillerDAO {
 		}
 	}
 	
-public static class IrpfDataFiller implements Function<Record, IrpfData> {
+	public static class IrpfDataFiller implements Function<Record, IrpfData> {
 		
 		@Override
 		public IrpfData apply(Record r) {
@@ -699,6 +699,18 @@ public static class IrpfDataFiller implements Function<Record, IrpfData> {
 					.setDomain(r.getValue(IRPF_DATA.DOMAIN))
 					.setDisability(r.getValue(IRPF_DATA.DISABILITY_LEVEL));
 			// TODO AÑADIR LOS PARÁMETROS QUE FALTAN.
+		}
+	}
+
+	public static class AgreementLevelCategoryFiller implements Function<Record, AgreementLevelCategory> {
+		
+		@Override
+		public AgreementLevelCategory apply(Record r) {
+			return new AgreementLevelCategory()
+					.setId(r.getValue(AGREEMENT_LEVEL_CATEGORY.ID))
+					.setDomain(r.getValue(AGREEMENT_LEVEL_CATEGORY.DOMAIN))
+					.setAgreementLevel(r.getValue(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+					.setDescription(r.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
 		}
 	}
 }

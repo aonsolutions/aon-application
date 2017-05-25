@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
@@ -374,5 +375,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface IrpfDataFilter{
 		Filter filter(IrpfDataProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface AgreementLevelCategoryFilter{
+		Filter filter(AgreementLevelCategoryProperties properties);
 	}
 }

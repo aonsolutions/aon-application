@@ -24,6 +24,7 @@ import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -33,6 +34,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
@@ -58,6 +60,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
+import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
@@ -838,5 +841,26 @@ public class PropertiesDAO {
 		@Override public Property<Double> getRequestIrpfProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.REQUEST_IRPF);}
 		@Override public Property<Byte> getContractTypeProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.CONTRACT_TYPE);}
 		@Override public Property<Byte> getCeutaMelillaProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.CEUTA_MELILLA);}
+	}
+	
+	protected static class AgreementLevelCategoryPropertiesDAO implements AgreementLevelCategoryProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, AgreementLevelCategoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(AgreementLevelCategoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(AGREEMENT_LEVEL_CATEGORY.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(AGREEMENT_LEVEL_CATEGORY.DOMAIN);}
+		@Override public Property<Integer> getAgreementLevelProperty() {return new FilterDAO.PropertyDAO<>(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION);}
+		
 	}
 }

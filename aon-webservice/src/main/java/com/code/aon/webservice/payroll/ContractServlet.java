@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.DisabiltyLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -87,6 +88,8 @@ public class ContractServlet extends HttpServlet{
 				g.getContractProperty().eq(contract.getId()));
 			LinkedList<Double> fixedDoubleList = new LinkedList<>();fixedDoubleList.add(0.0);
 			LinkedList<Double> unfixedDoubleList = new LinkedList<>();unfixedDoubleList.add(0.0);
+			Double[] endFixed = new Double[]{0.0};
+			Double[] endUnfixed = new Double[]{0.0};
 				
 			if(list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).count() > 0){ 
 				list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).forEach(c -> {
@@ -103,12 +106,20 @@ public class ContractServlet extends HttpServlet{
 						} else {
 							unfixedDoubleList.add(coef * a.doubleValue());
 						}
+						if(end2.compareTo(ejFinalDate) >= 0){
+							if(b.equals("1") || b.equals("2") || b.equals("3")){
+								endFixed[0] = 1.0;
+							} else {
+								endUnfixed[0] = 1.0;
+							}
+						}
 					});
 				});	
 			} else {
 				Date start = AonDateUtils.getYear(contract.getStartDate()) == year ? contract.getStartDate() : ejInitDate;
 				Date end = contract.getEndDate() != null && AonDateUtils.getYear(contract.getEndDate()) == year ? contract.getEndDate() : ejFinalDate;	
-				list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0).forEach(h -> {
+				list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0)
+				.forEach(h -> {
 					Date start2 = h.getStartDate().compareTo(start) > 0 ? h.getStartDate() : start;
 					Date end2 = (h.getEndDate() != null && h.getEndDate().compareTo(end) < 0) ? AonDateUtils.addDays(h.getEndDate(),1) : end;
 					Long a = AonDateUtils.getDaysBetweenDates(start2, end2);
@@ -117,6 +128,13 @@ public class ContractServlet extends HttpServlet{
 						fixedDoubleList.add(a.doubleValue());
 					} else {
 						unfixedDoubleList.add(a.doubleValue());
+					}
+					if(end2.compareTo(ejFinalDate) >= 0){
+						if(b.equals("1") || b.equals("2") || b.equals("3")){
+							endFixed[0] = 1.0;
+						} else {
+							endUnfixed[0] = 1.0;
+						}
 					}
 				});
 			}
@@ -127,7 +145,7 @@ public class ContractServlet extends HttpServlet{
 			
 		//	Date start = AonDateUtils.getYear(contract.getStartDate()) == year ? contract.getStartDate() : ejInitDate;
 		//	Date end = contract.getEndDate() != null && AonDateUtils.getYear(contract.getEndDate()) == year ? contract.getEndDate() : ejFinalDate;
-			
+			Optional<AgreementLevelCategory> alc = PAYROLL.getAgreementLevelCategory(domainName, domainId, login, f -> f.getIdProperty().eq(contract.getAgreementLevelCategory()));
 			if(qg.isPresent()){
 				JSONObject json = new JSONObject();
 				String q = qg.get().getExpression();
@@ -141,7 +159,10 @@ public class ContractServlet extends HttpServlet{
 				Double unfixed = unfixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
 				json.put("fixed", AonMathUtils.round(fixed));
 				json.put("unfixed", AonMathUtils.round(unfixed));
-			
+				json.put("end_fixed", AonMathUtils.round(endFixed[0]));
+				json.put("end_unfixed", AonMathUtils.round(endUnfixed[0]));
+	
+				json.put("category", alc.isPresent() ? ToJSON.objectToJSON(alc.get().getId(), alc.get().getDescription()) : ToJSON.objectToJSON(-1, contract.getCategoryDescription()));
 				Integer disabilityId = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? irpfData.get().getDisability().intValue() : -1;
 				String disabilityName = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? DisabiltyLevel.values()[disabilityId].getName() : "-"; 
 				json.put("disability", ToJSON.objectToJSON(disabilityId, disabilityName));

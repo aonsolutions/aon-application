@@ -37,8 +37,12 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPage;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
@@ -86,6 +90,20 @@ public class printContractMediaList extends HttpServlet{
 		LOGGER.log(Level.INFO, "Print Salaried Staff - POST METHOD");
 	}
 	
+	public static class Rotate extends PdfPageEventHelper {
+		 
+        protected PdfNumber orientation = PdfPage.PORTRAIT;
+ 
+        public void setOrientation(PdfNumber orientation) {
+            this.orientation = orientation;
+        }
+ 
+        @Override
+        public void onStartPage(PdfWriter writer, Document document) {
+            writer.addPageDictEntry(PdfName.ROTATE, orientation);
+        }
+    }
+	
 	public static File createPdf(JSONObject json) {
 		File archivoPDF = null;
 		try {
@@ -96,9 +114,11 @@ public class printContractMediaList extends HttpServlet{
 		
 		Document document = new Document(PageSize.A4);
 		try {
-			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
+			Rotate event = new Rotate();
+			writer.setPageEvent(event);
+			event.setOrientation(PdfPage.LANDSCAPE);
 			document.open();
-	
 			writeDocument(document, json);	
 			
 		} catch (DocumentException | IOException e) {
@@ -126,11 +146,11 @@ public class printContractMediaList extends HttpServlet{
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		JSONObject company = json.getJSONObject("company");
-		
+
 		PdfPCell c010 = new PdfPCell(new Phrase("Empresa",getFont1()));
 		c010.setBorder(PdfPCell.NO_BORDER);
 		table0.addCell(c010);
-		
+
 		PdfPCell c019 = new PdfPCell(new Phrase(company.getString("name"),getFont2()));
 		c019.setBorder(PdfPCell.NO_BORDER);
 		table0.addCell(c019);
@@ -155,9 +175,9 @@ public class printContractMediaList extends HttpServlet{
 		
 		document.add(new Paragraph(" "));
 		
-		PdfPTable table1 = new PdfPTable(8);
+		PdfPTable table1 = new PdfPTable(9);
 		
-		float[] medidaCeldas1 = {1f,3f, 0f, 2f,1f,1f,1f,1f};
+		float[] medidaCeldas1 = {1f,3f, 3f, 0f, 2f,1f,1f,1f,1f};
 		try {
 			table1.setWidths(medidaCeldas1);
 		} catch (DocumentException e) {
@@ -200,9 +220,9 @@ public class printContractMediaList extends HttpServlet{
 		
 		document.add(table1);
 		
-		PdfPTable table = new PdfPTable(10);
+		PdfPTable table = new PdfPTable(11);
 		
-		float[] medidaCeldas = {1f,3f, 1f, 1f,1f,0.5f,0.5f,0.5f,0.5f,1f};
+		float[] medidaCeldas = {1f,3f,3f, 1f, 1f,1f,0.5f,0.5f,0.5f,0.5f,1f};
 		try {
 			table.setWidths(medidaCeldas);
 		} catch (DocumentException e) {
@@ -218,6 +238,10 @@ public class printContractMediaList extends HttpServlet{
 		PdfPCell c1 = new PdfPCell(new Phrase("Nombre",getFont1()));
 		c1.setBorder(PdfPCell.NO_BORDER);
 		table.addCell(c1);
+		
+		PdfPCell c1A = new PdfPCell(new Phrase("Categoria",getFont1()));
+		c1A.setBorder(PdfPCell.NO_BORDER);
+		table.addCell(c1A);
 		
 		PdfPCell c2 = new PdfPCell(new Phrase("Fecha Inicio",getFont1()));
 		c2.setBorder(PdfPCell.NO_BORDER);
@@ -267,6 +291,10 @@ public class printContractMediaList extends HttpServlet{
 			PdfPCell c11 = new PdfPCell(new Phrase(contract.getString("name"),getFont2()));
 			c11.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(c11);
+			
+			PdfPCell c11A = new PdfPCell(new Phrase(contract.getJSONObject("category").getString("name"),getFont2()));
+			c11A.setBorder(PdfPCell.NO_BORDER);
+			table.addCell(c11A);
 			
 			Date sd = dateTimeFormat.parse(contract.getString("start_date"));
 			PdfPCell c22 = new PdfPCell(new Phrase(dateFormat.format(sd),getFont2()));
@@ -326,7 +354,7 @@ public class printContractMediaList extends HttpServlet{
 		
 		PdfPTable tableN1 = new PdfPTable(7);
 		tableN1.setWidthPercentage(100);
-		float[] medidaCeldasN1 = {6f, 1f, 0.5f, 0.5f, 0.5f, 0.5f ,1f};
+		float[] medidaCeldasN1 = {9f, 1f, 0.5f, 0.5f, 0.5f, 0.5f ,1f};
 		try {
 			tableN1.setWidths(medidaCeldasN1);
 		} catch (DocumentException e) {
@@ -364,7 +392,7 @@ public class printContractMediaList extends HttpServlet{
 		PdfPTable tableN = new PdfPTable(3);
 		tableN.setWidthPercentage(100);
 
-		float[] medidaCeldasN = {7f, 2f, 1f};
+		float[] medidaCeldasN = {10f, 2f, 1f};
 		try {
 			tableN.setWidths(medidaCeldasN);
 		} catch (DocumentException e) {

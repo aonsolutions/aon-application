@@ -5,10 +5,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.impl.jooq.PayrollImpl;
@@ -134,6 +136,29 @@ public class PAYROLL {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPayroll().getIrpfDataStream(ctx, filter).findFirst();
+		} finally {
+			if (ctx != null){
+				ctx.close();
+			}
+		}
+	}
+	
+	public static Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(String domainName, Integer domainId, String login, AgreementLevelCategoryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getAgreementLevelCategoryStream(ctx, filter);
+		} finally {
+			if (ctx != null){
+				ctx.close();
+			}
+		}
+	}
+	public static Optional<AgreementLevelCategory> getAgreementLevelCategory(String domainName, Integer domainId, String login, AgreementLevelCategoryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getAgreementLevelCategoryStream(ctx, filter).findFirst();
 		} finally {
 			if (ctx != null){
 				ctx.close();

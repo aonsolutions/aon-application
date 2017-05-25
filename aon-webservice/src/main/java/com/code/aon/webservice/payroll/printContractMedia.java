@@ -24,6 +24,7 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -66,6 +67,13 @@ public class printContractMedia extends HttpServlet{
 		json.put("company", jsonCompany);
 		json.put("year", year);
 		
+		JSONArray categoryArray = new JSONArray();
+		PAYROLL.getAgreementLevelCategoryStream(domain.getName(), domain.getId(), login, f ->
+		f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+		.forEach(r -> {
+			categoryArray.put(ToJSON.objectToJSON(r.getId(), r.getDescription()));
+		});
+		json.put("categories", categoryArray);
 		File file = createPdf(json, resume, detail);
 		
         Utils.addCorsHeader(resp);
@@ -91,14 +99,19 @@ public class printContractMedia extends HttpServlet{
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		
-		Document document = new Document(PageSize.A4);
+		Document document = new Document();
+		if(resume){
+			document.setPageSize(PageSize.A4);
+		} else document.setPageSize(PageSize.A4.rotate());
 		try {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
 			document.open();
 			if(resume && detail){
-				printContractMediaList.writeDocument(document, json);
-				document.newPage();
 				printContractMediaResume.writeDocument(document, json);
+				document.setPageSize(PageSize.A4.rotate());
+				document.newPage();
+				printContractMediaList.writeDocument(document, json);
+
 			}else if(resume){
 				printContractMediaResume.writeDocument(document, json);
 			} else if(detail){

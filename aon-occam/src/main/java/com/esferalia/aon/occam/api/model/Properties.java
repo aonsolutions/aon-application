@@ -967,4 +967,11 @@ public interface Properties {
 		Property<Byte> getContractTypeProperty();
 		Property<Byte> getCeutaMelillaProperty();
 	}
+	
+	public interface AgreementLevelCategoryProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getAgreementLevelProperty();
+		Property<String> getDescriptionProperty();
+	}
 }
