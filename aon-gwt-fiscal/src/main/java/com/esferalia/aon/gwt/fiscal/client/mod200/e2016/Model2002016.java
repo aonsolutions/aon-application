@@ -644,7 +644,7 @@ public class Model2002016 extends ResizeComposite  {
 		private void checkAndShowPage(int page) {
 
 			if (mod200Object.isInitialized()) {
-				if (page > 10) {
+				if (page > 11) {
 					MessageDialog.warning("No disponible");
 				} else {
 					showPage(page);
