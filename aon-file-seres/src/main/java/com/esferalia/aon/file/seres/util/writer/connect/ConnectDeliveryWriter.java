@@ -213,24 +213,18 @@ public class ConnectDeliveryWriter {
 			String companyEdiCode, String customerEdiCode){
 		
 		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
-//		System.out.println(seh1pMap);
-		List<Integer> containerList = new ArrayList<>();
-		containerList.addAll(seh1pMap.keySet());
-		
-		seh1pMap.keySet().stream().sorted().forEach(key -> {
-			List<Integer> list = seh1pMap.get(key);
-			containerList.removeAll(list);	
-		});
-//		System.out.println(containerList);
-		
+		System.out.println(seh1pMap);
+		List<Integer> paletLines = new ArrayList<>();
+		paletLines.addAll(seh1pMap.keySet());
+		System.out.println(paletLines);
 		
 		SEH1P mainPalet = packageList.get(0);
 		mainPalet.seh1lList = new ArrayList<>();
 		
-		containerList.forEach(palet -> {
-			List<Integer> content = seh1pMap.get(palet);
-			content.forEach(contentIdx ->{
-				DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(contentIdx-1);
+		paletLines.forEach(palet -> {
+			List<Integer> boxList = seh1pMap.get(palet);
+			boxList.forEach(boxIdx -> {
+				DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(boxIdx-1);
 				if(!isPackageItem(detail.getItem())){
 					mainPalet.seh1lList.add(createSEH1LRecord(detail,
 							companyEdiCode, customerEdiCode));
@@ -240,21 +234,27 @@ public class ConnectDeliveryWriter {
 		
 		
 		Map<Integer, List<Integer>> seh1lMap = obtainSeh1lMap(delivery);
-//		System.out.println(seh1lMap);
-		int containerCount = containerList.size();
+		System.out.println(seh1lMap);
+		int paletCount = paletLines.size();
 		int linesCount = seh1lMap.values().size();
 		for(int idx=1; idx<packageList.size(); idx++){
 			SEH1P palet = packageList.get(idx);
 			palet.seh1lList = new ArrayList<>();
 			
-			List<Integer> content = seh1lMap.get(idx+containerCount+linesCount);
-			if(content!=null && !content.isEmpty()){
-				content.forEach(contentIdx ->{
-					DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(contentIdx-1);
+			int boxIdx = idx+paletCount+linesCount;
+			List<Integer> paletIdxList = new ArrayList<>();
+			seh1pMap.keySet().forEach(key -> {
+				if(seh1pMap.get(key).contains(boxIdx))
+					paletIdxList.add(key);
+			});
+			paletIdxList.forEach(paletIdx ->{
+				List<Integer> lineIdxList = seh1lMap.get(paletIdx);
+				lineIdxList.forEach(lineIdx ->{
+					DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(lineIdx-1);
 					palet.seh1lList.add(createSEH1LRecord(detail,
 							companyEdiCode, customerEdiCode));
 				});
-			}
+			});			
 		}
 		
 	}
