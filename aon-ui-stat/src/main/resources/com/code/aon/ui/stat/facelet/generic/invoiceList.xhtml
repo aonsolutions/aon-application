@@ -125,7 +125,9 @@
 								value="&#160;&#160;&#160;&#160;&#160;&#160;" target="_blank"
 								action="#{report.onExecute}"
 								actionListener="#{stat.onInvoicePdf}" styleClass="aon-icon-pdf">
-								<f:param name="reportKey" value="saleInvoice" />
+								<aon:actionListener method="#{printParams.onInit}" />
+								<f:setPropertyActionListener target="#{report.reportKey}"
+									value="#{printParams.saleInvoiceParams.invoicePrintTemplateValue}" />
 							</aon:htmlCommandLink>
 						</aon:column>
 						

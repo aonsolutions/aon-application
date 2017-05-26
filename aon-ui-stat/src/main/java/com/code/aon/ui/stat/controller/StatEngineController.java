@@ -1360,8 +1360,10 @@ public class StatEngineController implements Serializable {
 	}
 	
 	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
-		BasicController controller = (BasicController) FormUtil.getController("saleInvoice");
-		controller.select(event, ((Invoice) this.getInvoicesModel().getRowData()).getId());
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), ((Invoice) this.getInvoicesModel().getRowData()).getId());
+		FormUtil.getController("invoicePrint").setCriteria(criteria);
 	}
 	
 	public void  onSalesByCountry(ActionEvent event)  {
