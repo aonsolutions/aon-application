@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
@@ -8,11 +7,28 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Page13 extends PageAbs {
-
+	
+	private static String[] KEY_DESCRIPTIONS = new String[] {
+		 "Cuota del ejercicio a ingresar o a devolver."
+		,"1\u00BA Pago fraccionados 1\u00BA."
+		,"2\u00BA Pago fraccionados 2\u00BA."
+		,"3\u00BA Pago fraccionados 3\u00BA."
+		,"Cuota diferencial."
+		,"Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores."
+		,"Incremento por incumplimiento de requisitos SOCIMI."
+		,"Intereses de demora."
+		,"Importe ingreso/devoluci\u00F3n efectuada de la declaraci\u00F3n originaria."
+		,"Abono de deducciones I+D+i por insufi ciencia de cuota (opci\u00F3n art. 44.2 RDL 4/2004 y art. 39.2 LIS)"
+		,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS)"
+		,"L\u00EDquido a ingresar o a devolver."
+		,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)"
+		,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)"
+	};
+	
+	
 	interface PageBinder extends
 			UiBinder<Widget, Page13> {
 	}
@@ -25,103 +41,68 @@ public class Page13 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table2;
 	
-	TextBox nrsAnexoIII;
-	TextBox justCanarias;
-	TextBox nrsAnexoIV;
-	TextBox nrsAnexoV;
-	TextBox justActivos;
-
 	public Page13( Model200PageCallback callback ) {
 		super(callback);
 		table1 = new FlexTable();
 		table2 = new FlexTable();
-		
-		nrsAnexoIII = new TextBox();
-		nrsAnexoIII.setVisibleLength(20);
-		nrsAnexoIII.setStyleName(AON.AON_CSS.aonInputText());
-		
-		justCanarias = new TextBox();
-		justCanarias.setVisibleLength(20);
-		justCanarias.setStyleName(AON.AON_CSS.aonInputText());
-		
-		nrsAnexoIV = new TextBox();
-		nrsAnexoIV.setVisibleLength(20);
-		nrsAnexoIV.setStyleName(AON.AON_CSS.aonInputText());
-		
-		nrsAnexoV = new TextBox();
-		nrsAnexoV.setVisibleLength(20);
-		nrsAnexoV.setStyleName(AON.AON_CSS.aonInputText());
-		
-		justActivos = new TextBox();
-		justActivos.setVisibleLength(20);
-		justActivos.setStyleName(AON.AON_CSS.aonInputText());
-
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
-
+	
 	@Override
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		table.getColumnFormatter().setWidth(1, "200px");
+		
 		int row = 0;
-		for (final Mod2002016Key key : Mod2002016Constants.INCOME_DISTRIBUTION_KEYS_1) {
+		for (final Mod2002016Key key : Mod2002016Constants.COMBINED_TAXATION_1) {
 			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table,key,row);
 			}
 		}
-
-		table1.setWidth("100%");
-		table1.setCellSpacing(0);
-		table1.getColumnFormatter().setWidth(1, "200px");
-		row = 0;
-		for (final Mod2002016Key key : Mod2002016Constants.INCOME_DISTRIBUTION_KEYS_2) {
-			if (callback.getMod200Object().isVisible(key)) {
-				row = paintKey(table1,key,row);
-				if (key == Mod2002016Key.ID1270 || key == Mod2002016Key.ID1271 || key == Mod2002016Key.ID1522) {
-					table1.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
-				}
-				
+		
+		paintTable(table1, Mod2002016Constants.COMBINED_TAXATION_2);
+		paintTable(table2, Mod2002016Constants.COMBINED_TAXATION_3, 5);
+	}
+	
+	private void paintTable(FlexTable table, Mod2002016Key[] keys) {
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		table.getColumnFormatter().setWidth(1, "200px");	
+		int row = 0;
+		for (Mod2002016Key key : keys) {
+			if (keys != null && callback.getMod200Object().isVisible(key)) {
+				paintKeyDescription(table, key, row, 0);
+				paintKeyField(table,key,row, 1);
 			}
+			row++;
 		}
-
-		table2.setWidth("100%");
-		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(1, "200px");
-		paintDescription(table2, AON.MSG.nrsAnexoIII(), 0, 0, false);
-		table2.setWidget(0, 1, nrsAnexoIII);
-		
-		paintDescription(table2, AON.MSG.nrsAnexoIV(), 1, 0, false);
-		table2.setWidget(1, 1, nrsAnexoIV);
-		
-		paintDescription(table2, AON.MSG.nrsAnexoV(), 2, 0, false);
-		table2.setWidget(2, 1, nrsAnexoV);
-
-		paintDescription(table2, AON.MSG.justCanarias(), 3, 0, false);
-		table2.setWidget(3, 1, justCanarias);
-		
-		paintDescription(table2, AON.MSG.justActivos(), 4, 0, false);
-		table2.setWidget(4, 1, justActivos);
-		
+	}
+	
+	private void paintTable(FlexTable table, Mod2002016Key[][] liquidationKeys, int numCols) {
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		for (int i = 0; i < numCols; i++  ) {
+			table.getColumnFormatter().setWidth((i+1), "150px");	
+		}
+		table.getColumnFormatter().setWidth(0, "auto");
+		int row = 0;
+		for (Mod2002016Key[] keys : liquidationKeys) {
+			boolean paintDescription = true;	
+			for (int i = 0; i< keys.length; i++) {
+				if (keys[i] != null && callback.getMod200Object().isVisible(keys[i])) {
+					if (paintDescription) {
+						paintDescription(table, KEY_DESCRIPTIONS[row], row, 0, (row==0 || row == 4 || row == 11));
+						paintDescription = false;
+					}
+					paintKeyField(table,keys[i],row, i+1, 8);
+				}
+			}
+			row++;
+		}
 	}
 
 	@Override
-	public void dump() {
-		super.dump();
-		nrsAnexoIII.setValue( callback.getMod200Object().getMod200().getNrsAnexoIII());
-		justCanarias.setValue( callback.getMod200Object().getMod200().getJustCanarias());
-		nrsAnexoIV.setValue( callback.getMod200Object().getMod200().getNrsAnexoIV());
-		nrsAnexoV.setValue( callback.getMod200Object().getMod200().getNrsAnexoV());
-		justActivos.setValue( callback.getMod200Object().getMod200().getJustActivos());
-	}
-	@Override
-	public void populate() {
-		callback.getMod200Object().getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
-		callback.getMod200Object().getMod200().setJustCanarias(justCanarias.getValue());
-		callback.getMod200Object().getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());
-		callback.getMod200Object().getMod200().setNrsAnexoV(nrsAnexoV.getValue());
-		callback.getMod200Object().getMod200().setJustActivos(justActivos.getValue());
-	}
-
+	protected void populate() {}
 }

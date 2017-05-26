@@ -1702,6 +1702,19 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("D. Forales / Navarra")
 	String forales();
 	
+	@DefaultMessage("Tributaci\u00F3n conjunta al Estado, Pa\u00EDs Vasco y Navarra")
+	String combinedTaxation();
+	
+	@DefaultMessage("Aplicaci\u00F3n del concierto econ\u00F3mico con la Comunidad Aut\u00F3noma del Pa\u00EDs Vasco y del Convenio Econ\u00F3mico entre el Estado y la Comunidad Foral de Navarra")
+	String combinedTaxation1();
+
+	@DefaultMessage("C\u00E1lculo de los porcentajes de tributaci\u00F3n a cada una de las Administraciones")
+	String combinedTaxation2();
+	
+	@DefaultMessage("Determinaci\u00F3n del l\u00EDquido a ingresar o a devolver a cada una de las Administraciones")
+	String combinedTaxation3();
+	
+	
 	@DefaultMessage("Aplicaci\u00F3n de resultados")
 	String incomeDistribution();
 	

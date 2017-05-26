@@ -10,37 +10,26 @@
 			<g:SimplePanel ui:field="headerPanel"/>
 		 	<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.incomeDistribution}" />
+					<g:InlineLabel text="{msg.combinedTaxation1}" />
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
-					
-					
-		 			<div class="{aonResources.css.aonGroup}">
-						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.distributionBases}" />
-						</div>
-						<div class="{aonResources.css.aonGroupBody}">
-							<g:FlexTable ui:field="table"/>
-						</div>
-					</div>
-	
-		 			<div class="{aonResources.css.aonGroup}">
-						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.aplication}" />
-						</div>
-						<div class="{aonResources.css.aonGroupBody}">
-							<g:FlexTable ui:field="table1"/>
-						</div>
-					</div>
-					
-		 			<div class="{aonResources.css.aonGroup}">
-						<div class="{aonResources.css.aonGroupTitle}">
-							<g:InlineLabel text="{msg.documentsElectronicSede}" />
-						</div>
-						<div class="{aonResources.css.aonGroupBody}">
-							<g:FlexTable ui:field="table2"/>
-						</div>
-					</div>
+					<g:FlexTable ui:field="table"/>
+				</div>
+			</div>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.combinedTaxation2}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<g:FlexTable ui:field="table1"/>
+				</div>
+			</div>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.combinedTaxation3}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<g:FlexTable ui:field="table2"/>
 				</div>
 			</div>
 		</g:HTMLPanel>

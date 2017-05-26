@@ -332,10 +332,10 @@ public class Model2002016 extends ResizeComposite  {
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 
-//		saveButton.setVisible(false);
-//		removeButton.setVisible(false);
-//		aeatFileButton.setVisible(false);
-//		aeatPrintButton.setVisible(false);
+		saveButton.setVisible(false);
+		removeButton.setVisible(false);
+		aeatFileButton.setVisible(false);
+		aeatPrintButton.setVisible(false);
 		
 	}
 	
@@ -674,9 +674,10 @@ public class Model2002016 extends ResizeComposite  {
 		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII()	 ));
 		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() 	 ));
 		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() 	 	 ));
-		linkContainer.add(new WestFocusPanel(14,AON.MSG.incomeDistribution() ));
-		linkContainer.add(new WestFocusPanel(15,AON.MSG.deducibleLimitation()));
-		linkContainer.add(new WestFocusPanel(16,AON.MSG.idDocument()		 ));
+		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxation() 	 ));
+		linkContainer.add(new WestFocusPanel(15,AON.MSG.incomeDistribution() ));
+		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
+		linkContainer.add(new WestFocusPanel(17,AON.MSG.idDocument()		 ));
 		linkList.setWidget( linkContainer );
 	}
 	
@@ -728,9 +729,10 @@ public class Model2002016 extends ResizeComposite  {
 			if (i == 10) PAGES[i] = new Page10(cbk); 
 			if (i == 11) PAGES[i] = new Page11(cbk);
 			if (i == 12) PAGES[i] = new Page12(cbk); 
-			if (i == 13) PAGES[i] = new Page13(cbk); 
+			if (i == 13) PAGES[i] = new Page13(cbk);
 			if (i == 14) PAGES[i] = new Page14(cbk); 
 			if (i == 15) PAGES[i] = new Page15(cbk); 
+			if (i == 16) PAGES[i] = new Page16(cbk); 
 		}
 		return getPage(i);
 	}

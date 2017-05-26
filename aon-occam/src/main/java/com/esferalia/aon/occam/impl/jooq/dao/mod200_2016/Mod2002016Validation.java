@@ -26,7 +26,7 @@ public class Mod2002016Validation {
 	private static final int PAGE08 = 8;
 	private static final int PAGE09 = 9;
 	private static final int PAGE10 = 10;
-	private static final int PAGE13 = 13;
+	private static final int PAGE14 = 14;
 
 	private static final String EMPTY_BALANCE_MSG = "No se han cumplimentado datos en el Balance (Activo, patrimonio neto y pasivo).";
 
@@ -726,46 +726,46 @@ public class Mod2002016Validation {
 	}
 
 	static {	// PAGE 12
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID653
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID653
 				,MessageFormat.format(EQUAL_MSG,ID653.getDescription() + " (653)",ID666.getDescription()+ "(666)")
 				,MessageFormat.format(EQUAL_EXP,ID653.toString(),ID666.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID650
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID650
 				,MessageFormat.format(CHECK_SIGN_MSG,ID650.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID650.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID651
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID651
 				,MessageFormat.format(CHECK_SIGN_MSG,ID651.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID651.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID652
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID652
 				,MessageFormat.format(CHECK_SIGN_MSG,ID652.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID652.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID666
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID666
 				,MessageFormat.format(CHECK_SIGN_MSG,ID666.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID666.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID654
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID654
 				,MessageFormat.format(CHECK_SIGN_MSG,ID654.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID654.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID655
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID655
 				,MessageFormat.format(CHECK_SIGN_MSG,ID655.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID655.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID656
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID656
 				,MessageFormat.format(CHECK_SIGN_MSG,ID656.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID656.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID658
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID658
 				,MessageFormat.format(CHECK_SIGN_MSG,ID658.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID658.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID659
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID659
 				,MessageFormat.format(CHECK_SIGN_MSG,ID659.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID659.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID660
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID660
 				,MessageFormat.format(CHECK_SIGN_MSG,ID660.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID660.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID662
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID662
 				,MessageFormat.format(CHECK_SIGN_MSG,ID662.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID662.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID664
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID664
 				,MessageFormat.format(CHECK_SIGN_MSG,ID664.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID664.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,ID665
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID665
 				,MessageFormat.format(CHECK_SIGN_MSG,ID665.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID665.toString())));
 	}

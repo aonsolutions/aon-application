@@ -1,88 +1,39 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
-import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
-import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Page15 extends PageAbs {
 
-	interface PageBinder extends
-			UiBinder<Widget, Page15> {
-	}
-	
-	private static final PageBinder pageBinder = GWT
-			.create(PageBinder.class);
+	interface PageBinder extends UiBinder<Widget, Page15> {}
 
-	@UiField
-	Panel devPanel;
-	@UiField
-	Panel payPanel;
-	@UiField
-	Panel zeroPanel;
-	
-	@UiField
-	RadioButton devTypeR;
-	@UiField
-	RadioButton devTypeT;
-	@UiField
-	RadioButton payTypeE;
-	@UiField
-	RadioButton payTypeU;	
-	@UiField
-	CheckBox zeroQuota;
-	@UiField
-	DoubleBox amountD;
-	@UiField
-	DoubleBox amountP;
-	@UiField(provided=true)
-	IbanTextBox ibanD;
-	@UiField(provided=true)
-	IbanTextBox ibanP;
-	
+	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
+
+	@UiField(provided = true)
+	FlexTable table1;
+	@UiField(provided = true)
+	FlexTable table2;
+	@UiField(provided = true)
+	FlexTable table3;
+	@UiField(provided = true)
+	FlexTable table4;
 	
 	public Page15( Model200PageCallback callback ) {
 		super(callback);
-		ibanD = new IbanTextBox(getSuggestOracle(),true);
-		ibanP = new IbanTextBox(getSuggestOracle(),true);
+		table1 = new FlexTable();
+		table2 = new FlexTable();
+		table3 = new FlexTable();
+		table4 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		
-		callback.getMod200Object().register( new IMod200ChangeListener() {
-			
-			@Override
-			public void mod200Changed(Mod2002016 mod200) {
-				dumpPay(mod200);
-			}
-		});
 	}
 
 	@Override
@@ -90,205 +41,160 @@ public class Page15 extends PageAbs {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		table.getColumnFormatter().setWidth(1, "200px");
-		
-		Mod2002016Key key = Mod2002016Key.LQ552;
-		Label desc = new Label(key.getDescription() );
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(0, 0, desc);
-		table.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalBorderBottom());
-		FlowPanel panel = new FlowPanel();
-		BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
-		panel.add(code);
-		DoubleBox text = new DoubleBox();
-		text.setValue(callback.getMod200Object().getDoubleValue(key));
-		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		text.setEnabled(false);
-		panel.add(text);
-		getInputs().put(key, text);
-		panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-		table.setWidget(0, 1, panel);
-		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextRight());
-		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonNowrap());
-		
-		key = Mod2002016Key.LQ562;
-		desc = new Label(key.getDescription() );
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(1, 0, desc);
-		table.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalBorderBottom());
-		panel = new FlowPanel();
-		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
-		panel.add(code);
-		text = new DoubleBox();
-		text.setValue(callback.getMod200Object().getDoubleValue(key));
-		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		text.setEnabled(false);
-		panel.add(text);
-		getInputs().put(key, text);
-		panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-		table.setWidget(1, 1, panel);
-		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonTextRight());
-		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonNowrap());
-		
-		key = Mod2002016Key.BN621;
-		desc = new Label(key.getDescription() );
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(2, 0, desc);
-		table.getFlexCellFormatter().setStyleName(2, 0, AON.AON_CSS.aonFiscalBorderBottom());
-		panel = new FlowPanel();
-		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
-		panel.add(code);
-		text = new DoubleBox();
-		text.setValue(callback.getMod200Object().getDoubleValue(key));
-		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		text.setEnabled(false);
-		panel.add(text);
-		getInputs().put(key, text);
-		table.setWidget(2, 1, panel);
-		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonTextRight());
-		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonNowrap());
-	}
-
-	@Override
-	public void dump() {
-		super.dump();
-		dumpPay(callback.getMod200Object().getMod200());
-	}
-	
-	private void dumpPay(Mod2002016 mod200) {
-		devTypeR.setValue(false);
-		devTypeT.setValue(false);
-		amountD.setValue(0.0);
-		ibanD.setValue(null);
-		payTypeE.setValue(false);
-		payTypeU.setValue(false);
-		amountP.setValue(0.0);
-		ibanP.setValue(null);
-		zeroQuota.setValue(false);
-		zeroQuota.setEnabled(false);
-		if (AonStringUtils.isEmpty(mod200.getResultType())) {
-			payPanel.setVisible(true);
-			zeroPanel.setVisible(true);
-			devPanel.setVisible(true);
-		} else if ("D".equals( mod200.getResultType()) ) {
-			payPanel.setVisible(false);
-			zeroPanel.setVisible(false);
-			devPanel.setVisible(true);
-			devTypeR.setValue("R".equals(mod200.getDevType()));
-			devTypeT.setValue("D".equals(mod200.getDevType()));
-			ibanD.setValue(mod200.getIban(),mod200.getBic());
-			amountD.setValue( mod200.getAmount() );	
-		} else if ("I".equals( mod200.getResultType()) ) {
-			payPanel.setVisible(true);
-			zeroPanel.setVisible(false);
-			devPanel.setVisible(false);
-			payTypeU.setValue("U".equals(mod200.getPayType()));
-			payTypeE.setValue("H".equals(mod200.getPayType()));
-			ibanP.setValue(mod200.getIban(),mod200.getBic());
-			amountP.setValue( mod200.getAmount() );	
-		} else if ("C".equals( mod200.getResultType()) ) {
-			payPanel.setVisible(false);
-			zeroPanel.setVisible(true);
-			devPanel.setVisible(false);
-			zeroQuota.setValue(true);
-		}
-	}
-
-	public void populate(Mod2002016Object mod200Object) {
-		
-		DoubleVariable2016 dv =  mod200Object.getMod200().getVariable(Mod2002016Key.BN621);
-		Double value = dv==null?0.0:dv.getValue();
-		if (AonMathUtils.round(value) == 0.0) {
-			mod200Object.getMod200().setAmount(AonMathUtils.round(value));
-			mod200Object.getMod200().setResultType("C");
-			mod200Object.getMod200().setDevType(null);	
-			mod200Object.getMod200().setPayType(null);
-			mod200Object.getMod200().setIban(null);
-			mod200Object.getMod200().setBic(null);
-		} else if (AonMathUtils.round(value) < 0.0) {
-			mod200Object.getMod200().setAmount(AonMathUtils.round(value * -1));
-			mod200Object.getMod200().setResultType("D");
-			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"D");
-			mod200Object.getMod200().setPayType(null);
-			mod200Object.getMod200().setIban(ibanD.getValue());
-			mod200Object.getMod200().setBic(ibanD.getBic());
-		} else {
-			mod200Object.getMod200().setAmount(AonMathUtils.round(value));
-			mod200Object.getMod200().setResultType("I");
-			mod200Object.getMod200().setDevType(null);
-			mod200Object.getMod200().setPayType(payTypeE.getValue()?"H":"U");
-			mod200Object.getMod200().setIban(ibanP.getValue());
-			mod200Object.getMod200().setBic(ibanP.getBic());
-		}
-	}
-
-	@UiHandler("devTypeR")
-	void onDevTypeRClick(ClickEvent event) {
-	}
-	@UiHandler("devTypeT")
-	void onDevTypeTClick(ClickEvent event) {
-	}
-	@UiHandler("payTypeE")
-	void onPayTypeEClick(ClickEvent event) {
-	}
-	@UiHandler("payTypeU")
-	void onPayTypeUClick(ClickEvent event) {
-	}
-	@UiHandler("payTypeU")
-	void onZeroQuota(ClickEvent event) {
-	}
-	
-	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
-		@Override
-		public void requestSuggestions(final Request request,
-				final Callback callback) {
-			
-			Page15.this.callback.getMod200Object().getCompanyBanks ( 
-					new AsyncCallback<LinkedList<CompanyBank>>() {
-
-						public void onFailure(Throwable caught) {
-							Window.alert("Error while getting suggestions.");
-						}
-
-						public void onSuccess(LinkedList<CompanyBank> result) {
-							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
-							if (result != null) {
-								for (final CompanyBank cb : result) {
-									suggestions.add(new IbanTextBox.IbanSuggestion(cb));
-								}
-							}
-							Response resp = new Response(suggestions);
-							callback.onSuggestionsReady(request, resp);
-						}
-					});
-		}
-	}
-	
-	private SuggestOracle getSuggestOracle() {
-		return new EnterpriseSuggestOracle();
-	}
-	
-	@UiHandler("ibanD")
-	void onIbanD(SelectionEvent<Suggestion> event) {
-		Suggestion suggestion = event.getSelectedItem();
-		if (suggestion instanceof IbanSuggestion) {
-			IbanSuggestion is = (IbanSuggestion) suggestion;
-			ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
-		} else {
-			ibanD.setValue(suggestion.getReplacementString());	
+		int row = 0;
+		for (final Mod2002016Key key : Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_1) {
+			if (callback.getMod200Object().isVisible(key)) {
+				row = paintKey(table,key,row);
+			}
 		}
 		
-	}
-	@UiHandler("ibanP")
-	void onIbanP(SelectionEvent<Suggestion> event) {
-		Suggestion suggestion = event.getSelectedItem();
-		if (suggestion instanceof IbanSuggestion) {
-			IbanSuggestion is = (IbanSuggestion) suggestion;
-			ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
-		} else {
-			ibanP.setValue(suggestion.getReplacementString());	
+		table1.setWidth("100%");
+		table1.setCellSpacing(0);
+		table1.getColumnFormatter().setWidth(0, "auto");
+		row = 0;
+		table1.setWidget(row, 1, new Label(AON.MSG.liquiMsg2() ));
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonFontSmall());
+		table1.getFlexCellFormatter().setColSpan(row, 1, 2);
+		table1.setWidget(row, 3, new Label(AON.MSG.liquiMsg4() ));
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonFontSmall());
+		table1.getFlexCellFormatter().setColSpan(row, 3, 2);
+		++row;
+		table1.setWidget(row, 0, new Label(AON.MSG.fiscalYear() ));
+		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFontSmall());
+		table1.setWidget(row, 1, new Label(AON.MSG.liquiMsg21() ));
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonFontSmall());
+		table1.setWidget(row, 2, new Label(AON.MSG.remainder() ));
+		table1.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonFontSmall());
+		table1.setWidget(row, 3, new Label(AON.MSG.liquiMsg3() ));
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonFontSmall());
+		table1.setWidget(row, 4, new Label(AON.MSG.liquiMsg21() ));
+		table1.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonFontSmall());
+		table1.setWidget(row, 5, new Label(AON.MSG.remainder() ));
+		table1.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBold());
+		table1.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBorderBottom());
+		table1.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextCenter());
+		table1.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonFontSmall());
+		
+		for (int i = 0; i < Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_2.length; i++) {
+			Mod2002016Key key = Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_2[i];
+			if (key == null || callback.getMod200Object().isVisible(key)) {
+				int col = i % 5;
+				if (col == 0) {
+					++row;
+					paintDescription(table1,Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS1[row-2],row, 0, (col == 5));
+				}
+				if (key != null)
+					paintKeyField(table1,key,row,col+1,10);
+			}
+		}
+		
+		table2.setWidth("100%");
+		table2.setCellSpacing(0);
+		table2.getColumnFormatter().setWidth(1, "200px");
+		table2.getColumnFormatter().setWidth(2, "200px");
+		table2.getColumnFormatter().setWidth(3, "200px");
+		row = 0;
+		table2.setWidget(row, 0, new Label(AON.MSG.liquiMsg1() ));
+		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		table2.setWidget(row, 1, new Label(AON.MSG.liquiMsg2() ));
+		table2.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table2.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table2.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table2.setWidget(row, 2, new Label(AON.MSG.liquiMsg3() ));
+		table2.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table2.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table2.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		table2.setWidget(row, 3, new Label(AON.MSG.liquiMsg4() ));
+		table2.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table2.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table2.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		//++row;
+		for (int i = 0; i < Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_3.length; i++) {
+			Mod2002016Key key = Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_3[i];
+			if (callback.getMod200Object().isVisible(key)) {
+				int col = i%3;
+				if (col == 0) {
+					++row;
+					paintDescription(table2
+						, Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS1[row-1]
+						,row, 0, (col == 5));
+				}
+				paintKeyField(table2,key,row,col+1,10);
+			}
+		}
+		
+		table3.setWidth("100%");
+		table3.setCellSpacing(0);
+		table3.getColumnFormatter().setWidth(1, "250px");
+		row = 0;
+		table3.setWidget(row, 0, new Label(AON.MSG.liquiMsg1() ));
+		table3.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table3.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table3.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		table3.setWidget(row, 1, new Label(AON.MSG.liquiMsg2() ));
+		table3.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table3.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table3.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		table3.setWidget(row, 2, new Label(AON.MSG.liquiMsg3() ));
+		table3.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table3.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table3.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+		table3.setWidget(row, 3, new Label(AON.MSG.liquiMsg5() ));
+		table3.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table3.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table3.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table3.setWidget(row, 4, new Label(AON.MSG.liquiMsg4() ));
+		table3.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
+		table3.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
+		table3.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
+//		++row;
+		for (int i = 0; i < Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_4.length; i++) {
+			Mod2002016Key key = Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_4[i];
+			if (callback.getMod200Object().isVisible(key)) {
+				if (callback.getMod200Object().isVisible(key)) {
+					int col = i%4;
+					if (col == 0) {
+						++row;
+						paintDescription(table3
+							, Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS2[row-1]
+							,row, 0, (col == 5));
+					}
+					paintKeyField(table3,key,row,col+1,10);
+				}
+			}
+		}
+		
+		table4.setWidth("100%");
+		table4.setCellSpacing(0);
+		table4.getColumnFormatter().setWidth(1, "250px");
+		row = 0;
+		for (final Mod2002016Key key : Mod2002016Constants.DEDUCIBLE_LIMITATION_KEYS_5) {
+			if (callback.getMod200Object().isVisible(key)) {
+				row = paintKey(table4,key,row);
+			}
 		}
 	}
 
