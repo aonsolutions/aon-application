@@ -9,10 +9,12 @@ public class Parameters {
 	private String password;
 	private int domainId;
 	private String domainName;
-	private int invoiceId;
-	private String invoiceReferenceCode;
 	private Date fromDate;
 	private Date toDate;
+	private int invoiceId;
+	private String invoiceReferenceCode;
+	private int fbatchId;
+	private String fbatchDescription;
 
 	public String getWsUrl() {
 		return wsUrl;
@@ -49,6 +51,20 @@ public class Parameters {
 		this.domainName = domainName;
 	}
 
+	public Date getFromDate() {
+		return fromDate;
+	}
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
 	public int getInvoiceId() {
 		return invoiceId;
 	}
@@ -63,18 +79,18 @@ public class Parameters {
 		this.invoiceReferenceCode = invoiceReferenceCode;
 	}
 
-	public Date getFromDate() {
-		return fromDate;
+	public int getFbatchId() {
+		return fbatchId;
 	}
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
+	public void setFbatchId(int fbatchId) {
+		this.fbatchId = fbatchId;
 	}
 
-	public Date getToDate() {
-		return toDate;
+	public String getFbatchDescription() {
+		return fbatchDescription;
 	}
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
+	public void setFbatchDescription(String fbatchDescription) {
+		this.fbatchDescription = fbatchDescription;
 	}
 
 }

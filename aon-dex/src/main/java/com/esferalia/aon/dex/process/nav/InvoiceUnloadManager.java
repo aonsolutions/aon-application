@@ -76,10 +76,8 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 			int line = 0;
 
 			stmt = connection.prepareStatement(getInvoiceListSQL(params));
-			if (params.getFromDate() != null && params.getToDate() != null) {
-				stmt.setObject(1, params.getFromDate(), Types.DATE);
-				stmt.setObject(2, params.getToDate(), Types.DATE);
-			}
+			stmt.setObject(1, params.getFromDate(), Types.DATE);
+			stmt.setObject(2, params.getToDate(), Types.DATE);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				String invoice = rs.getString(INVOICE);
@@ -129,7 +127,7 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 				}
 			}
 
-			for(Facturas factura : facturasList.getFacturas()) {
+			for (Facturas factura : facturasList.getFacturas()) {
 				Create create = factory.createCreate();
 				create.setFacturas(factura);
 				params.setInvoiceId(Integer.parseInt(factura.getKey()));
@@ -222,9 +220,7 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 		query.append(" AND I.type = " + InvoiceType.SALES.ordinal());
 		query.append(" AND I.status = " + InvoiceStatus.SCORED.ordinal());
 		query.append(" AND I.signed = 0");
-		if (params.getFromDate() != null && params.getToDate() != null) {
-			query.append(" AND I.issue_date BETWEEN ? AND ?");
-		}
+		query.append(" AND I.issue_date BETWEEN ? AND ?");
 		query.append(" AND DA.id IS NULL");
 		query.append(" GROUP BY " + INVOICE + "," + ADVANCE + "," + TAX_PERCENT);
 		query.append(" ORDER BY " + ISSUE_DATE + "," + INVOICE + "," + ADVANCE + "," + TAX_PERCENT);

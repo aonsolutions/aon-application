@@ -55,6 +55,11 @@ public interface IDataLoadConstants {
 	String TAX_PERCENT = "tax_percent";
 	String TAX_QUOTA = "tax_quota";
 	String HOTEL = "hotel";
+	String FBATCH = "fbatch";
+	String FBATCH_DETAIL = "fbatch_detail";
+	String CONCEPT = "concept";
+	String PAY_METHOD = "pay_method";
+	String AMOUNT = "amount";
 
 	String EURO = "EUR";
 	String ANTICIPO = "ANTICIPO";
