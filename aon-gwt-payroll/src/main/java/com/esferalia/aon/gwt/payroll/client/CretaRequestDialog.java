@@ -125,12 +125,14 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	@UiField
 	Label messagesLabel;
 
-
 	@UiField
 	Element previousBasesTR;
 
 	@UiField
 	Element calcsDetailedTR;
+
+	@UiField
+	Element reftificationMarkTR;
 
 	@UiField
 	ListBox typeListBox;
@@ -140,6 +142,9 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 
 	@UiField
 	CheckBox calcsDetailedCheckBox;
+
+	@UiField
+	CheckBox reftificationMarkCheckBox;
 
 	private Callback callback;
 	
@@ -154,6 +159,8 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		setVisiblePreviousBases(false);
 		
 		setVisibleCalcsDetailed(false);
+		
+		setVisibleReftificationMark(false);
 
 		// Full CCC.
 		Column<CCC, String> fullNameColumn = new Column<CCC, String>(
@@ -369,6 +376,10 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		return calcsDetailedCheckBox.getValue();
 	}
 
+	public boolean reftificationMark(){
+		return reftificationMarkCheckBox.getValue();
+	}
+
 	public String getDescription(CCC ccc) {
 		return ccc.getCode();
 	}
@@ -402,6 +413,10 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		setVisible(visible, calcsDetailedTR);
 	}
 	
+	protected void setVisibleReftificationMark(boolean visible){
+		setVisible(visible, reftificationMarkTR);
+	}
+
 	protected void setVisible(boolean visible, Element el){
 		if ( visible )
 			el.getStyle().clearDisplay();

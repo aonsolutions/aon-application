@@ -106,6 +106,22 @@ public class Bases {
 		}
 
 	}
+	
+	public static class CustomizeBasesCallback implements BasesCallback {
+		boolean reftificationMark = false;
+		
+		public CustomizeBasesCallback setReftificationMark(boolean reftificationMark) {
+			this.reftificationMark = reftificationMark;
+			return this;
+		}
+		
+		// ------------------------------------------------------ BasesCallback
+		@Override
+		public void bases(net.aonsolutions.tgss.creta.jaxb.bases.Bases bases) {
+			if ( reftificationMark)
+				bases.setIndicadorRectificacion("S");
+		}
+	}
 
 	private static class MonthlySalaryCretaData implements CretaData {
 		@Override
@@ -315,7 +331,6 @@ public class Bases {
 	public static interface BasesCallback {
 
 		default void bases(net.aonsolutions.tgss.creta.jaxb.bases.Bases bases) {
-			
 		};
 
 
@@ -1224,9 +1239,12 @@ public class Bases {
 	// ------------------------------------------------------------------------
 
 	private static <D extends DatoSolicitado> void bases(
-			BasesBuilder basesBuilder, AONContext ctx,
-			Liquidacion<?, ?, ?, ?, ?> liquidacion, boolean aceptarBasesAnteriores,
+			BasesBuilder basesBuilder, 
+			AONContext ctx,
+			Liquidacion<?, ?, ?, ?, ?> liquidacion, 
+			boolean aceptarBasesAnteriores,
 			BasesCallback... cbs) {
+		
 		basesBuilder.addLiquidacion(
 				liquidacion(ctx, liquidacion, aceptarBasesAnteriores, cbs));
 	}
@@ -2014,6 +2032,11 @@ public class Bases {
 				.withDescription("Only send this NAF")
 				.create();
 
+		Option reftificationMark = OptionBuilder
+				.withLongOpt("reftification-mark")
+				.withDescription("Adds reftification mark '<IndicadorRectificacion>S</IndicadorRectificacion>'")
+				.create();
+
 		Option pretty = getPrettyOption();
 
 		Options options = new Options()
@@ -2028,7 +2051,10 @@ public class Bases {
 				.addOption(respuestaFile)
 				.addOption(defaults)
 				.addOption(skipExisting)
-				.addOption(naf);
+				.addOption(naf)
+				.addOption(reftificationMark)
+				;
+				
 		//@formatter:on
 
 		// create the parser
@@ -2061,7 +2087,9 @@ public class Bases {
 						.getOptionValues(respuestaFile.getLongOpt()))
 					respuestaFiles.add(new File(path));
 			}
-
+			
+			
+			
 			// @formatter:off
 			generate(connection,
 					cmd.hasOption(comments.getLongOpt()),
@@ -2071,7 +2099,10 @@ public class Bases {
 					cmd.getOptionValues(defaults.getLongOpt()), 
 					trabajadoresTramosFiles,
 					respuestaFiles, 
-					System.out);
+					System.out,
+					new CustomizeBasesCallback()
+					.setReftificationMark(cmd.hasOption(reftificationMark.getLongOpt()))
+					);
 			// @formatter:on
 
 		} catch (ParseException e) {
@@ -2135,7 +2166,9 @@ public class Bases {
 	}
 
 	public static void generate(Connection connection, boolean comments,
-			boolean skipExisting, boolean acceptPrevBases, String nafs[],
+			boolean skipExisting, 
+			boolean acceptPrevBases,
+			String nafs[],
 			String defaultsValues[],
 			Collection<InputStream> trabajadoresTramosIss,
 			Collection<InputStream> respuestaIss, OutputStream os,

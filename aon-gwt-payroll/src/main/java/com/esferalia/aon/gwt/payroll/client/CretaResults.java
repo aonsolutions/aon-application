@@ -2,8 +2,10 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -167,6 +169,37 @@ public class CretaResults extends Composite implements RequiresResize{
 		syncMessages();
 	}
 
+	public  void run() {
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES, 
+				DATA, jsFiles, 
+				new AsyncCallback<CretaService.JsBasesResult>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				Window.alert(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(JsBasesResult result) {
+				CretaResults.this.onBases(result);
+			}
+		});
+	}
+	
+	
+	public void removeParameter( CretaService.Parameter parameter) {
+		DATA.remove(parameter.name());
+	}
+	public void setParameter( CretaService.Parameter parameter, String value) {
+		DATA.put(parameter.name(), Collections.singleton(value));
+	}
+
+	public Optional<String> getParameter(CretaService.Parameter parameter){
+		return DATA.getOrDefault(parameter.name(), Collections.emptyList())
+		.stream()
+		.findFirst();
+	}
 	// ------------------------------------------------------------ @UiHandlers
 
 	@UiHandler("runButton")
@@ -279,6 +312,7 @@ public class CretaResults extends Composite implements RequiresResize{
 		defaults.add(unknownDato.getCode()+"="+value);
 	}
 	
+	
 	private void expandAll() {
 		errorsItem.setState(true);
 		warningsItem.setState(true);
@@ -290,23 +324,6 @@ public class CretaResults extends Composite implements RequiresResize{
 		warningsItem.setState(false);
 	}
 
-	private void run() {
-		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES, 
-				DATA, jsFiles, 
-				new AsyncCallback<CretaService.JsBasesResult>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				Window.alert(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(JsBasesResult result) {
-				CretaResults.this.onBases(result);
-			}
-		});
-	}
 
 	// ------------------------------------------------------------------------
 

@@ -156,6 +156,14 @@
 					<g:CheckBox  name="{CALCULOS_DESGLOSADOS.name}" ui:field="calcsDetailedCheckBox" checked="false"/>
 				</td>
 			</tr>
+			<tr ui:field="reftificationMarkTR"  >
+				<td class="{style.label}">
+					<g:Label text="Indicador Reftificaci&oacute;n" />
+				</td>
+				<td class="{style.field}" >
+					<g:CheckBox  name="{INDICADOR_RECTIFICACION.name}" ui:field="reftificationMarkCheckBox" checked="false"/>
+				</td>
+			</tr>
 			<tr>
 				<td class="{style.field}" colspan="2">&nbsp;</td>
 			</tr>

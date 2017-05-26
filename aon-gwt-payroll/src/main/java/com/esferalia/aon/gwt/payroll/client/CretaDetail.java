@@ -209,7 +209,11 @@ public abstract class CretaDetail extends Composite {
 	Set<JsFile> getSelected() {
 		return selectionModel.getSelectedSet();
 	}
-
+	
+	void setSelected( JsFile jsFile) {
+		selectionModel.clear();
+		selectionModel.setSelected(jsFile, true);
+	}
 	// ------------------------------------------------------------- UIHandlers
 
 	@UiHandler("fileUpload")

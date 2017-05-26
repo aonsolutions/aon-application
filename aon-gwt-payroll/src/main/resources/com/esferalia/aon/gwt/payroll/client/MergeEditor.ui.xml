@@ -36,7 +36,7 @@
 								<g:Label styleName="aon-outputText" text=" "/> 
 							</g:HTMLPanel>
 						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
+						<g:HorizontalPanel ui:field="toolBarPanel" styleName="aon-finding-toolbar" >
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar" /> 
 							</g:HTMLPanel>

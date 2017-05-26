@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -65,6 +66,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -248,6 +250,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		progressPanel.addAttachHandler(e ->  {
 			// Synchronize cret@ messages. 
 			IndeterminateTask syncTask = new IndeterminateTask();
+			syncTask.setDescription("Sincronizando mensajes");
 			progressPanel.showIndeterminateTask(syncTask);
 			sync( new MainCretaSyncCallback(syncTask));
 		});
@@ -258,7 +261,27 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		MainCreta.this.enterprisesCretaDetail.addAttachHandler( e -> MainCreta.this.enterprisesCretaDetail.onTrabajadoresYTramos());
 	}
+	
+	public void run(Map<CretaService.Parameter, String> params) {
+		CretaResults results = ( CretaResults ) resultsPanel.getWidget();
+		for ( Map.Entry<CretaService.Parameter, String> entry: params.entrySet() )
+			results.setParameter(entry.getKey(), entry.getValue());
+		results.run();
+	}
+	
 
+	public void reftification() {
+		run(Collections.singletonMap(CretaService.Parameter.INDICADOR_RECTIFICACION, isReftification() ? "off" : "on"));
+	}
+	
+	public boolean isReftification() {
+		return 
+		(( CretaResults ) resultsPanel.getWidget())
+		.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION)
+		.map( s -> "on".equalsIgnoreCase(s))
+		.orElse(false)
+		;
+	}
 	// --------------------------------------------------- Enterprises.Listener
 
 	@Override
@@ -490,6 +513,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
+			
+			
 
 			MergeEditor mergeEditor = new MergeEditor();
 			mergeEditor.setOrig(result.getBasesFile());
@@ -498,11 +523,17 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setLineNumbers(true);
 			mergeEditor.setOrig(result.getBasesFile());
 
+			String suffix = 
+					getSelected()
+					.stream()
+					.findFirst()
+					.map( f -> String.format(" %s %s", f.getCCC(), f.getFrom()))
+					.orElse("")
+				;
 			try {
-				
 				mergeEditor.setText(result.getChangedBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
 
@@ -511,7 +542,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					mergeEditor.setShowDifferences(false);
 					mergeEditor.setText(result.getDraftRequestFile());
 					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
 				} catch ( NoSuchElementException e2 ){
@@ -521,7 +552,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					basesEditor.setLineNumbers(true);
 					basesEditor.setText(result.getBasesFile());
 					basesEditor.setTitle(CretaService.File.BASES.getFilename());
-					basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					basesEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 					detailPanel.setWidget(basesEditor);
 					basesEditor.autoRefresh();
 				}
@@ -545,6 +576,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				result.getUnknown().length > 0)
 				showResultsPanel();
 
+			CheckBox reftification = new CheckBox("Reftificativa");
+			reftification.setValue(isReftification());
+			reftification.setStyleName("aon-finding-toolbar-item");
+			reftification.addClickHandler(e->MainCreta.this.reftification());
+			mergeEditor.add(reftification);
 		}
 		
 		@Override
@@ -570,7 +606,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			Button basesButton = new Button("SLD-FICHERO DE BASES");
 			basesButton.setStyleName("aon-finding-toolbar-item");
 			basesButton.addStyleName(AON.AON_ICON_SEGSOCIAL_SMALL);
-			basesButton.addClickHandler( e-> bases(jsFiles[filesEditor.getSelectedIndex()], this::onBases ));
+			basesButton.addClickHandler( e-> {
+				setSelected(jsFiles[filesEditor.getSelectedIndex()]);
+				bases(jsFiles[filesEditor.getSelectedIndex()], this::onBases ); 
+				});
 			
 			filesEditor.add(basesButton);
 			
@@ -1708,6 +1747,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 	
 	protected void bases(JsFile jsFile, Consumer<JsBasesResult> onBases) {
+		
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
 				Collections.emptyMap(),
 				Collections.singletonList(jsFile),
@@ -1724,6 +1764,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						onBases.accept(result);
 					}
 				});
+		
+		
 		
 	}
 	

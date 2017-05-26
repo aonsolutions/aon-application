@@ -14,6 +14,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -35,6 +37,9 @@ public class MergeEditor extends ResizeComposite {
 	@UiField
 	MenuItem saveMenuItem;
 
+	@UiField
+	HorizontalPanel toolBarPanel;
+
 	private String filename;
 
 	public MergeEditor() {
@@ -53,6 +58,10 @@ public class MergeEditor extends ResizeComposite {
 
 	public void setMode(String mode) {
 		mergeArea.setMode(mode);
+	}
+
+	public void add(IsWidget widget) {
+		toolBarPanel.add(widget);
 	}
 
 	public void setFoldGutter(boolean foldGutter) {
@@ -79,7 +88,7 @@ public class MergeEditor extends ResizeComposite {
 	public void setShowDifferences(boolean showDifferences ){
 		mergeArea.setShowDifferences(showDifferences);
 	}
-
+	
 	// -----------------------------------------------------------------------
 
 	public void autoRefresh() {

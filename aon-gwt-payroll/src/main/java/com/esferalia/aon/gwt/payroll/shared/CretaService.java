@@ -33,7 +33,8 @@ public interface CretaService {
 		TITULAR, 
 		DOCUMENTO, 
 		TIPO_DOCUMENTO,
-		CALCULOS_DESGLOSADOS
+		CALCULOS_DESGLOSADOS,
+		INDICADOR_RECTIFICACION,
 	}
 
 	public static enum File {

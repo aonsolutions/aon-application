@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
+import com.esferalia.aon.payroll.tgss.creta.Bases.CustomizeBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
 import com.esferalia.aon.payroll.tgss.creta.Calculo;
@@ -109,6 +110,7 @@ public class CretaServlet extends HttpServlet
 		}
 
 	}
+	
 
 	protected Connection getConnection() throws SQLException {
 		return AonServletUtils.getConnection();
@@ -124,6 +126,9 @@ public class CretaServlet extends HttpServlet
 		Connection connection = getConnection();
 		resp.setContentType("text/html;");
 
+		boolean indicadorReftificacion = AonStringUtils.equalsIgnoreCase("on",
+				req.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION.name()));
+
 		String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
 
 		List<String> defaultsList = new ArrayList<String>();
@@ -134,6 +139,10 @@ public class CretaServlet extends HttpServlet
 			defaultsList.addAll(Arrays.asList(paramDefaults));
 
 		String defaults[] = defaultsList.toArray(new String[defaultsList.size()]);
+		
+		CustomizeBasesCallback customBasesCb = new CustomizeBasesCallback()
+				.setReftificationMark(indicadorReftificacion)
+				;
 
 		EventsPickerBasesCallback pickerBasesCb = new EventsPickerBasesCallback();
 
@@ -164,7 +173,7 @@ public class CretaServlet extends HttpServlet
 		
 		try {
 			os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
-					trabajadoresYTramosIss, respuestasIss, pickerBasesCb));
+					trabajadoresYTramosIss, respuestasIss, customBasesCb, pickerBasesCb));
 		} catch (EmptyBasesException e) {
 			os.printf("\"full_bases\":\"\",\r\n");
 		}
@@ -200,7 +209,7 @@ public class CretaServlet extends HttpServlet
 		
 		try {
 			os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
-					trabajadoresYTramosIss, respuestasIss, noDiffsBasesCb, skippedCallback));
+					trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback));
 		} catch (EmptyBasesException e) {
 			os.printf("\"draft_request\":\"%s\",\r\n",
 					generateBorrador(e.getAutorizado(), noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
@@ -943,7 +952,7 @@ public class CretaServlet extends HttpServlet
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -3);
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -30);
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from)
@@ -958,7 +967,7 @@ public class CretaServlet extends HttpServlet
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -3);
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -30);
 
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
