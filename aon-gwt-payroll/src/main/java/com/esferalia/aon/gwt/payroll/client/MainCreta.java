@@ -523,13 +523,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setLineNumbers(true);
 			mergeEditor.setOrig(result.getBasesFile());
 
-			String suffix = 
-					getSelected()
-					.stream()
-					.findFirst()
-					.map( f -> String.format(" %s %s", f.getCCC(), f.getFrom()))
-					.orElse("")
-				;
+			String suffix = "";
+		//			getSelected()
+		//			.stream()
+		//			.findFirst()
+		//			.map( f -> String.format(" %s %s", f.getCCC(), f.getFrom()))
+		//			.orElse("")
+		//		;
 			try {
 				mergeEditor.setText(result.getChangedBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
