@@ -31,17 +31,25 @@ import junit.framework.Assert;
 public class Mod200Test {
 
 	private static AONContext ctx;
+	
+	// 	[*] Aquí debes poner el nombre del dominio de tu base de datos
 	private static String DOMAIN_NAME = "proorgan-masdemar.ecastellano.dev";
+	// 	[*] Aquí debes poner el ID del dominio de tu base de datos
 	private static int DOMAIN_ID = 804;
+	// 	[*] Aquí debes poner el login de un usuario con permisos.
 	private static String LOGIN = "luis";
+	
 	private static Mod2002016 mod200;
 	
+	// 	[*] Antes de comenzar el test, se carga el driver JDBC y se conecta a la base de datos.
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, LOGIN);
 	}
 	
+	// 	[*] JUNIT instancia esta clase cada vez que se ejecuta un método marcado con @Test
+	//		Este método se ejecuta antes de generar la instancia.
 	@Before
 	public void beforeInstance() throws ClassNotFoundException, SQLException, AonConnectionException {
 		System.out.println( "\n-- FIRST OF ALL\n" );
@@ -52,7 +60,12 @@ public class Mod200Test {
 	public void testBalanceActivoNormal() throws IOException {
 		System.out.println( "\n-- BALANCE: ACTIVO - NORMAL\n" );
 		// BALANCE: ACTIVO - NORMAL
+		
+		
+		// [*] Damos un valor aleatorio a todas las casillas que permiten introducción manual.
 		System.out.println( "\n\t-- random initialize\n" );
+		
+		// [*] El mapa "expected" simula los datos de pantalla.
 		EnumMap<Mod2002016Key,Double> expected = new EnumMap<Mod2002016Key,Double>(Mod2002016Key.class);
 		for (Mod2002016Key key : Mod2002016Constants.BALANCE_ACTIVE_KEYS) {
 			Boolean[] behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.toString());
@@ -60,6 +73,8 @@ public class Mod200Test {
 				expected.put(key, valueChanged(mod200,key));		
 			}
 		}
+		
+		// [*] Se calcula el modelo, las casillas que son calculadas, deben toman valor.
 		calculate(mod200);
 		
 		// BALANCE: ACTIVO - NORMAL - ACTIVO NO CORRIENTE
@@ -114,6 +129,12 @@ public class Mod200Test {
 				 + "  " +AonStringUtils.rightPad("DESCRIPTION", 110)
 				);		
 		System.out.println(AonStringUtils.repeat("=", 132));
+		
+		// [*] A partir de aquí vienen las comprobaciones.
+		// 		Se toman los valores de expected, se realiza la 
+		//		operación pertinente, que debe coincidoir con la casilla correspondiente del modelo. 
+		//
+
 		assertEquals(mod200,Mod2002016Key.BA102, BA102);
 		assertEquals(mod200,Mod2002016Key.BA111, BA111);
 		assertEquals(mod200,Mod2002016Key.BA115, BA115);
@@ -310,6 +331,7 @@ public class Mod200Test {
 	
 	@Test
 	public void testValidation() throws IOException {
+		// [*] se realiza una validación como último paso.
 		validate(mod200);
 	}
 
@@ -390,6 +412,9 @@ public class Mod200Test {
 		return value;
 	}
 	
+	
+	// [*] Se crea un modelo 200 - 2016. Se inicializa los tipos de balances.
+	//	   Se llama al método initializeMod2002016 para que cree la casillas adecuadas. 
 	private static Mod2002016 createNormal() {
 		System.out.println( "\n-- create\n" );
 		Mod2002016 mod200 = FISCAL.createMod2002016(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2016);
