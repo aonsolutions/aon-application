@@ -1336,13 +1336,40 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	}
 	
 	private void truckHandler(PaperIconButton truck) {
+		Boolean b1 = getCarrierPacking().getReceptionStartDate() != null;
+		
 		VerticalPanel panel = new VerticalPanel();
 		panel.setStyleName(AON.AON_CSS.aonWidthAll());
-
+		
+		if(b1){
+			PaperInput pesoBruto = new PaperInput();
+			pesoBruto.setLabel("Peso Bruto");
+			pesoBruto.setValue(getCarrierPacking().getGross().toString());
+			pesoBruto.setDisabled(true);
+			panel.add(pesoBruto);
+		}
+		
 		PaperInput quantity = new PaperInput();
-		quantity.setLabel("Cantidad");
+		quantity.setLabel(b1 ? "Tara" : "Peso Bruto");
 		panel.add(quantity);
     	
+		if(b1){
+			PaperInput pesoNeto = new PaperInput();
+			pesoNeto.setLabel("Peso Neto");
+			pesoNeto.setDisabled(true);
+			panel.add(pesoNeto);		
+			
+			quantity.addChangeHandler(new ChangeEventHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					Double d = Double.parseDouble(quantity.getValue());
+					Double net = getCarrierPacking().getGross() - d;
+					pesoNeto.setValue(net.toString());
+				}
+			});
+		}
+		
       	AonDialog dialog = new AonDialog("Recepcion", panel) {
 			
 			@Override protected void onCancel() {hide();}
@@ -1356,6 +1383,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					json.put("tare", new JSONNumber(tare));
 					json.put("net", new JSONNumber(getCarrierPacking().getGross() - tare));	
 					json.put("reception_end_date", new JSONString(Utils.formatDateTime(new Date())));
+					json.put("status", new JSONNumber(CarrierPackingStatus.FINISHED.ordinal()));
 					requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				} else {
 					Double gross = Double.parseDouble(quantity.getValue()); 
@@ -1370,9 +1398,14 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					@Override
 					public void onSuccess(JsCarrierPacking result) {
 						setCarrierPacking(result);
+						if(getCarrierPacking().getReceptionEndDate() != null){
+							parent.content();
+							parent.status.setSelectedIndex(CarrierPackingStatus.FINISHED.ordinal());
+						}
 						truck.getElement().getStyle().setColor(result.getReceptionEndDate() != null ? "red" : "green");
 						hide();
-					}
+			
+		}
 				});
 			}
 		};

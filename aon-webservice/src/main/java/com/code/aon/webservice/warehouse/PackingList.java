@@ -349,15 +349,17 @@ public class PackingList {
 			brutoLabel.setBorder(PdfPCell.NO_BORDER);
 			pesos.addCell(brutoLabel);
 			
-			PdfPCell bruto = new PdfPCell(new Phrase("-",getFont1()));
+			Double gross = json.getDouble("gross");
+			PdfPCell bruto = new PdfPCell(new Phrase(gross != null ? gross.toString() : "-",getFont1()));
 			bruto.setBorder(PdfPCell.NO_BORDER);
 			pesos.addCell(bruto);
 
 			PdfPCell taraLabel = new PdfPCell(new Phrase("Tara:",getFont1()));
 			taraLabel.setBorder(PdfPCell.NO_BORDER);
 			pesos.addCell(taraLabel);
-			
-			PdfPCell tara = new PdfPCell(new Phrase("-",getFont1()));
+
+			Double tare = json.getDouble("tare");
+			PdfPCell tara = new PdfPCell(new Phrase(tare != null ? tare.toString() : "-",getFont1()));
 			tara.setBorder(PdfPCell.NO_BORDER);
 			pesos.addCell(tara);
 			
@@ -365,7 +367,8 @@ public class PackingList {
 			netoLabel.setBorder(PdfPCell.NO_BORDER);
 			pesos.addCell(netoLabel);
 			
-			PdfPCell neto = new PdfPCell(new Phrase("-",getFont1()));
+			Double net = json.getDouble("net");
+			PdfPCell neto = new PdfPCell(new Phrase(net != null ? net.toString() : "-",getFont1()));
 			neto.setBorder(PdfPCell.NO_BORDER);
 			pesos.addCell(neto);
 			table.addCell(pesos);
