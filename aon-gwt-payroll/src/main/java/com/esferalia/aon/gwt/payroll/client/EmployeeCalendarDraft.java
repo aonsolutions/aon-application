@@ -1481,10 +1481,22 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	private void setMonthHours(int row, double monthHours) {
 		Label labelDay = new Label();
-		labelDay.setText(Double.toString(monthHours));
+		double monthHoursRound = roundDecimal(monthHours, 2);
+		labelDay.setText(Double.toString(monthHoursRound));
 		labelDay.setStyleName(style.cellStyle());
 		calendarGrid.setWidget(row, 38, labelDay);
 		cells[row][38] = new NoneCell();
+	}
+
+	private double roundDecimal(double monthHours, int decimalNum) {
+		double parteEntera, resultado;
+		resultado = monthHours;
+		parteEntera = Math.floor(resultado);
+		resultado = (resultado-parteEntera)*Math.pow(10, decimalNum);
+		resultado = Math.round(resultado);
+		resultado = (resultado/Math.pow(10, decimalNum))+parteEntera;
+		return resultado;
+		
 	}
 
 	/**
