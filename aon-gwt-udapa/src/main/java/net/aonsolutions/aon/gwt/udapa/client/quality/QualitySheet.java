@@ -350,9 +350,12 @@ public class QualitySheet extends Composite{
 	
 	private void calibresSiembra(){
 		String[] calibresSiembra ={
+				"Calibre 25-40",
 				"Calibre 28-35",
 				"Calibre 35-45",
+				"Calibre 40-50",
 				"Calibre 45-50",
+				"Calibre 45-55",
 				"Calibre 50-55",
 				"Calibre > 55",
 				"Sin Calibrar",
@@ -375,7 +378,7 @@ public class QualitySheet extends Composite{
 			caliberControl.setWidget(2+c, 1, hp);
 		}
 		
-		caliberControl.setWidget(9, 0, boldLabel("Total"));
+		caliberControl.setWidget(12, 0, boldLabel("Total"));
 		Label label3 = boldLabel( map.containsKey(QualitySheetCode.UFQCC15.getName()) 
 				? map.get(QualitySheetCode.UFQCC15.getName()) : "0.0");
 		label3.setWidth("52px");
@@ -392,7 +395,7 @@ public class QualitySheet extends Composite{
 		HorizontalPanel hp2 = new HorizontalPanel();
 		hp2.add(label3);
 		hp2.add(label4);
-		caliberControl.setWidget(9, 1, hp2);
+		caliberControl.setWidget(12, 1, hp2);
 	}
 	
 	private void defectControl() {
