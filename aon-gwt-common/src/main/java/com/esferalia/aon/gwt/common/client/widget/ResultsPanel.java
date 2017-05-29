@@ -30,10 +30,15 @@ public class ResultsPanel extends ResizeComposite implements ProvidesResize {
 		return centerPanel.getWidget();
 	}
 
+	public Widget getChild() {
+		return centerPanel.getWidget();
+	}
+
+	@Override
 	public void setWidget(Widget child) {
 		centerPanel.setWidget(child);
 	}
-
+	
 	public void setHTML(String html) {
 		// htmlPanel.add(new HTML(html));
 	}
