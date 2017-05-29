@@ -321,11 +321,14 @@ public class ReposServlet extends HttpServlet{
 							AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
 						
 					Registry registry = new Registry();
-
-					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), userName, f-> f.getDomainProperty().eq(domain.getId())
-							.and(f.getNameProperty().eq(json.getString(MSG.ENTERPRISE))));
+					Customer customer = new Customer();
 					
-					if(!faq) registry = AON.getRegistryFD(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
+					if(!faq) {
+						registry = AON.getRegistryFD(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
+						customer = AON.getCustomer(domain.getName(), domain.getId(), userName, f-> f.getDomainProperty().eq(domain.getId())
+								.and(f.getNameProperty().eq(json.getString(MSG.ENTERPRISE))));
+					}
+					
 					Task task = new Task()
 						.setDescription(json.getString("title"))
 						.setComments(json.getString("body"))

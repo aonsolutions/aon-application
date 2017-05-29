@@ -92,7 +92,9 @@ public class GithubServlet extends HttpServlet{
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())))
 			.setModificationUser(login).setModificationDate(Calendar.getInstance().getTime());
-		Registry user = AON.getTaskMember(domain.getName(), domain.getId(), login, assignee.getString("login"));
+		
+		Registry user = AON.getTaskHolder(domain.getName(), domain.getId(), login, f -> 
+			f.getNameProperty().like(assignee.getString("login")));
 		if(user.getId() != null)
 			AON.updateTaskUser(domain.getName(), domain.getId(), login, task.setTaskHolder(user.getId()));
 	}
@@ -103,7 +105,8 @@ public class GithubServlet extends HttpServlet{
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())))
 			.setModificationUser(login).setModificationDate(Calendar.getInstance().getTime());
-		Registry user = AON.getTaskMember(domain.getName(), domain.getId(), login, assignee.getString("login"));
+		Registry user = AON.getTaskHolder(domain.getName(), domain.getId(), login, f -> 
+			f.getNameProperty().like(assignee.getString("login")));
 		if(user.getId() != null && user.getId().equals(task.getTaskHolder()))
 			AON.updateTaskUser(domain.getName(), domain.getId(), login, task.setTaskHolder(null));
 	}

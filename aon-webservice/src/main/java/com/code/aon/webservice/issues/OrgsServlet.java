@@ -68,10 +68,12 @@ public class OrgsServlet extends HttpServlet{
 	private JSONArray getAllUsersJSON(Domain domain, String userName, final String filter, Integer workgroupId) {
 		JSONArray array = new JSONArray();
 		Stream<User> userList;
+		
 		if(workgroupId != -1) userList = AON.getTaskMemberWStream(domain.getName(), domain.getId(), userName, "%" + filter + "%",
-				workgroupId).map(new RegistryToUserFiller());
-		else userList = AON.getTaskMemberStream(domain.getName(), domain.getId(), userName,"%" + filter + "%")
-				.map(new RegistryToUserFiller());
+				workgroupId).filter(t -> t.getActive() != 0).map(new RegistryToUserFiller());
+		else userList = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getNameProperty().like("%" + filter + "%")).and(f.getActiveProperty().eq((byte)1)))
+				.sorted((e1,e2) -> e1.getName().compareTo(e2.getName())).map(new RegistryToUserFiller());
 		
 		array.put(new User().setId(-1).setLogin("Sin Asignar").toJSON());
 		userList.forEach(l->array.put(l.toJSON()));

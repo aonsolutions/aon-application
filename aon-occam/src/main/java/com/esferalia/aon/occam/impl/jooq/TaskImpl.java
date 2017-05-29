@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
@@ -175,13 +174,7 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
-	public Stream<Registry> getTaskMemberStream(AONContext ctx, String filter){
-		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskMemberStream(ctx, filter));	
-	}
-	
-	@Override
-	public Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
+	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskMemberWStream(ctx, filter,workgroupId));	
 	}
@@ -295,5 +288,11 @@ public class TaskImpl implements ITask {
 	public void deleteTaskEvent(AONContext ctx, TaskEventFilter filter) {
 		ctx.getDslContext().transaction(
 				configuration -> TaskDAO.deleteTaskEvent(ctx, filter));				
+	}
+
+	@Override
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskHolderStream(ctx, filter));
 	}
 }

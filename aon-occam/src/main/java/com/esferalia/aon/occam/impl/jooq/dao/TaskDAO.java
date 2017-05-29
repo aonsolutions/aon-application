@@ -58,8 +58,11 @@ import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -90,12 +93,19 @@ public class TaskDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.DOMAIN);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_HOLDER.TYPE);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_HOLDER.ACTIVE);}
-		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.USER_ID);}
-		@Override public Property<Integer> getCostProfileProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.COST_PROFILE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.TYPE);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.ACTIVE);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.USER_ID);}
+		@Override public Property<Integer> getCostProfileProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.COST_PROFILE);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
+		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
 	}
 	
 	protected static class TaskTagPropertiesDAO implements TaskTagProperties {
@@ -696,19 +706,13 @@ public class TaskDAO {
 		.execute();
 		return taskEvent;
 	}
-	
-	public static Stream<Registry> getTaskMemberStream(AONContext ctx, String filter){
-		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
-			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter)).orderBy(REGISTRY.NAME)
-			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
-	}
-	
-	public static Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
+
+	public static Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
 		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
 				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
 				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId)).orderBy(REGISTRY.NAME)
-			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
+			.fetch().stream().map(new TaskHolderFiller());
 	}
 	
 	public static Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter){
@@ -766,6 +770,14 @@ public class TaskDAO {
 				.where(WORKGROUP.ID.eq(wId))
 			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
 	}
+
+	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter){
+		return ctx.getDslContext().select()
+				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new TaskHolderFiller());
+	}
+
 	
 	public static TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter){
 		return ctx.getDslContext().select().from(TASK_HOLDER).where(TASK_HOLDER_PROPERTIES.getConditions(filter))
@@ -810,12 +822,38 @@ public class TaskDAO {
 	private static class FullTaskHolderFiller implements Function<TaskHolderRecord, TaskHolder> {
 		@Override
 		public TaskHolder apply(TaskHolderRecord t) {
-			return new TaskHolder().setId(t.getRegistry())
+			TaskHolder taskHolder = new TaskHolder();
+			taskHolder.setId(t.getRegistry());
+			return taskHolder
 					.setActive(t.getActive())
 					.setCostProfile(t.getCostProfile())
 					.setDomain(t.getDomain())
 					.setType(t.getType())
 					.setUserId(t.getUserId());
+		}
+	}
+	
+	private static class TaskHolderFiller implements Function<Record, TaskHolder> {
+		@Override
+		public TaskHolder apply(Record t) {
+			TaskHolder taskHolder = new TaskHolder();
+			taskHolder.setId(t.getValue(REGISTRY.ID));
+			taskHolder.setAlias(t.getValue(REGISTRY.ALIAS));
+			taskHolder.setName(t.getValue(REGISTRY.NAME));
+			taskHolder.setDocument(t.getValue(REGISTRY.DOCUMENT));
+			taskHolder.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(t.getValue(REGISTRY.SECURITY_LEVEL)));
+			taskHolder.setDocumentCountry(Country.valueOf(t.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
+			taskHolder.setDocumentType(DocumentType.values()[t.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			taskHolder.setNationality(Country.valueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
+			taskHolder.setSecurityLevel(SecurityLevel.values()[t.getValue(REGISTRY.SECURITY_LEVEL)]);
+			taskHolder.setType(t.getValue(REGISTRY.TYPE));	
+			
+			return taskHolder
+					.setActive(t.getValue(TASK_HOLDER.ACTIVE))
+					.setCostProfile(t.getValue(TASK_HOLDER.COST_PROFILE))
+					.setDomain(t.getValue(TASK_HOLDER.DOMAIN))
+					.setType(t.getValue(TASK_HOLDER.TYPE))
+					.setUserId(t.getValue(TASK_HOLDER.USER_ID));
 		}
 	}
 	

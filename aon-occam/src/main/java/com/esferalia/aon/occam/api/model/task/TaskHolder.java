@@ -2,10 +2,11 @@ package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
-public class TaskHolder implements Serializable{
+import com.esferalia.aon.occam.api.model.registry.Registry;
 
-	private Integer id; // registry
+@SuppressWarnings("serial")
+public class TaskHolder extends Registry implements Serializable{
+
 	private Integer domain;
 	private Byte type;
 	private Byte active;
@@ -13,15 +14,6 @@ public class TaskHolder implements Serializable{
 	private Integer costProfile;
 	
 	public TaskHolder() {}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public TaskHolder setId(Integer id) {
-		this.id = id;
-		return this;
-	}
 
 	public Integer getDomain() {
 		return domain;

@@ -510,8 +510,7 @@ public interface Properties {
 		Property<Integer> getWorkgroupProperty();
 	}
 	
-	public interface TaskHolderProperties{
-		Property<Integer> getIdProperty();
+	public interface TaskHolderProperties extends RegistryProperties{
 		Property<Integer> getDomainProperty();
 		Property<Byte> getTypeProperty();
 		Property<Byte> getActiveProperty();

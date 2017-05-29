@@ -4116,7 +4116,7 @@ public class AON {
 		}
 	}
 
-	public static Stream<Registry> getTaskMemberWStream(String domainName, Integer domainId, String login, String filter, Integer workgroupId){
+	public static Stream<TaskHolder> getTaskMemberWStream(String domainName, Integer domainId, String login, String filter, Integer workgroupId){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -4125,30 +4125,7 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-	
-	
-	public static Stream<Registry> getTaskMemberStream(String domainName, Integer domainId, String login, String filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskMemberStream(ctx, filter);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static LinkedList<Registry> getTaskMemberList(String domainName, Integer domainId, String login, String filter){
-		return getTaskMemberStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static Registry getTaskMember(String domainName, Integer domainId, String login, String filter){
-		return getTaskMemberStream(domainName, domainId, login, filter)
-			.findFirst().orElse(new Registry());
-	}
-	
 
-	
 	public static Stream<Workgroup> getTaskWorkgroupStream(String domainName, Integer domainId, String login, String filter){
 		AONContext ctx = null;
 		try{
@@ -4231,11 +4208,21 @@ public class AON {
 	
 	// ------------------- TASK HOLDER
 
+	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskHolderStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static TaskHolder getTaskHolder(String domainName, Integer domainId, String login, TaskHolderFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskHolder(ctx, filter);
+			return getTask().getTaskHolderStream(ctx, filter).findFirst().orElse(new TaskHolder());
 		} finally {
 			if (ctx != null) ctx.close();
 		}

@@ -126,9 +126,12 @@ public class WorkServlet extends HttpServlet{
 	
 	
 	private JSONArray getOperatorsJSON(Domain domain, String userName) {
-		JSONArray array = new JSONArray();
-		Stream<User> userList = AON.getTaskMemberStream(domain.getName(), domain.getId(), userName,"%%")
-				.map(new RegistryToUserFiller());		
+		JSONArray array = new JSONArray();			
+		
+		Stream<User> userList = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()))
+				.sorted((e1, e2) -> e1.getName().compareTo(e2.getName()))
+				.map(new RegistryToUserFiller());
+		
 		userList.forEach(l-> {
 			l.setEmail(AON.getRMedia(domain.getName(), domain.getId(), userName,
 				f -> f.getMediaProperty().eq((byte)4).and(f.getDomainProperty().eq(domain.getId()))
@@ -159,8 +162,9 @@ public class WorkServlet extends HttpServlet{
 				.setDomain(domain.getId()).setRegistry(registry);
 			AON.insertRMedia(domain.getName(), domain.getId(), userName, rmedia);
 		}			
-		TaskHolder taskHolder = new TaskHolder().setId(registry.getId()).setActive((byte) 1).setDomain(domain.getId())
+		TaskHolder taskHolder = new TaskHolder().setActive((byte) 1).setDomain(domain.getId())
 				.setType((byte) 0);
+		taskHolder.setId(registry.getId());
 		AON.insertTaskHolder(domain.getName(), domain.getId(), userName, taskHolder);
 		if(json.opt("workgroups") != null){
 			String[] workgroups = json.getString("workgroups").split("@");
@@ -237,10 +241,10 @@ public class WorkServlet extends HttpServlet{
 	}
 
 	
-	private static class RegistryToUserFiller implements Function<Registry, User> {
+	private static class RegistryToUserFiller implements Function<TaskHolder, User> {
 		
 		@Override
-		public User apply(Registry r) {
+		public User apply(TaskHolder r) {
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getName());  
