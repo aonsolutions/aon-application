@@ -133,21 +133,29 @@ public class PrintParametersController implements Serializable {
 	
 	
 	private byte[] getData(IAttachment attach) {
-		byte[] data;
+		byte[] data = null;
 		if (attach != null && attach.getData() != null) {
 			data = attach.getData();
-		} else if(attach.getDriveId()!=null){
+		} else if(attach != null && attach.getDriveId()!=null){
 			data = DriveUtils.getByteFile(AonUtil.getDomainName(),
 					attach.getDomain(), AonUtil.getAuthPrincipal().getShortName(),
 					attach.getDriveId(), attach.getId());
-		} else {
+		}
+		if(data==null) {
 			data = "".getBytes();
 		}
 		return data;
 	}
 	
 	private void deleteDriveData(IAttachment attach) {
-		if(attach.getDriveId()!=null && !"".equals(attach.getDriveId())){
+		if(attach != null && attach.getDriveId()!=null && !"".equals(attach.getDriveId())){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+				attach.setDriveId(null);
+				bean.update(attach);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage());
+			}
 			DriveUtils.deleteFile(AonUtil.getDomainName(), 
 					attach.getDomain(), AonUtil.getAuthPrincipal().getShortName(),
 					attach.getDriveId());
@@ -393,8 +401,7 @@ public class PrintParametersController implements Serializable {
 			setPrintSaleInvoiceFooter(AppParamUtil.getValueAsBoolean(APP_PRINT_S_INVOICE_FOOTER_PARAM));
 			
 			setText("");
-//			if(isPrintSaleInvoiceFooter()){
-//			}
+
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 				Criteria criteria = new Criteria();
