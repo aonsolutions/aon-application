@@ -26,10 +26,6 @@ public class ResultsPanel extends ResizeComposite implements ProvidesResize {
 		initWidget(binder.createAndBindUi(this));
 	}
 	
-	public Widget getWidget(){
-		return centerPanel.getWidget();
-	}
-
 	public Widget getChild() {
 		return centerPanel.getWidget();
 	}
