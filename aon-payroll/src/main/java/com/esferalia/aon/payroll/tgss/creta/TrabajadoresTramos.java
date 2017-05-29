@@ -576,7 +576,7 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitGrupoCotizacionDiario() {
-					//visitOthers();
+					// noop
 				}
 
 				@Override
@@ -587,7 +587,8 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitIncapacidadTemporalPagoDelegado() {
-					visitOthers();
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = itDelegate;
 				}
 
 				@Override
@@ -606,6 +607,56 @@ public class TrabajadoresTramos {
 				}
 			};
 			
+			SalaryVisitor itDelegate = new SalaryVisitor(){
+				
+				private void visitOthers(){
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = standard;
+				}
+				
+				@Override
+				public void visitTiempoParcialNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitTiempoCompletoNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitGrupoCotizacionDiario() {
+					// noop
+				}
+
+				@Override
+				public void visitIncapacidadTemporal15PrimerosDias() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = it15PrimerosDias;
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegado() {
+					Period last = cretaPeriods.removeLast();
+					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegado() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoCompleto() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcial() {
+					visitOthers();
+				}
+			};
+
 			private Period period ;
 			private SalaryVisitor state = standard;
 			
@@ -711,7 +762,7 @@ public class TrabajadoresTramos {
 		String tc2 = getContextData(TC2.getName(),salary, startDate, endDate);
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
 		
-
+		
 		boolean iT15primerosDias = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_1_3.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_4_15.getName(), salary, startDate, endDate) 
