@@ -263,7 +263,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 	
 	public void run(Map<CretaService.Parameter, String> params) {
-		CretaResults results = ( CretaResults ) resultsPanel.getWidget();
+		CretaResults results = ( CretaResults ) resultsPanel.getChild();
 		for ( Map.Entry<CretaService.Parameter, String> entry: params.entrySet() )
 			results.setParameter(entry.getKey(), entry.getValue());
 		results.run();
@@ -276,7 +276,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	public boolean isReftification() {
 		return 
-		(( CretaResults ) resultsPanel.getWidget())
+		(( CretaResults ) resultsPanel.getChild())
 		.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION)
 		.map( s -> "on".equalsIgnoreCase(s))
 		.orElse(false)
@@ -523,13 +523,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setLineNumbers(true);
 			mergeEditor.setOrig(result.getBasesFile());
 
-			String suffix = "";
-		//			getSelected()
-		//			.stream()
-		//			.findFirst()
-		//			.map( f -> String.format(" %s %s", f.getCCC(), f.getFrom()))
-		//			.orElse("")
-		//		;
+			String suffix = 
+					getSelected()
+					.stream()
+					.map( f -> f.getCCC() + " " + f.getFrom() )
+					.findFirst()
+					.orElse("")
+				;
+
 			try {
 				mergeEditor.setText(result.getChangedBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
