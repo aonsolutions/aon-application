@@ -610,9 +610,12 @@ public class printQuality {
     
     public static PdfPTable caliberSiembraTable(HashMap<String, String> map){
 		String[] calibresSiembra ={
+				"Calibre 25-40:",
 				"Calibre 28-35:",
 				"Calibre 35-45:",
+				"Calibre 40-50:",
 				"Calibre 45-50:",
+				"Calibre 45-55:",
 				"Calibre 50-55:",
 				"Calibre > 55:",
 				"Sin Calibrar:",

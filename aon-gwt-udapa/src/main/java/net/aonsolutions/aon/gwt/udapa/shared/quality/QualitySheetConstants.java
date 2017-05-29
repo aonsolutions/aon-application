@@ -24,9 +24,12 @@ public class QualitySheetConstants {
 	};
 	
 	public static QualitySheetCode[] CALIBER_SIEMBRA = new QualitySheetCode[]{
+		QualitySheetCode.UFQCC16, QualitySheetCode.UFQCC161,
 		QualitySheetCode.UFQCC03, QualitySheetCode.UFQCC031,
 		QualitySheetCode.UFQCC05, QualitySheetCode.UFQCC051,
+		QualitySheetCode.UFQCC17, QualitySheetCode.UFQCC171,
 		QualitySheetCode.UFQCC07, QualitySheetCode.UFQCC071,
+		QualitySheetCode.UFQCC18, QualitySheetCode.UFQCC181,
 		QualitySheetCode.UFQCC09, QualitySheetCode.UFQCC091,
 		QualitySheetCode.UFQCC11, QualitySheetCode.UFQCC111,
 		QualitySheetCode.UFQCC12, QualitySheetCode.UFQCC121,
