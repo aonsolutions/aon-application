@@ -158,13 +158,9 @@ public class printContractMediaResume extends HttpServlet{
 		
 		table.addCell(emptyCell());
 		
-		PdfPCell empresaName = new PdfPCell(new Phrase(json.getString("name"),getFont1()));
+		PdfPCell empresaName = new PdfPCell(new Phrase(json.getString("document") + " - " + json.getString("name"),getFont1()));
 		empresaName.setColspan(2);
 		table.addCell(empresaName);
-		
-		PdfPCell empresaCif= new PdfPCell(new Phrase(json.getString("document"),getFont1()));
-		empresaCif.setColspan(2);
-		table.addCell("C.I.F. " + empresaCif);
 		
 		return table;
 	}
@@ -254,13 +250,32 @@ public class printContractMediaResume extends HttpServlet{
 		
 		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO " + yearAct ,getFont1()));
 		ejAct.setColspan(2);
+		ejAct.setHorizontalAlignment(Element.ALIGN_CENTER);
 		ejAct.setBorder(PdfPCell.NO_BORDER);
 		table3.addCell(ejAct);
 		
 		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
 		ejAnt.setColspan(2);
+		ejAnt.setHorizontalAlignment(Element.ALIGN_CENTER);
 		ejAnt.setBorder(PdfPCell.NO_BORDER);
 		table3.addCell(ejAnt);
+		
+		PdfPCell ec = emptyCell();
+		ec.setColspan(2);
+		table3.addCell(ec);
+		
+		PdfPCell media = new PdfPCell(new Phrase("media" ,getFont2()));
+		media.setHorizontalAlignment(Element.ALIGN_CENTER);
+		media.setBorder(PdfPCell.NO_BORDER);
+		
+		PdfPCell endEj = new PdfPCell(new Phrase("31/12",getFont2()));
+		endEj.setHorizontalAlignment(Element.ALIGN_CENTER);
+		endEj.setBorder(PdfPCell.NO_BORDER);
+		
+		table3.addCell(media);
+		table3.addCell(endEj);
+		table3.addCell(media);
+		table3.addCell(endEj);
 		
 		table3.addCell(emptyCell());
 		
@@ -336,32 +351,64 @@ public class printContractMediaResume extends HttpServlet{
 		
 		PdfPCell ejAct5 = new PdfPCell(new Phrase("EJERCICIO " + yearAct,getFont1()));
 		ejAct5.setBorder(PdfPCell.NO_BORDER);
+		ejAct5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		ejAct5.setColspan(4);
 		table5.addCell(ejAct5);
 		
 		PdfPCell ejAnt5 = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
 		ejAnt5.setBorder(PdfPCell.NO_BORDER);
+		ejAnt5.setHorizontalAlignment(Element.ALIGN_CENTER);
 		ejAnt5.setColspan(4);
 		table5.addCell(ejAnt5);
 		
 		
 		table5.addCell(emptyCell());
 		
-		PdfPCell ejAct6H = new PdfPCell(new Phrase("HOMBRE",getFont2()));
+		
+		PdfPCell ejAct6H = new PdfPCell(new Phrase("HOMBRES",getFont2()));
 		ejAct6H.setColspan(2);
-		table5.addCell(ejAct6H);
+		ejAct6H.setHorizontalAlignment(Element.ALIGN_CENTER);
+		PdfPTable tableX1 = new PdfPTable(2);
+		tableX1.addCell(ejAct6H);
+		tableX1.addCell(media);
+		tableX1.addCell(endEj);
+		PdfPCell x1 = new PdfPCell(tableX1);
+		x1.setColspan(2);
+		table5.addCell(x1);
 		
 		PdfPCell ejAct6M = new PdfPCell(new Phrase("MUJERES",getFont2()));
 		ejAct6M.setColspan(2);
-		table5.addCell(ejAct6M);
+		ejAct6M.setHorizontalAlignment(Element.ALIGN_CENTER);
+		PdfPTable tableX2 = new PdfPTable(2);
+		tableX2.addCell(ejAct6M);
+		tableX2.addCell(media);
+		tableX2.addCell(endEj);
+		PdfPCell x2 = new PdfPCell(tableX2);
+		x2.setColspan(2);
+		table5.addCell(x2);
 		
 		PdfPCell ejAnt6H = new PdfPCell(new Phrase("HOMBRES",getFont2()));
 		ejAnt6H.setColspan(2);
-		table5.addCell(ejAnt6H);
+		ejAnt6H.setHorizontalAlignment(Element.ALIGN_CENTER);
+		PdfPTable tableX3 = new PdfPTable(2);
+		tableX3.addCell(ejAnt6H);
+		tableX3.addCell(media);
+		tableX3.addCell(endEj);
+		PdfPCell x3 = new PdfPCell(tableX3);
+		x3.setColspan(2);
+		table5.addCell(x3);
 		
 		PdfPCell ejAnt6M = new PdfPCell(new Phrase("MUJERES",getFont2()));
 		ejAnt6M.setColspan(2);
-		table5.addCell(ejAnt6M);
+		ejAnt6M.setHorizontalAlignment(Element.ALIGN_CENTER);
+		PdfPTable tableX4 = new PdfPTable(2);
+		tableX4.addCell(ejAnt6M);
+		tableX4.addCell(media);
+		tableX4.addCell(endEj);
+		PdfPCell x4 = new PdfPCell(tableX4);
+		x4.setColspan(2);
+		table5.addCell(x4);
+
 		
 		PdfPCell fix2 = new PdfPCell(new Phrase("FIJO",getFont1()));
 		fix2.setBorder(PdfPCell.NO_BORDER);
@@ -440,6 +487,7 @@ public class printContractMediaResume extends HttpServlet{
 		JSONArray arrayAnt = json.getJSONArray("contract_ant");
 		HashMap<Integer, Double> mapAct = new HashMap<>();
 		HashMap<Integer, Double> mapAnt = new HashMap<>();
+		Double otherAct1 = 0.0, otherAct2 = 0.0, otherAnt1 = 0.0, otherAnt2 = 0.0;
 		for (int i = 0; i < arrayAct.length(); i++) {
 			JSONObject js = arrayAct.getJSONObject(i);
 			Integer key = js.getJSONObject("category").getInt("id");
@@ -453,6 +501,9 @@ public class printContractMediaResume extends HttpServlet{
 					mapAct.put(key, AonMathUtils.round(d));
 					mapAct.put(key*-1, AonMathUtils.round(d2));
 				}
+			} else {
+				otherAct1 = otherAct1 + AonMathUtils.round(d);
+				otherAct2 = otherAct2 + AonMathUtils.round(d2);
 			}
 		}
 		for (int i = 0; i < arrayAnt.length(); i++) {
@@ -468,6 +519,9 @@ public class printContractMediaResume extends HttpServlet{
 					mapAnt.put(key, AonMathUtils.round(d));
 					mapAnt.put(key*-1, AonMathUtils.round(d2));
 				}
+			} else {
+				otherAnt1 = otherAnt1 + AonMathUtils.round(d);
+				otherAnt2 = otherAnt2 + AonMathUtils.round(d2);
 			}
 		}
 		
@@ -493,13 +547,33 @@ public class printContractMediaResume extends HttpServlet{
 		
 		table1.addCell(a);
 		
+		PdfPCell media = new PdfPCell(new Phrase("media" ,getFont2()));
+		media.setHorizontalAlignment(Element.ALIGN_CENTER);
+		media.setBorder(PdfPCell.NO_BORDER);
+		
+		PdfPCell endEj = new PdfPCell(new Phrase("31/12",getFont2()));
+		endEj.setHorizontalAlignment(Element.ALIGN_CENTER);
+		endEj.setBorder(PdfPCell.NO_BORDER);
+		
+		PdfPTable tableX1 = new PdfPTable(2);
 		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO "+ yearAct,getFont1()));
 		ejAct.setColspan(2);
-		table1.addCell(ejAct);
+		tableX1.addCell(ejAct);
+		tableX1.addCell(media);
+		tableX1.addCell(endEj);
+		PdfPCell x11 = new PdfPCell(tableX1);
+		x11.setColspan(2);
+		table1.addCell(x11);
 		
 		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
 		ejAnt.setColspan(2);
-		table1.addCell(ejAnt);
+		PdfPTable tableX2 = new PdfPTable(2);
+		tableX2.addCell(ejAnt);
+		tableX2.addCell(media);
+		tableX2.addCell(endEj);
+		PdfPCell x2 = new PdfPCell(tableX2);
+		x2.setColspan(2);
+		table1.addCell(x2);
 		
 		for(Integer i = 0  ; i < array.length() ; i++){
 			String x1 = array.getJSONObject(i).getString("name");	
@@ -527,18 +601,38 @@ public class printContractMediaResume extends HttpServlet{
 			PdfPCell ejAnt2 = new PdfPCell(new Phrase(dAnt2.toString(),getFont2()));
 			table1.addCell(ejAnt2);
 		}
+		
+		PdfPCell a1 = new PdfPCell(new Phrase("Otros",getFont2()));
+		a1.setBorder(PdfPCell.NO_BORDER);
+		table1.addCell(a1);
+		
+		PdfPCell ejAct1 = new PdfPCell(new Phrase(otherAct1.toString(),getFont2()));
+		table1.addCell(ejAct1);
+		
+		PdfPCell ejAct2 = new PdfPCell(new Phrase(otherAct2.toString(),getFont2()));
+		table1.addCell(ejAct2);
+		
+		PdfPCell ejAnt1 = new PdfPCell(new Phrase(otherAnt1.toString(),getFont2()));
+		table1.addCell(ejAnt1);
+
+		PdfPCell ejAnt2 = new PdfPCell(new Phrase(otherAnt2.toString(),getFont2()));
+		table1.addCell(ejAnt2);
 	
 		String xN ="TOTAL EMPLEO MEDIO";
 		PdfPCell aN = new PdfPCell(new Phrase(xN,getFont1()));
 		table1.addCell(aN);
 		
 		Double totalAct = 0.0, totalAct2 = 0.0, totalAnt = 0.0, totalAnt2 = 0.0 ;
+		totalAct = totalAct + otherAct1;
+		totalAct2 = totalAct2 + otherAct2;
+		totalAnt = totalAnt + otherAnt1;
+		totalAnt2 = totalAnt2 + otherAnt2;
 		for (Integer s : mapAct.keySet()) {
 			if(s < 0 ){
 				totalAct2 = totalAct2 + mapAct.get(s);
 			}else totalAct = totalAct +mapAct.get(s);
 		}
-	
+		
 		for (Integer s : mapAnt.keySet()) {
 			if(s < 0) {
 				totalAnt2 = totalAnt2 +mapAnt.get(s);
@@ -622,13 +716,33 @@ public class printContractMediaResume extends HttpServlet{
 		PdfPCell a = new PdfPCell(new Phrase(x,getFont1()));
 		table1.addCell(a);
 		
-		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO " + yearAct,getFont1()));
+		PdfPCell media = new PdfPCell(new Phrase("media" ,getFont2()));
+		media.setHorizontalAlignment(Element.ALIGN_CENTER);
+		media.setBorder(PdfPCell.NO_BORDER);
+		
+		PdfPCell endEj = new PdfPCell(new Phrase("31/12",getFont2()));
+		endEj.setHorizontalAlignment(Element.ALIGN_CENTER);
+		endEj.setBorder(PdfPCell.NO_BORDER);
+		
+		PdfPTable tableX1 = new PdfPTable(2);
+		PdfPCell ejAct = new PdfPCell(new Phrase("EJERCICIO "+ yearAct,getFont1()));
 		ejAct.setColspan(2);
-		table1.addCell(ejAct);
+		tableX1.addCell(ejAct);
+		tableX1.addCell(media);
+		tableX1.addCell(endEj);
+		PdfPCell x111 = new PdfPCell(tableX1);
+		x111.setColspan(2);
+		table1.addCell(x111);
 		
 		PdfPCell ejAnt = new PdfPCell(new Phrase("EJERCICIO " + yearAnt,getFont1()));
 		ejAnt.setColspan(2);
-		table1.addCell(ejAnt);
+		PdfPTable tableX2 = new PdfPTable(2);
+		tableX2.addCell(ejAnt);
+		tableX2.addCell(media);
+		tableX2.addCell(endEj);
+		PdfPCell x22 = new PdfPCell(tableX2);
+		x22.setColspan(2);
+		table1.addCell(x22);
 		
 		String x1 ="Ingenieros y Licenciados.Personal de alta dirección no incluido en el artículo 1.3.c) del Estatuto de los Trabajadores";
 		PdfPCell a1 = new PdfPCell(new Phrase(x1,getFont2()));

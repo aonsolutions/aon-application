@@ -177,7 +177,7 @@ public class printContractMediaList extends HttpServlet{
 		
 		PdfPTable table1 = new PdfPTable(9);
 		
-		float[] medidaCeldas1 = {1f,3f, 3f, 0f, 2f,1f,1f,1f,1f};
+		float[] medidaCeldas1 = {1f,3f, 3f, 1f, 1f,1f,1f,1f,1f};
 		try {
 			table1.setWidths(medidaCeldas1);
 		} catch (DocumentException e) {
@@ -187,22 +187,17 @@ public class printContractMediaList extends HttpServlet{
 		table1.setWidthPercentage(100);
 
 		PdfPCell c01 = new PdfPCell(new Phrase("",getFont1()));
+		c01.setColspan(3);
 		c01.setBorder(PdfPCell.NO_BORDER);
 		table1.addCell(c01);
-		
-		PdfPCell c12 = new PdfPCell(new Phrase("",getFont1()));
-		c12.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c12);
-		
-		PdfPCell c21 = new PdfPCell(new Phrase("",getFont1()));
-		c21.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c21);
-		
+
 		PdfPCell c31 = new PdfPCell(new Phrase("CONTRATO",getFont1()));
+		
 		c31.setBorder(PdfPCell.NO_BORDER);
 		table1.addCell(c31);
 		
 		PdfPCell c41 = new PdfPCell(new Phrase("",getFont1()));
+		c41.setColspan(2);
 		c41.setBorder(PdfPCell.NO_BORDER);
 		table1.addCell(c41);
 		
