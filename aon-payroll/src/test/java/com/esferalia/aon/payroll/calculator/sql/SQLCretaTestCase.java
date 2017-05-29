@@ -1485,6 +1485,120 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaTrabajadoresYTramosIT25Days()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, DAY_OF_MONTH, 2);
+		Date endIT = add(startIT, DAY_OF_MONTH, 24);
+		
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIT, 
+				endIT, 
+				null/*1750.00/30*/);
+		//@formatter:on
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		
+		Assert.assertEquals(4, tramos.size());
+		
+		//Activo
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("02", tramo0.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo0);
+		
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("03", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("17", tramo1.getFechaHasta().getDia());
+		assertTramoIT15PrimerosDias(tramo1);
+		
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("18", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals("27", tramo2.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo2);
+
+		Tramo tramo3 = tramos.get(3); 
+		Assert.assertEquals("28", tramo3.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo3);
+		
+
+	}
+
+	@Test
+	public void testCretaTrabajadoresYTramosIT99Days()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, DAY_OF_MONTH, 5);
+		Date endIT = null; //add(startIT, DAY_OF_MONTH, 24);
+		
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIT, 
+				endIT, 
+				null/*1750.00/30*/);
+		//@formatter:on
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		
+		Assert.assertEquals(3, tramos.size());
+		
+		//Activo
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("05", tramo0.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo0);
+		
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("06", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("20", tramo1.getFechaHasta().getDia());
+		assertTramoIT15PrimerosDias(tramo1);
+		
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("21", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo2);
+
+		
+
+	}
+	
+	@Test
 	public void testCretaTrabajadoresYTramosIT3Days()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
@@ -1753,16 +1867,53 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		assertTramoMaternidadTiempoParcial(tramo1);		
 
 	}
+	
+	
+	@Test
+	public void testCretaContratosFormacion()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(1, tramos.size());
+		
+		Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(get(endDate, DAY_OF_MONTH)), tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo);
+
+	}
+
+
+	
+	// ------------------------------------------------------------------------
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
-		return newContract(aonContext, ccc, ContractCode.C100, "03");
+		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
 	}
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode) {
-		return newContract(aonContext, ccc, contractCode, "03");
+		return newContract(aonContext, ccc, contractCode, "03", CCCType.PRINCIPAL);
 	}
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup ) {
+		return newContract(aonContext, ccc, contractCode, quoteGroup, CCCType.PRINCIPAL);
+	}
+
+	protected ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType ) {
 		DomainRecord domain = newDomain(aonContext);
 		
 		ScopeRecord scope = newScope(aonContext, domain.getId());
@@ -1862,6 +2013,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		return contract;
 	}
+
 	// -------------------------------------------------------------------------
 	private List<Tramo> getTramos ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		
