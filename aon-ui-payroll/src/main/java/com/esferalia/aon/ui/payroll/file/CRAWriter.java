@@ -189,15 +189,18 @@ public class CRAWriter {
 		if(!NumberUtils.isNumber(code)){
 			code = "1";
 		}
-		if(amount!=0.0d || (isExtraPayment(code) && quote!=0.0d)){
+		if(amount!=0.0d && !isExtraPayment(code)){
 			CRE cre = new CRE();
 			cre.setConcepto(autoComplete(code, 4, "0", true));
 			cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
-			if(isExtraPayment(code)){
-				cre.setImporte(String.valueOf((int)(CommonUtil.round(quote, 2)*100)));
-			} else {
-				cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
-			}
+			cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
+			cre.setIndicativoTipoActuacion(repeated?"C":"");
+			return cre;
+		} else if(quote!=0.0d && isExtraPayment(code)){
+			CRE cre = new CRE();
+			cre.setConcepto(autoComplete(code, 4, "0", true));
+			cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
+			cre.setImporte(String.valueOf((int)(CommonUtil.round(quote, 2)*100)));
 			cre.setIndicativoTipoActuacion(repeated?"C":"");
 			return cre;
 		}
@@ -238,29 +241,37 @@ public class CRAWriter {
 	}
 	
 	private Result<Record5<Byte, Double, Double, String, Integer>> getSalaryPaymentSelect(Connection connection, EnterpriseCCC ccc, Date startDate, Date endDate ) {
-		DSLContext ctx = DSL.using(connection, getDefaultSettings());
-			
-		Result<Record5<Byte, Double, Double, String, Integer>> record = ctx.select(SALARY_PAYMENT.TYPE, SALARY_PAYMENT.AMOUNT, SALARY_PAYMENT.QUOTE, SALARY_PAYMENT.PAYMENT_CONCEPT, SALARY.CONTRACT)
-			.from(SALARY_PAYMENT)
-			.leftOuterJoin(SALARY).onKey()
-			.where(SALARY.END_DATE.between(toSqlDate(startDate)).and(toSqlDate(endDate)))
-			.and(SALARY.CONTRACT.in( ctx.select(CONTRACT.ID).from(CONTRACT).where(CONTRACT.ENTERPRISE_CCC.equal(ccc.getId())) ))
-			.orderBy(SALARY.SOCIAL_SECURITY_NUMBER, SALARY.TYPE)
-			.fetch();
-		return record;
+		DSLContext ctx = null;
+		try {
+			ctx = DSL.using(connection, getDefaultSettings());
+			Result<Record5<Byte, Double, Double, String, Integer>> record = ctx.select(SALARY_PAYMENT.TYPE, SALARY_PAYMENT.AMOUNT, SALARY_PAYMENT.QUOTE, SALARY_PAYMENT.PAYMENT_CONCEPT, SALARY.CONTRACT)
+					.from(SALARY_PAYMENT)
+					.leftOuterJoin(SALARY).onKey()
+					.where(SALARY.END_DATE.between(toSqlDate(startDate)).and(toSqlDate(endDate)))
+					.and(SALARY.CONTRACT.in( ctx.select(CONTRACT.ID).from(CONTRACT).where(CONTRACT.ENTERPRISE_CCC.equal(ccc.getId())) ))
+					.orderBy(SALARY.SOCIAL_SECURITY_NUMBER, SALARY_PAYMENT.TYPE)
+					.fetch();
+			return record;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
 	}
 
 	private Result<Record1<Double>> getSSDelegatePaymentSelect(Connection connection, Date startDate, Date endDate, Integer contractId) {
-		DSLContext ctx = DSL.using(connection, getDefaultSettings());
-		
-		Result<Record1<Double>> record = ctx.select(SALARY_COST.AMOUNT)
-				.from(SALARY_COST)
-				.leftOuterJoin(SALARY).onKey()
-				.where(SALARY.END_DATE.between(toSqlDate(startDate)).and(toSqlDate(endDate)))
-				.and(SALARY.CONTRACT.equal(contractId))
-				.and(SALARY_COST.COST_CONCEPT.equal("ECSS_E"))
-				.fetch();
-		return record;
+		DSLContext ctx = null;
+		try {
+			ctx = DSL.using(connection, getDefaultSettings());
+			Result<Record1<Double>> record = ctx.select(SALARY_COST.AMOUNT)
+					.from(SALARY_COST)
+					.leftOuterJoin(SALARY).onKey()
+					.where(SALARY.END_DATE.between(toSqlDate(startDate)).and(toSqlDate(endDate)))
+					.and(SALARY.CONTRACT.equal(contractId))
+					.and(SALARY_COST.COST_CONCEPT.equal("ECSS_E"))
+					.fetch();
+			return record;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
 	}
 	
 	private boolean isSSDelegatePayment(Connection connection, Date startDate, Date endDate, String concept, Double amount, Integer contractId){
