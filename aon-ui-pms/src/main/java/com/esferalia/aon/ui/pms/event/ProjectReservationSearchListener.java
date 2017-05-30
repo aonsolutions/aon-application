@@ -196,7 +196,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 		if (getInsideDateFrom() != null) {
 			Date insideDateTo = (getInsideDateTo() != null) ? getInsideDateTo() : getInsideDateFrom();
 			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), insideDateTo);			
-			criteria.addGreaterThanExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), getInsideDateFrom());			
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_END_TIME), DateUtils.addDays(getInsideDateFrom(), 1)); //Para no tener en cuenta las Salidas Anticipadas			
 		}
 		if (getAgency() != null && getAgency().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
