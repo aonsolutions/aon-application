@@ -19,7 +19,14 @@ public class Page implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** EMPTY_PAGE. */
-	public static final Page EMPTY_PAGE;
+	public static final Page EMPTY_PAGE = new Page(Collections.<ITransferObject>emptyList(), 0) {
+
+		private static final long serialVersionUID = -2740939654016235294L;
+		
+		@Override
+		public void setList(List<ITransferObject> l) {}
+
+	};
 	
 	/** Index from which the page is loaded */
 	private int start;
@@ -34,7 +41,7 @@ public class Page implements Serializable {
 	 * @param l the list
 	 */
 	public Page(List<ITransferObject> l, int start) {
-		setList(l);
+	    this.objects = l;
 	    this.start = start;
 	}
 
@@ -113,8 +120,5 @@ public class Page implements Serializable {
         }
         return index >= start && index < getStartOfNextPage();
     }	
-	
-	static {
-	    EMPTY_PAGE = new Page(Collections.<ITransferObject>emptyList(), 0);
-	}
+
 }
