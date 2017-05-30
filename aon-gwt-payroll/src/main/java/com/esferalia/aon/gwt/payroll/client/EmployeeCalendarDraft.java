@@ -441,6 +441,24 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	PaperIconButton eraseEventButton;
 	
 	@UiField
+	IronLabel extraHoursButtonBlock;
+	
+	@UiField
+	PaperIconButton extraHoursButton;
+	
+	@UiField
+	PaperDialog extraHoursDialog;
+	
+	@UiField
+	PaperIconButton expandMonthsBtn;
+	
+	@UiField
+	DoubleBox extraHoursBox;
+	
+	@UiField
+	PaperButton extraHoursDialogOk;
+	
+	@UiField
 	PaperIconButton hourButton;
 	
 	@UiField
@@ -497,6 +515,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	@UiField
 	HTMLPanel sundayBlock;
 
+	@UiField(provided = true)
+	SuggestBox monthOpt;
+	
 	@UiField(provided = true)
 	SuggestBox mondayOpt;
 	
@@ -595,6 +616,23 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		this.fridayOpt = suggestOpts[FRIDAY];
 		this.saturdayOpt = suggestOpts[SATURDAY];
 		this.sundayOpt = suggestOpts[SUNDAY];
+		
+		ArrayList<String> suggestMonths = new ArrayList<String>();
+		MultiWordSuggestOracle oracleMonths = new MultiWordSuggestOracle();
+		suggestMonths.add("Enero");
+		suggestMonths.add("Febrero");
+		suggestMonths.add("Marzo");
+		suggestMonths.add("Abril");
+		suggestMonths.add("Mayo");
+		suggestMonths.add("Junio");
+		suggestMonths.add("Julio");
+		suggestMonths.add("Agosto");
+		suggestMonths.add("Septiembre");
+		suggestMonths.add("Octubre");
+		suggestMonths.add("Noviembre");
+		suggestMonths.add("Diciembre");
+		oracleMonths.setDefaultSuggestionsFromText(suggestMonths);
+		monthOpt = new SuggestBox(oracleMonths);
 		
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
@@ -952,6 +990,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		dialogLeyend.close();
 	}
 	
+	@UiHandler("expandMonthsBtn")
+	public void onExpandMonthsClick(ClickEvent event) {
+		monthOpt.showSuggestionList();	
+	}
+	
 	@UiHandler("expandHourBtnL")
 	public void onExpandHourLClick(ClickEvent event) {
 		suggestOpts[MONDAY].showSuggestionList();	
@@ -1070,6 +1113,25 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}
 	}
 	
+	@UiHandler("extraHoursButton")
+	public void onExtraHoursClick(ClickEvent event) {
+		extraHoursDialog.open();
+	}
+	
+	@UiHandler("extraHoursDialogOk")
+	public void onExtraHoursOKClick(ClickEvent event) {
+		String month = monthOpt.getValue();
+		Double extraHourMonth = extraHoursBox.getValue();
+		calendarEmployeeInfo.setExtraHourByMonth(month, extraHourMonth);
+		monthOpt.setText("");
+		extraHoursBox.setText("");
+		extraHoursDialog.close();
+		hourMenuItem.setEnabled(false);
+		hourButton.setDisabled(true);
+		selectedDates.clear();
+		changeYear(0);
+	}
+	
 	@UiHandler("leyendButton")
 	public void oninfoClick(ClickEvent event) {
 		dialogLeyend.open();
@@ -1098,6 +1160,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
 		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
+		paintMadeExtraHoursChanges(calendarEmployeeInfo.getChangesExtraHours());
 			
 	}
 
@@ -1113,6 +1176,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
 		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
+		paintMadeExtraHoursChanges(calendarEmployeeInfo.getChangesExtraHours());
 		
 	}
 	
@@ -1129,6 +1193,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
 		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
+		paintMadeExtraHoursChanges(calendarEmployeeInfo.getChangesExtraHours());
 		
 	}
 	
@@ -1193,11 +1258,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			totalHours.setText("Horas Mensuales");
 		}
 		
+		
 		cleanStyleChanges();
 		cleanCalendar();
 		initializeCellsCalendar();
 		initializeCellsTypeCalendar();
 		showCalendarWidget(this.year);
+//		cleanStyleChanges();
 		
 		if (this.showHours){
 			showHourMenuItem.setStyleName("aon-MenuItemCheckYes", showHours);
@@ -1210,15 +1277,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		if(this.fullTimeJourney){
 			hourMenuItem.setVisible(false);
 			hourButtonBlock.setVisible(false);
+			extraHoursButtonBlock.setVisible(true);
 			viewMenuItem.setVisible(false);
 		}else{
 			hourMenuItem.setVisible(true);
 			hourButtonBlock.setVisible(true);
+			extraHoursButtonBlock.setVisible(false);
 			viewMenuItem.setVisible(true);
 		}
 		
 		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
 		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
+		//paintMadeExtraHoursChanges(calendarEmployeeInfo.getChangesExtraHours());
 				
 	}
 	
@@ -1472,13 +1542,28 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 		}
 		
-		//Poner horas totales mensuales en la ultima columna
-		if(0 != monthHours)
-			setMonthHours(row, monthHours);
+		//Poner horas totales o extras mensuales en la ultima columna
+		if (fullTimeJourney){
+			setExtraHoursMonth(row);
+		}else{
+			if(0 != monthHours)
+				setMonthHours(row, monthHours);
+		}
 		
 		month++;
 	}
 	
+	private void setExtraHoursMonth(int row) {
+		Label labelDay = new Label();
+		String month = calendarGrid.getWidget(row, 0).getElement().getInnerText();
+		double monthExtraHoursRound = roundDecimal(calendarEmployeeInfo.getExtraHourByMonth(month), 2);
+		labelDay.setText(Double.toString(monthExtraHoursRound));
+		labelDay.setStyleName(style.cellStyle());
+		calendarGrid.setWidget(row, 38, labelDay);
+		cells[row][38] = new NoneCell();
+		
+	}
+
 	private void setMonthHours(int row, double monthHours) {
 		Label labelDay = new Label();
 		double monthHoursRound = roundDecimal(monthHours, 2);
@@ -1550,12 +1635,17 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 	
 	private void cleanStyleChanges() {
-		for (int i = 1; i < 25; i++)
-			for (int j = 1; j < 39; j++){
+		for (int i = 1; i < 25; i++){
+			for (int j = 1; j < 38; j++){
 				cells[i][j].eraseOnChange(i, j);
 				if (null != calendarGrid.getWidget(i, j))
 					calendarGrid.getCellFormatter().removeStyleName(i, j, style.setOutOfContractStyle());
-			}	
+			}
+			if (null != calendarGrid.getWidget(i, 38)){
+				calendarGrid.getWidget(i, 38).removeStyleName(style.onChange());
+				calendarGrid.getCellFormatter().removeStyleName(i, 38, style.onChange());
+			}
+		}	
 	}
 
 	private void cleanCalendar() {
@@ -1578,6 +1668,48 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}	
 	}
 	
+	private void paintMadeExtraHoursChanges(Set<Entry<String, Double>> changesExtraHours) {
+		for (Entry<String,Double> e : changesExtraHours){
+			int row = calculateRowByMonth(e.getKey());
+			if (row != -1){
+				calendarGrid.getWidget(row, 38).addStyleName(style.onChange());
+				calendarGrid.getCellFormatter().addStyleName(row, 38, style.onChange());
+			}
+		}
+		
+	}
+	
+	private int calculateRowByMonth(String month) {
+		switch (month) {
+		case "Enero":
+			return 1;
+		case "Febrero":
+			return 3;
+		case "Marzo":
+			return 5;
+		case "Abril":
+			return 7;
+		case "Mayo":
+			return 9;
+		case "Junio":
+			return 11;
+		case "Julio":
+			return 13;
+		case "Agosto":
+			return 15;
+		case "Septiembre":
+			return 17;
+		case "Octubre":
+			return 19;
+		case "Noviembre":
+			return 21;
+		case "Diciembre":
+			return 23;
+		default:
+			return -1;
+		}
+	}
+
 	private void paintMadeTypeChanges(Set<Entry<Date, DayType>> typeChanges) {
 		for (Entry<Date,DayType> e : typeChanges){
 			for (int i = 1; i < 25; i++)
@@ -1853,6 +1985,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
 		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
+		paintMadeExtraHoursChanges(calendarEmployeeInfo.getChangesExtraHours());
 		
 	}
 	
@@ -2010,8 +2143,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 		}
 		calendarEmployeeInfo.setWorkingDays(compositeH, compositeT);
-//		calendarEmployeeInfo.setHourByDay(compositeH);
-//		calendarEmployeeInfo.setTypeByDay(compositeT);
 	}
 
 	@Override

@@ -29,11 +29,13 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date,Double> mapDaysHour;
 	private Map<Date, DayType> mapDaysType;
 	private Map<Date, String> mapFestivesDays;
+	private Map<String, Double> mapExtraHours;
 	
 	private Map<Date,Double> draftMapDaysHour;
 	private Map<Date, DayType> draftMapDaysType;
 	private Map<Date, Double> draftMapDaysCoefficientEre;
 	private Map<Date, Double> draftMapDaysCoefficientStrike;
+	private Map<String, Double> draftMapExtraHours;
 	
 	private Date startContract;
 	private Date endContract;
@@ -234,6 +236,33 @@ public class EmployeeCalendarDraftObjectData {
 		
 	}
 	
+	class SetExtraHourEdit implements Undoable {
+
+		private Double oldHour;
+		private Double newHour;
+		private String month;
+		
+		public SetExtraHourEdit(Double oldH, Double newH, String actualMonth) {
+			this.oldHour = oldH;
+			this.newHour = newH;
+			this.month = actualMonth;
+		}
+		
+		@Override
+		public void undo() {
+			if (oldHour == null)
+				draftMapExtraHours.remove(month);
+			else
+				draftMapExtraHours.put(month, oldHour);	
+		}
+		
+		@Override
+		public void redo() {
+			draftMapExtraHours.put(month, newHour);
+		}
+		
+	}
+	
 	class SetEreEdit implements Undoable {
 
 		private Double oldEre;
@@ -300,11 +329,13 @@ public class EmployeeCalendarDraftObjectData {
 		this.mapDaysHour = new HashMap<Date,Double>();
 		this.mapDaysType = new HashMap<Date,DayType>();
 		this.mapFestivesDays = new HashMap<Date,String>();
+		this.mapExtraHours = new HashMap<String,Double>();
 		
 		this.draftMapDaysHour = new HashMap<Date,Double>();
 		this.draftMapDaysType = new HashMap<Date,DayType>();
 		this.draftMapDaysCoefficientEre = new HashMap<Date,Double>();
 		this.draftMapDaysCoefficientStrike = new HashMap<Date,Double>();
+		this.draftMapExtraHours = new HashMap<String,Double>();
 		
 		
 		this.startContract = startContract;
@@ -329,6 +360,10 @@ public class EmployeeCalendarDraftObjectData {
 	
 	public Set<Entry<Date, Double>> getChangesHours(){
 		return draftMapDaysHour.entrySet();
+	}
+	
+	public Set<Entry<String, Double>> getChangesExtraHours() {
+		return draftMapExtraHours.entrySet();
 	}
 	
 	public Set<Entry<Date, DayType>> getChangesTypes(){
@@ -424,6 +459,19 @@ public class EmployeeCalendarDraftObjectData {
 			undos.add(new SetHourEdit(old, entry.getValue(), entry.getKey()));
 		}
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
+	public double getExtraHourByMonth (String month){
+		Double extraHourMonthDraft = draftMapExtraHours.get(month);
+		if (extraHourMonthDraft != null)
+			return extraHourMonthDraft;
+		else
+			return mapDaysHour.getOrDefault(extraHourMonthDraft, (double) 0);
+	}
+	
+	public void setExtraHourByMonth(String month, Double extraHourMonth) {
+		Double old = draftMapExtraHours.put(month, extraHourMonth);
+		undoManager.add(new SetExtraHourEdit(old, extraHourMonth, month));	
 	}
 	
 	// ----------- SET SPECIAL DAYS -----------
@@ -1092,6 +1140,5 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 	}
-
 	
 }

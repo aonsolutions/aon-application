@@ -232,6 +232,12 @@
 			margin-top: 0px;
 			font-size: 1em;
 		}
+
+		.suggestMonthBoxStyle {
+			margin-left: 52px;
+			margin-top: 0px;
+			font-size: 1em;
+		}
 		
 		.labelHourStyle {
 			margin-top: 0px;
@@ -491,6 +497,29 @@
 										styleName="{style.okDialogLeyendButton}">OK</p:PaperButton>
 					</HTMLPanel>
 				</p:PaperDialog>
+				
+				<!-- DIALOG PARA AÑADIR HORAS EXTRAS -->
+			    <p:PaperDialog ui:field="extraHoursDialog" modal="true" entryAnimation="scale-up-animation" 
+			        exitAnimation="fade-out-animation" withBackdrop="true">
+					<a:CustomDialogBar ui:field="customDialogBarExtraHours" styleName="{style.marginTopCloseDialog}" 
+					    caption="Horas extras"/>
+					<g:HTMLPanel ui:field="extraHoursContent"></g:HTMLPanel>
+					<g:HTMLPanel>
+					    <i:IronLabel>Mes :</i:IronLabel>
+					    <g:SuggestBox ui:field="monthOpt" styleName="{style.suggestMonthBoxStyle}"/>
+					    <p:PaperIconButton icon="icons:expand-more"
+							styleName="{style.optionButtons} {style.expandButtonStyle}"
+							ui:field="expandMonthsBtn" />
+					</g:HTMLPanel>
+			        <g:HTMLPanel>
+					    <i:IronLabel>Horas extras :</i:IronLabel>
+					    <g:DoubleBox ui:field="extraHoursBox"/>
+			        </g:HTMLPanel>
+			        <HTMLPanel class="buttons">
+						<p:PaperButton ui:field="extraHoursDialogCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
+						<p:PaperButton ui:field="extraHoursDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
+					</HTMLPanel>
+			    </p:PaperDialog>
 
 				<!-- Dialogo para seleccionar las horas que se le va a asignar a cada dia de la semana -->
 				<p:PaperDialog ui:field="hourDialog" styleName="{style.dialogBoxStyle}"
@@ -670,6 +699,10 @@
 						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton"
 							disabled="true" />
 						Horas
+					</i:IronLabel>
+					<i:IronLabel ui:field="extraHoursButtonBlock">
+						<p:PaperIconButton icon="icons:alarm" ui:field="extraHoursButton"/>
+						Horas extras
 					</i:IronLabel>
 					<i:IronLabel styleName="{style.iconLeyendStyle}">
 						<p:PaperIconButton icon="icons:info-outline"
