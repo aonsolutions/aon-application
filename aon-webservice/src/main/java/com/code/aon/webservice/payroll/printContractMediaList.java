@@ -147,21 +147,12 @@ public class printContractMediaList extends HttpServlet{
 		}
 		JSONObject company = json.getJSONObject("company");
 
-		PdfPCell c010 = new PdfPCell(new Phrase("Empresa",getFont1()));
-		c010.setBorder(PdfPCell.NO_BORDER);
-		table0.addCell(c010);
 
-		PdfPCell c019 = new PdfPCell(new Phrase(company.getString("name"),getFont2()));
-		c019.setBorder(PdfPCell.NO_BORDER);
-		table0.addCell(c019);
+		table0.addCell(boldCell("Empresa"));
+		table0.addCell(stringCell(company.getString("name")));
 		
-		PdfPCell c018 = new PdfPCell(new Phrase("C.I.F.",getFont1()));
-		c018.setBorder(PdfPCell.NO_BORDER);
-		table0.addCell(c018);
-		
-		PdfPCell c017 = new PdfPCell(new Phrase(company.getString("document"),getFont2()));
-		c017.setBorder(PdfPCell.NO_BORDER);
-		table0.addCell(c017);
+		table0.addCell(boldCell("C.I.F."));
+		table0.addCell(boldCell(company.getString("document")));
 
 		t.addCell(table0);
 		
@@ -175,9 +166,9 @@ public class printContractMediaList extends HttpServlet{
 		
 		document.add(new Paragraph(" "));
 		
-		PdfPTable table1 = new PdfPTable(9);
+		PdfPTable table1 = new PdfPTable(6);
 		
-		float[] medidaCeldas1 = {1f,3f, 3f, 1f, 1f,1f,1f,1f,1f};
+		float[] medidaCeldas1 = {7f, 1f, 2f,1f,1f,1f};
 		try {
 			table1.setWidths(medidaCeldas1);
 		} catch (DocumentException e) {
@@ -186,32 +177,12 @@ public class printContractMediaList extends HttpServlet{
 		
 		table1.setWidthPercentage(100);
 
-		PdfPCell c01 = new PdfPCell(new Phrase("",getFont1()));
-		c01.setColspan(3);
-		c01.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c01);
-
-		PdfPCell c31 = new PdfPCell(new Phrase("CONTRATO",getFont1()));
-		
-		c31.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c31);
-		
-		PdfPCell c41 = new PdfPCell(new Phrase("",getFont1()));
-		c41.setColspan(2);
-		c41.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c41);
-		
-		PdfPCell c51 = new PdfPCell(new Phrase("FIJO",getFont1()));		
-		c51.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c51);
-		
-		PdfPCell c61 = new PdfPCell(new Phrase("NO FIJO",getFont1()));
-		c61.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c61);
-
-		PdfPCell c71 = new PdfPCell(new Phrase("",getFont1()));
-		c71.setBorder(PdfPCell.NO_BORDER);
-		table1.addCell(c71);
+		table1.addCell(emptyCell());		
+		table1.addCell(boldCell("CONTRATO"));
+		table1.addCell(emptyCell());
+		table1.addCell(boldCell("FIJO"));
+		table1.addCell(boldCell("NO FIJO"));
+		table1.addCell(emptyCell());
 		
 		document.add(table1);
 		
@@ -225,118 +196,71 @@ public class printContractMediaList extends HttpServlet{
 		}
 		
 		table.setWidthPercentage(100);
-
-		PdfPCell c0 = new PdfPCell(new Phrase("Documento",getFont1()));
-		c0.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c0);
 		
-		PdfPCell c1 = new PdfPCell(new Phrase("Nombre",getFont1()));
-		c1.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c1);
-		
-		PdfPCell c1A = new PdfPCell(new Phrase("Categoria",getFont1()));
-		c1A.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c1A);
-		
-		PdfPCell c2 = new PdfPCell(new Phrase("Fecha Inicio",getFont1()));
-		c2.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c2);
-		
-		PdfPCell c3 = new PdfPCell(new Phrase("Fecha Fin",getFont1()));
-		c3.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c3);
-		
-		PdfPCell c4 = new PdfPCell(new Phrase("GC",getFont1()));
-		c4.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c4);
-		
-		PdfPCell c5 = new PdfPCell(new Phrase("H",getFont1()));
-		c5.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c5);
-		
-		PdfPCell c52 = new PdfPCell(new Phrase("M",getFont1()));
-		c52.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c52);
-		
-		PdfPCell c6 = new PdfPCell(new Phrase("H",getFont1()));
-		c6.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c6);
-		
-		PdfPCell c62 = new PdfPCell(new Phrase("M",getFont1()));
-		c62.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c62);
-		
-		
-		PdfPCell c7 = new PdfPCell(new Phrase("Discap",getFont1()));
-		c7.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(c7);
+		table.addCell(boldCell("Documento"));
+		table.addCell(boldCell("Nombre"));
+		table.addCell(boldCell("Categoria"));
+		table.addCell(boldCell("Fecha Inicio"));
+		table.addCell(boldCell("Fecha Fin"));
+		table.addCell(boldCell("GC"));
+		table.addCell(boldCell("H"));
+		table.addCell(boldCell("M"));
+		table.addCell(boldCell("H"));
+		table.addCell(boldCell("M"));
+		table.addCell(boldCell("Discap"));
 		
 		JSONArray array = json.getJSONArray("contract_act");
 		
 		Double totalManFixed = 0.0, totalWomanFixed = 0.0, totalManUnfixed = 0.0, totalWomanUnfixed = 0.0, totalDiscap = 0.0;
-		
+		Double totalManFixed2 = 0.0, totalWomanFixed2 = 0.0, totalManUnfixed2 = 0.0, totalWomanUnfixed2 = 0.0, totalDiscap2 = 0.0;
+
 		for(Integer i = 0 ; i < array.length(); i++){
-			
 			JSONObject contract = array.getJSONObject(i);
 			
-			PdfPCell c00 = new PdfPCell(new Phrase(contract.getString("document"),getFont2()));
-			c00.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c00);
-			
-			PdfPCell c11 = new PdfPCell(new Phrase(contract.getString("name"),getFont2()));
-			c11.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c11);
-			
-			PdfPCell c11A = new PdfPCell(new Phrase(contract.getJSONObject("category").getString("name"),getFont2()));
-			c11A.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c11A);
+			table.addCell(stringCell(contract.getString("document")));
+			table.addCell(stringCell(contract.getString("name")));
+			table.addCell(stringCell(contract.getJSONObject("category").getString("name")));
 			
 			Date sd = dateTimeFormat.parse(contract.getString("start_date"));
-			PdfPCell c22 = new PdfPCell(new Phrase(dateFormat.format(sd),getFont2()));
-			c22.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c22);
+			table.addCell(stringCell(dateFormat.format(sd)));
 			
 			String date = contract.getString("end_date");
-			PdfPCell c33 = new PdfPCell(new Phrase("-",getFont2()));
 			if(!date.equals("-")){
-				Date ed = dateTimeFormat.parse(contract.getString("end_date"));
-				c33 = new PdfPCell(new Phrase(dateFormat.format(ed),getFont2()));
-			}
-			c33.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c33);
-			
-			PdfPCell c44 = new PdfPCell(new Phrase(contract.getString("quotation_group"),getFont2()));
-			c44.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c44);
+				Date ed = dateTimeFormat.parse(date);
+				date = dateFormat.format(ed);
+			}		
+			table.addCell(stringCell(date));			
+			table.addCell(stringCell(contract.getString("quotation_group")));
 			
 			Double manFixed = contract.getJSONObject("gender").getInt("id") != 1 ? contract.getDouble("fixed") : 0.0;
 			totalManFixed = totalManFixed + manFixed;
-			PdfPCell c55 = new PdfPCell(new Phrase(Double.toString(manFixed),getFont2()));
-			c55.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c55);
+			Double manFixed2 = contract.getJSONObject("gender").getInt("id") != 1 ? contract.getDouble("end_fixed") : 0.0;
+			totalManFixed2 = totalManFixed2 + manFixed2;
+			table.addCell(stringCell(Double.toString(manFixed)));
 			
 			Double womanFixed = contract.getJSONObject("gender").getInt("id") == 1 ? contract.getDouble("fixed") : 0.0;
 			totalWomanFixed = totalWomanFixed + womanFixed;
-			PdfPCell c552 = new PdfPCell(new Phrase(Double.toString(womanFixed),getFont2()));
-			c552.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c552);
+			Double womanFixed2 = contract.getJSONObject("gender").getInt("id") == 1 ? contract.getDouble("end_fixed") : 0.0;
+			totalWomanFixed2 = totalWomanFixed2 + womanFixed2;
+			table.addCell(stringCell(Double.toString(womanFixed)));
 
 			Double manUnfixed = contract.getJSONObject("gender").getInt("id") != 1 ? contract.getDouble("unfixed") : 0.0;
 			totalManUnfixed = totalManUnfixed + manUnfixed;
-			PdfPCell c66 = new PdfPCell(new Phrase(Double.toString(manUnfixed),getFont2()));
-			c66.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c66);
+			Double manUnfixed2 = contract.getJSONObject("gender").getInt("id") != 1 ? contract.getDouble("end_unfixed") : 0.0;
+			totalManUnfixed2 = totalManUnfixed2 + manUnfixed2;
+			table.addCell(stringCell(Double.toString(manUnfixed)));
 			
 			Double womanUnfixed = contract.getJSONObject("gender").getInt("id") == 1 ? contract.getDouble("unfixed") : 0.0;
 			totalWomanUnfixed = totalWomanUnfixed + womanUnfixed;
-			PdfPCell c662 = new PdfPCell(new Phrase(Double.toString(womanUnfixed),getFont2()));
-			c662.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c662);
+			Double womanUnfixed2 = contract.getJSONObject("gender").getInt("id") == 1 ? contract.getDouble("end_unfixed") : 0.0;
+			totalWomanUnfixed2 = totalWomanUnfixed2 + womanUnfixed2;
+			table.addCell(stringCell(Double.toString(womanUnfixed)));
 			
 			Double discap = contract.getJSONObject("disability").getInt("id") != -1 ? contract.getDouble("fixed") + contract.getDouble("unfixed") : 0.0;
-			PdfPCell c77 = new PdfPCell(new Phrase(Double.toString(discap),getFont2()));
-			c77.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(c77);
+			totalDiscap = totalDiscap + discap;
+			Double discap2 = contract.getJSONObject("disability").getInt("id") != -1 ? contract.getDouble("end_fixed") + contract.getDouble("end_unfixed") : 0.0;
+			totalDiscap2 = totalDiscap2 + discap2;
+			table.addCell(stringCell(Double.toString(discap)));
 		}
 		
 		document.add(table);
@@ -349,7 +273,7 @@ public class printContractMediaList extends HttpServlet{
 		
 		PdfPTable tableN1 = new PdfPTable(7);
 		tableN1.setWidthPercentage(100);
-		float[] medidaCeldasN1 = {9f, 1f, 0.5f, 0.5f, 0.5f, 0.5f ,1f};
+		float[] medidaCeldasN1 = {8f, 2f, 0.5f, 0.5f, 0.5f, 0.5f ,1f};
 		try {
 			tableN1.setWidths(medidaCeldasN1);
 		} catch (DocumentException e) {
@@ -357,37 +281,26 @@ public class printContractMediaList extends HttpServlet{
 		}
 		
 		tableN1.addCell(emptyCell());
+		tableN1.addCell(boldCell("Total Media Periodo"));
+		tableN1.addCell(boldCell(Double.toString(AonMathUtils.round(totalManFixed))));
+		tableN1.addCell(boldCell(Double.toString(AonMathUtils.round(totalWomanFixed))));
+		tableN1.addCell(boldCell(Double.toString(AonMathUtils.round(totalManUnfixed))));
+		tableN1.addCell(boldCell(Double.toString(AonMathUtils.round(totalWomanUnfixed))));
+		tableN1.addCell(boldCell(Double.toString(AonMathUtils.round(totalDiscap))));
 		
-		PdfPCell total = new PdfPCell(new Phrase("TOTAL",getFont1()));
-		total.setBorder(PdfPCell.NO_BORDER);
-		tableN1.addCell(total);
-		
-		
-		PdfPCell tmf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalManFixed)),getFont1()));
-		tmf.setBorder(PdfPCell.NO_BORDER);
-		tableN1.addCell(tmf);
-		
-		PdfPCell twf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalWomanFixed)),getFont1()));
-		twf.setBorder(PdfPCell.NO_BORDER);
-		tableN1.addCell(twf);
-
-		PdfPCell tmu = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalManUnfixed)),getFont1()));
-		tmu.setBorder(PdfPCell.NO_BORDER);
-		tableN1.addCell(tmu);
-		
-		PdfPCell twu = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalWomanUnfixed)),getFont1()));
-		twu.setBorder(PdfPCell.NO_BORDER);
-		tableN1.addCell(twu);
-		
-		PdfPCell td = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalDiscap)),getFont1()));
-		td.setBorder(PdfPCell.NO_BORDER);
-		tableN1.addCell(td);
+		tableN1.addCell(emptyCell());
+		tableN1.addCell(boldCell("Total a 31/12"));
+		tableN1.addCell(boldCell(Integer.toString(totalManFixed2.intValue())));
+		tableN1.addCell(boldCell(Integer.toString(totalWomanFixed2.intValue())));
+		tableN1.addCell(boldCell(Integer.toString(totalManUnfixed2.intValue())));
+		tableN1.addCell(boldCell(Integer.toString(totalWomanUnfixed2.intValue())));
+		tableN1.addCell(boldCell(Integer.toString(totalDiscap2.intValue())));
 
 		document.add(tableN1);
-		PdfPTable tableN = new PdfPTable(3);
+		PdfPTable tableN = new PdfPTable(4);
 		tableN.setWidthPercentage(100);
 
-		float[] medidaCeldasN = {10f, 2f, 1f};
+		float[] medidaCeldasN = {8f, 3f, 1f, 1f};
 		try {
 			tableN.setWidths(medidaCeldasN);
 		} catch (DocumentException e) {
@@ -395,37 +308,30 @@ public class printContractMediaList extends HttpServlet{
 		}
 	
 		tableN.addCell(emptyCell());
+		tableN.addCell(emptyCell());
+		tableN.addCell(boldCell("Media"));
+		tableN.addCell(boldCell("31/12"));
 		
-		PdfPCell tf1 = new PdfPCell(new Phrase("Total Fijo",getFont1()));
-		tf1.setBorder(PdfPCell.NO_BORDER);
-		tableN.addCell(tf1);
-		
+		tableN.addCell(emptyCell());
+		tableN.addCell(boldCell("Total Fijo"));
 		Double totalFixed = totalManFixed + totalWomanFixed;
-		PdfPCell tf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalFixed)),getFont1()));
-		tf.setBorder(PdfPCell.NO_BORDER);
-		tableN.addCell(tf);
+		tableN.addCell(boldCell(Double.toString(AonMathUtils.round(totalFixed))));
+		Double totalFixed2 = totalManFixed2 + totalWomanFixed2;
+		tableN.addCell(boldCell(Integer.toString(totalFixed2.intValue())));		
 		
 		tableN.addCell(emptyCell());
-		
-		PdfPCell tnf1 = new PdfPCell(new Phrase("Total No Fijo",getFont1()));
-		tnf1.setBorder(PdfPCell.NO_BORDER);
-		tableN.addCell(tnf1);
-		
+		tableN.addCell(boldCell("Total No Fijo"));
 		Double totalUnfixed = totalManUnfixed + totalWomanUnfixed;
-		PdfPCell tnf = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalUnfixed)),getFont1()));
-		tnf.setBorder(PdfPCell.NO_BORDER);
-		tableN.addCell(tnf);
+		tableN.addCell(boldCell(Double.toString(AonMathUtils.round(totalUnfixed))));
+		Double totalUnfixed2 = totalManUnfixed2 + totalWomanUnfixed2;
+		tableN.addCell(boldCell(Integer.toString(totalUnfixed2.intValue())));
 		
 		tableN.addCell(emptyCell());
-		
-		PdfPCell te1 = new PdfPCell(new Phrase("Total Empresa",getFont1()));
-		te1.setBorder(PdfPCell.NO_BORDER);
-		tableN.addCell(te1);
-		
+		tableN.addCell(boldCell("Total Empresa"));
 		Double totalCompany = totalFixed + totalUnfixed;
-		PdfPCell te = new PdfPCell(new Phrase(Double.toString(AonMathUtils.round(totalCompany)),getFont1()));
-		te.setBorder(PdfPCell.NO_BORDER);
-		tableN.addCell(te);
+		tableN.addCell(boldCell(Double.toString(AonMathUtils.round(totalCompany))));
+		Double totalCompany2 = totalFixed2 + totalUnfixed2;
+		tableN.addCell(boldCell(Integer.toString(totalCompany2.intValue())));
 
 		document.add(tableN);
 	}
@@ -457,6 +363,18 @@ public class printContractMediaList extends HttpServlet{
 	
 	private static PdfPCell emptyCell() {
 		PdfPCell cell = new PdfPCell(new Phrase("",getFont2()));
+		cell.setBorder(PdfPCell.NO_BORDER);
+		return cell;
+	}
+	
+	private static PdfPCell stringCell(String str) {
+		PdfPCell cell = new PdfPCell(new Phrase(str,getFont2()));
+		cell.setBorder(PdfPCell.NO_BORDER);
+		return cell;
+	}
+	
+	private static PdfPCell boldCell(String str) {
+		PdfPCell cell = new PdfPCell(new Phrase(str,getFont1()));
 		cell.setBorder(PdfPCell.NO_BORDER);
 		return cell;
 	}
