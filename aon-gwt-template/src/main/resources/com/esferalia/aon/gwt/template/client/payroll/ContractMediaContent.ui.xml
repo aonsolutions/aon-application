@@ -79,7 +79,7 @@
 						<td></td>
 						<td>
 							<div class="aon-search-lookup-button" style="display: inline-block;">
-								<g:Button ui:field="downloadButton" text="Descarga"
+								<g:Button ui:field="downloadButton" text="Informe"
 									styleName="aon-icon-commandButton aon-icon-pdf">
 								</g:Button>
 							</div>
