@@ -138,7 +138,6 @@ public class WebpolExporterController extends BasicController implements IPmsCon
 
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
-		//this.getModel().setWrappedData(null);
 		setModel(null);
 		data = null;
 		hotels = null;
