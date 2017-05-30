@@ -43,21 +43,21 @@
 							<aon:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
 							</aon:if>
-<!-- 							
+ 							
 							<aon:if test="#{desktop.state.documentalEnabled and !desktop.state.documentalInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/documentalDashboardPortlet.xhtml" />
 							</aon:if>
- -->
+
 							<!-- payroll portal -->
 							<aon:if test="#{desktop.state.payrollInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
 							</aon:if>
 							<!-- docs -->
-<!-- 							
+ 							
 							<aon:if test="#{desktop.state.documentalInfoVisibleForPortal}">
 								<ui:include src="/facelet/homepage/portlet/documentalPortalDashboardPortlet.xhtml" />
 							</aon:if>
- -->
+
 						</aon:if>
 
 						<aon:if test="#{!desktop.showGraphicsPortlet}">
