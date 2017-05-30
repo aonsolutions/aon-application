@@ -215,13 +215,16 @@ public class ProjectReservationSearchListener extends ControllerSearchListener i
 			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_STATUS);
 			addEnumToCriteria(criteria, status, getReservationStatuses());
 		}
-		completeScopeCriteria(criteria, getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_SCOPE_ID));
+		completeScopeCriteria(criteria);
 		completeConexFlowCriteria(criteria);
+
+		System.out.println(criteria);
 	}
 
-	private void completeScopeCriteria(Criteria criteria, String alias) throws ManagerBeanException, ExpressionException {
-		Expression hotelScopeExp = UserUtils.getInstance().getNullableScopeExpression(alias);
+	private void completeScopeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		Expression hotelScopeExp = UserUtils.getInstance().getNullableScopeExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_SCOPE_ID));
 		if (getController() instanceof ProjectReservationController) {
+			String alias = getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_SCOPE_ID);
 			hotelScopeExp = ExpressionUtilities.getOrExpression(hotelScopeExp, UserUtils.getInstance().getNullableScopeExpression(alias));
 		}
 		criteria.addExpression(hotelScopeExp);
