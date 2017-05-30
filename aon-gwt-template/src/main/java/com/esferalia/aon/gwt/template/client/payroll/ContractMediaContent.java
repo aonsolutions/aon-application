@@ -48,6 +48,7 @@ public class ContractMediaContent extends Composite {
 			Integer y = year-i;
 			yearList.addItem(y.toString(), y.toString());
 		}
+		yearList.setSelectedIndex(1);
 	}
 	
 	@UiHandler("downloadButton")
