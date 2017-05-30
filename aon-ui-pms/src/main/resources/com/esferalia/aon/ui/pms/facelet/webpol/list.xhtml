@@ -97,9 +97,8 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 					<ui:param name="controller" value="#{webpolExporter}" />
-					<ui:param name="skipSelectRow" value="#{true}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
-					<ui:param name="skipLineEdition" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 					
 					<ui:define name="columns">
 						<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -187,7 +186,7 @@
 								value="&#160;" title="#{bundle.aon_reservation}"
 								action="reservation_form"
 								styleClass="aon-icon-commandButton aon-button-goto aon-bold aon-italic"
-								actionListener="#{webpolExporter.onGotoReservation}" />
+								actionListener="#{webpolExporter.onLoadReservation}" />
 						</aon:column>
 					</ui:define>
 			

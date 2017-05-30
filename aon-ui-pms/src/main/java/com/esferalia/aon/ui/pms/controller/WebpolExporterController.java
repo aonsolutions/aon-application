@@ -40,7 +40,7 @@ import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
-public class WebpolExporterController extends BasicController {
+public class WebpolExporterController extends BasicController implements IPmsConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -138,7 +138,8 @@ public class WebpolExporterController extends BasicController {
 
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
-		this.getModel().setWrappedData(null);
+		//this.getModel().setWrappedData(null);
+		setModel(null);
 		data = null;
 		hotels = null;
 		fromDate = new Date();
@@ -148,12 +149,10 @@ public class WebpolExporterController extends BasicController {
 		generationHotel = null;
 	}
 	
-	public void onGotoReservation(ActionEvent event) throws ManagerBeanException {
-		ProjectReservationGuest guest = (ProjectReservationGuest) this.getModel().getRowData();
-		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
-		controller.select(event, guest.getProjectReservation().getId());
-		controller.setBackAction(IPmsConstants.WEBPOL_EXPORTER_LIST_NAME);
-		controller.setBackActionListener(this.getBeanName()+".onSearch");
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		ProjectReservationGuest guest = (ProjectReservationGuest)this.getModel().getRowData();
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
+		reservationController.onLoad(event, guest.getProjectReservation().getId(), WEBPOL_EXPORTER_LIST_NAME, WEBPOL_EXPORTER_CONTROLLER_NAME + ".onSearch");
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -166,7 +165,8 @@ public class WebpolExporterController extends BasicController {
 			this.getCriteria().addNotNullExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT));
 			this.getCriteria().addNotEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT), "");
 			this.getCriteria().addNotEqualExpression("ProjectReservationGuest.projectReservation.status", ReservationStatus.CANCELLED);
-			this.getCriteria().addEqualExpression("ProjectReservationGuest.projectReservation.checkStatus", ReservationCheckStatus.CHECK_IN);
+			ReservationCheckStatus[] checkStatus = new ReservationCheckStatus[] {ReservationCheckStatus.CHECK_IN, ReservationCheckStatus.CHECK_OUT};
+			this.getCriteria().addInExpression("ProjectReservationGuest.projectReservation.checkStatus", checkStatus);
 			this.getCriteria().addBetweenExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_START_DATE), getFromDate(), getToDate());
 			this.getCriteria().addOrder(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_HOTEL_ID));
 			super.onSearch(event);

@@ -32,6 +32,7 @@ public interface IPmsConstants {
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	String SELECTED_INVOICE_CONTROLLER_NAME = "selectedInvoice";
 	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
+	String WEBPOL_EXPORTER_CONTROLLER_NAME = "webpolExporter";
 
 	// ************************************************************
 	// NAVIGATION
