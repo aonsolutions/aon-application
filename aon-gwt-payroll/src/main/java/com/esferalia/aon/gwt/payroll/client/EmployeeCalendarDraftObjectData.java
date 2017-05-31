@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -29,13 +28,13 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date,Double> mapDaysHour;
 	private Map<Date, DayType> mapDaysType;
 	private Map<Date, String> mapFestivesDays;
-	private Map<String, Double> mapExtraHours;
+	private Map<Date, Double> mapExtraHours;
 	
 	private Map<Date,Double> draftMapDaysHour;
 	private Map<Date, DayType> draftMapDaysType;
 	private Map<Date, Double> draftMapDaysCoefficientEre;
 	private Map<Date, Double> draftMapDaysCoefficientStrike;
-	private Map<String, Double> draftMapExtraHours;
+	private Map<Date, Double> draftMapExtraHours;
 	
 	private Date startContract;
 	private Date endContract;
@@ -240,9 +239,9 @@ public class EmployeeCalendarDraftObjectData {
 
 		private Double oldHour;
 		private Double newHour;
-		private String month;
+		private Date month;
 		
-		public SetExtraHourEdit(Double oldH, Double newH, String actualMonth) {
+		public SetExtraHourEdit(Double oldH, Double newH, Date actualMonth) {
 			this.oldHour = oldH;
 			this.newHour = newH;
 			this.month = actualMonth;
@@ -329,13 +328,13 @@ public class EmployeeCalendarDraftObjectData {
 		this.mapDaysHour = new HashMap<Date,Double>();
 		this.mapDaysType = new HashMap<Date,DayType>();
 		this.mapFestivesDays = new HashMap<Date,String>();
-		this.mapExtraHours = new HashMap<String,Double>();
+		this.mapExtraHours = new HashMap<Date,Double>();
 		
 		this.draftMapDaysHour = new HashMap<Date,Double>();
 		this.draftMapDaysType = new HashMap<Date,DayType>();
 		this.draftMapDaysCoefficientEre = new HashMap<Date,Double>();
 		this.draftMapDaysCoefficientStrike = new HashMap<Date,Double>();
-		this.draftMapExtraHours = new HashMap<String,Double>();
+		this.draftMapExtraHours = new HashMap<Date,Double>();
 		
 		
 		this.startContract = startContract;
@@ -362,7 +361,7 @@ public class EmployeeCalendarDraftObjectData {
 		return draftMapDaysHour.entrySet();
 	}
 	
-	public Set<Entry<String, Double>> getChangesExtraHours() {
+	public Set<Entry<Date, Double>> getChangesExtraHours() {
 		return draftMapExtraHours.entrySet();
 	}
 	
@@ -461,17 +460,19 @@ public class EmployeeCalendarDraftObjectData {
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
 	
-	public double getExtraHourByMonth (String month){
-		Double extraHourMonthDraft = draftMapExtraHours.get(month);
+	public double getExtraHourByMonth (Date actualMonth){
+		Double extraHourMonthDraft = draftMapExtraHours.get(actualMonth);
 		if (extraHourMonthDraft != null)
 			return extraHourMonthDraft;
 		else
 			return mapDaysHour.getOrDefault(extraHourMonthDraft, (double) 0);
 	}
 	
-	public void setExtraHourByMonth(String month, Double extraHourMonth) {
-		Double old = draftMapExtraHours.put(month, extraHourMonth);
-		undoManager.add(new SetExtraHourEdit(old, extraHourMonth, month));	
+	@SuppressWarnings("deprecation")
+	public void setExtraHourByMonth(Double extraHourMonth, int month, int year) {
+		Date actualDate = new Date(year, month, 1);
+		Double old = draftMapExtraHours.put(actualDate, extraHourMonth);
+		undoManager.add(new SetExtraHourEdit(old, extraHourMonth, actualDate));	
 	}
 	
 	// ----------- SET SPECIAL DAYS -----------
@@ -679,6 +680,31 @@ public class EmployeeCalendarDraftObjectData {
 		
 		if(var != null){
 			variablesList.add(var);
+		}
+		
+		return variablesList;
+	}
+	
+	public ArrayList<StringVariable> getVariablesListExtraHours(Date draftStartDate, Date draftEndDate) {
+		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		
+		CalendarVariable var = null;
+		
+		for (Entry<Date, Double> e : draftMapExtraHours.entrySet()){					
+			if(!e.getKey().equals(draftStartDate))
+				continue;
+			
+			var = new CalendarVariable();
+			var.setImplicit(false);
+			var.setScope(Scope.SALARY); // DRAFT
+			var.setName("HORAS_EXTRAS");
+			var.setStartDate(e.getKey());
+			var.setEndDate(DateUtils.copyDateOnly(draftEndDate));
+			var.setExpression(Double.toString(e.getValue()));
+			
+			variablesList.add(var);
+			
+			//Window.alert("CALENDAR = Name :"+var.getName()+", StartDate :"+ var.getStartDate()+", EndDate :"+ var.getEndDate()+", Exp :"+var.getExpression());
 		}
 		
 		return variablesList;

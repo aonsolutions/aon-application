@@ -1121,8 +1121,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	@UiHandler("extraHoursDialogOk")
 	public void onExtraHoursOKClick(ClickEvent event) {
 		String month = monthOpt.getValue();
+		Integer intMonth = calculateIntByMonth(month);
+		Integer intYear = Integer.parseInt(yearLabel.getText())- 1900;
 		Double extraHourMonth = extraHoursBox.getValue();
-		calendarEmployeeInfo.setExtraHourByMonth(month, extraHourMonth);
+		calendarEmployeeInfo.setExtraHourByMonth(extraHourMonth, intMonth, intYear);
 		monthOpt.setText("");
 		extraHoursBox.setText("");
 		extraHoursDialog.close();
@@ -1556,7 +1558,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void setExtraHoursMonth(int row) {
 		Label labelDay = new Label();
 		String month = calendarGrid.getWidget(row, 0).getElement().getInnerText();
-		double monthExtraHoursRound = roundDecimal(calendarEmployeeInfo.getExtraHourByMonth(month), 2);
+		Date auxDate = new Date(Integer.parseInt(yearLabel.getText())- 1900, calculateIntByMonth(month), 1);
+		double monthExtraHoursRound = roundDecimal(calendarEmployeeInfo.getExtraHourByMonth(auxDate), 2);
 		labelDay.setText(Double.toString(monthExtraHoursRound));
 		labelDay.setStyleName(style.cellStyle());
 		calendarGrid.setWidget(row, 38, labelDay);
@@ -1668,9 +1671,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}	
 	}
 	
-	private void paintMadeExtraHoursChanges(Set<Entry<String, Double>> changesExtraHours) {
-		for (Entry<String,Double> e : changesExtraHours){
-			int row = calculateRowByMonth(e.getKey());
+	private void paintMadeExtraHoursChanges(Set<Entry<Date, Double>> changesExtraHours) {
+		for (Entry<Date,Double> e : changesExtraHours){
+			int row = calculateRowByMonth(e.getKey().getMonth());
 			if (row != -1){
 				calendarGrid.getWidget(row, 38).addStyleName(style.onChange());
 				calendarGrid.getCellFormatter().addStyleName(row, 38, style.onChange());
@@ -1679,32 +1682,63 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 	}
 	
-	private int calculateRowByMonth(String month) {
+	private int calculateRowByMonth(int month) {
+		switch (month) {
+		case 0:
+			return 1;
+		case 1:
+			return 3;
+		case 2:
+			return 5;
+		case 3:
+			return 7;
+		case 4:
+			return 9;
+		case 5:
+			return 11;
+		case 6:
+			return 13;
+		case 7:
+			return 15;
+		case 8:
+			return 17;
+		case 9:
+			return 19;
+		case 10:
+			return 21;
+		case 11:
+			return 23;
+		default:
+			return -1;
+		}
+	}
+	
+	private int calculateIntByMonth(String month) {
 		switch (month) {
 		case "Enero":
-			return 1;
+			return 0;
 		case "Febrero":
-			return 3;
+			return 1;
 		case "Marzo":
-			return 5;
+			return 2;
 		case "Abril":
-			return 7;
+			return 3;
 		case "Mayo":
-			return 9;
+			return 4;
 		case "Junio":
-			return 11;
+			return 5;
 		case "Julio":
-			return 13;
+			return 6;
 		case "Agosto":
-			return 15;
+			return 7;
 		case "Septiembre":
-			return 17;
+			return 8;
 		case "Octubre":
-			return 19;
+			return 9;
 		case "Noviembre":
-			return 21;
+			return 10;
 		case "Diciembre":
-			return 23;
+			return 11;
 		default:
 			return -1;
 		}

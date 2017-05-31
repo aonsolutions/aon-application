@@ -304,11 +304,8 @@ public class SalaryDraftObject implements IContextProvider {
 	public void save(final CalculateCallback callback) {
 		removeCalendarDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListStrike(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
-		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+		addCalendarVariablesDraft();
+		addEventsVariablesDraft();
 		removeSalaryPart(salaryDraft);
 		employeeCalendarDraftObjectData.clearDraftHours();
 		
@@ -359,11 +356,8 @@ public class SalaryDraftObject implements IContextProvider {
 		removeCalendarDraft();
 		removeEventsDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListStrike(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
-		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+		addCalendarVariablesDraft();
+		addEventsVariablesDraft();
 		employeeCalendarDraftObjectData.getSalaryDraftChanged(salaryDraft);
 		
 		removeSalaryPart(salaryDraft);
@@ -401,6 +395,18 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	
+	public void addCalendarVariablesDraft(){
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListStrike(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
+		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListExtraHours(getDraftStartDate(), getDraftEndDate()));
+		
+	}
+	
+	public void addEventsVariablesDraft(){
+		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+	}
 	
 
 	public void emitSalary(final CalculateCallback callback) {
