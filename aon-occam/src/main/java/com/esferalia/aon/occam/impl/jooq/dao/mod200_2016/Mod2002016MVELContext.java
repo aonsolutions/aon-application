@@ -485,6 +485,51 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return 0.0;
 	}
 	
+	private double computePreBN599() throws AonCoreException {
+		double BN592 = roundKey(Mod2002016Key.BN592);
+		double BN595 = roundKey(Mod2002016Key.BN595);
+		double BN596 = roundKey(Mod2002016Key.BN596);
+		double BN597 = roundKey(Mod2002016Key.BN597);
+		return (BN592-BN595-BN596-BN597);
+	}
+	public double computeBN599() throws AonCoreException {
+		double BN599 = computePreBN599();
+		if (isChecked(Mod2002016Key.C0028)) {
+			double TR625 = roundKey(Mod2002016Key.TR625);
+			return round(TR625 * BN599 / 100);
+		}
+		return round(BN599);
+	}
+	
+	public double computeTR420() throws AonCoreException {
+		if (isChecked(Mod2002016Key.C0028)) {
+			double TR626 = roundKey(Mod2002016Key.TR626);
+			return round(TR626 * computePreBN599() / 100);
+		}
+		return 0.0;
+	}
+	public double computeTR421() throws AonCoreException {
+		if (isChecked(Mod2002016Key.C0028)) {
+			double TR627 = roundKey(Mod2002016Key.TR627);
+			return round(TR627 * computePreBN599() / 100);
+		}
+		return 0.0;
+	}
+	public double computeTR426() throws AonCoreException {
+		if (isChecked(Mod2002016Key.C0028)) {
+			double TR628 = roundKey(Mod2002016Key.TR628);
+			return round(TR628 * computePreBN599() / 100);
+		}
+		return 0.0;
+	}
+	public double computeTR427() throws AonCoreException {
+		if (isChecked(Mod2002016Key.C0028)) {
+			double TR629 = roundKey(Mod2002016Key.TR629);
+			return round(TR629 * computePreBN599() / 100);
+		}
+		return 0.0;
+	}
+	
 	public double computeP1501() throws AonCoreException {
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;

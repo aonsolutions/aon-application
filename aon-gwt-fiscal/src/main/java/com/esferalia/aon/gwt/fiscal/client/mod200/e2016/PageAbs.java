@@ -291,8 +291,12 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	protected FlexTable getFlexTable(Panel container,int row,final String label, String[] headers) {
 		FlexTable tableDetail = new FlexTable();
-		tableDetail.addStyleName(AON.AON_CSS.aonWidthAll());
 		container.add(tableDetail);
+		return getFlexTable(tableDetail, row, label, headers);
+	}
+	
+	protected FlexTable getFlexTable(FlexTable tableDetail,int row,final String label, String[] headers) {
+		tableDetail.addStyleName(AON.AON_CSS.aonWidthAll());
 		int r = 0;
 		int col = 0;
 		if (headers != null) {
@@ -311,7 +315,6 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		return tableDetail;
 	}
-	
 	
 	protected abstract void populate();
 	protected abstract void initializeTable();

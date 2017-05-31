@@ -12,7 +12,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class Page13 extends PageAbs {
 	
 	private static String[] KEY_DESCRIPTIONS = new String[] {
-		 "Cuota del ejercicio a ingresar o a devolver."
+		 ""
+		,"Cuota del ejercicio a ingresar o a devolver."
 		,"1\u00BA Pago fraccionados 1\u00BA."
 		,"2\u00BA Pago fraccionados 2\u00BA."
 		,"3\u00BA Pago fraccionados 3\u00BA."
@@ -63,7 +64,23 @@ public class Page13 extends PageAbs {
 		}
 		
 		paintTable(table1, Mod2002016Constants.COMBINED_TAXATION_2);
-		paintTable(table2, Mod2002016Constants.COMBINED_TAXATION_3, 5);
+
+		getFlexTable(table2,0,null, new String[]{"","ARABA","GIPUZKOA","BIZKAIA","NAVARRA","TOTAL"});
+		table2.getColumnFormatter().setWidth(0, "auto");
+		row = 1;
+		for (Mod2002016Key[] keys : Mod2002016Constants.COMBINED_TAXATION_3) {
+			boolean paintDescription = true;	
+			for (int i = 0; i< keys.length; i++) {
+				if (keys[i] != null && callback.getMod200Object().isVisible(keys[i])) {
+					if (paintDescription) {
+						paintDescription(table2, KEY_DESCRIPTIONS[row], row, 0, (row==0 || row == 4 || row == 11));
+						paintDescription = false;
+					}
+					paintKeyField(table2,keys[i],row, i+1, 8);
+				}
+			}
+			row++;
+		}
 	}
 	
 	private void paintTable(FlexTable table, Mod2002016Key[] keys) {
@@ -72,7 +89,7 @@ public class Page13 extends PageAbs {
 		table.getColumnFormatter().setWidth(1, "200px");	
 		int row = 0;
 		for (Mod2002016Key key : keys) {
-			if (keys != null && callback.getMod200Object().isVisible(key)) {
+			if (key != null && callback.getMod200Object().isVisible(key)) {
 				paintKeyDescription(table, key, row, 0);
 				paintKeyField(table,key,row, 1);
 			}
@@ -80,29 +97,6 @@ public class Page13 extends PageAbs {
 		}
 	}
 	
-	private void paintTable(FlexTable table, Mod2002016Key[][] liquidationKeys, int numCols) {
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		for (int i = 0; i < numCols; i++  ) {
-			table.getColumnFormatter().setWidth((i+1), "150px");	
-		}
-		table.getColumnFormatter().setWidth(0, "auto");
-		int row = 0;
-		for (Mod2002016Key[] keys : liquidationKeys) {
-			boolean paintDescription = true;	
-			for (int i = 0; i< keys.length; i++) {
-				if (keys[i] != null && callback.getMod200Object().isVisible(keys[i])) {
-					if (paintDescription) {
-						paintDescription(table, KEY_DESCRIPTIONS[row], row, 0, (row==0 || row == 4 || row == 11));
-						paintDescription = false;
-					}
-					paintKeyField(table,keys[i],row, i+1, 8);
-				}
-			}
-			row++;
-		}
-	}
-
 	@Override
 	protected void populate() {}
 }
