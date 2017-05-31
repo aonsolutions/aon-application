@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -197,7 +198,7 @@ public class FtpDeliveryUploadHandler implements Serializable {
 		}
 	}
 	
-	public FileOutput exportEdiFile(Delivery delivery){
+	public FileOutput exportEdiFile(Delivery delivery) {
 		FileOutput output = null;
 		try {
 			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
@@ -212,14 +213,16 @@ public class FtpDeliveryUploadHandler implements Serializable {
 				AonUtil.addErrorMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage());
 			}
-			String customerEdiCode = ediSupport.getEdiCodes(
+			Map<String, String> ediCodes = ediSupport.getEdiCodes(
 					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).get(
+					delivery.getRegistryAddress());
+			String customerEdiCode = ediCodes.get(
 							CustomerEdiSupportController.ALBARANES);
-			String deliveryPointEdiCode = ediSupport.getEdiCodes(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).get(
+			String deliveryPointEdiCode = ediCodes.get(
 							CustomerEdiSupportController.PTO_ENTREGA);
+			String customerPackage = ediSupport.obtainPackingTag(
+					delivery.getCustomer().getRegistry(),
+					delivery.getRegistryAddress()).getName();
 			CompanyController company = (CompanyController) AonUtil
 					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
@@ -227,7 +230,7 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			// write file
 			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
 			output = writer.createFile(delivery, companyEdiCode,
-					customerEdiCode, deliveryPointEdiCode);
+					customerEdiCode, deliveryPointEdiCode, customerPackage);
 			return output;
 		} catch (IOException e) {
         	AonUtil.addErrorMessage(e.getMessage());

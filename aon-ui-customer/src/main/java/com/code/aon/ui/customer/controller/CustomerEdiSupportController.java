@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -298,6 +299,28 @@ public class CustomerEdiSupportController implements Serializable {
 			values.put(MEDIDA, m.groupCount()>6 ? m.group(7) : null);
 		}
 		return values;
+	}
+	
+	public Tag obtainPackingTag(Registry registry, RegistryAddress address) {
+		RegistryNote rNote = this.getRegistryNote(address.getId().toString(),
+				registry.getId());
+		String value = null;
+		if (rNote != null) {
+			value = rNote.getComments();
+		}
+		Matcher m;
+		Pattern p = Pattern.compile(CustomerEdiSupportController.MEDIDA + "=([^;]*);");
+		try {
+			if (value != null && (m = p.matcher(value)).find()) {
+				IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+				return (Tag) tagBean.get(Integer.valueOf(m.group(1)));
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		} catch (NumberFormatException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return null;
 	}
 
 }
