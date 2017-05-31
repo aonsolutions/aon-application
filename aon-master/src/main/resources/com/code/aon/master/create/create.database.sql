@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.104.0
+# Version: 8.105.0
 # Created by: girazu
-# Creation Date: 18/05/2017 17:05
+# Creation Date: 31/05/2017 12:55
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -7622,6 +7622,7 @@ CREATE TABLE `salary` (
   `enterprise_address` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Domicilio de la empresa',
   `enterprise_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Documento de la Empresa',
   `ccc` char(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Valor del Codigo Cuenta Cotizacion',
+  `ss_regime` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Regimen de la Seguridad Social',
   `employee_name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del trabajador',
   `social_security_number` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de la seguridad social',
   `employee_document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Documento de la Persona',
@@ -8431,7 +8432,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.104.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.105.0');
 
 COMMIT;
 
