@@ -539,6 +539,7 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitIncapacidadTemporalPagoDelegado() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = itDelegate;
 				}
 
 				@Override
@@ -549,6 +550,7 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitMaternidadPaternidadTiempoCompleto() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = fullMaternity;
 				}
 				
 				@Override
@@ -598,7 +600,8 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitMaternidadPaternidadTiempoCompleto() {
-					visitOthers();
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = fullMaternity;
 				}
 				
 				@Override
@@ -648,7 +651,59 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitMaternidadPaternidadTiempoCompleto() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = fullMaternity;
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcial() {
 					visitOthers();
+				}
+			};
+
+			SalaryVisitor fullMaternity = new SalaryVisitor(){
+				
+				private void visitOthers(){
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = standard;
+				}
+				
+				@Override
+				public void visitTiempoParcialNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitTiempoCompletoNormal() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitGrupoCotizacionDiario() {
+					// noop
+				}
+
+				@Override
+				public void visitIncapacidadTemporal15PrimerosDias() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = it15PrimerosDias;
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegado() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					state = itDelegate;
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegado() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoCompleto() {
+					Period last = cretaPeriods.removeLast();
+					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
 				}
 				
 				@Override
@@ -814,8 +869,8 @@ public class TrabajadoresTramos {
 		else 
 			visitor.visitTiempoParcialNormal();
 			
-		String quoteGroup = getContextData(QUOTE_GROUP.getName(),salary, startDate, endDate);
-		//String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
+		//String quoteGroup = getContextData(QUOTE_GROUP.getName(),salary, startDate, endDate);
+		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( Integer.parseInt(quoteGroup ) >= 8 )
 			visitor.visitGrupoCotizacionDiario();
 	}

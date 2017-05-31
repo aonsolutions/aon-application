@@ -1813,6 +1813,87 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaTrabajadoresYTramosRiesgoYMaternidad()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, DAY_OF_MONTH, 4);
+		Date endIT = add(startIT, DAY_OF_MONTH, 5);
+		
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIT, 
+				endIT, 
+				null);
+		//@formatter:on
+
+		Date startRisk = add(endIT, DAY_OF_MONTH, 1);
+		Date endRisk = add(startRisk, DAY_OF_MONTH, 9);
+		
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.PREGNANCY_RISK, 
+				startRisk, 
+				endRisk, 
+				null);
+		//@formatter:on
+
+		Date startMtndad = add(endRisk, DAY_OF_MONTH, 1);
+
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.MATERNITY, 
+				startMtndad, 
+				null, 
+				null);
+		//@formatter:on
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		for ( Tramo t : tramos ) 
+			System.out.println("Tramo : " + t.getFechaDesde().getMes() + "/" + t.getFechaDesde().getDia() 
+					+ "..." + t.getFechaHasta().getMes() + "/" + t.getFechaHasta().getDia());
+		
+		Assert.assertEquals(3, tramos.size());
+		
+		// Activo
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("04", tramo0.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo0);
+		
+		// IT
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("05", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("10", tramo1.getFechaHasta().getDia());
+		assertTramoIT15PrimerosDias(tramo1);
+
+		// Risk & Mtndad
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("11", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+		assertTramoMaternidadTiempoCompleto(tramo2);		
+
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosMaternidadTiempoParcial()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
@@ -2002,12 +2083,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		PaymentConceptRecord mtnad = addConcept(aonContext, "MTNAD");
 
 		addPayment(aonContext, contract, mtnad, 
-				String.format("BASE_REGULADORA * 0.00 * %s",  MATERNITY_DAYS),
+				String.format("0.00 * %s",  MATERNITY_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 
 		addPayment(aonContext, contract, mtnad, 
-				String.format("BASE_REGULADORA * 0.00 * %s",  PATERNITY_DAYS),
+				String.format("0.00 * %s",  PATERNITY_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 		//@formatter:on
