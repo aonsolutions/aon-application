@@ -362,10 +362,11 @@ public class SaleInvoiceController extends InvoiceController {
 
 	@Override
 	public SignerController getSignerController() {
-		PrintParametersController controller = (PrintParametersController) AonUtil
+		PrintParametersController printParams = (PrintParametersController) AonUtil
 				.getRegisteredBean(ICompanyConstants.PRINT_PARAMETERS_CONTROLLER_NAME);
+		printParams.onInit(null);
 		SignerController signer = super.getSignerController();
-		signer.setReportKey(controller.getSaleInvoiceParams().getSaleInvoiceTemplateValue());
+		signer.setReportKey(printParams.getSaleInvoiceParams().getSaleInvoiceTemplateValue());
 		return signer;
 	}
 	
