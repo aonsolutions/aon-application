@@ -30,15 +30,16 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 	public void afterDetailEval() throws JRScriptletException {
 		try {
 			String description = getFieldDescription();
-			String newDescription = buildLineDescription();
+			StringBuilder newDescription = new StringBuilder (buildLineDescription());
 			fillLineReferenceCode(newDescription);
 			if(newDescription.length()>0){
-				newDescription = newDescription.concat("\n  ");
-				newDescription = newDescription.concat(description.replace("\n", "\n  "));
+				newDescription.append("\n  ");
+				newDescription.append(description.replace("\n", "\n  "));
 			} else {
-				newDescription = description;
+				newDescription.delete(0, newDescription.length());
+				newDescription.append(description);
 			}
-			setVariableDescription(newDescription);
+			setVariableDescription(newDescription.toString());
 		} catch (Exception e) {
 			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
 			LOGGER.error(msg,e);
@@ -46,7 +47,7 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 		}
 	}
 	
-	private void fillLineReferenceCode(String newDescription) throws JRScriptletException{
+	private void fillLineReferenceCode(StringBuilder newDescription) throws JRScriptletException{
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			InvoiceDetail invoiceDetail = (InvoiceDetail) invoiceDetailBean.get((Integer)super.getFieldValue(FIELD_ID));
@@ -55,8 +56,8 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 			
 			String referenceCode = obtainReferenceCode(invoiceDetail);
 			if(isPrintReferenceCode && StringUtils.isNotBlank(referenceCode)){
-				newDescription.concat(newDescription.length()>0?" - ":"");
-				newDescription.concat(referenceCode);
+				newDescription.append(newDescription.length()>0?" - ":"");
+				newDescription.append(referenceCode);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
