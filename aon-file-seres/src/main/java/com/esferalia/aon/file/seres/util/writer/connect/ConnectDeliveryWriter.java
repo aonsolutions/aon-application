@@ -22,6 +22,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tag;
 import com.code.aon.customer.Customer;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
@@ -52,10 +53,10 @@ public class ConnectDeliveryWriter {
 
 
 	public FileOutput createFile(Delivery delivery, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode) throws FileNotFoundException,
-			UnsupportedEncodingException {
+			String customerEdiCode, String deliveryPointEdiCode,
+			String customerPackage) throws FileNotFoundException, UnsupportedEncodingException {
 		RECTL rectl = createRECTLRecord(delivery, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode);
+				customerEdiCode, deliveryPointEdiCode, customerPackage);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new ConnectDelivery(rectl, writer);
@@ -66,7 +67,7 @@ public class ConnectDeliveryWriter {
 	}
 
 	private RECTL createRECTLRecord(Delivery delivery, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode) {
+			String customerEdiCode, String deliveryPointEdiCode, String customerPackage) {
 		RECTL rectl = new RECTL();
 		rectl.setTipoDeMensaje(RECTL.RECTL_2.AVISO_DE_EXPEDICION_DESADV.getValue());
 		rectl.setCodigoEmisor(companyEdiCode);
@@ -79,7 +80,7 @@ public class ConnectDeliveryWriter {
 		rectl.seh1dList = createSEH1DList(delivery, companyEdiCode,
 				customerEdiCode, deliveryPointEdiCode);
 		rectl.seh1pList = createSEH1PList(delivery, companyEdiCode,
-				customerEdiCode);
+				customerEdiCode, customerPackage);
 //		rectl.seh1lList = createSEH1LList(delivery, companyEdiCode,
 //				customerEdiCode);
 		rectl.seh1gList = createSEH1GList(delivery);
@@ -164,7 +165,7 @@ public class ConnectDeliveryWriter {
 	}
 
 	private List<SEH1P> createSEH1PList(Delivery delivery, 
-			String companyEdiCode, String customerEdiCode) {
+			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		List<SEH1P> list = new ArrayList<>();
 		
 		delivery.getDetailList().stream()
@@ -201,7 +202,7 @@ public class ConnectDeliveryWriter {
 					});
 			
 			
-			fillPackageLines(delivery, list2, companyEdiCode, customerEdiCode);
+			fillPackageLines(delivery, list2, companyEdiCode, customerEdiCode, customerPackage);
 			
 			return list2;
 		}
@@ -210,13 +211,13 @@ public class ConnectDeliveryWriter {
 	}
 	
 	private void fillPackageLines(Delivery delivery, List<SEH1P> packageList,
-			String companyEdiCode, String customerEdiCode){
+			String companyEdiCode, String customerEdiCode, String customerPackage){
 		
 		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
-		System.out.println(seh1pMap);
+//		System.out.println(seh1pMap);
 		List<Integer> paletLines = new ArrayList<>();
 		paletLines.addAll(seh1pMap.keySet());
-		System.out.println(paletLines);
+//		System.out.println(paletLines);
 		
 		SEH1P mainPalet = packageList.get(0);
 		mainPalet.seh1lList = new ArrayList<>();
@@ -227,14 +228,14 @@ public class ConnectDeliveryWriter {
 				DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(boxIdx-1);
 				if(!isPackageItem(detail.getItem())){
 					mainPalet.seh1lList.add(createSEH1LRecord(detail,
-							companyEdiCode, customerEdiCode));
+							companyEdiCode, customerEdiCode, customerPackage));
 				}
 			});
 		});
 		
 		
 		Map<Integer, List<Integer>> seh1lMap = obtainSeh1lMap(delivery);
-		System.out.println(seh1lMap);
+//		System.out.println(seh1lMap);
 		int paletCount = paletLines.size();
 		int linesCount = seh1lMap.values().size();
 		for(int idx=1; idx<packageList.size(); idx++){
@@ -252,7 +253,7 @@ public class ConnectDeliveryWriter {
 				lineIdxList.forEach(lineIdx ->{
 					DeliveryDetail detail = (DeliveryDetail) delivery.getDetailList().get(lineIdx-1);
 					palet.seh1lList.add(createSEH1LRecord(detail,
-							companyEdiCode, customerEdiCode));
+							companyEdiCode, customerEdiCode, customerPackage));
 				});
 			});			
 		}
@@ -260,14 +261,14 @@ public class ConnectDeliveryWriter {
 	}
 
 	private List<SEH1L> createSEH1LList(Delivery delivery,
-			String companyEdiCode, String customerEdiCode) {
+			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		List<SEH1L> list = new ArrayList<>();
 		delivery.getDetailList().forEach(
 				to -> {
 					DeliveryDetail detail = (DeliveryDetail) to;
 					if(!isPackageItem(detail.getItem())){
 						list.add(createSEH1LRecord(detail,
-								companyEdiCode, customerEdiCode));
+								companyEdiCode, customerEdiCode, customerPackage));
 					}
 				});
 		return list;
@@ -422,7 +423,7 @@ public class ConnectDeliveryWriter {
 	 * Línea de artículos
 	 */
 	private SEH1L createSEH1LRecord(DeliveryDetail detail,
-			String companyEdiCode, String customerEdiCode) {
+			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		Item item = detail.getItem();
 		Customer customer = detail.getDelivery().getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customer);
@@ -447,7 +448,7 @@ public class ConnectDeliveryWriter {
 		record.setCodigoACU_ACU_(null);
 		record.setNumeroDeLote_NB_(item.getSerialNumber());
 		record.setNumeroDeArticuloDelComprador_IN_(null);
-		record.setCantidadEnviada_12_(detail.getQuantity());
+		record.setCantidadEnviada_12_(obtainPackageQuantity(detail, customerPackage));
 		record.setUnidadDeMedidaCantidadEnviada(null);
 		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(null);
 		record.setFechaDeCaducidad_36__102_203_(null);
@@ -581,7 +582,33 @@ public class ConnectDeliveryWriter {
 				&& item.getSerialDate() == null;
 	}
 	
-
+	private Double obtainPackageQuantity(DeliveryDetail detail,
+			String customerPackingTag) {
+		if(detail!=null && customerPackingTag!=null){
+			Item item = detail.getItem();
+			Double quantity = detail.getQuantity();
+			Tag itemPackFormatTag = item.getPackFormatTag();
+			Tag itemPackMeasurementTag = item.getPackMeasurementTag();
+			Tag itemPackingTag = item.getPackUnitsTag();
+			double itemPackMeasurement = item.getPackMeasurement();
+			int itemPackUnits = item.getPackUnits();
+			if (customerPackingTag != null && itemPackingTag != null
+					&& itemPackFormatTag != null && itemPackMeasurementTag != null) {
+				if (customerPackingTag.equals(itemPackMeasurementTag.getName())) {
+					return quantity;
+				} else if (customerPackingTag.equals(
+						itemPackingTag.getName())) {
+					return quantity / itemPackMeasurement;
+				} else if (customerPackingTag.equals(
+						itemPackFormatTag.getName())) {
+					return (quantity / itemPackMeasurement) / itemPackUnits;
+				}
+			}
+			return quantity;
+		}
+		return null;
+	}
+	
 	private Map<Integer, List<Integer>> obtainSeh1pMap(Delivery delivery) {
 		String remarks = delivery.getRemarks();
 		
