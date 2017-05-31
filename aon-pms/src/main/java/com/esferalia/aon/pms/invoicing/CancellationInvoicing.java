@@ -146,7 +146,7 @@ public class CancellationInvoicing {
 		double invoiceTotal = CommonUtil.round(penaltyAmount - advancedAmount);
 
 		Map<Date, Double> penaltyTaxableBases = new HashMap<Date, Double>();
-		if (cancellationInvoiceTo.isKeepAdvance() || !cancellationInvoiceTo.isManual()) {
+		if (cancellationInvoiceTo.isKeepAdvance() || reservation.getPenaltyMode().equals("P") || reservation.getPenaltyMode().equals("M")) {
 			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
 		} else {
 			Date fromDate = reservation.getStartDate();

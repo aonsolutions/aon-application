@@ -77,14 +77,15 @@
 
 										<aon:if test="#{searchListener.manual}">
 											<aon:outputLabel for="CancellationInvoice_cancellationPenalty"
-												value="#{bundle.pms_penalty_days}" />
+												value="#{bundle.pms_penalty}" />
 											<aon:selectOneMenu id="CancellationInvoice_cancellationPenalty"
-												value="#{controller.cancellationPenalty}" required="true"
+												value="#{controller.cancellationPenaltyValue}" required="true"
 												ajaxSingle="true">
 												<f:selectItem itemLabel=" - " value="#{null}" />
-												<f:selectItem itemLabel="1"  itemValue="1" />
-												<f:selectItem itemLabel="2" itemValue="2" />
-												<f:selectItem itemLabel="#{bundle.finance_all}" itemValue="-1" />
+												<f:selectItem itemLabel="1N"  itemValue="1D" />
+												<f:selectItem itemLabel="2N" itemValue="2D" />
+												<f:selectItem itemLabel="50%" itemValue="50P" />
+												<f:selectItem itemLabel="100%" itemValue="100P" />
 											</aon:selectOneMenu>
 										</aon:if>
 

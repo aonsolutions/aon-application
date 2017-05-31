@@ -38,7 +38,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Date cancellationDate;
-	private Integer cancellationPenalty;
+	private String cancellationPenaltyValue;
 	private PayMethod cancellationPayMethod;
 	private RegistryBank cancellationBank;
 	private int cancellationDaysToPayment;
@@ -52,11 +52,11 @@ public class CancellationInvoiceController extends BasicController implements IP
 		this.cancellationDate = cancellationDate;
 	}
 
-	public Integer getCancellationPenalty() {
-		return cancellationPenalty;
+	public String getCancellationPenaltyValue() {
+		return cancellationPenaltyValue;
 	}
-	public void setCancellationPenalty(Integer cancellationPenalty) {
-		this.cancellationPenalty = cancellationPenalty;
+	public void setCancellationPenaltyValue(String cancellationPenaltyValue) {
+		this.cancellationPenaltyValue = cancellationPenaltyValue;
 	}
 
 	public PayMethod getCancellationPayMethod() {
@@ -102,7 +102,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 			throw new AbortProcessingException(msg);
 		}
 		setCancellationDate(new Date());
-		setCancellationPenalty(null);
+		setCancellationPenaltyValue(null);
 		setCancellationPayMethod(null);
 		setCancellationBank(null);
 		setCancellationDaysToPayment(0);
@@ -125,7 +125,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 				cancellationInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 				cancellationInvoiceTo.setIssueDate(getCancellationDate());
 				cancellationInvoiceTo.setItem(obtainCancellationItem());
-				cancellationInvoiceTo.setPenaltyDays(getCancellationPenalty());
+				cancellationInvoiceTo.setPenaltyValue(getCancellationPenaltyValue());
 				cancellationInvoiceTo.setPayMethod(getCancellationPayMethod());
 				cancellationInvoiceTo.setConexFlowPayMethod(obtainConexFlowPayMethod());
 				cancellationInvoiceTo.setRegistryBank(getCancellationBank());
@@ -280,7 +280,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 			Double amount = reservation.getPenaltyAmount();
 			if (cancellationInvoiceTo.isManual() || (amount == null || amount <= 0.01)) {
 				if (cancellationInvoiceTo.isManual()) {
-					reservation.setPenaltyValue(cancellationInvoiceTo.getPenaltyDays().toString());
+					reservation.setPenaltyValue(cancellationInvoiceTo.getPenaltyValue());
 				}
 				ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 				amount = reservationUtils.obtainCancellationPenaltyAmount(reservation);

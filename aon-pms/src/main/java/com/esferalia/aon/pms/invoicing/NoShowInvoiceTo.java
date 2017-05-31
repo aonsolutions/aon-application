@@ -16,7 +16,7 @@ public class NoShowInvoiceTo implements Serializable {
 	private boolean guestReservation;
 	private Date issueDate;
 	private Item item;
-	private Integer penaltyDays;
+	private String penaltyValue;
 	private PayMethod payMethod;
 	private PayMethod conexFlowPayMethod;
 	private RegistryBank registryBank;
@@ -46,12 +46,12 @@ public class NoShowInvoiceTo implements Serializable {
 		this.item = item;
 	}
 
-	public Integer getPenaltyDays() {
-		return penaltyDays;
+	public String getPenaltyValue() {
+		return penaltyValue;
 	}
 
-	public void setPenaltyDays(Integer penaltyDays) {
-		this.penaltyDays = penaltyDays;
+	public void setPenaltyValue(String penaltyValue) {
+		this.penaltyValue = penaltyValue;
 	}
 
 	public PayMethod getPayMethod() {

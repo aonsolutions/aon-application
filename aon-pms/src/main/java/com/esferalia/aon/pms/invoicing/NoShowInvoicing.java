@@ -146,7 +146,7 @@ public class NoShowInvoicing {
 		double invoiceTotal = CommonUtil.round(penaltyAmount - advancedAmount);
 
 		Map<Date, Double> penaltyTaxableBases = new HashMap<Date, Double>();
-		if (noShowInvoiceTo.isKeepAdvance() || !noShowInvoiceTo.isManual()) {
+		if (noShowInvoiceTo.isKeepAdvance() || reservation.getPenaltyMode().equals("P") || reservation.getPenaltyMode().equals("M")) {
 			penaltyTaxableBases.put(reservation.getStartDate(), penaltyTaxableBase);
 		} else {
 			Date fromDate = reservation.getStartDate();

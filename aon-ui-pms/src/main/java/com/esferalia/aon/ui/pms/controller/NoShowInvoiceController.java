@@ -38,7 +38,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Date noShowDate;
-	private Integer noShowPenalty;
+	private String noShowPenaltyValue;
 	private PayMethod noShowPayMethod;
 	private RegistryBank noShowBank;
 	private int noShowDaysToPayment;
@@ -52,11 +52,11 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 		this.noShowDate = noShowDate;
 	}
 
-	public Integer getNoShowPenalty() {
-		return noShowPenalty;
+	public String getNoShowPenaltyValue() {
+		return noShowPenaltyValue;
 	}
-	public void setNoShowPenalty(Integer noShowPenalty) {
-		this.noShowPenalty = noShowPenalty;
+	public void setNoShowPenaltyValue(String noShowPenaltyValue) {
+		this.noShowPenaltyValue = noShowPenaltyValue;
 	}
 
 	public PayMethod getNoShowPayMethod() {
@@ -102,7 +102,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 			throw new AbortProcessingException(msg);
 		}
 		setNoShowDate(new Date());
-		setNoShowPenalty(null);
+		setNoShowPenaltyValue(null);
 		setNoShowPayMethod(null);
 		setNoShowBank(null);
 		setNoShowDaysToPayment(0);
@@ -125,7 +125,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 				noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 				noShowInvoiceTo.setIssueDate(getNoShowDate());
 				noShowInvoiceTo.setItem(obtainNoShowItem());
-				noShowInvoiceTo.setPenaltyDays(getNoShowPenalty());
+				noShowInvoiceTo.setPenaltyValue(getNoShowPenaltyValue());
 				noShowInvoiceTo.setPayMethod(getNoShowPayMethod());
 				noShowInvoiceTo.setConexFlowPayMethod(obtainConexFlowPayMethod());
 				noShowInvoiceTo.setRegistryBank(getNoShowBank());
@@ -281,7 +281,7 @@ public class NoShowInvoiceController extends BasicController implements IPmsCons
 				Double amount = reservation.getPenaltyAmount();
 				if (noShowInvoiceTo.isManual() || (amount == null || amount <= 0.01)) {
 					if (noShowInvoiceTo.isManual()) {
-						reservation.setPenaltyValue(noShowInvoiceTo.getPenaltyDays().toString());
+						reservation.setPenaltyValue(noShowInvoiceTo.getPenaltyValue());
 					}
 					ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 					amount = reservationUtils.obtainNoShowPenaltyAmount(reservation);
