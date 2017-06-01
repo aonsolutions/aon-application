@@ -73,6 +73,7 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 			ObjectFactory factory = new ObjectFactory();
 			FacturasList facturasList = factory.createFacturasList();
 			Facturas facturas = null;
+			int limit = params.getLimit();
 			int line = 0;
 
 			stmt = connection.prepareStatement(getInvoiceListSQL(params));
@@ -82,6 +83,9 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 			while (rs.next()) {
 				String invoice = rs.getString(INVOICE);
 				if (facturas == null || !facturas.getKey().equals(invoice)) {
+					if (limit == 0) break;
+					--limit;
+
 					facturas = factory.createFacturas();
 					facturas.setKey(invoice);
 					facturas.setNoFactura(StringUtils.defaultIfEmpty(rs.getString(NUMBER), null));

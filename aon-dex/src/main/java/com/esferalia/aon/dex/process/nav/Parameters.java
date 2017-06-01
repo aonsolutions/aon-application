@@ -15,6 +15,7 @@ public class Parameters {
 	private String invoiceReferenceCode;
 	private int fbatchId;
 	private String fbatchDescription;
+	private int limit;
 
 	public String getWsUrl() {
 		return wsUrl;
@@ -91,6 +92,13 @@ public class Parameters {
 	}
 	public void setFbatchDescription(String fbatchDescription) {
 		this.fbatchDescription = fbatchDescription;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
 
 }

@@ -69,6 +69,7 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 			ObjectFactory factory = new ObjectFactory();
 			RemesasList remesasList = factory.createRemesasList();
 			Remesas remesas = null;
+			int limit = params.getLimit();
 			int line = 0;
 			Map<String, String> fbatchMap = new HashMap<String, String>();
 
@@ -79,6 +80,9 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 			while (rs.next()) {
 				String fBatch = rs.getString(FBATCH);
 				if (remesas == null || !remesas.getKey().equals(fBatch)) {
+					if (limit == 0) break;
+					--limit;
+
 					remesas = factory.createRemesas();
 					remesas.setKey(fBatch);
 					remesas.setNoRemesa(fBatch);

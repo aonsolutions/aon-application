@@ -35,6 +35,7 @@ public class FbatchUnloadServlet extends HttpServlet implements IDexConstants {
 			params.setDomainName(request.getParameter(DOMAIN_NAME));
 			params.setFromDate(DateUtils.parseDate(request.getParameter(DATE_FROM), new String[]{"dd/MM/yyyy"}));
 			params.setToDate(DateUtils.parseDate(request.getParameter(DATE_TO), new String[]{"dd/MM/yyyy"}));
+			params.setLimit(request.getParameter(LIMIT) != null ? Integer.parseInt(request.getParameter(DOMAIN_ID)) : Integer.MAX_VALUE);
 
 			FbatchUnloadManager manager = new FbatchUnloadManager();
 			manager.processFbatchList(params);
