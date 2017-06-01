@@ -10,7 +10,7 @@
 			<g:SimplePanel ui:field="headerPanel"/>
 		 	<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.deducibleLimitationArt}" />
+					<g:InlineLabel text="{msg.deducibleLimitation}" />
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
 					<g:FlexTable ui:field="table"/>

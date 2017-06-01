@@ -10,7 +10,7 @@
 			<g:SimplePanel ui:field="headerPanel"/>
 		 	<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.deducibleLimitationArt}" />
+					<g:InlineLabel text="{msg.deducibleLimitation}" />
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
 					<g:FlexTable ui:field="table"/>
@@ -32,19 +32,6 @@
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
 					<g:FlexTable ui:field="table2"/>
-				</div>
-			</div>
-	
-		 	<div class="{aonResources.css.aonGroup}">
-				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.damageAmount}" />
-				</div>
-				<div class="{aonResources.css.aonGroupBody}">
-					<g:FlexTable ui:field="table3"/>
-				</div>
-				<div class="{aonResources.css.aonGroupBody}">
-					<g:Label text="{msg.damageAmount1}" styleName="{aonResources.css.aonMarginTop} {aonResources.css.aonBold}"/>
-					<g:FlexTable ui:field="table4"/>
 				</div>
 			</div>
 		</g:HTMLPanel>

@@ -7,6 +7,8 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0004;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0005;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0006;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0009;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0010;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0012;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0013;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0015;
@@ -16,6 +18,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0021;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0022;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0024;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0025;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0030;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0034;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0036;
@@ -224,6 +227,10 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	public Boolean isCooperativa() {
 		return isChecked(C0017) || isChecked(C0018) || isChecked(C0019); 
 	}
+	public Boolean isLimitEnabled() {
+		return !(isChecked(C0009) || isChecked(C0010) || isChecked(C0024) || isChecked(C0025));
+	}
+	
 	public Boolean isBalanceNormal() {
 		return (mod200.getBalanceType() == BalanceType.NORMAL); 
 	}
@@ -434,11 +441,12 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		double lm1256 = roundKey(Mod2002016Key.LM1256);
 		double lm1258 = roundKey(Mod2002016Key.LM1258);
 		double lm1259 = roundKey(Mod2002016Key.LM1259);
-		double lm1249 = round( (lm1250 - lm1251 - lm1252 - lm1253 + lm1254) * 0.30);
-		if ( (lm1256 + lm1258 + lm1259) >= getLimit(LIM_2)) {
-		 return lm1249>getLimit(LIM_2)?lm1249:getLimit(LIM_2);
+		double lm1249_1 = round( (lm1250 - lm1251 - lm1252 - lm1253 + lm1254) * 0.30);
+		double lm1249_2 = round(lm1256+lm1258+lm1259);
+		if ( lm1249_2 >= getLimit(LIM_2)) {
+		 return lm1249_1>getLimit(LIM_2)?lm1249_1:getLimit(LIM_2);
 		}
-		return lm1249>(lm1256 + lm1258 +lm1259)?lm1249:(lm1256 + lm1258 +lm1259);
+		return lm1249_1>lm1249_2?lm1249_1:lm1249_2;
 	}
 	
 	public double computeLQ560() throws AonCoreException {

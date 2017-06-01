@@ -719,29 +719,23 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.TR1044.toString(),new Boolean[]{FALSE,TRUE});
 	}
 
-	static { 
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM175.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM176.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM177.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM178.toString(),new Boolean[]{FALSE,TRUE});
-//
-//		
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM253.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM259.toString(),new Boolean[]{FALSE,TRUE});
-//		
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM043.toString(),new Boolean[]{FALSE,TRUE});
-//		
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM271.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM971.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM263.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM266.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM267.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM268.toString(),new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM269.toString(),new Boolean[]{FALSE,TRUE});
+	static {
+		//  Limitación en la deducibilidad de gastos financieros.
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1240.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1246.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1248.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1249.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1250.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1251.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1252.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1253.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1260.toString(),new Boolean[]{FALSE,TRUE});
 		
 		// Limitación en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir
-		// FALTA - Ver como se calculan determinadas casillas, para ver si se deshabilitan por 
-		// tener calculos automáticos. Por ahora solo están los totales
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1191.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1196.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1201.toString(),new Boolean[]{FALSE,TRUE});
+
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1212.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1213.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1214.toString(),new Boolean[]{FALSE,TRUE});

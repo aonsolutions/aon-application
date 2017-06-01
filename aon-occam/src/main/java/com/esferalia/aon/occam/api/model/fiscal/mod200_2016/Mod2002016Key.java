@@ -960,15 +960,6 @@ public enum Mod2002016Key implements IMod200Key {
 	
 	// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
     // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
-/*	
-	,LM893(893)		,LM173(173)		,LM958(958)		,LM898(898)
-	,LM899(899)		,LM227(227)		,LM959(959)		,LM917(917)
-	,LM948(948)		,LM291(291)		,LM979(979)		,LM949(949)
-	,LM950(950)		,LM951(951)		,LM980(980)		,LM952(952)	
-	,LM981(981)		,LM982(982)		,LM983(983)		,LM984(984)
-	,LM1220(1220)	,LM1221(1221)	,LM1222(1222)	,LM1223(1223)
-	,LM953(953)		,LM344(344)		,LM985(985)		,LM954(954)
-*/
 	,LM1473(1473)					,LM1474(1474)	,LM1475(1475)	,LM1476(1476)	
 	,LM1477(1477)	,LM1478(1478)	,LM1481(1481)	,LM1482(1482)	,LM1483(1483)	,LM1484(1484)
 	,LM1485(1485)	,LM1486(1486)	,LM1487(1487)	,LM1488(1488)	,LM1489(1489)	,LM1490(1490)

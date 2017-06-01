@@ -1734,21 +1734,121 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros.")
 	String deducibleLimitation();
+	@DefaultMessage("L\u00EDmite art. 16.5, o 83 LIS")
+	String limitMsg1();
+
+	@DefaultMessage("L\u00EDmite art. 16.1 y 16.2 LIS")
+	String limitMsg2();
 	
-	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros.")
-	String deducibleLimitationArt();
-	
+	@DefaultMessage("Dotaci\u00F3n / Reversi\u00F3n / Conversi\u00F3n")
+	String page16();
+
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir")
 	String deducibleLimitationPending();
 	
 	@DefaultMessage("Pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado")
 	String pendingAddinngs();
 	
+	@DefaultMessage("Dotaciones pendientes de integraci\u00F3n a principio del per\u00EDodo/generado en el propio per\u00EDodo")
+	String dot1();
+	
+	@DefaultMessage("Dotaciones pendientes de integraci\u00F3n a principio del per\u00EDodo")
+	String dot3();
+
+	@DefaultMessage("Dotaciones pendientes de integraci\u00F3n en per\u00EDodos futuros")
+	String dot2();
+	
+	@DefaultMessage("Que no han cumplido condiciones de deducibilidad fiscal")
+	String dot11();
+	
+	@DefaultMessage("Que han cumplido condiciones de deducibilidad fiscal pero no integradas por aplicaci\u00F3n l\u00EDmite")
+	String dot12();
+	
+	@DefaultMessage("Dotaciones integradas en esta liquidaci\u00F3n")	
+	String dot22();
+	
+	@DefaultMessage("Dotaciones aplicadas por la conversi\u00F3n de los activos por impuesto diferido")	
+	String dot23();	
+	
+	@DefaultMessage("Importe total AID pendientes de aplicaci\u00F3n a principio del per\u00EDodo (DT 33a.1 y 6 a) LIS)")
+	String dot30();
+	@DefaultMessage("AID aplicados en el per\u00EDodo por integraci\u00F3n dotaciones en la liquidaci\u00F3n)")
+	String dot31();
+	@DefaultMessage("AID convertidos en cr\u00E9dito exigible en el per\u00EDodo")
+	String dot32();
+	@DefaultMessage("Con prestaci\u00F3n patrimonial (DT 33a.6 c) LIS)")
+	String dot33();
+	@DefaultMessage("Sin prestaci\u00F3n patrimonial (DT 33a.6 d) LIS)")
+	String dot34();
+	@DefaultMessage("Sin prestaci\u00F3n patrimonial. Minoraci\u00F3n prestaci\u00F3n por exceso cuota otros per\u00EDodos iniciados a partir de 2016 (DT 33a.4 y 6 d) LIS)")
+	String dot35();
+	@DefaultMessage("Importe total AID pendientes (DT 33a.1 y 6 a) LIS)(*)")
+	String dot36();
+	
+	@DefaultMessage("AID pendientes de aplicaci\u00F3n a principio del per\u00EDodo/generados en el propio per\u00EDodo")
+	String dot4_1();
+	
+	@DefaultMessage("AID pendientes de aplicaci\u00F3n en per\u00EDodos futuros")
+	String dot4_2();
+	
+	@DefaultMessage("Importe total AID (art. 130.6 a) LIS) pendientes de aplicaci\u00F3n a principio "
+			+ "del per\u00EDodo/generados en el propio per\u00EDodo")
+	String dot40();
+	@DefaultMessage("Cuota l\u00EDquida positiva")
+	String dot41();
+	@DefaultMessage("Con derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130.6 b) LIS)")
+	String dot42();
+	@DefaultMessage("Con derecho conversi\u00F3n en cr\u00E9dito exigible por exceso cuota otros per\u00EDodos (art. 130.1 y 6 b) LIS)")
+	String dot43();
+	@DefaultMessage("Sin derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130.6 c) LIS)")
+	String dot44();
+	@DefaultMessage("AID aplicados en el per\u00EDodo (por integraci\u00F3n dotaciones en la liquidaci\u00F3n)")
+	String dot45();
+	@DefaultMessage("AID convertidos en cr\u00E9dito exigible en el per\u00EDodo")
+	String dot46();
+	@DefaultMessage("Con derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130.6 b) LIS)")
+	String dot47();
+	@DefaultMessage("Con derecho a conversi\u00F3n en cr\u00E9dito exigible por exceso cuota otros per\u00EDodos (art. 130.1 y 6 b) LIS)")
+	String dot48();
+	@DefaultMessage("Sin derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130.6 c)LIS)")
+	String dot49();
+
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva pendiente a principio del per\u00EDodo/generado en el propio per\u00EDodo")
+	String dot50();
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva aplicado en per\u00EDodos impositivos de 2008 a 2015 (DT 33a.4 LIS)")
+	String dot51();
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva aplicado en per\u00EDodos impositivos iniciados a partir de 2016 (art. 130.1 p\u00E1rrafo 2o LIS)")
+	String dot52();
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva pendiente de aplicaci\u00F3n en per\u00EDodos futuros")
+	String dot53();
+
+	@DefaultMessage("N\u00FAmero de per\u00EDodo impositivo")	
+	String numPer();
+
 	@DefaultMessage("Dotaciones por deterioro de cr\u00E9ditos u otros activos derivados de las posibles insolvencias de los deudores no vinculados con el contribuyemte y otras del art. 11.12 LIS. conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la adm\u00F3n. tributaria (ART. 130 LIS)")
 	String damageAmount();
-	
+
 	@DefaultMessage("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria")
 	String damageAmount1();
+	
+	@DefaultMessage("Dotaciones por deterioro de cr\u00E9ditos u otros activos derivados "
+		+ "de las posibles insolvencias de los deudores no vinculados con el contribuyente "
+		+ "y otras del art. 11.12 LIS con posibilidad de conversi\u00F3n en cr\u00E9dito exigible (**).")
+	String damageAmount2();
+	
+	@DefaultMessage("Reversi\u00F3n de las p\u00E9rdidas por deterioro de valores representativos de "
+			+ "la participaci\u00F3n en el capital o en los fondos"
+			+"propios de entidades pendientes de reversi\u00F3n (DT 16a LIS).")
+	String damageAmount3();
+	
+	@DefaultMessage("Activos por impuesto diferido (AID). DT 33a y DA 13a LIS")
+	String damageAmount4();
+	
+	@DefaultMessage("Activos por impuesto diferido (AID). Art. 130 LIS")
+	String damageAmount5();
+
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva (art. 130.1 y DT 33a.4 LIS)")
+	String damageAmount6();
 	
 	@DefaultMessage("C\u00E1lculo autom\u00E1tico")
 	String authomaticCalculation();
