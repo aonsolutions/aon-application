@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
+import com.code.aon.webservice.common.PdfUtils;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.server.warehouse.XMLUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -28,7 +29,6 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
@@ -39,7 +39,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
-public class PackingList {
+public class PackingList extends PdfUtils{
 	
 	private static final Logger LOGGER  = Logger.getLogger(PackingList.class.getName());
 	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -273,8 +273,6 @@ public class PackingList {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		JSONObject address = json.getJSONObject("address");
-		PdfPCell cEmpty = new PdfPCell(new Phrase("",getFont1()));
-		cEmpty.setBorder(PdfPCell.NO_BORDER);
 		
 		PdfPCell c8 = new PdfPCell(new Phrase("Empresa de Transporte:",getFont1()));
 		c8.setBorder(PdfPCell.NO_BORDER);
@@ -292,42 +290,44 @@ public class PackingList {
 		c11.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c11);
 		
-		carrier.addCell(cEmpty);
-
-		PdfPCell cNif = new PdfPCell(new Phrase("NIF: " + json.getString("document"),getFont2()));
-		cNif.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(cNif);
+		carrier.addCell(emptyCell());
 		
-		carrier.addCell("");
-		carrier.addCell("");
+		PdfPTable addressTable = new PdfPTable(1);
+		addressTable.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		
-		carrier.addCell(cEmpty);
-
-		PdfPCell caddress2 = new PdfPCell(new Phrase(address.getString("address"),getFont2()));
-		caddress2.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(caddress2);
-		
-		carrier.addCell("");
-		carrier.addCell("");
-		
-		carrier.addCell(cEmpty);
-		
-		PdfPCell cc = new PdfPCell(new Phrase(address.getString("zip") + " " 
+		addressTable.addCell(stringCell("NIF: " + json.getString("document")));
+		addressTable.addCell(stringCell(address.getString("address")));
+		addressTable.addCell(stringCell(address.getString("zip") + " " 
 				   + address.getString("city") + " "
 				   + address.getString("province") + " "
-				   + address.getString("country"),getFont2()));
-		cc.setBorder(PdfPCell.NO_BORDER);
-		carrier.addCell(cc);
+				   + address.getString("country")));
+		carrier.addCell(addressTable);
 		
-		carrier.addCell("");
-		carrier.addCell("");
+		Boolean reception = "reception".equals(printType);
+		PdfPTable receptionLabelTable = new PdfPTable(1);
+		receptionLabelTable.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		receptionLabelTable.addCell(reception ? boldCell("Peso Bruto", getFont3()) : emptyCell());
+		receptionLabelTable.addCell(reception ? boldCell("Tara", getFont3()) : emptyCell());
+		receptionLabelTable.addCell(reception ? boldCell("Neto", getFont3()) : emptyCell());
+
+		carrier.addCell(receptionLabelTable);
+		PdfPTable receptionTable = new PdfPTable(1);
+		
+		Double gross = json.optDouble("gross");
+		receptionTable.addCell(reception ? boldCell(!gross.isNaN() ? gross.toString() : "-", getFont3()) : emptyCell());
+		Double tare = json.optDouble("tare");
+		receptionTable.addCell(reception ? boldCell(!tare.isNaN() ? tare.toString() : "-", getFont3()) : emptyCell());
+		Double net = json.optDouble("net"); 
+		receptionTable.addCell(reception ? boldCell(!net.isNaN() ? net.toString() : "-", getFont3()) : emptyCell());
+		
+		carrier.addCell(receptionTable);
 		
 		PdfPCell c14 = new PdfPCell(new Phrase("Conductor:",getFont3()));
 		c14.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c14);
 		
-		PdfPCell c15 = new PdfPCell(new Phrase(json.getString("driver_name") +" - "
-									+ json.getString("driver_document"),getFont3()));
+		PdfPCell c15 = new PdfPCell(new Phrase(json.optString("driver_name") +" - "
+									+ json.optString("driver_document"),getFont3()));
 		c15.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c15);
 		
@@ -335,44 +335,11 @@ public class PackingList {
 		c12.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c12);
 		
-		PdfPCell c13 = new PdfPCell(new Phrase(json.getString("number_plate"),getFont3()));
+		PdfPCell c13 = new PdfPCell(new Phrase(json.optString("number_plate"),getFont3()));
 		c13.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c13);
 
 		table.addCell(carrier);
-		
-		if("reception".equals(printType)){ // TODO
-			PdfPTable pesos = new PdfPTable(6);
-			pesos.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-			
-			PdfPCell brutoLabel = new PdfPCell(new Phrase("Peso Bruto:",getFont1()));
-			brutoLabel.setBorder(PdfPCell.NO_BORDER);
-			pesos.addCell(brutoLabel);
-			
-			Double gross = json.getDouble("gross");
-			PdfPCell bruto = new PdfPCell(new Phrase(gross != null ? gross.toString() : "-",getFont1()));
-			bruto.setBorder(PdfPCell.NO_BORDER);
-			pesos.addCell(bruto);
-
-			PdfPCell taraLabel = new PdfPCell(new Phrase("Tara:",getFont1()));
-			taraLabel.setBorder(PdfPCell.NO_BORDER);
-			pesos.addCell(taraLabel);
-
-			Double tare = json.getDouble("tare");
-			PdfPCell tara = new PdfPCell(new Phrase(tare != null ? tare.toString() : "-",getFont1()));
-			tara.setBorder(PdfPCell.NO_BORDER);
-			pesos.addCell(tara);
-			
-			PdfPCell netoLabel = new PdfPCell(new Phrase("Neto:",getFont1()));
-			netoLabel.setBorder(PdfPCell.NO_BORDER);
-			pesos.addCell(netoLabel);
-			
-			Double net = json.getDouble("net");
-			PdfPCell neto = new PdfPCell(new Phrase(net != null ? net.toString() : "-",getFont1()));
-			neto.setBorder(PdfPCell.NO_BORDER);
-			pesos.addCell(neto);
-			table.addCell(pesos);
-		}
 
 		return table;
 	}
@@ -776,38 +743,4 @@ public class PackingList {
 		return t;
 	}
 
-	// ------------------- FONTS
-	private static Font getTitleFont(){
-		Font font = new Font();
-		font.setSize(16);
-		font.setStyle(Font.BOLD);
-		return font;
-	}
-	
-	private static Font getBoeInfoFont(){
-		Font font = new Font();
-		font.setSize(13);
-		font.setStyle(Font.BOLD);
-		return font;
-	}
-	
-	private static Font getFont1(){
-		Font font1 = new Font();
-		font1.setSize(8);
-		font1.setStyle(Font.BOLD);
-		return font1;
-	}
-	
-	private static Font getFont2(){
-		Font font2 = new Font();
-		font2.setSize(8);
-		return font2;
-	}
-
-	private static Font getFont3(){
-		Font font1 = new Font();
-		font1.setSize(12);
-		font1.setStyle(Font.BOLD);
-		return font1;
-	}
 }
