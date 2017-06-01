@@ -690,6 +690,8 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		if(!isShipment() && isSelected(panl)){
 			vp.add(buildBultosPeso(order));
 		}
+		Double totalQuantity = details.getData().stream().mapToDouble(r -> r.getQuantity()).sum();
+
 		details.getData().stream().forEach(detail ->{
 			HorizontalPanel panel = new HorizontalPanel();
 			if(isSelected(panl) & isPending()){
@@ -742,7 +744,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 							if(isReception(panl)){
 								removeIncomeDetail(order, detail, detail.getQuantity(), false);
 							} else {
-								addToIncome(order, detail);
+								addToIncome(order, detail, totalQuantity);
 							}
 						}
 					}
@@ -752,6 +754,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		    panel.add(db);
 		    panel.add(new Label(detail.getDescription()));
 		    vp.add(panel);
+
 		});
 		return vp;
 	}
@@ -931,7 +934,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		}
 	}	
 	
-	private void addToIncome(JsOrder order, JsOrderDetail detail){
+	private void addToIncome(JsOrder order, JsOrderDetail detail, Double total){
 		String serie = Utils.format("yyMMdd", new Date());
 		VerticalPanel panel = new VerticalPanel();
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -991,10 +994,16 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 
 		panel.add(param);
 
+		
+		Double q = detail.getQuantity() - detail.getDelivered();
+		
+		if(getCarrierPacking().getNet() != null && !getCarrierPacking().getNet().isNaN()){
+			q = q + ((getCarrierPacking().getNet() - total) * (q/ total));
+		}
 		HorizontalPanel hp = new HorizontalPanel();
 		PaperInput quantity = new PaperInput();
 		quantity.setLabel("Cantidad");
-		quantity.setValue((detail.getQuantity() - detail.getDelivered())+ "");
+		quantity.setValue(q+ "");
 		quantity.setMaxlength(8);
 		hp.add(quantity);
 		
@@ -1383,7 +1392,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					json.put("tare", new JSONNumber(tare));
 					json.put("net", new JSONNumber(getCarrierPacking().getGross() - tare));	
 					json.put("reception_end_date", new JSONString(Utils.formatDateTime(new Date())));
-					json.put("status", new JSONNumber(CarrierPackingStatus.FINISHED.ordinal()));
 					requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				} else {
 					Double gross = Double.parseDouble(quantity.getValue()); 
@@ -1400,7 +1408,6 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						setCarrierPacking(result);
 						if(getCarrierPacking().getReceptionEndDate() != null){
 							parent.content();
-							parent.status.setSelectedIndex(CarrierPackingStatus.FINISHED.ordinal());
 						}
 						truck.getElement().getStyle().setColor(result.getReceptionEndDate() != null ? "red" : "green");
 						hide();

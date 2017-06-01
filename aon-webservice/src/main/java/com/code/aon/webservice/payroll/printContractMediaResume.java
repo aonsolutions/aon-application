@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.PdfUtils;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.code.aon.webservice.util.ToJSON;
@@ -42,7 +43,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "PrintContractMediaResume", urlPatterns = {"/aon_gwt_aio/print_contract_media_resume/*"})
-public class printContractMediaResume extends HttpServlet{
+public class printContractMediaResume extends HttpServlet {
 	
 	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -874,41 +875,27 @@ public class printContractMediaResume extends HttpServlet{
 	}
 	
 	private static PdfPCell emptyCell() {
-		PdfPCell cell = new PdfPCell(new Phrase("",getFont2()));
-		cell.setBorder(PdfPCell.NO_BORDER);
-		return cell;
+		return PdfUtils.emptyCell();
 	}
 	
 	private static PdfPCell stringCell(String str) {
-		PdfPCell cell = new PdfPCell(new Phrase(str,getFont2()));
-		cell.setBorder(PdfPCell.NO_BORDER);
-		return cell;
+		return PdfUtils.stringCell(str);
 	}
 	
 	private static PdfPCell boldCell(String str) {
-		PdfPCell cell = new PdfPCell(new Phrase(str,getFont1()));
-		cell.setBorder(PdfPCell.NO_BORDER);
-		return cell;
+		return PdfUtils.boldCell(str);
 	}
 	
 	private static Font getFont1(){
-		Font font1 = new Font();
-		font1.setSize(8);
-		font1.setStyle(Font.BOLD);
-		return font1;
+		return PdfUtils.getFont1();
 	}
 	
 	private static Font getFont2(){
-		Font font2 = new Font();
-		font2.setSize(8);
-		return font2;
+		return PdfUtils.getFont2();
 	}
 	
 	private static Font getTitleFont(){
-		Font font = new Font();
-		font.setSize(16);
-		font.setStyle(Font.BOLD);
-		return font;
+		return PdfUtils.getTitleFont();
 	}
 	
 
