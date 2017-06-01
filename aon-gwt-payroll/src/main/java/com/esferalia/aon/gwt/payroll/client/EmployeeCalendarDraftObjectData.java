@@ -846,12 +846,14 @@ public class EmployeeCalendarDraftObjectData {
 			@Override
 			public void onSuccess(EmployeeCalendarData result) {
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> hoursList = result.getContractHoursList();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> extraHoursList = result.getContractExtraHoursList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> typesList = result.getContractTypeDaysList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> ITDaysList = result.getcontractITDayTypeList();
 				ArrayList<Byte> nonWorkingList = result.getContractNonWorkingDaysList();
 				HashMap<java.util.Date, String> festivesList = result.getContractFestiveDaysList();
 				initializeNonWorkingsDaysTypeMap(nonWorkingList);
 				initializeHoursMap(hoursList);
+				initializeExtraHoursMap(extraHoursList);
 				initializeTypesMap(typesList);
 				initializeFestivesDaysTypeMap(festivesList);
 				initializeITDaysTypeMap(ITDaysList);
@@ -860,6 +862,14 @@ public class EmployeeCalendarDraftObjectData {
 					fullTimeEmployeeDraft = result.isFullTimeJourney() ? 1 : 0;
 				
 				success.accept(result);
+				
+			}
+
+			private void initializeExtraHoursMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> extraHoursList) {
+				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterExtraHours : extraHoursList){
+					Date startDate = DateUtils.copyDateOnly(quarterExtraHours.getStartDate());
+					mapExtraHours.put(startDate, Double.parseDouble(quarterExtraHours.getExpression()));
+				}
 				
 			}
 
@@ -1038,6 +1048,7 @@ public class EmployeeCalendarDraftObjectData {
 		EmployeeCalendarUpdate updateInfo = new EmployeeCalendarUpdate();
 		
 		updateInfo.setDaysHourMap(createUpdateHoursMap(mapDaysHour, draftMapDaysHour));
+		updateInfo.setMonthExtraHoursList(createUpdateExtraHoursList(mapExtraHours, draftMapExtraHours));
 		updateInfo.setDaysTypeMap(createUpdateTypesMap(mapDaysType, draftMapDaysType));
 		updateInfo.setFullTimeEmployee(this.fullTimeEmployee);
 		
@@ -1059,7 +1070,7 @@ public class EmployeeCalendarDraftObjectData {
 	}
 
 	// -------- AUX METHODS DATABASE SYNC --------
-	
+
 	private String calculateDayOfWeek(int day) {
 		String result = "";
 		switch (day) {
@@ -1139,6 +1150,47 @@ public class EmployeeCalendarDraftObjectData {
 		return updateHoursMap;
 	}
 	
+	private List<Quartet<java.sql.Date, java.sql.Date, String, String>> createUpdateExtraHoursList(
+			Map<Date, Double> mapExtraHours, Map<Date, Double> draftMapExtraHours) {
+		
+		HashMap<Date, Double> updateExtraHoursMap = new HashMap<Date, Double>();
+		
+		for ( Entry<Date,Double> entry : mapExtraHours.entrySet()){
+			DateUtils.resetTime(entry.getKey());
+			updateExtraHoursMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		for (Entry<Date,Double> entry : draftMapExtraHours.entrySet()){
+			DateUtils.resetTime(entry.getKey());
+			updateExtraHoursMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		List<Quartet<java.sql.Date, java.sql.Date, String, String>> updateExtraHoursList = new ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>();
+		
+		createUpdateExtraHoursList(updateExtraHoursList, updateExtraHoursMap);
+		
+		return updateExtraHoursList;
+	}
+	
+	private void createUpdateExtraHoursList(List<Quartet<java.sql.Date, java.sql.Date, String, String>> updateExtraHoursList,
+			HashMap<Date, Double> updateExtraHoursMap) {
+		
+		for (Entry<Date, Double> entry : updateExtraHoursMap.entrySet()){
+			Quartet<java.sql.Date, java.sql.Date, String, String> extraHoursQuarter = new Quartet<java.sql.Date, java.sql.Date, String, String>();
+			
+			java.sql.Date startDate = new java.sql.Date(entry.getKey().getTime());
+			java.sql.Date endDate = new java.sql.Date(DateUtils.getLastDayOfMonth(entry.getKey()).getTime());
+			
+			extraHoursQuarter.setStartDate(startDate);
+			extraHoursQuarter.setEndDate(endDate);
+			extraHoursQuarter.setName("HORAS_EXTRAS");
+			extraHoursQuarter.setExpression(Double.toString(entry.getValue()));
+			
+			updateExtraHoursList.add(extraHoursQuarter);
+		}
+		
+	}
+
 	private HashMap<Date, DayType> createUpdateTypesMap(Map<Date, DayType> mapDaysType,
 			Map<Date, DayType> draftMapDaysType) {
 		

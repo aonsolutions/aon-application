@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
@@ -53,6 +54,7 @@ public class JooqEmployeeCalendar {
 		EmployeeCalendarData employeeInfoCalendar;
 		
 		ArrayList<Quartet<Date, Date, String, String>> contractHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<Quartet<Date, Date, String, String>> contractExtraHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractDayTypesList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		HashMap<java.util.Date, String> contractFestiveDaysList = new HashMap<java.util.Date, String>();
@@ -107,6 +109,26 @@ public class JooqEmployeeCalendar {
 			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
 			
 			contractHoursList.add(quarterEmployeeHourInfo);
+		}
+		
+		// ---------------------------------------------- HORAS EXTRAS MENSUALES ---------------------------------------------------------
+		
+		Result<Record> contractExtraHoursEmployeeInfo = dslContext
+				  .select()
+				  .from(CONTRACT_DATA)
+				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+				  .and(CONTRACT_DATA.NAME.eq(ContextVariable.EXTRA_HOURS.getName()))
+				  .fetch();
+		
+		for(Record r: contractExtraHoursEmployeeInfo){
+			Quartet<Date, Date, String, String> quarterEmployeeExtraHoursInfo = new Quartet<Date, Date, String, String>();
+			
+			quarterEmployeeExtraHoursInfo.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+			.setName(r.get(CONTRACT_DATA.NAME))
+			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+			
+			contractExtraHoursList.add(quarterEmployeeExtraHoursInfo);
 		}
 		
 		// -------------------------------------- TIPOS DIAS NO LABORABLES SEGUN HORAS ---------------------------------------------
@@ -243,7 +265,7 @@ public class JooqEmployeeCalendar {
 		
 		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
 		
-		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractDayTypesList, contractITDayTypeList, 
+		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractExtraHoursList, contractDayTypesList, contractITDayTypeList, 
 				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney);
 		
 		return employeeInfoCalendar;
@@ -357,6 +379,32 @@ public class JooqEmployeeCalendar {
 									sqlstartDateHour, sqlendDateHour).execute();
 	
 				}
+			}
+		}
+		
+		// ----------------------------------------------- ACTUALIZACION HORAS EXTRAS MENSUALES --------------------------------------------------
+		
+		dslContext.delete(CONTRACT_DATA)
+				   .where(CONTRACT_DATA.CONTRACT.eq(contract))
+				   .and(CONTRACT_DATA.NAME.eq(ContextVariable.EXTRA_HOURS.getName()))
+				   .execute();
+		
+		List<Quartet<Date, Date, String, String>> updateExtraHoursList = updateInfo.getMonthExtraHoursList();
+		
+		if(fullTimeEmployee){
+			if (!updateExtraHoursList.isEmpty()){
+				
+				for (Quartet<Date, Date, String, String> updateExtraHoursInfo : updateExtraHoursList){
+					Date sqlstartDateHour = new Date(updateExtraHoursInfo.getStartDate().getTime());
+					Date sqlendDateHour = new Date(updateExtraHoursInfo.getEndDate().getTime());
+					
+					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+							CONTRACT_DATA.END_DATE)
+							.values(domain, updateExtraHoursInfo.getName(), contract, updateExtraHoursInfo.getExpression(), 
+									sqlstartDateHour, sqlendDateHour).execute();
+				}
+				
 			}
 		}
 		

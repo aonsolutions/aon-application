@@ -1,8 +1,11 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 
 public class EmployeeCalendarUpdate implements Serializable {
@@ -11,6 +14,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 	
 	private HashMap<java.util.Date, DayType> daysTypesMap;
 	private HashMap<java.util.Date, Double> daysHoursMap;
+	private List<Quartet<Date, Date, String, String>> monthExtraHoursList;
 	private Double ereCoefficient;
 	private Boolean fullTimeEmployee;
 	
@@ -19,10 +23,11 @@ public class EmployeeCalendarUpdate implements Serializable {
 	}
 
 	public EmployeeCalendarUpdate(HashMap<java.util.Date, DayType> daysTypesMap, HashMap<java.util.Date, Double> daysHoursMap,
-			Double ereCoefficient, Boolean fullTimeEmployee) {
+			List<Quartet<Date, Date, String, String>> monthExtraHoursList, Double ereCoefficient, Boolean fullTimeEmployee) {
 		super();
 		this.daysTypesMap = daysTypesMap;
 		this.daysHoursMap = daysHoursMap;
+		this.monthExtraHoursList = monthExtraHoursList;
 		this.ereCoefficient = ereCoefficient;
 		this.fullTimeEmployee = fullTimeEmployee;
 		
@@ -30,6 +35,15 @@ public class EmployeeCalendarUpdate implements Serializable {
 
 	// ------------ GETTERS / SETTERS ------------
 	
+	public List<Quartet<Date, Date, String, String>> getMonthExtraHoursList() {
+		return monthExtraHoursList;
+	}
+
+	public EmployeeCalendarUpdate setMonthExtraHoursList(List<Quartet<Date, Date, String, String>> monthExtraHoursList) {
+		this.monthExtraHoursList = monthExtraHoursList;
+		return this;
+	}
+
 	public HashMap<java.util.Date, DayType> getDaysTypeMap() {
 		return daysTypesMap;
 	}

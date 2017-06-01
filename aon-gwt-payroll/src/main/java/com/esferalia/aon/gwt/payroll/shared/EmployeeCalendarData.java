@@ -12,6 +12,7 @@ public class EmployeeCalendarData implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Quartet<Date, Date, String, String>> contractHoursList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractExtraHoursList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList;
 	private HashMap<java.util.Date, String> contractFestivesDaysList;
@@ -23,6 +24,7 @@ public class EmployeeCalendarData implements Serializable {
 	}
 
 	public EmployeeCalendarData(ArrayList<Quartet<Date, Date, String, String>> contractHoursList,
+			ArrayList<Quartet<Date, Date, String, String>> contractExtraHoursList,
 			ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList,
 			ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList, 
 			HashMap<java.util.Date, String> contractFestivesDaysList,
@@ -30,6 +32,7 @@ public class EmployeeCalendarData implements Serializable {
 			boolean fullTimeJourney) {
 		super();
 		this.contractHoursList = contractHoursList;
+		this.contractExtraHoursList = contractExtraHoursList;
 		this.contractTypeDaysList = contractTypeDaysList;
 		this.contractITDayTypeList = contractITDayTypeList;
 		this.contractFestivesDaysList = contractFestivesDaysList;
@@ -45,6 +48,15 @@ public class EmployeeCalendarData implements Serializable {
 
 	public EmployeeCalendarData setContractHoursList(ArrayList<Quartet<Date, Date, String, String>> contractHoursList) {
 		this.contractHoursList = contractHoursList;
+		return this;
+	}
+	
+	public List<Quartet<Date, Date, String, String>> getContractExtraHoursList() {
+		return contractExtraHoursList;
+	}
+
+	public EmployeeCalendarData setContractExtraHoursList(ArrayList<Quartet<Date, Date, String, String>> contractExtraHoursList) {
+		this.contractExtraHoursList = contractExtraHoursList;
 		return this;
 	}
 
@@ -92,8 +104,5 @@ public class EmployeeCalendarData implements Serializable {
 		this.fullTimeJourney = fullTimeJourney;
 		return this;
 	}
-	
-	
-	
 	
 }
