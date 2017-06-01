@@ -88,7 +88,7 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 
 					facturas = factory.createFacturas();
 					facturas.setKey(invoice);
-					facturas.setNoFactura(StringUtils.defaultIfEmpty(rs.getString(NUMBER), null));
+					facturas.setNoFactura(StringUtils.defaultIfEmpty(StringUtils.leftPad(rs.getString(NUMBER), 6, "0"), null));
 					facturas.setNoSerie(StringUtils.defaultIfEmpty(rs.getString(SERIES), null));
 					facturas.setTipoDocumentoFactura(0);
 					facturas.setTipoFactura((rs.getInt(RECTIFICATION_TYPE)==1) ? 1 : 0);
