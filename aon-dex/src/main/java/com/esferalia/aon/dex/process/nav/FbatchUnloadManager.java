@@ -15,8 +15,6 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -71,7 +69,6 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 			Remesas remesas = null;
 			int limit = params.getLimit();
 			int line = 0;
-			Map<String, String> fbatchMap = new HashMap<String, String>();
 
 			stmt = connection.prepareStatement(getFbatchListSQL(params));
 			stmt.setObject(1, params.getFromDate(), Types.DATE);
@@ -86,6 +83,7 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 					remesas = factory.createRemesas();
 					remesas.setKey(fBatch);
 					remesas.setNoRemesa(fBatch);
+					remesas.setDescripcion(rs.getString(DESCRIPTION));
 					remesas.setFechaRegistroRemesa(formatter.format(rs.getDate(ISSUE_DATE)));
 					remesas.setFormaDeCobro(rs.getString(PAY_METHOD));
 					remesas.setImporteTotalRemesa(new BigDecimal(0));
@@ -93,7 +91,6 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 					remesas.setBandejaOtrosCobrosRemesas(factory.createBandejaOtrosCobrosRemesasList());
 					remesasList.getRemesas().add(remesas);
 					line = 0;
-					fbatchMap.put(remesas.getKey(), rs.getString(DESCRIPTION));
 				}
 
 				if (rs.getString(INVOICE) != null) {
@@ -124,7 +121,7 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 				Create create = factory.createCreate();
 				create.setRemesas(remesa);
 				params.setFbatchId(Integer.parseInt(remesa.getNoRemesa()));
-				params.setFbatchDescription(fbatchMap.get(remesa.getKey()));
+				params.setFbatchDescription(remesa.getDescripcion());
 
 				StringWriter writer = new StringWriter();
 				JAXBContext context = JAXBContext.newInstance(Create.class);
