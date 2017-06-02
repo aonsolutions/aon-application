@@ -11,10 +11,13 @@ public class Parameters {
 	private String domainName;
 	private Date fromDate;
 	private Date toDate;
+	private int hotelId;
 	private int invoiceId;
 	private String invoiceReferenceCode;
 	private int fbatchId;
 	private String fbatchDescription;
+	private int productionId;
+	private String productionDescription;
 	private int limit;
 
 	public String getWsUrl() {
@@ -66,6 +69,13 @@ public class Parameters {
 		this.toDate = toDate;
 	}
 
+	public int getHotelId() {
+		return hotelId;
+	}
+	public void setHotelId(int hotelId) {
+		this.hotelId = hotelId;
+	}
+
 	public int getInvoiceId() {
 		return invoiceId;
 	}
@@ -92,6 +102,20 @@ public class Parameters {
 	}
 	public void setFbatchDescription(String fbatchDescription) {
 		this.fbatchDescription = fbatchDescription;
+	}
+
+	public int getProductionId() {
+		return productionId;
+	}
+	public void setProductionId(int productionId) {
+		this.productionId = productionId;
+	}
+
+	public String getProductionDescription() {
+		return productionDescription;
+	}
+	public void setProductionDescription(String productionDescription) {
+		this.productionDescription = productionDescription;
 	}
 
 	public int getLimit() {

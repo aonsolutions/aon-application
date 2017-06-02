@@ -8,7 +8,8 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum DataResponseSource implements IResourceable {
 
 	QUALITY,
-	PROJECT;
+	PROJECT,
+	HOTEL;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_response_source_";

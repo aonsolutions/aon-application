@@ -58,8 +58,10 @@ public interface IDataLoadConstants {
 	String FBATCH = "fbatch";
 	String FBATCH_DETAIL = "fbatch_detail";
 	String CONCEPT = "concept";
+	String SUBCONCEPT = "subconcept";
 	String PAY_METHOD = "pay_method";
 	String AMOUNT = "amount";
+	String PRODUCTION = "production";
 
 	String EURO = "EUR";
 	String ANTICIPO = "ANTICIPO";
