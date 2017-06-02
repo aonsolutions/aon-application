@@ -59,6 +59,7 @@ public class CarrierPackingPrincipal extends Composite{
 		this.filterMap = new HashMap<>();
 		LinkedList<String> status = new LinkedList<>();
 		status.add(CarrierPackingStatus.PENDING.ordinal() + "");
+		status.add(CarrierPackingStatus.ON_ROUTE.ordinal() + "");
 		filterMap.put("status", status);
 		
 		filterContent();

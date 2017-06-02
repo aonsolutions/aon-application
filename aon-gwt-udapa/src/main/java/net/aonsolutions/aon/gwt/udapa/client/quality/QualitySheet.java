@@ -346,6 +346,12 @@ public class QualitySheet extends Composite{
 		
 		caliberControl.setWidget(9, 0, new Label());
 		caliberControl.setWidget(9, 1, new Label());		
+		caliberControl.setWidget(10, 0, new Label());	
+		caliberControl.setWidget(10, 1, new Label());	
+		caliberControl.setWidget(11, 0, new Label());	
+		caliberControl.setWidget(11, 1, new Label());	
+		caliberControl.setWidget(12, 0, new Label());	
+		caliberControl.setWidget(12, 1, new Label());		
 	}
 	
 	private void calibresSiembra(){

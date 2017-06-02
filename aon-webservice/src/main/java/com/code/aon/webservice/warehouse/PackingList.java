@@ -331,6 +331,9 @@ public class PackingList extends PdfUtils{
 		c15.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c15);
 		
+		carrier.addCell(emptyCell());
+		carrier.addCell(emptyCell());
+		
 		PdfPCell c12 = new PdfPCell(new Phrase("Matricula:",getFont3()));
 		c12.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c12);
@@ -339,6 +342,9 @@ public class PackingList extends PdfUtils{
 		c13.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c13);
 
+		carrier.addCell(emptyCell());
+		carrier.addCell(emptyCell());
+		
 		table.addCell(carrier);
 
 		return table;

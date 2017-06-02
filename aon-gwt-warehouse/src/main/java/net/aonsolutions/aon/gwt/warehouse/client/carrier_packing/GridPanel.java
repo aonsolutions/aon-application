@@ -243,14 +243,25 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 				return object.getIssueDate() != null ? object.getIssueDate() : "";
 			}
 		};
-		
+
 		issueDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		issueDateColumn.setSortable(true); 
 		sortHandler.setComparator(issueDateColumn,new Comparator<JsCarrierPacking>() {
 			
 			@Override
 			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				return o1.getIssueDate().compareTo(o2.getIssueDate());
+				String[] a1 = o1.getIssueDate().split("/");
+				String a = "";
+				for(Integer i = a1.length - 1; i >= 0 ; i--){
+					a = a + a1[i];
+				}
+				
+				String[] b1 = o2.getIssueDate().split("/");
+				String b = "";
+				for(Integer i = b1.length - 1; i >= 0 ; i--){
+					b = b + b1[i];
+				}
+				return a.compareTo(b);
 			}
 		});
 		dataGrid.getColumnSortList().push(issueDateColumn);
