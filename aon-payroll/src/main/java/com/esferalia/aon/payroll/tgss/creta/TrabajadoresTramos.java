@@ -550,7 +550,6 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitMaternidadPaternidadTiempoCompleto() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = fullMaternity;
 				}
 				
 				@Override
@@ -600,8 +599,7 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitMaternidadPaternidadTiempoCompleto() {
-					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = fullMaternity;
+					visitOthers();
 				}
 				
 				@Override
@@ -651,8 +649,7 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitMaternidadPaternidadTiempoCompleto() {
-					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = fullMaternity;
+					visitOthers();
 				}
 				
 				@Override
@@ -661,7 +658,7 @@ public class TrabajadoresTramos {
 				}
 			};
 
-			SalaryVisitor fullMaternity = new SalaryVisitor(){
+			SalaryVisitor _fullMaternity = new SalaryVisitor(){
 				
 				private void visitOthers(){
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));

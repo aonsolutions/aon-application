@@ -1871,7 +1871,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 			System.out.println("Tramo : " + t.getFechaDesde().getMes() + "/" + t.getFechaDesde().getDia() 
 					+ "..." + t.getFechaHasta().getMes() + "/" + t.getFechaHasta().getDia());
 		
-		Assert.assertEquals(3, tramos.size());
+		Assert.assertEquals(4, tramos.size());
 		
 		// Activo
 		Tramo tramo0 = tramos.get(0); 
@@ -1885,11 +1885,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals("10", tramo1.getFechaHasta().getDia());
 		assertTramoIT15PrimerosDias(tramo1);
 
-		// Risk & Mtndad
+		// Risk 
 		Tramo tramo2 = tramos.get(2); 
 		Assert.assertEquals("11", tramo2.getFechaDesde().getDia());
-		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
-		assertTramoMaternidadTiempoCompleto(tramo2);		
+		Assert.assertEquals("20", tramo2.getFechaHasta().getDia());
+		assertTramoMaternidadTiempoCompleto(tramo2);
+		
+		// Mtndad
+		Tramo tramo3 = tramos.get(3); 
+		Assert.assertEquals("21", tramo3.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
+		assertTramoMaternidadTiempoCompleto(tramo3);
 
 	}
 
