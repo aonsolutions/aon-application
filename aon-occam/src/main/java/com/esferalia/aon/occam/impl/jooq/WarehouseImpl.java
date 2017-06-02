@@ -236,6 +236,11 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.getElaborationDetail(ctx, id));
 	}
+	@Override
+	public ElaborationDetailComposition getElaborationDetailComposition(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.getElaborationDetailComposition(ctx, id));
+	}
 
 	
 	
@@ -250,9 +255,19 @@ public class WarehouseImpl implements IWarehouse {
 			ElaborationDAO.getElaborationDetailList(ctx, id));
 	}
 	@Override
+	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, ElaborationDetailFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.getElaborationDetailList(ctx, filter));
+	}
+	@Override
 	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(configuration ->
 		ElaborationDAO.getElaborationDetailCompositionList(ctx, id));
+	}
+	@Override
+	public List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, ElaborationDetailCompositionFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+		ElaborationDAO.getElaborationDetailCompositionList(ctx, filter));
 	}
 	
 	

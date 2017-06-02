@@ -133,7 +133,10 @@ public interface IWarehouse {
 	Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter);
 	ElaborationDetail getElaborationDetail(AONContext ctx, Integer id);
 	List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id);
+	List<ElaborationDetail> getElaborationDetailList(AONContext ctx, ElaborationDetailFilter filter);
+	ElaborationDetailComposition getElaborationDetailComposition(AONContext ctx, Integer compositionId);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
+	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, ElaborationDetailCompositionFilter filter);
 	Integer insertElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration updateElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration deleteElaboration(AONContext ctx, Integer id);

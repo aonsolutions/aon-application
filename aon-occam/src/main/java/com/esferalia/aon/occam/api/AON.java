@@ -3070,9 +3070,9 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			int id = getWarehouse().insertElaborationDetail(ctx, detail);
-			// TODO AON.addStock 
-//			AON.addStock(getDomain(domainName, domainId, login), login,
-//					detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
+			// addStock 
+			AON.addStock(getDomain(domainName, domainId, login), login,
+					detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
 			return id;
 		} finally {
 			if (ctx != null) ctx.close();
@@ -3084,15 +3084,15 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			detail = getWarehouse().updateElaborationDetail(ctx, detail);
-			// TODO AON.addStock && AON.substractStock  
-//			Integer id = detail.getId();
-//			Double oldQuantity = AON.getElaborationStream(domainName, domainId, login,
-//					f -> f.getIdProperty().eq(id))
-//					.findFirst().get().getQuantity();
-//			AON.substractStock(getDomain(domainName, domainId, login), login,
-//					detail.getItem().getId(), oldQuantity, detail.getWarehouse().getId());
-//			AON.addStock(getDomain(domainName, domainId, login), login,
-//					detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
+			// addStock && substractStock  
+			Integer id = detail.getId();
+			Double oldQuantity = AON.getElaborationStream(domainName, domainId, login,
+					f -> f.getIdProperty().eq(id))
+					.findFirst().get().getQuantity();
+			AON.substractStock(getDomain(domainName, domainId, login), login,
+					detail.getItem().getId(), oldQuantity, detail.getWarehouse().getId());
+			AON.addStock(getDomain(domainName, domainId, login), login,
+					detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
 			return detail;
 		} finally {
 			if (ctx != null) ctx.close();
@@ -3101,12 +3101,27 @@ public class AON {
 	
 	public static ElaborationDetail deleteElaborationDetail(String domainName, Integer domainId, String login, ElaborationDetailFilter filter) {
 		AONContext ctx = null;
+		List<ElaborationDetail> list = null;
+		try {
+			list = getWarehouse().getElaborationDetailList(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+		if(list!=null){
+			list.forEach(detail -> deleteElaborationDetail(domainName, domainId, login, detail.getId()));
+		}
+		return null;
+	}
+	
+	public static ElaborationDetail deleteElaborationDetail(String domainName, Integer domainId, String login, Integer detailId) {
+		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			ElaborationDetail detail = getWarehouse().deleteElaborationDetail(ctx, filter);
-			// TODO AON.substractStock 
-//			AON.substractStock(getDomain(domainName, domainId, login), login,
-//					detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
+			ElaborationDetail detail = getFullElaborationDetail(domainName, domainId, login, detailId);
+			getWarehouse().deleteElaborationDetail(ctx, detailId);
+			// substractStock 
+			AON.substractStock(getDomain(domainName, domainId, login), login,
+					detail.getItem().getId(), detail.getQuantity(), detail.getWarehouse().getId());
 			return detail;
 		} finally {
 			if (ctx != null) ctx.close();
@@ -3144,8 +3159,11 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			// TODO AON.addStock  
-			return getWarehouse().insertElaborationDetailComposition(ctx, composition);
+			Integer id =  getWarehouse().insertElaborationDetailComposition(ctx, composition);
+			// addStock  
+			AON.addStock(getDomain(domainName, domainId, login), login,
+					composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
+			return id;
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -3157,8 +3175,16 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			// TODO AON.addStock && AON.substractStock  
-			return getWarehouse().updateElaborationDetailComposition(ctx, composition);
+			getWarehouse().updateElaborationDetailComposition(ctx, composition);
+			// addStock && substractStock
+			Double oldQuantity = AON.getElaborationDetailCompositionList(domainName, domainId, login,
+					composition.getElaborationDetail().getId())
+					.get(0).getQuantity();
+			AON.substractStock(getDomain(domainName, domainId, login), login,
+					composition.getItem().getId(), oldQuantity, composition.getWarehouse().getId());
+			AON.addStock(getDomain(domainName, domainId, login), login,
+					composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
+			return composition;
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -3168,10 +3194,30 @@ public class AON {
 	public static ElaborationDetailComposition deleteElaborationDetailComposition(String domainName, Integer domainId,
 			String login, ElaborationDetailCompositionFilter filter) {
 		AONContext ctx = null;
+		List<ElaborationDetailComposition> list = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			// TODO AON.substractStock  
-			return getWarehouse().deleteElaborationDetailComposition(ctx, filter);
+			list = getWarehouse().getElaborationDetailCompositionList(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+		if(list!=null){
+			list.forEach(composition -> deleteElaborationDetailComposition(domainName, domainId, login, composition.getId()));
+		}
+		return null;		
+	}
+	
+	public static ElaborationDetailComposition deleteElaborationDetailComposition(String domainName, Integer domainId,
+			String login, Integer compositionId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			ElaborationDetailComposition composition = getWarehouse().getElaborationDetailComposition(ctx, compositionId);
+			getWarehouse().deleteElaborationDetailComposition(ctx, f -> f.getIdProperty().eq(compositionId));
+			// substractStock  
+			AON.substractStock(getDomain(domainName, domainId, login), login,
+					composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
+			return composition;
 		} finally {
 			if (ctx != null)
 				ctx.close();

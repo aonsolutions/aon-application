@@ -132,7 +132,7 @@ public class DBWarehouse {
 	public static JSONObject deleteElaborationDetail(Domain domain, String login, int detailId) {
 		AON.deleteElaborationDetailComposition(domain.getName(), domain.getId(), login,
 				f -> f.getElaborationDetailProperty().eq(detailId));
-		AON.deleteElaborationDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(detailId));
+		AON.deleteElaborationDetail(domain.getName(), domain.getId(), login, detailId);
 		return new JSONObject();
 	}
 
