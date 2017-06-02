@@ -117,6 +117,8 @@
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintDiscountPriceApplied()]]></defaultValueExpression>
 	</parameter>
 
+<field name="id" class="java.lang.Integer"/>
+<field name="domain" class="java.lang.Integer"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
@@ -124,7 +126,6 @@
 	<field name="registryDocumentCountry" class="com.code.aon.common.enumeration.Country"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="detailList" class="java.util.ArrayList"/>
-	<field name="id" class="java.lang.Integer"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
 	<field name="lines" class="java.util.Set"/>
 	<field name="finances" class="java.util.Set"/>

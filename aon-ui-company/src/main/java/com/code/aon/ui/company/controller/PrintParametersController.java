@@ -114,7 +114,12 @@ public class PrintParametersController implements Serializable {
 
 	
 	public void onInit(ActionEvent event) {
-		loadCompany();
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		this.onInit(((Company) controller.getTo()).getRegistry().getDomain());
+	}	
+
+	public void onInit(int domainId) {
+		loadCompany(domainId);
 		getSaleInvoiceParams().init();
 		getReportBackground().init();
 		getSaleInvoiceFooter().init();
@@ -126,12 +131,53 @@ public class PrintParametersController implements Serializable {
 		getReportBackground().accept();
 	}
 
-	private void loadCompany() {
-		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		company = (Company) controller.getTo();
-	}	
+	private void loadCompany(int domainId) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Company.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COMPANY_DOMAIN),
+					domainId);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list==null || list.isEmpty() ){
+				throw new AbortProcessingException("****ERROR: No Company found with domainId = "+domainId+" !!!!!");
+			} else if(list.size()>1){
+				throw new AbortProcessingException("****ERROR: Multiple Companyes found in domainId = "+domainId+" !!!!!");
+			} else {
+				company = (Company) list.get(0);
+				
+				checkLoadedCompany(domainId);
+				
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
 	
-	
+	/**
+	 * 	WARN WHEN COMPANY OF SESSION DOES NOT MATCH WITH THE LOADED COMPANY 
+	 * @param domainId 
+	 */
+	private void checkLoadedCompany(int domainId) {
+		try {
+			CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			Company sessionCompany = (Company) controller.getTo();
+			if(company!=null && sessionCompany!=null){
+				if(Integer.compare(company.getId(), sessionCompany.getId())!=0){
+					StringBuilder sb = new StringBuilder("### IMPORTANT ### ");
+					sb.append("COMPANY OF SESSION (");
+					sb.append(sessionCompany.getName());
+					sb.append(") DOES NOT MATCH WITH THE LOADED COMPANY (");
+					sb.append(company.getName());
+					sb.append(") WITH domainId ");
+					sb.append(domainId);
+					LOGGER.warn(sb.toString());
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.warn(e.getMessage());
+		}
+	}
+
 	private byte[] getData(IAttachment attach) {
 		byte[] data = null;
 		if (attach != null && attach.getData() != null) {
