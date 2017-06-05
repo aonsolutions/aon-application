@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
@@ -39,10 +40,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.InvestAsset;
 import com.code.aon.company.enumeration.ReportPrintOption;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.Scope;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -60,6 +68,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.config.ReportConfig;
@@ -76,6 +85,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -129,7 +139,7 @@ public class InvoiceServlet extends HttpServlet{
 				f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
 				.and(f.getDomainProperty().eq(domain.getId())), AttachType.REGISTRY);
 
-			RecordData recordData = AON.getRecordData(domain.getName(), domain.getId(), login, f -> 
+			com.esferalia.aon.occam.api.model.registry.RecordData recordData = AON.getRecordData(domain.getName(), domain.getId(), login, f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getRegistryProperty().eq(company.getId())));
 			StringBuilder leftSideText = new StringBuilder("");
