@@ -114,10 +114,11 @@ public class InvoiceServlet extends HttpServlet{
 			HashMap<String, String> parameters = getParameters(req.getPathInfo().substring(1));
 
 			String domainName = parameters.get("domain");
+			String domainId = parameters.get("domain_id");
 			String login = parameters.get("login");
 			String invoice = parameters.get("invoice");
 			String registry = parameters.get("registry");
-
+			
 			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
 			
 			String reportKey = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM).getValue();
@@ -128,11 +129,45 @@ public class InvoiceServlet extends HttpServlet{
 				f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
 				.and(f.getDomainProperty().eq(domain.getId())), AttachType.REGISTRY);
 
-			RecordData recordData = recordData(AON.getRecordData(domain.getName(), domain.getId(), login, f -> 
+			RecordData recordData = AON.getRecordData(domain.getName(), domain.getId(), login, f -> 
 				f.getDomainProperty().eq(domain.getId())
-				.and(f.getRegistryProperty().eq(company.getId()))));
+				.and(f.getRegistryProperty().eq(company.getId())));
+			StringBuilder leftSideText = new StringBuilder("");
 			
+			if(company.getName() != null){
+				leftSideText.append(company.getName()).append(" ");
+			}
+			if(recordData.getRegistration() != null){
+				leftSideText.append(recordData.getRegistration()).append(" ");
+			}
+			if(recordData.getVolume() != null){
+				leftSideText.append("Tomo ").append(recordData.getVolume()).append(" ");
+			}
+			if(recordData.getSection() != null){
+				leftSideText.append("Sección ").append(recordData.getSection()).append(" ");
+			}
+			if(recordData.getPage() != null){
+				leftSideText.append("Folio ").append(recordData.getPage()).append(" ");
+			}
+			if(recordData.getSheet() != null){
+				leftSideText.append("Hoja ").append(recordData.getSheet()).append(" ");
+			}
+			if(recordData.getRecordDate() != null){
+				leftSideText.append("con Fecha ").append(new SimpleDateFormat("dd/MM/yyyy").format(recordData.getRecordDate()));
+			}			
+			if(company.getDocument() != null && company.getDocumentCountry() != null){
+				leftSideText.append(leftSideText.length()>0?", ":"");
+				leftSideText.append("N.I.F.").append(": ");
+				leftSideText.append(company.getDocumentCountry()).append("-");
+				leftSideText.append(company.getDocument());
+			}
+
 			RegistryAddress registryAddress = registryAddress(AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
+			
+			String invoiceFooterText="De conformidad con la Ley Orgánica 15/1999, le informamos que sus datos se hallan incorporados a un fichero titularidad de "+ company.getName() +" con la finalidad de cumplir con nuestra relación comercial. Puede ejercer los derechos de acceso, rectificación, cancelación y oposición en cualquier momento, mediante escrito, acompañado de copia de documento oficial que le identifique, dirigido a "+ company.getName() +", "+ 
+					registryAddress.getFullAddress()
+					+".";
+
 			
 			RegistryMedia phone = registryMedia(AON.getRMedia(domain.getName(), domain.getId(), login, f -> 
 				f.getMediaProperty().eq((byte) MediaType.FIXED_PHONE.ordinal())
@@ -159,18 +194,19 @@ public class InvoiceServlet extends HttpServlet{
 			HashMap<String, Object> params = new HashMap<>();
 			//params.put("REPORT_TIMER_ZONE", "");		
 			params.put("invoiceDetailPrinter", new InvoiceDetailByDeliveryPrinter());
-			params.put("printDiscountPriceApplied", FALSE);
+			params.put("printDiscountPriceApplied", TRUE);
 			params.put("printHeader", TRUE);
 			params.put("printLogo", TRUE);
 			params.put("PriceStrategy",  new InvoicePriceStrategy());
 			params.put("company", company);
 			params.put("logoImageFile", new ByteArrayInputStream(attach.getData()));
-			params.put("recordData", recordData);
+			params.put("leftSideText", leftSideText.toString());
 			params.put("address", registryAddress);
 			params.put("phone", phone);
 			params.put("fax", fax);
-			params.put("invoiceFooterText", "De conformidad con la Ley Orgánica 15/1999, le informamos que sus datos se hallan incorporados a un fichero titularidad de AON SOLUTIONS, S.L. con la finalidad de cumplir con nuestra relación comercial. Puede ejercer los derechos de acceso, rectificación, cancelación y oposición en cualquier momento, mediante escrito, acompañado de copia de documento oficial que le identifique, dirigido a AON SOLUTIONS, S.L.U., CL. Duque de Wellington 52, Bajo.");
-			params.put("IS_IGNORE_PAGINATION", FALSE);
+			params.put("invoiceFooterText",  invoiceFooterText);
+			params.put("IS_IGNORE_PAGINATION", FALSE);	
+			params.put("IsIgnorePagination", FALSE);	
 			params.put("printNif", ReportPrintOption.LEFT_SIDE); 
 			params.put("printHeaders", TRUE); 
 			params.put("printRecordData", TRUE); 
@@ -179,6 +215,7 @@ public class InvoiceServlet extends HttpServlet{
 			
 			params.put("printAddress", ReportPrintOption.FOOTER);
 	// GET RMEDIO NO DB CONNECTOR -	params.put("printInternetData", ReportPrintOption.FOOTER);
+			
 			params.put("invoiceReportScriptlet_SCRIPTLET", new InvoiceReportScriptlet());
 			params.put("REPORT_FORMAT_FACTORY", new DefaultFormatFactory());
 			params.put("printName", ReportPrintOption.FOOTER);
@@ -252,6 +289,11 @@ public class InvoiceServlet extends HttpServlet{
 			JasperReport jr = (JasperReport) params.get("JASPER_REPORT");
 			JasperPrint jasperPrint = JasperFillManager.fillReport(
 				jr,params, jrbcds);
+
+	
+//			jasperPrint.setPageHeight(842);
+//			jasperPrint.setPageWidth(595);
+			
 			data = JasperExportManager.exportReportToPdf(jasperPrint);
 		}
 		return data;
@@ -279,6 +321,7 @@ public class InvoiceServlet extends HttpServlet{
 	
 	public Company company(com.esferalia.aon.occam.api.model.Company company) {
 		Company c = new Company();
+		
 		// Company
 		c.setActive(company.isActive());
 		c.setVatAccrualPayment(company.isVatAccrualPayment());
@@ -286,17 +329,24 @@ public class InvoiceServlet extends HttpServlet{
 		c.setSurcharge(company.isSurcharge());
 		c.setWithholding(company.isWithholding());
 		c.setEInvoice(company.iseInvoice());
-			
+
 		// Registry
 		c.setId(company.getId());
 		c.setDocument(company.getDocument());
 		c.setName(company.getName());
 		c.setAlias(company.getAlias());
 		c.setConfidential(company.isConfidential());
-	//	c.setDocumentType(DocumentType.values()[company.getDocumentType().ordinal()]);
-	//	c.setSecurityLevel(SecurityLevel.values()[company.getSecurityLevel().ordinal()]);
-	//	c.setType(RegistryType.values()[company.getType()]);
-	
+		c.setDocumentType(DocumentType.values()[company.getDocumentType().ordinal()]);
+		c.setSecurityLevel(SecurityLevel.values()[company.getSecurityLevel().ordinal()]);
+		if(company.getType() != null){
+			c.setType(RegistryType.values()[company.getType()]);
+		}		
+		c.setDocumentCountry(Country.valueOf(company.getDocumentCountry().getIso2()));
+		c.setNationality(Country.valueOf(company.getNationality().getIso2()));
+		
+		//c.getWeb();
+		//c.getEmail();
+		
 		return c;
 	}
 	
@@ -352,6 +402,7 @@ public class InvoiceServlet extends HttpServlet{
 
 		GeoZone geoZone = new GeoZone();
 		geoZone.setId(raddress.getGeozone());
+		geoZone.setName(raddress.getGeozoneName());
 		ra.setGeozone(geoZone);
 
 		return ra;
@@ -381,16 +432,39 @@ public class InvoiceServlet extends HttpServlet{
 		
 		invoice.setId(inv.getId());
 		invoice.setReferenceCode(inv.getReferenceCode());
-		invoice.setIssueDate(inv.getIssueDate() != null ? inv.getIssueDate() : new Date());
-		invoice.setRegistryDocument(inv.getRegistryDocument());
+		Date issueDate = inv.getIssueDate() != null ? inv.getIssueDate() : new Date();
+		invoice.setIssueDate(issueDate);
+		invoice.setIssueDay(AonDateUtils.getDay(issueDate));
+		invoice.setIssueMonth(AonDateUtils.getMonth(issueDate));
+		invoice.setIssueYear(AonDateUtils.getYear(issueDate));
 
+		Registry registry = new Registry();
+		registry.setId(inv.getRegistry());
+		invoice.setRegistry(registry);
+		invoice.setRegistryDocument(inv.getRegistryDocument());
+		
+		invoice.setStatus(InvoiceStatus.values()[inv.getStatus()]);
+		invoice.setTransaction(InvoiceTransactionType.values()[inv.getTransaction().ordinal()]);
+		invoice.setCreationUser(inv.getCreationUser());
+		invoice.setCreationDate(inv.getCreationDate());
+		invoice.setModificationUser(inv.getModificationUser());
+		invoice.setModificationDate(inv.getModificationDate());
+		
+		Scope scope = new Scope();
+		scope.setId(inv.getScope().getId());
+		invoice.setScope(scope);
 		
 		invoice.setRegistryDocumentCountry(Country.valueOf(inv.getRegistryDocumentCountry().getIso2()));
 		invoice.setRegistryDocumentType(DocumentType.values()[inv.getRegistryDocumentType().ordinal()]);
 		invoice.setRegistryName(inv.getRegistryName());
 
 		// address
-		
+		invoice.setTaxableBase(inv.getTaxableBase());
+		invoice.setTaxDate(inv.getTaxDate());
+		invoice.setTotal(inv.getTotal());
+		invoice.setRetentionQuota(inv.getRetentionQuota());
+		invoice.setVatQuota(inv.getVatQuota());
+		invoice.setVatAccrualPayment(inv.isVatAccrualPayment());
 		invoice.setComments(inv.getComments());
 		invoice.setRectificationType(RectificationType.values()[inv.getRectificationType().ordinal()]);
 		
@@ -410,6 +484,11 @@ public class InvoiceServlet extends HttpServlet{
 		
 		invoice.setLines(invoiceDetail);
 		
+		Set<Finance> finances = AON.getFinanceStream(domain.getName(), domain.getId(), login, 
+				f -> f.getInvoiceProperty().eq(invoice.getId())).map(new FinanceFiller())
+				.collect(Collectors.toSet());
+	
+		invoice.setFinances(finances);
 		
 		invoice.setAdvance(inv.isAdvance());
 		invoice.setConfidential(inv.isConfidential());
@@ -557,7 +636,83 @@ public class InvoiceServlet extends HttpServlet{
 			
 			return invoiceDetail;
 		}
-	}
+	}	
 	
+	public static class FinanceFiller implements Function<com.esferalia.aon.occam.api.model.finance.Finance, Finance> {
+
+		@Override
+		public Finance apply(com.esferalia.aon.occam.api.model.finance.Finance f) {
+			Finance finance =  new Finance();
+			finance.setAdvance(f.isAdvance());
+			finance.setAmount(f.getAmount());
+			
+			BankAccount bankAccount = new BankAccount();
+			bankAccount.setBban1(f.getBankAccount().getBban1());
+			bankAccount.setBban2(f.getBankAccount().getBban2());
+			bankAccount.setBban3(f.getBankAccount().getBban3());
+			bankAccount.setBban4(f.getBankAccount().getBban4());
+			bankAccount.setBban5(f.getBankAccount().getBban5());
+			bankAccount.setBban6(f.getBankAccount().getBban6());
+			bankAccount.setBban7(f.getBankAccount().getBban7());
+			bankAccount.setBban8(f.getBankAccount().getBban8());
+			bankAccount.setCheck(f.getBankAccount().getCheck());
+			bankAccount.setCountry(Country.valueOf(f.getBankAccount().getCountry().getIso2()));
+			finance.setBankAccount(bankAccount);
+			
+			finance.setBankAlias(f.getBankAlias());
+			finance.setBic(f.getBic());
+			finance.setChequeNumber(f.getChequeNumber());
+			finance.setConcept(f.getConcept());
+			finance.setConfidential(f.isConfidential());
+			finance.setCreationDate(f.getCreationDate());
+			finance.setCreationUser(f.getCreationUser());
+			finance.setDomain(f.getDomain());
+			finance.setDueDate(f.getDueDate());
+			finance.setExpenses(f.getExpenses());
+
+			Finance financeGroup = new Finance();
+			financeGroup.setId(f.getFinanceGroup());
+			finance.setFinanceGroup(financeGroup);
+			
+			finance.setId(f.getId());
+			
+			com.code.aon.finance.Invoice invoice = new com.code.aon.finance.Invoice();
+			invoice.setId(f.getInvoice().getId());
+			finance.setInvoice(invoice);
+			finance.setManual(f.isManual());
+			finance.setModificationDate(f.getModificationDate());
+			finance.setModificationUser(f.getModificationUser());
+			finance.setPayment(f.isPayment());
+			
+			PayMethod payMethod = new PayMethod();
+			payMethod.setId(f.getPayMethod());
+			payMethod.setName(f.getPayMethodName());
+			finance.setPayMethod(payMethod);
+			
+			finance.setPayroll(f.isPayroll());
+			finance.setPrepayment(f.isPrepayment());
+
+			Registry registry = new Registry();
+			registry.setId(f.getRegistry().getId());
+			finance.setRegistry(registry);
+			
+			finance.setRegistryDocument(f.getRegistryDocument());
+			finance.setRegistryDocumentCountry(Country.valueOf(f.getRegistryDocumentCountry().getIso2()));
+			finance.setRegistryDocumentType(DocumentType.values()[f.getRegistryDocumentType().ordinal()]);
+			finance.setRegistryName(f.getRegistryName());
+			finance.setRemarks(f.getRemarks());
+			
+			Scope scope = new Scope();
+			scope.setId(f.getScope().getId());
+			scope.setDescription(f.getScope().getDescription());
+		//	scope.setDomain(f.getScope().getDomain());
+			finance.setScope(scope);
+			
+			finance.setSecurityLevel(SecurityLevel.values()[f.getSecurityLevel().ordinal()]);
+			finance.setSourceId(f.getSourceId());
+			
+			return finance;			
+		}
+	}	
 
 }

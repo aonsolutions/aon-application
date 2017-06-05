@@ -32,7 +32,7 @@ public class HibernateConnectionProvider implements ConnectionProvider {
 			if ( domain == null ) { 
 				// Necesario para el RSSServlet
 				String path = HttpServletRequestValve.getHttpServletRequest().getServletPath();
-				if ( "/aonFeed".equals(path) ) {
+				if ( "/aonFeed".equals(path) || "/invoice_download".equals(path) ) {
 					domain = AonUtil.getServerName();	
 				}
 			}

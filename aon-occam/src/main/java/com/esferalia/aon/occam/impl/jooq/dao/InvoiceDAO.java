@@ -378,7 +378,7 @@ public class InvoiceDAO {
 				.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(record.getValue(INVOICE.TOTAL))	
 				.setComments(record.getValue(INVOICE.COMMENTS))
-				;
+				.setStatus(record.getValue(INVOICE.STATUS));
 		}
 		
 	}

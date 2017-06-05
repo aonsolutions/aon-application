@@ -141,7 +141,9 @@
 	<parameter name="printDiscountPriceApplied" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintDiscountPriceApplied()]]></defaultValueExpression>
 	</parameter>
-
+	<parameter name="leftSideText" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText()]]></defaultValueExpression>
+	</parameter>
 	<field name="id" class="java.lang.Integer"/>
 <field name="domain" class="java.lang.Integer"/>
 	<field name="referenceCode" class="java.lang.String"/>
@@ -215,7 +217,7 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{leftSideText}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="fd23aec2-7fb6-4e28-b26b-39b1d4ea310d" key="line-5" x="-25" y="241" width="4" height="1"/>
@@ -1185,7 +1187,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{invoiceFooterText}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="a24c6b58-6d31-4b68-85d0-1255063686e5" key="textField-56" positionType="FixRelativeToBottom" x="0" y="175" width="535" height="10"/>

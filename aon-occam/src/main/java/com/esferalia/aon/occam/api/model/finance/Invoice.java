@@ -72,6 +72,8 @@ public class Invoice implements Serializable, HasAudit {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
+	
+	private Byte status;
 
 	private LinkedList<InvoiceDetail> details;
 	
@@ -473,6 +475,15 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 
+	
+	public Byte getStatus() {
+		return status;
+	}
+	public Invoice setStatus(Byte status) {
+		this.status = status;
+		return this;
+	}
+	
 	// ---------------------------------------------------------- UTIL
 	public boolean isNational() {
 		return getTransaction() == InvoiceTransactionType.NATIONAL;
