@@ -41,6 +41,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String cellOddFormat();
 		String isSelectedCell();
 		String onChange();
+		String setBlockVariableStyle();
 	}
 	
 	
@@ -145,10 +146,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
 	private EmployeeEventsDraftObject employeeEventsDraft;
+	private ArrayList<String> blockVariableList;
 	
 	public EmployeeEventsDraft() {
 		//Inicializamos la vista del gestor de incidencias
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		//Inicializamos lista de variables que no son modificables desde el gestor de incidencias
+		initializeBlockVariablesList();
 		
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
@@ -171,6 +176,18 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}
 		});
 		
+	}
+
+	private void initializeBlockVariablesList() {
+		this.blockVariableList = new ArrayList<String>();
+		this.blockVariableList.add("DIAS_TRABAJADOS");
+		this.blockVariableList.add("DIAS_EFECTIVOS");
+		this.blockVariableList.add("DIAS_ERE");
+		this.blockVariableList.add("DIAS_HUELGA");
+		this.blockVariableList.add("DIAS_AUSENCIA");
+		this.blockVariableList.add("HORAS_TRABAJADAS");
+		this.blockVariableList.add("HORAS_COMPLEMENTARIAS");
+		this.blockVariableList.add("DIAS_VACACIONES");
 	}
 
 	/**
@@ -219,11 +236,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		event.preventDefault();
 		
-		newValueButton.setEnabled(true);
-		addNewValueMenuItem.setEnabled(true);
-		
 		int row = eventsGrid.getCellForEvent(event).getRowIndex();
 		int col = eventsGrid.getCellForEvent(event).getCellIndex();
+		
+		if (checkBlockVariables(row)){
+			return;
+		}
+		
+		newValueButton.setEnabled(true);
+		addNewValueMenuItem.setEnabled(true);
 		
 		if (col != 0){
 			if(event.isControlKeyDown()){ //Cambiar por CTRL
@@ -258,7 +279,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		}
 		
 	}
-	
+
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		this.employeeEventsDraft.undoManager.undo();
@@ -307,9 +328,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private void fillCellsEvents() {
 		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
+		Boolean blockVariable = false;
 		for (int row = 1; row < 17; row ++){
 			Integer actualMonth = 0;
 			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+			blockVariable = checkBlockVariables(row);
+			
 			ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
 			
 			for (int col = 1; col < 13; col ++){
@@ -318,6 +342,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				eventValue.setStyleName(style.cellFormat());
 				if (row % 2 == 1)
 					eventValue.setStyleName(style.cellOddFormat());
+				
+				if (blockVariable)
+					eventValue.setStyleName(style.setBlockVariableStyle());
+				else
+					eventValue.removeStyleName(style.setBlockVariableStyle());
 				
 				if(null == varList){
 					eventValue.setText("-");
@@ -364,6 +393,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		showingVar[13] = jrCheckBox14.getChecked();
 		showingVar[14] = heCheckBox15.getChecked();
 		showingVar[15] = hefCheckBox16.getChecked();
+	}
+	
+	private boolean checkBlockVariables(int row) {
+		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+		return this.blockVariableList.contains(variableName);
 	}
 	
 	private void openNewValueDialog(){
