@@ -50,7 +50,7 @@ public class ConexFlowUtils {
 		query.setMoneda("EUR");
 		query.setPlazos("000");
 		query.setSecurityCode("");
-		query.setRefCliente(leftZeros(20, cliente));
+		query.setRefCliente(cliente);//leftZeros(20, cliente));
 		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setCF_ReplyURLAuth("");
@@ -163,7 +163,7 @@ public class ConexFlowUtils {
 		query.setMoneda("EUR");
 		query.setPlazos("000");
 		query.setSecurityCode("");
-		query.setRefCliente(leftZeros(20, cliente));
+		query.setRefCliente(cliente);//leftZeros(20, cliente));
 		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setCF_ReplyURLAuth("");
@@ -271,7 +271,7 @@ public class ConexFlowUtils {
 		query.setFechaCad("");
 		query.setImporte(importe.toString());
 		query.setMoneda("EUR");
-		query.setRefCliente(leftZeros(20, cliente));
+		query.setRefCliente(cliente);//leftZeros(20, cliente));
 		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
@@ -387,7 +387,7 @@ public class ConexFlowUtils {
 		query.setImporteOriginal(importeOriginal.toString());
 		
 		query.setAutOriginal(autorizacion);
-		query.setRefCliente(leftZeros(20, cliente));
+		query.setRefCliente(cliente);//leftZeros(20, cliente));
 		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
@@ -466,7 +466,7 @@ public class ConexFlowUtils {
 		query.setImporteOriginal(amountOriginal != null ? importeOriginal.toString() : importe.toString());
 		query.setAutOriginal(autorizacion);
 		query.setMoneda("EUR");
-		query.setRefCliente(leftZeros(20, cliente));
+		query.setRefCliente(cliente);//leftZeros(20, cliente));
 		query.setInfoAdicionalEntrada(reservationId.toString());
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
@@ -657,7 +657,7 @@ public class ConexFlowUtils {
 		query.setHora(getCurrentTime());
 		query.setDocumento(creditCardNumber);
 		query.setFechaCad(fechaCad);
-		query.setRefCliente(leftZeros(20, cliente));
+		query.setRefCliente(cliente);//leftZeros(20, cliente));
 		query.setCF_ReplyURL("");
 		query.setRefTokenCliente("");
 		
@@ -734,7 +734,7 @@ public class ConexFlowUtils {
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setDocumento(creditCardNumber);
-		query.setRefCliente(leftZeros(20, client));
+		query.setRefCliente(client);//leftZeros(20, client));
 		query.setCF_ReplyURL("");
 		return query;
 	}
