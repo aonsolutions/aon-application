@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -61,6 +62,8 @@ public class Mod2002016 implements IFiscalModel {
 	private LinkedList<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();    // Administradores 
 	private LinkedList<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>(); // B.1. Participaciones declarante en otras entidades
 	private LinkedList<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();  // B.2. Participaciones de personas o entidades en la declarante	
+	
+	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();
 	
 	private String resultType;
 	private String devType;
@@ -251,6 +254,12 @@ public class Mod2002016 implements IFiscalModel {
 	}
 	public void setParticipationsOut(LinkedList<CompanyParticipation> participationsOut) {
 		this.participationsOut = participationsOut;
+	}
+	public LinkedList<UteParticipation> getUteParticipations() {
+		return uteParticipations;
+	}
+	public void setUteParticipations(LinkedList<UteParticipation> uteParticipations) {
+		this.uteParticipations = uteParticipations;
 	}
 	public EnumMap<Mod2002016Key, DoubleVariable2016> getKeysMap() {
 		return keysMap;

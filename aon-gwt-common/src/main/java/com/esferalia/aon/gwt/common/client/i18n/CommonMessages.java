@@ -2140,6 +2140,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Base de la deducci\u00F3n / Importe")
 	String deductionBase();
 	
+	@DefaultMessage("Base de la deducci\u00F3n")
+	String deductionBaseAbbrv();
+	
 	@DefaultMessage("Retenciones e ingresos a cuenta")
 	String retentionAccountDeposit();
 	
@@ -3423,4 +3426,21 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("El ejericio de la declaraci\u00F3n no est\u00E1 soportado")
 	String noModuleForYear();
 	
+	@DefaultMessage("A) Porcentaje de imputaci\u00F3n de bases imponibles y dem\u00E1s conceptos liquidatorios")
+	String ute1();
+	
+	@DefaultMessage("B) Modelo de informaci\u00F3n (art\u00EDculo 46 RIS)")
+	String ute2();
+	
+	@DefaultMessage("6.- Deducci\u00F3n para evitar la doble imposici\u00F3n:")
+	String ute31();
+
+	@DefaultMessage("8.- Base de las deducciones para incentivar la realizaci\u00F3n de determinadas actividades:")
+	String ute4();
+
+	@DefaultMessage("10.- Dividendos y participaciones en benefi cios distribuidos con cargo a reservas:")
+	String ute5();
+
+	
 }
+

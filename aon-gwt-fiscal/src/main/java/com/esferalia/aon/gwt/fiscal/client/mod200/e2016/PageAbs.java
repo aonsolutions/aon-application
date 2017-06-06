@@ -228,12 +228,12 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	protected boolean isDisabled(Mod2002016Key key) {
-		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
+		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key);
 		return behaviour != null && behaviour[1];
 	}
 
 	protected boolean isTitle(Mod2002016Key key) {
-		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
+		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key);
 		return (behaviour != null && behaviour[0]); 
 	}
 

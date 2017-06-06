@@ -566,6 +566,24 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.LM506,"Opciones: Compensaci\u00F3n,");
 		
 	}
+	static {
+		DESCRIPTION_MAP.put(Mod2002016Key.UT060,"Indique el porcentaje de imputaci\u00F3n de bases imponibles y "
+				+ "dem\u00E1s conceptos liquidatorios a las personas o entidades que ostenten los derechos econ\u00F3micos "
+				+ "inherentes a la cualidad de socio que sean contribuyentes por el IRPF o del Impuesto sobre "
+				+ "Sociedades o socios o empresas miembros residentes en territorio espa\u00F1ol o no residentes "
+				+ "con establecimiento permanente");
+		DESCRIPTION_MAP.put(Mod2002016Key.UT500 ,"1.- Resultado de la cuenta de p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP.put(Mod2002016Key.UT1227,"2.- Gastos financieros netos no deducidos por la entidad");
+		DESCRIPTION_MAP.put(Mod2002016Key.UT1228,"3.- Reserva de capitalizaci\u00F3n no aplicada por la entidad");
+		DESCRIPTION_MAP.put(Mod2002016Key.UT552 ,"4.- Base imponible");
+		DESCRIPTION_MAP.put(Mod2002016Key.UT1330,"5.- Base imponible minorada o incrementada, en su caso, en las cantidades derivadas de la aplicaci\u00F3n de la reserva de nivelaci\u00F3n (entidades de reducida dimensi\u00F3n)");
+		DESCRIPTION_MAP.put(Mod2002016Key.UTC01	,"7.- Base de las bonificaciones");
+		DESCRIPTION_MAP.put(Mod2002016Key.UTC02 ,"a) Base total (excepto base de deducci\u00F3n por inversiones en elementos del inmovilizado material nuevos)");
+		DESCRIPTION_MAP.put(Mod2002016Key.UTC03 ,"b) Base de deducci\u00F3n por inversiones en elementos del inmovilizado material nuevos");
+		DESCRIPTION_MAP.put(Mod2002016Key.UT062 ,"9.- Retenciones e ingresos a cuenta");
+		DESCRIPTION_MAP.put(Mod2002016Key.UTC04 ,"a) De ejercicios en los que la sociedad no haya tributado en el r\u00E9gimen especial");
+		DESCRIPTION_MAP.put(Mod2002016Key.UTC05 ,"b) De ejercicios en los que la sociedad haya tributado en el r\u00E9gimen especial");
+	}
 	
 	static {
 		DESCRIPTION_MAP.put(Mod2002016Key.TR050,"Volumen de las operaciones realizadas en:Volumen total de las operaciones realizadas por la entidad en el ejercicio (incluidas las operaciones realizadas en el extranjero)");

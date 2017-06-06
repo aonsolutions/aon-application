@@ -90,7 +90,7 @@ public class Mod200Page13Test {
 			// Casilla aumento
 			if (key.isIncreaseEnabled())
 			{
-				behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getIncrease().toString());
+				behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getIncrease());
 				if (  behaviour == null || (behaviour != null && !behaviour[1]) ) {
 					expected.put(key.getIncrease(), valueChanged(mod200,key.getIncrease()));		
 				}
@@ -99,7 +99,7 @@ public class Mod200Page13Test {
 			// Casilla disminucion
 			if (key.isDecreaseEnabled())
 			{
-				behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getDecrease().toString());
+				behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getDecrease());
 				if (  behaviour == null || (behaviour != null && !behaviour[1]) ) {
 					expected.put(key.getDecrease(), valueChanged(mod200,key.getDecrease()));		
 				}
@@ -302,14 +302,14 @@ public class Mod200Page13Test {
 			Boolean[] behaviour;
 			
 			// Casilla Pendiente de Aplicacion a principio del periodo
-			behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getPreviousPendind().toString());
+			behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getPreviousPendind());
 			if (  behaviour == null || (behaviour != null && !behaviour[1]) ) {
 				expected.put(key.getPreviousPendind(), valueChanged(mod200,key.getPreviousPendind()));		
 			}
 			
 			// Casilla Aplicado en esta declaración
 			if (key.getCurrent()!=null) {
-				behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getCurrent().toString());
+				behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.getCurrent());
 				if (  behaviour == null || (behaviour != null && !behaviour[1]) ) {
 					expected.put(key.getCurrent(), valueChanged(mod200,key.getCurrent()));		
 				}

@@ -68,7 +68,7 @@ public class Mod200Test {
 		// [*] El mapa "expected" simula los datos de pantalla.
 		EnumMap<Mod2002016Key,Double> expected = new EnumMap<Mod2002016Key,Double>(Mod2002016Key.class);
 		for (Mod2002016Key key : Mod2002016Constants.BALANCE_ACTIVE_KEYS) {
-			Boolean[] behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.toString());
+			Boolean[] behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key);
 			if (  behaviour == null || (behaviour != null && !behaviour[1]) ) {
 				expected.put(key, valueChanged(mod200,key));		
 			}
@@ -160,7 +160,7 @@ public class Mod200Test {
 		System.out.println( "\n\t-- random initialize\n" );
 		EnumMap<Mod2002016Key,Double> expected = new EnumMap<Mod2002016Key,Double>(Mod2002016Key.class);
 		for (Mod2002016Key key : Mod2002016Constants.BALANCE_PASIVE_KEYS) {
-			Boolean[] behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.toString());
+			Boolean[] behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key);
 			if (  behaviour == null || (behaviour != null && !behaviour[1]) ) {
 				expected.put(key, valueChanged(mod200,key));		
 			}
@@ -248,7 +248,7 @@ public class Mod200Test {
 		System.out.println( "\n\t-- random initialize\n" );
 		EnumMap<Mod2002016Key,Double> expected = new EnumMap<Mod2002016Key,Double>(Mod2002016Key.class);
 		for (Mod2002016Key key : Mod2002016Constants.PYG_KEYS) {
-			Boolean[] behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key.toString());
+			Boolean[] behaviour = Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.get(key);
 			if (  behaviour == null || (behaviour != null && !behaviour[1]) ) {
 				expected.put(key, valueChanged(mod200,key));		
 			}

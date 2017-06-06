@@ -990,6 +990,25 @@ public enum Mod2002016Key implements IMod200Key {
 	,LM1575(1575) ,LM1576(1576) ,LM1577(1577) ,LM1578(1578)
 	,LM1579(1579) ,LM1580(1580) ,LM1581(1581) ,LM1582(1582)
 	
+	
+	// UTES
+	,UT060(60)
+	,UT500(500)
+	,UT1227(1227)
+	,UT1228(1228)
+	,UT552(552)
+	,UT1330(1330)
+	,UTB01(-100)	,UTP01(-101)
+	,UTB02(-102)	,UTP02(-103)
+	,UTB03(-104)	,UTP03(-105)
+	,UTB04(-106)	,UTP04(-107)
+	,UTC01(-108)	
+	,UTC02(-109)
+	,UTC03(-110)
+	,UT062(62)
+	,UTC04(-111)
+	,UTC05(-112)
+	
 	// TRIBUTACION CONJUNTA AL ESTADO Y A LAS ADMINISTRACIONES FORALES DEL PAIS VASCO Y NAVARRA	
 	// Aplicación del concierto económico con la Comunidad Autónoma del País Vasco y del Convenio Económico entre el Estado y la Comunidad Foral de Navarra
 	,TR050(50)
@@ -1043,5 +1062,4 @@ public enum Mod2002016Key implements IMod200Key {
 	public String getCode(Administration adm) {
 		return getCode();
 	}
-	
 }

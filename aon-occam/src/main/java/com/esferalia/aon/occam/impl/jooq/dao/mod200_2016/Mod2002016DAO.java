@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
@@ -196,6 +197,22 @@ public class Mod2002016DAO  {
 				detail.setNotaryDate( lr.getNotaryDate()==null?null:new java.sql.Date( lr.getNotaryDate().getTime() ) );
 				detail.setName(lr.getName());
 				detail.setType((byte) 3);
+				list.add(detail);
+			}
+		}
+		if (mod200.getUteParticipations() != null) {
+			for ( UteParticipation ute : mod200.getUteParticipations() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setDocument(ute.getDocument());
+				detail.setProvince( (byte) ute.getProvince() );
+				detail.setCountry( ute.getCountry() );
+				detail.setRepresentative( (byte) (ute.isRepresentative()?1:0) );
+				detail.setName(ute.getName());
+				detail.setNominalValue(ute.getBase());
+				detail.setPercent(ute.getPercent());
+				detail.setType((byte) 4);
 				list.add(detail);
 			}
 		}
@@ -469,7 +486,7 @@ public class Mod2002016DAO  {
 				cp.setOtherAmounts(reg.getOtherAmounts());
 				cp.setResult(reg.getResult());
 				mod200.getParticipationsOut().add(cp);
-			} if (reg.getType() == 2) {
+			} else if (reg.getType() == 2) {
 				cp = new CompanyParticipation();					
 				cp.setDocument(reg.getDocument());
 				cp.setName(reg.getName());
@@ -479,13 +496,24 @@ public class Mod2002016DAO  {
 				cp.setPercent(reg.getPercent());
 				cp.setNominalValue(reg.getNominalValue());
 				mod200.getParticipationsIn().add(cp);
-			} if (reg.getType() == 3) {
+			} else if (reg.getType() == 3) {
 				lr = new LegalRepresentative();					
 				lr.setDocument(reg.getDocument());
 				lr.setName(reg.getName());
 				lr.setNotary(reg.getNotary());
 				lr.setNotaryDate(reg.getNotaryDate());
 				mod200.getRepresentatives().add(lr);
+			} else if (reg.getType() == 4) {
+				mod200.getUteParticipations().add(
+				new UteParticipation()					
+					.setDocument(reg.getDocument())
+					.setName(reg.getName())
+					.setProvince(reg.getProvince() )
+					.setCountry( reg.getCountry() )
+					.setRepresentative( reg.getRepresentative() == 1 )
+					.setPercent(reg.getPercent())
+					.setBase(reg.getNominalValue())
+				);
 			}
 		}
 	}

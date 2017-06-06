@@ -678,7 +678,8 @@ public class Model2002016 extends ResizeComposite  {
 		linkContainer.add(new WestFocusPanel(15,AON.MSG.incomeDistribution() ));
 		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
 		linkContainer.add(new WestFocusPanel(17,AON.MSG.page16()		 	 ));
-		linkContainer.add(new WestFocusPanel(18,AON.MSG.idDocument()		 ));
+		linkContainer.add(new WestFocusPanel(18,"U.T.E.S."));
+		linkContainer.add(new WestFocusPanel(19,AON.MSG.idDocument()		 ));
 		linkList.setWidget( linkContainer );
 	}
 	
@@ -735,6 +736,7 @@ public class Model2002016 extends ResizeComposite  {
 			if (i == 15) PAGES[i] = new Page15(cbk); 
 			if (i == 16) PAGES[i] = new Page16(cbk); 
 			if (i == 17) PAGES[i] = new Page17(cbk); 
+			if (i == 18) PAGES[i] = new Page18(cbk); 
 		}
 		return getPage(i);
 	}
