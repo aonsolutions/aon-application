@@ -68,6 +68,7 @@
 	<parameter name="defaultPayMethod" class="java.lang.Boolean"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
 	<field name="id" class="java.lang.Integer"/>
+	<field name="domain" class="java.lang.Integer"/>
 	<field name="type" class="com.code.aon.commercial.enumeration.OfferType"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="issueDate" class="java.util.Date"/>
