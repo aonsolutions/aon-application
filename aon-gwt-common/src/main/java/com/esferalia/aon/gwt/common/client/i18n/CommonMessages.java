@@ -3441,6 +3441,23 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("10.- Dividendos y participaciones en benefi cios distribuidos con cargo a reservas:")
 	String ute5();
 
+	@DefaultMessage("Informaci\u00F3n de detalle de EP o UTE que operen en el extranjero y por participaci\u00F3n en f\u00F3rmula de colaboraci\u00F3n an\u00E1loga a UTE")
+	String utefor();
+
+	@DefaultMessage("Pa\u00EDs de residencia fiscal")
+	String utefor1();
+
+	@DefaultMessage("Volumen de operaciones")
+	String utefor2();
+	
+	@DefaultMessage("Beneficio o p\u00E9rdida que obtienen en el per\u00EDodo impositivo")
+	String utefor3();
+	
+	@DefaultMessage("Suma de ajustes al resultado contable desde el inicio de la actividad")
+	String utefor4();
+	
+	@DefaultMessage("Suma de deducciones por DI internac (art. 31 LIS) acreditada en periodos anteriores")
+	String utefor5();
 	
 }
 

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -213,6 +214,22 @@ public class Mod2002016DAO  {
 				detail.setNominalValue(ute.getBase());
 				detail.setPercent(ute.getPercent());
 				detail.setType((byte) 4);
+				list.add(detail);
+			}
+		}
+		
+		if (mod200.getUteForeign() != null) {
+			for ( UteForeign ute : mod200.getUteForeign() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setName(ute.getIdentification());
+				detail.setCountry( ute.getCountry() );
+				detail.setAValue(ute.getVolume());
+				detail.setBValue(ute.getPyg());
+				detail.setCValue(ute.getAdjust());
+				detail.setDValue(ute.getDeduction());
+				detail.setType((byte) 5);
 				list.add(detail);
 			}
 		}
@@ -505,15 +522,25 @@ public class Mod2002016DAO  {
 				mod200.getRepresentatives().add(lr);
 			} else if (reg.getType() == 4) {
 				mod200.getUteParticipations().add(
-				new UteParticipation()					
-					.setDocument(reg.getDocument())
-					.setName(reg.getName())
-					.setProvince(reg.getProvince() )
-					.setCountry( reg.getCountry() )
-					.setRepresentative( reg.getRepresentative() == 1 )
-					.setPercent(reg.getPercent())
-					.setBase(reg.getNominalValue())
+					new UteParticipation()					
+						.setDocument(reg.getDocument())
+						.setName(reg.getName())
+						.setProvince(reg.getProvince() )
+						.setCountry( reg.getCountry() )
+						.setRepresentative( reg.getRepresentative() == 1 )
+						.setPercent(reg.getPercent())
+						.setBase(reg.getNominalValue())
 				);
+			} else if (reg.getType() == 5) {
+				mod200.getUteForeign().add(
+					new UteForeign()
+					 	.setIdentification(reg.getName())
+					 	.setCountry( reg.getCountry() )
+						.setVolume(reg.getAValue())
+						.setPyg(reg.getBValue())
+						.setAdjust(reg.getCValue())
+						.setDeduction(reg.getDValue())
+					);
 			}
 		}
 	}

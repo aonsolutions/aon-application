@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
+import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -44,7 +45,10 @@ public class Page17 extends PageAbs {
 	private ListDataProvider<UteParticipation> participationDataProvider;
 	private CellTable<UteParticipation> participationTable;
 	private Button newParticipation;
-	
+
+	private ListDataProvider<UteForeign> foreignProvider;
+	private CellTable<UteForeign> foreignTable;
+	private Button newForeign;
 	
 	public Page17( Model200PageCallback callback ) {
 		super(callback);
@@ -97,13 +101,13 @@ public class Page17 extends PageAbs {
 			participationDataProvider = new ListDataProvider<UteParticipation>();
 			participationDataProvider.addDataDisplay(participationTable);
 			
-			addInDocumentColumn();
-			addInRepresentativeColumn();
-			addInDescriptionColumn();
-			addInProvinceColumn();
-			addInBaseColumn();
-			addInPercentColumn();
-			addInRemoveColumn();
+			addDocumentColumn();
+			addRepresentativeColumn();
+			addDescriptionColumn();
+			addProvinceColumn();
+			addBaseColumn();
+			addPercentColumn();
+			addRemoveColumn();
 			
 			newParticipation = new Button();
 			newParticipation.setStyleName(AON.AON_CSS.aonIconReset());
@@ -133,6 +137,51 @@ public class Page17 extends PageAbs {
 				
 			baseContainerPanel.add(groupPanel3);
 
+
+			foreignTable = new CellTable<UteForeign>(25,Model200Table.TABLE_STYLE);
+			foreignTable.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+			foreignTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+			foreignTable.setEmptyTableWidget(new HTML(AON.MSG.noData()));
+			foreignProvider = new ListDataProvider<UteForeign>();
+			foreignProvider.addDataDisplay(foreignTable);
+			
+			addIdentificationColumn();
+			addCountryColumn();
+			addVolumeColumn();
+			addPygColumn();
+			addAdjustColumn();
+			addDeductionColumn();
+			addForeignRemoveColumn();
+			
+			newForeign = new Button();
+			newForeign.setStyleName(AON.AON_CSS.aonIconReset());
+			newForeign.addStyleName(AON.AON_CSS.aonBorderNone());
+			newForeign.addStyleName(AON.AON_CSS.aonMarginTop());
+			newForeign.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					foreignProvider.getList().add(new UteForeign());
+					foreignTable.redraw();		    		
+				}
+			});
+			FlowPanel groupPanel4 = new FlowPanel();
+			groupPanel4.setStyleName(AON.AON_CSS.aonGroup());
+			 
+				FlowPanel groupHeaderPanel4 = new FlowPanel();
+				groupHeaderPanel4.setStyleName(AON.AON_CSS.aonGroupTitle());
+				groupHeaderPanel4.add (new InlineLabel(AON.MSG.utefor())); 
+				groupPanel4.add(groupHeaderPanel4);
+				
+				FlowPanel groupBodyPanel4 = new FlowPanel();
+				groupBodyPanel4.setStyleName(AON.AON_CSS.aonGroupBody());
+				groupBodyPanel4.add(foreignTable);
+				groupBodyPanel4.add(newForeign);
+				groupPanel4.add(groupBodyPanel4);
+				
+			baseContainerPanel.add(groupPanel4);
+
+			
 		container.add(baseContainerPanel);
 		initWidget(container);
 	}
@@ -189,7 +238,7 @@ public class Page17 extends PageAbs {
 		
 	}
 	
-	private void addInDocumentColumn() {
+	private void addDocumentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
 		Column<UteParticipation, String> documentColumn = new Column<UteParticipation, String>(
 				input) {
@@ -208,7 +257,7 @@ public class Page17 extends PageAbs {
 		participationTable.setColumnWidth(documentColumn, 100, Unit.PX);
 	}
 
-	private void addInDescriptionColumn() {
+	private void addDescriptionColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(30);
 		Column<UteParticipation, String> descriptionColumn = new Column<UteParticipation, String>(
 				input) {
@@ -226,7 +275,7 @@ public class Page17 extends PageAbs {
 		descriptionColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
-	private void addInRepresentativeColumn() {
+	private void addRepresentativeColumn() {
 		Column<UteParticipation, Boolean> representativeColumn = new Column<UteParticipation, Boolean>(
 				new TabCheckboxCell()) {
 			@Override
@@ -244,7 +293,7 @@ public class Page17 extends PageAbs {
 		representativeColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 
-	private void addInProvinceColumn() {
+	private void addProvinceColumn() {
 		final LinkedList<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
 			options.add( prov.getName() );
@@ -291,7 +340,7 @@ public class Page17 extends PageAbs {
 		provinceColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
-	private void addInPercentColumn() {
+	private void addPercentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(5);
 		Column<UteParticipation, String> percentColumn = new Column<UteParticipation, String>(
 				input) {
@@ -315,7 +364,7 @@ public class Page17 extends PageAbs {
 		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
-	private void addInBaseColumn() {
+	private void addBaseColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
 		Column<UteParticipation, String> nominalValueColumn = new Column<UteParticipation, String>(
 				input) {
@@ -339,7 +388,7 @@ public class Page17 extends PageAbs {
 		nominalValueColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 
-	private void addInRemoveColumn() {
+	private void addRemoveColumn() {
 		ButtonCell removeButton = new ButtonCell( new DeleteButtonSafeHtmlTemplates())  {
 			  @Override
 			  public void render(Context context, SafeHtml data, SafeHtmlBuilder sb) {
@@ -378,15 +427,203 @@ public class Page17 extends PageAbs {
 		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 	
+	private void addIdentificationColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(30);
+		Column<UteForeign, String> identificationColumn = new Column<UteForeign, String>(
+				input) {
+			@Override
+			public String getValue(UteForeign ca) {
+				return ca.getIdentification();
+			}
+		};
+		identificationColumn.setFieldUpdater(new FieldUpdater<UteForeign, String>() {
+		    public void update(int index, UteForeign cp, String value) {
+		    	foreignProvider.getList().get(index).setIdentification(value);
+		    }
+		});		
+		foreignTable.addColumn(identificationColumn, AON.MSG.identification());
+		identificationColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+	
+	private void addCountryColumn() {
+		final LinkedList<String> options = new LinkedList<String>();
+		for (Country c : Country.values()) {
+			options.add( c.getName() );
+		}
+		TabSelectionCell provinceCell = new TabSelectionCell(options);
+		Column<UteForeign, String> countryColumn = new Column<UteForeign, String>(
+				provinceCell) {
+			
+			@Override
+			public String getValue(UteForeign ca) {
+				Country c = Country.safeValueOf(ca.getCountry());
+				return (c==null?null:c.getName());
+			}
+		};
+		countryColumn.setFieldUpdater(new FieldUpdater<UteForeign, String>() {
+		    public void update(int index, UteForeign cp, String value) {
+		    	Country c = null;
+		    	if (AonStringUtils.isNotEmpty(value)) {
+		    		int idx = options.indexOf(value);
+		    		c = Country.values()[idx];
+		    	} 
+		    	foreignProvider.getList().get(index).setCountry(c==null?null:c.getIso2());
+		    }
+		});		
+		foreignTable.addColumn(countryColumn, AON.MSG.utefor1());
+		foreignTable.setColumnWidth(countryColumn, 150, Unit.PX);
+		countryColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+	
+	private void addVolumeColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(8);
+		Column<UteForeign, String> volumeColumn = new Column<UteForeign, String>(
+				input) {
+			@Override
+			public String getValue(UteForeign ca) {
+				return Double.toString( ca.getVolume() );
+			}
+		};
+		volumeColumn.setFieldUpdater(new FieldUpdater<UteForeign, String>() {
+		    public void update(int index, UteForeign cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		foreignProvider.getList().get(index).setVolume(p);
+		    	} catch (NumberFormatException e) {
+		    		MessageDialog.error("Valor no v\u00E1lido.");
+		    	}
+		    }
+		});		
+		foreignTable.addColumn(volumeColumn, AON.MSG.utefor2() );
+		foreignTable.setColumnWidth(volumeColumn, 150, Unit.PX);
+		volumeColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+	private void addPygColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(8);
+		Column<UteForeign, String> pygColumn = new Column<UteForeign, String>(
+				input) {
+			@Override
+			public String getValue(UteForeign ca) {
+				return Double.toString( ca.getPyg() );
+			}
+		};
+		pygColumn.setFieldUpdater(new FieldUpdater<UteForeign, String>() {
+		    public void update(int index, UteForeign cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		foreignProvider.getList().get(index).setPyg(p);
+		    	} catch (NumberFormatException e) {
+		    		MessageDialog.error("Valor no v\u00E1lido.");
+		    	}
+		    }
+		});		
+		foreignTable.addColumn(pygColumn, AON.MSG.utefor3());
+		foreignTable.setColumnWidth(pygColumn, 150, Unit.PX);
+		pygColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+	private void addAdjustColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(8);
+		Column<UteForeign, String> adjustColumn = new Column<UteForeign, String>(
+				input) {
+			@Override
+			public String getValue(UteForeign ca) {
+				return Double.toString( ca.getAdjust() );
+			}
+		};
+		adjustColumn.setFieldUpdater(new FieldUpdater<UteForeign, String>() {
+		    public void update(int index, UteForeign cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		foreignProvider.getList().get(index).setAdjust(p);
+		    	} catch (NumberFormatException e) {
+		    		MessageDialog.error("Valor no v\u00E1lido.");
+		    	}
+		    }
+		});		
+		foreignTable.addColumn(adjustColumn, AON.MSG.utefor4());
+		foreignTable.setColumnWidth(adjustColumn, 150, Unit.PX);
+		adjustColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+	private void addDeductionColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(8);
+		Column<UteForeign, String> deductionColumn = new Column<UteForeign, String>(
+				input) {
+			@Override
+			public String getValue(UteForeign ca) {
+				return Double.toString( ca.getDeduction() );
+			}
+		};
+		deductionColumn.setFieldUpdater(new FieldUpdater<UteForeign, String>() {
+		    public void update(int index, UteForeign cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		foreignProvider.getList().get(index).setDeduction(p);
+		    	} catch (NumberFormatException e) {
+		    		MessageDialog.error("Valor no v\u00E1lido.");
+		    	}
+		    }
+		});		
+		foreignTable.addColumn(deductionColumn, AON.MSG.utefor5());
+		foreignTable.setColumnWidth(deductionColumn, 150, Unit.PX);
+		deductionColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+
+	private void addForeignRemoveColumn() {
+		ButtonCell removeButton = new ButtonCell( new DeleteButtonSafeHtmlTemplates())  {
+			  @Override
+			  public void render(Context context, SafeHtml data, SafeHtmlBuilder sb) {
+			    if (data != null) {
+			      sb.append(data);
+			    }
+			  }
+		};
+		Column<UteForeign,String> col = new Column<UteForeign,String>(removeButton) {
+		  public String getValue(UteForeign object) {
+		    return AON.MSG.deleteAction();
+		  }
+		};
+		col.setFieldUpdater(new FieldUpdater<UteForeign, String>() {
+			
+		    public void update(int index, UteForeign ca, String value) {
+		    	ConfirmDialog cd = new ConfirmDialog();
+		    	cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {}
+					
+					@Override
+					public void onAccept() {
+						callback.getMod200Object().getMod200().getUteForeign().remove(index);
+						foreignProvider = new ListDataProvider<UteForeign>(
+								callback.getMod200Object().getMod200().getUteForeign());
+						foreignProvider.addDataDisplay(foreignTable);
+						foreignTable.redraw();
+					}
+				});
+		    }
+		});		
+		foreignTable.addColumn(col);
+		foreignTable.setColumnWidth(col, 20, Unit.PX);
+		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+	}
+
 	@Override
 	protected void dump() {
 		super.dump();
-		participationDataProvider = callback.getMod200Object().getMod200().getParticipationsIn() == null
+		participationDataProvider = callback.getMod200Object().getMod200().getUteParticipations() == null
 			?new ListDataProvider<UteParticipation>()
 			:new ListDataProvider<UteParticipation>(callback.getMod200Object().getMod200().getUteParticipations());
 
 		participationDataProvider.addDataDisplay(participationTable);
 		participationTable.redraw();
+		
+		foreignProvider = callback.getMod200Object().getMod200().getUteForeign()  == null
+				?new ListDataProvider<UteForeign>()
+				:new ListDataProvider<UteForeign>(callback.getMod200Object().getMod200().getUteForeign());
+
+		foreignProvider.addDataDisplay(foreignTable);
+		foreignTable.redraw();
+		
 	}
 	
 	@Override
@@ -396,6 +633,12 @@ public class Page17 extends PageAbs {
 			listIn.add(cp);
 		}
 		callback.getMod200Object().getMod200().setUteParticipations(listIn);
+		
+		LinkedList<UteForeign> list2 = new LinkedList<UteForeign>();
+		for (UteForeign cp : foreignProvider.getList()) {
+			list2.add(cp);
+		}
+		callback.getMod200Object().getMod200().setUteForeign(list2);
 		
 	}
 }
