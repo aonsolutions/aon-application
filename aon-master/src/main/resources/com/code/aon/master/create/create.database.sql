@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.105.0
+# Version: 8.107.0
 # Created by: girazu
-# Creation Date: 31/05/2017 12:55
+# Creation Date: 07/06/2017 13:15
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3844,6 +3844,7 @@ CREATE TABLE `data_attach` (
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_DATA_ATTACH_DOMAIN` (`domain`),
+  KEY `IDX_DATA_ATTACH_SOURCE` (`source_id`,`source`),
   CONSTRAINT `FK_DATA_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='DATA ATTACH';
 
@@ -8432,7 +8433,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.105.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.107.0');
 
 COMMIT;
 
