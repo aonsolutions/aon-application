@@ -205,6 +205,9 @@ color:#000;
 .aon-width-180{
 	width:180px;
 }	
+.aon-width-185{
+	width:185px;
+}	
 .aon-width-190{
 	width:190px;
 }	
@@ -2854,6 +2857,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 .aon-icon-utilities{
 	background:transparent url(images/aon-main-menu/aon-icon-utilities.png) no-repeat scroll center left;
+}
+.aon-icon-utilities-folder{
+	background:transparent url(images/aon-main-menu/aon-icon-utilities-folder.png) no-repeat scroll center left;
 }
 .aon-icon-general{
 	background:transparent url(images/aon-main-menu/aon-icon-general.png) no-repeat scroll center left;
