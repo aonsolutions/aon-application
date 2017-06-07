@@ -187,8 +187,6 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 		query.append(" FROM data_response AS DR");
 		query.append(" LEFT JOIN data_response_detail AS DRD ON DRD.data_response = DR.id");
 		query.append(" LEFT JOIN hotel AS H ON H.id = DR.source_id");
-		query.append(" LEFT JOIN data_attach AS DA ON DA.source = " + DataAttachmentSource.PRODUCTION.ordinal() + " AND DA.source_id = DR.id");
-		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal());
 		query.append(" WHERE DR.domain = " + params.getDomainId());
 		query.append(" AND DR.source = " + DataResponseSource.HOTEL.ordinal());
 		query.append(" AND DR.response_date BETWEEN ? AND ?");
@@ -196,7 +194,8 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 		if (params.getHotelId() != 0) {
 			query.append(" AND DR.source_id = ?");
 		}
-		query.append(" AND DA.id IS NULL");
+		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = I.id AND DA.source = " + DataAttachmentSource.PRODUCTION.ordinal());
+		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal() + ")");
 		query.append(" ORDER BY " + HOTEL + "," + ISSUE_DATE + "," + DESCRIPTION);
 
 		return query.toString();

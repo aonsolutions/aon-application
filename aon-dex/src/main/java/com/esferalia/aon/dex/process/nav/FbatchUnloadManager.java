@@ -189,13 +189,12 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 		query.append(" LEFT JOIN fbatch_detail AS FBD ON FBD.fbatch = FB.id");
 		query.append(" LEFT JOIN finance AS F ON F.id = FBD.finance");
 		query.append(" LEFT JOIN invoice AS I ON I.id = F.invoice");
-		query.append(" LEFT JOIN data_attach AS DA ON DA.source = " + DataAttachmentSource.FBATCH.ordinal() + " AND DA.source_id = FB.id");
-		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal());
 		query.append(" WHERE FB.domain = " + params.getDomainId());
 		query.append(" AND FB.status = " + FinanceBatchStatus.RECORDED.ordinal());
 		query.append(" AND FB.payment = 0");
 		query.append(" AND FB.issue_date BETWEEN ? AND ?");
-		query.append(" AND DA.id IS NULL");
+		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = I.id AND DA.source = " + DataAttachmentSource.FBATCH.ordinal());
+		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal() + ")");
 		query.append(" ORDER BY " + ISSUE_DATE + "," + FBATCH + "," + FBATCH_DETAIL);
 
 		return query.toString();

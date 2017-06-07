@@ -205,7 +205,8 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 		query.append(", PR.project AS " + RESERVATION + ", PR.code AS " + CODE + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		query.append(", H.code AS " + HOTEL + ", IFNULL(AP.id,0) AS " + ADVANCE + ", SUM(ID.taxable_base) AS " + TAXABLE_BASE);
 		query.append(", IT.percentage AS " + TAX_PERCENT + ", SUM(IT.quota) AS " + TAX_QUOTA);
-		query.append(", (SELECT MIN(T.id) FROM tax AS T WHERE T.percentage = IT.percentage AND T.tax_type = " + TaxType.VAT.ordinal() + ") AS " + TAX); 
+		query.append(", (SELECT MIN(T.id) FROM tax AS T WHERE T.domain = I.domain AND T.percentage = IT.percentage");
+		query.append("   AND T.tax_type = " + TaxType.VAT.ordinal() + ") AS " + TAX); 
 		query.append(" FROM invoice AS I");
 		query.append(" LEFT JOIN invoice_address AS IA ON IA.invoice = I.id");
 		query.append(" LEFT JOIN geozone AS G ON G.id = IA.geozone");
@@ -215,17 +216,16 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 		query.append(" LEFT JOIN invoice_detail AS ID ON ID.invoice = I.id");
 		query.append(" LEFT JOIN item AS I2 ON I2.id = ID.item");
 		query.append(" LEFT JOIN product AS P ON P.id = I2.product");
-		query.append(" LEFT JOIN app_param AS AP ON AP.name = '" + AppParam.PMS_ADVANCE_ITEM.getValue() + "' AND AP.value = P.code");
+		query.append(" LEFT JOIN app_param AS AP ON AP.domain = I.domain AND AP.name = '" + AppParam.PMS_ADVANCE_ITEM.getValue() + "' AND AP.value = P.code");
 		query.append(" LEFT JOIN invoice_tax AS IT ON IT.invoice_detail = ID.id AND IT.tax_type = " + TaxType.VAT.ordinal());
 		query.append(" LEFT JOIN hotel AS H ON H.workplace = ID.workplace");
-		query.append(" LEFT JOIN data_attach AS DA ON DA.source = " + DataAttachmentSource.INVOICE.ordinal() + " AND DA.source_id = I.id");
-		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal());
 		query.append(" WHERE I.domain = " + params.getDomainId());
 		query.append(" AND I.type = " + InvoiceType.SALES.ordinal());
 		query.append(" AND I.status = " + InvoiceStatus.SCORED.ordinal());
 		query.append(" AND I.signed = 0");
 		query.append(" AND I.issue_date BETWEEN ? AND ?");
-		query.append(" AND DA.id IS NULL");
+		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = I.id AND DA.source = " + DataAttachmentSource.INVOICE.ordinal());
+		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal() + ")");
 		query.append(" GROUP BY " + INVOICE + "," + ADVANCE + "," + TAX_PERCENT);
 		query.append(" ORDER BY " + ISSUE_DATE + "," + INVOICE + "," + ADVANCE + "," + TAX_PERCENT);
 
