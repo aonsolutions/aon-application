@@ -460,12 +460,13 @@ public class EmployeeCalendarDraftObjectData {
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
 	
-	public double getExtraHourByMonth (Date actualMonth){
-		Double extraHourMonthDraft = draftMapExtraHours.get(actualMonth);
+	public double getExtraHourByMonth (Date findindDate){
+		Double extraHourMonthDraft = draftMapExtraHours.get(findindDate);
+		
 		if (extraHourMonthDraft != null)
 			return extraHourMonthDraft;
 		else
-			return mapDaysHour.getOrDefault(extraHourMonthDraft, (double) 0);
+			return mapExtraHours.getOrDefault(findindDate, (double) 0);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -868,6 +869,7 @@ public class EmployeeCalendarDraftObjectData {
 			private void initializeExtraHoursMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> extraHoursList) {
 				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterExtraHours : extraHoursList){
 					Date startDate = DateUtils.copyDateOnly(quarterExtraHours.getStartDate());
+					DateUtils.resetTime(startDate);
 					mapExtraHours.put(startDate, Double.parseDouble(quarterExtraHours.getExpression()));
 				}
 				

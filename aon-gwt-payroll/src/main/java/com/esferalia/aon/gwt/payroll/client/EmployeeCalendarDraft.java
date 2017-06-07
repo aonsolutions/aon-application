@@ -1559,6 +1559,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		Label labelDay = new Label();
 		String month = calendarGrid.getWidget(row, 0).getElement().getInnerText();
 		Date auxDate = new Date(Integer.parseInt(yearLabel.getText())- 1900, calculateIntByMonth(month), 1);
+		DateUtils.resetTime(auxDate);
 		double monthExtraHoursRound = roundDecimal(calendarEmployeeInfo.getExtraHourByMonth(auxDate), 2);
 		labelDay.setText(Double.toString(monthExtraHoursRound));
 		labelDay.setStyleName(style.cellStyle());
