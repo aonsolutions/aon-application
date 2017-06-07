@@ -21,6 +21,8 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -44,7 +46,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
-		CalendarServiceAsync {
+		CalendarServiceAsync, EmployeeEventsServiceAsync {
 
 	private EmployeesServiceAsync employeesServiceAsync;
 
@@ -568,5 +570,23 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 
 	}
 
+	// --------------------------------------------------- EmployeeEventsServiceAsync
+
+	@Override
+	public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+			AsyncCallback<EmployeeEventsUpdate> callback) {
+		AON.start();
+		employeesServiceAsync.setEmployeeEvents(contract, updateInfo,
+				new AsyncCallbackWrapper<EmployeeEventsUpdate>(callback));
+		
+	}
+
+	@Override
+	public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeEvents(contract,
+				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
+		
+	}
 	
 }

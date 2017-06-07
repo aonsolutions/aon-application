@@ -16,6 +16,9 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject_COPIA.Callback;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.junit.client.GWTTestCase;
@@ -56,6 +59,19 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				super.getEvents(workplaceId, startDate, endDate, offset, limit,
 						names, callback);
+			}
+
+			@Override
+			public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+					AsyncCallback<EmployeeEventsUpdate> callback) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 

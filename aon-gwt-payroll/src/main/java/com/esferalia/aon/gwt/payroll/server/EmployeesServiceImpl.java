@@ -84,12 +84,14 @@ import com.esferalia.aon.gwt.common.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.common.shared.EvalWarning;
 import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.CalendarService;
+import com.esferalia.aon.gwt.payroll.client.EmployeeEventsService;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SalaryFilter;
@@ -109,6 +111,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -213,7 +216,7 @@ import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
  */
 @SuppressWarnings("serial")
 public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
-		EmployeesService, StatisticsService, CalendarService {
+		EmployeesService, StatisticsService, CalendarService, EmployeeEventsService {
 
 	public static final String REMOVE = "REMOVE()";
 
@@ -4372,6 +4375,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 		return target;
+	}
+
+	@Override
+	public EmployeeEventsData getEmployeeEvents(int contract) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			return JooqEmployeeEvents.getEmployeeEvents(connection, contract);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			JooqEmployeeEvents.setEmployeeEvents(connection, contract, updateInfo);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+		
 	}
 
 	

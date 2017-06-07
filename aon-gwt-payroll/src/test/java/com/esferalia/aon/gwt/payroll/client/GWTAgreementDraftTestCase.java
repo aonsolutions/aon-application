@@ -19,6 +19,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -74,6 +77,19 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 				Assert.fail(t.getMessage());
 			}
 		}
+
+		@Override
+		public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+				AsyncCallback<EmployeeEventsUpdate> callback) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	@Before
@@ -127,6 +143,19 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 							throws IllegalArgumentException {
 
 						callback.onSuccess(agreementDraft);
+					}
+
+					@Override
+					public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+							AsyncCallback<EmployeeEventsUpdate> callback) {
+						// TODO Auto-generated method stub
+						
 					}
 				});
 

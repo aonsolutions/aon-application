@@ -11,6 +11,9 @@ import static java.lang.Math.random;
 import org.junit.Before;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -62,6 +65,19 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 				
 				callback.onSuccess(salaryDraft);
+			}
+
+			@Override
+			public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+					AsyncCallback<EmployeeEventsUpdate> callback) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 

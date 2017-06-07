@@ -31,7 +31,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("employees")
-public interface EmployeesService extends RemoteService, CalendarService,
+public interface EmployeesService extends RemoteService, CalendarService, EmployeeEventsService,
 		StatisticsService, GPSReportsService {
 	Enterprise getEnterprise() throws IllegalArgumentException;
 
