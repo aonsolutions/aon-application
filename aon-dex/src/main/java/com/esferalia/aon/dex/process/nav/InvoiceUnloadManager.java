@@ -197,7 +197,7 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 	private String getInvoiceListSQL(Parameters params) {
 		StringBuffer query = new StringBuffer();
 		query.append("SELECT I.id AS " + INVOICE + ", I.series AS " + SERIES + ", I.number AS " + NUMBER + ", I.issue_date AS " + ISSUE_DATE);
-		query.append(", I.rectification_type AS " + RECTIFICATION_TYPE + ", I.rectification_invoice AS " + RECTIFICATION_INVOICE);
+		query.append(", I.rectification_type AS " + RECTIFICATION_TYPE + ", R.reference_code AS " + RECTIFICATION_INVOICE);
 		query.append(", I.rname AS " + CUSTOMER_NAME + ", I.rdocument AS " + CUSTOMER_DOCUMENT + ", I.total AS " + TOTAL);
 		query.append(", (SELECT MAX(RA.value) FROM raddinfo AS RA WHERE RA.registry = I.registry AND RA.attribute = '" + NAV_ACCOUNT+ "') AS " + CUSTOMER); 
 		query.append(", IA.street_type AS " + STREET_TYPE + ", IA.address AS " + ADDRESS + ", IA.number AS " + ADDRESS_NUMBER + ", IA.address2 AS " + ADDRESS_EXT);
@@ -208,6 +208,7 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 		query.append(", (SELECT MIN(T.id) FROM tax AS T WHERE T.domain = I.domain AND T.percentage = IT.percentage");
 		query.append("   AND T.tax_type = " + TaxType.VAT.ordinal() + ") AS " + TAX); 
 		query.append(" FROM invoice AS I");
+		query.append(" LEFT JOIN invoice AS R ON R.id = I.rectification_invoice");
 		query.append(" LEFT JOIN invoice_address AS IA ON IA.invoice = I.id");
 		query.append(" LEFT JOIN geozone AS G ON G.id = IA.geozone");
 		query.append(" LEFT JOIN geotree AS GT ON GT.child = G.id");
