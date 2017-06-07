@@ -94,9 +94,9 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 					productionMap.put(produccion.getKey(), rs.getString(CODE));
 				}
 
-				String concept = rs.getString(CONCEPT);
-				String subconcept = !rs.getString(SUBCONCEPT).equals(concept) ? rs.getString(SUBCONCEPT) : StringUtils.EMPTY;
-				if (StringUtils.isEmpty(subconcept) || StringUtils.startsWithAny(subconcept, productionConcepts)) {
+				String concept = rs.getString(VARIABLE).contains(".") ? StringUtils.substringBefore(rs.getString(VARIABLE), ".") : rs.getString(VARIABLE);
+				String subconcept = rs.getString(VARIABLE).contains(".") ? StringUtils.substringAfter(rs.getString(VARIABLE), ".") : null;
+				if (StringUtils.startsWithAny(concept, productionConcepts)) {
 					BandejaImportesProduccion importes = factory.createBandejaImportesProduccion();
 					importes.setKey(rs.getString(DETAIL));
 					importes.setIdentificativoHotel(produccion.getIdentificativoHotel());
@@ -104,7 +104,7 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 					importes.setConcepto(concept);
 					importes.setSubconcepto(subconcept);
 					importes.setCantidad(BigDecimal.valueOf(1));
-					importes.setDescripcion(rs.getString(DESCRIPTION));
+					importes.setDescripcion(rs.getString(VARIABLE));
 					importes.setImporte(rs.getBigDecimal(VALUE));
 					produccion.getBandejaImportesProduccion().getBandejaImportesProduccion().add(importes);
 				} else {
@@ -112,7 +112,7 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 					datos.setKey(rs.getString(DETAIL));
 					datos.setIdentificativoHotel(produccion.getIdentificativoHotel());
 					datos.setFechaProduccion(produccion.getFechaProduccion());
-					datos.setCodigoEstadistico(subconcept);
+					datos.setCodigoEstadistico(concept);
 					datos.setValor(rs.getBigDecimal(VALUE));
 					datos.setNoLinea(++line);
 					produccion.getBandejaDatosEstadisticos().getBandejaDatosEstadisticos().add(datos);
@@ -182,8 +182,7 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 	private String getProductionListSQL(Parameters params) {
 		StringBuffer query = new StringBuffer();
 		query.append("SELECT DR.id AS " + PRODUCTION + ", H.code AS " + HOTEL + ", DR.response_date AS " + ISSUE_DATE + ", DR.code AS " + CODE);
-		query.append(", DRD.id AS " + DETAIL + ", DRD.data_variable AS " + DESCRIPTION + ", SUBSTRING_INDEX(DRD.data_variable, '.', 1) AS " + CONCEPT);
-		query.append(", SUBSTRING_INDEX(DRD.data_variable, '.', -1) AS " + SUBCONCEPT + ", DRD.data_value AS " + VALUE);
+		query.append(", DRD.id AS " + DETAIL + ", DRD.data_variable AS " + VARIABLE + ", DRD.data_value AS " + VALUE);
 		query.append(" FROM data_response AS DR");
 		query.append(" LEFT JOIN data_response_detail AS DRD ON DRD.data_response = DR.id");
 		query.append(" LEFT JOIN hotel AS H ON H.id = DR.source_id");
@@ -196,7 +195,7 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 		}
 		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = DR.id AND DA.source = " + DataAttachmentSource.PRODUCTION.ordinal());
 		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal() + ")");
-		query.append(" ORDER BY " + HOTEL + "," + ISSUE_DATE + "," + DESCRIPTION);
+		query.append(" ORDER BY " + HOTEL + "," + ISSUE_DATE + "," + VARIABLE);
 
 		return query.toString();
 	}

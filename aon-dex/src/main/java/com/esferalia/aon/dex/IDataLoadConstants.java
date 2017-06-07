@@ -22,6 +22,7 @@ public interface IDataLoadConstants {
 
 	String NAV_ACCOUNT = "CUENTA_NAV";
 	String NAME = "name";
+	String VARIABLE = "variable";
 	String VALUE = "value";
 	String INVOICE = "invoice";
 	String SERIES = "series";
