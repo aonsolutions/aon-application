@@ -193,7 +193,7 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 		query.append(" AND FB.status = " + FinanceBatchStatus.RECORDED.ordinal());
 		query.append(" AND FB.payment = 0");
 		query.append(" AND FB.issue_date BETWEEN ? AND ?");
-		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = I.id AND DA.source = " + DataAttachmentSource.FBATCH.ordinal());
+		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = FB.id AND DA.source = " + DataAttachmentSource.FBATCH.ordinal());
 		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal() + ")");
 		query.append(" ORDER BY " + ISSUE_DATE + "," + FBATCH + "," + FBATCH_DETAIL);
 

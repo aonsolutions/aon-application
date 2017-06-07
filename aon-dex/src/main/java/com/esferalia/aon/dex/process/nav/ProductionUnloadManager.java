@@ -194,7 +194,7 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 		if (params.getHotelId() != 0) {
 			query.append(" AND DR.source_id = ?");
 		}
-		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = I.id AND DA.source = " + DataAttachmentSource.PRODUCTION.ordinal());
+		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = DR.id AND DA.source = " + DataAttachmentSource.PRODUCTION.ordinal());
 		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal() + ")");
 		query.append(" ORDER BY " + HOTEL + "," + ISSUE_DATE + "," + DESCRIPTION);
 
