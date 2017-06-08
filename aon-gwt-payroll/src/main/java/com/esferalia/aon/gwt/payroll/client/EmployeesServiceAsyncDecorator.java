@@ -573,7 +573,7 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	// --------------------------------------------------- EmployeeEventsServiceAsync
 
 	@Override
-	public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+	public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
 			AsyncCallback<EmployeeEventsUpdate> callback) {
 		AON.start();
 		employeesServiceAsync.setEmployeeEvents(contract, updateInfo,

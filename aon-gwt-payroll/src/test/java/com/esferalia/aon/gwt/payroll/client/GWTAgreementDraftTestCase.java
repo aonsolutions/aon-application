@@ -11,15 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.client.AgreementDraft;
-import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -28,6 +23,8 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import junit.framework.Assert;
 
 /**
  * 
@@ -85,7 +82,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+		public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
 				AsyncCallback<EmployeeEventsUpdate> callback) {
 			// TODO Auto-generated method stub
 			
@@ -152,7 +149,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+					public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
 							AsyncCallback<EmployeeEventsUpdate> callback) {
 						// TODO Auto-generated method stub
 						

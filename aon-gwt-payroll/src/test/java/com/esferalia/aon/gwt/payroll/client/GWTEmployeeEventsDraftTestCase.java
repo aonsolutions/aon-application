@@ -7,8 +7,6 @@ import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 
 import java.util.Date;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -16,13 +14,14 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject_COPIA.Callback;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import junit.framework.Assert;
 
 /**
  * 
@@ -68,7 +67,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			}
 
 			@Override
-			public void setEmployeeEvents(int contract, EmployeeCalendarUpdate updateInfo,
+			public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
 					AsyncCallback<EmployeeEventsUpdate> callback) {
 				// TODO Auto-generated method stub
 				
