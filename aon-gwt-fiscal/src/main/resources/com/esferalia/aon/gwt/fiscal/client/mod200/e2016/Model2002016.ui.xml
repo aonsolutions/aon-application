@@ -93,25 +93,6 @@
 				</g:west>
 				<g:center>
 					<g:SimpleLayoutPanel ui:field="pageContainer" />
-<!-- 				
-					<g:DeckLayoutPanel ui:field="deckPanel">
-						<mod200:Page00 ui:field="page00"/>
-						<mod200:Page01 ui:field="page01"/>
-						<mod200:Page02 ui:field="page02"/>
-						<mod200:Page03 ui:field="page03"/>
-						<mod200:Page04 ui:field="page04"/>
-						<mod200:Page05 ui:field="page05"/>
-						<mod200:Page06 ui:field="page06"/>
-						<mod200:Page07 ui:field="page07"/>
-						<mod200:Page08 ui:field="page08"/>
-						<mod200:Page09 ui:field="page09"/>
-						<mod200:Page10 ui:field="page10"/>
-						<mod200:Page11 ui:field="page11"/>
-						<mod200:Page12 ui:field="page12"/>
-						<mod200:Page13 ui:field="page13"/>
-						<mod200:Page14 ui:field="page14"/>
-					</g:DeckLayoutPanel>
--->
 				</g:center>
 			</g:SplitLayoutPanel>
 		</g:center>

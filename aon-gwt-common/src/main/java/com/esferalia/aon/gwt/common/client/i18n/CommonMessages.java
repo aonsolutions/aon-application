@@ -3441,6 +3441,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("10.- Dividendos y participaciones en benefi cios distribuidos con cargo a reservas:")
 	String ute5();
 
+	@DefaultMessage("11.- Relaci\u00F3n de socios existentes a la fecha de cierre del per\u00EDodo impositivo, en orden decreciente de grado de participaci\u00F3n, con sus datos identifi cativos y grado de participaci\u00F3n en dicha fecha:")
+	String ute6();
+
 	@DefaultMessage("Informaci\u00F3n de detalle de EP o UTE que operen en el extranjero y por participaci\u00F3n en f\u00F3rmula de colaboraci\u00F3n an\u00E1loga a UTE")
 	String utefor();
 

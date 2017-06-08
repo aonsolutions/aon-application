@@ -221,7 +221,7 @@ public class Model200 extends MainEntryPoint {
 		new2016.setText(AON.MSG.newSomething("2016"));
 		new2016.setTitle(new2016.getText());
 		new2016.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		new2016.addStyleName(AON.AON_CSS.aonIconDelete());
+		new2016.addStyleName(AON.AON_CSS.aonIconReset());
 		new2016.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -236,7 +236,7 @@ public class Model200 extends MainEntryPoint {
 		newButton.setText(AON.MSG.newAction());
 		newButton.setTitle(newButton.getText());
 		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		newButton.addStyleName(AON.AON_CSS.aonIconDelete());
+		newButton.addStyleName(AON.AON_CSS.aonIconReset());
 		newButton.addClickHandler(new ClickHandler() {
 			
 			@Override

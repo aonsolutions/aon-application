@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -230,6 +231,17 @@ public class Mod2002016DAO  {
 				detail.setCValue(ute.getAdjust());
 				detail.setDValue(ute.getDeduction());
 				detail.setType((byte) 5);
+				list.add(detail);
+			}
+		}
+		if (mod200.getUteBases() != null) {
+			for ( UteBase ute : mod200.getUteBases() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setNominalValue(ute.getBase());
+				detail.setPercent(ute.getPercent());
+				detail.setType((byte) 6);
 				list.add(detail);
 			}
 		}
@@ -540,6 +552,12 @@ public class Mod2002016DAO  {
 						.setPyg(reg.getBValue())
 						.setAdjust(reg.getCValue())
 						.setDeduction(reg.getDValue())
+					);
+			} else if (reg.getType() == 6) {
+				mod200.getUteBases().add(
+					new UteBase()
+						.setPercent(reg.getPercent())
+						.setBase(reg.getNominalValue())
 					);
 			}
 		}

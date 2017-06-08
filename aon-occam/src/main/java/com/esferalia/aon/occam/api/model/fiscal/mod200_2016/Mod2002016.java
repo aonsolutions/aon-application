@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -64,6 +65,7 @@ public class Mod2002016 implements IFiscalModel {
 	private LinkedList<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>(); // B.1. Participaciones declarante en otras entidades
 	private LinkedList<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();  // B.2. Participaciones de personas o entidades en la declarante	
 	
+	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>();
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();
 	private LinkedList<UteForeign> uteForeign = new LinkedList<UteForeign>();
 	
@@ -256,6 +258,12 @@ public class Mod2002016 implements IFiscalModel {
 	}
 	public void setParticipationsOut(LinkedList<CompanyParticipation> participationsOut) {
 		this.participationsOut = participationsOut;
+	}
+	public LinkedList<UteBase> getUteBases() {
+		return uteBases;
+	}
+	public void setUteBases(LinkedList<UteBase> uteBases) {
+		this.uteBases = uteBases;
 	}
 	public LinkedList<UteParticipation> getUteParticipations() {
 		return uteParticipations;

@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
+import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
@@ -39,7 +40,6 @@ import com.google.gwt.view.client.ListDataProvider;
 public class Page17 extends PageAbs {
 
 	FlexTable table1;
-	FlexTable table2;
 	FlexTable table3;
 	
 	private ListDataProvider<UteParticipation> participationDataProvider;
@@ -50,11 +50,14 @@ public class Page17 extends PageAbs {
 	private CellTable<UteForeign> foreignTable;
 	private Button newForeign;
 	
+	private ListDataProvider<UteBase> baseProvider;
+	private CellTable<UteBase> baseTable;
+	private Button newBase;
+	
 	public Page17( Model200PageCallback callback ) {
 		super(callback);
 
 		table1 = new FlexTable();
-		table2 = new FlexTable();
 		table3 = new FlexTable();
 		
 		ScrollPanel container = new ScrollPanel();
@@ -88,7 +91,47 @@ public class Page17 extends PageAbs {
 				FlowPanel groupBodyPanel2 = new FlowPanel();
 				groupBodyPanel2.setStyleName(AON.AON_CSS.aonGroupBody());
 				groupBodyPanel2.add(table1);
-				groupBodyPanel2.add(table2);
+
+				FlowPanel groupPanelBase = new FlowPanel();
+				groupPanelBase.setStyleName(AON.AON_CSS.aonGroup());
+					FlowPanel groupHeaderBase = new FlowPanel();
+					groupHeaderBase.setStyleName(AON.AON_CSS.aonGroupTitle());
+					groupHeaderBase.add (new InlineLabel(AON.MSG.ute31())); 
+					groupPanelBase.add(groupHeaderBase);
+
+					FlowPanel groupBodyPanelBase = new FlowPanel();
+					groupBodyPanelBase.setStyleName(AON.AON_CSS.aonGroupBody());
+					groupBodyPanelBase.addStyleName(AON.AON_CSS.aonWidth300());
+					groupBodyPanelBase.addStyleName(AON.AON_CSS.aonBlockCenter());
+					
+					baseTable = new CellTable<UteBase>(25,Model200Table.TABLE_STYLE);
+					baseTable.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+					baseTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+					baseTable.setEmptyTableWidget(new HTML(AON.MSG.noData()));
+					baseProvider = new ListDataProvider<UteBase>();
+					baseProvider.addDataDisplay(baseTable);
+					addBaseBaseColumn();
+					addPercentBaseColumn();
+
+					newBase = new Button();
+					newBase.setStyleName(AON.AON_CSS.aonIconReset());
+					newBase.addStyleName(AON.AON_CSS.aonBorderNone());
+					newBase.addStyleName(AON.AON_CSS.aonMarginTop());
+					newBase.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							baseProvider.getList().add(new UteBase());
+							baseTable.redraw();		    		
+						}
+					});
+					groupBodyPanelBase.add(baseTable);
+					groupBodyPanelBase.add(newBase);
+					groupPanelBase.add(groupBodyPanelBase);
+					
+					
+					groupBodyPanel2.add(groupPanelBase);
+					
 				groupBodyPanel2.add(table3);
 				groupPanel2.add(groupBodyPanel2);
 				
@@ -126,7 +169,7 @@ public class Page17 extends PageAbs {
 			
 				FlowPanel groupHeaderPanel3 = new FlowPanel();
 				groupHeaderPanel3.setStyleName(AON.AON_CSS.aonGroupTitle());
-				groupHeaderPanel3.add (new InlineLabel(AON.MSG.ute2())); 
+				groupHeaderPanel3.add (new InlineLabel(AON.MSG.ute6())); 
 				groupPanel3.add(groupHeaderPanel3);
 				
 				FlowPanel groupBodyPanel3 = new FlowPanel();
@@ -202,23 +245,7 @@ public class Page17 extends PageAbs {
 		paintKey(table1, Mod2002016Key.UT1228, row++);
 		paintKey(table1, Mod2002016Key.UT552 , row++);
 		paintKey(table1, Mod2002016Key.UT1330, row++);
-		
-		table2.setWidth("100%");
-		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(1, "200px");
-		table2.getColumnFormatter().setWidth(2, "200px");
-		paintDescription(table2, AON.MSG.ute31(), row, 0, false);
-		paintDescription(table2, AON.MSG.deductionBaseAbbrv(), row, 1, false);
-		paintDescription(table2, AON.MSG.partPercent(), row++, 2, false);
-		paintKeyField(table2, Mod2002016Key.UTB01, row, 1);
-		paintKeyField(table2, Mod2002016Key.UTP01, row++, 2);
-		paintKeyField(table2, Mod2002016Key.UTB02, row, 1);
-		paintKeyField(table2, Mod2002016Key.UTP02, row++, 2);
-		paintKeyField(table2, Mod2002016Key.UTB03, row, 1);
-		paintKeyField(table2, Mod2002016Key.UTP03, row++, 2);
-		paintKeyField(table2, Mod2002016Key.UTB04, row, 1);
-		paintKeyField(table2, Mod2002016Key.UTP04, row++, 2);
-		
+
 		table3.setWidth("100%");
 		table3.setCellSpacing(0);
 		table3.getColumnFormatter().setWidth(1, "200px");
@@ -624,6 +651,12 @@ public class Page17 extends PageAbs {
 		foreignProvider.addDataDisplay(foreignTable);
 		foreignTable.redraw();
 		
+		baseProvider = callback.getMod200Object().getMod200().getUteBases()  == null
+				?new ListDataProvider<UteBase>()
+				:new ListDataProvider<UteBase>(callback.getMod200Object().getMod200().getUteBases());
+
+		baseProvider.addDataDisplay(baseTable);
+		baseTable.redraw();
 	}
 	
 	@Override
@@ -640,5 +673,57 @@ public class Page17 extends PageAbs {
 		}
 		callback.getMod200Object().getMod200().setUteForeign(list2);
 		
+		LinkedList<UteBase> list3 = new LinkedList<UteBase>();
+		for (UteBase cp : baseProvider.getList()) {
+			list3.add(cp);
+		}
+		callback.getMod200Object().getMod200().setUteBases(list3);
+	}
+	
+	
+	private void addBaseBaseColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(8);
+		Column<UteBase, String> baseColumn = new Column<UteBase, String>(input) {
+			@Override
+			public String getValue(UteBase ca) {
+				return Double.toString( ca.getBase() );
+			}
+		};
+		baseColumn.setFieldUpdater(new FieldUpdater<UteBase, String>() {
+		    public void update(int index, UteBase cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		baseProvider.getList().get(index).setBase(p);
+		    	} catch (NumberFormatException e) {
+		    		MessageDialog.error("N\u00FAmero no v\u00E1lido.");
+		    	}
+		    }
+		});		
+		baseTable.addColumn(baseColumn, AON.MSG.deductionBase());
+		baseTable.setColumnWidth(baseColumn, 200, Unit.PX);
+		baseColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+	}
+	
+	private void addPercentBaseColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(5);
+		Column<UteBase, String> percentColumn = new Column<UteBase, String>(input) {
+			@Override
+			public String getValue(UteBase ca) {
+				return Double.toString( ca.getPercent() );
+			}
+		};
+		percentColumn.setFieldUpdater(new FieldUpdater<UteBase, String>() {
+		    public void update(int index, UteBase cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		baseProvider.getList().get(index).setPercent(p);
+		    	} catch (NumberFormatException e) {
+		    		MessageDialog.error("Porcentaje no v\u00E1lido.");
+		    	}
+		    }
+		});		
+		baseTable.addColumn(percentColumn, "%");
+		baseTable.setColumnWidth(percentColumn, 200, Unit.PX);
+		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
 }
