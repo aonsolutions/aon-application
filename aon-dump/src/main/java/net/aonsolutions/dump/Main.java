@@ -24,6 +24,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
 import org.jooq.Record3;
 import org.jooq.Result;
@@ -284,6 +285,7 @@ public class Main {
 				cb = new SiblingCallBackDump(cb);
 			
 			cb = new DomainZeroCallbackDump(cb);
+			cb = new DomainNullCallbackDump(cb);
 			
 			if (cmd.hasOption(standAloneOpt.getLongOpt()))
 				cb = new DomainParentCallBackDump(cb, idDomain);
@@ -334,6 +336,7 @@ public class Main {
 					
 					return super.onErrFk(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);
 				}
+				
 			};
 			
 			if ( cmd.hasOption(recursiveOpt.getLongOpt())) {

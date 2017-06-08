@@ -20,6 +20,9 @@ public class ErrorReferenceCallBackDump extends AbstractChaimCallbackDump {
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		
 		//TODO: ver que mensaje de error mostrar para dar la maxima informacion posible
+		
+		System.err.println("onErrorFk : " + fk.getTable().getName() + ", " + r.getValue(fk.getFields().get(0)) + " -> "  + fk.getKey().getTable().getName() );
+		
 		return null;
 		
 	}

@@ -2,6 +2,7 @@ package net.aonsolutions.dump;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import org.jooq.Table;
 
 public class ParentCallbackDump extends AbstractChaimCallbackDump{
 
+	private static String DEFAULTS_TABLES = "geozone,account";
+	
 	private CallbackDump  cb;
 	private Integer parentDomain;
 	
@@ -61,11 +64,14 @@ public class ParentCallbackDump extends AbstractChaimCallbackDump{
 	
 	@Override
 	public void downloadParent(DSLContext dslContext, Record r, ForeignKey<?, ?> fk, AonDump aondump, IdsMap idsMap, CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition whereParent) {
+		Condition where ;
+		if ( DEFAULTS_TABLES.contains(fk.getKey().getTable().getName()) )
+			where = ((Field<Integer>)fk.getKey().getTable().field("domain")).eq(parentDomain);
+		else 
+			where = ((Field<Integer>)fk.getKey().getTable().field("id")).in(dslContext.select((Field<Integer>)fk.getFields().get(0)).from(fk.getTable())
+					.where(whereParent))
+					.and(((Field<Integer>)fk.getKey().getTable().field("domain")).eq(parentDomain));
 
-		Condition where = ((Field<Integer>)fk.getKey().getTable().field("id")).in(dslContext.select((Field<Integer>)fk.getFields().get(0)).from(fk.getTable())
-				.where(whereParent))
-				.and(((Field<Integer>)fk.getKey().getTable().field("domain")).eq(parentDomain));
-		
 		aondump.downloadTableReferenceDomain(fk.getKey().getTable(), fk.getKey().getTable().getReferences(), idsMap, cb, ciclica, where);
 
 		this.cb.downloadParent(dslContext, r, fk, aondump, idsMap, cb, ciclica, references, where);

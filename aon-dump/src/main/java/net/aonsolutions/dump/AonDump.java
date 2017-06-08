@@ -144,8 +144,9 @@ public class AonDump {
 				return;
 
 			HashMap<Condition, ForeignKey<? extends Record, ?>> map = fkSpecificMap.fkMap.get(t.getName().toUpperCase());
-			
+
 			if ( map != null) {
+				Condition condition = (DSL.field("domain")).equal(idDomain);
 				for (Map.Entry<Condition, ForeignKey<? extends Record,?>> e : map.entrySet()){
 					
 					List<?> references = t.getReferences();
@@ -156,7 +157,12 @@ public class AonDump {
 					
 					downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
 							newReferences, (DSL.field("domain")).equal(idDomain), e.getKey());
+					
+					condition = condition.andNot(e.getKey());
+					
 				}
+				downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
+						t.getReferences(), condition);
 			}
 			else{
 				downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
@@ -253,12 +259,14 @@ public class AonDump {
 				continue;
 			}
 
-			if (!idsMap.containsTable(tableReference.getName()))
+			if (!idsMap.containsTable(tableReference.getName())){
 				continue;
-
+			}
+			
 			if (idsMap.getTableInformation(tableReference.getName()) == null) {
 				downloadTable(tableReference, idsMap, cb, out, tablesStack, Collections.emptyList(), tableReference.getReferences(), where);
 			}
+			
 		}
 
 		// Initialize the Ids map of every table we have to download
@@ -267,6 +275,7 @@ public class AonDump {
 		for (Condition c : filter ) 
 			where  = where.and(c);
 		
+		//System.err.println("downloadTableReferenceDomain : " + t.getName() + "->" + where );
 		downloadTableReferenceDomain(t, references, idsMap, cb, myTablesCiclic, where);
 
 		tablesStack.pop();
@@ -301,7 +310,6 @@ public class AonDump {
 				// Check the correct relationship of the foreignkeys
 				try {
 					fkInsertMap = checksFK(r, references, idsMap, cb, tablesCiclic, where, stackContId.peek());
-
 				} catch (FkErrorException e) {
 					continue;
 				}
