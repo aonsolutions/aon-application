@@ -8,10 +8,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 
 public class EmployeeEventsDraftObject {
@@ -128,7 +135,7 @@ public class EmployeeEventsDraftObject {
 	
 	public EmployeeEventsDraftObject(Integer idEmployee, EmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
-		crearMapaEmployeeEvents();
+		//crearMapaEmployeeEvents();
 		this.draftMapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
 		
 		this.idEmployee = idEmployee;
@@ -294,96 +301,72 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	/**
-	 * METODOS PARA BORRAR
+	 * METODOS SYNC DATABASE
 	 */
 	
-	public void crearMapaEmployeeEvents(){
-		ArrayList<EmployeeEventsVariable> dtList = new ArrayList<EmployeeEventsVariable>();
-		rellenarLista(dtList);
-		mapEventsVar.put("DIAS_TRABAJADOS", dtList);
+	public void initializeDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
 		
-		ArrayList<EmployeeEventsVariable> deList = new ArrayList<EmployeeEventsVariable>();
-		rellenarLista(deList);
-		mapEventsVar.put("DIAS_EFECTIVOS", deList);
+		employeesService.getEmployeeEvents(this.idEmployee, new AsyncCallback<EmployeeEventsData>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(EmployeeEventsData result) {
+				Map<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> contractEventsMap = 
+						result.getContractEventsList();
+				
+				for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : contractEventsMap.entrySet()){
+					String varName = entry.getKey();
+					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
+					
+					for(Quartet<java.sql.Date, java.sql.Date, String, String> quarter : entry.getValue()){
+						Date startDate = DateUtils.copyDateOnly(quarter.getStartDate());
+						Date endDate = DateUtils.copyDateOnly(quarter.getEndDate());
+						Double value = Double.parseDouble(quarter.getExpression());
+						EmployeeEventsVariable var = new EmployeeEventsVariable(startDate, endDate, value);
+						varList.add(var);
+					}
+					sortListByStartDate(varList);
+					mapEventsVar.put(varName, varList);
+				}
+				
+				success.accept(result);
+				
+			}
+
+			});
+	}
+	
+	public void updateDBCalendar(Consumer<EmployeeEventsUpdate> success, Consumer<Throwable> failure) {
 		
-		ArrayList<EmployeeEventsVariable> daList = new ArrayList<EmployeeEventsVariable>();
-		rellenarListaCaso1(daList);
-		mapEventsVar.put("DIAS_AUSENCIA", daList);
+		EmployeeEventsUpdate updateInfo = new EmployeeEventsUpdate();
+		updateInfo.setVariableEventsList(createVariablesList());
 		
-		ArrayList<EmployeeEventsVariable> htList = new ArrayList<EmployeeEventsVariable>();
-		rellenarListaCaso2(htList);
-		sortListByStartDate(htList);
-		mapEventsVar.put("HORAS_TRABAJADAS", htList);
+		employeesService.setEmployeeEvents(idEmployee, updateInfo, new AsyncCallback<EmployeeEventsUpdate>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+				
+			}
+
+			@Override
+			public void onSuccess(EmployeeEventsUpdate result) {
+				draftMapEventsVar.clear();
+				success.accept(result);
+				
+			}
+			
+		});
 		
-		ArrayList<EmployeeEventsVariable> hcList = new ArrayList<EmployeeEventsVariable>();
-		rellenarListaCaso3(hcList);
-		sortListByStartDate(hcList);
-		mapEventsVar.put("HORAS_COMPLEMENTARIAS", hcList);
-		
-		ArrayList<EmployeeEventsVariable> dmList = new ArrayList<EmployeeEventsVariable>();
-		rellenarListaCaso4(dmList);
-		sortListByStartDate(dmList);
-		mapEventsVar.put("DIAS_MANUTENCION", dmList);
 	}
 
-	private void rellenarLista(ArrayList<EmployeeEventsVariable> list) {
-		for (int i = 0; i<12; i++){
-			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
-			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
-			Double value = i*1.00;
-			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
-			list.add(info);
-		}
-	}
-	
-	private void rellenarListaCaso1(ArrayList<EmployeeEventsVariable> list) {
-		for (int i = 0; i<12; i++){
-			if(i== 0 || i == 5){
-				continue;
-			}
-			
-			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
-			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
-			Double value = i*1.00;
-			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
-			list.add(info);
-		}
-	}
-	
-	private void rellenarListaCaso2(ArrayList<EmployeeEventsVariable> list) {
-		for (int i = 11; i>=0; i--){
-			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
-			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
-			Double value = i*1.00;
-			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
-			list.add(info);
-		}	
-	}
-	
-	private void rellenarListaCaso3(ArrayList<EmployeeEventsVariable> list) {
-		for (int i = 11; i>=0; i--){
-			if(i== 1 || i == 6){
-				continue;	
-			}
-			
-			Date startDate = new Date(117, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
-			Date endDate = new Date(117, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
-			Double value = i*1.00;
-			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
-			list.add(info);
-		}
-				
-	}
-	
-	private void rellenarListaCaso4(ArrayList<EmployeeEventsVariable> list) {
-		for (int i = 11; i>=0; i--){
-			Date startDate = new Date(116, i, DateUtils.getFirstDayOfMonth(new Date(117, i, i)).getDate());
-			Date endDate = new Date(116, i, DateUtils.getLastDayOfMonth(new Date(117, i, i)).getDate());
-			Double value = i*1.00;
-			EmployeeEventsVariable info = new EmployeeEventsVariable(startDate, endDate, value);
-			list.add(info);
-		}	
-	}
+	/**
+	 * METODOS AUX
+	 */
 	
 	private void sortListByStartDate(ArrayList<EmployeeEventsVariable> list){
 		Collections.sort(list, new Comparator<EmployeeEventsVariable>(){
@@ -394,6 +377,41 @@ public class EmployeeEventsDraftObject {
 				return variable1.getStartDate().compareTo(variable2.getStartDate());
 			}
 		});
+	}
+	
+	private List<Quartet<java.sql.Date, java.sql.Date, String, String>> createVariablesList() {
+		List<Quartet<java.sql.Date, java.sql.Date, String, String>> updateList = new ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>();
+		Map<String, ArrayList<EmployeeEventsVariable>> updateMap = createUpdateMap();
+		
+		for(Entry<String, ArrayList<EmployeeEventsVariable>> entry : updateMap.entrySet()){
+			Quartet<java.sql.Date, java.sql.Date, String, String> quarterInfo = new Quartet<java.sql.Date, java.sql.Date, String, String>();
+			String varName = entry.getKey();
+			for(EmployeeEventsVariable eVar : updateMap.get(varName)){
+				java.sql.Date startDate = new java.sql.Date(eVar.getStartDate().getTime());
+				java.sql.Date endDate = new java.sql.Date(eVar.getEndDate().getTime());
+				String value = Double.toString(eVar.getValue());
+				quarterInfo.setName(varName).setStartDate(startDate).setEndDate(endDate).setExpression(value);
+				updateList.add(quarterInfo);
+			}
+			
+		}
+		
+		return updateList;
+	}
+
+	private Map<String, ArrayList<EmployeeEventsVariable>> createUpdateMap() {
+		Map<String, ArrayList<EmployeeEventsVariable>> updateMap = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
+		
+		for (Entry<String, ArrayList<EmployeeEventsVariable>> entry : mapEventsVar.entrySet()){
+			updateMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		//TODO: MIRAR ESTO COMO HACERLO BIEN!!!!!!
+		for (Entry<String, ArrayList<EmployeeEventsVariable>> entry : draftMapEventsVar.entrySet()){
+			updateMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		return updateMap;
 	}
 
 }

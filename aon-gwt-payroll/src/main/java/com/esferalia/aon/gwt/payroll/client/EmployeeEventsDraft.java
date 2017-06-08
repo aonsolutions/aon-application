@@ -118,6 +118,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	Button newValueButton;
 	
 	@UiField
+	Button saveButton;
+	
+	@UiField
 	Label yearLabel;
 	
 	@UiField
@@ -176,6 +179,13 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}
 		});
 		
+		//#ifndef env.SNAPSHOT
+		saveButton.setVisible(false);
+		//#endif
+		
+		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
+		//saveButton.setVisible(true);
+		
 	}
 
 	private void initializeBlockVariablesList() {
@@ -219,6 +229,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		eraseSelectedPositions();
 		newValueDialog.close();
 		changeYear(0);
+	}
+	
+	@UiHandler("saveButton")
+	void onSaveButtonClick(ClickEvent event) {
+		employeeEventsDraft.updateDBCalendar(r -> 
+		{
+			setEmployeeEventsDraftObject(employeeEventsDraft);
+			employeeEventsDraft.undoManager.discardAll();
+		}, t -> {});
 	}
 
 	@UiHandler("lastYearButton")
@@ -317,12 +336,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				undoAllButton.setEnabled(undoManager.canUndo());
 				undoButton.setEnabled(undoManager.canUndo());
 				redoButton.setEnabled(undoManager.canRedo());
-				//saveButton.setEnabled(undoManager.canUndo());
+				saveButton.setEnabled(undoManager.canUndo());
 			}
 		});
 		
 		//Pintar la tabla
-		fillCellsEvents();
+		employeeEventsDraft.initializeDBCalendar(
+				r -> { fillCellsEvents();
+					 }, t -> {});
 		
 	}
 	
