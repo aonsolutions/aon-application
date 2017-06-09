@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -91,7 +90,6 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param ft
 	 */
 	public NormalizedMemory(DigitalDepositTreeNode ddtn, Deposit deposit) {
-		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -145,7 +143,6 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param mt
 	 */
 	public NormalizedMemory(Enterprise enterprise,MemoryTemplate mt, DigitalDepositFreeTextTreeNode ddtn) {
-		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -201,7 +198,6 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param e
 	 */
 	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn, Deposit deposit) {
-		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -246,7 +242,6 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param e
 	 */
 	public NormalizedMemory(Boolean type, DigitalDepositFreeTextTreeNode ddtn, Enterprise e) {
-		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -1008,45 +1003,11 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	
 	// SERVLETS GWT FISCAL
-	private static final String CCAA_PRINT = "/aon_gwt_deposit/CCAAPrint";
-	private static final String CCAA_PRINT_PDF = "/aon_gwt_deposit/CCAAPrintPdf";
-
-	private FormPanel diskForm;
-	private Hidden schemaIdHidden;
-	private Hidden domainNameHidden;	
-	private Hidden domainIdHidden;
-	private Hidden cifHidden;
-	private Hidden razonSocialHidden;
-	private Hidden yearHidden;
-	private Hidden typeHidden;
-	private Hidden optionsHidden;
-	
-	private void initialize() {
-		diskForm = new FormPanel("_blank");
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		schemaIdHidden = new Hidden("schemaId");
-		formFlowPanel.add(schemaIdHidden);
-		domainIdHidden = new Hidden("domainId");
-		formFlowPanel.add(domainIdHidden);
-		domainNameHidden = new Hidden("domainName");
-		formFlowPanel.add(domainNameHidden);
-		cifHidden = new Hidden("cif");
-		formFlowPanel.add(cifHidden);
-		razonSocialHidden = new Hidden("razonSocial");
-		formFlowPanel.add(razonSocialHidden);
-		yearHidden = new Hidden("year");
-		formFlowPanel.add(yearHidden);
-		typeHidden = new Hidden("type");
-		formFlowPanel.add(typeHidden);
-		optionsHidden = new Hidden("options");
-		formFlowPanel.add(optionsHidden);
-	}
+	private static final String CCAA_PRINT = "/CCAAPrint";
+	private static final String CCAA_PRINT_PDF = "/CCAAPrintPdf";
 	
 	@UiHandler("downloadButton")
-	void downExcel(ClickEvent event) {
-		
+	void downExcel(ClickEvent event) {		
 		DownloadDialog dd = new DownloadDialog(digitalDepositTreeNode.getIsMemory(), digitalDepositTreeNode.getIsMa()) {
 		
 			@Override 
@@ -1056,22 +1017,22 @@ public class NormalizedMemory extends ResizeComposite {
 			
 			@Override
 			protected void onAccept() {
-				hide();
 				String options = "";
 				for(Integer i = 1; i < 24; i++){
 					CheckBox  cb = (CheckBox) flex_table.getWidget(i, 1);
 					options = options + (cb.getValue() ? "T":"F");
 				}
-				diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT);
-				schemaIdHidden.setValue(String.valueOf(1));
-				domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				cifHidden.setValue(enterprise.getDocument());
-				razonSocialHidden.setValue(enterprise.getName());
-				yearHidden.setValue(String.valueOf(year));
-				typeHidden.setValue(depositType.getText());
-				optionsHidden.setValue(options);
-				diskForm.submit();
+				String fileDownloadURL = GWT.getModuleBaseURL()+ CCAA_PRINT
+	                	+ "?schemaId=" + String.valueOf(1)
+	                	+ "&domainId=" + Integer.toString(enterprise.getDomain())
+	                	+ "&domainName=" + getCurrentDomainName()
+	                	+ "&cif=" + enterprise.getDocument()
+						+ "&razonSocial=" + enterprise.getName()
+						+ "&year=" + String.valueOf(year)
+						+ "&type=" + depositType.getText()
+						+ "&options=" + options;
+				Window.open( fileDownloadURL, "_blank",null);
+				hide();
 			}
 		};
 		dd.addStyleName("gwt-PopupPanel-template");
@@ -1090,22 +1051,22 @@ public class NormalizedMemory extends ResizeComposite {
 			
 			@Override
 			protected void onAccept() {
-				hide();
 				String options = "";
 				for(Integer i = 1; i < 24; i++){
 					CheckBox  cb = (CheckBox) flex_table.getWidget(i, 1);
 					options = options + (cb.getValue() ? "T":"F");
 				}
-				diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT_PDF);
-				schemaIdHidden.setValue(String.valueOf(1));
-				domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				cifHidden.setValue(enterprise.getDocument());
-				razonSocialHidden.setValue(enterprise.getName());
-				yearHidden.setValue(String.valueOf(year));
-				typeHidden.setValue(depositType.getText());
-				optionsHidden.setValue(options);
-				diskForm.submit();
+				String fileDownloadURL = GWT.getModuleBaseURL() + CCAA_PRINT_PDF
+	                	+ "?schemaId=" + String.valueOf(1)
+	                	+ "&domainId=" + Integer.toString(enterprise.getDomain())
+	                	+ "&domainName=" + getCurrentDomainName()
+	                	+ "&cif=" + enterprise.getDocument()
+						+ "&razonSocial=" + enterprise.getName()
+						+ "&year=" + String.valueOf(year)
+						+ "&type=" + depositType.getText()
+						+ "&options=" + options;
+				Window.open( fileDownloadURL, "_blank",null);
+				hide();
 			}
 		};
 		dd.addStyleName("gwt-PopupPanel-template");
