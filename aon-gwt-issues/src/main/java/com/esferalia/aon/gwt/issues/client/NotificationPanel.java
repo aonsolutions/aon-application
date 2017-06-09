@@ -220,7 +220,7 @@ public class NotificationPanel extends Composite {
     }
     
     private void initBccInput(JsNotify notify, Boolean admin) {
-        bccInput.setLabel("Incluir en BCC"); 
+        bccInput.setLabel("Incluir en Cco"); 
         bccInput.setDisabled(admin);
         bccInput.setWidth("300px");
         bccInput.setValue(notify.getBcc());
