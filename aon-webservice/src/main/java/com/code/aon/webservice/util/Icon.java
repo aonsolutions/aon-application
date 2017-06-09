@@ -1,5 +1,6 @@
 package com.code.aon.webservice.util;
 
+import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 
 public class Icon {
@@ -15,6 +16,6 @@ public class Icon {
 			return "mail";
 		if(media.equals(MediaType.WEB.value()))
 			return "http";//av:web
-		return "";
+		return MSG.EMPTY;
 	}
 }

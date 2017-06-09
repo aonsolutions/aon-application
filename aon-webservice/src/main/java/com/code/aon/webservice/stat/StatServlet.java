@@ -1,11 +1,8 @@
 package com.code.aon.webservice.stat;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -33,7 +31,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 												  "/aon_gwt_aio/stat/*"})
 public class StatServlet extends HttpServlet{
 	private static final Logger LOGGER  = Logger.getLogger(StatServlet.class.getName());
-	private static final String EMPTY = "";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp){
@@ -127,20 +124,17 @@ public class StatServlet extends HttpServlet{
 	}
 	
 	public static IssueFilter getFilter(Domain domain, String userName, HttpServletRequest req){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date from = new Date();from.setHours(0);
 		from = AonDateUtils.addYears(from, -1);
 		Date to = new Date();to.setHours(0);
-		try {
-			if(req.getParameter("from") != null && !EMPTY.equals(req.getParameter("from"))){
-				from = dateFormat.parse(req.getParameter("from"));
-			}
-			if(req.getParameter("to") != null && !EMPTY.equals(req.getParameter("to"))){
-				to = dateFormat.parse(req.getParameter("to"));
-			}
-		} catch (ParseException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
+		
+		if(req.getParameter("from") != null && !MSG.EMPTY.equals(req.getParameter("from"))){
+			from = AonDateUtils.simpleParse(req.getParameter("from"));
 		}
+		if(req.getParameter("to") != null && !MSG.EMPTY.equals(req.getParameter("to"))){
+			to = AonDateUtils.simpleParse(req.getParameter("to"));
+		}
+		
 		to = AonDateUtils.addDays(to, 1);
 		LinkedList<Integer> assignee = getList(req.getParameter("asignee"));
 		LinkedList<Integer> workgroup = getList(req.getParameter("workgroup"));

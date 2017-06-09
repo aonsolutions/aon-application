@@ -1,7 +1,6 @@
 package com.code.aon.webservice.payroll;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -39,9 +38,6 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 													 "/aon_gwt_aio/contract/*"})
 public class ContractServlet extends HttpServlet{
 	
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
 	private static final Logger LOGGER  = Logger.getLogger(ContractServlet.class.getName());
 
 	@Override
@@ -152,8 +148,8 @@ public class ContractServlet extends HttpServlet{
 				json.put("quotation_group",q.substring(1, q.length()-1)); 
 				json.put("name", person.isPresent() ? person.get().getName() : "-");
 				json.put("document", person.isPresent() ? person.get().getDocument() : "-");
-				json.put("start_date", dateTimeFormat.format(contract.getStartDate()));
-				json.put("end_date", contract.getEndDate() != null ? dateTimeFormat.format(contract.getEndDate()) : "-");
+				json.put("start_date", AonDateUtils.dateTimeFormat(contract.getStartDate()));
+				json.put("end_date", contract.getEndDate() != null ? AonDateUtils.dateTimeFormat(contract.getEndDate()) : "-");
 				json.put("gender", ToJSON.objectToJSON(person.get().getGender().ordinal(), person.get().getGender().getName()));
 				Double fixed = fixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;
 				Double unfixed = unfixedDoubleList.stream().mapToDouble(i -> i).sum() / 365;

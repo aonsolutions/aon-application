@@ -5,6 +5,7 @@ public class MSG {
 	public static final String ACTION = "action";
 	public static final String ACTIVE = "active";	
 	public static final String ADD = "add";
+	public static final String ADD_INFO = "add_info";	
 	public static final String ADDRESS = "address";
 	public static final String ASSIGNEE = "assignee";
 	public static final String APP_PARAM = "app_param";

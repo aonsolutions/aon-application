@@ -1,11 +1,9 @@
 package com.code.aon.webservice.issues;
 
-import java.text.SimpleDateFormat;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
-
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Event {
 	
@@ -20,45 +18,49 @@ public class Event {
 	}
 	
 	public Event(TaskEvent taskEvent) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		
 		this.id = taskEvent.getId();
 		this.url = "";
 		this.event = taskEvent.getEvent();
-		this.createdAt = dateFormat.format(taskEvent.getCreationDate());
+		this.createdAt = AonDateUtils.dateTimeFormat(taskEvent.getCreationDate());
 		this.user = new User(taskEvent.getCreationUser());
 	}
 	
 	public Integer getId() {
 		return id;
 	}
+	
 	public Event setId(Integer id) {
 		this.id = id;
 		return this;
 	}
+	
 	public String getUrl() {
 		return url;
 	}
+	
 	public Event setUrl(String url) {
 		this.url = url;
 		return this;
 	}
+	
 	public String getCreatedAt() {
 		return createdAt;
 	}
+	
 	public Event setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 		return this;
 	}
+	
 	public User getUser() {
 		return user;
 	}
+	
 	public Event setUser(User user) {
 		this.user = user;
 		return this;
 	}
 	
-
 	public String getEvent() {
 		return event;
 	}
@@ -74,8 +76,7 @@ public class Event {
 		json.put("url", getUrl());
 		json.put("created_at", getCreatedAt());
 		json.put("actor", getUser().toJSON());
-		json.put("event", getEvent());
-				
+		json.put("event", getEvent());	
 		return json;
 	}	
 }

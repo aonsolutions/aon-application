@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,9 +37,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 @WebServlet(name = "PrintContractMedia", urlPatterns = {"/aon_gwt_aio/print_contract_media/*"})
 public class printContractMedia extends HttpServlet{
 	
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
 	private static final Logger LOGGER  = Logger.getLogger(printContractMedia.class.getName());
 	
 	@Override

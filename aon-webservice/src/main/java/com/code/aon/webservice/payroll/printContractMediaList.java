@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -28,6 +27,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.Document;
@@ -49,9 +49,6 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 @SuppressWarnings("serial")
 @WebServlet(name = "PrintContractMediaList", urlPatterns = {"/aon_gwt_aio/print_contract_media_list/*"})
 public class printContractMediaList extends HttpServlet{
-	
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	private static final Logger LOGGER  = Logger.getLogger(printContractMediaList.class.getName());
 
@@ -221,13 +218,13 @@ public class printContractMediaList extends HttpServlet{
 			table.addCell(stringCell(contract.getString("name")));
 			table.addCell(stringCell(contract.getJSONObject("category").getString("name")));
 			
-			Date sd = dateTimeFormat.parse(contract.getString("start_date"));
-			table.addCell(stringCell(dateFormat.format(sd)));
+			Date sd = AonDateUtils.dateTimeParse(contract.getString("start_date"));
+			table.addCell(stringCell(AonDateUtils.simpleFormat(sd)));
 			
 			String date = contract.getString("end_date");
 			if(!date.equals("-")){
-				Date ed = dateTimeFormat.parse(date);
-				date = dateFormat.format(ed);
+				Date ed = AonDateUtils.dateTimeParse(date);
+				date = AonDateUtils.simpleFormat(ed);
 			}		
 			table.addCell(stringCell(date));			
 			table.addCell(stringCell(contract.getString("quotation_group")));

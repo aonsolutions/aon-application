@@ -1,11 +1,9 @@
 package com.code.aon.webservice.issues;
 
-import java.text.SimpleDateFormat;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.task.TaskComment;
-
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Comment {
 	
@@ -21,26 +19,27 @@ public class Comment {
 	}
 
 	public Comment(TaskComment taskComment) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
 		this.id = taskComment.getId();
 		this.url = "";
 		this.body = taskComment.getComment();
 		this.user = new User(taskComment.getCreationUser());
-		this.createdAt = dateFormat.format(taskComment.getCreationDate());
-		this.updatedAt = dateFormat.format(taskComment.getModificationDate());
+		this.createdAt = AonDateUtils.dateTimeFormat(taskComment.getCreationDate());
+		this.updatedAt = AonDateUtils.dateTimeFormat(taskComment.getModificationDate());
 	}	
 	
 	public Integer getId() {
 		return id;
 	}
+	
 	public Comment setId(Integer id) {
 		this.id = id;
 		return this;
 	}
+	
 	public String getUrl() {
 		return url;
 	}
+	
 	public Comment setUrl(String url) {
 		this.url = url;
 		return this;
@@ -49,6 +48,7 @@ public class Comment {
 	public String getBody() {
 		return body;
 	}
+	
 	public Comment setBody(String body) {
 		this.body = body;
 		return this;
@@ -57,13 +57,16 @@ public class Comment {
 	public String getCreatedAt() {
 		return createdAt;
 	}
+	
 	public Comment setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 		return this;
 	}
+	
 	public String getUpdatedAt() {
 		return updatedAt;
 	}
+	
 	public Comment setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
 		return this;
@@ -72,11 +75,11 @@ public class Comment {
 	public User getUser() {
 		return user;
 	}
+	
 	public Comment setUser(User user) {
 		this.user = user;
 		return this;
 	}
-	
 	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();

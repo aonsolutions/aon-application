@@ -1,7 +1,6 @@
 package com.code.aon.webservice.registry;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +19,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -27,8 +27,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 													  "/aon_gwt_aio/registry/*"})
 public class RegistryServlet extends HttpServlet{
 			
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp){
 		System.out.println("GET METHOD");
@@ -245,7 +243,7 @@ public class RegistryServlet extends HttpServlet{
         			json2.put("name", rp.getValueNumber().equals(1));
         		else if(q.getType().equals(QuestionType.DATE.value()))
         			json2.put("name", rp.getValueDate());
-        		json2.put("date", dateFormat.format(rp.getLastUpdate()));
+        		json2.put("date", AonDateUtils.simpleFormat(rp.getLastUpdate()));
         		array2.put(json2);
     		});
     		json.put("array", array2);

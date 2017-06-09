@@ -1,7 +1,6 @@
 package com.code.aon.webservice.issues;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +39,7 @@ import com.esferalia.aon.occam.api.model.task.NotificationMode;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "NotificationGwtServlet2", urlPatterns = { "/notification/*",
 															  "/aon_gwt_aio/notification/*"})
@@ -141,8 +141,6 @@ public class NotificationServlet extends HttpServlet{
 					;
 				//logo cabecera
 			if(ni.getIsLogo())	msg = msg +"<div><img src=\"http://"+dom.getName() + "/aonDocuments/company.logo\" width=\""+ni.getLogoPercentage()+"%\"></div>";
-
-			SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
 			
 			NotificationInfo st = list.stream().sorted((n1,n2)-> n2.getDate().compareTo(n1.getDate()))
 			.filter(n -> !n.getNotificationType().equals(NotificationType.NEW_INFO))
@@ -152,17 +150,17 @@ public class NotificationServlet extends HttpServlet{
 			String status = "<b>ABIERTA</b>";
 			if((st.getNotificationType() != null && st.getNotificationType().equals(NotificationType.CLOSE))
 					|| type.equals(NotificationType.CLOSE)) 
-				status = "<b>CERRADA</b> el <b>"+ format.format(notificationInfo.getDate()) +"</b>" ;
+				status = "<b>CERRADA</b> el <b>"+ AonDateUtils.simpleFormat(notificationInfo.getDate()) +"</b>" ;
 			if((st.getNotificationType() != null && st.getNotificationType().equals(NotificationType.REOPEN)) 
 					|| type.equals(NotificationType.REOPEN))
-				status = "<b>REABIERTA</b> el <b>"+ format.format(notificationInfo.getDate()) +"</b>" ;
+				status = "<b>REABIERTA</b> el <b>"+ AonDateUtils.simpleFormat(notificationInfo.getDate()) +"</b>" ;
 				// title
 			msg = msg +"<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
 					+"<tr><td style=\"background-color: #F6F6F6;color: #222;border: 1px solid #CCC;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
 						+ "<span style='color: #222;font-size: 140%;margin-bottom: 2px;font-weight: bold;'>"+title+"</span>"
 						+ "<span> con referencia <b>#" + notificationInfo.getNoticeId() + "</b></span>"
 						+ "<div>"
-							+ status + " , registrada el <b>" + format.format(notificationInfo.getCreateDate()) +"</b>"//+ "por XXX"
+							+ status + " , registrada el <b>" + AonDateUtils.simpleFormat(notificationInfo.getCreateDate()) +"</b>"//+ "por XXX"
 						+ "</div>"
 							
 						+ "<div>"
@@ -268,6 +266,7 @@ public class NotificationServlet extends HttpServlet{
 	
 	protected void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
+			//String url = "http://"+domainName+ ":8080/aon-aio/send_email/";
 			String url = "http://"+domainName+ "/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
@@ -284,9 +283,7 @@ public class NotificationServlet extends HttpServlet{
 	}
 	
 	private String getMessage(NotificationInfo n, String action, String typeDescription) {
-		SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
-		SimpleDateFormat timeFomat = new SimpleDateFormat("HH:mm");
-		String desc = typeDescription+ " el <b>" + format.format(n.getDate()) +"</b> a las <b>"+timeFomat.format(n.getDate())+"</b> ";	
+		String desc = typeDescription+ " el <b>" + AonDateUtils.simpleFormat(n.getDate()) +"</b> a las <b>"+AonDateUtils.timeFormat(n.getDate())+"</b> ";	
 
 		String msg = "<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'>"
 				+"<tbody><tr>"

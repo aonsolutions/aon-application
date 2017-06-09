@@ -1,6 +1,5 @@
 package com.code.aon.webservice.util;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -44,10 +43,6 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class ToJSON {
 	
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat dateFormat_YYYY_MM_DD = new SimpleDateFormat("yyyy/MM/dd");
-	private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
 	public static JSONObject attachToJSON(Attach attach){	
 		return new JSONObject()
 			.put("id", attach.getId())
@@ -127,7 +122,7 @@ public class ToJSON {
 		json.put(MSG.DOMAIN, rnote.getDomain());
 		json.put(MSG.REGISTRY, rnote.getRegistry());
 		json.put(MSG.DESCRIPTION, rnote.getDescription());
-		json.put("note_date", dateFormat.format(rnote.getNoteDate()));
+		json.put("note_date", AonDateUtils.simpleFormat(rnote.getNoteDate()));
 		json.put("comments", rnote.getComments());
 		json.put("note_type", rnote.getNoteType());
 		json.put("confidential", rnote.getSecurityLevel() == 1);
@@ -150,9 +145,9 @@ public class ToJSON {
 		json.put("customer", fee.getCustomer());
 		json.put(MSG.DESCRIPTION, fee.getDescription());
 		json.put("start_date", fee.getStartDate() != null ?
-				dateFormat.format(fee.getStartDate()) : "");
+				AonDateUtils.simpleFormat(fee.getStartDate()) : "");
 		json.put("end_date", fee.getEndDate() != null ?
-				dateFormat.format(fee.getEndDate()) : "");
+				AonDateUtils.simpleFormat(fee.getEndDate()) : "");
 		json.put("billing_month", getMonth(fee.getBillingDate()));
 		json.put("billing_year", AonDateUtils.getYear(fee.getBillingDate()));
 		json.put("period", getPeriod(BillingPeriod.values()[fee.getPeriod()]));
@@ -168,7 +163,7 @@ public class ToJSON {
 		json.put("quantity", id.getQuantity());
 		json.put("price", id.getPrice());
 		json.put("discount", Double.parseDouble(id.getDiscountExpression()));
-		json.put("date", dateFormat.format(id.getInvoice().getIssueDate()));
+		json.put("date", AonDateUtils.simpleFormat(id.getInvoice().getIssueDate()));
 		json.put("code", id.getItem().getCode());
 		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((Double.parseDouble(id.getDiscountExpression())/100) + 1)));
 		json.put("reference_code", id.getInvoice().getReferenceCode());
@@ -183,7 +178,7 @@ public class ToJSON {
 		json.put("alias", project.getAlias());
 		json.put(MSG.REGISTRY, registryToJSON(registry));
 		json.put("seller", registryToJSON(seller));
-		json.put("date", dateFormat.format(project.getDate()));
+		json.put("date", AonDateUtils.simpleFormat(project.getDate()));
 		json.put("project_type", project.getProjectTypeId());
 		json.put(MSG.COMMENT, project.getComments());
 		return json;
@@ -193,7 +188,7 @@ public class ToJSON {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, ct.getId());
 		json.put(MSG.DOMAIN, ct.getDomain());
-		json.put("date", dateFormat.format(ct.getDate()));
+		json.put("date", AonDateUtils.simpleFormat(ct.getDate()));
 		json.put("seller", registryToJSON(seller));
 		json.put(MSG.COMMENT, ct.getComments());
 		return json;
@@ -248,11 +243,11 @@ public class ToJSON {
 			.put(MSG.STATUS, new JSONObject()
 				.put(MSG.ID, carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : "")
 				.put(MSG.NAME, carrierPacking.getStatus() != null ? carrierPacking.getStatus().getName(): "")) 
-			.put(MSG.ISSUE_DATE, carrierPacking.getIssueDate() != null ? dateFormat.format(carrierPacking.getIssueDate()) : "")
+			.put(MSG.ISSUE_DATE, carrierPacking.getIssueDate() != null ? AonDateUtils.simpleFormat(carrierPacking.getIssueDate()) : "")
 			.put(MSG.CARRIER, new JSONObject()
 				.put(MSG.ID, carrierPacking.getCarrier())
 				.put(MSG.NAME, carrierPacking.getCarrierName()))
-			.put(MSG.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? dateFormat.format(carrierPacking.getDeliveryDate()) : "")
+			.put(MSG.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? AonDateUtils.simpleFormat(carrierPacking.getDeliveryDate()) : "")
 			.put(MSG.CARRIER_REFERENCE, carrierPacking.getCarrierReference() != null ? carrierPacking.getCarrierReference() : "")
 			.put(MSG.NUMBER_PLATE, carrierPacking.getNumberPlate())
 			.put(MSG.DRIVER_NAME, carrierPacking.getDriverName())
@@ -264,13 +259,13 @@ public class ToJSON {
 			.put(MSG.GROSS, carrierPacking.getGross())
 			.put(MSG.TARE, carrierPacking.getTare())
 			.put(MSG.NET, carrierPacking.getNet())
-			.put(MSG.RECEPTION_START_DATE, carrierPacking.getReceptionStartDate() != null ? dateTimeFormat.format(carrierPacking.getReceptionStartDate()) : null)
-			.put(MSG.RECEPTION_END_DATE, carrierPacking.getReceptionEndDate() != null ? dateTimeFormat.format(carrierPacking.getReceptionEndDate()) : null)
+			.put(MSG.RECEPTION_START_DATE, carrierPacking.getReceptionStartDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getReceptionStartDate()) : null)
+			.put(MSG.RECEPTION_END_DATE, carrierPacking.getReceptionEndDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getReceptionEndDate()) : null)
 			
 			
-			.put(MSG.CREATION_DATE, carrierPacking.getCreationDate() != null ? dateFormat.format(carrierPacking.getCreationDate()): "")
+			.put(MSG.CREATION_DATE, carrierPacking.getCreationDate() != null ? AonDateUtils.simpleFormat(carrierPacking.getCreationDate()): "")
 			.put(MSG.CREATION_USER, carrierPacking.getCreationUser())
-			.put(MSG.MODIFICATION_DATE, carrierPacking.getModificationDate() != null ? dateFormat.format(carrierPacking.getModificationDate()) : "")
+			.put(MSG.MODIFICATION_DATE, carrierPacking.getModificationDate() != null ? AonDateUtils.simpleFormat(carrierPacking.getModificationDate()) : "")
 			.put(MSG.MODIFICATION_USER, carrierPacking.getModificationUser());
 	}
 	
@@ -285,7 +280,7 @@ public class ToJSON {
 			.put(MSG.STATUS, new JSONObject()
 				.put(MSG.ID, elaboration.getStatus() != null ? elaboration.getStatus().intValue() : "")
 				.put(MSG.NAME, elaboration.getStatus() != null ? ElaborationStatus.values()[elaboration.getStatus()].getName(): ""))
-			.put(MSG.DATE, elaboration.getDate() != null ? dateFormat_YYYY_MM_DD.format(elaboration.getDate()) : "")
+			.put(MSG.DATE, elaboration.getDate() != null ? AonDateUtils.format(elaboration.getDate(), "yyyy/MM/dd") : "")
 			.put(MSG.ITEM, itemToJSON(elaboration.getItem()))
 			.put(MSG.DESCRIPTION, elaboration.getDescription())
 			.put(MSG.QUANTITY, elaboration.getQuantity())
@@ -298,27 +293,27 @@ public class ToJSON {
 					.put(MSG.ID, elaboration.getSource() != null ? elaboration.getSource().intValue() : "")
 					.put(MSG.NAME, elaboration.getSource() != null ? ElaborationSource.values()[elaboration.getSource()].getName(): ""))
 			.put("source_id", elaboration.getSourceId())
-			.put("creation_date", elaboration.getCreationDate() != null ? dateFormat.format(elaboration.getCreationDate()): "")
-			.put("creation_user", elaboration.getCreationUser())
-			.put("modification_date", elaboration.getModificationDate() != null ? dateFormat.format(elaboration.getModificationDate()) : "")
-			.put("modification_user", elaboration.getModificationUser());
+			.put(MSG.CREATION_DATE, elaboration.getCreationDate() != null ? AonDateUtils.simpleFormat(elaboration.getCreationDate()): "")
+			.put(MSG.CREATION_USER, elaboration.getCreationUser())
+			.put(MSG.MODIFICATION_DATE, elaboration.getModificationDate() != null ? AonDateUtils.simpleFormat(elaboration.getModificationDate()) : "")
+			.put(MSG.MODIFICATION_USER, elaboration.getModificationUser());
 	}
 	
 	public static JSONObject elaborationDetailToJSON(ElaborationDetail detail) {
 		return new JSONObject()
 				.put(MSG.ID, detail.getId())
 				.put(MSG.DOMAIN, detail.getDomain())
-				.put(MSG.DATE, detail.getDate() != null ? dateFormat_YYYY_MM_DD.format(detail.getDate()) : "")
+				.put(MSG.DATE, detail.getDate() != null ? AonDateUtils.format(detail.getDate(), "yyyy/MM/dd") : "")
 				.put(MSG.ITEM, itemToJSON(detail.getItem()))
 				.put(MSG.QUANTITY, detail.getQuantity())
 				.put(MSG.WAREHOUSE, new JSONObject()
 						.put(MSG.ID, detail.getWarehouse() != null ? detail.getWarehouse().getId() : "")
 						.put(MSG.NAME, detail.getWarehouse() != null ? detail.getWarehouse().getName(): ""))
-				.put("add_info", detail.getAddInfo() != null ? detail.getAddInfo() : " ")
-				.put("creation_date", detail.getCreationDate() != null ? dateFormat.format(detail.getCreationDate()): "")
-				.put("creation_user", detail.getCreationUser())
-				.put("modification_date", detail.getModificationDate() != null ? dateFormat.format(detail.getModificationDate()) : "")
-				.put("modification_user", detail.getModificationUser());
+				.put(MSG.ADD_INFO, detail.getAddInfo() != null ? detail.getAddInfo() : " ")
+				.put(MSG.CREATION_DATE, detail.getCreationDate() != null ? AonDateUtils.simpleFormat(detail.getCreationDate()): "")
+				.put(MSG.CREATION_USER, detail.getCreationUser())
+				.put(MSG.MODIFICATION_DATE, detail.getModificationDate() != null ? AonDateUtils.simpleFormat(detail.getModificationDate()) : "")
+				.put(MSG.MODIFICATION_USER, detail.getModificationUser());
 	}
 	
 	public static JSONObject elaborationDetailCompositionToJSON(ElaborationDetailComposition detailComposition) {
@@ -330,14 +325,13 @@ public class ToJSON {
 				.put(MSG.WAREHOUSE, new JSONObject()
 						.put(MSG.ID, detailComposition.getWarehouse() != null ? detailComposition.getWarehouse().getId() : "")
 						.put(MSG.NAME, detailComposition.getWarehouse() != null ? detailComposition.getWarehouse().getName(): ""))
-				.put("creation_date", detailComposition.getCreationDate() != null ? dateFormat.format(detailComposition.getCreationDate()): "")
-				.put("creation_user", detailComposition.getCreationUser())
-				.put("modification_date", detailComposition.getModificationDate() != null ? dateFormat.format(detailComposition.getModificationDate()) : "")
-				.put("modification_user", detailComposition.getModificationUser());
+				.put(MSG.CREATION_DATE, detailComposition.getCreationDate() != null ? AonDateUtils.simpleFormat(detailComposition.getCreationDate()): "")
+				.put(MSG.CREATION_USER, detailComposition.getCreationUser())
+				.put(MSG.MODIFICATION_DATE, detailComposition.getModificationDate() != null ? AonDateUtils.simpleFormat(detailComposition.getModificationDate()) : "")
+				.put(MSG.MODIFICATION_USER, detailComposition.getModificationUser());
 	}
 	
 	public static JSONObject purchaseToJSON(Purchase purchase) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		String seriesNumber = (purchase.getSeries() != null ? purchase.getSeries() + "/" : "") + purchase.getNumber();
 		return new JSONObject()
 			.put(MSG.ID, purchase.getId())
@@ -348,15 +342,13 @@ public class ToJSON {
 			.put(MSG.REGISTRY, new JSONObject()
 				.put(MSG.ID, purchase.getSupplier())
 				.put(MSG.NAME, purchase.getSupplierName())) 
-			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? dateFormat.format(purchase.getIssueDate()) : "")
+			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? AonDateUtils.dateTimeFormat(purchase.getIssueDate()) : "")
 			.put("order_type", "purchase")
 			.put("address", purchase.getAddress())
 			.put("reference", purchase.getPurchaseReference() != null ? purchase.getPurchaseReference() : " ");
 	}
 	
 	public static JSONObject deliveryToJSON(Delivery delivery) {		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
 		String seriesNumber = (delivery.getSeries() != null ? delivery.getSeries() + "/" : "") + delivery.getNumber();
 		return new JSONObject()
 			.put(MSG.ID, delivery.getId())
@@ -367,7 +359,7 @@ public class ToJSON {
 			.put(MSG.REGISTRY, new JSONObject()
 				.put(MSG.ID, delivery.getCustomer())
 				.put(MSG.NAME, delivery.getCustomerName())) 
-			.put(MSG.ISSUE_DATE, delivery.getIssueTime() != null ? dateFormat.format(delivery.getIssueTime()) : "")
+			.put(MSG.ISSUE_DATE, delivery.getIssueTime() != null ? AonDateUtils.dateTimeFormat(delivery.getIssueTime()) : "")
 			.put("order_type", "delivery")
 			.put("reference", delivery.getTrackingNumber() != null ? delivery.getTrackingNumber() : " ")
 			.put("total_packages", delivery.getTotalPackages())
@@ -414,7 +406,6 @@ public class ToJSON {
 	}
 	
 	public static JSONObject salesToJSON(Sales sales) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		return new JSONObject()
 		.put(MSG.ID, sales.getId())
 		.put(MSG.DOMAIN, sales.getDomain())
@@ -424,8 +415,8 @@ public class ToJSON {
 		.put(MSG.CUSTOMER, new JSONObject()
 			.put(MSG.ID, sales.getCustomer() != null ? sales.getCustomer().getId() : "")
 			.put(MSG.NAME, sales.getCustomer() != null ? sales.getCustomer().getName(): ""))
-		.put(MSG.ISSUE_DATE, sales.getIssueDate() != null ? dateFormat.format(sales.getIssueDate()) : "")
-		.put(MSG.DELIVERY_DATE, sales.getDeliveryDate() != null ? dateFormat.format(sales.getDeliveryDate()) : "")
+		.put(MSG.ISSUE_DATE, sales.getIssueDate() != null ? AonDateUtils.dateTimeFormat(sales.getIssueDate()) : "")
+		.put(MSG.DELIVERY_DATE, sales.getDeliveryDate() != null ? AonDateUtils.dateTimeFormat(sales.getDeliveryDate()) : "")
 		.put("purchase_reference", sales.getPurchaseReference() != null ? sales.getPurchaseReference() : " ");
 	}
 	
@@ -449,21 +440,19 @@ public class ToJSON {
 	}
 	
 	public static JSONObject dataResponseToJSON(DataResponse dr) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		return new JSONObject()
 				.put(MSG.ID, dr.getId())
 				.put(MSG.DOMAIN, dr.getDomain())
 				.put(MSG.NUMBER, dr.getNumber())
-				.put(MSG.ISSUE_DATE, dr.getIssueDate() != null ? dateFormat.format(dr.getIssueDate()) : "")
+				.put(MSG.ISSUE_DATE, dr.getIssueDate() != null ? AonDateUtils.dateTimeFormat(dr.getIssueDate()) : "")
 				.put(MSG.CREATION_USER, dr.getCreationUser())
-				.put(MSG.CREATION_DATE, dr.getCreationDate() != null ? dateFormat.format(dr.getCreationDate()) : "")
+				.put(MSG.CREATION_DATE, dr.getCreationDate() != null ? AonDateUtils.dateTimeFormat(dr.getCreationDate()) : "")
 				.put(MSG.MODIFICATION_USER, dr.getModificationUser())
-				.put(MSG.MODIFICATION_DATE, dr.getModificationDate() != null ? dateFormat.format(dr.getModificationDate()) : "")
+				.put(MSG.MODIFICATION_DATE, dr.getModificationDate() != null ? AonDateUtils.dateTimeFormat(dr.getModificationDate()) : "")
 		;
 	}
 	
 	public static JSONObject dataResponseDetailToJSON(DataResponseDetail drd) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		return new JSONObject()
 				.put(MSG.ID, drd.getId())
 				.put(MSG.DOMAIN, drd.getDomain())
@@ -471,9 +460,9 @@ public class ToJSON {
 				.put(MSG.DATA_VARIABLE, drd.getDataVariable())
 				.put(MSG.VALUE, drd.getValue())
 				.put(MSG.CREATION_USER, drd.getCreationUser())
-				.put(MSG.ISSUE_DATE, dateFormat.format(drd.getCreationDate()))
+				.put(MSG.ISSUE_DATE, AonDateUtils.dateTimeFormat(drd.getCreationDate()))
 				.put(MSG.MODIFICATION_USER, drd.getModificationUser())
-				.put(MSG.MODIFICATION_DATE, dateFormat.format(drd.getModificationDate()))
+				.put(MSG.MODIFICATION_DATE, AonDateUtils.dateTimeFormat(drd.getModificationDate()))
 		;
 	}
 	

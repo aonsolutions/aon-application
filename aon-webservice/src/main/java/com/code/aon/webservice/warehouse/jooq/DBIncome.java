@@ -1,13 +1,10 @@
 package com.code.aon.webservice.warehouse.jooq;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
@@ -24,8 +21,8 @@ import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
-import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBIncome {
 	
@@ -63,17 +60,11 @@ public class DBIncome {
 	
 	public static JSONObject insertIncome(Domain domain, String login, JSONObject json) {
 		Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getInt("supplier")));
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		Date date = new Date();
-		try {
-			date = dateFormat.parse(json.getString("issue_time"));
-		} catch (JSONException | ParseException e) {
-			e.printStackTrace();
-		}
+		Date date = AonDateUtils.dateTimeParse(json.getString("issue_time"));
 		Income income = new Income()
 				.setCarrierPacking(json.getInt("carrier_packing"))
 				.setDomain(domain.getId())
-				.setIssueDate(date)
+				.setIssueDate(date != null ? date : new Date())
 				.setReferenceCode(json.getString("reference_code"))
 				.setScope(supplier.get().getScope())
 				.setSupplier(json.getInt("supplier"))
@@ -225,7 +216,6 @@ public class DBIncome {
 	}
 	
 	public static JSONObject  incomeToJSON(Income income){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		JSONObject json = new JSONObject();
 		if(income != null){
 			json.put(MSG.ID, income.getId());
@@ -239,7 +229,7 @@ public class DBIncome {
 			
 			json.put(MSG.REFERENCE_CODE, income.getReferenceCode());
 			json.put(MSG.ADDRESS, income.getAddress());
-			json.put(MSG.ISSUE_DATE, dateFormat.format(income.getIssueDate()));
+			json.put(MSG.ISSUE_DATE, AonDateUtils.dateTimeFormat(income.getIssueDate()));
 			json.put(MSG.PAY_METHOD, income.getPayMethod());
 			json.put(MSG.CONFIDENTIAL, income.isConfidential());
 			

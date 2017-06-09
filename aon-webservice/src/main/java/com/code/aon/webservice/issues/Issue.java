@@ -1,6 +1,5 @@
 package com.code.aon.webservice.issues;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -66,10 +65,6 @@ public class Issue {
 	
 	public Issue(Task task, Registry assignee, LinkedList<Label> labels, Label type, Integer comments,
 			Domain domain, String userName, Workgroup workgroup, Registry enterprise, Boolean principal, String url) {
-		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
-		
 		this.id = task.getId();
 		this.parent = task.getParent();
 		this.title = Utils.getShortString(task.getDescription());
@@ -81,15 +76,15 @@ public class Issue {
 		this.eventsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/events";
 		this.state = TaskStatus.values()[task.getStatus()].getGwtName();
 		this.body = task.getComments();
-		this.closedAt = task.getEndDate() != null ? dateTimeFormat.format(task.getEndDate()) : "";
-		this.closedAtDate = task.getEndDate() != null ? dateFormat.format(task.getEndDate()) : "";
-		this.closedAtHour = task.getEndDate() != null ? hourFormat.format(task.getEndDate()) : "";
-		this.createdAt = dateTimeFormat.format(task.getStartDate());
-		this.createdAtDate = dateFormat.format(task.getStartDate());
-		this.createdAtHour = hourFormat.format(task.getStartDate());
-		this.updatedAt = task.getModificationDate() != null ? dateTimeFormat.format(task.getModificationDate()): "";
-		this.updatedAtDate = task.getModificationDate() != null ? dateFormat.format(task.getModificationDate()): "";
-		this.updatedAtHour = task.getModificationDate() != null ? hourFormat.format(task.getModificationDate()): "";
+		this.closedAt = task.getEndDate() != null ? AonDateUtils.dateTimeFormat(task.getEndDate()) : "";
+		this.closedAtDate = task.getEndDate() != null ? AonDateUtils.simpleFormat(task.getEndDate()) : "";
+		this.closedAtHour = task.getEndDate() != null ? AonDateUtils.timeFormat(task.getEndDate()) : "";
+		this.createdAt = AonDateUtils.dateTimeFormat(task.getStartDate());
+		this.createdAtDate = AonDateUtils.simpleFormat(task.getStartDate());
+		this.createdAtHour = AonDateUtils.timeFormat(task.getStartDate());
+		this.updatedAt = task.getModificationDate() != null ? AonDateUtils.dateTimeFormat(task.getModificationDate()) : "";
+		this.updatedAtDate = task.getModificationDate() != null ? AonDateUtils.simpleFormat(task.getModificationDate()) : "";
+		this.updatedAtHour = task.getModificationDate() != null ? AonDateUtils.timeFormat(task.getModificationDate()) : "";
 		this.assignee = new User().setId(assignee.getId()).setLogin(assignee.getName());
 		this.user = new User().setLogin(task.getCreationUser());
 		this.labels = labels;

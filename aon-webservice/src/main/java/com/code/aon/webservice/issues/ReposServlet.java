@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.AonUrlApi;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -831,12 +832,11 @@ public class ReposServlet extends HttpServlet{
 		
 		@Override
 		public Comment apply(TaskComment r) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			return new Comment()
 					.setBody(r.getComment())
-					.setCreatedAt(dateFormat.format(r.getCreationDate()))
+					.setCreatedAt(AonDateUtils.dateTimeFormat(r.getCreationDate()))
 					.setId(r.getId())
-					.setUpdatedAt(dateFormat.format(r.getModificationDate()))
+					.setUpdatedAt(AonDateUtils.dateTimeFormat(r.getModificationDate()))
 					.setUrl(AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/issues/comments/" + r.getId())
 					.setUser(new User(r.getCreationUser()));
 		}

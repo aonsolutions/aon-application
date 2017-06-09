@@ -1000,6 +1000,20 @@ public class AonDateUtils {
         return str2;
     }
 
+	public static String format(Date date, String pattern) {
+		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		return date == null ? null : format.format(date);
+	}
+	
+	public static Date parse(String date, String pattern) {
+		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		try {
+			return date == null ? null : format.parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+    
 	public static String simpleFormat(Date date) {
 		return date == null ? null : SIMPLE_DATE_FORMAT.format(date);
 	}
