@@ -1859,9 +1859,9 @@ public class Mod131DAO extends FiscalModelDAO {
 				.peek( act -> act
 						.setYear(mod.getYear())
 						.setPeriod(mod.getPeriod())
-						.setDia((int) AonDateUtils.getDaysBetweenDates(
+						.setDia((int) (AonDateUtils.getDaysBetweenDates(
 								 FiscalUtils.getPeriodStart(mod)
-								,FiscalUtils.getPeriodEnd(mod)))
+								,FiscalUtils.getPeriodEnd(mod)) + 1))
 					)
 				.collect(Collectors.toCollection(LinkedList::new))
 			);
@@ -1873,9 +1873,9 @@ public class Mod131DAO extends FiscalModelDAO {
 				mod.getActivities().add(new Mod131Activity()
 						.setYear(mod.getYear())
 						.setPeriod(mod.getPeriod())
-						.setDia((int) AonDateUtils.getDaysBetweenDates(
+						.setDia((int) (AonDateUtils.getDaysBetweenDates(
 								 FiscalUtils.getPeriodStart(mod)
-								,FiscalUtils.getPeriodEnd(mod)))
+								,FiscalUtils.getPeriodEnd(mod)) + 1))
 						.setModules( new LinkedList<Mod131ActivityModule>()));
 						
 			}

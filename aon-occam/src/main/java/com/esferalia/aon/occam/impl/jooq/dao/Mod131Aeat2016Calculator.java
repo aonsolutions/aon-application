@@ -438,6 +438,7 @@ public class Mod131Aeat2016Calculator  {
 		int periodDays = (int) AonDateUtils.getDaysBetweenDates(
 				 FiscalUtils.getPeriodStart(act.getYear(),act.getPeriod())
 				,FiscalUtils.getPeriodEnd(act.getYear(),act.getPeriod()));
+		periodDays = periodDays + 1;
 		double net = AonMathUtils.round(act.getRdr() * act.getDia() / periodDays);
 		act.setNet(net);
 		
