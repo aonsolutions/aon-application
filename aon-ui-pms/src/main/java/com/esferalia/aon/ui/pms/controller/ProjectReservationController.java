@@ -1195,19 +1195,34 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void fillTouristTaxInvoiceData(ProjectReservation reservation, Item touristTaxItem) throws ManagerBeanException {
 		getReservationInvoiceTo().setRegistry(reservation.getHotel().getCustomer().getRegistry());
 		getReservationInvoiceTo().setAddress(new InvoiceAddress());
 
-		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
-		criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
-		for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
-			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
-			getReservationInvoiceTo().setGuest(reservationGuest);
-			fillGuestData(reservationGuest);
-			break;
+		boolean invoiceFound = false;
+		if (getInvoiceModel() != null && getInvoiceModel().getRowCount() > 0) {
+			List<ITransferObject> invoiceList = (List<ITransferObject>)getInvoiceModel().getWrappedData();
+			ListIterator<ITransferObject> iterator = invoiceList.listIterator(invoiceList.size());
+			while (iterator.hasPrevious()) {
+				Invoice invoice = (Invoice)iterator.previous();
+				invoiceFound = true;
+				fillInvoiceModificationData(invoice);
+				break;
+			}
+		} 
+
+		if (!invoiceFound) {
+			IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
+			criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
+			for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
+				ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
+				getReservationInvoiceTo().setGuest(reservationGuest);
+				fillGuestData(reservationGuest);
+				break;
+			}
 		}
 
 		getReservationInvoiceTo().setTouristTax(true);
@@ -1346,11 +1361,9 @@ public class ProjectReservationController extends BasicController implements IPm
 				ListIterator<ITransferObject> iterator = invoiceList.listIterator(invoiceList.size());
 				while (iterator.hasPrevious()) {
 					Invoice invoice = (Invoice)iterator.previous();
-					if (!invoice.isService()) {
-						invoiceFound = true;
-						fillInvoiceModificationData(invoice);
-						break;
-					}
+					invoiceFound = true;
+					fillInvoiceModificationData(invoice);
+					break;
 				}
 			} 
 
