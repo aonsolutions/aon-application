@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="882"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -26,8 +26,7 @@
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
 	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
-
-<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false">
+	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getCompany()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="logoImageFile" class="java.io.InputStream">
@@ -42,10 +41,10 @@
 	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getFax()]]></defaultValueExpression>
 	</parameter>
-    <parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+	<parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getEmail()]]></defaultValueExpression>
 	</parameter>
-    <parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getWeb()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false">
@@ -79,7 +78,7 @@
 		<defaultValueExpression><![CDATA[$P{leftSideText}]]></defaultValueExpression>
 	</parameter>
 	<field name="id" class="java.lang.Integer"/>
-<field name="domain" class="java.lang.Integer"/>
+	<field name="domain" class="java.lang.Integer"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="registryDocument" class="java.lang.String"/>
@@ -137,7 +136,7 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{leftSideText}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="df6e6cd9-8c63-41be-a9d4-b73cdbc1132e" key="line-8" x="583" y="559" width="4" height="1"/>

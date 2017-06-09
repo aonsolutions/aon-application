@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="624"/>
+	<property name="ireport.y" value="720"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -29,10 +29,10 @@
 	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getFax()]]></defaultValueExpression>
 	</parameter>
-    <parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+	<parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getEmail()]]></defaultValueExpression>
 	</parameter>
-    <parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getWeb()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
@@ -65,7 +65,7 @@
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText()]]></defaultValueExpression>
 	</parameter>
 	<field name="id" class="java.lang.Integer"/>
-<field name="domain" class="java.lang.Integer"/>
+	<field name="domain" class="java.lang.Integer"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="registryDocument" class="java.lang.String"/>
@@ -116,7 +116,7 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{leftSideText}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="5264d3a0-6a3f-4d5a-8e60-52ae67c268b1" key="line-5" x="-25" y="241" width="4" height="1"/>

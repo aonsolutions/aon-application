@@ -4,22 +4,21 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="768"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
 	<parameter name="GTA_RESOURCE_BUNDLE" class="java.util.ResourceBundle"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
-	
-	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
-	<parameter name="nestedReports" class="java.util.Map"/>
-
-<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false">
+	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getCompany()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="logoImageFile" class="java.io.InputStream">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLogoFile()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintRecordData()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getAddress()]]></defaultValueExpression>
@@ -36,13 +35,12 @@
 	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getWeb()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false">
+	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
+	<parameter name="nestedReports" class="java.util.Map"/>
+	<parameter name="printHeader" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintHeader()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintRecordData()]]></defaultValueExpression>
-	</parameter>
-	<parameter name="printLogo" class="java.lang.Boolean" isForPrompting="false">
+	<parameter name="printLogo" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintLogo()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="printName" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
@@ -60,12 +58,11 @@
 	<parameter name="invoiceFooterText" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></defaultValueExpression>
 	</parameter>
-<parameter name="printDiscountPriceApplied" class="java.lang.Boolean">
+	<parameter name="printDiscountPriceApplied" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintDiscountPriceApplied()]]></defaultValueExpression>
 	</parameter>
-
 	<field name="id" class="java.lang.Integer"/>
-<field name="domain" class="java.lang.Integer"/>
+	<field name="domain" class="java.lang.Integer"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
@@ -110,9 +107,7 @@
 	<background>
 		<band height="802" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2fff443b-2681-4092-bce1-fa1db87dd709" key="textField-42" x="-15" y="47" width="9" height="703">
-					<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
-				</reportElement>
+				<reportElement uuid="2fff443b-2681-4092-bce1-fa1db87dd709" key="textField-42" x="-15" y="47" width="9" height="703"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -282,7 +277,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="214fdc6f-a384-4124-999c-548911c916f6" key="textField-23" x="5" y="0" width="246" height="16">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader}&&$P{printName}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -553,7 +548,13 @@
 				<textElement textAlignment="Justified" verticalAlignment="Top">
 					<font fontName="SansSerif" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " " + $R{gta_footer_text_2} + "\n" + $R{tas_legal_text_1} + " " + $P{company}.getName() + " " + $R{tas_legal_text_2} + " " + $P{company}.getName() + ", " + $P{address}.getFullAddress() + " - " + $P{address}.getZip() + " " + $P{address}.getCity() + " (" + $P{address}.getGeozone().getName() + ") " + $R{tas_legal_text_3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " "
++ $R{gta_footer_text_2} + "\n" + $R{tas_legal_text_1} + " "
++ $P{company}.getName() + " " + $R{tas_legal_text_2} + " "
++ $P{company}.getName() + ", " + $P{address}.getFullAddress()
++ " - " + $P{address}.getZip() + " " + $P{address}.getCity()
++ " (" + $P{address}.getGeozone().getName() + ") " + $R{tas_legal_text_3}
++ ($P{printName}.name().equals( "FOOTER" )?"":"")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="104d3eeb-2048-4c04-b93d-d621fb95f49c" key="line-9" positionType="Float" x="2" y="15" width="530" height="1"/>
