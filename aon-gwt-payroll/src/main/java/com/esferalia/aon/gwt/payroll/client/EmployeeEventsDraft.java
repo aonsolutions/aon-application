@@ -184,7 +184,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//#endif
 		
 		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
-		saveButton.setVisible(true);
+		//saveButton.setVisible(true);
 		
 	}
 

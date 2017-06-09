@@ -385,9 +385,9 @@ public class EmployeeEventsDraftObject {
 		Map<String, ArrayList<EmployeeEventsVariable>> updateMap = createUpdateMap();
 		
 		for(Entry<String, ArrayList<EmployeeEventsVariable>> entry : updateMap.entrySet()){
-			Quartet<java.sql.Date, java.sql.Date, String, String> quarterInfo = new Quartet<java.sql.Date, java.sql.Date, String, String>();
 			String varName = entry.getKey();
 			for(EmployeeEventsVariable eVar : updateMap.get(varName)){
+				Quartet<java.sql.Date, java.sql.Date, String, String> quarterInfo = new Quartet<java.sql.Date, java.sql.Date, String, String>();
 				java.sql.Date startDate = new java.sql.Date(eVar.getStartDate().getTime());
 				java.sql.Date endDate = new java.sql.Date(eVar.getEndDate().getTime());
 				String value = Double.toString(eVar.getValue());
@@ -412,7 +412,6 @@ public class EmployeeEventsDraftObject {
 			
 			if(null != updateMap.get(key))
 				for(EmployeeEventsVariable e : draftMapEventsVar.get(key)){
-					//Window.alert("DraftMap, Key :"+key+", StarDate :"+e.getStartDate()+", Value :"+e.getValue());
 					updateMap.get(key).add(e);
 				}
 			else
@@ -429,7 +428,6 @@ public class EmployeeEventsDraftObject {
 			if(draftContainsDate(e.startDate, key)){
 				continue;
 			}else{
-				//Window.alert("Map Original, Key :"+key+", StarDate :"+e.getStartDate()+", Value :"+e.getValue());
 				resultList.add(e);
 			}
 		}
