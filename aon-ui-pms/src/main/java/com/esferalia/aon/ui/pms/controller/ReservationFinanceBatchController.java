@@ -27,6 +27,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
@@ -51,6 +52,7 @@ public class ReservationFinanceBatchController implements Serializable {
 
 	private AonFile reservationFile;
 	private String batchDescription;
+	private PayMethod payMethod;
 
 	public AonFile getReservationFile() {
 		return reservationFile;
@@ -66,9 +68,25 @@ public class ReservationFinanceBatchController implements Serializable {
 		this.batchDescription = batchDescription;
 	}
 
-	public void onEditSearch(ActionEvent event) {
+	public PayMethod getPayMethod() {
+		return payMethod;
+	}
+	public void setPayMethod(PayMethod payMethod) {
+		this.payMethod = payMethod;
+	}
+
+	public void onEditSearch(ActionEvent event) throws ManagerBeanException {
 		setReservationFile(null);
 		setBatchDescription(null);
+		setPayMethod(null);
+		try {
+			ApplicationParameter payMethodParam = AppParamUtil.getParameter(AppParam.PMS_CONEXFLOW_PAY_METHOD);
+			if (payMethodParam != null && StringUtils.isNotBlank(payMethodParam.getValue())) {
+				setPayMethod((PayMethod)BeanManager.getManagerBean(PayMethod.class).get(Integer.parseInt(payMethodParam.getValue())));
+			}
+		} catch (ManagerBeanException ex) {
+			setPayMethod(null);
+		}
 	}
 
 	public void fileUploaded(UploadEvent event) {
@@ -97,6 +115,7 @@ public class ReservationFinanceBatchController implements Serializable {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), getPayMethod().getId());
 			criteria.addInExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_PROJECT_ID), ExpressionUtilities.getSubQueryExpression(ProjectReservation.class, subCriteria, projectIdList));
 			for (ITransferObject ito : financeBean.getList(criteria)) {
 				Finance finance = (Finance)ito;

@@ -38,6 +38,13 @@
 						size="30" maxlength="32">
 					</aon:inputText>
 
+					<aon:outputLabel for="ReservationFinanceBatch_payMethod" 
+						value="#{bundle.finance_payMethod}" />
+					<aon:selectOneMenu id="ReservationFinanceBatch_payMethod"
+						value="#{reservationFinanceBatch.payMethod}" required="true">
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="ReservationFinanceBatch_reservationFile"
 						value="#{bundle.pms_reservation_file}" />
 					<aon:div>
