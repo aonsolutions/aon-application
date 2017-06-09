@@ -80,7 +80,7 @@ public class Page02 extends PageAbs {
 			@Override
 			public void onAccept(int index, CompanyParticipation cp) {
 				if (index < 0) {
-					callback.getMod200Object().getMod200().getParticipationsOut().add(cp);
+//					callback.getMod200Object().getMod200().getParticipationsOut().add(cp);
 					dataProviderOut.getList().add(cp);
 				} else {
 					callback.getMod200Object().getMod200().getParticipationsOut().set(index, cp);
