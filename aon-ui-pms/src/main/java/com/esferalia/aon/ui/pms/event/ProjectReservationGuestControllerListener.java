@@ -38,7 +38,7 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
 		to.setProjectReservation((ProjectReservation)controller.getMasterController().getTo());
 		to.setDocumentCountry(Country.ES);
-		to.setCountry(Country.ES);
+		to.setCountry(null);
 		controller.setPhonePrefix("+");
 		controller.setPhoneNumber(null);
 	}
@@ -47,9 +47,6 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
 		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
-		if (to.getCountry() == null) {
-			to.setCountry(to.getDocumentCountry());
-		}
 		controller.setPhonePrefix(controller.obtainPhonePrefix(to.getPhone()));
 		controller.setPhoneNumber(controller.obtainPhoneNumber(to.getPhone()));
 	}

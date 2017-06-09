@@ -56,9 +56,6 @@ public class ProjectReservationGuestController extends LinesController {
 		ProjectReservationGuest reservationGuest = (ProjectReservationGuest)getTo();
 		reservationGuest.setDocumentCountry((Country)event.getNewValue());
 		obtainPersonData(reservationGuest);
-		if (reservationGuest.getCountry() == null || reservationGuest.getCountry() == (Country)event.getOldValue()) {
-			reservationGuest.setCountry(reservationGuest.getDocumentCountry());
-		}
 	}
 
 	public void onDocumentChanged(ValueChangeEvent event) throws ManagerBeanException {

@@ -33,6 +33,7 @@
 			<aon:selectOneMenu id="ProjectReservationGuest_country#{suffix}" styleClass="aon-width-180 aon-form-input-text"
 				value="#{controller.to.country}" ajaxSingle="true"
 				reRender="GuestAddressDiv#{suffix}">
+				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{commonCollections.countries}" />
 			</aon:selectOneMenu>
 
@@ -43,7 +44,7 @@
 			<aon:selectOneMenu id="ProjectReservationGuest_province-List#{suffix}" styleClass="aon-width-180 aon-form-input-text"
 				value="#{controller.to.province}" ajaxSingle="true"
 				rendered="#{controller.to.country == 'ES'}">
-				<f:selectItem itemLabel="-" value="#{null}" />		
+				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{geozoneCollections.systemGeoTrees}" />
 			</aon:selectOneMenu>
 		</aon:panelGrid>
