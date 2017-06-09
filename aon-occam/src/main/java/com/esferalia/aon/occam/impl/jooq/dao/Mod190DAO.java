@@ -19,7 +19,6 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -229,7 +228,7 @@ public class Mod190DAO {
 					, irpfData.getBirthYear()
 					, irpfData.getFamilySituation()
 					, irpfData.getSpouseDocument()
-					, irpfData.getDisability()
+					, (irpfData.getDisability() == null ? 0 : irpfData.getDisability())
 					, irpfData.getContract()
 					, AonEnumUtils.getByte(irpfData.isWorkActivityExtension())
 					, AonEnumUtils.getByte(irpfData.isGeographicMobility())

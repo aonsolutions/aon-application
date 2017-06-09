@@ -226,7 +226,7 @@ public class Model190 extends MainEntryPoint {
 		cancelButton.setVisible(table.getRowCount() > 0);
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(currentMod190.getId() != null);
-		printButton.setVisible(currentMod190.getId() != null);
+		printButton.setVisible(currentMod190.getId() != null && currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
 		printMod190Button.setVisible(currentMod190.getId() != null);
 		showDetail(currentMod190);
 		paintHeaderTable();		
@@ -256,8 +256,6 @@ public class Model190 extends MainEntryPoint {
 				perceptorPanel.setWidget(detail);
 			}
 		}
-		printButton.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
-		printMod190Button.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
 	}
 
 	@UiHandler("table")
@@ -385,8 +383,7 @@ public class Model190 extends MainEntryPoint {
 	@UiHandler("administration")
 	void onAdministrationChanged(ChangeEvent event) {
 		currentMod190.setAdministration((byte) administration.getSelectedIndex());
-		printButton.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
-		printMod190Button.setVisible(currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
+		printButton.setVisible(currentMod190.getId() != null && currentMod190.getAdministration() == Administration.COMMON_TERRITORY.ordinal() );
 		paintHeaderTable();	
 	}
 	
