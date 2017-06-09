@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
@@ -402,16 +403,48 @@ public class EmployeeEventsDraftObject {
 	private Map<String, ArrayList<EmployeeEventsVariable>> createUpdateMap() {
 		Map<String, ArrayList<EmployeeEventsVariable>> updateMap = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
 		
-		for (Entry<String, ArrayList<EmployeeEventsVariable>> entry : mapEventsVar.entrySet()){
-			updateMap.put(entry.getKey(), entry.getValue());
+		for(String key : mapEventsVar.keySet()){
+			ArrayList<EmployeeEventsVariable> resultList = checkResultList(key);
+			updateMap.put(key, resultList);
 		}
 		
-		//TODO: MIRAR ESTO COMO HACERLO BIEN!!!!!!
-		for (Entry<String, ArrayList<EmployeeEventsVariable>> entry : draftMapEventsVar.entrySet()){
-			updateMap.put(entry.getKey(), entry.getValue());
+		for(String key : draftMapEventsVar.keySet()){
+			
+			if(null != updateMap.get(key))
+				for(EmployeeEventsVariable e : draftMapEventsVar.get(key)){
+					//Window.alert("DraftMap, Key :"+key+", StarDate :"+e.getStartDate()+", Value :"+e.getValue());
+					updateMap.get(key).add(e);
+				}
+			else
+				updateMap.put(key, draftMapEventsVar.get(key));
 		}
 		
 		return updateMap;
+	}
+
+	private ArrayList<EmployeeEventsVariable> checkResultList(String key) {
+		ArrayList<EmployeeEventsVariable> resultList = new ArrayList<>();
+		
+		for(EmployeeEventsVariable e : mapEventsVar.get(key)){
+			if(draftContainsDate(e.startDate, key)){
+				continue;
+			}else{
+				//Window.alert("Map Original, Key :"+key+", StarDate :"+e.getStartDate()+", Value :"+e.getValue());
+				resultList.add(e);
+			}
+		}
+		
+		return resultList;
+	}
+
+	private boolean draftContainsDate(Date startDateMap, String key) {
+		if(null != draftMapEventsVar.get(key)){
+			for(EmployeeEventsVariable e : draftMapEventsVar.get(key)){
+				if(e.startDate.equals(startDateMap))
+					return true;
+			}
+		}
+		return false;
 	}
 
 }
