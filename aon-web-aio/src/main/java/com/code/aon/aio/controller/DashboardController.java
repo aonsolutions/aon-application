@@ -486,7 +486,7 @@ public class DashboardController implements Serializable {
 	}
 
 	private List<DashboardMessage> getRetentionInvoices(Connection c) {
-		String select = "SELECT count(it.id),it.withholding_type "
+		String select = "SELECT count(DISTINCT i.id),it.withholding_type "
 				+ " FROM invoice_tax it"
 				+ " INNER JOIN invoice_detail id ON it.invoice_detail = id.id"
 				+ " INNER JOIN invoice i ON id.invoice = i.id" + WHERE
