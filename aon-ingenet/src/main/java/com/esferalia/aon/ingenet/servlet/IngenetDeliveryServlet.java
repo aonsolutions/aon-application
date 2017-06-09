@@ -34,10 +34,15 @@ import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -54,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -330,7 +336,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		delivery.setStatus(DeliveryStatus.PENDING);
 		delivery.setComments(albaran.getCOMENTARIOS());
 		delivery.setRemarks("Creado por '"+ctx.getUser()+"' el "
-				+ new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()));
+				+ new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()) + "."
+				+ "\n" + "La unidad de la cantidad es KILOS." );
 		try {
 			delivery.setWorkplace(wp.getId());
 		} catch (Throwable th) {
@@ -403,7 +410,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 								detail.setDiscountExpression("0");
 							}
 							if(elaboration==null || elaboration.getId()==null){
-								addError(albaran, "No hay ninguna elaboracion asociada a la linea " + linea.getLINEA());
+								String number = linea.getDATOSELABORACIONORIGEN().getSERIE()
+										+ "/" + linea.getDATOSELABORACIONORIGEN().getNUMERO();
+								addError(albaran, "No hay ninguna elaboracion con numero '"+number+"' asociada a la linea " + linea.getLINEA());
 							} else {
 								detail.setSalesDetail(elaboration.getSourceId());
 							}
@@ -437,6 +446,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					if(linea.getLINEAALBARANCONTENIDA()!=null)
 						packages += ";LIN=" + linea.getLINEAALBARANCONTENIDA();
 					packages += "]";
+					savePackages(ctx, delivery, packages);
 					delivery.setRemarks(delivery.getRemarks() + "\n" + packages );
 					String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
 					detail.setDescription(description);
@@ -455,6 +465,26 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 
 	
+	private void savePackages(AONContext ctx, Delivery delivery, String packages) {
+		try{
+			Attach attach = new Attach();
+			attach.setAttachType(AttachType.DATA);
+			attach.setDomain(new Domain().setId(delivery.getDomain()));
+			attach.setDate(new Date());
+			attach.setData(packages.getBytes());
+			attach.setMimeType(MimeType.TXT);
+			attach.setSourceType(DataAttachSource.DELIVERY.value());
+			attach.setSourceBatch(delivery.getId());
+			attach.setType(DataAttachType.REQUEST.value());
+			
+			AON.insertAttach(ctx.getDomainName(),
+					ctx.getDomainId(),
+					ctx.getUser(), attach);
+		} catch (Exception e) {
+			LOGGER.error("ERROR (DataAttach) saving packages.", e);
+		}
+	}
+
 	private void failElaborations(AONContext ctx, ALBARANTYPE albaran,
 			DATOSLINEAALBARANTYPE linea, String cause) {
 		Elaboration elaboration = obtainElaboration(ctx,

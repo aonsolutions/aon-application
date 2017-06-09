@@ -300,10 +300,14 @@ public class AttachmentDAO {
 		ctx.checkWrite();
 		return ctx.getDslContext().insertInto(DATA_ATTACH, DATA_ATTACH.DOMAIN,
 				DATA_ATTACH.DATA, DATA_ATTACH.DRIVE_ID, DATA_ATTACH.MIMETYPE,
-				DATA_ATTACH.SOURCE_ID, DATA_ATTACH.SOURCE, DATA_ATTACH.TYPE)
+				DATA_ATTACH.SOURCE_ID, DATA_ATTACH.SOURCE, DATA_ATTACH.TYPE,
+				DATA_ATTACH.CREATION_DATE, DATA_ATTACH.CREATION_USER,
+				DATA_ATTACH.MODIFICATION_DATE, DATA_ATTACH.MODIFICATION_USER)
 			.values(attach.getDomain().getId(), attach.getData(), attach.getDriveId(),
 				(byte) attach.getMimeType().ordinal(), attach.getSourceBatch(), 
-				(byte) attach.getSourceType(), (byte) attach.getType())
+				(byte) attach.getSourceType(), (byte) attach.getType(),
+				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
+				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
 		.returning(DATA_ATTACH.ID).fetchOne().getId();
 	}
 	
