@@ -604,7 +604,6 @@ input[type="checkbox"]:focus + label {
 	font-size: 0.9em;
 	height: auto;
 	overflow: hidden;
-	color: white;
 	padding-left: 8px;
 	padding-right: 10px;
 	text-transform: uppercase;

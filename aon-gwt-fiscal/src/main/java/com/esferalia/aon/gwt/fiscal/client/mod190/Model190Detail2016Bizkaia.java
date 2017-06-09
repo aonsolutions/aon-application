@@ -230,7 +230,7 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 
 		IrpfData irpfData = getDetail().getIrpfData();
 		if (irpfData != null) {
-			disability.setSelectedIndex(irpfData.getDisability());
+			disability.setSelectedIndex(irpfData.ensureDisability());
 		}
 		IrpfResult irpfResult = getDetail().getIrpfResult();
 		if (irpfResult != null) {

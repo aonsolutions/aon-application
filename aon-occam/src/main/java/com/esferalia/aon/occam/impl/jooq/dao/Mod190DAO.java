@@ -228,7 +228,7 @@ public class Mod190DAO {
 					, irpfData.getBirthYear()
 					, irpfData.getFamilySituation()
 					, irpfData.getSpouseDocument()
-					, (irpfData.getDisability() == null ? 0 : irpfData.getDisability())
+					, irpfData.ensureDisability()
 					, irpfData.getContract()
 					, AonEnumUtils.getByte(irpfData.isWorkActivityExtension())
 					, AonEnumUtils.getByte(irpfData.isGeographicMobility())
@@ -324,7 +324,7 @@ public class Mod190DAO {
 						irpfData.getFamilySituation())
 				.set(FS_MODEL190_DETAIL.SPOUSE_DOCUMENT,
 						irpfData.getSpouseDocument())
-				.set(FS_MODEL190_DETAIL.DISABILITY, irpfData.getDisability())
+				.set(FS_MODEL190_DETAIL.DISABILITY, irpfData.ensureDisability())
 				.set(FS_MODEL190_DETAIL.CONTRACT, irpfData.getContract())
 				.set(FS_MODEL190_DETAIL.LABOUR_PROLONGATION,
 						AonEnumUtils.getByte(irpfData.isWorkActivityExtension()))
@@ -429,7 +429,7 @@ public class Mod190DAO {
 						irpfData.getFamilySituation())
 				.set(FS_MODEL190_DETAIL.SPOUSE_DOCUMENT,
 						irpfData.getSpouseDocument())
-				.set(FS_MODEL190_DETAIL.DISABILITY, irpfData.getDisability())
+				.set(FS_MODEL190_DETAIL.DISABILITY, irpfData.ensureDisability())
 				.set(FS_MODEL190_DETAIL.CONTRACT, irpfData.getContract())
 				.set(FS_MODEL190_DETAIL.LABOUR_PROLONGATION,
 						AonEnumUtils.getByte(irpfData.isWorkActivityExtension()))

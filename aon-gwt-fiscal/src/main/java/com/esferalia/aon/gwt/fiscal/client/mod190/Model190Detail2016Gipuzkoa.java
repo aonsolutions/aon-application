@@ -237,7 +237,7 @@ public class Model190Detail2016Gipuzkoa extends ResizeComposite {
 
 		IrpfData irpfData = getDetail().getIrpfData();
 		if (irpfData != null) {
-			disability.setSelectedIndex(irpfData.getDisability());
+			disability.setSelectedIndex(irpfData.ensureDisability());
 			contract.setSelectedIndex(irpfData.getContract());
 		}
 		IrpfResult irpfResult = getDetail().getIrpfResult();

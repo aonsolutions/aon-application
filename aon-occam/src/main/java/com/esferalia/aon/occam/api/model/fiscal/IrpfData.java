@@ -89,4 +89,7 @@ public class IrpfData implements Serializable {
 		this.geographicMobility = geographicMobility;
 		return this;
 	}
+	public byte ensureDisability() {
+		return getDisability() == null ? 0 : getDisability();
+	}
 }

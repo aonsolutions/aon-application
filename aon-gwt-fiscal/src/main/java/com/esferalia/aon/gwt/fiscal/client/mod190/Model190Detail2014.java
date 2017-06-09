@@ -312,7 +312,7 @@ public class Model190Detail2014 extends ResizeComposite {
 			birthYear.setValue(irpfData.getBirthYear());
 			familySituation.setSelectedIndex(irpfData.getFamilySituation());
 			spouseDocument.setValue(irpfData.getSpouseDocument());
-			disability.setSelectedIndex(irpfData.getDisability());
+			disability.setSelectedIndex(irpfData.ensureDisability());
 			contract.setSelectedIndex(irpfData.getContract());
 			workActivityExtension.setValue(irpfData.isWorkActivityExtension());
 			geographicMobility.setValue(irpfData.isGeographicMobility());
