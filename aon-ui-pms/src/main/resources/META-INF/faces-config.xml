@@ -1370,7 +1370,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* WEBPOL EXPORTER ********************* -->
+	<!-- ************* WEBPOL EXPORTER ********************** -->
 	<managed-bean>
 		<managed-bean-name>webpolExporter</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.WebpolExporterController</managed-bean-class>
@@ -1385,13 +1385,20 @@
 		</managed-property>		
 	</managed-bean>
 
-	<!-- ************* PRODUCTION REPORT ********************* -->
+	<!-- ************* PRODUCTION REPORT ******************** -->
 	<managed-bean>
 		<managed-bean-name>productionReport</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ProductionReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ********** RESERVATION FINANCE BATCH *************** -->
+	<managed-bean>
+		<managed-bean-name>reservationFinanceBatch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationFinanceBatchController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************************************************** -->
 	<!-- ************* LOOKUP ******************************* -->
 	<!-- **************************************************** -->
@@ -1796,7 +1803,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- ============= Webpol Exporter =================== -->
+	<!-- ============= Webpol Exporter ====================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>webpolExporter_list</from-outcome>
@@ -1804,7 +1811,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- ============= Production report =================== -->
+	<!-- ============= Production report ==================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>productionReport_list</from-outcome>
@@ -1812,4 +1819,12 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- ============= Reservation Finance Batch ============ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>reservationFinanceBatch</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/util/reservationFinanceBatch.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>

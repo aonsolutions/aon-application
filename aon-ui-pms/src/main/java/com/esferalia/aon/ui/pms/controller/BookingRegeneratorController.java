@@ -61,9 +61,9 @@ public class BookingRegeneratorController implements Serializable {
 	}
 
 	public void onEditSearch(ActionEvent event) {
-		this.setHotel(null);
-		this.setFromDate(null);
-		this.setToDate(null);
+		setHotel(null);
+		setFromDate(null);
+		setToDate(null);
 	}
 
 	public void regenerateBooking(ActionEvent event) {

@@ -15,7 +15,7 @@
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle" value="#{bundle.pms_regenerate_booking_module}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="regenerateBooking" 
+					<aon:commandButton id="regenerateBooking-execute" 
 						value="#{bundle.aon_execute}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{bookingRegenerator.regenerateBooking}"
@@ -26,7 +26,7 @@
 			</ui:decorate>
 
 			<aon:div>
-				<aon:panelGrid columns="2" styleClass="aon-width-500 aon-padding aon-margin-left"
+				<aon:panelGrid columns="2" styleClass="aon-width-600 aon-padding aon-margin-left"
 					columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="RegenerateBooking_hotel"
