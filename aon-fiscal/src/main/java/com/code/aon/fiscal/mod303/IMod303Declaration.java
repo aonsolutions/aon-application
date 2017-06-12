@@ -13,6 +13,7 @@ public interface IMod303Declaration {
 	Administration getAdministration();
 	IBankAccountContainer getBankAccountContainer();
 	boolean isReplacement();
+	String getReplacedNumber();
 	boolean isComplementary();
 	boolean isTaxRefundRegistry();
 	double getProrata();

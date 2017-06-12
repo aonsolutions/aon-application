@@ -13,6 +13,7 @@ public class Declaration {
 	private String period;
 	private boolean replacement;
 	private boolean complementary;
+	private String replacedNumber;
 	private boolean taxRefundRegistry;
 	private boolean simplRegimeOnly;
 	private boolean mergedDeclaration;
@@ -175,6 +176,12 @@ public class Declaration {
 	}
 	public void setReplacement(boolean replacement) {
 		this.replacement = replacement;
+	}
+	public String getReplacedNumber() {
+		return this.replacedNumber;
+	}
+	public void setReplacedNumber(String replacedNumber) {
+		this.replacedNumber = replacedNumber;
 	}
 	public boolean isComplementary() {
 		return complementary;

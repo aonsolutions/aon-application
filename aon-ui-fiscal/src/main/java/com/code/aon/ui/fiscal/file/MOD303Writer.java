@@ -162,9 +162,12 @@ public class MOD303Writer {
 			Month month = Month.getMonthByValue( CommonUtil.getMonth(today) ); 
 			declaration.setTodayMonth( month.getName(AonUtil.getCurrentLocale()) );
 			declaration.setTodayYear( CommonUtil.getYear(today) );
-			
 			declaration.setReplacement( mod303Declaration.isReplacement() );
 			declaration.setComplementary( mod303Declaration.isComplementary() );
+			declaration.setReplacedNumber(null);
+			if (mod303Declaration.isReplacement() || mod303Declaration.isComplementary()) {
+				declaration.setReplacedNumber( mod303Declaration.getReplacedNumber() );	
+			}
 			declaration.setTaxRefundRegistry( mod303Declaration.isTaxRefundRegistry());
 			
 			double prorata = mod303Declaration.getProrata();

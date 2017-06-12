@@ -136,16 +136,30 @@
 						disabled="#{vatTax.detailNew}"/>
 
 					<aon:div>
-						<aon:div>
+						<aon:div id="VatTax_replacement_box">
+<!-- 						
 							<aon:selectBooleanCheckbox id="VatTax_replacement"
-								disabled="#{vatTax.to.finished or vatTax.detailNew}"
+								disabled="#{vatTax.to.finished or vatTax.detailNew or vatTax.to.complementary}"
+								reRender="VatTax_replacement_box"
+								ajaxSingle="true"
 								value="#{vatTax.to.replacement}"/>
 							<aon:outputLabel for="VatTax_replacement" styleClass="aon-italic"
 								value="#{bundle.aon_replacement}" />
-							<aon:panelGroup rendered="#{!vatTax.nevv and vatTax.to.replacement}" styleClass="aon-italic aon-margin-left">		
-								<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_number}" />
-								<aon:outputText value=":" />
-								<aon:outputText styleClass="aon-margin-left" value="#{vatTax.to.number}" />
+ -->
+							<aon:selectBooleanCheckbox id="VatTax_complementary"
+								disabled="#{vatTax.to.finished or vatTax.detailNew}"
+								reRender="VatTax_replacement_box"
+								ajaxSingle="true"
+								value="#{vatTax.to.complementary}"/>
+							<aon:outputLabel for="VatTax_complementary" styleClass="aon-italic"
+								value="Complementaria" />
+
+							<aon:panelGroup rendered="#{!vatTax.nevv and vatTax.to.complementary}" styleClass="aon-italic aon-margin-left">		
+								<aon:outputLabel for="VatTax_number" styleClass="aon-margin-left aon-margin-right" 
+									value="Número sustituida/complementada: " />
+								<aon:inputText id="VatTax_number" size="13" maxlength="13" value="#{vatTax.to.replacedNumber}"
+									required="true" 
+									disabled="#{vatTax.to.finished or vatTax.detailNew}"/>
 							</aon:panelGroup>
 						</aon:div>
 

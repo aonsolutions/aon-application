@@ -93,6 +93,12 @@ public class VatTaxDeclaration extends VatTaxDeclarationDB implements IMod303Dec
 	public boolean isReplacement() {
 		return getVatTax()!=null?getVatTax().isReplacement():false;
 	}
+	
+	@Override
+	@Transient
+	public String getReplacedNumber() {
+		return getVatTax()!=null?getVatTax().getReplacedNumber():null;
+	}
 
 	@Override
 	@Transient

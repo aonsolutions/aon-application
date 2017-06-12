@@ -29,7 +29,7 @@
 
 	
 	<field name="complementary" value="bean" bean="dec" property="complementaryLetter" format="AlphaNumeric" pattern="X(1)" />
-	<field name="free5" value=" " format="Alphabetic" pattern="X(13)" />
+	<field name="replacedNumber" value="bean" bean="dec" property="replacedNumber" format="AlphaNumeric" pattern="X(13)" />
 	<field name="withoutActivity" value="bean" bean="dec" property="withoutActivityLetter" format="AlphaNumeric" pattern="X(1)" />
 
 	<field name="SWIFT" value=" " format="Alphabetic" pattern="X(11)" />

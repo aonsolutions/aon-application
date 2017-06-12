@@ -648,6 +648,10 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 		return getHeader().isReplacement();
 	}
 	@Override
+	public String getReplacedNumber() {
+		return getHeader().getReplacedNumber();
+	}
+	@Override
 	public boolean isComplementary() {
 		return getHeader().isComplementary();
 	}
