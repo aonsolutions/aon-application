@@ -36,6 +36,7 @@ public class Mod2002016 implements IFiscalModel {
 	private int domain;
 	private int year;
 	private Administration administration = Administration.COMMON_TERRITORY;
+	private FiscalStatus status;
 	
 	private String receipt;
 	private boolean complementary;
@@ -410,7 +411,10 @@ public class Mod2002016 implements IFiscalModel {
 	@Override
 	public FiscalStatus getStatus() {
 		// TODO Soporte!!
-		return FiscalStatus.PENDING;
+		return this.status;
+	}
+	public void setStatus(FiscalStatus status) {
+		this.status = status;
 	}
 	@Override
 	public boolean isReplacement() {

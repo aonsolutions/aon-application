@@ -93,6 +93,7 @@ public class Mod2002016DAO  {
 			 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
 			 .set(FS_MODEL200.YEAR, mod200.getYear())
 			 .set(FS_MODEL200.ADMINISTRATION, mod200.getAdministration().getValue() )
+			 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte( mod200.getStatus() ) )
 			 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
 			 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
 			 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
@@ -123,6 +124,7 @@ public class Mod2002016DAO  {
 			 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
 			 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 			 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
+			 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
@@ -308,6 +310,7 @@ public class Mod2002016DAO  {
 		 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
 		 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 		 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
+		 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		deleteDetail(ctx, mod200.getId());
@@ -420,6 +423,7 @@ public class Mod2002016DAO  {
 		mod200.setJustCanarias(record.getJustCanarias());
 		mod200.setNrsAnexoIV(record.getNrsAnexoiv());
 		mod200.setNrsAnexoV(record.getNrsAnexov());
+		mod200.setJustActivos(record.getJustActivos());
 		return mod200;
 	}
 	
