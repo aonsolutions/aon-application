@@ -6,6 +6,7 @@ import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.Mod303Key;
 import com.code.aon.fiscal.model.FiscalModelDetailCalculator;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implements IMod303Calculator {
 
@@ -90,9 +91,11 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 				double za1 = 0;
 				if (z1 == 0) {
 					z1 = 1;
-					za1 = 90;
+					za1 = AonDateUtils.getDaysBetweenDates(mod303.getPeriod().getStartDate(mod303.getYear()), 
+							mod303.getPeriod().getDueDate(mod303.getYear())) + 1;
+					// za1 = 90;
 					if (zd1 == 0) {
-						zd1 = 90;
+						zd1 = za1;
 					}
 				} else {
 					za1 = mod303.ensureAmount( Mod303Key.CAC1_ZA);

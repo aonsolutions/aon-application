@@ -42,6 +42,7 @@ import com.code.aon.fiscal.vat.tax.VatTaxManager;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializable {
 
@@ -195,7 +196,10 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializa
 								detail = new FiscalModelDetail();
 						    	detail.setFiscalModel(getHeader());
 								detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "ZD");
-								detail.setAccumulatedAmount(seasonDays>0?seasonDays:90);
+								detail.setAccumulatedAmount(seasonDays>0?seasonDays:
+									(AonDateUtils.getDaysBetweenDates(fiscalModel.getPeriod().getStartDate(fiscalModel.getYear()), 
+											fiscalModel.getPeriod().getDueDate(fiscalModel.getYear())) + 1)
+									);
 								addDetail(detail);
 							} else if (info.getInfoKey() == FiscalActivityInfoKey.V05) {
 								detail = new FiscalModelDetail();
