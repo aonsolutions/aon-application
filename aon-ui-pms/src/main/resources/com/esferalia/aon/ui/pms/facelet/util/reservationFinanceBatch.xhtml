@@ -28,7 +28,7 @@
 			</ui:decorate>
 
 			<aon:div>
-				<aon:panelGrid columns="2" styleClass="aon-width-600 aon-padding aon-margin-left"
+				<aon:panelGrid id="ReservationFinanceBatch_dataGrid" columns="2" styleClass="aon-width-600 aon-padding aon-margin-left"
 					columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="ReservationFinanceBatch_batchDescription"
@@ -64,12 +64,32 @@
 					</aon:div>	
 
 				</aon:panelGrid>
+
+				<aon:panelGrid id="ReservationFinanceBatch_batchGrid" columns="2" styleClass="aon-width-600 aon-padding aon-margin-left"
+					columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+					<aon:if test="#{reservationFinanceBatch.financeBatch != null}">
+						<aon:outputLabel for="ReservationFinanceBatch_financeBatchGenerated"
+							value="#{bundle.finance_fbatch_generated}" />
+						<aon:div>
+							<aon:outputText id="ReservationFinanceBatch_financeBatchGenerated"
+								value="#{reservationFinanceBatch.financeBatch.description}" />
+							<aon:commandLink id="financeBatch_link" immediate="true"
+								styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
+								value="&#160;" title="#{bundle.aon_finance_batch}"
+								actionListener="#{reservationFinanceBatch.onLoadFinanceBatch}"
+								action="fbatch_form" />
+						</aon:div>
+					</aon:if>
+
+				</aon:panelGrid>
 			</aon:div>
 
 		</aon:form>
 
 		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 			<ui:param name="logPanelTitle" value="#{bundle.pms_reservation_finance_batch_module}" />
+			<ui:param name="closeButtonReRender" value="ReservationFinanceBatch_batchGrid" />
 		</ui:include>		
 	</ui:define>
 

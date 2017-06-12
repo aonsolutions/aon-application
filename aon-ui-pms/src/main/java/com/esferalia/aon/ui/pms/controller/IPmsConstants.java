@@ -47,6 +47,7 @@ public interface IPmsConstants {
 	String NO_SHOW_INVOICE_LIST_NAME = "noShowInvoice_list";
 	String CANCELLATION_INVOICE_LIST_NAME = "cancellationInvoice_list";
 	String WEBPOL_EXPORTER_LIST_NAME = "webpolExporter_list";
+	String RESERVATION_FINANCE_BATCH_FORM_NAME = "reservationFinanceBatch";
 
 	// ************************************************************
 	// OTHER

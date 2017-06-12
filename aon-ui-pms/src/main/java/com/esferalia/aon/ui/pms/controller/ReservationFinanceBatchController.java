@@ -42,6 +42,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -51,6 +52,7 @@ public class ReservationFinanceBatchController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private AonFile reservationFile;
+	private FinanceBatch financeBatch;
 	private String batchDescription;
 	private PayMethod payMethod;
 
@@ -59,6 +61,13 @@ public class ReservationFinanceBatchController implements Serializable {
 	}
 	public void setReservationFile(AonFile reservationFile) {
 		this.reservationFile = reservationFile;
+	}
+
+	public FinanceBatch getFinanceBatch() {
+		return financeBatch;
+	}
+	public void setFinanceBatch(FinanceBatch financeBatch) {
+		this.financeBatch = financeBatch;
 	}
 
 	public String getBatchDescription() {
@@ -77,6 +86,7 @@ public class ReservationFinanceBatchController implements Serializable {
 
 	public void onEditSearch(ActionEvent event) throws ManagerBeanException {
 		setReservationFile(null);
+		setFinanceBatch(null);
 		setBatchDescription(null);
 		setPayMethod(null);
 		try {
@@ -102,7 +112,6 @@ public class ReservationFinanceBatchController implements Serializable {
 		log.reset();
 		log.info(AonUtil.getMessage(PMS_RESERVATION_FINANCE_BATCH_PROCESS_START));
 
-		FinanceBatch fBatch = null;
 		try {
 			List<String> reservationCodeList = importReservationFile();
 
@@ -111,6 +120,7 @@ public class ReservationFinanceBatchController implements Serializable {
 			subCriteria.addInExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservationCodeList);
 			ProjectionList projectIdList = new ProjectionList(Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_PROJECT_ID)));
 
+			setFinanceBatch(null);
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
@@ -121,13 +131,12 @@ public class ReservationFinanceBatchController implements Serializable {
 				Finance finance = (Finance)ito;
 				log.info(AonUtil.getMessage(PMS_RESERVATION_FINANCE_BATCH_PROCESS_INFO, finance.getReferenceCode(), finance.getInvoice().getProject().getId()));
 
-				if (fBatch == null) {
-					fBatch = createFinanceBatch();
+				if (getFinanceBatch() == null) {
+					setFinanceBatch(createFinanceBatch());
 				}
-
 				FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
 				fBatchDetail.setFinance(finance);
-				fBatchDetail.setFinanceBatch(fBatch);
+				fBatchDetail.setFinanceBatch(getFinanceBatch());
 				fBatchDetail.setAmount(finance.getTotalAmount());
 				fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				fBatchDetail.setCreationUser(ICommonConstants.SYSTEM_USER);
@@ -175,7 +184,13 @@ public class ReservationFinanceBatchController implements Serializable {
 		financeBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
 		financeBatch.setCreationUser(ICommonConstants.SYSTEM_USER);
 		return (FinanceBatch)BeanManager.getManagerBean(FinanceBatch.class).insert(financeBatch);
-		
+	}
+
+	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
+		if (getFinanceBatch() != null && getFinanceBatch().getId() != null) {
+			BasicController controller = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.FINANCE_BATCH_CONTROLLER_NAME);
+			controller.onLoad(event, getFinanceBatch().getId(), IPmsConstants.RESERVATION_FINANCE_BATCH_FORM_NAME, null);
+		}
 	}
 
 }
