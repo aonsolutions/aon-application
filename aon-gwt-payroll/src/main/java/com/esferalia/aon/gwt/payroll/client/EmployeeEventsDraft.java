@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
@@ -147,6 +148,30 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiField
 	Grid eventsGrid;
 	
+	@UiField
+	Button calendarButton;
+	
+	@UiField
+	Button calendarButton1;
+	
+	@UiField
+	Button calendarButton2;
+	
+	@UiField
+	Button calendarButton3;
+	
+	@UiField
+	Button calendarButton4;
+	
+	@UiField
+	Button calendarButton5;
+	
+	@UiField
+	Button calendarButton6;
+	
+	@UiField
+	Button calendarButton7;
+	
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
 	private EmployeeEventsDraftObject employeeEventsDraft;
 	private ArrayList<String> blockVariableList;
@@ -160,6 +185,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
+		
+		calendarButton.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton1.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton2.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton3.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton4.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton5.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton6.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton7.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
 		
 		//Boton para añadir un nuevo valor
 		addNewValueMenuItem.setScheduledCommand(new Command() {
@@ -318,7 +352,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		fillCellsEvents();
 	}
 
-
 	/**
 	 * METEDOS AUXILIARES
 	 */
@@ -352,8 +385,20 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		Boolean blockVariable = false;
 		for (int row = 1; row < 17; row ++){
 			Integer actualMonth = 0;
-			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+			
+			String variableName = "";
+			Element element = eventsGrid.getWidget(row, 0).getElement().getFirstChildElement();
+			if(null != element)
+				variableName = element.getInnerText();
+			else
+				variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+			
 			blockVariable = checkBlockVariables(row);
+			
+			if (blockVariable)
+				eventsGrid.getWidget(row, 0).setStyleName(style.setBlockVariableStyle());
+			else
+				eventsGrid.getWidget(row, 0).removeStyleName(style.setBlockVariableStyle());
 			
 			ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
 			
@@ -417,7 +462,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
 	private boolean checkBlockVariables(int row) {
-		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+		Element element = eventsGrid.getWidget(row, 0).getElement().getFirstChildElement();
+		if(element == null)
+			return false;
+		
+		String variableName = element.getInnerText();
 		return this.blockVariableList.contains(variableName);
 	}
 	

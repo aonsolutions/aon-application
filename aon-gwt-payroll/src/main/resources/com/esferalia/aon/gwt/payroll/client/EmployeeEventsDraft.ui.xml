@@ -431,42 +431,66 @@
 								</g:row>
 								<g:row styleName="{style.filasImparesStyle}">
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>DIAS_TRABAJADOS</g:Label>
+										<g:HTMLPanel>
+											<i:IronLabel>DIAS_TRABAJADOS</i:IronLabel>
+											<g:Button ui:field='calendarButton' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row>
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>DIAS_EFECTIVOS</g:Label>
+									    <g:HTMLPanel>
+											<i:IronLabel>DIAS_EFECTIVOS</i:IronLabel>
+											<g:Button ui:field='calendarButton1' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row styleName="{style.filasImparesStyle}">
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>DIAS_ERE</g:Label>
+									    <g:HTMLPanel>
+											<i:IronLabel>DIAS_ERE</i:IronLabel>
+											<g:Button ui:field='calendarButton2' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row>
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>DIAS_HUELGA</g:Label>
+									    <g:HTMLPanel>
+											<i:IronLabel>DIAS_HUELGA</i:IronLabel>
+											<g:Button ui:field='calendarButton3' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row styleName="{style.filasImparesStyle}">
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>DIAS_AUSENCIA</g:Label>
+										<g:HTMLPanel>
+											<i:IronLabel>DIAS_AUSENCIA</i:IronLabel>
+											<g:Button ui:field='calendarButton4' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row>
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>HORAS_TRABAJADAS</g:Label>
+										<g:HTMLPanel>
+											<i:IronLabel>HORAS_TRABAJADAS</i:IronLabel>
+											<g:Button ui:field='calendarButton5' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row styleName="{style.filasImparesStyle}">
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>HORAS_COMPLEMENTARIAS</g:Label>
+										<g:HTMLPanel>
+											<i:IronLabel>HORAS_COMPLEMENTARIAS</i:IronLabel>
+											<g:Button ui:field='calendarButton6' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row>
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>DIAS_PECNORTA</g:Label>
+										<g:HTMLPanel>
+											<i:IronLabel>DIAS_VACACIONES</i:IronLabel>
+											<g:Button ui:field='calendarButton7' styleName='aon-editDataTable-button aon-icon-calendar'/>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 								<g:row styleName="{style.filasImparesStyle}">
@@ -491,7 +515,7 @@
 								</g:row>
 								<g:row styleName="{style.filasImparesStyle}">
 									<g:customCell styleName="{style.cabeceraFirstStyle}">
-										<g:Label>DIAS_VACACIONES</g:Label>
+										<g:Label>DIAS_PECNORTA</g:Label>
 									</g:customCell>
 								</g:row>
 								<g:row>
