@@ -745,7 +745,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				cleanCalendarSelectedDates();
 				dialogUntill.open();
 				addDates();
 				
