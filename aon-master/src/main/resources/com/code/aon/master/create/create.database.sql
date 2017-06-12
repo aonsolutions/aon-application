@@ -5012,6 +5012,7 @@ CREATE TABLE `fs_model200` (
   `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
   `administration` tinyint(2) NOT NULL COMMENT 'Administracion',
+  `status` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'Estado de la Declaracion',  
   `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF',
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `phone1` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono 1',
@@ -5039,6 +5040,7 @@ CREATE TABLE `fs_model200` (
   `nrs_anexoIV` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NRS anexo IV',
   `nrs_anexoV` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NRS anexo V',
   `bic` char(11) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'BIC - Codigo Identificador del Banco',
+  `just_activos` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de justificante activos',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
@@ -5167,6 +5169,7 @@ CREATE TABLE `fs_vat` (
   `tax_refund_registry` tinyint(1) DEFAULT '0' COMMENT 'Inscrito en registro de devolucion',
   `number` int(4) DEFAULT '0' COMMENT 'Numero de Decl. complementaria o sustitutiva',
   `prorata` double(5,2) DEFAULT '100.00' COMMENT 'Porcentaje de prorrata',
+  `replaced_number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Declaracion complementada o sustituida',  
   PRIMARY KEY (`id`),
   KEY `IDX_FS_VAT_DOMAIN` (`domain`),
   CONSTRAINT `FK_FS_VAT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -8433,7 +8436,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.107.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.108.0');
 
 COMMIT;
 
