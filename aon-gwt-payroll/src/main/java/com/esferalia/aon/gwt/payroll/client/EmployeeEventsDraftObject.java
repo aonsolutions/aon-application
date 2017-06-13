@@ -133,6 +133,7 @@ public class EmployeeEventsDraftObject {
 	private Integer idEmployee;
 	private EmployeesServiceAsync employeesService;
 	public UndoManager<Undoable> undoManager;
+	private EmployeeCalendarDraftObjectData employeeCalendar;
 	
 	public EmployeeEventsDraftObject(Integer idEmployee, EmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
@@ -143,6 +144,14 @@ public class EmployeeEventsDraftObject {
 		this.employeesService = employeesService;
 		
 		this.undoManager = new UndoManager<>();
+	}
+	
+	public void setEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
+		this.employeeCalendar = employeeCalendarDraftobjectData;
+	}
+	
+	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
+		return this.employeeCalendar;
 	}
 
 	/**
