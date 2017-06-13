@@ -122,10 +122,10 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 			for (Produccion prod : produccionList.getProduccion()) {
 				BandejaImportesProduccion importes = factory.createBandejaImportesProduccion();
 				importes.setKey("0");
-				importes.setIdentificativoHotel("");
-				importes.setFechaProduccion("");
-				importes.setConcepto("");
-				importes.setSubconcepto("");
+				importes.setIdentificativoHotel(prod.getIdentificativoHotel());
+				importes.setFechaProduccion(prod.getFechaProduccion());
+				importes.setConcepto("FIN");
+				importes.setSubconcepto("FIN");
 				importes.setCantidad(BigDecimal.valueOf(0));
 				importes.setDescripcion("FIN");
 				importes.setImporte(BigDecimal.valueOf(0));

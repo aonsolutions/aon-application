@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -149,9 +150,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	Grid eventsGrid;
 	
 	@UiField
-	Button calendarButton;
-	
-	@UiField
 	Button calendarButton1;
 	
 	@UiField
@@ -162,9 +160,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiField
 	Button calendarButton4;
-	
-	@UiField
-	Button calendarButton5;
 	
 	@UiField
 	Button calendarButton6;
@@ -186,14 +181,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
-		calendarButton.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
-		calendarButton1.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
-		calendarButton2.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
-		calendarButton3.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
-		calendarButton4.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
-		calendarButton5.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
-		calendarButton6.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
-		calendarButton7.addClickHandler(e -> EmployeeTree.showEmployeeCalendar());
+		calendarButton1.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+		calendarButton2.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+		calendarButton3.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+		calendarButton4.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+		calendarButton6.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+		calendarButton7.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
 		
 		//Boton para añadir un nuevo valor
 		addNewValueMenuItem.setScheduledCommand(new Command() {
@@ -214,11 +207,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		});
 		
 		//#ifndef env.SNAPSHOT
-		saveButton.setVisible(false);
+		//saveButton.setVisible(false);
 		//#endif
 		
 		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
-		//saveButton.setVisible(true);
+		saveButton.setVisible(true);
 		
 	}
 
@@ -360,7 +353,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		this.employeeEventsDraft = employeeEventsDraft;
 		
-		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
+		Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
 		
 		this.employeeEventsDraft.undoManager.addListener(new UndoManager.Listener() {
 			@SuppressWarnings("rawtypes")
@@ -383,7 +376,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	private void fillCellsEvents() {
 		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
 		Boolean blockVariable = false;
-		for (int row = 1; row < 17; row ++){
+		for (int row = 1; row < 15; row ++){
 			Integer actualMonth = 0;
 			
 			String variableName = "";
