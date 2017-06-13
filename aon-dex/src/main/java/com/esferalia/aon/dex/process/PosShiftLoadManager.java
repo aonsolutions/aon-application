@@ -72,7 +72,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 						HibernateUtil.getSession(sessionName).flush();
 						HibernateUtil.commitTransaction(sessionName);
 
-			            if (posShiftDB.getPos().isInvoiceable()) {
+			            if (posShiftDB.getPos().isInvoiceable() && details.size() > 0) {
 			            	Invoice invoice = generateInvoice(ps, details, finances, domain);
 			            	if (invoice != null) {
 								HibernateUtil.beginTransaction(sessionName);
@@ -99,7 +99,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 						HibernateUtil.getSession(sessionName).flush();
 						HibernateUtil.commitTransaction(sessionName);
 
-			            if (posShiftDB.getPos().isInvoiceable()) {
+			            if (posShiftDB.getPos().isInvoiceable() && details.size() > 0) {
 			            	Invoice invoice = obtainInvoice();
 			            	if (invoice == null) {
 				            	invoice = generateInvoice(ps, details, finances, domain);
