@@ -80,6 +80,9 @@ node {
       // Run the maven build
       sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=true -Dmaven.test.failure.ignore=true -Dgwt.working=true -DSNAPSHOT clean deploy"
 
+      // Recording fingerprints of files to track usage
+      fingerprint '**/target/*SNAPSHOT.jar'
+
       // Mark the RPMs deploy 'stage'....
       stage 'Deploy RPMs'
     
