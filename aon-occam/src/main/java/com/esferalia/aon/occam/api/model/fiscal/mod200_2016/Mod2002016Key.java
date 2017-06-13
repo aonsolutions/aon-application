@@ -990,6 +990,11 @@ public enum Mod2002016Key implements IMod200Key {
 	,LM1575(1575) ,LM1576(1576) ,LM1577(1577) ,LM1578(1578)
 	,LM1579(1579) ,LM1580(1580) ,LM1581(1581) ,LM1582(1582)
 	
+	// Comunicación de la cifra de negocios
+	,CN987(987)
+	,CN988(988)
+	,CNEST(-99)
+	,CN989(989)
 	
 	// UTES
 	,UT060(60)

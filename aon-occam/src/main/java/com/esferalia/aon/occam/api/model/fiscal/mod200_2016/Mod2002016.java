@@ -70,6 +70,9 @@ public class Mod2002016 implements IFiscalModel {
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();
 	private LinkedList<UteForeign> uteForeign = new LinkedList<UteForeign>();
 	
+	private LinkedList<String> groupEntities  = new LinkedList<String>(); 	// NIF de las entidades del grupo
+	private LinkedList<String> establishments = new LinkedList<String>();	// NIF de los establecimientos permanentes, en caso de entidad titular
+	
 	private String resultType;
 	private String devType;
 	private String payType;
@@ -277,6 +280,18 @@ public class Mod2002016 implements IFiscalModel {
 	}
 	public void setUteForeign(LinkedList<UteForeign> uteForeign) {
 		this.uteForeign = uteForeign;
+	}
+	public LinkedList<String> getGroupEntities() {
+		return groupEntities;
+	}
+	public void setGroupEntities(LinkedList<String> groupEntities) {
+		this.groupEntities = groupEntities;
+	}
+	public LinkedList<String> getEstablishments() {
+		return establishments;
+	}
+	public void setEstablishments(LinkedList<String> establishments) {
+		this.establishments = establishments;
 	}
 	public EnumMap<Mod2002016Key, DoubleVariable2016> getKeysMap() {
 		return keysMap;

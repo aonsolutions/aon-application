@@ -354,6 +354,7 @@ public class Mod2002016DAO  {
 		Mod2002016 mod200 = new Mod2002016();
 		mod200.setDomain(ctx.getDomainId());
 		mod200.setYear(year);
+		mod200.setStatus(FiscalStatus.PENDING);
 		initializeNewMod200(ctx,mod200);
 		return mod200;
 	}

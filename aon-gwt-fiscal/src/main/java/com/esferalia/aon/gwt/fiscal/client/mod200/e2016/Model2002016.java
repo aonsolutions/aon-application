@@ -56,7 +56,7 @@ public class Model2002016 extends ResizeComposite  {
 		public Mod2002016Object getMod200Object();
 	}
 	
-	private PageAbs[] PAGES = new PageAbs[15];
+	private PageAbs[] PAGES = new PageAbs[20];
 	private int P00 = 0;
 	
 	interface Model2002016Binder extends
@@ -675,7 +675,8 @@ public class Model2002016 extends ResizeComposite  {
 		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
 		linkContainer.add(new WestFocusPanel(17,AON.MSG.page16()		 	 ));
 		linkContainer.add(new WestFocusPanel(18,"U.T.E.S."));
-		linkContainer.add(new WestFocusPanel(19,AON.MSG.idDocument()		 ));
+		linkContainer.add(new WestFocusPanel(19,AON.MSG.bussinessAmount()	 ));
+		linkContainer.add(new WestFocusPanel(20,AON.MSG.idDocument()		 ));
 		linkList.setWidget( linkContainer );
 	}
 	
@@ -733,6 +734,7 @@ public class Model2002016 extends ResizeComposite  {
 			if (i == 16) PAGES[i] = new Page16(cbk); 
 			if (i == 17) PAGES[i] = new Page17(cbk); 
 			if (i == 18) PAGES[i] = new Page18(cbk); 
+			if (i == 19) PAGES[i] = new Page19(cbk); 
 		}
 		return getPage(i);
 	}

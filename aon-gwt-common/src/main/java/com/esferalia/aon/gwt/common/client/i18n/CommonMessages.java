@@ -3462,5 +3462,17 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Suma de deducciones por DI internac (art. 31 LIS) acreditada en periodos anteriores")
 	String utefor5();
 	
+	@DefaultMessage("Comunicaci\u00F3n del importe neto de la cifra de negocios")
+	String bussinessAmount();
+
+	@DefaultMessage("Grupos de sociedades, art. 42 c\u00F3digo de comercio, incluidas entidades de cr\u00E9dito y aseguradoras")
+	String bussinessAmount1();
+	
+	@DefaultMessage("No residentes con m\u00E1s de un establecimiento permanente")
+	String bussinessAmount2();
+	
+	@DefaultMessage("Entidades de cr\u00E9dito, aseguradoras e instituciones de inversi\u00F3n colectiva")
+	String bussinessAmount3();
+	
 }
 

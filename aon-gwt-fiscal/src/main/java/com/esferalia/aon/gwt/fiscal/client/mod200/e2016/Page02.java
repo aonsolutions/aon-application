@@ -309,6 +309,8 @@ public class Page02 extends PageAbs {
 								callback.getMod200Object().getMod200().getParticipationsIn());
 						dataProviderIn.addDataDisplay(tableIn);
 			    		tableIn.redraw();
+						callback.getMod200Object().doubleValueChanged(Mod2002016Key.P1501,
+								callback.getMod200Object().getDoubleValue(Mod2002016Key.P1501));
 					}
 				});
 		    }

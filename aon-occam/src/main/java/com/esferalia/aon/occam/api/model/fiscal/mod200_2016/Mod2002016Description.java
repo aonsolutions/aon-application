@@ -567,6 +567,13 @@ public class Mod2002016Description {
 		
 	}
 	static {
+		DESCRIPTION_MAP.put(Mod2002016Key.CN987,"Importe neto de la cifra de negocios del conjunto de las entidades del grupo");
+		DESCRIPTION_MAP.put(Mod2002016Key.CN988,"Importe neto cifra de negocios del conjunto de establecimientos permanentes de la misma persona f\u00EDsica o entidad titular");
+		DESCRIPTION_MAP.put(Mod2002016Key.CNEST,"N\u00FAmero de establecimientos permanentes a trav\u00E9s de los que opera, en caso de persona f\u00EDsica titular");
+		DESCRIPTION_MAP.put(Mod2002016Key.CN989,"Las entidades que hayan marcado la clave de caracteres de la declaraci\u00F3n [00003], [00004], [00024] \u00F3 [00025] deber\u00E1n consignar a continuaci\u00F3n el importe neto de la cifra de negocios en el ejercicio 2016");
+	}
+	
+	static {
 		DESCRIPTION_MAP.put(Mod2002016Key.UT060,"Indique el porcentaje de imputaci\u00F3n de bases imponibles y "
 				+ "dem\u00E1s conceptos liquidatorios a las personas o entidades que ostenten los derechos econ\u00F3micos "
 				+ "inherentes a la cualidad de socio que sean contribuyentes por el IRPF o del Impuesto sobre "
