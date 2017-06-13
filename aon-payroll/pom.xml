@@ -166,8 +166,8 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.aeat</artifactId>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aeat</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
