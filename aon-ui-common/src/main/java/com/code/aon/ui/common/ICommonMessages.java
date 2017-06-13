@@ -485,6 +485,7 @@ public interface ICommonMessages {
 	String PMS_REGENERATE_BOOKING_PROCESS_END = "pms_regenerate_booking_process_end";
 	String PMS_REGENERATE_BOOKING_PROCESS_START = "pms_regenerate_booking_process_start";
 	String PMS_RESERVATION_FINANCE_BATCH_PROCESS_INFO="pms_reservation_finance_batch_process_info";
+	String PMS_RESERVATION_FINANCE_BATCH_PROCESS_ERROR="pms_reservation_finance_batch_process_error";
 	String PMS_RESERVATION_FINANCE_BATCH_PROCESS_END="pms_reservation_finance_batch_process_end";
 	String PMS_RESERVATION_FINANCE_BATCH_PROCESS_START="pms_reservation_finance_batch_process_start";
 	String PMS_HOTEL = "aon_module_hotel";

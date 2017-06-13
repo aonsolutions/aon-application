@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.PMS_RESERVATION_FINANCE_BATCH_PROCESS_END;
+import static com.code.aon.ui.common.ICommonMessages.PMS_RESERVATION_FINANCE_BATCH_PROCESS_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PMS_RESERVATION_FINANCE_BATCH_PROCESS_INFO;
 import static com.code.aon.ui.common.ICommonMessages.PMS_RESERVATION_FINANCE_BATCH_PROCESS_START;
 
@@ -116,20 +117,21 @@ public class ReservationFinanceBatchController implements Serializable {
 			List<String> reservationCodeList = importReservationFile();
 
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-			Criteria subCriteria = new Criteria();
-			subCriteria.addInExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservationCodeList);
-			ProjectionList projectIdList = new ProjectionList(Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_PROJECT_ID)));
+			Criteria prjCriteria = new Criteria();
+			prjCriteria.addInExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservationCodeList);
+			Projection prjProjectId = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_PROJECT_ID));
 
 			setFinanceBatch(null);
+			List<Integer> reservationIdOkList = new LinkedList<Integer>();
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), getPayMethod().getId());
-			criteria.addInExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_PROJECT_ID), ExpressionUtilities.getSubQueryExpression(ProjectReservation.class, subCriteria, projectIdList));
+			criteria.addInExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_PROJECT_ID), ExpressionUtilities.getSubQueryExpression(ProjectReservation.class, prjCriteria, new ProjectionList(prjProjectId)));
 			for (ITransferObject ito : financeBean.getList(criteria)) {
 				Finance finance = (Finance)ito;
-				log.info(AonUtil.getMessage(PMS_RESERVATION_FINANCE_BATCH_PROCESS_INFO, finance.getReferenceCode(), finance.getInvoice().getProject().getId()));
+				log.info(AonUtil.getMessage(PMS_RESERVATION_FINANCE_BATCH_PROCESS_INFO, finance.getReferenceCode(), finance.getInvoice().getProject().getId().toString()));
 
 				if (getFinanceBatch() == null) {
 					setFinanceBatch(createFinanceBatch());
@@ -141,6 +143,19 @@ public class ReservationFinanceBatchController implements Serializable {
 				fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				fBatchDetail.setCreationUser(ICommonConstants.SYSTEM_USER);
 				fBatchDetailBean.insert(fBatchDetail);
+
+				Integer projectId = finance.getInvoice().getProject().getId();
+				if (!reservationIdOkList.contains(projectId)) {
+					reservationIdOkList.add(projectId);
+				}
+			}
+
+			Projection prjProjectCode = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE));
+			for (Object obj : reservationBean.getList(new ProjectionList(prjProjectId, prjProjectCode), prjCriteria)) {
+				Object[] objs = (Object[])obj;
+				if (!reservationIdOkList.contains((Integer)objs[0])) {
+					log.error(AonUtil.getMessage(PMS_RESERVATION_FINANCE_BATCH_PROCESS_ERROR, objs[0].toString(), objs[1].toString()));
+				}
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
