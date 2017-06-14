@@ -451,10 +451,13 @@ public class JooqEmployeeCalendar {
 						DateUtils.addDays2Date(javaEndDateType, -1);
 						Date sqlEndDateType = new Date(javaEndDateType.getTime());
 						
+						String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
+								DateUtils.copyDateOnly(javaEndDateType));
+						
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 								CONTRACT_DATA.END_DATE)
-								.values(domain, dayType, contract, "", 
+								.values(domain, dayType, contract, expression, 
 										sqlStartDateType, sqlEndDateType).execute();
 					}
 					
@@ -469,6 +472,19 @@ public class JooqEmployeeCalendar {
 		
 	}
 	
+	private static String calculateExpression(java.util.Date startDate, java.util.Date endDate) {
+		int expression = 0;
+		
+		while(!startDate.equals(endDate)){
+			expression++;
+			DateUtils.addDays2Date(startDate, 1);
+		}
+		
+		expression++;
+		
+		return Integer.toString(expression);
+	}
+
 	// ---------- CLASS AUX METHODS ----------
 	
 	private static boolean validDayType(String dayType) {
