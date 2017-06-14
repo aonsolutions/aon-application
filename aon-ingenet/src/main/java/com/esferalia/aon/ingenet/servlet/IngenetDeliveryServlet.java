@@ -42,7 +42,6 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -235,6 +234,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	private Delivery createDelivery(AONContext ctx, ALBARANTYPE albaran, boolean test) {
 		Delivery delivery = new Delivery(); 
 		List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
+		Attach attach = new Attach(); 
 		try {
 			fillDelivery(ctx, albaran, delivery);
 		} catch (Throwable th) {
@@ -242,6 +242,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		try {
 			fillDeliveryDetailList(ctx, albaran, delivery, detailList, test);
+		} catch (Throwable th) {
+			addError(albaran, th.getLocalizedMessage());
+		}
+		try {
+			fillAttach(ctx, albaran, delivery, detailList, attach, test);
 		} catch (Throwable th) {
 			addError(albaran, th.getLocalizedMessage());
 		}
@@ -265,6 +270,14 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
 								manageElaborations(ctx, albaran, linea, test);
 							});
+						} catch (Throwable th) {
+							addError(albaran, th.getLocalizedMessage());
+						}
+						try {
+							attach.setSourceBatch(deliveryId);
+							AON.insertAttach(ctx.getDomainName(),
+									ctx.getDomainId(),
+									ctx.getUser(), attach);
 						} catch (Throwable th) {
 							addError(albaran, th.getLocalizedMessage());
 						}
@@ -423,7 +436,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					});
 		}
 		
-		// TODO packages 
 		if (lineasEnvase != null && lineasEnvase.size() > 0) {
 			List<DATOSLINEAENVASETYPE> lineas = lineasEnvase
 					.stream()
@@ -440,14 +452,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					detail.setDelivery(delivery);
 					detail.setLine(Integer.valueOf(linesCount+Integer.valueOf(linea.getLINEA())).shortValue());
 					detail.setItem(item);
-					String packages = "[ENV=" + (linesCount+Integer.valueOf(linea.getLINEA()));
-					if(linea.getLINEAENVASECONTENEDOR()!=null)
-						packages += ";CONT=" + (linesCount+Integer.valueOf(linea.getLINEAENVASECONTENEDOR()));
-					if(linea.getLINEAALBARANCONTENIDA()!=null)
-						packages += ";LIN=" + linea.getLINEAALBARANCONTENIDA();
-					packages += "]";
-					savePackages(ctx, delivery, packages);
-					delivery.setRemarks(delivery.getRemarks() + "\n" + packages );
 					String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
 					detail.setDescription(description);
 					detail.setWarehouse(warehouse.getId());
@@ -463,26 +467,45 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				
 		return detailList;
 	}
-
 	
-	private void savePackages(AONContext ctx, Delivery delivery, String packages) {
-		try{
-			Attach attach = new Attach();
+	private Attach fillAttach(AONContext ctx, ALBARANTYPE albaran,
+			Delivery delivery, List<DeliveryDetail> detailList, Attach attach,
+			boolean test) {
+		List<DATOSLINEAENVASETYPE> lineasEnvase = null;
+		if(albaran.getLINEASENVASES()!=null){
+			lineasEnvase = albaran.getLINEASENVASES().getDATOSLINEAENVASE();
+		}
+		
+		if (lineasEnvase != null && lineasEnvase.size() > 0) {
+			List<DATOSLINEAENVASETYPE> lineas = lineasEnvase
+					.stream()
+					.sorted((linea1, linea2) -> linea1.getLINEA().compareTo(
+							linea2.getLINEA())).collect(Collectors.toList());
+			Integer linesCount = albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().size();
+			StringBuilder packagesBuilder = new StringBuilder();
+			for(DATOSLINEAENVASETYPE linea: lineas){
+				try {
+					packagesBuilder.append("[ENV=" + (linesCount+Integer.valueOf(linea.getLINEA())));
+					if(linea.getLINEAENVASECONTENEDOR()!=null)
+						packagesBuilder.append(";CONT=" + (linesCount+Integer.valueOf(linea.getLINEAENVASECONTENEDOR())));
+					if(linea.getLINEAALBARANCONTENIDA()!=null)
+						packagesBuilder.append(";LIN=" + linea.getLINEAALBARANCONTENIDA());
+					packagesBuilder.append("]");
+				} catch (Exception e) {
+					addError(albaran, e.getMessage());
+				}
+			}
+			
 			attach.setAttachType(AttachType.DATA);
 			attach.setDomain(new Domain().setId(delivery.getDomain()));
 			attach.setDate(new Date());
-			attach.setData(packages.getBytes());
+			attach.setData(packagesBuilder.toString().getBytes());
 			attach.setMimeType(MimeType.TXT);
 			attach.setSourceType(DataAttachSource.DELIVERY.value());
 			attach.setSourceBatch(delivery.getId());
-			attach.setType(DataAttachType.REQUEST.value());
-			
-			AON.insertAttach(ctx.getDomainName(),
-					ctx.getDomainId(),
-					ctx.getUser(), attach);
-		} catch (Exception e) {
-			LOGGER.error("ERROR (DataAttach) saving packages.", e);
+			attach.setType((byte)0);
 		}
+		return attach;
 	}
 
 	private void failElaborations(AONContext ctx, ALBARANTYPE albaran,
