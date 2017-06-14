@@ -3480,5 +3480,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Entidades de cr\u00E9dito, aseguradoras e instituciones de inversi\u00F3n colectiva")
 	String bussinessAmount3();
 	
+	@DefaultMessage("NIF de las entidades del grupo")
+	String bussinessAmount11();
+
+	@DefaultMessage("NIF de los establecimientos permanentes en caso de entidad titular")
+	String bussinessAmount12();
 }
 

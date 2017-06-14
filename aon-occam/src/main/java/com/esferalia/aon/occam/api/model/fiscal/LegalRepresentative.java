@@ -14,26 +14,30 @@ public class LegalRepresentative implements Serializable  {
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public LegalRepresentative setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getDocument() {
 		return document;
 	}
-	public void setDocument(String document) {
+	public LegalRepresentative setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 	public Date getNotaryDate() {
 		return notaryDate;
 	}
-	public void setNotaryDate(Date notaryDate) {
+	public LegalRepresentative setNotaryDate(Date notaryDate) {
 		this.notaryDate = notaryDate;
+		return this;
 	}
 	public String getNotary() {
 		return notary;
 	}
-	public void setNotary(String notary) {
+	public LegalRepresentative setNotary(String notary) {
 		this.notary = notary;
+		return this;
 	}
 	
 	

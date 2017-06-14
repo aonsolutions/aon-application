@@ -62,6 +62,117 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod2002016DAO  {
+	
+	@FunctionalInterface
+	private static interface IPopulater {
+		boolean populate(Mod2002016 mod,FsModel200RegistryRecord reg);
+	}
+
+	private static enum Mod2002016RegistryType {
+		 ADMINISTRATOR ( 
+			(mod,reg) -> mod.getAdministrators().add(new CompanyAdministrator()
+				.setDocument( reg.getDocument())
+				.setName( reg.getName())
+				.setRepresentative( reg.getRepresentative() == 1 )
+				.setProvince( reg.getProvince() )))
+		,PARTICPATION_OUT( 
+			(mod,reg) -> mod.getParticipationsOut().add(new CompanyParticipation()
+				.setDocument(reg.getDocument())
+				.setName(reg.getName())
+				.setProvince( reg.getProvince() )
+				.setCountry( reg.getCountry() )
+				.setPercent(reg.getPercent())
+				.setNominalValue(reg.getNominalValue())
+				.setBookValue(reg.getBookValue())
+				.setIncomes(reg.getIncomes())
+				.setaValue(reg.getAValue())
+				.setbValue(reg.getBValue())
+				.setccValue(reg.getCcValue())
+				.setcValue(reg.getCValue())
+				.setdValue(reg.getDValue())
+				.setCapital(reg.getCapital())
+				.setReserve(reg.getReserve())
+				.setOtherAmounts(reg.getOtherAmounts())
+				.setResult(reg.getResult())))
+		,PARTICPATION_IN( 
+			(mod,reg) -> mod.getParticipationsIn().add(new CompanyParticipation()				
+				.setDocument(reg.getDocument())
+				.setName(reg.getName())
+				.setProvince(reg.getProvince() )
+				.setCountry( reg.getCountry() )
+				.setRepresentative( reg.getRepresentative() == 1 )
+				.setPercent(reg.getPercent())
+				.setNominalValue(reg.getNominalValue())))
+		,REPRESENTATIVE( 
+			(mod,reg) -> mod.getRepresentatives().add(new LegalRepresentative()					
+				.setDocument(reg.getDocument())
+				.setName(reg.getName())
+				.setNotary(reg.getNotary())
+				.setNotaryDate(reg.getNotaryDate())))
+		,UTE_PARTICIPATION( 
+			(mod,reg) -> mod.getUteParticipations().add(new UteParticipation()					
+				.setDocument(reg.getDocument())
+				.setName(reg.getName())
+				.setProvince(reg.getProvince() )
+				.setCountry( reg.getCountry() )
+				.setRepresentative( reg.getRepresentative() == 1 )
+				.setPercent(reg.getPercent())
+				.setBase(reg.getNominalValue())))
+		,UTE_FOREIGN( 
+			(mod,reg) -> mod.getUteForeign().add(new UteForeign()
+			 	.setIdentification(reg.getName())
+			 	.setCountry( reg.getCountry() )
+				.setVolume(reg.getAValue())
+				.setPyg(reg.getBValue())
+				.setAdjust(reg.getCValue())
+				.setDeduction(reg.getDValue())))
+		,UTE_BASE( 
+			(mod,reg) -> mod.getUteBases().add(new UteBase()
+				.setPercent(reg.getPercent())
+				.setBase(reg.getNominalValue())))
+		,GROUP_ENTITIES( 
+			(mod,reg) -> mod.getGroupEntities().add(reg.getDocument()))
+		,ESTABLISHMENTS( 
+			(mod,reg) -> mod.getEstablishments().add(reg.getDocument()))
+		;
+		
+		private IPopulater populater;
+		private Mod2002016RegistryType( IPopulater populater){
+			this.populater = populater;
+		}
+		
+		private boolean accept(FsModel200RegistryRecord reg) {
+			return reg.getType() == this.ordinal();
+		}
+		private void _populate(Mod2002016 mod,FsModel200RegistryRecord reg) {
+			if ( accept(reg) ) {
+				this.populater.populate(mod, reg);
+			}
+		}
+		
+		public static void populate(Mod2002016 mod,FsModel200RegistryRecord reg) {
+			Mod2002016RegistryType type = Mod2002016RegistryType.safeValueOf(reg.getType());
+			if (type != null) {
+				type._populate(mod, reg);
+			}
+		}
+		
+		private static Mod2002016RegistryType safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		private static Mod2002016RegistryType safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= Mod2002016RegistryType.values().length) return null;
+			return Mod2002016RegistryType.values()[i];
+		}
+
+		private byte byteValue() {
+			return (byte) ordinal();
+		}
+		
+	}
+	
 	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
 		
 		@Override
@@ -141,11 +252,11 @@ public class Mod2002016DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
+				detail.setType( Mod2002016RegistryType.ADMINISTRATOR.byteValue());
 				detail.setDocument(ca.getDocument());
 				detail.setName(ca.getName());
 				detail.setRepresentative( (byte) (ca.isRepresentative()?1:0) );
 				detail.setProvince( (byte) ca.getProvince() );
-				detail.setType((byte) 0);
 				list.add(detail);
 			}
 		}
@@ -154,11 +265,11 @@ public class Mod2002016DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002016RegistryType.PARTICPATION_OUT.byteValue());
 				detail.setDocument(cp.getDocument());
 				detail.setName(cp.getName());
 				detail.setProvince( (byte) cp.getProvince() );
 				detail.setCountry( cp.getCountry() );
-				detail.setType((byte) 1);
 				detail.setPercent(cp.getPercent());
 				detail.setNominalValue(cp.getNominalValue());
 				detail.setBookValue(cp.getBookValue());
@@ -180,11 +291,11 @@ public class Mod2002016DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002016RegistryType.PARTICPATION_IN.byteValue());
 				detail.setDocument(cp.getDocument());
 				detail.setName(cp.getName());
 				detail.setProvince( (byte) cp.getProvince() );
 				detail.setCountry( cp.getCountry() );
-				detail.setType((byte) 2);
 				detail.setRepresentative( (byte) (cp.isRepresentative()?1:0) );
 				detail.setPercent(cp.getPercent());
 				detail.setNominalValue(cp.getNominalValue());
@@ -196,11 +307,11 @@ public class Mod2002016DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002016RegistryType.REPRESENTATIVE.byteValue());
 				detail.setDocument(lr.getDocument());
 				detail.setNotary(lr.getNotary());
 				detail.setNotaryDate( lr.getNotaryDate()==null?null:new java.sql.Date( lr.getNotaryDate().getTime() ) );
 				detail.setName(lr.getName());
-				detail.setType((byte) 3);
 				list.add(detail);
 			}
 		}
@@ -209,6 +320,7 @@ public class Mod2002016DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002016RegistryType.UTE_PARTICIPATION.byteValue());
 				detail.setDocument(ute.getDocument());
 				detail.setProvince( (byte) ute.getProvince() );
 				detail.setCountry( ute.getCountry() );
@@ -216,7 +328,6 @@ public class Mod2002016DAO  {
 				detail.setName(ute.getName());
 				detail.setNominalValue(ute.getBase());
 				detail.setPercent(ute.getPercent());
-				detail.setType((byte) 4);
 				list.add(detail);
 			}
 		}
@@ -226,13 +337,13 @@ public class Mod2002016DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002016RegistryType.UTE_FOREIGN.byteValue());
 				detail.setName(ute.getIdentification());
 				detail.setCountry( ute.getCountry() );
 				detail.setAValue(ute.getVolume());
 				detail.setBValue(ute.getPyg());
 				detail.setCValue(ute.getAdjust());
 				detail.setDValue(ute.getDeduction());
-				detail.setType((byte) 5);
 				list.add(detail);
 			}
 		}
@@ -241,10 +352,35 @@ public class Mod2002016DAO  {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002016RegistryType.UTE_BASE.byteValue());
 				detail.setNominalValue(ute.getBase());
 				detail.setPercent(ute.getPercent());
-				detail.setType((byte) 6);
 				list.add(detail);
+			}
+		}
+		if (mod200.getGroupEntities() != null) {
+			for ( String ge : mod200.getGroupEntities() ) {
+				if (AonStringUtils.isNotBlank(ge)) {
+					detail = new FsModel200RegistryRecord();
+					detail.setFsModel200(mod200.getId());
+					detail.setDomain(mod200.getDomain());
+					detail.setType(Mod2002016RegistryType.GROUP_ENTITIES.byteValue());
+					detail.setDocument(ge);
+					list.add(detail);
+				}
+			}
+		}
+
+		if (mod200.getEstablishments() != null) {
+			for ( String es : mod200.getEstablishments() ) {
+				if (AonStringUtils.isNotBlank(es)) {
+					detail = new FsModel200RegistryRecord();
+					detail.setFsModel200(mod200.getId());
+					detail.setDomain(mod200.getDomain());
+					detail.setType(Mod2002016RegistryType.ESTABLISHMENTS.byteValue());
+					detail.setDocument(es);
+					list.add(detail);
+				}
 			}
 		}
 		if (!list.isEmpty()) {
@@ -433,7 +569,14 @@ public class Mod2002016DAO  {
 		if (record != null) {
 			mod200 = getMod200(record);
 			fillDetail(mod200,ctx);
-			fillRegistryLists(mod200,ctx);
+			final Mod2002016 mod = mod200;
+			ctx.getDslContext() 
+				.selectFrom(FS_MODEL200_REGISTRY)
+				.where(	FS_MODEL200_REGISTRY.FS_MODEL200.equal(mod200.getId()))
+				.fetch()
+				.stream()
+				.forEach(reg -> Mod2002016RegistryType.populate(mod, reg));
+//			fillRegistryLists(mod200,ctx);
 		}
 		return mod200;
 	}
@@ -484,6 +627,7 @@ public class Mod2002016DAO  {
 		mod200.setPygType( bt );
 	}
 	
+/*		
 	private static void fillRegistryLists(Mod2002016 mod200, AONContext ctx) {
 		Result<FsModel200RegistryRecord> res = ctx.getDslContext() 
 				.selectFrom(FS_MODEL200_REGISTRY)
@@ -567,6 +711,7 @@ public class Mod2002016DAO  {
 			}
 		}
 	}
+*/
 	
 	public static Mod2002016 initializeNewMod200(AONContext ctx, Mod2002016 mod200) {
 		Mod2002015 old= Mod2002015DAO.getByYear(ctx, 2015);

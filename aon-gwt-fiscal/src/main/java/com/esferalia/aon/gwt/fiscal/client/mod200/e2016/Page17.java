@@ -112,6 +112,7 @@ public class Page17 extends PageAbs {
 					baseProvider.addDataDisplay(baseTable);
 					addBaseBaseColumn();
 					addPercentBaseColumn();
+					addRemoveBaseColumn();
 
 					newBase = new Button();
 					newBase.setStyleName(AON.AON_CSS.aonIconReset());
@@ -726,4 +727,44 @@ public class Page17 extends PageAbs {
 		baseTable.setColumnWidth(percentColumn, 200, Unit.PX);
 		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
 	}
+	
+	private void addRemoveBaseColumn() {
+		ButtonCell removeButton = new ButtonCell( new DeleteButtonSafeHtmlTemplates())  {
+			  @Override
+			  public void render(Context context, SafeHtml data, SafeHtmlBuilder sb) {
+			    if (data != null) {
+			      sb.append(data);
+			    }
+			  }
+		};
+		Column<UteBase,String> col = new Column<UteBase,String>(removeButton) {
+		  public String getValue(UteBase object) {
+		    return AON.MSG.deleteAction();
+		  }
+		};
+		col.setFieldUpdater(new FieldUpdater<UteBase, String>() {
+			
+		    public void update(int index, UteBase ca, String value) {
+		    	ConfirmDialog cd = new ConfirmDialog();
+		    	cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {}
+					
+					@Override
+					public void onAccept() {
+						callback.getMod200Object().getMod200().getUteBases().remove(index);
+						baseProvider = new ListDataProvider<UteBase>(callback.getMod200Object().getMod200().getUteBases());
+						baseProvider.addDataDisplay(baseTable);
+						baseTable.redraw();
+					}
+				});
+		    }
+		});		
+		baseTable.addColumn(col);
+		baseTable.setColumnWidth(col, 20, Unit.PX);
+		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
+	}
+	
+	
 }
