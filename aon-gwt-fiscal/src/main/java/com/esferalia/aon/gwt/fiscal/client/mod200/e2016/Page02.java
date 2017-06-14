@@ -41,7 +41,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
 public class Page02 extends PageAbs {
-
 	
 	interface Page2Binder extends UiBinder<Widget, Page02> {}
 
@@ -80,15 +79,12 @@ public class Page02 extends PageAbs {
 			@Override
 			public void onAccept(int index, CompanyParticipation cp) {
 				if (index < 0) {
-//					callback.getMod200Object().getMod200().getParticipationsOut().add(cp);
 					dataProviderOut.getList().add(cp);
 				} else {
-					callback.getMod200Object().getMod200().getParticipationsOut().set(index, cp);
 					dataProviderOut.getList().set(index,cp);
 				}
 				tableOut.redraw();
-				callback.getMod200Object().doubleValueChanged(Mod2002016Key.P1501,
-						callback.getMod200Object().getDoubleValue(Mod2002016Key.P1501));
+				calculate();
 			}
 		});
 		
@@ -127,6 +123,12 @@ public class Page02 extends PageAbs {
 		
 		Widget ui = page2Binder.createAndBindUi(this);
 		initWidget(ui);
+	}
+
+	protected void calculate() {
+		populate();
+		callback.getMod200Object().doubleValueChanged(Mod2002016Key.P1501,
+				callback.getMod200Object().getDoubleValue(Mod2002016Key.P1501));
 	}
 
 	private void addInDocumentColumn() {
@@ -304,13 +306,9 @@ public class Page02 extends PageAbs {
 					
 					@Override
 					public void onAccept() {
-						callback.getMod200Object().getMod200().getParticipationsIn().remove(index);
-						dataProviderIn = new ListDataProvider<CompanyParticipation>(
-								callback.getMod200Object().getMod200().getParticipationsIn());
-						dataProviderIn.addDataDisplay(tableIn);
+						dataProviderIn.getList().remove(index);
 			    		tableIn.redraw();
-						callback.getMod200Object().doubleValueChanged(Mod2002016Key.P1501,
-								callback.getMod200Object().getDoubleValue(Mod2002016Key.P1501));
+			    		calculate();
 					}
 				});
 		    }
@@ -429,11 +427,9 @@ public class Page02 extends PageAbs {
 					
 					@Override
 					public void onAccept() {
-						callback.getMod200Object().getMod200().getParticipationsOut().remove(index);
-						dataProviderOut = new ListDataProvider<CompanyParticipation>(
-								callback.getMod200Object().getMod200().getParticipationsOut());
-						dataProviderOut.addDataDisplay(tableOut);
+						dataProviderOut.getList().remove(index);
 			    		tableOut.redraw();
+			    		calculate();
 					}
 				});
 		    }
