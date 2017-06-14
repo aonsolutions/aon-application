@@ -30,6 +30,7 @@ import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
+import com.esferalia.aon.file.seres.util.DeliveryPackages;
 import com.esferalia.aon.file.seres.util.ftp.FtpException;
 import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
 import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
@@ -227,9 +228,19 @@ public class FtpDeliveryUploadHandler implements Serializable {
 					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
 			
+
+			byte[] attachData = DeliveryPackages.obtainPackageDataAttach(
+					AonUtil.getDomainName(), delivery.getDomain(),
+					AonUtil.getRemoteUser(), delivery.getId()).getData();
+			if(attachData==null || "".equals(attachData)){				
+				String msg = "Secuencia de embalajes NO definida";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			
 			// write file
 			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
-			output = writer.createFile(delivery, companyEdiCode,
+			output = writer.createFile(delivery, attachData.toString(), companyEdiCode,
 					customerEdiCode, deliveryPointEdiCode, customerPackage);
 			return output;
 		} catch (IOException e) {

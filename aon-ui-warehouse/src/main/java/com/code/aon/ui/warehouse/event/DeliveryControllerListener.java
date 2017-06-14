@@ -54,6 +54,7 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 			controller.setDefaultPayMethod(null);
 			controller.resetDeliveryPayMethod();
 			controller.initSeries();
+			controller.getPackagesHandler().init();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -63,6 +64,7 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		DeliveryController controller = (DeliveryController)event.getController();
 		try {
+			controller.setSelectedTab(null);
 			controller.loadAddresses(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
 			controller.loadProjects(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
 	        controller.setWarehouse(controller.obtainWarehouse((Delivery)controller.getTo()));
@@ -72,6 +74,7 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 				((Delivery)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
 			}
 			controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
+			controller.getPackagesHandler().init();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -81,6 +84,19 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IController deliveryDetailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		deliveryDetailController.onReset(null);
+	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		DeliveryController controller = (DeliveryController) event.getController();
+		try {
+			if(controller.getPackagesHandler().isPackagesDefined()) {
+				controller.getPackagesHandler().removePackages();
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
+		}
 	}
 	
 	@Override

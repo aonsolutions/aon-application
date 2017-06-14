@@ -101,6 +101,15 @@
 									actionListener="#{delivery.onExportEdiFile}" >
 								</aon:htmlCommandLink>
 							</aon:menuItem>
+							<aon:menuItem value="#{bundle.product_packages}"
+								iconClass="aon-icon-package"
+								reRender="deliveryList"
+								actionListener="#{delivery.packagesHandler.onLoadPackages}" >
+								<f:setPropertyActionListener value="#{true}"
+									target="#{delivery.packagesHandler.showPackages}" />
+								<f:setPropertyActionListener value="deliveryPackages"
+									target="#{delivery.selectedTab}" />
+							</aon:menuItem>
 						</aon:if>
 						
 						<ui:include
@@ -389,7 +398,7 @@
 				</aon:div>
 				
 				<aon:if test="#{!delivery.nevv}">
-					<aon:panelTabSet selectedTab="#{sales.selectedTab}">
+					<aon:panelTabSet selectedTab="#{delivery.selectedTab}">
 						<aon:panelTab id="deliveryDetail" 
 							label="#{bundle.warehouse_delivery_detail}">
 							<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formDetail.xhtml" />
@@ -398,6 +407,13 @@
 							label="#{bundle.carrier_shipment}">
 							<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formShipment.xhtml" />
 						</aon:panelTab>
+						<c:if test="#{delivery.packagesHandler.showPackages}">
+							<aon:panelTab id="deliveryPackages" 
+								label="#{bundle.product_packages}"
+								actionListener="#{delivery.packagesHandler.onLoadPackages}">
+								<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formPackages.xhtml" />
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</aon:if>
 				

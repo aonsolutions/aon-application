@@ -74,6 +74,7 @@ import com.code.aon.ui.registry.controller.CorporateIdentity;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.util.DeliveryPackagesHandler;
 import com.code.aon.ui.warehouse.importer.FtpDeliveryUploadHandler;
 import com.code.aon.ui.warehouse.udapa.UdapaDeliveryHandler;
 import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
@@ -116,6 +117,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private boolean showEdiFtpWindow;
 	
 	private FtpDeliveryUploadHandler ftpEdiUploader;
+	private DeliveryPackagesHandler packagesHandler;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
@@ -297,6 +299,13 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			ftpEdiUploader = new FtpDeliveryUploadHandler(this);
 		}
 		return ftpEdiUploader;
+	}
+	
+	public DeliveryPackagesHandler getPackagesHandler() {
+		if(packagesHandler==null){
+			packagesHandler = new DeliveryPackagesHandler(this);
+		}
+		return packagesHandler;
 	}
 	
 	public boolean isCustomerReadOnly() {

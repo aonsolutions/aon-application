@@ -6,12 +6,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,6 +40,7 @@ import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1D;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1G;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1L;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1P;
+import com.esferalia.aon.file.seres.util.DeliveryPackages;
 import com.esferalia.aon.file.seres.util.SeresUtils;
 
 public class ConnectDeliveryWriter {
@@ -52,10 +49,10 @@ public class ConnectDeliveryWriter {
 			.getLogger(ConnectDeliveryWriter.class);
 
 
-	public FileOutput createFile(Delivery delivery, String companyEdiCode,
+	public FileOutput createFile(Delivery delivery, String packageData, String companyEdiCode,
 			String customerEdiCode, String deliveryPointEdiCode,
 			String customerPackage) throws FileNotFoundException, UnsupportedEncodingException {
-		RECTL rectl = createRECTLRecord(delivery, companyEdiCode,
+		RECTL rectl = createRECTLRecord(delivery, packageData, companyEdiCode,
 				customerEdiCode, deliveryPointEdiCode, customerPackage);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
@@ -66,7 +63,7 @@ public class ConnectDeliveryWriter {
 		return output;
 	}
 
-	private RECTL createRECTLRecord(Delivery delivery, String companyEdiCode,
+	private RECTL createRECTLRecord(Delivery delivery, String packageData, String companyEdiCode,
 			String customerEdiCode, String deliveryPointEdiCode, String customerPackage) {
 		RECTL rectl = new RECTL();
 		rectl.setTipoDeMensaje(RECTL.RECTL_2.AVISO_DE_EXPEDICION_DESADV.getValue());
@@ -79,7 +76,7 @@ public class ConnectDeliveryWriter {
 				customerEdiCode, deliveryPointEdiCode);
 		rectl.seh1dList = createSEH1DList(delivery, companyEdiCode,
 				customerEdiCode, deliveryPointEdiCode);
-		rectl.seh1pList = createSEH1PList(delivery, companyEdiCode,
+		rectl.seh1pList = createSEH1PList(delivery, packageData, companyEdiCode,
 				customerEdiCode, customerPackage);
 //		rectl.seh1lList = createSEH1LList(delivery, companyEdiCode,
 //				customerEdiCode);
@@ -164,9 +161,15 @@ public class ConnectDeliveryWriter {
 		return list;
 	}
 
-	private List<SEH1P> createSEH1PList(Delivery delivery, 
+	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, 
 			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		List<SEH1P> list = new ArrayList<>();
+		
+		// TODO packageData
+		Map<Integer, List<Integer>> seh1pMap = DeliveryPackages.loadPackagesContainerMap(packageData);
+		System.out.println(seh1pMap);
+		Map<Integer, List<Integer>> seh1lMap = DeliveryPackages.loadLinesPackageMap(packageData);
+		System.out.println(seh1lMap);
 		
 		delivery.getDetailList().stream()
 				.map(to -> (DeliveryDetail)to)
@@ -202,7 +205,7 @@ public class ConnectDeliveryWriter {
 					});
 			
 			
-			fillPackageLines(delivery, list2, companyEdiCode, customerEdiCode, customerPackage);
+			fillPackageLines(delivery, packageData, list2, companyEdiCode, customerEdiCode, customerPackage);
 			
 			return list2;
 		}
@@ -210,10 +213,11 @@ public class ConnectDeliveryWriter {
 		return list;
 	}
 	
-	private void fillPackageLines(Delivery delivery, List<SEH1P> packageList,
+	private void fillPackageLines(Delivery delivery, String packageData, List<SEH1P> packageList,
 			String companyEdiCode, String customerEdiCode, String customerPackage){
 		
-		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
+		Map<Integer, List<Integer>> seh1pMap = DeliveryPackages.loadPackagesContainerMap(packageData);
+//		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
 //		System.out.println(seh1pMap);
 		List<Integer> paletLines = new ArrayList<>();
 		paletLines.addAll(seh1pMap.keySet());
@@ -234,7 +238,8 @@ public class ConnectDeliveryWriter {
 		});
 		
 		
-		Map<Integer, List<Integer>> seh1lMap = obtainSeh1lMap(delivery);
+		Map<Integer, List<Integer>> seh1lMap = DeliveryPackages.loadLinesPackageMap(packageData);
+//		Map<Integer, List<Integer>> seh1lMap = obtainSeh1lMap(delivery);
 //		System.out.println(seh1lMap);
 		int paletCount = paletLines.size();
 		int linesCount = seh1lMap.values().size();
@@ -611,57 +616,60 @@ public class ConnectDeliveryWriter {
 		return null;
 	}
 	
-	private Map<Integer, List<Integer>> obtainSeh1pMap(Delivery delivery) {
-		String remarks = delivery.getRemarks();
-		
-		if(remarks!=null && !"".equals(remarks)){
-			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
-			
-			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(CONT=\\d{1,3})\\]");
-			Matcher matcher = pattern.matcher(remarks);
-			while (matcher.find()) {	
-				String value1 = matcher.group(1).replaceFirst("ENV=", "");
-				String value2 = matcher.group(2).replaceFirst("CONT=", "");
-				Integer key = Integer.parseInt(value2);
-				Integer value = Integer.parseInt(value1);
-				List<Integer> list = new LinkedList<>();
-				list.add(value);
-				if(seh1pMap.containsKey(key))
-					seh1pMap.get(key).addAll(list);
-				else
-					seh1pMap.put(key, list);
-			}
-			
-			return seh1pMap;
-		}
-		return null;
-	}
 	
-	private Map<Integer, List<Integer>> obtainSeh1lMap(Delivery delivery) {
-		String remarks = delivery.getRemarks();
-		
-		if(remarks!=null && !"".equals(remarks)){
-			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
-			
-			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]");
-			Matcher matcher = pattern.matcher(remarks);
-			while (matcher.find()) {
-				String value1 = matcher.group(1).replaceFirst("ENV=", "");
-				String value2 = matcher.group(2).replaceFirst("LIN=", "");
-				Integer key = Integer.parseInt(value1);
-				Integer value = Integer.parseInt(value2);
-				List<Integer> list = new LinkedList<>();
-				list.add(value);
-				if(seh1pMap.containsKey(key))
-					seh1pMap.get(key).addAll(list);
-				else
-					seh1pMap.put(key, list);
-			}
-			
-			return seh1pMap;
-		}
-		return null;
-	}
+	// TODO
+//	private Map<Integer, List<Integer>> obtainSeh1pMap(Delivery delivery) {
+//		String remarks = delivery.getRemarks();
+//		
+//		if(remarks!=null && !"".equals(remarks)){
+//			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
+//			
+//			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(CONT=\\d{1,3})\\]");
+//			Matcher matcher = pattern.matcher(remarks);
+//			while (matcher.find()) {	
+//				String value1 = matcher.group(1).replaceFirst("ENV=", "");
+//				String value2 = matcher.group(2).replaceFirst("CONT=", "");
+//				Integer key = Integer.parseInt(value2);
+//				Integer value = Integer.parseInt(value1);
+//				List<Integer> list = new LinkedList<>();
+//				list.add(value);
+//				if(seh1pMap.containsKey(key))
+//					seh1pMap.get(key).addAll(list);
+//				else
+//					seh1pMap.put(key, list);
+//			}
+//			
+//			return seh1pMap;
+//		}
+//		return null;
+//	}
+	
+	// TODO
+//	private Map<Integer, List<Integer>> obtainSeh1lMap(Delivery delivery) {
+//		String remarks = delivery.getRemarks();
+//		
+//		if(remarks!=null && !"".equals(remarks)){
+//			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
+//			
+//			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]");
+//			Matcher matcher = pattern.matcher(remarks);
+//			while (matcher.find()) {
+//				String value1 = matcher.group(1).replaceFirst("ENV=", "");
+//				String value2 = matcher.group(2).replaceFirst("LIN=", "");
+//				Integer key = Integer.parseInt(value1);
+//				Integer value = Integer.parseInt(value2);
+//				List<Integer> list = new LinkedList<>();
+//				list.add(value);
+//				if(seh1pMap.containsKey(key))
+//					seh1pMap.get(key).addAll(list);
+//				else
+//					seh1pMap.put(key, list);
+//			}
+//			
+//			return seh1pMap;
+//		}
+//		return null;
+//	}
 	
 
 }

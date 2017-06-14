@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 
 public class TestIngenetDeliveryServlet  {
@@ -20,6 +21,7 @@ public class TestIngenetDeliveryServlet  {
 //		String filePath = "/temp/albaranes20170220110328.xml";
 //		String filePath = "/temp/albaranes20170224085549.xml";
 		String filePath = "/temp/albaranes-pv17-114-115.xml";
+		filePath = "/temp/delivery.xml";
 		
 		try (
 			BufferedReader xml_br = new BufferedReader(new FileReader(filePath))) {
@@ -40,36 +42,56 @@ public class TestIngenetDeliveryServlet  {
 		path = "http://udapa.esferalia.net:8080/aon-aio";
 //		path = "https://udapa.aonsolutions.net";
 		path += "/ingenet/delivery";
-
+		
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("URL: " + path);
+		System.out.print("Proceed? (y/n) (default yes): ");
+		
+		boolean exit = false;
+		String inputText = null;
+		while(!exit && scanner.hasNextLine()){
+			inputText = scanner.nextLine();
+			if(!"n".equals(inputText) && !"no".equals(inputText)){
+				execute(path);
+				System.out.println("Done.");
+			} else {
+				System.out.println("Aborted.");
+			}
+			exit = true;
+		}
+		scanner.close();
+	}
+			
+	public static void execute(String path) throws Exception {
 		String user = "ingenet";
 		String passwd = "1ng3n3t";
 		
 		String xml = getValue();
 		
-        StringBuilder postData = new StringBuilder();
-        postData.append('&');
-        postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_USERNAME, "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(user, "UTF-8"));
-        postData.append('&');
-        postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_PASSWORD, "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(passwd, "UTF-8"));
-        postData.append('&');
-        postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_VALUE, "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(xml, "UTF-8"));
-        
-        byte[] postDataBytes = postData.toString().getBytes(StandardCharsets.UTF_8.name());
-
-        URL url = new URL(path);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
-        try {
+		StringBuilder postData = new StringBuilder();
+		postData.append('&');
+		postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_USERNAME, "UTF-8"));
+		postData.append('=');
+		postData.append(URLEncoder.encode(user, "UTF-8"));
+		postData.append('&');
+		postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_PASSWORD, "UTF-8"));
+		postData.append('=');
+		postData.append(URLEncoder.encode(passwd, "UTF-8"));
+		postData.append('&');
+		postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_VALUE, "UTF-8"));
+		postData.append('=');
+		postData.append(URLEncoder.encode(xml, "UTF-8"));
+		
+		byte[] postDataBytes = postData.toString().getBytes(StandardCharsets.UTF_8.name());
+		
+		URL url = new URL(path);
+		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setDoOutput(true);
+		conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		try {
 			conn.connect();
 			conn.getOutputStream().write(postDataBytes);
 			System.out.print("Server response: ");

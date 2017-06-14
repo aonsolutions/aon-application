@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:if test="#{aonRole.sysAdmin or (delivery.packagesHandler.packagesInRemark and empty delivery.packagesHandler.dataAttach.id)}">
+		<aon:panel styleClass="aon-width-all aon-margin-top">
+			<aon:commandButton value="#{bundle.aon_refresh}" 
+				styleClass="aon-icon-commandButton aon-icon-sincronize aon-padding-left"
+				actionListener="#{delivery.packagesHandler.onCreateAttachFromRemarks}">
+			</aon:commandButton>
+			<aon:if test="#{aonRole.sysAdmin}">
+				<aon:div>
+					<aon:inputTextarea cols="80" rows="4"
+						value="#{delivery.packagesHandler.dataAttachValue}" />
+				</aon:div>
+			</aon:if>
+		</aon:panel>
+	</aon:if>
+	
+	<aon:panel id="packagesContainerPanel"
+		styleClass="aon-width-all aon-margin-top">
+		<f:facet name="header">
+			<aon:outputText value="Contenedores" />
+		</f:facet>
+
+		<aon:dataTable id="packagesContainerData" var="pair" rows="10"
+			rendered="#{delivery.packagesHandler.packagesContainerModel.rowCount > 0}"
+			value="#{delivery.packagesHandler.packagesContainerModel}" >
+
+			<aon:column styleClass="aon-nowrap">
+				<aon:outputText value="La linea" />
+			</aon:column>
+
+			<aon:column styleClass="aon-width-50">
+				<aon:inputText value="#{pair.first.line}"
+					required="true" disabled="true" size="2" />
+				<!-- TODO: implement CRUD operations -->
+				<!--  
+				<rich:inputNumberSpinner value="#{pair.first.line}"
+					required="true" disabled="true"
+					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+					inputStyle="width:20px" >
+					<a4j:support event="onchange"
+						actionListener="#{delivery.packagesHandler.onPackagesContainerLineChange}"
+						reRender="packagesContainerPanel"
+						ajaxSingle="true" />
+				</rich:inputNumberSpinner>
+				-->
+			</aon:column>
+			
+			<aon:column>
+				<aon:outputText value=" (" />
+				<aon:outputText value="#{pair.first.quantity}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" x #{pair.first.description}) " />
+			</aon:column>
+
+			<aon:column styleClass="aon-nowrap">
+				<aon:outputText value="contiene la linea" />
+			</aon:column>
+
+			<aon:column styleClass="aon-width-50">
+				<aon:inputText value="#{pair.second.line}"
+					required="true" disabled="true" size="2" />
+				<!-- TODO: implement CRUD operations -->
+				<!--  
+				<rich:inputNumberSpinner value="#{pair.second.line}"
+					required="true" disabled="true"
+					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+					inputStyle="width:20px" >
+					<a4j:support event="onchange"
+						actionListener="#{delivery.packagesHandler.onPackagesContainerLineChange}"
+						reRender="packagesContainerPanel"
+						ajaxSingle="true" />
+				</rich:inputNumberSpinner>
+				-->
+			</aon:column>
+			
+			<aon:column>
+				<aon:outputText value=" (" />
+				<aon:outputText value="#{pair.second.quantity}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" x #{pair.second.description}) " />
+			</aon:column>
+		</aon:dataTable>
+
+	</aon:panel>
+	
+	<aon:panel id="linesPackagePanel"
+		styleClass="aon-width-all aon-margin-top">
+		<f:facet name="header">
+			<aon:outputText value="Envases" />
+		</f:facet>
+		<aon:dataTable id="linesPackageData" var="pair" rows="10"
+			rendered="#{delivery.packagesHandler.linesPackageModel.rowCount > 0}"
+			value="#{delivery.packagesHandler.linesPackageModel}" >
+
+			<aon:column styleClass="aon-nowrap">
+				<aon:outputText value="La linea" />
+			</aon:column>
+
+			<aon:column styleClass="aon-width-50">
+				<aon:inputText value="#{pair.first.line}"
+					required="true" disabled="true" size="2" />
+				<!-- TODO: implement CRUD operations -->
+				<!--  
+				<rich:inputNumberSpinner value="#{pair.first.line}"
+					required="true" disabled="true"
+					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+					inputStyle="width:20px"
+					actionListener="#{delivery.packagesHandler.onLinesPackageLineChange}"
+					reRender="linesPackagePanel" />
+				-->
+			</aon:column>
+			
+			<aon:column>
+				<aon:outputText value=" (" />
+				<aon:outputText value="#{pair.first.quantity}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" x #{pair.first.description}) " />
+			</aon:column>
+
+			<aon:column styleClass="aon-nowrap">
+				<aon:outputText value="contiene la linea" />
+			</aon:column>
+
+			<aon:column styleClass="aon-width-50">
+				<aon:inputText value="#{pair.second.line}"
+					required="true" disabled="true" size="2" />
+				<!-- TODO: implement CRUD operations -->
+				<!--  
+				<rich:inputNumberSpinner value="#{pair.second.line}"
+					required="true" disabled="true"
+					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+					inputStyle="width:20px"
+					actionListener="#{delivery.packagesHandler.onLinesPackageLineChange}"
+					reRender="linesPackagePanel" />
+				-->
+			</aon:column>
+			
+			<aon:column>
+				<aon:outputText value=" (" />
+				<aon:outputText value="#{pair.second.quantity}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" x #{pair.second.description}) " />
+			</aon:column>
+		</aon:dataTable>
+
+	</aon:panel>
+	
+</ui:composition>

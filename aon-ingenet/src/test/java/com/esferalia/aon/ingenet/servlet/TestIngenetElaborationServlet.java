@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 public class TestIngenetElaborationServlet {
 
@@ -31,14 +32,18 @@ public class TestIngenetElaborationServlet {
 		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
 				
+				// *****************
 				// RECUPERAR
+				// *****************
 				+ "<ACCION>RECUPERAR</ACCION>"
-				+ "<FECHA>20170310</FECHA>"
+				+ "<FECHA>20170508</FECHA>"
 				+ "<ESTADO>PENDIENTE</ESTADO>"
 				+ "<ESTADO>PROCESANDO</ESTADO>"
 				+ "<ESTADO>FINALIZADO</ESTADO>"
 
+				// *****************
 				// CANCELAR
+				// *****************
 //				+ "<ACCION>CANCELAR</ACCION>"
 //				+ "<ELABORACIONES>"
 //				+ "<REFERENCIAS>"
@@ -53,13 +58,34 @@ public class TestIngenetElaborationServlet {
 
 		return xml;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		String path = "";
 		path += "http://udapa.esferalia.net:8080/aon-aio";
 //		path += "https://udapa.aonsolutions.net";
+//		path += "https://cau.aonsolutions.net";
 		path += "/ingenet/elaboration";
 		
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("URL: " + path);
+		System.out.print("Proceed? (y/n) (default yes): ");
+		
+		boolean exit = false;
+		String inputText = null;
+		while(!exit && scanner.hasNextLine()){
+			inputText = scanner.nextLine();
+			if(!"n".equals(inputText) && !"no".equals(inputText)){
+				execute(path);
+				System.out.println("Done.");
+			} else {
+				System.out.println("Aborted.");
+			}
+			exit = true;
+		}
+		scanner.close();
+	}
+	
+	public static void execute(String path) throws Exception {
 		String user = "ingenet";
 		String passwd = "1ng3n3t";
 		
@@ -74,10 +100,10 @@ public class TestIngenetElaborationServlet {
         postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_PASSWORD, "UTF-8"));
         postData.append('=');
         postData.append(URLEncoder.encode(passwd, "UTF-8"));
-        postData.append('&');
-        postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_VALUE, "UTF-8"));
-        postData.append('=');
-        postData.append(URLEncoder.encode(xml, "UTF-8"));
+//        postData.append('&');
+//        postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_VALUE, "UTF-8"));
+//        postData.append('=');
+//        postData.append(URLEncoder.encode(xml, "UTF-8"));
         
         byte[] postDataBytes = postData.toString().getBytes(StandardCharsets.UTF_8.name());
 
