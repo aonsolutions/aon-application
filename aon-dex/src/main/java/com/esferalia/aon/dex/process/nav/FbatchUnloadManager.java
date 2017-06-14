@@ -120,7 +120,7 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 			for (Remesas remesa : remesasList.getRemesas()) {
 				BandejaOtrosCobrosRemesas lineas = factory.createBandejaOtrosCobrosRemesas();
 				lineas.setKey("0");
-				lineas.setNoRemesa("0");
+				lineas.setNoRemesa(remesa.getNoRemesa());
 				lineas.setNoLinea(remesa.getBandejaDocRemesas().getBandejaDocRemesas().size() + remesa.getBandejaOtrosCobrosRemesas().getBandejaOtrosCobrosRemesas().size() + 1);
 				lineas.setClienteNAV("0");
 				lineas.setConcepto("FIN");
