@@ -969,48 +969,20 @@ public class NormalizedMemory extends ResizeComposite {
 		return generateFileButton;
 	}
 	
-	
-	// SERVLETS GWT FISCAL
-	private static final String CCAA_PRINT = "/CCAAPrint";
-	private static final String CCAA_PRINT_PDF = "/CCAAPrintPdf";
+	// -------------------- DOWNLOAD
 	
 	@UiHandler("downloadButton")
 	void downExcel(ClickEvent event) {		
-		DownloadDialog dd = new DownloadDialog(digitalDepositTreeNode.getIsMemory(), digitalDepositTreeNode.getIsMa()) {
-		
-			@Override 
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				String options = "";
-				for(Integer i = 1; i < 24; i++){
-					CheckBox  cb = (CheckBox) flex_table.getWidget(i, 1);
-					options = options + (cb.getValue() ? "T":"F");
-				}
-				String fileDownloadURL = GWT.getModuleBaseURL()+ CCAA_PRINT
-	                	+ "?schemaId=" + String.valueOf(1)
-	                	+ "&domainId=" + Integer.toString(enterprise.getDomain())
-	                	+ "&domainName=" + getCurrentDomainName()
-	                	+ "&cif=" + enterprise.getDocument()
-						+ "&razonSocial=" + enterprise.getName()
-						+ "&year=" + String.valueOf(year)
-						+ "&type=" + depositType.getText()
-						+ "&options=" + options;
-				Window.open( fileDownloadURL, "_blank",null);
-				hide();
-			}
-		};
-		dd.addStyleName("gwt-PopupPanel-template");
-		dd.setGlassEnabled(true);
-		dd.show();
+		download("excel");
 	}
 	
 	@UiHandler("downloadButtonPdf")
 	void downPdf(ClickEvent event) {
-		DownloadDialog dd = new DownloadDialog(digitalDepositTreeNode.getIsMemory(), digitalDepositTreeNode.getIsMa()) {
+		download("pdf");
+	}
+	
+	private void download(String format){
+		DownloadDialog dd = new DownloadDialog(digitalDepositTreeNode.getIsMemory(), digitalDepositTreeNode.getIsMa(), getD2Deposit().getYear()) {
 			
 			@Override 
 			protected void onCancel() {
@@ -1020,11 +992,12 @@ public class NormalizedMemory extends ResizeComposite {
 			@Override
 			protected void onAccept() {
 				String options = "";
-				for(Integer i = 1; i < 24; i++){
-					CheckBox  cb = (CheckBox) flex_table.getWidget(i, 1);
+				for(Integer i = 1; i < flex_table.getRowCount(); i++){
+					CheckBox cb = (CheckBox) flex_table.getWidget(i, 1);
 					options = options + (cb.getValue() ? "T":"F");
 				}
-				String fileDownloadURL = GWT.getModuleBaseURL() + CCAA_PRINT_PDF
+			
+				String fileDownloadURL = GWT.getModuleBaseURL() + "/CCAAPrint"
 	                	+ "?schemaId=" + String.valueOf(1)
 	                	+ "&domainId=" + Integer.toString(enterprise.getDomain())
 	                	+ "&domainName=" + getCurrentDomainName()
@@ -1032,7 +1005,9 @@ public class NormalizedMemory extends ResizeComposite {
 						+ "&razonSocial=" + enterprise.getName()
 						+ "&year=" + String.valueOf(year)
 						+ "&type=" + depositType.getText()
-						+ "&options=" + options;
+						+ "&options=" + options
+						+ "&format=" + format
+						+ "&isMemory=" + digitalDepositTreeNode.getIsMemory();
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
 			}

@@ -23,6 +23,8 @@ public class D2Deposit implements Serializable{
 	
 	public D2Deposit(Domain domain, String cif, String razonSocial){
 		this.domain = domain;
+		this.enterprise = new Enterprise().setDocument(cif)
+				.setName(razonSocial);
 	}
 
 	//-------------------- Getters & Setters

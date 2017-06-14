@@ -1115,8 +1115,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void AP3(){
-		AP3A();
-		AP3B();
+		if(getD2Deposit().getYear() < 2016){
+			AP3A();
+			AP3B();
+		} else {
+			AP3C();
+		}
 	}
 	
 	public void AP3A(){
@@ -1147,9 +1151,37 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys2, 1, 0, null);
 	}
 	
+	public void AP3C(){
+		addSheet("Aplicaci\u00f3n de resultados");
+		Integer pageMaxNumber = 2; 
+		header(pageMaxNumber);
+		D2DepositKey[][] keys;
+		D2DepositKey[][] keys2;
+		if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
+			keys = D2PDepositConstants.MRN_PYMES_KEYS_1;
+			keys2 = D2PDepositConstants.MRN_PYMES_KEYS_2;
+		}
+		else{
+			keys = D2DepositConstants.MRN_ABREVIATE_KEYS_1;
+			keys2 = D2DepositConstants.MRN_ABREVIATE_KEYS_2;		
+		}
+		D2DepositKey[][] keys3 = D2DepositConstants.MRN_ABREVIATE_KEYS_3;
+	
+		general(pageMaxNumber, 2, new String[]{"BASES DE REPARTO", "Ejercicio " + getD2Deposit().getYear(), 
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0, null);
+		sheet.createRow(rowCount++);
+
+		general(pageMaxNumber, 2, new String[]{"APLICACI\u00d3N A", "Ejercicio " + getD2Deposit().getYear(), 
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys2, 1, 0, null);
+		sheet.createRow(rowCount++);
+
+		general(pageMaxNumber, 2, new String[]{"INFORMACI\u00d3N SOBRE EL PER\u00cdODO MEDIO DE PAGO A PROVEEDORES DURANTE EL EJERCICIO",
+				"Ejercicio " + getD2Deposit().getYear(), "Ejercicio " + (getD2Deposit().getYear()-1)}, keys3, 1, 0, null);
+	}
+	
 	public void AP4(){
-		addSheet("Apartado 4 - Normas de registro y valoraci\u00f3n");
-		freeText("Apartado 4 - Normas de registro y valoraci\u00f3n", D2DepositKey.MAT49049001);
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "4" : "3") + " - Normas de registro y valoraci\u00f3n");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "4" : "3") + " - Normas de registro y valoraci\u00f3n", D2DepositKey.MAT49049001);
 	}
 	
 	public void AP5(){
@@ -1158,12 +1190,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void AP5A(){
-		addSheet("Apartado 5 - Texto Libre");
-		freeText("Apartado 5 - Inmovilizado material, intangible, e inversiones inmobiliarias", D2DepositKey.MAT59059001);
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "5" : "4") + " - Texto Libre");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "5" : "4") + " - Inmovilizado material, intangible, e inversiones inmobiliarias", D2DepositKey.MAT59059001);
 	}
 	
 	public void AP5B(){
-		addSheet("Apartado 5 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "5" : "4") + " - Cuadros Normalizados");
 		Integer pageMaxNumber = 3;
 		header(pageMaxNumber);
 		D2DepositKey[][] keys = D2DepositConstants.MRN5_ABREVIATE_PYMES_KEYS_1;
@@ -1185,13 +1217,13 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	
 	public void AP6(){
 		AP6A();
-		AP6B();
+		if(getD2Deposit().getYear() < 2016) AP6B();
 		AP6C();
 	}
 	
 	public void AP6A(){
-		addSheet("Apartado 6 - Texto Libre");
-		freeText("Apartado 6 - Activos financieros", D2DepositKey.MAT69069001);
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "6" : "5") + " - Texto Libre");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "6" : "5") + " - Activos financieros", D2DepositKey.MAT69069001);
 	}
 	
 	public void AP6B(){
@@ -1233,7 +1265,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void AP6C(){
-		addSheet("Apartado 6.2 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "6.2" : "5") + " - Cuadros Normalizados");
 		Integer pageMaxNumber = 6;
 		header(pageMaxNumber);
 		D2DepositKey[][] keys, keys2;
@@ -1273,12 +1305,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void AP7A(){
-		addSheet("Apartado 7 - Texto Libre");
-		freeText("Apartado 7 - Pasivos financieros", D2DepositKey.MAT79079001);	
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "7" : "6") + " - Texto Libre");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "7" : "6") + " - Pasivos financieros", D2DepositKey.MAT79079001);	
 	}
 	
 	public void AP7B(){
-		addSheet("Apartado 7 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "7" : "6") + " - Cuadros Normalizados");
 		Integer pageMaxNumber = 8;
 		header(pageMaxNumber);
 		
@@ -1296,34 +1328,39 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		String current = "Ejercicio " + getD2Deposit().getYear();
 		String previous = "Ejercicio " + (getD2Deposit().getYear()-1);
-		// 3 2
-		special(2, pageMaxNumber, 8, new String[]{"Pasivos financieros a largo plazo", "Deudas con entidades de cr\u00e9dito",
+		
+		if(getD2Deposit().getYear() < 2016){
+			// 3 2
+			special(2, pageMaxNumber, 8, new String[]{"Pasivos financieros a largo plazo", "Deudas con entidades de cr\u00e9dito",
 				"Obligaciones y otros valores negociables", "Derivados y otros", "TOTAL"},
 				new String[]{"", current, previous, current, previous, current, previous, current, previous}, keys, 3, 2, 4);
-		sheet.createRow(rowCount++);
+			sheet.createRow(rowCount++);
 		
-		// 3 2
-		special(2, pageMaxNumber, 8, new String[]{"Pasivos financieros a corto plazos", "Deudas con entidades de cr\u00e9dito",
+			// 3 2
+			special(2, pageMaxNumber, 8, new String[]{"Pasivos financieros a corto plazos", "Deudas con entidades de cr\u00e9dito",
 				"Obligaciones y otros valores negociables", "Derivados y otros", "TOTAL"},
 				new String[]{"", current, previous, current, previous, current, previous, current, previous}, keys2, 3, 2, 4);
-		sheet.createRow(rowCount++);
+			sheet.createRow(rowCount++);
+		}
 		// 1
 		general(pageMaxNumber, 7, new String[]{"Vencimiento de las deudas al cierre del ejercicio"+getD2Deposit().getYear(),
 				"Uno", "Dos", "Tres", "Cuatro", "Cinco", "M\u00e1s de 5", "TOTAL"}, keys3, 1, 4, null);
 		sheet.createRow(rowCount++);
 		// 3
-		general(pageMaxNumber, 3, new String[]{"Lineas de descuento y p\u00f3lizas al cierre del ejercicio"+ getD2Deposit().getYear(),
+		if(getD2Deposit().getYear() < 2016){
+			general(pageMaxNumber, 3, new String[]{"Lineas de descuento y p\u00f3lizas al cierre del ejercicio"+ getD2Deposit().getYear(),
 				"L\u00ed�mite concedido", "Dispuesto", "Disponible"},keys4, 3, 4, null);
+		}
 	}
 	
 	public void AP8(){
-		addSheet("Apartado 8 - Fondos propios");
-		freeText("Apartado 8 - Fondos propios", D2DepositKey.MAT89089001);	
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "8" : "7") + " - Fondos propios");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "8" : "7") + " - Fondos propios", D2DepositKey.MAT89089001);	
 	}
 	
 	public void AP9(){
-		addSheet("Apartado 9 - Situaci\u00f3n fiscal");
-		freeText("Apartado 9 - Situaci\u00f3n fiscal", D2DepositKey.MAT99099001);	
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "9" : "8") + " - Situaci\u00f3n fiscal");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "9" : "8") + " - Situaci\u00f3n fiscal", D2DepositKey.MAT99099001);	
 	}
 	
 	public void AP10(){
@@ -1379,79 +1416,111 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void AP12A(){
-		addSheet("Apartado 12 - Texto Libre");
-		freeText("Apartado 12 - Operaciones con partes vinculadas", D2DepositKey.MAT129129001);	
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "12" : "9") + " - Texto Libre");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "12" : "9") + " - Operaciones con partes vinculadas", D2DepositKey.MAT129129001);	
 	}
 	
 	public void AP12B(){
-		addSheet("Apartado 12.1 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "12" : "9") + ".1 - Cuadros Normalizados");
 		Integer pageMaxNumber = 7;
 		header(pageMaxNumber);
 	
-		D2DepositKey[][] keys = D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1;
+		D2DepositKey[][] keys =  getD2Deposit().getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1 : D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1_2016;
 		// 11
-		general(pageMaxNumber, 7, new String[]{"Operaciones con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
+		if(getD2Deposit().getYear() < 2016){
+			general(pageMaxNumber, 7, new String[]{"Operaciones con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
 				"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
+		} else {
+			general(pageMaxNumber, 6, new String[]{"Operaciones con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
+				"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+				"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"}, keys, 11, 4, null);
+		}
 	}
 	
 	public void AP12C(){
-		addSheet("Apartado 12.2 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "12" : "9") + ".2 - Cuadros Normalizados");
 		Integer pageMaxNumber = 7;
 		header(pageMaxNumber);
 	
-		D2DepositKey[][] keys = D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_2;
+		D2DepositKey[][] keys =  getD2Deposit().getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_2 : D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_2_2016;
 		
-		general(pageMaxNumber, 7, new String[]{"Operaciones con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
+		if(getD2Deposit().getYear() < 2016){
+			general(pageMaxNumber, 7, new String[]{"Operaciones con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
 				"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
+		} else {
+			general(pageMaxNumber, 6, new String[]{"Operaciones con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
+					"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+				"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"}, keys, 11, 4, null);
+		}
 	}
 	
 	public void AP12D(){
-		addSheet("Apartado 12.3 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "12" : "9") + ".3 - Cuadros Normalizados");
 		Integer pageMaxNumber = 7;
 		header(pageMaxNumber);
 		D2DepositKey [][] keys;
 		if (getD2Deposit().getType().equalsIgnoreCase("PYMES"))
-			keys = D2PDepositConstants.MRN12_PYMES_KEYS_3;
-		else keys = D2DepositConstants.MRN12_ABREVIATE_KEYS_3;
+			 keys =  getD2Deposit().getYear() < 2016 ? D2PDepositConstants.MRN12_PYMES_KEYS_3 :  D2PDepositConstants.MRN12_PYMES_KEYS_3_2016;
+		else keys =  getD2Deposit().getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_KEYS_3 : D2DepositConstants.MRN12_ABREVIATE_KEYS_3_2016;
 				
-		general(pageMaxNumber, 7, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
+		if(getD2Deposit().getYear() < 2016){
+			general(pageMaxNumber, 7, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
 				"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
+		} else {
+			general(pageMaxNumber, 6, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
+				"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+				"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"}, keys, 11, 4, null);
+		}
 	}
 	
 	public void AP12E(){
-		addSheet("Apartado 12.4 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "12" : "9") + ".4 - Cuadros Normalizados");
 		Integer pageMaxNumber = 7;
 		header(pageMaxNumber);
 		D2DepositKey [][] keys;
 		if (getD2Deposit().getType().equalsIgnoreCase("PYMES"))
-			keys = D2PDepositConstants.MRN12_PYMES_KEYS_4;
-		else keys = D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4;
-
-		general(pageMaxNumber, 7, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
+			keys = getD2Deposit().getYear() < 2016 ? D2PDepositConstants.MRN12_PYMES_KEYS_4 : D2PDepositConstants.MRN12_PYMES_KEYS_4_2016;
+		else keys = getD2Deposit().getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4 : D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4_2016;
+		if(getD2Deposit().getYear() < 2016){
+			general(pageMaxNumber, 7, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
 				"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
+		} else {
+			general(pageMaxNumber, 6, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
+					"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+					"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+					"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"}, keys, 11, 4, null);
+		}
 	}
 	
 	public void AP12F(){
-		addSheet("Apartado 12.5 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "12" : "9") + ".5 - Cuadros Normalizados");
 		Integer pageMaxNumber = 7;
 		header(pageMaxNumber);
 		
 		D2DepositKey [][] keys, keys2;
-		if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
-			keys = D2PDepositConstants.MRN12_PYMES_KEYS_5;
-			keys2 = D2PDepositConstants.MRN12_PYMES_KEYS_6;
-		}
-		else{
-			keys = D2DepositConstants.MRN12_ABREVIATE_KEYS_5;
-			keys2 = D2DepositConstants.MRN12_ABREVIATE_KEYS_6;		
+		if(getD2Deposit().getYear() < 2016){
+			if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
+				keys = D2PDepositConstants.MRN12_PYMES_KEYS_5;
+				keys2 = D2PDepositConstants.MRN12_PYMES_KEYS_6;
+			}
+			else{
+				keys = D2DepositConstants.MRN12_ABREVIATE_KEYS_5;
+				keys2 = D2DepositConstants.MRN12_ABREVIATE_KEYS_6;		
+			}
+		} else {
+			keys = D2DepositConstants.MRN12_ABREVIATE_KEYS_5_2016;
+			keys2 = D2DepositConstants.MRN12_ABREVIATE_KEYS_6_2016;		
 		}
 		// 2
 		general(pageMaxNumber, 2, new String[]{"Importes recibidos por el personal de alta direcci\u00f3n",
@@ -1468,16 +1537,20 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void AP13A(){
-		addSheet("Apartado 13 - Texto Libre");
-		freeText("Apartado 13 - Otra informaci\u00f3n", D2DepositKey.MAT139139001);	
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "13" : "10") + " - Texto Libre");
+		freeText("Apartado " + (getD2Deposit().getYear() < 2016 ? "13" : "10") + " - Otra informaci\u00f3n", D2DepositKey.MAT139139001);	
 	}
 	
 	public void AP13B(){
-		addSheet("Apartado 13 - Cuadros Normalizados");
+		addSheet("Apartado " + (getD2Deposit().getYear() < 2016 ? "13" : "10") + " - Cuadros Normalizados");
 		Integer pageMaxNumber = 2;
 		header(pageMaxNumber);
-		D2DepositKey[][] keys = D2DepositConstants.MRN13_ABREVIATE_KEYS;
-		
+		D2DepositKey[][] keys = null;
+		if(getD2Deposit().getYear() < 2016){
+			keys = D2DepositConstants.MRN13_ABREVIATE_KEYS;
+		} else {
+			keys = D2DepositConstants.MRN13_ABREVIATE_KEYS_2016;
+		}
 		// 2
 		general(pageMaxNumber, 2, new String[]{"N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)", "Ejercicio " + getD2Deposit().getYear(), 
 				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 2, 0, null);
@@ -1747,7 +1820,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		row.setHeight(x.shortValue());
 		row = sheet.createRow(rowCount++); cellCount = 0;
 		
-		ssHeader(new String[]{"Fecha", "Relaci\u00f3n numerada de las acciones / participaciones", "T\u00edtulo de adquisici\u00f3n", "% sobre capital"}, 4, 2);
+		ssHeader(new String[]{"Fecha", "Relaci\u00f3n numerada de las acciones / participaciones", "Causa de la baja", "% sobre capital"}, 4, 2);
 
 		for(Integer i = 0; i< D2DepositConstants.A3_ABREVIATE_KEYS.length; i+=4){
 			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
@@ -1836,7 +1909,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		row.setHeight(x.shortValue());
 		row = sheet.createRow(rowCount++); cellCount = 0;
 		
-		String[] strings = new String[]{"Fecha", "Descripci\u00f3n del negocio", "N\u00famero de acciones dadas en garant\u00eda"};
+		String[] strings = new String[]{"Fecha", "Descripci\u00f3n del negocio", "N\u00famero de acciones adquiridas"};
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		row.setHeight(x.shortValue());
@@ -2044,8 +2117,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell(s + " Abreviado", 0, 0);
 		idacell(s + " Abreviado", 1, 2);
 		idacell(s + " Abreviado", 3, 3);
-		idacell(s + " Abreviado", 4, 5);
-		
+		if(getD2Deposit().getYear() < 2016){
+			idacell(s + " Abreviado", 4, 5);
+		}
+
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		
@@ -2053,7 +2128,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell(s + " PYME", 0, 0);
 		idacell(s + " PYME", 1, 2);
 		idacell(s + " PYME", 3, 3);
-		idacell(s + " PYME", 4, 5);
+		if(getD2Deposit().getYear() < 2016){
+			idacell(s + " PYME", 4, 5);
+		}
 		
 		row = sheet.createRow(rowCount++);
 		row.setHeight(x.shortValue());

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.FreeText;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.Header1;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
@@ -24,8 +25,18 @@ import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageH2;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageH3;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageH4;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageH5;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM10;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM11_2;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM12_2;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM13_2;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM14_2;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM15;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM3_2;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM5_2;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM6_2;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageM7_2;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
+import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryItem;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
@@ -436,9 +447,8 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 				@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
 			};
 			memory.setText("Memoria");
-			MemoryItem mi = new MemoryItem();
-			for(Integer pos = 0; pos < mi.getApartadosSize(getD2Deposit().getYear()); pos++){
-				memory.addItem(mi.getTreeNode(this, pos));
+			for(Integer pos = 0; pos < MemoryItem.getInstance().getApartadosSize(getD2Deposit().getYear()); pos++){
+				memory.addItem(getTreeNode(pos));
 			}
 			this.addItem(memory);
 		}
@@ -657,5 +667,514 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 		ma.addItem(ma8);
 		}
 		}
+	}
+	
+	public TreeNode<Enterprise> getTreeNode(Integer pos){
+		Integer year = getD2Deposit().getYear();
+		switch (MemoryItem.getInstance().apartadosName.get(year)[pos]) {
+		case MemoryItem.ACTIVIDAD_EMPRESA:
+			return getActividadEmpresa(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.BASES_PRESENTACION:
+			return getBasesPresentacion(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.APLICACION_RESULTADOS:
+			return getAplicacionResultado(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.NORMAS_REGISTRO:
+			return getNormasRegistro(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.INMOVILIZADO:
+			return getInmovilizado(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.ACTIVOS_FINANCIEROS:
+			return getActivosFinancieros(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.PASIVOS_FINANCIEROS:
+			return getPasivosFinancieros(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.FONDOS_PROPIOS:
+			return getFondosPropios(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.SITUACION_FISCAL:
+			return getSituacionFiscal(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.INGRESOS_GASTOS:
+			return getIngresosGastos(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.SUBVENCIONES:
+			return getSubvenciones(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.PARTES_VINCULANTES:
+			return getPartesVinculantes(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.OTRA_INFORMACION:
+			return getOtraInformacion(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.MEDIOAMBIENTE:
+			return getMedioAmbiente(MemoryItem.getInstance().getApartadoName(year, pos));
+		case MemoryItem.APLAZAMIENTOS:
+			return getAplazamientos(MemoryItem.getInstance().getApartadoName(year, pos));
+		default:
+			return new TreeNode<Enterprise>() {
+				@Override public void select(Deposit deposit) {}
+				@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+				@Override public Enterprise getTreeObject() {return null;}
+			}; 
+		}
+	}
+	
+	private TreeNode<Enterprise> getActividadEmpresa(String description){
+		TreeNode<Enterprise> ae = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+    			ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph1Page = new FreeText(description, true, "MAT1", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(),false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph1Page);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		ae.setText(description);
+		return ae;
+	}
+	
+	private TreeNode<Enterprise> getBasesPresentacion(String description){
+		TreeNode<Enterprise> bpca = new TreeNode<Enterprise>() {
+		
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph2Page = new FreeText(description, true, "MAT2", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph2Page);
+				fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+	
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		bpca.setText(description);
+		return bpca;
+	}
+	
+	public TreeNode<Enterprise> getAplicacionResultado(String description){
+		TreeNode<Enterprise> ar = new TreeNode<Enterprise>() {
+
+			@Override public void select(Deposit fiscalPanel) {}
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		ar.setText(description);
+	
+		TreeNode<Enterprise> tl3 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph3_1Page = new FreeText(description, true, "MAT3", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph3_1Page);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl3.setText("Texto Libre");
+		ar.addItem(tl3);
+		
+		TreeNode<Enterprise> cn3 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM3_2 p32 = new PageM3_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p32);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}	
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn3.setText("Cuadros Normalizados");
+		ar.addItem(cn3);
+		return ar;
+	}
+	
+	private TreeNode<Enterprise> getNormasRegistro(String description){
+		TreeNode<Enterprise> nrv = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph4Page = new FreeText(description, true, "MAT4", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph4Page);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		nrv.setText(description);		
+		return nrv;
+	}
+	
+	private TreeNode<Enterprise> getInmovilizado(String description){
+		TreeNode<Enterprise> imiii = new TreeNode<Enterprise>() {
+			@Override public void select(Deposit fiscalPanel) {}	
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		
+		imiii.setText(description);
+		
+		TreeNode<Enterprise> tl5 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph5_1Page = new FreeText(description, true, "MAT5", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(),false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph5_1Page);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl5.setText("Texto Libre");
+		imiii.addItem(tl5);
+			
+		TreeNode<Enterprise> cn5 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM5_2 p52 = new PageM5_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p52);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn5.setText("Cuadros Normalizados");
+		imiii.addItem(cn5);
+		
+		return imiii;
+	}
+	
+	private TreeNode<Enterprise> getActivosFinancieros(String description){
+		TreeNode<Enterprise> af = new TreeNode<Enterprise>() {
+			@Override public void select(Deposit fiscalPanel) {}
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		af.setText(description);
+		TreeNode<Enterprise> tl6 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				String page = "MAT6";
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph6_1Page = new FreeText(description, true, page, ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(),false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph6_1Page);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {	return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl6.setText("Texto Libre");
+		af.addItem(tl6);	
+		TreeNode<Enterprise> cn6 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {	
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM6_2 p62 = new PageM6_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p62);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn6.setText("Cuadros Normalizados");
+		af.addItem(cn6);
+		
+		return af;
+	}
+	
+	private TreeNode<Enterprise> getPasivosFinancieros(String description){
+		TreeNode<Enterprise> pf = new TreeNode<Enterprise>() {
+			@Override public void select(Deposit fiscalPanel) {}
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		pf.setText(description);
+		TreeNode<Enterprise> tl7 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				String page = "MAT7";
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph7_1Page = new FreeText(description, true, page, ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph7_1Page);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());	
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl7.setText("Texto Libre");
+		pf.addItem(tl7);
+			
+		TreeNode<Enterprise> cn7 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit deposit) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM7_2 p72 = new PageM7_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p72);
+				deposit.setContent(ddtn.getNormalizedMemory());
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn7.setText("Cuadros Normalizados");
+		pf.addItem(cn7);
+		
+		return pf;
+	}
+	
+	private TreeNode<Enterprise> getFondosPropios(String description){
+		TreeNode<Enterprise> fp = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph8Page = new FreeText(description, true, "MAT8", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph8Page);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}	
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		fp.setText(description);
+		
+		return fp;
+	}
+	
+	private TreeNode<Enterprise> getSituacionFiscal(String description){
+		TreeNode<Enterprise> sf = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph9Page = new FreeText(description, true, "MAT9", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph9Page);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		sf.setText(description);
+		
+		return sf;
+	}
+	
+	private TreeNode<Enterprise> getIngresosGastos(String description){
+		TreeNode<Enterprise> ig = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM10 p10 = new PageM10(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p10);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		ig.setText(description);
+		
+		return ig;
+	}
+	
+	private TreeNode<Enterprise> getSubvenciones(String description){
+		TreeNode<Enterprise> sdl = new TreeNode<Enterprise>() {
+			@Override public void select(Deposit fiscalPanel) {}
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		sdl.setText(description);
+		TreeNode<Enterprise> tl11 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph11_1Page = new FreeText(description, true, "MAT11", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph11_1Page);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl11.setText("Texto Libre");
+		sdl.addItem(tl11);
+			
+		TreeNode<Enterprise> cn11 = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM11_2 p112 = new PageM11_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p112);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn11.setText("Cuadros Normalizados");
+		sdl.addItem(cn11);
+		return sdl;
+	}
+	
+	private TreeNode<Enterprise> getPartesVinculantes(String description){
+		TreeNode<Enterprise> opv = new TreeNode<Enterprise>() {
+			@Override public void select(Deposit fiscalPanel) {}	
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		opv.setText(description);
+		TreeNode<Enterprise> tl12 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph12_1Page = new FreeText(description, true, "MAT12", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph12_1Page);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl12.setText("Texto Libre");
+		opv.addItem(tl12);
+			
+		TreeNode<Enterprise> cn12 = new TreeNode<Enterprise>() {
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM12_2 p122 = new PageM12_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p122);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn12.setText("Cuadros Normalizados");
+		opv.addItem(cn12);
+		
+		return opv;
+	}
+	
+	private TreeNode<Enterprise> getOtraInformacion(String description){
+		TreeNode<Enterprise> oi = new TreeNode<Enterprise>() {
+			@Override public void select(Deposit fiscalPanel) {}
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		oi.setText(description);
+		TreeNode<Enterprise> tl13 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph13_1Page = new FreeText(description, true, "MAT13", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph13_1Page);
+				fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl13.setText("Texto Libre");
+		oi.addItem(tl13);
+			
+		TreeNode<Enterprise> cn13 = new TreeNode<Enterprise>() {
+		
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM13_2 p132 = new PageM13_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p132);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn13.setText("Cuadros Normalizados");
+		oi.addItem(cn13);
+		
+		return oi;
+	}
+
+	private TreeNode<Enterprise> getMedioAmbiente(String description){
+		TreeNode<Enterprise> ima = new TreeNode<Enterprise>() {
+			@Override public void select(Deposit fiscalPanel) {}
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		ima.setText(description);
+		TreeNode<Enterprise> tl14 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				FreeText paragraph14_1Page = new FreeText(description, true, "MAT14", ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), false);
+				ddtn.getNormalizedMemory().setPagesPanel(paragraph14_1Page);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+				
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		tl14.setText("Texto Libre");
+		ima.addItem(tl14);
+			
+		TreeNode<Enterprise> cn14 = new TreeNode<Enterprise>() {
+				
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM14_2 p142 = new PageM14_2(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p142);
+	    		fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		cn14.setText("Cuadros Normalizados");
+		ima.addItem(cn14);
+		
+		return ima;
+	}
+	
+	private TreeNode<Enterprise> getAplazamientos(String description){
+		TreeNode<Enterprise> iapep = new TreeNode<Enterprise>() {
+			
+			@Override
+			public void select(Deposit fiscalPanel) {
+				ddtn.getNormalizedMemory().paintHeaderTable("Memoria Normalizada", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), ddtn.getD2Deposit().getYear().toString());
+				PageM15 p15 = new PageM15(ddtn.getD2Deposit().getEnterprise(), ddtn.getNormalizedMemory(), ddtn.getD2Deposit().getYear());
+				ddtn.getNormalizedMemory().setPagesPanel(p15);
+    			fiscalPanel.setContent(ddtn.getNormalizedMemory());
+			}
+			
+			@Override public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {return null;}
+			@Override public Enterprise getTreeObject() {return (Enterprise) getUserObject();}
+		};
+		iapep.setText(description);
+		
+		return iapep;
 	}
 }
