@@ -18,9 +18,7 @@ import javax.xml.bind.JAXBException;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.fiscal.deposit.client.D2DepositTreeObject;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
-import com.esferalia.aon.gwt.fiscal.deposit.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
@@ -29,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
@@ -52,8 +51,7 @@ import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
-		INormalizedMemory {
+public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements INormalizedMemory {
 
 	/**
 	 * 
@@ -72,8 +70,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
 	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 
-	public Integer initialize() {
-		return null;
+	public String getLoggedUser() {
+		return AonServletUtils.getLoggedUser();
 	}
 	
 	public Map<String, String> getSchema(String cif,
@@ -173,11 +171,11 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return DBConsults.getDepositExercises(domain, domainId, getUserLogin());
 	}
 	
-	public void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014, Boolean textMode, Integer year) {
+	public void saveDeposit(String cif, Integer domainId, D2Deposit d2Deposit2014, Boolean textMode, Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();
 		String domain = AonServletUtils.getRequestDomainName(request);
 		Esquema schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
-		schema = D2Deposit2014ToSchema(schema, d2Deposit2014);
+		schema = D2DepositToSchema(schema, d2Deposit2014);
 		try {
 			byte[] b = Utils.writeXml(schema);
 			if (textMode) {
@@ -190,16 +188,16 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		request.getSession().removeAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif + year);
 	}
 	
-	private Esquema D2Deposit2014ToSchema(Esquema schema, D2Deposit2014 d2Deposit2014) {
+	private Esquema D2DepositToSchema(Esquema schema, D2Deposit d2Deposit) {
 		Esquema s = new Esquema();
 		s.setCabecera(schema.getCabecera());
 		Claves claves = new Claves();
 
-		for(String key : d2Deposit2014.getMapDraft().keySet()){
+		for(String key : d2Deposit.getMapDraft().keySet()){
 			if(!key.equals("DepositType")){
 				Clave clave = new Clave();
 				clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
-				clave.setValor(d2Deposit2014.getMapDraft().get(key));
+				clave.setValor(d2Deposit.getMapDraft().get(key));
 				claves.getClave().add(clave);
 			}
 		}
@@ -224,14 +222,14 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			AttachType.REGISTRY, true).map(r -> new MemoryTemplate()
 										.setId(r.getId())
 										.setName(r.getDescription())
-										.setD2Deposit2014(getD2DepositTreeObject(r.getId(), year, r.getData())))
+										.setD2Deposit(getD2DepositTreeObject(r.getId(), year, r.getData())))
 			.collect(Collectors.toCollection(Vector::new));
 	}
 	
-	private D2DepositTreeObject getD2DepositTreeObject(Integer id, Integer year, byte[] data){
+	private D2Deposit getD2DepositTreeObject(Integer id, Integer year, byte[] data){
 		if(data != null){
 			HttpServletRequest request = getThreadLocalRequest();
-			D2DepositTreeObject d2 = new D2DepositTreeObject();
+			D2Deposit d2 = new D2Deposit();
 			
 			Esquema schema = DBConsults.readXml(data);
 			
@@ -260,7 +258,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		Integer id = DBConsults.insertDepositText(domain, name, data, domainId, this.getUserLogin());
 
 		return new MemoryTemplate().setId(id).setName(name)
-				.setD2Deposit2014(getD2DepositTreeObject(id, year, data));
+				.setD2Deposit(getD2DepositTreeObject(id, year, data));
 	}
 	
 	public Map<String, String> updateTexts(MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif, Map<String, String> map) {

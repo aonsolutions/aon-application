@@ -78,7 +78,7 @@ public class D2DepositPreviousToCurrentConstants {
 		,D2DepositKey.MA391006	,D2DepositKey.MA391007
 		,D2DepositKey.MA391008	,D2DepositKey.MA391009
 		,D2DepositKey.MA391010	,D2DepositKey.MA391011
-		,D2DepositKey.MA391012
+		,D2DepositKey.MA391012	,D2DepositKey.MA394705
 	};
 	
 	public static D2DepositKey[] MEM_AP5 = new D2DepositKey[]{

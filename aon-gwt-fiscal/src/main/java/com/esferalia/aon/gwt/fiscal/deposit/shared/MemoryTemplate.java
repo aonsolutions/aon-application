@@ -1,12 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.deposit.shared;
 
-import com.esferalia.aon.gwt.fiscal.deposit.client.D2DepositTreeObject;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class MemoryTemplate implements IsSerializable{
 	Integer id;
 	String name;
-	D2DepositTreeObject d2Deposit2014;
+	D2Deposit d2Deposit;
 	String cif;
 	
 	public String getName() {
@@ -23,11 +23,11 @@ public class MemoryTemplate implements IsSerializable{
 		this.id = id;
 		return this;
 	}
-	public D2DepositTreeObject getD2Deposit2014() {
-		return d2Deposit2014;
+	public D2Deposit getD2Deposit() {
+		return d2Deposit;
 	}
-	public MemoryTemplate setD2Deposit2014(D2DepositTreeObject d2Deposit2014) {
-		this.d2Deposit2014 = d2Deposit2014;
+	public MemoryTemplate setD2Deposit(D2Deposit d2Deposit) {
+		this.d2Deposit = d2Deposit;
 		return this;
 	}
 }

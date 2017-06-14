@@ -6,8 +6,8 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.deposit.client.D2DepositTreeObject;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -77,7 +77,6 @@ public class FreeText extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		// TODO Auto-generated method stub
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		D2DepositKey key = null;
@@ -134,7 +133,6 @@ public class FreeText extends PageAbs {
 				} catch (ParseException e) {
 					// nothing.
 				}
-				
 			}
 		});
 		if(textMode){
@@ -167,12 +165,9 @@ public class FreeText extends PageAbs {
 	}
 	
 	@Override
-	public void dump(D2DepositTreeObject d2DepositObject) {
-		// TODO Auto-generated method stub
-		
+	public void dumpFT(D2Deposit d2Deposit) {
 		if(textMode){
-
-			inma.getSchema(enterprise.getDocument(),enterprise.getDomain(),textMode, d2DepositObject.getYear(), new AsyncCallback<Map<String, String>>() {
+			inma.getSchema(enterprise.getDocument(),enterprise.getDomain(),textMode, d2Deposit.getYear(), new AsyncCallback<Map<String, String>>() {
 				
 				@Override
 				public void onSuccess(Map<String, String> result) {
@@ -184,9 +179,9 @@ public class FreeText extends PageAbs {
 					
 				}
 			});
-		}else super.dump(d2DepositObject);
+		} else{
+			super.dumpFT(d2DepositObject);
+		}
 	}
-	
-	
 	
 }

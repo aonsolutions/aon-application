@@ -8,9 +8,8 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.deposit.client.D2DepositTreeObject;
-import com.esferalia.aon.gwt.fiscal.deposit.shared.D2Deposit2014;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositBehaviour;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
@@ -60,7 +59,7 @@ public abstract class PageAbs extends ResizeComposite {
 		SafeHtml render(String option);
 	}
 
-	protected D2DepositTreeObject d2DepositObject;
+	protected D2Deposit d2DepositObject;
 
 
 	private HashMap<D2DepositKey, DoubleBox> inputs = new HashMap<D2DepositKey, DoubleBox>();
@@ -84,7 +83,7 @@ public abstract class PageAbs extends ResizeComposite {
 		this.year = year;
 	}
 	
-	public void dump(D2DepositTreeObject d2DepositObject) {
+	public void dumpFT(D2Deposit d2DepositObject) {
 		this.d2DepositObject = d2DepositObject;
 		if(d2DepositObject.getModify())
 			map = d2DepositObject.getMapDraft();
@@ -96,11 +95,11 @@ public abstract class PageAbs extends ResizeComposite {
 		initializeTable();
 	}
 	
-	public void dump(D2Deposit2014 d2Deposit2014) {
+	public void dump(D2Deposit d2Deposit) {
 		map = new HashMap<String, String>();
 		mapDraft = new HashMap<String, String>();
-		map.putAll(d2Deposit2014.getMap());
-		mapDraft.putAll(d2Deposit2014.getMapDraft());
+		map.putAll(d2Deposit.getMap());
+		mapDraft.putAll(d2Deposit.getMapDraft());
 		depositType = DepositType.valueOfLabel(map.get(D2DepositConstants.DEPOSIT_TYPE));
 		initializeTable();
 	}
@@ -619,8 +618,8 @@ public abstract class PageAbs extends ResizeComposite {
 		inma.calculate(mapDraft, new AsyncCallback<Map<String,String>>() {
 			@Override
 			public void onSuccess(Map<String, String> result) {
-				normalizedMemory.getD2Deposit2014().setMapDraft(result);
-				normalizedMemory.getD2Deposit2014().setModify(true);
+				normalizedMemory.getD2Deposit().setMapDraft(result);
+				normalizedMemory.getD2Deposit().setModify(true);
 				normalizedMemory.update();
 			}
 

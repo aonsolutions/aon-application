@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client;
 
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 
 public abstract class TreeNodeTypes<T> {
 
@@ -11,23 +12,16 @@ public abstract class TreeNodeTypes<T> {
 		}
 	};
 
-	public static TreeNodeTypes<Enterprise> ENTERPRISE_DATA = new TreeNodeTypes<Enterprise>() {
+	public static TreeNodeTypes<Integer> YEAR = new TreeNodeTypes<Integer>() {
 		@Override
-		public TreeNode<Enterprise> getInstance() {
-			return new EnterpriseDataTreeNode();
-		}
-	};
-
-	public static TreeNodeTypes<EnterpriseYear> YEAR = new TreeNodeTypes<EnterpriseYear>() {
-		@Override
-		public TreeNode<EnterpriseYear> getInstance() {
+		public TreeNode<Integer> getInstance() {
 			return new YearTreeNode();
 		}
 	};
 
-	public static TreeNodeTypes<D2DepositTreeObject> DIGITAL_DEPOSIT = new TreeNodeTypes<D2DepositTreeObject>() {
+	public static TreeNodeTypes<D2Deposit> DIGITAL_DEPOSIT = new TreeNodeTypes<D2Deposit>() {
 		@Override
-		public TreeNode<D2DepositTreeObject> getInstance() {
+		public TreeNode<D2Deposit> getInstance() {
 			return new DigitalDepositTreeNode();
 		}
 	};

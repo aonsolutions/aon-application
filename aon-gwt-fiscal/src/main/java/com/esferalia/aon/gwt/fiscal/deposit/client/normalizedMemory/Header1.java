@@ -538,8 +538,8 @@ public class Header1 extends PageAbs {
 			if(mapDraft.containsKey(key))
 				mapDraft.remove(key);
 			mapDraft.put(key, value);
-			normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
-			normalizedMemory.getD2Deposit2014().setModify(true);
+			normalizedMemory.getD2Deposit().setMapDraft(mapDraft);
+			normalizedMemory.getD2Deposit().setModify(true);
 			//normalizedMemory.update();
 		
 	}

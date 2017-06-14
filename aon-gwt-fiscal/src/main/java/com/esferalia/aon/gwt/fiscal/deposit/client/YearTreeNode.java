@@ -4,12 +4,12 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
 
-public class YearTreeNode extends TreeNode<EnterpriseYear> {
+public class YearTreeNode extends TreeNode<Integer> {
 
 
 	@Override
-	public EnterpriseYear getTreeObject() {
-		return (EnterpriseYear) getUserObject();
+	public Integer getTreeObject() {
+		return (Integer) getUserObject();
 	}
 
 	@Override
@@ -18,12 +18,12 @@ public class YearTreeNode extends TreeNode<EnterpriseYear> {
 	}
 
 	@Override
-	public YearTreeNode render(HasTreeItems parent,final EnterpriseYear enterpriseYear) {
+	public YearTreeNode render(HasTreeItems parent,final Integer year) {
 		InlineLabel label = new InlineLabel();
-		label.setText(AON.MSG.fiscalYear() + " " + enterpriseYear.getYear().toString());
+		label.setText(AON.MSG.fiscalYear() + " " + year.toString());
 		label.addStyleName(AON.AON_CSS.aonTreeModel());
 		setWidget(label);
-		setUserObject(enterpriseYear);
+		setUserObject(year);
 		parent.addItem(this);
 		return this;
 	}

@@ -6,19 +6,16 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.fiscal.deposit.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
 
-	//void getSchema(String cif, String part, Integer domainId, Boolean textMode,
-		//	AsyncCallback<Map<String, String>> callback);
-
-	void initialize(AsyncCallback<Integer> callback);
+	void getSchema(String cif, Integer domainId, Boolean textMode, Integer year, AsyncCallback<Map<String, String>> callback);
 
 	void updateSchema(String cif, Integer domainId, String key, String value, Integer year,
 			AsyncCallback<Void> callback);
@@ -46,12 +43,9 @@ public interface INormalizedMemoryAsync {
 	void delete(Integer domainId, String document, Integer year,
 			AsyncCallback<Void> callback);
 
-	void getSchema(String cif, Integer domainId, Boolean textMode,
-			Integer year, AsyncCallback<Map<String, String>> callback);
-
 	void deleteFreeText(Integer domainId, Integer rattachId, Integer year, AsyncCallback<Void> callback);
 
-	void saveDeposit(String cif, Integer domainId, D2Deposit2014 d2Deposit2014,
+	void saveDeposit(String cif, Integer domainId, D2Deposit d2Deposit,
 			Boolean textMode, Integer year, AsyncCallback<Void> callback);
 
 	void calculate(Map<String, String> map,
@@ -79,7 +73,4 @@ public interface INormalizedMemoryAsync {
 			AsyncCallback<LinkedList<Enterprise>> callback);
 
 	void getDepositExercises(Integer domainId, AsyncCallback<String[]> callback);
-
-
-
 }

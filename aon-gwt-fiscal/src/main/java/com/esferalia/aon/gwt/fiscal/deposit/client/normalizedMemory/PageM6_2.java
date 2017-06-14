@@ -82,6 +82,9 @@ public class PageM6_2 extends PageAbs {
 
 	@UiField TabPanel tabPanel;
 	@UiField InlineLabel abreviateCLabel;
+	@UiField InlineLabel table4Label;
+	@UiField InlineLabel table5Label;
+
 	
 	public PageM6_2() {
 		super();
@@ -118,18 +121,24 @@ public class PageM6_2 extends PageAbs {
 			new String[] {AON.MSG.fiscalYear() + " " + year, AON.MSG.fiscalYear() + " " + (year-1)}
 			, new String[] {"Largo plazo", "Corto plazo"}
 		};
-		
-		if(tabPanel.getTabBar().getSelectedTab() != 0)
-			tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
-		else tabPanel.selectTab(0);
-		
+		if(year < 2016){
+			if(tabPanel.getTabBar().getSelectedTab() != 0)
+				tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
+			else tabPanel.selectTab(0);
+		} else {
+			table5Label.setText("Valoraci\u00f3n y variaciones de valor de inversiones financieras valoradas a valor razonable" );
+			tabPanel.getTabBar().setTabEnabled(0, false);
+			tabPanel.selectTab(1);
+		}
 		if (isPymes()) {
+			table4Label.setText("Movimiento de las cuentas correctoras representativas de las p\u00e9rdidas por deterioro originadas por el riesgo de cr\u00e9dito");
+			table5Label.setText("Valor razonable y variaciones en el valor de activos financieros valorados a valor razonable");
 			defineMRNTable(table, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_1, 2);
 			defineMRNTable(table1, MRN_HEADER_1, AUXILIARES[0], D2PDepositConstants.MRN6_PYMES_KEYS_2, 2);
 			//NO HAY table2
 			defineMRNTable(table3, MRN_HEADER_3, AUXILIARES[1], D2PDepositConstants.MRN6_PYMES_KEYS_4, 2);
 			defineMRNTable(table4, MRN_HEADER_4, null, D2PDepositConstants.MRN6_PYMES_KEYS_5, 1);
-			defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_ABREVIATE_KEYS_6, 1);
+			defineMRNTable(table5, MRN_PYMES_HEADER_5, null, D2DepositConstants.MRN6_PYMES_KEYS_6, 1);
 			abreviateCLabel.setText("");
 		}
 		else {

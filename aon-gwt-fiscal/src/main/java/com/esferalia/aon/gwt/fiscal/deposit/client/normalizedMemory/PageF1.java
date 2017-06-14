@@ -71,9 +71,9 @@ public class PageF1 extends PageAbs {
 						mapDraft.remove(key2);
 					mapDraft.put(key2, value);
 		
-					normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().setMapDraft(mapDraft);
-					normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
-					normalizedMemory.getD2Deposit2014().setModify(true);
+					normalizedMemory.getDigitalDepositTreeNode().getD2Deposit().setMapDraft(mapDraft);
+					normalizedMemory.getD2Deposit().setMapDraft(mapDraft);
+					normalizedMemory.getD2Deposit().setModify(true);
 					normalizedMemory.update();
 					
 								

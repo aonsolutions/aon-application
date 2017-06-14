@@ -23,6 +23,12 @@
 						<g:FlexTable ui:field="table1" />
 					</div>
 				</div>
+				
+				<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupBody}">
+						<g:FlexTable ui:field="table2" />
+					</div>
+				</div>
 		</g:HTMLPanel>
 		</g:Tab>
 	</g:TabPanel>

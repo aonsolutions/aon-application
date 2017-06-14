@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Enterprise;
 
 @SuppressWarnings("serial")
 public class D2Deposit implements Serializable{
 	private Integer id;
 	private Domain domain;
-	private String cif;
-	private String razonSocial;
+	private Enterprise enterprise;
 	private Map<String, String> map;
 	private Map<String, String> mapDraft;
 	private Boolean modify = false;
@@ -23,8 +23,6 @@ public class D2Deposit implements Serializable{
 	
 	public D2Deposit(Domain domain, String cif, String razonSocial){
 		this.domain = domain;
-		this.cif = cif;
-		this.razonSocial = razonSocial;
 	}
 
 	//-------------------- Getters & Setters
@@ -48,21 +46,11 @@ public class D2Deposit implements Serializable{
 	}
 
 	public String getCif() {
-		return cif;
-	}
-
-	public D2Deposit setCif(String cif) {
-		this.cif = cif;
-		return this;
+		return enterprise.getDocument();
 	}
 
 	public String getRazonSocial() {
-		return razonSocial;
-	}
-
-	public D2Deposit setRazonSocial(String razonSocial) {
-		this.razonSocial = razonSocial;
-		return this;
+		return enterprise.getName();
 	}
 
 	public Map<String, String> getMap() {
@@ -107,6 +95,15 @@ public class D2Deposit implements Serializable{
 
 	public D2Deposit setType(String type) {
 		this.type = type;
+		return this;
+	}
+
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	public D2Deposit setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
 		return this;
 	}
 }

@@ -72,7 +72,7 @@ public class PageF1E extends PageAbs {
 		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
 		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
-		table.setWidget(row, 2, new Label("T\u00EDtulo de adquisici\u00F3n"));
+		table.setWidget(row, 2, new Label("Causa de la baja"));
 		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
 		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
@@ -258,7 +258,7 @@ public class PageF1E extends PageAbs {
 		if(mapDraft.containsKey(key))
 			mapDraft.remove(key);
 		mapDraft.put(key, value);
-		normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
-		normalizedMemory.getD2Deposit2014().setModify(true);
+		normalizedMemory.getD2Deposit().setMapDraft(mapDraft);
+		normalizedMemory.getD2Deposit().setModify(true);
 	}
 }

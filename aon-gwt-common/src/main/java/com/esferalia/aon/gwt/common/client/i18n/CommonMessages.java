@@ -2658,6 +2658,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Otras empresas del grupo")
  	String memory12_2Header2();
  	
+ 	@DefaultMessage("Empresas dependientes")
+ 	String memory12_2Header2_2016();
+ 	
  	@DefaultMessage("Negocios conjuntos en los que la empresa sea uno de los participantes")
  	String memory12_2Header3();
  	
@@ -2667,8 +2670,11 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Empresas con control conjunto o influencia significativa sobre la empresa")
  	String memory12_2Header5();
  	
- 	@DefaultMessage("Personal clave de la direcci\u00F3 de la empresa o de la entidad dominante")
+ 	@DefaultMessage("Personal clave de la direcci\u00F3n de la empresa o de la entidad dominante")
  	String memory12_2Header6();
+ 	
+ 	@DefaultMessage("Miembros de los \u00F3rganos de administraci\u00F3n y personal clave de la direcci\u00F3n de la empresa")
+ 	String memory12_2Header6_2016();
  	
  	@DefaultMessage("Otras partes vinculadas")
  	String memory12_2Header7();

@@ -37,7 +37,7 @@
 					<g:DockLayoutPanel unit='PX'>
 						<g:north size='26'>
 							<g:FlowPanel styleName="gwt-MenuBar-horizontal {aonResources.css.aonNoPrint}" ui:field="buttonBar">
-								<aon:OptionsToolbar ui:field="toolbar" />
+								<!--<aon:OptionsToolbar ui:field="toolbar" />-->
 							</g:FlowPanel>
 						</g:north>
 				

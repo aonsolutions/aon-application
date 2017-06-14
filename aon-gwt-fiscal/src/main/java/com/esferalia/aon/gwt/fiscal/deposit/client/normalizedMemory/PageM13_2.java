@@ -50,7 +50,11 @@ public class PageM13_2 extends PageAbs {
 		
 		tabPanel.selectTab(0);
 	
-		defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS);
+		if(year < 2016){
+			defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS);
+		} else {
+			defineMRNTable(table, PERIODS, D2DepositConstants.MRN13_ABREVIATE_KEYS_2016);
+		}
 	}
 	
 	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){

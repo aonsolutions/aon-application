@@ -3,23 +3,18 @@ package com.esferalia.aon.gwt.fiscal.deposit.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
-import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
-import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.DepositDialog;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -31,7 +26,6 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -39,13 +33,12 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Deposit implements EntryPoint , OptionsToolbar.Listener{
+public class Deposit implements EntryPoint {
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 	
 	interface DepositBinder extends UiBinder<Widget, Deposit> {
@@ -58,12 +51,10 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 	Enterprise enterprise;
 	TreeNode<Enterprise> rootNode;
 	TreeNode<Enterprise> enterpriseDataNode;
-	NewContextMenu newContextMenu;
 	
 	@UiField DockLayoutPanel dockLayoutPanel;
 	@UiField SplitLayoutPanel splitLayoutPanel;
 	@UiField ScrollPanel sidebar;
-	@UiField OptionsToolbar toolbar;
 	@UiField Tree tree;
 	@UiField Label subtitle;
 	@UiField(provided = true) SuggestBox enterpriseSuggest;
@@ -89,44 +80,35 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-		toolbar.setVisibleViewButton(false);
-		toolbar.setVisibleCopyButton(false);
-		toolbar.setVisibleDraftButton(false);
-		toolbar.setVisiblePasteButton(false);
-		toolbar.setVisible(false);
-		toolbar.addListener(this);
 				
-		inma.getParentEnterprises(getCurrentDomainName(),getCurrentDomain(),"%"
-				,new AsyncCallback<LinkedList<Enterprise>>() {
-					@Override
-					public void onSuccess(LinkedList<Enterprise> result) {
-						
-						if (result == null || result.size() == 0) {
-							PopupPanel box = DialogMessages.alertErrorWidget(AON.MSG.noData());
-							box.center();
-							box.show();
-						} else if ( result.size() == 1) {
-							enterpriseSuggest.setText(result.get(0).toString());
-							enterpriseSuggest.setEnabled(false);
-							initialize(result.get(0), false);
-						} else {
-							enterpriseSuggest.setText(AON.MSG.startTyping());
-							enterpriseSuggest.setEnabled(true);
-							enterpriseSuggest.getValueBox().selectAll();
-							enterpriseSuggest.setFocus(true);
-							memoryInitialize();
-						}
-					}
+		inma.getParentEnterprises(getCurrentDomainName(),getCurrentDomain(), "%", new AsyncCallback<LinkedList<Enterprise>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<Enterprise> result) {	
+				if (result == null || result.size() == 0) {
+					PopupPanel box = DialogMessages.alertErrorWidget(AON.MSG.noData());
+					box.center();
+					box.show();
+				} else if ( result.size() == 1) {
+					enterpriseSuggest.setText(result.get(0).toString());
+					enterpriseSuggest.setEnabled(false);
+					initialize(result.get(0), false);
+				} else {
+					enterpriseSuggest.setText(AON.MSG.startTyping());
+					enterpriseSuggest.setEnabled(true);
+					enterpriseSuggest.getValueBox().selectAll();
+					enterpriseSuggest.setFocus(true);
+					memoryInitialize();
+				}
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						PopupPanel box = DialogMessages
-								.alertErrorWidget(AON.MSG.unableToShowData(caught
-								.getMessage()));
-						box.center();
-						box.show();
-					}
-				});	
+			@Override
+			public void onFailure(Throwable caught) {
+				PopupPanel box = DialogMessages.alertErrorWidget(AON.MSG.unableToShowData(caught.getMessage()));
+				box.center();
+				box.show();
+			}
+		});	
 	}
 	
 	public SimpleLayoutPanel getContent() {
@@ -141,50 +123,6 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 		return enterprise;
 	}
 
-	public DigitalDepositTreeNode getDepositNode(Integer year) {
-		Boolean bool = true;
-		Boolean bool2 = true;
-		for (int i = 0; i < rootNode.getChildCount(); i++) {
-			if (rootNode.getChild(i) instanceof YearTreeNode){
-				YearTreeNode yearTreeNode = (YearTreeNode) rootNode.getChild(i);
-				yearTreeNode.setState(true);
-				if(yearTreeNode.getTreeObject().getYear().equals(year)){
-					bool = false;
-					for(Integer j = 0 ; j< yearTreeNode.getChildCount();j++){
-						if (yearTreeNode.getChild(j) instanceof DigitalDepositTreeNode) {
-							bool2 = false;
-							DigitalDepositTreeNode node = (DigitalDepositTreeNode) yearTreeNode.getChild(j);
-							node.setState(true);
-							return node;
-						}
-					}
-					if(bool2){
-						EnterpriseYear ey = new EnterpriseYear();
-						ey.setEnterprise(enterprise);
-						ey.setYear(year);
-						DigitalDepositTreeNode digitalDepositNode = 
-								(DigitalDepositTreeNode) TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2DepositTreeObject(enterprise, year));
-						digitalDepositNode.setState(true);
-						return digitalDepositNode;
-					}
-				}
-			}
-		}
-		if(bool){
-			EnterpriseYear ey = new EnterpriseYear();
-			ey.setEnterprise(enterprise);
-			ey.setYear(year);
-			TreeNode<EnterpriseYear> yearTreeNode = TreeNodeTypes.YEAR.getInstance().render(rootNode, ey);
-			yearTreeNode.setState(true);
-			// Nodo:  "Cuentas Anuales"
-			DigitalDepositTreeNode digitalDepositNode = 
-				(DigitalDepositTreeNode) TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2DepositTreeObject(enterprise, year));
-			digitalDepositNode.setState(true);
-			return digitalDepositNode;
-		}
-		return null;
-	}
-
 	public YearTreeNode getYearNode(Integer year) {
 		for (int i = 0; i < rootNode.getChildCount(); i++) {
 			if (rootNode.getChild(i) instanceof YearTreeNode){
@@ -196,70 +134,31 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 		return null;
 	}
 	
-	public NewContextMenu getNewContextMenu() {
-		return newContextMenu;
-	}
-	
-	public OptionsToolbar getToolbar(){
-		return toolbar;
-	}
-	
-	Integer yearAux;
 	private void initialize(final Enterprise enterprise, Boolean isParent) {
-		newContextMenu = new NewContextMenu();
 		this.enterprise = enterprise;
 		subtitle.setText(AON.MSG.enterprise());
 		tree.removeItems();
 		rootNode = TreeNodeTypes.ENTERPRISE.getInstance();
 		rootNode.render(tree, enterprise);
-
-		// Nodo:  "Datos de la empresa"
-		//enterpriseDataNode = TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode, enterprise);
 		
-		for(Integer y = 2014; y < CURRENT_YEAR; y++){
-			yearAux = y;
-			inma.isDigitalDeposit(enterprise.getDomain(), y, new AsyncCallback<Boolean>() {
-				Integer year = yearAux;
-				@Override
-				public void onSuccess(Boolean result) {
-					if(!result) {
-						toolbar.setVisible(true);
-						newContextMenu.addDeposit(year);
-					}
-					if(result || year == CURRENT_YEAR -1){// Has Fiscal Model or deposit
-						// Nodo:  "Ejercicio YEAR"
-						EnterpriseYear ey = new EnterpriseYear();
-						ey.setEnterprise(enterprise);
-						ey.setYear(year);
-						TreeNode<EnterpriseYear> yearTreeNode = TreeNodeTypes.YEAR.getInstance().render(rootNode, ey);
-						yearTreeNode.setState(true);
-								
-						// Nodo:  "Deposito Digital"
-						if(result || year == CURRENT_YEAR -1){ // has deposit || last year
-							TreeNode<D2DepositTreeObject> digitalDepositNode = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2DepositTreeObject(enterprise, year));
-							digitalDepositNode.setState(true);
-							if(year == CURRENT_YEAR -1)
-								tree.setSelectedItem(digitalDepositNode);
-						}
-						if(year == CURRENT_YEAR - 1)
-							yearTreeNode.setState(true);
-					}
-		    	}
-		  
-		    	@Override
-		    	public void onFailure(Throwable caught) {};
-			});
+		for(Integer year = CURRENT_YEAR-1; year >= 2014; year--){
+			TreeNode<Integer> yearTreeNode = TreeNodeTypes.YEAR.getInstance().render(rootNode, year);
+			TreeNode<D2Deposit> digitalDepositNode = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2Deposit()
+					.setDomain(new Domain().setName(getCurrentDomainName()).setId(enterprise.getDomain()))
+					.setEnterprise(enterprise).setYear(year));
+			if(year.equals(CURRENT_YEAR - 1)){
+				tree.setSelectedItem(digitalDepositNode);
+			}
 		}
-		rootNode.setState(true);
 		tree.addItem(rootNode);
 		
-
 		if(isParent){
 			TreeNode<Integer> rootNode2 =  TreeNodeTypes.DIGITAL_DEPOSIT_FREETEXT.getInstance();
 			rootNode2.render(tree, getCurrentDomain());
 			tree.addItem(rootNode2);
 			tree.setSelectedItem(rootNode2);
 		}
+		rootNode.setState(true);
 	}
 	
 	private void memoryInitialize() {
@@ -281,39 +180,37 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 	@UiHandler("enterpriseSuggest")
 	void onSelectEnterprise(SelectionEvent<Suggestion> suggestion) {
 		EnterpriseSuggestion sugg = (EnterpriseSuggestion) suggestion.getSelectedItem();
-		initialize( sugg.getEnterprise(), true);
+		initialize(sugg.getEnterprise(), true);
 	}
 	
 	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
 
 		@Override
-		public void requestSuggestions(final Request request,
-				final Callback callback) {
+		public void requestSuggestions(final Request request, final Callback callback) {
 			String query = '%' + request.getQuery() + '%';
 			   
-			inma.getParentEnterprises(getCurrentDomainName()
-					,getCurrentDomain(),
-					query
-					,new AsyncCallback<LinkedList<Enterprise>>() {
+			inma.getParentEnterprises(getCurrentDomainName(), getCurrentDomain(), query, new AsyncCallback<LinkedList<Enterprise>>() {
 
-						public void onFailure(Throwable caught) {
-							PopupPanel box = DialogMessages
-									.alertErrorWidget(caught.getMessage());
-							box.center();
-							box.show();
+				@Override
+				public void onFailure(Throwable caught) {
+					PopupPanel box = DialogMessages
+							.alertErrorWidget(caught.getMessage());
+					box.center();
+					box.show();
+				}
+				
+				@Override
+				public void onSuccess(LinkedList<Enterprise> result) {
+					ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
+					if (result != null) {
+						for (final Enterprise enterprise : result) {
+							suggestions.add(new EnterpriseSuggestion(enterprise));
 						}
-
-						public void onSuccess(LinkedList<Enterprise> result) {
-							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
-							if (result != null) {
-								for (final Enterprise enterprise : result) {
-									suggestions.add(new EnterpriseSuggestion(enterprise));
-								}
-							}
-							Response resp = new Response(suggestions);
-							callback.onSuggestionsReady(request, resp);
-						}
-					});
+					}
+					Response resp = new Response(suggestions);
+					callback.onSuggestionsReady(request, resp);
+				}
+			});
 		}
 	}
 
@@ -396,118 +293,4 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 		return widget;
 	}
 	
-	public class NewContextMenu extends ContextMenu {
-		public NewContextMenu() {	
-			addStyleName(AON.AON_CSS.aonSelector());
-		}
-		
-		public void addItem(FiscalModelType model, String text, ScheduledCommand cmd) {
-			super.addItem(model.getValue(), text, cmd);
-		}
-		
-		public NewContextMenu addDeposit(final Integer year){
-			addItem("Nuevo Deposito "+year, new ScheduledCommand() {
-				@Override
-				public void execute() {
-					String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-					PopupPanel popup =  new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null, year){
-						
-						@Override
-						protected void onCancel() {
-							hide();
-						}
-						
-						@Override
-						protected void onAccept() {
-							final ListBox lb = (ListBox) flex_table.getWidget(0, 1);
-							 final TextBox tb = (TextBox) flex_table.getWidget(1, 1);
-							 ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
-							 final Integer year = Integer.parseInt(lb3.getSelectedItemText());
-							 hide();
-							 inma.isDigitalDeposit(enterprise.getDomain(), year, new AsyncCallback<Boolean>() {
-																
-								 @Override
-								 public void onSuccess(Boolean result) {
-									 if(result){
-										 DigitalDepositTreeNode ddtn = getDepositNode(year);
-										 ddtn.select(Deposit.this);
-									 } else{
-										 inma.createD2Deposit(enterprise.getDomain(),
-												 enterprise.getId(), tb.getValue(),
-												 lb.getSelectedItemText(),year,
-												 new AsyncCallback<Map<String, String>>() {
-											 @Override
-											 public void onFailure(Throwable caught) {
-												 
-											 }
-											 @Override
-											 public void onSuccess(Map<String, String> result) {
-												 DigitalDepositTreeNode ddtn = getDepositNode(year);
-												 tree.setSelectedItem(ddtn);
-												 removeDeposit(year);
-											 }
-										 });
-									 }									
-								 }
-								 								
-								 @Override public void onFailure(Throwable caught) {}
-							 });
-						}
-						};
-					popup.addStyleName("gwt-PopupPanel-template");
-					popup.setGlassEnabled(true);
-					popup.show();
-				}
-			});
-			return this; 
-		}
-
-		public void removeDeposit(Integer year){ 
-			newContextMenu = new NewContextMenu();
-			toolbar.setVisible(false);
-			for(Integer y = 2014; y < CURRENT_YEAR; y++){
-				if(!y.equals(year)){
-					final Integer yearAux = y; 
-					inma.isDigitalDeposit(enterprise.getDomain(), y, new AsyncCallback<Boolean>() {
-						Integer year = yearAux;
-						@Override public void onSuccess(Boolean result) {
-							if(!result) {
-								toolbar.setVisible(true);
-								newContextMenu.addDeposit(year);
-							}
-			    		}
-			    		@Override public void onFailure(Throwable caught) {};
-					});	
-				}
-			}
-		}	
-	}
-
-	@Override
-	public void onNewButtonClick(ClickEvent event) {
-		NativeEvent nativeEvent = event.getNativeEvent();
-		newContextMenu.setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
-		newContextMenu.show();
-	}
-
-	@Override
-	public void onPasteButtonClick(ClickEvent event) {
-		
-	}
-
-	@Override
-	public void onCopyButtonClick(ClickEvent event) {
-		
-	}
-
-	@Override
-	public void onDraftButtonClick(ClickEvent event) {
-		
-	}
-
-	@Override
-	public void onCollapseAllButtonClick(ClickEvent event) {
-		
-	}
 }

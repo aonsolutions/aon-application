@@ -35,6 +35,7 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA391010,"Remanente y otros"); 
 		DESCRIPTION_MAP.put(D2DepositKey.MA391011,"Compensaci\u00f3n de p\u00e9rdidas de ejercicios anteriores");
 		DESCRIPTION_MAP.put(D2DepositKey.MA391012,"TOTAL APLICAC\u00d3N = TOTAL BASES DE REPARTO");
+		DESCRIPTION_MAP.put(D2DepositKey.MA394705,"Per\u00edodo medio de pago a proveedores (d\u00edas)");
 	}
 	
 	static {
@@ -548,7 +549,7 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121800,"VIII. (Dividendo a cuenta)");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121900,"IX. Otros instrumentos de patrimonio");
 		
-		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BP2122000,"A2). Ajustes en patrimonio neto");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BP2122000,"A-2). Ajustes en patrimonio neto");
 		
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2122000,"A-2) Ajustes por cambios de valor");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2123000,"A-3) Subvenciones, donaciones y legados recibidos");

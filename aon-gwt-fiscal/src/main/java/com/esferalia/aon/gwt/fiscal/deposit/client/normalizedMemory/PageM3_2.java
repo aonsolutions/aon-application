@@ -20,13 +20,14 @@ public class PageM3_2 extends PageAbs {
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
-	@UiField
-	TabPanel tabPanel;
-	@UiField(provided = true)
-	FlexTable table1;
+	@UiField TabPanel tabPanel;
+	@UiField(provided = true) FlexTable table1;
+	@UiField(provided = true) FlexTable table2;
+	
 	public PageM3_2() {
 		super();
 		table1 = new FlexTable();
+		table2 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
@@ -51,6 +52,12 @@ public class PageM3_2 extends PageAbs {
 			AON.MSG.fiscalYear() + " " + year ,
 			AON.MSG.fiscalYear() + " " + (year -1)
 		};
+		
+		String[] MRN_HEADER_3 = new String[] {
+			"Informaci\u00f3n sobre el per\u00edodo medio de pago a proveedores durante el ejercicio".toUpperCase(), 
+			AON.MSG.fiscalYear() + " " + year ,
+			AON.MSG.fiscalYear() + " " + (year -1)
+		};
 		tabPanel.selectTab(0);
 		
 		if (isPymes()) {
@@ -60,18 +67,23 @@ public class PageM3_2 extends PageAbs {
 			defineMRNTable(table, MRN_HEADER_1, D2DepositConstants.MRN_ABREVIATE_KEYS_1);
 			defineMRNTable(table1, MRN_HEADER_2, D2DepositConstants.MRN_ABREVIATE_KEYS_2);
 		}		
+		if(year >= 2016){
+			defineMRNTable(table2, MRN_HEADER_3, D2DepositConstants.MRN_ABREVIATE_KEYS_3);
+		} else table2.setVisible(false);
 	}
 	
 	protected void defineMRNTable( FlexTable tab, String[] headers, D2DepositKey[][] keys){
-		tab.setWidth("100%");
+	//	tab.setWidth("100%");
 		tab.setCellSpacing(0);
 		int row = 0;
 		int col = 0;
-		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidthAuto());
+		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidthAll());
 		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonNowrap());		
 		
 		for (String primary : headers) {
-			tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
+			if(col > 0){
+				tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
+			}
 			tab.setWidget(row, col, new Label(primary));	
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());

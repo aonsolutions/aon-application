@@ -16,55 +16,61 @@
 
 					<div class="{aonResources.css.aonGroupBody}">
 
-
-						<div class="{aonResources.css.aonGroup}">
-							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory7_2Table1}" />
-							</div>
-							<div class="{aonResources.css.aonGroupBody}">
-								<div
-									class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
-									<g:FlexTable ui:field="table" />
+						<g:HTMLPanel ui:field="tablePanel">
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="{msg.memory7_2Table1}" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<div
+										class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+										<g:FlexTable ui:field="table" />
+									</div>
 								</div>
 							</div>
-						</div>
+						</g:HTMLPanel>
 
-						<div class="{aonResources.css.aonGroup}">
-							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory7_2Table2}" />
-							</div>
-							<div class="{aonResources.css.aonGroupBody}">
-								<div
-									class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
-									<g:FlexTable ui:field="table1" />
+						<g:HTMLPanel ui:field="table1Panel">
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="{msg.memory7_2Table2}" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<div
+										class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+										<g:FlexTable ui:field="table1" />
+									</div>
 								</div>
 							</div>
-						</div>
-
-						<div class="{aonResources.css.aonGroup}">
-							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory7_2Table3}" />
-							</div>
-							<div class="{aonResources.css.aonGroupBody}">
-								<div
-									class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
-									<g:FlexTable ui:field="table2" />
+						</g:HTMLPanel>
+						
+						<g:HTMLPanel ui:field="table2Panel">
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="{msg.memory7_2Table3}" ui:field="table2Label"/>
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<div
+										class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+										<g:FlexTable ui:field="table2" />
+									</div>
 								</div>
 							</div>
-						</div>
-
-						<div class="{aonResources.css.aonGroup}">
-							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory7_2Table4}" ui:field="table4Label" />
-							</div>
-							<div class="{aonResources.css.aonGroupBody}">
-								<div
-									class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
-									<g:FlexTable ui:field="table3" />
+						</g:HTMLPanel>
+						
+						<g:HTMLPanel ui:field="table3Panel">
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="{msg.memory7_2Table4}" ui:field="table4Label" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<div
+										class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+										<g:FlexTable ui:field="table3" />
+									</div>
 								</div>
 							</div>
-						</div>
-
+						</g:HTMLPanel>
 					</div>
 
 				</g:HTMLPanel>

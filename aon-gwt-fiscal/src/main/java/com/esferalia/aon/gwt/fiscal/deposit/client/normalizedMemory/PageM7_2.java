@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -57,9 +58,13 @@ public class PageM7_2 extends PageAbs {
 	@UiField
 	TabPanel tabPanel;
 	
-	@UiField
-	InlineLabel table4Label;
+	@UiField InlineLabel table4Label;
+	@UiField InlineLabel table2Label;
 	
+	@UiField HTMLPanel tablePanel;
+	@UiField HTMLPanel table1Panel;
+	@UiField HTMLPanel table2Panel;
+	@UiField HTMLPanel table3Panel;
 
 	public PageM7_2() {
 		super();
@@ -84,11 +89,20 @@ public class PageM7_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
+		table2Label.setText("Vencimientos de las deudas al cierre del ejercicio " + year);
+		table4Label.setText("Lineas de descuento y p\u00f3lizas al cierre del ejercicio " + year);
+
 		String[] AUXILIARES = new String[] {
 			AON.MSG.fiscalYear() + " " + year , AON.MSG.fiscalYear() + " " + (year - 1)
 		};
 		
 		tabPanel.selectTab(0);
+		
+		if(year >=2016){
+			tablePanel.setVisible(false);
+			table1Panel.setVisible(false);
+			table3Panel.setVisible(false);
+		}
 		
 		if (isPymes()) {
 			defineMRNTable(table, MRN_HEADER_1, AUXILIARES, D2PDepositConstants.MRN7_PYMES_KEYS_1, 2);

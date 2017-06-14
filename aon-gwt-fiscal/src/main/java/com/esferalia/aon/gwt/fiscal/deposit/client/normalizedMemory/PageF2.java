@@ -136,6 +136,7 @@ public class PageF2 extends PageAbs {
 		
 		PR8080805 = new CheckBox(); //CHECKBOX Abreviado - memoria
 		PR8080854 = new CheckBox(); //CHECKBOX Abreviado - ecpn
+
 		PR8080801 = new CheckBox(); //CHECKBOX Abreviado - balance
 		PR8080803 = new CheckBox(); //CHECKBOX Abreviado - pyg
 		PR8080811 = new CheckBox(); //CHECKBOX Abreviado - certificacion acuerdo
@@ -228,6 +229,11 @@ public class PageF2 extends PageAbs {
 		else {
 			ROAC.setVisible(false);
 			ROACLabel.setVisible(false);
+		}
+		
+		if(year >= 2016) {
+			PR8080854.setVisible(false);
+			PR8080855.setVisible(false);
 		}
 	}
 	
@@ -478,7 +484,7 @@ public class PageF2 extends PageAbs {
 		if(mapDraft.containsKey(key))
 			mapDraft.remove(key);
 		mapDraft.put(key, value);
-		normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
-		normalizedMemory.getD2Deposit2014().setModify(true);
+		normalizedMemory.getD2Deposit().setMapDraft(mapDraft);
+		normalizedMemory.getD2Deposit().setModify(true);
 	}
 }

@@ -66,8 +66,8 @@ public class PageF1A extends PageAbs {
 	}
 
 	private void init(){
-		map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
-		mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
+		map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit().getMap();
+		mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit().getMapDraft();
 				
 		keyExe("8009010", A18009010, "double", true);
 		keyExe("8009020", A18009020, "double", true);
@@ -346,7 +346,7 @@ public class PageF1A extends PageAbs {
 		if(mapDraft.containsKey(key))
 			mapDraft.remove(key);
 		mapDraft.put(key, value);
-		normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
-		normalizedMemory.getD2Deposit2014().setModify(true);
+		normalizedMemory.getD2Deposit().setMapDraft(mapDraft);
+		normalizedMemory.getD2Deposit().setModify(true);
 	}
 }
