@@ -353,7 +353,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		this.employeeEventsDraft = employeeEventsDraft;
 		
-		Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
+		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
 		
 		this.employeeEventsDraft.undoManager.addListener(new UndoManager.Listener() {
 			@SuppressWarnings("rawtypes")

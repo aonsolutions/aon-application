@@ -1839,7 +1839,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void checkNonWorkingDay(Date date, double hora) {
 		if(hora == Double.parseDouble("-1")){
 			calendarEmployeeInfo.setTypeByDay(date, DayType.NOWORKINGDAY);
-		}	
+		}
+		if(hora != Double.parseDouble("-1")){
+			Integer pos = calculateDatePosition(date);
+			if(cellsType[calculatePositionRow(pos)][calculatePositionCol(pos)].getType().equals(DayType.NOWORKINGDAY))
+				calendarEmployeeInfo.setTypeByDay(date, DayType.NOTYPEDAY);
+			//TODO:
+		}
 	}
 
 	private void checkShowingUpDays() {
