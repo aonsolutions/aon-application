@@ -1039,7 +1039,8 @@ public class DriveUtils implements IBlobManager {
 					if(file.getType() == RegistryAttachmentType.LOGO.value()
 						|| file.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
 						|| file.getType() == RegistryAttachmentType.D2_DEPOSIT.value()
-							
+						|| file.getType() == RegistryAttachmentType.INVOICE_FOOTER_TEXT.value()
+						|| file.getType() == RegistryAttachmentType.REPORT_BACKGROUND.value()
 						|| file.getType() == RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value() // Historial en configuración
 						
 						|| file.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 

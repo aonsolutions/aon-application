@@ -157,6 +157,8 @@ public class AonDrive extends DriveUtils{
 					|| attach.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 
 					|| attach.getType() == RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value() 
 					|| attach.getType() == RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()
+					|| attach.getType() == RegistryAttachmentType.INVOICE_FOOTER_TEXT.value()
+					|| attach.getType() == RegistryAttachmentType.REPORT_BACKGROUND.value()
 				)) 
 			|| (AttachType.PROJECT.equals(attach.getAttachType())
 				&& (attach.getType() == ProjectAttachmentType.CONEXFLOW.value()
