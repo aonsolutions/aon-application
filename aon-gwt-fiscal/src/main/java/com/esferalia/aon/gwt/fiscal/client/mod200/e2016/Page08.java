@@ -71,6 +71,7 @@ public class Page08 extends PageAbs {
 		table1 = new FlexTable();
 		Widget ui = page8Binder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();
 	}
 
 	@Override

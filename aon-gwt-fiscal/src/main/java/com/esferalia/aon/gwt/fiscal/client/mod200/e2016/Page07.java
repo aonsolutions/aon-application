@@ -130,6 +130,7 @@ public class Page07 extends PageAbs {
 		super(callback);
 		Widget ui = page7Binder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();
 	}
 
 	@Override

@@ -50,6 +50,7 @@ public class Page09 extends PageAbs {
 		super(callback);
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();
 	}
 	
 	@Override

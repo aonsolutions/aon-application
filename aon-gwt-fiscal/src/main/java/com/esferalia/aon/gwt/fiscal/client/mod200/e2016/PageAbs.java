@@ -119,11 +119,8 @@ public abstract class PageAbs extends ResizeComposite {
 						input.addStyleName(AON.AON_CSS.aonChanged());
 					}
 				}
-				for ( Mod2002016Key key : labels.keySet() ) {
-					BoxLabel label = labels.get(key);
-					if (label != null) {
-						label.removeErrorState();
-					}
+				for ( BoxLabel label  : labels.values() ) {
+					label.removeErrorState();
 				}
 			}
 		});
@@ -320,15 +317,10 @@ public abstract class PageAbs extends ResizeComposite {
 	protected abstract void initializeTable();
 	
 	protected void dump() {
-		initializeTable();
-		refreshDraftMap(callback.getMod200Object().getMod200());
-	};
-	
-	private void refreshDraftMap(Mod2002016 mod200) {
-		for (Mod2002016Key key : mod200.getDraftMap().keySet()) {
+		for (Mod2002016Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
 			if (inputs.containsKey(key)) {
 				DoubleBox input = inputs.get(key);
-				DoubleVariable2016 var = mod200.getDraftMap().get(key);
+				DoubleVariable2016 var = callback.getMod200Object().getMod200().getDraftMap().get(key);
 				input.setValue(var.getValue()); ;
 				input.addStyleName(AON.AON_CSS.aonChanged());
 			}

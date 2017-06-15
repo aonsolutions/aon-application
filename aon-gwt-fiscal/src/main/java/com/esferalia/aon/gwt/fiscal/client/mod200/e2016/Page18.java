@@ -228,6 +228,7 @@ public class Page18 extends PageAbs {
 			
 		container.add(baseContainerPanel);
 		initWidget(container);
+		initializeTable();		
 	}
 
 	@Override

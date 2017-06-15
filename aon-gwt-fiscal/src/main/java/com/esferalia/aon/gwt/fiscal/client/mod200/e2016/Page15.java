@@ -28,6 +28,7 @@ public class Page15 extends PageAbs {
 		table2 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();
 	}
 
 	@Override

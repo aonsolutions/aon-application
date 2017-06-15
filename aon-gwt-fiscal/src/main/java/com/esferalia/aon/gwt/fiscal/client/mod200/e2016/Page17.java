@@ -32,6 +32,7 @@ public class Page17 extends PageAbs {
 		super(callback);
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();		
 	}
 
 	@Override

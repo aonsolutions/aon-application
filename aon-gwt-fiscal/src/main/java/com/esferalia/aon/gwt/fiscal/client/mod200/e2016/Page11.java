@@ -49,6 +49,7 @@ public class Page11 extends PageAbs {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		table.getColumnFormatter().setWidth(1, "200px");
+		initializeTable();
 	}
 	
 	@Override

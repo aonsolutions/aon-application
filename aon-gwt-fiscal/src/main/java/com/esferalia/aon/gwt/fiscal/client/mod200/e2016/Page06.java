@@ -21,6 +21,7 @@ public class Page06 extends PageAbs {
 		super(callback);
 		Widget ui = page6Binder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();
 	}
 	@Override
 	protected void initializeTable() {

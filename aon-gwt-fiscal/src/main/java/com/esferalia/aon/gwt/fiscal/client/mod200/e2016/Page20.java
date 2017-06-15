@@ -75,7 +75,7 @@ public class Page20 extends PageAbs {
 		ibanP = new IbanTextBox(getSuggestOracle(),true);
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		
+		initializeTable();		
 		callback.getMod200Object().register( new IMod200ChangeListener() {
 			
 			@Override

@@ -32,6 +32,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -322,7 +323,7 @@ public class Page00 extends PageAbs {
 				@Override
 				public void onClick(ClickEvent event) {
 					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
-						MessageDialog.show(AON.MSG.unsupportedCharacter(key.getDescription()));
+						MessageDialog.show("ERROR",AON.MSG.unsupportedCharacter(key.getDescription()));
 						check.setValue(false);
 					} else {
 						changeAvailability(key);
@@ -413,6 +414,7 @@ public class Page00 extends PageAbs {
 	}
 	
 	protected void enableCharacters( boolean enabled) {
+		Window.alert("enableCharacters 1");
 		periodType.setEnabled(enabled);
 		balanceSheetType.setEnabled(enabled);
 		profitAndLossType.setEnabled(enabled);
@@ -420,12 +422,15 @@ public class Page00 extends PageAbs {
 			check.setEnabled(enabled);
 		}
 		c061.setEnabled(enabled);
+		Window.alert("enableCharacters 2");
 		
 		for (Mod2002016Key key : CHARACTERS_KEYS) {
 			if (inputs.containsKey( key ) && inputs.get( key ).getValue()) {
 				changeAvailability(key);
 			}
 		}
+		Window.alert("enableCharacters 3");
+
 	}
 	
 }

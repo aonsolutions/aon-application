@@ -108,6 +108,7 @@ public class Page01 extends PageAbs {
 		
 		Widget ui = page1Binder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();
 	}
 
 	@Override

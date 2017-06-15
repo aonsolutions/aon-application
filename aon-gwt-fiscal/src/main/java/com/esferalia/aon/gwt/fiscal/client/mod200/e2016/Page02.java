@@ -123,6 +123,7 @@ public class Page02 extends PageAbs {
 		
 		Widget ui = page2Binder.createAndBindUi(this);
 		initWidget(ui);
+		initializeTable();
 	}
 
 	protected void calculate() {

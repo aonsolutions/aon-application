@@ -36,6 +36,7 @@ public class Page16 extends PageAbs {
 			baseContainerPanel.add(groupPanel);
 		container.add(baseContainerPanel);
 		initWidget(container);
+		initializeTable();
 	}
 
 	@Override
