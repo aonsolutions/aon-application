@@ -414,7 +414,6 @@ public class Page00 extends PageAbs {
 	}
 	
 	protected void enableCharacters( boolean enabled) {
-		Window.alert("enableCharacters 1");
 		periodType.setEnabled(enabled);
 		balanceSheetType.setEnabled(enabled);
 		profitAndLossType.setEnabled(enabled);
@@ -422,15 +421,11 @@ public class Page00 extends PageAbs {
 			check.setEnabled(enabled);
 		}
 		c061.setEnabled(enabled);
-		Window.alert("enableCharacters 2");
-		
 		for (Mod2002016Key key : CHARACTERS_KEYS) {
 			if (inputs.containsKey( key ) && inputs.get( key ).getValue()) {
 				changeAvailability(key);
 			}
 		}
-		Window.alert("enableCharacters 3");
-
 	}
 	
 }

@@ -74,6 +74,7 @@ public class Mod2002016DAO  {
 				.setDocument( reg.getDocument())
 				.setName( reg.getName())
 				.setRepresentative( reg.getRepresentative() == 1 )
+				.setResidence(reg.getResidence())
 				.setProvince( reg.getProvince() )))
 		,PARTICPATION_OUT( 
 			(mod,reg) -> mod.getParticipationsOut().add(new CompanyParticipation()
@@ -190,6 +191,37 @@ public class Mod2002016DAO  {
 			mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2016));
 			mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2016));
 		}
+		if ( AonStringUtils.length(mod200.getEnterpriseDocument()) > 9)
+			throw new AonCoreException("El documento del presentador no puede superar 9 caracteres.");
+		if ( AonStringUtils.length(mod200.getEnterpriseName()) > 45)
+			throw new AonCoreException("La razón social del presentador no puede superar 45 caracteres.");
+		if ( AonStringUtils.length(mod200.getEnterprisePhone1()) > 9)
+			throw new AonCoreException("El teléfono 1 del presentador no puede superar 9 caracteres.");
+		if ( AonStringUtils.length(mod200.getEnterprisePhone2()) > 9)
+			throw new AonCoreException("El teléfono 2 del presentador no puede superar 9 caracteres.");
+		if ( AonStringUtils.length(mod200.getReceipt()) > 13)
+			throw new AonCoreException("El número de declaración no puede superar 13 caracteres.");
+		if ( AonStringUtils.length(mod200.getComplementaryReceipt()) > 13)
+			throw new AonCoreException("El número de declaración complementaria no puede superar 13 caracteres.");
+		if ( AonStringUtils.length(mod200.getFiscalGroup()) > 9)
+			throw new AonCoreException("El Número del grupo fiscal no puede superar 9 caracteres."); 			
+		if ( AonStringUtils.length(mod200.getDominantDocument()) > 9)
+			throw new AonCoreException("El NIF de la sociendad dominante no puede superar 9 caracteres.");
+		if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getDocument()) > 9)
+			throw new AonCoreException("El NIF del secretario no puede superar 9 caracteres.");
+		if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getName()) > 25) 
+			throw new AonCoreException("El nombre del secretario no puede superar 9 caracteres.");
+		if ( AonStringUtils.length(mod200.getNrsAnexoIII()) > 30) 
+			throw new AonCoreException("Documentaci\u00F3n presentada por el Anexo III (Ajustes y deducciones)");
+		if ( AonStringUtils.length(mod200.getNrsAnexoIV()) > 30) 
+			throw new AonCoreException("Documentaci\u00F3n presentada por el Anexo IV (Personal investigador)");
+		if ( AonStringUtils.length(mod200.getNrsAnexoV()) > 30)
+			throw new AonCoreException("Documento normalizado presentada por el Anexo V");
+		if ( AonStringUtils.length(mod200.getJustCanarias()) > 30)
+			throw new AonCoreException("N\u00FAmero de justificante identificativo de la declaraci\u00F3n informativa de ayudas R\u00E9gimen Econ\u00F3mico y Fiscal de Canarias"); 
+		if ( AonStringUtils.length(mod200.getJustActivos()) > 30)
+			throw new AonCoreException("N\u00FAmero de justificante identificativo autoliquidaci\u00F3n de la prestaci\u00F3n patrimonial por conversi\u00F3n de activos (DA 13a LIS)");
+		
 		if (mod200.getId() == null) {
 			return insert(ctx, mod200);
 		} else {
@@ -253,10 +285,11 @@ public class Mod2002016DAO  {
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
 				detail.setType( Mod2002016RegistryType.ADMINISTRATOR.byteValue());
-				detail.setDocument(ca.getDocument());
-				detail.setName(ca.getName());
+				detail.setDocument(AonStringUtils.substring(ca.getDocument(),0,9));
+				detail.setName(AonStringUtils.substring(ca.getName(),0,45));
 				detail.setRepresentative( (byte) (ca.isRepresentative()?1:0) );
 				detail.setProvince( (byte) ca.getProvince() );
+				detail.setResidence(AonStringUtils.substring(ca.getResidence(),0,45));
 				list.add(detail);
 			}
 		}
@@ -266,8 +299,8 @@ public class Mod2002016DAO  {
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002016RegistryType.PARTICPATION_OUT.byteValue());
-				detail.setDocument(cp.getDocument());
-				detail.setName(cp.getName());
+				detail.setDocument(AonStringUtils.substring(cp.getDocument(),0,9));
+				detail.setName(AonStringUtils.substring(cp.getName(),0,45));
 				detail.setProvince( (byte) cp.getProvince() );
 				detail.setCountry( cp.getCountry() );
 				detail.setPercent(cp.getPercent());
@@ -292,8 +325,8 @@ public class Mod2002016DAO  {
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002016RegistryType.PARTICPATION_IN.byteValue());
-				detail.setDocument(cp.getDocument());
-				detail.setName(cp.getName());
+				detail.setDocument(AonStringUtils.substring(cp.getDocument(),0,9));
+				detail.setName(AonStringUtils.substring(cp.getName(),0,45));
 				detail.setProvince( (byte) cp.getProvince() );
 				detail.setCountry( cp.getCountry() );
 				detail.setRepresentative( (byte) (cp.isRepresentative()?1:0) );
@@ -308,10 +341,10 @@ public class Mod2002016DAO  {
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002016RegistryType.REPRESENTATIVE.byteValue());
-				detail.setDocument(lr.getDocument());
-				detail.setNotary(lr.getNotary());
+				detail.setDocument(AonStringUtils.substring(lr.getDocument(),0,9));
+				detail.setNotary(AonStringUtils.substring(lr.getNotary(),0,20));
 				detail.setNotaryDate( lr.getNotaryDate()==null?null:new java.sql.Date( lr.getNotaryDate().getTime() ) );
-				detail.setName(lr.getName());
+				detail.setName(AonStringUtils.substring(lr.getName(),0,45));
 				list.add(detail);
 			}
 		}
@@ -321,11 +354,11 @@ public class Mod2002016DAO  {
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002016RegistryType.UTE_PARTICIPATION.byteValue());
-				detail.setDocument(ute.getDocument());
+				detail.setDocument(AonStringUtils.substring(ute.getDocument(),0,9));
 				detail.setProvince( (byte) ute.getProvince() );
 				detail.setCountry( ute.getCountry() );
 				detail.setRepresentative( (byte) (ute.isRepresentative()?1:0) );
-				detail.setName(ute.getName());
+				detail.setName(AonStringUtils.substring(ute.getName(),0,45));
 				detail.setNominalValue(ute.getBase());
 				detail.setPercent(ute.getPercent());
 				list.add(detail);
@@ -338,7 +371,7 @@ public class Mod2002016DAO  {
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
 				detail.setType(Mod2002016RegistryType.UTE_FOREIGN.byteValue());
-				detail.setName(ute.getIdentification());
+				detail.setName(AonStringUtils.substring(ute.getIdentification(),0,45));
 				detail.setCountry( ute.getCountry() );
 				detail.setAValue(ute.getVolume());
 				detail.setBValue(ute.getPyg());
@@ -365,7 +398,7 @@ public class Mod2002016DAO  {
 					detail.setFsModel200(mod200.getId());
 					detail.setDomain(mod200.getDomain());
 					detail.setType(Mod2002016RegistryType.GROUP_ENTITIES.byteValue());
-					detail.setDocument(ge);
+					detail.setDocument(AonStringUtils.substring(ge,0,9));
 					list.add(detail);
 				}
 			}
@@ -378,7 +411,7 @@ public class Mod2002016DAO  {
 					detail.setFsModel200(mod200.getId());
 					detail.setDomain(mod200.getDomain());
 					detail.setType(Mod2002016RegistryType.ESTABLISHMENTS.byteValue());
-					detail.setDocument(es);
+					detail.setDocument(AonStringUtils.substring(es,0,9));
 					list.add(detail);
 				}
 			}

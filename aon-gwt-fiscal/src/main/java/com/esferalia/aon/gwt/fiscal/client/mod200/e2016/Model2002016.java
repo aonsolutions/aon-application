@@ -357,6 +357,10 @@ public class Model2002016 extends ResizeComposite  {
 			public void onFailure(Throwable caught) {
 				super.onFailure(caught);
 				MessageDialog.error("No se han podido guardar los datos.");
+				errorPage.clearMessages();
+				errorPage.addErrorMsg( caught.getMessage() );
+				resultsPanel.setWidget(errorPage);
+				showResultsPanel();
 			}
 		};
 		final PopupPanel popup = new PopupPanel(false, true);
