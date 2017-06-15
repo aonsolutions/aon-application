@@ -661,22 +661,23 @@ public class Model2002016 extends ResizeComposite  {
 		linkContainer.add(new WestFocusPanel( 2,AON.MSG.administratorPage()	 ));
 		linkContainer.add(new WestFocusPanel( 3,AON.MSG.participations()	 ));
 		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()		 ));
-		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()		 ));
+		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivoAbbrv()	 ));
 		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg() 				 ));
-		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresos() ));
+		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresosAbbrv() ));
 		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()	 ));
 		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI()		 ));
 		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII()		 ));
 		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII()	 ));
 		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() 	 ));
 		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() 	 	 ));
-		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxation() 	 ));
+		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()	 ));
 		linkContainer.add(new WestFocusPanel(15,AON.MSG.incomeDistribution() ));
-		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
-		linkContainer.add(new WestFocusPanel(17,AON.MSG.page16()		 	 ));
-		linkContainer.add(new WestFocusPanel(18,"U.T.E.S."));
-		linkContainer.add(new WestFocusPanel(19,AON.MSG.bussinessAmount()	 ));
-		linkContainer.add(new WestFocusPanel(20,AON.MSG.idDocument()		 ));
+		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitationAbbrv()));
+		linkContainer.add(new WestFocusPanel(17,AON.MSG.page17()		 	 ));
+		linkContainer.add(new WestFocusPanel(18,AON.MSG.page18()		 	 ));
+		linkContainer.add(new WestFocusPanel(19,"U.T.E.S."));
+		linkContainer.add(new WestFocusPanel(20,AON.MSG.bussinessAmount()	 ));
+		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()		 ));
 		linkList.setWidget( linkContainer );
 	}
 	
@@ -731,10 +732,11 @@ public class Model2002016 extends ResizeComposite  {
 			if (i == 13) PAGES[i] = new Page13(cbk);
 			if (i == 14) PAGES[i] = new Page14(cbk); 
 			if (i == 15) PAGES[i] = new Page15(cbk); 
-			if (i == 16) PAGES[i] = new Page16(cbk); 
+			if (i == 16) PAGES[i] = new Page16(cbk);
 			if (i == 17) PAGES[i] = new Page17(cbk); 
 			if (i == 18) PAGES[i] = new Page18(cbk); 
 			if (i == 19) PAGES[i] = new Page19(cbk); 
+			if (i == 20) PAGES[i] = new Page20(cbk); 
 		}
 		return getPage(i);
 	}

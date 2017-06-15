@@ -1389,11 +1389,17 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Balance: Patrimonio Neto y Pasivo")
 	String balancePasivo();
 
+	@DefaultMessage("Balance: Patr. Neto y Pasivo")
+	String balancePasivoAbbrv();
+
 	@DefaultMessage("Cuenta de p\u00E9rdidas y ganancias")
 	String pyg();
 
 	@DefaultMessage("ECPN. Estado de ingresos y gastos reconocidos en el ejercicio")
 	String patrimonioIngresos();
+
+	@DefaultMessage("ECPN. Estado de ingresos y gastos")
+	String patrimonioIngresosAbbrv();
 
 	@DefaultMessage("ECPN. Estado total de cambios en el patrimonio neto")
 	String patrimonioCambios();
@@ -1704,6 +1710,8 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Tributaci\u00F3n conjunta al Estado, Pa\u00EDs Vasco y Navarra")
 	String combinedTaxation();
+	@DefaultMessage("Tributaci\u00F3n conjunta")
+	String combinedTaxationAbbrv();
 	
 	@DefaultMessage("Aplicaci\u00F3n del concierto econ\u00F3mico con la Comunidad Aut\u00F3noma del Pa\u00EDs Vasco y del Convenio Econ\u00F3mico entre el Estado y la Comunidad Foral de Navarra")
 	String combinedTaxation1();
@@ -1734,14 +1742,24 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros.")
 	String deducibleLimitation();
+
+	@DefaultMessage("Limitaci\u00F3n deduc. gastos financieros.")
+	String deducibleLimitationAbbrv();
+
 	@DefaultMessage("L\u00EDmite art. 16.5, o 83 LIS")
 	String limitMsg1();
 
 	@DefaultMessage("L\u00EDmite art. 16.1 y 16.2 LIS")
 	String limitMsg2();
 	
+	@DefaultMessage("R\u00E9gimen especial Canarias")
+	String page17();
+	
+	@DefaultMessage("R\u00E9gimen especial de la reserva para inversiones en Canarias (Ley 19/1994)")
+	String canariasRegime();
+
 	@DefaultMessage("Dotaci\u00F3n / Reversi\u00F3n / Conversi\u00F3n")
-	String page16();
+	String page18();
 
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir")
 	String deducibleLimitationPending();
@@ -3485,5 +3503,17 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("NIF de los establecimientos permanentes en caso de entidad titular")
 	String bussinessAmount12();
+	
+	@DefaultMessage("Importe de la dotaci\u00F3n")
+	String canCol1();
+	
+	@DefaultMessage("Inversiones previstas letras A, B, B bis y D (1o) art. 27.4 Ley 19/1994")
+	String canCol2();
+	
+	@DefaultMessage("Inversiones previstas letras C y D (2o a 6o) art. 27.4 Ley 19/1994")
+	String canCol3();
+	
+	@DefaultMessage("Pendiente de materializar")
+	String canCol4();
 }
 

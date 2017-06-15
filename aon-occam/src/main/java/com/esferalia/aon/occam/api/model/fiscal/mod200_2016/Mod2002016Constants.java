@@ -363,6 +363,24 @@ public class Mod2002016Constants {
 		,new Mod2002016Key[]{Mod2002016Key.LM1575, Mod2002016Key.LM1576, Mod2002016Key.LM1577, Mod2002016Key.LM1578}
 		,new Mod2002016Key[]{Mod2002016Key.LM1579, Mod2002016Key.LM1580, Mod2002016Key.LM1581, Mod2002016Key.LM1582}
 	};
-	
+
+	// Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)
+	public static Mod2002016Key[][] CANARIAS_KEYS = new Mod2002016Key[][] {
+		 new Mod2002016Key[]{Mod2002016Key.RC089,Mod2002016Key.RC094,Mod2002016Key.RC095,null 				}
+		,new Mod2002016Key[]{Mod2002016Key.RC097,Mod2002016Key.RC098,Mod2002016Key.RC047,Mod2002016Key.RC048}
+		,new Mod2002016Key[]{Mod2002016Key.RC524,Mod2002016Key.RC525,Mod2002016Key.RC526,Mod2002016Key.RC527}
+		,new Mod2002016Key[]{Mod2002016Key.RC922,Mod2002016Key.RC923,Mod2002016Key.RC924,Mod2002016Key.RC925}
+		,new Mod2002016Key[]{Mod2002016Key.RC927,Mod2002016Key.RC928,Mod2002016Key.RC938,Mod2002016Key.RC996}
+		,new Mod2002016Key[]{null 				,Mod2002016Key.RC020,Mod2002016Key.RC021,null 				}
+	};
+	// Descripciones del apartado anterior (DEDUCIBLE_LIMITATION_KEYS_4)
+	public static String[] CANARIAS_KEYS_DESCRIPTIONS = new String[] {
+		 "RIC 2012. Dotaci\u00F3n y materializaciones efectuadas en 2012"
+		,"RIC 2013. Dotaci\u00F3n y materializaciones efectuadas en 2013"
+		,"RIC 2014. Dotaci\u00F3n y materializaciones efectuadas en 2014"
+		,"RIC 2015. Dotaci\u00F3n y materializaciones efectuadas en 2015"
+		,"RIC 2016. Dotaci\u00F3n y materializaciones efectuadas en 2016"
+		,"Inversiones anticipadas de futuras dotaciones a la RIC, efectuadas en 2016"
+	};
 }
 
