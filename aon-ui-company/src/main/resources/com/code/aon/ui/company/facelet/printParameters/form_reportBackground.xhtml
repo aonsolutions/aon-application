@@ -15,8 +15,16 @@
 				<aon:div styleClass="aon-margin-left" layout="inline">
 					<aon:outputText value="(Dim: 196 x 276) " />
 					<aon:outputText value="&#160;" styleClass="aon-icon2 aon-icon-info" />
-					<rich:toolTip styleClass="aon-width-200"
-						value="La imagen se redimensiona a un tamaño de 196 x 276 mm" />
+					<rich:toolTip styleClass="aon-width-250">
+						<aon:div>
+							<aon:outputText 
+								value="La imagen debe ajustarse a un tamaño de 196 mm x 276 mm." />
+						</aon:div>
+						<aon:div>
+							<aon:outputText 
+								value="Formatos admitidos: jpg, jpeg, gif, png y bmp." />
+						</aon:div>
+					</rich:toolTip>
 				</aon:div>
 			</aon:panelGroup>
 		</f:facet>

@@ -6,9 +6,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.jasperreports.engine.JRDefaultScriptlet;
-import net.sf.jasperreports.engine.JRScriptletException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +23,14 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.PrintParametersController;
 import com.code.aon.ui.company.controller.RegistryInfo;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+
+import net.sf.jasperreports.engine.JRDefaultScriptlet;
+import net.sf.jasperreports.engine.JRScriptletException;
 
 public class ReportScriptlet extends JRDefaultScriptlet implements Serializable {
 	
@@ -54,6 +56,7 @@ public class ReportScriptlet extends JRDefaultScriptlet implements Serializable 
 	 * REPORT TEMPLATE FIELDS
 	 */
 	public static final String FIELD_DOMAIN = "domain";
+	public static final String FIELD_ID = "id";
 	
 	
 	private RegistryAttachment logoAttach;
@@ -91,8 +94,13 @@ public class ReportScriptlet extends JRDefaultScriptlet implements Serializable 
 		try {
 			if(super.getFieldValue(FIELD_DOMAIN)!=null){
 				Integer domain = ((Integer)super.getFieldValue(FIELD_DOMAIN));
-				printParams = new PrintParametersController();
-				printParams.onInit(domain);
+				if(super.getFieldValue(FIELD_ID)!=null){
+					printParams = new PrintParametersController();
+					printParams.onInit(domain);
+				} else {
+					printParams = (PrintParametersController) AonUtil
+							.getRegisteredBean(ICompanyConstants.PRINT_PARAMETERS_CONTROLLER_NAME);
+				}
 				loadParams();
 			}
 		} catch (JRScriptletException e) {

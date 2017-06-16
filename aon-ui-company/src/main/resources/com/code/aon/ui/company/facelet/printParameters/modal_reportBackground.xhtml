@@ -27,12 +27,25 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{printParams.reportBackground.createSaleInvoiceBackgroundContent}"
-				value="#{printParams.reportBackground.saleInvoiceBackgroundFile.key}"
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
+		<aon:form>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="innerToolbar" value="true" />
+				<ui:define name="toolbarContent">
+					<aon:htmlCommandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{bundle.aon_report}"
+						action="#{printParams.onSampleReportSaleInvoice}">
+						<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+			<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
+				<a4j:mediaOutput element="img" mimeType="#{file.mime}"
+					createContent="#{printParams.reportBackground.createSaleInvoiceBackgroundContent}"
+					value="#{printParams.reportBackground.saleInvoiceBackgroundFile.key}"
+					styleClass="aon-border" cacheable="false" />
+			</aon:panel>
+		</aon:form>
 	</rich:modalPanel>
 
 	<rich:modalPanel id="offerBackground-modal" autosized="true">
@@ -54,12 +67,25 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{printParams.reportBackground.createOfferBackgroundContent}"
-				value="#{printParams.reportBackground.offerBackgroundFile.key}" 
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
+		<aon:form>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="innerToolbar" value="true" />
+				<ui:define name="toolbarContent">
+					<aon:htmlCommandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{bundle.aon_report}"
+						action="#{printParams.onSampleReportOffer}">
+						<f:param name="reportKey" value="offer" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+			<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
+				<a4j:mediaOutput element="img" mimeType="#{file.mime}"
+					createContent="#{printParams.reportBackground.createOfferBackgroundContent}"
+					value="#{printParams.reportBackground.offerBackgroundFile.key}" 
+					styleClass="aon-border" cacheable="false" />
+			</aon:panel>
+		</aon:form>
 	</rich:modalPanel>
 
 	<rich:modalPanel id="deliveryBackground-modal" autosized="true">
@@ -81,12 +107,25 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{printParams.reportBackground.createDeliveryBackgroundContent}"
-				value="#{printParams.reportBackground.deliveryBackgroundFile.key}"
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
+		<aon:form>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="innerToolbar" value="true" />
+				<ui:define name="toolbarContent">
+					<aon:htmlCommandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{bundle.aon_report}"
+						action="#{printParams.onSampleReportDelivery}">
+						<f:param name="reportKey" value="delivery" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+			<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
+				<a4j:mediaOutput element="img" mimeType="#{file.mime}"
+					createContent="#{printParams.reportBackground.createDeliveryBackgroundContent}"
+					value="#{printParams.reportBackground.deliveryBackgroundFile.key}"
+					styleClass="aon-border" cacheable="false" />
+			</aon:panel>
+		</aon:form>
 	</rich:modalPanel>
 
 	<rich:modalPanel id="salesBackground-modal" autosized="true">
@@ -108,12 +147,25 @@
 				</aon:commandButton>
 			</aon:form>
 		</f:facet>
-		<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
-			<a4j:mediaOutput element="img" mimeType="#{file.mime}"
-				createContent="#{printParams.reportBackground.createSalesBackgroundContent}"
-				value="#{printParams.reportBackground.salesBackgroundFile.key}" 
-				styleClass="aon-border" cacheable="false" />
-		</aon:panel>
+		<aon:form>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="innerToolbar" value="true" />
+				<ui:define name="toolbarContent">
+					<aon:htmlCommandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{bundle.aon_report}"
+						action="#{printParams.onSampleReportSales}">
+						<f:param name="reportKey" value="sales" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+			<aon:panel style="overflow:auto; width:580px; height:620px; padding-top:10px;" >
+				<a4j:mediaOutput element="img" mimeType="#{file.mime}"
+					createContent="#{printParams.reportBackground.createSalesBackgroundContent}"
+					value="#{printParams.reportBackground.salesBackgroundFile.key}" 
+					styleClass="aon-border" cacheable="false" />
+			</aon:panel>
+		</aon:form>
 	</rich:modalPanel>
 	
 </ui:composition>

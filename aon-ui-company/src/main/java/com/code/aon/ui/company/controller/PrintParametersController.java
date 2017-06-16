@@ -16,12 +16,11 @@ import static com.code.aon.ui.company.controller.ICompanyConstants.IMAGE_MAX_SIZ
 import static com.code.aon.ui.company.controller.ICompanyConstants.INVOICE_PRINT_REPORT_KEY;
 import static com.code.aon.ui.company.controller.ICompanyConstants.SALE_INVOICE_REPORT_KEY;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +30,6 @@ import javax.faces.component.UIInput;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
@@ -42,13 +40,13 @@ import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.common.util.ImageUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
@@ -64,6 +62,8 @@ import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
@@ -208,9 +208,42 @@ public class PrintParametersController implements Serializable {
 		}
 	}
 	
+	public String onSampleReportSaleInvoice() throws ManagerBeanException {
+		return onPrintSampleReport("saleInvoice");
+	}
+	public String onSampleReportOffer() throws ManagerBeanException {
+		return onPrintSampleReport("offer");
+	}
+	public String onSampleReportDelivery() throws ManagerBeanException {
+		return onPrintSampleReport("delivery");
+	}
+	public String onSampleReportSales() throws ManagerBeanException {
+		return onPrintSampleReport("sales");
+	}
 	
-	
-	
+	public String onPrintSampleReport(String beanName) throws ManagerBeanException {
+		IController controller = (IController) AonUtil
+				.getRegisteredBean(beanName);
+		ITransferObject to = controller.getManagerBean().createNewTo();
+		ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
+		report.setCollectionProvider(new ICollectionProvider() {
+			
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+				return getCollection();
+			}
+			
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Collection getCollection() {
+				List<ITransferObject> list = new LinkedList<>();
+				list.add(to);
+				return list;
+			}
+		});
+		return report.onExecute();
+	}
 	
 	
 	/*
@@ -640,10 +673,6 @@ public class PrintParametersController implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 		
-		private final int BACKGROUND_WIDTH = 535;
-		
-		private final int BACKGROUND_HEIGHT = 802;
-		
 		private AonFile saleInvoiceBackgroundFile;
 		private AonFile deliveryBackgroundFile;
 		private AonFile salesBackgroundFile;
@@ -693,42 +722,23 @@ public class PrintParametersController implements Serializable {
 		
 		public void saleInvoiceBackgroundFileUploaded(UploadEvent event) {
 			AonFile aonFile = AttachmentUtil.fileUploaded(event);
-			adjustImage(aonFile);
 			setSaleInvoiceBackgroundFile(aonFile);
 			saleInvoiceBackgroundAttach.setData(aonFile.getData());
 		}
 		public void deliveryBackgroundFileUploaded(UploadEvent event) {
 			AonFile aonFile = AttachmentUtil.fileUploaded(event);
-			adjustImage(aonFile);
 			setDeliveryBackgroundFile(aonFile);
 			deliveryBackgroundAttach.setData(aonFile.getData());
 		}
 		public void salesBackgroundFileUploaded(UploadEvent event) {
 			AonFile aonFile = AttachmentUtil.fileUploaded(event);
-			adjustImage(aonFile);
 			setSalesBackgroundFile(aonFile);
 			salesBackgroundAttach.setData(aonFile.getData());
 		}
 		public void offerBackgroundFileUploaded(UploadEvent event) {
 			AonFile aonFile = AttachmentUtil.fileUploaded(event);
-			adjustImage(aonFile);
 			setOfferBackgroundFile(aonFile);
 			offerBackgroundAttach.setData(aonFile.getData());
-		}
-		
-		private void adjustImage(AonFile aonFile) {
-			if ((aonFile != null) && aonFile.isDirty() ) {
-				BufferedImage image = ImageUtil.getBufferedImage( aonFile.getData() );
-				BufferedImage newImage = ImageUtil.scale(image, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-				
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				try {
-					ImageIO.write(newImage, aonFile.getMimeType().getExtension(), baos);
-					aonFile.setData(baos.toByteArray());
-				} catch (IOException e) {
-					LOGGER.error("Error when trying to adjust report background image", e);
-				}
-			}
 		}
 		
 		public void createSaleInvoiceBackgroundContent(OutputStream out, Object data) throws IOException {
