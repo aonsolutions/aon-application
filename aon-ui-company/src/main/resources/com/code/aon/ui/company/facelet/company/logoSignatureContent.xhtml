@@ -16,13 +16,24 @@
 					rendered="#{company.logoFile.size > 0}"
 					createContent="#{company.createCurrentLogoContent}">
 				</a4j:mediaOutput>
-				<aon:fileUpload id="attach_file" listWidth="100"
-					fileUploadListener="#{company.logoFileUploaded}" >
-					<f:facet name="label">
-						<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-					</f:facet>
-					<a4j:support event="onuploadcomplete" reRender="attachGrid" />
-				</aon:fileUpload>
+				<h:panelGrid columns="1">
+					<aon:fileUpload id="attach_file" listWidth="100"
+						fileUploadListener="#{company.logoFileUploaded}" >
+						<f:facet name="label">
+							<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+						</f:facet>
+						<a4j:support event="onuploadcomplete" reRender="attachGrid" />
+					</aon:fileUpload>
+					<aon:div style="margin-left: 0.5em;"
+						styleClass="rich-fileupload-button rich-fileupload-button-content"
+						rendered="#{company.logoFile.size > 0}">
+						<a4j:commandButton
+							action="#{company.clearLogoUploadData}"
+							reRender="attachGrid"
+							value="#{bundle.aon_remove}" title="#{bundle.aon_remove}"
+							styleClass="aon-icon-commandButton aon-icon-close" />
+					</aon:div>
+				</h:panelGrid>				
 			</h:panelGrid>
 		</a4j:region>
 		<aon:outputLabel for="signatureAttach_file"
@@ -34,13 +45,24 @@
 					rendered="#{company.signatureFile.size > 0}"
 					createContent="#{company.createCurrentSignatureContent}">
 				</a4j:mediaOutput>
-				<aon:fileUpload id="signatureAttach_file" listWidth="100"
-					fileUploadListener="#{company.signatureFileUploaded}" >
-					<f:facet name="label">
-						<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-					</f:facet>
-					<a4j:support event="onuploadcomplete" reRender="signatureAttachGrid" />
-				</aon:fileUpload>
+				<h:panelGrid columns="1">
+					<aon:fileUpload id="signatureAttach_file" listWidth="100"
+						fileUploadListener="#{company.signatureFileUploaded}" >
+						<f:facet name="label">
+							<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+						</f:facet>
+						<a4j:support event="onuploadcomplete" reRender="signatureAttachGrid" />
+					</aon:fileUpload>
+					<aon:div style="margin-left: 0.5em;"
+						styleClass="rich-fileupload-button rich-fileupload-button-content"
+						rendered="#{company.signatureFile.size > 0}">
+						<a4j:commandButton
+							action="#{company.clearSignatureUploadData}"
+							reRender="signatureAttachGrid"
+							value="#{bundle.aon_remove}" title="#{bundle.aon_remove}"
+							styleClass="aon-icon-commandButton aon-icon-close" />
+					</aon:div>
+				</h:panelGrid>
 			</h:panelGrid>
 		</a4j:region>
 	</aon:panelGrid>

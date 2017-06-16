@@ -132,6 +132,12 @@ public class CompanyController extends CompanyParentController {
 			out.write(getLogoFile().getData());
 		}
 	}
+	
+	public void clearLogoUploadData(){
+		if ( getLogoFile() != null ) {
+			getLogoFile().clean();	
+		}
+	}
 
 	/**
 	 * @param out
@@ -159,6 +165,12 @@ public class CompanyController extends CompanyParentController {
 	public void createCurrentSignatureContent(OutputStream out, Object data) throws IOException {
 		if (getSignatureFile() != null && (getSignatureFile().getSize() > 0) ) {
 			out.write(getSignatureFile().getData());
+		}
+	}
+	
+	public void clearSignatureUploadData(){
+		if ( getSignatureFile() != null ) {
+			getSignatureFile().clean();	
 		}
 	}
 
