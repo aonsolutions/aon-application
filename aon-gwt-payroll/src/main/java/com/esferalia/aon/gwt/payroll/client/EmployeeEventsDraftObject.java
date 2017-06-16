@@ -134,8 +134,8 @@ public class EmployeeEventsDraftObject {
 	private EmployeeCalendarDraftObjectData employeeCalendar;
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO (AHORA SE CREA ALEATORIAMENTE)
-	public ArrayList<String> employeeContractVariables;
-	public ArrayList<String> variablesList;
+	private ArrayList<String> employeeContractVariables;
+	private ArrayList<String> variablesList;
 	
 	public EmployeeEventsDraftObject(Integer idEmployee, EmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
@@ -144,10 +144,13 @@ public class EmployeeEventsDraftObject {
 		this.idEmployee = idEmployee;
 		this.employeesService = employeesService;
 		
-		this.variablesList = addVariablesList();
+		this.variablesList = new ArrayList<String>();
 		this.employeeContractVariables = new ArrayList<String>();
 		
 		this.undoManager = new UndoManager<>();
+		
+		addVariablesList();
+		createContractVariables();
 	}
 	
 
@@ -158,32 +161,31 @@ public class EmployeeEventsDraftObject {
 	 * @return
 	 */
 	
-	private ArrayList<String> addVariablesList() {
-		ArrayList<String> list = new ArrayList<String>();
-		list.add("HORAS_COMPLEMENTARIAS");
-		list.add("DIAS_EFECTIVOS");
-		list.add("DIAS_ERE");
-		list.add("DIAS_HUELGA");
-		list.add("DIAS_AUSENCIA");
-		list.add("DIAS_VACACIONES");
-		list.add("DIAS_MANUTENCION");
-		list.add("DIAS_PECNORTA");
-		list.add("DIAS_MANUTENCION_EXTRANJERO");
-		list.add("DIAS_PECNORTA_EXTRANJERO");
-		list.add("KMS");
-		list.add("JORNADAS_REALES");
-		list.add("HORAS_EXTRAS");
-		list.add("HORAS_EXTRAS_FZA");
-		return list;
+	private void addVariablesList() {
+		this.variablesList.add("HORAS_COMPLEMENTARIAS");
+		this.variablesList.add("DIAS_EFECTIVOS");
+		this.variablesList.add("DIAS_ERE");
+		this.variablesList.add("DIAS_HUELGA");
+		this.variablesList.add("DIAS_AUSENCIA");
+		this.variablesList.add("DIAS_VACACIONES");
+		this.variablesList.add("DIAS_MANUTENCION");
+		this.variablesList.add("DIAS_PECNORTA");
+		this.variablesList.add("DIAS_MANUTENCION_EXTRANJERO");
+		this.variablesList.add("DIAS_PECNORTA_EXTRANJERO");
+		this.variablesList.add("KMS");
+		this.variablesList.add("JORNADAS_REALES");
+		this.variablesList.add("HORAS_EXTRAS");
+		this.variablesList.add("HORAS_EXTRAS_FZA");
 	}
 	
-	public void createContractVariables() {
+	private void createContractVariables() {
 		
 		int numShowingVar = (int) Math.floor(Math.random()*13+1);
 		
 		for (int i = 0; i < numShowingVar; i++){
 			int numPositionShow = (int) Math.floor(Math.random()*14);
-			this.employeeContractVariables.add(this.variablesList.get(numPositionShow));
+			String var = this.variablesList.get(numPositionShow);
+			this.employeeContractVariables.add(var);
 		}
 	
 	}
@@ -394,6 +396,7 @@ public class EmployeeEventsDraftObject {
 					sortListByStartDate(varList);
 					mapEventsVar.put(varName, varList);
 				}
+				
 				
 				success.accept(result);
 				

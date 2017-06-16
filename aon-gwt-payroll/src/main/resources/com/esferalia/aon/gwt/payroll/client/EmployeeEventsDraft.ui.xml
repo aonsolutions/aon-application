@@ -390,7 +390,7 @@
 								<!-- PARTE OCULTA PARA REDIMENSIONAR LA TABLA -->
 								<g:row>
 									<g:customCell styleName="{style.firstHeadStyleHide}">
-										<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
+										<g:Label></g:Label>
 									</g:customCell>
 									<g:customCell styleName="{style.cabeceraStyle}">
 										<g:Label>ENERO</g:Label>

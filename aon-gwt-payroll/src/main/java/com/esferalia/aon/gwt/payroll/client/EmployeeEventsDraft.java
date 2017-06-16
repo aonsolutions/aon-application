@@ -14,11 +14,14 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -357,9 +360,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		this.employeeEventsDraft = employeeEventsDraft;
 		
 		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
-		//Window.alert("Size VariablesList :"+this.employeeEventsDraft.variablesList.size());
-		this.employeeEventsDraft.createContractVariables();
-		//Window.alert("Size VariablesListEmployee :"+this.employeeEventsDraft.employeeContractVariables.size());
 		
 		this.employeeEventsDraft.undoManager.addListener(new UndoManager.Listener() {
 			@SuppressWarnings("rawtypes")
@@ -391,16 +391,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
     private void createVariableRow(String var) {
     	Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
     	Integer actualMonth = 0;
-    	Boolean blockVariable = false;
     	
     	int newRow = eventsGrid.insertRow(eventsGrid.getRowCount());
 		
 		if (newRow % 2 == 1)
 			eventsGrid.getRowFormatter().addStyleName(newRow, style.oddRowStyle());
 		
-		FlowPanel headPanel = new FlowPanel();
+		HorizontalPanel headPanel = new HorizontalPanel();
 		Label headLabel = new Label(var);
-		headLabel.setStyleName(style.firstHeadStyle());
+		headLabel.addStyleName(style.firstHeadStyle());
 		headPanel.add(headLabel);
 		
 		if (this.blockVariableList.contains(var)){
@@ -416,12 +415,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			});
 			
 			headPanel.add(calendarButton);
-			headLabel.setStyleName(style.setBlockVariableStyle());
+			headLabel.addStyleName(style.setBlockVariableStyle());
 		}else
-			headLabel.setStyleName(style.setBlockVariableStyle());
+			headLabel.removeStyleName(style.setBlockVariableStyle());
 		
 		if (newRow % 2 == 1)
-			headLabel.setStyleName(style.cellOddFormat());
+			headLabel.addStyleName(style.cellOddFormat());
 		
 		eventsGrid.setWidget(newRow, 0, headPanel);
 		
@@ -431,12 +430,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		for (int col = 1; col < eventsGrid.getColumnCount(); col++){
 			Label eventValue = new Label();
-			eventValue.setStyleName(style.cellFormat());
+			eventValue.addStyleName(style.cellFormat());
 			if (newRow % 2 == 1)
-				eventValue.setStyleName(style.cellOddFormat());
+				eventValue.addStyleName(style.cellOddFormat());
 			
-			if (blockVariable)
-				eventValue.setStyleName(style.setBlockVariableStyle());
+			if (this.blockVariableList.contains(var))
+				eventValue.addStyleName(style.setBlockVariableStyle());
 			else
 				eventValue.removeStyleName(style.setBlockVariableStyle());
 			
