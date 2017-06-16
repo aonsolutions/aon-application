@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-06-16T13:21:11 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryExpense" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42" isFloatColumnFooter="true" uuid="8d22d66a-4dd1-4590-ad84-0f4617639ba5">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<import value="net.sf.jasperreports.engine.data.JRMapArrayDataSource"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
-	<import value="java.util.Collections"/>
-	<import value="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
+	<import value="net.sf.jasperreports.engine.data.JRMapArrayDataSource"/>
+	<import value="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<import value="java.util.Collections"/>
 	<style name="default" isDefault="true" fontName="SansSerif">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
@@ -201,7 +203,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 		<groupFooter>
 			<band height="28">
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="03139855-d2f1-4f35-9c69-28a260cde3e2" x="0" y="0" width="201" height="14"/>
+					<reportElement x="0" y="0" width="201" height="14" uuid="03139855-d2f1-4f35-9c69-28a260cde3e2"/>
 					<box leftPadding="5" rightPadding="5"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -209,7 +211,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$R{payroll_subtotal}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="6faf10e3-dd68-415d-b655-d9533a376358" key="textField" x="261" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="261" y="0" width="60" height="14" uuid="6faf10e3-dd68-415d-b655-d9533a376358"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -219,7 +221,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalSSEmployee}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="155aafc6-641f-46a9-b4e1-67bce6388ab0" key="textField" x="441" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="441" y="0" width="60" height="14" uuid="155aafc6-641f-46a9-b4e1-67bce6388ab0"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -229,7 +231,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalOther}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="f9593210-c543-4bef-ae83-c604b2e90fa9" key="textField" x="501" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="501" y="0" width="60" height="14" uuid="f9593210-c543-4bef-ae83-c604b2e90fa9"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -239,7 +241,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalLiquid}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="1436ca34-b7b6-4df6-97c9-2a4ff1b88390" key="textField" x="741" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="741" y="0" width="60" height="14" uuid="1436ca34-b7b6-4df6-97c9-2a4ff1b88390"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -249,7 +251,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalSS}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="4f7a0271-c774-4c97-9478-6e0841ba5cdc" key="textField" x="561" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="561" y="0" width="60" height="14" uuid="4f7a0271-c774-4c97-9478-6e0841ba5cdc"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -259,7 +261,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalSSEnterprise}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="b0e3b0c3-aa4f-4461-ba4b-383ce1853383" key="textField" x="201" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="201" y="0" width="60" height="14" uuid="b0e3b0c3-aa4f-4461-ba4b-383ce1853383"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -269,7 +271,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalPayment}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="4d555d11-5459-428b-bf10-1866aec87899" key="textField" x="681" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="681" y="0" width="60" height="14" uuid="4d555d11-5459-428b-bf10-1866aec87899"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -279,7 +281,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalExpense}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="69276c8a-7f30-47d1-bcdc-31ba36dd2c7c" key="textField" x="621" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="621" y="0" width="60" height="14" uuid="69276c8a-7f30-47d1-bcdc-31ba36dd2c7c"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -289,7 +291,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalBonus}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="613a3a32-7897-42ff-963e-68da45f392cc" key="textField" x="321" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="321" y="0" width="60" height="14" uuid="613a3a32-7897-42ff-963e-68da45f392cc"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -299,7 +301,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$V{subtotalIrpf}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="fb3af68f-beb9-402e-8bf9-67848488fb32" key="textField" x="381" y="0" width="60" height="14"/>
+					<reportElement key="textField" x="381" y="0" width="60" height="14" uuid="fb3af68f-beb9-402e-8bf9-67848488fb32"/>
 					<box rightPadding="5">
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
@@ -316,7 +318,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 		<groupHeader>
 			<band height="14">
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="b47497df-7460-498c-91df-92b91cf2b1bd" x="151" y="0" width="90" height="14"/>
+					<reportElement x="151" y="0" width="90" height="14" uuid="b47497df-7460-498c-91df-92b91cf2b1bd"/>
 					<box leftPadding="15"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -324,7 +326,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$R{payroll_workplace}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="6ddd1adc-37d0-4456-a06c-3e04f18eed17" x="241" y="0" width="320" height="14"/>
+					<reportElement x="241" y="0" width="320" height="14" uuid="6ddd1adc-37d0-4456-a06c-3e04f18eed17"/>
 					<box leftPadding="5">
 						<rightPen lineWidth="0.5"/>
 					</box>
@@ -334,7 +336,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$F{salary}.getContract().getWorkPlace().getDescription()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="79c9c2f0-4989-487e-8258-e71eb21eaf8f" x="561" y="0" width="180" height="14"/>
+					<reportElement x="561" y="0" width="180" height="14" uuid="79c9c2f0-4989-487e-8258-e71eb21eaf8f"/>
 					<box leftPadding="5">
 						<rightPen lineWidth="0.5"/>
 					</box>
@@ -344,7 +346,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[""]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="0c6e9c34-b48d-44cd-961c-50bc2bd3a021" x="0" y="0" width="151" height="14"/>
+					<reportElement x="0" y="0" width="151" height="14" uuid="0c6e9c34-b48d-44cd-961c-50bc2bd3a021"/>
 					<box leftPadding="5"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -364,7 +366,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 		<band height="52" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<componentElement>
-				<reportElement uuid="72f39765-dc5c-4ec6-9c5b-74a7bec495c2" key="head_table" x="0" y="0" width="802" height="50"/>
+				<reportElement key="head_table" x="0" y="0" width="802" height="50" uuid="72f39765-dc5c-4ec6-9c5b-74a7bec495c2"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 					<datasetRun subDataset="Head Dataset" uuid="76d4ec58-4878-47a7-b947-950b994ec4d5">
 						<datasetParameter name="month">
@@ -381,8 +383,8 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<jr:column width="75" uuid="195de06b-dac9-4741-ac7d-ab80703c8690">
 						<printWhenExpression><![CDATA[$V{logo} != null]]></printWhenExpression>
 						<jr:detailCell height="50" rowSpan="1">
-							<image>
-								<reportElement uuid="f9e21807-2f61-4f20-bf31-66e10742cc38" positionType="Float" x="0" y="0" width="75" height="50">
+							<image onErrorType="Blank">
+								<reportElement positionType="Float" x="0" y="0" width="75" height="50" uuid="f9e21807-2f61-4f20-bf31-66e10742cc38">
 									<printWhenExpression><![CDATA[$P{logo} != null]]></printWhenExpression>
 								</reportElement>
 								<imageExpression><![CDATA[new java.io.ByteArrayInputStream($P{logo}.getData())]]></imageExpression>
@@ -392,7 +394,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<jr:column width="703" uuid="9ed1b83f-f6ec-46e5-b74a-8c27f16d4662">
 						<jr:detailCell height="50" rowSpan="1">
 							<textField>
-								<reportElement uuid="1dc4e1de-5f4e-4037-93e6-2255b6baab23" style="default" mode="Opaque" x="0" y="20" width="60" height="15"/>
+								<reportElement style="default" mode="Opaque" x="0" y="20" width="60" height="15" uuid="1dc4e1de-5f4e-4037-93e6-2255b6baab23"/>
 								<box leftPadding="10"/>
 								<textElement verticalAlignment="Middle" markup="none">
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -400,14 +402,14 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 								<textFieldExpression><![CDATA[$R{aon_company}+": "]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="1b9b8df5-cb8b-4d5b-9897-8ae314a9b96f" style="default" x="60" y="20" width="500" height="15"/>
+								<reportElement style="default" x="60" y="20" width="500" height="15" uuid="1b9b8df5-cb8b-4d5b-9897-8ae314a9b96f"/>
 								<textElement verticalAlignment="Middle">
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
 							</textField>
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-								<reportElement uuid="72ecb40d-2926-4eb8-9012-9d3a4df8ad42" key="textField-2" style="default" x="560" y="20" width="142" height="15"/>
+								<reportElement key="textField-2" style="default" x="560" y="20" width="142" height="15" uuid="72ecb40d-2926-4eb8-9012-9d3a4df8ad42"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -420,7 +422,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 								<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 							</textField>
 							<textField>
-								<reportElement uuid="6d924f1f-a358-44d2-a945-1f5387f9699a" style="default" mode="Opaque" x="0" y="35" width="60" height="15">
+								<reportElement style="default" mode="Opaque" x="0" y="35" width="60" height="15" uuid="6d924f1f-a358-44d2-a945-1f5387f9699a">
 									<printWhenExpression><![CDATA[false]]></printWhenExpression>
 								</reportElement>
 								<box leftPadding="10"/>
@@ -430,7 +432,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 								<textFieldExpression><![CDATA[$R{aon_period}+": "]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="e9e739b1-ec0a-47e4-8717-c3b327b090dc" style="default" x="60" y="35" width="500" height="15">
+								<reportElement style="default" x="60" y="35" width="500" height="15" uuid="e9e739b1-ec0a-47e4-8717-c3b327b090dc">
 									<printWhenExpression><![CDATA[false]]></printWhenExpression>
 								</reportElement>
 								<textElement verticalAlignment="Middle">
@@ -439,7 +441,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 								<textFieldExpression><![CDATA[$P{month}.getName( $P{REPORT_LOCALE} ) + ", " + $P{year}]]></textFieldExpression>
 							</textField>
 							<textField isBlankWhenNull="true">
-								<reportElement uuid="5f9a5a88-efb5-42f3-b1fb-8a7b5c2bcaa9" key="textField-1" style="default" x="0" y="0" width="560" height="20"/>
+								<reportElement key="textField-1" style="default" x="0" y="0" width="560" height="20" uuid="5f9a5a88-efb5-42f3-b1fb-8a7b5c2bcaa9"/>
 								<box leftPadding="10">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -460,7 +462,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 	<columnHeader>
 		<band height="30">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c9948d7a-7c69-48dc-9714-cdb8b8cd9fd7" key="textField-3" mode="Opaque" x="621" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="621" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="c9948d7a-7c69-48dc-9714-cdb8b8cd9fd7"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -473,7 +475,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA["Bonif."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="63cecb33-3690-4021-8260-cf4d3aca066d" key="textField-3" mode="Opaque" x="201" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="201" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="63cecb33-3690-4021-8260-cf4d3aca066d"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -486,7 +488,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA["Devengado"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="d1c50570-d893-4183-b8b8-d08514c3b33a" key="textField-3" mode="Opaque" x="0" y="0" width="151" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="0" y="0" width="151" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="d1c50570-d893-4183-b8b8-d08514c3b33a"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -499,7 +501,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA[$R{payroll_salary_period}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="cf368a6e-4b6d-4f3c-bdd3-3de80b997664" key="textField-3" mode="Opaque" x="681" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="681" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="cf368a6e-4b6d-4f3c-bdd3-3de80b997664"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -512,7 +514,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA["Coste Empresa"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="9c5d6a37-81dc-4aaf-9390-407c9a98a2bf" key="textField-3" mode="Opaque" x="501" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="501" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="9c5d6a37-81dc-4aaf-9390-407c9a98a2bf"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -525,7 +527,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA[$R{payroll_total_liquid}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2c45d1a9-eb88-4277-a77d-db3bbea7b4ff" key="textField-3" mode="Opaque" x="321" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="321" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="2c45d1a9-eb88-4277-a77d-db3bbea7b4ff"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -538,7 +540,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA["I.R.P.F. Dinerario"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c1110cf6-e2f7-437e-97c0-667b6477bf70" key="textField-3" mode="Opaque" x="441" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="441" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="c1110cf6-e2f7-437e-97c0-667b6477bf70"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -551,7 +553,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA["Otras Deducc."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4518919c-1ee4-4497-93b1-56b4e28a642b" key="textField-3" mode="Opaque" x="741" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="741" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="4518919c-1ee4-4497-93b1-56b4e28a642b"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -564,7 +566,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA[$R{payroll_ss_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="87d5b649-3a7d-4366-b912-1ed8bb8e76be" key="textField-3" mode="Opaque" x="151" y="0" width="50" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="151" y="0" width="50" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="87d5b649-3a7d-4366-b912-1ed8bb8e76be"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -577,7 +579,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA[$R{aon_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="26725f2a-0db2-4677-8c6d-4ce80286eeb4" key="textField-3" mode="Opaque" x="381" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="381" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="26725f2a-0db2-4677-8c6d-4ce80286eeb4"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -590,7 +592,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA["I.R.P.F. Especie"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="b255c53f-58df-46aa-94cc-d7f5e25f5693" key="textField-3" mode="Opaque" x="261" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="261" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="b255c53f-58df-46aa-94cc-d7f5e25f5693"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -603,7 +605,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textFieldExpression><![CDATA["S.S. Trabajador"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="89ad52e2-800f-4231-b8b1-460a4300bd49" key="textField-3" mode="Opaque" x="561" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-3" mode="Opaque" x="561" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="89ad52e2-800f-4231-b8b1-460a4300bd49"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -620,9 +622,9 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 	<detail>
 		<band height="14">
 			<frame>
-				<reportElement uuid="cff11e0b-52c7-4bab-9347-c37757419c07" style="default" x="0" y="0" width="802" height="14"/>
+				<reportElement style="default" x="0" y="0" width="802" height="14" uuid="cff11e0b-52c7-4bab-9347-c37757419c07"/>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="6b71b38c-405e-4e6e-b4be-3422d38ee1f9" key="textField-8" style="employee" x="0" y="0" width="151" height="14"/>
+					<reportElement key="textField-8" style="employee" x="0" y="0" width="151" height="14" uuid="6b71b38c-405e-4e6e-b4be-3422d38ee1f9"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -635,7 +637,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$F{salary}.getMonth().getName( $P{REPORT_LOCALE} ) + ", " + $F{salary}.getYear()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="4c233f89-39a4-4ffc-8c89-aa99b4c9a29d" key="textField-8" style="employee" x="151" y="0" width="50" height="14"/>
+					<reportElement key="textField-8" style="employee" x="151" y="0" width="50" height="14" uuid="4c233f89-39a4-4ffc-8c89-aa99b4c9a29d"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -648,7 +650,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[($F{salary}.getIssueYear() == 0 ? "*" : "" ) + $F{salary}.getType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="6de609c3-4311-4800-8c8d-d28f5b120378" key="textField-8" style="employee" x="501" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="501" y="0" width="60" height="14" uuid="6de609c3-4311-4800-8c8d-d28f5b120378"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -661,7 +663,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$F{salary}.getTotalLiquid()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="e74a37e5-0b36-43ca-bf5f-74601d251c2a" key="textField-8" style="employee" x="321" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="321" y="0" width="60" height="14" uuid="e74a37e5-0b36-43ca-bf5f-74601d251c2a"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -676,7 +678,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
     : $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="291853b2-4634-4277-949f-d39937a472ca" key="textField-8" style="employee" x="621" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="621" y="0" width="60" height="14" uuid="291853b2-4634-4277-949f-d39937a472ca"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -689,7 +691,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$F{salary}.getBonuses().getTotal()==null?new Double(0.0):$F{salary}.getBonuses().getTotal()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="5c681ae5-c3df-4a45-970a-878dca53a49a" key="textField-8" style="employee" x="561" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="561" y="0" width="60" height="14" uuid="5c681ae5-c3df-4a45-970a-878dca53a49a"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -702,7 +704,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textFieldExpression><![CDATA[$F{salary}.getTotalEnterprise()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="eb1a2e7d-1be5-4e66-8da7-a85ce77fe750" key="textField-8" style="employee" x="441" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="441" y="0" width="60" height="14" uuid="eb1a2e7d-1be5-4e66-8da7-a85ce77fe750"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -720,7 +722,7 @@ new Double(0.0):$F{salary}.getDeductions().getInKind().getAmount())
 new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="9918995a-a4b7-4737-8c12-de35d73d16e7" key="textField-8" style="employee" x="741" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="741" y="0" width="60" height="14" uuid="9918995a-a4b7-4737-8c12-de35d73d16e7"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -734,7 +736,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 +$F{salary}.getSocialSecurityContributions()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="1adb67e5-08e8-45ce-b664-c2a4486047c1" key="textField-8" style="employee" x="681" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="681" y="0" width="60" height="14" uuid="1adb67e5-08e8-45ce-b664-c2a4486047c1"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -747,7 +749,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 					<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()+$F{salary}.getTotalEnterprise()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="37bd4369-96a1-403f-ba75-de9e0be8ba8a" key="textField-8" style="employee" x="261" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="261" y="0" width="60" height="14" uuid="37bd4369-96a1-403f-ba75-de9e0be8ba8a"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -761,7 +763,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="2c79878d-b0b8-4445-9651-5644e45a0335" key="textField-8" style="employee" x="201" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="201" y="0" width="60" height="14" uuid="2c79878d-b0b8-4445-9651-5644e45a0335"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -774,7 +776,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 					<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement uuid="91e1f873-ae28-47f8-b986-351392f2797a" key="textField-8" style="employee" x="381" y="0" width="60" height="14"/>
+					<reportElement key="textField-8" style="employee" x="381" y="0" width="60" height="14" uuid="91e1f873-ae28-47f8-b986-351392f2797a"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -792,7 +794,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 	<columnFooter>
 		<band height="14">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="517846da-2967-4525-a20f-95a5816c9903" x="0" y="0" width="201" height="14"/>
+				<reportElement x="0" y="0" width="201" height="14" uuid="517846da-2967-4525-a20f-95a5816c9903"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
@@ -800,7 +802,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$R{payroll_enterprise_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="6ed469fa-09e8-406a-8f14-2c7a887e72df" key="textField" x="321" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="321" y="0" width="60" height="14" uuid="6ed469fa-09e8-406a-8f14-2c7a887e72df"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -811,7 +813,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalIrpf}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="f74145f5-e0db-4d47-be93-185ab2b46488" key="textField" x="621" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="621" y="0" width="60" height="14" uuid="f74145f5-e0db-4d47-be93-185ab2b46488"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -822,7 +824,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalBonus}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="f1ea5acf-cac6-464b-9304-64ea93a4dd7d" key="textField" x="561" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="561" y="0" width="60" height="14" uuid="f1ea5acf-cac6-464b-9304-64ea93a4dd7d"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -833,7 +835,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalSSEnterprise}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="4fbca53c-43af-437f-8b68-c81450fc5138" key="textField" x="381" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="381" y="0" width="60" height="14" uuid="4fbca53c-43af-437f-8b68-c81450fc5138"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -844,7 +846,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalIrpfInkind}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="bb51eaa8-3e25-4d12-91b3-ba30fb28e8d3" key="textField" x="261" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="261" y="0" width="60" height="14" uuid="bb51eaa8-3e25-4d12-91b3-ba30fb28e8d3"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -855,7 +857,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalSSEmployee}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="2c64d136-6c3d-4d3c-a353-155ecd76f901" key="textField" x="741" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="741" y="0" width="60" height="14" uuid="2c64d136-6c3d-4d3c-a353-155ecd76f901"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -866,7 +868,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalSS}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="a2a28a40-ca87-4c1a-b019-f94377164d91" key="textField" x="681" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="681" y="0" width="60" height="14" uuid="a2a28a40-ca87-4c1a-b019-f94377164d91"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -877,7 +879,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalExpense}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="10989e58-86b4-4cfd-be1d-2af82488915b" key="textField" x="441" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="441" y="0" width="60" height="14" uuid="10989e58-86b4-4cfd-be1d-2af82488915b"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -888,7 +890,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalOther}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="26ca56c4-fad9-48dc-950b-30308f610779" key="textField" x="501" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="501" y="0" width="60" height="14" uuid="26ca56c4-fad9-48dc-950b-30308f610779"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -899,7 +901,7 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 				<textFieldExpression><![CDATA[$V{totalLiquid}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement uuid="02ab565c-6505-473e-bc6e-40c13c82846f" key="textField" x="201" y="0" width="60" height="14"/>
+				<reportElement key="textField" x="201" y="0" width="60" height="14" uuid="02ab565c-6505-473e-bc6e-40c13c82846f"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Double"/>
@@ -915,13 +917,13 @@ new Double(0.0):$F{salary}.getDeductions().getSocialSecurityContributions()]]></
 		<band height="14">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField>
-				<reportElement uuid="c62ee294-02f7-4ce9-a12e-c30e25d7a58b" x="0" y="0" width="786" height="14"/>
+				<reportElement x="0" y="0" width="786" height="14" uuid="c62ee294-02f7-4ce9-a12e-c30e25d7a58b"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
 				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement uuid="5092a07d-fe2a-4be9-9eea-efd91e20c434" x="786" y="0" width="16" height="14"/>
+				<reportElement x="786" y="0" width="16" height="14" uuid="5092a07d-fe2a-4be9-9eea-efd91e20c434"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Bottom"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
