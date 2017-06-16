@@ -32,7 +32,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -51,6 +50,7 @@ public class Page00 extends PageAbs {
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002016Key.C0004);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002016Key.C0024);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002016Key.C0025);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002016Key.C0035);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002016Key.C0036);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002016Key.C0058);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002016Key.C0061);
