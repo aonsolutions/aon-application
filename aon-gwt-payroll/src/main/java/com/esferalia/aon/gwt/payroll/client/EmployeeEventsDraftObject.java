@@ -13,14 +13,12 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
 	
@@ -135,15 +133,72 @@ public class EmployeeEventsDraftObject {
 	public UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObjectData employeeCalendar;
 	
+	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO (AHORA SE CREA ALEATORIAMENTE)
+	public ArrayList<String> employeeContractVariables;
+	public ArrayList<String> variablesList;
+	
 	public EmployeeEventsDraftObject(Integer idEmployee, EmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
-		//crearMapaEmployeeEvents();
 		this.draftMapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
 		
 		this.idEmployee = idEmployee;
 		this.employeesService = employeesService;
 		
+		this.variablesList = addVariablesList();
+		this.employeeContractVariables = new ArrayList<String>();
+		
 		this.undoManager = new UndoManager<>();
+	}
+	
+
+	/**
+	 * METODOS PARA CREAR DE FORMA ALEATORIA LAS VARIABLES DE CADA EMPLEADO
+	 * 
+	 * ¡¡¡HAY QUE BORRARLO EN EL FUTURO!!!!
+	 * @return
+	 */
+	
+	private ArrayList<String> addVariablesList() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("HORAS_COMPLEMENTARIAS");
+		list.add("DIAS_EFECTIVOS");
+		list.add("DIAS_ERE");
+		list.add("DIAS_HUELGA");
+		list.add("DIAS_AUSENCIA");
+		list.add("DIAS_VACACIONES");
+		list.add("DIAS_MANUTENCION");
+		list.add("DIAS_PECNORTA");
+		list.add("DIAS_MANUTENCION_EXTRANJERO");
+		list.add("DIAS_PECNORTA_EXTRANJERO");
+		list.add("KMS");
+		list.add("JORNADAS_REALES");
+		list.add("HORAS_EXTRAS");
+		list.add("HORAS_EXTRAS_FZA");
+		return list;
+	}
+	
+	public void createContractVariables() {
+		
+		int numShowingVar = (int) Math.floor(Math.random()*13+1);
+		
+		for (int i = 0; i < numShowingVar; i++){
+			int numPositionShow = (int) Math.floor(Math.random()*14);
+			this.employeeContractVariables.add(this.variablesList.get(numPositionShow));
+		}
+	
+	}
+
+	public ArrayList<String> getEmployeeContractVariables() {
+		return this.employeeContractVariables;
+	}
+	
+
+	/**
+	 * GETTERS / SETTERS
+	 */
+	
+	public boolean isContractVariable(String var){
+		return this.employeeContractVariables.contains(var);
 	}
 	
 	public void setEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
@@ -153,10 +208,6 @@ public class EmployeeEventsDraftObject {
 	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
 		return this.employeeCalendar;
 	}
-
-	/**
-	 * GETTERS / SETTERS
-	 */
 	
 	public Map<String, ArrayList<EmployeeEventsVariable>> getMapEventsVar() {
 		return mapEventsVar;
@@ -178,6 +229,7 @@ public class EmployeeEventsDraftObject {
 		return idEmployee;
 	}
 
+	
 	/**
 	 * METODO GETTERS Y SETTERS AUXILIARES
 	 * @return 

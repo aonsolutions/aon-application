@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEv
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -13,10 +14,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -39,6 +40,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	interface MyStyle extends CssResource {
 		String ocultarFila();
+		String oddRowStyle();
+		String firstHeadStyle();
 		String cellFormat();
 		String cellOddFormat();
 		String isSelectedCell();
@@ -149,23 +152,23 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiField
 	Grid eventsGrid;
 	
-	@UiField
-	Button calendarButton1;
-	
-	@UiField
-	Button calendarButton2;
-	
-	@UiField
-	Button calendarButton3;
-	
-	@UiField
-	Button calendarButton4;
-	
-	@UiField
-	Button calendarButton6;
-	
-	@UiField
-	Button calendarButton7;
+//	@UiField
+//	Button calendarButton1;
+//	
+//	@UiField
+//	Button calendarButton2;
+//	
+//	@UiField
+//	Button calendarButton3;
+//	
+//	@UiField
+//	Button calendarButton4;
+//	
+//	@UiField
+//	Button calendarButton6;
+//	
+//	@UiField
+//	Button calendarButton7;
 	
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
 	private EmployeeEventsDraftObject employeeEventsDraft;
@@ -181,12 +184,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
-		calendarButton1.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-		calendarButton2.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-		calendarButton3.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-		calendarButton4.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-		calendarButton6.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-		calendarButton7.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+//		calendarButton1.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+//		calendarButton2.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+//		calendarButton3.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+//		calendarButton4.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+//		calendarButton6.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
+//		calendarButton7.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
 		
 		//Boton para añadir un nuevo valor
 		addNewValueMenuItem.setScheduledCommand(new Command() {
@@ -354,6 +357,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		this.employeeEventsDraft = employeeEventsDraft;
 		
 		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
+		//Window.alert("Size VariablesList :"+this.employeeEventsDraft.variablesList.size());
+		this.employeeEventsDraft.createContractVariables();
+		//Window.alert("Size VariablesListEmployee :"+this.employeeEventsDraft.employeeContractVariables.size());
 		
 		this.employeeEventsDraft.undoManager.addListener(new UndoManager.Listener() {
 			@SuppressWarnings("rawtypes")
@@ -374,66 +380,159 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
 	private void fillCellsEvents() {
-		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
-		Boolean blockVariable = false;
-		for (int row = 1; row < 15; row ++){
-			Integer actualMonth = 0;
-			
-			String variableName = "";
-			Element element = eventsGrid.getWidget(row, 0).getElement().getFirstChildElement();
-			if(null != element)
-				variableName = element.getInnerText();
-			else
-				variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
-			
-			blockVariable = checkBlockVariables(row);
-			
-			if (blockVariable)
-				eventsGrid.getWidget(row, 0).setStyleName(style.setBlockVariableStyle());
-			else
-				eventsGrid.getWidget(row, 0).removeStyleName(style.setBlockVariableStyle());
-			
-			ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
-			
-			for (int col = 1; col < 13; col ++){
-			
-				Label eventValue = new Label();
-				eventValue.setStyleName(style.cellFormat());
-				if (row % 2 == 1)
-					eventValue.setStyleName(style.cellOddFormat());
-				
-				if (blockVariable)
-					eventValue.setStyleName(style.setBlockVariableStyle());
-				else
-					eventValue.removeStyleName(style.setBlockVariableStyle());
-				
-				if(null == varList){
-					eventValue.setText("-");
-					eventsGrid.setWidget(row, col, eventValue);
-					continue;
-				}
-				
-				EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(variableName, actualMonth, actualYear);
-				
-				if (null == varMonth){
-					eventValue.setText("-");
-					eventsGrid.setWidget(row, col, eventValue);
-					actualMonth++;
-					continue;
-				}
-				
-				if (this.employeeEventsDraft.hasChanged(variableName, varMonth))
-					eventValue.setStyleName(style.onChange());
-				else
-					eventValue.removeStyleName(style.onChange());
-				
-				eventValue.setText(varMonth.getValue().toString());
-				eventsGrid.setWidget(row, col, eventValue);
-				actualMonth++;
-			}	
+		
+		//Crear nuevas filas con las variables dadas
+		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+			createVariableRow(var);
 		}
 		
 	}
+	
+    private void createVariableRow(String var) {
+    	Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
+    	Integer actualMonth = 0;
+    	Boolean blockVariable = false;
+    	
+    	int newRow = eventsGrid.insertRow(eventsGrid.getRowCount());
+		
+		if (newRow % 2 == 1)
+			eventsGrid.getRowFormatter().addStyleName(newRow, style.oddRowStyle());
+		
+		FlowPanel headPanel = new FlowPanel();
+		Label headLabel = new Label(var);
+		headLabel.setStyleName(style.firstHeadStyle());
+		headPanel.add(headLabel);
+		
+		if (this.blockVariableList.contains(var)){
+			Button calendarButton = new Button();
+			calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
+			calendarButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					EmployeeTree.showEmployeeCalendar((employeeEventsDraft.getEmployeeCalendar()));
+					
+				}
+			});
+			
+			headPanel.add(calendarButton);
+			headLabel.setStyleName(style.setBlockVariableStyle());
+		}else
+			headLabel.setStyleName(style.setBlockVariableStyle());
+		
+		if (newRow % 2 == 1)
+			headLabel.setStyleName(style.cellOddFormat());
+		
+		eventsGrid.setWidget(newRow, 0, headPanel);
+		
+		//Rellenamos el resto de la fila
+		
+		ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(var);
+		
+		for (int col = 1; col < eventsGrid.getColumnCount(); col++){
+			Label eventValue = new Label();
+			eventValue.setStyleName(style.cellFormat());
+			if (newRow % 2 == 1)
+				eventValue.setStyleName(style.cellOddFormat());
+			
+			if (blockVariable)
+				eventValue.setStyleName(style.setBlockVariableStyle());
+			else
+				eventValue.removeStyleName(style.setBlockVariableStyle());
+			
+			if(null == varList){
+				eventValue.setText("-");
+				eventsGrid.setWidget(newRow, col, eventValue);
+				continue;
+			}
+			
+			EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(var, actualMonth, actualYear);
+			
+			if (null == varMonth){
+				eventValue.setText("-");
+				eventsGrid.setWidget(newRow, col, eventValue);
+				actualMonth++;
+				continue;
+			}
+			
+			if (this.employeeEventsDraft.hasChanged(var, varMonth))
+				eventValue.setStyleName(style.onChange());
+			else
+				eventValue.removeStyleName(style.onChange());
+			
+			eventValue.setText(varMonth.getValue().toString());
+			eventsGrid.setWidget(newRow, col, eventValue);
+			actualMonth++;
+		}
+		
+	}
+
+//	private void fillCellsEvents() {
+//		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
+//		Boolean blockVariable = false;
+//		for (int row = 1; row < 15; row ++){
+//			Integer actualMonth = 0;
+//			
+//			String variableName = "";
+//			Element element = eventsGrid.getWidget(row, 0).getElement().getFirstChildElement();
+//			if(null != element)
+//				variableName = element.getInnerText();
+//			else
+//				variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+//			
+//			if(this.employeeEventsDraft.isContractVariable(variableName)){
+//				eventsGrid.getRowFormatter().addStyleName(row, style.ocultarFila());
+//				continue;
+//			}
+//			
+//			blockVariable = checkBlockVariables(row);
+//			
+//			if (blockVariable)
+//				eventsGrid.getWidget(row, 0).setStyleName(style.setBlockVariableStyle());
+//			else
+//				eventsGrid.getWidget(row, 0).removeStyleName(style.setBlockVariableStyle());
+//			
+//			ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
+//			
+//			for (int col = 1; col < 13; col ++){
+//			
+//				Label eventValue = new Label();
+//				eventValue.setStyleName(style.cellFormat());
+//				if (row % 2 == 1)
+//					eventValue.setStyleName(style.cellOddFormat());
+//				
+//				if (blockVariable)
+//					eventValue.setStyleName(style.setBlockVariableStyle());
+//				else
+//					eventValue.removeStyleName(style.setBlockVariableStyle());
+//				
+//				if(null == varList){
+//					eventValue.setText("-");
+//					eventsGrid.setWidget(row, col, eventValue);
+//					continue;
+//				}
+//				
+//				EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(variableName, actualMonth, actualYear);
+//				
+//				if (null == varMonth){
+//					eventValue.setText("-");
+//					eventsGrid.setWidget(row, col, eventValue);
+//					actualMonth++;
+//					continue;
+//				}
+//				
+//				if (this.employeeEventsDraft.hasChanged(variableName, varMonth))
+//					eventValue.setStyleName(style.onChange());
+//				else
+//					eventValue.removeStyleName(style.onChange());
+//				
+//				eventValue.setText(varMonth.getValue().toString());
+//				eventsGrid.setWidget(row, col, eventValue);
+//				actualMonth++;
+//			}	
+//		}
+//		
+//	}
 	
 	private void fillShowingVarList(Boolean[] showingVar) {
 		showingVar[0] = dtCheckBox1.getChecked();

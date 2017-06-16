@@ -27,13 +27,13 @@
 			font-size: 11px;
 		}
 
-		.cabeceraFirstStyle {
+		.firstHeadStyle {
 			width: 16em;
 			font-weight: bold;
 			padding: 3px;
 		}
 
-		.cabeceraFirstStyleHide {
+		.firstHeadStyleHide {
 			/* width:16em; */
 			padding-bottom: 15px;
 			visibility: hidden;
@@ -51,7 +51,7 @@
 			font-weight: bold;
 		}
 
-		.filasImparesStyle {
+		.oddRowStyle {
 			background-color: #eee;
 		}
 
@@ -341,7 +341,7 @@
 					<!--g:north size="1">
 						< g:Grid width="99%" styleName="{style.tableStyle}">
 							<g:row>
-								<g:customCell styleName="{style.cabeceraFirstStyleHide}">
+								<g:customCell styleName="{style.firstHeadStyleHide}">
 									<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
 								</g:customCell>
 								<g:customCell styleName="{style.cabeceraStyleHide}">
@@ -389,7 +389,7 @@
 								styleName="{style.tableStyle} {style.noselect}">
 								<!-- PARTE OCULTA PARA REDIMENSIONAR LA TABLA -->
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyleHide}">
+									<g:customCell styleName="{style.firstHeadStyleHide}">
 										<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
 									</g:customCell>
 									<g:customCell styleName="{style.cabeceraStyle}">
@@ -429,8 +429,8 @@
 										<g:Label>DICIEMBRE</g:Label>
 									</g:customCell>
 								</g:row>
-								<g:row styleName="{style.filasImparesStyle}">
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+								<!-- g:row styleName="{style.oddRowStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 									    <g:HTMLPanel>
 											<i:IronLabel>HORAS_COMPLEMENTARIAS</i:IronLabel>
 											<g:Button ui:field='calendarButton6' styleName='aon-editDataTable-button aon-icon-calendar'/>
@@ -438,15 +438,15 @@
 									</g:customCell>
 								</g:row>
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 									    <g:HTMLPanel>
 											<i:IronLabel>DIAS_EFECTIVOS</i:IronLabel>
 											<g:Button ui:field='calendarButton1' styleName='aon-editDataTable-button aon-icon-calendar'/>
 										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
-								<g:row styleName="{style.filasImparesStyle}">
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+								<g:row styleName="{style.oddRowStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 									    <g:HTMLPanel>
 											<i:IronLabel>DIAS_ERE</i:IronLabel>
 											<g:Button ui:field='calendarButton2' styleName='aon-editDataTable-button aon-icon-calendar'/>
@@ -454,15 +454,15 @@
 									</g:customCell>
 								</g:row>
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 									    <g:HTMLPanel>
 											<i:IronLabel>DIAS_HUELGA</i:IronLabel>
 											<g:Button ui:field='calendarButton3' styleName='aon-editDataTable-button aon-icon-calendar'/>
 										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
-								<g:row styleName="{style.filasImparesStyle}">
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+								<g:row styleName="{style.oddRowStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:HTMLPanel>
 											<i:IronLabel>DIAS_AUSENCIA</i:IronLabel>
 											<g:Button ui:field='calendarButton4' styleName='aon-editDataTable-button aon-icon-calendar'/>
@@ -470,53 +470,53 @@
 									</g:customCell>
 								</g:row>
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:HTMLPanel>
 											<i:IronLabel>DIAS_VACACIONES</i:IronLabel>
 											<g:Button ui:field='calendarButton7' styleName='aon-editDataTable-button aon-icon-calendar'/>
 										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
-								<g:row styleName="{style.filasImparesStyle}">
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+								<g:row styleName="{style.oddRowStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>DIAS_MANUTENCION</g:Label>
 									</g:customCell>
 								</g:row>
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>DIAS_PECNORTA</g:Label>
 									</g:customCell>
 								</g:row>
-								<g:row styleName="{style.filasImparesStyle}">
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+								<g:row styleName="{style.oddRowStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
 									</g:customCell>
 								</g:row>
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>DIAS_PECNORTA_EXTRAJERO</g:Label>
 									</g:customCell>
 								</g:row>
-								<g:row styleName="{style.filasImparesStyle}">
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+								<g:row styleName="{style.oddRowStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>KMS</g:Label>
 									</g:customCell>
 								</g:row>
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>JORNADAS_REALES</g:Label>
 									</g:customCell>
 								</g:row>
-								<g:row styleName="{style.filasImparesStyle}">
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+								<g:row styleName="{style.oddRowStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>HORAS_EXTRAS</g:Label>
 									</g:customCell>
 								</g:row>
 								<g:row>
-									<g:customCell styleName="{style.cabeceraFirstStyle}">
+									<g:customCell styleName="{style.firstHeadStyle}">
 										<g:Label>HORAS_EXTRAS_FZA</g:Label>
 									</g:customCell>
-								</g:row>
+								</g:row -->
 							</g:Grid>
 						</g:ScrollPanel>
 					</g:center>
