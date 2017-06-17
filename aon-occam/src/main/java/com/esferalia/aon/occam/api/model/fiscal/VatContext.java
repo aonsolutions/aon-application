@@ -32,6 +32,7 @@ public class VatContext implements Serializable {
 	
 	private InvoiceType invoiceType;
 	private RectificationType rectificationType;
+	private Integer rectificationInvoice;
 	private boolean service;
 	private InvoiceTransactionType transaction;
 	private boolean investment;
@@ -50,7 +51,7 @@ public class VatContext implements Serializable {
 	private boolean surcharge;
 	private double surchargePercent;
 	private double surchargeQuota;
-	
+
 	public Integer getInvoice() {
 		return invoice;
 	}
@@ -270,6 +271,12 @@ public class VatContext implements Serializable {
 		this.surchargeQuota = surchargeQuota;
 		return this;
 	}
+	public Integer getRectificationInvoice() {
+		return rectificationInvoice;
+	}
+	public void setRectificationInvoice(Integer rectificationInvoice) {
+		this.rectificationInvoice = rectificationInvoice;
+	}
 	public boolean isRectification() {
 		return (rectificationType == RectificationType.NORMAL_RECTIFIER);
 	}
@@ -336,5 +343,4 @@ public class VatContext implements Serializable {
 	public boolean isWithoutRightDeductionType() {
 		return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
 	}
-	
 }

@@ -5,7 +5,9 @@ import java.io.Serializable;
 public enum DataResponseSource implements Serializable{
 
 	QUALITY,
-	PROJECT;
+	PROJECT,
+	HOTEL,
+	SII;
 
 	public byte value() {
 		return (byte) this.ordinal();

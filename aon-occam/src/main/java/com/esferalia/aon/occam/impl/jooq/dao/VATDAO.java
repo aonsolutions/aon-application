@@ -52,6 +52,7 @@ public class VATDAO  {
 
 			return new Condition[] { filterDAO.getCondition() };
 		}
+		@Override public Property<Integer> getInvoiceIdProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);}
 		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
 		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.REGISTRY);}
 		@Override public Property<Byte> getInvoiceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}

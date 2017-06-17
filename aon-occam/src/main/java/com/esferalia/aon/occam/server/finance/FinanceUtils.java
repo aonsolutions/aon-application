@@ -73,6 +73,9 @@ public class FinanceUtils {
 
 	public static Filter getVATFilter(VATProperties p, VatParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
+		if(params.getInvoices() != null){
+			prop = prop.and(p.getInvoiceIdProperty().in(params.getInvoices()));
+		}
 		if (params.getRegistry()  != null && params.getRegistry().intValue() != 0 ) {
 			prop = prop.and(p.getRegistryProperty().eq(params.getRegistry()));
 		}

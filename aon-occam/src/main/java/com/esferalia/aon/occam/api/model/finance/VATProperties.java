@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 
 public interface VATProperties  {
+	Property<Integer> getInvoiceIdProperty();
 	Property<Integer> getDomainProperty();
 	Property<Integer> getRegistryProperty();
 	Property<Byte> getInvoiceTypeProperty();

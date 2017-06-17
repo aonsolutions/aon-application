@@ -9,7 +9,8 @@ public enum DataResponseSource implements IResourceable {
 
 	QUALITY,
 	PROJECT,
-	HOTEL;
+	HOTEL,
+	SII;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_response_source_";

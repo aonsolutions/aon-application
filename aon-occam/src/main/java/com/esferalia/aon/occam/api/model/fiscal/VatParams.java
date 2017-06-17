@@ -22,6 +22,14 @@ public class VatParams implements Serializable {
 	private Boolean investment;
 	private Boolean service;
 	
+	Integer[] invoices;
+	
+	public Integer[] getInvoices() {
+		return invoices;
+	}
+	public void setInvoices(Integer[] invoices) {
+		this.invoices = invoices;
+	}
 	public int getDomain() {
 		return domain;
 	}
