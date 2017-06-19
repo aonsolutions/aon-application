@@ -94,7 +94,7 @@ public class VATFormatter {
 				+ ' '
 				+ AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.SPACE),8)
 				+ AonStringUtils.rightPad(vat.getDocumentNumber(),15)
-				+ AonStringUtils.rightPad(vat.getRegistryDocument(),15)
+				+ AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getRegistryDocument(), AonStringUtils.SPACE),15)
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getRegistryName(),29),30)
 				+ (
 				  AonDateUtils.isSameDay(vat.getIssueDate(), vat.getTaxDate())
