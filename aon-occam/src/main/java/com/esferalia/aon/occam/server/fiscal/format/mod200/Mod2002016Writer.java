@@ -23,6 +23,7 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
@@ -134,11 +135,16 @@ public class Mod2002016Writer {
 	
 	// Devuelve el codigo de provincia (por defecto) o el pais, según este cumplimentado 
 	// uno u otro campo (province o country) de participaciones
-	private static String getProvinceCountry(CompanyParticipation cp) {
-		
-		int province = cp.getProvince();
+	//private static String getProvinceCountry(CompanyParticipation cp) {
+//	int province = cp.getProvince();
+//	if (province==0)
+//		return AonStringUtils.trimToEmpty(cp.getCountry()); // Pais
+//	else return AonStringUtils.leftPad(Integer.toString(province), 2, "0");  // Provincia
+	
+	private static String getProvinceCountry(int province, String country) {
+
 		if (province==0)
-			return AonStringUtils.trimToEmpty(cp.getCountry()); // Pais
+			return AonStringUtils.trimToEmpty(country); // Pais
 		else return AonStringUtils.leftPad(Integer.toString(province), 2, "0");  // Provincia
 		
 	}
@@ -164,7 +170,7 @@ public class Mod2002016Writer {
 		if (index < mod200.getParticipationsOut().size()) {			
             document     = mod200.getParticipationsOut().get(index).getDocument();	
             name         = mod200.getParticipationsOut().get(index).getName();	    
-            province     = getProvinceCountry(mod200.getParticipationsOut().get(index));	
+            province     = getProvinceCountry(mod200.getParticipationsOut().get(index).getProvince(),mod200.getParticipationsOut().get(index).getCountry());	
             percent      = mod200.getParticipationsOut().get(index).getPercent();
             nominalValue = mod200.getParticipationsOut().get(index).getNominalValue();  
             bookValue    = mod200.getParticipationsOut().get(index).getBookValue();  	
@@ -211,7 +217,7 @@ public class Mod2002016Writer {
 			rpte = mod200.getParticipationsIn().get(index).getRepresenStr();
 			fj = mod200.getParticipationsIn().get(index).getEntity();
 			name = mod200.getParticipationsIn().get(index).getName();
-			province = getProvinceCountry(mod200.getParticipationsIn().get(index));   
+			province = getProvinceCountry(mod200.getParticipationsIn().get(index).getProvince(),mod200.getParticipationsIn().get(index).getCountry());   
 			nominalValue = mod200.getParticipationsIn().get(index).getNominalValue();
 			percent = mod200.getParticipationsIn().get(index).getPercent();
 		}
@@ -222,6 +228,84 @@ public class Mod2002016Writer {
 		line.append( AonFiscalFileUtils.text(province,  2));
 		line.append( AonFiscalFileUtils.signedZero(nominalValue, DS, DD) ); 
 		line.append( AonFiscalFileUtils.unsigned(percent, 5,2));
+	}
+	
+	// UTES - Deducción para evitar la doble imposicion
+	private static void addUteBase(Writer line, Mod2002016 mod200, int index) throws IOException {			
+		double base = 0;
+		double percent = 0;
+		if (index < mod200.getUteBases().size()) {			   
+			base = mod200.getUteBases().get(index).getBase();
+			percent = mod200.getUteBases().get(index).getPercent();
+		}
+		line.append( AonFiscalFileUtils.signedZero(base, DS, DD) ); 
+		line.append( AonFiscalFileUtils.unsigned(percent, 5,2));
+	}
+	
+	// UTES - Relación de Socios
+	private static void addUteParticipation(Writer line, Mod2002016 mod200, int index) throws IOException {
+		String document = "";
+		String rpte = "0";
+		String fj = "";
+		String rx = "";  // Según el PADIS este dato no debe cumplimentarse si esta marcada la casilla 013, pero si se puede si esta la 014 de caracteres
+		String name = "";
+		String province = "";
+		double base = 0;
+		double percent = 0;
+		if (index < mod200.getUteParticipations().size()) {
+			document = mod200.getUteParticipations().get(index).getDocument();   
+			rpte = mod200.getUteParticipations().get(index).getRepresenStr();
+			fj = mod200.getUteParticipations().get(index).getEntity();
+			
+			// FALTA - Campo para R/X Residente/No residente, que se utiliza cuando se marca la casilla 013
+			//rx = mod200.getDoubleValue(Mod2002016Key.C0014)==1?mod200.getUteParticipations().get(index).get
+			
+			name = mod200.getUteParticipations().get(index).getName();			
+			province = getProvinceCountry(mod200.getUteParticipations().get(index).getProvince(),mod200.getUteParticipations().get(index).getCountry());
+			base = mod200.getUteParticipations().get(index).getBase();
+			percent = mod200.getUteParticipations().get(index).getPercent();
+		}
+		line.append( AonFiscalFileUtils.text(document,9));
+		line.append( AonFiscalFileUtils.text(rpte,1));
+		line.append( AonFiscalFileUtils.text(fj,1));
+		line.append( AonFiscalFileUtils.text(rx,1));
+		line.append( AonFiscalFileUtils.text(name,34)); 
+		line.append( AonFiscalFileUtils.text(province,2));
+		line.append( AonFiscalFileUtils.signedZero(base,DS, DD) ); 
+		line.append( AonFiscalFileUtils.unsigned(percent,7,4));
+	}
+	
+	// UTES - Información de detalle de EP o UTE que operen en el extranjero...
+	private static void addUteForeign(Writer line, Mod2002016 mod200, int index) throws IOException {
+		String identification = "";		
+		String country = "";		
+		double volume = 0;
+		double pyg = 0;
+		double adjust = 0;
+		double deduction = 0;
+		if (index < mod200.getUteForeign().size()) {
+			identification = mod200.getUteForeign().get(index).getIdentification();   
+			country = mod200.getUteForeign().get(index).getCountry();			
+			volume = mod200.getUteForeign().get(index).getVolume();
+			pyg = mod200.getUteForeign().get(index).getPyg();
+			adjust = mod200.getUteForeign().get(index).getAdjust();
+			deduction = mod200.getUteForeign().get(index).getDeduction();
+		}
+		line.append( AonFiscalFileUtils.text(identification,20));
+		line.append( AonFiscalFileUtils.text(country,2));		
+		line.append( AonFiscalFileUtils.signedZero(volume,DS,DD) );
+		line.append( AonFiscalFileUtils.signedZero(pyg,DS,DD) );
+		line.append( AonFiscalFileUtils.signedZero(adjust,DS,DD) );
+		line.append( AonFiscalFileUtils.signedZero(deduction,DS,DD) );		
+	}
+	
+	// Cifra de Negocios - Nif Entidades y Nif establecimientos permanentes
+	private static void addNIF(Writer line, LinkedList<String> list, int index) throws IOException {
+		String document = "";		
+		if (index < list.size()) {
+			document = list.get(index);
+		}
+		line.append( AonFiscalFileUtils.text(document,9) );		
 	}
 	
 	// **** FIN VARIABLES Y METODOS ESTATICOS DE UTILIDAD ****
@@ -348,7 +432,8 @@ public class Mod2002016Writer {
 				int a  = 0;  // Contador para Administradores
 				int b1 = 0;  // Contador para Participaciones B1
 				int b2 = 0;  // Contador para Participaciones B2 
-				while ( a  < mod200.getAdministrators().size() || 
+				while ( !isComplementary ||
+						a  < mod200.getAdministrators().size() || 
 						b1 < mod200.getParticipationsOut().size() ||
 						b2 < mod200.getParticipationsIn().size()) {
 					addStartLabel(line,label);					 
@@ -2316,49 +2401,97 @@ public class Mod2002016Writer {
 				
 		})
 		
+//		,PAG21 ("T20021000", new IPropertyFiller[] {
+//
+//				(line,mod200, label) -> {
+//					    
+//					    addStartLabel(line,label);  // Etiqueta de inicio de pagina
+//					    
+//					    // Esta página puede tener complementarias en los apartados que ahora no están en el modelo
+//					    // Si se añaden dichos apartados hay que tenerlo en cuenta, para hacerlo de forma similar a la pagina 2
+//					    boolean isComplementary = false;
+//						line.append(isComplementary?"C":" ");  // Indicador de pagina complementaria
+//					
+//						// [...] NO ESTA EN EL MODELO - Comunicación del importe neto de la cifra de negocios
+//						line.append(AonFiscalFileUtils.zeros(DS)); // Grupos de sociedades. Importe neto cifra negocios [987] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [1]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [2]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [3]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [4]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [5]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [6]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [7]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [8]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [9]
+//						line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Importe neto [988] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+//						line.append(AonFiscalFileUtils.zeros(3)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Nº establecimientos (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+//						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [1]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [2]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [3]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [4]
+//						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [5]
+//						line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - Entidades de crédito, aseguradoras, I.I.C. y sociedades de garantíarecíproca - Importe neto [989] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+//						
+//						// Las siguientes 5 casillas solo van con importes en la primera pagina, en las complementarias van a cero
+//						addUnSignedKey(line, mod200, Mod2002016Key.LQ0N1, 4, 0, isComplementary); // Rég. Entidades navieras en función del tonelaje. Nº de buques  [N1]
+//						addSignedKey(line, mod200, Mod2002016Key.LQ630,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de  aplicar la escala [630]
+//						addSignedKey(line, mod200, Mod2002016Key.LQ631,isComplementary); // Rég. Entidades navieras en función del tonelaje. Importe rentas generadas en trasmisiones de buques [631]
+//						addSignedKey(line, mod200, Mod2002016Key.LQ632,isComplementary); // Rég. Entidades navieras en función del tonelaje. Compensación bases imponibles negativas períodos anteriores [632]
+//						addSignedKey(line, mod200, Mod2002016Key.LQ579,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de la aplicación del régimen [579]
+//						
+//						line.append(AonFiscalFileUtils.spaces(200));  // Reservado para la AEAT
+//						
+//						addEndLabel(line,label); // Etiqueta fin de pagina
+//				}
+//		})
+		
 		,PAG21 ("T20021000", new IPropertyFiller[] {
-
 				(line,mod200, label) -> {
-					    
-					    addStartLabel(line,label);  // Etiqueta de inicio de pagina
-					    
-					    // Esta página puede tener complementarias en los apartados que ahora no están en el modelo
-					    // Si se añaden dichos apartados hay que tenerlo en cuenta, para hacerlo de forma similar a la pagina 2
-					    boolean isComplementary = false;
-						line.append(isComplementary?"C":" ");  // Indicador de pagina complementaria
-					
-						// [...] NO ESTA EN EL MODELO - Comunicación del importe neto de la cifra de negocios
-						line.append(AonFiscalFileUtils.zeros(DS)); // Grupos de sociedades. Importe neto cifra negocios [987] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [1]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [2]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [3]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [4]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [5]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [6]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [7]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [8]
-						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [9]
-						line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Importe neto [988] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
-						line.append(AonFiscalFileUtils.zeros(3)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Nº establecimientos (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
-						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [1]
-						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [2]
-						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [3]
-						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [4]
-						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [5]
-						line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - Entidades de crédito, aseguradoras, I.I.C. y sociedades de garantíarecíproca - Importe neto [989] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+					boolean isComplementary = false; // Indicador de pagina complementaria
+					int i1 = 0;  // Contador para NIF entidades del grupo
+					int i2 = 0;  // Contador para NIF establecimientos permanentes					 
+					while ( !isComplementary ||
+							i1 < mod200.getGroupEntities().size() ||							
+							i2 < mod200.getEstablishments().size()) {
+						addStartLabel(line,label);					 
+						line.append(isComplementary?"C":" ");
 						
-						// Las siguientes 5 casillas solo van con importes en la primera pagina, en las complementarias van a cero
+						addSignedKey(line, mod200, Mod2002016Key.CN987, isComplementary); 
+						
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						addNIF(line, mod200.getGroupEntities(), i1++);
+						
+						addSignedKey(line, mod200, Mod2002016Key.CN988, isComplementary);
+						addUnSignedKey(line, mod200, Mod2002016Key.CNEST, 3, 0, isComplementary);
+						
+						addNIF(line, mod200.getEstablishments(), i2++);
+						addNIF(line, mod200.getEstablishments(), i2++);
+						addNIF(line, mod200.getEstablishments(), i2++);
+						addNIF(line, mod200.getEstablishments(), i2++);
+						addNIF(line, mod200.getEstablishments(), i2++);
+						
+						addSignedKey(line, mod200, Mod2002016Key.CN989, isComplementary);
+						
 						addUnSignedKey(line, mod200, Mod2002016Key.LQ0N1, 4, 0, isComplementary); // Rég. Entidades navieras en función del tonelaje. Nº de buques  [N1]
 						addSignedKey(line, mod200, Mod2002016Key.LQ630,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de  aplicar la escala [630]
 						addSignedKey(line, mod200, Mod2002016Key.LQ631,isComplementary); // Rég. Entidades navieras en función del tonelaje. Importe rentas generadas en trasmisiones de buques [631]
 						addSignedKey(line, mod200, Mod2002016Key.LQ632,isComplementary); // Rég. Entidades navieras en función del tonelaje. Compensación bases imponibles negativas períodos anteriores [632]
 						addSignedKey(line, mod200, Mod2002016Key.LQ579,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de la aplicación del régimen [579]
 						
-						line.append(AonFiscalFileUtils.spaces(200));  // Reservado para la AEAT
+						line.append( AonFiscalFileUtils.spaces(200));  // Reservado para la AEAT
 						
-						addEndLabel(line,label); // Etiqueta fin de pagina
+						isComplementary = true;
+						addEndLabel(line,label);
+					}
 				}
-		})
+			})
 		
 		,PAG22 ("T20022000", new IPropertyFiller[] {
 				 (line,mod200, label) -> addStartLabel(line,label)
@@ -2490,7 +2623,70 @@ public class Mod2002016Writer {
 				,(line,mod200, label) -> addEndLabel(line,label)
 		})
 		
-		// [...] FALTA - NO ESTA EN EL MODELO - Página 24: Agrup. interés económico y UTES
+		,PAG24 ("T20024000", new IPropertyFiller[] {
+				(line,mod200, label) -> {
+					boolean isComplementary = false; // Indicador de pagina complementaria
+					int i1 = 0;  // Contador para Deducción para Evitar la doble imposición
+					int i2 = 0;  // Contador para Relación de Socios
+					int i3 = 0;  // Contador para Información de detalle de EP o UTE 
+					while ( !isComplementary ||
+							i1 < mod200.getUteBases().size() || 
+							i2 < mod200.getUteParticipations().size() ||
+							i3 < mod200.getUteForeign().size()) {
+						addStartLabel(line,label);					 
+						line.append(isComplementary?"C":" ");
+						
+						addUnSignedKey(line, mod200, Mod2002016Key.UT060, 7, 4, isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UT500, isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UT1227, isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UT1228, isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UT552, isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UT1330, isComplementary );
+												
+						addUteBase(line, mod200, i1++);
+						addUteBase(line, mod200, i1++);
+						addUteBase(line, mod200, i1++);
+						addUteBase(line, mod200, i1++);
+						
+						addSignedKey(line, mod200, Mod2002016Key.UTC01 , isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UTC02 , isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UTC03 , isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UT062 , isComplementary );						
+						addSignedKey(line, mod200, Mod2002016Key.UTC04 , isComplementary );
+						addSignedKey(line, mod200, Mod2002016Key.UTC05 , isComplementary );
+						
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						addUteParticipation(line, mod200, i2++);
+						
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						addUteForeign(line, mod200, i3++);
+						
+						line.append( AonFiscalFileUtils.spaces(200));  // Reservado para la AEAT
+						
+						isComplementary = true;
+						addEndLabel(line,label);
+					}
+				}
+			})
+		
 		// [...] FALTA - NO ESTA EN EL MODELO - Página 25: Régimen especial de transparencia fiscal internacional
 		
 		,PAG26 ("T20026000", new IPropertyFiller[] {
@@ -2655,7 +2851,10 @@ public class Mod2002016Writer {
 			}
 			
 			// Página 24. Agrupaciones de interes económico y UTES (regimen especial). Caracteres 013 o 014 marcados
-			// La página 24 actualmente no está en el Modelo 200, luego por ahora nunca se pone, ni siquiera está definida en el enumerado
+			if (this == Pages2016.PAG24) {
+				addPage = (mod200.getDoubleValue(Mod2002016Key.C0013)==1) ||
+			              (mod200.getDoubleValue(Mod2002016Key.C0014)==1);			              
+			}
 			
 			// Página 26. Tributación Conjunta. Caracter 028 marcado
 			if (this == Pages2016.PAG26) {
@@ -2724,13 +2923,14 @@ public class Mod2002016Writer {
 			mod200.setPeriodEnd( sdf.parse("31-12-2016") );
 			mod200.setYear(2016);
 			
-			// Caracteres todos a cero excepto 9, 28 y 29 para que salgan todas las páginas
+			// Caracteres todos a cero excepto 9, 13, 28 y 29 para que salgan todas las páginas
 			for (Mod2002016Key key : Mod2002016Character.CHARACTERS_KEYS) {				
 				setDoubleValue2016(mod200, key, 0.0);						
 			}
 			setDoubleValue2016(mod200, Mod2002016Key.C0009, 1.0);
 			setDoubleValue2016(mod200, Mod2002016Key.C0028, 1.0);
 			setDoubleValue2016(mod200, Mod2002016Key.C0029, 1.0);
+			setDoubleValue2016(mod200, Mod2002016Key.C0013, 1.0);
 			
 			// Estados de cuentas de IIC
 			setDoubleValue2016(mod200, Mod2002016Key.C0061, 0.0);
@@ -2743,23 +2943,23 @@ public class Mod2002016Writer {
 			mod200.setPygType(BalanceType.NORMAL);
 			
 			// Añadir un administrador para que salga la pagina 2
-			if (mod200.getAdministrators() == null ) {
-				mod200.setAdministrators( new LinkedList<CompanyAdministrator>());
-			}
-
-		    // Crear un objeto y asignar los datos		
-			CompanyAdministrator ca = new CompanyAdministrator();
-			ca.setDocument("12345678Z");
-			ca.setRepresentative(true);
-			ca.setName("ADMINISTRADOR DE PRUEBA");
-			ca.setResidence("DOMICILIO FISCAL");
-			ca.setProvince(50);
-			
-			// Añadirlo a la lista
-			mod200.getAdministrators().add(ca);
+//			if (mod200.getAdministrators() == null ) {
+//				mod200.setAdministrators( new LinkedList<CompanyAdministrator>());
+//			}
+//
+//		    // Crear un objeto y asignar los datos		
+//			CompanyAdministrator ca = new CompanyAdministrator();
+//			ca.setDocument("12345678Z");
+//			ca.setRepresentative(true);
+//			ca.setName("ADMINISTRADOR DE PRUEBA");
+//			ca.setResidence("DOMICILIO FISCAL");
+//			ca.setProvince(50);
+//			
+//			// Añadirlo a la lista
+//			mod200.getAdministrators().add(ca);
 			
 			// Generamos el fichero
-			String filename = "c:\\tmp\\prueba.txt";
+			String filename = "c:\\tmp\\prueba_M200_2016.txt";
 			BufferedWriter line = new BufferedWriter(new FileWriter(filename));
 			fillWriter(mod200, line);
 			
@@ -2798,7 +2998,7 @@ public class Mod2002016Writer {
 			m.put(Pages2016.PAG21.tag, 476);
 			m.put(Pages2016.PAG22.tag, 1907);
 			m.put(Pages2016.PAG23.tag, 1014);
-			//m.put(Pages2016.PAG24.tag, 2288);
+			m.put(Pages2016.PAG24.tag, 2288);
 			//m.put(Pages2016.PAG25.tag, 3685);
 			m.put(Pages2016.PAG26.tag, 1558);
 			m.put(Pages2016.DID.tag, 604);
@@ -2818,9 +3018,6 @@ public class Mod2002016Writer {
 			System.out.println("");
 			System.out.println("***** Fin Fichero : "+filename);
 			System.out.println("");
-			
-			// Mostramos el archivo creado, con el bloc de notas
-			//Runtime.getRuntime().exec("notepad.exe "+filename);
 				        
 		} 
         catch (Exception e) {
