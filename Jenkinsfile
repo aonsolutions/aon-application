@@ -44,6 +44,9 @@ node {
                 [$class: 'StringParameterDefinition', defaultValue: "${branch}", description: 'SCM Branch', name: 'branch'],
       ]
 
+      sh "${mvnHome}/bin/mvn versions:force-releases -Dincludes=net.aonsolutions:aeat,net.aonsolutions:sii"
+      sh "git commit -a -m 'Replaces any -SNAPSHOT versions ( non child ) with a release version'"
+      sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git"
 
       sh "echo yes | ${mvnHome}/bin/mvn  -DdevelopmentVersion=${mavenRelease['developmentVersion']} -DreleaseVersion=${mavenRelease['releaseVersion']} -Dusername=${mavenRelease['username']} -Dpassword=${mavenRelease['password']} -Dtag=${mavenRelease['tag']} -Dresume=false -DdryRun=${mavenRelease['dryRun']} -DscmCommentPrefix=${mavenRelease['scmCommentPrefix']} -Darguments='-Drpm.release=true -DskipTests=true -Dgwt.localWorkers=4' release:prepare"
       
@@ -71,6 +74,9 @@ node {
       sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git ${mavenRelease['branch']}"
 
 
+      sh "${mvnHome}/bin/mvn versions:use-latest-snapshot -Dincludes=net.aonsolutions:aeat,net.aonsolutions:sii"
+      sh "git commit -a -m 'Replaces any release versions ( non child ) with the latest -SNAPSHOT version'"
+      sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git"
    }
    else {
 
