@@ -9,13 +9,20 @@ import com.code.aon.common.enumeration.IStringEnum;
 public enum CreditCardType implements IResourceable, IStringEnum {
 
 	AX("AX"),
+	BC("BC"),
 	CA("CA"),
 	DC("DC"),
+	DS("DS"),
+	E("E"),
 	EC("EC"),
 	IK("IK"),
 	JC("JC"),
 	MC("MC"),
-	VI("VI");
+	R("R"),
+	T("T"),
+	TO("TO"),
+	VI("VI"),
+	UN("UN");
 
 	private String value;
 

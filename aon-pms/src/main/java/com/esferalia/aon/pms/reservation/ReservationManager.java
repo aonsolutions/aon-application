@@ -308,7 +308,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setCreditCardNumber((creditCard != null) ? creditCard.getCardNumber() : null);
 			reservation.setCreditCardExpirationMonth((creditCard != null) ? StringUtils.substring(creditCard.getExpireDate(), 0, 2) : null);
 			reservation.setCreditCardExpirationYear((creditCard != null) ? StringUtils.substring(creditCard.getExpireDate(), -2) : null);
-			reservation.setCreditCardType((creditCard != null && creditCard.getCardType() != null) ? CreditCardType.valueOf(creditCard.getCardType()) : null);
+			reservation.setCreditCardType((creditCard != null && creditCard.getCardType() != null) ? obtainCreditCardType(creditCard) : null);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 
@@ -1147,6 +1147,14 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 		return null;
+	}
+
+	private CreditCardType obtainCreditCardType(PaymentCardType creditCard) {
+		try {
+			return CreditCardType.valueOf(creditCard.getCardType());
+		} catch (Exception ex) {
+			return CreditCardType.UN;
+		}
 	}
 
 	private Node findNode(Node parent, String nodeName, boolean deep) {
