@@ -168,7 +168,7 @@
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aeat</artifactId>
-			<version>8.108</version>
+			<version>9.00-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
