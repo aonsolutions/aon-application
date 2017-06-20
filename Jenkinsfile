@@ -75,7 +75,11 @@ node {
       sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git ${mavenRelease['branch']}"
 
 
-      sh "${mvnHome}/bin/mvn versions:use-latest-snapshots -Dincludes=net.aonsolutions:aeat,net.aonsolutions:sii"
+      // Delete any backup POM & release.properties files
+      sh "echo yes | ${mvnHome}/bin/mvn  release:clean"
+      // Switched to branch 'master'
+      sh "git checkout master"
+      sh "${mvnHome}/bin/mvn versions:use-latest-snapshots -Dincludes=net.aonsolutions:aeat,net.aonsolutions:sii -DallowMajorUpdates=true"
       sh "${mvnHome}/bin/mvn versions:commit"
       sh "git commit -a -m 'Replaces any release versions ( non child ) with the latest -SNAPSHOT version'"
       sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git"
