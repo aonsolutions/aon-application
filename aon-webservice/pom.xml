@@ -17,7 +17,7 @@
 		<dependency>
             <groupId>net.aonsolutions</groupId>
             <artifactId>sii</artifactId>
-           	<version>9.00-SNAPSHOT</version>
+           	<version>8.108</version>
         	<scope>compile</scope>
         </dependency>
 		
