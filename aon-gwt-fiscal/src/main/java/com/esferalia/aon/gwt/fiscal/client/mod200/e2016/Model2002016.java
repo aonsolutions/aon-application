@@ -640,14 +640,18 @@ public class Model2002016 extends ResizeComposite  {
 							return mod200Object;
 						}
 					});
-			pageAbs.dump();
-			pageContainer.setWidget(pageAbs);
-			addStyleName(AON.AON_CSS.aonLinkItemSelected());
+			if (pageAbs.isAvailable()) {
+				pageAbs.dump();
+				pageContainer.setWidget(pageAbs);
+				addStyleName(AON.AON_CSS.aonLinkItemSelected());
+			} else {
+				MessageDialog.warning(AON.MSG.pageNotAvailable());
+			}
 		}
 		
 		private void checkAndShowPage(int page) {
 
-			if (mod200Object.isInitialized()) {
+			if (mod200Object.isInitialized() ) {
 				showPage(page);
 			} else {
 				MessageDialog.warning(AON.MSG.mustInitialzeMod200());

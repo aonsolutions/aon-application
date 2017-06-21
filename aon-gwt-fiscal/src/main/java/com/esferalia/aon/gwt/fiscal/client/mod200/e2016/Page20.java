@@ -24,7 +24,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
@@ -41,7 +43,12 @@ public class Page20 extends PageAbs {
 	
 	private static final PageBinder pageBinder = GWT
 			.create(PageBinder.class);
-
+	
+	@UiField
+	FlexTable table2;
+	@UiField
+	InlineLabel abonoLabel;
+	
 	@UiField
 	Panel devPanel;
 	@UiField
@@ -149,6 +156,17 @@ public class Page20 extends PageAbs {
 		table.setWidget(2, 1, panel);
 		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonTextRight());
 		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonNowrap());
+		
+		table2.setWidth("100%");
+		table2.setCellSpacing(0);
+		table2.getColumnFormatter().setWidth(1, "200px");
+		abonoLabel.setText("Abono / Compensaci\u00F3n");
+		
+		paintDescription(table2,"Abono por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)",0,0,false);
+		paintKeyField(table2, Mod2002016Key.LM150, 0, 1);
+		paintDescription(table2,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)",1,0,false);
+		paintKeyField(table2, Mod2002016Key.LM506, 1, 1);
+		
 	}
 
 	@Override
@@ -236,7 +254,7 @@ public class Page20 extends PageAbs {
 	@UiHandler("payTypeU")
 	void onPayTypeUClick(ClickEvent event) {
 	}
-	@UiHandler("payTypeU")
+	@UiHandler("zeroQuota")
 	void onZeroQuota(ClickEvent event) {
 	}
 	
@@ -294,4 +312,5 @@ public class Page20 extends PageAbs {
 
 	@Override
 	protected void populate() {}
+	
 }

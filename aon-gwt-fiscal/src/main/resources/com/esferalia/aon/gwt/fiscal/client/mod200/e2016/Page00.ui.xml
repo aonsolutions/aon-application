@@ -19,7 +19,7 @@
 								<div class="{aonResources.css.aonGroupBody}">
 									<table class="{aonResources.css.aonWidthAll}">
 										<tr>
-											<td style="width:150px;">
+											<td style="width:120px;">
 												<g:Label text="{msg.nif}" styleName="{aonResources.css.aonInnerLabel}"/>
 											</td>
 											<td style="width:350px;">
@@ -65,12 +65,10 @@
 											</td>
 										</tr>
 										<tr>
-											<td>
+											<td colspan="4">	
 												<g:CheckBox ui:field="complementary" text="{msg.complementary}"/>
-											</td>	
-											<td colspan="3">	
 												<g:Label text="{msg.complementaryReceipt}" 
-													styleName="{aonResources.css.aonInnerLabel}"/>
+													styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonMarginLeft}"/>
 												<g:TextBox ui:field="complementaryReceipt" visibleLength="13" maxLength="13"
 													styleName="{aonResources.css.aonInputText}"/>
 											</td>

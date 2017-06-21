@@ -2443,6 +2443,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Rellene la p\u00E1gina de \"Identificaci\u00F3n\" y pulse \"Continuar\" para completar el modelo.")
 	String mustInitialzeMod200();
 	
+	@DefaultMessage("La p\u00E1gina no procede para su declaraci\u00F3n.")
+	String pageNotAvailable();
+
 	@DefaultMessage("Ejercicio de generaci\u00F3n")
 	String liquiMsg1();
 	

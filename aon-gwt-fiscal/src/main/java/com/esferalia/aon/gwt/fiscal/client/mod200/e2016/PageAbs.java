@@ -327,4 +327,7 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	}
 	
+	protected boolean isAvailable() {
+		return true;
+	}
 }

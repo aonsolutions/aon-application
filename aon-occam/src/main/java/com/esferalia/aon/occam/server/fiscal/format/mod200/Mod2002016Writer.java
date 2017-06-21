@@ -21,9 +21,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
-import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
@@ -2812,8 +2809,8 @@ public class Mod2002016Writer {
 						line.append( AonFiscalFileUtils.signedZero(importe>0 ? importe : 0.0, DS, DD) );               // Ingreso - Importe a ingresar
 						line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
 		
-						addSignedKey(line, mod200, Mod2002016Key.BN1020);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
-						addSignedKey(line, mod200, Mod2002016Key.BN1021);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
+						addSignedKey(line, mod200, Mod2002016Key.LM150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
+						addSignedKey(line, mod200, Mod2002016Key.LM506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
 						
 						line.append(importe == 0 ? "1" : "0"); // Cuota Cero "0" o "1"
 					}
@@ -2835,6 +2832,12 @@ public class Mod2002016Writer {
 			
 			// Controles determinadas páginas que solo se ponen si están marcados ciertos caracteres
 			boolean addPage = true;
+			
+			// Página 7.
+			// Página 8. La cuenta de pérdidas y ganancias no debe aparecer si se ha marcado el caracter 26 (entidad inactiva).
+			if (this == Pages2016.PAG07 || this == Pages2016.PAG08) {
+				addPage = (mod200.getDoubleValue(Mod2002016Key.C0026)==0);
+			}
 			
 			// Página 9. Estado de Ingresos y Gastos Reconocidos. Solo si Balance Normal o Abreviado
 			if (this == Pages2016.PAG09) {  

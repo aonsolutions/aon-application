@@ -54,4 +54,11 @@ public class Page05 extends PageAbs {
 		}
 		return super.isDisabled(key);
 	}
+
+	@Override
+	protected boolean isAvailable() {
+		boolean av = super.isAvailable()
+  		  && (callback.getMod200Object().getMod200().isNotChecked(Mod2002016Key.C0026));
+		return av;
+	}
 }

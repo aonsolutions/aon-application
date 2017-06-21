@@ -366,6 +366,9 @@ public class Mod2002016 implements IFiscalModel {
 		DoubleVariable2016 dv = keysMap.get(key); 
 		return dv != null && (AonMathUtils.round(dv.getValue()) == 1.0);
 	}
+	public boolean isNotChecked(Mod2002016Key key) {
+		return !isChecked(key);
+	}
 	
 	public void addVariable(Mod2002016Key key, Number d) {
 		DoubleVariable2016 dv = new DoubleVariable2016(key);

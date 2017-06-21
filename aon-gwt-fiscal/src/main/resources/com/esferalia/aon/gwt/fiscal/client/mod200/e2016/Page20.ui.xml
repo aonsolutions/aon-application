@@ -52,7 +52,7 @@
 						<g:InlineLabel text="{msg.amount}"/>
 						<aon:DoubleBox ui:field="amountP" enabled="false" 
 							styleName="{aonResources.css.aonMarginLeft}  {aonResources.css.aonInputText}"/>
-						</div>
+					</div>
 					<div class="{aonResources.css.aonMarginTop}">
 						<g:InlineLabel text="{msg.iban}"/>
 						<aon:IbanTextBox ui:field="ibanP" styleName="{aonResources.css.aonMarginLeft}"/>
@@ -60,6 +60,14 @@
 				</div>
 			</g:HTMLPanel>
 	
+		 	<g:HTMLPanel styleName="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel ui:field="abonoLabel" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<g:FlexTable ui:field="table2"/> 
+				</div>
+			</g:HTMLPanel>
 	
 		 	<g:HTMLPanel ui:field="zeroPanel" styleName="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
