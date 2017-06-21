@@ -53,6 +53,7 @@ public class Page18 extends PageAbs {
 	private ListDataProvider<UteBase> baseProvider;
 	private CellTable<UteBase> baseTable;
 	private Button newBase;
+	private FlowPanel groupPanelA;
 	
 	public Page18( Model200PageCallback callback ) {
 		super(callback);
@@ -65,39 +66,39 @@ public class Page18 extends PageAbs {
 		FlowPanel baseContainerPanel = new FlowPanel();
 		baseContainerPanel.setStyleName(AON.AON_CSS.aonFiscalContainer());
 		
-			FlowPanel groupPanel = new FlowPanel();
-			groupPanel.setStyleName(AON.AON_CSS.aonGroup());
+			groupPanelA = new FlowPanel();
+			groupPanelA.setStyleName(AON.AON_CSS.aonGroup());
 			
 				FlowPanel groupHeaderPanel = new FlowPanel();
 				groupHeaderPanel.setStyleName(AON.AON_CSS.aonGroupTitle());
 				groupHeaderPanel.add (new InlineLabel(AON.MSG.ute1())); 
-				groupPanel.add(groupHeaderPanel);
+				groupPanelA.add(groupHeaderPanel);
 				
 				FlowPanel groupBodyPanel = new FlowPanel();
 				groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
 				groupBodyPanel.add(table);
-				groupPanel.add(groupBodyPanel);
+				groupPanelA.add(groupBodyPanel);
 				
-			baseContainerPanel.add(groupPanel);
+			baseContainerPanel.add(groupPanelA);
 			
-			FlowPanel groupPanel2 = new FlowPanel();
-			groupPanel2.setStyleName(AON.AON_CSS.aonGroup());
+			FlowPanel groupPanelB = new FlowPanel();
+			groupPanelB.setStyleName(AON.AON_CSS.aonGroup());
 			
 				FlowPanel groupHeaderPanel2 = new FlowPanel();
 				groupHeaderPanel2.setStyleName(AON.AON_CSS.aonGroupTitle());
 				groupHeaderPanel2.add (new InlineLabel(AON.MSG.ute2())); 
-				groupPanel2.add(groupHeaderPanel2);
+				groupPanelB.add(groupHeaderPanel2);
 				
 				FlowPanel groupBodyPanel2 = new FlowPanel();
 				groupBodyPanel2.setStyleName(AON.AON_CSS.aonGroupBody());
 				groupBodyPanel2.add(table1);
 
-				FlowPanel groupPanelBase = new FlowPanel();
-				groupPanelBase.setStyleName(AON.AON_CSS.aonGroup());
+				FlowPanel groupPanelB6 = new FlowPanel();
+				groupPanelB6.setStyleName(AON.AON_CSS.aonGroup());
 					FlowPanel groupHeaderBase = new FlowPanel();
 					groupHeaderBase.setStyleName(AON.AON_CSS.aonGroupTitle());
 					groupHeaderBase.add (new InlineLabel(AON.MSG.ute31())); 
-					groupPanelBase.add(groupHeaderBase);
+					groupPanelB6.add(groupHeaderBase);
 
 					FlowPanel groupBodyPanelBase = new FlowPanel();
 					groupBodyPanelBase.setStyleName(AON.AON_CSS.aonGroupBody());
@@ -128,58 +129,60 @@ public class Page18 extends PageAbs {
 					});
 					groupBodyPanelBase.add(baseTable);
 					groupBodyPanelBase.add(newBase);
-					groupPanelBase.add(groupBodyPanelBase);
+					groupPanelB6.add(groupBodyPanelBase);
 					
 					
-					groupBodyPanel2.add(groupPanelBase);
+					groupBodyPanel2.add(groupPanelB6);
 					
 				groupBodyPanel2.add(table3);
-				groupPanel2.add(groupBodyPanel2);
+				groupPanelB.add(groupBodyPanel2);
 				
-			baseContainerPanel.add(groupPanel2);
 			
-			participationTable = new CellTable<UteParticipation>(25,Model200Table.TABLE_STYLE);
-			participationTable.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
-			participationTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
-			participationTable.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-			participationDataProvider = new ListDataProvider<UteParticipation>();
-			participationDataProvider.addDataDisplay(participationTable);
-			
-			addDocumentColumn();
-			addRepresentativeColumn();
-			addDescriptionColumn();
-			addProvinceColumn();
-			addBaseColumn();
-			addPercentColumn();
-			addRemoveColumn();
-			
-			newParticipation = new Button();
-			newParticipation.setStyleName(AON.AON_CSS.aonIconReset());
-			newParticipation.addStyleName(AON.AON_CSS.aonBorderNone());
-			newParticipation.addStyleName(AON.AON_CSS.aonMarginTop());
-			newParticipation.addClickHandler(new ClickHandler() {
+				participationTable = new CellTable<UteParticipation>(25,Model200Table.TABLE_STYLE);
+				participationTable.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+				participationTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+				participationTable.setEmptyTableWidget(new HTML(AON.MSG.noData()));
+				participationDataProvider = new ListDataProvider<UteParticipation>();
+				participationDataProvider.addDataDisplay(participationTable);
 				
-				@Override
-				public void onClick(ClickEvent event) {
-					participationDataProvider.getList().add(new UteParticipation());
-					participationTable.redraw();		    		
-				}
-			});
-			FlowPanel groupPanel3 = new FlowPanel();
-			groupPanel3.setStyleName(AON.AON_CSS.aonGroup());
-			
-				FlowPanel groupHeaderPanel3 = new FlowPanel();
-				groupHeaderPanel3.setStyleName(AON.AON_CSS.aonGroupTitle());
-				groupHeaderPanel3.add (new InlineLabel(AON.MSG.ute6())); 
-				groupPanel3.add(groupHeaderPanel3);
+				addDocumentColumn();
+				addRepresentativeColumn();
+				addDescriptionColumn();
+				addProvinceColumn();
+				addBaseColumn();
+				addPercentColumn();
+				addRemoveColumn();
 				
-				FlowPanel groupBodyPanel3 = new FlowPanel();
-				groupBodyPanel3.setStyleName(AON.AON_CSS.aonGroupBody());
-				groupBodyPanel3.add(participationTable);
-				groupBodyPanel3.add(newParticipation);
-				groupPanel3.add(groupBodyPanel3);
+				newParticipation = new Button();
+				newParticipation.setStyleName(AON.AON_CSS.aonIconReset());
+				newParticipation.addStyleName(AON.AON_CSS.aonBorderNone());
+				newParticipation.addStyleName(AON.AON_CSS.aonMarginTop());
+				newParticipation.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						participationDataProvider.getList().add(new UteParticipation());
+						participationTable.redraw();		    		
+					}
+				});
+				FlowPanel groupPanelB11 = new FlowPanel();
+				groupPanelB11.setStyleName(AON.AON_CSS.aonGroup());
 				
-			baseContainerPanel.add(groupPanel3);
+					FlowPanel groupHeaderPanel3 = new FlowPanel();
+					groupHeaderPanel3.setStyleName(AON.AON_CSS.aonGroupTitle());
+					InlineLabel il = new InlineLabel(AonStringUtils.abbreviate(AON.MSG.ute6(),100));
+					il.setTitle(AON.MSG.ute6());
+					groupHeaderPanel3.add (il); 
+					groupPanelB11.add(groupHeaderPanel3);
+					
+					FlowPanel groupBodyPanel3 = new FlowPanel();
+					groupBodyPanel3.setStyleName(AON.AON_CSS.aonGroupBody());
+					groupBodyPanel3.add(participationTable);
+					groupBodyPanel3.add(newParticipation);
+					groupPanelB11.add(groupBodyPanel3);
+				
+					groupPanelB.add(groupPanelB11);
+			baseContainerPanel.add(groupPanelB);
 
 
 			foreignTable = new CellTable<UteForeign>(25,Model200Table.TABLE_STYLE);
@@ -233,10 +236,14 @@ public class Page18 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");
-		paintKey(table, Mod2002016Key.UT060, 0);
+		boolean c0013 = callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0013);
+		groupPanelA.setVisible(c0013);
+		if (c0013) {
+			table.setWidth("100%");
+			table.setCellSpacing(0);
+			table.getColumnFormatter().setWidth(1, "200px");
+			paintKey(table, Mod2002016Key.UT060, 0);
+		} 
 		
 		int row = 0;
 		table1.setWidth("100%");
@@ -300,8 +307,9 @@ public class Page18 extends PageAbs {
 		    	participationDataProvider.getList().get(index).setName(value);
 		    }
 		});		
-		participationTable.addColumn(descriptionColumn, AON.MSG.companyName());
+		participationTable.addColumn(descriptionColumn, AON.MSG.fullName());
 		descriptionColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+		participationTable.setColumnWidth(descriptionColumn, 250, Unit.PX);
 	}
 
 	private void addRepresentativeColumn() {
@@ -442,7 +450,7 @@ public class Page18 extends PageAbs {
 					
 					@Override
 					public void onAccept() {
-						callback.getMod200Object().getMod200().getParticipationsIn().remove(index);
+						callback.getMod200Object().getMod200().getUteParticipations().remove(index);
 						participationDataProvider = new ListDataProvider<UteParticipation>(
 								callback.getMod200Object().getMod200().getUteParticipations());
 						participationDataProvider.addDataDisplay(participationTable);
@@ -767,5 +775,12 @@ public class Page18 extends PageAbs {
 		col.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 	}
 	
+	@Override
+	protected boolean isAvailable() {
+		boolean av = super.isAvailable()
+  		  && (callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0013) 
+		   || callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0014));
+		return av;
+	}
 	
 }

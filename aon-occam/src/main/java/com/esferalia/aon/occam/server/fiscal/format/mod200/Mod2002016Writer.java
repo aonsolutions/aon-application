@@ -2855,8 +2855,8 @@ public class Mod2002016Writer {
 			
 			// Página 24. Agrupaciones de interes económico y UTES (regimen especial). Caracteres 013 o 014 marcados
 			if (this == Pages2016.PAG24) {
-				addPage = (mod200.getDoubleValue(Mod2002016Key.C0013)==1) ||
-			              (mod200.getDoubleValue(Mod2002016Key.C0014)==1);			              
+				addPage = (mod200.isChecked( Mod2002016Key.C0013) 
+					    || mod200.isChecked( Mod2002016Key.C0014));			              
 			}
 			
 			// Página 26. Tributación Conjunta. Caracter 028 marcado
