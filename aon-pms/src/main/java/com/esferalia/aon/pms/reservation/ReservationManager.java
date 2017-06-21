@@ -611,28 +611,33 @@ public class ReservationManager implements IReservationConstants {
 				dataResponseDetail = new DataResponseDetail();
 				dataResponseDetail.setDomain(reservation.getDomain());
 				dataResponseDetail.setDataResponse(dataResponse);
-				dataResponseDetail.setDataVariable(DESCRIPTION);
-				dataResponseDetail.setDataValue(findAttribute(discountNode, DESCRIPTION).getNodeValue());
 				dataResponseDetail.setCreationUser(CRS);
 				dataResponseDetail.setCreationDate(new Date());
-				dataResponseDetailBean.insert(dataResponseDetail);
 
+				Node descriptionNode = findAttribute(discountNode, DESCRIPTION);
+				if (descriptionNode != null) {
+					dataResponseDetail.setDataVariable(DESCRIPTION);
+					dataResponseDetail.setDataValue(descriptionNode.getNodeValue());
+					dataResponseDetailBean.insert(dataResponseDetail);
+				}
 				Node percentNode = findAttribute(discountNode, PERCENT);
 				if (percentNode != null) {
 					dataResponseDetail.setDataVariable(DISCOUNT + PERCENT);
 					dataResponseDetail.setDataValue(percentNode.getNodeValue());
+					dataResponseDetailBean.insert(dataResponseDetail);
 				}
 				Node amountBeforeTaxNode = findAttribute(discountNode, AMOUNT_BEFORE_TAX);
 				if (amountBeforeTaxNode != null) {
 					dataResponseDetail.setDataVariable(DISCOUNT + AMOUNT_BEFORE_TAX);
 					dataResponseDetail.setDataValue(amountBeforeTaxNode.getNodeValue());
+					dataResponseDetailBean.insert(dataResponseDetail);
 				}
 				Node amountAfterTaxNode = findAttribute(discountNode, AMOUNT_AFTER_TAX);
 				if (amountAfterTaxNode != null) {
 					dataResponseDetail.setDataVariable(DISCOUNT + AMOUNT_AFTER_TAX);
 					dataResponseDetail.setDataValue(amountAfterTaxNode.getNodeValue());
+					dataResponseDetailBean.insert(dataResponseDetail);
 				}
-				dataResponseDetailBean.insert(dataResponseDetail);
 			}
 		}
 	}
