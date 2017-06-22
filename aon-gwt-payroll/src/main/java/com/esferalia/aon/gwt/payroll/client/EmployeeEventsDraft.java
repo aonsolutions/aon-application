@@ -357,6 +357,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraft) {
 		
+		clearEventsGrid();
+		
 		this.employeeEventsDraft = employeeEventsDraft;
 		
 		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
@@ -377,6 +379,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				r -> { fillCellsEvents();
 					 }, t -> {});
 		
+	}
+	
+	private void clearEventsGrid() {
+		for (int i = eventsGrid.getRowCount() - 1; i > 0; i--)
+			eventsGrid.removeRow(i);
 	}
 	
 	private void fillCellsEvents() {
@@ -421,6 +428,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		if (newRow % 2 == 1)
 			headLabel.addStyleName(style.cellOddFormat());
+		else
+			headLabel.addStyleName(style.cellFormat());
 		
 		eventsGrid.setWidget(newRow, 0, headPanel);
 		
@@ -465,73 +474,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		}
 		
 	}
-
-//	private void fillCellsEvents() {
-//		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
-//		Boolean blockVariable = false;
-//		for (int row = 1; row < 15; row ++){
-//			Integer actualMonth = 0;
-//			
-//			String variableName = "";
-//			Element element = eventsGrid.getWidget(row, 0).getElement().getFirstChildElement();
-//			if(null != element)
-//				variableName = element.getInnerText();
-//			else
-//				variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
-//			
-//			if(this.employeeEventsDraft.isContractVariable(variableName)){
-//				eventsGrid.getRowFormatter().addStyleName(row, style.ocultarFila());
-//				continue;
-//			}
-//			
-//			blockVariable = checkBlockVariables(row);
-//			
-//			if (blockVariable)
-//				eventsGrid.getWidget(row, 0).setStyleName(style.setBlockVariableStyle());
-//			else
-//				eventsGrid.getWidget(row, 0).removeStyleName(style.setBlockVariableStyle());
-//			
-//			ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
-//			
-//			for (int col = 1; col < 13; col ++){
-//			
-//				Label eventValue = new Label();
-//				eventValue.setStyleName(style.cellFormat());
-//				if (row % 2 == 1)
-//					eventValue.setStyleName(style.cellOddFormat());
-//				
-//				if (blockVariable)
-//					eventValue.setStyleName(style.setBlockVariableStyle());
-//				else
-//					eventValue.removeStyleName(style.setBlockVariableStyle());
-//				
-//				if(null == varList){
-//					eventValue.setText("-");
-//					eventsGrid.setWidget(row, col, eventValue);
-//					continue;
-//				}
-//				
-//				EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(variableName, actualMonth, actualYear);
-//				
-//				if (null == varMonth){
-//					eventValue.setText("-");
-//					eventsGrid.setWidget(row, col, eventValue);
-//					actualMonth++;
-//					continue;
-//				}
-//				
-//				if (this.employeeEventsDraft.hasChanged(variableName, varMonth))
-//					eventValue.setStyleName(style.onChange());
-//				else
-//					eventValue.removeStyleName(style.onChange());
-//				
-//				eventValue.setText(varMonth.getValue().toString());
-//				eventsGrid.setWidget(row, col, eventValue);
-//				actualMonth++;
-//			}	
-//		}
-//		
-//	}
 	
 	private void fillShowingVarList(Boolean[] showingVar) {
 		showingVar[0] = dtCheckBox1.getChecked();
@@ -595,6 +537,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		int actualYear = Integer.parseInt(yearLabel.getText());
 		int newYear = actualYear + change;
 		yearLabel.setText(Integer.toString(newYear));
+		clearEventsGrid();
 		fillCellsEvents();
 		newValueButton.setEnabled(false);
 		addNewValueMenuItem.setEnabled(false);
