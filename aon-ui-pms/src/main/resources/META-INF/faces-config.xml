@@ -692,6 +692,15 @@
 			<value>reservation</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ProjectReservationService_removed</key>
+					<value>0</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ProjectReservationService_serviceIndex</value>
 		</managed-property>	
@@ -726,8 +735,7 @@
 		<managed-bean-class>com.esferalia.aon.ui.pms.event.ProjectReservationServiceControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
-	
+
 	<!--  ************ RESERVATION ATTACHMENT *************** --> 
 	<managed-bean>
 		<managed-bean-name>reservationAttach</managed-bean-name>

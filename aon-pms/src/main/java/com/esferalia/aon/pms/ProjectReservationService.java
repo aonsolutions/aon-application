@@ -27,6 +27,10 @@ public class ProjectReservationService extends ProjectReservationServiceDB imple
 	private boolean showServiceDetail;
 	private String roomNumber;
 
+	public ProjectReservationService() {
+		setRemoved(false);
+	}
+
 	@Transient
 	public boolean isShowServiceDetail() {
 		return showServiceDetail;

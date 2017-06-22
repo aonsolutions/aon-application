@@ -737,6 +737,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), getId());
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_REMOVED), Boolean.FALSE);
 		criteria.addNotNullExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_MEAL_PLAN));
 		criteria.addOrder(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_COMPOSITION), false);
 		Projection prjMealPlan = Projection.property(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_MEAL_PLAN));
@@ -776,6 +777,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), getId());
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_REMOVED), Boolean.FALSE);
 		return reservationServiceBean.getCount(criteria);
 	}
 
@@ -786,7 +788,9 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
 		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), getId());
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_REMOVED;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
 		return reservationServiceDetailBean.getCount(criteria);
 	}
 
@@ -827,7 +831,9 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_VAT_ID;
 		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), vat.getId());
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_REMOVED;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
 		Projection prjDate = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
 		Projection prjBase = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_TAXABLE_BASE));
 		for (Object obj : reservationServiceDetailBean.getList(new ProjectionList(prjDate, prjBase), criteria)) {
@@ -853,7 +859,9 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE;
 		criteria.addBetweenExpression(reservationServiceDetailBean.getFieldName(alias), fromDate, toDate);
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
-		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_REMOVED;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
 		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_VAT_ID;
 		Projection prjVat = Projection.property(reservationServiceDetailBean.getFieldName(alias));
 		Projection prjBase = Projection.property(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_TAXABLE_BASE));
@@ -1058,7 +1066,9 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
 			criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), getId());
 			alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
-			criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
+			criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
+			alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_REMOVED;
+			criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), Boolean.FALSE);
 			return reservationServiceDetailBean.getList(criteria);
 		} catch (ManagerBeanException ex) {
 			LOGGER.error("Error obtaining services list", ex);

@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.107.0
+# Version: 8.109.0
 # Created by: girazu
-# Creation Date: 07/06/2017 13:15
+# Creation Date: 19/06/2017 14:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5012,7 +5012,7 @@ CREATE TABLE `fs_model200` (
   `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
   `administration` tinyint(2) NOT NULL COMMENT 'Administracion',
-  `status` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'Estado de la Declaracion',  
+  `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Estado de la Declaracion',
   `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF',
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `phone1` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono 1',
@@ -5169,7 +5169,7 @@ CREATE TABLE `fs_vat` (
   `tax_refund_registry` tinyint(1) DEFAULT '0' COMMENT 'Inscrito en registro de devolucion',
   `number` int(4) DEFAULT '0' COMMENT 'Numero de Decl. complementaria o sustitutiva',
   `prorata` double(5,2) DEFAULT '100.00' COMMENT 'Porcentaje de prorrata',
-  `replaced_number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Declaracion complementada o sustituida',  
+  `replaced_number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Declaracion complementada o sustituida',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_VAT_DOMAIN` (`domain`),
   CONSTRAINT `FK_FS_VAT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -7000,6 +7000,7 @@ CREATE TABLE `project_reservation_service` (
   `meal_plan` varchar(3) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Regimen',
   `project_reservation_room` int(4) DEFAULT NULL COMMENT 'Identificador de la Habitacion de la Reserva',
   `extra` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se trata de un Servicio extra',
+  `removed` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Servicio borrado',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -7026,6 +7027,8 @@ CREATE TABLE `project_reservation_service_detail` (
   `quantity` double(15,2) DEFAULT '0.00' COMMENT 'Cantidad',
   `price` double(15,4) DEFAULT '0.0000' COMMENT 'Precio',
   `taxable_base` double(15,4) DEFAULT '0.0000' COMMENT 'Base imponible',
+  `taxable_base_production` double(15,4) DEFAULT '0.0000' COMMENT 'Base imponible de Produccion',
+  `total_production` double(15,4) DEFAULT '0.0000' COMMENT 'Total Produccion acumulado',
   PRIMARY KEY (`id`),
   KEY `IDX_PROJECT_RESERVATION_SERVICE_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_SERVICE` (`project_reservation_service`),
@@ -8436,7 +8439,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.108.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.109.0');
 
 COMMIT;
 

@@ -212,6 +212,8 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
 			criteria.addEqualExpression(alias, Boolean.TRUE);
 		}
+		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_REMOVED);
+		criteria.addEqualExpression(alias, Boolean.FALSE);
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_ID));
 		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
 			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;

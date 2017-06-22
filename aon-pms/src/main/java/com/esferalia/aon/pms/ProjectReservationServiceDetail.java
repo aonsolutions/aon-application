@@ -68,4 +68,9 @@ public class ProjectReservationServiceDetail extends ProjectReservationServiceDe
 		return pricesManager.getSalesPrice(vatPercent, 0, getTaxableBase());
 	}
 
+    @Transient
+    public boolean hasProduction() {
+    	return getTaxableBaseProduction() != 0;
+    }
+
 }

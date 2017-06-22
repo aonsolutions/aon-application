@@ -201,7 +201,7 @@ public class BoardListController extends DataScrollerState implements ICollectio
 		stmt.append(", GREATEST(SUM(PRR.adults + PRR.children) / COUNT(DISTINCT PRSD.id), SUM(PRSD.quantity) / COUNT(DISTINCT PRR.id)) AS " + QUANTITY);
 		stmt.append(" FROM project_reservation AS PR");
 		stmt.append(" LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation = PR.project AND PRG.guest_index = 1");
-		stmt.append(" LEFT JOIN project_reservation_service AS PRS ON PRS.project_reservation = PR.project");
+		stmt.append(" LEFT JOIN project_reservation_service AS PRS ON PRS.project_reservation = PR.project AND PRS.removed = 0");
 		stmt.append(" LEFT JOIN project_reservation_service_detail AS PRSD ON PRSD.project_reservation_service = PRS.id");
 		stmt.append(" LEFT JOIN item AS I ON I.id = PRS.item");
 		stmt.append(" LEFT JOIN product AS P ON P.id = I.product");

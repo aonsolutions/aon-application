@@ -340,10 +340,18 @@ public class ProjectReservationServiceController extends LinesController {
 	public void onRemoveReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 
+		if (reservationService.getProjectReservation().isDirty()) {
+			String message = "La Reserva ha sido modificada por otro usuario. Refrescar para obtener los datos actualizados.";
+			throw new AbortProcessingException(message);
+		}
+
 		ReservationUtils reservationUtils = new ReservationUtils();
     	reservationUtils.removeProjectReservationServiceDetails(reservationService);
-
-    	onRemove(event);
+    	if (!reservationService.isRemoved()) {
+    		onRemove(event);
+    	} else {
+    		onSearch(event);
+    	}
 
     	refreshReservationTotals();
 	}

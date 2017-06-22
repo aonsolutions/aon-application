@@ -106,7 +106,9 @@ public class PenalizationInvoicing implements IReservationConstants {
 		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE);
 		criteria.addGreaterThanOrEqualExpression(alias, reservationInvoiceTo.getEarlyCheckOutDate());
 		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
-		criteria.addEqualExpression(alias, false);
+		criteria.addEqualExpression(alias, Boolean.FALSE);
+		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_REMOVED);
+		criteria.addEqualExpression(alias, Boolean.FALSE);
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ID));
 		List<ITransferObject> reservationServiceDetailList = reservationServiceDetailBean.getList(criteria);

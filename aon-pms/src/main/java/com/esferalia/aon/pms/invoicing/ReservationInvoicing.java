@@ -310,6 +310,8 @@ public class ReservationInvoicing implements IReservationConstants {
 		Criteria criteria = new Criteria();
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
 		criteria.addEqualExpression(alias, reservation.getId());
+		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_REMOVED);
+		criteria.addEqualExpression(alias, Boolean.FALSE);
 		if (!reservationInvoiceTo.isService()) {
 			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
 			criteria.addEqualExpression(alias, Boolean.FALSE);
@@ -629,23 +631,40 @@ public class ReservationInvoicing implements IReservationConstants {
 	}
 
 	private void removeRectifiedServices(Invoice invoice) throws ManagerBeanException {
-		List<ProjectReservationService> servicesToRemove = new LinkedList<ProjectReservationService>();
+		List<Integer> servicesToRemove = new LinkedList<Integer>();
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		for (ITransferObject ito : invoice.getDetailList()) {
 			Integer serviceDetailId = ((InvoiceDetail)ito).getSourceId();
 			if (serviceDetailId != null) {
 	    		ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.get(serviceDetailId);
 	    		if (reservationServiceDetail != null && reservationServiceDetail.getProjectReservationService().isExtra()) {
-	        		reservationServiceDetailBean.remove(reservationServiceDetail);
-					if (!servicesToRemove.contains(reservationServiceDetail.getProjectReservationService())) {
-						servicesToRemove.add(reservationServiceDetail.getProjectReservationService());
-					}
+	    			if (!reservationServiceDetail.hasProduction()) {
+		    			reservationServiceDetailBean.remove(reservationServiceDetail);
+
+						if (!servicesToRemove.contains(reservationServiceDetail.getProjectReservationService().getId())) {
+							servicesToRemove.add(reservationServiceDetail.getProjectReservationService().getId());
+						}
+	    			} else {
+	    				reservationServiceDetail.setTaxableBase(0);
+	    				reservationServiceDetail.setProjectReservationRoomDetail(null);
+		    			reservationServiceDetailBean.update(reservationServiceDetail);
+
+		    			if (!reservationServiceDetail.getProjectReservationService().isRemoved()) {
+		    				reservationServiceDetail.getProjectReservationService().setRemoved(true);
+		    	    		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+			    			reservationServiceBean.update(reservationServiceDetail.getProjectReservationService());
+		    			}
+	    			}
 				}
 			}
 		}
 
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
-		for (ProjectReservationService reservationService : servicesToRemove) {
+		Criteria criteria = new Criteria();
+		criteria.addInExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ID), servicesToRemove);
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_REMOVED), Boolean.FALSE);
+		for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+			ProjectReservationService reservationService = (ProjectReservationService)ito;
 			reservationServiceBean.remove(reservationService);
 		}
 	}

@@ -254,7 +254,8 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		stmt.append("     AND R.item = I.id");
 		stmt.append("     AND R.active = 1) AS " + ROOMS);
 		stmt.append(", (SELECT PRS.meal_plan FROM project_reservation_service AS PRS, item AS I2, product AS P2");
-		stmt.append("     WHERE PRS.project_reservation = PR.project AND PRS.project_reservation_room = B.project_reservation_room");
+		stmt.append("     WHERE PRS.project_reservation = PR.project AND PRS.removed = 0");
+		stmt.append("     AND PRS.project_reservation_room = B.project_reservation_room");
 		stmt.append("     AND PRS.item = I2.id AND I2.detail IS NOT NULL");
 		stmt.append("     AND I2.product = P2.id ORDER BY P2.composition DESC LIMIT 1) AS " + MEAL_PLAN);
 		stmt.append(" FROM booking AS B");

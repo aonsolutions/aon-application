@@ -30,6 +30,8 @@ public class ProductBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     			Criteria criteria = new Criteria();
     			String alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_ID);
     			criteria.addEqualExpression(alias, product.getId());
+    			alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_REMOVED);
+    			criteria.addEqualExpression(alias, Boolean.FALSE);
     			alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_STATUS);
     			criteria.addNotEqualExpression(alias, ReservationStatus.INVOICED);
     			criteria.addNotEqualExpression(alias, ReservationStatus.CANCELLED);

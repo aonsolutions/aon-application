@@ -70,15 +70,27 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
     			IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 	    		ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.get(serviceDetailId);
 	    		if (reservationServiceDetail != null && reservationServiceDetail.getProjectReservationService().isExtra()) {
-	        		reservationServiceDetailBean.remove(reservationServiceDetail);
-	    			
-		    		Criteria criteria = new Criteria();
-		        	String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
-		        	criteria.addEqualExpression(alias, reservationServiceDetail.getProjectReservationService().getId());
-	        		if (reservationServiceDetailBean.getCount(criteria) == 0) {
-	    	    		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
-	    	    		reservationServiceBean.remove(reservationServiceDetail.getProjectReservationService());
-	        		}
+	    			if (!reservationServiceDetail.hasProduction()) {
+		    			reservationServiceDetailBean.remove(reservationServiceDetail);
+
+			    		Criteria criteria = new Criteria();
+			        	String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
+			        	criteria.addEqualExpression(alias, reservationServiceDetail.getProjectReservationService().getId());
+		        		if (reservationServiceDetailBean.getCount(criteria) == 0) {
+		    	    		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+		    	    		reservationServiceBean.remove(reservationServiceDetail.getProjectReservationService());
+		        		}
+	    			} else {
+	    				reservationServiceDetail.setTaxableBase(0);
+	    				reservationServiceDetail.setProjectReservationRoomDetail(null);
+		    			reservationServiceDetailBean.update(reservationServiceDetail);
+
+		    			if (!reservationServiceDetail.getProjectReservationService().isRemoved()) {
+		    				reservationServiceDetail.getProjectReservationService().setRemoved(true);
+		    	    		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+			    			reservationServiceBean.update(reservationServiceDetail.getProjectReservationService());
+		    			}
+	    			}
 	    		}
     		}
     	} catch (ManagerBeanException ex) {

@@ -48,6 +48,7 @@ import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class PosClosingController implements IFinanceConstants, Serializable {
 	
@@ -225,7 +226,8 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 
 		if (rBank != null) {
 			PosFinanceController posFinanceController = (PosFinanceController)AonUtil.getRegisteredBean(IFinanceConstants.POS_FINANCE_CONTROLLER_NAME);
-			Date issueDate = obtainClosingDate();
+			ReservationUtils reservationUtils = new ReservationUtils();
+			Date issueDate = reservationUtils.obtainProductionDate(getPosShift().getEndTime());
 
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
@@ -260,21 +262,6 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 				}
 			}
 		}
-	}
-
-	private Date obtainClosingDate() {
-		ApplicationParameter closeHourParam = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_CLOSE_HOUR);
-		String closeHour = (closeHourParam!=null && StringUtils.isNotBlank(closeHourParam.getValue())) ? closeHourParam.getValue() : "00:00:00";
-		Date limitDate = DateUtils.truncate(getPosShift().getEndTime(), Calendar.DATE);
-		limitDate = DateUtils.addHours(limitDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[0]));
-		limitDate = DateUtils.addMinutes(limitDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[1]));
-		limitDate = DateUtils.addSeconds(limitDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[2]));
-
-		Date issueDate = DateUtils.truncate(getPosShift().getEndTime(), Calendar.DATE);
-		if (!getPosShift().getEndTime().after(limitDate)) {
-			issueDate = DateUtils.addDays(issueDate, -1);
-		}
-		return issueDate;
 	}
 
 	private FinanceBatch obtainFinanceBatch(RegistryBank rBank, String description, Date issueDate) throws ManagerBeanException {

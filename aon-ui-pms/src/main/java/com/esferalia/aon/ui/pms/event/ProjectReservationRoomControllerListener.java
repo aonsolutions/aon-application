@@ -60,6 +60,8 @@ public class ProjectReservationRoomControllerListener extends ControllerAdapter 
 				Criteria criteria = new Criteria();
 				String alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
 				criteria.addEqualExpression(alias, reservationRoom.getProjectReservation().getId());
+				alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_REMOVED);
+				criteria.addEqualExpression(alias, Boolean.FALSE);
 				if (services != null && services.length > 0) {
 					alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ID);
 					Expression idExpr = ExpressionUtilities.getInExpression(alias, Arrays.asList(services));
