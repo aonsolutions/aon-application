@@ -6,11 +6,263 @@ import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016CorrectionKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.ValidationMessage2016;
+import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod2002016Validation {
+	
+	private static final int PAGE00 = 0;
+	private static final int PAGE01 = 1;
+	private static final int PAGE02 = 2;
+	private static final int PAGE03 = 3;
+	private static final int PAGE04 = 4;
+	
+	private static final String MUST_EQUAL_MSG = "[{0}] {1} y [{2}] {3} deben ser iguales.";
+	private static final String CHECK_SIGN_MSG = "Verifique el signo de la clave: [{0}] {1}";
+	
+	@FunctionalInterface
+	private static interface IValidator {
+		boolean validate(Mod2002016 mod);
+	}
+	private static enum Type {
+		 DOC   ( mod -> !AonDocumentUtil.isValid(mod.getEnterpriseDocument()),new ValidationMessage2016(PAGE00,"NIF de la declaraci\u00F3n incorrecto."))
+		,CNAE_1( mod -> AonStringUtils.isEmpty(mod.getCnae()),new ValidationMessage2016(PAGE00,"Rellene el CNAE de la empresa."))
+		,CNAE_2( mod -> !AonStringUtils.isEmpty(mod.getCnae()) && CNAE2009.valueOfCode(mod.getCnae()) == null,new ValidationMessage2016(PAGE00,"CNAE de la empresa, no válido."))
+		,COMP_1( mod -> mod.isComplementary() && AonStringUtils.isBlank(mod.getComplementaryReceipt() )
+			,new ValidationMessage2016(PAGE00,"Si marca Decl. Complementaria, debe indicar un n. de justificante anterior."))
+		,COMP_2( mod -> mod.isComplementary() && AonStringUtils.isNotBlank(mod.getComplementaryReceipt()) && mod.getComplementaryReceipt().length() != 13 
+			,new ValidationMessage2016(PAGE00,"El n. de justificante anterior debe tener 13 caracteres."))
+		,COMP_3( mod -> mod.isComplementary() && AonStringUtils.isNotBlank(mod.getComplementaryReceipt()) 
+				  && (!mod.getComplementaryReceipt().startsWith("200") && !mod.getComplementaryReceipt().startsWith("206"))
+			,new ValidationMessage2016(PAGE00,"El n. de justificante anterior debe empezar por 200 o 206."))
+		,COMP_4( mod -> !mod.isComplementary() && AonStringUtils.isNotBlank(mod.getComplementaryReceipt())
+			, new ValidationMessage2016(PAGE00,"Si no marca Decl. Complementaria, no debe indicar un n. de justificante anterior."))
+		,SECR_1( mod -> AonDocumentUtil.isEntity(mod.getEnterpriseDocument()) && mod.getSecretary() == null
+			, new ValidationMessage2016(PAGE01,"Para personas jur\u00EDdicas, debe rellenar los datos del secretario"))
+		,SECR_2( mod -> AonDocumentUtil.isEntity(mod.getEnterpriseDocument()) 
+					&& mod.getSecretary() != null 
+					&& !AonDocumentUtil.isValid(mod.getSecretary().getDocument())
+			, new ValidationMessage2016(PAGE01,"NIF del secretario incorrecto."))
+		,SECR_3( mod -> AonDocumentUtil.isEntity(mod.getEnterpriseDocument()) 
+					&& mod.getSecretary() != null 
+					&& AonStringUtils.isBlank(mod.getSecretary().getName())
+			, new ValidationMessage2016(PAGE01,"Falta nombre del secretario."))
+		,SECR_4( mod -> AonDocumentUtil.isEntity(mod.getEnterpriseDocument()) 
+					&& mod.getSecretary() != null && AonStringUtils.isNotBlank(mod.getSecretary().getName()) 
+					&& mod.getSecretary().getName().length() > 25
+			, new ValidationMessage2016(PAGE01,"Longitud excedida en el nombre del secretario. Debe limitarse a 25 caracteres."))
+		,SECR_5( mod -> AonDocumentUtil.isEntity(mod.getEnterpriseDocument()) 
+					&& mod.getSecretary() != null 
+					&& mod.getSecretary().getIrnr() == null 
+					&& (mod.isChecked(C0021) || mod.isChecked(C0046))  
+			, new ValidationMessage2016(PAGE01,"Falta fecha IRNR."))
+		
+		// ------------------------------------------------------------------------
+		// -------------------------- BALANCE: ACTIVO ----------------------------- 		
+		// ------------------------------------------------------------------------
+		,V_BA180_1( mod -> isNotEqual(mod,BA180,BP252),new ValidationMessage2016(PAGE03,BA180,mustEqualMsg( BA180, BP252 )))
+		,V_BA180_2( mod -> isZero(mod,BA180) && isZero(mod,BP252) && isZero(mod,BP187)
+			 ,new ValidationMessage2016(PAGE03,BA180,"Advertencia: Los totales de los balances son cero (Activo, patrimonio neto y pasivo)." ))
+		
+		// ------------------------------------------------------------------------
+		// --------------- BALANCE: PATRIMONIO NETO Y PASIVO ----------------------
+		// ------------------------------------------------------------------------
+		,V_BP189_1( mod -> isPositive(mod,BP189)		,new ValidationMessage2016(PAGE04,BP189,checkSignMsg(BP189)))
+		,V_BP194_1( mod -> isPositive(mod,BP194)		,new ValidationMessage2016(PAGE04,BP194,checkSignMsg(BP194)))
+		,V_BP197  ( mod -> isPositive(mod,BP197)		,new ValidationMessage2016(PAGE04,BP197,checkSignMsg(BP197)))
+		,V_BP199_1( mod -> isNotEqual(mod,BP199,LQ500)	,new ValidationMessage2016(PAGE04,BP199,mustEqualMsg(BP199, LQ500)))  
+		,V_BP200_1( mod -> isPositive(mod,BP200)		,new ValidationMessage2016(PAGE04,BP200,checkSignMsg(BP200)))
+		
+		// ------------------------------------------------------------------------
+		// --------- ECPN. ESTADO TOTAL DE CAMBIOS EN EL PATRIMONIO NETO ----------
+		// ------------------------------------------------------------------------
+		,V_TC632  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP188,TC632)
+			, new ValidationMessage2016(PAGE07, TC632,mustEqualMsg(TC632,BP188))) 
+		,V_TC633  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP189,TC633)
+			, new ValidationMessage2016(PAGE07, TC633,mustEqualMsg(TC633,BP189)))
+		,V_TC634  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP190,TC634)
+			, new ValidationMessage2016(PAGE07, TC634,mustEqualMsg(TC634,BP190)))
+		,V_TC635  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP191,TC635)
+			, new ValidationMessage2016(PAGE07, TC635,mustEqualMsg(TC635,BP191)))
+		,V_TC636  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP194,TC636)
+			, new ValidationMessage2016(PAGE07, TC637,mustEqualMsg(TC636,BP194)))
+		,V_TC637  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP195,TC637)
+			, new ValidationMessage2016(PAGE07, TC637,mustEqualMsg(TC637,BP195)))
+		,V_TC639  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP199,TC639)
+			, new ValidationMessage2016(PAGE07, TC639,mustEqualMsg(TC639,BP199)))
+		,V_TC640  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP200,TC640)
+			, new ValidationMessage2016(PAGE07, TC640,mustEqualMsg(TC640,BP200)))
+		,V_TC641  ( mod -> isECPNFilled(mod) && isNotBalancePymes(mod) && isNotEqual(mod,BP201,TC641)
+			, new ValidationMessage2016(PAGE07, TC642,mustEqualMsg(TC641,BP201))) 
+		,V_TC642  ( mod -> isECPNFilled(mod) && isNotBalancePymes(mod) && isNotEqual(mod,BP202,TC642)
+			, new ValidationMessage2016(PAGE07, TC642,mustEqualMsg(TC642,BP202))) 
+		,V_TC638  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP198,TC638)
+			, new ValidationMessage2016(PAGE07, TC638,mustEqualMsg(TC638,BP198)))
+		,V_TC643  ( mod -> isECPNFilled(mod) && isBalancePymes(mod) && isNotEqual(mod,BP208,LQ643)
+			, new ValidationMessage2016(PAGE07, TC643,mustEqualMsg(TC643,BP208))) 
+		,V_TC644  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP209,TC644)
+			, new ValidationMessage2016(PAGE07, TC644,mustEqualMsg(TC644,BP209)))
+		,V_TC645  ( mod -> isECPNFilled(mod) && isNotEqual(mod,BP185,TC645)
+			, new ValidationMessage2016(PAGE07, TC645,mustEqualMsg(TC645,BP185)))
+		
+		,V_TC534  ( mod -> isPositive(mod,TC534),new ValidationMessage2016(PAGE07,TC534, checkSignMsg(TC534)))
+		,V_TC535  ( mod -> isPositive(mod,TC535),new ValidationMessage2016(PAGE07,TC535, checkSignMsg(TC535)))
+		,V_TC536  ( mod -> isPositive(mod,TC536),new ValidationMessage2016(PAGE07,TC536, checkSignMsg(TC536)))
+		,V_TC537  ( mod -> isPositive(mod,TC537),new ValidationMessage2016(PAGE07,TC537, checkSignMsg(TC537)))
+		,V_TC538  ( mod -> isPositive(mod,TC538),new ValidationMessage2016(PAGE07,TC538, checkSignMsg(TC538)))
+		,V_TC539  ( mod -> isPositive(mod,TC539),new ValidationMessage2016(PAGE07,TC539, checkSignMsg(TC539)))
+		,V_TC540  ( mod -> isPositive(mod,TC540),new ValidationMessage2016(PAGE07,TC540, checkSignMsg(TC540)))
+		,V_TC541  ( mod -> isPositive(mod,TC541),new ValidationMessage2016(PAGE07,TC541, checkSignMsg(TC541)))
+		,V_TC542  ( mod -> isPositive(mod,TC542),new ValidationMessage2016(PAGE07,TC542, checkSignMsg(TC542)))
+		,V_TC543  ( mod -> isPositive(mod,TC543),new ValidationMessage2016(PAGE07,TC543, checkSignMsg(TC543)))
+		,V_TC544  ( mod -> isPositive(mod,TC544),new ValidationMessage2016(PAGE07,TC544, checkSignMsg(TC544)))
+		,V_TC545  ( mod -> isPositive(mod,TC545),new ValidationMessage2016(PAGE07,TC545, checkSignMsg(TC545)))
+		,V_TC546  ( mod -> isPositive(mod,TC546),new ValidationMessage2016(PAGE07,TC546, checkSignMsg(TC546)))
+		,V_TC562  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC562),new ValidationMessage2016(PAGE07,TC562, checkSignMsg(TC562))) 
+		,V_TC563  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC563),new ValidationMessage2016(PAGE07,TC563, checkSignMsg(TC563)))
+		,V_TC564  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC564),new ValidationMessage2016(PAGE07,TC564, checkSignMsg(TC564)))
+		,V_TC565  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC565),new ValidationMessage2016(PAGE07,TC565, checkSignMsg(TC565)))
+		,V_TC566  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC566),new ValidationMessage2016(PAGE07,TC566, checkSignMsg(TC566)))
+		,V_TC567  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC567),new ValidationMessage2016(PAGE07,TC567, checkSignMsg(TC567)))
+		,V_TC568  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC568),new ValidationMessage2016(PAGE07,TC568, checkSignMsg(TC568)))
+		,V_TC569  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC569),new ValidationMessage2016(PAGE07,TC569, checkSignMsg(TC569)))
+		,V_TC570  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC570),new ValidationMessage2016(PAGE07,TC570, checkSignMsg(TC570)))
+		,V_TC571  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC571),new ValidationMessage2016(PAGE07,TC571, checkSignMsg(TC571)))
+		,V_TC572  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC572),new ValidationMessage2016(PAGE07,TC572, checkSignMsg(TC572)))
+		,V_TC574  ( mod -> isBalanceNormal(mod) && isPositive(mod,TC574),new ValidationMessage2016(PAGE07,TC574, checkSignMsg(TC574)))
+		
+		;
+		
+		private IValidator validator;
+		private ValidationMessage2016 message;
+		private Type( IValidator validator,ValidationMessage2016 message){
+			this.validator = validator;
+			this.message = message;
+		}
+		public boolean validate(Mod2002016 mod) {
+			return (this.validator.validate(mod));
+		}
+		public ValidationMessage2016 getMessage() {
+			return message;
+		}
+	}
+	public static void validate(Mod2002016 mod) {
+		validateAdministrators(mod);
+		validateParticipationsIn(mod);
+		validateParticipationsOut(mod);
+		validateRepresentatives(mod);
+		for ( Type type : Type.values()) {
+			if (type.validate(mod)) {
+				mod.getMessages().add(type.getMessage());
+			}
+		}
+	}
+	
+	private static void validateRepresentatives(Mod2002016 mod200) {
+		if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			if (mod200.getRepresentatives() == null || mod200.getRepresentatives().size() == 0 ) {
+				mod200.getMessages().add(new ValidationMessage2016(PAGE01,"Para personas jur\u00EDdicas, debe rellenar al menos un representante."));
+			} else {
+				for (int i = 0; i < mod200.getRepresentatives().size(); i++ ) {
+					LegalRepresentative lr = mod200.getRepresentatives().get(i); 
+					if (!AonDocumentUtil.isValid(lr.getDocument())) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE01,"NIF del representante legal nº "+(i+1) +" incorrecto ["+lr.getDocument()+"]"));		
+					}
+					if (AonStringUtils.isEmpty(lr.getName())) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE01,"Falta nombre del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+					}
+					if (AonStringUtils.isEmpty(lr.getNotary())) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE01,"Falta el dato de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+					} else if (lr.getNotary().length() > 20) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE01,"Longitud excedida en la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]. Debe limitarse a 20 caracteres."));	
+					}
+					if (lr.getNotaryDate() == null) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE01,"Falta el dato fecha de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
+	
+	private static void validateAdministrators(Mod2002016 mod200) {
+		if (mod200.getAdministrators() == null || mod200.getAdministrators().size() == 0 ) {
+			mod200.getMessages().add(new ValidationMessage2016(PAGE01,"Debe rellenar al menos un administrador."));
+		} else {
+			for (int i = 0; i < mod200.getAdministrators().size(); i++ ) {
+				CompanyAdministrator ca = mod200.getAdministrators().get(i); 
+				if (!AonDocumentUtil.isValid(ca.getDocument())) {
+					mod200.getMessages().add(new ValidationMessage2016(PAGE01,"NIF del administrador nº "+(i+1) +" incorrecto ["+ca.getDocument()+"]"));		
+				}
+				if (AonStringUtils.isEmpty(ca.getName())) {
+					mod200.getMessages().add(new ValidationMessage2016(PAGE01,"Falta nombre del administrador nº "+(i+1) +". ["+ca.getDocument()+"]"));
+				}
+			}
+		}
+	}
+
+	private static void validateParticipationsIn(Mod2002016 mod200) {
+		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())
+			&& !AonDocumentUtil.isCulturalAssociation(mod200.getEnterpriseDocument())) {
+			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsIn();
+			if (participations == null || participations.size() == 0) {
+				mod200.getMessages().add(new ValidationMessage2016(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
+			} else {
+				for (int i = 0; i < participations.size(); i++ ) {
+					CompanyParticipation cp = participations.get(i); 
+					if (!AonDocumentUtil.isValid(cp.getDocument())) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE02,"NIF de la participaci\u00F3n en la declarante nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
+					}
+					if (AonStringUtils.isEmpty(cp.getName())) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE02,"Falta nombre de la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE02,"Porcentaje no correcto en la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
+	
+	private static void validateParticipationsOut(Mod2002016 mod200) {
+		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsOut();
+			if (participations == null || participations.size() == 0) {
+			} else {
+				for (int i = 0; i < participations.size(); i++ ) {
+					CompanyParticipation cp = participations.get(i); 
+					if (!AonDocumentUtil.isValid(cp.getDocument())) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE02,"NIF de la participaci\u00F3n de la declarante en otras nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
+					}
+					if (AonStringUtils.isEmpty(cp.getName())) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE02,"Falta nombre de la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
+						mod200.getMessages().add(new ValidationMessage2016(PAGE02,"Porcentaje no correcto en la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
+	
+	
+	// ***************************************************************************************************************
+	// ***************************************************************************************************************
+	// ***************************************************************************************************************
+	// ***************************************************************************************************************
+	// ***************************************************************************************************************
+	// ***************************************************************************************************************
+	
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED
@@ -20,18 +272,14 @@ public class Mod2002016Validation {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 
-	private static final int PAGE03 = 3;
-	private static final int PAGE04 = 4;
 	private static final int PAGE07 = 7;
 	private static final int PAGE08 = 8;
 	private static final int PAGE09 = 9;
 	private static final int PAGE10 = 10;
 	private static final int PAGE14 = 14;
 
-	private static final String EMPTY_BALANCE_MSG = "No se han cumplimentado datos en el Balance (Activo, patrimonio neto y pasivo).";
-
-	private static final String EQUAL_MSG = "\"{0}\" debe igual que \"{1}\".";
-	private static final String EQUAL_EXP = "round({0}) == round({1})";
+	// private static final String EQUAL_MSG = "\"{0}\" debe igual que \"{1}\".";
+	// private static final String EQUAL_EXP = "round({0}) == round({1})";
 
 	private static final String EQUAL_GREATER_MSG = "\"{0}\" debe ser mayor o igual que \"{1}\".";
 	private static final String EQUAL_GREATER_EXP = "round({0}) >= round({1})";
@@ -42,11 +290,10 @@ public class Mod2002016Validation {
 	private static final String EQUAL_LESS_FACTOR_MSG = "\"{0}\" debe ser menor o igual que el {2} por \"{1}\".";
 	private static final String EQUAL_LESS_FACTOR_EXP = "round({0}) <= round({1} * {2})";
 
-	private static final String MUST_EQUAL_MSG = "\"{0}\" y \"{1}\" deben ser iguales.";
-	private static final String MUST_EQUAL_EXP = "round({0}) == round({1})";
+//	private static final String MUST_EQUAL_MSG = "\"{0}\" y \"{1}\" deben ser iguales.";
 	
-	private static final String CHECK_SIGN_MSG = "Verifique el signo de la clave: \"{0}\"";
-	private static final String MUST_NEGATIVE_EXP = "round({0}) <= 0.0";
+//	private static final String CHECK_SIGN_MSG = "Verifique el signo de la clave: \"{0}\"";
+//	private static final String MUST_NEGATIVE_EXP = "round({0}) <= 0.0";
 	private static final String MUST_POSITIVE_EXP = "round({0}) >= 0.0";
 	
 	private static final String INV_BOX_MSG = "Casilla \"[{0}]\" no v\u00E1lida sin el caracter \"{1}\".";
@@ -67,113 +314,108 @@ public class Mod2002016Validation {
 	//	**************************************************************************************
 	//	**************************************************************************************
 	
-	static {	// PAGE 03	
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE03,BA180
-				,MessageFormat.format(MUST_EQUAL_MSG,BA180.getDescription(),BP252.getDescription())
-				,MessageFormat.format(MUST_EQUAL_EXP,BA180.toString(),BP252.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE03,BA180
-				,EMPTY_BALANCE_MSG
-				,"round(BA180) != 0.0 && round(BP252) != 0.0 && round(BP187) != 0.0"));
-	}
+//	static {	// BALANCE: ACTIVO	
+//		VALIDATION_EXPRESSION_LIST.add(new EqualValidationMessage2016(PAGE03,BA180,BP252));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE03,BA180
+//				,"Advertencia: Los totales de los balances son cero (Activo, patrimonio neto y pasivo)."
+//				,"isNotZero(BA180) && isNotZero(BP252) && isNotZero(BP187)"));
+//	}
 
 	
-	static { // PAGE 04	
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP189
-				,MessageFormat.format(CHECK_SIGN_MSG,BP189.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,BP189.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP194
-				,MessageFormat.format(CHECK_SIGN_MSG,BP194.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,BP194.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP197
-				,MessageFormat.format(CHECK_SIGN_MSG,BP197.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,BP197.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP200
-				,MessageFormat.format(CHECK_SIGN_MSG,BP200.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,BP200.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP199
-				,MessageFormat.format(MUST_EQUAL_MSG,BP199.getDescription(),LQ500.getDescription())
-				//,"(C0003 || C0004 || C0024 || C0025 || C0036 || C0061)? true : round(BP199) == round(LQ500)"));
-				,"(C0003 || C0004 || C0024 || C0025 || C0036)? true : round(BP199) == round(LQ500)"));
-	}
+//	static { // BALANCE: PATRIMONIO NETO Y PASIVO	
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP189
+//				,MessageFormat.format(CHECK_SIGN_MSG,BP189.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,BP189.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP194
+//				,MessageFormat.format(CHECK_SIGN_MSG,BP194.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,BP194.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP197
+//				,MessageFormat.format(CHECK_SIGN_MSG,BP197.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,BP197.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE04,BP200
+//				,MessageFormat.format(CHECK_SIGN_MSG,BP200.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,BP200.toString())));
+//		//VALIDATION_EXPRESSION_LIST.add(new EqualValidationMessage2016(PAGE04,BP199,LQ500));
+//	}
 
 	
 	static { // PAGE 07	
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC534
-				,MessageFormat.format(CHECK_SIGN_MSG,TC534.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC534.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC535
-				,MessageFormat.format(CHECK_SIGN_MSG,TC535.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC535.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC536
-				,MessageFormat.format(CHECK_SIGN_MSG,TC536.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC536.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC537
-				,MessageFormat.format(CHECK_SIGN_MSG,TC537.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC537.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC538
-				,MessageFormat.format(CHECK_SIGN_MSG,TC538.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC538.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC539
-				,MessageFormat.format(CHECK_SIGN_MSG,TC539.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC539.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC540
-				,MessageFormat.format(CHECK_SIGN_MSG,TC540.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC540.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC541
-				,MessageFormat.format(CHECK_SIGN_MSG,TC541.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC541.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC542
-				,MessageFormat.format(CHECK_SIGN_MSG,TC542.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC542.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC543
-				,MessageFormat.format(CHECK_SIGN_MSG,TC543.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC543.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC544
-				,MessageFormat.format(CHECK_SIGN_MSG,TC544.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC544.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC545
-				,MessageFormat.format(CHECK_SIGN_MSG,TC545.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC545.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC546
-				,MessageFormat.format(CHECK_SIGN_MSG,TC546.toString())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC546.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC534
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC534.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC534.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC535
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC535.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC535.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC536
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC536.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC536.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC537
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC537.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC537.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC538
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC538.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC538.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC539
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC539.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC539.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC540
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC540.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC540.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC541
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC541.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC541.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC542
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC542.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC542.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC543
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC543.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC543.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC544
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC544.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC544.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC545
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC545.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC545.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC546
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC546.toString())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC546.toString())));
 		
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC562
-				,MessageFormat.format(CHECK_SIGN_MSG,TC562.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC562.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC563
-				,MessageFormat.format(CHECK_SIGN_MSG,TC563.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC563.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC564
-				,MessageFormat.format(CHECK_SIGN_MSG,TC564.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC564.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC565
-				,MessageFormat.format(CHECK_SIGN_MSG,TC565.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC565.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC566
-				,MessageFormat.format(CHECK_SIGN_MSG,TC566.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC566.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC567
-				,MessageFormat.format(CHECK_SIGN_MSG,TC567.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC567.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC568
-				,MessageFormat.format(CHECK_SIGN_MSG,TC568.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC568.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC569
-				,MessageFormat.format(CHECK_SIGN_MSG,TC569.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC569.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC570
-				,MessageFormat.format(CHECK_SIGN_MSG,TC570.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC570.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC571
-				,MessageFormat.format(CHECK_SIGN_MSG,TC571.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC571.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC572
-				,MessageFormat.format(CHECK_SIGN_MSG,TC572.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC572.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC574
-				,MessageFormat.format(CHECK_SIGN_MSG,TC574.getDescription())
-				,MessageFormat.format(MUST_NEGATIVE_EXP,TC574.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC562
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC562.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC562.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC563
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC563.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC563.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC564
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC564.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC564.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC565
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC565.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC565.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC566
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC566.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC566.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC567
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC567.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC567.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC568
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC568.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC568.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC569
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC569.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC569.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC570
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC570.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC570.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC571
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC571.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC571.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC572
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC572.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC572.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE07,TC574
+//				,MessageFormat.format(CHECK_SIGN_MSG,TC574.getDescription())
+//				,MessageFormat.format(MUST_NEGATIVE_EXP,TC574.toString())));
 	}
 
 	
@@ -374,7 +616,7 @@ public class Mod2002016Validation {
 //				,"C0027?LQ552<=0:LQ552>0"));
 		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ1140
-				,MessageFormat.format(EQUAL_MSG,"Reserva de capitalizaci\u00F3n dotada en el ejercicio",BP1001.getDescription())
+				,MessageFormat.format(MUST_EQUAL_MSG,"Reserva de capitalizaci\u00F3n dotada en el ejercicio",BP1001.getDescription())
 				,MessageFormat.format(EQUAL_LESS_EXP,LQ1140.toString(),BP1001.toString())));
 		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ641
@@ -726,9 +968,7 @@ public class Mod2002016Validation {
 	}
 
 	static {	// PAGE 12
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID653
-				,MessageFormat.format(EQUAL_MSG,ID653.getDescription() + " (653)",ID666.getDescription()+ "(666)")
-				,MessageFormat.format(EQUAL_EXP,ID653.toString(),ID666.toString())));
+		//VALIDATION_EXPRESSION_LIST.add(new EqualValidationMessage2016(PAGE14,ID653,ID666));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID650
 				,MessageFormat.format(CHECK_SIGN_MSG,ID650.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID650.toString())));
@@ -890,6 +1130,58 @@ public class Mod2002016Validation {
 //				,"Compruebe el importe pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado"
 //				,"LM957==(LM043+LM049)-LM254-LM258"));
 	}
-
+	
+	private static double getValue(Mod2002016 mod, Mod2002016Key key) {
+		if (mod.getDraftMap().containsKey(key)){
+			DoubleVariable2016 dv = mod.getDraftMap().get(key);
+			if (dv != null) {
+				Object o = dv.getValue();
+				if (o != null && o instanceof Double) {
+					return (Double) o;
+				}
+			}
+		}
+		return mod.getDoubleValue(key);
+	}
+	private static boolean isPositive(Mod2002016 mod, Mod2002016Key key) {
+		return AonMathUtils.isGreatherThanZero( getValue(mod,key) );
+	}
+	private static boolean isZero(Mod2002016 mod, Mod2002016Key key) {
+		return AonMathUtils.isZero( getValue(mod,key) );
+	}
+	private static boolean isNotZero(Mod2002016 mod, Mod2002016Key key) {
+		return !AonMathUtils.isZero( getValue(mod,key) );
+	}
+	private static boolean isEqual(Mod2002016 mod, Mod2002016Key key1, Mod2002016Key key2) {
+		return AonMathUtils.equals( getValue(mod,key1), getValue(mod,key2) );
+	}
+	private static boolean isNotEqual(Mod2002016 mod, Mod2002016Key key1, Mod2002016Key key2) {
+		return !isEqual(mod, key1, key2);
+	}
+	private static boolean isBalanceNormal(Mod2002016 mod) {
+		return (mod.getBalanceType() == BalanceType.NORMAL); 
+	}
+	private static boolean isBalancePymes(Mod2002016 mod) {
+		return (mod.getBalanceType() == BalanceType.PYMES); 
+	}
+	private static boolean isNotBalancePymes(Mod2002016 mod) {
+		return !isBalancePymes(mod);		 
+	}
+	private static boolean isECPNFilled(Mod2002016 mod) {
+		return isNotZero(mod, TC645) && isNotZero(mod, T0355);
+	}	
+	private static String mustEqualMsg( Mod2002016Key key1, Mod2002016Key key2 ) {
+		String desc1 = key1.getDescription();
+		String desc2 = key2.getDescription();  
+		return MessageFormat.format(MUST_EQUAL_MSG,key1.getCode()
+			,AonStringUtils.isBlank(desc1)?"": ("- \"" + desc1 + "\"")
+			,key2.getCode()
+			,AonStringUtils.isBlank(desc2)?"": ("\"" + desc2 + "\"")
+			); 
+	}
+	private static String checkSignMsg( Mod2002016Key key) {
+		String desc = key.getDescription();
+		return MessageFormat.format(CHECK_SIGN_MSG, key.getCode(), AonStringUtils.isBlank(desc)?"": ("- \"" + desc + "\""));
+	}
 	
 }

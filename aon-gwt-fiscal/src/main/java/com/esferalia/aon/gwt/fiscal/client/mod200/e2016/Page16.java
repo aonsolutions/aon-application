@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class Page16 extends PageAbs {
 
+	private FlexTable table;
+
 	public Page16( Model200PageCallback callback ) {
 		super(callback);
 
@@ -30,6 +32,7 @@ public class Page16 extends PageAbs {
 				
 				FlowPanel groupBodyPanel = new FlowPanel();
 				groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
+				table = new FlexTable();
 				groupBodyPanel.add(table);
 				groupPanel.add(groupBodyPanel);
 				

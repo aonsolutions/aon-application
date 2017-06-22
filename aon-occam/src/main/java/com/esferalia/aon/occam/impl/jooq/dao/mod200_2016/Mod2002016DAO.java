@@ -43,7 +43,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Character;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.ValidationMessage2016;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -55,7 +54,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod200_2016.jaxb.Mod2002016toMOD200
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002016Import2015;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -194,17 +192,17 @@ public class Mod2002016DAO  {
 		if ( AonStringUtils.length(mod200.getEnterpriseDocument()) > 9)
 			throw new AonCoreException("El documento del presentador no puede superar 9 caracteres.");
 		if ( AonStringUtils.length(mod200.getEnterpriseName()) > 45)
-			throw new AonCoreException("La razón social del presentador no puede superar 45 caracteres.");
+			throw new AonCoreException("La raz\u00F3n social del presentador no puede superar 45 caracteres.");
 		if ( AonStringUtils.length(mod200.getEnterprisePhone1()) > 9)
 			throw new AonCoreException("El teléfono 1 del presentador no puede superar 9 caracteres.");
 		if ( AonStringUtils.length(mod200.getEnterprisePhone2()) > 9)
 			throw new AonCoreException("El teléfono 2 del presentador no puede superar 9 caracteres.");
 		if ( AonStringUtils.length(mod200.getReceipt()) > 13)
-			throw new AonCoreException("El número de declaración no puede superar 13 caracteres.");
+			throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n no puede superar 13 caracteres.");
 		if ( AonStringUtils.length(mod200.getComplementaryReceipt()) > 13)
-			throw new AonCoreException("El número de declaración complementaria no puede superar 13 caracteres.");
+			throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n complementaria no puede superar 13 caracteres.");
 		if ( AonStringUtils.length(mod200.getFiscalGroup()) > 9)
-			throw new AonCoreException("El Número del grupo fiscal no puede superar 9 caracteres."); 			
+			throw new AonCoreException("El N\u00FAmero del grupo fiscal no puede superar 9 caracteres."); 			
 		if ( AonStringUtils.length(mod200.getDominantDocument()) > 9)
 			throw new AonCoreException("El NIF de la sociendad dominante no puede superar 9 caracteres.");
 		if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getDocument()) > 9)
@@ -609,7 +607,6 @@ public class Mod2002016DAO  {
 				.fetch()
 				.stream()
 				.forEach(reg -> Mod2002016RegistryType.populate(mod, reg));
-//			fillRegistryLists(mod200,ctx);
 		}
 		return mod200;
 	}
@@ -659,92 +656,6 @@ public class Mod2002016DAO  {
 		}
 		mod200.setPygType( bt );
 	}
-	
-/*		
-	private static void fillRegistryLists(Mod2002016 mod200, AONContext ctx) {
-		Result<FsModel200RegistryRecord> res = ctx.getDslContext() 
-				.selectFrom(FS_MODEL200_REGISTRY)
-			 	.where(	FS_MODEL200_REGISTRY.FS_MODEL200.equal(mod200.getId()))
-			 	.fetch();
-		CompanyAdministrator ca = null;
-		CompanyParticipation cp = null;
-		LegalRepresentative lr  = null;
-		for (FsModel200RegistryRecord reg : res) {
-			if (reg.getType() == 0) {
-				ca = new CompanyAdministrator();
-				ca.setDocument( reg.getDocument());
-				ca.setName( reg.getName());
-				ca.setRepresentative( reg.getRepresentative() == 1 );
-				ca.setProvince( reg.getProvince() );
-				mod200.getAdministrators().add(ca);
-			} else if (reg.getType() == 1) {
-				cp = new CompanyParticipation();
-				cp.setDocument(reg.getDocument());
-				cp.setName(reg.getName());
-				cp.setProvince( reg.getProvince() );
-				cp.setCountry( reg.getCountry() );
-				cp.setPercent(reg.getPercent());
-				cp.setNominalValue(reg.getNominalValue());
-				cp.setBookValue(reg.getBookValue());
-				cp.setIncomes(reg.getIncomes());
-				cp.setaValue(reg.getAValue());
-				cp.setbValue(reg.getBValue());
-				cp.setccValue(reg.getCcValue());
-				cp.setcValue(reg.getCValue());
-				cp.setdValue(reg.getDValue());
-				cp.setCapital(reg.getCapital());
-				cp.setReserve(reg.getReserve());
-				cp.setOtherAmounts(reg.getOtherAmounts());
-				cp.setResult(reg.getResult());
-				mod200.getParticipationsOut().add(cp);
-			} else if (reg.getType() == 2) {
-				cp = new CompanyParticipation();					
-				cp.setDocument(reg.getDocument());
-				cp.setName(reg.getName());
-				cp.setProvince(reg.getProvince() );
-				cp.setCountry( reg.getCountry() );
-				cp.setRepresentative( reg.getRepresentative() == 1 );
-				cp.setPercent(reg.getPercent());
-				cp.setNominalValue(reg.getNominalValue());
-				mod200.getParticipationsIn().add(cp);
-			} else if (reg.getType() == 3) {
-				lr = new LegalRepresentative();					
-				lr.setDocument(reg.getDocument());
-				lr.setName(reg.getName());
-				lr.setNotary(reg.getNotary());
-				lr.setNotaryDate(reg.getNotaryDate());
-				mod200.getRepresentatives().add(lr);
-			} else if (reg.getType() == 4) {
-				mod200.getUteParticipations().add(
-					new UteParticipation()					
-						.setDocument(reg.getDocument())
-						.setName(reg.getName())
-						.setProvince(reg.getProvince() )
-						.setCountry( reg.getCountry() )
-						.setRepresentative( reg.getRepresentative() == 1 )
-						.setPercent(reg.getPercent())
-						.setBase(reg.getNominalValue())
-				);
-			} else if (reg.getType() == 5) {
-				mod200.getUteForeign().add(
-					new UteForeign()
-					 	.setIdentification(reg.getName())
-					 	.setCountry( reg.getCountry() )
-						.setVolume(reg.getAValue())
-						.setPyg(reg.getBValue())
-						.setAdjust(reg.getCValue())
-						.setDeduction(reg.getDValue())
-					);
-			} else if (reg.getType() == 6) {
-				mod200.getUteBases().add(
-					new UteBase()
-						.setPercent(reg.getPercent())
-						.setBase(reg.getNominalValue())
-					);
-			}
-		}
-	}
-*/
 	
 	public static Mod2002016 initializeNewMod200(AONContext ctx, Mod2002016 mod200) {
 		Mod2002015 old= Mod2002015DAO.getByYear(ctx, 2015);
@@ -982,15 +893,8 @@ public class Mod2002016DAO  {
 	}
 	
 	public static Mod2002016 validate(Mod2002016 mod200) {
-		LinkedList<ValidationMessage2016> list = new LinkedList<ValidationMessage2016>();
-		validateComplementary(list,mod200);
-		validateDocument(list,mod200);
-		validateCNAE(list,mod200);
-		validateSecretary(list,mod200);
-		validateRepresentatives(list,mod200);
-		validateAdministrators(list,mod200);
-		validateParticipationsIn(list,mod200);
-		validateParticipationsOut(list,mod200);
+		mod200.setMessages(new LinkedList<ValidationMessage2016>());
+		LinkedList<ValidationMessage2016> list = mod200.getMessages();
 		Mod2002016MVELContext ctx = new Mod2002016MVELContext( mod200, ACCEPTER );
 		for (DoubleVariable2016 dv : mod200.getKeysMap().values()) {
 			ctx.put(dv.getKey().toString(), dv.getValue());
@@ -1001,160 +905,14 @@ public class Mod2002016DAO  {
 			ctx.put(key.toString(), d.getValue());
 		}
 		addCharacters(ctx,mod200);
-//		addBalanceCharacters(ctx,mod200);
-		mod200.setMessages(null);	
+		Mod2002016Validation.validate(mod200);
 		for (ValidationMessage2016 validation : VALIDATION_EXPRESSION_LIST) {
 			boolean valid = ctx.validateExpression(validation.getKey(),validation.getExpression());
 			if (!valid) {
 				list.add(validation);
 			}
 		}
-		if (list.size() > 0) {
-			mod200.setMessages(list);	
-		}
 		return mod200;
-	}
-	
-	private static final int PAGE00 = 0;
-	private static final int PAGE01 = 1;
-	private static final int PAGE02 = 2;
-	
-	
-	private static void validateComplementary(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
-		if (mod200.isComplementary() ) {
-			if (AonStringUtils.isEmpty(mod200.getComplementaryReceipt() )) {
-				list.add(new ValidationMessage2016(PAGE00,"Si marca Decl. Complementaria, debe indicar un n. de justificante anterior."));
-			} else {
-				if (mod200.getComplementaryReceipt().length() != 13) {
-					list.add(new ValidationMessage2016(PAGE00,"El n. de justificante anterior debe tener 13 caracteres."));
-				}
-				if (!mod200.getComplementaryReceipt().startsWith("200") && !mod200.getComplementaryReceipt().startsWith("206")) {
-					list.add(new ValidationMessage2016(PAGE00,"El n. de justificante anterior debe empezar por 200 o 206."));
-				}
-			}
-			
-		} else if (!mod200.isComplementary() && !AonStringUtils.isEmpty(mod200.getComplementaryReceipt())) {
-			list.add(new ValidationMessage2016(PAGE00,"Si no marca Decl. Complementaria, no debe indicar un n. de justificante anterior."));
-		}
-	}
-
-	private static void validateDocument(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
-		if (!AonDocumentUtil.isValid(mod200.getEnterpriseDocument())) {
-			list.add(new ValidationMessage2016(PAGE00,"NIF de la declaraci\u00F3n incorrecto."));
-		}
-		
-	}
-	private static void validateCNAE(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
-		if (AonStringUtils.isEmpty(mod200.getCnae())) {
-			list.add(new ValidationMessage2016(PAGE00,"Rellene el CNAE de la empresa."));
-		} else if (CNAE2009.valueOfCode(mod200.getCnae()) == null) {
-			list.add(new ValidationMessage2016(PAGE00,"CNAE de la empresa, no válido."));	
-		}
-	}
-	private static void validateAdministrators(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
-		if (mod200.getAdministrators() == null || mod200.getAdministrators().size() == 0 ) {
-			list.add(new ValidationMessage2016(PAGE01,"Debe rellenar al menos un administrador."));
-		} else {
-			for (int i = 0; i < mod200.getAdministrators().size(); i++ ) {
-				CompanyAdministrator ca = mod200.getAdministrators().get(i); 
-				if (!AonDocumentUtil.isValid(ca.getDocument())) {
-					list.add(new ValidationMessage2016(PAGE01,"NIF del administrador nº "+(i+1) +" incorrecto ["+ca.getDocument()+"]"));		
-				}
-				if (AonStringUtils.isEmpty(ca.getName())) {
-					list.add(new ValidationMessage2016(PAGE01,"Falta nombre del administrador nº "+(i+1) +". ["+ca.getDocument()+"]"));
-				}
-			}
-		}
-	}
-	
-	private static void validateSecretary(LinkedList<ValidationMessage2016> list, Mod2002016 mod200) {
-		if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
-			if (mod200.getSecretary() == null) {
-				list.add(new ValidationMessage2016(PAGE01,"Para personas jur\u00EDdicas, debe rellenar los datos del secretario"));
-			} else {
-				if (!AonDocumentUtil.isValid(mod200.getSecretary().getDocument())) {
-					list.add(new ValidationMessage2016(PAGE01,"NIF del secretario incorrecto."));
-				}
-				if ( AonStringUtils.isEmpty(mod200.getSecretary().getName())) {
-					list.add(new ValidationMessage2016(PAGE01,"Falta nombre del secretario."));
-				} else if (mod200.getSecretary().getName().length() > 25) {
-					list.add(new ValidationMessage2016(PAGE01,"Longitud excedida en el nombre del secretario. Debe limitarse a 25 caracteres."));	
-				}
-				if (mod200.getSecretary().getIrnr() == null && (mod200.isChecked(Mod2002016Key.C0021) || mod200.isChecked(Mod2002016Key.C0046)) ) {
-					list.add(new ValidationMessage2016(PAGE01,"Falta fecha IRNR."));
-				}
-			}
-		}
-	}
-
-	private static void validateRepresentatives(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
-		if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
-			if (mod200.getRepresentatives() == null || mod200.getRepresentatives().size() == 0 ) {
-				list.add(new ValidationMessage2016(PAGE01,"Para personas jur\u00EDdicas, debe rellenar al menos un representante."));
-			} else {
-				for (int i = 0; i < mod200.getRepresentatives().size(); i++ ) {
-					LegalRepresentative lr = mod200.getRepresentatives().get(i); 
-					if (!AonDocumentUtil.isValid(lr.getDocument())) {
-						list.add(new ValidationMessage2016(PAGE01,"NIF del representante legal nº "+(i+1) +" incorrecto ["+lr.getDocument()+"]"));		
-					}
-					if (AonStringUtils.isEmpty(lr.getName())) {
-						list.add(new ValidationMessage2016(PAGE01,"Falta nombre del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
-					}
-					if (AonStringUtils.isEmpty(lr.getNotary())) {
-						list.add(new ValidationMessage2016(PAGE01,"Falta el dato de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
-					} else if (lr.getNotary().length() > 20) {
-						list.add(new ValidationMessage2016(PAGE01,"Longitud excedida en la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]. Debe limitarse a 20 caracteres."));	
-					}
-					if (lr.getNotaryDate() == null) {
-						list.add(new ValidationMessage2016(PAGE01,"Falta el dato fecha de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
-					}
-				}
-			}
-		}
-	}
-	
-	private static void validateParticipationsIn(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
-		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())
-			&& !AonDocumentUtil.isCulturalAssociation(mod200.getEnterpriseDocument())) {
-			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsIn();
-			if (participations == null || participations.size() == 0) {
-				list.add(new ValidationMessage2016(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
-			} else {
-				for (int i = 0; i < participations.size(); i++ ) {
-					CompanyParticipation cp = participations.get(i); 
-					if (!AonDocumentUtil.isValid(cp.getDocument())) {
-						list.add(new ValidationMessage2016(PAGE02,"NIF de la participaci\u00F3n en la declarante nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
-					}
-					if (AonStringUtils.isEmpty(cp.getName())) {
-						list.add(new ValidationMessage2016(PAGE02,"Falta nombre de la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
-					}
-					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
-						list.add(new ValidationMessage2016(PAGE02,"Porcentaje no correcto en la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
-					}
-				}
-			}
-		}
-	}
-	
-	private static void validateParticipationsOut(LinkedList<ValidationMessage2016> list,Mod2002016 mod200) {
-		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
-			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsOut();
-			if (participations == null || participations.size() == 0) {
-			} else {
-				for (int i = 0; i < participations.size(); i++ ) {
-					CompanyParticipation cp = participations.get(i); 
-					if (!AonDocumentUtil.isValid(cp.getDocument())) {
-						list.add(new ValidationMessage2016(PAGE02,"NIF de la participaci\u00F3n de la declarante en otras nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
-					}
-					if (AonStringUtils.isEmpty(cp.getName())) {
-						list.add(new ValidationMessage2016(PAGE02,"Falta nombre de la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
-					}
-					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
-						list.add(new ValidationMessage2016(PAGE02,"Porcentaje no correcto en la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
-					}
-				}
-			}
-		}
 	}
 	
 	public static String dumpAEAT(Mod2002016 mod200)  {

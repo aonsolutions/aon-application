@@ -99,14 +99,10 @@ public abstract class PageAbs extends ResizeComposite {
 	@UiField
 	Panel basePanel;
 
-	@UiField(provided = true)
-	FlexTable table;
-	
 	protected Model200PageCallback callback;
 	
 	public PageAbs( Model200PageCallback callback) {
 		this.callback = callback;
-		table = new FlexTable();
 		callback.getMod200Object().register( new IMod200ChangeListener() {
 			
 			@Override
@@ -131,10 +127,6 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	public Map<Mod2002016Key, BoxLabel> getLabels() {
 		return labels;
-	}
-	
-	protected int paintKey(final Mod2002016Key key,int row) {
-		return paintKey(table,key,row);
 	}
 	
 	protected int paintKey(FlexTable tab,final Mod2002016Key key,int row) {

@@ -18,6 +18,8 @@ public class Page17 extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
 	@UiField
+	FlexTable table;
+	@UiField
 	FlexTable table1;
 	@UiField
 	FlexTable table2;
@@ -30,6 +32,7 @@ public class Page17 extends PageAbs {
 	
 	public Page17( Model200PageCallback callback ) {
 		super(callback);
+		table = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		initializeTable();		

@@ -64,10 +64,13 @@ public class Page08 extends PageAbs {
 			.create(Page8Binder.class);
 	
 	@UiField(provided = true)
+	FlexTable table;
+	@UiField(provided = true)
 	FlexTable table1;
 
 	public Page08( Model200PageCallback callback ) {
 		super(callback);
+		table = new FlexTable();
 		table1 = new FlexTable();
 		Widget ui = page8Binder.createAndBindUi(this);
 		initWidget(ui);

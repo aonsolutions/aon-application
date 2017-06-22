@@ -30,9 +30,9 @@ import com.google.gwt.view.client.ListDataProvider;
 
 public class Page19 extends PageAbs {
 
-	FlexTable table1;
-	FlexTable table2;
-	FlexTable table3;
+	private FlexTable table;
+	private FlexTable table1;
+	private FlexTable table2;
 	
 	private ListDataProvider<String> groupEntitiesProvider;
 	private CellTable<String> groupEntitiesTable;
@@ -44,10 +44,9 @@ public class Page19 extends PageAbs {
 	
 	public Page19( Model200PageCallback callback ) {
 		super(callback);
-		
+		table  = new FlexTable();
 		table1 = new FlexTable();
 		table2 = new FlexTable();
-		table3 = new FlexTable();
 		
 		ScrollPanel container = new ScrollPanel();
 		container.setStyleName(AON.AON_CSS.aonScrollArea());

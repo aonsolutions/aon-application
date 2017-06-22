@@ -63,10 +63,13 @@ public class Page02 extends PageAbs {
 	Button newParticipationIn;
 
 	@UiField(provided = true)
+	FlexTable table;
+	@UiField(provided = true)
 	FlexTable table1;
 
 	public Page02( Model200PageCallback callback ) {
 		super(callback);
+		table  = new FlexTable();
 		table1 = new FlexTable();
 		
 		participationPanel = new ParticipationPanel( new ParticipationPanelCallback() {
@@ -475,7 +478,7 @@ public class Page02 extends PageAbs {
 		int row = 0;
 		for (final Mod2002016Key key : Mod2002016Constants.PARTICIPATION_KEYS) {
 			if (callback.getMod200Object().isVisible(key)) {
-				row = paintKey(key,row);
+				row = paintKey(table,key,row);
 			}
 		}
 		

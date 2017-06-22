@@ -9,21 +9,18 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200Pag
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class Page07 extends PageAbs {
 
-	interface Page7Binder extends
-			UiBinder<Widget, Page07> {
-	}
+	private FlexTable table;
 	
-	private static final Page7Binder page7Binder = GWT.create(Page7Binder.class);
 	private static enum Page7Column {
 		 COL00(""                 ,true ,true ,true )
 		,COL01(AON.MSG.ecpnMsg1() ,true ,true ,true )
@@ -128,9 +125,36 @@ public class Page07 extends PageAbs {
 
 	public Page07( Model200PageCallback callback ) {
 		super(callback);
-		Widget ui = page7Binder.createAndBindUi(this);
-		initWidget(ui);
-		initializeTable();
+		ScrollPanel container = new ScrollPanel();
+		container.setStyleName(AON.AON_CSS.aonScrollArea());
+		FlowPanel baseContainerPanel = new FlowPanel();
+		baseContainerPanel.setStyleName(AON.AON_CSS.aonFiscalContainer());
+		
+		FlowPanel groupPanel= new FlowPanel();
+		groupPanel.setStyleName(AON.AON_CSS.aonGroup());
+			
+				FlowPanel groupHeaderPanel = new FlowPanel();
+				groupHeaderPanel.setStyleName(AON.AON_CSS.aonGroupTitle());
+				groupHeaderPanel.add (new InlineLabel(AON.MSG.patrimonioCambios())); 
+				groupPanel.add(groupHeaderPanel);
+				
+				FlowPanel groupBodyPanel = new FlowPanel();
+				groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
+				
+				FlowPanel tableContainer = new FlowPanel();
+				tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
+				tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
+				table = new FlexTable();
+				table.setStyleName(AON.AON_CSS.aonMarginBottom());
+				tableContainer.add(table);
+				groupBodyPanel.add(tableContainer);
+				groupPanel.add(groupBodyPanel);
+		
+		baseContainerPanel.add(groupPanel);	
+		container.add(baseContainerPanel);
+		initWidget(container);
+		initializeTable();		
+		
 	}
 
 	@Override

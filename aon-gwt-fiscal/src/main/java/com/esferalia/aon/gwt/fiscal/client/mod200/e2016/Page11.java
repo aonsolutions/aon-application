@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Page11 extends PageAbs {
@@ -42,8 +44,12 @@ public class Page11 extends PageAbs {
 			AON.MSG.liquiMsg31(),
 			AON.MSG.pendingAmount()};
 
+	@UiField(provided = true)
+	FlexTable table;
+
 	public Page11( Model200PageCallback callback ) {
 		super(callback);
+		table = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		table.setWidth("100%");

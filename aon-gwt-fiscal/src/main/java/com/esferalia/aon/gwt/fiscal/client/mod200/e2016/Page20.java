@@ -45,6 +45,8 @@ public class Page20 extends PageAbs {
 			.create(PageBinder.class);
 	
 	@UiField
+	FlexTable table;
+	@UiField
 	FlexTable table2;
 	@UiField
 	InlineLabel abonoLabel;
@@ -80,6 +82,7 @@ public class Page20 extends PageAbs {
 		super(callback);
 		ibanD = new IbanTextBox(getSuggestOracle(),true);
 		ibanP = new IbanTextBox(getSuggestOracle(),true);
+		table = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		initializeTable();		

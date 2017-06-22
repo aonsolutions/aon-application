@@ -18,12 +18,15 @@ public class Page15 extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
 	@UiField(provided = true)
+	FlexTable table;
+	@UiField(provided = true)
 	FlexTable table1;
 	@UiField(provided = true)
 	FlexTable table2;
 	
 	public Page15( Model200PageCallback callback ) {
 		super(callback);
+		table  = new FlexTable();
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);

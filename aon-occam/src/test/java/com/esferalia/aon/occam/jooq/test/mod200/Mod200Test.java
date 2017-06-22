@@ -372,7 +372,7 @@ public class Mod200Test {
 			);
 			for (ValidationMessage2016 msg : mod200.getMessages()) {
 				System.out.println(
-						 AonStringUtils.center(msg.getKey().getCode(), 6)
+						 AonStringUtils.center(msg.getKey()!=null?msg.getKey().getCode():"", 6)
 						+AonStringUtils.center(AonNumberUtils.toString(msg.getPage()), 6)
 						+AonStringUtils.rightPad(AonStringUtils.abbreviate(msg.getMessage(), 100),101)
 						+AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.trim(msg.getExpression()), 50),51)

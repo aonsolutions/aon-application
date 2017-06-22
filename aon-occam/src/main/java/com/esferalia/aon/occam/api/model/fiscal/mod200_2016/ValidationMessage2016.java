@@ -34,9 +34,15 @@ public class ValidationMessage2016 implements Serializable {
 			String expression) {
 		this(page,key,message,expression, MessageType.ERROR);
 	}
+	public ValidationMessage2016(int page, Mod2002016Key key, String message) {
+		this(page,key,message,null, MessageType.ERROR);
+	}
 
 	public ValidationMessage2016(int page, String message) {
 		this(page,null,message,null, MessageType.ERROR);
+	}
+	public ValidationMessage2016(MessageType type,int page, String message) {
+		this(page,null,message,null, type);
 	}
 
 	public String getMessage() {

@@ -19,6 +19,8 @@ public class Page12 extends PageAbs {
 			.create(PageBinder.class);
 
 	@UiField(provided = true)
+	FlexTable table;
+	@UiField(provided = true)
 	FlexTable table1;
 	@UiField(provided = true)
 	FlexTable table2;
@@ -29,6 +31,7 @@ public class Page12 extends PageAbs {
 	
 	public Page12( Model200PageCallback callback ) {
 		super(callback);
+		table  = new FlexTable();
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();

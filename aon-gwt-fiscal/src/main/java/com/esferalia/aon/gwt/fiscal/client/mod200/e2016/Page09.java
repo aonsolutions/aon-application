@@ -16,6 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -46,8 +47,12 @@ public class Page09 extends PageAbs {
 		 	,"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
 		};
 	
+	@UiField(provided = true)
+	FlexTable table;
+
 	public Page09( Model200PageCallback callback ) {
 		super(callback);
+		table = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		initializeTable();
@@ -114,7 +119,7 @@ public class Page09 extends PageAbs {
 					margin = false;
 				}
 								
-				row = paintKey(key,row);
+				row = paintKey(table,key,row);
 				if (margin) {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft());
 				}

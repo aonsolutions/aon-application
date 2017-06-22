@@ -29,6 +29,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0049;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0050;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0051;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0052;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0057;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0058;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0063;
@@ -237,6 +238,18 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	public Boolean isBalanceAbreviado() {
 		return (mod200.getBalanceType() == BalanceType.ABREVIADO);
 	}
+	public Boolean isBalancePymes() {
+		return (mod200.getBalanceType() == BalanceType.PYMES); 
+	}
+	public Boolean isPygNormal() {
+		return (mod200.getPygType() == BalanceType.NORMAL); 
+	}
+	public Boolean isPygAbreviado() {
+		return (mod200.getPygType() == BalanceType.ABREVIADO);
+	}
+	public Boolean isPygPymes() {
+		return (mod200.getPygType() == BalanceType.PYMES); 
+	}
 	
 	public Double getValue(Mod2002016Key key) {
 		Object o = get(key.toString());
@@ -250,6 +263,16 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return AonMathUtils.round(getValue(key));
 	}
 	
+	public boolean equals(double value1,double value2) throws AonCoreException {
+		return AonMathUtils.equals(value1,value2);
+	}
+	public boolean isZero(double value) throws AonCoreException {
+		return AonMathUtils.isZero(value);
+	}
+	public boolean isNotZero(double value) throws AonCoreException {
+		return AonMathUtils.isNotZero(value);
+	}
+
 	private int getDays() {
 		if ( mod200.getPeriodType() == 3) {
 			return (int) AonDateUtils.getDaysBetweenDates(mod200.getPeriodStart(), mod200.getPeriodEnd());
@@ -264,7 +287,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return (Boolean) get( C0051 );
 	}
 	public Boolean isBalPymes() {
-		return (Boolean) get( C0050 );
+		return (Boolean) get( C0052 );
 	}
 
 	public double computeC0027() throws AonCoreException {

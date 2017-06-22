@@ -1,27 +1,46 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class Page04 extends PageAbs {
 
-	interface Page4Binder extends
-			UiBinder<Widget, Page04> {
-	}
+	private FlexTable table;
 
-	private static final Page4Binder page4Binder = GWT.create(Page4Binder.class);
-	
 	public Page04( Model200PageCallback callback ) {
 		super(callback);
-		Widget ui = page4Binder.createAndBindUi(this);
-		initWidget(ui);
-		initializeTable();
+		ScrollPanel container = new ScrollPanel();
+		container.setStyleName(AON.AON_CSS.aonScrollArea());
+		FlowPanel baseContainerPanel = new FlowPanel();
+		baseContainerPanel.setStyleName(AON.AON_CSS.aonFiscalContainer());
+		
+		FlowPanel groupPanel= new FlowPanel();
+		groupPanel.setStyleName(AON.AON_CSS.aonGroup());
+			
+				FlowPanel groupHeaderPanel = new FlowPanel();
+				groupHeaderPanel.setStyleName(AON.AON_CSS.aonGroupTitle());
+				groupHeaderPanel.add (new InlineLabel(AON.MSG.balancePasivo())); 
+				groupPanel.add(groupHeaderPanel);
+				
+				FlowPanel groupBodyPanel = new FlowPanel();
+				groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
+				table = new FlexTable();
+				groupBodyPanel.add(table);
+				groupPanel.add(groupBodyPanel);
+		
+		baseContainerPanel.add(groupPanel);	
+		container.add(baseContainerPanel);
+		initWidget(container);
+		initializeTable();		
+		
 	}
 	
 	@Override
@@ -35,7 +54,7 @@ public class Page04 extends PageAbs {
 		int row = 0;
 		for (Mod2002016Key key : Mod2002016Constants.BALANCE_PASIVE_KEYS) {
 			if (callback.getMod200Object().isVisible(key)) {
-				row = paintKey(key,row);
+				row = paintKey(table,key,row);
 			}
 		}
 	}

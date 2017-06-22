@@ -38,12 +38,15 @@ public class Page13 extends PageAbs {
 			.create(PageBinder.class);
 
 	@UiField(provided = true)
+	FlexTable table;
+	@UiField(provided = true)
 	FlexTable table1;
 	@UiField(provided = true)
 	FlexTable table2;
 	
 	public Page13( Model200PageCallback callback ) {
 		super(callback);
+		table  = new FlexTable();
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
