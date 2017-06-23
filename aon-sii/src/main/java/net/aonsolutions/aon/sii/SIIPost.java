@@ -27,7 +27,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
-import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
 import net.aonsolutions.aeat.sii.EstadoRegistroType;
 import net.aonsolutions.aeat.sii.RespuestaLRAgenciasViajesType;
 import net.aonsolutions.aeat.sii.RespuestaLRBienesInversionType;
@@ -38,6 +37,7 @@ import net.aonsolutions.aeat.sii.RespuestaLRIMetalicoType;
 import net.aonsolutions.aeat.sii.RespuestaLROComunitariasType;
 import net.aonsolutions.aeat.sii.RespuestaLROperacionesSegurosType;
 import net.aonsolutions.aeat.sii.RespuestaLRPagosRecibidasType;
+import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
 import net.aonsolutions.aeat.sii.SuministroLRAgenciasViajes;
 import net.aonsolutions.aeat.sii.SuministroLRBienesInversion;
 import net.aonsolutions.aeat.sii.SuministroLRCobrosEmitidas;
@@ -73,7 +73,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	messageSender.setKeyManagers(kmf.getKeyManagers());
 
     	setMessageSender(messageSender);
-   		
+    	
     	CustJaxbUnMarshaller marshaller = new CustJaxbUnMarshaller();
         marshaller.setContextPath("net.aonsolutions.aeat.sii");
         setMarshaller(marshaller);
@@ -95,7 +95,10 @@ public class SIIPost extends WebServiceGatewaySupport{
 	
 	@SuppressWarnings("unchecked")
     protected JSONObject suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
-    	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS);
+
+
+		
+		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS);
     	SuministroLRFacturasEmitidas suministro = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, contextList, cert, pass);     	
 
     	JAXBElement<RespuestaLRFEmitidasType> response = (JAXBElement<RespuestaLRFEmitidasType>) post(uri, suministro);

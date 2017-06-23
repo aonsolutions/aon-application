@@ -24,10 +24,15 @@ import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 import net.aonsolutions.aeat.nif.VNifV1Ent;
-import net.aonsolutions.aeat.sii.BajaLRBienesInversion;
-import net.aonsolutions.aeat.sii.BajaLRDetOperacionIntracomunitaria;
-import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
-import net.aonsolutions.aeat.sii.BajaLRFacturasRecibidas;
+import net.aonsolutions.aeat.sii.RespuestaLRAgenciasViajesType;
+import net.aonsolutions.aeat.sii.RespuestaLRBienesInversionType;
+import net.aonsolutions.aeat.sii.RespuestaLRCobrosEmitidasType;
+import net.aonsolutions.aeat.sii.RespuestaLRFEmitidasType;
+import net.aonsolutions.aeat.sii.RespuestaLRFRecibidasType;
+import net.aonsolutions.aeat.sii.RespuestaLRIMetalicoType;
+import net.aonsolutions.aeat.sii.RespuestaLROComunitariasType;
+import net.aonsolutions.aeat.sii.RespuestaLROperacionesSegurosType;
+import net.aonsolutions.aeat.sii.RespuestaLRPagosRecibidasType;
 import net.aonsolutions.aeat.sii.BienDeInversionType;
 import net.aonsolutions.aeat.sii.CabeceraSii;
 import net.aonsolutions.aeat.sii.CabeceraSiiBaja;
@@ -63,6 +68,26 @@ import net.aonsolutions.aeat.sii.IDFacturaExpedidaType.IDEmisorFactura;
 import net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType;
 import net.aonsolutions.aeat.sii.IDFacturaRecibidaType;
 import net.aonsolutions.aeat.sii.IDOtroType;
+import net.aonsolutions.aeat.sii.NoSujetaType;
+import net.aonsolutions.aeat.sii.OperacionIntracomunitariaType;
+import net.aonsolutions.aeat.sii.PagosType;
+import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaESType;
+import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaType;
+import net.aonsolutions.aeat.sii.RegistroSii.PeriodoImpositivo;
+import net.aonsolutions.aeat.sii.SujetaPrestacionType;
+import net.aonsolutions.aeat.sii.SujetaType;
+import net.aonsolutions.aeat.sii.SujetaType.Exenta;
+import net.aonsolutions.aeat.sii.SujetaType.NoExenta;
+import net.aonsolutions.aeat.sii.SujetaType.NoExenta.DesgloseIVA;
+import net.aonsolutions.aeat.sii.TipoConDesgloseType;
+import net.aonsolutions.aeat.sii.TipoOperacionSujetaNoExentaType;
+import net.aonsolutions.aeat.sii.TipoSinDesglosePrestacionType;
+import net.aonsolutions.aeat.sii.TipoSinDesgloseType;
+import net.aonsolutions.aeat.sii.VariosDestinatariosType;
+import net.aonsolutions.aeat.sii.BajaLRBienesInversion;
+import net.aonsolutions.aeat.sii.BajaLRDetOperacionIntracomunitaria;
+import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
+import net.aonsolutions.aeat.sii.BajaLRFacturasRecibidas;
 import net.aonsolutions.aeat.sii.LRAgenciasViajesType;
 import net.aonsolutions.aeat.sii.LRBajaBienesInversionType;
 import net.aonsolutions.aeat.sii.LRBajaExpedidasType;
@@ -76,26 +101,6 @@ import net.aonsolutions.aeat.sii.LROperacionIntracomunitariaType;
 import net.aonsolutions.aeat.sii.LROperacionesSegurosType;
 import net.aonsolutions.aeat.sii.LRPagosEmitidasType;
 import net.aonsolutions.aeat.sii.LRfacturasEmitidasType;
-import net.aonsolutions.aeat.sii.NoSujetaType;
-import net.aonsolutions.aeat.sii.OperacionIntracomunitariaType;
-import net.aonsolutions.aeat.sii.PagosType;
-import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaESType;
-import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaType;
-import net.aonsolutions.aeat.sii.RegistroSii.PeriodoImpositivo;
-import net.aonsolutions.aeat.sii.RespuestaLRAgenciasViajesType;
-import net.aonsolutions.aeat.sii.RespuestaLRBienesInversionType;
-import net.aonsolutions.aeat.sii.RespuestaLRCobrosEmitidasType;
-import net.aonsolutions.aeat.sii.RespuestaLRFEmitidasType;
-import net.aonsolutions.aeat.sii.RespuestaLRFRecibidasType;
-import net.aonsolutions.aeat.sii.RespuestaLRIMetalicoType;
-import net.aonsolutions.aeat.sii.RespuestaLROComunitariasType;
-import net.aonsolutions.aeat.sii.RespuestaLROperacionesSegurosType;
-import net.aonsolutions.aeat.sii.RespuestaLRPagosRecibidasType;
-import net.aonsolutions.aeat.sii.SujetaPrestacionType;
-import net.aonsolutions.aeat.sii.SujetaType;
-import net.aonsolutions.aeat.sii.SujetaType.Exenta;
-import net.aonsolutions.aeat.sii.SujetaType.NoExenta;
-import net.aonsolutions.aeat.sii.SujetaType.NoExenta.DesgloseIVA;
 import net.aonsolutions.aeat.sii.SuministroLRAgenciasViajes;
 import net.aonsolutions.aeat.sii.SuministroLRBienesInversion;
 import net.aonsolutions.aeat.sii.SuministroLRCobrosEmitidas;
@@ -105,11 +110,6 @@ import net.aonsolutions.aeat.sii.SuministroLRFacturasEmitidas;
 import net.aonsolutions.aeat.sii.SuministroLRFacturasRecibidas;
 import net.aonsolutions.aeat.sii.SuministroLROperacionesSeguros;
 import net.aonsolutions.aeat.sii.SuministroLRPagosRecibidas;
-import net.aonsolutions.aeat.sii.TipoConDesgloseType;
-import net.aonsolutions.aeat.sii.TipoOperacionSujetaNoExentaType;
-import net.aonsolutions.aeat.sii.TipoSinDesglosePrestacionType;
-import net.aonsolutions.aeat.sii.TipoSinDesgloseType;
-import net.aonsolutions.aeat.sii.VariosDestinatariosType;
 import net.aonsolutions.aon.nif.NIFPost;
 
 
@@ -1183,7 +1183,7 @@ public class SIIBuilt {
 	 * @param company
 	 * @return CabeceraSii
 	 */
-	private CabeceraSii cabecera(Company company){
+	public CabeceraSii cabecera(Company company){
 		CabeceraSii cabecera = new CabeceraSii();
 		cabecera.setIDVersionSii("1.0");
 		cabecera.setTipoComunicacion(ClaveTipoComunicacionType.A_0);

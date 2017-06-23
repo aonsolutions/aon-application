@@ -60,6 +60,13 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		</dependency>
    		
        <!-- AON DEPENDENCIES -->
+
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>sii</artifactId>
+			<version>9.00-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
         
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
@@ -81,58 +88,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.13.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-					<args>
-						<arg>-XautoNameResolution</arg>
-					</args>
-                    <generatePackage>net.aonsolutions.aeat.sii</generatePackage>
-					<schemas>
-					    <schema>
-					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/ConsultaLR.xsd</url>
-					    </schema>
-					    <schema>
-					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroLR.xsd</url>
-					    </schema>
-					    <schema>
-					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroInformacion.xsd</url>
-					    </schema>
-					    <schema>
-					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/RespuestaSuministro.xsd</url>
-					    </schema>
-					    <schema>
-					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/RespuestaConsultaLR.xsd</url>
-					    </schema>
-				  	</schemas>
-	                <generatePackage>net.aonsolutions.aeat.nif</generatePackage>
-				  	<schemas>
-					    <schema>
-					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Ent.xsd</url>
-					    </schema>
-					   	<schema>
-					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Sal.xsd</url>
-					    </schema>
-					     <schema>
-					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV1Ent.xsd</url>
-					    </schema>
-					   	<schema>
-					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV1Sal.xsd</url>
-					    </schema>
-					</schemas>
-                </configuration>
-            </plugin>
-        </plugins>
+		</plugins>
     </build>
 
 </project>

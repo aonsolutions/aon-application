@@ -134,6 +134,10 @@ public class ToJSON {
 		json.put(MSG.ID, invoice.getId());
 		json.put(MSG.DOMAIN, invoice.getDomain());
 		json.put(MSG.REGISTRY, invoice.getRegistry());
+		json.put("registry_name", invoice.getRegistryName());
+		json.put("registry_document", invoice.getRegistryDocument());
+		json.put("registry_document_country", invoice.getRegistryDocumentCountry());
+		json.put("registry_document_type", invoice.getRegistryDocumentType());
 		json.put("reference_code", invoice.getReferenceCode());
 		return json;
 	}
