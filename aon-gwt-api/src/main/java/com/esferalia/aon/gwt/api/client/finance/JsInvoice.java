@@ -1,9 +1,17 @@
 package com.esferalia.aon.gwt.api.client.finance;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.view.client.ProvidesKey;
 
 public class JsInvoice extends JavaScriptObject {
 
+	public static final ProvidesKey<JsInvoice> PROVIDES_KEY = new ProvidesKey<JsInvoice>() {
+		@Override
+		public Object getKey(JsInvoice invoice) {
+			return invoice == null ? null : invoice.getId();
+		}
+	};
+	
 	protected JsInvoice() {
 	}
 
@@ -17,6 +25,10 @@ public class JsInvoice extends JavaScriptObject {
 	
 	public final native Integer getRegistry() /*-{
 		return this.registry;
+	}-*/;
+	
+	public final native String getRegistryName() /*-{
+		return this.registry_name;
 	}-*/;
 	
 	public final native String getReferenceCode() /*-{

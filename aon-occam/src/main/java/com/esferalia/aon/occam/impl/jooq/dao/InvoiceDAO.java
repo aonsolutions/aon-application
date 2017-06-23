@@ -80,6 +80,7 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;;
 
 public class InvoiceDAO {
 	
@@ -87,34 +88,6 @@ public class InvoiceDAO {
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
-	private static class InvoicePropertiesDAO implements InvoiceProperties {
-
-		private Condition[] getConditions(InvoiceFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
-
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);}
-		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty(){return new FilterDAO.PropertyDAO<Integer>(INVOICE.REGISTRY);}
-		@Override public Property<Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-		@Override public Property<Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.SCOPE);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SECURITY_LEVEL);}
-		@Override public Property<Byte> getRectificationTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.RECTIFICATION_TYPE);}
-		@Override public Property<Integer> getRectificationInvoiceProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.RECTIFICATION_INVOICE);}
-		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.WORKPLACE);}
-		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.SELLER);}
-		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.ITEM);}
-		@Override public Property<Integer> getProductCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.ID);}
-		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}	
-		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
-	}
-	
 	private static final InvoicingGroupPropertiesDAO INVOICING_GROUP_PROPERTIES = new InvoicingGroupPropertiesDAO();
 	private static class InvoicingGroupPropertiesDAO implements InvoicingGroupProperties {
 
@@ -138,12 +111,9 @@ public class InvoiceDAO {
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
 	
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
-		return ctx.getDslContext()
-				.select()
-				.from(INVOICE)
-				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
-				.where(INVOICE_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new FullInvoiceFiller());
+		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
+				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE)), filter)
+				.fetch().stream().map(new FullInvoiceFiller());
 	}
 	
 	public static Invoice getInvoice(AONContext ctx, Integer id) {

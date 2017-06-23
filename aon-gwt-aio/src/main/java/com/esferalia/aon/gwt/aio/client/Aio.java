@@ -17,6 +17,7 @@ import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import net.aonsolutions.aon.gwt.sii.client.Sii;
 import net.aonsolutions.aon.gwt.udapa.client.Udapa;
 import net.aonsolutions.aon.gwt.warehouse.client.Warehouse;
 
@@ -146,7 +147,7 @@ public class Aio implements EntryPoint {
 			});		
 			break;
 		case Modules.UDAPA:
-			GWT.runAsync(com.esferalia.aon.gwt.dump.client.MainEntryPoint.class, new RunAsyncCallback() {
+			GWT.runAsync(Udapa.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -170,6 +171,20 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new Templates(aonData).onModuleLoad(getSubEntryPoint());
+				}
+			});		
+			break;
+		case Modules.SII:
+			GWT.runAsync(Sii.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new Sii(aonData).onModuleLoad();
 				}
 			});		
 			break;

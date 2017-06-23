@@ -299,9 +299,16 @@
 		<scope>runtime</scope>
 	</dependency>
 	
-		<dependency>
+	<dependency>
 		<groupId>net.aonsolutions</groupId>
 		<artifactId>aon.gwt.udapa</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
+	
+	<dependency>
+		<groupId>net.aonsolutions</groupId>
+		<artifactId>aon.gwt.sii</artifactId>
 		<version>${project.version}</version>
 		<scope>runtime</scope>
 	</dependency>
@@ -440,6 +447,13 @@
      <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.webservice</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
+   	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.sii</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>

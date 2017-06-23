@@ -61,5 +61,21 @@ public class Finance extends Methods{
 	}
 	
 	
-
+	public void getInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsInvoice>> callback){	
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "finance/"+getDomainName()+"/"+getUserName()+"/invoice" + filter, callback);
+	}
+	
+	public void sendSii(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName();
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				get(getUrl() + "sii22/" + result, callback);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
 }

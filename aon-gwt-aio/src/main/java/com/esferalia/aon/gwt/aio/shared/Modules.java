@@ -10,5 +10,6 @@ public interface Modules {
 	public static final String WAREHOUSE = "warehouse";
 	public static final String UDAPA = "udapa";
 	public static final String TEMPLATES = "templates";
+	public static final String SII = "sii";
 
 }

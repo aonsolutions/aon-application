@@ -49,6 +49,9 @@ public class DocumentalServlet extends HttpServlet{
 				case "files":
 					object = getAttachJSON(domain, userName);
 					break;
+				case "certificates":
+					object = getCertificateAttachJSON(domain, userName);
+					break;
 				case "quality":
 					object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
 					break;
@@ -77,6 +80,19 @@ public class DocumentalServlet extends HttpServlet{
 		AON.getAttachStream(domain.getName(), domain.getId(), login, 
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
+				.page(1)
+				.perPage(30)
+			), AttachType.REGISTRY, false).forEach(a -> {
+				array.put(ToJSON.attachToJSON(a));
+			});
+		return array;
+	}
+	
+	private JSONArray getCertificateAttachJSON(Domain domain, String login) {
+		JSONArray array = new JSONArray();
+		AON.getAttachStream(domain.getName(), domain.getId(), login, 
+				f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())
 				.page(1)
 				.perPage(30)
 			), AttachType.REGISTRY, false).forEach(a -> {

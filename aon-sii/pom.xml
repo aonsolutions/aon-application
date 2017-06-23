@@ -1,0 +1,138 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.00-SNAPSHOT</version>
+	</parent>
+	<groupId>net.aonsolutions</groupId>
+	<artifactId>aon.sii</artifactId>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring-framework.bom-version>Brussels-SR1</spring-framework.bom-version>
+		<jargs.version>2.33</jargs.version>
+	</properties>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.spring.platform</groupId>
+				<artifactId>platform-bom</artifactId>
+				<version>${spring-framework.bom-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-support</artifactId>
+		</dependency>
+		
+		<dependency>
+      		<groupId>javax.servlet</groupId>
+      		<artifactId>javax.servlet-api</artifactId>
+      		<version>3.1.0</version>
+      		<scope>provided</scope>
+   		</dependency>
+   		
+   		<dependency>
+   		 	<groupId>org.json</groupId>
+    		<artifactId>json</artifactId>
+	 		<version>20160810</version>
+		</dependency>
+   		
+       <!-- AON DEPENDENCIES -->
+        
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.google.apis.v2</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.13.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+					<args>
+						<arg>-XautoNameResolution</arg>
+					</args>
+                    <generatePackage>net.aonsolutions.aeat.sii</generatePackage>
+					<schemas>
+					    <schema>
+					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/ConsultaLR.xsd</url>
+					    </schema>
+					    <schema>
+					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroLR.xsd</url>
+					    </schema>
+					    <schema>
+					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroInformacion.xsd</url>
+					    </schema>
+					    <schema>
+					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/RespuestaSuministro.xsd</url>
+					    </schema>
+					    <schema>
+					        <url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/RespuestaConsultaLR.xsd</url>
+					    </schema>
+				  	</schemas>
+	                <generatePackage>net.aonsolutions.aeat.nif</generatePackage>
+				  	<schemas>
+					    <schema>
+					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Ent.xsd</url>
+					    </schema>
+					   	<schema>
+					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV2Sal.xsd</url>
+					    </schema>
+					     <schema>
+					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV1Ent.xsd</url>
+					    </schema>
+					   	<schema>
+					    	<url>https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/burt/jdit/ws/VNifV1Sal.xsd</url>
+					    </schema>
+					</schemas>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

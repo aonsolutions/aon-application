@@ -385,6 +385,16 @@
 											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_349_module}" />
 										</aon:commandLink>
 										
+										<aon:if test="#{domainSwitcher.betaDomain}">
+										<aon:commandLink id="gwt_sii"
+												action="gwt_sii"
+												title="SII - Suministro Inmediato de Información">
+												<aon:outputText
+													styleClass="aon-fiscal-link-label aon-icon-beta-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="SII - Suministro Inmediato de Información" />
+										</aon:commandLink>
+										</aon:if>										
 										<aon:outputText value="&#160;" />
 									</aon:if>
 					    </h:panelGrid>

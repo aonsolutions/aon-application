@@ -1,5 +1,6 @@
 package com.code.aon.webservice.finance;
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -17,6 +18,9 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "FinanceServlet", urlPatterns = { "/finance/*",
@@ -50,7 +54,7 @@ public class FinanceServlet extends HttpServlet{
 								object = getInvoice(domain, userName, Integer.parseInt(pathInfo[5])); 
 						}
 					} else {// LISTA DE INVOICE CONDICION DOMAIN
-						getInvoiceList(domain, userName);
+						object = getInvoiceList(domain, userName, req);
 					}
 					break;
 				case MSG.FEE: // FEE
@@ -92,13 +96,80 @@ public class FinanceServlet extends HttpServlet{
 		LOGGER.info("Finance Servlet - POST METHOD");	
 	}
 
-    private JSONArray getInvoiceList(Domain domain, String login){
+    private JSONArray getInvoiceList(Domain domain, String login, HttpServletRequest req){
+    	if(req.getParameterMap().containsKey("sii")){
+    		Integer page =  req.getParameterMap().containsKey("page") ? Integer.parseInt(req.getParameter("page")) : 1;
+    		Integer perPage = req.getParameterMap().containsKey("per_page") ? Integer.parseInt(req.getParameter("per_page")) : 40;
+    		if("emitidas".equals(req.getParameter("sii"))){
+    			return getInvoiceEmitidasList(domain, login, page, perPage);
+    		} else if("recibidas".equals(req.getParameter("sii"))){
+    			return getInvoiceRecibidasList(domain, login, page, perPage);
+    		} else if("bienes".equals(req.getParameter("sii"))){
+    			return getInvoiceBienesList(domain, login, page, perPage);
+    		} else if("intracomunitarias".equals(req.getParameter("sii"))){
+    			return getInvoiceIntracomunitariasList(domain, login, page, perPage);
+    		}
+    	}
     	JSONArray array = new JSONArray();
     	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId()))
     		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
     	return array;
     }
+   
+    private JSONArray getInvoiceEmitidasList(Domain domain, String login, Integer page, Integer perPage){
+    	JSONArray array = new JSONArray();
+    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getTypeProperty().eq(InvoiceType.SALES.value()))
+    			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
+    			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
+    			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
+    			.page(page).perPage(perPage))
+    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    	return array;
+    }
+    
+    private JSONArray getInvoiceRecibidasList(Domain domain, String login, Integer page, Integer perPage){
+    	JSONArray array = new JSONArray();
+    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
+    			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
+    			.and(f.getInvestmentProperty().eq((byte) 0))
+    			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
+    			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
+    			.page(page).perPage(perPage))
+    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    	return array;
+    }
+	
+	private JSONArray getInvoiceBienesList(Domain domain, String login, Integer page, Integer perPage){
+		JSONArray array = new JSONArray();
+    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
+    			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
+    			.and(f.getInvestmentProperty().eq((byte) 1))
+    			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
+    			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
+    			.page(page).perPage(perPage))
+    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    	return array;
+	}
+
+	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage){
+    	JSONArray array = new JSONArray();
+    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    				.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
+    				.and(f.getTransactionProperty().eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
+        			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
+        			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
+    				.page(page).perPage(perPage))
+    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    	return array;
+	}
     
     private JSONArray getInvoiceList(Domain domain, String login, Integer registryId){
     	JSONArray array = new JSONArray();

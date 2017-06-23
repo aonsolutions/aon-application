@@ -29,6 +29,10 @@ public class Attachment extends Methods{
 		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/files", callback);
 	}
 	
+	public void getCertificates( AsyncCallback<JSON<JsAttach>> callback){
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/certificates", callback);
+	}
+	
 	public void getCategories(AsyncCallback<JSON<JsLabel>> callback){
 		get(url + "attachment/"+ getDomainName()+"/"+getUserName()+"/category",callback);
 	}	

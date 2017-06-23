@@ -70,6 +70,15 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- AON GWT SII -->
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_sii</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/fiscal/sii.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 	<!-- AON GWT TEMPLATE -->
 
 	<navigation-rule>
