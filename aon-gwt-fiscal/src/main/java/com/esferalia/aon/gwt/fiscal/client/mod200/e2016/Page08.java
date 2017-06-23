@@ -112,16 +112,16 @@ public class Page08 extends PageAbs {
 		paintKeyField(table, Mod2002016Key.LQ501, row, 2);
 		++row;
 		
-		paintKeyDescription(table, Mod2002016Key.LQ1230, row, 0);
-		paintKeyField(table, Mod2002016Key.LQ1230, row, 1);
-		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
-		paintKeyField(table, Mod2002016Key.LQ1231, row, 2);
-		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
-		++row;
+		if (callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0010) ) {
+			paintKeyDescription(table, Mod2002016Key.LQ1230, row, 0);
+			paintKeyField(table, Mod2002016Key.LQ1230, row, 1);
+			table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
+			paintKeyField(table, Mod2002016Key.LQ1231, row, 2);
+			table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
+			++row;
+		}
 
 		paintEmptyCell(table, row, 0);
-		paintEmptyCell(table, row, 1);
-		paintEmptyCell(table, row, 2);
 		++row;
 		
 		desc = new Label(AON.MSG.liquidation1Label2());

@@ -136,7 +136,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintEmptyCell(FlexTable tab, int row,int col) {
-		tab.setWidget(row, col, new Label());
+		tab.setWidget(row, col, new Label("."));
 	}
 	
 	protected void paintKeyDescription(FlexTable tab, Mod2002016Key key, int row,int col) {
