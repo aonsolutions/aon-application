@@ -36,8 +36,12 @@ public class Mod2002016Validation {
 	private static final int PAGE04 = 4;
 	private static final int PAGE07 = 7;
 	private static final int PAGE08 = 8;
+	private static final int PAGE09 = 9;
+	private static final int PAGE10 = 10;
+	private static final int PAGE14 = 14;
 	
 	private static final String MUST_EQUAL_MSG = "[{0}] {1} y [{2}] {3} deben ser iguales.";
+	private static final String MUST_GREATHER_MSG = "[{0}] {1} debe ser mayor que [{2}] {3} ";
 	private static final String CHECK_SIGN_MSG = "Verifique el signo de la clave: [{0}] {1}";
 	private static final String MUST_POSITIVE_MSG = "El valor de la clave: [{0}] {1} debe ser un n\u00FAmero positivo" ;
 	private static final String COOP_MSG =  "Las sociedades cooperativas tienen unas casillas espec\u00EDficas que se aplican a nivel de cuota, la [00210], [00480], [00408] y [01037]";
@@ -349,6 +353,14 @@ public class Mod2002016Validation {
 
 		,V_D0404_4  ( mod -> isNotZero(mod,D0404) && (getValue(mod,D0404) >= (getValue(mod,LQ650) * 0.90)) , new ValidationMessage2016(PAGE08,D0404,"Revise importe disminuciones RIC"))
 		
+		
+		// ------------------------------------------------------------------------
+		// --------------------------- LIQUIDACIÓN (II) ----------------------------
+		// ------------------------------------------------------------------------
+		
+		// -- Entidades navieras en regimen  de tributación en función del tonelaje
+		,V_LQ631_1  ( mod -> isLessThan(mod,LQ631,LQ632), new ValidationMessage2016(PAGE09,LQ631,mustGreatherMsg(LQ631,LQ632)))
+		
 		;		
 		private IValidator validator;
 		private ValidationMessage2016 message;
@@ -469,10 +481,6 @@ public class Mod2002016Validation {
 	// ***************************************************************************************************************
 	// ***************************************************************************************************************
 
-	private static final int PAGE09 = 9;
-	private static final int PAGE10 = 10;
-	private static final int PAGE14 = 14;
-
 	private static final String EQUAL_GREATER_MSG = "\"{0}\" debe ser mayor o igual que \"{1}\".";
 	private static final String EQUAL_GREATER_EXP = "round({0}) >= round({1})";
 	
@@ -506,9 +514,6 @@ public class Mod2002016Validation {
 	
 	
 	static {	// PAGE 09
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ631
-				,MessageFormat.format(EQUAL_GREATER_MSG,LQ631.getDescription(),LQ632.getDescription())
-				,MessageFormat.format(EQUAL_GREATER_EXP,LQ631.toString(),LQ632.toString())));
 //		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ552
 //				,LQ552.getDescription() + " debe ser cero con el caracter \"" + C0027.getDescription() + "\" marcado"
 //				,"C0027?LQ552<=0:LQ552>0"));
@@ -1062,6 +1067,9 @@ public class Mod2002016Validation {
 	private static boolean isGreatherThan(Mod2002016 mod, Mod2002016Key key1, Mod2002016Key key2) {
 		return getValue(mod,key1) > getValue(mod,key2);
 	}	
+	private static boolean isLessThan(Mod2002016 mod, Mod2002016Key key1, Mod2002016Key key2) {
+		return getValue(mod,key1) < getValue(mod,key2);
+	}	
 	private static boolean isBalanceNormal(Mod2002016 mod) {
 		return (mod.getBalanceType() == BalanceType.NORMAL); 
 	}
@@ -1080,15 +1088,6 @@ public class Mod2002016Validation {
 	private static boolean isECPNFilled(Mod2002016 mod) {
 		return isNotZero(mod, TC645) && isNotZero(mod, T0355);
 	}	
-	private static String mustEqualMsg( Mod2002016Key key1, Mod2002016Key key2 ) {
-		String desc1 = key1.getDescription();
-		String desc2 = key2.getDescription();  
-		return MessageFormat.format(MUST_EQUAL_MSG,key1.getCode()
-			,AonStringUtils.isBlank(desc1)?"": ("- \"" + desc1 + "\"")
-			,key2.getCode()
-			,AonStringUtils.isBlank(desc2)?"": ("\"" + desc2 + "\"")
-			); 
-	}
 	private static String checkSignMsg( Mod2002016Key key) {
 		String desc = key.getDescription();
 		return MessageFormat.format(CHECK_SIGN_MSG, key.getCode(), AonStringUtils.isBlank(desc)?"": ("- \"" + desc + "\""));
@@ -1097,10 +1096,21 @@ public class Mod2002016Validation {
 		String desc = key.getDescription();
 		return MessageFormat.format(MUST_POSITIVE_MSG, key.getCode(), AonStringUtils.isBlank(desc)?"": ("- \"" + desc + "\""));
 	}
+	
+	
+	private static String mustEqualMsg( Mod2002016Key key1, Mod2002016Key key2 ) {
+		return format(MUST_EQUAL_MSG,key1,key2); 
+	}
+	private static String mustGreatherMsg( Mod2002016Key key1, Mod2002016Key key2 ) {
+		return format(MUST_GREATHER_MSG,key1,key2); 
+	}
 	private static String incompatibleCharacterMsg( Mod2002016Key key1,Mod2002016Key key2) {
+		return format(INV_BOX_MSG,key1,key2); 
+	}
+	private static String format(String pattern, Mod2002016Key key1,Mod2002016Key key2) {
 		String desc1 = key1.getDescription();
 		String desc2 = key2.getDescription();  
-		return MessageFormat.format(INV_BOX_MSG,key1.getCode()
+		return MessageFormat.format(pattern,key1.getCode()
 			,AonStringUtils.isBlank(desc1)?"": ("- \"" + desc1 + "\"")
 			,key2.getCode()
 			,AonStringUtils.isBlank(desc2)?"": ("\"" + desc2 + "\"")

@@ -228,6 +228,9 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	public Boolean isCooperativa() {
 		return isChecked(C0017) || isChecked(C0018) || isChecked(C0019); 
 	}
+	public Boolean isGroup() {
+		return isChecked(C0009) || isChecked(C0010) || isChecked(C0019); 
+	}
 	public Boolean isLimitEnabled() {
 		return !(isChecked(C0009) || isChecked(C0010) || isChecked(C0024) || isChecked(C0025));
 	}
@@ -338,7 +341,24 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	private double getLimit(int limit) {
 		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
+	
+	public double computeLQ1230() throws AonCoreException {
+		if (!context.containsKey(Mod2002016Key.LQ1230)) {
+			return 0.0;
+		}
+		return isGroup()?getValue(Mod2002016Key.LQ1230):0.0;
+	}
+	public double computeLQ1231() throws AonCoreException {
+		if (!context.containsKey(Mod2002016Key.LQ1231)) {
+			return 0.0;
+		}
+		return isGroup()?getValue(Mod2002016Key.LQ1231):0.0;
+	}
+
 	public double computeD1004() throws AonCoreException {
+		if (!context.containsKey(Mod2002016Key.D1004)) {
+			return 0.0;
+		}
 		double d1004 = getValue(Mod2002016Key.D1004);
 		if ( AonMathUtils.isZero(d1004)) {
 			return 0.0;
@@ -447,7 +467,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 			else return lq579; 
 		}
 		if(isChecked(Mod2002016Key.C0009) || isChecked(Mod2002016Key.C0010)){
-			if(isChecked(C0017) || isChecked(C0018) || isChecked(C0019)){
+			if(isCooperativa()){
 				return lq1029 +lq1030;
 			} 
 			return lq1029 +lq1030 + lq1031;
