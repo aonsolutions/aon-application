@@ -64,7 +64,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>sii</artifactId>
-			<version>9.00-SNAPSHOT</version>
+			<version>8.109</version>
 			<scope>compile</scope>
 		</dependency>
         
