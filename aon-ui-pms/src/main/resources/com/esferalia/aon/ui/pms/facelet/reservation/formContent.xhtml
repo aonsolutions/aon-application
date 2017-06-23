@@ -342,11 +342,21 @@
 					rendered="#{reservation.to.conexFlowSaleOk}" />
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-purple"
 					rendered="#{reservation.to.conexFlowRefundOk}" />
+				<aon:if test="#{reservation.to.creditCardType != null}">
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+						<aon:outputText value="#{reservation.to.creditCardType}" />
+					</rich:toolTip>
+				</aon:if>
 			</aon:div>
 			<aon:div style="display:inline;" 
 				rendered="#{!reservation.to.blankToken and (reservation.to.invoiced or (reservation.to.cancelled and reservation.to.noInvoiceable) or
 							!reservation.to.conexFlow)}">
 				<aon:outputText	value="&#160;" styleClass="aon-icon-commandButton aon-icon-card-grey" />
+				<aon:if test="#{reservation.to.creditCardType != null}">
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+						<aon:outputText value="#{reservation.to.creditCardType}" />
+					</rich:toolTip>
+				</aon:if>
 			</aon:div>
 		</aon:div>
 		<aon:div id="AdvanceDiv">
