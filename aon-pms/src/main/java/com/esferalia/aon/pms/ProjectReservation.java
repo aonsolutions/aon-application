@@ -380,6 +380,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		return null;
 	}
 
+	@Transient
+	public boolean hasAnyCreditCardData() {
+		return StringUtils.isNotBlank(getCreditCardNumber()) ||	StringUtils.isNotBlank(getCreditCardExpirationMonth()) || StringUtils.isNotBlank(getCreditCardExpirationYear()) || getCreditCardType() != null;
+	}
+
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})
 	@OrderBy()
 	public Set<ProjectReservationGuest> getGuests() {
