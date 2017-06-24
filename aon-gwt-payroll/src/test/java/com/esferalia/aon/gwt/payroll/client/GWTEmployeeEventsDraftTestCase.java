@@ -6,6 +6,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.junit.Before;
 
@@ -72,6 +73,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+					AsyncCallback<Map<String, String>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			
 		};
 
 		//@formatter:off

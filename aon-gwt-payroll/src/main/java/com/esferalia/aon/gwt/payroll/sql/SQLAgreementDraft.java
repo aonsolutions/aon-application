@@ -103,7 +103,8 @@ public class SQLAgreementDraft {
 											.greaterOrEqual(sqlStartDate)))
 							.and(AGREEMENT_PAYMENT.START_DATE
 									.lessOrEqual(sqlEndDate))
-							.and(AGREEMENT_PAYMENT.DOMAIN.in(domainList)))
+							//.and(AGREEMENT_PAYMENT.DOMAIN.in(domainList))
+							)
 					.fetchLazy();
 
 			Set<Payment> payments = new HashSet<Payment>();
@@ -119,23 +120,23 @@ public class SQLAgreementDraft {
 				payment.setDomain(record.getValue(AGREEMENT_PAYMENT.DOMAIN));
 
 				payment.setExpression(
-						getAux(String.class, AGREEMENT_PAYMENT.EXPRESSION,
-								PAYMENT_CONCEPT.EXPRESSION));
+						getAux(String.class, record.getValue(AGREEMENT_PAYMENT.EXPRESSION),
+								record.getValue(PAYMENT_CONCEPT.EXPRESSION)));
 				payment.setIrpfExpression(
-						getAux(String.class, AGREEMENT_PAYMENT.IRPF_EXPRESSION,
-								PAYMENT_CONCEPT.IRPF_EXPRESSION));
+						getAux(String.class, record.getValue(AGREEMENT_PAYMENT.IRPF_EXPRESSION),
+								record.getValue(PAYMENT_CONCEPT.IRPF_EXPRESSION)));
 				payment.setQuoteExpression(
-						getAux(String.class, AGREEMENT_PAYMENT.QUOTE_EXPRESSION,
-								PAYMENT_CONCEPT.QUOTE_EXPRESSION));
+						getAux(String.class, record.getValue(AGREEMENT_PAYMENT.QUOTE_EXPRESSION),
+								record.getValue(PAYMENT_CONCEPT.QUOTE_EXPRESSION)));
 				payment.setDescription(
-						getAux(String.class, AGREEMENT_PAYMENT.DESCRIPTION,
-								PAYMENT_CONCEPT.DESCRIPTION));
+						getAux(String.class, record.getValue(AGREEMENT_PAYMENT.DESCRIPTION),
+								record.getValue(PAYMENT_CONCEPT.DESCRIPTION)));
 
 				Object paymentType = getAux(Object.class,
-						AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE);
+						record.getValue(AGREEMENT_PAYMENT.TYPE), record.getValue(PAYMENT_CONCEPT.TYPE));
 				payment.setType(getType(paymentType, Payment.Type.class));
 
-				Integer month = getAux(Integer.class, AGREEMENT_PAYMENT.MONTH);
+				Byte month = getAux(Byte.class, record.getValue(AGREEMENT_PAYMENT.MONTH));
 				payment.setMonth(month != null ? month.shortValue() : null);
 
 				Object salaryType = record
@@ -144,13 +145,16 @@ public class SQLAgreementDraft {
 
 				payment.setName(record.getValue(PAYMENT_CONCEPT.CODE));
 
-				payment.setConceptId(getAux(Integer.class, PAYMENT_CONCEPT.ID));
+				payment.setConceptId(getAux(Integer.class, record.getValue(PAYMENT_CONCEPT.ID)));
 
 				payments.add(payment);
 			}
 
 			return payments;
 
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
 		} finally {
 			if (cursor != null)
 				cursor.close();

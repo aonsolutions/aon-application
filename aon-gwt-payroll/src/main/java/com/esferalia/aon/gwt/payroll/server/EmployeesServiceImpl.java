@@ -208,6 +208,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+import com.google.gwt.user.client.Window;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
@@ -1002,6 +1003,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	@Override
+	public Map<String, String> getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
+			throws IllegalArgumentException {
+		
+		Connection connection = null;
+		
+		try {
+			initFacesContext();
+			connection = getConnection();
+			
+			Integer agreementId = SQLEvents.getAgreementId(connection, employeeId);
+			
+			return getEmployeeMapEventsVariables(connection, employeeId, agreementId,
+					startDate, endDate, getDomainID(), getParentDomainID());
+			
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	
 
 	@Override
 	public List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate,
@@ -3168,6 +3194,83 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return variables;
 
 		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	private Map<String, String> getEmployeeMapEventsVariables(Connection connection, Integer employeeId, Integer agreementId,
+			Date startDate, Date endDate, Integer domainID, Integer parentDomainID) throws SQLException{
+		
+		try {
+			Set<Payment> payments = SQLEvents.getEmployeePayments(connection,
+					employeeId, startDate, endDate);
+			
+			if (agreementId != null) {
+				// payments.addAll(SQLAgreementDraft.getPayments(connection,
+				// agreementId, startDate, endDate));
+				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection,
+						agreementId, startDate, endDate));
+			}
+
+			Map<String, String> variables = new HashMap<String, String>();
+
+			for (Payment payment : payments) {
+
+				if (StringUtils.equals(REMOVE, payment.getExpression()))
+					continue;
+
+				Set<String> paymentVars = ExpressionContext
+						.getVariableSet(payment.getExpression());
+
+				for (String var : paymentVars) {
+					if (var.endsWith("_ACTUAL"))
+						continue; // This is awfull ... very awful
+					variables.put(var, String.format("%s",
+							payment.getDescription(), payment.getExpression()));
+				}
+
+				variables.remove(payment.getName());
+			}
+			
+			// Filter ContextVariable
+			for (ContextVariable ctxVar : ContextVariable.values())
+				variables.remove(ctxVar.getName());
+
+			// Clean system variables.
+			Set<String> systemVars = getSystemVariables(connection, startDate,
+					endDate);
+			for (String var : systemVars)
+				variables.remove(var);
+
+			Set<Level> levels = null;
+			SalaryTable salaryTable = null;
+			
+			if(null != agreementId)
+				levels = SQLAgreementDraft.getLevels(connection,
+					agreementId, domainID, parentDomainID);
+			
+			if(null != agreementId)
+				salaryTable = SQLAgreementDraft.getSalaryTable(
+					connection, agreementId, startDate, endDate,domainID, parentDomainID);
+
+			if(null != levels && null != salaryTable){
+				Set<String> names = variables.keySet();
+				for (Level level : levels) {
+					Iterator<String> namesIt = names.iterator();
+					while (namesIt.hasNext()) {
+						String name = namesIt.next();
+						if (salaryTable.get(level.getId(), name) != null)
+							namesIt.remove();
+					}
+				}
+			}
+
+			return variables;
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
 			if (connection != null)
 				connection.close();
 		}

@@ -426,6 +426,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 				new AsyncCallbackWrapper<Map<String, String>>(callback));
 
 	}
+	
+	@Override
+	public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+			AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeEventsVariables(employeeId, startDate, endDate,
+				new AsyncCallbackWrapper<Map<String, String>>(callback));
+		
+	}
 
 	@Override
 	public void delete(Salary[] salaries, AsyncCallback<Void> callback)
@@ -588,5 +597,9 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
 		
 	}
+
+	
+
+	
 	
 }

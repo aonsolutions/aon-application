@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -87,6 +88,15 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+				AsyncCallback<Map<String, String>> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		
 	}
 
 	@Before
@@ -154,6 +164,15 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						// TODO Auto-generated method stub
 						
 					}
+
+					@Override
+					public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+							AsyncCallback<Map<String, String>> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					
 				});
 
 		agreementDraftWidget.setAgreementDraftObject(agreementDraftObject);

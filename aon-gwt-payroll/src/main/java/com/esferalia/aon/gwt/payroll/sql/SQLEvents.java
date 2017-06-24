@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.sql;
 
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
@@ -29,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.conf.Settings;
@@ -933,6 +936,132 @@ public class SQLEvents {
 		}
 
 	}
+	
+	public static Integer getAgreementId(Connection connection, Integer employeeId) throws SQLException {
+		Integer agreementId = null;
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		try {
+
+			Record1<Integer> result = dslContext.select(AGREEMENT_LEVEL.AGREEMENT)
+			.from(AGREEMENT_LEVEL)
+			.leftJoin(AGREEMENT_LEVEL_CATEGORY)
+			.on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+			.leftJoin(CONTRACT)
+			.on(AGREEMENT_LEVEL_CATEGORY.ID.eq(CONTRACT.AGREEMENT_LEVEL_CATEGORY))
+			.where(CONTRACT.ID.eq(employeeId)).fetchOne();
+			
+			if(null != result)
+				agreementId = result.value1();
+			
+			return agreementId;
+
+		} finally {
+		}
+	}
+
+	
+	public static Set<Payment> getEmployeePayments(Connection connection,
+			int employeeId, Date startDate, Date endDate) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+
+			java.sql.Date sqlEndDate = SQLUtils.date2sql(endDate);
+			java.sql.Date sqlStartDate = SQLUtils.date2sql(startDate);
+
+			String sql = ("SELECT * " + " FROM "
+					+ SQLConstants.CONTRACT + " LEFT JOIN "
+					+ SQLConstants.CONTRACT_PAYMENT + " ON ( "
+					+ SQLConstants.CONTRACT + "." + ContractColumns.ID + "= "
+					+ SQLConstants.CONTRACT_PAYMENT + "."
+					+ ContractPaymentColumns.CONTRACT + ")" + " LEFT JOIN "
+					+ SQLConstants.PAYMENT_CONCEPT + " ON ( "
+					+ SQLConstants.CONTRACT_PAYMENT + "."
+					+ ContractPaymentColumns.PAYMENT_CONCEPT + " = "
+					+ SQLConstants.PAYMENT_CONCEPT + "."
+					+ PaymentConceptColumns.ID + ")" + " WHERE "
+					+ SQLConstants.CONTRACT + "." + ContractColumns.ID
+					+ " = ? " + " AND ( " + SQLConstants.CONTRACT + "."
+					+ ContractColumns.END_DATE + " IS NULL " + " OR "
+					+ SQLConstants.CONTRACT + "." + ContractColumns.END_DATE
+					+ " >= ?  ) " + " AND " + SQLConstants.CONTRACT + "."
+					+ ContractColumns.START_DATE + " <= ? " + " AND ( "
+					+ SQLConstants.CONTRACT_PAYMENT + "."
+					+ ContractPaymentColumns.END_DATE + " IS NULL " + " OR "
+					+ SQLConstants.CONTRACT_PAYMENT + "."
+					+ ContractPaymentColumns.END_DATE + " >= ?  ) " + " AND "
+					+ SQLConstants.CONTRACT_PAYMENT + "."
+					+ ContractPaymentColumns.START_DATE + " <= ? ");
+			
+			System.out.println(sql);
+			stmt = connection.prepareStatement(sql);
+
+			stmt.setInt(1, employeeId);
+			stmt.setDate(2, sqlStartDate);
+			stmt.setDate(3, sqlEndDate);
+			stmt.setDate(4, sqlStartDate);
+			stmt.setDate(5, sqlEndDate);
+
+			rs = stmt.executeQuery();
+
+			Set<Payment> payments = new HashSet<Payment>();
+
+			while (rs.next()) {
+				Payment payment = new Payment();
+
+				payment.setStartDate(sqlStartDate);
+				payment.setEndDate(sqlEndDate);
+
+				payment.setId(rs.getInt(SQLConstants.CONTRACT_PAYMENT + "."
+						+ ContractPaymentColumns.ID));
+
+				// bellow payment's properties may be inherit from concept
+				payment.setExpression(getPayment(rs,
+						ContractPaymentColumns.EXPRESSION,
+						PaymentConceptColumns.EXPRESSION, String.class));
+				payment.setIrpfExpression(getPayment(rs,
+						ContractPaymentColumns.IRPF_EXPRESSION,
+						PaymentConceptColumns.IRPF_EXPRESSION, String.class));
+				payment.setQuoteExpression(getPayment(rs,
+						ContractPaymentColumns.QUOTE_EXPRESSION,
+						PaymentConceptColumns.QUOTE_EXPRESSION, String.class));
+				payment.setDescription(getPayment(rs,
+						ContractPaymentColumns.DESCRIPTION,
+						PaymentConceptColumns.DESCRIPTION, String.class));
+				Object paymentType = getPayment(rs,
+						ContractPaymentColumns.TYPE,
+						PaymentConceptColumns.TYPE, Object.class);
+				payment.setType(getType(paymentType, Payment.Type.class));
+
+				// 'month' & 'salary' only at contract's payment....
+				Integer month = getInteger(rs, ContractPaymentColumns.MONTH);
+				payment.setMonth(month != null ? month.shortValue() : null);
+
+				Object salaryType = rs.getObject(SQLConstants.CONTRACT_PAYMENT
+						+ "." + ContractPaymentColumns.SALARY_TYPE);
+				payment.setSalaryType(getType(salaryType, Salary.Type.class));
+
+				// 'name' it's the code of concept.
+				payment.setName(rs.getString(SQLConstants.PAYMENT_CONCEPT + "."
+						+ PaymentConceptColumns.CODE));
+
+				payments.add(payment);
+			}
+
+			return payments;
+
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		 finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
 
 	// -------------------------------------------------------------------------
 	//
@@ -985,5 +1114,6 @@ public class SQLEvents {
 		}
 		return SETTINGS;
 	}
+	
 
 }

@@ -8,6 +8,9 @@ import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfMonth;
 import static java.lang.Math.random;
 
+import java.util.Date;
+import java.util.Map;
+
 import org.junit.Before;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -76,6 +79,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+					AsyncCallback<Map<String, String>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			
 		};
 
 		ITDataObject itDataObject = new ITDataObject(workplaceId,

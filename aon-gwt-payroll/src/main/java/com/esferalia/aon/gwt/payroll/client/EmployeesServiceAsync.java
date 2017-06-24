@@ -161,6 +161,9 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 			Date startDate, Date endDate,
 			AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException;
+	
+	void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+			AsyncCallback<Map<String, String>> callback);
 
 	void getVariables(SalaryDraft salaryDraft, Date startDate, Date endDate,
 			String names[], AsyncCallback<List<Variable>> callback)
@@ -187,4 +190,5 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 
 	void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException;
+
 }

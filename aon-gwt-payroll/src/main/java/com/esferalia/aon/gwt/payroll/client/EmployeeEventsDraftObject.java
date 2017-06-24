@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -149,8 +148,10 @@ public class EmployeeEventsDraftObject {
 		
 		this.undoManager = new UndoManager<>();
 		
-		addVariablesList();
-		createContractVariables();
+		//addVariablesList();
+		//createContractVariables();
+		
+		initializeDBEventsVariables();
 	}
 	
 
@@ -367,6 +368,36 @@ public class EmployeeEventsDraftObject {
 	/**
 	 * METODOS SYNC DATABASE
 	 */
+	
+	public void initializeDBEventsVariables() {
+		
+		employeesService.getEmployeeEventsVariables(idEmployee, new Date(117, 0, 1), new Date(117, 11, 31), new AsyncCallback<Map<String,String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+
+//				for (Entry<String, String> e : result.entrySet()){
+//					Window.alert("Clave :"+e.getKey()+" Valor :"+e.getValue());
+//				}
+				
+				employeeContractVariables.add("DIAS_VACACIONES");
+				employeeContractVariables.add("DIAS_AUSENCIA");
+				employeeContractVariables.add("DIAS_HUELGA");
+				employeeContractVariables.add("DIAS_ERE");
+				employeeContractVariables.add("HORAS_EXTRAS");
+				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
+				
+				for (String k : result.keySet()){
+					employeeContractVariables.add(k);
+				}
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}
 	
 	public void initializeDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
 		
