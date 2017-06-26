@@ -18,7 +18,6 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -122,11 +121,15 @@ public class FinanceServlet extends HttpServlet{
     	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getTypeProperty().eq(InvoiceType.SALES.value()))
-    			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
     			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
     			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
     			.page(page).perPage(perPage))
-    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    		.forEach(rm -> {
+    			JSONObject json = ToJSON.invoiceToJSON(rm);
+    			Boolean sent = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_OK").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
+    			json.put("sii_sent", sent);
+    			array.put(json);
+    		});
     	return array;
     }
     
@@ -135,32 +138,34 @@ public class FinanceServlet extends HttpServlet{
     	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
-    			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
-    			.and(f.getInvestmentProperty().eq((byte) 0))
     			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
     			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
     			.page(page).perPage(perPage))
-    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    		.forEach(rm ->{
+    			JSONObject json = ToJSON.invoiceToJSON(rm);
+    			Boolean sent = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_OK").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
+    			json.put("sii_sent", sent);
+    			array.put(json);
+    		});
     	return array;
     }
 	
 	private JSONArray getInvoiceBienesList(Domain domain, String login, Integer page, Integer perPage){
 		JSONArray array = new JSONArray();
-    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    /*	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
     			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
-    			.and(f.getInvestmentProperty().eq((byte) 1))
     			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
     			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
     			.page(page).perPage(perPage))
     		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
-    	return array;
+    */	return array;
 	}
 
 	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage){
     	JSONArray array = new JSONArray();
-    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    	/*AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     				.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
     				.and(f.getTransactionProperty().eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
@@ -168,7 +173,7 @@ public class FinanceServlet extends HttpServlet{
         			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
     				.page(page).perPage(perPage))
     		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
-    	return array;
+    	 */return array;
 	}
     
     private JSONArray getInvoiceList(Domain domain, String login, Integer registryId){

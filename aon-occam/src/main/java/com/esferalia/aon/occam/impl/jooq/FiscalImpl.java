@@ -902,4 +902,9 @@ public class FiscalImpl implements IFiscal {
 		return VATDAO.getVatBreakdown(ctx, params.getFromDate()
 				,params.getToDate(),p -> FinanceUtils.getVATFilter(p, params));
 	}
+	
+	@Override
+	public Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params) {
+		return VATDAO.getSiiVatContext(ctx, params.getFromDate(), params.getToDate(), p -> FinanceUtils.getVATFilter(p, params));
+	}
 }

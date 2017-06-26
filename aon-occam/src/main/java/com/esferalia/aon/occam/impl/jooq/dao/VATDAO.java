@@ -254,6 +254,36 @@ public class VATDAO  {
 			.map(new VatContextFiller())
 		;
 	}
+	
+	public static Stream<VatContext> getSiiVatContext(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
+		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
+		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		return ctx.getDslContext().select(
+				 INVOICE.ID, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REFERENCE_CODE
+				,INVOICE.RDOCUMENT, INVOICE.RDOCUMENT_TYPE, INVOICE.RDOCUMENT_COUNTRY
+				,INVOICE.RNAME, INVOICE.ISSUE_DATE, INVOICE.TAX_DATE, INVOICE.TYPE
+				,INVOICE.RECTIFICATION_TYPE, INVOICE.SERVICE, INVOICE.TRANSACTION
+				,INVOICE.INVESTMENT, INVOICE.WITHHOLDING_FARMER, INVOICE.VAT_ACCRUAL_PAYMENT
+				,INVOICE.TOTAL
+				
+				,INVOICE_DETAIL.TAXABLE_BASE, INVOICE_DETAIL.INVEST_ASSET
+				
+				,INVOICE_TAX.BASE, INVOICE_TAX.PERCENTAGE, INVOICE_TAX.QUOTA
+				,INVOICE_TAX.SURCHARGE, INVOICE_TAX.SURCHARGE_QUOTA
+				,INVOICE_TAX.DEDUCTIBLE_PERCENT, INVOICE_TAX.DEDUCTIBLE_QUOTA
+				,INVOICE_TAX.VAT_DEDUCTION_TYPE
+			)
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.where(VAT_PROPERTIES.getConditions(filter))
+			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+			.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.fetch().stream().map(new SiiVatContextFiller())
+		;
+	}
 
 		
 	private static double getQuota( Record rec) {
@@ -328,6 +358,45 @@ public class VATDAO  {
 				.setEpigraph(rec.getValue(IAE.EPIGRAPH))
 				.setVatGeneralRegime( (rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) == null 
 						|| rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) == (byte) 0) )
+				.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE))
+						, rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
+				.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
+				.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(rec.getValue(INVOICE.RNAME))	
+				.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
+				.setInvoiceType(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)))
+				.setRectificationType(RectificationType.safeValueOf(rec.getValue(INVOICE.RECTIFICATION_TYPE)))
+				.setService(rec.getValue(INVOICE.SERVICE) == 1 || InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.EXPENSES)
+				.setTransaction(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)))
+				.setInvestment(rec.getValue(INVOICE.INVESTMENT) == 1)
+				.setVatAccrualRegime(rec.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1)
+				.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)
+				.setVatDeductionType(VatDeductionType.safeValueOf(rec.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
+				.setInvestAsset(rec.getValue(INVOICE_DETAIL.INVEST_ASSET))
+				
+				.setBase( rec.getValue(INVOICE_TAX.BASE) )
+				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE))
+				.setQuota( getQuota(rec) )
+				
+				.setSurcharge(AonMathUtils.round(rec.getValue(INVOICE_TAX.SURCHARGE)) > 0)
+				.setSurchargePercent(rec.getValue(INVOICE_TAX.SURCHARGE))
+				.setSurchargeQuota(getSurchargeQuota(rec))
+	
+				.setDeductiblePercent(getDeductiblePercent(rec))
+				.setDeductibleQuota(getDeductibleQuota(rec))
+			;
+		}
+	}
+	
+	public static class SiiVatContextFiller  implements Function<Record,VatContext> {
+
+		@Override
+		public VatContext apply(Record rec) {
+			return new VatContext()
+				.setInvoice(rec.getValue(INVOICE.ID))
 				.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE))
 						, rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
 				.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))

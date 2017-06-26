@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.xml.bind.JAXBElement;
@@ -25,10 +26,13 @@ import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
 import net.aonsolutions.aeat.sii.EstadoRegistroType;
 import net.aonsolutions.aeat.sii.RespuestaLRAgenciasViajesType;
+import net.aonsolutions.aeat.sii.RespuestaLRBajaFEmitidasType;
+import net.aonsolutions.aeat.sii.RespuestaLRBajaFRecibidasType;
 import net.aonsolutions.aeat.sii.RespuestaLRBienesInversionType;
 import net.aonsolutions.aeat.sii.RespuestaLRCobrosEmitidasType;
 import net.aonsolutions.aeat.sii.RespuestaLRFEmitidasType;
@@ -38,6 +42,7 @@ import net.aonsolutions.aeat.sii.RespuestaLROComunitariasType;
 import net.aonsolutions.aeat.sii.RespuestaLROperacionesSegurosType;
 import net.aonsolutions.aeat.sii.RespuestaLRPagosRecibidasType;
 import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
+import net.aonsolutions.aeat.sii.BajaLRFacturasRecibidas;
 import net.aonsolutions.aeat.sii.SuministroLRAgenciasViajes;
 import net.aonsolutions.aeat.sii.SuministroLRBienesInversion;
 import net.aonsolutions.aeat.sii.SuministroLRCobrosEmitidas;
@@ -95,19 +100,17 @@ public class SIIPost extends WebServiceGatewaySupport{
 	
 	@SuppressWarnings("unchecked")
     protected JSONObject suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
-
-
-		
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS);
     	SuministroLRFacturasEmitidas suministro = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, contextList, cert, pass);     	
 
     	JAXBElement<RespuestaLRFEmitidasType> response = (JAXBElement<RespuestaLRFEmitidasType>) post(uri, suministro);
     	RespuestaLRFEmitidasType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidas(suministro);
         byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
-        SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+        SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores);
 
         return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     			correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -119,13 +122,13 @@ public class SIIPost extends WebServiceGatewaySupport{
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS);
     	BajaLRFacturasEmitidas suministro = SIIBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList);     	
 
-    	JAXBElement<RespuestaLRFEmitidasType> response = (JAXBElement<RespuestaLRFEmitidasType>) post(uri, suministro);
-    	RespuestaLRFEmitidasType respuesta = response.getValue();
+    	JAXBElement<RespuestaLRBajaFEmitidasType> response = (JAXBElement<RespuestaLRBajaFEmitidasType>) post(uri, suministro);
+    	RespuestaLRBajaFEmitidasType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     
     //	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidas(suministro);
-    //    byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
-    //   SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    //  byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
+    //  SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
 
         return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     			correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -135,17 +138,20 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS EMITIDAS COBROS
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList, LinkedList<VatContext> contextList) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS);
-    	SuministroLRCobrosEmitidas suministro = SIIBuilt.getInstance().suministroFacturasEmitidasCobros(company);     	
+    	SuministroLRCobrosEmitidas suministro = SIIBuilt.getInstance().suministroFacturasEmitidasCobros(domain, login, company, invoiceList);     	
     
     	JAXBElement<RespuestaLRCobrosEmitidasType> response = (JAXBElement<RespuestaLRCobrosEmitidasType>) post(uri, suministro);
     	RespuestaLRCobrosEmitidasType respuesta = response.getValue();
+   
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    	
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidasCobros(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidasCobros(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    
+    	LinkedList<Integer> il = invoiceList.stream().map(m -> m.getId()).collect(Collectors.toCollection(LinkedList::new));
+        SIIDB.getInstance().insertSuministro(domain, login, il, requestXml, responseXml, correcto || aceptadoConErrores);
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -167,10 +173,11 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JAXBElement<RespuestaLRFRecibidasType> response = (JAXBElement<RespuestaLRFRecibidasType>) post(uri, suministro);
     	RespuestaLRFRecibidasType respuesta = response.getValue();	
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores);
     
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -179,24 +186,40 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     @SuppressWarnings("unchecked")
    	protected JSONObject bajaFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
-    	return new JSONObject();
+    	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS);
+    	BajaLRFacturasRecibidas suministro = SIIBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList);     	
+
+    	JAXBElement<RespuestaLRBajaFRecibidasType> response = (JAXBElement<RespuestaLRBajaFRecibidasType>) post(uri, suministro);
+    	RespuestaLRBajaFRecibidasType respuesta = response.getValue();
+    	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    
+    //	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidas(suministro);
+    //  byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
+    //  SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+
+        return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    			correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			respuesta.getRespuestaLinea().get(0).getIDFactura().getNumSerieFacturaEmisor());
     }
     
     // -------------------- FACTURAS RECIBIDAS PAGOS
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList, LinkedList<VatContext> contextList) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS_PAGOS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS_PAGOS);
-    	SuministroLRPagosRecibidas suministro = SIIBuilt.getInstance().suministroFacturasRecibidasPagos(company);     	
+    	SuministroLRPagosRecibidas suministro = SIIBuilt.getInstance().suministroFacturasRecibidasPagos(domain, login, company, invoiceList);     	
     
     	JAXBElement<RespuestaLRPagosRecibidasType> response = (JAXBElement<RespuestaLRPagosRecibidasType>) post(uri, suministro);
     	RespuestaLRPagosRecibidasType respuesta = response.getValue();
     	
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-   
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidasPagos(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+
+    	LinkedList<Integer> il = invoiceList.stream().map(m -> m.getId()).collect(Collectors.toCollection(LinkedList::new));
+    	SIIDB.getInstance().insertSuministro(domain, login, il, requestXml, responseXml, correcto || aceptadoConErrores);
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     			correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -218,10 +241,11 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
     	RespuestaLRBienesInversionType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
 
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores);
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -243,10 +267,11 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
     	RespuestaLROComunitariasType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
 
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores);
     
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -269,10 +294,11 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JAXBElement<RespuestaLRIMetalicoType> response = (JAXBElement<RespuestaLRIMetalicoType>) post(uri, suministro);
     	RespuestaLRIMetalicoType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+  
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroCobrosMetalico(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores);
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -294,10 +320,11 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JAXBElement<RespuestaLROperacionesSegurosType> response = (JAXBElement<RespuestaLROperacionesSegurosType>) post(uri, suministro);
     	RespuestaLROperacionesSegurosType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+    	
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesSeguros(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores);
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -319,10 +346,10 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JAXBElement<RespuestaLRAgenciasViajesType> response = (JAXBElement<RespuestaLRAgenciasViajesType>) post(uri, suministro);
     	RespuestaLRAgenciasViajesType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-
+    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroAgenciasViajes(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml);
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores);
    
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class Finance implements Serializable, HasAudit {
@@ -20,6 +21,7 @@ public class Finance implements Serializable, HasAudit {
 	private Integer id;
 	private Invoice invoice;
 	private Integer payMethod;
+	private PayMethodType payMethodType;
 	private String payMethodName;
 	private Registry registry;
 	private Scope scope;
@@ -436,4 +438,14 @@ public class Finance implements Serializable, HasAudit {
 		this.selected = selected;
 		return this;
 	}
+
+	public PayMethodType getPayMethodType() {
+		return payMethodType;
+	}
+
+	public Finance setPayMethodType(PayMethodType payMethodType) {
+		this.payMethodType = payMethodType;
+		return this;
+	}
+
 }

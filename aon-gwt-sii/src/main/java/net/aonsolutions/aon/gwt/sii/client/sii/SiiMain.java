@@ -8,11 +8,11 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
-import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -69,17 +69,17 @@ public class SiiMain extends AonTemplate2{
 	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Suministro Inmediato de Informacion") {
-			@Override protected void reset() {}
-			@Override protected void remove() {}
-			@Override protected void print() {}
-			@Override protected void next() {}
-			@Override protected void email() {}
-			@Override protected void back() {}
-			@Override protected void ant() {}
-		};
-		toolbar.setAllVisible(false);
-		toolbar.setResetVisible(true);
+		Toolbar toolbar = new Toolbar("Suministro Inmediato de Informacion") {};
+		Button sendAll = toolbar.addButton("Enviar todo", AON.AON_CSS.aonIconSave());
+		sendAll.setVisible(false);
+		sendAll.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.alert("Opción no implementada");
+			}
+		});
+	
 		setToolbar(toolbar);
 	}
 	
@@ -114,7 +114,7 @@ public class SiiMain extends AonTemplate2{
 		});
 		menuPanel.add(facturasRecibidasButton);
 
-		Button bienesInversionButton = new Button("Bienes de Inversion");
+	/*	Button bienesInversionButton = new Button("Bienes de Inversion");
 		bienesInversionButton.setStyleName("aon-editDataTable-button");
 		bienesInversionButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		bienesInversionButton.addClickHandler(new ClickHandler() {
@@ -139,11 +139,11 @@ public class SiiMain extends AonTemplate2{
 			}
 		});
 		menuPanel.add(operacionesIntracomunitariasButton);
-		
+	*/	
 		setWestContent(menuPanel);
 	}
 	
-	private void content() {
+	public void content() {
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
 		getFilterMap().put("page", list);
