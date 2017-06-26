@@ -314,7 +314,8 @@ public class Page19 extends PageAbs {
 	protected boolean isAvailable() {
 		boolean av = super.isAvailable()
   		  && (callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0021) 
-		   || callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0039));
+		   || callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0039))
+  		  ;
 		return av;
 	}
 

@@ -86,7 +86,7 @@ public class Mod2002016Print extends HttpServlet {
 				+"&LEV=000000000000"
 				+"&FIC=" + encodedFile  
 				+"&RUT="  
-				+"&PRG=PTLINK17"  
+				+"&PRG=PTLINKI7"  
 				+"&FIN="  
 				+"&EJF=2016"  
 				+"&MOD=200";

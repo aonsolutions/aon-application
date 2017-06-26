@@ -327,10 +327,15 @@ public class Mod2002016Writer {
 		 ,PAG01 ("T20001000", new IPropertyFiller[] {
 				 (line,mod200, label) -> addStartLabel(line,label)
 				,(line,mod200, label) -> line.append(" ")  				
-				
-				// FALTA - Tipo de declaración campo nuevo este año - habra que pedirlo en pantalla
-				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getDeclarationTypeKey()==null?"":mod200.getDeclarationTypeKey().getValue(),1) )  // Tipo de declaración
-				
+				,(line,mod200, label) -> { // Tipo de declaración
+					if ("N".equals( mod200.getResultType()) || AonStringUtils.isEmpty(mod200.getResultType())) {
+						line.append( "N" );  
+					} else if ("I".equals( mod200.getResultType()) ) {
+						line.append( AonFiscalFileUtils.text(mod200.getPayType(),1) );  // Tipo de declaración
+					} else if ("D".equals( mod200.getResultType()) ) {
+						line.append( AonFiscalFileUtils.text(mod200.getDevType(),1) );  // Tipo de declaración
+					}
+				}
 				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getEnterpriseDocument(),9)) 
 				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getEnterpriseName(),80))
 				,(line,mod200, label) -> line.append( AonFiscalFileUtils.unsigned(mod200.getYear(), 4,0))  // Ejercicio
@@ -2799,10 +2804,10 @@ public class Mod2002016Writer {
 				,(line,mod200, label) -> {
 						double importe = mod200.getDoubleValue(Mod2002016Key.BN621); // importe a ingresar o a devolver
 						
-						line.append( AonFiscalFileUtils.text(importe<0 ? mod200.getDevType() : "",1) );                                   // Devolución - Renuncia o por Transferencia "blanco" "R","D"				
+						line.append( AonFiscalFileUtils.text(importe<0 ? ("V".equals(mod200.getDevType())?"":mod200.getDevType()) : "",1) ); // Devolución - Renuncia o por Transferencia "blanco" "R","D"				
 						line.append( AonFiscalFileUtils.signedZero(importe<0 ? Math.abs(importe) : 0.0, DS, DD) );     // Devolución - Importe a devolver
 						line.append( AonFiscalFileUtils.text(importe<0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "",34) );  // Devolución - Número de cuenta IBAN (si devolución por transferencia)
-						line.append( AonFiscalFileUtils.text(mod200.getBic(),11)); // Devolución - Código SWIFT-BIC
+						line.append( AonFiscalFileUtils.text(importe<0 && "D".equals(mod200.getDevType()) ? mod200.getBic() : "",11)); // Devolución - Código SWIFT-BIC
 						line.append( AonFiscalFileUtils.text(importe>0 ? mod200.getPayType() : "",1) );  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores	"blanco", "I" Adeudo en	cuenta, "H" Efectivo, "U" Domiciliación
 						line.append(" ");   // RESERVADO AEAT
 						line.append(" ");   // RESERVADO AEAT
@@ -2835,9 +2840,9 @@ public class Mod2002016Writer {
 			
 			// Página 7.
 			// Página 8. La cuenta de pérdidas y ganancias no debe aparecer si se ha marcado el caracter 26 (entidad inactiva).
-			if (this == Pages2016.PAG07 || this == Pages2016.PAG08) {
-				addPage = (mod200.getDoubleValue(Mod2002016Key.C0026)==0);
-			}
+//			if (this == Pages2016.PAG07 || this == Pages2016.PAG08) {
+//				addPage = (mod200.getDoubleValue(Mod2002016Key.C0026)==0);
+//			}
 			
 			// Página 9. Estado de Ingresos y Gastos Reconocidos. Solo si Balance Normal o Abreviado
 			if (this == Pages2016.PAG09) {  
@@ -2880,13 +2885,13 @@ public class Mod2002016Writer {
 		// llevaba un cero detras del año y este año no lo lleva, pero no han actualizado
 		// la longitud del campo
 		//line.append("<T2000"+mod200.getYear()+"0A0000>");  // Etiqueta inicio de fichero
-		line.append("<T2000"+mod200.getYear()+"A0000>");  // Etiqueta inicio de fichero
+		line.append("<T2000"+mod200.getYear()+"0A0000>");  // Etiqueta inicio de fichero
 		for (Pages2016 page : Pages2016.values()) {     			
 			page.fillPage(mod200, line);			
 		}
 		// FALTA - IDEM etiqueta de inicio
 		//line.append("</T2000"+mod200.getYear()+"0A0000>");  // Etiqueta fin de fichero
-		line.append("</T2000"+mod200.getYear()+"A0000>");  // Etiqueta fin de fichero
+		line.append("</T2000"+mod200.getYear()+"0A0000>");  // Etiqueta fin de fichero
 		line.append(AonStringUtils.CR_LF); // Fin de registro. Constante CRLF
 		line.close(); 
 		
