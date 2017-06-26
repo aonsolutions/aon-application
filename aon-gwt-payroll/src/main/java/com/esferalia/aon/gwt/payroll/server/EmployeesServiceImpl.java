@@ -4482,12 +4482,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeEventsData getEmployeeEvents(int contract) {
+	public EmployeeEventsData getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables) {
 		Connection connection = null;
 		initFacesContext();
 		try {
 			connection = AonServletUtils.getConnection();
-			return JooqEmployeeEvents.getEmployeeEvents(connection, contract);
+			return JooqEmployeeEvents.getEmployeeEvents(connection, contract, employeeContractVariables);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

@@ -14,14 +14,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -155,23 +152,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiField
 	Grid eventsGrid;
 	
-//	@UiField
-//	Button calendarButton1;
-//	
-//	@UiField
-//	Button calendarButton2;
-//	
-//	@UiField
-//	Button calendarButton3;
-//	
-//	@UiField
-//	Button calendarButton4;
-//	
-//	@UiField
-//	Button calendarButton6;
-//	
-//	@UiField
-//	Button calendarButton7;
 	
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
 	private EmployeeEventsDraftObject employeeEventsDraft;
@@ -186,13 +166,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
-		
-//		calendarButton1.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-//		calendarButton2.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-//		calendarButton3.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-//		calendarButton4.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-//		calendarButton6.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
-//		calendarButton7.addClickHandler(e -> EmployeeTree.showEmployeeCalendar((this.employeeEventsDraft.getEmployeeCalendar())));
 		
 		//Boton para añadir un nuevo valor
 		addNewValueMenuItem.setScheduledCommand(new Command() {

@@ -3,6 +3,7 @@
  */
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,7 +27,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
@@ -591,9 +591,10 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
-	public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
+	public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
+			AsyncCallback<EmployeeEventsData> callback) {
 		AON.start();
-		employeesServiceAsync.getEmployeeEvents(contract,
+		employeesServiceAsync.getEmployeeEvents(contract, employeeContractVariables,
 				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
 		
 	}

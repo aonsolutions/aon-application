@@ -5,6 +5,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
@@ -61,11 +62,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 						names, callback);
 			}
 
-			@Override
-			public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
-				// TODO Auto-generated method stub
-				
-			}
+			
 
 			@Override
 			public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
@@ -77,6 +74,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			@Override
 			public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
 					AsyncCallback<Map<String, String>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
+					AsyncCallback<EmployeeEventsData> callback) {
 				// TODO Auto-generated method stub
 				
 			}

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -521,11 +522,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
-	@Override
-	public EmployeeEventsData getEmployeeEvents(int contract) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo) {
@@ -536,6 +533,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public Map<String, String> getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public EmployeeEventsData getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -401,7 +401,7 @@ public class EmployeeEventsDraftObject {
 	
 	public void initializeDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
 		
-		employeesService.getEmployeeEvents(this.idEmployee, new AsyncCallback<EmployeeEventsData>(){
+		employeesService.getEmployeeEvents(this.idEmployee, this.employeeContractVariables, new AsyncCallback<EmployeeEventsData>(){
 
 			@Override
 			public void onFailure(Throwable caught) {

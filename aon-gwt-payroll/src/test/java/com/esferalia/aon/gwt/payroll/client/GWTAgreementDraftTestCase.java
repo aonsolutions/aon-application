@@ -76,11 +76,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			}
 		}
 
-		@Override
-		public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
-			// TODO Auto-generated method stub
-			
-		}
+		
 
 		@Override
 		public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
@@ -92,6 +88,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
 				AsyncCallback<Map<String, String>> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
+				AsyncCallback<EmployeeEventsData> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -152,11 +155,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						callback.onSuccess(agreementDraft);
 					}
 
-					@Override
-					public void getEmployeeEvents(int contract, AsyncCallback<EmployeeEventsData> callback) {
-						// TODO Auto-generated method stub
-						
-					}
+					
 
 					@Override
 					public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
@@ -168,6 +167,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
 							AsyncCallback<Map<String, String>> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
+							AsyncCallback<EmployeeEventsData> callback) {
 						// TODO Auto-generated method stub
 						
 					}

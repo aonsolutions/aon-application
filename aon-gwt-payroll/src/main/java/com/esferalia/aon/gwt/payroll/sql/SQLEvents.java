@@ -993,7 +993,6 @@ public class SQLEvents {
 					+ SQLConstants.CONTRACT_PAYMENT + "."
 					+ ContractPaymentColumns.START_DATE + " <= ? ");
 			
-			System.out.println(sql);
 			stmt = connection.prepareStatement(sql);
 
 			stmt.setInt(1, employeeId);
