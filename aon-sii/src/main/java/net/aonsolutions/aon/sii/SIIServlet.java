@@ -2,10 +2,6 @@ package net.aonsolutions.aon.sii;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,7 +31,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
@@ -72,30 +67,31 @@ public class SIIServlet extends HttpServlet{
 //		String md5 = Utils.getMd5(login+domainName);
 		if(true){//accessToken.equals(md5)){
 			String action = parameters.get("action"); // consulta || suministro || anulacion
+			String option = parameters.get("option"); 
 			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));		
 			Company company = new Company().setName("AON SOLUTIONS, S.L.")
 					.setDocument("B01487271");
 					//AON.getCompany(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId()));
 			LinkedList<Invoice> invoiceList = AON.getInvoiceList(domain.getName(), domain.getId(), login,f -> f.getIdProperty().eq(id));// f -> invoiceFilter(domain, req.getParameterMap(), f));
+			
 			VatParams params = new VatParams();
 			params.setDomain(domain.getId());
 			params.setFromDate(AonDateUtils.addDays(new Date(), -7));
 			params.setToDate(AonDateUtils.addDays(new Date(), 1));
 			params.setInvoices(invoiceList.stream().map(i -> i.getId()).toArray(Integer[]::new));
-			LinkedList<VatContext> contextList = FISCAL.getVatContext(domain.getName(), domain.getId(), login, params)
+			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params)
 					.collect(Collectors.toCollection(LinkedList::new));
-			
-			LinkedList<Integer> emitidasList =  invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.SALES) && !f.getTransaction().equals(InvoiceTransactionType.INTRACOMMUNITY))
+
+			LinkedList<Integer> emitidasList =  invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.SALES))
 					.map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
-			LinkedList<Integer> recibidasList = invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.PURCHASE) && !f.getTransaction().equals(InvoiceTransactionType.INTRACOMMUNITY) && !f.isInvestment()).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
-			LinkedList<Integer> bienesList =invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.PURCHASE) && !f.getTransaction().equals(InvoiceTransactionType.INTRACOMMUNITY) && f.isInvestment()).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));;
-			LinkedList<Integer> intracomunitariasList =  invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.PURCHASE) && f.getTransaction().equals(InvoiceTransactionType.INTRACOMMUNITY)).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
+			LinkedList<Integer> recibidasList = invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.PURCHASE)).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
+			LinkedList<Integer> bienesList = new LinkedList<>();
+			LinkedList<Integer> intracomunitariasList = new LinkedList<>();
 			LinkedList<Integer> metalicoList = new LinkedList<>();
 			LinkedList<Integer> segurosList = new LinkedList<>();
 			LinkedList<Integer> agenciasList = new LinkedList<>();
 		
 			// TODO dividir invoiceList en las demas listas.
-			
 			Integer cert = Integer.parseInt(parameters.get("cert"));
 			String pass = parameters.get("pass");
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
@@ -108,6 +104,13 @@ public class SIIServlet extends HttpServlet{
 			}
 			try{
 				Object object = new Object();
+				
+
+				if(option.equals("cobros")){
+					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidasCobros(domain, login, company, invoiceList, contextList);
+				} else if(option.equals("pagos")){
+					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, invoiceList, contextList);
+				} else {
 				if(emitidasList.size() > 0){
 					if(action.equals("suministro")){
 						object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidas(domain, login, company, emitidasList, contextList);
@@ -163,7 +166,7 @@ public class SIIServlet extends HttpServlet{
 						object = SIIPost.getInstance(attach.getData(), pass).bajaAgenciasViajes(domain, login, company, agenciasList, contextList);
 					}
 				}
-				
+				}	
 				giveBack(req, resp, object, new JSONObject());
 			} catch (Exception e) {
 				JSONObject json = new JSONObject();

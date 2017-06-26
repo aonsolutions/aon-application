@@ -1760,5 +1760,16 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	public static Stream<VatContext> getSiiVatContext(String domainName, int domainId, String user, VatParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().getSiiVatContext(ctx, params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 }

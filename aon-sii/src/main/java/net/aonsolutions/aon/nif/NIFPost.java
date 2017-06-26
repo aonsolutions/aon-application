@@ -1,12 +1,7 @@
 package net.aonsolutions.aon.nif;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.xml.bind.JAXBElement;
@@ -17,7 +12,6 @@ import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
 import net.aonsolutions.aeat.nif.ObjectFactory;
 import net.aonsolutions.aeat.nif.VNifV1Ent;
-import net.aonsolutions.aeat.nif.VNifV1Sal;
 import net.aonsolutions.aeat.nif.VNifV2Ent;
 import net.aonsolutions.aeat.nif.VNifV2Sal;
 

@@ -34,5 +34,23 @@ public class JsInvoice extends JavaScriptObject {
 	public final native String getReferenceCode() /*-{
 		return this.reference_code;
 	}-*/;
+	
+	public final native String getTaxDate() /*-{
+		return this.tax_date;
+	}-*/;
 
+	
+	public final native Boolean isSiiSent() /*-{
+		return this.sii_sent;
+	}-*/;
+	
+	public final native Boolean isVatAccrualPayment() /*-{
+		return this.vat_accrual_payment;
+	}-*/;
+
+	public final native String getType() /*-{
+		return this.type;
+	}-*/;
+	
+	
 }

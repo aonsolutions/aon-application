@@ -139,6 +139,8 @@ public class ToJSON {
 		json.put("registry_document_country", invoice.getRegistryDocumentCountry());
 		json.put("registry_document_type", invoice.getRegistryDocumentType());
 		json.put("reference_code", invoice.getReferenceCode());
+		json.put("vat_accrual_payment", invoice.isVatAccrualPayment());
+		json.put("type", invoice.getType().getDescription());
 		return json;
 	}
 	

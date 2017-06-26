@@ -18,21 +18,17 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatData;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 import net.aonsolutions.aeat.nif.VNifV1Ent;
-import net.aonsolutions.aeat.sii.RespuestaLRAgenciasViajesType;
-import net.aonsolutions.aeat.sii.RespuestaLRBienesInversionType;
-import net.aonsolutions.aeat.sii.RespuestaLRCobrosEmitidasType;
-import net.aonsolutions.aeat.sii.RespuestaLRFEmitidasType;
-import net.aonsolutions.aeat.sii.RespuestaLRFRecibidasType;
-import net.aonsolutions.aeat.sii.RespuestaLRIMetalicoType;
-import net.aonsolutions.aeat.sii.RespuestaLROComunitariasType;
-import net.aonsolutions.aeat.sii.RespuestaLROperacionesSegurosType;
-import net.aonsolutions.aeat.sii.RespuestaLRPagosRecibidasType;
+import net.aonsolutions.aeat.sii.BajaLRBienesInversion;
+import net.aonsolutions.aeat.sii.BajaLRDetOperacionIntracomunitaria;
+import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
+import net.aonsolutions.aeat.sii.BajaLRFacturasRecibidas;
 import net.aonsolutions.aeat.sii.BienDeInversionType;
 import net.aonsolutions.aeat.sii.CabeceraSii;
 import net.aonsolutions.aeat.sii.CabeceraSiiBaja;
@@ -68,26 +64,6 @@ import net.aonsolutions.aeat.sii.IDFacturaExpedidaType.IDEmisorFactura;
 import net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType;
 import net.aonsolutions.aeat.sii.IDFacturaRecibidaType;
 import net.aonsolutions.aeat.sii.IDOtroType;
-import net.aonsolutions.aeat.sii.NoSujetaType;
-import net.aonsolutions.aeat.sii.OperacionIntracomunitariaType;
-import net.aonsolutions.aeat.sii.PagosType;
-import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaESType;
-import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaType;
-import net.aonsolutions.aeat.sii.RegistroSii.PeriodoImpositivo;
-import net.aonsolutions.aeat.sii.SujetaPrestacionType;
-import net.aonsolutions.aeat.sii.SujetaType;
-import net.aonsolutions.aeat.sii.SujetaType.Exenta;
-import net.aonsolutions.aeat.sii.SujetaType.NoExenta;
-import net.aonsolutions.aeat.sii.SujetaType.NoExenta.DesgloseIVA;
-import net.aonsolutions.aeat.sii.TipoConDesgloseType;
-import net.aonsolutions.aeat.sii.TipoOperacionSujetaNoExentaType;
-import net.aonsolutions.aeat.sii.TipoSinDesglosePrestacionType;
-import net.aonsolutions.aeat.sii.TipoSinDesgloseType;
-import net.aonsolutions.aeat.sii.VariosDestinatariosType;
-import net.aonsolutions.aeat.sii.BajaLRBienesInversion;
-import net.aonsolutions.aeat.sii.BajaLRDetOperacionIntracomunitaria;
-import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
-import net.aonsolutions.aeat.sii.BajaLRFacturasRecibidas;
 import net.aonsolutions.aeat.sii.LRAgenciasViajesType;
 import net.aonsolutions.aeat.sii.LRBajaBienesInversionType;
 import net.aonsolutions.aeat.sii.LRBajaExpedidasType;
@@ -101,6 +77,26 @@ import net.aonsolutions.aeat.sii.LROperacionIntracomunitariaType;
 import net.aonsolutions.aeat.sii.LROperacionesSegurosType;
 import net.aonsolutions.aeat.sii.LRPagosEmitidasType;
 import net.aonsolutions.aeat.sii.LRfacturasEmitidasType;
+import net.aonsolutions.aeat.sii.NoSujetaType;
+import net.aonsolutions.aeat.sii.OperacionIntracomunitariaType;
+import net.aonsolutions.aeat.sii.PagosType;
+import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaESType;
+import net.aonsolutions.aeat.sii.PersonaFisicaJuridicaType;
+import net.aonsolutions.aeat.sii.RegistroSii.PeriodoImpositivo;
+import net.aonsolutions.aeat.sii.RespuestaLRAgenciasViajesType;
+import net.aonsolutions.aeat.sii.RespuestaLRBienesInversionType;
+import net.aonsolutions.aeat.sii.RespuestaLRCobrosEmitidasType;
+import net.aonsolutions.aeat.sii.RespuestaLRFEmitidasType;
+import net.aonsolutions.aeat.sii.RespuestaLRFRecibidasType;
+import net.aonsolutions.aeat.sii.RespuestaLRIMetalicoType;
+import net.aonsolutions.aeat.sii.RespuestaLROComunitariasType;
+import net.aonsolutions.aeat.sii.RespuestaLROperacionesSegurosType;
+import net.aonsolutions.aeat.sii.RespuestaLRPagosRecibidasType;
+import net.aonsolutions.aeat.sii.SujetaPrestacionType;
+import net.aonsolutions.aeat.sii.SujetaType;
+import net.aonsolutions.aeat.sii.SujetaType.Exenta;
+import net.aonsolutions.aeat.sii.SujetaType.NoExenta;
+import net.aonsolutions.aeat.sii.SujetaType.NoExenta.DesgloseIVA;
 import net.aonsolutions.aeat.sii.SuministroLRAgenciasViajes;
 import net.aonsolutions.aeat.sii.SuministroLRBienesInversion;
 import net.aonsolutions.aeat.sii.SuministroLRCobrosEmitidas;
@@ -110,6 +106,11 @@ import net.aonsolutions.aeat.sii.SuministroLRFacturasEmitidas;
 import net.aonsolutions.aeat.sii.SuministroLRFacturasRecibidas;
 import net.aonsolutions.aeat.sii.SuministroLROperacionesSeguros;
 import net.aonsolutions.aeat.sii.SuministroLRPagosRecibidas;
+import net.aonsolutions.aeat.sii.TipoConDesgloseType;
+import net.aonsolutions.aeat.sii.TipoOperacionSujetaNoExentaType;
+import net.aonsolutions.aeat.sii.TipoSinDesglosePrestacionType;
+import net.aonsolutions.aeat.sii.TipoSinDesgloseType;
+import net.aonsolutions.aeat.sii.VariosDestinatariosType;
 import net.aonsolutions.aon.nif.NIFPost;
 
 
@@ -156,9 +157,7 @@ public class SIIBuilt {
 
 	byte[] cert;
 	String pass;
-	private Boolean con = false;
-	private Boolean sin = false;
-	
+
 	/**
 	 * Libro de registro de Facturas expedidas.
 	 * 
@@ -262,6 +261,7 @@ public class SIIBuilt {
 			fet.setNumRegistroAcuerdoFacturacion("");//TODO TIENE K DARLO EL CLIENTE
 			
 			// IMPORTE TOTAL 
+			Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
 			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota()).sum();
 			fet.setImporteTotal(Double.toString(AonMathUtils.round(total)));
 
@@ -269,8 +269,8 @@ public class SIIBuilt {
 			if(fet.getClaveRegimenEspecialOTrascendencia().equals("06")
 					|| (fet.getClaveRegimenEspecialOTrascendenciaAdicional1() != null && fet.getClaveRegimenEspecialOTrascendenciaAdicional1().equals("06"))
 					|| (fet.getClaveRegimenEspecialOTrascendenciaAdicional2() != null && fet.getClaveRegimenEspecialOTrascendenciaAdicional2().equals("06"))){
-				Double base = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase()).sum();
-				fet.setBaseImponibleACoste(Double.toString(base));
+				Double base = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase()).sum();
+				fet.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
 			}			
 			// DESCRIPCION OPERACION 
 			fet.setDescripcionOperacion("VENTAS GENERALES"); // + " - " + vat.getComments());
@@ -308,8 +308,81 @@ public class SIIBuilt {
 	
 			// TIPO DESGLOSE
 			TipoDesglose tipoDesglose = new TipoDesglose(); 
-			
-			if(!vat.isService()){
+
+			if(!fet.getTipoFactura().equals(ClaveTipoFacturaType.F_2) && !fet.getTipoFactura().equals(ClaveTipoFacturaType.F_4) 
+				&& (vat.isService() || vat.isIntracommunity())){
+				TipoConDesgloseType tcdt = new TipoConDesgloseType();
+				
+				if(vat.isService()){
+					TipoSinDesglosePrestacionType prestacion = new TipoSinDesglosePrestacionType();
+					NoSujetaType nst3 = new NoSujetaType();
+					nst3.setImportePorArticulos714Otros(Double.toString(noSujeta)); 
+				//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
+					prestacion.setNoSujeta(nst3);
+					SujetaPrestacionType st3 = new SujetaPrestacionType();
+					
+					net.aonsolutions.aeat.sii.SujetaPrestacionType.Exenta exenta3 = new net.aonsolutions.aeat.sii.SujetaPrestacionType.Exenta();
+					exenta3.setBaseImponible(Double.toString(exenta));
+					exenta3.setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!
+					st3.setExenta(exenta3); 
+					net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA diva3 = new net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA();
+					
+					noExenta.stream().forEach(r->{
+						DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
+						diet.setBaseImponible(Double.toString(r.getBase())); 
+						diet.setCuotaRepercutida(Double.toString(r.getQuota())); 
+						diet.setTipoImpositivo(Double.toString(r.getPercentage())); 
+						
+						diva3.getDetalleIVA().add(diet);
+					});	
+				
+					net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta noExenta3 = new net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta();
+					noExenta3.setDesgloseIVA(diva3);
+					noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+					st3.setNoExenta(noExenta3);
+					prestacion.setSujeta(st3);		
+					tcdt.setPrestacionServicios(new TipoSinDesglosePrestacionType());
+				} else {
+					TipoSinDesgloseType entrega = new TipoSinDesgloseType();
+					NoSujetaType nst2 = new NoSujetaType();
+					nst2.setImportePorArticulos714Otros(Double.toString(noSujeta)); // TODO
+					//nst2.setImporteTAIReglasLocalizacion(""); // TODO
+					entrega.setNoSujeta(nst2);
+					SujetaType st2 = new SujetaType();
+					
+					Exenta exenta2 = new Exenta();
+					exenta2.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
+					if(vat.isIntracommunity() && vat.isInvestment()){
+						exenta2.setCausaExencion(CausaExencionType.E_5);
+					} else if(vat.isIntracommunity()){
+						exenta2.setCausaExencion(CausaExencionType.E_2);
+					} else {
+						exenta2.setCausaExencion(CausaExencionType.E_6);
+					}
+					st2.setExenta(exenta2); // TODO
+					
+					DesgloseIVA diva2 = new DesgloseIVA();
+					noExenta.stream().forEach(r -> {
+						DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
+						diet.setBaseImponible(Double.toString(r.getBase()));
+						diet.setCuotaRepercutida(Double.toString(r.getQuota()));
+						diet.setTipoImpositivo(Double.toString(r.getPercentage()));
+						if(r.getSurchargePercent() != 0.0){
+							diet.setTipoRecargoEquivalencia(Double.toString(r.getSurchargeQuota()));
+							diet.setCuotaRecargoEquivalencia(Double.toString(r.getSurchargePercent()));
+						}
+						diva2.getDetalleIVA().add(diet);
+					});
+
+					NoExenta noExenta2 = new NoExenta();
+					noExenta2.setDesgloseIVA(diva2);
+					noExenta2.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+					st2.setNoExenta(noExenta2); // TODO
+					entrega.setSujeta(st2);
+					tcdt.setEntrega(entrega);
+				}				
+				tipoDesglose.setDesgloseTipoOperacion(tcdt);
+			} else {
 				TipoSinDesgloseType tsdt = new TipoSinDesgloseType();
 				NoSujetaType nst = new NoSujetaType();
 				nst.setImportePorArticulos714Otros(Double.toString(noSujeta)); // TODO
@@ -331,90 +404,19 @@ public class SIIBuilt {
 					diet.setTipoImpositivo(Double.toString(r.getPercentage())); //TODO
 					if(r.getSurchargePercent() != 0.0){
 						diet.setTipoRecargoEquivalencia(Double.toString(r.getSurchargeQuota())); //TODO
-						diet.setCuotaRecargoEquivalencia(Double.toString(r.getSurchargePercent())); //TODO
+						diet.setCuotaRecargoEquivalencia(Double.toString(r.getSurchargePercent()));
 					}
-
 					diva.getDetalleIVA().add(diet);
-					if(r.getQuota() == 0.0){
-						con = true;
-					} else {
-						sin = true;
-					}
 				});
 				NoExenta noExenta1 = new NoExenta();
 				noExenta1.setDesgloseIVA(diva);
-				TipoOperacionSujetaNoExentaType noExType;
-				if(con & sin) noExType = TipoOperacionSujetaNoExentaType.S_3;
-				else if(con) noExType = TipoOperacionSujetaNoExentaType.S_2;
-				else noExType = TipoOperacionSujetaNoExentaType.S_1;
+				TipoOperacionSujetaNoExentaType noExType = TipoOperacionSujetaNoExentaType.S_1;
+				// TODO inversion sujeto pasivo 
 				noExenta1.setTipoNoExenta(noExType); // TODO 
 				st.setNoExenta(noExenta1);
 
 				tsdt.setSujeta(st);
 				tipoDesglose.setDesgloseFactura(tsdt);
-			} else {
-				TipoConDesgloseType tcdt = new TipoConDesgloseType();
-				/*
-				TipoSinDesgloseType entrega = new TipoSinDesgloseType();
-				NoSujetaType nst2 = new NoSujetaType();
-				nst2.setImportePorArticulos714Otros(""); // TODO
-				nst2.setImporteTAIReglasLocalizacion(""); // TODO
-				entrega.setNoSujeta(nst2);
-				SujetaType st2 = new SujetaType();
-				
-				Exenta exenta2 = new Exenta();
-				exenta2.setBaseImponible(""); // TODO
-				exenta2.setCausaExencion(CausaExencionType.E_6);
-				st2.setExenta(exenta2); // TODO
-				DesgloseIVA diva2 = new DesgloseIVA();
-				
-				invoiceTaxList.stream().forEach(r->{
-					DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
-					diet.setBaseImponible(""); //TODO
-					diet.setCuotaRecargoEquivalencia(""); //TODO
-					diet.setCuotaRepercutida(""); //TODO
-					diet.setTipoImpositivo(""); //TODO
-					diet.setTipoRecargoEquivalencia(""); //TODO
-					
-					diva2.getDetalleIVA().add(diet);
-				});	
-			
-				NoExenta noExenta2 = new NoExenta();
-				noExenta2.setDesgloseIVA(diva2);
-				noExenta2.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
-				st2.setNoExenta(noExenta2); // TODO
-				entrega.setSujeta(st2);
-				tcdt.setEntrega(entrega);
-				*/
-				TipoSinDesglosePrestacionType prestacion = new TipoSinDesglosePrestacionType();
-				NoSujetaType nst3 = new NoSujetaType();
-				nst3.setImportePorArticulos714Otros(Double.toString(noSujeta)); 
-			//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
-				prestacion.setNoSujeta(nst3);
-				SujetaPrestacionType st3 = new SujetaPrestacionType();
-				
-				net.aonsolutions.aeat.sii.SujetaPrestacionType.Exenta exenta3 = new net.aonsolutions.aeat.sii.SujetaPrestacionType.Exenta();
-				exenta3.setBaseImponible(Double.toString(exenta));
-				exenta3.setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!
-				st3.setExenta(exenta3); 
-				net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA diva3 = new net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA();
-				
-				noExenta.stream().forEach(r->{
-					DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
-					diet.setBaseImponible(Double.toString(r.getBase())); 
-					diet.setCuotaRepercutida(Double.toString(r.getQuota())); 
-					diet.setTipoImpositivo(Double.toString(r.getPercentage())); 
-					
-					diva3.getDetalleIVA().add(diet);
-				});	
-			
-				net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta noExenta3 = new net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta();
-				noExenta3.setDesgloseIVA(diva3);
-				noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_3);
-				st3.setNoExenta(noExenta3);
-				prestacion.setSujeta(st3);		
-				tcdt.setPrestacionServicios(new TipoSinDesglosePrestacionType());
-				tipoDesglose.setDesgloseTipoOperacion(tcdt);
 			}
 			fet.setTipoDesglose(tipoDesglose);
 			
@@ -428,7 +430,8 @@ public class SIIBuilt {
 		BajaLRFacturasEmitidas baja = new BajaLRFacturasEmitidas();
 		baja.setCabecera(cabeceraBaja(company));
 		
-		vatList.stream().forEach(vat -> {
+		invoiceList.stream().forEach(i -> {
+			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(i)).findFirst().orElse(new VatContext());
 			LRBajaExpedidasType factura = new LRBajaExpedidasType();
 			
 			IDFacturaExpedidaBCType idFactura = new IDFacturaExpedidaBCType();
@@ -472,39 +475,44 @@ public class SIIBuilt {
 		}
 		return b;
 	}
+	
 	/**
 	 * Libro de registro de Facturas expedidas, COBROS.
 	 *  
 	 * @param company
 	 */
-	protected SuministroLRCobrosEmitidas suministroFacturasEmitidasCobros(Company company) {
+	protected SuministroLRCobrosEmitidas suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList) {
 		SuministroLRCobrosEmitidas suministro = new SuministroLRCobrosEmitidas();
 		
-		// CABECERA
 		suministro.setCabecera(cabeceraCobrosPagos(company));
 
-		// FOR COBROS
+		invoiceList.stream().forEach(i -> {
+			LRCobrosEmitidasType cobros = new LRCobrosEmitidasType();
+			CobrosType ct = new CobrosType();
 		
-		LRCobrosEmitidasType cobros = new LRCobrosEmitidasType();
-		CobrosType ct = new CobrosType();
-		//TODO FOR
-		DatosPagoCobroType dpct = new DatosPagoCobroType();
-		dpct.setCuentaOMedio(""); //TODO
-		dpct.setFecha("");//TODO
-		dpct.setImporte("");//TODO
-		dpct.setMedio("");//TODO
-		ct.getCobro().add(dpct);
-		cobros.setCobros(ct);
-		IDFacturaExpedidaBCType f = new IDFacturaExpedidaBCType();
-		f.setFechaExpedicionFacturaEmisor("");//TODO
-		net.aonsolutions.aeat.sii.IDFacturaExpedidaBCType.IDEmisorFactura emisor = new net.aonsolutions.aeat.sii.IDFacturaExpedidaBCType.IDEmisorFactura();
-		emisor.setNIF(company.getDocument());
-		f.setIDEmisorFactura(emisor);
-		f.setNumSerieFacturaEmisor(""); //TODO
-		// TODO NO HAY OPTION f.setNumSerieFacturaEmisorResumenFin("");
-		cobros.setIDFactura(f);
-		
-		suministro.getRegistroLRCobros().add(cobros);
+			AON.getFinanceStream(domain.getName(), domain.getId(), login, f -> f.getInvoiceProperty().eq(i.getId())).forEach(f -> {
+				DatosPagoCobroType dpct = new DatosPagoCobroType();
+				dpct.setFecha(AonDateUtils.format(f.getDueDate(), "dd-MM-yyyy"));
+				dpct.setImporte(Double.toString(AonMathUtils.round(f.getAmount())));
+				if(f.getPayMethodType().equals(PayMethodType.BANK_TRANSFER)){
+					dpct.setMedio("01");
+				} else if(f.getPayMethodType().equals(PayMethodType.CHEQUE)){
+					dpct.setMedio("02");
+				} else dpct.setMedio("04");
+				ct.getCobro().add(dpct);
+			});
+			
+			cobros.setCobros(ct);
+			IDFacturaExpedidaBCType f = new IDFacturaExpedidaBCType();
+			f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(i.getIssueDate(), "dd-MM-yyyy"));
+			net.aonsolutions.aeat.sii.IDFacturaExpedidaBCType.IDEmisorFactura emisor = new net.aonsolutions.aeat.sii.IDFacturaExpedidaBCType.IDEmisorFactura();
+			emisor.setNIF(company.getDocument());
+			f.setIDEmisorFactura(emisor);
+			f.setNumSerieFacturaEmisor(i.getReferenceCode());
+			cobros.setIDFactura(f);
+			
+			suministro.getRegistroLRCobros().add(cobros);
+		});
 
 		return suministro;
 	}
@@ -635,6 +643,10 @@ public class SIIBuilt {
 			
 			// TIPO FACTURA
 			frt.setTipoFactura(ClaveTipoFacturaType.F_1);//TODO De momento a piñon fijo!!!
+			if(vat.isIntracommunity()){
+				frt.setTipoFactura(ClaveTipoFacturaType.F_5);
+			}
+				
 			if(vat.isRectification()){
 				frt.setTipoFactura(ClaveTipoFacturaType.R_1); // TODO R_1 || R_2 || R_3 || R_4 || R_4.  De momento a piñon fijo!!!
 				frt.setTipoRectificativa("I"); //TODO  S (por sustitucion) || I (por diferencia). De momento a piñon fijo!!!
@@ -715,18 +727,31 @@ public class SIIBuilt {
 		return suministro;
 	}
 		
-	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company, LinkedList<VatContext> vatList) {
+	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company,LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList) {
 		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
 		baja.setCabecera(cabeceraBaja(company));
 		
-		vatList.stream().forEach(vat -> {
+		invoiceList.stream().forEach(i -> {
+			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(i)).findFirst().orElse(new VatContext());
+
 			LRBajaRecibidasType factura = new LRBajaRecibidasType();
 			
 			IDFacturaRecibidaNombreBCType idFactura = new IDFacturaRecibidaNombreBCType();
 			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
 			idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
 			net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
-			emisor.setNIF(company.getDocument());
+		
+			emisor.setNombreRazon(vat.getRegistryName());
+			if(vat.getRegistryDocumentCountry().equals(Country.ES)){
+				emisor.setNIF(vat.getRegistryDocument());
+			} else {
+				IDOtroType otro = new IDOtroType();
+				otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+				otro.setID(vat.getRegistryDocument());
+				otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
+				emisor.setIDOtro(otro);
+			}
+			
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 			
@@ -769,35 +794,50 @@ public class SIIBuilt {
 	 * 
 	 * @param company
 	 */
-	protected SuministroLRPagosRecibidas suministroFacturasRecibidasPagos(Company company) {
+	protected SuministroLRPagosRecibidas suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList) {
 		SuministroLRPagosRecibidas suministro = new SuministroLRPagosRecibidas();
 		
 		// CABECERA
 		suministro.setCabecera(cabeceraCobrosPagos(company));	
-			
+		
 		// FOR PAGOS
+		
+		invoiceList.stream().forEach(i -> {
+			LRPagosEmitidasType pagos = new LRPagosEmitidasType();
+			PagosType pt = new PagosType();
 			
-		// PAGOS
-		LRPagosEmitidasType pagos = new LRPagosEmitidasType();
-		PagosType pt = new PagosType();
-		DatosPagoCobroType dpct = new DatosPagoCobroType();
-		dpct.setCuentaOMedio("");
-		dpct.setFecha("");
-		dpct.setImporte("");
-		dpct.setMedio("");
-		pt.getPago().add(dpct);
-		pagos.setPagos(pt);
-		
-		// ID FACTURA
-		IDFacturaRecibidaNombreBCType f = new IDFacturaRecibidaNombreBCType();
-		f.setFechaExpedicionFacturaEmisor("");
-		net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
-		emisor.setNIF(company.getDocument());
-		f.setIDEmisorFactura(emisor);
-		f.setNumSerieFacturaEmisor("");
-		pagos.setIDFactura(f);
-		
-		suministro.getRegistroLRPagos().add(pagos);
+			AON.getFinanceStream(domain.getName(), domain.getId(), login, f -> f.getInvoiceProperty().eq(i.getId())).forEach(f -> {
+				DatosPagoCobroType dpct = new DatosPagoCobroType();
+				dpct.setFecha(AonDateUtils.format(f.getDueDate(), "dd-MM-yyyy"));
+				dpct.setImporte(Double.toString(AonMathUtils.round(f.getAmount())));
+				if(f.getPayMethodType().equals(PayMethodType.BANK_TRANSFER)){
+					dpct.setMedio("01");
+				} else if(f.getPayMethodType().equals(PayMethodType.CHEQUE)){
+					dpct.setMedio("02");
+				} else dpct.setMedio("04");
+				pt.getPago().add(dpct);
+			});
+			pagos.setPagos(pt);
+			IDFacturaRecibidaNombreBCType f = new IDFacturaRecibidaNombreBCType();
+			f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(i.getIssueDate(), "dd-MM-yyyy"));
+			
+			net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new net.aonsolutions.aeat.sii.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
+			emisor.setNombreRazon(i.getRegistryName());
+			if(i.getRegistryDocumentCountry().equals(Country.ES)){
+				emisor.setNIF(i.getRegistryDocument());
+			} else {
+				IDOtroType otro = new IDOtroType();
+				otro.setCodigoPais(CountryType2.valueOf(i.getRegistryDocumentCountry().getIso2()));
+				otro.setID(i.getRegistryDocument());
+				otro.setIDType(IDType.valueOf(i.getRegistryDocumentType()).getName());
+				emisor.setIDOtro(otro);
+			}
+			f.setIDEmisorFactura(emisor);
+			f.setNumSerieFacturaEmisor(i.getReferenceCode());
+			pagos.setIDFactura(f);
+			
+			suministro.getRegistroLRPagos().add(pagos);
+		});
 		
 		return suministro;
 	}
@@ -843,8 +883,7 @@ public class SIIBuilt {
 		// BODY
 		invoiceList.stream().forEach(invoice -> {
 			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
-			
-			
+
 			LRBienesInversionType bien = new LRBienesInversionType();
 			
 			bien.setPeriodoImpositivo(periodoImpositivo(vat, true));
@@ -865,7 +904,7 @@ public class SIIBuilt {
 			
 			BienDeInversionType bdit = new BienDeInversionType();
 			bdit.setFechaInicioUtilizacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-			bdit.setIdentificacionBien("ASAD");
+			bdit.setIdentificacionBien("ASAD22");
 			bdit.setProrrataAnualDefinitiva("0.0");
 //			bdit.setRegularizacionAnualDeduccion(""); // OPTIONAL
 //			bdit.setIdentificacionEntrega(""); // OPTIONAL
