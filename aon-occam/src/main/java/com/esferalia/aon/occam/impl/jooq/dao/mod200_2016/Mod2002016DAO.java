@@ -817,7 +817,7 @@ public class Mod2002016DAO  {
 			v = mod200.getVariable(Mod2002016Key.BN621);
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {
-				mod200.setResultType("C");
+				mod200.setResultType("N");
 				mod200.setAmount( 0.0 );
 				mod200.setDevType(null);
 				mod200.setPayType(null);

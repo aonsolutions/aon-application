@@ -16,7 +16,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -61,11 +60,17 @@ public class Page20 extends PageAbs {
 	@UiField
 	RadioButton devTypeR;
 	@UiField
-	RadioButton devTypeT;
+	RadioButton devTypeD;
 	@UiField
-	RadioButton payTypeE;
+	RadioButton devTypeV;
 	@UiField
-	RadioButton payTypeU;	
+	RadioButton payTypeH;
+	@UiField
+	RadioButton payTypeU;
+	@UiField
+	RadioButton payTypeI;
+	@UiField
+	RadioButton payTypeG;
 	@UiField
 	CheckBox zeroQuota;
 	@UiField
@@ -180,11 +185,14 @@ public class Page20 extends PageAbs {
 	
 	private void dumpPay(Mod2002016 mod200) {
 		devTypeR.setValue(false);
-		devTypeT.setValue(false);
+		devTypeD.setValue(false);
+		devTypeV.setValue(false);
 		amountD.setValue(0.0);
 		ibanD.setValue(null);
-		payTypeE.setValue(false);
+		payTypeH.setValue(false);
 		payTypeU.setValue(false);
+		payTypeI.setValue(false);
+		payTypeG.setValue(false);
 		amountP.setValue(0.0);
 		ibanP.setValue(null);
 		zeroQuota.setValue(false);
@@ -198,7 +206,8 @@ public class Page20 extends PageAbs {
 			zeroPanel.setVisible(false);
 			devPanel.setVisible(true);
 			devTypeR.setValue("R".equals(mod200.getDevType()));
-			devTypeT.setValue("D".equals(mod200.getDevType()));
+			devTypeD.setValue("D".equals(mod200.getDevType()));
+			devTypeV.setValue("V".equals(mod200.getDevType()));
 			ibanD.setValue(mod200.getIban(),mod200.getBic());
 			amountD.setValue( mod200.getAmount() );	
 		} else if ("I".equals( mod200.getResultType()) ) {
@@ -206,10 +215,12 @@ public class Page20 extends PageAbs {
 			zeroPanel.setVisible(false);
 			devPanel.setVisible(false);
 			payTypeU.setValue("U".equals(mod200.getPayType()));
-			payTypeE.setValue("H".equals(mod200.getPayType()));
+			payTypeH.setValue("H".equals(mod200.getPayType()));
+			payTypeI.setValue("I".equals(mod200.getPayType()));
+			payTypeG.setValue("G".equals(mod200.getPayType()));
 			ibanP.setValue(mod200.getIban(),mod200.getBic());
 			amountP.setValue( mod200.getAmount() );	
-		} else if ("C".equals( mod200.getResultType()) ) {
+		} else if ("N".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(false);
 			zeroPanel.setVisible(true);
 			devPanel.setVisible(false);
@@ -217,50 +228,48 @@ public class Page20 extends PageAbs {
 		}
 	}
 
-	public void populate(Mod2002016Object mod200Object) {
-		
-		DoubleVariable2016 dv =  mod200Object.getMod200().getVariable(Mod2002016Key.BN621);
+	@Override
+	public void populate() {
+		DoubleVariable2016 dv =  callback.getMod200Object().getMod200().getVariable(Mod2002016Key.BN621);
 		Double value = dv==null?0.0:dv.getValue();
 		if (AonMathUtils.round(value) == 0.0) {
-			mod200Object.getMod200().setAmount(AonMathUtils.round(value));
-			mod200Object.getMod200().setResultType("C");
-			mod200Object.getMod200().setDevType(null);	
-			mod200Object.getMod200().setPayType(null);
-			mod200Object.getMod200().setIban(null);
-			mod200Object.getMod200().setBic(null);
+			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
+			callback.getMod200Object().getMod200().setResultType("N");
+			callback.getMod200Object().getMod200().setDevType(null);	
+			callback.getMod200Object().getMod200().setPayType(null);
+			callback.getMod200Object().getMod200().setIban(null);
+			callback.getMod200Object().getMod200().setBic(null);
 		} else if (AonMathUtils.round(value) < 0.0) {
-			mod200Object.getMod200().setAmount(AonMathUtils.round(value * -1));
-			mod200Object.getMod200().setResultType("D");
-			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"D");
-			mod200Object.getMod200().setPayType(null);
-			mod200Object.getMod200().setIban(ibanD.getValue());
-			mod200Object.getMod200().setBic(ibanD.getBic());
+			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value * -1));
+			callback.getMod200Object().getMod200().setResultType("D");
+			if (devTypeR.getValue()) {
+				callback.getMod200Object().getMod200().setDevType("R");
+			}else if (devTypeV.getValue()) {
+				callback.getMod200Object().getMod200().setDevType("V");
+			} else {
+				callback.getMod200Object().getMod200().setDevType("D");	
+			}
+			callback.getMod200Object().getMod200().setPayType(null);
+			callback.getMod200Object().getMod200().setIban(ibanD.getValue());
+			callback.getMod200Object().getMod200().setBic(ibanD.getBic());
 		} else {
-			mod200Object.getMod200().setAmount(AonMathUtils.round(value));
-			mod200Object.getMod200().setResultType("I");
-			mod200Object.getMod200().setDevType(null);
-			mod200Object.getMod200().setPayType(payTypeE.getValue()?"H":"U");
-			mod200Object.getMod200().setIban(ibanP.getValue());
-			mod200Object.getMod200().setBic(ibanP.getBic());
+			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
+			callback.getMod200Object().getMod200().setResultType("I");
+			callback.getMod200Object().getMod200().setDevType(null);
+			if (payTypeH.getValue()) {
+				callback.getMod200Object().getMod200().setPayType("H");
+			} else if (payTypeI.getValue()) {
+				callback.getMod200Object().getMod200().setPayType("I");
+			} else if (payTypeG.getValue()) {
+				callback.getMod200Object().getMod200().setPayType("G");
+			} else {
+				callback.getMod200Object().getMod200().setPayType("U");	
+			}
+			callback.getMod200Object().getMod200().setIban(ibanP.getValue());
+			callback.getMod200Object().getMod200().setBic(ibanP.getBic());
 		}
 	}
 
-	@UiHandler("devTypeR")
-	void onDevTypeRClick(ClickEvent event) {
-	}
-	@UiHandler("devTypeT")
-	void onDevTypeTClick(ClickEvent event) {
-	}
-	@UiHandler("payTypeE")
-	void onPayTypeEClick(ClickEvent event) {
-	}
-	@UiHandler("payTypeU")
-	void onPayTypeUClick(ClickEvent event) {
-	}
-	@UiHandler("zeroQuota")
-	void onZeroQuota(ClickEvent event) {
-	}
-	
 	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
 		@Override
 		public void requestSuggestions(final Request request,
@@ -313,7 +322,4 @@ public class Page20 extends PageAbs {
 		}
 	}
 
-	@Override
-	protected void populate() {}
-	
 }

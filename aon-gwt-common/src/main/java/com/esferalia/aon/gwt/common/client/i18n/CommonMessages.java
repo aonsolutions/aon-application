@@ -2025,6 +2025,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Devoluci\u00F3n por transferencia")
 	String payBackTransfer();
 	
+	@DefaultMessage("Anotaci\u00F3n de devoluci\u00F3n por en CCT")
+	String payBackCCT();
+
+	@DefaultMessage("Anotaci\u00F3n de ingreso en CCT")
+	String payCCT();
+
+	@DefaultMessage("Adeudo en cuenta")
+	String payInAccount();
+
 	@DefaultMessage("Forma de pago")
 	String paymentType();
 	
