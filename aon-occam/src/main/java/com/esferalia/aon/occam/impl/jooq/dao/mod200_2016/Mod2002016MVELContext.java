@@ -59,6 +59,7 @@ import java.util.Stack;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
@@ -667,6 +668,29 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 			return round( x ); 
 		}
 		return 0.0;
+	}
+	
+	public double computeUT1330() throws AonCoreException {
+		
+		// La clave UT1330 será igual a la LQ1330 
+		if (isChecked(Mod2002016Key.C0013) || isChecked(Mod2002016Key.C0014))
+		{
+			double x = roundKey(Mod2002016Key.LQ1330);
+			
+			// Si cambia el valor entonces actualizar tambien la base de la relación de 
+			// socios, que se calcula en funcion de la casilla 1330
+			if (x != roundKey(Mod2002016Key.UT1330))
+			{		
+				if (mod200.getUteParticipations() != null && mod200.getUteParticipations().size() > 0) {
+					for (UteParticipation p : mod200.getUteParticipations()) {
+						p.setBase(round(x*p.getPercent()/100));						
+					}					 
+				}
+			}
+			
+			return round( x );
+		}
+		else return 0.0;
 	}
 	
 	// ***********************************************************************

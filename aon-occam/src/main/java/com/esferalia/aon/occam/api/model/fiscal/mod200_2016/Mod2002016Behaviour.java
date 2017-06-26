@@ -810,6 +810,13 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC925,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC996,new Boolean[]{FALSE,TRUE});
 	}
+	
+	static {
+		// Agrupaciones de interés económico y UTES
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.UT500,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.UT552,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.UT1330,new Boolean[]{FALSE,TRUE});		
+	}
 
 }
 
