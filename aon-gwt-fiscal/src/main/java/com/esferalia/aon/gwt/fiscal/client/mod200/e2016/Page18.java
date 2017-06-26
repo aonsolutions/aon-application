@@ -14,12 +14,16 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200Pag
 import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.NumberCell;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -392,6 +396,12 @@ public class Page18 extends PageAbs {
 		    	try {
 		    		double p = Double.parseDouble(value);
 		    		participationDataProvider.getList().get(index).setPercent(p);
+		    		// Recalcular Base según el porcentaje indicado
+		    		double c1330 = callback.getMod200Object().getMod200().getVariable(Mod2002016Key.UT1330).getValue();
+		    		double base = AonMathUtils.round(c1330 * p / 100); 
+		    		participationDataProvider.getList().get(index).setBase(base);
+		    		participationTable.redraw();
+		    		
 		    	} catch (NumberFormatException e) {
 		    		MessageDialog.error("Porcentaje no v\u00E1lido.");
 		    	}
@@ -403,27 +413,28 @@ public class Page18 extends PageAbs {
 	}
 
 	private void addBaseColumn() {
-		SizableTextInputCell input = new SizableTextInputCell(8);
-		Column<UteParticipation, String> nominalValueColumn = new Column<UteParticipation, String>(
-				input) {
+		//SizableTextInputCell input = new SizableTextInputCell(8);
+		TextCell input = new TextCell(); // Solo mostrar datos, no permite modificar		
+		Column<UteParticipation, String> nominalValueColumn = new Column<UteParticipation, String>(input) {
 			@Override
 			public String getValue(UteParticipation ca) {
 				return Double.toString( ca.getBase() );
 			}
 		};
-		nominalValueColumn.setFieldUpdater(new FieldUpdater<UteParticipation, String>() {
-		    public void update(int index, UteParticipation cp, String value) {
-		    	try {
-		    		double p = Double.parseDouble(value);
-		    		participationDataProvider.getList().get(index).setBase(p);
-		    	} catch (NumberFormatException e) {
-		    		MessageDialog.error("N\u00FAmero no v\u00E1lido.");
-		    	}
-		    }
-		});		
+		// No se pone por que no es un campo de edición, es calculado
+//		nominalValueColumn.setFieldUpdater(new FieldUpdater<UteParticipation, String>() {
+//		    public void update(int index, UteParticipation cp, String value) {
+//		    	try {
+//		    		double p = Double.parseDouble(value);
+//		    		participationDataProvider.getList().get(index).setBase(p);
+//		    	} catch (NumberFormatException e) {
+//		    		MessageDialog.error("N\u00FAmero no v\u00E1lido.");
+//		    	}
+//		    }
+//		});		
 		participationTable.addColumn(nominalValueColumn, AON.MSG.nominalValue());
 		participationTable.setColumnWidth(nominalValueColumn, 100, Unit.PX);
-		nominalValueColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+		nominalValueColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());		
 	}
 
 	private void addRemoveColumn() {
@@ -712,7 +723,7 @@ public class Page18 extends PageAbs {
 		});		
 		baseTable.addColumn(baseColumn, AON.MSG.deductionBase());
 		baseTable.setColumnWidth(baseColumn, 200, Unit.PX);
-		baseColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+		baseColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());		
 	}
 	
 	private void addPercentBaseColumn() {
@@ -735,7 +746,7 @@ public class Page18 extends PageAbs {
 		});		
 		baseTable.addColumn(percentColumn, "%");
 		baseTable.setColumnWidth(percentColumn, 200, Unit.PX);
-		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());
+		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextLeft());		
 	}
 	
 	private void addRemoveBaseColumn() {

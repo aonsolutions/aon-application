@@ -265,6 +265,10 @@ public class XMLtoMod2002016 {
 	}
 	
 	private static void fillPagina09(MOD2002016 mod, Mod2002016 mod200) {
+		
+		// A partir del 2016, no tiene por que venir el ECPN pues es voluntario
+		if (mod.getNormal().getCambiosPN()==null) return;
+		
 		TipoPagina09 pag = mod.getNormal().getCambiosPN().getPagina09();
 		if (pag==null) return;
 		addVariable(mod200,Mod2002016Key.T0336, pag.getT00336());
@@ -287,6 +291,10 @@ public class XMLtoMod2002016 {
 	}
 
 	private static void fillPagina10(MOD2002016 mod, Mod2002016 mod200) {
+		
+		// A partir del 2016, no tiene por que venir el ECPN pues es voluntario
+		if (mod.getNormal().getCambiosPN()==null) return;
+		
 		TipoPagina10 pag = mod.getNormal().getCambiosPN().getPagina10();
 		if (pag==null) return;
 		addVariable(mod200,Mod2002016Key.TC380, pag.getT00380());
@@ -411,6 +419,10 @@ public class XMLtoMod2002016 {
 	}
 
 	private static void fillPagina11(MOD2002016 mod, Mod2002016 mod200) {
+
+		// A partir del 2016, no tiene por que venir el ECPN pues es voluntario
+		if (mod.getNormal().getCambiosPN()==null) return;
+
 		TipoPagina11 pag = mod.getNormal().getCambiosPN().getPagina11();
 		if (pag==null) return;
 		addVariable(mod200,Mod2002016Key.TC387, pag.getT00387());
