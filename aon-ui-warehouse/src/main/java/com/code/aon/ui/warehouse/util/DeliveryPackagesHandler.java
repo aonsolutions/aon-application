@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +27,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.Pair;
 
 public class DeliveryPackagesHandler implements Serializable {
 	
@@ -296,19 +296,19 @@ public class DeliveryPackagesHandler implements Serializable {
 	public void onPackagesContainerLineChange(ActionEvent event) {
 		if(getPackagesContainerModel().isRowAvailable()){
 			Pair<DeliveryDetail, DeliveryDetail> pair = (Pair<DeliveryDetail, DeliveryDetail>) getPackagesContainerModel().getRowData();
-			DeliveryDetail first = pair.getFirst();
-			DeliveryDetail second = pair.getSecond();
-			if(first.getLine()!=null){
-				DeliveryDetail detail = (DeliveryDetail) detailList.get(first.getLine()-1);
-				first.setId(detail.getId());
-				first.setDescription(detail.getDescription());
-				first.setQuantity(detail.getQuantity());
+			DeliveryDetail left = pair.getLeft();
+			DeliveryDetail right = pair.getRight();
+			if(left.getLine()!=null){
+				DeliveryDetail detail = (DeliveryDetail) detailList.get(left.getLine()-1);
+				left.setId(detail.getId());
+				left.setDescription(detail.getDescription());
+				left.setQuantity(detail.getQuantity());
 			}
-			if(second.getLine()!=null){
-				DeliveryDetail detail = (DeliveryDetail) detailList.get(second.getLine()-1);
-				second.setId(detail.getId());
-				second.setDescription(detail.getDescription());
-				second.setQuantity(detail.getQuantity());
+			if(right.getLine()!=null){
+				DeliveryDetail detail = (DeliveryDetail) detailList.get(right.getLine()-1);
+				right.setId(detail.getId());
+				right.setDescription(detail.getDescription());
+				right.setQuantity(detail.getQuantity());
 			}
 		}
 	}

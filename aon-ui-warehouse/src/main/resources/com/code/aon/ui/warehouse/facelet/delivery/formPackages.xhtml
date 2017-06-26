@@ -38,11 +38,11 @@
 			</aon:column>
 
 			<aon:column styleClass="aon-width-50">
-				<aon:inputText value="#{pair.first.line}"
+				<aon:inputText value="#{pair.left.line}"
 					required="true" disabled="true" size="2" />
 				<!-- TODO: implement CRUD operations -->
 				<!--  
-				<rich:inputNumberSpinner value="#{pair.first.line}"
+				<rich:inputNumberSpinner value="#{pair.left.line}"
 					required="true" disabled="true"
 					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
 					inputStyle="width:20px" >
@@ -56,10 +56,10 @@
 			
 			<aon:column>
 				<aon:outputText value=" (" />
-				<aon:outputText value="#{pair.first.quantity}" >
+				<aon:outputText value="#{pair.left.quantity}" >
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:outputText value=" x #{pair.first.description}) " />
+				<aon:outputText value=" x #{pair.left.description}) " />
 			</aon:column>
 
 			<aon:column styleClass="aon-nowrap">
@@ -67,11 +67,11 @@
 			</aon:column>
 
 			<aon:column styleClass="aon-width-50">
-				<aon:inputText value="#{pair.second.line}"
+				<aon:inputText value="#{pair.right.line}"
 					required="true" disabled="true" size="2" />
 				<!-- TODO: implement CRUD operations -->
 				<!--  
-				<rich:inputNumberSpinner value="#{pair.second.line}"
+				<rich:inputNumberSpinner value="#{pair.right.line}"
 					required="true" disabled="true"
 					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
 					inputStyle="width:20px" >
@@ -85,10 +85,10 @@
 			
 			<aon:column>
 				<aon:outputText value=" (" />
-				<aon:outputText value="#{pair.second.quantity}" >
+				<aon:outputText value="#{pair.right.quantity}" >
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:outputText value=" x #{pair.second.description}) " />
+				<aon:outputText value=" x #{pair.right.description}) " />
 			</aon:column>
 		</aon:dataTable>
 
@@ -108,11 +108,11 @@
 			</aon:column>
 
 			<aon:column styleClass="aon-width-50">
-				<aon:inputText value="#{pair.first.line}"
+				<aon:inputText value="#{pair.left.line}"
 					required="true" disabled="true" size="2" />
 				<!-- TODO: implement CRUD operations -->
 				<!--  
-				<rich:inputNumberSpinner value="#{pair.first.line}"
+				<rich:inputNumberSpinner value="#{pair.left.line}"
 					required="true" disabled="true"
 					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
 					inputStyle="width:20px"
@@ -123,10 +123,10 @@
 			
 			<aon:column>
 				<aon:outputText value=" (" />
-				<aon:outputText value="#{pair.first.quantity}" >
+				<aon:outputText value="#{pair.left.quantity}" >
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:outputText value=" x #{pair.first.description}) " />
+				<aon:outputText value=" x #{pair.left.description}) " />
 			</aon:column>
 
 			<aon:column styleClass="aon-nowrap">
@@ -134,11 +134,11 @@
 			</aon:column>
 
 			<aon:column styleClass="aon-width-50">
-				<aon:inputText value="#{pair.second.line}"
+				<aon:inputText value="#{pair.right.line}"
 					required="true" disabled="true" size="2" />
 				<!-- TODO: implement CRUD operations -->
 				<!--  
-				<rich:inputNumberSpinner value="#{pair.second.line}"
+				<rich:inputNumberSpinner value="#{pair.right.line}"
 					required="true" disabled="true"
 					minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
 					inputStyle="width:20px"
@@ -149,10 +149,10 @@
 			
 			<aon:column>
 				<aon:outputText value=" (" />
-				<aon:outputText value="#{pair.second.quantity}" >
+				<aon:outputText value="#{pair.right.quantity}" >
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:outputText value=" x #{pair.second.description}) " />
+				<aon:outputText value=" x #{pair.right.description}) " />
 			</aon:column>
 		</aon:dataTable>
 
