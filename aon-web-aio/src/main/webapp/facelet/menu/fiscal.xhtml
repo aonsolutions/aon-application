@@ -332,6 +332,25 @@
 											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_193_module}" />
 										</aon:commandLink>
 									</aon:div>
+									
+									<aon:if test="#{domainSwitcher.betaDomain}">
+										<aon:div>
+											<aon:commandLink id="gwt_sii" action="gwt_sii" 
+												title="SII - Suministro Inmediato de Información" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="SII"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="SII"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="SII"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="SII"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="SII"/>
+												<aon:outputText styleClass="aon-menu-fiscal-label"
+													value="&#160;" />
+												<aon:outputText styleClass="aon-icon-beta-text"
+													style="margin-left: 5px; padding-left: 20px;" 
+													value="SII - Suministro Inmediato de Información" />
+												
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>		
 								</aon:if>
 						</aon:div>
 						</aon:panelGrid>
@@ -384,17 +403,7 @@
 											<aon:outputText styleClass="aon-fiscal-link-box" value="349" />
 											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_349_module}" />
 										</aon:commandLink>
-										
-										<aon:if test="#{domainSwitcher.betaDomain}">
-										<aon:commandLink id="gwt_sii"
-												action="gwt_sii"
-												title="SII - Suministro Inmediato de Información">
-												<aon:outputText
-													styleClass="aon-fiscal-link-label aon-icon-beta-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="SII - Suministro Inmediato de Información" />
-										</aon:commandLink>
-										</aon:if>										
+																		
 										<aon:outputText value="&#160;" />
 									</aon:if>
 					    </h:panelGrid>
