@@ -1,5 +1,7 @@
 package com.esferalia.aon.file.seres.util;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,10 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.google.common.collect.Iterables;
 
 public class DeliveryPackages {
 
@@ -56,8 +62,62 @@ public class DeliveryPackages {
 		return null;
 	}
 	
+	public static Collection<Integer> loadLevel1List(String data) {
+		Map<Integer, List<Integer>> containerMap = loadContainerMap(data);
+		Map<Integer, List<Integer>> linesMap = loadLinesMap(data);
+		Collection<Integer> c = CollectionUtils.subtract(linesMap.keySet(), containerMap.keySet());
+		containerMap.values().forEach( list -> {
+			c.removeAll(CollectionUtils.subtract(list, c));
+		});
+		return CollectionUtils.union(containerMap.keySet(), c);
+	}
 	
-	public static Map<Integer, List<Integer>> loadPackagesContainerMap(String data) {
+	public static Map<Integer, List<Integer>> loadLevel2Map(String data) {
+		Collection<Integer> containerList =  loadLevel1List(data);
+		Map<Integer, List<Integer>> containerMap = loadContainerMap(data);
+		Map<Integer, List<Integer>> linesMap = loadLinesMap(data);
+		
+		
+		Map<Integer, List<Integer>> level2Map = new LinkedHashMap<>();
+		containerList.forEach(id->{			
+			if(containerMap.containsKey(id)){
+				level2Map.put(id, containerMap.get(id));
+			} else if(linesMap.containsKey(id)){
+				level2Map.put(id, linesMap.get(id));
+			} else {
+				System.out.println("ERROR! package-id not found");
+			}
+		});
+		return level2Map;
+	}
+	
+	public static Map<Integer, List<Integer>> loadLevel3Map(String data) {
+		Map<Integer, List<Integer>> containerMap = loadContainerMap(data);
+		Map<Integer, List<Integer>> linesMap = loadLinesMap(data);
+		
+		
+//		containerMap.keySet().forEach(key->{
+//			linesMap.remove(key);
+//		});
+//		containerMap.values().forEach( list -> {
+//			list.forEach(id->{
+//				linesMap.remove(id);	
+//			});
+//		});
+//		return linesMap;
+		
+		Map<Integer, List<Integer>> level3Map = new LinkedHashMap<>();
+		containerMap.keySet().forEach(key->{
+			containerMap.get(key).forEach( id -> {
+				if(linesMap.containsKey(key)){
+					level3Map.put(id, linesMap.get(key));
+				}
+			});
+		});
+		return level3Map;
+	}
+	
+	public static Map<Integer, List<Integer>> loadContainerMap(String data) {
 		String regex = "\\[(ENV=\\d{1,3});(CONT=\\d{1,3})\\]";
 		String keyPrefix = "CONT=", valuePrefix = "ENV=";
 		int keyGroup = 2, valueGroup = 1;
@@ -65,7 +125,7 @@ public class DeliveryPackages {
 				regex, keyPrefix, valuePrefix, keyGroup, valueGroup);
 	}
 	
-	public static Map<Integer, List<Integer>> loadLinesPackageMap(String data) {
+	public static Map<Integer, List<Integer>> loadLinesMap(String data) {
 		String regex = "\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]";
 		String keyPrefix = "ENV=", valuePrefix = "LIN=";
 		int keyGroup = 1, valueGroup = 2;

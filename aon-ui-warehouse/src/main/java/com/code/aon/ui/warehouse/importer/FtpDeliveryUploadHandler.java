@@ -232,7 +232,15 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			byte[] attachData = DeliveryPackages.obtainPackageDataAttach(
 					AonUtil.getDomainName(), delivery.getDomain(),
 					AonUtil.getRemoteUser(), delivery.getId()).getData();
-			if(attachData==null || "".equals(attachData)){				
+			if(attachData==null || "".equals(attachData)){
+				String remarks = delivery.getRemarks();
+				if(remarks.replaceAll("\r|\n", "").matches(".*\\[ENV=.*\\].*")){
+					remarks = remarks.substring(remarks.indexOf("["));
+					remarks = remarks.substring(0, remarks.lastIndexOf("]")+1);
+				}
+				attachData = remarks.getBytes();
+			}
+			if(attachData==null || "".equals(attachData)){
 				String msg = "Secuencia de embalajes NO definida";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -240,7 +248,7 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			
 			// write file
 			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
-			output = writer.createFile(delivery, attachData.toString(), companyEdiCode,
+			output = writer.createFile(delivery, new String(attachData), companyEdiCode,
 					customerEdiCode, deliveryPointEdiCode, customerPackage);
 			return output;
 		} catch (IOException e) {

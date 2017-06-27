@@ -29,7 +29,7 @@
 			<aon:outputText value="Contenedores" />
 		</f:facet>
 
-		<aon:dataTable id="packagesContainerData" var="pair" rows="10"
+		<aon:dataTable id="packagesContainerData" var="pair" 
 			rendered="#{delivery.packagesHandler.packagesContainerModel.rowCount > 0}"
 			value="#{delivery.packagesHandler.packagesContainerModel}" >
 
@@ -99,7 +99,7 @@
 		<f:facet name="header">
 			<aon:outputText value="Envases" />
 		</f:facet>
-		<aon:dataTable id="linesPackageData" var="pair" rows="10"
+		<aon:dataTable id="linesPackageData" var="pair" 
 			rendered="#{delivery.packagesHandler.linesPackageModel.rowCount > 0}"
 			value="#{delivery.packagesHandler.linesPackageModel}" >
 
