@@ -185,45 +185,53 @@ public class Mod2002016DAO  {
 	};
 
 	public static Mod2002016 save(AONContext ctx, Mod2002016 mod200) {
-		if (mod200.getPeriodType() == 1) {
-			mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2016));
-			mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2016));
-		}
-		if ( AonStringUtils.length(mod200.getEnterpriseDocument()) > 9)
-			throw new AonCoreException("El documento del presentador no puede superar 9 caracteres.");
-		if ( AonStringUtils.length(mod200.getEnterpriseName()) > 45)
-			throw new AonCoreException("La raz\u00F3n social del presentador no puede superar 45 caracteres.");
-		if ( AonStringUtils.length(mod200.getEnterprisePhone1()) > 9)
-			throw new AonCoreException("El teléfono 1 del presentador no puede superar 9 caracteres.");
-		if ( AonStringUtils.length(mod200.getEnterprisePhone2()) > 9)
-			throw new AonCoreException("El teléfono 2 del presentador no puede superar 9 caracteres.");
-		if ( AonStringUtils.length(mod200.getReceipt()) > 13)
-			throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n no puede superar 13 caracteres.");
-		if ( AonStringUtils.length(mod200.getComplementaryReceipt()) > 13)
-			throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n complementaria no puede superar 13 caracteres.");
-		if ( AonStringUtils.length(mod200.getFiscalGroup()) > 9)
-			throw new AonCoreException("El N\u00FAmero del grupo fiscal no puede superar 9 caracteres."); 			
-		if ( AonStringUtils.length(mod200.getDominantDocument()) > 9)
-			throw new AonCoreException("El NIF de la sociendad dominante no puede superar 9 caracteres.");
-		if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getDocument()) > 9)
-			throw new AonCoreException("El NIF del secretario no puede superar 9 caracteres.");
-		if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getName()) > 25) 
-			throw new AonCoreException("El nombre del secretario no puede superar 9 caracteres.");
-		if ( AonStringUtils.length(mod200.getNrsAnexoIII()) > 30) 
-			throw new AonCoreException("Documentaci\u00F3n presentada por el Anexo III (Ajustes y deducciones)");
-		if ( AonStringUtils.length(mod200.getNrsAnexoIV()) > 30) 
-			throw new AonCoreException("Documentaci\u00F3n presentada por el Anexo IV (Personal investigador)");
-		if ( AonStringUtils.length(mod200.getNrsAnexoV()) > 30)
-			throw new AonCoreException("Documento normalizado presentada por el Anexo V");
-		if ( AonStringUtils.length(mod200.getJustCanarias()) > 30)
-			throw new AonCoreException("N\u00FAmero de justificante identificativo de la declaraci\u00F3n informativa de ayudas R\u00E9gimen Econ\u00F3mico y Fiscal de Canarias"); 
-		if ( AonStringUtils.length(mod200.getJustActivos()) > 30)
-			throw new AonCoreException("N\u00FAmero de justificante identificativo autoliquidaci\u00F3n de la prestaci\u00F3n patrimonial por conversi\u00F3n de activos (DA 13a LIS)");
-		
-		if (mod200.getId() == null) {
-			return insert(ctx, mod200);
-		} else {
-			return update(ctx, mod200);
+		try {
+			ctx.log().info("------ [START] SAVE MOD 200");
+			if (mod200.getPeriodType() == 1) {
+				mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2016));
+				mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2016));
+			}
+			if ( AonStringUtils.length(mod200.getEnterpriseDocument()) > 9)
+				throw new AonCoreException("El documento del presentador no puede superar 9 caracteres.");
+			if ( AonStringUtils.length(mod200.getEnterpriseName()) > 45)
+				throw new AonCoreException("La raz\u00F3n social del presentador no puede superar 45 caracteres.");
+			if ( AonStringUtils.length(mod200.getEnterprisePhone1()) > 9)
+				throw new AonCoreException("El teléfono 1 del presentador no puede superar 9 caracteres.");
+			if ( AonStringUtils.length(mod200.getEnterprisePhone2()) > 9)
+				throw new AonCoreException("El teléfono 2 del presentador no puede superar 9 caracteres.");
+			if ( AonStringUtils.length(mod200.getReceipt()) > 13)
+				throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n no puede superar 13 caracteres.");
+			if ( AonStringUtils.length(mod200.getComplementaryReceipt()) > 13)
+				throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n complementaria no puede superar 13 caracteres.");
+			if ( AonStringUtils.length(mod200.getFiscalGroup()) > 9)
+				throw new AonCoreException("El N\u00FAmero del grupo fiscal no puede superar 9 caracteres."); 			
+			if ( AonStringUtils.length(mod200.getDominantDocument()) > 9)
+				throw new AonCoreException("El NIF de la sociendad dominante no puede superar 9 caracteres.");
+			if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getDocument()) > 9)
+				throw new AonCoreException("El NIF del secretario no puede superar 9 caracteres.");
+			if ( mod200.getSecretary() != null && AonStringUtils.length(mod200.getSecretary().getName()) > 25) 
+				throw new AonCoreException("El nombre del secretario no puede superar 9 caracteres.");
+			if ( AonStringUtils.length(mod200.getNrsAnexoIII()) > 30) 
+				throw new AonCoreException("Documentaci\u00F3n presentada por el Anexo III (Ajustes y deducciones)");
+			if ( AonStringUtils.length(mod200.getNrsAnexoIV()) > 30) 
+				throw new AonCoreException("Documentaci\u00F3n presentada por el Anexo IV (Personal investigador)");
+			if ( AonStringUtils.length(mod200.getNrsAnexoV()) > 30)
+				throw new AonCoreException("Documento normalizado presentada por el Anexo V");
+			if ( AonStringUtils.length(mod200.getJustCanarias()) > 30)
+				throw new AonCoreException("N\u00FAmero de justificante identificativo de la declaraci\u00F3n informativa de ayudas R\u00E9gimen Econ\u00F3mico y Fiscal de Canarias"); 
+			if ( AonStringUtils.length(mod200.getJustActivos()) > 30)
+				throw new AonCoreException("N\u00FAmero de justificante identificativo autoliquidaci\u00F3n de la prestaci\u00F3n patrimonial por conversi\u00F3n de activos (DA 13a LIS)");
+			Mod2002016 mod = null;
+			if (mod200.getId() == null) {
+				mod = insert(ctx, mod200);
+			} else {
+				mod = update(ctx, mod200);
+			}
+			ctx.log().info("------ [END OK] SAVE MOD 200");
+			return mod;
+		} catch (Throwable t) {
+			ctx.log().info("------ [END FAIL] SAVE MOD 200 [" + t.getMessage() + "]");
+			throw t;
 		}
 	}
 	
@@ -269,6 +277,7 @@ public class Mod2002016DAO  {
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
+		ctx.log().info("------ MOD 200 INSERTED (" + mod200.getId() + ")");
 		insertDetail(ctx, mod200);	
 		insertAdministrator(ctx, mod200);
 		return mod200;
@@ -416,6 +425,7 @@ public class Mod2002016DAO  {
 		}
 		if (!list.isEmpty()) {
 			ctx.getDslContext().batchStore(list).execute();
+			ctx.log().info("\t\t MOD 200 REGISTRY (" + list.size() + " rows)");
 		}
 	}
 
@@ -439,6 +449,7 @@ public class Mod2002016DAO  {
 			}
 		}
 		ctx.getDslContext().batchStore(list).execute();
+		ctx.log().info("\t\t MOD 200 DETAIL (" + list.size() + " rows)");
 	}
 	
 	private static Mod2002016 update(AONContext ctx, Mod2002016 mod200)  {
@@ -480,6 +491,7 @@ public class Mod2002016DAO  {
 		 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
+		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
 		deleteDetail(ctx, mod200.getId());
 		insertDetail(ctx, mod200);
 		deleteRegistry(ctx, mod200.getId());
@@ -488,23 +500,33 @@ public class Mod2002016DAO  {
 	}
 
 	private static void deleteDetail(AONContext ctx, int id ) {
-		ctx.getDslContext().delete(FS_MODEL200_DETAIL)
+		int count = ctx.getDslContext().delete(FS_MODEL200_DETAIL)
 		   .where(FS_MODEL200_DETAIL.FS_MODEL200.equal(id) )
 		   .execute();
+		ctx.log().info("\t\t MOD 200 DETAIL DELETED (" + count + " rows)");
 	}
 
 	private static void deleteRegistry(AONContext ctx, int id ) {
-		ctx.getDslContext().delete(FS_MODEL200_REGISTRY)
+		int count = ctx.getDslContext().delete(FS_MODEL200_REGISTRY)
 		   .where(FS_MODEL200_REGISTRY.FS_MODEL200.equal(id) )
 		   .execute();
+		ctx.log().info("\t\t MOD 200 REGISTRY DELETED (" + count + " rows)");
 	}
 	
 	public static void delete(AONContext ctx, int id )  {
-		deleteRegistry(ctx, id);
-		deleteDetail(ctx, id);
-		ctx.getDslContext().delete(FS_MODEL200)
-			.where(FS_MODEL200.ID.equal(id) )
-			.execute();
+		try {
+			ctx.log().info("------ [START] DELETE MOD 200 ["+id+"]");
+			deleteRegistry(ctx, id);
+			deleteDetail(ctx, id);
+			int count = ctx.getDslContext().delete(FS_MODEL200)
+				.where(FS_MODEL200.ID.equal(id) )
+				.execute();
+			ctx.log().info("------ [END OK] DELETE MOD 200 ["+id+"] (" + count +" rows )");
+		} catch (Throwable t) {
+			ctx.log().info("------ [END FAIL] DELETE MOD 200 [" + t.getMessage() + "]");
+			throw t;
+		}
+			
 	}
 
 	public static Mod2002016 getById(AONContext ctx, int id ) {
@@ -518,12 +540,19 @@ public class Mod2002016DAO  {
 	}
 	
 	public static Mod2002016 createNewMod200(AONContext ctx, int year) {
-		Mod2002016 mod200 = new Mod2002016();
-		mod200.setDomain(ctx.getDomainId());
-		mod200.setYear(year);
-		mod200.setStatus(FiscalStatus.PENDING);
-		initializeNewMod200(ctx,mod200);
-		return mod200;
+		try {
+			ctx.log().info("------ [END OK] INITIALIZE NEW MOD 200");
+			Mod2002016 mod200 = new Mod2002016();
+			mod200.setDomain(ctx.getDomainId());
+			mod200.setYear(year);
+			mod200.setStatus(FiscalStatus.PENDING);
+			initializeNewMod200(ctx,mod200);
+			ctx.log().info("------ [END OK] INITIALIZE NEW MOD 200");
+			return mod200;
+		} catch (Throwable t) {
+			ctx.log().info("------ [END FAIL] INITIALIZE NEW MOD 200 [" + t.getMessage() + "]");
+			throw t;
+		}
 	}
 	
 	public static Mod2002016 getByYear(AONContext ctx, int year) {
@@ -687,66 +716,73 @@ public class Mod2002016DAO  {
 
 	
 	public static Mod2002016 initializeMod200(AONContext ctx, Mod2002016 mod200) {
-		if (!mod200.isInitializedFromLastYear()) {
-			LinkedList<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
-			if ( adms != null && adms.size() > 0 ) {
-				for (CompanyAdministrator ca : adms ) {
-					if (ca.isAdministrator()) {
-						mod200.getAdministrators().add(ca);
-					}
-					if (ca.isShareholder()) {
-						CompanyParticipation cp = new CompanyParticipation();
-						cp.setDocument(ca.getDocument());
-						cp.setName(ca.getName());
-						cp.setProvince(ca.getProvince());
-						cp.setPercent(ca.getPercent());
-						cp.setNominalValue(ca.getNominalValue());
-						cp.setRepresentative(ca.isRepresentative());
-						mod200.getParticipationsIn().add(cp);		
-					}
-					if (ca.isRepresentative()) {
-						LegalRepresentative lr = new LegalRepresentative();
-						lr.setDocument(ca.getDocument());
-						lr.setName(ca.getName());
-						mod200.getRepresentatives().add(lr);		
+		try {
+			ctx.log().info("------ [START] INITIALIZE MOD 200");
+			if (!mod200.isInitializedFromLastYear()) {
+				LinkedList<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
+				if ( adms != null && adms.size() > 0 ) {
+					for (CompanyAdministrator ca : adms ) {
+						if (ca.isAdministrator()) {
+							mod200.getAdministrators().add(ca);
+						}
+						if (ca.isShareholder()) {
+							CompanyParticipation cp = new CompanyParticipation();
+							cp.setDocument(ca.getDocument());
+							cp.setName(ca.getName());
+							cp.setProvince(ca.getProvince());
+							cp.setPercent(ca.getPercent());
+							cp.setNominalValue(ca.getNominalValue());
+							cp.setRepresentative(ca.isRepresentative());
+							mod200.getParticipationsIn().add(cp);		
+						}
+						if (ca.isRepresentative()) {
+							LegalRepresentative lr = new LegalRepresentative();
+							lr.setDocument(ca.getDocument());
+							lr.setName(ca.getName());
+							mod200.getRepresentatives().add(lr);		
+						}
 					}
 				}
 			}
-		}
-
-		
-		Mod2002016MVELContext mvelCtx = new Mod2002016MVELContext( mod200, ACCEPTER );		
-		AccMiningParameters params = getParams(ctx,mod200);
-		if (params != null) {
-			mvelCtx.setAccounts( ACCOUNTING.getAccountBalances(ctx, params) );
-		} else {
-			mvelCtx.setAccounts( new HashMap<String,AccountBalance>() );
-		}
-		mvelCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
-		addCharacters(mvelCtx,mod200);
-		addBalanceCharacters(mvelCtx,mod200);
-		DoubleVariable2016 dv = null;
-		for (Mod2002016Key k : INITIALIZE_EXPRESSION_MAP.keySet()) {
-			String stringKey = k.toString();
-			String expression = INITIALIZE_EXPRESSION_MAP.get(k);
-			mvelCtx.put(stringKey, 0.0 );
-			Object ret = mvelCtx.evaluateExpression(k,expression);
-			mvelCtx.put(stringKey, ret );
-			if (ret instanceof Double ) {
-				dv = new DoubleVariable2016( k );
-				dv.setValue( (Double) ret );
-				mod200.addVariable( dv );
-			} 
-			if (ret instanceof Boolean) {
-				dv = new DoubleVariable2016( k );
-				dv.setValue((Boolean) ret );
-				mod200.addVariable( dv );
+	
+			
+			Mod2002016MVELContext mvelCtx = new Mod2002016MVELContext( mod200, ACCEPTER );		
+			AccMiningParameters params = getParams(ctx,mod200);
+			if (params != null) {
+				mvelCtx.setAccounts( ACCOUNTING.getAccountBalances(ctx, params) );
+			} else {
+				mvelCtx.setAccounts( new HashMap<String,AccountBalance>() );
 			}
-		}		
-		fillMod202(ctx,mod200);
-		calculate(mod200,false);
-		initializeActiveMap(mod200);
-		return mod200;
+			mvelCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
+			addCharacters(mvelCtx,mod200);
+			addBalanceCharacters(mvelCtx,mod200);
+			DoubleVariable2016 dv = null;
+			for (Mod2002016Key k : INITIALIZE_EXPRESSION_MAP.keySet()) {
+				String stringKey = k.toString();
+				String expression = INITIALIZE_EXPRESSION_MAP.get(k);
+				mvelCtx.put(stringKey, 0.0 );
+				Object ret = mvelCtx.evaluateExpression(k,expression);
+				mvelCtx.put(stringKey, ret );
+				if (ret instanceof Double ) {
+					dv = new DoubleVariable2016( k );
+					dv.setValue( (Double) ret );
+					mod200.addVariable( dv );
+				} 
+				if (ret instanceof Boolean) {
+					dv = new DoubleVariable2016( k );
+					dv.setValue((Boolean) ret );
+					mod200.addVariable( dv );
+				}
+			}		
+			fillMod202(ctx,mod200);
+			calculate(mod200,false);
+			initializeActiveMap(mod200);
+			ctx.log().info("------ [END OK] INITIALIZE MOD 200");
+			return mod200;
+		} catch (Throwable t) {
+			ctx.log().info("------ [END FAIL] INITIALIZE MOD 200 [" + t.getMessage() + "]");
+			throw t;
+		}
 	}
 	
 	private static void fillMod202(AONContext ctx,Mod2002016 mod200) {

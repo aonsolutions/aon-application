@@ -42,6 +42,7 @@ public class Mod2002016Validation {
 	
 	private static final String MUST_EQUAL_MSG = "[{0}] {1} y [{2}] {3} deben ser iguales.";
 	private static final String MUST_GREATHER_MSG = "[{0}] {1} debe ser mayor que [{2}] {3} ";
+	private static final String MUST_LESS_MSG = "[{0}] {1} debe ser menor que [{2}] {3} ";
 	private static final String CHECK_SIGN_MSG = "Verifique el signo de la clave: [{0}] {1}";
 	private static final String MUST_POSITIVE_MSG = "El valor de la clave: [{0}] {1} debe ser un n\u00FAmero positivo" ;
 	private static final String COOP_MSG =  "Las sociedades cooperativas tienen unas casillas espec\u00EDficas que se aplican a nivel de cuota, la [00210], [00480], [00408] y [01037]";
@@ -360,7 +361,43 @@ public class Mod2002016Validation {
 		
 		// -- Entidades navieras en regimen  de tributación en función del tonelaje
 		,V_LQ631_1  ( mod -> isLessThan(mod,LQ631,LQ632), new ValidationMessage2016(PAGE09,LQ631,mustGreatherMsg(LQ631,LQ632)))
+
+		// -- Reserva de capitalizacion
+		,V_LQ1140_1  ( mod -> isLessThan(mod,BP1001,LQ1140), new ValidationMessage2016(PAGE09,LQ1140,mustGreatherMsg(BP1001,LQ1140)))
 		
+		// -- Compensación de bases imponibles negativas de períodos anteriores
+		,V_LQ640_1  ( mod -> isGreatherThan(mod,  LQ641  ,LQ640  ), new ValidationMessage2016(PAGE09,LQ641  ,mustLessMsg(LQ641  ,LQ640 )))    
+		,V_LQ643_1  ( mod -> isGreatherThan(mod,  LQ644  ,LQ643  ), new ValidationMessage2016(PAGE09,LQ644  ,mustLessMsg(LQ644  ,LQ643 )))
+		,V_LQ646_1  ( mod -> isGreatherThan(mod,  LQ647  ,LQ646  ), new ValidationMessage2016(PAGE09,LQ647  ,mustLessMsg(LQ647  ,LQ646 )))
+		,V_LQ649_1  ( mod -> isGreatherThan(mod,  LQ650  ,LQ649  ), new ValidationMessage2016(PAGE09,LQ650  ,mustLessMsg(LQ650  ,LQ649 )))
+		,V_LQ652_1  ( mod -> isGreatherThan(mod,  LQ653  ,LQ652  ), new ValidationMessage2016(PAGE09,LQ653  ,mustLessMsg(LQ653  ,LQ652 )))
+		,V_LQ655_1  ( mod -> isGreatherThan(mod,  LQ656  ,LQ655  ), new ValidationMessage2016(PAGE09,LQ656  ,mustLessMsg(LQ656  ,LQ655 )))
+		,V_LQ658_1  ( mod -> isGreatherThan(mod,  LQ659  ,LQ658  ), new ValidationMessage2016(PAGE09,LQ659  ,mustLessMsg(LQ659  ,LQ658 )))
+		,V_LQ661_1  ( mod -> isGreatherThan(mod,  LQ662  ,LQ661  ), new ValidationMessage2016(PAGE09,LQ662  ,mustLessMsg(LQ662  ,LQ661 )))
+		,V_LQ664_1  ( mod -> isGreatherThan(mod,  LQ665  ,LQ664  ), new ValidationMessage2016(PAGE09,LQ665  ,mustLessMsg(LQ665  ,LQ664 )))
+		,V_LQ667_1  ( mod -> isGreatherThan(mod,  LQ668  ,LQ667  ), new ValidationMessage2016(PAGE09,LQ668  ,mustLessMsg(LQ668  ,LQ667 )))
+		,V_LQ743_1  ( mod -> isGreatherThan(mod,  LQ747  ,LQ743  ), new ValidationMessage2016(PAGE09,LQ747  ,mustLessMsg(LQ747  ,LQ743 )))
+		,V_LQ275_1  ( mod -> isGreatherThan(mod,  LQ276  ,LQ275  ), new ValidationMessage2016(PAGE09,LQ276  ,mustLessMsg(LQ276  ,LQ275 )))
+		,V_LQ608_1  ( mod -> isGreatherThan(mod,  LQ609  ,LQ608  ), new ValidationMessage2016(PAGE09,LQ609  ,mustLessMsg(LQ609  ,LQ608 )))
+		,V_LQ704_1  ( mod -> isGreatherThan(mod,  LQ705  ,LQ704  ), new ValidationMessage2016(PAGE09,LQ705  ,mustLessMsg(LQ705  ,LQ704 )))
+		,V_LQ013_1  ( mod -> isGreatherThan(mod,  LQ014  ,LQ013  ), new ValidationMessage2016(PAGE09,LQ014  ,mustLessMsg(LQ014  ,LQ013 )))
+		,V_LQ725_1  ( mod -> isGreatherThan(mod,  LQ726  ,LQ725  ), new ValidationMessage2016(PAGE09,LQ726  ,mustLessMsg(LQ726  ,LQ725 )))
+		,V_LQ534_1  ( mod -> isGreatherThan(mod,  LQ535  ,LQ534  ), new ValidationMessage2016(PAGE09,LQ535  ,mustLessMsg(LQ535  ,LQ534 )))
+		,V_LQ607_1  ( mod -> isGreatherThan(mod,  LQ675  ,LQ607  ), new ValidationMessage2016(PAGE09,LQ675  ,mustLessMsg(LQ675  ,LQ607 )))
+		,V_LQ1045_1 ( mod -> isGreatherThan(mod,  LQ1046 ,LQ1045 ), new ValidationMessage2016(PAGE09,LQ1046 ,mustLessMsg(LQ1046 ,LQ1045)))
+		,V_LQ1519_1 ( mod -> isGreatherThan(mod,  LQ1520 ,LQ1519 ), new ValidationMessage2016(PAGE09,LQ1520 ,mustLessMsg(LQ1520 ,LQ1519)))
+		,V_LQ670_1  ( mod -> isGreatherThan(mod,  LQ547  ,LQ670  ), new ValidationMessage2016(PAGE09,LQ547  ,mustLessMsg(LQ547  ,LQ670 )))
+		
+		// -- Sólo sociedades cooperativas
+		,V_LQ553_1  ( mod -> isCooperativa(mod)  && !AonMathUtils.equals(getValue(mod,LQ552),(getValue(mod,LQ553)+getValue(mod,LQ554))), 
+				new ValidationMessage2016(PAGE09,LQ553,"La suma de las casillas \""+LQ553.getDescription()+"\" y \""+LQ554.getDescription()
+														+"\" debe ser igual que \""+LQ552.getDescription()+"\""))
+
+		// -- Rentas que no limitan la compensación de bases imponibles y cuotas negativas
+		,V_LQ545  ( mod -> isNegative(mod,LQ545) ,new ValidationMessage2016(PAGE09,LQ545 , mustPositiveMsg(LQ545)))
+		,V_LQ593  ( mod -> isNegative(mod,LQ593) ,new ValidationMessage2016(PAGE08,LQ593 , mustPositiveMsg(LQ593)))
+		,V_LQ1509 ( mod -> isNegative(mod,LQ1509),new ValidationMessage2016(PAGE08,LQ1509, mustPositiveMsg(LQ1509)))
+		,V_LQ1510 ( mod -> isNegative(mod,LQ1510),new ValidationMessage2016(PAGE08,LQ1510, mustPositiveMsg(LQ1510)))
 		;		
 		private IValidator validator;
 		private ValidationMessage2016 message;
@@ -476,7 +513,7 @@ public class Mod2002016Validation {
 	
 	// ***************************************************************************************************************
 	// ***************************************************************************************************************
-	// ***************************************************************************************************************
+	// **********************************************************************************************************
 	// ***************************************************************************************************************
 	// ***************************************************************************************************************
 	// ***************************************************************************************************************
@@ -487,8 +524,8 @@ public class Mod2002016Validation {
 	private static final String EQUAL_LESS_MSG = "\"{0}\" debe ser menor o igual que \"{1}\".";
 	private static final String EQUAL_LESS_EXP = "round({0}) <= round({1})";
 
-	private static final String EQUAL_LESS_FACTOR_MSG = "\"{0}\" debe ser menor o igual que el {2} por \"{1}\".";
-	private static final String EQUAL_LESS_FACTOR_EXP = "round({0}) <= round({1} * {2})";
+//	private static final String EQUAL_LESS_FACTOR_MSG = "\"{0}\" debe ser menor o igual que el {2} por \"{1}\".";
+//	private static final String EQUAL_LESS_FACTOR_EXP = "round({0}) <= round({1} * {2})";
 
 	private static final String MUST_POSITIVE_EXP = "round({0}) >= 0.0";
 	
@@ -518,10 +555,11 @@ public class Mod2002016Validation {
 //				,LQ552.getDescription() + " debe ser cero con el caracter \"" + C0027.getDescription() + "\" marcado"
 //				,"C0027?LQ552<=0:LQ552>0"));
 		
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ1140
-				,MessageFormat.format(MUST_EQUAL_MSG,"Reserva de capitalizaci\u00F3n dotada en el ejercicio",BP1001.getDescription())
-				,MessageFormat.format(EQUAL_LESS_EXP,LQ1140.toString(),BP1001.toString())));
-		
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ1140
+//				,MessageFormat.format(MUST_EQUAL_MSG,"Reserva de capitalizaci\u00F3n dotada en el ejercicio",BP1001.getDescription())
+//				,MessageFormat.format(EQUAL_LESS_EXP,LQ1140.toString(),BP1001.toString())));
+
+/*
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ641
 				,MessageFormat.format(EQUAL_LESS_MSG,LQ641.getDescription(),LQ640.getDescription())
 				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ641.toString(),LQ640.toString())));
@@ -634,13 +672,10 @@ public class Mod2002016Validation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ535
 				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ535.getDescription(),LQ534.getDescription(),"0.50")
 				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ535.toString(),LQ534.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ553
-				,"La suma de las casillas \""+LQ553.getDescription()+"\" y \""+LQ554.getDescription()+"\" debe ser igual que \""+LQ552.getDescription()+"\""	
-				,"(C0017 || C0018 || C0019)?(round(LQ552) == round(LQ553 + LQ554)):true"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ559
 				,"La casilla \""+LQ559.getDescription()+"\" debe ser mayor igual que cero y menor o igual que la casilla \""+LQ552.getDescription()+"\""
 				,"C0015?(0.0 <= round(LQ559) && round(LQ559) <= round(LQ552)):true"));
-
+*/
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ674
 				,MessageFormat.format(EQUAL_GREATER_MSG,"673","674")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ673.toString(),LQ674.toString()))); 
@@ -1103,6 +1138,9 @@ public class Mod2002016Validation {
 	}
 	private static String mustGreatherMsg( Mod2002016Key key1, Mod2002016Key key2 ) {
 		return format(MUST_GREATHER_MSG,key1,key2); 
+	}
+	private static String mustLessMsg( Mod2002016Key key1, Mod2002016Key key2 ) {
+		return format(MUST_LESS_MSG,key1,key2); 
 	}
 	private static String incompatibleCharacterMsg( Mod2002016Key key1,Mod2002016Key key2) {
 		return format(INV_BOX_MSG,key1,key2); 

@@ -342,7 +342,8 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ694,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ695,new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ562,new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ1331,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LQ562 ,new Boolean[]{TRUE,TRUE});
 
 		// Desglose Casilla 570
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.BN570,new Boolean[]{FALSE,TRUE});

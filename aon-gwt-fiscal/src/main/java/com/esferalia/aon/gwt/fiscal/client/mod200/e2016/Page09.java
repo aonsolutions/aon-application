@@ -135,11 +135,15 @@ public class Page09 extends PageAbs {
 					row = paintKeyBreakdownLink(table,row,Mod2002016Key.LQ579.getDescription()
 							,Mod2002016LQ579Key.values(),null);
 				}
-/**/			if (key == Mod2002016Key.LQ1032) {
+
+				 
+/**/			if (key == Mod2002016Key.LQ1032 
+					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002016Key.C0009) 
+					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002016Key.C0010)) {
 					row = paintKeyBreakdownLink(table,row,Mod2002016Key.LQ1032.getDescription()
 							,Mod2002016LQ1032Key.values(),HEADERS_3);
 				}
-/**/			if (key == Mod2002016Key.LQ547) {
+/**/			if (key == Mod2002016Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
 					row = paintKeyBreakdownLink(table,row,Mod2002016Key.LQ547.getDescription()
 							,Mod2002016LQ547Key.values(),HEADERS_2);
 				}
@@ -244,6 +248,15 @@ public class Page09 extends PageAbs {
 		});
 		
 		return ++row;
+	}
+	@Override
+	protected boolean isDisabled(Mod2002016Key key) {
+		if (key == Mod2002016Key.LQ1032 
+				&& (callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0009) 
+				|| callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0010))) {
+			return false;
+		}
+		return super.isDisabled(key);
 	}
 	
 	@Override

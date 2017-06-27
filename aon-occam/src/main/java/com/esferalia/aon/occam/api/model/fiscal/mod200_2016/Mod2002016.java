@@ -369,6 +369,9 @@ public class Mod2002016 implements IFiscalModel {
 	public boolean isNotChecked(Mod2002016Key key) {
 		return !isChecked(key);
 	}
+	public boolean isCooperativa() {
+		return isChecked(Mod2002016Key.C0017) || isChecked(Mod2002016Key.C0018) || isChecked(Mod2002016Key.C0019);
+	}
 	
 	public void addVariable(Mod2002016Key key, Number d) {
 		DoubleVariable2016 dv = new DoubleVariable2016(key);
