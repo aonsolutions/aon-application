@@ -72,9 +72,7 @@ public class SIIServlet extends HttpServlet{
 			String action = parameters.get("action"); // consulta || suministro || anulacion
 			String option = parameters.get("option"); 
 			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));		
-			Company company = new Company().setName("AON SOLUTIONS, S.L.")
-					.setDocument("B01487271");
-					//AON.getCompany(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId()));
+			Company company = AON.getCompany(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId()));
 			LinkedList<Invoice> invoiceList = AON.getInvoiceList(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids));// f -> invoiceFilter(domain, req.getParameterMap(), f));
 			
 			VatParams params = new VatParams();
