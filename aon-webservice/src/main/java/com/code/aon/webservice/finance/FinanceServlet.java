@@ -17,6 +17,8 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -100,16 +102,19 @@ public class FinanceServlet extends HttpServlet{
     		Integer page =  req.getParameterMap().containsKey("page") ? Integer.parseInt(req.getParameter("page")) : 1;
     		Integer perPage = req.getParameterMap().containsKey("per_page") ? Integer.parseInt(req.getParameter("per_page")) : 40;
     		Date from =  req.getParameterMap().containsKey("from") ? new Date(Long.parseLong(req.getParameter("from"))) : AonDateUtils.getDate(2017, 07, 01);  
+    		Boolean pending = req.getParameterMap().containsKey("pending") ? req.getParameter("pending").equalsIgnoreCase("true") : false;
+    		Boolean sent = req.getParameterMap().containsKey("sent") ? req.getParameter("sent").equalsIgnoreCase("true") : false;
+
     		if("emitidas".equals(req.getParameter("sii"))){
     	    	if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
     	    		from = AonDateUtils.getDate(2017, 0, 1);    				
     	    	}
-    			return getInvoiceEmitidasList(domain, login, page, perPage, from);
+    			return getInvoiceEmitidasList(domain, login, page, perPage, from, pending, sent);
     		} else if("recibidas".equals(req.getParameter("sii"))){
     			if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
     	    		from = AonDateUtils.getDate(2017, 0, 1);    				
     	    	}
-    			return getInvoiceRecibidasList(domain, login, page, perPage, from);
+    			return getInvoiceRecibidasList(domain, login, page, perPage, from, pending, sent);
     		} else if("bienes".equals(req.getParameter("sii"))){
     			return getInvoiceBienesList(domain, login, page, perPage);
     		} else if("intracomunitarias".equals(req.getParameter("sii"))){
@@ -123,33 +128,59 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
    
-    private JSONArray getInvoiceEmitidasList(Domain domain, String login, Integer page, Integer perPage, Date from){
+    private JSONArray getInvoiceEmitidasList(Domain domain, String login, Integer page, Integer perPage, Date from
+    		,Boolean pending, Boolean sent){
     	JSONArray array = new JSONArray();
-    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    	Boolean onlyPending = pending && !sent;
+    	Boolean onlySent = !pending && sent;
+    	AON.getInvoiceStream(domain.getName(), domain.getId(), login, 	
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getTypeProperty().eq(InvoiceType.SALES.value()))
     			.and(f.getTaxDateProperty().ge(from))
+    			.and(iFilter(domain, login,onlyPending, onlySent, f))
     			.page(page).perPage(perPage))
     		.forEach(rm -> {
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			Boolean sent = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_OK").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
-    			json.put("sii_sent", sent);
+    			Boolean sent1 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
+    			json.put("sii_sent", sent1);
     			array.put(json);
     		});
     	return array;
     }
     
-    private JSONArray getInvoiceRecibidasList(Domain domain, String login, Integer page, Integer perPage, Date from){
+    public static Filter iFilter(Domain domain, String login,Boolean pending, Boolean sent, InvoiceProperties f) {
+    	Filter filter =  f.getDomainProperty().eq(domain.getId());
+		if(sent){
+			Integer[] a = AON.getDataResponseDetailStream(domain.getName(), domain.getId(), login, h -> 
+			h.getDomainProperty().eq(domain.getId()).and(h.getDataVariableProperty().eq("invoice_sum_ok")))
+			.map(r -> Integer.parseInt(r.getValue())).toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(a));
+		} else if(pending){
+			Integer[] a = AON.getDataResponseDetailStream(domain.getName(), domain.getId(), login, h -> 
+			h.getDomainProperty().eq(domain.getId()).and(h.getDataVariableProperty().eq("invoice_sum_ok")))
+			.map(r -> Integer.parseInt(r.getValue())).toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().notIn(a));
+		}
+		return filter;
+    }
+    
+    private JSONArray getInvoiceRecibidasList(Domain domain, String login, Integer page, Integer perPage, Date from
+    		,Boolean pending, Boolean sent){
     	JSONArray array = new JSONArray();
+    	Boolean onlyPending = pending && !sent;
+    	Boolean onlySent = !pending && sent;
+    	
     	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
+    			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()) 
+    					.or(f.getTypeProperty().eq(InvoiceType.EXPENSES.value())))
     			.and(f.getTaxDateProperty().ge(from))
+    			.and(iFilter(domain, login,onlyPending, onlySent, f))
     			.page(page).perPage(perPage))
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			Boolean sent = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
-    			json.put("sii_sent", sent);
+    			Boolean sent1 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
+    			json.put("sii_sent", sent1);
     			array.put(json);
     		});
     	return array;
@@ -170,15 +201,12 @@ public class FinanceServlet extends HttpServlet{
 
 	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage){
     	JSONArray array = new JSONArray();
-    	/*AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    /*	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    				.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
     				.and(f.getTransactionProperty().eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
-        			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
-        			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
     				.page(page).perPage(perPage))
     		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
-    	 */return array;
+    */	return array;
 	}
     
     private JSONArray getInvoiceList(Domain domain, String login, Integer registryId){

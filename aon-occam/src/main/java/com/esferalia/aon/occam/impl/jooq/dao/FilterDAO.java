@@ -79,6 +79,11 @@ public class FilterDAO implements Filter {
 		public Filter between(T min, T max) {
 			return new FilterDAO(field.between(min, max));
 		}
+
+		@Override
+		public Filter notIn(T[] t) {
+			return new FilterDAO(field.notIn(t));
+		}
 		
 	}
 	public static class DateBetweenPropertyDAO implements Property<Date> {
@@ -148,6 +153,12 @@ public class FilterDAO implements Filter {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Filter notIn(Date[] t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 
@@ -211,6 +222,11 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter between(Date min, Date max) {
 			return new FilterDAO(field.between(new java.sql.Date(min.getTime()), new java.sql.Date(max.getTime())));
+		}
+
+		@Override
+		public Filter notIn(Date[] t) {
+			return new FilterDAO(field.notIn(Arrays.asList(t)));
 		}
 		
 	}
@@ -279,6 +295,11 @@ public class FilterDAO implements Filter {
 		public Filter between(Boolean min, Boolean max) {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public Filter notIn(Boolean[] t) {
+			throw new UnsupportedOperationException();
+		}
 		
 	}
 
@@ -342,6 +363,11 @@ public class FilterDAO implements Filter {
 		
 		@Override
 		public Filter between(Boolean min, Boolean max) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Filter notIn(Boolean[] t) {
 			throw new UnsupportedOperationException();
 		}
 	}

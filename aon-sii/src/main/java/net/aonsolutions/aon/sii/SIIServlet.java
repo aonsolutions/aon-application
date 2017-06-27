@@ -85,9 +85,9 @@ public class SIIServlet extends HttpServlet{
 
 			LinkedList<Integer> emitidasList =  invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.SALES))
 					.map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
-			LinkedList<Integer> recibidasList = invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.PURCHASE)).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
+			LinkedList<Integer> recibidasList = invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.PURCHASE) || f.getType().equals(InvoiceType.EXPENSES)).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
 			LinkedList<Integer> bienesList = new LinkedList<>();
-			LinkedList<Integer> intracomunitariasList = new LinkedList<>();
+			LinkedList<Integer> intracomunitariasList = new LinkedList<>();// TODO
 			LinkedList<Integer> metalicoList = new LinkedList<>();
 			LinkedList<Integer> segurosList = new LinkedList<>();
 			LinkedList<Integer> agenciasList = new LinkedList<>();

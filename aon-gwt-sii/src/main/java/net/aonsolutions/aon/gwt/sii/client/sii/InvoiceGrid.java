@@ -579,9 +579,10 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
-						Window.alert(result.getOneData().getId() + ": " + result.getOneData().getName());
-						parent.content();
-
+						result.getData().stream().forEach(r -> {
+							Window.alert(r.getId() + ": " + r.getName());
+						});
+						parent.gridContent();
 					}
 					
 					@Override
@@ -652,7 +653,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						result.getData().stream().forEach(r -> {
 							Window.alert(r.getId() + ": " + r.getName());
 						});
-						parent.content();
+						parent.gridContent();
 					}
 					
 					@Override

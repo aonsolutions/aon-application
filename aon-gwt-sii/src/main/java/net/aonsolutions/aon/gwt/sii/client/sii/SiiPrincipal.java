@@ -35,6 +35,10 @@ public class SiiPrincipal extends Composite{
 		return parent.getAPI();
 	}
 	
+	public SimpleLayoutPanel getContent(){
+		return content;
+	}
+	
 	public HashMap<String, LinkedList<String>> getFilterMap(){
 		return parent.getFilterMap();
 	}
@@ -78,10 +82,6 @@ public class SiiPrincipal extends Composite{
 
 	public void initializeFilterMap(){
 		parent.initializeFilterMap();
-	}
-	
-	public void content() {
-		
 	}
 	
 	public Button getSendAll() {
