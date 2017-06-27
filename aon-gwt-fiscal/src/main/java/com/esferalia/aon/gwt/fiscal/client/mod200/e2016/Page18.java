@@ -10,11 +10,12 @@ import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -22,7 +23,6 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -237,6 +237,16 @@ public class Page18 extends PageAbs {
 		container.add(baseContainerPanel);
 		initWidget(container);
 		initializeTable();		
+		callback.getMod200Object().register( new IMod200ChangeListener() {
+			
+			@Override
+			public void mod200Changed(Mod2002016 mod200) {
+				participationDataProvider = new ListDataProvider<UteParticipation>(
+						callback.getMod200Object().getMod200().getUteParticipations());
+				participationDataProvider.addDataDisplay(participationTable);
+				participationTable.redraw();
+			}
+		});
 	}
 
 	@Override
