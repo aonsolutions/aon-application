@@ -1,6 +1,7 @@
 package com.code.aon.ui.warehouse.util;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -133,12 +134,22 @@ public class DeliveryPackagesHandler implements Serializable {
 				AonUtil.getRemoteUser(), delivery.getId());
 		String data = dataAttach!=null && dataAttach.getData()!=null?new String(dataAttach.getData()):"";
 //		value = value.substring(value.indexOf("["));
-		Map<Integer, List<Integer>> packagesContainerMap = DeliveryPackages.loadPackagesContainerMap(data);
-		Map<Integer, List<Integer>> linesPackageMap = DeliveryPackages.loadLinesPackageMap(data);
+		Map<Integer, List<Integer>> containerMap = DeliveryPackages.loadContainerMap(data);
+		Map<Integer, List<Integer>> linesMap = DeliveryPackages.loadLinesMap(data);
+//		System.out.println("C: "+containerMap);
+//		System.out.println("L: "+linesMap);
+		
+		// TODO show package info in window
+//		Collection<Integer> level1List = DeliveryPackages.loadLevel1List(data);
+//		System.out.println("L1: "+level1List);
+//		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(data);
+//		System.out.println("L2: "+level2Map.keySet()+" | "+level2Map);
+//		Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(data);
+//		System.out.println("L3: "+level3Map.keySet()+" | "+level3Map);
 		
 		packagesContainerList = new LinkedList<Pair<DeliveryDetail,DeliveryDetail>>();
-		for(int key: packagesContainerMap.keySet()) {
-			for(int id: packagesContainerMap.get(key)) {
+		for(int key: containerMap.keySet()) {
+			for(int id: containerMap.get(key)) {
 				DeliveryDetail first = detailList.size()>=key?
 						(DeliveryDetail)detailList.get(key-1):new DeliveryDetail();
 				DeliveryDetail second = detailList.size()>=id?
@@ -148,8 +159,8 @@ public class DeliveryPackagesHandler implements Serializable {
 		}
 		
 		linesPackageList = new LinkedList<Pair<DeliveryDetail,DeliveryDetail>>();
-		for(int key: linesPackageMap.keySet()) {
-			for(int id: linesPackageMap.get(key)) {
+		for(int key: linesMap.keySet()) {
+			for(int id: linesMap.get(key)) {
 				DeliveryDetail first = detailList.size()>=key?
 						(DeliveryDetail)detailList.get(key-1):new DeliveryDetail();
 				DeliveryDetail second = detailList.size()>=id?

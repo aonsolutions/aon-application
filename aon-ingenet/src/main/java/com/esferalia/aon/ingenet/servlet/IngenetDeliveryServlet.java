@@ -347,7 +347,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		delivery.setSecurityLevel((byte) 0);
 		delivery.setStatus(DeliveryStatus.PENDING);
-		delivery.setComments(albaran.getCOMENTARIOS());
+		delivery.setComments("No. Ingenet " + albaran.getNUMERO() + ". " + albaran.getCOMENTARIOS());
 		delivery.setRemarks("Creado por '"+ctx.getUser()+"' el "
 				+ new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()) + "."
 				+ "\n" + "La unidad de la cantidad es KILOS." );
@@ -483,18 +483,37 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							linea2.getLINEA())).collect(Collectors.toList());
 			Integer linesCount = albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().size();
 			StringBuilder packagesBuilder = new StringBuilder();
+
+			// CONTENEDORES (lo que va sobre el transporte)
 			for(DATOSLINEAENVASETYPE linea: lineas){
 				try {
-					packagesBuilder.append("[ENV=" + (linesCount+Integer.valueOf(linea.getLINEA())));
-					if(linea.getLINEAENVASECONTENEDOR()!=null)
-						packagesBuilder.append(";CONT=" + (linesCount+Integer.valueOf(linea.getLINEAENVASECONTENEDOR())));
-					if(linea.getLINEAALBARANCONTENIDA()!=null)
-						packagesBuilder.append(";LIN=" + linea.getLINEAALBARANCONTENIDA());
-					packagesBuilder.append("]");
+					if(linea.getLINEAENVASECONTENEDOR()!=null){
+						packagesBuilder.append("[ENV=")
+							.append(linesCount+Integer.valueOf(linea.getLINEA()))
+							.append(";CONT=")
+							.append(linesCount+Integer.valueOf(linea.getLINEAENVASECONTENEDOR()))
+							.append("]");
+					}
 				} catch (Exception e) {
 					addError(albaran, e.getMessage());
 				}
 			}
+			
+			// ENVASES (lo que va dentro de los contenedores)
+			for(DATOSLINEAENVASETYPE linea: lineas){
+				try {
+					if(linea.getLINEAALBARANCONTENIDA()!=null){
+						packagesBuilder.append("[ENV=")
+						.append(linesCount+Integer.valueOf(linea.getLINEA()))
+						.append(";LIN=")
+						.append(linea.getLINEAALBARANCONTENIDA())
+						.append("]");
+					}
+				} catch (Exception e) {
+					addError(albaran, e.getMessage());
+				}
+			}
+			
 			
 			attach.setAttachType(AttachType.DATA);
 			attach.setDomain(new Domain().setId(delivery.getDomain()));
@@ -660,14 +679,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
 	private Carrier obtainCarrier(AONContext ctx,
 			DATOSAGENCIATRANSPORTETYPE datosagenciatransportetype) {
-//		Byte type = Byte.valueOf(datosagenciatransportetype.getDATOSREGISTRO()
-//				.getDATOSDOCUMENTO().getTIPODOCUMENTO());
 		String document = datosagenciatransportetype.getDATOSREGISTRO()
 				.getDATOSDOCUMENTO().getDOCUMENTO();
 		Carrier carrier = RegistryDAO.getCarrierStream(
 				ctx,
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
-//						.and(f.getDocumentTypeProperty().eq(type))
 						.and(f.getDocumentProperty().eq(document))).findFirst().orElse(new Carrier());
 		return carrier;
 	}

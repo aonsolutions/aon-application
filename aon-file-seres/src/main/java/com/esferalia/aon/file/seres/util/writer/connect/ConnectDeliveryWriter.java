@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -165,50 +166,111 @@ public class ConnectDeliveryWriter {
 			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		List<SEH1P> list = new ArrayList<>();
 		
-		// TODO packageData
-		Map<Integer, List<Integer>> seh1pMap = DeliveryPackages.loadPackagesContainerMap(packageData);
-		System.out.println(seh1pMap);
-		Map<Integer, List<Integer>> seh1lMap = DeliveryPackages.loadLinesPackageMap(packageData);
-		System.out.println(seh1lMap);
 		
-		delivery.getDetailList().stream()
-				.map(to -> (DeliveryDetail)to)
-				.forEach( to -> {
-					DeliveryDetail detail = (DeliveryDetail) to;
-					if(isPackageItem(detail.getItem())){
-						list.add(createSEH1PRecord(detail, list.size()+1));
+		Collection<Integer> level1List = DeliveryPackages.loadLevel1List(packageData);
+//		System.out.println("L1: "+level1List);
+		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
+//		System.out.println("L2: "+level2Map.keySet()+" | "+level2Map);
+		Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(packageData);
+//		System.out.println("L3: "+level3Map.keySet()+" | "+level3Map);
+		
+		List<ITransferObject> detailList = delivery.getDetailList();
+		
+		// TODO group mainPackages
+//		Map<Integer, List<Integer>> mainPackageMap = new LinkedHashMap<>();
+//		level1List.forEach(id->{
+//			
+//		});
+		
+		int line = 1;
+		SEH1P mainPackage = createSEH1PRecord(line, level1List.size(), "201");
+		mainPackage.seh1lList = new ArrayList<>();
+		list.add(mainPackage);
+		
+		for(Integer key: level2Map.keySet()){
+			DeliveryDetail detail = (DeliveryDetail) detailList.get(key-1);
+			SEH1P container = createSEH1PRecord(++line, (int) detail.getQuantity(), "CT");
+			container.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+			container.seh1lList = new ArrayList<>();
+			list.add(container);
+			
+			List<Integer> lineList = level2Map.get(key);
+			if(lineList!=null){				
+				lineList.forEach(id->{
+					DeliveryDetail d = (DeliveryDetail) detailList.get(id-1);
+					if(!isPackageItem(d.getItem())){
+						container.seh1lList.add(createSEH1LRecord(d,
+								companyEdiCode, customerEdiCode, customerPackage));
 					}
 				});
-		
-		SEH1P mainPackage = list.stream()
-				.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
-				.findFirst().orElse(null);
-		
-		if(mainPackage!=null) {
-			int packageCount = list.stream()
-					.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
-					.mapToInt(SEH1P::getNumeroDePaquetes)
-					.sum();
-			mainPackage.setNumeroDePaquetes(packageCount);
+			}
 			
-			List<SEH1P> list2 = list.stream()
-					.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
-					.collect(Collectors.toList());
-			list2.add(0, mainPackage);
-			
-			list2.stream()
-					.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
-					.forEach(o -> {
-						Integer line = Integer.parseInt(o.getNumeroDeJerarquiaDeEmbalaje());
-						o.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(line-packageCount+1));
-						o.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
-					});
-			
-			
-			fillPackageLines(delivery, packageData, list2, companyEdiCode, customerEdiCode, customerPackage);
-			
-			return list2;
 		}
+		
+		for(Integer key: level3Map.keySet()){
+			DeliveryDetail detail = (DeliveryDetail) detailList.get(key-1);
+			SEH1P container = createSEH1PRecord(++line, (int) detail.getQuantity(), "CT");
+			container.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+			container.seh1lList = new ArrayList<>();
+			list.add(container);
+			
+			List<Integer> lineList = level3Map.get(key);
+			if(lineList!=null){				
+				lineList.forEach(id->{
+					DeliveryDetail d = (DeliveryDetail) detailList.get(id-1);
+					container.seh1lList.add(createSEH1LRecord(d,
+							companyEdiCode, customerEdiCode, customerPackage));
+				});
+			}
+			
+		}
+		
+		
+				
+		// TODO packageData
+//		Map<Integer, List<Integer>> seh1pMap = DeliveryPackages.loadContainerMap(packageData);
+////		System.out.println("C: "+seh1pMap);
+//		Map<Integer, List<Integer>> seh1lMap = DeliveryPackages.loadLinesMap(packageData);
+////		System.out.println("L:"+seh1lMap);
+//		
+//		delivery.getDetailList().stream()
+//				.map(to -> (DeliveryDetail)to)
+//				.forEach( to -> {
+//					DeliveryDetail detail = (DeliveryDetail) to;
+//					if(isPackageItem(detail.getItem())){
+//						list.add(createSEH1PRecord(detail, list.size()+1));
+//					}
+//				});
+//		
+//		SEH1P mainPackage = list.stream()
+//				.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
+//				.findFirst().orElse(null);
+//		
+//		if(mainPackage!=null) {
+//			int packageCount = list.stream()
+//					.filter(o -> o.getTipoDeEmbalaje_Codificado().equals("201"))
+//					.mapToInt(SEH1P::getNumeroDePaquetes)
+//					.sum();
+//			mainPackage.setNumeroDePaquetes(packageCount);
+//			
+//			List<SEH1P> list2 = list.stream()
+//					.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
+//					.collect(Collectors.toList());
+//			list2.add(0, mainPackage);
+//			
+//			list2.stream()
+//					.filter(o -> !o.getTipoDeEmbalaje_Codificado().equals("201"))
+//					.forEach(o -> {
+//						Integer line = Integer.parseInt(o.getNumeroDeJerarquiaDeEmbalaje());
+//						o.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(line-packageCount+1));
+//						o.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+//					});
+//			
+//			
+//			fillPackageLines(delivery, packageData, list2, companyEdiCode, customerEdiCode, customerPackage);
+//			
+//			return list2;
+//		}
 		
 		return list;
 	}
@@ -216,7 +278,7 @@ public class ConnectDeliveryWriter {
 	private void fillPackageLines(Delivery delivery, String packageData, List<SEH1P> packageList,
 			String companyEdiCode, String customerEdiCode, String customerPackage){
 		
-		Map<Integer, List<Integer>> seh1pMap = DeliveryPackages.loadPackagesContainerMap(packageData);
+		Map<Integer, List<Integer>> seh1pMap = DeliveryPackages.loadContainerMap(packageData);
 //		Map<Integer, List<Integer>> seh1pMap = obtainSeh1pMap(delivery);
 //		System.out.println(seh1pMap);
 		List<Integer> paletLines = new ArrayList<>();
@@ -238,7 +300,7 @@ public class ConnectDeliveryWriter {
 		});
 		
 		
-		Map<Integer, List<Integer>> seh1lMap = DeliveryPackages.loadLinesPackageMap(packageData);
+		Map<Integer, List<Integer>> seh1lMap = DeliveryPackages.loadLinesMap(packageData);
 //		Map<Integer, List<Integer>> seh1lMap = obtainSeh1lMap(delivery);
 //		System.out.println(seh1lMap);
 		int paletCount = paletLines.size();
