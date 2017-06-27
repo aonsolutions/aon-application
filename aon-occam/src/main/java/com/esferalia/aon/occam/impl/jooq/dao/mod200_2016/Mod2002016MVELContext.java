@@ -11,6 +11,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0010;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0012;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0013;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0014;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0015;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0017;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key.C0018;
@@ -230,7 +231,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return isChecked(C0017) || isChecked(C0018) || isChecked(C0019); 
 	}
 	public Boolean isGroup() {
-		return isChecked(C0009) || isChecked(C0010) || isChecked(C0019); 
+		return isChecked(C0009) || isChecked(C0010); 
 	}
 	public Boolean isLimitEnabled() {
 		return !(isChecked(C0009) || isChecked(C0010) || isChecked(C0024) || isChecked(C0025));
@@ -303,13 +304,13 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		if ( isChecked(C0030) ) return roundKey(LQ558);
 		if ( isChecked(C0047) ) return roundKey(LQ558);
 		
-		if ( isChecked(C0024)) return 28.0;
 		if ( isChecked(C0063) ) return 15.0;
-		if ( isChecked(C0066)) return 28.0;
+		if ( isChecked(C0066)) return 25.0;
 		if ( isChecked(C0071)) return 15.0;
+		if ( isChecked(C0024)) return 30.0;	
 		
-		if ( isChecked(C0046) ) return 28.0;
-		if ( isChecked(C0021) ) return 28.0;
+		if ( isChecked(C0046) ) return 25.0;
+		if ( isChecked(C0021) ) return 25.0;
 
 		if ( isChecked(C0001) ) return 10.0;
 		if ( isChecked(C0002) ) return 25.0;
@@ -317,28 +318,37 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		if ( isChecked(C0004) ) return 1.0;
 		if ( isChecked(C0005) ) return 25.0;
 		
+		if ( isChecked(C0009) ) return roundKey(LQ558);
+		if ( isChecked(C0010) ) return roundKey(LQ558);
+		
 		if ( isChecked(C0017) ) return roundKey(LQ558);
 		if ( isChecked(C0018) ) return roundKey(LQ558);
-		if ( isChecked(C0019) ) return roundKey(LQ558);
+		
+		
+		if ( isChecked(C0006) && isChecked(C0034)) return 30.0;
+		if ( isChecked(C0057) && isChecked(C0006) && isChecked(C0034)) return 30.0;
 		if ( isChecked(C0006) ) return 25.0;
-		if ( isChecked(C0006) && isChecked(C0057) && !isChecked(C0034)) return 25.0;
-		if ( isChecked(C0006) && isChecked(C0034)) return 33.0;
-		if ( isChecked(C0006) && !isChecked(C0034)) return 25.0;
-		if ( isChecked(C0012) ) return 28.0;
+		
+		if ( isChecked(C0012) ) return 25.0;
+		if ( isChecked(C0013) && (getValue(Mod2002016Key.UT060) == 100.0) ) return 0.0;
+		if ( isChecked(C0014) ) return 0.0;
 		if ( isChecked(C0015) ) return 4.0;
 		// --- 
-		if ( isChecked(C0034) ) return 33.0;
+		if ( isChecked(C0034) ) return 30.0;
 		if ( isChecked(C0036) ) return 25.0;
-		if ( isChecked(C0038) ) return 28.0;
-		if ( isChecked(C0048) ) return 0.0;
-		if ( isChecked(C0049) ) return roundKey(LQ558);
-		if ( isChecked(C0057) ) return 28.0;
-		if ( isChecked(C0058) ) return 25.0;
+		if ( isChecked(C0038) ) return 25.0;
 		
-		if ( isChecked(C0064) ) return 28.0;
+		if ( isChecked(C0048) ) return 0.0;
+		if ( isChecked(C0049) ) return roundKey(LQ558);	
+		if ( isChecked(C0057) && !isChecked(C0006) && isChecked(C0034)) return 30.0;
+		if ( isChecked(C0057) ) return 25.0;
+		if ( isChecked(C0058) ) return 25.0;
 
-		return 28.0;
+		if ( isChecked(C0064) ) return 25.0;
+
+		return 25.0;
 	}
+	
 	private double getLimit(int limit) {
 		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
@@ -371,18 +381,18 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		}
 	}
 	public double computeLQ562() throws AonCoreException {
-		double lq521 = roundKey(LQ521);
+		
 		double lq558 = roundKey(LQ558);
-		double lq559 = roundKey(LQ559);
-		double lq1035 = roundKey(Mod2002016Key.LQ1035);
-		double lq560 = roundKey(LQ560);
-		double lq210 = roundKey(LQ210);
-		double lq480 = roundKey(LQ480);
-		double lq561 = roundKey(LQ561);
 		double lq1330 = roundKey(Mod2002016Key.LQ1330);
 		
 		if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019)) {
-			double lq562 = round(lq560+lq210-lq480-lq561);
+			double lq560 = roundKey(LQ560);
+			double lq210 = roundKey(LQ210);
+			double lq480 = roundKey(LQ480);
+			double lq561 = roundKey(LQ561);
+			double lq408 = roundKey(Mod2002016Key.LQ408);
+			double lq1037= roundKey(Mod2002016Key.LQ1037);
+			double lq562 = round(lq560+lq210-lq480+lq408-lq1037-lq561);
 			if (lq562 < 0) lq562 = 0;
 			return lq562; 
 		}
@@ -409,22 +419,21 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 			return round(lq1330 * lq558 / 100);			
 		}
 		if (isChecked(C0006)) {
-			if (lq1330<=getLimit(LIM_1)){
-				return round( lq1330*25/100);			
-			} else {
-				return (getLimit(LIM_1)*25/100) + (lq1330 - getLimit(LIM_1))*28/100;				
-			}
+			return round(lq1330 * lq558 / 100);
 		}
 		
 		if (isChecked(C0015)) {
+			double lq559 = roundKey(LQ559);
+			double lq521 = roundKey(LQ521);
+			double lq1035 = roundKey(Mod2002016Key.LQ1035);
 			if (isChecked(C0057)) {
 				if (round(lq1330 - lq559 - lq521) > 0) {
-					return round(((lq559+lq1035) * lq558 / 100) + (lq1330 - lq559 - lq521 - lq1035) * 28 / 100);	
+					return round(((lq559+lq1035) * lq558 / 100) + (lq1330 - lq559 - lq521 - lq1035) * 25 / 100);	
 				} else {
 					return round((lq559 * lq558 / 100));
 				}
 			}
-			return round(((lq559+lq1035) * lq558 / 100) + (lq1330 - lq559 - lq1035) * 28 / 100);
+			return round(((lq559+lq1035) * lq558 / 100) + (lq1330 - lq559 - lq1035) * 25 / 100);
 		}
 		
 		if (isChecked(C0030) || isChecked(C0047)) {
@@ -438,6 +447,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		}
 
 		if (isChecked(C0057)) {
+			double lq521 = roundKey(LQ521);
 			if (round(lq1330-lq521) > 0) {
 				return round((lq1330 -lq521)* lq558 /100);
 			}
@@ -446,33 +456,39 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return round(lq1330 * lq558 / 100);
 	}
 	
-	public double computeLQ550()  throws AonCoreException {
+	public double computeLQ550() throws AonCoreException {
+		if (isChecked(C0022) || isChecked(Mod2002016Key.C0009) || isChecked(Mod2002016Key.C0010)) {
+			if (isChecked(C0022)) {
+				double lq578 = roundKey(Mod2002016Key.LQ578);
+				double lq579 = roundKey(Mod2002016Key.LQ579);
+				if (!isChecked(Mod2002016Key.C0009) && !isChecked(Mod2002016Key.C0010)) {
+					if (lq578 > 0) {
+						return lq578 + lq579;
+					} else {
+						return lq579;
+					}
+				} else {
+					double lq1030 = roundKey(Mod2002016Key.LQ1030);
+					double lq1031 = roundKey(Mod2002016Key.LQ1031);
+					if ((lq578 + lq1030 + lq1031) > 0) {
+						return lq578 + lq1030 + lq1031 + lq579;
+					} else {
+						return lq579;
+					}
+				}
+			} else {
+				double lq1029 = roundKey(Mod2002016Key.LQ1029);
+				double lq1030 = roundKey(Mod2002016Key.LQ1030);
+				if (isCooperativa()) {
+					return lq1029 + lq1030;
+				}
+				double lq1031 = roundKey(Mod2002016Key.LQ1031);
+				return lq1029 + lq1030 + lq1031;
+			}
+		}
 		double lq501 = roundKey(Mod2002016Key.LQ501);
 		double i0417 = roundKey(Mod2002016Key.I0417);
-		double d0418 = roundKey(Mod2002016Key.D0418);
-		double lq578 = roundKey(Mod2002016Key.LQ578);
-		double lq579 = roundKey(Mod2002016Key.LQ579);
-		double lq1029 = roundKey(Mod2002016Key.LQ1029);
-		double lq1030 = roundKey(Mod2002016Key.LQ1030);
-		double lq1031 = roundKey(Mod2002016Key.LQ1031);
-		
-		if(!isChecked(C0022) && !isChecked(Mod2002016Key.C0009) && !isChecked(Mod2002016Key.C0010))
-			return lq501 + i0417 - d0418;
-		if(isChecked(C0022)){
-			if(isChecked(Mod2002016Key.C0009) || isChecked(Mod2002016Key.C0010)){
-				if((lq578 + lq1030 + lq1031) > 0)
-					return lq578 + lq1030 + lq1031 + lq579;
-				else return lq579;
-			}
-			if(lq578>0) return lq578 + lq579;
-			else return lq579; 
-		}
-		if(isChecked(Mod2002016Key.C0009) || isChecked(Mod2002016Key.C0010)){
-			if(isCooperativa()){
-				return lq1029 +lq1030;
-			} 
-			return lq1029 +lq1030 + lq1031;
-		}
+	 	double d0418 = roundKey(Mod2002016Key.D0418);
 		return lq501 + i0417 - d0418;
 	}
 	
