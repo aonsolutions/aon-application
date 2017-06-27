@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -16,17 +17,23 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -52,8 +59,8 @@ import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionModel;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 
@@ -123,11 +130,32 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		initWidget(binder.createAndBindUi(this));
 	}	
 	
+	LinkedList<JsInvoice> selFiles = new LinkedList<>();
 	private void load(LinkedList<JsInvoice> list) {
 		DefaultKeyboardSelectionHandler<JsInvoice> selHandler = new DefaultKeyboardSelectionHandler<JsInvoice>(dataGrid){
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsInvoice> event) {
-				
+				 if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
+					 JsInvoice object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+					 if(event.getColumn() == 0){
+						 if(dataGrid.getSelectionModel().isSelected(object) || object.isSiiSent())
+							 dataGrid.getSelectionModel().setSelected(object, false);
+						 else dataGrid.getSelectionModel().setSelected(object, true);
+					 } else {
+						 for(JsInvoice f :dataProvider.getList()){
+							 dataGrid.getSelectionModel().setSelected(f, false);
+						 }
+						 dataGrid.getSelectionModel().setSelected(object, true);
+					 }
+					 
+					selFiles = new LinkedList<>();
+					for(JsInvoice f :dataProvider.getList()){
+						if(dataGrid.getSelectionModel().isSelected(f)){
+							selFiles.add(f);
+						}
+					}
+					parent.getSendAll().setVisible(selFiles.size() > 0);
+				 }
 			}
 		};
 		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
@@ -138,12 +166,16 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		addDataDisplay(dataGrid, list);
 		ListHandler<JsInvoice> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
-		final SingleSelectionModel<JsInvoice> selectionModel = new SingleSelectionModel<JsInvoice>(
-				JsInvoice.PROVIDES_KEY);
+	//	final SingleSelectionModel<JsInvoice> selectionModel = new SingleSelectionModel<JsInvoice>(
+	//			JsInvoice.PROVIDES_KEY);
+		final SelectionModel<JsInvoice> selectionModel = new MultiSelectionModel<JsInvoice>(JsInvoice.PROVIDES_KEY);
+
+		
 		dataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<JsInvoice> createCheckboxManager());
-		dataGrid.setSelectionModel(selectionModel);
+	//	dataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
+		
 	}
 	
 	//------------------------------ DataGrid Utils
@@ -172,6 +204,30 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	}
 	
 	private void initTableColumns(final SelectionModel<JsInvoice> selectionModel, ListHandler<JsInvoice> sortHandler) {
+		
+		/** Check Column **/
+		
+		Column<JsInvoice, Boolean> checkColumn = new Column<JsInvoice, Boolean>(new CheckboxCell(true, true) {
+			@Override
+			public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent, Boolean value,
+					NativeEvent event, com.google.gwt.cell.client.ValueUpdater<Boolean> valueUpdater) {
+			}
+		}) {
+			@Override
+			public void render(Context context, JsInvoice object, SafeHtmlBuilder sb) {
+				if(object.isSiiSent()){
+					sb.append(SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled=\"disabled\"/>"));
+				} else super.render(context, object, sb);
+			}
+			
+			@Override
+			public Boolean getValue(JsInvoice object) {
+				return selectionModel.isSelected(object);
+			}
+		};
+		dataGrid.addColumn(checkColumn);
+		dataGrid.setColumnWidth(checkColumn, 40, Unit.PX);
+		
 		/** code Column **/
 		Column<JsInvoice, String> codeColumn = new Column<JsInvoice, String>(new TextCell()) {
 
@@ -526,6 +582,77 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						Window.alert(result.getOneData().getId() + ": " + result.getOneData().getName());
 						parent.content();
 
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
+			}
+		};
+		dialog.center();
+	}
+	
+	public void sendSii(){
+		VerticalPanel vp = new VerticalPanel();
+		HorizontalPanel hp1 = new HorizontalPanel();
+		hp1.add(new Label("Certificado"));
+		ListBox lb = new ListBox();
+		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				result.getData().stream().forEach(a -> {
+					lb.addItem(a.getTitle(), a.getId() + "");
+				});
+			}
+
+			@Override public void onFailure(Throwable caught) {}
+		});
+		hp1.add(lb);
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
+		hp2.add(new Label("Contrase\u00f1a"));
+		PasswordTextBox tb = new PasswordTextBox();
+		tb.setStyleName(AON.AON_CSS.aonInputText());
+		hp2.add(tb);
+		vp.add(hp1);
+		vp.add(hp2);
+		AonDialog dialog = new AonDialog("Enviar Factura", vp) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				HashMap<String, LinkedList<String>> map =  new HashMap<>();
+				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
+				map.put("id", list);
+		    	list = new LinkedList<>();
+		    	list.add("suministro");
+		    	map.put("action", list);
+		    	list = new LinkedList<>();
+		    	list.add(lb.getSelectedValue());
+		    	map.put("cert", list);
+		    	list = new LinkedList<>();
+		    	list.add(tb.getText());
+		    	map.put("pass", list);
+		    	list = new LinkedList<>();
+		    	list.add("general");
+		    	map.put("option", list);
+		    	hide();
+		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						result.getData().stream().forEach(r -> {
+							Window.alert(r.getId() + ": " + r.getName());
+						});
+						parent.content();
 					}
 					
 					@Override

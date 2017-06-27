@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.sii;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AON;
@@ -43,6 +44,63 @@ public class SIIDB {
     		drd.setDomain(domain.getId())
     			.setDataResponse(dr.getId())
     			.setDataVariable(ok ? "invoice_OK" : "invoice_KO") 
+    			.setValue(invoice.toString())
+    			.setCreationDate(new Date())
+    			.setCreationUser(login)
+    			.setModificationDate(new Date())
+    			.setModificationUser(login);
+    		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
+    	});
+    	
+    	Attach requestAttach = new Attach()
+    			.setDomain(domain)
+    			.setAttachType(AttachType.DATA)
+    			.setSourceType(DataAttachSource.SII.value())
+    			.setSourceBatch(dr.getId())
+    			.setDescription(dr.getNumber())
+    			.setData(requestXml)
+    			.setType(DataAttachType.REQUEST.value())
+    			.setMimeType(MimeType.XML)
+    			.setCreationDate(new Date())	
+    			.setCreationUser(login)
+    			.setModificationDate(new Date())
+    			.setModificationUser(login);
+    	AON.insertAttach(domain.getName(), domain.getId(), login, requestAttach);
+    	
+    	Attach responseAttach = new Attach()
+    			.setDomain(domain)
+    			.setAttachType(AttachType.DATA)
+    			.setSourceType(DataAttachSource.SII.value())
+    			.setSourceBatch(dr.getId())
+    			.setDescription(dr.getNumber())
+    			.setData(responseXml)
+    			.setType(DataAttachType.RESPONSE_OK.value()) // || DataAttachType.RESPONSE_ERROR
+    			.setMimeType(MimeType.XML)
+    			.setCreationDate(new Date())	
+    			.setCreationUser(login)
+    			.setModificationDate(new Date())
+    			.setModificationUser(login);
+    	AON.insertAttach(domain.getName(), domain.getId(), login, responseAttach);
+    }
+    
+    protected void insertSuministro(Domain domain, String login, HashMap<Integer, Boolean> invoiceMap, byte[] requestXml, byte[] responseXml ){
+
+    	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
+    			new DataResponse()
+    			.setDomain(domain.getId())
+    			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+    			.setIssueDate(new Date())
+    			.setSource(DataResponseSource.SII)
+    			.setCreationDate(new Date())
+    			.setCreationUser(login)
+    			.setModificationDate(new Date())
+    			.setModificationUser(login));
+    
+    	invoiceMap.keySet().stream().forEach(invoice -> {
+    		DataResponseDetail drd = new DataResponseDetail();
+    		drd.setDomain(domain.getId())
+    			.setDataResponse(dr.getId())
+    			.setDataVariable(invoiceMap.get(invoice) ? "invoice_OK" : "invoice_KO") 
     			.setValue(invoice.toString())
     			.setCreationDate(new Date())
     			.setCreationUser(login)
