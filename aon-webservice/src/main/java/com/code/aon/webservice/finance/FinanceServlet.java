@@ -99,10 +99,16 @@ public class FinanceServlet extends HttpServlet{
     	if(req.getParameterMap().containsKey("sii")){
     		Integer page =  req.getParameterMap().containsKey("page") ? Integer.parseInt(req.getParameter("page")) : 1;
     		Integer perPage = req.getParameterMap().containsKey("per_page") ? Integer.parseInt(req.getParameter("per_page")) : 40;
-    		Date from =  AonDateUtils.getDate(2017, 5, 1);//  req.getParameterMap().containsKey("from") ? AonDateUtils.parse(req.getParameter("from"), "dd-MM-yyyy") : AonDateUtils.getDate(2017, 07, 01);  
+    		Date from =  req.getParameterMap().containsKey("from") ? new Date(Long.parseLong(req.getParameter("from"))) : AonDateUtils.getDate(2017, 07, 01);  
     		if("emitidas".equals(req.getParameter("sii"))){
+    	    	if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
+    	    		from = AonDateUtils.getDate(2017, 0, 1);    				
+    	    	}
     			return getInvoiceEmitidasList(domain, login, page, perPage, from);
     		} else if("recibidas".equals(req.getParameter("sii"))){
+    			if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
+    	    		from = AonDateUtils.getDate(2017, 0, 1);    				
+    	    	}
     			return getInvoiceRecibidasList(domain, login, page, perPage, from);
     		} else if("bienes".equals(req.getParameter("sii"))){
     			return getInvoiceBienesList(domain, login, page, perPage);

@@ -79,14 +79,14 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	@UiField(provided = true) CustomDataGrid<JsInvoice> dataGrid; 
 	
 	
-	SiiMain parent;
+	SiiPrincipal parent;
 	Integer cont = 0;
 	
 	private API getAPI() {
 		return parent.getAPI();
 	}
 
-	public InvoiceGrid(SiiMain parent, LinkedList<JsInvoice> list) {
+	public InvoiceGrid(SiiPrincipal parent, LinkedList<JsInvoice> list) {
 		this.parent = parent;		
 		dataGrid = new CustomDataGrid<JsInvoice>(Integer.MAX_VALUE, resources,
 				JsInvoice.PROVIDES_KEY);
