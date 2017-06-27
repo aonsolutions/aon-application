@@ -1,18 +1,16 @@
 package net.aonsolutions.aon.gwt.sii.client.sii;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
-import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -22,7 +20,6 @@ public class SiiMain extends AonTemplate2{
 	private API API;
 	HashMap<String, LinkedList<String>> filterMap;
 	private AonData aonData;
-	private SiiMain me = this;
 	
 	public API getAPI() {
 		return API;
@@ -59,11 +56,17 @@ public class SiiMain extends AonTemplate2{
 		content();
 	}
 	
-	private void initializeFilterMap() {
+	public void initializeFilterMap() {
 		filterMap = new HashMap<>();
 		LinkedList<String> list = new LinkedList<>();
 		list.add("emitidas");
 		filterMap.put("sii",list);
+		
+		Date date = new Date(2017-1900, 5, 1);
+		list = new LinkedList<>();
+		list.add(Long.toString(date.getTime()));
+		filterMap.put("from",list);
+		
 	}
 	
 	Button sendAll;
@@ -102,7 +105,8 @@ public class SiiMain extends AonTemplate2{
 				LinkedList<String> list = new LinkedList<>();
 				list.add("emitidas");
 				getFilterMap().put("sii",list);
-				content();
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				p.gridContent();
 			}
 		});
 		menuPanel.add(facturasEmitidasButton);
@@ -115,7 +119,8 @@ public class SiiMain extends AonTemplate2{
 				LinkedList<String> list = new LinkedList<>();
 				list.add("recibidas");
 				getFilterMap().put("sii",list);
-				content();
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				p.gridContent();
 			}
 		});
 		menuPanel.add(facturasRecibidasButton);
@@ -149,31 +154,8 @@ public class SiiMain extends AonTemplate2{
 		setWestContent(menuPanel);
 	}
 	
-	public void content() {
-		LinkedList<String> list = new LinkedList<>();
-		list.add("1");
-		getFilterMap().put("page", list);
-		list = new LinkedList<>();
-		list.add("40");
-		getFilterMap().put("per_page", list);
-		getAPI().getFinance().getInvoices(getFilterMap(), new AsyncCallback<JSON<JsInvoice>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsInvoice> result) {
-				SimpleLayoutPanel slp = new SimpleLayoutPanel();
-				slp.addStyleName("aon-margin-left10");
-				slp.addStyleName("aon-margin-top10");
-				slp.addStyleName("aon-margin-right10");
-				slp.addStyleName("aon-margin-bottom10");
-				slp.setWidget(new InvoiceGrid(me, result.getData().toLinkedList()));
-				setContent(slp);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-
-			}
-		});
+	private void content() {
+		setContent(new SiiPrincipal(this));
 	}
 
 }
