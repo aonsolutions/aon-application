@@ -68,6 +68,7 @@ public interface Filter {
 		Filter gt(T t);
 		Filter ge(T t);
 		Filter in(T[] t);
+		Filter notIn(T[] t);
 		Filter isNull();
 		Filter isNotNull();
 		Filter like(T t);

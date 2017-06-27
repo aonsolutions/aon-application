@@ -9,10 +9,13 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -72,6 +75,35 @@ public class FilterPanel extends Composite {
 			}
 		});
 		datePanel.add(from);
+		
+		CheckBox cb = new CheckBox("Pendientes");
+		if(parent.getFilterMap().containsKey("pending")){
+			cb.setValue(parent.getFilterMap().get("pending").get(0).equalsIgnoreCase("true"));
+		}
+		cb.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(cb.getValue().toString());
+				onChange("pending", list);
+			}
+		});
+		datePanel.add(cb);
+		CheckBox cb2 = new CheckBox("Enviadas");
+		if(parent.getFilterMap().containsKey("sent")){
+			cb2.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
+		}
+		cb2.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(cb2.getValue().toString());
+				onChange("sent", list);				
+			}
+		});
+		datePanel.add(cb2);
 		return datePanel;
 	}
 }

@@ -247,12 +247,17 @@ public class SIIBuilt {
 			
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA  
 			
-			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaType._01.getName()); //TODO 
+			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._01.getName()); //TODO 
 
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA ADICIONAL 1			
 			if(vat.isVatAccrualRegime()){
-				fet.setClaveRegimenEspecialOTrascendenciaAdicional1(ClaveRegimenEspecialOTrascendenciaType._07.getName());//TODO OPTIONAL
+				fet.setClaveRegimenEspecialOTrascendenciaAdicional1(ClaveRegimenEspecialOTrascendenciaEmitidasType._07.getName());//TODO OPTIONAL
+			}	
+			
+			if(vat.getTaxDate().compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
+				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._16.getName());
 			}
+		
 			
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA ADICIONAL 2
 			//fet.setClaveRegimenEspecialOTrascendenciaAdicional2("");//TODO OPTIONAL
@@ -603,13 +608,17 @@ public class SIIBuilt {
 			frt.setContraparte(contraparte(vat));
 
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA  
-			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaType._01.getName()); //TODO 
+			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._01.getName()); //TODO 
 
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA ADICIONAL 1			
 			if(vat.isVatAccrualRegime()){
-				frt.setClaveRegimenEspecialOTrascendenciaAdicional1(ClaveRegimenEspecialOTrascendenciaType._07.getName());//TODO OPTIONAL
+				frt.setClaveRegimenEspecialOTrascendenciaAdicional1(ClaveRegimenEspecialOTrascendenciaRecibidasType._07.getName());//TODO OPTIONAL
 			}
-						
+			
+			if(vat.getTaxDate().compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
+				frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
+			}
+			
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA ADICIONAL 2
 			//frt.setClaveRegimenEspecialOTrascendenciaAdicional2("");//TODO OPTIONAL
 			

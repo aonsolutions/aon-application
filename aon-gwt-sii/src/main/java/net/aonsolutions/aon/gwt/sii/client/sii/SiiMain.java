@@ -67,6 +67,14 @@ public class SiiMain extends AonTemplate2{
 		list.add(Long.toString(date.getTime()));
 		filterMap.put("from",list);
 		
+		list = new LinkedList<>();
+		list.add("true");
+		filterMap.put("pending", list);
+		
+		list = new LinkedList<>();
+		list.add("false");
+		filterMap.put("sent", list);
+		
 	}
 	
 	Button sendAll;
@@ -79,7 +87,8 @@ public class SiiMain extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SimpleLayoutPanel slp = (SimpleLayoutPanel) getContent().getWidget();
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				SimpleLayoutPanel slp = p.getContent();
 				InvoiceGrid ig = (InvoiceGrid) slp.getWidget();
 				ig.sendSii();
 			}

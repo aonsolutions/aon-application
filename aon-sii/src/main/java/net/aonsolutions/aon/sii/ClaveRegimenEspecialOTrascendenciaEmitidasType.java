@@ -8,7 +8,7 @@
 
 package net.aonsolutions.aon.sii;
 
-public enum ClaveRegimenEspecialOTrascendenciaType {
+public enum ClaveRegimenEspecialOTrascendenciaEmitidasType {
 
 
     /**
