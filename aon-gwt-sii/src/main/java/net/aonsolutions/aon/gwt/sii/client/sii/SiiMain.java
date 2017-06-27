@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -67,20 +66,27 @@ public class SiiMain extends AonTemplate2{
 		filterMap.put("sii",list);
 	}
 	
+	Button sendAll;
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Suministro Inmediato de Informacion") {};
-		Button sendAll = toolbar.addButton("Enviar todo", AON.AON_CSS.aonIconSave());
+		sendAll = toolbar.addButton("Enviar", AON.AON_CSS.aonIconSave());
 		sendAll.setVisible(false);
 		sendAll.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Opción no implementada");
+				SimpleLayoutPanel slp = (SimpleLayoutPanel) getContent().getWidget();
+				InvoiceGrid ig = (InvoiceGrid) slp.getWidget();
+				ig.sendSii();
 			}
 		});
 	
 		setToolbar(toolbar);
+	}
+	
+	public Button getSendAll() {
+		return sendAll;
 	}
 	
 	private void westContent() {

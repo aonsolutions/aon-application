@@ -61,8 +61,11 @@ public class SIIServlet extends HttpServlet{
 		String domainName = parameters.get("domain");
 		String login = parameters.get("login");	
 		
-		String idS = parameters.get("id");
-		Integer id = Integer.parseInt(idS);
+		String[] idS = parameters.get("id").split(",");
+		Integer[] ids = new Integer[idS.length];
+		for(Integer i = 0 ; i < idS.length ; i++){
+			ids[i] = Integer.parseInt(idS[i]);
+		}
 //		String accessToken = req.getParameter(MSG.ACCESS_TOKEN); TODO
 //		String md5 = Utils.getMd5(login+domainName);
 		if(true){//accessToken.equals(md5)){
@@ -72,7 +75,7 @@ public class SIIServlet extends HttpServlet{
 			Company company = new Company().setName("AON SOLUTIONS, S.L.")
 					.setDocument("B01487271");
 					//AON.getCompany(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId()));
-			LinkedList<Invoice> invoiceList = AON.getInvoiceList(domain.getName(), domain.getId(), login,f -> f.getIdProperty().eq(id));// f -> invoiceFilter(domain, req.getParameterMap(), f));
+			LinkedList<Invoice> invoiceList = AON.getInvoiceList(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids));// f -> invoiceFilter(domain, req.getParameterMap(), f));
 			
 			VatParams params = new VatParams();
 			params.setDomain(domain.getId());

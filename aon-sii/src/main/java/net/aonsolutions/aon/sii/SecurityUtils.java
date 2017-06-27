@@ -15,7 +15,9 @@ public class SecurityUtils {
 		String[] parameters = decode(value.getBytes()).split("&");
 		for(String parameter : parameters){
 			String[] values = parameter.split("=");
-			map.put(values[0], values[1]);
+			if(map.containsKey(values[0])){
+				map.put(values[0], map.get(values[0]) + "," + values[1]);
+			} else map.put(values[0], values[1]);
 		}
 		return map;
 	}
