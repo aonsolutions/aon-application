@@ -362,7 +362,7 @@ public class FinanceDAO {
 				.setModificationUser(record.getValue(FINANCE.MODIFICATION_USER))
 				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
-				.setPayMethodType(PayMethodType.values()[record.getValue(PAY_METHOD.TYPE)])
+				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
 				;
 		}
 
