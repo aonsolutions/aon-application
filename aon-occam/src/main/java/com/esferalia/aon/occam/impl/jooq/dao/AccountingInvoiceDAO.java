@@ -668,10 +668,16 @@ public class AccountingInvoiceDAO {
 						// --------------------------------------
 					);
 					if (vat.isWithholding() && accInvoice.isWithholding()) {
-						double quota = AonMathUtils.round(vat.getBase() * accInvoice.getWithholdingData().getPercentage() / 100);
+						double base = 0;
+						if (accInvoice.isWithholdingFarmer()) {
+							base = AonMathUtils.round(vat.getBase() + vat.getQuota()); 
+						} else {
+							base = vat.getBase();
+						}
+						double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
 						detail.addInvoiceTax(new InvoiceTax()
 							.setTaxType(TaxType.RETENTION)
-							.setBase(vat.getBase())
+							.setBase(base)
 							.setPercentage(accInvoice.getWithholdingData().getPercentage())
 							.setQuota(quota)
 							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
