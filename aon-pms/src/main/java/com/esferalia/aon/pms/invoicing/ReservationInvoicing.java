@@ -659,13 +659,15 @@ public class ReservationInvoicing implements IReservationConstants {
 			}
 		}
 
-		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
-		Criteria criteria = new Criteria();
-		criteria.addInExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ID), servicesToRemove);
-		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_REMOVED), Boolean.FALSE);
-		for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
-			ProjectReservationService reservationService = (ProjectReservationService)ito;
-			reservationServiceBean.remove(reservationService);
+		if (servicesToRemove.size() > 0) {
+			IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ID), servicesToRemove);
+			criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_REMOVED), Boolean.FALSE);
+			for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+				ProjectReservationService reservationService = (ProjectReservationService)ito;
+				reservationServiceBean.remove(reservationService);
+			}
 		}
 	}
 
