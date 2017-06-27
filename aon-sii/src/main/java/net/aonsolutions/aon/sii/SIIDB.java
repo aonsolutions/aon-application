@@ -83,7 +83,7 @@ public class SIIDB {
     	AON.insertAttach(domain.getName(), domain.getId(), login, responseAttach);
     }
     
-    protected void insertSuministro(Domain domain, String login, HashMap<Integer, Boolean> invoiceMap, byte[] requestXml, byte[] responseXml ){
+    protected void insertSuministro(Domain domain, String login, HashMap<Integer, SIIDataVariable> invoiceMap, byte[] requestXml, byte[] responseXml ){
 
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
@@ -100,7 +100,7 @@ public class SIIDB {
     		DataResponseDetail drd = new DataResponseDetail();
     		drd.setDomain(domain.getId())
     			.setDataResponse(dr.getId())
-    			.setDataVariable(invoiceMap.get(invoice) ? "invoice_OK" : "invoice_KO") 
+    			.setDataVariable(invoiceMap.get(invoice).getVariable()) 
     			.setValue(invoice.toString())
     			.setCreationDate(new Date())
     			.setCreationUser(login)

@@ -255,9 +255,7 @@ public class VATDAO  {
 		;
 	}
 	
-	public static Stream<VatContext> getSiiVatContext(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
-		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
-		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+	public static Stream<VatContext> getSiiVatContext(AONContext ctx, VATFilter filter) {
 		return ctx.getDslContext().select(
 				 INVOICE.ID, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REFERENCE_CODE
 				,INVOICE.RDOCUMENT, INVOICE.RDOCUMENT_TYPE, INVOICE.RDOCUMENT_COUNTRY
@@ -279,8 +277,7 @@ public class VATDAO  {
 			.where(VAT_PROPERTIES.getConditions(filter))
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
-			.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
-			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.orderBy(InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch().stream().map(new SiiVatContextFiller())
 		;
 	}

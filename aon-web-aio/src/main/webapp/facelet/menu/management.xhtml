@@ -204,61 +204,12 @@
 								</aon:div>
 							</aon:panelGrid>
 								
-							<aon:panelGrid id="group_sales_utilities"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-utilities aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_utilities}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="invoicePrint"
-											action="invoicePrint_search"
-											actionListener="#{invoicePrint.onEditSearch}"
-											value="#{bundle.finance_invoice_print_module}"/>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="delivery_invoicing"
-											action="deliveryInvoicing"
-											actionListener="#{deliveryInvoicing.onInitialize}"
-											value="#{bundle.finance_delivery_invoicing_module}"/>
-									</aon:div>									
-		<!-- 
-			Se quita esta opcion del menu por su peligrosidad obvia. Ahora mismo genera facturas que no son compatibles con la aplicacion 
-			a la hora de imprimirlas o contabilizarlas. Si sigue adelante este tema habria que revisarlo con MAC para dejarlo bien.
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="rectifierInvoiceManagement"
-												action="rectifierInvoice_search" actionListener="#{rectifierInvoice.onReset}"
-												value="#{bundle.finance_special_rectifier_invoice_module}" />
-										</aon:div>
-		 -->								
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="invoiceRemover"
-											action="invoiceRemover_search"
-											actionListener="#{invoiceRemover.onEditSearch}"
-											value="#{bundle.finance_invoice_removing_module}"/>
-									</aon:div>
-									<aon:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="saleInvoiceSigner"
-												action="invoiceSigner_search"
-												actionListener="#{invoiceSigner.onEditSearch}"
-												value="#{bundle.finance_invoice_signing_module}"/>
-										</aon:div>								
-									</aon:if>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="no_fee_customers"
-											action="noFeeCustomer_list"
-											actionListener="#{customerFee.onNoFeeCustomers}"
-											value="#{bundle.finance_fee_no_fee_customer_module}"/>
-									</aon:div>
-								</aon:div>
-							</aon:panelGrid>
+							
 						</aon:panelGroup>
 					</aon:if>
 
-					<aon:if test="#{aonRole.purchaseOperator}">
-						<aon:panelGroup>
+					<aon:panelGroup>
+						<aon:if test="#{aonRole.purchaseOperator}">
 							<aon:panelGrid id="group_management_holder_purchases"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-purchase aon-direct-access-panel">
@@ -415,11 +366,63 @@
 									</aon:panelGrid>
 								</aon:panelGroup>
 							</aon:if>
-						</aon:panelGroup>
-					</aon:if>
-
-					<aon:if test="#{aonRole.purchaseOperator}">
-						<aon:panelGroup>
+						</aon:if>
+						
+						<aon:if test="#{aonRole.saleOperator}">
+						<aon:panelGrid id="group_sales_utilities"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="UTILIDADES DE VENTAS" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoicePrint"
+											action="invoicePrint_search"
+											actionListener="#{invoicePrint.onEditSearch}"
+											value="#{bundle.finance_invoice_print_module}"/>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="delivery_invoicing"
+											action="deliveryInvoicing"
+											actionListener="#{deliveryInvoicing.onInitialize}"
+											value="#{bundle.finance_delivery_invoicing_module}"/>
+									</aon:div>									
+		<!-- 
+			Se quita esta opcion del menu por su peligrosidad obvia. Ahora mismo genera facturas que no son compatibles con la aplicacion 
+			a la hora de imprimirlas o contabilizarlas. Si sigue adelante este tema habria que revisarlo con MAC para dejarlo bien.
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="rectifierInvoiceManagement"
+												action="rectifierInvoice_search" actionListener="#{rectifierInvoice.onReset}"
+												value="#{bundle.finance_special_rectifier_invoice_module}" />
+										</aon:div>
+		 -->								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoiceRemover"
+											action="invoiceRemover_search"
+											actionListener="#{invoiceRemover.onEditSearch}"
+											value="#{bundle.finance_invoice_removing_module}"/>
+									</aon:div>
+									<aon:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="saleInvoiceSigner"
+												action="invoiceSigner_search"
+												actionListener="#{invoiceSigner.onEditSearch}"
+												value="#{bundle.finance_invoice_signing_module}"/>
+										</aon:div>								
+									</aon:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="no_fee_customers"
+											action="noFeeCustomer_list"
+											actionListener="#{customerFee.onNoFeeCustomers}"
+											value="#{bundle.finance_fee_no_fee_customer_module}"/>
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
+					</aon:panelGroup>
+					<aon:panelGroup>
+						<aon:if test="#{aonRole.purchaseOperator}">
 							<aon:panelGrid id="group_management_holder_expenses"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-expenses aon-direct-access-panel">
@@ -518,8 +521,48 @@
 									</aon:div>
 								</aon:panelGrid>
 							</aon:if>
-						</aon:panelGroup>
-					</aon:if>
+						</aon:if>
+						<aon:panelGroup>
+						<aon:if test="#{aonRole.accountingOperator}">					
+							<aon:panelGrid id="group_taxes_management"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-aeat aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.config_tax_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="vat_report-aonOne"
+											action="vat_report_search-aonOne"
+											actionListener="#{vatReport.onReset}"
+											value="#{bundle.finance_vat_report_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="retention_report-aonOne"
+											action="retention_report_search-aonOne"
+											actionListener="#{retentionReport.onReset}"
+											value="#{bundle.fiscal_retention_report_module}" />
+									</aon:div>	
+									<aon:if test="#{domainSwitcher.betaDomain}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_sii"
+													action="gwt_sii"
+													title="SII - Suministro Inmediato de Información">
+													<aon:outputText
+														styleClass="aon-fiscal-link-label aon-icon-beta-text"
+														style="margin-left: 5px; padding-left: 20px;" 
+														value="SII - Suministro Inmediato de Información" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>		
+																	
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
+					</aon:panelGroup>
+						
+					</aon:panelGroup>
+				
 					
 				</h:panelGrid>
 			</aon:div>
