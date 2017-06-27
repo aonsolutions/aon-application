@@ -109,14 +109,14 @@ public class SIIPost extends WebServiceGatewaySupport{
 
     	JAXBElement<RespuestaLRFEmitidasType> response = (JAXBElement<RespuestaLRFEmitidasType>) post(uri, suministro);
     	RespuestaLRFEmitidasType respuesta = response.getValue();
-    	HashMap<Integer, Boolean> map = new HashMap<>();
+    	HashMap<Integer, SIIDataVariable> map = new HashMap<>();
     	Integer index = 0;
     	
     	JSONArray array = new JSONArray();
     	for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
         	Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
-    		map.put(invoiceList.get(index), correcto || aceptadoConErrores);
+    		map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
     		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
         			correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
         	    	r.getIDFactura().getNumSerieFacturaEmisor()));
@@ -171,11 +171,6 @@ public class SIIPost extends WebServiceGatewaySupport{
     			respuesta.getRespuestaLinea().get(0).getIDFactura().getNumSerieFacturaEmisor());
     }
     
-    @SuppressWarnings("unchecked")
-    protected JSONObject bajaFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
-    	return new JSONObject();
-    }
-    
     // -------------------- FACTURAS RECIBIDAS
 	
     @SuppressWarnings("unchecked")
@@ -186,14 +181,14 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JAXBElement<RespuestaLRFRecibidasType> response = (JAXBElement<RespuestaLRFRecibidasType>) post(uri, suministro);
     	RespuestaLRFRecibidasType respuesta = response.getValue();	
     
-    	HashMap<Integer, Boolean> map = new HashMap<>();
+    	HashMap<Integer, SIIDataVariable> map = new HashMap<>();
     	Integer index = 0;
     	
     	JSONArray array = new JSONArray();
     	for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
         	Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
-    		map.put(invoiceList.get(index), correcto || aceptadoConErrores);
+    		map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
     		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
         			correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
         	    	r.getIDFactura().getNumSerieFacturaEmisor()));
@@ -248,12 +243,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     			correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
     			respuesta.getRespuestaLinea().get(0).getIDFactura().getNumSerieFacturaEmisor());
     }
-    
-    @SuppressWarnings("unchecked")
-    protected JSONObject bajaFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
-    	return new JSONObject();
-    }
-    
+
     // -------------------- BIENES INVERSION
 	
     @SuppressWarnings("unchecked")
@@ -277,6 +267,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     @SuppressWarnings("unchecked")
     protected JSONObject bajaBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    	//RespuestaLRBajaBienesInversionType
     	return new JSONObject();
     }
     
@@ -303,6 +294,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     @SuppressWarnings("unchecked")
     protected JSONObject bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    	//RespuestaLRBajaOComunitariasType
     	return new JSONObject();
     }
     
@@ -330,6 +322,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     @SuppressWarnings("unchecked")
     protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    	//RespuestaLRBajaIMetalicoType
     	return new JSONObject();
     }
     
@@ -356,6 +349,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     @SuppressWarnings("unchecked")
     protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    	//RespuestaLRBajaOperacionesSegurosType
     	return new JSONObject();
     }
     
@@ -381,6 +375,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     @SuppressWarnings("unchecked")
     protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    	//RespuestaLRBajaAgenciasViajesType
     	return new JSONObject();
     }
     

@@ -99,10 +99,11 @@ public class FinanceServlet extends HttpServlet{
     	if(req.getParameterMap().containsKey("sii")){
     		Integer page =  req.getParameterMap().containsKey("page") ? Integer.parseInt(req.getParameter("page")) : 1;
     		Integer perPage = req.getParameterMap().containsKey("per_page") ? Integer.parseInt(req.getParameter("per_page")) : 40;
+    		Date from =  AonDateUtils.getDate(2017, 5, 1);//  req.getParameterMap().containsKey("from") ? AonDateUtils.parse(req.getParameter("from"), "dd-MM-yyyy") : AonDateUtils.getDate(2017, 07, 01);  
     		if("emitidas".equals(req.getParameter("sii"))){
-    			return getInvoiceEmitidasList(domain, login, page, perPage);
+    			return getInvoiceEmitidasList(domain, login, page, perPage, from);
     		} else if("recibidas".equals(req.getParameter("sii"))){
-    			return getInvoiceRecibidasList(domain, login, page, perPage);
+    			return getInvoiceRecibidasList(domain, login, page, perPage, from);
     		} else if("bienes".equals(req.getParameter("sii"))){
     			return getInvoiceBienesList(domain, login, page, perPage);
     		} else if("intracomunitarias".equals(req.getParameter("sii"))){
@@ -116,13 +117,12 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
    
-    private JSONArray getInvoiceEmitidasList(Domain domain, String login, Integer page, Integer perPage){
+    private JSONArray getInvoiceEmitidasList(Domain domain, String login, Integer page, Integer perPage, Date from){
     	JSONArray array = new JSONArray();
     	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getTypeProperty().eq(InvoiceType.SALES.value()))
-    			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
-    			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
+    			.and(f.getTaxDateProperty().ge(from))
     			.page(page).perPage(perPage))
     		.forEach(rm -> {
     			JSONObject json = ToJSON.invoiceToJSON(rm);
@@ -133,17 +133,16 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
     
-    private JSONArray getInvoiceRecibidasList(Domain domain, String login, Integer page, Integer perPage){
+    private JSONArray getInvoiceRecibidasList(Domain domain, String login, Integer page, Integer perPage, Date from){
     	JSONArray array = new JSONArray();
     	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
-    			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
-    			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
+    			.and(f.getTaxDateProperty().ge(from))
     			.page(page).perPage(perPage))
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			Boolean sent = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_OK").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
+    			Boolean sent = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
     			json.put("sii_sent", sent);
     			array.put(json);
     		});
