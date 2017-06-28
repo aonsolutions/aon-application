@@ -3161,7 +3161,7 @@ public class AON {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Integer id =  getWarehouse().insertElaborationDetailComposition(ctx, composition);
 			// addStock  
-			AON.addStock(getDomain(domainName, domainId, login), login,
+			AON.substractStock(getDomain(domainName, domainId, login), login,
 					composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
 			return id;
 		} finally {
@@ -3215,7 +3215,7 @@ public class AON {
 			ElaborationDetailComposition composition = getWarehouse().getElaborationDetailComposition(ctx, compositionId);
 			getWarehouse().deleteElaborationDetailComposition(ctx, f -> f.getIdProperty().eq(compositionId));
 			// substractStock  
-			AON.substractStock(getDomain(domainName, domainId, login), login,
+			AON.addStock(getDomain(domainName, domainId, login), login,
 					composition.getItem().getId(), composition.getQuantity(), composition.getWarehouse().getId());
 			return composition;
 		} finally {
