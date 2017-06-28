@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -87,7 +88,6 @@ public class SIIServlet extends HttpServlet{
 					.map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
 			LinkedList<Integer> recibidasList = invoiceList.stream().filter(f -> f.getType().equals(InvoiceType.PURCHASE) || f.getType().equals(InvoiceType.EXPENSES)).map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
 			LinkedList<Integer> bienesList = new LinkedList<>();
-			LinkedList<Integer> intracomunitariasList = new LinkedList<>();// TODO
 			LinkedList<Integer> metalicoList = new LinkedList<>();
 			LinkedList<Integer> segurosList = new LinkedList<>();
 			LinkedList<Integer> agenciasList = new LinkedList<>();
@@ -111,6 +111,14 @@ public class SIIServlet extends HttpServlet{
 					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidasCobros(domain, login, company, invoiceList, contextList);
 				} else if(option.equals("pagos")){
 					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, invoiceList, contextList);
+				} else if(option.equals("intracomunitaria")){
+					String tipoOp = parameters.get("tipo_operacion");
+					LinkedList<Integer> list = invoiceList.stream().map(f -> f.getId()).collect(Collectors.toCollection(LinkedList::new));
+					if(action.equals("suministro")){
+						object = SIIPost.getInstance(attach.getData(), pass).suministroOperacionesIntracomunitarias(domain, login,company, list, contextList, tipoOp);
+					}else if(action.equals("baja")){
+						object= SIIPost.getInstance(attach.getData(), pass).bajaOperacionesIntracomunitarias(domain, login, company, list, contextList);
+					}
 				} else {
 				if(emitidasList.size() > 0){
 					if(action.equals("suministro")){
@@ -133,14 +141,6 @@ public class SIIServlet extends HttpServlet{
 						object = SIIPost.getInstance(attach.getData(), pass).suministroBienesInversion(domain, login, company, bienesList, contextList);	
 					} else if(action.equals("baja")){
 						object = SIIPost.getInstance(attach.getData(), pass).bajaBienesInversion(domain, login, company, bienesList, contextList);
-					}
-				}
-		
-				if(intracomunitariasList.size() > 0){
-					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroOperacionesIntracomunitarias(domain, login,company, intracomunitariasList, contextList);
-					}else if(action.equals("baja")){
-						object= SIIPost.getInstance(attach.getData(), pass).bajaOperacionesIntracomunitarias(domain, login, company, intracomunitariasList, contextList);
 					}
 				}
 		
@@ -170,10 +170,12 @@ public class SIIServlet extends HttpServlet{
 				}	
 				giveBack(req, resp, object, new JSONObject());
 			} catch (Exception e) {
+				JSONArray array = new JSONArray();
 				JSONObject json = new JSONObject();
 				json.put("id", 1);
 				json.put("name", e.getLocalizedMessage());
-				giveBack(req, resp, json, new JSONObject());
+				array.put(json);
+				giveBack(req, resp, array, new JSONObject());
 				e.printStackTrace();
 			}
 		}

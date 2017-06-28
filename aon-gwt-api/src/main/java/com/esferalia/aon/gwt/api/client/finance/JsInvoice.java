@@ -38,11 +38,6 @@ public class JsInvoice extends JavaScriptObject {
 	public final native String getTaxDate() /*-{
 		return this.tax_date;
 	}-*/;
-
-	
-	public final native Boolean isSiiSent() /*-{
-		return this.sii_sent;
-	}-*/;
 	
 	public final native Boolean isVatAccrualPayment() /*-{
 		return this.vat_accrual_payment;
@@ -53,4 +48,18 @@ public class JsInvoice extends JavaScriptObject {
 	}-*/;
 	
 	
+	// SII
+
+	public final native String getSii() /*-{
+		return this.sii;
+	}-*/;
+
+	
+	public final native Boolean isSiiSent() /*-{
+		return this.sii_sent;
+	}-*/;
+	
+	public final native Boolean isSiiSent2() /*-{
+		return this.sii_sent2;
+	}-*/;
 }

@@ -145,7 +145,8 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						 for(JsInvoice f :dataProvider.getList()){
 							 dataGrid.getSelectionModel().setSelected(f, false);
 						 }
-						 dataGrid.getSelectionModel().setSelected(object, true);
+						 if(object.isSiiSent())
+							 dataGrid.getSelectionModel().setSelected(object, true);
 					 }
 					 
 					selFiles = new LinkedList<>();
@@ -346,22 +347,38 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	        	public void render(com.google.gwt.cell.client.Cell.Context context,
 	        			JsInvoice value, SafeHtmlBuilder sb) {
 	        		if(text.equals("enviar")){
-	        			if(!value.isSiiSent()){
-	        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-accept\" tabindex=\"-1\">");
-	        				sb.appendHtmlConstant("</button>");		
+	        			if(value.getSii().equals("intracomunitaria")){
+	        				if(value.isSiiSent() && !value.isSiiSent2()){
+	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-accept\" tabindex=\"-1\">");
+	        					sb.appendHtmlConstant("</button>");		
+	        				}
+	        			} else {
+	        				if(!value.isSiiSent()){
+	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-accept\" tabindex=\"-1\">");
+	        					sb.appendHtmlConstant("</button>");		
+	        				}
 	        			}
 	        		}
 	        		if(text.equals("anular")){
-	        			if(value.isSiiSent()){
-	        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-removed\" tabindex=\"-1\">");
-							sb.appendHtmlConstant("</button>");
+	        			if(value.getSii().equals("intracomunitaria")){
+	        				if(value.isSiiSent() && value.isSiiSent2()){
+	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-removed\" tabindex=\"-1\">");
+	        					sb.appendHtmlConstant("</button>");		
+	        				}
+	        			} else {
+	        				if(value.isSiiSent()){
+	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-removed\" tabindex=\"-1\">");
+	        					sb.appendHtmlConstant("</button>");
+	        				}
 	        			}
 	        		}
 	        		
 	        		if(text.equals("cobros_pagos")){
-	        			if(value.isSiiSent() && value.isVatAccrualPayment()){
-	        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-pay\" tabindex=\"-1\">");
-							sb.appendHtmlConstant("</button>");
+	        			if(!value.getSii().equals("intracomunitaria")){
+	        				if(value.isSiiSent() && value.isVatAccrualPayment()){
+	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-pay\" tabindex=\"-1\">");
+	        					sb.appendHtmlConstant("</button>");
+	        				}
 	        			}
 	        		}
 	        	}
@@ -434,14 +451,16 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		    	list.add(tb.getText());
 		    	map.put("pass", list);
 		    	list = new LinkedList<>();
-		    	list.add("baja");
+		    	list.add(invoice.getSii());
 		    	map.put("option", list);
 		    	hide();
 		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
-						Window.alert(result.getOneData().getId() + ": " + result.getOneData().getName());
+						result.getData().stream().forEach(r -> {
+							Window.alert(r.getId() + ": " + r.getName());
+						});
 					}
 					
 					@Override
@@ -525,7 +544,18 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	
 	private void sendSii(JsInvoice invoice){
 		VerticalPanel vp = new VerticalPanel();
+		HorizontalPanel hp0 = new HorizontalPanel();
+		hp0.add(new Label("Tipo de Operacion"));
+		ListBox lb0 = new ListBox();
+		lb0.addItem("Articulo 70, apartado uno, n\u00famero 7\u00BA, Ley del Impuesto(Ley 37/1992)", "A");
+		lb0.addItem("Articulo 16, apartado 2\u00BA, Ley del Impuesto(Ley 37/1992)", "B");
+		hp0.add(lb0);
+		if(invoice.getSii().equals("intracomunitaria")){
+			vp.add(hp0);
+		}
+		
 		HorizontalPanel hp1 = new HorizontalPanel();
+		hp1.addStyleName(AON.AON_CSS.aonPaddingTop());
 		hp1.add(new Label("Certificado"));
 		ListBox lb = new ListBox();
 		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
@@ -572,7 +602,10 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		    	list.add(tb.getText());
 		    	map.put("pass", list);
 		    	list = new LinkedList<>();
-		    	list.add("general");
+		    	list.add(lb0.getSelectedValue());
+		    	map.put("tipo_operacion", list);
+		    	list = new LinkedList<>();
+		    	list.add(invoice.getSii());
 		    	map.put("option", list);
 		    	hide();
 		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
