@@ -366,6 +366,19 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		return isGroup()?getValue(Mod2002016Key.LQ1231):0.0;
 	}
 
+	public double computeLQ1032() throws AonCoreException {
+		if (isGroup() && getContainsKey(Mod2002016Key.LQ1032)) {
+			return getValue(Mod2002016Key.LQ1032);
+		}
+		if (isGroup()) {
+			return 0.0;
+		}
+		double lq1132 = roundKey(Mod2002016Key.LQ1132);
+		double lq1135 = roundKey(Mod2002016Key.LQ1135);
+		double lq1471 = roundKey(Mod2002016Key.LQ1471);
+		return round(lq1132+lq1135+lq1471);
+	}
+
 	public double computeD1004() throws AonCoreException {
 		if (!context.containsKey(Mod2002016Key.D1004)) {
 			return 0.0;
