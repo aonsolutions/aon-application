@@ -380,18 +380,18 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 	}
 
 	public double computeD1004() throws AonCoreException {
-		if (!context.containsKey(Mod2002016Key.D1004)) {
-			return 0.0;
+		if (getContainsKey(Mod2002016Key.D1004)) {
+			double d1004 = getValue(Mod2002016Key.D1004);
+			if ( AonMathUtils.isZero(d1004)) {
+				return 0.0;
+			} 	
+			if (d1004>getLimit(LIM_3)){
+				return getLimit(LIM_3);			
+			} else {
+				return d1004;				
+			}
 		}
-		double d1004 = getValue(Mod2002016Key.D1004);
-		if ( AonMathUtils.isZero(d1004)) {
-			return 0.0;
-		} 	
-		if (d1004>getLimit(LIM_3)){
-			return getLimit(LIM_3);			
-		} else {
-			return d1004;				
-		}
+		return 0.0;
 	}
 	public double computeLQ562() throws AonCoreException {
 		
