@@ -99,5 +99,13 @@ public class Page10 extends PageAbs {
 	}
 	
 	@Override
+	protected boolean isDisabled(Mod2002016Key key) {
+		if (key == Mod2002016Key.BN575)  {
+			return callback.getMod200Object().getMod200().isNotChecked(Mod2002016Key.C0007);
+		}
+		return super.isDisabled(key);
+	}
+	
+	@Override
 	protected void populate() {}
 }

@@ -624,7 +624,7 @@ public enum Mod2002016Key implements IMod200Key {
 	,BN566(566)
 	,BN576(576)
 	,BN569(569)
-	,BN103(103) // Tipo de gravamen 2015, para desgloses de doble imposicion interna e internacional
+	//,BN103(103)
 	,BN570(570) // DI interna de periodos anteriores aplicada en el ejercicio (art.30 RDL 4/2004)		
 		,BN104(104)		,BN105(105)		,BN846(846)		,BN847(847)		,BN848(848)
 		,BN106(106)		,BN107(107)		,BN282(282)		,BN283(283)		,BN284(284)
@@ -633,12 +633,12 @@ public enum Mod2002016Key implements IMod200Key {
 		,BN112(112)		,BN113(113)		,BN025(25)		,BN026(26)		,BN027(27)
 		,BN114(114)		,BN115(115)		,BN714(714)		,BN715(715)		,BN716(716)
 		,BN735(735)		,BN920(920)		,BN736(736)		,BN737(737)		,BN738(738)
-		,BN116(116)						,BN117(117)						,BN118(118)
+		,BN116(116)		,BN103A(103)	,BN117(117)						,BN118(118)
 		
 	,BN1344(1344) // DI interna de periodos anteriores aplicada en el ejercicio (DT 23ª.1 LIS)
 	    ,BN101(101)		,BN102(102)		,BN119(119)		,BN120(120)		,BN121(121)
 		,BN122(122)		,BN123(123)		,BN124(124)		,BN125(125)		,BN126(126)
-		,BN1342(1342)			        ,BN1343(1343)				    ,BN1345(1345)
+		,BN1342(1342)	,BN103B(103)    ,BN1343(1343)				    ,BN1345(1345)
 		
 	,BN1280(1280) // DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)
 	    ,BN127(127)		,BN128(128)		,BN129(129)
@@ -655,12 +655,12 @@ public enum Mod2002016Key implements IMod200Key {
 		,BN720(720)		,BN721(721)		,BN722(722)		,BN723(723)		,BN724(724)
 		,BN739(739)		,BN921(921)		,BN740(740)		,BN741(741)		,BN742(742)
 		,BN134(134)		,BN926(926)		,BN135(135)		,BN136(136)		,BN137(137)
-		,BN160(160)						,BN161(161)						,BN162(162)
+		,BN160(160)		,BN103C(103)    ,BN161(161)						,BN162(162)
 		
 	,BN571(571)   // DI internacional de periodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)
 		,BN1054(1054)	,BN1050(1050)	,BN1051(1051)	,BN1052(1052)	,BN1053(1053)
 		,BN1348(1348)	,BN1349(1349)	,BN1350(1350)	,BN1351(1351)	,BN1352(1352)		
-		,BN131(131)						,BN132(132)		/* BN571 */   	,BN133(133)
+		,BN131(131)		,BN103D(103)    ,BN132(132)		/* BN571 */   	,BN133(133)
 		
 	,BN573(573)  // DI internacional generada y aplicada en el ejercicio (art. 31 y 32 LIS) 
 		,BN163(163)										,BN165(165)		,BN166(166)		

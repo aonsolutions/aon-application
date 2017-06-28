@@ -13,10 +13,10 @@ public enum Mod2002016BN1344Key implements Serializable, IMod200KeysProvider {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 
-	 C01(new Mod2002016Key[]{Mod2002016Key.BN101 ,Mod2002016Key.BN102,Mod2002016Key.BN119 ,Mod2002016Key.BN120,Mod2002016Key.BN121 },"D.I. interna 2015")
-	,C02(new Mod2002016Key[]{Mod2002016Key.BN122 ,Mod2002016Key.BN123,Mod2002016Key.BN124 ,Mod2002016Key.BN125,Mod2002016Key.BN126 },"D.I. interna 2016(*)")
-	,C03(new Mod2002016Key[]{Mod2002016Key.BN1342,Mod2002016Key.BN103,Mod2002016Key.BN1343,null /* BN1344 */  ,Mod2002016Key.BN1345},"Total")
-	,C04(new Mod2002016Key[]{null				 ,Mod2002016Key.BN103,null				  ,null 			  ,null 			   },"Tipo de gravamen 2016")
+	 C01(new Mod2002016Key[]{Mod2002016Key.BN101 ,Mod2002016Key.BN102 ,Mod2002016Key.BN119 ,Mod2002016Key.BN120,Mod2002016Key.BN121 },"D.I. interna 2015")
+	,C02(new Mod2002016Key[]{Mod2002016Key.BN122 ,Mod2002016Key.BN123 ,Mod2002016Key.BN124 ,Mod2002016Key.BN125,Mod2002016Key.BN126 },"D.I. interna 2016(*)")
+	,C03(new Mod2002016Key[]{Mod2002016Key.BN1342,null				  ,Mod2002016Key.BN1343,null /* BN1344 */  ,Mod2002016Key.BN1345},"Total")
+	,C04(new Mod2002016Key[]{null				 ,Mod2002016Key.BN103B,null				  ,null 			  ,null 			   },"Tipo de gravamen 2016")
 	;
 	 
     private String description;

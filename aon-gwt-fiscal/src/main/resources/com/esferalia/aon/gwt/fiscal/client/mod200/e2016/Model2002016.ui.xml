@@ -57,9 +57,6 @@
 						</g:HTMLPanel>
 						<g:FlowPanel ui:field="formContainer" />
 					</g:HorizontalPanel>
-					<g:FlowPanel styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonTextCenter} {aonResources.css.aonFontBig} {aonResources.css.aonColorRed}">
-						<g:Label text="M&#243;dulo en desarrollo" />
-					</g:FlowPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>
