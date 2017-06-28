@@ -231,8 +231,10 @@
 					withBackdrop="true">
 					<a:CustomDialogBar ui:field="customDialogBarShowVariables"
 						styleName="{style.marginTopCloseDialog}" caption="Variables mostradas" />
-					<g:HTMLPanel ui:field="showVariablesContent"></g:HTMLPanel>
-					<g:HTMLPanel>
+					<g:HTMLPanel ui:field="showVariablesContent">
+					    
+					</g:HTMLPanel>
+					<!--  g:HTMLPanel>
 						<p:PaperCheckbox checked="true" ui:field="dtCheckBox1" />
 						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_TRABAJADOS</i:IronLabel>
 					</g:HTMLPanel>
@@ -295,7 +297,7 @@
 					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
 						<p:PaperCheckbox checked="true" ui:field="hefCheckBox16" />
 						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">HORAS_EXTRAS_FZA</i:IronLabel>
-					</g:HTMLPanel>
+					</g:HTMLPanel -->
 					<HTMLPanel class="buttons">
 						<p:PaperButton ui:field="showVariablesDialogCancel"
 							attributes="dialog-dismiss">Cancel</p:PaperButton>

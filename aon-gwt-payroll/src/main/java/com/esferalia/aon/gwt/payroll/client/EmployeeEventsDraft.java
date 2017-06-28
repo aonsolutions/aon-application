@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
@@ -10,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -17,7 +19,9 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -57,52 +61,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	MenuItem showVariablesMenuItem;
 	
 	@UiField
-	PaperCheckbox dtCheckBox1;
-	
-	@UiField
-	PaperCheckbox deCheckBox2;
-	
-	@UiField
-	PaperCheckbox deCheckBox3;
-	
-	@UiField
-	PaperCheckbox dhCheckBox4;
-	
-	@UiField
-	PaperCheckbox daCheckBox5;
-	
-	@UiField
-	PaperCheckbox htCheckBox6;
-	
-	@UiField
-	PaperCheckbox hcCheckBox7;
-	
-	@UiField
-	PaperCheckbox dpCheckBox8;
-	
-	@UiField
-	PaperCheckbox dmCheckBox9;
-	
-	@UiField
-	PaperCheckbox dpeCheckBox10;
-	
-	@UiField
-	PaperCheckbox dmeCheckBox11;
-	
-	@UiField
-	PaperCheckbox kmCheckBox12;
-	
-	@UiField
-	PaperCheckbox dvCheckBox13;
-	
-	@UiField
-	PaperCheckbox jrCheckBox14;
-	
-	@UiField
-	PaperCheckbox heCheckBox15;
-	
-	@UiField
-	PaperCheckbox hefCheckBox16;
+	HTMLPanel showVariablesContent;
 	
 	@UiField
 	PaperButton showVariablesDialogOk;
@@ -156,6 +115,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
 	private EmployeeEventsDraftObject employeeEventsDraft;
 	private ArrayList<String> blockVariableList;
+	private HashMap<String,PaperCheckbox> showVariablesMap = new HashMap<String,PaperCheckbox>();
+	private HashMap<String,Integer> variablesRow = new HashMap<String,Integer>();
 	
 	public EmployeeEventsDraft() {
 		//Inicializamos la vista del gestor de incidencias
@@ -181,12 +142,50 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		showVariablesMenuItem.setScheduledCommand(new Command() {
 			@Override
 			public void execute() {
+				createShowVariablesDialog();
+				showVariablesDialog.center();
 				showVariablesDialog.open();
+				showVariablesDialog.center();
+			}
+
+			private void createShowVariablesDialog() {
+				showVariablesContent.clear();
+				ArrayList<String> list = new ArrayList<String>();
+				
+				Storage storage = Storage.getLocalStorageIfSupported();
+				
+				if (null != storage){
+					String stringList = storage.getItem("NO_MOSTRAR");
+					if(null != stringList){
+						String[] arrayList = stringList.split(",");
+						
+						for(int i = 0; i < arrayList.length; i++)
+							list.add(arrayList[i]);
+					}
+					
+				}
+					
+				for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+					FlowPanel panel = new FlowPanel();
+					PaperCheckbox checkBox = new PaperCheckbox();
+					IronLabel label = new IronLabel();
+					label.getElement().setInnerText(var);
+					if(list.contains(var))
+						checkBox.setChecked(false);
+					else
+						checkBox.setChecked(true);
+					
+					panel.add(checkBox);
+					panel.add(label);
+					showVariablesContent.add(panel);
+					
+					showVariablesMap.put(var, checkBox);
+				}
 			}
 		});
 		
 		//#ifndef env.SNAPSHOT
-		//saveButton.setVisible(false);
+		saveButton.setVisible(false);
 		//#endif
 		
 		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
@@ -212,17 +211,31 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiHandler("showVariablesDialogOk")
 	public void onShowVariableDialogOkClick(ClickEvent event) {
-		Boolean showingVar[] = new Boolean[16];
-		fillShowingVarList(showingVar);
-		for (int i = 0; i < 16; i++){
-			if (showingVar[i]){
-				eventsGrid.getRowFormatter().removeStyleName(i+1, style.ocultarFila());
-			}else{
-				eventsGrid.getRowFormatter().addStyleName(i+1, style.ocultarFila());
-			}		
+		ArrayList<String> variablesLocalStore = new ArrayList<String>();
+		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+			 PaperCheckbox check = showVariablesMap.get(var);
+			 Integer row = calculateRowByVariableName(var);
+			 if(check.getChecked())
+				 eventsGrid.getRowFormatter().removeStyleName(row, style.ocultarFila());
+			 else{
+				 eventsGrid.getRowFormatter().addStyleName(row, style.ocultarFila());
+				 variablesLocalStore.add(var);
+			 }
+		}
+		
+		Storage storage = Storage.getLocalStorageIfSupported();
+		
+		if(null != storage){
+			String noShowVar = "";
+			for(String var : variablesLocalStore)
+				noShowVar += var+",";
+			
+			storage.removeItem("NO_MOSTRAR");
+			storage.setItem("NO_MOSTRAR", noShowVar);
 		}
 	}
 
+	
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
 		openNewValueDialog();
@@ -361,18 +374,34 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private void fillCellsEvents() {
 		
+		ArrayList<String> list = new ArrayList<String>();
+		
+		Storage storage = Storage.getLocalStorageIfSupported();
+		
+		if (null != storage){
+			String stringList = storage.getItem("NO_MOSTRAR");
+			if(null != stringList){
+				String[] arrayList = stringList.split(",");
+				
+				for(int i = 0; i < arrayList.length; i++)
+					list.add(arrayList[i]);
+			}
+			
+		}
+		
 		//Crear nuevas filas con las variables dadas
 		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-			createVariableRow(var);
+			createVariableRow(var, list);
 		}
 		
 	}
 	
-    private void createVariableRow(String var) {
+    private void createVariableRow(String var, ArrayList<String> list) {
     	Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
     	Integer actualMonth = 0;
     	
     	int newRow = eventsGrid.insertRow(eventsGrid.getRowCount());
+    	variablesRow.put(var, newRow);
 		
 		if (newRow % 2 == 1)
 			eventsGrid.getRowFormatter().addStyleName(newRow, style.oddRowStyle());
@@ -446,25 +475,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			actualMonth++;
 		}
 		
+		if(list.contains(var))
+			eventsGrid.getRowFormatter().addStyleName(newRow, style.ocultarFila());
+		else
+			eventsGrid.getRowFormatter().removeStyleName(newRow, style.ocultarFila());
+		
 	}
-	
-	private void fillShowingVarList(Boolean[] showingVar) {
-		showingVar[0] = dtCheckBox1.getChecked();
-		showingVar[1] = deCheckBox2.getChecked();
-		showingVar[2] = deCheckBox3.getChecked();
-		showingVar[3] = dhCheckBox4.getChecked();
-		showingVar[4] = daCheckBox5.getChecked();
-		showingVar[5] = htCheckBox6.getChecked();
-		showingVar[6] = hcCheckBox7.getChecked();
-		showingVar[7] = dpCheckBox8.getChecked();
-		showingVar[8] = dmCheckBox9.getChecked();
-		showingVar[9] = dpeCheckBox10.getChecked();
-		showingVar[10] = dmeCheckBox11.getChecked();
-		showingVar[11] = kmCheckBox12.getChecked();
-		showingVar[12] = dvCheckBox13.getChecked();
-		showingVar[13] = jrCheckBox14.getChecked();
-		showingVar[14] = heCheckBox15.getChecked();
-		showingVar[15] = hefCheckBox16.getChecked();
+    
+    private Integer calculateRowByVariableName(String var) {
+    	return variablesRow.get(var);
 	}
 	
 	private boolean checkBlockVariables(int row) {
