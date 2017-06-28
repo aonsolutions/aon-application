@@ -1,7 +1,6 @@
 package com.esferalia.aon.file.seres.util;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,36 +10,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 
+import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.google.common.collect.Iterables;
 
 public class DeliveryPackages {
-
-	
-//	private boolean isPackageItem(Item item) {
-//		return item != null && item.getSerialNumber() == null
-//				&& item.getSerialDate() == null;
-//	}
-//
-//	private String getFormatName(DeliveryDetail detail) {
-//		String format = "";
-//		try {
-//			if(detail.getItem().getProduct().getName()!=null){
-//				format = detail.getItem().getProduct().getName();
-//			}
-//			if(detail.getItem().getProduct().getBaseItem().getPackFormatTag()!=null){
-//				format = detail.getItem().getProduct().getBaseItem().getPackFormatTag().getName();
-//			}
-//		} catch (ManagerBeanException e) {
-//			LOGGER.error("Error obtaining product format name.", e);
-//		}
-//		return format;
-//	}
 
 	
 	public static Attach obtainPackageDataAttach(String domainName, int domainId, String user, Integer deliveryId) {
@@ -62,7 +39,7 @@ public class DeliveryPackages {
 		return null;
 	}
 	
-	public static Collection<Integer> loadLevel1List(String data) {
+	private static Collection<Integer> loadLevel1List(String data) {
 		Map<Integer, List<Integer>> containerMap = loadContainerMap(data);
 		Map<Integer, List<Integer>> linesMap = loadLinesMap(data);
 		Collection<Integer> c = CollectionUtils.subtract(linesMap.keySet(), containerMap.keySet());
@@ -70,6 +47,25 @@ public class DeliveryPackages {
 			c.removeAll(CollectionUtils.subtract(list, c));
 		});
 		return CollectionUtils.union(containerMap.keySet(), c);
+	}
+	
+	public static Map<Integer, List<Integer>> loadLevel1Map(String data, List<DeliveryDetail> detailList) {
+		Collection<Integer> level1List =  loadLevel1List(data);
+		Map<Integer, List<Integer>> level1Map = new LinkedHashMap<>();
+		if(detailList!=null){
+			level1List.forEach(id->{
+				DeliveryDetail packageLine = (DeliveryDetail) detailList.get(id-1);
+				
+				List<Integer> packageList = new LinkedList<>();
+				packageList.add(id);
+				int itemId = packageLine.getItem().getId();
+				if (level1Map.containsKey(itemId))
+					level1Map.get(itemId).addAll(packageList);
+				else
+					level1Map.put(itemId, packageList);
+			});
+		}
+		return level1Map;
 	}
 	
 	public static Map<Integer, List<Integer>> loadLevel2Map(String data) {
@@ -145,6 +141,11 @@ public class DeliveryPackages {
 				String _value = matcher.group(valueGroup).replaceFirst(valuePrefix, "");
 				Integer key = Integer.parseInt(_key);
 				Integer value = Integer.parseInt(_value);
+				
+				// adjust to zero-starting system
+//				--key;
+//				--value;
+				
 				List<Integer> list = new LinkedList<>();
 				list.add(value);
 				if (map.containsKey(key))
