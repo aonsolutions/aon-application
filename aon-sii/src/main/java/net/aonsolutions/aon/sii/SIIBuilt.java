@@ -292,7 +292,7 @@ public class SIIBuilt {
 				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._02.getName());
 			}
 			if(vat.getTaxDate().compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
-				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._16.getName());
+	//			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._16.getName());
 			}
 			
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA ADICIONAL 2
@@ -345,8 +345,9 @@ public class SIIBuilt {
 			}
 			
 			// CONTRAPARTE
-			fet.setContraparte(contraparte(vat));
-	
+			if(vat.getRegistryDocument() != null && !vat.getRegistryDocument().equals("")){
+				fet.setContraparte(contraparte(vat));
+			}
 			// TIPO DESGLOSE
 			TipoDesglose tipoDesglose = new TipoDesglose(); 
 
@@ -357,6 +358,7 @@ public class SIIBuilt {
 				if(vat.isService() && !vat.isIntracommunity()){
 					TipoSinDesglosePrestacionType prestacion = new TipoSinDesglosePrestacionType();
 					NoSujetaType nst3 = new NoSujetaType();
+					
 					nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
 				//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
 					prestacion.setNoSujeta(nst3);
@@ -379,14 +381,19 @@ public class SIIBuilt {
 					net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta noExenta3 = new net.aonsolutions.aeat.sii.SujetaPrestacionType.NoExenta();
 					noExenta3.setDesgloseIVA(diva3);
 					noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+					if(vat.isOtherISP()){
+						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);
+					}
 					st3.setNoExenta(noExenta3);
 					prestacion.setSujeta(st3);		
 					tcdt.setPrestacionServicios(prestacion);
 				} else {
 					TipoSinDesgloseType entrega = new TipoSinDesgloseType();
 					NoSujetaType nst2 = new NoSujetaType();
-					nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
-					//nst2.setImporteTAIReglasLocalizacion(""); // TODO
+					if(vat.isIntracommunity() && vat.isOtherISP()){
+						nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
+					} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
+					// // TODO
 					entrega.setNoSujeta(nst2);
 					SujetaType st2 = new SujetaType();
 					
@@ -409,7 +416,7 @@ public class SIIBuilt {
 							diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
 							diet.setCuotaRepercutida(Double.toString(AonMathUtils.round(r.getQuota())));
 							diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage())));
-							if(r.getSurchargePercent() != 0.0){
+							if(r.getSurchargePercent() > 0.0 && r.getSurchargeQuota() > 0.0){
 								diet.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 								diet.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargePercent())));
 							}
@@ -445,7 +452,7 @@ public class SIIBuilt {
 					diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase()))); //TODO
 					diet.setCuotaRepercutida(Double.toString(AonMathUtils.round(r.getQuota()))); //TODO
 					diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage()))); //TODO
-					if(r.getSurchargePercent() != 0.0){
+					if(r.getSurchargePercent() > 0.0 && r.getSurchargeQuota() > 0.0){
 						diet.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota()))); //TODO
 						diet.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargePercent())));
 					}
@@ -629,11 +636,12 @@ public class SIIBuilt {
 		
 		// BODY
 		invoiceList.stream().forEach(invoice -> {
-			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() == 0  && !f.getVatDeductionType().equals(VatDeductionType.NON_TAXABLE))
-					.mapToDouble(f -> f.getBase()).sum();
-			Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getVatDeductionType().equals(VatDeductionType.NON_TAXABLE))
-					.mapToDouble(f -> f.getBase()).sum();
-			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() > 0  && !f.getVatDeductionType().equals(VatDeductionType.NON_TAXABLE))
+			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
+
+			LinkedList<VatData> noExenta = new LinkedList<>();
+			LinkedList<VatData> pasivoList = new LinkedList<>();
+			if(!vat.isIntracommunity()){
+				noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && !f.isOtherISP())
 					.map(f -> new VatData().setBase(f.getBase())
 							.setPercentage(f.getPercentage())
 							.setQuota(f.getQuota())
@@ -641,15 +649,22 @@ public class SIIBuilt {
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			
-			LinkedList<VatData> pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() == 0  || f.getVatDeductionType().equals(VatDeductionType.NON_TAXABLE))
+				pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.isOtherISP())
 					.map(f -> new VatData().setBase(f.getBase())
 							.setPercentage(f.getPercentage())
 							.setQuota(f.getQuota())
 							.setSurchargePercent(f.getSurchargePercent())
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
-				
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
+			} else {
+				noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice))
+					.map(f -> new VatData().setBase(f.getBase())
+							.setPercentage(f.getPercentage())
+							.setQuota(f.getQuota())
+							.setSurchargePercent(f.getSurchargePercent())
+							.setSurchargeQuota(f.getSurchargeQuota()))
+					.collect(Collectors.toCollection(LinkedList::new));
+			}
 			
 			LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
 
@@ -686,24 +701,23 @@ public class SIIBuilt {
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA  
 			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._01.getName()); //TODO 
 
-			// CLAVE REGIMEN IVA || TRANSCENDENCIA ADICIONAL 1			
 			if(vat.isVatAccrualRegime()){
-				frt.setClaveRegimenEspecialOTrascendenciaAdicional1(ClaveRegimenEspecialOTrascendenciaRecibidasType._07.getName());//TODO OPTIONAL
+				frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._07.getName());//TODO OPTIONAL
 			}
 			
+			if(vat.isIntracommunity()){
+				frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._09.getName());
+			}
 			if(vat.getTaxDate().compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
-				frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
+	//			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 			}
-			
-			// CLAVE REGIMEN IVA || TRANSCENDENCIA ADICIONAL 2
-			//frt.setClaveRegimenEspecialOTrascendenciaAdicional2("");//TODO OPTIONAL
 			
 			// BASE IMPONIBLE A COSTE (OPTIONAL)
 			if(frt.getClaveRegimenEspecialOTrascendencia().equals("06")
 					|| (frt.getClaveRegimenEspecialOTrascendenciaAdicional1() != null && frt.getClaveRegimenEspecialOTrascendenciaAdicional1().equals("06"))
 					|| (frt.getClaveRegimenEspecialOTrascendenciaAdicional2() != null && frt.getClaveRegimenEspecialOTrascendenciaAdicional2().equals("06"))){
-				Double base = noSujeta + exenta + noExenta.stream().mapToDouble(h -> h.getBase()).sum();
-				// TODO CALCULO !!!
+				Double base = noExenta.stream().mapToDouble(h -> h.getBase()).sum()
+						+ pasivoList.stream().mapToDouble(h -> h.getBase()).sum();
 				frt.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
 			}			
 
@@ -720,12 +734,12 @@ public class SIIBuilt {
 			frt.setFechaRegContable(AonDateUtils.format(vat.getTaxDate(), "dd-MM-yyyy"));//TODO
 			
 			// IMPORTE TOTAL
-			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum();
+			Double total = noExenta.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum()
+					+ pasivoList.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum();
 			frt.setImporteTotal(Double.toString(AonMathUtils.round(total)));//TODO
 			
 			// NUM REGISTRO ACUERDO FACTURACION
 			frt.setNumRegistroAcuerdoFacturacion("");//TODO
-			
 			// TIPO FACTURA
 			frt.setTipoFactura(ClaveTipoFacturaType.F_1);//TODO De momento a piñon fijo!!!
 			if(vat.isIntracommunity()){
@@ -777,7 +791,7 @@ public class SIIBuilt {
 					diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase()))); //TODO
 					diet.setCuotaSoportada(Double.toString(AonMathUtils.round(r.getQuota())));
 					diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage())));
-					if(r.getSurchargePercent() != 0.0){
+					if(r.getSurchargePercent() > 0.0 && r.getSurchargeQuota() > 0.0){
 						diet.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 						diet.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargePercent())));
 					}
@@ -795,7 +809,7 @@ public class SIIBuilt {
 					diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase()))); //TODO
 					diet.setCuotaSoportada(Double.toString(AonMathUtils.round(r.getQuota())));
 					diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage())));
-					if(r.getSurchargePercent() != 0.0){
+					if(r.getSurchargePercent() > 0.0 && r.getSurchargeQuota() > 0.0){
 						diet.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 						diet.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargePercent())));
 					}
@@ -1451,7 +1465,6 @@ public class SIIBuilt {
 	private PersonaFisicaJuridicaType contraparte(VatContext vat) {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
-		
 		if(vat.getRegistryDocumentCountry().equals(Country.ES)
 				&& validateNif(vat.getRegistryDocument(), vat.getRegistryName())){
 			contraparte.setNIF(vat.getRegistryDocument());
@@ -1460,9 +1473,9 @@ public class SIIBuilt {
 			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
 			otro.setID(vat.getRegistryDocument());
 			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) ? 
-					IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
+				IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
 			contraparte.setIDOtro(otro);
-		}
+		}	
 		return contraparte;
 	}
 	
