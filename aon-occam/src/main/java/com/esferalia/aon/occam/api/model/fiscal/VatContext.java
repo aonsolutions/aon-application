@@ -24,9 +24,12 @@ public class VatContext implements Serializable {
 	private String registryDocument;
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
+	private Integer registry;
 	private String registryName;
 	private Date issueDate;
 	private Date taxDate;
+	
+	private String detailDescription;
 	
 	private boolean insidePeriod;
 	
@@ -94,6 +97,13 @@ public class VatContext implements Serializable {
 		this.documentNumber = documentNumber;
 		return this;
 	}
+	public Integer getRegistry() {
+		return registry;
+	}
+	public VatContext setRegistry(Integer registry) {
+		this.registry = registry;
+		return this;
+	}
 	public String getReferenceCode() {
 		return referenceCode;
 	}
@@ -101,7 +111,13 @@ public class VatContext implements Serializable {
 		this.referenceCode = referenceCode;
 		return this;
 	}
-	
+	public String getDetailDescription() {
+		return detailDescription;
+	}
+	public VatContext setDetailDescription(String detailDescription) {
+		this.detailDescription = detailDescription;
+		return this;
+	}
 	public String getRegistryDocument() {
 		return registryDocument;
 	}

@@ -146,7 +146,7 @@ public class SiiMain extends AonTemplate2{
 			}
 		});
 		menuPanel.add(bienesInversionButton);
-		
+	*/	
 		Button operacionesIntracomunitariasButton = new Button("Operaciones Intracomunitarias");
 		operacionesIntracomunitariasButton.setStyleName("aon-editDataTable-button");
 		operacionesIntracomunitariasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
@@ -159,7 +159,7 @@ public class SiiMain extends AonTemplate2{
 			}
 		});
 		menuPanel.add(operacionesIntracomunitariasButton);
-	*/	
+		
 		setWestContent(menuPanel);
 	}
 	

@@ -262,9 +262,9 @@ public class VATDAO  {
 				,INVOICE.RNAME, INVOICE.ISSUE_DATE, INVOICE.TAX_DATE, INVOICE.TYPE
 				,INVOICE.RECTIFICATION_TYPE, INVOICE.SERVICE, INVOICE.TRANSACTION
 				,INVOICE.INVESTMENT, INVOICE.WITHHOLDING_FARMER, INVOICE.VAT_ACCRUAL_PAYMENT
-				,INVOICE.TOTAL
+				,INVOICE.TOTAL, INVOICE.REGISTRY
 				
-				,INVOICE_DETAIL.TAXABLE_BASE, INVOICE_DETAIL.INVEST_ASSET
+				,INVOICE_DETAIL.TAXABLE_BASE, INVOICE_DETAIL.INVEST_ASSET, INVOICE_DETAIL.DESCRIPTION
 				
 				,INVOICE_TAX.BASE, INVOICE_TAX.PERCENTAGE, INVOICE_TAX.QUOTA
 				,INVOICE_TAX.SURCHARGE, INVOICE_TAX.SURCHARGE_QUOTA
@@ -397,6 +397,7 @@ public class VATDAO  {
 				.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE))
 						, rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
 				.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
+				.setRegistry(rec.getValue(INVOICE.REGISTRY))
 				.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
 				.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
 				.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
@@ -412,6 +413,7 @@ public class VATDAO  {
 				.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)
 				.setVatDeductionType(VatDeductionType.safeValueOf(rec.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
 				.setInvestAsset(rec.getValue(INVOICE_DETAIL.INVEST_ASSET))
+				.setDetailDescription(rec.getValue(INVOICE_DETAIL.DESCRIPTION))
 				
 				.setBase( rec.getValue(INVOICE_TAX.BASE) )
 				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE))

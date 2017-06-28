@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -118,7 +119,7 @@ public class FinanceServlet extends HttpServlet{
     		} else if("bienes".equals(req.getParameter("sii"))){
     			return getInvoiceBienesList(domain, login, page, perPage);
     		} else if("intracomunitarias".equals(req.getParameter("sii"))){
-    			return getInvoiceIntracomunitariasList(domain, login, page, perPage);
+    			return getInvoiceIntracomunitariasList(domain, login, page, perPage, from , pending, sent);
     		}
     	}
     	JSONArray array = new JSONArray();
@@ -143,6 +144,7 @@ public class FinanceServlet extends HttpServlet{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
     			Boolean sent1 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
     			json.put("sii_sent", sent1);
+    			json.put("sii", "emitida");
     			array.put(json);
     		});
     	return array;
@@ -158,6 +160,22 @@ public class FinanceServlet extends HttpServlet{
 		} else if(pending){
 			Integer[] a = AON.getDataResponseDetailStream(domain.getName(), domain.getId(), login, h -> 
 			h.getDomainProperty().eq(domain.getId()).and(h.getDataVariableProperty().eq("invoice_sum_ok")))
+			.map(r -> Integer.parseInt(r.getValue())).toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().notIn(a));
+		}
+		return filter;
+    }
+    
+    public static Filter iFilterIntracomunitaria(Domain domain, String login,Boolean pending, Boolean sent, InvoiceProperties f) {
+    	Filter filter =  f.getDomainProperty().eq(domain.getId());
+		if(sent){
+			Integer[] a = AON.getDataResponseDetailStream(domain.getName(), domain.getId(), login, h -> 
+			h.getDomainProperty().eq(domain.getId()).and(h.getDataVariableProperty().eq("invoice_sum_com_ok")))
+			.map(r -> Integer.parseInt(r.getValue())).toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(a));
+		} else if(pending){
+			Integer[] a = AON.getDataResponseDetailStream(domain.getName(), domain.getId(), login, h -> 
+			h.getDomainProperty().eq(domain.getId()).and(h.getDataVariableProperty().eq("invoice_sum_com_ok")))
 			.map(r -> Integer.parseInt(r.getValue())).toArray(Integer[]::new);
 			filter = filter.and(f.getIdProperty().notIn(a));
 		}
@@ -181,6 +199,7 @@ public class FinanceServlet extends HttpServlet{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
     			Boolean sent1 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
     			json.put("sii_sent", sent1);
+    			json.put("sii", "recibida");
     			array.put(json);
     		});
     	return array;
@@ -188,7 +207,7 @@ public class FinanceServlet extends HttpServlet{
 	
 	private JSONArray getInvoiceBienesList(Domain domain, String login, Integer page, Integer perPage){
 		JSONArray array = new JSONArray();
-    /*	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
     			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
@@ -196,17 +215,28 @@ public class FinanceServlet extends HttpServlet{
     			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
     			.page(page).perPage(perPage))
     		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
-    */	return array;
+    	return array;
 	}
 
-	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage){
+	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage, Date from
+    		,Boolean pending, Boolean sent){
     	JSONArray array = new JSONArray();
-    /*	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     				.and(f.getTransactionProperty().eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
+    				.and(f.getTaxDateProperty().ge(from))
+    				.and(iFilterIntracomunitaria(domain, login,pending, sent, f))
     				.page(page).perPage(perPage))
-    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
-    */	return array;
+    		.forEach(rm ->{ 
+    			JSONObject json = ToJSON.invoiceToJSON(rm);
+    			json.put("sii", "intracomunitaria");
+    			Boolean sent1 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
+    			json.put("sii_sent", sent1);
+    			Boolean sent2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataVariableProperty().eq("invoice_sum_com_ok").and(f.getValueProperty().eq(rm.getId().toString()))).isPresent();
+    			json.put("sii_sent2", sent2);
+    			array.put(json);
+    		});
+    	return array;
 	}
     
     private JSONArray getInvoiceList(Domain domain, String login, Integer registryId){
