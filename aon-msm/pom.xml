@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.109.3</version>
+		<version>8.109.4</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon-msm</artifactId>
@@ -16,7 +16,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</connection>
-	  <tag>8.109.3.x</tag>
+	  <tag>8.109.4.x</tag>
   </scm>
 	<build>
 		<plugins>
