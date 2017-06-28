@@ -290,8 +290,9 @@ public class VatContext implements Serializable {
 	public Integer getRectificationInvoice() {
 		return rectificationInvoice;
 	}
-	public void setRectificationInvoice(Integer rectificationInvoice) {
+	public VatContext setRectificationInvoice(Integer rectificationInvoice) {
 		this.rectificationInvoice = rectificationInvoice;
+		return this;
 	}
 	public boolean isRectification() {
 		return (rectificationType == RectificationType.NORMAL_RECTIFIER);
