@@ -1,6 +1,7 @@
 package com.code.aon.ui.warehouse.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Item;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -276,6 +278,115 @@ public class DeliveryPackagesHandler implements Serializable {
 						f -> f.getIdProperty().eq(attach.getId()),
 						AttachType.DATA);
 			}
+		}
+	}
+
+	private boolean isPackageItem(Item item) {
+		return item != null && item.getSerialNumber() == null
+				&& item.getSerialDate() == null;
+	}
+	
+	public SerializableListDataModel getEdiStructureModel() {
+		List<EdiStructureItem> list = new ArrayList<>();
+		if(detailList!=null && dataAttach!=null && dataAttach.getData()!=null){
+			List<DeliveryDetail> detailList = this.detailList.stream()
+					.map(to -> (DeliveryDetail)to)
+					.sorted((d1, d2)->d1.getLine().compareTo(d2.getLine()))
+					.collect(Collectors.toList());
+			String packageData = new String(dataAttach.getData());
+			
+			Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
+			Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
+			Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(packageData);
+			
+			int mainPackageLine = 0;
+			int packageLine = 0;
+			int mainPackageSize = 0;
+			for(Integer level1Key: level1Map.keySet()){
+				List<Integer> packageLineList = level1Map.get(level1Key);
+				
+				// MAIN-PACKAGE
+				mainPackageSize = (int)detailList.stream()
+						.filter(detail->packageLineList.contains(detail.getLine()))
+						.mapToDouble(DeliveryDetail::getQuantity).sum();
+				mainPackageLine = ++packageLine;
+				DeliveryDetail level1Detail = (DeliveryDetail) detailList.get(level1Map.get(level1Key).get(0)-1);
+				EdiStructureItem mainPackage = new EdiStructureItem(mainPackageLine, null, 0, mainPackageSize, level1Detail);
+				list.add(mainPackage);
+				
+				// SUB-PACKAGE OR PRODUCT OVER MAIN-PACKAGE
+				for(Integer level2Key: level2Map.keySet()){
+					if(packageLineList.contains(level2Key)){
+						List<Integer> level2LineList = new LinkedList<>(level2Map.get(level2Key));
+						for(int level2LineId: level2LineList){
+							DeliveryDetail level2Detail = (DeliveryDetail) detailList.get(level2LineId-1);
+							if(!isPackageItem(level2Detail.getItem())) {
+								EdiStructureItem mainPackageItem = new EdiStructureItem(null, mainPackageLine, 1, (int)level2Detail.getQuantity(), level2Detail);
+								list.add(mainPackageItem);
+							} else {
+								EdiStructureItem subPackage = new EdiStructureItem(++packageLine, mainPackageLine, 1, (int)level2Detail.getQuantity(), level2Detail);
+								list.add(subPackage);
+								
+								// PRODUCT OVER SUB-PACKAGE, IF EXIST
+								List<Integer> level3LineList = new LinkedList<>(level3Map.get(level2Detail.getLine()));
+								for(int level3LineId: level3LineList){
+									DeliveryDetail level3Detail = (DeliveryDetail) detailList.get(level3LineId-1);
+									
+									int quantity = 0;
+									
+//									quantity = (int) (level3Detail.getQuantity()
+//											/ level3Detail.getItem().getPackMeasurement()
+//											/ level3Detail.getItem().getPackUnits());
+									quantity = (int) (level3Detail.getItem().getPackUnits());
+									
+//									quantity = (int) (level3Detail.getQuantity()
+//											/ level3Detail.getItem().getPackMeasurement());
+//									quantity = (int) (level3Detail.getItem().getPackMeasurement());
+									
+									quantity *= subPackage.getQuantity();
+									
+									EdiStructureItem subPackageItem = new EdiStructureItem(null, null, 2, quantity, level3Detail);
+									list.add(subPackageItem);
+								}
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		
+//		return list;
+		return new SerializableListDataModel(list);
+	}
+	
+	public class EdiStructureItem implements Serializable {
+		private Integer line;
+		private Integer parent;
+		private int level;
+		private int quantity;
+		private DeliveryDetail detail;
+		public EdiStructureItem(Integer line, Integer parent, int level, int quantity, DeliveryDetail detail) {
+			this.line = line;
+			this.parent = parent;
+			this.level = level;
+			this.quantity = quantity;
+			this.detail = detail;
+		}
+		public Integer getLine() {
+			return line;
+		}
+		public Integer getParent() {
+			return parent;
+		}
+		public int getLevel() {
+			return level;
+		}
+		public int getQuantity() {
+			return quantity;
+		}
+		public DeliveryDetail getDetail() {
+			return detail;
 		}
 	}
 	
