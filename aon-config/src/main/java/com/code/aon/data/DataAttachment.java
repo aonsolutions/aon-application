@@ -24,6 +24,8 @@ import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.dao.hibernate.BlobEntityListener;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
+import com.code.aon.data.enumeration.DataAttachmentSource;
+import com.code.aon.data.enumeration.DataAttachmentType;
 import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.entity.master.DataAttachmentDB;
 
@@ -39,7 +41,33 @@ public class DataAttachment extends DataAttachmentDB implements IAttachment, IBl
 
 	private Integer size;
 
-    @Transient
+	@Transient
+	public boolean isSourceInvoice() {
+		return getSource() == DataAttachmentSource.INVOICE;
+	}
+	@Transient
+	public boolean isSourceFbatch() {
+		return getSource() == DataAttachmentSource.FBATCH;
+	}
+	@Transient
+	public boolean isSourceProduction() {
+		return getSource() == DataAttachmentSource.PRODUCTION;
+	}
+ 
+	@Transient
+	public boolean isTypeRequest() {
+		return getType() == DataAttachmentType.REQUEST;
+	}
+	@Transient
+	public boolean isTypeResponseOk() {
+		return getType() == DataAttachmentType.RESPONSE_OK;
+	}
+	@Transient
+	public boolean isTypeResponseError() {
+		return getType() == DataAttachmentType.RESPONSE_ERROR;
+	}
+ 
+	@Transient
 	@Column(name="data")
 	public byte[] getData() {
     	if ( data != null ) {
@@ -52,7 +80,7 @@ public class DataAttachment extends DataAttachmentDB implements IAttachment, IBl
 		setSize(ArrayUtils.getLength(data));
 	}
 
-	@Formula("IFNULL(LENGTH(data),IFNULL(dparent_id,0))")
+	@Formula("LENGTH(data)")
 	public Integer getSize() {
 		return size;	
 	}
