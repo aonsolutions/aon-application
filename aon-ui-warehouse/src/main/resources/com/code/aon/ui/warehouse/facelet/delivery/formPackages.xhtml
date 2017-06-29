@@ -7,17 +7,29 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<!-- PACKAGE VARIABLES -->
+	<c:set var="handler" value="#{delivery.packagesHandler}"/>
+	<c:set var="containerModel" value="#{delivery.packagesHandler.packagesContainerModel}"/>
+	<c:set var="linesModel" value="#{delivery.packagesHandler.linesPackageModel}"/>
+	
+	<!-- EDI STRUCTURE VARIABLES -->
+	<c:set var="ediModel" value="#{delivery.packagesHandler.ediStructureModel}"/>
 
-	<aon:if test="#{aonRole.sysAdmin or (delivery.packagesHandler.packagesInRemark and empty delivery.packagesHandler.dataAttach.id)}">
+
+	<!-- *********************** -->
+
+
+	<aon:if test="#{aonRole.sysAdmin or (handler.packagesInRemark and empty handler.dataAttach.id)}">
 		<aon:panel styleClass="aon-width-all aon-margin-top">
 			<aon:commandButton value="#{bundle.aon_refresh}" 
 				styleClass="aon-icon-commandButton aon-icon-sincronize aon-padding-left"
-				actionListener="#{delivery.packagesHandler.onCreateAttachFromRemarks}">
+				actionListener="#{handler.onCreateAttachFromRemarks}">
 			</aon:commandButton>
 			<aon:if test="#{aonRole.sysAdmin}">
 				<aon:div>
 					<aon:inputTextarea cols="80" rows="4"
-						value="#{delivery.packagesHandler.dataAttachValue}" />
+						value="#{handler.dataAttachValue}" />
 				</aon:div>
 			</aon:if>
 		</aon:panel>
@@ -28,14 +40,43 @@
 		<!-- ****************************************** -->
 		<!-- TODO move this item to the end of panelBar -->
 		<!-- ****************************************** -->
-		<!--
 		<aon:if test="#{company.ediSupportEnabled}">
 			<rich:panelBarItem id="ediPanel" label="Estructura EDI">
-	            <aon:outputText value="TODO" />
+	            <aon:dataTable id="ediStructureData" var="ediItem" 
+					rendered="#{ediModel.rowCount > 0}" value="#{ediModel}" >
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
+						<f:facet name="header">
+							<aon:outputText value="Bulto" />
+						</f:facet>
+						<aon:outputText value="#{ediItem.line}" />
+					</aon:column>
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
+						<f:facet name="header">
+							<aon:outputText value="Dentro de" />
+						</f:facet>
+						<aon:outputText value="#{ediItem.parent}" />
+					</aon:column>
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="Cantidad" />
+						</f:facet>
+						<aon:outputText value="#{ediItem.quantity}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText value=" #{ediItem.detail.item.packUnitsTag.name}"
+							rendered="#{empty ediItem.line}" />
+					</aon:column>
+					<aon:column styleClass="aon-width-auto">
+						<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+							rendered="#{ediItem.level>0}" />
+						<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+							rendered="#{ediItem.level>1}" />
+						<aon:outputText value="#{ediItem.detail.description}" />
+					</aon:column>
+				</aon:dataTable>
 			</rich:panelBarItem>
 		</aon:if>
-		-->
-	
+		
 		<rich:panelBarItem id="packagesPanel" label="Secuencia de envases">
             
 			<aon:panel id="packagesContainerPanel"
@@ -45,8 +86,8 @@
 				</f:facet>
 		
 				<aon:dataTable id="packagesContainerData" var="pair" 
-					rendered="#{delivery.packagesHandler.packagesContainerModel.rowCount > 0}"
-					value="#{delivery.packagesHandler.packagesContainerModel}" >
+					rendered="#{containerModel.rowCount > 0}"
+					value="#{containerModel}" >
 		
 					<aon:column styleClass="aon-nowrap">
 						<aon:outputText value="La linea" />
@@ -59,10 +100,10 @@
 						<!--  
 						<rich:inputNumberSpinner value="#{pair.left.line}"
 							required="true" disabled="true"
-							minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+							minValue="1" maxValue="#{handler.linesCount}"
 							inputStyle="width:20px" >
 							<a4j:support event="onchange"
-								actionListener="#{delivery.packagesHandler.onPackagesContainerLineChange}"
+								actionListener="#{handler.onPackagesContainerLineChange}"
 								reRender="packagesContainerPanel"
 								ajaxSingle="true" />
 						</rich:inputNumberSpinner>
@@ -88,10 +129,10 @@
 						<!--  
 						<rich:inputNumberSpinner value="#{pair.right.line}"
 							required="true" disabled="true"
-							minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+							minValue="1" maxValue="#{handler.linesCount}"
 							inputStyle="width:20px" >
 							<a4j:support event="onchange"
-								actionListener="#{delivery.packagesHandler.onPackagesContainerLineChange}"
+								actionListener="#{handler.onPackagesContainerLineChange}"
 								reRender="packagesContainerPanel"
 								ajaxSingle="true" />
 						</rich:inputNumberSpinner>
@@ -115,8 +156,8 @@
 					<aon:outputText value="Envases" />
 				</f:facet>
 				<aon:dataTable id="linesPackageData" var="pair" 
-					rendered="#{delivery.packagesHandler.linesPackageModel.rowCount > 0}"
-					value="#{delivery.packagesHandler.linesPackageModel}" >
+					rendered="#{linesModel.rowCount > 0}"
+					value="#{linesModel}" >
 		
 					<aon:column styleClass="aon-nowrap">
 						<aon:outputText value="La linea" />
@@ -129,9 +170,9 @@
 						<!--  
 						<rich:inputNumberSpinner value="#{pair.left.line}"
 							required="true" disabled="true"
-							minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+							minValue="1" maxValue="#{handler.linesCount}"
 							inputStyle="width:20px"
-							actionListener="#{delivery.packagesHandler.onLinesPackageLineChange}"
+							actionListener="#{handler.onLinesPackageLineChange}"
 							reRender="linesPackagePanel" />
 						-->
 					</aon:column>
@@ -155,9 +196,9 @@
 						<!--  
 						<rich:inputNumberSpinner value="#{pair.right.line}"
 							required="true" disabled="true"
-							minValue="1" maxValue="#{delivery.packagesHandler.linesCount}"
+							minValue="1" maxValue="#{handler.linesCount}"
 							inputStyle="width:20px"
-							actionListener="#{delivery.packagesHandler.onLinesPackageLineChange}"
+							actionListener="#{handler.onLinesPackageLineChange}"
 							reRender="linesPackagePanel" />
 						-->
 					</aon:column>

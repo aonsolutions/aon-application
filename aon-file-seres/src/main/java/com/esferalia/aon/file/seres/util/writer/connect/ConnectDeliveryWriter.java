@@ -232,11 +232,10 @@ public class ConnectDeliveryWriter {
 					for(int level2LineId: level2LineList){
 						DeliveryDetail level2Detail = (DeliveryDetail) detailList.get(level2LineId-1);
 						if(!isPackageItem(level2Detail.getItem())) {
-							mainPackage.seh1lList.add(createSEH1LRecord(level2Detail,
+							mainPackage.seh1lList.add(createSEH1LRecord(level2Detail, null,
 									companyEdiCode, customerEdiCode, customerPackage));
 						} else {
-							SEH1P subPackage = null;
-							subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
+							SEH1P subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
 							subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 							subPackage.seh1lList = new ArrayList<>();
 							list.add(subPackage);
@@ -244,11 +243,9 @@ public class ConnectDeliveryWriter {
 							// PRODUCT OVER SUB-PACKAGE, IF EXIST
 							List<Integer> level3LineList = new LinkedList<>(level3Map.get(level2Detail.getLine()));
 							for(int level3LineId: level3LineList){
-								if(true){
-									DeliveryDetail level3Detail = (DeliveryDetail) detailList.get(level3LineId-1);
-									subPackage.seh1lList.add(createSEH1LRecord(level3Detail,
-											companyEdiCode, customerEdiCode, customerPackage));
-								}
+								DeliveryDetail level3Detail = (DeliveryDetail) detailList.get(level3LineId-1);
+								subPackage.seh1lList.add(createSEH1LRecord(level3Detail, level2Detail.getQuantity(),
+										companyEdiCode, customerEdiCode, customerPackage));
 							}
 						}
 					}
@@ -412,7 +409,7 @@ public class ConnectDeliveryWriter {
 	 * Línea de artículos
 	 */
 	private SEH1L createSEH1LRecord(DeliveryDetail detail,
-			String companyEdiCode, String customerEdiCode, String customerPackage) {
+			Double packageQuantity, String companyEdiCode, String customerEdiCode, String customerPackage) {
 		Item item = detail.getItem();
 		Customer customer = detail.getDelivery().getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customer);
@@ -437,7 +434,14 @@ public class ConnectDeliveryWriter {
 		record.setCodigoACU_ACU_(null);
 		record.setNumeroDeLote_NB_(item.getSerialNumber());
 		record.setNumeroDeArticuloDelComprador_IN_(null);
-		record.setCantidadEnviada_12_(obtainPackageQuantity(detail, customerPackage));
+		// TODO packageQuantity
+		if(packageQuantity==null){
+			record.setCantidadEnviada_12_(obtainPackageQuantity(detail, customerPackage));
+		} else {
+			double quantity = detail.getItem().getPackUnits() * packageQuantity;
+			record.setCantidadEnviada_12_(quantity);
+		}
+		
 		record.setUnidadDeMedidaCantidadEnviada(null);
 		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(null);
 		record.setFechaDeCaducidad_36__102_203_(null);
