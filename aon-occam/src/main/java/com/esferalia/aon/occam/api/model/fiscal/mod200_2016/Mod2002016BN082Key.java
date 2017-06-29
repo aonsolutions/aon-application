@@ -22,7 +22,7 @@ public enum Mod2002016BN082Key implements Serializable, IMod200KeysProvider {
 	 ,C06(new Mod2002016Key[]{Mod2002016Key.BN1127,Mod2002016Key.BN1128,Mod2002016Key.BN1129,Mod2002016Key.BN1130},"2015: Innovaci\u00F3n tecnol\u00F3gica (ITE)")
 	 ,C07(new Mod2002016Key[]{Mod2002016Key.BN1426,Mod2002016Key.BN1427,Mod2002016Key.BN1428,Mod2002016Key.BN1429},"2016(*): Investigaci\u00F3n y desarrollo (CTE)")
 	 ,C08(new Mod2002016Key[]{Mod2002016Key.BN1430,Mod2002016Key.BN1431,Mod2002016Key.BN1432,Mod2002016Key.BN1433},"2016(*): Innovaci\u00F3n tecnol\u00F3gica (ITE)")
-	 ,C09(new Mod2002016Key[]{Mod2002016Key.BN517 ,Mod2002016Key.BN081 ,null /* BN082 */    ,Mod2002016Key.BN1234},"Total")
+	 ,C09(new Mod2002016Key[]{Mod2002016Key.BN517 ,Mod2002016Key.BN081 ,null /* BN082 */    ,Mod2002016Key.BN1234A},"Total")
 	;
 	 
     private String description;

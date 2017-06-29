@@ -539,7 +539,7 @@ public class Model2002016 extends ResizeComposite  {
 		ConfirmDialog cd = new ConfirmDialog();
 		cd.confirm("La impresi\u00F3n se genera en los servidores de la Agencia Tributaria "
 				+ "y se realiza a partir de los datos guardados. En el caso de validaci\u00F3n "
-				+ "correcta se devolver\u00E1 el documento PDF de la declarai\u00F3n Asegúrese "
+				+ "correcta se devolver\u00E1 el documento PDF de la declarai\u00F3n Aseg\u00FArese "
 				+ "de haber guardado la declaraci\u00F3n."
 			,new ConfirmDialogCallback() {
 				
