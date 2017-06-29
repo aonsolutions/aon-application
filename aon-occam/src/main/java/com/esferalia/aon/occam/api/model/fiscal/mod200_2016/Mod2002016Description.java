@@ -498,7 +498,7 @@ public class Mod2002016Description {
 		DESCRIPTION_MAP.put(Mod2002016Key.BN618,"Intereses de demora (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN619,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN620,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod2002016Key.BN1234,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). TOTAL");
+		DESCRIPTION_MAP.put(Mod2002016Key.BN1234B,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). TOTAL");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN083,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). (Estado)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1332,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002016Key.BN1200,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). TOTAL");

@@ -573,6 +573,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		double BN597 = roundKey(Mod2002016Key.BN597);
 		return (BN592-BN595-BN596-BN597);
 	}
+	
 	public double computeBN599() throws AonCoreException {
 		double BN599 = computePreBN599();
 		if (isChecked(Mod2002016Key.C0028)) {

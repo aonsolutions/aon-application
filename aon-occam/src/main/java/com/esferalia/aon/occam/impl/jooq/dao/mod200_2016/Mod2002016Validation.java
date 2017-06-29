@@ -4,7 +4,6 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
@@ -39,7 +38,7 @@ public class Mod2002016Validation {
 	private static final int PAGE09 = 9;
 	private static final int PAGE10 = 10;
 	private static final int PAGE11 = 11;
-	private static final int PAGE14 = 14;
+	private static final int PAGE12 = 12;
 	
 	private static final String MUST_EQUAL_MSG = "[{0}] {1} y [{2}] {3} deben ser iguales.";
 	private static final String MUST_GREATHER_MSG = "[{0}] {1} debe ser mayor que [{2}] {3} ";
@@ -492,7 +491,6 @@ public class Mod2002016Validation {
 		,V_BN165_1  ( mod -> isGreatherThan(mod,  BN165,BN163), new ValidationMessage2016(PAGE10,BN165,mustLessMsg(BN165, BN163)))
 		,V_BN169_1  ( mod -> isGreatherThan(mod,  BN169,BN167), new ValidationMessage2016(PAGE10,BN169,mustLessMsg(BN169, BN167)))
 		
-		
 		// ------------------------------------------------------------------------
 		// --------------------------- LIQUIDACIÓN (IV) ---------------------------
 		// ------------------------------------------------------------------------
@@ -686,6 +684,42 @@ public class Mod2002016Validation {
 
 		,V_BN592_1( mod -> isNegative(mod,BN592) ,new ValidationMessage2016(PAGE11,BN592  , mustPositiveMsg(BN592)))
 		
+		
+		// ------------------------------------------------------------------------
+		// --------------------------- LIQUIDACIÓN (V) ----------------------------
+		// ------------------------------------------------------------------------
+		
+		,V_BN595_1( mod -> isNegative(mod,BN595) ,new ValidationMessage2016(PAGE12,BN595, mustPositiveMsg(BN595)))
+		,V_BN596_1( mod -> isNegative(mod,BN596) ,new ValidationMessage2016(PAGE12,BN596, mustPositiveMsg(BN596)))
+		,V_BN597_1( mod -> isNegative(mod,BN597) ,new ValidationMessage2016(PAGE12,BN597, mustPositiveMsg(BN597)))
+		
+		,V_BN615_1( mod -> isNegative(mod,BN615) ,new ValidationMessage2016(PAGE12,BN615, mustPositiveMsg(BN615)))
+		,V_BN616_1( mod -> isNegative(mod,BN616) ,new ValidationMessage2016(PAGE12,BN616, mustPositiveMsg(BN616)))
+		
+		,V_BN633_1( mod -> isNegative(mod,BN633) ,new ValidationMessage2016(PAGE12,BN633, mustPositiveMsg(BN633)))
+		,V_BN642_1( mod -> isNegative(mod,BN642) ,new ValidationMessage2016(PAGE12,BN642, mustPositiveMsg(BN642)))
+		
+		,V_BN617_1( mod -> isNegative(mod,BN617) ,new ValidationMessage2016(PAGE12,BN617, mustPositiveMsg(BN617)))
+		,V_BN618_1( mod -> isNegative(mod,BN618) ,new ValidationMessage2016(PAGE12,BN618, mustPositiveMsg(BN618)))
+		
+		,V_BN1042_1( mod -> isNegative(mod,BN1042) ,new ValidationMessage2016(PAGE12,BN1042, mustPositiveMsg(BN1042)))
+		
+		// ------------------------------------------------------------------------
+		// ------------------- APLICACION DE RESULTADOS ---------------------------
+		// ------------------------------------------------------------------------
+		,V_ID650  ( mod -> isNegative(mod,ID650),new ValidationMessage2016(PAGE08,ID650, mustPositiveMsg(ID650)))
+		,V_ID651  ( mod -> isNegative(mod,ID651),new ValidationMessage2016(PAGE08,ID651, mustPositiveMsg(ID651)))
+		,V_ID652  ( mod -> isNegative(mod,ID652),new ValidationMessage2016(PAGE08,ID652, mustPositiveMsg(ID652)))
+		,V_ID666  ( mod -> isNegative(mod,ID666),new ValidationMessage2016(PAGE08,ID666, mustPositiveMsg(ID666)))
+		,V_ID654  ( mod -> isNegative(mod,ID654),new ValidationMessage2016(PAGE08,ID654, mustPositiveMsg(ID654)))
+		,V_ID655  ( mod -> isNegative(mod,ID655),new ValidationMessage2016(PAGE08,ID655, mustPositiveMsg(ID655)))
+		,V_ID656  ( mod -> isNegative(mod,ID656),new ValidationMessage2016(PAGE08,ID656, mustPositiveMsg(ID656)))
+		,V_ID658  ( mod -> isNegative(mod,ID658),new ValidationMessage2016(PAGE08,ID658, mustPositiveMsg(ID658)))
+		,V_ID659  ( mod -> isNegative(mod,ID659),new ValidationMessage2016(PAGE08,ID659, mustPositiveMsg(ID659)))
+		,V_ID660  ( mod -> isNegative(mod,ID660),new ValidationMessage2016(PAGE08,ID660, mustPositiveMsg(ID660)))
+		,V_ID662  ( mod -> isNegative(mod,ID662),new ValidationMessage2016(PAGE08,ID662, mustPositiveMsg(ID662)))
+		,V_ID664  ( mod -> isNegative(mod,ID664),new ValidationMessage2016(PAGE08,ID664, mustPositiveMsg(ID664)))
+		,V_ID665  ( mod -> isNegative(mod,ID665),new ValidationMessage2016(PAGE08,ID665, mustPositiveMsg(ID665)))
 		;		
 		private IValidator validator;
 		private ValidationMessage2016 message;
@@ -806,9 +840,7 @@ public class Mod2002016Validation {
 	// ***************************************************************************************************************
 	// ***************************************************************************************************************
 
-	private static final String MUST_POSITIVE_EXP = "round({0}) >= 0.0";
-	
-	public static List<ValidationMessage2016> VALIDATION_EXPRESSION_LIST = new LinkedList<ValidationMessage2016>();
+//	public static List<ValidationMessage2016> VALIDATION_EXPRESSION_LIST = new LinkedList<ValidationMessage2016>();
 
 	//	**************************************************************************************
 	//	**************************************************************************************
@@ -816,57 +848,14 @@ public class Mod2002016Validation {
 	//	**************************************************************************************
 	//	**************************************************************************************
 
-	static {	// PAGE 12
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID650
-				,MessageFormat.format(CHECK_SIGN_MSG,ID650.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID650.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID651
-				,MessageFormat.format(CHECK_SIGN_MSG,ID651.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID651.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID652
-				,MessageFormat.format(CHECK_SIGN_MSG,ID652.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID652.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID666
-				,MessageFormat.format(CHECK_SIGN_MSG,ID666.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID666.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID654
-				,MessageFormat.format(CHECK_SIGN_MSG,ID654.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID654.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID655
-				,MessageFormat.format(CHECK_SIGN_MSG,ID655.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID655.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID656
-				,MessageFormat.format(CHECK_SIGN_MSG,ID656.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID656.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID658
-				,MessageFormat.format(CHECK_SIGN_MSG,ID658.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID658.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID659
-				,MessageFormat.format(CHECK_SIGN_MSG,ID659.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID659.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID660
-				,MessageFormat.format(CHECK_SIGN_MSG,ID660.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID660.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID662
-				,MessageFormat.format(CHECK_SIGN_MSG,ID662.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID662.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID664
-				,MessageFormat.format(CHECK_SIGN_MSG,ID664.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID664.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID665
-				,MessageFormat.format(CHECK_SIGN_MSG,ID665.getDescription())
-				,MessageFormat.format(MUST_POSITIVE_EXP,ID665.toString())));
-	}
-	
-	
 	static {
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0364
-				,"Compruebe la correspondencia entre el importe declarado en "
-				+ "la clave 364 y los de las claves 1258 y 1259 de la p\u00E1gina 14."
-				,"D0364 == round(LM1258 + LM1259)"));
 	}
 
 	static { // PAGE 13 		
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0364
+//				,"Compruebe la correspondencia entre el importe declarado en "
+//				+ "la clave 364 y los de las claves 1258 y 1259 de la p\u00E1gina 14."
+//				,"D0364 == round(LM1258 + LM1259)"));
 //		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM259
 //				,"La casilla 259 debe ser menor o igual que la suma de las casillas 043 y 049" 
 //				,"LM259 <= (LM043+LM049)"));
@@ -1064,4 +1053,5 @@ public class Mod2002016Validation {
 			,AonStringUtils.isBlank(desc2)?"": ("\"" + desc2 + "\"")
 			); 
 	}
+	
 }
