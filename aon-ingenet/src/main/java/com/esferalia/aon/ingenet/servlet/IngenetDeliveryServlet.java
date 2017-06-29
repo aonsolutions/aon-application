@@ -182,7 +182,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		StringBuffer bf = new StringBuffer("<h1>Recepción de albaranes.</h1>");
 		bf.append("<ul>");
 		deliveryList.forEach(alb -> {
-			bf.append("<li>Albarán " + alb.getREFERENCIA()+" del " + alb.getFECHAEMISION()+"</li>");
+			bf.append("<li>Albarán " + alb.getSERIE()+"/"+ alb.getNUMERO()+" del " + alb.getFECHAEMISION()+"</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();
@@ -197,7 +197,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		});
 		bf.append("</ul>");
 		deliveryList.forEach(alb -> {
-			bf.append("<h2>Albarán "+alb.getREFERENCIA()+"</h2>");
+			bf.append("<h2>Albarán "+alb.getSERIE()+"/"+ alb.getNUMERO()+"</h2>");
 			bf.append("<ul>");
 			alb.getERRORES().getERRORES().forEach(error -> {
 				if(error!=null)
@@ -347,7 +347,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		delivery.setSecurityLevel((byte) 0);
 		delivery.setStatus(DeliveryStatus.PENDING);
-		delivery.setComments("Ref. Ingenet " + albaran.getREFERENCIA() + ". " + albaran.getCOMENTARIOS());
+		delivery.setComments("Ref. Ingenet " + albaran.getSERIE()+"/"+ albaran.getNUMERO() + ". " + albaran.getCOMENTARIOS());
 		delivery.setRemarks("Creado por '"+ctx.getUser()+"' el "
 				+ new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()) + "."
 				+ "\n" + "La unidad de la cantidad es KILOS." );
