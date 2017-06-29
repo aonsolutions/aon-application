@@ -36,7 +36,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="SERIE">
+			<xsd:element name="SERIE" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Serie del albaran.
 					</xsd:documentation>
