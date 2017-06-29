@@ -38,6 +38,7 @@ public class Mod2002016Validation {
 	private static final int PAGE08 = 8;
 	private static final int PAGE09 = 9;
 	private static final int PAGE10 = 10;
+	private static final int PAGE11 = 11;
 	private static final int PAGE14 = 14;
 	
 	private static final String MUST_EQUAL_MSG = "[{0}] {1} y [{2}] {3} deben ser iguales.";
@@ -457,55 +458,234 @@ public class Mod2002016Validation {
 		
 		,V_BN581_2( mod -> (isNotZero(mod,BN581) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
 			,new ValidationMessage2016(PAGE10,BN581 ,"No puede aplicarse la clave 581 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
-		,V_BN583_2( mod -> (isNotZero(mod,BN583) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
-			,new ValidationMessage2016(PAGE10,BN583 ,"No puede aplicarse la clave 583 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
-		,V_BN585_2( mod -> (isNotZero(mod,BN585) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
-			,new ValidationMessage2016(PAGE10,BN585 ,"No puede aplicarse la clave 585 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
-		,V_BN584_2( mod -> (isNotZero(mod,BN584) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
-			,new ValidationMessage2016(PAGE10,BN584 ,"No puede aplicarse la clave 584 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
-		,V_BN588_2( mod -> (isNotZero(mod,BN588) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
-			,new ValidationMessage2016(PAGE10,BN588 ,"No puede aplicarse la clave 588 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
-		,V_BN590_2( mod -> (isNotZero(mod,BN590) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
-			,new ValidationMessage2016(PAGE10,BN590 ,"No puede aplicarse la clave 590 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
-		,V_BN082_2( mod -> (isNotZero(mod,BN082) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
-			,new ValidationMessage2016(PAGE10,BN082 ,"No puede aplicarse la clave 082 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
-		,V_BN565_2( mod -> (isNotZero(mod,BN565) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
-			,new ValidationMessage2016(PAGE10,BN565,"No puede aplicarse la clave 565 mientras existan saldos pendientes "
-					+ "de aplicaci\u00F3n de deducciones por doble imposici\u00F3n o de deducciones "
-					+ "del cap\u00EDtulo IV T\u00EDtulo VI de la Ley del Impuesto."))
 		
 		// -- DI interna de períodos anteriores aplicada en el ejercicio (art. 30 RDL 4/2004)
 		,V_BN847_1  ( mod -> isGreatherThan(mod,  BN847,BN846), new ValidationMessage2016(PAGE10,BN847,mustLessMsg(BN847,BN846)))
-		,V_BN283_1  ( mod -> isGreatherThan(mod,  BN283,BN282), new ValidationMessage2016(PAGE10,BN283,mustLessMsg(BN282,BN283)))
-		,V_BN703_1  ( mod -> isGreatherThan(mod,  BN703,BN702), new ValidationMessage2016(PAGE10,BN703,mustLessMsg(BN702,BN703)))
-		,V_BN187_1  ( mod -> isGreatherThan(mod,  BN187,BN071), new ValidationMessage2016(PAGE10,BN187,mustLessMsg(BN071,BN187)))
-		,V_BN026_1  ( mod -> isGreatherThan(mod,  BN026,BN025), new ValidationMessage2016(PAGE10,BN026,mustLessMsg(BN025,BN026)))
-		,V_BN715_1  ( mod -> isGreatherThan(mod,  BN715,BN714), new ValidationMessage2016(PAGE10,BN715,mustLessMsg(BN714,BN715)))
-		,V_BN737_1  ( mod -> isGreatherThan(mod,  BN737,BN736), new ValidationMessage2016(PAGE10,BN737,mustLessMsg(BN736,BN737)))
+		,V_BN283_1  ( mod -> isGreatherThan(mod,  BN283,BN282), new ValidationMessage2016(PAGE10,BN283,mustLessMsg(BN283,BN282)))
+		,V_BN703_1  ( mod -> isGreatherThan(mod,  BN703,BN702), new ValidationMessage2016(PAGE10,BN703,mustLessMsg(BN703,BN702)))
+		,V_BN187_1  ( mod -> isGreatherThan(mod,  BN187,BN071), new ValidationMessage2016(PAGE10,BN187,mustLessMsg(BN187,BN071)))
+		,V_BN026_1  ( mod -> isGreatherThan(mod,  BN026,BN025), new ValidationMessage2016(PAGE10,BN026,mustLessMsg(BN026,BN025)))
+		,V_BN715_1  ( mod -> isGreatherThan(mod,  BN715,BN714), new ValidationMessage2016(PAGE10,BN715,mustLessMsg(BN715,BN714)))
+		,V_BN737_1  ( mod -> isGreatherThan(mod,  BN737,BN736), new ValidationMessage2016(PAGE10,BN737,mustLessMsg(BN737,BN736)))
 		
 		// -- DI interna de periodos anteriores aplicada en el ejercicio (DT 23.1 LIS)
 		,V_BN120_1  ( mod -> isGreatherThan(mod,  BN120,BN119), new ValidationMessage2016(PAGE10,BN120,mustLessMsg(BN119,BN120)))
 		,V_BN125_1  ( mod -> isGreatherThan(mod,  BN125,BN124), new ValidationMessage2016(PAGE10,BN125,mustLessMsg(BN124,BN125)))
 		
 		// -- DI internacional de períodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)
-		,V_BN638_1  ( mod -> isGreatherThan(mod,  BN638,BN637), new ValidationMessage2016(PAGE10,BN638,mustLessMsg(BN637,BN638)))
-		,V_BN894_1  ( mod -> isGreatherThan(mod,  BN894,BN849), new ValidationMessage2016(PAGE10,BN894,mustLessMsg(BN849,BN894)))
-		,V_BN286_1  ( mod -> isGreatherThan(mod,  BN286,BN285), new ValidationMessage2016(PAGE10,BN286,mustLessMsg(BN285,BN286)))
-		,V_BN826_1  ( mod -> isGreatherThan(mod,  BN826,BN825), new ValidationMessage2016(PAGE10,BN826,mustLessMsg(BN825,BN826)))
-		,V_BN002_1  ( mod -> isGreatherThan(mod,  BN002,BN001), new ValidationMessage2016(PAGE10,BN002,mustLessMsg(BN001,BN002)))
-		,V_BN029_1  ( mod -> isGreatherThan(mod,  BN029,BN028), new ValidationMessage2016(PAGE10,BN029,mustLessMsg(BN028,BN029)))
-		,V_BN718_1  ( mod -> isGreatherThan(mod,  BN718,BN717), new ValidationMessage2016(PAGE10,BN718,mustLessMsg(BN717,BN718)))
-		,V_BN723_1  ( mod -> isGreatherThan(mod,  BN723,BN722), new ValidationMessage2016(PAGE10,BN723,mustLessMsg(BN722,BN723)))
-		,V_BN741_1  ( mod -> isGreatherThan(mod,  BN741,BN740), new ValidationMessage2016(PAGE10,BN741,mustLessMsg(BN740,BN741)))
-		,V_BN136_1  ( mod -> isGreatherThan(mod,  BN136,BN135), new ValidationMessage2016(PAGE10,BN136,mustLessMsg(BN135,BN136)))
+		,V_BN638_1  ( mod -> isGreatherThan(mod,  BN638,BN637), new ValidationMessage2016(PAGE10,BN638,mustLessMsg(BN638,BN637)))
+		,V_BN894_1  ( mod -> isGreatherThan(mod,  BN894,BN849), new ValidationMessage2016(PAGE10,BN894,mustLessMsg(BN894,BN849)))
+		,V_BN286_1  ( mod -> isGreatherThan(mod,  BN286,BN285), new ValidationMessage2016(PAGE10,BN286,mustLessMsg(BN286,BN285)))
+		,V_BN826_1  ( mod -> isGreatherThan(mod,  BN826,BN825), new ValidationMessage2016(PAGE10,BN826,mustLessMsg(BN826,BN825)))
+		,V_BN002_1  ( mod -> isGreatherThan(mod,  BN002,BN001), new ValidationMessage2016(PAGE10,BN002,mustLessMsg(BN002,BN001)))
+		,V_BN029_1  ( mod -> isGreatherThan(mod,  BN029,BN028), new ValidationMessage2016(PAGE10,BN029,mustLessMsg(BN029,BN028)))
+		,V_BN718_1  ( mod -> isGreatherThan(mod,  BN718,BN717), new ValidationMessage2016(PAGE10,BN718,mustLessMsg(BN718,BN717)))
+		,V_BN723_1  ( mod -> isGreatherThan(mod,  BN723,BN722), new ValidationMessage2016(PAGE10,BN723,mustLessMsg(BN723,BN722)))
+		,V_BN741_1  ( mod -> isGreatherThan(mod,  BN741,BN740), new ValidationMessage2016(PAGE10,BN741,mustLessMsg(BN741,BN740)))
+		,V_BN136_1  ( mod -> isGreatherThan(mod,  BN136,BN135), new ValidationMessage2016(PAGE10,BN136,mustLessMsg(BN136,BN135)))
 
 		// -- DI internacional de períodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)
-		,V_BN1052_1  ( mod -> isGreatherThan(mod,  BN1052,BN1051), new ValidationMessage2016(PAGE10,BN1052 ,mustLessMsg(BN1051,BN1052)))
-		,V_BN1351_1  ( mod -> isGreatherThan(mod,  BN1351,BN1350), new ValidationMessage2016(PAGE10,BN1351 ,mustLessMsg(BN1350,BN1351)))
+		,V_BN1052_1  ( mod -> isGreatherThan(mod,  BN1052,BN1051), new ValidationMessage2016(PAGE10,BN1052 ,mustLessMsg(BN1052,BN1051)))
+		,V_BN1351_1  ( mod -> isGreatherThan(mod,  BN1351,BN1350), new ValidationMessage2016(PAGE10,BN1351 ,mustLessMsg(BN1351,BN1350)))
 
 		// -- DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)
-		,V_BN165_1  ( mod -> isGreatherThan(mod,  BN165,BN163), new ValidationMessage2016(PAGE10,BN165,mustLessMsg(BN163,BN165)))
-		,V_BN169_1  ( mod -> isGreatherThan(mod,  BN169,BN167), new ValidationMessage2016(PAGE10,BN169,mustLessMsg(BN167,BN169)))
+		,V_BN165_1  ( mod -> isGreatherThan(mod,  BN165,BN163), new ValidationMessage2016(PAGE10,BN165,mustLessMsg(BN165, BN163)))
+		,V_BN169_1  ( mod -> isGreatherThan(mod,  BN169,BN167), new ValidationMessage2016(PAGE10,BN169,mustLessMsg(BN169, BN167)))
+		
+		
+		// ------------------------------------------------------------------------
+		// --------------------------- LIQUIDACIÓN (IV) ---------------------------
+		// ------------------------------------------------------------------------
+		
+		,V_BN583_2( mod -> (isNotZero(mod,BN583) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
+			,new ValidationMessage2016(PAGE11,BN583 ,"No puede aplicarse la clave 583 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
+		,V_BN585_2( mod -> (isNotZero(mod,BN585) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
+			,new ValidationMessage2016(PAGE11,BN585 ,"No puede aplicarse la clave 585 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
+		,V_BN584_2( mod -> (isNotZero(mod,BN584) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
+			,new ValidationMessage2016(PAGE11,BN584 ,"No puede aplicarse la clave 584 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
+		,V_BN588_2( mod -> (isNotZero(mod,BN588) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
+			,new ValidationMessage2016(PAGE11,BN588 ,"No puede aplicarse la clave 588 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
+		,V_BN590_2( mod -> (isNotZero(mod,BN590) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
+			,new ValidationMessage2016(PAGE11,BN590 ,"No puede aplicarse la clave 590 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
+		,V_BN082_2( mod -> (isNotZero(mod,BN082) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
+			,new ValidationMessage2016(PAGE11,BN082 ,"No puede aplicarse la clave 082 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."))
+		,V_BN565_2( mod -> (isNotZero(mod,BN565) && (isNotZero(mod,BN118 ) || isNotZero(mod,BN162 ) || isNotZero(mod,BN133 ) || isNotZero(mod,BN1345) || isNotZero(mod,BN1347) || isNotZero(mod,BN174 )))
+			,new ValidationMessage2016(PAGE11,BN565,"No puede aplicarse la clave 565 mientras existan saldos pendientes "
+					+ "de aplicaci\u00F3n de deducciones por doble imposici\u00F3n o de deducciones "
+					+ "del cap\u00EDtulo IV T\u00EDtulo VI de la Ley del Impuesto."))
+
+			// -- Deducción DT 24ª.7 LIS, art. 42 RDL 4/2004 y art. 36 ter Ley 43/95
+		,V_BN585_1  ( mod -> isGreatherThan(mod,  BN585,BN582), new ValidationMessage2016(PAGE11,BN585,mustLessMsg(BN585,BN582)))
+		
+		,V_BN836_1  ( mod -> isGreatherThan(mod,  BN836  ,BN835  ), new ValidationMessage2016(PAGE11,BN836  ,mustLessMsg(BN836 , BN835  )))
+		,V_BN839_1  ( mod -> isGreatherThan(mod,  BN839  ,BN838  ), new ValidationMessage2016(PAGE11,BN839  ,mustLessMsg(BN839 , BN838  )))
+		,V_BN933_1  ( mod -> isGreatherThan(mod,  BN933  ,BN932  ), new ValidationMessage2016(PAGE11,BN933  ,mustLessMsg(BN933 , BN932  )))
+		,V_BN298_1  ( mod -> isGreatherThan(mod,  BN298  ,BN297  ), new ValidationMessage2016(PAGE11,BN298  ,mustLessMsg(BN298 , BN297  )))
+		,V_BN091_1  ( mod -> isGreatherThan(mod,  BN091  ,BN090  ), new ValidationMessage2016(PAGE11,BN091  ,mustLessMsg(BN091 , BN090  )))
+		,V_BN005_1  ( mod -> isGreatherThan(mod,  BN005  ,BN004  ), new ValidationMessage2016(PAGE11,BN005  ,mustLessMsg(BN005 , BN004  )))
+		,V_BN032_1  ( mod -> isGreatherThan(mod,  BN032  ,BN031  ), new ValidationMessage2016(PAGE11,BN032  ,mustLessMsg(BN032 , BN031  )))
+		,V_BN023_1  ( mod -> isGreatherThan(mod,  BN023  ,BN022  ), new ValidationMessage2016(PAGE11,BN023  ,mustLessMsg(BN023 , BN022  )))
+		,V_BN041_1  ( mod -> isGreatherThan(mod,  BN041  ,BN040  ), new ValidationMessage2016(PAGE11,BN041  ,mustLessMsg(BN041 , BN040  )))
+		,V_BN139_1  ( mod -> isGreatherThan(mod,  BN139  ,BN138  ), new ValidationMessage2016(PAGE11,BN139  ,mustLessMsg(BN139 , BN138  )))
+		,V_BN142_1  ( mod -> isGreatherThan(mod,  BN142  ,BN141  ), new ValidationMessage2016(PAGE11,BN142  ,mustLessMsg(BN142 , BN141  )))
+		,V_BN189_1  ( mod -> isGreatherThan(mod,  BN189  ,BN188  ), new ValidationMessage2016(PAGE11,BN189  ,mustLessMsg(BN189 , BN188  )))
+		,V_BN804_1  ( mod -> isGreatherThan(mod,  BN804  ,BN803  ), new ValidationMessage2016(PAGE11,BN804  ,mustLessMsg(BN804 , BN803  )))
+		,V_BN1056_1 ( mod -> isGreatherThan(mod,  BN1056 ,BN1055 ), new ValidationMessage2016(PAGE11,BN1056 ,mustLessMsg(BN1056, BN1055 )))
+		,V_BN708_1  ( mod -> isGreatherThan(mod,  BN708  ,BN700  ), new ValidationMessage2016(PAGE11,BN708  ,mustLessMsg(BN708 , BN700  )))
+		,V_BN1354_1 ( mod -> isGreatherThan(mod,  BN1354 ,BN1353 ), new ValidationMessage2016(PAGE11,BN1354 ,mustLessMsg(BN1354, BN1353 )))
+		
+		// -- Deducciones DT 24ª.1 LIS y DT 8ª RDL 4/2004
+		,V_BN750 ( mod -> isGreatherThan(mod,  BN750 ,BN749 ), new ValidationMessage2016(PAGE11,BN750 ,mustLessMsg(BN750, BN749)))
+		,V_BN753 ( mod -> isGreatherThan(mod,  BN753 ,BN752 ), new ValidationMessage2016(PAGE11,BN753 ,mustLessMsg(BN753, BN752)))
+		,V_BN756 ( mod -> isGreatherThan(mod,  BN756 ,BN755 ), new ValidationMessage2016(PAGE11,BN756 ,mustLessMsg(BN756, BN755)))
+		,V_BN759 ( mod -> isGreatherThan(mod,  BN759 ,BN758 ), new ValidationMessage2016(PAGE11,BN759 ,mustLessMsg(BN759, BN758)))
+		,V_BN762 ( mod -> isGreatherThan(mod,  BN762 ,BN761 ), new ValidationMessage2016(PAGE11,BN762 ,mustLessMsg(BN762, BN761)))
+		,V_BN745 ( mod -> isGreatherThan(mod,  BN745 ,BN744 ), new ValidationMessage2016(PAGE11,BN745 ,mustLessMsg(BN745, BN744)))
+		,V_BN783 ( mod -> isGreatherThan(mod,  BN783 ,BN779 ), new ValidationMessage2016(PAGE11,BN783 ,mustLessMsg(BN783, BN779)))
+
+		// Deducciones con límite del Capítulo IV Título VI RDL 4/2004 y LIS
+		,V_BN769_1 ( mod -> isGreatherThan(mod,  BN769,BN768), new ValidationMessage2016(PAGE11,BN769,mustLessMsg(BN769, BN768)))
+		,V_BN775_1 ( mod -> isGreatherThan(mod,  BN775,BN774), new ValidationMessage2016(PAGE11,BN775,mustLessMsg(BN775, BN774)))
+		,V_BN781_1 ( mod -> isGreatherThan(mod,  BN781,BN780), new ValidationMessage2016(PAGE11,BN781,mustLessMsg(BN781, BN780)))
+		,V_BN787_1 ( mod -> isGreatherThan(mod,  BN787,BN786), new ValidationMessage2016(PAGE11,BN787,mustLessMsg(BN787, BN786)))
+		,V_BN767_1 ( mod -> isGreatherThan(mod,  BN767,BN766), new ValidationMessage2016(PAGE11,BN767,mustLessMsg(BN767, BN766)))
+		,V_BN896_1 ( mod -> isGreatherThan(mod,  BN896,BN198), new ValidationMessage2016(PAGE11,BN896,mustLessMsg(BN896, BN198)))
+		,V_BN289_1 ( mod -> isGreatherThan(mod,  BN289,BN288), new ValidationMessage2016(PAGE11,BN289,mustLessMsg(BN289, BN288)))
+		,V_BN467_1 ( mod -> isGreatherThan(mod,  BN467,BN466), new ValidationMessage2016(PAGE11,BN467,mustLessMsg(BN467, BN466)))
+		,V_BN498_1 ( mod -> isGreatherThan(mod,  BN498,BN061), new ValidationMessage2016(PAGE11,BN498,mustLessMsg(BN498, BN061)))
+		,V_BN473_1 ( mod -> isGreatherThan(mod,  BN473,BN472), new ValidationMessage2016(PAGE11,BN473,mustLessMsg(BN473, BN472)))
+		,V_BN181_1 ( mod -> isGreatherThan(mod,  BN181,BN180), new ValidationMessage2016(PAGE11,BN181,mustLessMsg(BN181, BN180)))
+		,V_BN532_1 ( mod -> isGreatherThan(mod,  BN532,BN531), new ValidationMessage2016(PAGE11,BN532,mustLessMsg(BN532, BN531)))
+		,V_BN946_1 ( mod -> isGreatherThan(mod,  BN946,BN945), new ValidationMessage2016(PAGE11,BN946,mustLessMsg(BN946, BN945)))
+		,V_BN961_1 ( mod -> isGreatherThan(mod,  BN961,BN960), new ValidationMessage2016(PAGE11,BN961,mustLessMsg(BN961, BN960)))
+		,V_BN185_1 ( mod -> isGreatherThan(mod,  BN185,BN183), new ValidationMessage2016(PAGE11,BN185,mustLessMsg(BN185, BN183)))
+		,V_BN967_1 ( mod -> isGreatherThan(mod,  BN967,BN966), new ValidationMessage2016(PAGE11,BN967,mustLessMsg(BN967, BN966)))
+		,V_BN458_1 ( mod -> isGreatherThan(mod,  BN458,BN457), new ValidationMessage2016(PAGE11,BN458,mustLessMsg(BN458, BN457)))
+		,V_BN461_1 ( mod -> isGreatherThan(mod,  BN461,BN460), new ValidationMessage2016(PAGE11,BN461,mustLessMsg(BN461, BN460)))
+		,V_BN1064_1 ( mod -> isGreatherThan(mod,  BN1064,BN1063), new ValidationMessage2016(PAGE11,BN1064,mustLessMsg(BN1064, BN1063)))
+		,V_BN1067_1 ( mod -> isGreatherThan(mod,  BN1067,BN1066), new ValidationMessage2016(PAGE11,BN1067,mustLessMsg(BN1067, BN1066)))
+		,V_BN1070_1 ( mod -> isGreatherThan(mod,  BN1070,BN1069), new ValidationMessage2016(PAGE11,BN1070,mustLessMsg(BN1070, BN1069)))
+		,V_BN814_1 ( mod -> isGreatherThan(mod,  BN814,BN813), new ValidationMessage2016(PAGE11,BN814,mustLessMsg(BN814, BN813)))
+		,V_BN810_1 ( mod -> isGreatherThan(mod,  BN810,BN986), new ValidationMessage2016(PAGE11,BN810,mustLessMsg(BN810, BN986)))
+		,V_BN591_1 ( mod -> isGreatherThan(mod,  BN591,BN557), new ValidationMessage2016(PAGE11,BN591,mustLessMsg(BN591, BN557)))
+		,V_BN1361_1 ( mod -> isGreatherThan(mod,  BN1361,BN1360), new ValidationMessage2016(PAGE11,BN1361,mustLessMsg(BN1361, BN1360)))
+		,V_BN1364_1 ( mod -> isGreatherThan(mod,  BN1364,BN1363), new ValidationMessage2016(PAGE11,BN1364,mustLessMsg(BN1364, BN1363)))
+		,V_BN1367_1 ( mod -> isGreatherThan(mod,  BN1367,BN1366), new ValidationMessage2016(PAGE11,BN1367,mustLessMsg(BN1367, BN1366)))
+		,V_BN799_1 ( mod -> isGreatherThan(mod,  BN799,BN798), new ValidationMessage2016(PAGE11,BN799,mustLessMsg(BN799, BN798)))
+		,V_BN698_1 ( mod -> isGreatherThan(mod,  BN698,BN096), new ValidationMessage2016(PAGE11,BN698,mustLessMsg(BN698, BN096)))
+		,V_BN808_1 ( mod -> isGreatherThan(mod,  BN808,BN807), new ValidationMessage2016(PAGE11,BN808,mustLessMsg(BN808, BN807)))
+		,V_BN1076_1 ( mod -> isGreatherThan(mod,  BN1076,BN1075), new ValidationMessage2016(PAGE11,BN1076,mustLessMsg(BN1076, BN1075)))
+		,V_BN964_1 ( mod -> isGreatherThan(mod,  BN964,BN963), new ValidationMessage2016(PAGE11,BN964,mustLessMsg(BN964, BN963)))
+		,V_BN502_1 ( mod -> isGreatherThan(mod,  BN502,BN931), new ValidationMessage2016(PAGE11,BN502,mustLessMsg(BN502, BN931)))
+		,V_BN796_1 ( mod -> isGreatherThan(mod,  BN796,BN795), new ValidationMessage2016(PAGE11,BN796,mustLessMsg(BN796, BN795)))
+		,V_BN888_1 ( mod -> isGreatherThan(mod,  BN888,BN549), new ValidationMessage2016(PAGE11,BN888,mustLessMsg(BN888, BN549)))
+		,V_BN1370_1 ( mod -> isGreatherThan(mod,  BN1370,BN1369), new ValidationMessage2016(PAGE11,BN1370,mustLessMsg(BN1370, BN1369)))
+		,V_BN079_1 ( mod -> isGreatherThan(mod,  BN079,BN078), new ValidationMessage2016(PAGE11,BN079,mustLessMsg(BN079, BN078)))
+		,V_BN086_1 ( mod -> isGreatherThan(mod,  BN086,BN085), new ValidationMessage2016(PAGE11,BN086,mustLessMsg(BN086, BN085)))
+		,V_BN205_1 ( mod -> isGreatherThan(mod,  BN205,BN204), new ValidationMessage2016(PAGE11,BN205,mustLessMsg(BN205, BN204)))
+		,V_BN012_1 ( mod -> isGreatherThan(mod,  BN012,BN007), new ValidationMessage2016(PAGE11,BN012,mustLessMsg(BN012, BN007)))
+		,V_BN292_1 ( mod -> isGreatherThan(mod,  BN292,BN199), new ValidationMessage2016(PAGE11,BN292,mustLessMsg(BN292, BN199)))
+		,V_BN422_1 ( mod -> isGreatherThan(mod,  BN422,BN419), new ValidationMessage2016(PAGE11,BN422,mustLessMsg(BN422, BN419)))
+		,V_BN433_1 ( mod -> isGreatherThan(mod,  BN433,BN432), new ValidationMessage2016(PAGE11,BN433,mustLessMsg(BN433, BN432)))
+		,V_BN436_1 ( mod -> isGreatherThan(mod,  BN436,BN435), new ValidationMessage2016(PAGE11,BN436,mustLessMsg(BN436, BN435)))
+		,V_BN439_1 ( mod -> isGreatherThan(mod,  BN439,BN438), new ValidationMessage2016(PAGE11,BN439,mustLessMsg(BN439, BN438)))
+		,V_BN1082_1 ( mod -> isGreatherThan(mod,  BN1082,BN1081), new ValidationMessage2016(PAGE11,BN1082,mustLessMsg(BN1082, BN1081)))
+		,V_BN1085_1 ( mod -> isGreatherThan(mod,  BN1085,BN1084), new ValidationMessage2016(PAGE11,BN1085,mustLessMsg(BN1085, BN1084)))
+		,V_BN1088_1 ( mod -> isGreatherThan(mod,  BN1088,BN1087), new ValidationMessage2016(PAGE11,BN1088,mustLessMsg(BN1088, BN1087)))
+		,V_BN1091_1 ( mod -> isGreatherThan(mod,  BN1091,BN1090), new ValidationMessage2016(PAGE11,BN1091,mustLessMsg(BN1091, BN1090)))
+		,V_BN1094_1 ( mod -> isGreatherThan(mod,  BN1094,BN1093), new ValidationMessage2016(PAGE11,BN1094,mustLessMsg(BN1094, BN1093)))
+		,V_BN1097_1 ( mod -> isGreatherThan(mod,  BN1097,BN1096), new ValidationMessage2016(PAGE11,BN1097,mustLessMsg(BN1097, BN1096)))
+		,V_BN1100_1 ( mod -> isGreatherThan(mod,  BN1100,BN1099), new ValidationMessage2016(PAGE11,BN1100,mustLessMsg(BN1100, BN1099)))
+		,V_BN1103_1 ( mod -> isGreatherThan(mod,  BN1103,BN1102), new ValidationMessage2016(PAGE11,BN1103,mustLessMsg(BN1103, BN1102)))
+		,V_BN1106_1 ( mod -> isGreatherThan(mod,  BN1106,BN1105), new ValidationMessage2016(PAGE11,BN1106,mustLessMsg(BN1106, BN1105)))
+		,V_BN1115_1 ( mod -> isGreatherThan(mod,  BN1115,BN1114), new ValidationMessage2016(PAGE11,BN1115,mustLessMsg(BN1115, BN1114)))
+		,V_BN1118_1 ( mod -> isGreatherThan(mod,  BN1118,BN1117), new ValidationMessage2016(PAGE11,BN1118,mustLessMsg(BN1118, BN1117)))
+		,V_BN1373_1 ( mod -> isGreatherThan(mod,  BN1373,BN1372), new ValidationMessage2016(PAGE11,BN1373,mustLessMsg(BN1373, BN1372)))
+		,V_BN1376_1 ( mod -> isGreatherThan(mod,  BN1376,BN1375), new ValidationMessage2016(PAGE11,BN1376,mustLessMsg(BN1376, BN1375)))
+		,V_BN1379_1 ( mod -> isGreatherThan(mod,  BN1379,BN1378), new ValidationMessage2016(PAGE11,BN1379,mustLessMsg(BN1379, BN1378)))
+		,V_BN1382_1 ( mod -> isGreatherThan(mod,  BN1382,BN1381), new ValidationMessage2016(PAGE11,BN1382,mustLessMsg(BN1382, BN1381)))
+		,V_BN1385_1 ( mod -> isGreatherThan(mod,  BN1385,BN1384), new ValidationMessage2016(PAGE11,BN1385,mustLessMsg(BN1385, BN1384)))
+		,V_BN1388_1 ( mod -> isGreatherThan(mod,  BN1388,BN1387), new ValidationMessage2016(PAGE11,BN1388,mustLessMsg(BN1388, BN1387)))
+		,V_BN1391_1 ( mod -> isGreatherThan(mod,  BN1391,BN1390), new ValidationMessage2016(PAGE11,BN1391,mustLessMsg(BN1391, BN1390)))
+		,V_BN1394_1 ( mod -> isGreatherThan(mod,  BN1394,BN1393), new ValidationMessage2016(PAGE11,BN1394,mustLessMsg(BN1394, BN1393)))
+		,V_BN1397_1 ( mod -> isGreatherThan(mod,  BN1397,BN1396), new ValidationMessage2016(PAGE11,BN1397,mustLessMsg(BN1397, BN1396)))
+		,V_BN1400_1 ( mod -> isGreatherThan(mod,  BN1400,BN1399), new ValidationMessage2016(PAGE11,BN1400,mustLessMsg(BN1400, BN1399)))
+		,V_BN1403_1 ( mod -> isGreatherThan(mod,  BN1403,BN1402), new ValidationMessage2016(PAGE11,BN1403,mustLessMsg(BN1403, BN1402)))
+		,V_BN1406_1 ( mod -> isGreatherThan(mod,  BN1406,BN1405), new ValidationMessage2016(PAGE11,BN1406,mustLessMsg(BN1406, BN1405)))
+		,V_BN1409_1 ( mod -> isGreatherThan(mod,  BN1409,BN1408), new ValidationMessage2016(PAGE11,BN1409,mustLessMsg(BN1409, BN1408)))
+		,V_BN1412_1 ( mod -> isGreatherThan(mod,  BN1412,BN1411), new ValidationMessage2016(PAGE11,BN1412,mustLessMsg(BN1412, BN1411)))
+		,V_BN1415_1 ( mod -> isGreatherThan(mod,  BN1415,BN1414), new ValidationMessage2016(PAGE11,BN1415,mustLessMsg(BN1415, BN1414)))
+		,V_BN1418_1 ( mod -> isGreatherThan(mod,  BN1418,BN1417), new ValidationMessage2016(PAGE11,BN1418,mustLessMsg(BN1418, BN1417)))
+		,V_BN1421_1 ( mod -> isGreatherThan(mod,  BN1421,BN1420), new ValidationMessage2016(PAGE11,BN1421,mustLessMsg(BN1421, BN1420)))
+		,V_BN1424_1 ( mod -> isGreatherThan(mod,  BN1424,BN1423), new ValidationMessage2016(PAGE11,BN1424,mustLessMsg(BN1424, BN1423)))
+		,V_BN635_1 ( mod -> isGreatherThan(mod,  BN635,BN634), new ValidationMessage2016(PAGE11,BN635,mustLessMsg(BN635, BN634)))
+		,V_BN829_1 ( mod -> isGreatherThan(mod,  BN829,BN828), new ValidationMessage2016(PAGE11,BN829,mustLessMsg(BN829, BN828)))		
+		//  -- Deducción donaciones a entidades sin fines de lucro (Ley 49/2002)
+		,V_BN943_1 ( mod -> isGreatherThan(mod,  BN943,BN942), new ValidationMessage2016(PAGE11,BN943,mustLessMsg(BN943, BN942)))
+		,V_BN295_1 ( mod -> isGreatherThan(mod,  BN295,BN294), new ValidationMessage2016(PAGE11,BN295,mustLessMsg(BN295, BN294)))
+		,V_BN074_1 ( mod -> isGreatherThan(mod,  BN074,BN066), new ValidationMessage2016(PAGE11,BN074,mustLessMsg(BN074, BN066)))
+		,V_BN009_1 ( mod -> isGreatherThan(mod,  BN009,BN008), new ValidationMessage2016(PAGE11,BN009,mustLessMsg(BN009, BN008)))
+		,V_BN035_1 ( mod -> isGreatherThan(mod,  BN035,BN034), new ValidationMessage2016(PAGE11,BN035,mustLessMsg(BN035, BN034)))
+		,V_BN202_1 ( mod -> isGreatherThan(mod,  BN202,BN201), new ValidationMessage2016(PAGE11,BN202,mustLessMsg(BN202, BN201)))
+		,V_BN905_1 ( mod -> isGreatherThan(mod,  BN905,BN904), new ValidationMessage2016(PAGE11,BN905,mustLessMsg(BN905, BN904)))
+		,V_BN991_1 ( mod -> isGreatherThan(mod,  BN991,BN990), new ValidationMessage2016(PAGE11,BN991,mustLessMsg(BN991, BN990)))
+		,V_BN998_1 ( mod -> isGreatherThan(mod,  BN998,BN997), new ValidationMessage2016(PAGE11,BN998,mustLessMsg(BN998, BN997)))
+		,V_BN247_1 ( mod -> isGreatherThan(mod,  BN247,BN246), new ValidationMessage2016(PAGE11,BN247,mustLessMsg(BN247, BN246)))
+		,V_BN994_1 ( mod -> isGreatherThan(mod,  BN994,BN993), new ValidationMessage2016(PAGE11,BN994,mustLessMsg(BN994, BN993)))
+		,V_BN1435_1 ( mod -> isGreatherThan(mod,  BN1435,BN1434), new ValidationMessage2016(PAGE11,BN1435,mustLessMsg(BN1435, BN1434)))
+		
+		// -- Deducciones Inversión Canarias
+		,V_BN855_1 ( mod -> isGreatherThan(mod,  BN855,BN854), new ValidationMessage2016(PAGE11,BN855,mustLessMsg(BN855, BN854)))
+		,V_BN858_1 ( mod -> isGreatherThan(mod,  BN858,BN857), new ValidationMessage2016(PAGE11,BN858,mustLessMsg(BN858, BN857)))
+		,V_BN861_1 ( mod -> isGreatherThan(mod,  BN861,BN860), new ValidationMessage2016(PAGE11,BN861,mustLessMsg(BN861, BN860)))
+		,V_BN864_1 ( mod -> isGreatherThan(mod,  BN864,BN863), new ValidationMessage2016(PAGE11,BN864,mustLessMsg(BN864, BN863)))
+		,V_BN884_1 ( mod -> isGreatherThan(mod,  BN884,BN883), new ValidationMessage2016(PAGE11,BN884,mustLessMsg(BN884, BN883)))
+		,V_BN789_1 ( mod -> isGreatherThan(mod,  BN789,BN785), new ValidationMessage2016(PAGE11,BN789,mustLessMsg(BN789, BN785)))
+		,V_BN1358_1 ( mod -> isGreatherThan(mod,  BN1358,BN1357), new ValidationMessage2016(PAGE11,BN1358,mustLessMsg(BN1358, BN1357)))
+		,V_BN564_1 ( mod -> isGreatherThan(mod,  BN564,BN088), new ValidationMessage2016(PAGE11,BN564,mustLessMsg(BN564, BN088)))
+		,V_BN195_1 ( mod -> isGreatherThan(mod,  BN195,BN194), new ValidationMessage2016(PAGE11,BN195,mustLessMsg(BN195, BN194)))
+		,V_BN869_1 ( mod -> isGreatherThan(mod,  BN869,BN868), new ValidationMessage2016(PAGE11,BN869,mustLessMsg(BN869, BN868)))
+		,V_BN872_1 ( mod -> isGreatherThan(mod,  BN872,BN871), new ValidationMessage2016(PAGE11,BN872,mustLessMsg(BN872, BN871)))
+		,V_BN875_1 ( mod -> isGreatherThan(mod,  BN875,BN874), new ValidationMessage2016(PAGE11,BN875,mustLessMsg(BN875, BN874)))
+		,V_BN878_1 ( mod -> isGreatherThan(mod,  BN878,BN877), new ValidationMessage2016(PAGE11,BN878,mustLessMsg(BN878, BN877)))
+		,V_BN881_1 ( mod -> isGreatherThan(mod,  BN881,BN880), new ValidationMessage2016(PAGE11,BN881,mustLessMsg(BN881, BN880)))
+		,V_BN867_1 ( mod -> isGreatherThan(mod,  BN867,BN866), new ValidationMessage2016(PAGE11,BN867,mustLessMsg(BN867, BN866)))
+		,V_BN940_1 ( mod -> isGreatherThan(mod,  BN940,BN939), new ValidationMessage2016(PAGE11,BN940,mustLessMsg(BN940, BN939)))
+		,V_BN192_1 ( mod -> isGreatherThan(mod,  BN192,BN191), new ValidationMessage2016(PAGE11,BN192,mustLessMsg(BN192, BN191)))
+		,V_BN614_1 ( mod -> isGreatherThan(mod,  BN614,BN613), new ValidationMessage2016(PAGE11,BN614,mustLessMsg(BN614, BN613)))
+		,V_BN257_1 ( mod -> isGreatherThan(mod,  BN257,BN200), new ValidationMessage2016(PAGE11,BN257,mustLessMsg(BN257, BN200)))
+		,V_BN038_1 ( mod -> isGreatherThan(mod,  BN038,BN037), new ValidationMessage2016(PAGE11,BN038,mustLessMsg(BN038, BN037)))
+		,V_BN045_1 ( mod -> isGreatherThan(mod,  BN045,BN044), new ValidationMessage2016(PAGE11,BN045,mustLessMsg(BN045, BN044)))
+		,V_BN529_1 ( mod -> isGreatherThan(mod,  BN529,BN528), new ValidationMessage2016(PAGE11,BN529,mustLessMsg(BN529, BN528)))
+		,V_BN145_1 ( mod -> isGreatherThan(mod,  BN145,BN144), new ValidationMessage2016(PAGE11,BN145,mustLessMsg(BN145, BN144)))
+		,V_BN148_1 ( mod -> isGreatherThan(mod,  BN148,BN147), new ValidationMessage2016(PAGE11,BN148,mustLessMsg(BN148, BN147)))
+		,V_BN241_1 ( mod -> isGreatherThan(mod,  BN241,BN240), new ValidationMessage2016(PAGE11,BN241,mustLessMsg(BN241, BN240)))
+		,V_BN1059_1 ( mod -> isGreatherThan(mod,  BN1059,BN1058), new ValidationMessage2016(PAGE11,BN1059,mustLessMsg(BN1059, BN1058)))
+		,V_BN802_1 ( mod -> isGreatherThan(mod,  BN802,BN791), new ValidationMessage2016(PAGE11,BN802,mustLessMsg(BN802, BN791)))
+		,V_BN853_1 ( mod -> isGreatherThan(mod,  BN853,BN852), new ValidationMessage2016(PAGE11,BN853,mustLessMsg(BN853, BN852)))
+
+		// -- Deducciones sin límite I + D + i
+		,V_BN574_1 ( mod -> isGreatherThan(mod,  BN574,BN919), new ValidationMessage2016(PAGE11,BN574,mustLessMsg(BN574, BN919)))
+		,V_BN977_1 ( mod -> isGreatherThan(mod,  BN977,BN976), new ValidationMessage2016(PAGE11,BN977,mustLessMsg(BN977, BN976)))
+		,V_BN824_1 ( mod -> isGreatherThan(mod,  BN824,BN823), new ValidationMessage2016(PAGE11,BN824,mustLessMsg(BN824, BN823)))
+		,V_BN850_1 ( mod -> isGreatherThan(mod,  BN850,BN233), new ValidationMessage2016(PAGE11,BN850,mustLessMsg(BN850, BN233)))
+		,V_BN1125_1 ( mod -> isGreatherThan(mod,  BN1125,BN1124), new ValidationMessage2016(PAGE11,BN1125,mustLessMsg(BN1125, BN1124)))
+		,V_BN1129_1 ( mod -> isGreatherThan(mod,  BN1129,BN1128), new ValidationMessage2016(PAGE11,BN1129,mustLessMsg(BN1129, BN1128)))
+		,V_BN1428_1 ( mod -> isGreatherThan(mod,  BN1428,BN1427), new ValidationMessage2016(PAGE11,BN1428,mustLessMsg(BN1428, BN1427)))
+		,V_BN1432_1 ( mod -> isGreatherThan(mod,  BN1432,BN1431), new ValidationMessage2016(PAGE11,BN1432,mustLessMsg(BN1432, BN1431)))
+
+		// -- Deducción por reversión de medidas temporales DT 37ª.1 LIS
+		,V_BN1437_1 ( mod -> isGreatherThan(mod,  BN1437,BN1167), new ValidationMessage2016(PAGE11,BN1437,mustLessMsg(BN1437, BN1167)))
+		,V_BN1440_1 ( mod -> isGreatherThan(mod,  BN1440,BN1439), new ValidationMessage2016(PAGE11,BN1440,mustLessMsg(BN1440, BN1439)))
+		,V_BN1444_1 ( mod -> isGreatherThan(mod,  BN1444,BN1443), new ValidationMessage2016(PAGE11,BN1444,mustLessMsg(BN1444, BN1443)))
+		
+		// -- Deducción por reversión de medidas temporales DT 37ª.2 LIS
+		,V_BN1446_1 ( mod -> isGreatherThan(mod,  BN1446,BN1179), new ValidationMessage2016(PAGE11,BN1446,mustLessMsg(BN1446, BN1179)))
+		,V_BN1449_1 ( mod -> isGreatherThan(mod,  BN1449,BN1448), new ValidationMessage2016(PAGE11,BN1449,mustLessMsg(BN1449, BN1448)))
+		,V_BN1453_1 ( mod -> isGreatherThan(mod,  BN1453,BN1452), new ValidationMessage2016(PAGE11,BN1453,mustLessMsg(BN1453, BN1452)))
+
+		,V_BN592_1( mod -> isNegative(mod,BN592) ,new ValidationMessage2016(PAGE11,BN592  , mustPositiveMsg(BN592)))
+		
 		;		
 		private IValidator validator;
 		private ValidationMessage2016 message;
@@ -626,29 +806,8 @@ public class Mod2002016Validation {
 	// ***************************************************************************************************************
 	// ***************************************************************************************************************
 
-	private static final String EQUAL_GREATER_MSG = "\"{0}\" debe ser mayor o igual que \"{1}\".";
-	private static final String EQUAL_GREATER_EXP = "round({0}) >= round({1})";
-	
-	private static final String EQUAL_LESS_MSG = "\"{0}\" debe ser menor o igual que \"{1}\".";
-	private static final String EQUAL_LESS_EXP = "round({0}) <= round({1})";
-
-//	private static final String EQUAL_LESS_FACTOR_MSG = "\"{0}\" debe ser menor o igual que el {2} por \"{1}\".";
-//	private static final String EQUAL_LESS_FACTOR_EXP = "round({0}) <= round({1} * {2})";
-
 	private static final String MUST_POSITIVE_EXP = "round({0}) >= 0.0";
 	
-//  private static final String EQUAL_MSG = "\"{0}\" debe igual que \"{1}\".";
-//  private static final String EQUAL_EXP = "round({0}) == round({1})";
-//	private static final String MUST_EQUAL_MSG = "\"{0}\" y \"{1}\" deben ser iguales.";
-//	private static final String CHECK_SIGN_MSG = "Verifique el signo de la clave: \"{0}\"";
-//	private static final String MUST_NEGATIVE_EXP = "round({0}) <= 0.0";
-//	private static final String INV_BOX_EXP = "round({0}) == 0.0 || (round({0}) > 0.0 && {1})";
-//	private static final String INCOMPATIBLE_MSG = "Casilla \"{0}\" incompatible con \"{1}\"";
-//	private static final String MSG_581 = "Si existen deducciones por doble imposici\u00F3n pendientes "
-//			+ "de aplicar no podr\u00E1n aplicarse ni las bonificaciones del art\u00EDculo 76 de la Ley "
-//			+ "19/1994, ni las deducciones por inversiones";
-	
-
 	public static List<ValidationMessage2016> VALIDATION_EXPRESSION_LIST = new LinkedList<ValidationMessage2016>();
 
 	//	**************************************************************************************
@@ -656,365 +815,8 @@ public class Mod2002016Validation {
 	//								LA CONDICIÓN DEBE CUMPLIRSE.
 	//	**************************************************************************************
 	//	**************************************************************************************
-	
-	
-	static {	// PAGE 09
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ552
-//				,LQ552.getDescription() + " debe ser cero con el caracter \"" + C0027.getDescription() + "\" marcado"
-//				,"C0027?LQ552<=0:LQ552>0"));
-		
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ1140
-//				,MessageFormat.format(MUST_EQUAL_MSG,"Reserva de capitalizaci\u00F3n dotada en el ejercicio",BP1001.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LQ1140.toString(),BP1001.toString())));
-
-/*
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ641
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ641.getDescription(),LQ640.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ641.toString(),LQ640.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ644
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ644.getDescription(),LQ643.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ644.toString(),LQ643.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ647
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ647.getDescription(),LQ646.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ647.toString(),LQ646.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ650
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ650.getDescription(),LQ649.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ650.toString(),LQ649.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ653
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ653.getDescription(),LQ652.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ653.toString(),LQ652.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ656
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ656.getDescription(),LQ655.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ656.toString(),LQ655.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ659
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ659.getDescription(),LQ658.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ659.toString(),LQ658.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ662
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ662.getDescription(),LQ661.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ662.toString(),LQ661.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ665
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ665.getDescription(),LQ664.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ665.toString(),LQ664.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ668
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ668.getDescription(),LQ667.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ668.toString(),LQ667.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ747
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ747.getDescription(),LQ743.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ747.toString(),LQ743.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ276
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ276.getDescription(),LQ275.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ276.toString(),LQ275.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ609
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ609.getDescription(),LQ608.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ609.toString(),LQ608.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ705
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ705.getDescription(),LQ704.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ705.toString(),LQ704.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ014
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ014.getDescription(),LQ013.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ014.toString(),LQ013.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ726
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ726.getDescription(),LQ725.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ726.toString(),LQ725.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ535
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ535.getDescription(),LQ534.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ535.toString(),LQ534.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ675
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ675.getDescription(),LQ607.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ675.toString(),LQ607.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ1046
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ1046.getDescription(),LQ1045.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ1046.toString(),LQ1045.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ547
-				,MessageFormat.format(EQUAL_LESS_MSG,LQ547.getDescription(),LQ670.getDescription())
-				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,LQ547.toString(),LQ670.toString())));
-
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ641
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ641.getDescription(),LQ640.getDescription(),"0.25")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ641.toString(),LQ640.toString(),"0.25")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ644
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ644.getDescription(),LQ643.getDescription(),"0.25")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ644.toString(),LQ643.toString(),"0.25")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ647
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ647.getDescription(),LQ646.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ647.toString(),LQ646.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ650
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ650.getDescription(),LQ649.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ650.toString(),LQ649.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ653
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ653.getDescription(),LQ652.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ653.toString(),LQ652.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ656
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ656.getDescription(),LQ655.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ656.toString(),LQ655.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ659
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ659.getDescription(),LQ658.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ659.toString(),LQ658.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ662
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ662.getDescription(),LQ661.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ662.toString(),LQ661.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ665
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ665.getDescription(),LQ664.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ665.toString(),LQ664.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ668
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ668.getDescription(),LQ667.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ668.toString(),LQ667.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ747
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ747.getDescription(),LQ743.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ747.toString(),LQ743.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ276
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ276.getDescription(),LQ275.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ276.toString(),LQ275.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ609
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ609.getDescription(),LQ608.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ609.toString(),LQ608.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ705
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ705.getDescription(),LQ704.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ705.toString(),LQ704.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ014
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ014.getDescription(),LQ013.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ014.toString(),LQ013.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ726
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ726.getDescription(),LQ725.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ726.toString(),LQ725.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ535
-				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,LQ535.getDescription(),LQ534.getDescription(),"0.50")
-				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ535.toString(),LQ534.toString(),"0.50")+":true"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ559
-				,"La casilla \""+LQ559.getDescription()+"\" debe ser mayor igual que cero y menor o igual que la casilla \""+LQ552.getDescription()+"\""
-				,"C0015?(0.0 <= round(LQ559) && round(LQ559) <= round(LQ552)):true"));
-*/
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ674
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"673","674")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ673.toString(),LQ674.toString()))); 
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ677
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"676","677")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ676.toString(),LQ677.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ680
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"679","680")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ679.toString(),LQ680.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ683
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"682","683")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ682.toString(),LQ683.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ686
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"685","686")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ685.toString(),LQ686.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ689
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"688","689")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ688.toString(),LQ689.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ692
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"691","692")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ691.toString(),LQ692.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ099
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"059","099")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ059.toString(),LQ099.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ018
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"017","018")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ017.toString(),LQ018.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ773
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"772","773")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ772.toString(),LQ773.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ908
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"907","908")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ907.toString(),LQ908.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ911
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"910","911")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ910.toString(),LQ911.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ936
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"935","936")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ935.toString(),LQ936.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ515
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"587","515")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ587.toString(),LQ515.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ280
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"279","280")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ279.toString(),LQ280.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE09,LQ624
-//				,MessageFormat.format(EQUAL_GREATER_MSG,"623","624")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,LQ623.toString(),LQ624.toString())));
-	}
-	
-	static {// PAGE 10
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN565
-//				,"No puede aplicarse la clave 565 mientras existan saldos pendientes "
-//				+ "de aplicaci\u00F3n de deducciones por doble imposici\u00F3n o de deducciones "
-//				+ "del cap\u00EDtulo IV T\u00EDtulo VI de la Ley del Impuesto."
-//				,"BN565 == 0 || (BN565 != 0 && (BN118 == 0 && BN133 == 0 && BN162 == 0 && BN174 == 0 && BN832 == 0))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN567
-//				,"La clave 567 no puede superar el 50% de la clave 562"
-//				,"BN567 <= (LQ562 * 50 /100)"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN567
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN567.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN567.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN568
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN568.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN568.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN563
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN563.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN563.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN566
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN566.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN566.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN576
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN576.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN576.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN569
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN569.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN569.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN570
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN570.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN570.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN571
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN571.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN571.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN572
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN572.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN572.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN573
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN573.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN573.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN575
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN575.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN575.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN577
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN577.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN577.toString(),"0")));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN581
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN581.toString(),"0")
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN581.toString(),"0")));
-
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN582
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN582.getDescription(),LQ562.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN582.toString(),LQ562.toString())));
-		
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN581
-//				,"No puede aplicarse la clave 581 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."
-//				,"BN581 == 0 || (BN581 != 0 && (BN118 == 0 && BN162 == 0 && BN133 == 0 && BN1345 == 0 && BN1347 == 0 && BN174 == 0))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN583
-//				,"No puede aplicarse la clave 583 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."
-//				,"BN583 == 0 || (BN581 != 0 && (BN118 == 0 && BN162 == 0 && BN133 == 0 && BN1345 == 0 && BN1347 == 0 && BN174 == 0))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN585
-//				,"No puede aplicarse la clave 585 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."
-//				,"BN585 == 0 || (BN581 != 0 && (BN118 == 0 && BN162 == 0 && BN133 == 0 && BN1345 == 0 && BN1347 == 0 && BN174 == 0))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN584
-//				,"No puede aplicarse la clave 584 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."
-//				,"BN584 == 0 || (BN581 != 0 && (BN118 == 0 && BN162 == 0 && BN133 == 0 && BN1345 == 0 && BN1347 == 0 && BN174 == 0))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN588
-//				,"No puede aplicarse la clave 588 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."
-//				,"BN588 == 0 || (BN581 != 0 && (BN118 == 0 && BN162 == 0 && BN133 == 0 && BN1345 == 0 && BN1347 == 0 && BN174 == 0))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN590
-//				,"No puede aplicarse la clave 590 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."
-//				,"BN590 == 0 || (BN581 != 0 && (BN118 == 0 && BN162 == 0 && BN133 == 0 && BN1345 == 0 && BN1347 == 0 && BN174 == 0))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN082
-//				,"No puede aplicarse la clave 082 mientras existan saldos pendientes de aplicaci\u00F3n de deducciones por doble imposici\u00F3n."
-//				,"BN082 == 0 || (BN581 != 0 && (BN118 == 0 && BN162 == 0 && BN133 == 0 && BN1345 == 0 && BN1347 == 0 && BN174 == 0))"));
-		
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN563
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN563.getDescription(),C0029.getDescription())
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN563.toString(),C0029.toString())));
-//		
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN566
-//				,BN566.getDescription() + " no procede. Caracter '" + C0017.getDescription() + "' o '"+C0018.getDescription()+"' no marcado." 
-//				,"(BN566 == 0.0) || (BN566 > 0 && (C0017 || C0018))"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN576
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN576.getDescription(),C0038.getDescription())
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN576.toString(),C0038.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN575
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN575.getDescription(),C0007.getDescription())
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN575.toString(),C0007.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN581
-//				,MessageFormat.format(EQUAL_GREATER_MSG,BN581.getDescription(),C0015.getDescription())
-//				,MessageFormat.format(EQUAL_GREATER_EXP,BN581.toString(),C0015.toString())));
-//		
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN581,MSG_581
-//				,"BN581 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN583,MSG_581
-//				,"BN583 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN585,MSG_581
-//				,"BN585 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN584,MSG_581
-//				,"BN584 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN588,MSG_581
-//				,"BN588 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN590,MSG_581
-//				,"BN590 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN082,MSG_581
-//				,"BN082 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
-
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN697
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN697.getDescription(),BN696.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN697.toString(),BN696.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN847
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN847.getDescription(),BN846.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN847.toString(),BN846.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN283
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN283.getDescription(),BN282.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN283.toString(),BN282.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN703
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN703.getDescription(),BN702.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN703.toString(),BN702.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN187
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN187.getDescription(),BN071.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN187.toString(),BN071.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN026
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN026.getDescription(),BN025.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN026.toString(),BN025.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN715
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN715.getDescription(),BN714.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN715.toString(),BN714.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN737
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN737.getDescription(),BN736.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN737.toString(),BN736.toString())));
-	
-		
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN712
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN712.getDescription(),BN711.getDescription()) 
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN712.toString(),BN711.toString()))); 
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN638
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN638.getDescription(),BN637.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN638.toString(),BN637.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN894
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN894.getDescription(),BN849.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN894.toString(),BN849.toString()))); 
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN286
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN286.getDescription(),BN285.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN286.toString(),BN285.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN826
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN826.getDescription(),BN825.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN826.toString(),BN825.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN002
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN002.getDescription(),BN001.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN002.toString(),BN001.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN029
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN029.getDescription(),BN028.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN029.toString(),BN028.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN718
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN718.getDescription(),BN717.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN718.toString(),BN717.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN723
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN723.getDescription(),BN722.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN723.toString(),BN722.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN741
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN741.getDescription(),BN740.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN741.toString(),BN740.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN136
-//				,MessageFormat.format(EQUAL_LESS_MSG,BN136.getDescription(),BN135.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,BN136.toString(),BN135.toString())));
-
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN585
-				,MessageFormat.format(EQUAL_LESS_MSG,BN585.getDescription(),BN582.getDescription())
-				,MessageFormat.format(EQUAL_LESS_EXP,BN585.toString(),BN582.toString())));
-
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE10,BN592
-				,MessageFormat.format(EQUAL_GREATER_MSG,BN592.getDescription(),"0")
-				,MessageFormat.format(EQUAL_GREATER_EXP,BN592.toString(),"0")));
-	}
-
-	static {	// PAGE 11
-	}
 
 	static {	// PAGE 12
-		//VALIDATION_EXPRESSION_LIST.add(new EqualValidationMessage2016(PAGE14,ID653,ID666));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE14,ID650
 				,MessageFormat.format(CHECK_SIGN_MSG,ID650.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID650.toString())));
