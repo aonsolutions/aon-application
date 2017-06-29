@@ -537,12 +537,11 @@ public class Model2002016 extends ResizeComposite  {
 	@UiHandler("aeatPrintButton")
 	void onAeatPrintButtonClick(ClickEvent event) {
 		ConfirmDialog cd = new ConfirmDialog();
-		cd.confirm("Se va a proceder a la validaci\u00F3n en los servidores de la \n"
-				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
-				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
-				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "La petici\u00F3n se genera a partir de los datos guardados.",
-			new ConfirmDialogCallback() {
+		cd.confirm("La impresi\u00F3n se genera en los servidores de la Agencia Tributaria "
+				+ "y se realiza a partir de los datos guardados. En el caso de validaci\u00F3n "
+				+ "correcta se devolver\u00E1 el documento PDF de la declarai\u00F3n Asegúrese "
+				+ "de haber guardado la declaraci\u00F3n."
+			,new ConfirmDialogCallback() {
 				
 				@Override
 				public void onCancel() {}
