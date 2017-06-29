@@ -39,6 +39,8 @@ public class Mod2002016Validation {
 	private static final int PAGE10 = 10;
 	private static final int PAGE11 = 11;
 	private static final int PAGE12 = 12;
+	private static final int PAGE14 = 14;
+	private static final int PAGE15 = 15;
 	
 	private static final String MUST_EQUAL_MSG = "[{0}] {1} y [{2}] {3} deben ser iguales.";
 	private static final String MUST_GREATHER_MSG = "[{0}] {1} debe ser mayor que [{2}] {3} ";
@@ -707,19 +709,31 @@ public class Mod2002016Validation {
 		// ------------------------------------------------------------------------
 		// ------------------- APLICACION DE RESULTADOS ---------------------------
 		// ------------------------------------------------------------------------
-		,V_ID650  ( mod -> isNegative(mod,ID650),new ValidationMessage2016(PAGE08,ID650, mustPositiveMsg(ID650)))
-		,V_ID651  ( mod -> isNegative(mod,ID651),new ValidationMessage2016(PAGE08,ID651, mustPositiveMsg(ID651)))
-		,V_ID652  ( mod -> isNegative(mod,ID652),new ValidationMessage2016(PAGE08,ID652, mustPositiveMsg(ID652)))
-		,V_ID666  ( mod -> isNegative(mod,ID666),new ValidationMessage2016(PAGE08,ID666, mustPositiveMsg(ID666)))
-		,V_ID654  ( mod -> isNegative(mod,ID654),new ValidationMessage2016(PAGE08,ID654, mustPositiveMsg(ID654)))
-		,V_ID655  ( mod -> isNegative(mod,ID655),new ValidationMessage2016(PAGE08,ID655, mustPositiveMsg(ID655)))
-		,V_ID656  ( mod -> isNegative(mod,ID656),new ValidationMessage2016(PAGE08,ID656, mustPositiveMsg(ID656)))
-		,V_ID658  ( mod -> isNegative(mod,ID658),new ValidationMessage2016(PAGE08,ID658, mustPositiveMsg(ID658)))
-		,V_ID659  ( mod -> isNegative(mod,ID659),new ValidationMessage2016(PAGE08,ID659, mustPositiveMsg(ID659)))
-		,V_ID660  ( mod -> isNegative(mod,ID660),new ValidationMessage2016(PAGE08,ID660, mustPositiveMsg(ID660)))
-		,V_ID662  ( mod -> isNegative(mod,ID662),new ValidationMessage2016(PAGE08,ID662, mustPositiveMsg(ID662)))
-		,V_ID664  ( mod -> isNegative(mod,ID664),new ValidationMessage2016(PAGE08,ID664, mustPositiveMsg(ID664)))
-		,V_ID665  ( mod -> isNegative(mod,ID665),new ValidationMessage2016(PAGE08,ID665, mustPositiveMsg(ID665)))
+		,V_ID650  ( mod -> isNegative(mod,ID650),new ValidationMessage2016(PAGE14,ID650, mustPositiveMsg(ID650)))
+		,V_ID651  ( mod -> isNegative(mod,ID651),new ValidationMessage2016(PAGE14,ID651, mustPositiveMsg(ID651)))
+		,V_ID652  ( mod -> isNegative(mod,ID652),new ValidationMessage2016(PAGE14,ID652, mustPositiveMsg(ID652)))
+		,V_ID666  ( mod -> isNegative(mod,ID666),new ValidationMessage2016(PAGE14,ID666, mustPositiveMsg(ID666)))
+		,V_ID654  ( mod -> isNegative(mod,ID654),new ValidationMessage2016(PAGE14,ID654, mustPositiveMsg(ID654)))
+		,V_ID655  ( mod -> isNegative(mod,ID655),new ValidationMessage2016(PAGE14,ID655, mustPositiveMsg(ID655)))
+		,V_ID656  ( mod -> isNegative(mod,ID656),new ValidationMessage2016(PAGE14,ID656, mustPositiveMsg(ID656)))
+		,V_ID658  ( mod -> isNegative(mod,ID658),new ValidationMessage2016(PAGE14,ID658, mustPositiveMsg(ID658)))
+		,V_ID659  ( mod -> isNegative(mod,ID659),new ValidationMessage2016(PAGE14,ID659, mustPositiveMsg(ID659)))
+		,V_ID660  ( mod -> isNegative(mod,ID660),new ValidationMessage2016(PAGE14,ID660, mustPositiveMsg(ID660)))
+		,V_ID662  ( mod -> isNegative(mod,ID662),new ValidationMessage2016(PAGE14,ID662, mustPositiveMsg(ID662)))
+		,V_ID664  ( mod -> isNegative(mod,ID664),new ValidationMessage2016(PAGE14,ID664, mustPositiveMsg(ID664)))
+		,V_ID665  ( mod -> isNegative(mod,ID665),new ValidationMessage2016(PAGE14,ID665, mustPositiveMsg(ID665)))
+
+		// ------------------------------------------------------------------------
+		// -------------- LIMITACIÓN DEDUC. GASTOS FINANCIEROS. -------------------
+		// ------------------------------------------------------------------------
+		,V_LM1241_1 ( mod -> (getValue(mod,  LM1241) < getValue(mod,LM1242)+getValue(mod,LM1244))
+			, new ValidationMessage2016(PAGE15,LM1241,
+			"La suma de las casillas [01242] \""+LM1242.getDescription()+"\" y [01244] \""+LM1244.getDescription()
+					+"\" debe ser menor o igual que [01241] \""+LM1241.getDescription()+"\""))
+		,V_LM1256_1 ( mod -> (getValue(mod,LM1249)+getValue(mod,LM1255) < getValue(mod,  LM1256))
+			, new ValidationMessage2016(PAGE15,LM1256,
+			"La suma de las casillas [01249] \""+LM1249.getDescription()+"\" y [01255] \""+LM1255.getDescription()
+					+"\" debe ser menor o igual que [01256] \""+LM1256.getDescription()+"\""))
 		;		
 		private IValidator validator;
 		private ValidationMessage2016 message;
@@ -830,142 +844,6 @@ public class Mod2002016Validation {
 				}
 			}
 		}
-	}
-	
-	
-	// ***************************************************************************************************************
-	// ***************************************************************************************************************
-	// **********************************************************************************************************
-	// ***************************************************************************************************************
-	// ***************************************************************************************************************
-	// ***************************************************************************************************************
-
-//	public static List<ValidationMessage2016> VALIDATION_EXPRESSION_LIST = new LinkedList<ValidationMessage2016>();
-
-	//	**************************************************************************************
-	//	**************************************************************************************
-	//								LA CONDICIÓN DEBE CUMPLIRSE.
-	//	**************************************************************************************
-	//	**************************************************************************************
-
-	static {
-	}
-
-	static { // PAGE 13 		
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE08,D0364
-//				,"Compruebe la correspondencia entre el importe declarado en "
-//				+ "la clave 364 y los de las claves 1258 y 1259 de la p\u00E1gina 14."
-//				,"D0364 == round(LM1258 + LM1259)"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM259
-//				,"La casilla 259 debe ser menor o igual que la suma de las casillas 043 y 049" 
-//				,"LM259 <= (LM043+LM049)"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM254
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM254.getDescription(),LM253.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM254.toString(),LM253.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM255
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM255.getDescription(),LM253.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM255.toString(),LM253.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM260
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM260.getDescription(),LM259.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM260.toString(),LM259.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM049
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM049.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM049.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM249
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM249.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM249.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM252
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM252.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM252.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM253
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM253.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM253.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM254
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM254.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM254.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM255
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM255.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM255.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM258
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM258.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM258.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM259
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM259.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM259.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM260
-//				,MessageFormat.format(CHECK_SIGN_MSG,LM260.getDescription())
-//				,MessageFormat.format(MUST_POSITIVE_EXP,LM260.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM175 
-//				,MessageFormat.format(EQUAL_MSG,LM175.getDescription() + " (175)",PG296.getDescription()+ "(PYG - 296)")
-//				,MessageFormat.format(EQUAL_EXP,LM175.toString(),PG296.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM176 
-//				,MessageFormat.format(EQUAL_MSG,LM176.getDescription() + " (176)",PG284.getDescription()+ "(PYG - 284)")
-//				,MessageFormat.format(EQUAL_EXP,LM176.toString(),PG284.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM177 
-//				,MessageFormat.format(EQUAL_MSG,LM177.getDescription() + " (177)",PG285.getDescription()+ "(PYG - 285)")
-//				,MessageFormat.format(EQUAL_EXP,LM177.toString(),PG285.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM178 
-//				,MessageFormat.format(EQUAL_MSG,LM178.getDescription() + " (178)",PG287.getDescription()+ "(PYG - 287)")
-//				,MessageFormat.format(EQUAL_EXP,LM178.toString(),PG287.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM179 
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM179.getDescription() + " (179)",PG298.getDescription()+ "(PYG - 298)")
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM179.toString(),PG298.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM254
-//				,"\"" + LM254.getDescription() +"\" debe ser menor o igual que la suma de \"" 
-//				+ LM043.getDescription() + "\" y \""
-//				+ LM049.getDescription() + "\"" 
-//				,"LM254<=LM043+LM049"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM254
-//				,"Si el importe de la casilla 254 es menor que la suma de los importes de las "
-//				+ "casillas 043 + 049, dicho importe debe ser igual al de la casilla 253" 
-//				,"LM254<(LM043+LM049)?LM254==LM253:true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM255
-//				,"El importe de la casilla 255 debe ser igual a la diferencia "
-//				+ "de las casillas 253 menos 254" 
-//				,"LM255==(LM253-LM254)"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM255
-//				,"Si el importe de la casilla 255 es mayor que cero, la casilla 258 debe ser cero" 
-//				,"LM255>0?LM258==0:true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM255
-//				,"Si el importe de la casilla 043 es mayor que la suma de las casillas 254 y 258, la casilla 049 debe ser cero" 
-//				,"(LM254+LM258)<=LM043?LM049==0:true"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM255 
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM255.getDescription() 
-//				+ " (255)",Mod2002014CorrectionKey.C0040.getDescription()+ " (Correcciones Contables - 363)")
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM255.toString(),I0363.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM258 
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM258.getDescription() 
-//				+ " (258)",Mod2002014CorrectionKey.C0040.getDescription()+ "(Correcciones Contables - 364)")
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM258.toString(),D0364.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM970
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM970.getDescription(),LM969.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM970.toString(),LM969.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM262
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM262.getDescription(),LM261.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM262.toString(),LM261.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM265
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM265.getDescription(),LM264.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM265.toString(),LM264.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM266
-//				,"Compruebe los gastos financieros pendientes de deducir. " 
-//				+MessageFormat.format(MUST_EQUAL_MSG,LM266.getDescription(),LM255.getDescription())
-//				,MessageFormat.format(MUST_EQUAL_EXP,LM266.toString(),LM255.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM258
-//				,"Compruebe los gastos financieros pendientes de deducir de per\u00EDodos "
-//				+ "anteriores aplicados en esta liquidaci\u00F3n, claves 258, 970 y 262" 
-//				,"LM258==(LM970+LM262)"));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM522
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM522.getDescription(),LM503.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM522.toString(),LM503.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM271
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM271.getDescription(),LM270.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM271.toString(),LM270.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM274
-//				,MessageFormat.format(EQUAL_LESS_MSG,LM274.getDescription(),LM273.getDescription())
-//				,MessageFormat.format(EQUAL_LESS_EXP,LM274.toString(),LM273.toString())));
-//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2016(PAGE13,LM957
-//				,"Compruebe el importe pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado"
-//				,"LM957==(LM043+LM049)-LM254-LM258"));
 	}
 	
 	private static double getValue(Mod2002016 mod, Mod2002016Key key) {

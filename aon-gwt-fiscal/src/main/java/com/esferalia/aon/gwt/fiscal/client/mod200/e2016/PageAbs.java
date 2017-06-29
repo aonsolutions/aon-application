@@ -144,7 +144,10 @@ public abstract class PageAbs extends ResizeComposite {
 		paintDescription(tab, description, row,col,isTitle(key));	
 	}
 	protected void paintDescription(FlexTable tab, String description, int row,int col, boolean title) {
-		Label desc = new Label( AonStringUtils.abbreviate(description, 120) );
+		paintDescription(tab, description, row,col, title, 120);	
+	}
+	protected void paintDescription(FlexTable tab, String description, int row,int col, boolean title, int size) {
+		Label desc = new Label( AonStringUtils.abbreviate(description, size) );
 		if (AonStringUtils.length(description) > 117) {
 			desc.setTitle(description);
 		}
