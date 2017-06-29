@@ -36,14 +36,14 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="NUMERO">
+			<xsd:element name="REFERENCIA">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Numero de albaran.
+					<xsd:documentation xml:lang="es">Referencia de albaran.
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="\d{1,5}" />
+						<xsd:maxLength value="13" />
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
