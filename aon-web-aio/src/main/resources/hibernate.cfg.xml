@@ -146,6 +146,9 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 		<mapping class="com.code.aon.customer.InvoicingGroup"/>
 
+		<!-- AON-DATA Mapping files -->	
+		<mapping class="com.code.aon.data.DataAttachment"/>
+
 		<!-- AON-FINANCE Mapping files -->	
 		<mapping class="com.code.aon.finance.BankConcept"/>
 		<mapping class="com.code.aon.finance.BankStatement"/>
