@@ -1,7 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200.e2016;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016.Model200PageCallback;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Behaviour;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -57,6 +61,19 @@ public class Page16 extends PageAbs {
 		addHeaderCell(table,row, 2,AON.MSG.canCol2());
 		addHeaderCell(table,row, 3,AON.MSG.canCol3());
 		addHeaderCell(table,row, 4,AON.MSG.canCol4());
+		
+		// Desactivar las casillas 20 y 21 si no está marcado el caracter 45
+		if (callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0045))
+		{
+			Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC020,new Boolean[]{FALSE,FALSE});
+			Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC021,new Boolean[]{FALSE,FALSE});
+		}
+		else
+		{
+			Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC020,new Boolean[]{FALSE,TRUE});
+			Mod2002016Behaviour.BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC021,new Boolean[]{FALSE,TRUE});
+		}	
+		
 		++row;
 		for (int i = 0; i < Mod2002016Constants.CANARIAS_KEYS.length; i++) {
 			Mod2002016Key[] keys = Mod2002016Constants.CANARIAS_KEYS[i];
@@ -64,7 +81,7 @@ public class Page16 extends PageAbs {
 			for (int x = 0; x < keys.length; x++) {
 				Mod2002016Key key = keys[x]; 
 				if (key != null && callback.getMod200Object().isVisible(key)) {
-					paintKeyField(table,key,row,x+1,8);
+					paintKeyField(table,key,row,x+1,8);					
 				}
 			}
 			++row;
@@ -81,5 +98,12 @@ public class Page16 extends PageAbs {
 
 	@Override
 	protected void populate() {
+	}
+	
+	@Override
+	protected boolean isAvailable() {
+		boolean av = super.isAvailable()
+  		  && (callback.getMod200Object().getMod200().isChecked(Mod2002016Key.C0029));
+		return av;
 	}
 }
