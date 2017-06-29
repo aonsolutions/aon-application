@@ -58,7 +58,7 @@ public class Page15 extends PageAbs {
 				for (int x = 0; x < keys.length; x++) {
 					Mod2002016Key key = keys[x]; 
 					if (key != null && callback.getMod200Object().isVisible(key)) {
-						paintDescription(table, key.getDescription(), row, 0, false);
+						paintDescription(table, key.getDescription(), row, 0, false, 95);
 						if (key == Mod2002016Key.LM1250 || key == Mod2002016Key.LM1251
 						 || key == Mod2002016Key.LM1252 || key == Mod2002016Key.LM1253
 						 || key == Mod2002016Key.LM1254) {
@@ -145,4 +145,14 @@ public class Page15 extends PageAbs {
 
 	@Override
 	protected void populate() {}
+	
+	
+	@Override
+	protected boolean isAvailable() {
+		boolean av = super.isAvailable()
+  		  && callback.getMod200Object().getMod200().isNotChecked(Mod2002016Key.C0009) 
+  		  &&  callback.getMod200Object().getMod200().isNotChecked(Mod2002016Key.C0010);
+		return av;
+	}
+	
 }

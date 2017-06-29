@@ -821,14 +821,15 @@ public class Mod2002016Compute {
 	static { // LIMITACION EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS.
 		
 		//  Limitación en la deducibilidad de gastos financieros.
-		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1240,"isLimitEnabled()?LM1242+LM1243:0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1246,"isLimitEnabled()?LM1242+LM1245:0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1240,"isLimitEnabled()?(LM1242+LM1243):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1246,"isLimitEnabled()?(LM1242+LM1245):0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1248,"isLimitEnabled()?((LM1247>=LM1246)?0.0:(LM1246-LM1247)):0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1249,"isLimitEnabled()?computeLM1249():0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1250,"isLimitEnabled()?PG296:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1251,"isLimitEnabled()?PG284:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1252,"isLimitEnabled()?PG285:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1253,"isLimitEnabled()?PG287:0.0");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LM1260,"isLimitEnabled()?LM1243+LM1257:0.0");
 
 		 // Limitación en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir
