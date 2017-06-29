@@ -10,6 +10,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -51,6 +54,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String isSelectedCell();
 		String onChange();
 		String setBlockVariableStyle();
+		String showVariablesStyle();
 	}
 	
 	
@@ -177,6 +181,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					
 					panel.add(checkBox);
 					panel.add(label);
+					panel.addStyleName(style.showVariablesStyle());
 					showVariablesContent.add(panel);
 					
 					showVariablesMap.put(var, checkBox);
@@ -239,6 +244,23 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
 		openNewValueDialog();
+		newValueBox.addKeyDownHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent key) {
+				if(key.getNativeKeyCode() == KeyCodes.KEY_ENTER)
+					newValueOk();
+				
+			}
+
+			private void newValueOk() {
+				addValueSelectedPositions(newValueBox.getValue());
+				newValueBox.setText("");
+				eraseSelectedPositions();
+				newValueDialog.close();
+				changeYear(0);
+			}
+		});
 	}
 	
 	@UiHandler("newValueDialogOk")
@@ -305,9 +327,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			eraseSelectedPositions();
 			
 			//Aplicar estilo seleccionado a una fila entera
-			for (int j = 1; j < 13; j++){
+			for (int j = 1; j < eventsGrid.getColumnCount(); j++){
 				//Guardar en SelectionModel
-				int selectPos = (row * 13) + j;
+				int selectPos = (row * eventsGrid.getColumnCount()) + j;
 				selectedPositions.setSelected(selectPos, true);
 				
 				//Aplicar estilo seleccion a posicion
@@ -321,12 +343,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		this.employeeEventsDraft.undoManager.undo();
+		clearEventsGrid();
 		fillCellsEvents();
 	}
 
 	@UiHandler("redoButton")
 	void onRedoButtonClick(ClickEvent event) {
 		this.employeeEventsDraft.undoManager.redo();
+		clearEventsGrid();
 		fillCellsEvents();
 	}
 	
@@ -334,6 +358,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	void onUndoAllButtonClick(ClickEvent event) {
 		while (this.employeeEventsDraft.undoManager.canUndo())
 			this.employeeEventsDraft.undoManager.undo();
+		clearEventsGrid();
 		fillCellsEvents();
 	}
 
@@ -500,8 +525,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		int row = calculateRow(selectedPositions.getSelectedList().get(0));
 		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
 		nameVariableDialog.getElement().setInnerText(variableName+" : ");
+		
 		//TODO: PORQUE NO FUNCIONA!!!
-		newValueBox.setFocus(true);
+		newValueDialog.addAttachHandler(t -> newValueBox.setFocus(true));
+		
+		
+		
 	}
 	
 	private void addValueSelectedPositions(Double newValue) {
@@ -537,7 +566,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private void selectPosition(int row, int col) {
 		//Guardar en SelectionModel
-		int selectPos = (row * 13) + col;
+		int selectPos = (row * eventsGrid.getColumnCount()) + col;
 		selectedPositions.setSelected(selectPos, true);
 		
 		//Aplicar estilo seleccion a posicion
@@ -562,11 +591,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 
 	private int calculateCol(Integer position) {
-		return position % 13;
+		return position % eventsGrid.getColumnCount();
 	}
 
 	private int calculateRow(Integer position) {
-		return position / 13;
+		return position / eventsGrid.getColumnCount();
 	}
 	
 	/**

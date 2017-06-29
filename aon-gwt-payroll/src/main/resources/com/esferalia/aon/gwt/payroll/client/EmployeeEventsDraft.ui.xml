@@ -152,6 +152,10 @@
 			margin-top: 10px !important;
 		}
 
+		.showVariablesStyle{
+			padding: 3px;
+		}
+
 	</ui:style>
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />

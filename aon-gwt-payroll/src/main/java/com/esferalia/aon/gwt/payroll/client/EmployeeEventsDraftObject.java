@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -148,57 +149,17 @@ public class EmployeeEventsDraftObject {
 		
 		this.undoManager = new UndoManager<>();
 		
-		//addVariablesList();
-		//createContractVariables();
-		
 		initializeDBEventsVariables();
 	}
-	
 
-	/**
-	 * METODOS PARA CREAR DE FORMA ALEATORIA LAS VARIABLES DE CADA EMPLEADO
-	 * 
-	 * ¡¡¡HAY QUE BORRARLO EN EL FUTURO!!!!
-	 * @return
-	 */
-	
-	private void addVariablesList() {
-		this.variablesList.add("HORAS_COMPLEMENTARIAS");
-		this.variablesList.add("DIAS_EFECTIVOS");
-		this.variablesList.add("DIAS_ERE");
-		this.variablesList.add("DIAS_HUELGA");
-		this.variablesList.add("DIAS_AUSENCIA");
-		this.variablesList.add("DIAS_VACACIONES");
-		this.variablesList.add("DIAS_MANUTENCION");
-		this.variablesList.add("DIAS_PECNORTA");
-		this.variablesList.add("DIAS_MANUTENCION_EXTRANJERO");
-		this.variablesList.add("DIAS_PECNORTA_EXTRANJERO");
-		this.variablesList.add("KMS");
-		this.variablesList.add("JORNADAS_REALES");
-		this.variablesList.add("HORAS_EXTRAS");
-		this.variablesList.add("HORAS_EXTRAS_FZA");
-	}
-	
-	private void createContractVariables() {
-		
-		int numShowingVar = (int) Math.floor(Math.random()*13+1);
-		
-		for (int i = 0; i < numShowingVar; i++){
-			int numPositionShow = (int) Math.floor(Math.random()*14);
-			String var = this.variablesList.get(numPositionShow);
-			this.employeeContractVariables.add(var);
-		}
-	
-	}
-
-	public ArrayList<String> getEmployeeContractVariables() {
-		return this.employeeContractVariables;
-	}
-	
 
 	/**
 	 * GETTERS / SETTERS
 	 */
+	
+	public ArrayList<String> getEmployeeContractVariables() {
+		return this.employeeContractVariables;
+	}
 	
 	public boolean isContractVariable(String var){
 		return this.employeeContractVariables.contains(var);

@@ -3233,15 +3233,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				variables.remove(payment.getName());
 			}
 			
-			// Filter ContextVariable
-			for (ContextVariable ctxVar : ContextVariable.values())
-				variables.remove(ctxVar.getName());
-
-			// Clean system variables.
-			Set<String> systemVars = getSystemVariables(connection, startDate,
-					endDate);
-			for (String var : systemVars)
-				variables.remove(var);
+//			// Filter ContextVariable
+//			for (ContextVariable ctxVar : ContextVariable.values())
+//				variables.remove(ctxVar.getName());
+//
+//			// Clean system variables.
+//			Set<String> systemVars = getSystemVariables(connection, startDate,
+//					endDate);
+//			for (String var : systemVars)
+//				variables.remove(var);
 
 			Set<Level> levels = null;
 			SalaryTable salaryTable = null;
