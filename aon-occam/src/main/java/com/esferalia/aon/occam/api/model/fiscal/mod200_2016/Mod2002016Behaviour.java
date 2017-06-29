@@ -756,8 +756,6 @@ public class Mod2002016Behaviour {
 		
 		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
-		// FALTA - Ver como se calculan determinadas casillas, para ver si se deshabilitan por 
-		// tener calculos automáticos. Por ahora solo están los totales
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1494,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1495,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1496,new Boolean[]{FALSE,TRUE});
@@ -773,10 +771,10 @@ public class Mod2002016Behaviour {
 	
 	static {	
 		// CONVERSION DE ACTIVOS POR IMPUESTO DIFERIDO EN CREDITO EXIGIBLE FRENTE A LA ADMON. TRIBUTARIA (art. 130, DA 13ª Y DT 33ª LIS)
-		// FALTA - Ver como se calculan determinadas casillas, para ver si se deshabilitan por 
-		// tener calculos automáticos. Por ahora solo están los totales
 		
 		// Activos por impuesto diferido (AID). DT 33ª y DA 13ª LIS
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1528,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1534,new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1535,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1536,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1537,new Boolean[]{FALSE,TRUE}); 
@@ -803,14 +801,6 @@ public class Mod2002016Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1581,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.LM1582,new Boolean[]{FALSE,TRUE});
 		
-	}
-	
-	static {
-		// Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC048,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC527,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC925,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002016Key.RC996,new Boolean[]{FALSE,TRUE});
 	}
 	
 	static {
