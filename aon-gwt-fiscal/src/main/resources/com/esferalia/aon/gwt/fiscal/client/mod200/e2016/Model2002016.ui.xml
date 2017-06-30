@@ -44,8 +44,8 @@
 								title="{msg.generateFileAbr}" />
 							<g:Button ui:field="aeatPrintButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}"
-								text="{msg.print}" 
-								title="{msg.printViaAeat}" />
+								text="{msg.validateAction}/{msg.print}" 
+								title="{msg.validateAction}/{msg.printViaAeat}" />
 							<g:Button ui:field="importAccountingButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconMoveUp}"
 								text="{msg.importAccounting}" 
