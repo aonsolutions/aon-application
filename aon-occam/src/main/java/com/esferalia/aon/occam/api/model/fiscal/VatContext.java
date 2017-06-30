@@ -55,6 +55,17 @@ public class VatContext implements Serializable {
 	private double surchargePercent;
 	private double surchargeQuota;
 
+	
+	private String siiStatus;
+
+	
+	public String getSiiStatus() {
+		return siiStatus;
+	}
+	public VatContext setSiiStatus(String siiStatus) {
+		this.siiStatus = siiStatus;
+		return this;
+	}
 	public Integer getInvoice() {
 		return invoice;
 	}

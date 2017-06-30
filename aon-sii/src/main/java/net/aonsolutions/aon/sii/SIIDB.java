@@ -41,19 +41,25 @@ public class SIIDB {
     			.setModificationUser(login));
     
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
-    		DataResponse di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
-    			new DataResponse()
-        			.setDomain(domain.getId())
-        			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
-        			.setIssueDate(new Date())
-        			.setSource(DataResponseSource.SII)
-        			.setSourceId(invoiceList.get(i))
-        			.setCreationDate(new Date())
-        			.setCreationUser(login)
-        			.setModificationDate(new Date())
-        			.setModificationUser(login));
-    		
-    		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq("status")));
+    		Integer invoice = invoiceList.get(i);
+    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
+    				f -> f.getSource2Property().eq(DataResponseSource.SII_INVOICE.value())
+    				.and(f.getSourceIdProperty().eq(invoice)));
+    		if(di == null){
+    			di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
+    					new DataResponse()
+    					.setDomain(domain.getId())
+    					.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+    					.setIssueDate(new Date())
+    					.setSource(DataResponseSource.SII_INVOICE)
+    					.setSourceId(invoiceList.get(i))
+    					.setCreationDate(new Date())
+    					.setCreationUser(login)
+    					.setModificationDate(new Date())
+    					.setModificationUser(login));
+    		}
+    		Integer diID = di.getId();
+    		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("status")));
     		if(opt.isPresent()){
         		DataResponseDetail drdOpt = opt.get().setDataVariable("status_old");
     			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drdOpt, f -> f.getIdProperty().eq(drdOpt.getId()));
@@ -69,13 +75,13 @@ public class SIIDB {
     			.setModificationUser(login);
     		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     		
-    		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq("send")));
+    		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("send")));
     		if(opt.isPresent()){
         		DataResponseDetail drdOpt = opt2.get().setDataVariable("send_old");
     			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drdOpt, f -> f.getIdProperty().eq(drdOpt.getId()));
     		}
     		DataResponseDetail drd2 = new DataResponseDetail();
-    		drd.setDomain(domain.getId())
+    		drd2.setDomain(domain.getId())
     			.setDataResponse(di.getId())
     			.setDataVariable("send") 
     			.setValue(dr.getId().toString())

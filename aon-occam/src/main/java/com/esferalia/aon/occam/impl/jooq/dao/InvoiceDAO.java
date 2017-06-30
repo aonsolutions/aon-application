@@ -120,10 +120,10 @@ public class InvoiceDAO {
 	
 	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada){
 		Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente");
-		if(aceptada) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
-		if(aceptadaErrores) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadaConErrores"));
-		if(incorrecta) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecta"));
-		if(anulada) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
+		if(aceptada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
+		if(aceptadaErrores) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadaConErrores"));
+		if(incorrecta) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecto"));
+		if(anulada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
 		if(pending){
 			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 					.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))

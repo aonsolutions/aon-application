@@ -110,13 +110,13 @@ public class SIIServlet extends HttpServlet{
 					}else if(action.equals("baja")){
 						object= SIIPost.getInstance(attach.getData(), pass).bajaOperacionesIntracomunitarias(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
 					}
-				} else if("emitida".equalsIgnoreCase(option)){
+				} else if(option.contains("fe_")){
 					if(action.equals("suministro")){
 						object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
 					} else if(action.equals("baja")){
 						object = SIIPost.getInstance(attach.getData(), pass).bajaFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
 					}
-				} else if("recibida".equalsIgnoreCase(option)){
+				} else if(option.contains("fr_")){
 					if(action.equals("suministro")){
 						object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
 					} else if(action.equals("baja")){

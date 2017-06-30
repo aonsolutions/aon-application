@@ -109,30 +109,65 @@ public class SIIPost extends WebServiceGatewaySupport{
 	@SuppressWarnings("unchecked")
     protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS);
-    	SuministroLRFacturasEmitidas suministro = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, contextList, cert, pass);     	
-
-    	JAXBElement<RespuestaLRFEmitidasType> response = (JAXBElement<RespuestaLRFEmitidasType>) post(uri, suministro);
-    	RespuestaLRFEmitidasType respuesta = response.getValue();
-    	HashMap<Integer, SIIDataVariable> map = new HashMap<>();
-    	Integer index = 0;
     	
+    	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
+    			|| "AceptadoConErrores".equals(v.getSiiStatus())
+    			|| "Anulada".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
+    	
+    	LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
+    			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
+    	
+    	    	
     	JSONArray array = new JSONArray();
-    	for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
-    		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-        	Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
-    		map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
-    		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
-        			correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
-        	    	r.getIDFactura().getNumSerieFacturaEmisor()));
-    		index++;
-    	}
+		
+    	if(modList.size() > 0){
+    		SuministroLRFacturasEmitidas suministroMod = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);     	
 
-    	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidas(suministro);
-        byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
+    		JAXBElement<RespuestaLRFEmitidasType> response = (JAXBElement<RespuestaLRFEmitidasType>) post(uri, suministroMod);
+    		RespuestaLRFEmitidasType respuesta = response.getValue();
+    		HashMap<Integer, SIIDataVariable> map = new HashMap<>();
+    		Integer index = 0;
+    	
+    		for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
+    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+    			map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    							r.getIDFactura().getNumSerieFacturaEmisor()));
+    			index++;
+    		}
+
+    		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidas(suministroMod);
+    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
        
-    	LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-   		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    	}
+    	if(newList.size() > 0){
+    		SuministroLRFacturasEmitidas suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);     	
 
+    		JAXBElement<RespuestaLRFEmitidasType> response = (JAXBElement<RespuestaLRFEmitidasType>) post(uri, suministroNew);
+    		RespuestaLRFEmitidasType respuesta = response.getValue();
+    		HashMap<Integer, SIIDataVariable> map = new HashMap<>();
+    		Integer index = 0;
+    	
+    		for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
+    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+    			map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    							r.getIDFactura().getNumSerieFacturaEmisor()));
+    			index++;
+    		}
+
+    		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidas(suministroNew);
+    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
+       
+    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    	}
         return array;
 	}
 	
@@ -187,31 +222,65 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
 	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS);
-    	SuministroLRFacturasRecibidas suministro = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, contextList, cert, pass);       	
-   
-    	JAXBElement<RespuestaLRFRecibidasType> response = (JAXBElement<RespuestaLRFRecibidasType>) post(uri, suministro);
-    	RespuestaLRFRecibidasType respuesta = response.getValue();	
-    
-    	HashMap<Integer, SIIDataVariable> map = new HashMap<>();
-    	Integer index = 0;
+    	LinkedList<VatContext> modList = contextList.stream().filter(v-> v.getSiiStatus().equals("Correcto")
+    			|| v.getSiiStatus().equals("AceptadoConErrores")
+    			|| v.getSiiStatus().equals("Anulada")).collect(Collectors.toCollection(LinkedList::new));
     	
+    	LinkedList<VatContext> newList = contextList.stream().filter(v-> v.getSiiStatus().equals("Pendiente")
+    			|| v.getSiiStatus().equals("Incorrecto")).collect(Collectors.toCollection(LinkedList::new));   	
+  
     	JSONArray array = new JSONArray();
-    	for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {
-    		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-        	Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
-    		map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
-    		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    	
+    	if(modList.size() > 0){
+        	SuministroLRFacturasRecibidas suministroMod = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
+    		JAXBElement<RespuestaLRFRecibidasType> response = (JAXBElement<RespuestaLRFRecibidasType>) post(uri, suministroMod);
+    		RespuestaLRFRecibidasType respuesta = response.getValue();	
+    
+    		HashMap<Integer, SIIDataVariable> map = new HashMap<>();
+    		Integer index = 0;
+    	
+    	
+    		for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {
+    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+    			map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
         			correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
-        	    	r.getIDFactura().getNumSerieFacturaEmisor()));
-    		index++;
+        					r.getIDFactura().getNumSerieFacturaEmisor()));
+    			index++;
+    		}
+    		
+    		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministroMod);
+    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
+    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
     	}
-
-    	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministro);
-    	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
-    	LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-   		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
-
-
+    	
+    	if(newList.size()>0){
+    	  	SuministroLRFacturasRecibidas suministroNew = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);     	
+    	    
+    		JAXBElement<RespuestaLRFRecibidasType> response = (JAXBElement<RespuestaLRFRecibidasType>) post(uri, suministroNew);
+    		RespuestaLRFRecibidasType respuesta = response.getValue();	
+    
+    		HashMap<Integer, SIIDataVariable> map = new HashMap<>();
+    		Integer index = 0;
+    	
+    	
+    		for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {
+    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			Boolean aceptadoConErrores = r.getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+    			map.put(invoiceList.get(index), correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OK : SIIDataVariable.INVOICE_SUMINISTRO_ERROR);
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+        			correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+        					r.getIDFactura().getNumSerieFacturaEmisor()));
+    			index++;
+    		}
+    		
+    		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministroNew);
+    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
+    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    	}
         return array;
     }
     

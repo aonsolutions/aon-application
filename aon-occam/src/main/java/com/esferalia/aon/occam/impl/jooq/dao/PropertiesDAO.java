@@ -764,6 +764,9 @@ public class PropertiesDAO {
 		
 		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
 		@Override public Property<String> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
+		@Override public Property<Byte> getSource2Property() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE_ID);}
+
 	}
 	
 	protected static class DataResponseDetailPropertiesDAO implements DataResponseDetailProperties{

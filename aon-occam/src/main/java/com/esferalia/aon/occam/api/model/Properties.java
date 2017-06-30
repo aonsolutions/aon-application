@@ -832,6 +832,9 @@ public interface Properties {
 
 		Property<String> getTypeProperty();
 		Property<String> getSourceProperty();
+
+		Property<Byte> getSource2Property();
+		Property<Integer> getSourceIdProperty();
 	}
 	
 	public interface DataResponseDetailProperties extends AuditProperties{

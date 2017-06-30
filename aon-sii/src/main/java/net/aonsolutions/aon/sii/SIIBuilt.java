@@ -135,7 +135,7 @@ public class SIIBuilt {
 	 
 	protected byte[] getSuministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) throws JAXBException, IOException{
 		JAXBContext ctx = JAXBContext.newInstance(SuministroLRFacturasEmitidas.class);
-		return writeXml(ctx, suministroFacturasEmitidas(domain, login, company, invoiceList, contextList, cert, pass));
+		return writeXml(ctx, suministroFacturasEmitidas(domain, login, company, invoiceList, contextList, cert, pass, false, "false"));
 	}
 
 	protected byte[] getSuministroFacturasEmitidas(SuministroLRFacturasEmitidas suministro){
@@ -196,13 +196,13 @@ public class SIIBuilt {
 	 * @param vatList
 	 */
 	protected SuministroLRFacturasEmitidas suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList
-			, byte[] cert, String pass) {
+			, byte[] cert, String pass, Boolean mod, String terceros) {
 		this.cert = cert;
 		this.pass = pass;
 		SuministroLRFacturasEmitidas suministro = new SuministroLRFacturasEmitidas();
-	
+
 		// CABECERA
-		suministro.setCabecera(cabecera(company));
+		suministro.setCabecera(cabecera(company, mod, terceros));
 		
 		// BODY
 		invoiceList.stream().forEach(invoice -> {	
@@ -218,7 +218,7 @@ public class SIIBuilt {
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext()); 
+			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
@@ -278,7 +278,7 @@ public class SIIBuilt {
 			}
 		
 			// FECHA OPERACION 
-			fet.setFechaOperacion("05-06-2017");//TODO 
+			fet.setFechaOperacion(AonDateUtils.format(vat.getTaxDate(), "dd-MM-yyyy")); 
 			
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA  
 			
@@ -314,7 +314,10 @@ public class SIIBuilt {
 				fet.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
 			}			
 			// DESCRIPCION OPERACION 
-			fet.setDescripcionOperacion("VENTAS GENERALES"); // + " - " + vat.getComments());
+			
+			
+			
+			fet.setDescripcionOperacion(vat.getDetailDescription()); // + " - " + vat.getComments());
 		
 			// DATOS INMUEBLES (OPTIONAL) TODO // sii regimen IVA 12 - Operaciones de arrendamiento de local de negocio no sujetos a retención.
 			if(fet.getClaveRegimenEspecialOTrascendencia().equals("12")
@@ -626,13 +629,13 @@ public class SIIBuilt {
 	 * @param invoiceList
 	 */
 	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, 
-			byte[] cert, String pass) {
+			byte[] cert, String pass, Boolean mod, String terceros) {
 		this.cert = cert;
 		this.pass = pass;
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
 			
 		// CABECERA
-		suministro.setCabecera(cabecera(company));
+		suministro.setCabecera(cabecera(company, mod, terceros));
 		
 		// BODY
 		invoiceList.stream().forEach(invoice -> {
@@ -722,10 +725,10 @@ public class SIIBuilt {
 			}			
 
 			// CUOTA DEDUCIBLE
-			frt.setCuotaDeducible("0.0"); // TODO
-			
+			frt.setCuotaDeducible(contextList.stream().mapToDouble(a -> a.getDeductibleQuota()).sum() + ""); // TODO
+
 			// DESCRIPCION OPERACION
-			frt.setDescripcionOperacion("COMPRAS GENERALES"); //TODO
+			frt.setDescripcionOperacion(vat.getDetailDescription()); //TODO
 			
 			// FECHA OPERACION
 			frt.setFechaOperacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));//TODO
@@ -1429,6 +1432,20 @@ public class SIIBuilt {
 	 * @param company
 	 * @return CabeceraSii
 	 */
+	public CabeceraSii cabecera(Company company, Boolean mod, String terceros){
+		CabeceraSii cabecera = new CabeceraSii();
+		cabecera.setIDVersionSii("1.0");
+		cabecera.setTipoComunicacion(mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);
+		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
+		titular.setNIF(company.getDocument());
+		titular.setNombreRazon(company.getName());
+		if(terceros != null && !terceros.equals("false"))
+			titular.setNIFRepresentante(terceros);
+		cabecera.setTitular(titular);
+		
+		
+		return cabecera;
+	}
 	public CabeceraSii cabecera(Company company){
 		CabeceraSii cabecera = new CabeceraSii();
 		cabecera.setIDVersionSii("1.0");

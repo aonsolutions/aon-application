@@ -8,6 +8,9 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -26,6 +29,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -270,10 +274,14 @@ public class VATDAO  {
 				,INVOICE_TAX.SURCHARGE, INVOICE_TAX.SURCHARGE_QUOTA
 				,INVOICE_TAX.DEDUCTIBLE_PERCENT, INVOICE_TAX.DEDUCTIBLE_QUOTA
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
+				
+				,DATA_RESPONSE_DETAIL.DATA_VALUE
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
+			.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
 			.where(VAT_PROPERTIES.getConditions(filter))
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
@@ -416,10 +424,11 @@ public class VATDAO  {
 				.setInvestAsset(rec.getValue(INVOICE_DETAIL.INVEST_ASSET))
 				.setDetailDescription(rec.getValue(INVOICE_DETAIL.DESCRIPTION))
 				
+				.setSiiStatus(rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) != null ? rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) : "Pendiente")
+				
 				.setBase( rec.getValue(INVOICE_TAX.BASE) )
 				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE))
 				.setQuota( getQuota(rec) )
-				
 				.setSurcharge(AonMathUtils.round(rec.getValue(INVOICE_TAX.SURCHARGE)) > 0)
 				.setSurchargePercent(rec.getValue(INVOICE_TAX.SURCHARGE))
 				.setSurchargeQuota(getSurchargeQuota(rec))

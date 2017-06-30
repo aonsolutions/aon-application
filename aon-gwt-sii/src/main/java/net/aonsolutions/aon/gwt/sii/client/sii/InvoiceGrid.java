@@ -580,8 +580,19 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dialog.center();
 	}
 	
-	public void sendSii(){
+	public void sendSii(String sii){
 		VerticalPanel vp = new VerticalPanel();
+		
+		HorizontalPanel hp0 = new HorizontalPanel();
+		hp0.add(new Label("Tipo de Operacion"));
+		ListBox lb0 = new ListBox();
+		lb0.addItem("Articulo 70, apartado uno, n\u00famero 7\u00BA, Ley del Impuesto(Ley 37/1992)", "A");
+		lb0.addItem("Articulo 16, apartado 2\u00BA, Ley del Impuesto(Ley 37/1992)", "B");
+		hp0.add(lb0);
+		if("intracomunitarias".equalsIgnoreCase(sii)){
+			vp.add(hp0);
+		}
+		
 		HorizontalPanel hp1 = new HorizontalPanel();
 		hp1.add(new Label("Certificado"));
 		ListBox lb = new ListBox();
@@ -606,7 +617,30 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		hp2.add(tb);
 		vp.add(hp1);
 		vp.add(hp2);
-		AonDialog dialog = new AonDialog("Enviar Factura", vp) {
+		
+		HorizontalPanel hp3 = new HorizontalPanel();
+		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
+		Label l = new Label("NIF");
+		l.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		l.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		l.setVisible(false);
+		TextBox t = new TextBox();t.setStyleName(AON.AON_CSS.aonInputText());
+		t.setVisible(false);
+		CheckBox cb = new CheckBox("Por terceros");
+		cb.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				l.setVisible(cb.getValue());
+				t.setVisible(cb.getValue());	
+			}
+		});
+		hp3.add(cb);
+		hp3.add(l);
+		hp3.add(t);
+		vp.add(hp3);
+		
+		AonDialog dialog = new AonDialog("Enviar Facturas", vp) {
 			
 			@Override
 			protected void onCancel() {
@@ -629,9 +663,17 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		    	list.add(tb.getText());
 		    	map.put("pass", list);
 		    	list = new LinkedList<>();
-		    	list.add("general");
+		    	list.add(sii);
 		    	map.put("option", list);
 		    	hide();
+		    	
+		    	list = new LinkedList<>();
+		    	list.add(lb0.getSelectedValue());
+		    	map.put("tipo_operacion", list);
+	
+		    	list = new LinkedList<>();
+		    	list.add(cb.getValue() ? t.getValue() : "false");
+		    	map.put("terceros", list);
 		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override

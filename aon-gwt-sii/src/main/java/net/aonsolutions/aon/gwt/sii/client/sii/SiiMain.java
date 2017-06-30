@@ -108,7 +108,7 @@ public class SiiMain extends AonTemplate2{
 				
 				SimpleLayoutPanel slp = p.getContent();
 				InvoiceGrid ig = (InvoiceGrid) slp.getWidget();
-				ig.sendSii();
+				ig.sendSii(getFilterMap().get("sii").get(0)); // TODO
 			}
 		});
 	
@@ -327,7 +327,7 @@ public class SiiMain extends AonTemplate2{
 		operacionesCobrosPagosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				LinkedList<String> list = new LinkedList<>();
-				list.add("intracomunitarias");
+				list.add("cp_cobros_pagos");
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
@@ -344,7 +344,7 @@ public class SiiMain extends AonTemplate2{
 		cobrosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {				
 				LinkedList<String> list = new LinkedList<>();
-				list.add("emitidas");
+				list.add("cp_cobros");
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
@@ -361,7 +361,7 @@ public class SiiMain extends AonTemplate2{
 		pagosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {				
 				LinkedList<String> list = new LinkedList<>();
-				list.add("emitidas");
+				list.add("cp_pagos");
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				p.gridContent();
