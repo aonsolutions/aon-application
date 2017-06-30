@@ -112,9 +112,8 @@ public class XMLtoMod2002016 {
 		addVariable(mod200,Mod2002016Key.BP188, pag.getT00188());
 		addVariable(mod200,Mod2002016Key.BP189, pag.getT00189());
 		addVariable(mod200,Mod2002016Key.BP190, pag.getT00190());
-		addVariable(mod200,Mod2002016Key.BP191, pag.getT00191());
-		addVariable(mod200,Mod2002016Key.BP1001, pag.getT01001());
-		addVariable(mod200,Mod2002016Key.BP1002, pag.getT01002());
+		addVariable(mod200,Mod2002016Key.BP1001,pag.getT01001());
+		addVariable(mod200,Mod2002016Key.BP1002,pag.getT01002());
 		addVariable(mod200,Mod2002016Key.BP192, pag.getT00192());
 		addVariable(mod200,Mod2002016Key.BP193, pag.getT00193());
 		addVariable(mod200,Mod2002016Key.BP702, pag.getT00702());

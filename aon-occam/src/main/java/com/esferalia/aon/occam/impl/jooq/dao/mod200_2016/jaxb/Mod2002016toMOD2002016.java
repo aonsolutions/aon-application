@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -123,13 +122,8 @@ public class Mod2002016toMOD2002016 {
 	    pagina05.setT00188(getKey(mod200,Mod2002016Key.BP188));
 	    pagina05.setT00189(getKey(mod200,Mod2002016Key.BP189));
 	    pagina05.setT00190(getKey(mod200,Mod2002016Key.BP190));
-	    if(mod200.getBalanceType().equals(BalanceType.ABREVIADO)
-	    	|| mod200.getBalanceType().equals(BalanceType.PYMES)){
-	    	pagina05.setT00191(getKey(mod200,Mod2002016Key.BP191));
-	    } else {
-	    	pagina05.setT01001(getKey(mod200,Mod2002016Key.BP1001));
-	    	pagina05.setT01002(getKey(mod200,Mod2002016Key.BP1002));
-	    }
+    	pagina05.setT01001(getKey(mod200,Mod2002016Key.BP1001));
+    	pagina05.setT01002(getKey(mod200,Mod2002016Key.BP1002));
 	    pagina05.setT00192(getKey(mod200,Mod2002016Key.BP192));
 	    pagina05.setT00193(getKey(mod200,Mod2002016Key.BP193));
 	    pagina05.setT00702(getKey(mod200,Mod2002016Key.BP702));

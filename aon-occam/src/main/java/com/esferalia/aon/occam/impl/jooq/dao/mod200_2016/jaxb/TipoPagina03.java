@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="T00107" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00108" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00700" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00701" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00109" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00110" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00111" type="{}tipo_ImpNegativo" minOccurs="0"/>
@@ -70,6 +69,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="T00146" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00147" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00148" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00701" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -87,7 +87,6 @@ import javax.xml.bind.annotation.XmlType;
     "t00107",
     "t00108",
     "t00700",
-    "t00701",
     "t00109",
     "t00110",
     "t00111",
@@ -124,7 +123,8 @@ import javax.xml.bind.annotation.XmlType;
     "t00145",
     "t00146",
     "t00147",
-    "t00148"
+    "t00148",
+    "t00701"
 })
 public class TipoPagina03 {
 
@@ -142,8 +142,6 @@ public class TipoPagina03 {
     protected BigDecimal t00108;
     @XmlElement(name = "T00700")
     protected BigDecimal t00700;
-    @XmlElement(name = "T00701")
-    protected BigDecimal t00701;
     @XmlElement(name = "T00109")
     protected BigDecimal t00109;
     @XmlElement(name = "T00110")
@@ -218,6 +216,8 @@ public class TipoPagina03 {
     protected BigDecimal t00147;
     @XmlElement(name = "T00148")
     protected BigDecimal t00148;
+    @XmlElement(name = "T00701")
+    protected BigDecimal t00701;
 
     /**
      * Gets the value of the t00103 property.
@@ -385,30 +385,6 @@ public class TipoPagina03 {
      */
     public void setT00700(BigDecimal value) {
         this.t00700 = value;
-    }
-
-    /**
-     * Gets the value of the t00701 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00701() {
-        return t00701;
-    }
-
-    /**
-     * Sets the value of the t00701 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00701(BigDecimal value) {
-        this.t00701 = value;
     }
 
     /**
@@ -1297,6 +1273,30 @@ public class TipoPagina03 {
      */
     public void setT00148(BigDecimal value) {
         this.t00148 = value;
+    }
+
+    /**
+     * Gets the value of the t00701 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00701() {
+        return t00701;
+    }
+
+    /**
+     * Sets the value of the t00701 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00701(BigDecimal value) {
+        this.t00701 = value;
     }
 
 }

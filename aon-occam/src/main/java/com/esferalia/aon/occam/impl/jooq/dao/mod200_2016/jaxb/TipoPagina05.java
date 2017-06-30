@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="T00188" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00189" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00190" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00191" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00192" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00193" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00702" type="{}tipo_ImpNegativo" minOccurs="0"/>
@@ -79,7 +78,6 @@ import javax.xml.bind.annotation.XmlType;
     "t00188",
     "t00189",
     "t00190",
-    "t00191",
     "t00192",
     "t00193",
     "t00702",
@@ -126,8 +124,6 @@ public class TipoPagina05 {
     protected BigDecimal t00189;
     @XmlElement(name = "T00190")
     protected BigDecimal t00190;
-    @XmlElement(name = "T00191")
-    protected BigDecimal t00191;
     @XmlElement(name = "T00192")
     protected BigDecimal t00192;
     @XmlElement(name = "T00193")
@@ -273,30 +269,6 @@ public class TipoPagina05 {
      */
     public void setT00190(BigDecimal value) {
         this.t00190 = value;
-    }
-
-    /**
-     * Gets the value of the t00191 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00191() {
-        return t00191;
-    }
-
-    /**
-     * Sets the value of the t00191 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00191(BigDecimal value) {
-        this.t00191 = value;
     }
 
     /**
