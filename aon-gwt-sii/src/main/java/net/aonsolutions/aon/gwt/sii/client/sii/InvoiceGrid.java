@@ -14,26 +14,19 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.ActionCell.Delegate;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.CompositeCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -45,6 +38,7 @@ import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -53,6 +47,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -62,8 +57,13 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionModel;
 
+import net.aonsolutions.aon.gwt.sii.client.ISii;
+import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
+
 public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 
+	final ISiiAsync impl = GWT.create(ISii.class);
+	
 	interface GridBinder extends UiBinder<Widget, InvoiceGrid> {
 	}
 
@@ -138,15 +138,14 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				 if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
 					 JsInvoice object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 					 if(event.getColumn() == 0){
-						 if(dataGrid.getSelectionModel().isSelected(object) || object.isSiiSent())
+						 if(dataGrid.getSelectionModel().isSelected(object))
 							 dataGrid.getSelectionModel().setSelected(object, false);
 						 else dataGrid.getSelectionModel().setSelected(object, true);
 					 } else {
 						 for(JsInvoice f :dataProvider.getList()){
 							 dataGrid.getSelectionModel().setSelected(f, false);
 						 }
-						 if(object.isSiiSent())
-							 dataGrid.getSelectionModel().setSelected(object, true);
+						 dataGrid.getSelectionModel().setSelected(object, true);
 					 }
 					 
 					selFiles = new LinkedList<>();
@@ -170,7 +169,6 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	//	final SingleSelectionModel<JsInvoice> selectionModel = new SingleSelectionModel<JsInvoice>(
 	//			JsInvoice.PROVIDES_KEY);
 		final SelectionModel<JsInvoice> selectionModel = new MultiSelectionModel<JsInvoice>(JsInvoice.PROVIDES_KEY);
-
 		
 		dataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<JsInvoice> createCheckboxManager());
@@ -214,12 +212,6 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 					NativeEvent event, com.google.gwt.cell.client.ValueUpdater<Boolean> valueUpdater) {
 			}
 		}) {
-			@Override
-			public void render(Context context, JsInvoice object, SafeHtmlBuilder sb) {
-				if(object.isSiiSent()){
-					sb.append(SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled=\"disabled\"/>"));
-				} else super.render(context, object, sb);
-			}
 			
 			@Override
 			public Boolean getValue(JsInvoice object) {
@@ -293,114 +285,33 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(contraparteColumn);
 		dataGrid.addColumn(contraparteColumn, "Contraparte");
 		dataGrid.setColumnWidth(contraparteColumn, 15, Unit.PCT);
-		
-		/** action Column **/
-		List<HasCell<JsInvoice, ?>> cells = new LinkedList<HasCell<JsInvoice, ?>>();
-	    
-		cells.add(new ActionHasCell("enviar", new Delegate<JsInvoice>() {
-
-	        @Override
-	        public void execute(JsInvoice object) {
-	        	sendSii(object);
-	        }
-	    }));
-		
-	    cells.add(new ActionHasCell("anular", new Delegate<JsInvoice>() {
-
-	        @Override
-	        public void execute(JsInvoice object) {
-	        	anular(object);
-	        }
-	    }));
-	    
-	    cells.add(new ActionHasCell("cobros_pagos", new Delegate<JsInvoice>() {
-
-	        @Override
-	        public void execute(JsInvoice object) {
-	        	cobrosPagos(object);
-	        }
-	    }));
-		
-		CompositeCell<JsInvoice> cell = new CompositeCell<JsInvoice>(cells);
-		
-		Column<JsInvoice,JsInvoice> actionColumn = new Column<JsInvoice, JsInvoice>(cell){
+	
+		/** Status Column **/
+		Column<JsInvoice, String> statusColumn = new Column<JsInvoice, String>(new TextCell()) {
 
 			@Override
-			public JsInvoice getValue(JsInvoice object) {
-				return object;
+			public String getValue(JsInvoice object) {
+				return object.getSiiStatus();
 			}
+		
 		};
-		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-		dataGrid.addColumn(actionColumn, "Acciones");
-		dataGrid.setColumnWidth(actionColumn, 10, Unit.PCT);
+		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		statusColumn.setSortable(true); 
+		sortHandler.setComparator(statusColumn,new Comparator<JsInvoice>() {
+			
+			@Override
+			public int compare(JsInvoice o1, JsInvoice o2) {
+				return o1.getSiiStatus().compareTo(o2.getSiiStatus());
+			}
+		});
+		dataGrid.getColumnSortList().push(statusColumn);
+		dataGrid.addColumn(statusColumn, "Estado");
+		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
+	   
+	
+
 	}
 	
-	private class ActionHasCell implements HasCell<JsInvoice, JsInvoice> {
-	    private ActionCell<JsInvoice> cell;
-	    String s;
-	    
-	    public ActionHasCell(String text, Delegate<JsInvoice> delegate) {
-	    	s = text;
-	        cell = new ActionCell<JsInvoice>(text, delegate){
-	        	String text = s;
-	        	@Override
-	        	public void render(com.google.gwt.cell.client.Cell.Context context,
-	        			JsInvoice value, SafeHtmlBuilder sb) {
-	        		if(text.equals("enviar")){
-	        			if(value.getSii().equals("intracomunitaria")){
-	        				if(value.isSiiSent() && !value.isSiiSent2()){
-	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-accept\" tabindex=\"-1\">");
-	        					sb.appendHtmlConstant("</button>");		
-	        				}
-	        			} else {
-	        				if(!value.isSiiSent()){
-	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-accept\" tabindex=\"-1\">");
-	        					sb.appendHtmlConstant("</button>");		
-	        				}
-	        			}
-	        		}
-	        		if(text.equals("anular")){
-	        			if(value.getSii().equals("intracomunitaria")){
-	        				if(value.isSiiSent() && value.isSiiSent2()){
-	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-removed\" tabindex=\"-1\">");
-	        					sb.appendHtmlConstant("</button>");		
-	        				}
-	        			} else {
-	        				if(value.isSiiSent()){
-	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-removed\" tabindex=\"-1\">");
-	        					sb.appendHtmlConstant("</button>");
-	        				}
-	        			}
-	        		}
-	        		
-	        		if(text.equals("cobros_pagos")){
-	        			if(!value.getSii().equals("intracomunitaria")){
-	        				if(value.isSiiSent() && value.isVatAccrualPayment()){
-	        					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-pay\" tabindex=\"-1\">");
-	        					sb.appendHtmlConstant("</button>");
-	        				}
-	        			}
-	        		}
-	        	}
-	        };
-	        
-	    }
-
-	    @Override
-	    public Cell<JsInvoice> getCell() {
-	        return cell;
-	    }
-
-	    @Override
-	    public FieldUpdater<JsInvoice, JsInvoice> getFieldUpdater() {
-	        return null;
-	    }
-
-	    @Override
-	    public JsInvoice getValue(JsInvoice object) {
-	        return object;
-	    }
-	}
 	
 	private void anular(JsInvoice invoice){
 		VerticalPanel vp = new VerticalPanel();
@@ -579,6 +490,42 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		hp2.add(tb);
 		vp.add(hp1);
 		vp.add(hp2);
+		
+		HorizontalPanel hp3 = new HorizontalPanel();
+		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
+		Label l = new Label("NIF");
+		l.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		l.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		l.setVisible(false);
+		TextBox t = new TextBox();t.setStyleName(AON.AON_CSS.aonInputText());
+		t.setVisible(false);
+		CheckBox cb = new CheckBox("Por terceros");
+		cb.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				l.setVisible(cb.getValue());
+				t.setVisible(cb.getValue());	
+			}
+		});
+		hp3.add(cb);
+		hp3.add(l);
+		hp3.add(t);
+		vp.add(hp3);
+
+		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				result.getData().stream().forEach(a -> {
+					lb.addItem(a.getTitle(), a.getId() + "");
+				});
+			}
+
+			@Override public void onFailure(Throwable caught) {}
+		});
+		hp1.add(lb);
+		
 		AonDialog dialog = new AonDialog("Enviar Factura", vp) {
 			
 			@Override
@@ -607,6 +554,11 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		    	list = new LinkedList<>();
 		    	list.add(invoice.getSii());
 		    	map.put("option", list);
+		    	
+		    	list = new LinkedList<>();
+		    	list.add(cb.getValue() ? t.getValue() : "false");
+		    	map.put("terceros", list);
+		    	
 		    	hide();
 		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
 					
@@ -663,6 +615,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			protected void onAccept() {
+				
 				HashMap<String, LinkedList<String>> map =  new HashMap<>();
 				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
 				map.put("id", list);

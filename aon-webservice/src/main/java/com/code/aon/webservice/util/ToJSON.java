@@ -142,6 +142,7 @@ public class ToJSON {
 		json.put("vat_accrual_payment", invoice.isVatAccrualPayment());
 		json.put("type", invoice.getType().getDescription());
 		json.put("tax_date", AonDateUtils.format(invoice.getTaxDate(), "dd-MM-yyyy"));
+		json.put("sii_status", invoice.getSiiStatus() != null ? invoice.getSiiStatus() : "Pendiente" );
 		
 		return json;
 	}

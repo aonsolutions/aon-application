@@ -18,8 +18,12 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import net.aonsolutions.aon.gwt.sii.client.ISii;
+import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
+
 public class SiiPrincipal extends Composite{
 	
+	final ISiiAsync impl = GWT.create(ISii.class);
 	interface Binder extends UiBinder<Widget, SiiPrincipal> {}
 	public static final AonGwtIssuesCSS I_CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 	private static final Binder binder = GWT.create(Binder.class);
@@ -38,6 +42,11 @@ public class SiiPrincipal extends Composite{
 	public SimpleLayoutPanel getContent(){
 		return content;
 	}
+	
+	public SimpleLayoutPanel getNorthContent(){
+		return northContent;
+	}
+	
 	
 	public HashMap<String, LinkedList<String>> getFilterMap(){
 		return parent.getFilterMap();

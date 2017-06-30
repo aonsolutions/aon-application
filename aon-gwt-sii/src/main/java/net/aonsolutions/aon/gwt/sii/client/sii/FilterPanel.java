@@ -21,7 +21,12 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 
+import net.aonsolutions.aon.gwt.sii.client.ISii;
+import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
+
 public class FilterPanel extends Composite {
+	
+	final ISiiAsync impl = GWT.create(ISii.class);
 	
     interface Binder extends UiBinder<HTMLPanel, FilterPanel> {
     	
@@ -32,6 +37,7 @@ public class FilterPanel extends Composite {
 	public static final AonGwtIssuesCSS ICSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 
     @UiField HorizontalPanel panel;
+    @UiField InlineLabel label;
     
     private SiiPrincipal parent;
     
@@ -43,9 +49,13 @@ public class FilterPanel extends Composite {
     public FilterPanel(SiiPrincipal parent) {
     	this.parent = parent;
     	initWidget(binder.createAndBindUi(this));       
-    	
+    	label.setText("Facturas Emitidas");
 		panel.add(datePanel());
 
+    }
+    
+    public void setTitle(String title){
+    	label.setText(title);
     }
     
     private HorizontalPanel datePanel() {
@@ -90,7 +100,8 @@ public class FilterPanel extends Composite {
 			}
 		});
 		datePanel.add(cb);
-		CheckBox cb2 = new CheckBox("Enviadas");
+		
+		CheckBox cb2 = new CheckBox("Aceptadas");
 		if(parent.getFilterMap().containsKey("sent")){
 			cb2.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
 		}
@@ -104,6 +115,51 @@ public class FilterPanel extends Composite {
 			}
 		});
 		datePanel.add(cb2);
+		
+		CheckBox cb3 = new CheckBox("Aceptadas con Errores");
+		if(parent.getFilterMap().containsKey("sent")){
+			cb3.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
+		}
+		cb3.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(cb3.getValue().toString());
+				onChange("sent_error", list);				
+			}
+		});
+		datePanel.add(cb3);
+		
+		CheckBox cb4 = new CheckBox("Incorrectas");
+		if(parent.getFilterMap().containsKey("sent")){
+			cb4.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
+		}
+		cb4.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(cb4.getValue().toString());
+				onChange("error", list);				
+			}
+		});
+		datePanel.add(cb4);
+		
+		CheckBox cb5 = new CheckBox("Anuladas");
+		if(parent.getFilterMap().containsKey("sent")){
+			cb5.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
+		}
+		cb5.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(cb5.getValue().toString());
+				onChange("anulada", list);				
+			}
+		});
+		datePanel.add(cb5);
 		return datePanel;
 	}
 }

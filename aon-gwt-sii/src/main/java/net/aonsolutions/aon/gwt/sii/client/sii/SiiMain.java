@@ -9,14 +9,19 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import net.aonsolutions.aon.gwt.sii.client.ISii;
+import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
+
 public class SiiMain extends AonTemplate2{
 
+	final ISiiAsync impl = GWT.create(ISii.class);
 	private API API;
 	HashMap<String, LinkedList<String>> filterMap;
 	private AonData aonData;
@@ -59,7 +64,7 @@ public class SiiMain extends AonTemplate2{
 	public void initializeFilterMap() {
 		filterMap = new HashMap<>();
 		LinkedList<String> list = new LinkedList<>();
-		list.add("emitidas");
+		list.add("fe_emitidas");
 		filterMap.put("sii",list);
 		
 		Date date = new Date(2017-1900, 5, 1);
@@ -75,6 +80,18 @@ public class SiiMain extends AonTemplate2{
 		list.add("false");
 		filterMap.put("sent", list);
 		
+		list = new LinkedList<>();
+		list.add("false");
+		filterMap.put("sent_error", list);
+		
+		list = new LinkedList<>();
+		list.add("false");
+		filterMap.put("error", list);
+		
+		list = new LinkedList<>();
+		list.add("false");
+		filterMap.put("anulada", list);
+		
 	}
 	
 	Button sendAll;
@@ -88,6 +105,7 @@ public class SiiMain extends AonTemplate2{
 			@Override
 			public void onClick(ClickEvent event) {
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				
 				SimpleLayoutPanel slp = p.getContent();
 				InvoiceGrid ig = (InvoiceGrid) slp.getWidget();
 				ig.sendSii();
@@ -112,13 +130,83 @@ public class SiiMain extends AonTemplate2{
 		facturasEmitidasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {				
 				LinkedList<String> list = new LinkedList<>();
-				list.add("emitidas");
+				list.add("fe_emitidas");
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Emitidas");
 				p.gridContent();
 			}
 		});
 		menuPanel.add(facturasEmitidasButton);
+		
+		Button feGeneralButton = new Button("Generales");
+		feGeneralButton.setStyleName("aon-editDataTable-button");
+		feGeneralButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feGeneralButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		feGeneralButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fe_generales");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Emitidas - Generales");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(feGeneralButton);
+		
+		Button feSimpleButton = new Button("Simplificadas");
+		feSimpleButton.setStyleName("aon-editDataTable-button");
+		feSimpleButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feSimpleButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		feSimpleButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fe_simplificadas");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Emitidas - Simplificadas");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(feSimpleButton);
+		
+		Button feRectButton = new Button("Rectificativas");
+		feRectButton.setStyleName("aon-editDataTable-button");
+		feRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		feRectButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fe_rectificativas");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Emitidas - Rectificativas");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(feRectButton);
+		
+		Button feIntraButton = new Button("Intracomunitarias");
+		feIntraButton.setStyleName("aon-editDataTable-button");
+		feIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		feIntraButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fe_intracomunitarias");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Emitidas - Intracomunitarias");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(feIntraButton);
 		
 		Button facturasRecibidasButton = new Button("Facturas Recibidas");
 		facturasRecibidasButton.setStyleName("aon-editDataTable-button");
@@ -126,13 +214,83 @@ public class SiiMain extends AonTemplate2{
 		facturasRecibidasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				LinkedList<String> list = new LinkedList<>();
-				list.add("recibidas");
+				list.add("fr_recibidas");
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Recibidas");
 				p.gridContent();
 			}
 		});
 		menuPanel.add(facturasRecibidasButton);
+		
+		Button frComprasButton = new Button("Compras");
+		frComprasButton.setStyleName("aon-editDataTable-button");
+		frComprasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frComprasButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		frComprasButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fr_compras");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Recibidas - Compras");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(frComprasButton);
+		
+		Button frGastosButton = new Button("Gastos");
+		frGastosButton.setStyleName("aon-editDataTable-button");
+		frGastosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frGastosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		frGastosButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fr_gastos");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Recibidas - Gastos");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(frGastosButton);
+		
+		Button frRectButton = new Button("Rectificativas");
+		frRectButton.setStyleName("aon-editDataTable-button");
+		frRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		frRectButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fr_rectificativas");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Recibidas - Rectificativas");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(frRectButton);
+		
+		Button frIntraButton = new Button("Intracomunitarias");
+		frIntraButton.setStyleName("aon-editDataTable-button");
+		frIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		frIntraButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("fr_intracomunitarias");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Facturas Recibidas - Intracomunitarias");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(frIntraButton);
 
 	/*	Button bienesInversionButton = new Button("Bienes de Inversion");
 		bienesInversionButton.setStyleName("aon-editDataTable-button");
@@ -155,10 +313,61 @@ public class SiiMain extends AonTemplate2{
 				LinkedList<String> list = new LinkedList<>();
 				list.add("intracomunitarias");
 				getFilterMap().put("sii",list);
-				content();
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Operaciones Intracomunitarias");
+				p.gridContent();
 			}
 		});
 		menuPanel.add(operacionesIntracomunitariasButton);
+		
+		Button operacionesCobrosPagosButton = new Button("Operaciones Cobros/Pagos");
+		operacionesCobrosPagosButton.setStyleName("aon-editDataTable-button");
+		operacionesCobrosPagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		operacionesCobrosPagosButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add("intracomunitarias");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Operaciones Cobros/Pagos");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(operacionesCobrosPagosButton);
+		
+		Button cobrosButton = new Button("Cobros");
+		cobrosButton.setStyleName("aon-editDataTable-button");
+		cobrosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		cobrosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		cobrosButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("emitidas");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setTitle("Operaciones Cobros");
+				p.gridContent();
+			}
+		});
+		menuPanel.add(cobrosButton);
+		
+		Button pagosButton = new Button("Pagos");
+		pagosButton.setStyleName("aon-editDataTable-button");
+		pagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		pagosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		pagosButton.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {				
+				LinkedList<String> list = new LinkedList<>();
+				list.add("emitidas");
+				getFilterMap().put("sii",list);
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				p.gridContent();
+			}
+		});
+		menuPanel.add(pagosButton);
 		
 		setWestContent(menuPanel);
 	}

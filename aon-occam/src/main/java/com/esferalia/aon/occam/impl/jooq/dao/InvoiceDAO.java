@@ -20,6 +20,8 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 
 import java.io.OutputStream;
 import java.sql.Timestamp;
@@ -60,6 +62,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -113,6 +116,31 @@ public class InvoiceDAO {
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE)), filter)
 				.fetch().stream().map(new FullInvoiceFiller());
+	}
+	
+	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada){
+		Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente");
+		if(aceptada) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
+		if(aceptadaErrores) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadaConErrores"));
+		if(incorrecta) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecta"));
+		if(anulada) c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
+		if(pending){
+			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
+					.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
+					.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
+						.and(c))
+					.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+				, filter)
+				.fetch().stream().map(new SiiInvoiceFiller());
+		}else {
+			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
+					.join(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
+					.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
+						.and(c))
+					.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+				, filter)
+				.fetch().stream().map(new SiiInvoiceFiller());
+		}
 	}
 	
 	public static Invoice getInvoice(AONContext ctx, Integer id) {
@@ -348,6 +376,51 @@ public class InvoiceDAO {
 				.setTotal(record.getValue(INVOICE.TOTAL))	
 				.setComments(record.getValue(INVOICE.COMMENTS))
 				.setStatus(record.getValue(INVOICE.STATUS));
+		}
+		
+	}
+	
+	public static class SiiInvoiceFiller  implements Function<Record,Invoice> {
+
+		@Override
+		public Invoice apply(Record record) {
+			return new Invoice()
+				.setId(record.getValue(INVOICE.ID))
+				.setDomain(record.getValue(INVOICE.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
+				.setSeries(record.getValue(INVOICE.SERIES))
+				.setNumber(record.getValue(INVOICE.NUMBER))
+				.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
+				.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
+				.setRegistry(record.getValue(INVOICE.REGISTRY))
+				.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(record.getValue(INVOICE.RNAME))
+				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
+				.setActivity(record.getValue(INVOICE.ACTIVITY))	
+				.setInvestAsset(record.getValue(INVOICE.INVEST_ASSET))
+				.setProject(record.getValue(INVOICE.PROJECT))
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,record.getValue(INVOICE.RECTIFICATION_TYPE)))	
+				.setRectificationInvoice(record.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,record.getValue(INVOICE.TRANSACTION)))
+				.setRecorded(record.getValue(INVOICE.STATUS) == 1 )	
+				.setSurcharge(record.getValue(INVOICE.SURCHARGE) == 1 )	
+				.setWithholding(record.getValue(INVOICE.WITHHOLDING) == 1 )	
+				.setWithholdingFarmer(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
+				.setVatAccrualPayment(record.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
+				.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1 )	
+				.setService(record.getValue(INVOICE.SERVICE) == 1 )	
+				.setAdvance(record.getValue(INVOICE.ADVANCE) == 1 )	
+				.setTaxableBase(record.getValue(INVOICE.TAXABLE_BASE))	
+				.setVatQuota(record.getValue(INVOICE.VAT_QUOTA))	
+				.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA))	
+				.setTotal(record.getValue(INVOICE.TOTAL))	
+				.setComments(record.getValue(INVOICE.COMMENTS))
+				.setStatus(record.getValue(INVOICE.STATUS))
+				.setSiiStatus(record.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
 		}
 		
 	}

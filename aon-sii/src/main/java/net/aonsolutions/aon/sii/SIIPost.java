@@ -107,7 +107,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS EMITIDAS
 	
 	@SuppressWarnings("unchecked")
-    protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS);
     	SuministroLRFacturasEmitidas suministro = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, contextList, cert, pass);     	
 
@@ -129,13 +129,15 @@ public class SIIPost extends WebServiceGatewaySupport{
 
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidas(suministro);
         byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
-        SIIDB.getInstance().insertSuministro(domain, login, map, requestXml, responseXml);
+       
+    	LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+   		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
 
         return array;
 	}
 	
 	@SuppressWarnings("unchecked")
-    protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS);
     	BajaLRFacturasEmitidas suministro = SIIBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList);     	
 
@@ -143,10 +145,11 @@ public class SIIPost extends WebServiceGatewaySupport{
     	RespuestaLRBajaFEmitidasType respuesta = response.getValue();
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     	Boolean aceptadoErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
-
     	byte[] requestXml = SIIBuilt.getInstance().getBajaFacturasEmitidas(suministro);
    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaFacturasEmitidas(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoErrores ? SIIDataVariable.INVOICE_BAJA_OK : SIIDataVariable.INVOICE_BAJA_ERROR);
+   		
+    	//LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+   		//SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
 
     	JSONArray array = new JSONArray();
     	array.put(json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
@@ -158,7 +161,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS EMITIDAS COBROS
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS);
     	SuministroLRCobrosEmitidas suministro = SIIBuilt.getInstance().suministroFacturasEmitidasCobros(domain, login, company, invoiceList);     	
     
@@ -170,9 +173,9 @@ public class SIIPost extends WebServiceGatewaySupport{
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasEmitidasCobros(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidasCobros(respuesta);
     
-    	LinkedList<Integer> il = invoiceList.stream().map(m -> m.getId()).collect(Collectors.toCollection(LinkedList::new));
-        SIIDB.getInstance().insertSuministro(domain, login, il, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_COBROS_PAGOS_OK : SIIDataVariable.INVOICE_COBROS_PAGOS_ERROR);
-        //TODO  parcial ¿?
+    	//LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	//SIIDB.getInstance().insertSuministro(domain, login, invoiceList.stream().map(a -> a.getId()).collect(Collectors.toCollection(LinkedList::new)) , requestXml, responseXml, status);
+   		//TODO  parcial ¿?
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -182,7 +185,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS RECIBIDAS
 	
     @SuppressWarnings("unchecked")
-	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS);
     	SuministroLRFacturasRecibidas suministro = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, contextList, cert, pass);       	
    
@@ -205,13 +208,15 @@ public class SIIPost extends WebServiceGatewaySupport{
 
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
-        SIIDB.getInstance().insertSuministro(domain, login, map, requestXml, responseXml);
+    	LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+   		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+
 
         return array;
     }
     
     @SuppressWarnings("unchecked")
-   	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+   	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS);
     	BajaLRFacturasRecibidas suministro = SIIBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList);     	
 
@@ -220,9 +225,10 @@ public class SIIPost extends WebServiceGatewaySupport{
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
      	Boolean aceptadoErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
          
-    	byte[] requestXml = SIIBuilt.getInstance().getBajaFacturasRecibidas(suministro);
-    	byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoErrores ? SIIDataVariable.INVOICE_BAJA_OK: SIIDataVariable.INVOICE_BAJA_ERROR);
+    //	byte[] requestXml = SIIBuilt.getInstance().getBajaFacturasRecibidas(suministro);
+    //	byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
+
+    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoErrores ? SIIDataVariable.INVOICE_BAJA_OK: SIIDataVariable.INVOICE_BAJA_ERROR);
 
     	JSONArray array = new JSONArray();
     	array.put(json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
@@ -234,7 +240,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS RECIBIDAS PAGOS
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Invoice> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS_PAGOS) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS_PAGOS);
     	SuministroLRPagosRecibidas suministro = SIIBuilt.getInstance().suministroFacturasRecibidasPagos(domain, login, company, invoiceList);     	
     
@@ -247,8 +253,8 @@ public class SIIPost extends WebServiceGatewaySupport{
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidasPagos(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
 
-    	LinkedList<Integer> il = invoiceList.stream().map(m -> m.getId()).collect(Collectors.toCollection(LinkedList::new));
-    	SIIDB.getInstance().insertSuministro(domain, login, il, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_COBROS_PAGOS_OK : SIIDataVariable.INVOICE_COBROS_PAGOS_ERROR);
+    	//LinkedList<Integer> il = invoiceList.stream().map(m -> m.getId()).collect(Collectors.toCollection(LinkedList::new));
+    	//SIIDB.getInstance().insertSuministro(domain, login, il, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_COBROS_PAGOS_OK : SIIDataVariable.INVOICE_COBROS_PAGOS_ERROR);
     	// TODO partial ¿?
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
@@ -259,7 +265,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- BIENES INVERSION
 	
     @SuppressWarnings("unchecked")
-    protected JSONArray suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONArray suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION);
     	SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList);     	
     	
@@ -270,7 +276,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_BIENES_INVERSION_OK : SIIDataVariable.INVOICE_SUMINISTRO_BIENES_INVERSION_ERROR);
+    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_BIENES_INVERSION_OK : SIIDataVariable.INVOICE_SUMINISTRO_BIENES_INVERSION_ERROR);
     	
     	JSONArray array = new JSONArray();
     	array.put(json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
@@ -280,7 +286,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-    protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION);
     	BajaLRBienesInversion suministro = SIIBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList);     	
 
@@ -291,7 +297,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     	byte[] requestXml = SIIBuilt.getInstance().getBajaBienesInversion(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoErrores ? SIIDataVariable.INVOICE_BAJA_BIENES_OK: SIIDataVariable.INVOICE_BAJA_BIENES_ERROR);
+    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoErrores ? SIIDataVariable.INVOICE_BAJA_BIENES_OK: SIIDataVariable.INVOICE_BAJA_BIENES_ERROR);
 
     	JSONArray array = new JSONArray();
     	array.put(json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
@@ -303,7 +309,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- OPERACIONES INTRACOMUNITARIAS
 	
     @SuppressWarnings("unchecked")
-    protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp) {
+    protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS);
     	SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp);     	
     	
@@ -314,7 +320,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OPERACIONES_INTRACOMUNITARIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_OPERACIONES_INTRACOMUNITARIAS_ERROR);
+    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OPERACIONES_INTRACOMUNITARIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_OPERACIONES_INTRACOMUNITARIAS_ERROR);
     	
     	JSONArray array = new JSONArray();
     	array.put(json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
@@ -324,7 +330,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-    protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS);
     	BajaLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList);     	
 
@@ -335,7 +341,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     
     	byte[] requestXml = SIIBuilt.getInstance().getBajaOperacionesIntracomunitarias(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoErrores ? SIIDataVariable.INVOICE_BAJA_OPERACIONES_INTRACOMUNITARIAS_OK: SIIDataVariable.INVOICE_BAJA_OPERACIONES_INTRACOMUNITARIAS_ERROR);
+    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoErrores ? SIIDataVariable.INVOICE_BAJA_OPERACIONES_INTRACOMUNITARIAS_OK: SIIDataVariable.INVOICE_BAJA_OPERACIONES_INTRACOMUNITARIAS_ERROR);
 
     	JSONArray array = new JSONArray();
     	array.put(json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
@@ -348,7 +354,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- COBROS METALICO
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.COBROS_METALICO) : SIIUri.getInstance().getURI(SIIType.COBROS_METALICO);
     	SuministroLRCobrosMetalico suministro = SIIBuilt.getInstance().suministroCobrosMetalico(domain, login, company, invoiceList, contextList);     	
     	
@@ -359,7 +365,7 @@ public class SIIPost extends WebServiceGatewaySupport{
   
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroCobrosMetalico(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_METALICO_OK : SIIDataVariable.INVOICE_SUMINISTRO_METALICO_ERROR);
+   // 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_METALICO_OK : SIIDataVariable.INVOICE_SUMINISTRO_METALICO_ERROR);
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -367,7 +373,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-    protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	//RespuestaLRBajaIMetalicoType
     	return new JSONObject();
     }
@@ -375,7 +381,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- OPERACIONES SEGUROS
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_SEGUROS) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_SEGUROS);
     	SuministroLROperacionesSeguros suministro = SIIBuilt.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceList, contextList);     	
     	
@@ -386,7 +392,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesSeguros(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_OK: SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_ERROR);
+    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_OK: SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_ERROR);
     	
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -394,7 +400,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-    protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	//RespuestaLRBajaOperacionesSegurosType
     	return new JSONObject();
     }
@@ -402,7 +408,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- AGENCIAS VIAJES
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.AGENCIAS_VIAJES) : SIIUri.getInstance().getURI(SIIType.AGENCIAS_VIAJES);
     	SuministroLRAgenciasViajes suministro = SIIBuilt.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
     	
@@ -412,7 +418,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
     	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
     	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroAgenciasViajes(respuesta);
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_ERROR);
+  //  	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_ERROR);
    
     	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
@@ -420,7 +426,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-    protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+    protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	//RespuestaLRBajaAgenciasViajesType
     	return new JSONObject();
     }

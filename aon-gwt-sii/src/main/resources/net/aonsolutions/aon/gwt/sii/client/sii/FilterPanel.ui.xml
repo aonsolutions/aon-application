@@ -27,6 +27,7 @@
 		<g:HorizontalPanel ui:field="filterHorizontal" styleName="aon-width-all">
 			<g:HTMLPanel>
 				<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>
+				<g:InlineLabel ui:field="label"> </g:InlineLabel>
 			</g:HTMLPanel>			
 		</g:HorizontalPanel>					
 	</div>

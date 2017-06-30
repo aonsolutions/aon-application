@@ -50,6 +50,10 @@ public class JsInvoice extends JavaScriptObject {
 	
 	// SII
 
+	public final native String getSiiStatus() /*-{	
+		return this.sii_status;
+	}-*/;
+	
 	public final native String getSii() /*-{
 		return this.sii;
 	}-*/;

@@ -1111,6 +1111,18 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Invoice> getSiiInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter
+			, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores, incorrecta, anulada);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static LinkedList<Invoice> getInvoiceList(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		return getInvoiceStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));

@@ -134,6 +134,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TRANSACTION);}
 		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.INVESTMENT);}
 		@Override public Property<java.util.Date> getTaxDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<Integer> getPosShiftroperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.POS_SHIFT);}
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {

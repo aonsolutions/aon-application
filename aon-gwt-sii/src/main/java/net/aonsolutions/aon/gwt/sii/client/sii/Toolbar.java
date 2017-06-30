@@ -10,8 +10,13 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import net.aonsolutions.aon.gwt.sii.client.ISii;
+import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
+
 public abstract class Toolbar extends Composite {
 
+	final ISiiAsync impl = GWT.create(ISii.class);
+	
 	interface ToolbarBinder extends UiBinder<Widget, Toolbar> {
 	}
 

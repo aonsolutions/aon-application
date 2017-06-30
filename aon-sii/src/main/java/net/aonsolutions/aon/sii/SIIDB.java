@@ -3,6 +3,7 @@ package net.aonsolutions.aon.sii;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -26,7 +27,7 @@ public class SIIDB {
 		
 	}
 	
-    protected void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, SIIDataVariable variable ){
+    protected void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<String> status){
 
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
@@ -39,18 +40,51 @@ public class SIIDB {
     			.setModificationDate(new Date())
     			.setModificationUser(login));
     
-    	invoiceList.stream().forEach(invoice -> {
+    	for(Integer i = 0 ; i < invoiceList.size() ; i++){
+    		DataResponse di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
+    			new DataResponse()
+        			.setDomain(domain.getId())
+        			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+        			.setIssueDate(new Date())
+        			.setSource(DataResponseSource.SII)
+        			.setSourceId(invoiceList.get(i))
+        			.setCreationDate(new Date())
+        			.setCreationUser(login)
+        			.setModificationDate(new Date())
+        			.setModificationUser(login));
+    		
+    		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq("status")));
+    		if(opt.isPresent()){
+        		DataResponseDetail drdOpt = opt.get().setDataVariable("status_old");
+    			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drdOpt, f -> f.getIdProperty().eq(drdOpt.getId()));
+    		}
     		DataResponseDetail drd = new DataResponseDetail();
     		drd.setDomain(domain.getId())
-    			.setDataResponse(dr.getId())
-    			.setDataVariable(variable.getVariable()) 
-    			.setValue(invoice.toString())
+    			.setDataResponse(di.getId())
+    			.setDataVariable("status") 
+    			.setValue(status.get(i))
     			.setCreationDate(new Date())
     			.setCreationUser(login)
     			.setModificationDate(new Date())
     			.setModificationUser(login);
     		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
-    	});
+    		
+    		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq("send")));
+    		if(opt.isPresent()){
+        		DataResponseDetail drdOpt = opt2.get().setDataVariable("send_old");
+    			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drdOpt, f -> f.getIdProperty().eq(drdOpt.getId()));
+    		}
+    		DataResponseDetail drd2 = new DataResponseDetail();
+    		drd.setDomain(domain.getId())
+    			.setDataResponse(di.getId())
+    			.setDataVariable("send") 
+    			.setValue(dr.getId().toString())
+    			.setCreationDate(new Date())
+    			.setCreationUser(login)
+    			.setModificationDate(new Date())
+    			.setModificationUser(login);
+    		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
+    	};
     	
     	Attach requestAttach = new Attach()
     			.setDomain(domain)

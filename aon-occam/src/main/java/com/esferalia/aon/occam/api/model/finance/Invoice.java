@@ -74,6 +74,8 @@ public class Invoice implements Serializable, HasAudit {
 	private Date modificationDate;
 	
 	private Byte status;
+	
+	private String siiStatus;
 
 	private LinkedList<InvoiceDetail> details;
 	
@@ -516,5 +518,14 @@ public class Invoice implements Serializable, HasAudit {
 				&& (isNational() || isIntracommunity() || isIsp())) 
 		;
 	}
+	public String getSiiStatus() {
+		return siiStatus;
+	}
+	public Invoice setSiiStatus(String siiStatus) {
+		this.siiStatus = siiStatus;
+		return this;
+	}
+	
+	
 }
 

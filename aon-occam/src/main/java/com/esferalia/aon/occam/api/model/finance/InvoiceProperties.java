@@ -25,6 +25,7 @@ public interface InvoiceProperties {
 	Property<Byte> getProductTypeProperty();
 	Property<Byte> getTransactionProperty();
 	Property<Byte> getInvestmentProperty();
+	Property<Integer> getPosShiftroperty();	
 	Property<Date> getTaxDateProperty();
 
 }
