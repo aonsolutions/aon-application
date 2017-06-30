@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-15T15:23:29 -->
+<!-- 2017-06-30T14:11:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="0aeeb98a-40cc-475d-a99e-70f5e9b1a99b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -136,7 +136,7 @@
 			<line>
 				<reportElement key="line-8" x="553" y="539" width="4" height="1" uuid="00cb677d-556a-47ae-be41-229e46050ba8"/>
 			</line>
-			<image scaleImage="Clip" hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank">
+			<image scaleImage="RealSize" hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank">
 				<reportElement key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="535" height="802" forecolor="#000000" backcolor="#FFFFFF" uuid="24d0ab92-6d4c-44c1-9a25-e79c11a377ce">
 					<printWhenExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getBackgroundFile()!=null]]></printWhenExpression>
 				</reportElement>
