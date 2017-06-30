@@ -67,6 +67,12 @@ public class CRAWriter {
 	public FileOutput createCRA(List<EnterpriseCCC> list, Integer year, Month month) throws ManagerBeanException {
 		try {
 			ETI eti = buildCRA( list, year, month );
+			if(eti.getDdeList()==null
+					|| eti.getDdeList().isEmpty()){
+				String msg = "No se puede generar el fichero CRA. (Segmento ETI vacio)";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			PrintWriter writer = new PrintWriter(outputStream);
 			FileFiller cra = new CRA(eti, writer);
@@ -115,10 +121,15 @@ public class CRAWriter {
 						}
 					}
 				}
+				
+				cleanEmptyTRBSegment(dde);
+				
 				if(dde.getTrbList()!=null && !dde.getTrbList().isEmpty()){
 					eti.getDdeList().add(dde);
 				} else {
-					AonUtil.addErrorMessage("No hay datos para la cuenta de cotización: " + PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc());
+					AonUtil.addErrorMessage("La cuenta de cotización " 
+							+ PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc()
+							+ " no se incluye porque no tiene datos para comunicar.");
 				}
 			}
 			return eti;
@@ -129,7 +140,15 @@ public class CRAWriter {
 		}		
 	}
 		
-		
+	private void cleanEmptyTRBSegment(DDE dde) {
+		for(TRB trb: dde.getTrbList()){
+			if(trb.getCreList()==null || 
+					trb.getCreList().isEmpty()){
+				dde.getTrbList().remove(trb);
+			}
+		}
+	}
+	
 	private ETI createETIRecord(Integer year, Month month) throws ManagerBeanException {
 		ETI eti = new ETI();
 		String authorizationKey = getAuthorizationKey(DomainManager.getCurrentDomain());
