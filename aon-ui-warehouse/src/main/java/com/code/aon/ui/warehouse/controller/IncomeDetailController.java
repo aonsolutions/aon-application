@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -25,6 +26,8 @@ public class IncomeDetailController extends LinesController implements IWarehous
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
 	private boolean showItemPackageWindow;
+	private boolean showQuantityAdjustWindow;
+	private double quantityAdjust;
 	private IncomeDetail incomeDetail;
 	
 	public IPriceStrategy getPriceStrategy(){
@@ -64,6 +67,22 @@ public class IncomeDetailController extends LinesController implements IWarehous
 
 	public void setShowItemPackageWindow(boolean value) {
 		this.showItemPackageWindow = value;
+	}
+
+	public boolean isShowQuantityAdjustWindow() {
+		return showQuantityAdjustWindow;
+	}
+
+	public void setShowQuantityAdjustWindow(boolean value) {
+		this.showQuantityAdjustWindow = value;
+	}
+
+	public double getQuantityAdjust() {
+		return quantityAdjust;
+	}
+
+	public void setQuantityAdjust(double quantityAdjust) {
+		this.quantityAdjust = quantityAdjust;
 	}
 
 	public IncomeDetail getIncomeDetail() {
@@ -129,6 +148,26 @@ public class IncomeDetailController extends LinesController implements IWarehous
 	public void onAssignItemPackage(ActionEvent event) {
 		IncomeDetail incomeDetail = (IncomeDetail)getTo();
 		incomeDetail.setQuantity(incomeDetail.getItem().getPackStockQuantity());
+	}
+
+	public void onPurchaseQuantityAdjustShow(ActionEvent event) throws ManagerBeanException {
+		setIncomeDetail((IncomeDetail)this.getModel().getRowData());
+		setQuantityAdjust(getIncomeDetail().getQuantity());
+	}
+
+	public void onPurchaseQuantityAdjust(ActionEvent event) throws ManagerBeanException {
+		getIncomeDetail().setId(null);
+		getIncomeDetail().setLine(incomeDetail.getLine()+1);
+		getIncomeDetail().setDescription(getIncomeDetail().getDescription() + " [AJUSTE]");
+		getIncomeDetail().setQuantity(CommonUtil.round(getIncomeDetail().getQuantity() - getQuantityAdjust(), 3));
+		getIncomeDetail().setPurchaseDetail(null); 
+		getIncomeDetail().setCreationUser(null);
+		getIncomeDetail().setCreationDate(null);
+		getIncomeDetail().setModificationUser(null);
+		getIncomeDetail().setModificationDate(null);
+		getManagerBean().insert(getIncomeDetail());
+
+		onSearch(event);
 	}
 
 	public double getAmount() {

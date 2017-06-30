@@ -153,6 +153,15 @@
 				<f:facet name="header">
 					<aon:outputLabel for="IncomeDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
+				<aon:commandLink id="IncomeDetail_quantity-adjust"
+					styleClass="aon-finding-toolbar-item aon-noborder aon-icon-edit-blue"
+					value="&#160;" title="#{bundle.aon_quantity_adjust}"
+					rendered="#{formList and to.purchaseDetail != null and to.purchaseDetail.id != null}" 
+					actionListener="#{controller.onPurchaseQuantityAdjustShow}"
+					reRender="showQuantityAdjustWindow">
+					<f:setPropertyActionListener target="#{incomeDetail.showQuantityAdjustWindow}"
+						value="#{true}" />
+				</aon:commandLink>
 				<aon:outputText value="#{to.quantity}"
 					rendered="#{formList or !controller.modelEditable}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
