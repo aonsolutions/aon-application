@@ -530,7 +530,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 		double lq558 = roundKey(LQ558);
 		if (isChecked(C0017) || isChecked(C0018)) {
 			if (isChecked(C0057) && !isChecked(C0063)) {
-				return round( (lq553 * lq558 / 100) + (lq554 * 30 / 100) + (lq521 * 0));		
+				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100) + (lq521 * 0));		
 			}
 			if (isChecked(C0063)) {
 				if (lq552<=getLimit(LIM_1)){
@@ -539,13 +539,15 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
 				}
 			}
-			return round( (lq553 * lq558 / 100) + (lq554 * 30 / 100));
+			if (lq558 == 20 || lq558 == 25) {
+				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
+			}
 		} else if (isChecked(C0019) ) {
 			if (isChecked(C0006)) {
 				if (lq552<=getLimit(LIM_1)){
-					return round( lq552*25/100);			
+					return round( lq552*15/100);			
 				} else {
-					return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*30/100;				
+					return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
 				}
 			}
 			if (isChecked(C0030) || isChecked(C0047)) {
@@ -559,7 +561,7 @@ public class Mod2002016MVELContext implements Map<String, Object> { // extends A
 				}
 			}
 			if (isChecked(C0057)) {
-				return round( ((lq552 - lq521) * lq558 / 100) + (lq554 * 30 / 100) + (lq521 *0));
+				return round( ((lq552 - lq521) * lq558 / 100) + (lq521 *0));
 			}
 			return round( (lq553 * lq558 / 100) );			
 		}

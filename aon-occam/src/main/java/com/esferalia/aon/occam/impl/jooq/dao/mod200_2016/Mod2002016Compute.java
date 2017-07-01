@@ -372,7 +372,7 @@ public class Mod2002016Compute {
 		
 		// Cuota íntegra
 		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LQ562,"computeLQ562()");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LQ1331,"(isCooperativa())?(LQ562):(0.0)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002016Key.LQ1331,"(isCooperativa())?(LQ560+LQ210-LQ480+LQ408-LQ1037-LQ561+LQ1285-LQ1286):(0.0)");
 		
 	}
 	
