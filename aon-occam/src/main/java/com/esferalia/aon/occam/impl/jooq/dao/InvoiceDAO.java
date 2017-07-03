@@ -119,35 +119,37 @@ public class InvoiceDAO {
 	}
 	
 	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada){
-		Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente");
-		if(aceptada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
-		if(aceptadaErrores) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadaConErrores"));
-		if(incorrecta) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecto"));
-		if(anulada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
-		if(pending && !aceptada && !aceptadaErrores && !incorrecta && !anulada){
+		if(pending){
+			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Pendiente");
+			if(aceptada) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Correcto"));
+			if(aceptadaErrores) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("AceptadoConErrores"));
+			if(incorrecta) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Incorrecto"));
+			if(anulada) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Anulada"));
 			FilterDAO d = (FilterDAO) filter.filter(INVOICE_PROPERTIES);
 			return ctx.getDslContext().select()
 					.from(INVOICE).join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+					.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
+					.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
 					.where(INVOICE_PROPERTIES.getConditions(filter))
 					.and(INVOICE.ID.notIn(
 							ctx.getDslContext().select(DATA_RESPONSE.SOURCE_ID)
-							.from(DATA_RESPONSE)
+							.from(DATA_RESPONSE).join(DATA_RESPONSE_DETAIL)
+									.on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status")
+									.and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
+									.and(c))
 							.where(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()))
 							.and(DATA_RESPONSE.DOMAIN.eq(ctx.getDomainId()))
 							))
 					.limit(d.getPerPage())
 					.offset(d.getPerPage() * (d.getPage() -1))
-					.fetch().stream().map(new FullInvoiceFiller());
+					.fetch().stream().map(new SiiInvoiceFiller());
 
-		} else if (pending){
-			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
-					.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
-					.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
-						.and(c))
-					.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
-				, filter)
-				.fetch().stream().map(new SiiInvoiceFiller());
-		}else {
+		} else {
+			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente");
+			if(aceptada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
+			if(aceptadaErrores) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadoConErrores"));
+			if(incorrecta) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecto"));
+			if(anulada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
 			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 					.join(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
 					.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))

@@ -100,7 +100,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 	private JSONObject json(Integer id, String name, String referenceCode){
 		JSONObject json = new JSONObject();
     	json.put("id", id);
-    	json.put("name",  referenceCode + " - " + name);
+    	json.put("name", "Factura " + referenceCode + (!id.equals(200) ?  " - Error " + id + ": " : " - ") + name);
     	return json;
 	}
 	
