@@ -416,20 +416,35 @@ public class SalesUtils {
 	public boolean isManufactureDone(SalesDetail detail) {
 		AONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), detail.getDomain(), AonUtil.getRemoteUser());
-		com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = PurchaseDAO.getTargetManufactureDetail(ctx, detail.getId());
-		return pd !=null && pd.getId()!=null;
+		try {
+			com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = PurchaseDAO.getTargetManufactureDetail(ctx, detail.getId());
+			return pd !=null && pd.getId()!=null;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	public Map<Integer, PurchaseDetail> getTargetPurchaseDetailMap(Sales sales) {
 		AONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
-		return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetPurchaseDetails(ctx, sales.getId()));
+		try {
+			return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetPurchaseDetails(ctx, sales.getId()));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	public Map<Integer, PurchaseDetail> getTargetManufactureDetailMap(Sales sales) {
 		AONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
-		return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetManufactureDetails(ctx, sales.getId()));
+		try {
+			return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetManufactureDetails(ctx, sales.getId()));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	private Map<Integer, PurchaseDetail> fillPurchaseDetailMap(AONContext ctx, List<com.esferalia.aon.occam.api.model.management.PurchaseDetail> list) {
