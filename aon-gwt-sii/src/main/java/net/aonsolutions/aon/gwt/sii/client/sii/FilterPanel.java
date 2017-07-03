@@ -58,6 +58,14 @@ public class FilterPanel extends Composite {
     	label.setText(title);
     }
     
+    public void setCheckVisible(Boolean bool){
+    	HorizontalPanel hp =(HorizontalPanel) panel.getWidget(0);
+    	for(Integer i = 2 ; i < hp.getWidgetCount() ; i++){
+    		CheckBox cb = (CheckBox) hp.getWidget(i);
+    		cb.setVisible(bool);
+    	}
+    }
+    
     private HorizontalPanel datePanel() {
     	HorizontalPanel datePanel = new HorizontalPanel(); 
     	datePanel.addStyleName(AON.AON_CSS.aonMarginTop());  

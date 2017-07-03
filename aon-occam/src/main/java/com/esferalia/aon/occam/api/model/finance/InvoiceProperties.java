@@ -27,5 +27,6 @@ public interface InvoiceProperties {
 	Property<Byte> getInvestmentProperty();
 	Property<Integer> getPosShiftroperty();	
 	Property<Date> getTaxDateProperty();
+	Property<Byte> getVatAccrualPayment();
 
 }
