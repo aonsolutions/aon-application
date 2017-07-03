@@ -105,9 +105,9 @@ public class FinanceServlet extends HttpServlet{
     		Date from =  req.getParameterMap().containsKey("from") ? new Date(Long.parseLong(req.getParameter("from"))) : AonDateUtils.getDate(2017, 07, 01);  
     		Boolean pending = req.getParameterMap().containsKey("pending") ? req.getParameter("pending").equalsIgnoreCase("true") : false;
     		Boolean sent = req.getParameterMap().containsKey("sent") ? req.getParameter("sent").equalsIgnoreCase("true") : false;
-    		Boolean sent_error = req.getParameterMap().containsKey("sent_error") ? req.getParameter("sent").equalsIgnoreCase("true") : false;
-    		Boolean error = req.getParameterMap().containsKey("error") ? req.getParameter("sent").equalsIgnoreCase("true") : false;
-    		Boolean anulada = req.getParameterMap().containsKey("anulada") ? req.getParameter("sent").equalsIgnoreCase("true") : false;
+    		Boolean sent_error = req.getParameterMap().containsKey("sent_error") ? req.getParameter("sent_error").equalsIgnoreCase("true") : false;
+    		Boolean error = req.getParameterMap().containsKey("error") ? req.getParameter("error").equalsIgnoreCase("true") : false;
+    		Boolean anulada = req.getParameterMap().containsKey("anulada") ? req.getParameter("anulada").equalsIgnoreCase("true") : false;
     		
     		if("fe_emitidas".equals(req.getParameter("sii"))
     			|| "fe_generales".equals(req.getParameter("sii"))
