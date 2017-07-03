@@ -278,7 +278,7 @@ public class FDIWriter implements Serializable {
 		} else if (detail.getContractLeave().getType() == LeaveType.OCCUPATIONAL_DISEASE) { 
 //			3	Accidente de trabajo		
 			dit.setContingencia(T35.T35_3.getCode());
-			dit.setFechaATEP( Integer.parseInt( dateFormatter.format( detail.getContractLeave().getEndDate() )) );
+			dit.setFechaATEP( Integer.parseInt( dateFormatter.format( detail.getContractLeave().getStartDate() )) );
 		} else {
 			dit.setContingencia("0");
 		}
