@@ -135,7 +135,7 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 				f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
 						.and(f.getSourceIdProperty().in(ids))).collect(Collectors.toList());
 		if(list!=null && list.size()>0){
-			throw new ControllerListenerException("No se puede borrar, hay productos que están en proceso de elaboración.");
+			throw new ControllerListenerException("No se puede borrar, hay productos elaborados.");
 		}
 	}
 
