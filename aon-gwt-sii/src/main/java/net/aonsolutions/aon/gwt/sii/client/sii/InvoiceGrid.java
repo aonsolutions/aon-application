@@ -14,11 +14,13 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +38,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -55,7 +58,6 @@ import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionModel;
 
 import net.aonsolutions.aon.gwt.sii.client.ISii;
 import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
@@ -168,7 +170,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.addColumnSortHandler(sortHandler);
 	//	final SingleSelectionModel<JsInvoice> selectionModel = new SingleSelectionModel<JsInvoice>(
 	//			JsInvoice.PROVIDES_KEY);
-		final SelectionModel<JsInvoice> selectionModel = new MultiSelectionModel<JsInvoice>(JsInvoice.PROVIDES_KEY);
+		final MultiSelectionModel<JsInvoice> selectionModel = new MultiSelectionModel<JsInvoice>(JsInvoice.PROVIDES_KEY);
 		
 		dataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<JsInvoice> createCheckboxManager());
@@ -202,7 +204,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		};
 	}
 	
-	private void initTableColumns(final SelectionModel<JsInvoice> selectionModel, ListHandler<JsInvoice> sortHandler) {
+	private void initTableColumns(final MultiSelectionModel<JsInvoice> selectionModel, ListHandler<JsInvoice> sortHandler) {
 		
 		/** Check Column **/
 		
@@ -218,7 +220,8 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				return selectionModel.isSelected(object);
 			}
 		};
-		dataGrid.addColumn(checkColumn);
+
+		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
 		dataGrid.setColumnWidth(checkColumn, 40, Unit.PX);
 		
 		/** code Column **/
@@ -307,8 +310,35 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(statusColumn);
 		dataGrid.addColumn(statusColumn, "Estado");
 		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
-	   
+	}
 	
+	public final class CheckboxHeader extends Header {
+
+	    private final MultiSelectionModel<JsInvoice> selectionModel;
+	    private final ListDataProvider<JsInvoice> provider;
+
+	    public CheckboxHeader(MultiSelectionModel<JsInvoice> selectionModel,
+	    		ListDataProvider<JsInvoice> provider) {
+	        super(new CheckboxCell());
+	        this.selectionModel = selectionModel;
+	        this.provider = provider;
+	    }
+
+	    @Override
+	    public Boolean getValue() {
+	        boolean allItemsSelected = selectionModel.getSelectedSet().size() == provider
+	                .getList().size();
+	        return allItemsSelected;
+	    }
+
+	    @Override
+	    public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
+	        InputElement input = elem.getFirstChild().cast();
+	        Boolean isChecked = input.isChecked();
+	        for (JsInvoice element : provider.getList()) {
+	            selectionModel.setSelected(element, isChecked);
+	        }
+	    }
 
 	}
 	
