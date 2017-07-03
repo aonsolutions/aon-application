@@ -11,7 +11,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -315,10 +318,15 @@ public class SIIBuilt {
 			}			
 			// DESCRIPCION OPERACION 
 			
+			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoice);
+			String str = "";
+			if(ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null){
+				for(AccountEntryDetail aed : ai.getAccountEntry().getDetails()){
+					str = str + ACCOUNTING.getAccount(domain.getName(), domain.getId(), login,  aed.getAccount()).getDescription() + "-";
+				}
+			}
+			fet.setDescripcionOperacion(str + vat.getDetailDescription());
 			
-			
-			fet.setDescripcionOperacion(vat.getDetailDescription()); // + " - " + vat.getComments());
-		
 			// DATOS INMUEBLES (OPTIONAL) TODO // sii regimen IVA 12 - Operaciones de arrendamiento de local de negocio no sujetos a retención.
 			if(fet.getClaveRegimenEspecialOTrascendencia().equals("12")
 					|| (fet.getClaveRegimenEspecialOTrascendenciaAdicional1() != null && fet.getClaveRegimenEspecialOTrascendenciaAdicional1().equals("12"))
@@ -728,7 +736,14 @@ public class SIIBuilt {
 			frt.setCuotaDeducible(contextList.stream().mapToDouble(a -> a.getDeductibleQuota()).sum() + ""); // TODO
 
 			// DESCRIPCION OPERACION
-			frt.setDescripcionOperacion(vat.getDetailDescription()); //TODO
+			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoice);
+			String str = "";
+			if(ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null){
+				for(AccountEntryDetail aed : ai.getAccountEntry().getDetails()){
+					str = str + ACCOUNTING.getAccount(domain.getName(), domain.getId(), login,  aed.getAccount()).getDescription() + "-";
+				}
+			}
+			frt.setDescripcionOperacion(str + vat.getDetailDescription());
 			
 			// FECHA OPERACION
 			frt.setFechaOperacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));//TODO

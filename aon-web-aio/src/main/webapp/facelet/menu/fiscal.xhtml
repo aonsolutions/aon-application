@@ -333,24 +333,22 @@
 										</aon:commandLink>
 									</aon:div>
 									
-									<aon:if test="#{domainSwitcher.betaDomain}">
-										<aon:div>
-											<aon:commandLink id="gwt_sii-fiscal" action="gwt_sii-fiscal" 
-												title="SII - Suministro Inmediato de Información" styleClass="aon-menu-fiscal">
-												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="SII"/>
-												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
-												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="&#160;"/>
-												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="&#160;"/>
-												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="&#160;"/>
-												<aon:outputText styleClass="aon-menu-fiscal-label"
-													value="&#160;" />
-												<aon:outputText styleClass="aon-icon-beta-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="SII - Suministro Inmediato de Información" />
-												
-											</aon:commandLink>
-										</aon:div>
-									</aon:if>		
+									<aon:div rendered="#{fiscalParams.aeat}">
+										<aon:commandLink id="gwt_sii-fiscal" action="gwt_sii-fiscal" 
+											title="SII - Suministro Inmediato de Información" styleClass="aon-menu-fiscal">
+											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="SII"/>
+											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="&#160;"/>
+											<aon:outputText styleClass="aon-menu-fiscal-label"
+												value="&#160;" />
+											<aon:outputText styleClass="aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="SII - Suministro Inmediato de Información" />
+											
+										</aon:commandLink>
+									</aon:div>		
 								</aon:if>
 						</aon:div>
 						</aon:panelGrid>

@@ -134,6 +134,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas");
 				p.gridContent();
 			}
@@ -151,6 +152,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Generales");
 				p.gridContent();
 			}
@@ -168,6 +170,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Simplificadas");
 				p.gridContent();
 			}
@@ -185,6 +188,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Rectificativas");
 				p.gridContent();
 			}
@@ -202,6 +206,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Intracomunitarias");
 				p.gridContent();
 			}
@@ -218,6 +223,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas");
 				p.gridContent();
 			}
@@ -235,6 +241,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Compras");
 				p.gridContent();
 			}
@@ -252,6 +259,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Gastos");
 				p.gridContent();
 			}
@@ -269,6 +277,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Rectificativas");
 				p.gridContent();
 			}
@@ -286,6 +295,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Intracomunitarias");
 				p.gridContent();
 			}
@@ -315,6 +325,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(false);
 				fp.setTitle("Operaciones Intracomunitarias");
 				p.gridContent();
 			}
@@ -331,6 +342,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(false);
 				fp.setTitle("Operaciones Cobros/Pagos");
 				p.gridContent();
 			}
@@ -348,6 +360,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(false);
 				fp.setTitle("Operaciones Cobros");
 				p.gridContent();
 			}
@@ -364,6 +377,9 @@ public class SiiMain extends AonTemplate2{
 				list.add("cp_pagos");
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(false);
+				fp.setTitle("Operaciones Pagos");
 				p.gridContent();
 			}
 		});
