@@ -411,6 +411,15 @@ public class FilterDAO implements Filter {
 		return this;
 	}
 	
+	
+	public Integer getPage(){
+		return page;
+	}
+	
+	public Integer getPerPage(){
+		return perPage;
+	}
+	
 	public Select<Record> build(SelectJoinStep<Record> select) {
 		if(perPage != null && page != null) {
 			return select.where(getCondition()).limit(perPage)

@@ -67,7 +67,7 @@ public class SiiMain extends AonTemplate2{
 		list.add("fe_emitidas");
 		filterMap.put("sii",list);
 		
-		Date date = new Date(2017-1900, 5, 1);
+		Date date = new Date(2017-1900, 6, 1);
 		list = new LinkedList<>();
 		list.add(Long.toString(date.getTime()));
 		filterMap.put("from",list);
