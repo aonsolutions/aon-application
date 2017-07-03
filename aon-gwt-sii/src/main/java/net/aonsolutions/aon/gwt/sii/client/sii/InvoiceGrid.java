@@ -708,9 +708,18 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
+						VerticalPanel vp = new VerticalPanel();
 						result.getData().stream().forEach(r -> {
-							Window.alert(r.getId() + ": " + r.getName());
+							Label label = new Label(r.getName());
+							String str = r.getId() + "";
+							String color = "red";
+							if(str.equals("200")) color = "green";
+							else if(str.substring(0, 1).equals("2")) color = "orange";
+							label.getElement().getStyle().setColor(color);
+							vp.add(label);
 						});
+						parent.errorPanel.setWidget(vp);
+						parent.openFootPanel();
 						parent.gridContent();
 					}
 					

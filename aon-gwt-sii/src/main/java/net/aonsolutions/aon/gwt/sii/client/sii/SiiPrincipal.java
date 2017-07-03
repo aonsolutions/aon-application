@@ -8,14 +8,22 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.sii.client.ISii;
@@ -28,9 +36,15 @@ public class SiiPrincipal extends Composite{
 	public static final AonGwtIssuesCSS I_CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 	private static final Binder binder = GWT.create(Binder.class);
 	
+	
+	@UiField SplitLayoutPanel splitLayoutPanel;
 	@UiField DockLayoutPanel contentDockLayoutPanel;
 	@UiField SimpleLayoutPanel northContent;
 	@UiField SimpleLayoutPanel content;
+	
+	@UiField MinimizePanel footPanel;
+	@UiField TabLayoutPanel tabLayout; 
+	@UiField ScrollPanel errorPanel;
 	
 	private SiiMain parent;
 	private SiiPrincipal me;
@@ -95,6 +109,26 @@ public class SiiPrincipal extends Composite{
 	
 	public Button getSendAll() {
 		return parent.getSendAll();
+	}
+	
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+	
+	@UiHandler("footPanel")
+	void onFootMaximize(MaximizeEvent event) {
+		openFootPanel();
+	}
+	
+	public void openFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 3);
+		splitLayoutPanel.animate(500);
+	}
+	
+	public void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
 	}
 	
 }
