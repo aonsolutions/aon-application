@@ -1294,6 +1294,23 @@ public class AON {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Stream<Finance> getSiiFinanceStream(String domainName, Integer domainId, String login, FinanceFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getSiiFinanceStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Finance> getSiiFinanceList(String domainName,
+			Integer domainId, String login, FinanceFilter filter) {
+		return getSiiFinanceStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************

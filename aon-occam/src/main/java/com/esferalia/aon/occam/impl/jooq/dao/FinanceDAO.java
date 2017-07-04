@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
@@ -78,7 +80,30 @@ public class FinanceDAO {
 				.stream()
 				.map(new FullFinanceFiller());
 	}
-	
+	public static Stream<Finance> getSiiFinanceStream(AONContext ctx, FinanceFilter filter){
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select(FINANCE.fields())
+			.select(REGISTRY.fields())
+			.select(PAY_METHOD.fields())
+			.select(SCOPE.fields())
+			.select(INVOICE.fields())
+				.from(FINANCE)
+				.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+				.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+				.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+				.where(FINANCE_PROPERTIES.getConditions(filter))
+				.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+				.and(FINANCE.ID.notIn(ctx.getDslContext().select(DATA_RESPONSE.SOURCE_ID)
+						.from(DATA_RESPONSE)
+						.where(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_FINANCE.value()))
+						.and(DATA_RESPONSE.SOURCE_ID.eq(FINANCE.ID))
+				))
+			.fetch()
+			.stream()
+			.map(new FullFinanceFiller());
+	}
 	// ------------------------------------------------------------- FINANCE
 	public static LinkedList<Finance> getInvoiceFinances(AONContext ctx,Integer invoice) {
 		return fetch(ctx,p -> 

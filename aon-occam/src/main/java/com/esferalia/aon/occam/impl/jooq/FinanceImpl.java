@@ -148,5 +148,12 @@ public class FinanceImpl implements IFinance {
 				-> FinanceDAO.getFinanceStream(ctx,filter));
 
 	}
+	
+	@Override
+	public Stream<Finance> getSiiFinanceStream(AONContext ctx, FinanceFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceDAO.getSiiFinanceStream(ctx,filter));
+
+	}
 
 }
