@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MediaType;
@@ -271,56 +272,70 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private RESPUESTAELABORACIONES fillElaborationData(AONContext ctx, List<Elaboration> pendingList) {
 		RESPUESTAELABORACIONES elaboraciones = new RESPUESTAELABORACIONES();
 		pendingList.forEach(elaboration -> {
-			Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-					elaboration.getItem().getId());
-			Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
-			SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
-			Customer customer = null;
-			if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
-				customer = obtainCustomer(ctx, salesDetail.getSales().getId());
-			}
-			RESPUESTAELABORACIONTYPE elaboracion = new RESPUESTAELABORACIONTYPE();
-			elaboracion.setSERIE(elaboration.getSeries());
-			elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
-			elaboracion.setFECHAEMISION(getDateFormatter().format(elaboration.getDate()));
-			elaboracion.setCOMENTARIOS(elaboration.getComments());
-			if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
-				Sales sales = obtainSales(ctx, salesDetail.getSales().getId());
-				elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
-				elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
-				elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
-				elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
-				if(customer!=null && customer.getId()!=null){
-					elaboracion.getDATOSPEDIDOORIGEN().setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
+			try {
+				Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+						elaboration.getItem().getId());
+				Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
+				SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
+				Customer customer = null;
+				if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
+					customer = obtainCustomer(ctx, salesDetail.getSales().getId());
 				}
-				elaboracion.getDATOSPEDIDOORIGEN().setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
-				elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
+				RESPUESTAELABORACIONTYPE elaboracion = new RESPUESTAELABORACIONTYPE();
+				elaboracion.setSERIE(elaboration.getSeries());
+				elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
+				elaboracion.setFECHAEMISION(getDateFormatter().format(elaboration.getDate()));
+				elaboracion.setCOMENTARIOS(elaboration.getComments());
+				if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
+					Sales sales = obtainSales(ctx, salesDetail.getSales().getId());
+					elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
+					elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
+					elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
+					elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
+					if(customer!=null && customer.getId()!=null){
+						elaboracion.getDATOSPEDIDOORIGEN().setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
+					}
+					elaboracion.getDATOSPEDIDOORIGEN().setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
+					elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
+				}
+				elaboracion.setDATOSPRODUCTO(new DATOSPRODUCTOTYPE());
+				elaboracion.getDATOSPRODUCTO().setCODIGO(product.getCode());
+				elaboracion.getDATOSPRODUCTO().setNOMBRE(product.getName());
+				elaboracion.getDATOSPRODUCTO().setDESCRIPCION(item.getDescription());
+				elaboracion.getDATOSPRODUCTO().setDETALLE(item.getDetail());
+				elaboracion.getDATOSPRODUCTO().setDETALLE2(item.getDetail2());
+				elaboracion.getDATOSPRODUCTO().setDETALLE3(item.getDetail3());
+				elaboracion.getDATOSPRODUCTO().setFECHASERIE(null);
+				elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
+				elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
+				elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
+				if(customer!=null && customer.getId()!=null){
+					elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
+				}
+				elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
+				if(elaboration.getItem().getStockUnitTag()!=null){
+					elaboracion.setUNIDADMEDIDA(elaboration.getItem().getStockUnitTag().getName());
+				} else {
+					String errorMsg = "Producto sin unidad de stock:" 
+							+ elaboration.getItem().getProduct().getCode()
+							+ elaboration.getItem().getProduct().getName();
+					errorList.add(errorMsg);
+				}
+				ElaborationStatus elaborationStatus = ElaborationStatus.values()[elaboration.getStatus()];
+				if(elaborationStatus==ElaborationStatus.PENDING){
+					elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PENDIENTE);
+				} else if(elaborationStatus==ElaborationStatus.IN_PROGRESS){
+					elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PROCESANDO);
+				}
+				elaboracion.setFECHACONSULTA(getDateFormatter().format(elaboration.getModificationDate()));
+				elaboracion.setHORACONSULTA(getTimeFormatter().format(elaboration.getModificationDate()));
+				elaboraciones.getDATOSRESPUESTAELABORACIONES().add(elaboracion);
+			} catch (Exception e) {
+				String errorMsg = "No se ha podido procesar la elaboracion " 
+						+ elaboration.getSeries() + "/" + elaboration.getNumber();
+				errorList.add(errorMsg);
+				errorList.add(e.getMessage());
 			}
-			elaboracion.setDATOSPRODUCTO(new DATOSPRODUCTOTYPE());
-			elaboracion.getDATOSPRODUCTO().setCODIGO(product.getCode());
-			elaboracion.getDATOSPRODUCTO().setNOMBRE(product.getName());
-			elaboracion.getDATOSPRODUCTO().setDESCRIPCION(item.getDescription());
-			elaboracion.getDATOSPRODUCTO().setDETALLE(item.getDetail());
-			elaboracion.getDATOSPRODUCTO().setDETALLE2(item.getDetail2());
-			elaboracion.getDATOSPRODUCTO().setDETALLE3(item.getDetail3());
-			elaboracion.getDATOSPRODUCTO().setFECHASERIE(null);
-			elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
-			elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
-			elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
-			if(customer!=null && customer.getId()!=null){
-				elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
-			}
-			elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
-			elaboracion.setUNIDADMEDIDA(elaboration.getItem().getStockUnitTag().getName());
-			ElaborationStatus elaborationStatus = ElaborationStatus.values()[elaboration.getStatus()];
-			if(elaborationStatus==ElaborationStatus.PENDING){
-				elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PENDIENTE);
-			} else if(elaborationStatus==ElaborationStatus.IN_PROGRESS){
-				elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PROCESANDO);
-			}
-			elaboracion.setFECHACONSULTA(getDateFormatter().format(elaboration.getModificationDate()));
-			elaboracion.setHORACONSULTA(getTimeFormatter().format(elaboration.getModificationDate()));
-			elaboraciones.getDATOSRESPUESTAELABORACIONES().add(elaboracion);
 		});
 		elaboraciones.setTOTAL(String.valueOf(pendingList.size()));
 		return elaboraciones;
@@ -337,21 +352,33 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private DATOSCENTROTRABAJOTYPE obtainDATOSCENTROTRABAJO(AONContext ctx,
 			Sales sales) {
 		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, p -> p.getIdProperty().eq(sales.getWorkplace()));
-		RAddress address = RegistryDAO
-				.getRAddressStream(ctx,
-						p -> p.getIdProperty().eq(workplace.getAddress()))
-				.findFirst().orElse(new RAddress());
-
-		DATOSCENTROTRABAJOTYPE datos = new DATOSCENTROTRABAJOTYPE();
-		datos.setDESCRIPCION(workplace.getDescription());
-		datos.setDATOSDIRECCION(new DATOSDIRECCIONTYPE());
-		datos.getDATOSDIRECCION().setDIRECCION(address.getAddress());
-		datos.getDATOSDIRECCION().setDIRECCION2(address.getAddress2());
-		datos.getDATOSDIRECCION().setDIRECCION3(address.getAddress3());
-		datos.getDATOSDIRECCION().setCIUDAD(address.getCity());
-		datos.getDATOSDIRECCION().setCODIGOPOSTAL(address.getZip());
-		datos.getDATOSDIRECCION().setPROVINCIA(null);
-		return datos;
+		if(workplace!=null){
+			RAddress address = RegistryDAO
+					.getRAddressStream(ctx,
+							p -> p.getIdProperty().eq(workplace.getAddress()))
+					.findFirst().orElse(new RAddress());
+			if(address!=null){
+				DATOSCENTROTRABAJOTYPE datos = new DATOSCENTROTRABAJOTYPE();
+				datos.setDESCRIPCION(workplace.getDescription());
+				datos.setDATOSDIRECCION(new DATOSDIRECCIONTYPE());
+				datos.getDATOSDIRECCION().setDIRECCION(address.getAddress());
+				datos.getDATOSDIRECCION().setDIRECCION2(address.getAddress2());
+				datos.getDATOSDIRECCION().setDIRECCION3(address.getAddress3());
+				datos.getDATOSDIRECCION().setCIUDAD(address.getCity());
+				datos.getDATOSDIRECCION().setCODIGOPOSTAL(address.getZip());
+				datos.getDATOSDIRECCION().setPROVINCIA(null);
+				return datos;
+			} else {
+				String errorMsg = "Centro de trabajo sin direccion definida:" 
+						+ workplace.getDescription();
+				errorList.add(errorMsg);
+			}
+		} else {
+			String errorMsg = "Pedido sin centro de trabajo definido:" 
+					+ sales.getSeries() + "/" + sales.getNumber();
+			errorList.add(errorMsg);
+		}
+		return null;
 	}
 
 	private DATOSDIRECCIONTYPE obtainDATOSDIRECCIONENTREGA(AONContext ctx,
@@ -369,13 +396,19 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			datos.setPROVINCIA(null);
 		} else {
 			RAddress address = obtainAddress(ctx, sales.getShippingAddress());
-			GeoZone gz = obtainGeozone(ctx, address.getGeozone());
-			datos.setDIRECCION(address.getAddress());
-			datos.setDIRECCION2(address.getAddress2());
-			datos.setDIRECCION3(address.getAddress3());
-			datos.setCIUDAD(address.getCity());
-			datos.setCODIGOPOSTAL(address.getZip());
-			datos.setPROVINCIA(gz!=null?gz.getName():null);
+			if(address!=null){
+				GeoZone gz = obtainGeozone(ctx, address.getGeozone());
+				datos.setDIRECCION(address.getAddress());
+				datos.setDIRECCION2(address.getAddress2());
+				datos.setDIRECCION3(address.getAddress3());
+				datos.setCIUDAD(address.getCity());
+				datos.setCODIGOPOSTAL(address.getZip());
+				datos.setPROVINCIA(gz!=null?gz.getName():null);
+			} else {
+				String errorMsg = "Pedido sin direccion definida:" 
+						+ sales.getSeries() + "/" + sales.getNumber();
+				errorList.add(errorMsg);
+			}
 		}
 		return datos;
 	}
@@ -390,15 +423,30 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		datos.getDATOSREGISTRO().setDATOSDOCUMENTO(new CIFNIFTYPE());
 		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setPAISDOCUMENTO(new PAISTYPE());
 		if(registry!=null){
-			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setCODIGO(String.valueOf(registry.getDocumentCountry().getIsoCode()));
-			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setDESCRIPCION(registry.getDocumentCountry().getName());
-			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setTIPODOCUMENTO(registry.getDocumentType().name());
+			Country documentCountry = registry.getDocumentCountry();
+			
+			if(documentCountry!=null){
+				datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setCODIGO(String.valueOf(documentCountry.getIsoCode()));
+				datos.getDATOSREGISTRO().getDATOSDOCUMENTO().getPAISDOCUMENTO().setDESCRIPCION(documentCountry.getName());
+				datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setTIPODOCUMENTO(documentCountry.name());
+			} else {
+				String errorMsg = "Pais documento invalido para: (" 
+						+ registry.getDocument() + ")" + registry.getName();
+				errorList.add(errorMsg);
+			}
 			datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setDOCUMENTO(registry.getDocument());
 			datos.getDATOSREGISTRO().setNOMBRE(registry.getName());
 			datos.getDATOSREGISTRO().setALIAS(registry.getAlias());
-			datos.getDATOSREGISTRO().setNACIONALIDAD(new PAISTYPE());
-			datos.getDATOSREGISTRO().getNACIONALIDAD().setCODIGO(String.valueOf(registry.getNationality().getIsoCode()));
-			datos.getDATOSREGISTRO().getNACIONALIDAD().setDESCRIPCION(registry.getNationality().getName());
+			Country nationality = registry.getNationality();
+			if(nationality!=null){
+				datos.getDATOSREGISTRO().setNACIONALIDAD(new PAISTYPE());
+				datos.getDATOSREGISTRO().getNACIONALIDAD().setCODIGO(String.valueOf(nationality.getIsoCode()));
+				datos.getDATOSREGISTRO().getNACIONALIDAD().setDESCRIPCION(nationality.getName());
+			} else {
+				String errorMsg = "Nacionalidad invalida para: (" 
+						+ registry.getDocument() + ")" + registry.getName();
+				errorList.add(errorMsg);
+			}
 		}
 		datos.getDATOSREGISTRO().setTELEFONOFIJO(obtainCustomerPhone(ctx, customer));
 		datos.getDATOSREGISTRO().setTELEFONOMOVIL(obtainCustomerCellular(ctx, customer));
