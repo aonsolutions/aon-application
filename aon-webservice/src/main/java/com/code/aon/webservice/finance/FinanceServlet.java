@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
@@ -200,7 +201,7 @@ public class FinanceServlet extends HttpServlet{
 		} else if("fr_rectificativas".equals(sii)){
 			filter = filter.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()) 
 					.or(f.getTypeProperty().eq(InvoiceType.EXPENSES.value())))
-					.and(f.getRectificationInvoiceProperty().isNull());
+					.and(f.getRectificationTypeProperty().eq(RectificationType.NORMAL_RECTIFIER.value()));
 		} 
     	
     	filter = filter.page(page).perPage(perPage);

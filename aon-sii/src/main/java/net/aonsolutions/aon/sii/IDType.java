@@ -46,7 +46,6 @@ public enum IDType {
 	}
 	
 	public static IDType valueOf(DocumentType documentType) {
-		if(DocumentType.NIF.equals(documentType)) return NIF_IVA;
 		if(DocumentType.PASSPORT.equals(documentType)) return PASAPORTE;
 	
 		return OTRO;
