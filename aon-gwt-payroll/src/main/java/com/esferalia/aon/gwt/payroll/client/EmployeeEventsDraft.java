@@ -19,6 +19,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -385,6 +386,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}
 		});
 		
+		//Descargar Variables actualizadas
+		employeeEventsDraft.initializeDBEventsVariables();
+		
 		//Pintar la tabla
 		employeeEventsDraft.initializeDBCalendar(
 				r -> { fillCellsEvents();
@@ -475,7 +479,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			else
 				eventValue.removeStyleName(style.setBlockVariableStyle());
 			
-			if(null == varList){
+			if(null == varList || varList.isEmpty()){
 				eventValue.setText("-");
 				eventsGrid.setWidget(newRow, col, eventValue);
 				continue;

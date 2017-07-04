@@ -5,6 +5,9 @@ import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
+import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +33,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -72,6 +77,44 @@ public class SQLAgreementDraft {
 			this.id = id;
 		}
 
+	}
+	
+	public static ArrayList<String> getEraseAgreement(Connection connection, Integer agreementId, Date startDate,
+			Date endDate) throws SQLException {
+		
+		ArrayList<String> eraseList = new ArrayList<>();
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record1<String>> recordData = dslContext.select(AGREEMENT_DATA.NAME)
+					.from(AGREEMENT_DATA)
+					.where(AGREEMENT_DATA.AGREEMENT.eq(agreementId))
+					.fetch();
+		
+		for (Record1<String> r : recordData){
+			eraseList.add(r.get(AGREEMENT_DATA.NAME));
+		}
+		
+		//SELECT name FROM agreement_level_data WHERE agreement_level IN (SELECT id FROM agreement_level WHERE agreement=1156)
+		
+		Result<Record1<String>> recordLevel = dslContext.select(AGREEMENT_LEVEL_DATA.NAME)
+				.from(AGREEMENT_LEVEL_DATA)
+				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL
+						.in(dslContext.select(AGREEMENT_LEVEL.ID)
+								.from(AGREEMENT_LEVEL)
+								.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))))
+				.fetch();
+	
+		for (Record1<String> r : recordLevel){
+			eraseList.add(r.get(AGREEMENT_LEVEL_DATA.NAME));
+		}
+		
+		eraseList.add("INICIO_ANTIGUEDAD");
+		eraseList.add("DIAS_MES");
+		eraseList.add("INICIO_CONTRATO");
+		eraseList.add("SALARIO_BASE");
+		eraseList.add("INICIO_NOMINA");
+		
+		return eraseList;
 	}
 
 	public static Set<Payment> getPaymentsAux(Connection connection,

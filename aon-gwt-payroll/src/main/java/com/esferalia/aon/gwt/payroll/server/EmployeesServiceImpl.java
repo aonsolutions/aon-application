@@ -33,6 +33,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.chrono.Era;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -3202,6 +3203,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private Map<String, String> getEmployeeMapEventsVariables(Connection connection, Integer employeeId, Integer agreementId,
 			Date startDate, Date endDate, Integer domainID, Integer parentDomainID) throws SQLException{
 		
+		ArrayList<String> eraseAgreements = new ArrayList<>();
+		
 		try {
 			Set<Payment> payments = SQLEvents.getEmployeePayments(connection,
 					employeeId, startDate, endDate);
@@ -3209,6 +3212,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			if (agreementId != null) {
 				// payments.addAll(SQLAgreementDraft.getPayments(connection,
 				// agreementId, startDate, endDate));
+				
+				eraseAgreements = SQLAgreementDraft.getEraseAgreement(connection,
+						agreementId, startDate, endDate);
+				
 				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection,
 						agreementId, startDate, endDate));
 			}
@@ -3232,6 +3239,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				variables.remove(payment.getName());
 			}
+			
+			// Filter Agreement Variables
+			for (String varName : eraseAgreements)
+				variables.remove(varName);
 			
 //			// Filter ContextVariable
 //			for (ContextVariable ctxVar : ContextVariable.values())

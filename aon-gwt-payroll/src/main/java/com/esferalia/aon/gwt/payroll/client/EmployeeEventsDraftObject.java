@@ -336,6 +336,8 @@ public class EmployeeEventsDraftObject {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {
+				
+				employeeContractVariables.clear();
 
 //				for (Entry<String, String> e : result.entrySet()){
 //					Window.alert("Clave :"+e.getKey()+" Valor :"+e.getValue());
@@ -378,14 +380,19 @@ public class EmployeeEventsDraftObject {
 					String varName = entry.getKey();
 					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
 					
-					for(Quartet<java.sql.Date, java.sql.Date, String, String> quarter : entry.getValue()){
-						Date startDate = DateUtils.copyDateOnly(quarter.getStartDate());
-						Date endDate = DateUtils.copyDateOnly(quarter.getEndDate());
-						Double value = Double.parseDouble(quarter.getExpression());
-						EmployeeEventsVariable var = new EmployeeEventsVariable(startDate, endDate, value);
-						varList.add(var);
+					if(!entry.getValue().isEmpty()){
+						for(Quartet<java.sql.Date, java.sql.Date, String, String> quarter : entry.getValue()){
+							Date startDate = DateUtils.copyDateOnly(quarter.getStartDate());
+							Date endDate = null;
+							if(null != quarter.getEndDate())
+								DateUtils.copyDateOnly(quarter.getEndDate());
+							Double value = Double.parseDouble(quarter.getExpression());
+							EmployeeEventsVariable var = new EmployeeEventsVariable(startDate, endDate, value);
+							varList.add(var);
+						}
+						sortListByStartDate(varList);
 					}
-					sortListByStartDate(varList);
+					
 					mapEventsVar.put(varName, varList);
 				}
 				
