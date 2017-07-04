@@ -8,7 +8,8 @@ public enum DataResponseSource implements Serializable{
 	PROJECT,
 	HOTEL,
 	SII,
-	SII_INVOICE;
+	SII_INVOICE,
+	SII_FINANCE;
 
 	public byte value() {
 		return (byte) this.ordinal();

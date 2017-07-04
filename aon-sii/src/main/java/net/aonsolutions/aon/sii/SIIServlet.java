@@ -29,10 +29,11 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
@@ -97,12 +98,31 @@ public class SIIServlet extends HttpServlet{
 			}
 			try{
 				Object object = new Object();
-				if(option.equals("cobros")){
-					LinkedList<Invoice> invoiceList = AON.getInvoiceList(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids));
-					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidasCobros(domain, login, company, invoiceList, contextList, terceros);
-				} else if(option.equals("pagos")){
-					LinkedList<Invoice> invoiceList = AON.getInvoiceList(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids));
-					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, invoiceList, contextList, terceros);
+				if(option.equals("cp_cobros_pagos")){
+					Integer[] int1 = AON.getInvoiceStream(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids).and(f.getTypeProperty().eq(InvoiceType.SALES.value())))
+						.map(a -> a.getId()).toArray(Integer[]::new);
+					Integer[] int2 = AON.getInvoiceStream(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids).and(f.getTypeProperty().eq(InvoiceType.EXPENSES.value()).or(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))))
+							.map(a -> a.getId()).toArray(Integer[]::new);
+
+					JSONArray array = new JSONArray();
+					if(int1.length > 0){
+						LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(int1));	
+						array = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidasCobros(domain, login, company, financeList,  new LinkedList<>(Arrays.asList(int1)), terceros);
+					} 
+					if(int2.length > 0){
+						LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(int2));
+						JSONArray a = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(int2)), terceros);
+						for(Integer i = 0; i < a.length(); i++){
+							array.put(a.get(i));
+						}
+					}
+					object = array;
+				} else if(option.equals("cp_cobros")){
+					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
+					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidasCobros(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros);
+				} else if(option.equals("cp_pagos")){
+					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
+					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros);
 				} else if(option.equals("intracomunitarias")){
 					String tipoOp = parameters.get("tipo_operacion");
 					if(action.equals("suministro")){

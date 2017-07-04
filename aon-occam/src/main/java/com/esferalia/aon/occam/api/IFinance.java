@@ -23,6 +23,7 @@ public interface IFinance {
 	// 	****************************************
 	
 	Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter);
+	Stream<Finance> getSiiFinanceStream(AONContext ctx, FinanceFilter filter);
 	
 	// 	****************************************
 	// 	**************************** INVOICE ***

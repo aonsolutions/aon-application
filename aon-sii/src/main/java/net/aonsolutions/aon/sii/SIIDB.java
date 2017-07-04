@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -28,7 +29,6 @@ public class SIIDB {
 	}
 	
     protected void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<String> status){
-
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
@@ -123,8 +123,7 @@ public class SIIDB {
     	AON.insertAttach(domain.getName(), domain.getId(), login, responseAttach);
     }
     
-    protected void insertSuministro(Domain domain, String login, HashMap<Integer, SIIDataVariable> invoiceMap, byte[] requestXml, byte[] responseXml ){
-
+    protected void insertSuministroCobrosPagos(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<Finance> financeList, HashMap<Integer, String> status){
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
@@ -135,19 +134,34 @@ public class SIIDB {
     			.setCreationUser(login)
     			.setModificationDate(new Date())
     			.setModificationUser(login));
-    
-    	invoiceMap.keySet().stream().forEach(invoice -> {
-    		DataResponseDetail drd = new DataResponseDetail();
-    		drd.setDomain(domain.getId())
-    			.setDataResponse(dr.getId())
-    			.setDataVariable(invoiceMap.get(invoice).getVariable()) 
-    			.setValue(invoice.toString())
-    			.setCreationDate(new Date())
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login);
-    		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
-    	});
+
+    	
+    	for(Finance f : financeList){
+    		if(!status.get(f.getInvoice().getId()).equals("Incorrecto")){
+    			DataResponse di = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
+					new DataResponse()
+					.setDomain(domain.getId())
+					.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+					.setIssueDate(new Date())
+					.setSource(DataResponseSource.SII_FINANCE)
+					.setSourceId(f.getId())
+					.setCreationDate(new Date())
+					.setCreationUser(login)
+					.setModificationDate(new Date())
+					.setModificationUser(login));
+    		
+    			DataResponseDetail drd2 = new DataResponseDetail();
+    			drd2.setDomain(domain.getId())
+    				.setDataResponse(di.getId())
+    				.setDataVariable("send") 
+    				.setValue(dr.getId().toString())
+    				.setCreationDate(new Date())
+    				.setCreationUser(login)
+    				.setModificationDate(new Date())
+    				.setModificationUser(login);
+    			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
+    		}
+    	}
     	
     	Attach requestAttach = new Attach()
     			.setDomain(domain)
