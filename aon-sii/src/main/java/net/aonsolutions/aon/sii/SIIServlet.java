@@ -103,7 +103,7 @@ public class SIIServlet extends HttpServlet{
 				} else if(option.equals("pagos")){
 					LinkedList<Invoice> invoiceList = AON.getInvoiceList(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids));
 					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, invoiceList, contextList, terceros);
-				} else if(option.equals("intracomunitaria")){
+				} else if(option.equals("intracomunitarias")){
 					String tipoOp = parameters.get("tipo_operacion");
 					if(action.equals("suministro")){
 						object = SIIPost.getInstance(attach.getData(), pass).suministroOperacionesIntracomunitarias(domain, login,company, new LinkedList<>(Arrays.asList(ids)), contextList, tipoOp, terceros);

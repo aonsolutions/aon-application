@@ -624,6 +624,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		}
 		
 		HorizontalPanel hp1 = new HorizontalPanel();
+		hp1.addStyleName(AON.AON_CSS.aonPaddingTop());
 		hp1.add(new Label("Certificado"));
 		ListBox lb = new ListBox();
 		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
