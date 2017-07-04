@@ -91,17 +91,6 @@ public class DeliveryPackages {
 		Map<Integer, List<Integer>> containerMap = loadContainerMap(data);
 		Map<Integer, List<Integer>> linesMap = loadLinesMap(data);
 		
-		
-//		containerMap.keySet().forEach(key->{
-//			linesMap.remove(key);
-//		});
-//		containerMap.values().forEach( list -> {
-//			list.forEach(id->{
-//				linesMap.remove(id);	
-//			});
-//		});
-//		return linesMap;
-		
 		Map<Integer, List<Integer>> level3Map = new LinkedHashMap<>();
 		containerMap.keySet().forEach(key->{
 			containerMap.get(key).forEach( id -> {
@@ -141,11 +130,6 @@ public class DeliveryPackages {
 				String _value = matcher.group(valueGroup).replaceFirst(valuePrefix, "");
 				Integer key = Integer.parseInt(_key);
 				Integer value = Integer.parseInt(_value);
-				
-				// adjust to zero-starting system
-//				--key;
-//				--value;
-				
 				List<Integer> list = new LinkedList<>();
 				list.add(value);
 				if (map.containsKey(key))

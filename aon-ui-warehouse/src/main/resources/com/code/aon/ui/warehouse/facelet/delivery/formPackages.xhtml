@@ -14,7 +14,7 @@
 	<c:set var="linesModel" value="#{delivery.packagesHandler.linesPackageModel}"/>
 	
 	<!-- EDI STRUCTURE VARIABLES -->
-	<c:set var="ediModel" value="#{delivery.packagesHandler.ediStructureModel}"/>
+	<c:set var="ediTree" value="#{delivery.packagesHandler.ediTreeNode}"/>
 
 
 	<!-- *********************** -->
@@ -37,43 +37,11 @@
 	
 	<rich:panelBar styleClass="aon-width-all" selectedPanel="packagesPanel">
 	
-		<!-- ****************************************** -->
-		<!-- TODO move this item to the end of panelBar -->
-		<!-- ****************************************** -->
 		<aon:if test="#{company.ediSupportEnabled}">
 			<rich:panelBarItem id="ediPanel" label="Estructura EDI">
-	            <aon:dataTable id="ediStructureData" var="ediItem" 
-					rendered="#{ediModel.rowCount > 0}" value="#{ediModel}" >
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
-						<f:facet name="header">
-							<aon:outputText value="Bulto" />
-						</f:facet>
-						<aon:outputText value="#{ediItem.line}" />
-					</aon:column>
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
-						<f:facet name="header">
-							<aon:outputText value="Dentro de" />
-						</f:facet>
-						<aon:outputText value="#{ediItem.parent}" />
-					</aon:column>
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<f:facet name="header">
-							<aon:outputText value="Cantidad" />
-						</f:facet>
-						<aon:outputText value="#{ediItem.quantity}" >
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:outputText value=" #{ediItem.detail.item.packUnitsTag.name}"
-							rendered="#{empty ediItem.line}" />
-					</aon:column>
-					<aon:column styleClass="aon-width-auto">
-						<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-							rendered="#{ediItem.level>0}" />
-						<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-							rendered="#{ediItem.level>1}" />
-						<aon:outputText value="#{ediItem.detail.description}" />
-					</aon:column>
-				</aon:dataTable>
+			    <rich:tree style="width:300px" ajaxSubmitSelection="true" switchType="client"
+	                value="#{ediTree}" var="ediItem" ajaxKeys="#{null}">
+	            </rich:tree>
 			</rich:panelBarItem>
 		</aon:if>
 		
