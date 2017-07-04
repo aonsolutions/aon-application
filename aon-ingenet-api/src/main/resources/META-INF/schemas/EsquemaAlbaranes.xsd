@@ -144,6 +144,13 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="DATOS_DIRECCION" type="DATOS_DIRECCION_TYPE"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Datos de la direccion..
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 
