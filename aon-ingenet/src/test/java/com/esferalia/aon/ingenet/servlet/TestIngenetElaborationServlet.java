@@ -36,7 +36,7 @@ public class TestIngenetElaborationServlet {
 				// RECUPERAR
 				// *****************
 				+ "<ACCION>RECUPERAR</ACCION>"
-				+ "<FECHA>20170508</FECHA>"
+//				+ "<FECHA>20170704</FECHA>"
 				+ "<ESTADO>PENDIENTE</ESTADO>"
 				+ "<ESTADO>PROCESANDO</ESTADO>"
 				+ "<ESTADO>FINALIZADO</ESTADO>"
@@ -100,10 +100,10 @@ public class TestIngenetElaborationServlet {
         postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_PASSWORD, "UTF-8"));
         postData.append('=');
         postData.append(URLEncoder.encode(passwd, "UTF-8"));
-//        postData.append('&');
-//        postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_VALUE, "UTF-8"));
-//        postData.append('=');
-//        postData.append(URLEncoder.encode(xml, "UTF-8"));
+        postData.append('&');
+        postData.append(URLEncoder.encode(AbstractIngenetServlet.PARAM_VALUE, "UTF-8"));
+        postData.append('=');
+        postData.append(URLEncoder.encode(xml, "UTF-8"));
         
         byte[] postDataBytes = postData.toString().getBytes(StandardCharsets.UTF_8.name());
 
