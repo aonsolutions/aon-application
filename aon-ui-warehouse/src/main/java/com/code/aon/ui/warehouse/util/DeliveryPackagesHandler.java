@@ -3,13 +3,17 @@ package com.code.aon.ui.warehouse.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.faces.event.ActionEvent;
 
+import org.richfaces.model.TreeNode;
+import org.richfaces.model.TreeNodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +57,15 @@ public class DeliveryPackagesHandler implements Serializable {
 	private SerializableListDataModel packagesContainerModel;
 	
 	private SerializableListDataModel linesPackageModel;
+	
+	private TreeNode<EdiStructureItem> ediRootNode = null;
+
+    public TreeNode<EdiStructureItem> getEdiTreeNode() {
+        if (ediRootNode == null) {
+            loadEdiTree();
+        }
+        return ediRootNode;
+    }
 	
 	
 	public DeliveryPackagesHandler(IController controller) {
@@ -120,6 +133,7 @@ public class DeliveryPackagesHandler implements Serializable {
 		packagesContainerModel = null;
 		linesPackageModel = null;
 		dataAttach = null;
+		ediRootNode = null;
 	}
 	
 	public void onLoadPackages(ActionEvent event) {
@@ -286,7 +300,37 @@ public class DeliveryPackagesHandler implements Serializable {
 				&& item.getSerialDate() == null;
 	}
 	
-	public SerializableListDataModel getEdiStructureModel() {
+	private void loadEdiTree() {
+		ediRootNode = new TreeNodeImpl<>();
+		int counter = 1;
+
+		List<EdiStructureItem> list = getEdiStructureList();
+		TreeNode<EdiStructureItem> parentNode = null, childNode = null, paletNode = null, caseNode = null;
+		for (EdiStructureItem edi : list) {
+			if (parentNode == null || edi.getLevel() == 0) {
+				parentNode = ediRootNode;
+				childNode = paletNode = new TreeNodeImpl<>();
+				counter = edi.getLine();
+			} else if (edi.getLevel() == 1 && edi.getLine() != null) {
+				parentNode = paletNode;
+				childNode = caseNode = new TreeNodeImpl<>();
+				counter = edi.getLine();
+			} else {
+				parentNode = edi.getLevel() == 1 ? paletNode : caseNode;
+				childNode = new TreeNodeImpl<>();
+				Iterator<Entry<Object, TreeNode<EdiStructureItem>>> iterator = parentNode.getChildren();
+				counter = 0;
+				while (iterator.hasNext()) {
+					counter++;
+					iterator.next();
+				}
+			}
+			childNode.setData(edi);
+			parentNode.addChild(new Integer(counter), childNode);
+		}
+	}
+	
+	public List<EdiStructureItem> getEdiStructureList() {
 		List<EdiStructureItem> list = new ArrayList<>();
 		if(detailList!=null && dataAttach!=null && dataAttach.getData()!=null){
 			List<DeliveryDetail> detailList = this.detailList.stream()
@@ -356,8 +400,7 @@ public class DeliveryPackagesHandler implements Serializable {
 			}
 		}
 		
-//		return list;
-		return new SerializableListDataModel(list);
+		return list;
 	}
 	
 	public class EdiStructureItem implements Serializable {
@@ -388,6 +431,16 @@ public class DeliveryPackagesHandler implements Serializable {
 		public DeliveryDetail getDetail() {
 			return detail;
 		}
+		@Override
+		public String toString() {
+			return quantity + " "
+					+ (line==null?detail.getItem().getPackUnitsTag().getName() + " / ":" x ") 
+					+ detail.getDescription();
+		}
+		
 	}
+	
+    
+	
 	
 }
