@@ -310,25 +310,57 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	private Delivery fillDelivery(AONContext ctx, ALBARANTYPE albaran, Delivery delivery) {
 		LinkedList<Scope> scopes = SecurityDAO.getDomainScopes(ctx);
 		
-		String series = "IGN"+new SimpleDateFormat("yy").format(new Date());
-		
-		int number = WarehouseDAO
-				.getDeliveryList(
-						ctx,
-						f -> f.getDomainProperty().eq(ctx.getDomainId())
-								.and(f.getSeriesProperty().eq(series)))
-				.stream()
-				.sorted((d1, d2) -> Integer.compare(d2.getNumber(),
-						d1.getNumber())).findFirst().orElse(new Delivery())
-				.getNumber();
 		Workplace wp = WorkplaceDAO.getWorkplace(ctx, f -> f
 				.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getActiveProperty().eq((byte)1)));
 		
 		delivery.setDomain(ctx.getDomainId());
 		delivery.setProject(new Project());
+		
+		String series = albaran.getSERIE();
+		int number = 0;
+		try {
+			number = Integer.parseInt(albaran.getNUMERO());
+		} catch (Exception e) {
+			String errorMsg = "Error desconocido comprobando el numero"
+					+ albaran.getNUMERO() + ": " + e.getMessage();
+			addError(albaran, errorMsg);
+		}
+		
+		long deliveryCount = 0;
+		try {
+			deliveryCount = WarehouseDAO
+					.getDeliveryList(
+							ctx,
+							f -> f.getDomainProperty().eq(ctx.getDomainId())
+									.and(f.getSeriesProperty().eq(albaran.getSERIE()))
+									.and(f.getNumberProperty().eq(Integer.parseInt(albaran.getNUMERO()))))
+					.stream().count();
+		} catch (Exception e) {
+			String errorMsg = "Error desconocido comprobando si existe " 
+					+ albaran.getSERIE() + "/" + albaran.getNUMERO();
+			addError(albaran, errorMsg);
+		}
+		if(deliveryCount>0 || number==0){
+			String errorMsg = "El albaran " + albaran.getSERIE()
+					+ "/" + albaran.getNUMERO() + " ya existe: "
+					+ ". Se asigna numeracion automatica al nuevo albaran";
+			addError(albaran, errorMsg);
+			series = "IGN"+new SimpleDateFormat("yy").format(new Date());
+			number = WarehouseDAO
+					.getDeliveryList(
+							ctx,
+							f -> f.getDomainProperty().eq(ctx.getDomainId())
+							.and(f.getSeriesProperty().eq(albaran.getSERIE())))
+					.stream()
+					.sorted((d1, d2) -> Integer.compare(d2.getNumber(),
+							d1.getNumber())).findFirst().orElse(new Delivery())
+					.getNumber();
+			++number;
+		}
 		delivery.setSeries(series);
-		delivery.setNumber(++number);
+		delivery.setNumber(number);
+		
 		Customer customer = obtainCustomer(ctx, albaran.getDATOSCLIENTE());
 		if (customer != null && customer.getId() != null) {
 			delivery.setCustomer(customer.getId());
