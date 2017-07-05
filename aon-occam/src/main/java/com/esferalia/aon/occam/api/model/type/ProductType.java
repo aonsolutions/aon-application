@@ -10,7 +10,8 @@ public enum ProductType implements Serializable {
 	EXTERNAL_WORK("Trabajo Externo"),
 	EXPENSE("Gasto"),
 	PREPAYMENT("Suplidos"),
-	INCREASE("Recargo");
+	INCREASE("Recargo"),
+	AUXILIARY("Auxiliar");
 
 	String name;
 	private ProductType(String name) {
