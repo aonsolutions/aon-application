@@ -62,7 +62,9 @@ public class FilterPanel extends Composite {
     	HorizontalPanel hp =(HorizontalPanel) panel.getWidget(0);
     	for(Integer i = 2 ; i < hp.getWidgetCount() ; i++){
     		CheckBox cb = (CheckBox) hp.getWidget(i);
-    		cb.setVisible(bool);
+    		if(i == 2 || i == 5) cb.setVisible(true);
+    		else if(i == 7 || i == 8) cb.setVisible(!bool);
+    		else cb.setVisible(bool);
     	}
     }
     
@@ -168,6 +170,38 @@ public class FilterPanel extends Composite {
 			}
 		});
 		datePanel.add(cb5);
+		
+		CheckBox cb6 = new CheckBox("Pago Parcial");
+		cb5.setVisible(false);
+		if(parent.getFilterMap().containsKey("sent")){
+			cb6.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
+		}
+		cb6.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(cb6.getValue().toString());
+				onChange("partial", list);				
+			}
+		});
+		datePanel.add(cb6);
+		
+		CheckBox cb7 = new CheckBox("Pagado");
+		cb7.setVisible(false);
+		if(parent.getFilterMap().containsKey("sent")){
+			cb7.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
+		}
+		cb7.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(cb7.getValue().toString());
+				onChange("paid", list);				
+			}
+		});
+		datePanel.add(cb7);
 		return datePanel;
 	}
 }

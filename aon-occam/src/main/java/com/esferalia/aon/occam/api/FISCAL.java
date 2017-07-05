@@ -1761,11 +1761,11 @@ public class FISCAL {
 		}
 	}
 	
-	public static Stream<VatContext> getSiiVatContext(String domainName, int domainId, String user, VatParams params) {
+	public static Stream<VatContext> getSiiVatContext(String domainName, int domainId, String user, VatParams params, String sii) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFiscal().getSiiVatContext(ctx, params);
+			return getFiscal().getSiiVatContext(ctx, params, sii);
 		} finally {
 			if (ctx != null)
 				ctx.close();

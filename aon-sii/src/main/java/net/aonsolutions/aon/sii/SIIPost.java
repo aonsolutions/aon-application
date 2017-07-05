@@ -36,6 +36,7 @@ import net.aonsolutions.aeat.sii.BajaLRDetOperacionIntracomunitaria;
 import net.aonsolutions.aeat.sii.BajaLRFacturasEmitidas;
 import net.aonsolutions.aeat.sii.BajaLRFacturasRecibidas;
 import net.aonsolutions.aeat.sii.EstadoRegistroType;
+import net.aonsolutions.aeat.sii.RespuestaComunitariaType;
 import net.aonsolutions.aeat.sii.RespuestaExpedidaCobroType;
 import net.aonsolutions.aeat.sii.RespuestaExpedidaType;
 import net.aonsolutions.aeat.sii.RespuestaLRAgenciasViajesType;
@@ -139,7 +140,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
        
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, false);
     	}
     	if(newList.size() > 0){
     		SuministroLRFacturasEmitidas suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);     	
@@ -158,7 +159,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
        
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, true);
     	}
         return array;
 	}
@@ -247,7 +248,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministroMod);
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, false);
     	}
     	
     	if(newList.size()>0){
@@ -267,7 +268,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministroNew);
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, true);
     	}
         return array;
     }
@@ -374,21 +375,52 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
     protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS);
-    	SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp);     	
     	
-    	JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
-    	RespuestaLROComunitariasType respuesta = response.getValue();
-    	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    	Boolean aceptadoConErrores = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.ACEPTADO_CON_ERRORES);
+    	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
+    			|| "AceptadoConErrores".equals(v.getSiiStatus())
+    			|| "Anulada".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
+    	
+    	LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
+    			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
+    	
+		JSONArray array = new JSONArray();
 
-    	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
-    	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
-    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_OPERACIONES_INTRACOMUNITARIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_OPERACIONES_INTRACOMUNITARIAS_ERROR);
+    	if(newList.size() > 0){
+    		SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros);     	
     	
-    	JSONArray array = new JSONArray();
-    	array.put(json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
-    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
-    			respuesta.getRespuestaLinea().get(0).getIDFactura().getNumSerieFacturaEmisor()));
+    		JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
+    		RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    		byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, true, true);
+    	
+    		for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	}    	
+    	if(modList.size() > 0){
+    		SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros);     	
+    	
+    		JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
+    		RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    		byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, true, true);
+    	
+    		for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	}
     	return array;
     }
     

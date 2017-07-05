@@ -1112,11 +1112,11 @@ public class AON {
 	}
 	
 	public static Stream<Invoice> getSiiInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter
-			, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada){
+			, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores, incorrecta, anulada);
+			return getFinance().getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores, incorrecta, anulada, sii);
 		} finally {
 			if (ctx != null)
 				ctx.close();

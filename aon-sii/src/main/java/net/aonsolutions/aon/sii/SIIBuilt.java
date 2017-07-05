@@ -1142,11 +1142,11 @@ public class SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp) {
+	protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros) {
 		SuministroLRDetOperacionIntracomunitaria suministro = new SuministroLRDetOperacionIntracomunitaria();
 		
 		// CABECERA
-		suministro.setCabecera(cabecera(company));
+		suministro.setCabecera(cabecera(company, mod, terceros));
 		
 		// BODY
 		invoiceList.stream().forEach(invoice -> {
