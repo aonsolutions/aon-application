@@ -82,7 +82,7 @@ public class SIIServlet extends HttpServlet{
 			params.setFromDate(AonDateUtils.addDays(new Date(), -7));
 			params.setToDate(AonDateUtils.addDays(new Date(), 1));
 			params.setInvoices(ids);//invoiceList.stream().map(i -> i.getId()).toArray(Integer[]::new));
-			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params)
+			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
 					.collect(Collectors.toCollection(LinkedList::new));
 		
 			// TODO dividir invoiceList en las demas listas.

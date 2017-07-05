@@ -118,8 +118,11 @@ public class InvoiceDAO {
 				.fetch().stream().map(new FullInvoiceFiller());
 	}
 	
-	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada){
-		if(pending){
+	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
+		Boolean intracomunitaria = "intracomunitarias".equals(sii);
+		Boolean cp = "cp_cobros_pagos".equals(sii) || "cp_cobros".equals(sii) || "cp_pagos".equals(sii);
+		
+		if(pending && !intracomunitaria && !cp){
 			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Pendiente");
 			if(aceptada) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Correcto"));
 			if(aceptadaErrores) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("AceptadoConErrores"));
@@ -145,14 +148,18 @@ public class InvoiceDAO {
 					.fetch().stream().map(new SiiInvoiceFiller());
 
 		} else {
-			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente");
-			if(aceptada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
-			if(aceptadaErrores) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadoConErrores"));
+			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq(""); 
+			if(pending) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente"));
+			if(aceptada) c = cp ? c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Parcial")) : c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
+			if(aceptadaErrores) c = cp ? c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pagado")) : c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadoConErrores"));
 			if(incorrecta) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecto"));
 			if(anulada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
+			String status = "status";
+			if(intracomunitaria)status =  "status_intra";
+			else if(cp) status = "status_cp";
 			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 					.join(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
-					.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
+					.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(status).and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
 						.and(c))
 					.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
 				, filter)

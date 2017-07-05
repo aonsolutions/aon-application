@@ -109,6 +109,8 @@ public class FinanceServlet extends HttpServlet{
     		Boolean sent_error = req.getParameterMap().containsKey("sent_error") ? req.getParameter("sent_error").equalsIgnoreCase("true") : false;
     		Boolean error = req.getParameterMap().containsKey("error") ? req.getParameter("error").equalsIgnoreCase("true") : false;
     		Boolean anulada = req.getParameterMap().containsKey("anulada") ? req.getParameter("anulada").equalsIgnoreCase("true") : false;
+    		Boolean partial = req.getParameterMap().containsKey("partial") ? req.getParameter("partial").equalsIgnoreCase("true") : false;
+    		Boolean paid = req.getParameterMap().containsKey("paid") ? req.getParameter("paid").equalsIgnoreCase("true") : false;
     		
     		if("fe_emitidas".equals(req.getParameter("sii"))
     			|| "fe_generales".equals(req.getParameter("sii"))
@@ -131,12 +133,12 @@ public class FinanceServlet extends HttpServlet{
     		} else if("bienes".equals(req.getParameter("sii"))){
     			return getInvoiceBienesList(domain, login, page, perPage);
     		} else if("intracomunitarias".equals(req.getParameter("sii"))){
-    			return getInvoiceIntracomunitariasList(domain, login, page, perPage, from);
+    			return getInvoiceIntracomunitariasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii"));
     		} else if("cp_cobros_pagos".equals(req.getParameter("sii"))
     					|| "cp_cobros".equals(req.getParameter("sii"))
     					|| "cp_pagos".equals(req.getParameter("sii"))
     				){
-    			return getInvoiceCobrosPagosList(domain, login, page, perPage, from, req.getParameter("sii"));
+    			return getInvoiceCobrosPagosList(domain, login, page, perPage, from, pending, error, partial, paid, req.getParameter("sii"));
     		}
     	}
     	JSONArray array = new JSONArray();
@@ -152,7 +154,7 @@ public class FinanceServlet extends HttpServlet{
  
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login, 	
     			f -> iFilterEmitidas(domain, login, f, from, page, perPage, sii)   			
-    			,pending, sent, sent_error, error, anulada)
+    			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm -> {
     			JSONObject json = ToJSON.invoiceToJSON(rm);
     			json.put("sii_sent", true);
@@ -213,7 +215,7 @@ public class FinanceServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> iFilterRecibidas(domain, login, f, from, page, perPage, sii)
-    			,pending, sent, sent_error, error, anulada)
+    			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
     			json.put("sii_sent", true);
@@ -236,14 +238,15 @@ public class FinanceServlet extends HttpServlet{
     	return array;
 	}
 	
-	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage, Date from){
+	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage, Date from
+			,Boolean pending, Boolean sent, Boolean sent_error, Boolean error, Boolean anulada, String sii){
 		JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTransactionProperty().eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
 				.and(f.getTaxDateProperty().ge(from))
 				.page(page).perPage(perPage)
-    			,false, true, true, false, false)
+    			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
     			json.put("sii_sent", true);
@@ -269,11 +272,11 @@ public class FinanceServlet extends HttpServlet{
 			return filter;
 	    }
 	
-	private JSONArray getInvoiceCobrosPagosList(Domain domain, String login, Integer page, Integer perPage, Date from, String sii){
+	private JSONArray getInvoiceCobrosPagosList(Domain domain, String login, Integer page, Integer perPage, Date from, Boolean pending,Boolean error, Boolean partial, Boolean paid, String sii){
 		JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
     			f ->  iFilterCobrosPagos(domain, login, f, from, page, perPage, sii)
-    			,false, true, true, false, false)
+    			,pending, partial, paid, error, false, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
     			json.put("sii_sent", true);

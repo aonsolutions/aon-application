@@ -236,6 +236,6 @@ public interface IFiscal {
 	public void deleteMod2002016(AONContext ctx, int id);
 	public String dumpAEATMod2002016(Mod2002016 mod200);
 	public Mod2002016 importMod2002015(AONContext ctx, Mod2002016 mod200);
-	Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params);
+	Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params, String sii);
 
 }

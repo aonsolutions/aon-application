@@ -325,7 +325,7 @@ public class SiiMain extends AonTemplate2{
 				getFilterMap().put("sii",list);
 				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
-				fp.setCheckVisible(false);
+				fp.setCheckVisible(true);
 				fp.setTitle("Operaciones Intracomunitarias");
 				p.gridContent();
 			}
