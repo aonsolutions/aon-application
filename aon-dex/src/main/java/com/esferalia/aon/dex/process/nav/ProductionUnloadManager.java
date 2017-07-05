@@ -81,42 +81,45 @@ public class ProductionUnloadManager implements IDataLoadConstants {
 			}
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				String production = rs.getString(PRODUCTION);
-				if (produccion == null || !produccion.getKey().equals(production)) {
-					produccion = factory.createProduccion();
-					produccion.setKey(production);
-					produccion.setIdentificativoHotel(rs.getString(HOTEL));
-					produccion.setFechaProduccion(formatter.format(rs.getDate(ISSUE_DATE)));
-					produccion.setBandejaImportesProduccion(factory.createBandejaImportesProduccionList());
-					produccion.setBandejaDatosEstadisticos(factory.createBandejaDatosEstadisticosList());
-					produccionList.getProduccion().add(produccion);
-					line = 0;
-					productionMap.put(produccion.getKey(), rs.getString(CODE));
-				}
+				String variable = rs.getString(VARIABLE);
+				if (variable != null) {
+					String production = rs.getString(PRODUCTION);
+					if (produccion == null || !produccion.getKey().equals(production)) {
+						produccion = factory.createProduccion();
+						produccion.setKey(production);
+						produccion.setIdentificativoHotel(rs.getString(HOTEL));
+						produccion.setFechaProduccion(formatter.format(rs.getDate(ISSUE_DATE)));
+						produccion.setBandejaImportesProduccion(factory.createBandejaImportesProduccionList());
+						produccion.setBandejaDatosEstadisticos(factory.createBandejaDatosEstadisticosList());
+						produccionList.getProduccion().add(produccion);
+						line = 0;
+						productionMap.put(produccion.getKey(), rs.getString(CODE));
+					}
 
-				String concept = rs.getString(VARIABLE).contains(".") ? StringUtils.substringBefore(rs.getString(VARIABLE), ".") : rs.getString(VARIABLE);
-				String subconcept = rs.getString(VARIABLE).contains(".") ? StringUtils.substringAfter(rs.getString(VARIABLE), ".") : null;
-				if (StringUtils.startsWithAny(concept, productionConcepts)) {
-					BandejaImportesProduccion importes = factory.createBandejaImportesProduccion();
-					importes.setKey(rs.getString(DETAIL));
-					importes.setClave(rs.getString(DETAIL));
-					importes.setIdentificativoHotel(produccion.getIdentificativoHotel());
-					importes.setFechaProduccion(produccion.getFechaProduccion());
-					importes.setConcepto(concept);
-					importes.setSubconcepto(subconcept);
-					importes.setCantidad(BigDecimal.valueOf(1));
-					importes.setDescripcion(rs.getString(VARIABLE));
-					importes.setImporte(rs.getBigDecimal(VALUE));
-					produccion.getBandejaImportesProduccion().getBandejaImportesProduccion().add(importes);
-				} else {
-					BandejaDatosEstadisticos datos = factory.createBandejaDatosEstadisticos();
-					datos.setKey(rs.getString(DETAIL));
-					datos.setIdentificativoHotel(produccion.getIdentificativoHotel());
-					datos.setFechaProduccion(produccion.getFechaProduccion());
-					datos.setCodigoEstadistico(concept);
-					datos.setValor(rs.getBigDecimal(VALUE));
-					datos.setNoLinea(++line);
-					produccion.getBandejaDatosEstadisticos().getBandejaDatosEstadisticos().add(datos);
+					String concept = variable.contains(".") ? StringUtils.substringBefore(variable, ".") : variable;
+					String subconcept = variable.contains(".") ? StringUtils.substringAfter(variable, ".") : null;
+					if (StringUtils.startsWithAny(concept, productionConcepts)) {
+						BandejaImportesProduccion importes = factory.createBandejaImportesProduccion();
+						importes.setKey(rs.getString(DETAIL));
+						importes.setClave(rs.getString(DETAIL));
+						importes.setIdentificativoHotel(produccion.getIdentificativoHotel());
+						importes.setFechaProduccion(produccion.getFechaProduccion());
+						importes.setConcepto(concept);
+						importes.setSubconcepto(subconcept);
+						importes.setCantidad(BigDecimal.valueOf(1));
+						importes.setDescripcion(variable);
+						importes.setImporte(rs.getBigDecimal(VALUE));
+						produccion.getBandejaImportesProduccion().getBandejaImportesProduccion().add(importes);
+					} else {
+						BandejaDatosEstadisticos datos = factory.createBandejaDatosEstadisticos();
+						datos.setKey(rs.getString(DETAIL));
+						datos.setIdentificativoHotel(produccion.getIdentificativoHotel());
+						datos.setFechaProduccion(produccion.getFechaProduccion());
+						datos.setCodigoEstadistico(concept);
+						datos.setValor(rs.getBigDecimal(VALUE));
+						datos.setNoLinea(++line);
+						produccion.getBandejaDatosEstadisticos().getBandejaDatosEstadisticos().add(datos);
+					}
 				}
 			}
 
