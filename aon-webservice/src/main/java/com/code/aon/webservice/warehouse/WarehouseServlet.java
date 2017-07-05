@@ -381,13 +381,13 @@ public class WarehouseServlet extends HttpServlet{
 			carrierPacking.setStatus(CarrierPackingStatus.values()[json.getInt(MSG.STATUS)]);
 		}
 		if(json.opt(MSG.ISSUE_DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.ISSUE_DATE))){
-			carrierPacking.setIssueDate(new Date(json.getLong(MSG.ISSUE_DATE)));
+			carrierPacking.setIssueDate(AonDateUtils.addHours(new Date(json.getLong(MSG.ISSUE_DATE)),2));
 		}
 		if(json.opt(MSG.CARRIER) != null && !MSG.EMPTY.equals(json.opt(MSG.CARRIER))){
 			carrierPacking.setCarrier(json.getInt(MSG.CARRIER));
 		}
 		if(json.opt(MSG.DELIVERY_DATE) != null && !MSG.EMPTY.equals(json.opt(MSG.DELIVERY_DATE))){
-			carrierPacking.setDeliveryDate(new Date(json.getLong(MSG.DELIVERY_DATE)));
+			carrierPacking.setDeliveryDate(AonDateUtils.addHours(new Date(json.getLong(MSG.DELIVERY_DATE)), 2));
 		}
 		if(json.opt(MSG.CARRIER_REFERENCE) != null){
 			carrierPacking.setCarrierReference(json.getString(MSG.CARRIER_REFERENCE));
