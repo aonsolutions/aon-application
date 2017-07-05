@@ -23,13 +23,15 @@
 		.tableStyle tr {
 			text-align: center;
 			border-bottom: 1px solid #ddd;
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 11px;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.firstHeadStyle {
 			width: 16em;
 			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 			padding: 3px;
 		}
 
@@ -38,17 +40,23 @@
 			padding-bottom: 15px;
 			visibility: hidden;
 			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.cabeceraStyle {
 			width: 5.5em;
 			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.cabeceraStyleHide {
 			width: 5.5em;
 			visibility:hidden;
 			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.oddRowStyle {
@@ -76,6 +84,8 @@
 			text-align: center;
 			border: none;
 			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.cellOddFormat{
@@ -85,6 +95,8 @@
 			text-align: center;
 			border: none;
 			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.isSelectedCell{
@@ -96,14 +108,20 @@
 			text-align: center;
 			border: none;
 			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.onChange {
 			background-color: rgba(255, 255, 0, 0.38);
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.setBlockVariableStyle{
 			color: #aaa;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		/* ESTILOS CAMBIO DE AÑO */

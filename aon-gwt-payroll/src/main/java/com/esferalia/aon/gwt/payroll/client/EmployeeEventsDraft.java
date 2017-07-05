@@ -19,7 +19,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -133,6 +132,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
+		//Poner check al tipo de visualizacion
+		showYearMenuItem.setStyleName("aon-MenuItemCheckYes", true);
+		
 		//Boton para añadir un nuevo valor
 		addNewValueMenuItem.setScheduledCommand(new Command() {
 			@Override
@@ -141,40 +143,25 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}
 		});
 		
-		showYearMenuItem.setStyleName("aon-MenuItemCheckYes", true);
-		
 		//Boton para analizar que variables se quieren mostrar
 		showVariablesMenuItem.setScheduledCommand(new Command() {
 			@Override
 			public void execute() {
 				createShowVariablesDialog();
-				showVariablesDialog.center();
 				showVariablesDialog.open();
 				showVariablesDialog.center();
 			}
 
 			private void createShowVariablesDialog() {
 				showVariablesContent.clear();
-				ArrayList<String> list = new ArrayList<String>();
-				
-				Storage storage = Storage.getLocalStorageIfSupported();
-				
-				if (null != storage){
-					String stringList = storage.getItem("NO_MOSTRAR");
-					if(null != stringList){
-						String[] arrayList = stringList.split(",");
-						
-						for(int i = 0; i < arrayList.length; i++)
-							list.add(arrayList[i]);
-					}
-					
-				}
+				ArrayList<String> list = getVariablesLocalStorage();
 					
 				for(String var : employeeEventsDraft.getEmployeeContractVariables()){
 					FlowPanel panel = new FlowPanel();
 					PaperCheckbox checkBox = new PaperCheckbox();
 					IronLabel label = new IronLabel();
 					label.getElement().setInnerText(var);
+					
 					if(list.contains(var))
 						checkBox.setChecked(false);
 					else
@@ -188,6 +175,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					showVariablesMap.put(var, checkBox);
 				}
 			}
+
 		});
 		
 		//#ifndef env.SNAPSHOT
@@ -199,6 +187,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 	}
 
+	
 	private void initializeBlockVariablesList() {
 		this.blockVariableList = new ArrayList<String>();
 		this.blockVariableList.add("DIAS_TRABAJADOS");
@@ -218,6 +207,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiHandler("showVariablesDialogOk")
 	public void onShowVariableDialogOkClick(ClickEvent event) {
 		ArrayList<String> variablesLocalStore = new ArrayList<String>();
+		
 		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
 			 PaperCheckbox check = showVariablesMap.get(var);
 			 Integer row = calculateRowByVariableName(var);
@@ -229,19 +219,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			 }
 		}
 		
-		Storage storage = Storage.getLocalStorageIfSupported();
-		
-		if(null != storage){
-			String noShowVar = "";
-			for(String var : variablesLocalStore)
-				noShowVar += var+",";
-			
-			storage.removeItem("NO_MOSTRAR");
-			storage.setItem("NO_MOSTRAR", noShowVar);
-		}
+		setVariablesLocalStorage(variablesLocalStore);
 	}
 
-	
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
 		openNewValueDialog();
@@ -250,27 +230,26 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			@Override
 			public void onKeyDown(KeyDownEvent key) {
 				if(key.getNativeKeyCode() == KeyCodes.KEY_ENTER)
-					newValueOk();
-				
+					newValueOk();	
 			}
 
 			private void newValueOk() {
-				addValueSelectedPositions(newValueBox.getValue());
-				newValueBox.setText("");
-				eraseSelectedPositions();
-				newValueDialog.close();
-				changeYear(0);
+				setNewValue(newValueBox.getValue());
 			}
 		});
 	}
-	
+
 	@UiHandler("newValueDialogOk")
 	public void onNewValueDialogOkClick(ClickEvent event) {
-		addValueSelectedPositions(newValueBox.getValue());
+		setNewValue(newValueBox.getValue());
+	}
+	
+	protected void setNewValue(Double value) {
+		addValueSelectedPositions(value);
 		newValueBox.setText("");
 		eraseSelectedPositions();
 		newValueDialog.close();
-		changeYear(0);
+		changeYear(0);	
 	}
 	
 	@UiHandler("saveButton")
@@ -294,7 +273,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiHandler("eventsGrid")
 	public void onEventsGridClick(ClickEvent event) {
-		
+		//Desactivar funcion predeterminada
 		event.preventDefault();
 		
 		int row = eventsGrid.getCellForEvent(event).getRowIndex();
@@ -344,23 +323,26 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		this.employeeEventsDraft.undoManager.undo();
-		clearEventsGrid();
-		fillCellsEvents();
+		refreshWindow();
 	}
 
 	@UiHandler("redoButton")
 	void onRedoButtonClick(ClickEvent event) {
 		this.employeeEventsDraft.undoManager.redo();
-		clearEventsGrid();
-		fillCellsEvents();
+		refreshWindow();
 	}
 	
 	@UiHandler("undoAllButton")
 	void onUndoAllButtonClick(ClickEvent event) {
 		while (this.employeeEventsDraft.undoManager.canUndo())
 			this.employeeEventsDraft.undoManager.undo();
+		refreshWindow();
+	}
+	
+	private void refreshWindow() {
 		clearEventsGrid();
-		fillCellsEvents();
+		changeYear(0);
+		//fillCellsEvents();	
 	}
 
 	/**
@@ -624,5 +606,43 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		    menu.show();
 		}
 	}
+	
+	/**
+	 * GETTER Y SETTER LOCAL STORAGE 
+	 */
+	
+	protected ArrayList<String> getVariablesLocalStorage() {
+		ArrayList<String> list = new ArrayList<String>();
+		
+		Storage storage = Storage.getLocalStorageIfSupported();
+		
+		if (null != storage){
+			String stringList = storage.getItem("NO_MOSTRAR");
+			if(null != stringList){
+				String[] arrayList = stringList.split(",");
+				
+				for(int i = 0; i < arrayList.length; i++)
+					list.add(arrayList[i]);
+			}
+			
+		}
+		
+		return list;
+	}
+	
+	private void setVariablesLocalStorage(ArrayList<String> variablesLocalStore) {
+		Storage storage = Storage.getLocalStorageIfSupported();
+		
+		if(null != storage){
+			String noShowVar = "";
+			for(String var : variablesLocalStore)
+				noShowVar += var+",";
+			
+			storage.removeItem("NO_MOSTRAR");
+			storage.setItem("NO_MOSTRAR", noShowVar);
+		}
+	}
+
+
 
 }

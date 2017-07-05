@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -129,22 +128,24 @@ public class EmployeeEventsDraftObject {
 	private Map<String, ArrayList<EmployeeEventsVariable>> mapEventsVar;
 	private Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar;
 	private Integer idEmployee;
+	private Date startContractDate;
+	private Date endContractDate;
 	private EmployeesServiceAsync employeesService;
 	public UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObjectData employeeCalendar;
 	
-	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO (AHORA SE CREA ALEATORIAMENTE)
+	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
 	private ArrayList<String> employeeContractVariables;
-	private ArrayList<String> variablesList;
 	
-	public EmployeeEventsDraftObject(Integer idEmployee, EmployeesServiceAsync employeesService) {
+	public EmployeeEventsDraftObject(Integer idEmployee, Date startContractDate, Date endContractDate, EmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
 		this.draftMapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
 		
 		this.idEmployee = idEmployee;
+		this.startContractDate = startContractDate;
+		this.endContractDate = endContractDate;
 		this.employeesService = employeesService;
 		
-		this.variablesList = new ArrayList<String>();
 		this.employeeContractVariables = new ArrayList<String>();
 		
 		this.undoManager = new UndoManager<>();
@@ -157,12 +158,8 @@ public class EmployeeEventsDraftObject {
 	 * GETTERS / SETTERS
 	 */
 	
-	public ArrayList<String> getEmployeeContractVariables() {
-		return this.employeeContractVariables;
-	}
-	
-	public boolean isContractVariable(String var){
-		return this.employeeContractVariables.contains(var);
+	public Integer getIdEmployee() {
+		return idEmployee;
 	}
 	
 	public void setEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
@@ -171,6 +168,14 @@ public class EmployeeEventsDraftObject {
 	
 	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
 		return this.employeeCalendar;
+	}
+	
+	public ArrayList<String> getEmployeeContractVariables() {
+		return this.employeeContractVariables;
+	}
+	
+	public boolean isContractVariable(String var){
+		return this.employeeContractVariables.contains(var);
 	}
 	
 	public Map<String, ArrayList<EmployeeEventsVariable>> getMapEventsVar() {
@@ -187,10 +192,6 @@ public class EmployeeEventsDraftObject {
 
 	public void setDraftMapEventsVar(Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar) {
 		this.draftMapEventsVar = draftMapEventsVar;
-	}
-
-	public Integer getIdEmployee() {
-		return idEmployee;
 	}
 
 	
@@ -230,12 +231,15 @@ public class EmployeeEventsDraftObject {
 	@SuppressWarnings("deprecation")
 	public void setValueByMonth(String variableName, Integer month, Double newValue, Integer year) {
 		EmployeeEventsVariable oldVar = null;
+		
 		for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
 			if(month == e.getStartDate().getMonth())
 				oldVar = e;
 		}
 		
 		EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue, year);
+		draftMapEventsVar.get(variableName).remove(oldVar);
+		draftMapEventsVar.get(variableName).add(newVar);
 		
 		this.undoManager.add(new SetVariableEdit(oldVar, newVar, variableName));
 	}
@@ -332,16 +336,21 @@ public class EmployeeEventsDraftObject {
 	
 	public void initializeDBEventsVariables() {
 		
-		employeesService.getEmployeeEventsVariables(idEmployee, new Date(117, 0, 1), new Date(117, 11, 31), new AsyncCallback<Map<String,String>>() {
+		Date endDateGetVariables;
+		
+		if(null != this.endContractDate)
+			endDateGetVariables = DateUtils.copyDateOnly(this.endContractDate);
+		else
+			endDateGetVariables = new Date(217, 11, 31);
+		
+		
+		employeesService.getEmployeeEventsVariables(idEmployee, this.startContractDate, endDateGetVariables, 
+				new AsyncCallback<Map<String,String>>() {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {
 				
 				employeeContractVariables.clear();
-
-//				for (Entry<String, String> e : result.entrySet()){
-//					Window.alert("Clave :"+e.getKey()+" Valor :"+e.getValue());
-//				}
 				
 				employeeContractVariables.add("DIAS_VACACIONES");
 				employeeContractVariables.add("DIAS_AUSENCIA");
@@ -352,8 +361,7 @@ public class EmployeeEventsDraftObject {
 				
 				for (String k : result.keySet()){
 					employeeContractVariables.add(k);
-				}
-				
+				}	
 			}
 			
 			@Override
@@ -373,10 +381,9 @@ public class EmployeeEventsDraftObject {
 
 			@Override
 			public void onSuccess(EmployeeEventsData result) {
-				Map<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> contractEventsMap = 
-						result.getContractEventsList();
 				
-				for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : contractEventsMap.entrySet()){
+				for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : result.getContractEventsList().entrySet()){
+					
 					String varName = entry.getKey();
 					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
 					
@@ -391,17 +398,12 @@ public class EmployeeEventsDraftObject {
 							varList.add(var);
 						}
 						sortListByStartDate(varList);
-					}
-					
+					}	
 					mapEventsVar.put(varName, varList);
 				}
-				
-				
 				success.accept(result);
-				
 			}
-
-			});
+		});
 	}
 	
 	public void updateDBCalendar(Consumer<EmployeeEventsUpdate> success, Consumer<Throwable> failure) {
@@ -457,12 +459,12 @@ public class EmployeeEventsDraftObject {
 				quarterInfo.setName(varName).setStartDate(startDate).setEndDate(endDate).setExpression(value);
 				updateList.add(quarterInfo);
 			}
-			
 		}
 		
 		return updateList;
 	}
-
+	
+	//Metodo para crear el mapa que va a recoer toda la informacion que queremos subir a la base de datos
 	private Map<String, ArrayList<EmployeeEventsVariable>> createUpdateMap() {
 		Map<String, ArrayList<EmployeeEventsVariable>> updateMap = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
 		
@@ -484,6 +486,7 @@ public class EmployeeEventsDraftObject {
 		return updateMap;
 	}
 
+	//Metodo para coger del mapa original solo aquellas entradas que no han sido modificadas
 	private ArrayList<EmployeeEventsVariable> checkResultList(String key) {
 		ArrayList<EmployeeEventsVariable> resultList = new ArrayList<>();
 		
