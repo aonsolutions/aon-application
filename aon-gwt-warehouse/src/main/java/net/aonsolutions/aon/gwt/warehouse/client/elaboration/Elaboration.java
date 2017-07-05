@@ -34,7 +34,7 @@ public class Elaboration extends AonTemplate2 {
 //	}
 
 	public Elaboration(AonData aonData) {
-//		filterMap = new HashMap<>();
+		filterMap = new HashMap<>();
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(), aonData.getDomain().getName(),
 				aonData.getUser().getLogin());
 	}
