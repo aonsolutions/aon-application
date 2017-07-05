@@ -73,18 +73,52 @@ public class FilterPanel extends Composite {
 		dateLabel.setWidth("20px");
 		datePanel.add(dateLabel);
 
-		final DateBoxEx date = new DateBoxEx();
-		date.setWidth("70px");
-		date.addValueChangeHandler(new ValueChangeHandler<Date>() {
+//		final DateBoxEx date = new DateBoxEx();
+//		date.setWidth("70px");
+//		date.addValueChangeHandler(new ValueChangeHandler<Date>() {
+//			@Override
+//			public void onValueChange(ValueChangeEvent<Date> event) {
+//				LinkedList<String> list = new LinkedList<>();
+//				list.add(Long.toString(date.getValue().getTime()));
+//				elaboration.getFilterMap().put("date", list);
+//				elaboration.loadContent();
+//			}
+//		});
+//		datePanel.add(date);
+		
+		final DateBoxEx fromDate = new DateBoxEx();
+		fromDate.setWidth("70px");
+		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				LinkedList<String> list = new LinkedList<>();
-				list.add(Long.toString(date.getValue().getTime()));
-				elaboration.getFilterMap().put("date", list);
+				list.add(Long.toString(fromDate.getValue().getTime()));
+				elaboration.getFilterMap().put("from", list);
 				elaboration.loadContent();
 			}
 		});
-		datePanel.add(date);
+		InlineLabel fromLabel = new InlineLabel(AON.MSG.from());
+		fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		fromLabel.setWidth("20px");
+		datePanel.add(fromLabel);
+		datePanel.add(fromDate);
+		
+		final DateBoxEx toDate = new DateBoxEx();
+		toDate.setWidth("70px");
+		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(Long.toString(toDate.getValue().getTime()));
+				elaboration.getFilterMap().put("to", list);
+				elaboration.loadContent();
+			}
+		});
+		InlineLabel toLabel = new InlineLabel(AON.MSG.to());
+		toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		toLabel.setWidth("20px");
+		datePanel.add(toLabel);
+		datePanel.add(toDate);
 
 		panel.add(datePanel);
 
