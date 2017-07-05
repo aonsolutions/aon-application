@@ -3210,8 +3210,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					employeeId, startDate, endDate);
 			
 			if (agreementId != null) {
-				// payments.addAll(SQLAgreementDraft.getPayments(connection,
-				// agreementId, startDate, endDate));
 				
 				eraseAgreements = SQLAgreementDraft.getEraseAgreement(connection,
 						agreementId, startDate, endDate);
@@ -3240,10 +3238,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				variables.remove(payment.getName());
 			}
 			
+			// Add Filter Allways Variables
+			eraseAgreements.add("INICIO_ANTIGUEDAD");
+			eraseAgreements.add("DIAS_MES");
+			eraseAgreements.add("INICIO_CONTRATO");
+			eraseAgreements.add("SALARIO_BASE");
+			eraseAgreements.add("INICIO_NOMINA");
+			eraseAgreements.add("SALARIO_MENSUAL");
+			eraseAgreements.add("TRIENIO");
+			
 			// Filter Agreement Variables
 			for (String varName : eraseAgreements)
 				variables.remove(varName);
-			
+						
 //			// Filter ContextVariable
 //			for (ContextVariable ctxVar : ContextVariable.values())
 //				variables.remove(ctxVar.getName());

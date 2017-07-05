@@ -108,12 +108,6 @@ public class SQLAgreementDraft {
 			eraseList.add(r.get(AGREEMENT_LEVEL_DATA.NAME));
 		}
 		
-		eraseList.add("INICIO_ANTIGUEDAD");
-		eraseList.add("DIAS_MES");
-		eraseList.add("INICIO_CONTRATO");
-		eraseList.add("SALARIO_BASE");
-		eraseList.add("INICIO_NOMINA");
-		
 		return eraseList;
 	}
 
