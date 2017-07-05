@@ -1,6 +1,5 @@
 package com.esferalia.aon.ingenet.servlet;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
@@ -44,6 +42,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductKind;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -59,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -84,6 +85,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetDeliveryServlet.class.getName());
 	
 	private List<String> errorList;
+	private List<String> warningList;
 	
 		
 	protected void processRequest(HttpServletRequest httpRequest,
@@ -101,14 +103,18 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		
 		ALBARANES deliveryList = null;
 		errorList = new LinkedList<>();
-		if(_xml!=null){
+		warningList = new LinkedList<>();
+		if(_xml==null){
+			errorList.add("Es necesario el parametro 'value'");
+		} else {
 			try {
-				super.validateAlbaranesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
+//				super.validateAlbaranesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
 				deliveryList = (ALBARANES) IngenetXmlValidator.extractValue(_xml, ALBARANES.class);
-			} catch (SAXException e) {
-				errorList.add("El fichero no ha pasado el proceso de validacion");
-				errorList.add(e.getMessage());
+//			} catch (SAXException e) {
+//				errorList.add("Los datos no han pasado el proceso de validacion");
+//				errorList.add(e.getMessage());
 			} catch (Exception e) {
+				errorList.add("Error desconocido al validar los datos");
 				errorList.add(e.getMessage());
 			}
 			if(deliveryList!=null && deliveryList.getDATOSALBARANES()!=null 
@@ -122,8 +128,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			} else {
 				errorList.add("No se han encontrado datos de albaranes");
 			}
-		} else {
-			errorList.add("Es necesario el parametro 'value'");
 		}
 		
 		List<ALBARANTYPE> invalidDeliveries = null;
@@ -147,8 +151,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		
 		if (errorList != null && errorList.size() > 0) {
 			errorList.add(0, "Se han producido errores al procesar el fichero");
-			errorList.forEach(System.out::println);
-			flushErrors(httpResponse, deliveryList, errorList);
+			errorList.forEach(LOGGER::error);
+			warningList.forEach(LOGGER::error);
+			List<String> list = new LinkedList<>();
+			list.addAll(errorList);
+			list.addAll(warningList);
+			flushErrors(httpResponse, deliveryList, list);
 		} else {
 			httpResponse.setStatus(HttpServletResponse.SC_OK);
 			if (!test) {
@@ -167,7 +175,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		});
 		String xml = IngenetXmlValidator.convertToXml(deliveryList, ALBARANES.class);
 		
-		String subject = "Recepcion automatica de albaranes";
+		String subject = "ERRORES en la recepcion de albaranes";
 		String content = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
 		sendEmail(subject, content, "albaranes", xml, RECIPIENTS_TO_FAILURES);
 		
@@ -185,6 +193,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			bf.append("<li>Albarán " + alb.getSERIE()+"/"+ alb.getNUMERO()+" del " + alb.getFECHAEMISION()+"</li>");
 		});
 		bf.append("</ul>");
+		
+		// TODO append warning messages
 		return bf.toString();
 	}
 	
@@ -475,24 +485,39 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							linea2.getLINEA())).collect(Collectors.toList());
 			Integer linesCount = detailList.size();
 			for(DATOSLINEAENVASETYPE linea: lineas){
-				Item item;
+				Item item = null;
 				try {
 					item = obtainItem(ctx,
 							linea.getPRODUCTO(), test);
-					DeliveryDetail detail = new DeliveryDetail();
-					detail.setDomain(ctx.getDomainId());
-					detail.setDelivery(delivery);
-					detail.setLine(Integer.valueOf(linesCount+Integer.valueOf(linea.getLINEA())).shortValue());
-					detail.setItem(item);
-					String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
-					detail.setDescription(description);
-					detail.setWarehouse(warehouse.getId());
-					detail.setDiscountExpression("0");
-					detail.setQuantity(Double.valueOf(linea
-							.getCANTIDAD()));
-					detailList.add(detail);
 				} catch (Exception e) {
-					addError(albaran, e.getMessage());
+					warningList.add("[ENVASES] " + e.getMessage());
+				}
+				if(item==null || item.getId()==null){
+					try {
+						item = createPackage(ctx,
+								linea.getPRODUCTO(), test);
+						warningList.add("Nuevo envase creado " + linea.getPRODUCTO().getCODIGO());
+					} catch (AonException e) {
+						addError(albaran, "[ENVASES] " + e.getMessage());
+					}
+				}
+				try {
+					if(item!=null){
+						DeliveryDetail detail = new DeliveryDetail();
+						detail.setDomain(ctx.getDomainId());
+						detail.setDelivery(delivery);
+						detail.setLine(Integer.valueOf(linesCount+Integer.valueOf(linea.getLINEA())).shortValue());
+						detail.setItem(item);
+						String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
+						detail.setDescription(description);
+						detail.setWarehouse(warehouse.getId());
+						detail.setDiscountExpression("0");
+						detail.setQuantity(Double.valueOf(linea
+								.getCANTIDAD()));
+						detailList.add(detail);
+					}
+				} catch (Exception e) {
+					addError(albaran, "[ENVASES] " + e.getMessage());
 				}
 			}
 		}
@@ -828,68 +853,27 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				.getProductStream(
 						ctx,
 						f -> f.getDomainProperty()
-								.eq(ctx.getDomainId())
-								.and(f.getCodeProperty().eq(
-										productoelaborado.getCODIGO())))
+						.eq(ctx.getDomainId())
+						.and(f.getCodeProperty().eq(
+								productoelaborado.getCODIGO())))
 				.findFirst().orElse(null);
 		if (product != null && product.getId() != null) {
 			Item item = AON
 					.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 							f -> f.getDomainProperty()
-									.eq(ctx.getDomainId())
-									.and(f.getProductProperty()
-											.eq(product.getId())
-											.and(StringUtils
-													.isNotBlank(productoelaborado
-															.getNUMEROLOTESERIE()) ? f
-													.getSerialNumberProperty()
-													.eq(productoelaborado
-															.getNUMEROLOTESERIE())
-													: f.getSerialNumberProperty()
+							.eq(ctx.getDomainId())
+							.and(f.getProductProperty()
+									.eq(product.getId())
+									.and(StringUtils
+											.isNotBlank(productoelaborado
+													.getNUMEROLOTESERIE()) ? f
+															.getSerialNumberProperty()
+															.eq(productoelaborado
+																	.getNUMEROLOTESERIE())
+															: f.getSerialNumberProperty()
 															.isNull())));
 			if(item==null || item.getId()==null){
-				Item baseItem = AON
-						.getItem(
-								ctx.getDomainName(),
-								ctx.getDomainId(),
-								ctx.getUser(),
-								f -> f.getDomainProperty()
-										.eq(ctx.getDomainId())
-										.and(f.getProductProperty().eq(
-												product.getId()))
-										.and(f.getSerialDateProperty().isNull())
-										.and(f.getSerialNumberProperty()
-												.isNull()));
-				item = new Item();
-				item.setDomain(ctx.getDomainId());
-				item.setProductId(product.getId());
-				item.setActive(false);
-				item.setCode(productoelaborado.getCODIGO());
-				item.setName(productoelaborado.getNOMBRE());
-				item.setDescription(productoelaborado.getDESCRIPCION());
-				item.setDetail(productoelaborado.getDETALLE());
-				item.setDetail2(productoelaborado.getDETALLE2());
-				item.setDetail3(productoelaborado.getDETALLE3());
-				item.setPackFormatTag(baseItem.getPackFormatTag());
-				item.setPackMeasurement(baseItem.getPackMeasurement());
-				item.setPackMeasurementTag(baseItem.getPackMeasurementTag());
-				item.setPackUnits(baseItem.getPackUnits());
-				item.setPackUnitsTag(baseItem.getPackUnitsTag());
-				item.setStockUnitTag(baseItem.getStockUnitTag());
-				if(productoelaborado.getFECHALOTESERIE()!=null){
-					Date serialDate = null;
-					try {
-						serialDate = getDateFormatter().parse(
-								productoelaborado.getFECHALOTESERIE());
-					} catch (ParseException e) {
-						serialDate = new Date();
-					}
-					item.setSerialDate(new java.sql.Date(serialDate.getTime()));
-				}
-				if(productoelaborado.getNUMEROLOTESERIE()!=null){
-					item.setSerialNumber(productoelaborado.getNUMEROLOTESERIE());
-				}
-				ProductDAO.insertItem(ctx, item);
+				createItem(ctx, product, productoelaborado, test);
 				item = AON.getItemList(
 						ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 						f -> f.getDomainProperty()
@@ -905,6 +889,96 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		} else {
 			throw new AonException("Codigo de producto no encontrado " + productoelaborado.getCODIGO());
 		}
+	}
+	
+	private void createItem(AONContext ctx, Product product, PRODUCTOTYPE producttype, boolean test) throws AonException {
+		Item baseItem = AON
+				.getItem(
+						ctx.getDomainName(),
+						ctx.getDomainId(),
+						ctx.getUser(),
+						f -> f.getDomainProperty()
+								.eq(ctx.getDomainId())
+								.and(f.getProductProperty().eq(
+										product.getId()))
+								.and(f.getSerialDateProperty().isNull())
+								.and(f.getSerialNumberProperty()
+										.isNull()));
+		Item item = new Item();
+		item.setDomain(ctx.getDomainId());
+		item.setProductId(product.getId());
+		item.setActive(false);
+		item.setCode(producttype.getCODIGO());
+		item.setName(producttype.getNOMBRE());
+		item.setDescription(producttype.getDESCRIPCION());
+		item.setDetail(producttype.getDETALLE());
+		item.setDetail2(producttype.getDETALLE2());
+		item.setDetail3(producttype.getDETALLE3());
+		item.setPackFormatTag(baseItem.getPackFormatTag());
+		item.setPackMeasurement(baseItem.getPackMeasurement());
+		item.setPackMeasurementTag(baseItem.getPackMeasurementTag());
+		item.setPackUnits(baseItem.getPackUnits());
+		item.setPackUnitsTag(baseItem.getPackUnitsTag());
+		item.setStockUnitTag(baseItem.getStockUnitTag());
+		if(producttype.getFECHALOTESERIE()!=null){
+			Date serialDate = null;
+			try {
+				serialDate = getDateFormatter().parse(
+						producttype.getFECHALOTESERIE());
+			} catch (ParseException e) {
+				serialDate = new Date();
+			}
+			item.setSerialDate(new java.sql.Date(serialDate.getTime()));
+		}
+		if(producttype.getNUMEROLOTESERIE()!=null){
+			item.setSerialNumber(producttype.getNUMEROLOTESERIE());
+		}
+		ProductDAO.insertItem(ctx, item);
+	}
+	
+	private Item createPackage(AONContext ctx, PRODUCTOTYPE productotype, boolean test) throws AonException {
+		Product product = ProductDAO
+				.getProductStream(
+						ctx,
+						f -> f.getDomainProperty()
+								.eq(ctx.getDomainId())
+								.and(f.getCodeProperty().eq(
+										productotype.getCODIGO())))
+				.findFirst().orElse(null);
+		if (product == null || product.getId() == null) {
+			product = new Product();
+			product.setDomain(ctx.getDomainId());
+			product.setStatus(ProductStatus.ACTIVE.value());
+			product.setLotable(Boolean.FALSE);
+			product.setSerializable(Boolean.FALSE);
+			product.setPackaged(Boolean.FALSE);
+			product.setInventoriable(Boolean.TRUE);
+			product.setCode(productotype.getCODIGO());
+			product.setName("ENVASE AUTOGENERADO ("+productotype.getCODIGO()+")");
+			product.setType(ProductType.AUXILIARY.value());
+			product.setKind(ProductKind.SALE_PURCHASE.value());
+			product.setVat(null);
+			ProductDAO.insert(ctx, product);
+			product = ProductDAO
+					.getProductStream(
+							ctx,
+							f -> f.getDomainProperty()
+									.eq(ctx.getDomainId())
+									.and(f.getCodeProperty().eq(
+											productotype.getCODIGO())))
+					.findFirst().orElse(null);
+		}
+		
+		createItem(ctx, product, productotype, test);
+		Integer productId = product.getId();
+		Item item = AON.getItemList(
+				ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+				f -> f.getDomainProperty()
+				.eq(ctx.getDomainId())
+				.and(f.getProductProperty()
+						.eq(productId)))
+				.getFirst();
+		return item;
 	}
 
 	private RegistryItem obtainCustomerItem(Integer productId, Integer customerId) {
