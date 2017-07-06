@@ -216,6 +216,7 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 		SOAPEnvelope envelope = soapRequest.getSOAPPart().getEnvelope();
 		envelope.addNamespaceDeclaration(XMLConstants.DEFAULT_NS_PREFIX, soapRequest.getSOAPBody().getFirstChild().getNamespaceURI());
 
+		removePreviousData(params);
 		saveRequestData(soapRequest, params);
 		SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
 		SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
@@ -227,6 +228,22 @@ public class FbatchUnloadManager implements IDataLoadConstants {
 		builderfactory.setNamespaceAware(true);
 		DocumentBuilder builder = builderfactory.newDocumentBuilder();
 		return builder.parse(new InputSource(new StringReader(message)));  
+	}
+
+	private void removePreviousData(Parameters params) throws Exception {
+		String sql = "DELETE FROM data_attach WHERE source = " + DataAttachmentSource.FBATCH.ordinal() + " AND source_id = ?";
+		PreparedStatement stmt = null;
+		try {
+			stmt = connection.prepareStatement(sql);
+			stmt.setObject(1, params.getFbatchId(), Types.INTEGER);
+			stmt.executeUpdate();
+		} catch (SQLException ex) {
+			throw ex;
+		} finally {
+			try {
+				stmt.close();
+			} catch (SQLException ex) {}
+		}
 	}
 
 	private void saveRequestData(SOAPMessage soapRequest, Parameters params) throws Exception {
