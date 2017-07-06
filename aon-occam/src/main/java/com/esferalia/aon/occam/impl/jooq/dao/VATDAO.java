@@ -260,7 +260,10 @@ public class VATDAO  {
 	}
 	
 	public static Stream<VatContext> getSiiVatContext(AONContext ctx, VATFilter filter, String sii) {
-		Boolean intracomunitaria = "intracomunitarias".equals(sii);
+		String status = "status";
+		if("intracomunitarias".equals(sii)) status = "status_intra";
+		if("bienes".equals(sii)) status = "status_bienes";
+		
 		return ctx.getDslContext().select(
 				 INVOICE.ID, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REFERENCE_CODE
 				,INVOICE.RDOCUMENT, INVOICE.RDOCUMENT_TYPE, INVOICE.RDOCUMENT_COUNTRY
@@ -282,7 +285,7 @@ public class VATDAO  {
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 			.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
-			.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(intracomunitaria ? "status_intra" : "status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
+			.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(status).and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
 			.where(VAT_PROPERTIES.getConditions(filter))
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))

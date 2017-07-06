@@ -3,7 +3,6 @@ package net.aonsolutions.aon.sii;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -34,7 +33,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -79,12 +77,11 @@ public class SIIServlet extends HttpServlet{
 			
 			VatParams params = new VatParams();
 			params.setDomain(domain.getId());
-			params.setFromDate(AonDateUtils.addDays(new Date(), -7));
-			params.setToDate(AonDateUtils.addDays(new Date(), 1));
-			params.setInvoices(ids);//invoiceList.stream().map(i -> i.getId()).toArray(Integer[]::new));
+			params.setInvoices(ids);
 			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
 					.collect(Collectors.toCollection(LinkedList::new));
 		
+			
 			// TODO dividir invoiceList en las demas listas.
 			Integer cert = Integer.parseInt(parameters.get("cert"));
 			String pass = parameters.get("pass");
@@ -166,7 +163,7 @@ public class SIIServlet extends HttpServlet{
 					} else if(action.equals("baja")){
 						object = SIIPost.getInstance(attach.getData(), pass).bajaAgenciasViajes(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
 					}
-				}	
+				}				
 				giveBack(req, resp, object, new JSONObject());
 			} catch (Exception e) {
 				JSONArray array = new JSONArray();

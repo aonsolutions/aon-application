@@ -29,6 +29,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -39,7 +40,6 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -157,6 +157,9 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						}
 					}
 					parent.getSendAll().setVisible(selFiles.size() > 0);
+					String sii = parent.getFilterMap().get("sii").get(0);
+					parent.getBaja().setVisible(selFiles.size() > 0 && !"cp_cobros_pagos".equals(sii)
+							&& !"cp_cobros".equals(sii) && !"cp_pagos".equals(sii));
 				 }
 			}
 		};
@@ -290,8 +293,18 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(contraparteColumn, 15, Unit.PCT);
 	
 		/** Status Column **/
+		
 		Column<JsInvoice, String> statusColumn = new Column<JsInvoice, String>(new TextCell()) {
-
+			@Override	
+			public void render(Context context, JsInvoice object, SafeHtmlBuilder sb) {
+				String icon = AON.AON_CSS.aonIconPointLightGreen();
+				if(object.getSiiStatus().equals("Correcto") || object.getSiiStatus().equals("Pagado")) icon = AON.AON_CSS.aonIconPointGreen();
+				else if(object.getSiiStatus().equals("AceptadoConErrores") || object.getSiiStatus().equals("Parcial")) icon = AON.AON_CSS.aonIconPointOrange();
+				else if(object.getSiiStatus().equals("Incorrecto")) icon= AON.AON_CSS.aonIconPointRed();
+				else if(object.getSiiStatus().equals("Anulada")) icon = AON.AON_CSS.aonIconPointYellow();
+				sb.appendHtmlConstant("<g:Label class=\""+ icon + "\" style=\"padding-left: 16px;\" >"+ "&nbsp;&nbsp;" + object.getSiiStatus());
+			}
+			
 			@Override
 			public String getValue(JsInvoice object) {
 				return object.getSiiStatus();
@@ -339,164 +352,11 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	            selectionModel.setSelected(element, isChecked);
 	        }
 	    }
-
 	}
 	
-	
-	private void anular(JsInvoice invoice){
+	public void anular(String sii){
 		VerticalPanel vp = new VerticalPanel();
 		HorizontalPanel hp1 = new HorizontalPanel();
-		hp1.add(new Label("Certificado"));
-		ListBox lb = new ListBox();
-		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsAttach> result) {
-				result.getData().stream().forEach(a -> {
-					lb.addItem(a.getTitle(), a.getId() + "");
-				});
-			}
-
-			@Override public void onFailure(Throwable caught) {}
-		});
-		hp1.add(lb);
-		
-		HorizontalPanel hp2 = new HorizontalPanel();
-		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
-		hp2.add(new Label("Contrase\u00f1a"));
-		PasswordTextBox tb = new PasswordTextBox();
-		tb.setStyleName(AON.AON_CSS.aonInputText());
-		hp2.add(tb);
-		vp.add(hp1);
-		vp.add(hp2);
-		AonDialog dialog = new AonDialog("Anular Operaci\u00f3n", vp) {
-			
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				HashMap<String, LinkedList<String>> map =  new HashMap<>();
-				LinkedList<String> list =new LinkedList<>();
-				list.add(invoice.getId() + "");
-				map.put("id", list);
-		    	list = new LinkedList<>();
-		    	list.add("baja");
-		    	map.put("action", list);
-		    	list = new LinkedList<>();
-		    	list.add(lb.getSelectedValue());
-		    	map.put("cert", list);
-		    	list = new LinkedList<>();
-		    	list.add(tb.getText());
-		    	map.put("pass", list);
-		    	list = new LinkedList<>();
-		    	list.add(invoice.getSii());
-		    	map.put("option", list);
-		    	hide();
-		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsObject> result) {
-						result.getData().stream().forEach(r -> {
-							Window.alert(r.getId() + ": " + r.getName());
-						});
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						
-					}
-				});
-			}
-		};
-		dialog.center();
-	}
-	
-	private void cobrosPagos(JsInvoice invoice){
-		VerticalPanel vp = new VerticalPanel();
-		HorizontalPanel hp1 = new HorizontalPanel();
-		hp1.add(new Label("Certificado"));
-		ListBox lb = new ListBox();
-		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsAttach> result) {
-				result.getData().stream().forEach(a -> {
-					lb.addItem(a.getTitle(), a.getId() + "");
-				});
-			}
-
-			@Override public void onFailure(Throwable caught) {}
-		});
-		hp1.add(lb);
-		
-		HorizontalPanel hp2 = new HorizontalPanel();
-		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
-		hp2.add(new Label("Contrase\u00f1a"));
-		PasswordTextBox tb = new PasswordTextBox();
-		tb.setStyleName(AON.AON_CSS.aonInputText());
-		hp2.add(tb);
-		vp.add(hp1);
-		vp.add(hp2);
-		AonDialog dialog = new AonDialog(invoice.getType().equalsIgnoreCase("Ventas") ? "Enviar Cobros Factura": "Enviar Pagos Factura", vp) {
-			
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				HashMap<String, LinkedList<String>> map =  new HashMap<>();
-				LinkedList<String> list =new LinkedList<>();
-				list.add(invoice.getId() + "");
-				map.put("id", list);
-		    	list = new LinkedList<>();
-		    	list.add("suministro");
-		    	map.put("action", list);
-		    	list = new LinkedList<>();
-		    	list.add(lb.getSelectedValue());
-		    	map.put("cert", list);
-		    	list = new LinkedList<>();
-		    	list.add(tb.getText());
-		    	map.put("pass", list);
-		    	list = new LinkedList<>();
-		    	list.add(invoice.getType().equalsIgnoreCase("Ventas") ? "cobros": "pagos");
-		    	map.put("option", list);
-		    	hide();
-		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsObject> result) {
-						Window.alert(result.getOneData().getId() + ": " + result.getOneData().getName());
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						
-					}
-				});
-			}
-		};
-		dialog.center();
-	}
-	
-	private void sendSii(JsInvoice invoice){
-		VerticalPanel vp = new VerticalPanel();
-		HorizontalPanel hp0 = new HorizontalPanel();
-		hp0.add(new Label("Tipo de Operacion"));
-		ListBox lb0 = new ListBox();
-		lb0.addItem("Articulo 70, apartado uno, n\u00famero 7\u00BA, Ley del Impuesto(Ley 37/1992)", "A");
-		lb0.addItem("Articulo 16, apartado 2\u00BA, Ley del Impuesto(Ley 37/1992)", "B");
-		hp0.add(lb0);
-		if(invoice.getSii().equals("intracomunitaria")){
-			vp.add(hp0);
-		}
-		
-		HorizontalPanel hp1 = new HorizontalPanel();
-		hp1.addStyleName(AON.AON_CSS.aonPaddingTop());
 		hp1.add(new Label("Certificado"));
 		ListBox lb = new ListBox();
 		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
@@ -542,21 +402,8 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		hp3.add(l);
 		hp3.add(t);
 		vp.add(hp3);
-
-		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsAttach> result) {
-				result.getData().stream().forEach(a -> {
-					lb.addItem(a.getTitle(), a.getId() + "");
-				});
-			}
-
-			@Override public void onFailure(Throwable caught) {}
-		});
-		hp1.add(lb);
 		
-		AonDialog dialog = new AonDialog("Enviar Factura", vp) {
+		AonDialog dialog = new AonDialog("Anular Operaci\u00f3n", vp) {
 			
 			@Override
 			protected void onCancel() {
@@ -566,11 +413,10 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			@Override
 			protected void onAccept() {
 				HashMap<String, LinkedList<String>> map =  new HashMap<>();
-				LinkedList<String> list =new LinkedList<>();
-				list.add(invoice.getId() + "");
+				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
 				map.put("id", list);
 		    	list = new LinkedList<>();
-		    	list.add("suministro");
+		    	list.add("baja");
 		    	map.put("action", list);
 		    	list = new LinkedList<>();
 		    	list.add(lb.getSelectedValue());
@@ -579,24 +425,30 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		    	list.add(tb.getText());
 		    	map.put("pass", list);
 		    	list = new LinkedList<>();
-		    	list.add(lb0.getSelectedValue());
-		    	map.put("tipo_operacion", list);
-		    	list = new LinkedList<>();
-		    	list.add(invoice.getSii());
+		    	list.add(sii);
 		    	map.put("option", list);
 		    	
 		    	list = new LinkedList<>();
 		    	list.add(cb.getValue() ? t.getValue() : "false");
 		    	map.put("terceros", list);
-		    	
+				
 		    	hide();
 		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
+						VerticalPanel vp = new VerticalPanel();
 						result.getData().stream().forEach(r -> {
-							Window.alert(r.getId() + ": " + r.getName());
+							Label label = new Label(r.getName());
+							String str = r.getId() + "";
+							String color = "red";
+							if(str.equals("200")) color = "green";
+							else if(str.substring(0, 1).equals("2")) color = "orange";
+							label.getElement().getStyle().setColor(color);
+							vp.add(label);
 						});
+						parent.errorPanel.setWidget(vp);
+						parent.openFootPanel();
 						parent.gridContent();
 					}
 					
@@ -680,7 +532,6 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			protected void onAccept() {
-				
 				HashMap<String, LinkedList<String>> map =  new HashMap<>();
 				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
 				map.put("id", list);

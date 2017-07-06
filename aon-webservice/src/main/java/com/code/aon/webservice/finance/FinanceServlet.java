@@ -131,7 +131,7 @@ public class FinanceServlet extends HttpServlet{
     	    	}
     			return getInvoiceRecibidasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii"));
     		} else if("bienes".equals(req.getParameter("sii"))){
-    			return getInvoiceBienesList(domain, login, page, perPage);
+    			return getInvoiceBienesList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii"));
     		} else if("intracomunitarias".equals(req.getParameter("sii"))){
     			return getInvoiceIntracomunitariasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii"));
     		} else if("cp_cobros_pagos".equals(req.getParameter("sii"))
@@ -225,16 +225,20 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
 	
-	private JSONArray getInvoiceBienesList(Domain domain, String login, Integer page, Integer perPage){
+	private JSONArray getInvoiceBienesList(Domain domain, String login, Integer page, Integer perPage, Date from
+			,Boolean pending, Boolean sent, Boolean sent_error, Boolean error, Boolean anulada, String sii){
 		JSONArray array = new JSONArray();
-    	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+    	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))
-    			.and(f.getTransactionProperty().ne(InvoiceTransactionType.INTRACOMMUNITY.value()))
-    			.and(f.getTaxDateProperty().ge(AonDateUtils.addDays(new Date(), -7)))
-    			.and(f.getTaxDateProperty().le(AonDateUtils.addDays(new Date(), 1)))
-    			.page(page).perPage(perPage))
-    		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    			.and(f.getInvestmentProperty().eq((byte) 1))
+    			.page(page).perPage(perPage)
+    			,pending, sent, sent_error, error, anulada, sii)
+    		.forEach(rm -> {
+    			JSONObject json = ToJSON.invoiceToJSON(rm);
+    			json.put("sii_sent", true);
+    			json.put("sii", "bienes");
+    			array.put(json);
+    		});
     	return array;
 	}
 	

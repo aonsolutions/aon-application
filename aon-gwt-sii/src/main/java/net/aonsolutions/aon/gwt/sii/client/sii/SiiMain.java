@@ -95,6 +95,7 @@ public class SiiMain extends AonTemplate2{
 	}
 	
 	Button sendAll;
+	Button baja;
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Suministro Inmediato de Informacion") {};
@@ -111,12 +112,30 @@ public class SiiMain extends AonTemplate2{
 				ig.sendSii(getFilterMap().get("sii").get(0)); // TODO
 			}
 		});
+		
+		baja = toolbar.addButton("Anular", "aon-icon-removed");
+		baja.setVisible(false);
+		baja.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				
+				SimpleLayoutPanel slp = p.getContent();
+				InvoiceGrid ig = (InvoiceGrid) slp.getWidget();
+				ig.anular(getFilterMap().get("sii").get(0)); // TODO
+			}
+		});
 	
 		setToolbar(toolbar);
 	}
 	
 	public Button getSendAll() {
 		return sendAll;
+	}
+	
+	public Button getBaja() {
+		return baja;
 	}
 	
 	private void westContent() {
@@ -128,7 +147,9 @@ public class SiiMain extends AonTemplate2{
 		facturasEmitidasButton.setStyleName("aon-editDataTable-button");
 		facturasEmitidasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		facturasEmitidasButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fe_emitidas");
 				getFilterMap().put("sii",list);
@@ -146,7 +167,9 @@ public class SiiMain extends AonTemplate2{
 		feGeneralButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		feGeneralButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feGeneralButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fe_generales");
 				getFilterMap().put("sii",list);
@@ -164,7 +187,9 @@ public class SiiMain extends AonTemplate2{
 		feSimpleButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		feSimpleButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feSimpleButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fe_simplificadas");
 				getFilterMap().put("sii",list);
@@ -182,7 +207,9 @@ public class SiiMain extends AonTemplate2{
 		feRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		feRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feRectButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fe_rectificativas");
 				getFilterMap().put("sii",list);
@@ -200,7 +227,9 @@ public class SiiMain extends AonTemplate2{
 		feIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		feIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feIntraButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fe_intracomunitarias");
 				getFilterMap().put("sii",list);
@@ -218,6 +247,8 @@ public class SiiMain extends AonTemplate2{
 		facturasRecibidasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		facturasRecibidasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fr_recibidas");
 				getFilterMap().put("sii",list);
@@ -235,7 +266,9 @@ public class SiiMain extends AonTemplate2{
 		frComprasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		frComprasButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frComprasButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fr_compras");
 				getFilterMap().put("sii",list);
@@ -253,7 +286,9 @@ public class SiiMain extends AonTemplate2{
 		frGastosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		frGastosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frGastosButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fr_gastos");
 				getFilterMap().put("sii",list);
@@ -271,7 +306,9 @@ public class SiiMain extends AonTemplate2{
 		frRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		frRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frRectButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fr_rectificativas");
 				getFilterMap().put("sii",list);
@@ -289,7 +326,9 @@ public class SiiMain extends AonTemplate2{
 		frIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		frIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frIntraButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("fr_intracomunitarias");
 				getFilterMap().put("sii",list);
@@ -307,19 +346,27 @@ public class SiiMain extends AonTemplate2{
 		bienesInversionButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		bienesInversionButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("bienes");
 				getFilterMap().put("sii",list);
-				content();
+				SiiPrincipal p = (SiiPrincipal) getContent().getWidget();
+				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
+				fp.setCheckVisible(true);
+				fp.setTitle("Bienes de Inversion");
+				p.gridContent();
 			}
 		});
 		menuPanel.add(bienesInversionButton);
-	*/	
+	*/
 		Button operacionesIntracomunitariasButton = new Button("Operaciones Intracomunitarias");
 		operacionesIntracomunitariasButton.setStyleName("aon-editDataTable-button");
 		operacionesIntracomunitariasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		operacionesIntracomunitariasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("intracomunitarias");
 				getFilterMap().put("sii",list);
@@ -337,6 +384,8 @@ public class SiiMain extends AonTemplate2{
 		operacionesCobrosPagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		operacionesCobrosPagosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("cp_cobros_pagos");
 				getFilterMap().put("sii",list);
@@ -354,7 +403,9 @@ public class SiiMain extends AonTemplate2{
 		cobrosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		cobrosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		cobrosButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("cp_cobros");
 				getFilterMap().put("sii",list);
@@ -372,7 +423,9 @@ public class SiiMain extends AonTemplate2{
 		pagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		pagosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		pagosButton.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {				
+			@Override public void onClick(ClickEvent event) {	
+				sendAll.setVisible(false);
+				baja.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add("cp_pagos");
 				getFilterMap().put("sii",list);
