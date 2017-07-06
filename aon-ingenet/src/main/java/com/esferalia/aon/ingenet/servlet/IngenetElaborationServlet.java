@@ -139,8 +139,13 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				elaborationList = getElaborationList(ctx, date, statusList);
 				flushElaborations(httpResponse, ctx, elaborationList);
 				elaborationList.forEach(elaboration -> {
-					elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
-					ElaborationDAO.updateElaboration(ctx, elaboration);
+					if(elaboration.getSourceId()!=null && existSales(ctx, elaboration)){						
+						elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
+						ElaborationDAO.updateElaboration(ctx, elaboration);
+					} else {
+						String reference = elaboration.getSeries()+"/"+elaboration.getNumber();
+						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
+					}
 				});
 				 
 //				String subject = "Recuperación automática de elaboraciones";
@@ -175,10 +180,16 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		}
 		
 		if(errorList!=null && errorList.size()>0){
-			errorList.add(0, "Se han producido errores al procesar el fichero");
+			errorList.add(0, "Se han producido errores al comunicar las elaboraciones");
 			flushErrors(httpResponse, errorList);
 		}
 		
+	}
+	
+	private boolean existSales(AONContext ctx, Elaboration elaboration) {
+		long count = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+				f -> f.getIdProperty().eq(elaboration.getSourceId())).count();
+		return count>0;
 	}
 
 	private void reopenElaborations(AONContext ctx,
