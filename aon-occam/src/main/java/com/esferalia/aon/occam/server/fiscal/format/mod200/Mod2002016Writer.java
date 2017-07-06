@@ -404,7 +404,10 @@ public class Mod2002016Writer {
 				,(line,mod200, label) -> line.append( AonFiscalFileUtils.unsigned(mod200.getBalanceType()==null?0:mod200.getBalanceType().ordinal()+1, 1,0))                
 				,(line,mod200, label) -> line.append( AonFiscalFileUtils.unsigned(mod200.getPygType()==null || mod200.getDoubleValue(Mod2002016Key.C0026)==1?0:mod200.getPygType().ordinal()+1, 1,0) )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002016Key.C0061, 1, 0)
-				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getFiscalGroup(), 7)) 
+				
+				//,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getFiscalGroup(), 7))
+				,(line,mod200, label) -> line.append( AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.unsigned(mod200.getFiscalGroup(), 7, 0) )
+				
 				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getDominantDocument(), 9) ) 
 				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(),15) ) 
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002016Key.C0041, 9, 2 ) 
