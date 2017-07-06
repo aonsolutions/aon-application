@@ -615,7 +615,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				elaborationDetail.setWarehouse(null);
 				elaborationDetail.setAddInfo("");
 			} catch (AonException e) {
-				addError(albaran, e.getMessage());
+				String msg = "[Producto " + linea.getPRODUCTO().getCODIGO() + "] ";
+				addError(albaran, msg + e.getMessage());
 			}
 
 			linea.getCOMPOSICIONPRODUCTOELABORADO()
@@ -638,7 +639,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 									elaborationDetailComposition.setAddInfo(null);
 									compositionList.add(elaborationDetailComposition);
 								} catch (Exception e) {
-									addError(albaran, e.getMessage());
+									String msg = "[Compuesto " + lineaComposicion.getPRODUCTO().getCODIGO() + "] ";
+									addError(albaran, msg + e.getMessage());
 								}
 							});
 			
