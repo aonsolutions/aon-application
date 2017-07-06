@@ -120,9 +120,10 @@ public class InvoiceDAO {
 	
 	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
 		Boolean intracomunitaria = "intracomunitarias".equals(sii);
+		Boolean bienes = "bienes".equals(sii);
 		Boolean cp = "cp_cobros_pagos".equals(sii) || "cp_cobros".equals(sii) || "cp_pagos".equals(sii);
 		
-		if(pending && !intracomunitaria && !cp){
+		if(pending && !intracomunitaria && !cp && !bienes){
 			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Pendiente");
 			if(aceptada) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Correcto"));
 			if(aceptadaErrores) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("AceptadoConErrores"));
@@ -157,6 +158,7 @@ public class InvoiceDAO {
 			String status = "status";
 			if(intracomunitaria)status =  "status_intra";
 			else if(cp) status = "status_cp";
+			else if(bienes) status = "status_bienes";
 			return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 					.join(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
 					.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(status).and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))

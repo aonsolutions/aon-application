@@ -111,6 +111,10 @@ public class SiiPrincipal extends Composite{
 		return parent.getSendAll();
 	}
 	
+	public Button getBaja() {
+		return parent.getBaja();
+	}
+	
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
 		closeFootPanel();

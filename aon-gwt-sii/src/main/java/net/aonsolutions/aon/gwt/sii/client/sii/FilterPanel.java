@@ -172,7 +172,7 @@ public class FilterPanel extends Composite {
 		datePanel.add(cb5);
 		
 		CheckBox cb6 = new CheckBox("Pago Parcial");
-		cb5.setVisible(false);
+		cb6.setVisible(false);
 		if(parent.getFilterMap().containsKey("sent")){
 			cb6.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
 		}

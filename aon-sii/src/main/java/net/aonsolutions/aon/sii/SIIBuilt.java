@@ -488,9 +488,9 @@ public class SIIBuilt {
 		return suministro;
 	}
 	
-	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList) {
+	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRFacturasEmitidas baja = new BajaLRFacturasEmitidas();
-		baja.setCabecera(cabeceraBaja(company));
+		baja.setCabecera(cabeceraBaja(company, terceros));
 		
 		invoiceList.stream().forEach(i -> {
 			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(i)).findFirst().orElse(new VatContext());
@@ -845,9 +845,9 @@ public class SIIBuilt {
 		return suministro;
 	}
 		
-	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company,LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList) {
+	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company,LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
-		baja.setCabecera(cabeceraBaja(company));
+		baja.setCabecera(cabeceraBaja(company, terceros));
 		
 		invoiceList.stream().forEach(i -> {
 			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(i)).findFirst().orElse(new VatContext());
@@ -1019,11 +1019,11 @@ public class SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRBienesInversion suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+	protected SuministroLRBienesInversion suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
 		SuministroLRBienesInversion suministro = new SuministroLRBienesInversion();
 		
 		// CABECERA
-		suministro.setCabecera(cabecera(company));
+		suministro.setCabecera(cabecera(company, mod, terceros));
 		
 		// BODY
 		invoiceList.stream().forEach(invoice -> {
@@ -1061,9 +1061,9 @@ public class SIIBuilt {
 		return suministro;
 	}
 	
-	protected BajaLRBienesInversion bajaBienesInversion(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList) {
+	protected BajaLRBienesInversion bajaBienesInversion(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRBienesInversion baja = new BajaLRBienesInversion();
-		baja.setCabecera(cabeceraBaja(company));
+		baja.setCabecera(cabeceraBaja(company, terceros));
 		
 		invoiceList.stream().forEach(invoice -> {
 			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
@@ -1203,9 +1203,9 @@ public class SIIBuilt {
 		return suministro;
 	}
 		
-	protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList) {
+	protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRDetOperacionIntracomunitaria baja = new BajaLRDetOperacionIntracomunitaria();
-		baja.setCabecera(cabeceraBaja(company));
+		baja.setCabecera(cabeceraBaja(company, terceros));
 		
 		invoiceList.stream().forEach(invoice -> {
 			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext()); 
@@ -1481,12 +1481,14 @@ public class SIIBuilt {
 	 * @param company
 	 * @return CabeceraSiiBaja
 	 */
-	private CabeceraSiiBaja cabeceraBaja(Company company){
+	private CabeceraSiiBaja cabeceraBaja(Company company, String terceros){
 		CabeceraSiiBaja cabecera = new CabeceraSiiBaja();
 		cabecera.setIDVersionSii("1.0");
 		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
 		titular.setNIF(company.getDocument());
 		titular.setNombreRazon(company.getName());
+		if(terceros != null && !terceros.equals("false"))
+			titular.setNIFRepresentante(terceros);
 		cabecera.setTitular(titular);
 		return cabecera;
 	}
