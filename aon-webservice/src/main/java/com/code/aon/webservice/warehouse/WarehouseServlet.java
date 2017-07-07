@@ -101,7 +101,9 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = DBIncome.getIncomes(domain, userName, req.getParameterMap());
 				} else if(MSG.ELABORATION.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
-						if(MSG.STATUS.equals(pathInfo[4])){
+						if(MSG.SERIES.equals(pathInfo[4])){
+							object = getElaborationSeriesList(domain, userName);
+						} else if(MSG.STATUS.equals(pathInfo[4])){
 							object = getElaborationStatusList();
 						} else if(MSG.DETAIL.equals(pathInfo[4])){
 							object = getElaborationDetailList(domain, userName, Integer.parseInt(pathInfo[5]));
@@ -605,6 +607,13 @@ public class WarehouseServlet extends HttpServlet{
     	return array;
     }
     
+    private JSONArray getElaborationSeriesList(Domain domain,String login) {
+    	JSONArray array = new JSONArray();
+    	array.put(ToJSON.objectToJSON(2017, "PV18"));
+    	array.put(ToJSON.objectToJSON(2016, "S17"));
+    	return array;
+    }
+    
     private JSONArray getElaborationList(Domain domain,String login, Map<String, String[]> map){
     	JSONArray array = new JSONArray();
     	AON.getElaborationStream(domain.getName(), domain.getId(), login, f -> elaborationFilter(domain, map, f))
@@ -648,12 +657,30 @@ public class WarehouseServlet extends HttpServlet{
 					.or(f.getDateProperty().isNull()));
 		}
 		
+		if(filterMap.containsKey(MSG.FROM)){
+			filter = filter.and(f.getDateProperty().ge(new Timestamp(Long.parseLong(filterMap.get(MSG.FROM)[0])))
+					.or(f.getDateProperty().isNull()));
+		}
+
+		if(filterMap.containsKey(MSG.TO)){
+			filter = filter.and(f.getDateProperty().le(new Timestamp(Long.parseLong(filterMap.get(MSG.TO)[0])))
+					.or(f.getDateProperty().isNull()));
+		}
+		
 		if(filterMap.containsKey(MSG.SERIES)){
 			Filter fseries = f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[0]); 
 			for(Integer i = 1; i < filterMap.get(MSG.SERIES).length ; i++){
 				fseries = fseries.or(f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[i]));
 			}
 			filter = filter.and(fseries);
+		}
+		
+		if(filterMap.containsKey(MSG.NUMBER)){
+			Filter fnumber = f.getNumberProperty().eq(Integer.parseInt(filterMap.get(MSG.NUMBER)[0])); 
+			for(Integer i = 1; i < filterMap.get(MSG.NUMBER).length ; i++){
+				fnumber = fnumber.or(f.getSeriesProperty().eq(filterMap.get(MSG.NUMBER)[i]));
+			}
+			filter = filter.and(fnumber);
 		}
 		
 		if(filterMap.containsKey(MSG.ITEM)){

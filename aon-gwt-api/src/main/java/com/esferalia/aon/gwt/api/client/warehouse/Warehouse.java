@@ -169,6 +169,9 @@ public class Warehouse extends Methods{
 	public void getElaboration(Integer id, AsyncCallback<JSON<JsElaboration>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/" + id, callback);
 	}
+	public void getElaborationSeries(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/series", callback);
+	}
 	public void getElaborationStatuses(AsyncCallback<JSON<JsObject>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/status", callback);
 	}
