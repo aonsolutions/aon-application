@@ -146,7 +146,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
        
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, true, false);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_EMITIDAS);
     	}
 
     	// MODIFICACIÓN
@@ -167,7 +167,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
        
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, false, false);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_EMITIDAS);
     	}
     	
         return array;
@@ -196,7 +196,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
     	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, false, false);
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_EMITIDAS);
     	
     	return array;
 	}
@@ -263,7 +263,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministroNew);
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, true, false);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_RECIBIDAS);
     	}
     	
     	// MODIFICACIÓN
@@ -286,7 +286,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidas(suministroMod);
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, false, false);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_RECIBIDAS);
     	}
     
         return array;
@@ -315,7 +315,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
     	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, false, false);
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_RECIBIDAS);
     	
     	return array;
     }
@@ -374,7 +374,7 @@ public class SIIPost extends WebServiceGatewaySupport{
         	byte[] requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
         	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, true, true);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INVERSION);
     	
     		for (RespuestaBienType r : respuesta.getRespuestaLinea()) {
     			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -393,7 +393,7 @@ public class SIIPost extends WebServiceGatewaySupport{
         	byte[] requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
         	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
         	LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, false, false, true);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INVERSION);
     	
     		for (RespuestaBienType r : respuesta.getRespuestaLinea()) {
     			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -428,7 +428,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
     	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, false, true);
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_INVERSION);
     	
     	return array;
     }
@@ -458,7 +458,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, true, true, false);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INTRACOMUNITARIAS);
     	
     		for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
     			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -478,7 +478,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
     		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
     		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, true, true, false);
+    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INTRACOMUNITARIAS);
     	
     		for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
     			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -514,7 +514,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
     	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, true, false);
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_INTRACOMUNITARIAS);
     	
     	return array;
     }

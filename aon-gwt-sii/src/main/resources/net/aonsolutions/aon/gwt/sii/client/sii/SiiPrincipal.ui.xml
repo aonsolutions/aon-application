@@ -25,15 +25,24 @@
 							<g:TabLayoutPanel ui:field="tabLayout" barHeight="26"
 									barUnit="PX" width="100%">
 
-							    <g:tab >
+							    <g:tab>
 									<g:customHeader >
 										<g:HTMLPanel>
 											<g:InlineLabel text="Errores" />
 										</g:HTMLPanel>
 									</g:customHeader>
-						
 									<g:ScrollPanel ui:field="errorPanel" styleName="{aonResources.css.aonTextCenter}" />
 								</g:tab>
+							<!-- TODO  	
+								<g:tab>
+									<g:customHeader >
+										<g:HTMLPanel>
+											<g:InlineLabel text="Historial" />
+										</g:HTMLPanel>
+									</g:customHeader>
+									<g:ScrollPanel ui:field="historyPanel" styleName="{aonResources.css.aonTextCenter}" />
+								</g:tab>
+							-->
 							</g:TabLayoutPanel>
 						</aon:MinimizePanel>
 					</g:south>

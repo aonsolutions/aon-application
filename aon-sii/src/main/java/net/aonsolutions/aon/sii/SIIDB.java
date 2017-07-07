@@ -30,18 +30,21 @@ public class SIIDB {
 		
 	}
 	
-    protected void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<String> status, LinkedList<VatContext> vatList, Boolean intracomunitaria, Boolean alta, Boolean bienes){
+    protected void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<String> status, LinkedList<VatContext> vatList, SendType sendType){
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
     			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
     			.setIssueDate(new Date())
-    			.setSource(DataResponseSource.SII)
-    			.setCreationDate(new Date())
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login));
+    			.setSource(DataResponseSource.SII));
     
+    	DataResponseDetail drd0= new DataResponseDetail();
+		drd0.setDomain(domain.getId())
+			.setDataResponse(dr.getId())
+			.setDataVariable("type") 
+			.setValue(Integer.toString(sendType.ordinal()));
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd0);
+    	
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
     		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
@@ -54,14 +57,10 @@ public class SIIDB {
     					.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
     					.setIssueDate(new Date())
     					.setSource(DataResponseSource.SII_INVOICE)
-    					.setSourceId(invoiceList.get(i))
-    					.setCreationDate(new Date())
-    					.setCreationUser(login)
-    					.setModificationDate(new Date())
-    					.setModificationUser(login));
+    					.setSourceId(invoiceList.get(i)));
     		}
     		Integer diID = di.getId();
-    		if(intracomunitaria) {
+    		if(sendType.isIntracomunitaria()) {
     			Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("status_intra")));
         		if(opt.isPresent()){
             		DataResponseDetail drdOpt = opt.get().setDataVariable("status_intra_old");
@@ -71,11 +70,7 @@ public class SIIDB {
         		drd.setDomain(domain.getId())
         			.setDataResponse(di.getId())
         			.setDataVariable("status_intra") 
-        			.setValue(status.get(i))
-        			.setCreationDate(new Date())
-        			.setCreationUser(login)
-        			.setModificationDate(new Date())
-        			.setModificationUser(login);
+        			.setValue(status.get(i));
         		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
         		
         		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("send_intra")));
@@ -87,13 +82,9 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send_intra") 
-    				.setValue(dr.getId().toString())
-    				.setCreationDate(new Date())
-    				.setCreationUser(login)
-    				.setModificationDate(new Date())
-    				.setModificationUser(login);
+    				.setValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
-    		} else if (bienes){
+    		} else if(sendType.isInversion()){
     			Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("status_bienes")));
         		if(opt.isPresent()){
             		DataResponseDetail drdOpt = opt.get().setDataVariable("status_bienes_old");
@@ -103,11 +94,7 @@ public class SIIDB {
         		drd.setDomain(domain.getId())
         			.setDataResponse(di.getId())
         			.setDataVariable("status_bienes") 
-        			.setValue(status.get(i))
-        			.setCreationDate(new Date())
-        			.setCreationUser(login)
-        			.setModificationDate(new Date())
-        			.setModificationUser(login);
+        			.setValue(status.get(i));
         		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
         		
         		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("send_bienes")));
@@ -119,11 +106,7 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send_bienes") 
-    				.setValue(dr.getId().toString())
-    				.setCreationDate(new Date())
-    				.setCreationUser(login)
-    				.setModificationDate(new Date())
-    				.setModificationUser(login);
+    				.setValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
 
     		} else {
@@ -136,11 +119,7 @@ public class SIIDB {
     			drd.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("status") 
-    				.setValue(status.get(i))
-    				.setCreationDate(new Date())
-    				.setCreationUser(login)
-    				.setModificationDate(new Date())
-    				.setModificationUser(login);
+    				.setValue(status.get(i));
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     	
     			Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("send")));
@@ -152,52 +131,36 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send") 
-    				.setValue(dr.getId().toString())
-    				.setCreationDate(new Date())
-    				.setCreationUser(login)
-    				.setModificationDate(new Date())
-    				.setModificationUser(login);
+    				.setValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     		
-    			if(alta && (status.get(i).equals("Correcto") || status.get(i).equals("AceptadoConErrores"))
+    			if(sendType.isAlta() && (status.get(i).equals("Correcto") || status.get(i).equals("AceptadoConErrores"))
     				&& vatList.stream().filter(d -> d.getInvoice().equals(invoice)).map(f -> f.isIntracommunity()).findFirst().orElse(false)){
     				DataResponseDetail drd3 = new DataResponseDetail();
     				drd3.setDomain(domain.getId())
     					.setDataResponse(di.getId())
     					.setDataVariable("status_intra") 
-    					.setValue("Pendiente")
-    					.setCreationDate(new Date())
-    					.setCreationUser(login)
-    					.setModificationDate(new Date())
-    					.setModificationUser(login);
+    					.setValue("Pendiente");
     				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd3);
     			}
     			
-    			if(alta && (status.get(i).equals("Correcto") || status.get(i).equals("AceptadoConErrores"))
+    			if(sendType.isAlta() && (status.get(i).equals("Correcto") || status.get(i).equals("AceptadoConErrores"))
         			&& vatList.stream().filter(d -> d.getInvoice().equals(invoice)).map(f -> f.isVatAccrualRegime()).findFirst().orElse(false)){
         			DataResponseDetail drd3 = new DataResponseDetail();
         			drd3.setDomain(domain.getId())
         				.setDataResponse(di.getId())
         				.setDataVariable("status_cp") 
-        				.setValue("Pendiente")
-        				.setCreationDate(new Date())
-        				.setCreationUser(login)
-        				.setModificationDate(new Date())
-        				.setModificationUser(login);
+        				.setValue("Pendiente");
         			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd3);
         		}
     			
-    			if(alta && (status.get(i).equals("Correcto") || status.get(i).equals("AceptadoConErrores"))
+    			if(sendType.isAlta() && (status.get(i).equals("Correcto") || status.get(i).equals("AceptadoConErrores"))
             			&& vatList.stream().filter(d -> d.getInvoice().equals(invoice)).map(f -> f.isInvestment()).findFirst().orElse(false)){
             			DataResponseDetail drd4 = new DataResponseDetail();
             			drd4.setDomain(domain.getId())
             				.setDataResponse(di.getId())
             				.setDataVariable("status_bienes") 
-            				.setValue("Pendiente")
-            				.setCreationDate(new Date())
-            				.setCreationUser(login)
-            				.setModificationDate(new Date())
-            				.setModificationUser(login);
+            				.setValue("Pendiente");
             			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd4);
             		}
     		}	
@@ -211,11 +174,7 @@ public class SIIDB {
     			.setDescription(dr.getNumber())
     			.setData(requestXml)
     			.setType(DataAttachType.REQUEST.value())
-    			.setMimeType(MimeType.XML)
-    			.setCreationDate(new Date())	
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login);
+    			.setMimeType(MimeType.XML);
     	AON.insertAttach(domain.getName(), domain.getId(), login, requestAttach);
     	
     	Attach responseAttach = new Attach()
@@ -226,26 +185,25 @@ public class SIIDB {
     			.setDescription(dr.getNumber())
     			.setData(responseXml)
     			.setType(DataAttachType.RESPONSE_OK.value()) // || DataAttachType.RESPONSE_ERROR
-    			.setMimeType(MimeType.XML)
-    			.setCreationDate(new Date())	
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login);
+    			.setMimeType(MimeType.XML);
     	AON.insertAttach(domain.getName(), domain.getId(), login, responseAttach);
     }
     
-    protected void insertSuministroBajas(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, HashMap<Integer, String> status, Boolean intra, Boolean bienes){
+    protected void insertSuministroBajas(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, HashMap<Integer, String> status, SendType sendType){
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
     			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
     			.setIssueDate(new Date())
-    			.setSource(DataResponseSource.SII)
-    			.setCreationDate(new Date())
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login));
+    			.setSource(DataResponseSource.SII));
     	
+    	DataResponseDetail drd0= new DataResponseDetail();
+		drd0.setDomain(domain.getId())
+			.setDataResponse(dr.getId())
+			.setDataVariable("type") 
+			.setValue(Integer.toString(sendType.ordinal()));
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd0);
+		
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
     		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
@@ -253,8 +211,8 @@ public class SIIDB {
     				.and(f.getSourceIdProperty().eq(invoice)));
     		if(di != null && (status.get(invoice).equals("Correcto") || status.get(invoice).equals("Correcto"))){
     			String estado = "status";
-    			if(intra) estado = "status_intra";
-    			if(bienes) estado = "status_bienes";
+    			if(sendType.isIntracomunitaria()) estado = "status_intra";
+    			if(sendType.isInversion()) estado = "status_bienes";
     			String s = estado;
     			Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq(s)));
     			if(opt.isPresent()){
@@ -265,16 +223,12 @@ public class SIIDB {
     			drd.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable(estado) 
-    				.setValue("Anulada")
-    				.setCreationDate(new Date())
-    				.setCreationUser(login)
-    				.setModificationDate(new Date())
-    				.setModificationUser(login);
+    				.setValue("Anulada");
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     	
     			String send = "send";
-    			if(intra) send = "send_intra";
-    			if(bienes) send = "send_bienes";
+    			if(sendType.isIntracomunitaria()) send = "send_intra";
+    			if(sendType.isInversion()) send = "send_bienes";
     			String s2 = send;
     			Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq(s2)));
     			if(opt2.isPresent()){
@@ -285,11 +239,7 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable(send) 
-    				.setValue(dr.getId().toString())
-    				.setCreationDate(new Date())
-    				.setCreationUser(login)
-    				.setModificationDate(new Date())
-    				.setModificationUser(login);
+    				.setValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     		}
     	}
@@ -301,13 +251,16 @@ public class SIIDB {
     			.setDomain(domain.getId())
     			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
     			.setIssueDate(new Date())
-    			.setSource(DataResponseSource.SII)
-    			.setCreationDate(new Date())
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login));
+    			.setSource(DataResponseSource.SII));
 
-    	for(Finance f : financeList){
+    	DataResponseDetail drd0= new DataResponseDetail();
+		drd0.setDomain(domain.getId())
+			.setDataResponse(dr.getId())
+			.setDataVariable("type") 
+			.setValue(Integer.toString(SendType.COBROS_PAGOS.ordinal()));
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd0);
+    	
+		for(Finance f : financeList){
     		if(!status.get(f.getInvoice().getId()).equals("Incorrecto")){
     			DataResponse di = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
 					new DataResponse()
@@ -315,21 +268,13 @@ public class SIIDB {
 					.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
 					.setIssueDate(new Date())
 					.setSource(DataResponseSource.SII_FINANCE)
-					.setSourceId(f.getId())
-					.setCreationDate(new Date())
-					.setCreationUser(login)
-					.setModificationDate(new Date())
-					.setModificationUser(login));
+					.setSourceId(f.getId()));
     		
     			DataResponseDetail drd2 = new DataResponseDetail();
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send") 
-    				.setValue(dr.getId().toString())
-    				.setCreationDate(new Date())
-    				.setCreationUser(login)
-    				.setModificationDate(new Date())
-    				.setModificationUser(login);
+    				.setValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     		}
     	}
@@ -351,11 +296,7 @@ public class SIIDB {
     		drd.setDomain(domain.getId())
     			.setDataResponse(di.getId())
     			.setDataVariable("status_cp") 
-    			.setValue(incorrect ? "Incorrecto" : (invoice.getTotal() > paid ? "Parcial" : "Pagado"))
-    			.setCreationDate(new Date())
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login);
+    			.setValue(incorrect ? "Incorrecto" : (invoice.getTotal() > paid ? "Parcial" : "Pagado"));
     		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     		
     		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq("send_cp")));
@@ -367,11 +308,7 @@ public class SIIDB {
 			drd2.setDomain(domain.getId())
 				.setDataResponse(di.getId())
 				.setDataVariable("send_cp") 
-				.setValue(dr.getId().toString())
-				.setCreationDate(new Date())
-				.setCreationUser(login)
-				.setModificationDate(new Date())
-				.setModificationUser(login);
+				.setValue(dr.getId().toString());
 			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     	}
     	
@@ -383,11 +320,7 @@ public class SIIDB {
     			.setDescription(dr.getNumber())
     			.setData(requestXml)
     			.setType(DataAttachType.REQUEST.value())
-    			.setMimeType(MimeType.XML)
-    			.setCreationDate(new Date())	
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login);
+    			.setMimeType(MimeType.XML);
     	AON.insertAttach(domain.getName(), domain.getId(), login, requestAttach);
     	
     	Attach responseAttach = new Attach()
@@ -398,11 +331,7 @@ public class SIIDB {
     			.setDescription(dr.getNumber())
     			.setData(responseXml)
     			.setType(DataAttachType.RESPONSE_OK.value()) // || DataAttachType.RESPONSE_ERROR
-    			.setMimeType(MimeType.XML)
-    			.setCreationDate(new Date())	
-    			.setCreationUser(login)
-    			.setModificationDate(new Date())
-    			.setModificationUser(login);
+    			.setMimeType(MimeType.XML);
     	AON.insertAttach(domain.getName(), domain.getId(), login, responseAttach);
     }
     

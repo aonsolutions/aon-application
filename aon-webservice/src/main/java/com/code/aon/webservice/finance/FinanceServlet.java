@@ -38,7 +38,7 @@ public class FinanceServlet extends HttpServlet{
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[2];
-		String domainName = pathInfo[1]; 
+		String domainName = pathInfo[1];
 		String md5 = Utils.getMd5(userName+domainName);
 		
 		if(accessToken.equals(md5)){
@@ -81,14 +81,12 @@ public class FinanceServlet extends HttpServlet{
 						}
 					}
 					break;
-					
 				case MSG.BILLING_PERIOD: // FEE
 					object = getBillingPeriodList();
 					break;
 				default:
 					break;
 				}
-				
 				Utils.giveBack(req, resp, object, meta);
 			}
 		}

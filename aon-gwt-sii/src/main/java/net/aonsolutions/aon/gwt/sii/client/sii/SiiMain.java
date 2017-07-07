@@ -139,7 +139,7 @@ public class SiiMain extends AonTemplate2{
 	}
 	
 	private void westContent() {
-		getDockLayoutPanel().setWidgetSize(getWestContent(), 350);
+		getDockLayoutPanel().setWidgetSize(getWestContent(), 300);
 		
 		VerticalPanel menuPanel = new VerticalPanel();
 		

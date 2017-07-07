@@ -350,6 +350,12 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	        Boolean isChecked = input.isChecked();
 	        for (JsInvoice element : provider.getList()) {
 	            selectionModel.setSelected(element, isChecked);
+	            if(isChecked){
+					selFiles.add(element);
+				}
+	        }
+	        if(!isChecked){
+	        	selFiles = new LinkedList<>();
 	        }
 	    }
 	}
