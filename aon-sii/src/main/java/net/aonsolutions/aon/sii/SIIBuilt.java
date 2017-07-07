@@ -1048,9 +1048,10 @@ public class SIIBuilt {
 			
 			
 			BienDeInversionType bdit = new BienDeInversionType();
-			bdit.setFechaInicioUtilizacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-			bdit.setIdentificacionBien("ASAD22");
-			bdit.setProrrataAnualDefinitiva("0.0");
+			
+			bdit.setFechaInicioUtilizacion(AonDateUtils.format(vat.getAmortizationInitialDate(), "dd-MM-yyyy"));
+			bdit.setIdentificacionBien(vat.getAmortizationDescription());
+			bdit.setProrrataAnualDefinitiva(vat.getAmortizationPercentage().toString());
 //			bdit.setRegularizacionAnualDeduccion(""); // OPTIONAL
 //			bdit.setIdentificacionEntrega(""); // OPTIONAL
 //			bdit.setRegularizacionDeduccionEfectuada(""); // OPTIONAL

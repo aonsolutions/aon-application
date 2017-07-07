@@ -341,7 +341,7 @@ public class SiiMain extends AonTemplate2{
 		});
 		menuPanel.add(frIntraButton);
 
-	/*	Button bienesInversionButton = new Button("Bienes de Inversion");
+		Button bienesInversionButton = new Button("Bienes de Inversion");
 		bienesInversionButton.setStyleName("aon-editDataTable-button");
 		bienesInversionButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		bienesInversionButton.addClickHandler(new ClickHandler() {
@@ -359,7 +359,7 @@ public class SiiMain extends AonTemplate2{
 			}
 		});
 		menuPanel.add(bienesInversionButton);
-	*/
+	
 		Button operacionesIntracomunitariasButton = new Button("Operaciones Intracomunitarias");
 		operacionesIntracomunitariasButton.setStyleName("aon-editDataTable-button");
 		operacionesIntracomunitariasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());

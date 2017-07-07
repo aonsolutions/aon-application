@@ -10,6 +10,8 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
+import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INVOICE;
+import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -280,12 +282,16 @@ public class VATDAO  {
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
 				
 				,DATA_RESPONSE_DETAIL.DATA_VALUE
+				
+				,AMORTIZATION.PERCENTAGE, AMORTIZATION.DESCRIPTION, AMORTIZATION.INITIAL_DATE
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 			.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
 			.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(status).and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
+			.leftOuterJoin(AMORTIZATION_INVOICE).on(AMORTIZATION_INVOICE.INVOICE.eq(INVOICE.ID))
+			.leftOuterJoin(AMORTIZATION).on(AMORTIZATION.ID.eq(AMORTIZATION_INVOICE.AMORTIZATION))
 			.where(VAT_PROPERTIES.getConditions(filter))
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
@@ -439,6 +445,10 @@ public class VATDAO  {
 	
 				.setDeductiblePercent(getDeductiblePercent(rec))
 				.setDeductibleQuota(getDeductibleQuota(rec))
+				
+				.setAmortizationDescription(rec.getValue(AMORTIZATION.DESCRIPTION))
+				.setAmortizationInitialDate(rec.getValue(AMORTIZATION.INITIAL_DATE))
+				.setAmortizationPercentage(rec.getValue(AMORTIZATION.PERCENTAGE))
 			;
 		}
 	}

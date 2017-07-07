@@ -57,6 +57,11 @@ public class VatContext implements Serializable {
 
 	
 	private String siiStatus;
+	
+	private String amortizationDescription;
+	private Double amortizationPercentage;
+	private Date amortizationInitialDate;
+	
 
 	
 	public String getSiiStatus() {
@@ -371,4 +376,26 @@ public class VatContext implements Serializable {
 	public boolean isWithoutRightDeductionType() {
 		return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
 	}
+	public String getAmortizationDescription() {
+		return amortizationDescription;
+	}
+	public VatContext setAmortizationDescription(String amortizationDescription) {
+		this.amortizationDescription = amortizationDescription;
+		return this;
+	}
+	public Double getAmortizationPercentage() {
+		return amortizationPercentage;
+	}
+	public VatContext setAmortizationPercentage(Double amortizationPercentage) {
+		this.amortizationPercentage = amortizationPercentage;
+		return this;
+	}
+	public Date getAmortizationInitialDate() {
+		return amortizationInitialDate;
+	}
+	public VatContext setAmortizationInitialDate(Date amortizationInitialDate) {
+		this.amortizationInitialDate = amortizationInitialDate;
+		return this;
+	}
+	
 }

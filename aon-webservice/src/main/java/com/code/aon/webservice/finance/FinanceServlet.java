@@ -230,6 +230,8 @@ public class FinanceServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value())
+   					.or(f.getTypeProperty().eq(InvoiceType.EXPENSES.value())))
     			.and(f.getInvestmentProperty().eq((byte) 1))
     			.page(page).perPage(perPage)
     			,pending, sent, sent_error, error, anulada, sii)
