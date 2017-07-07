@@ -433,6 +433,9 @@ public abstract class PageAbs extends ResizeComposite {
 		return behaviour != null && behaviour[1];
 	}
 	protected boolean isDisabled(D2DepositHeaderKey key) {
+		if( year == 2014  && (D2DepositHeaderKey.BA2121300.equals(key) || D2DepositHeaderKey.BA21213009.equals(key))){
+			return false;
+		}
 		Boolean[] behaviour = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(key.toString());
 		return behaviour != null && behaviour[1];
 	}
