@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -218,12 +219,15 @@ public class FooterPanel extends Composite {
 				panel.addStyleName(AON.AON_CSS.aonFontMedium());
 				panel.addStyleName(AON.AON_CSS.aonMarginBottom());
 				
-				String issueDate = jsSales.getIssueDate() != null ? Utils
-						.formatDate(Utils.parseDateTime(jsSales.getIssueDate()))
-						: "";
-				String deliveryDate = jsSales.getDeliveryDate() != null ? Utils
-						.formatDate(Utils.parseDateTime(jsSales
-								.getDeliveryDate())) : "";
+//				String issueDate = jsSales.getIssueDate() != null ? Utils
+//						.formatDate(Utils.parseDate(jsSales.getIssueDate()))
+//						: "";
+//				String deliveryDate = jsSales.getDeliveryDate() != null ? Utils
+//						.formatDate(Utils.parseDate(jsSales
+//								.getDeliveryDate())) : "";
+				
+				String issueDate = jsSales.getIssueDate();
+				String deliveryDate = jsSales.getDeliveryDate();
 
 				final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
 						+ AonStringUtils.rightPad("", 9)
@@ -273,7 +277,10 @@ public class FooterPanel extends Composite {
 			line.addStyleName(AON.AON_CSS.aonFontMedium());
 			line.addStyleName(AON.AON_CSS.aonMarginBottom());
 			
-			Double discount = jsDetail.getDiscountExpr() != null ? Double.parseDouble(jsDetail.getDiscountExpr()) : 1.0;
+			Double discount = 1.0;
+			discount = jsDetail.getDiscountExpr() != null 
+					? Double.parseDouble(jsDetail.getDiscountExpr()) 
+					: 1.0;
 			Double amount = jsDetail.getPrice() * jsDetail.getQuantity() * (1 - (discount/100));
 			InlineLabel d = new InlineLabel(AonStringUtils.SPACE
 					+ AonStringUtils.rightPad("",3)
