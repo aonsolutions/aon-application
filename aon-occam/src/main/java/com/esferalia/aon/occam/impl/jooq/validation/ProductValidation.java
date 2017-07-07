@@ -337,12 +337,25 @@ public class ProductValidation {
 			int count = ctx.getDslContext().selectCount()
 				.from(ITEM)
 				.where(ITEM.DOMAIN.eq(i.getDomain()))
+				.and(ITEM.PRODUCT.eq(i.getProduct().getId()))
 				.and(ITEM.SERIAL_NUMBER.eq(i.getSerialNumber()))
 				.fetchOne(0,int.class);
 			if(count>0)
 				throw new AonCoreException(AonError.DUPLICATE_SERIAL_NUMBER.format(i.getSerialNumber()));
 
 		}
+	};
+	
+	/**
+	 * El producto tiene que ser inventariable.
+	 */
+	public static BiConsumer<Integer, AONContext> CHECK_INVENTORIABLE = (itemId,ctx) -> {
+		byte inventoriable = ctx.getDslContext().select(PRODUCT.INVENTORIABLE)
+				.from(PRODUCT.leftJoin(ITEM).on(ITEM.PRODUCT.eq(PRODUCT.ID)))
+				.where(ITEM.ID.eq(itemId))
+				.fetchOne(PRODUCT.INVENTORIABLE);
+		if(inventoriable==0)
+			throw new AonCoreException("El producto no es inventariable");
 	};
 	
 	public static void validateItem(AONContext ctx, Item i) throws AonCoreException{
@@ -354,4 +367,10 @@ public class ProductValidation {
 			.andThen(CHECK_VALID_SERIAL_NUMBER)
 			.accept(i, ctx);
 	}
+	
+	public static void validateStocking(AONContext ctx, Integer itemId) throws AonCoreException{
+		(CHECK_INVENTORIABLE)
+			.accept(itemId, ctx);
+	}
+	
 }
