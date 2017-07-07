@@ -238,8 +238,10 @@ public class SQLSeniorityTestCase extends
 					salary.getTotalPayment() );
 		else
 			Assert.assertEquals( 
-					(1500.00/12 * (month - 6 )) 
-					+(1500.00 * 1.05 / 12 * ( 6  + 12 - month)), 
+					(1500.00) 
+//					(1500.00/12 * (month - 6 )) 
+//					+(1500.00/ 12 * ( 6  + 12 - month))
+					, 
 					salary.getTotalPayment() );
 	}
 	
