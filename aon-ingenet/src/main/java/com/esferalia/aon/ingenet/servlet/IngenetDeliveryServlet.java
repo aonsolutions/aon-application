@@ -896,7 +896,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 													.getNUMEROLOTESERIE()) ? f
 															.getSerialNumberProperty()
 															.eq(productoelaborado
-																	.getNUMEROLOTESERIE())
+																	.getNUMEROLOTESERIE().trim())
 															: f.getSerialNumberProperty()
 															.isNull())));
 			if(item==null || item.getId()==null){
