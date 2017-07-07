@@ -516,7 +516,24 @@ public class ElaborationDAO {
 							.and(RITEM.ITEM.eq(itemId))
 							.and(RITEM.REGISTRY.eq(customerId)))
 					.orderBy(RITEM.PRIORITY).limit(1).fetchOne().value1();
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	@Deprecated
+	public static Double getCustomerItemPrice(AONContext ctx, Integer itemId,
+			Integer customerId) {
+		try {
+			return ctx
+					.getDslContext()
+					.select(RITEM.PRICE)
+					.from(RITEM)
+					.where(RITEM.DOMAIN.eq(ctx.getDomainId())
+							.and(RITEM.ITEM.eq(itemId))
+							.and(RITEM.REGISTRY.eq(customerId)))
+					.orderBy(RITEM.PRIORITY).limit(1).fetchOne().value1();
+		} catch (Exception e) {
 			return null;
 		}
 	}

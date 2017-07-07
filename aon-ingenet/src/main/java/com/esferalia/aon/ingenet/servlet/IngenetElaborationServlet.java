@@ -319,9 +319,13 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				elaboracion.getDATOSPRODUCTO().setFECHASERIE(null);
 				elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
 				elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
-				elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
 				if(customer!=null && customer.getId()!=null){
-					elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(obtainCustomerProductCode(ctx, elaboration.getItem(), customer));
+					Double price = obtainCustomerProductPrice(ctx, elaboration.getItem(), customer);
+					String code = obtainCustomerProductCode(ctx, elaboration.getItem(), customer);
+					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", price));
+					elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(code);
+				} else {
+					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
 				}
 				elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
 				if(elaboration.getItem().getStockUnitTag()!=null){
@@ -359,6 +363,15 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		}
 		return null;
 	}
+	
+	private Double obtainCustomerProductPrice(AONContext ctx, Item item, Customer customer) {
+		if(item!=null && item.getId()!=null
+			&& customer!=null && customer.getId()!=null){
+			return ElaborationDAO.getCustomerItemPrice(ctx, item.getId(), customer.getId());
+		}
+		return null;
+	}
+	
 	
 	private DATOSCENTROTRABAJOTYPE obtainDATOSCENTROTRABAJO(AONContext ctx,
 			Sales sales) {
