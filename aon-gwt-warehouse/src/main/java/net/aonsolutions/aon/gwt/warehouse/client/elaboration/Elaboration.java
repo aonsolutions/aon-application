@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import net.aonsolutions.polymer.aon.AonComboBoxElement;
-
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
@@ -22,6 +20,8 @@ import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
+
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
 
 public class Elaboration extends AonTemplate2 {
 
@@ -179,7 +179,11 @@ public class Elaboration extends AonTemplate2 {
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		toolbar.accept.setVisible(true);
 		toolbar.back.setVisible(true);
-		toolbar.remove.setVisible(true);
+		if(!js.getStatus().getName().equals("En progreso")
+				&& !js.getStatus().getName().equals("Cerrado")
+				) {
+			toolbar.remove.setVisible(true);
+		}
 		toolbar.download.setVisible(true);
 		toolbar.subtitle.setText("Edici\u00F3n");
 		
