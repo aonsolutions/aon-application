@@ -367,7 +367,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private Double obtainCustomerProductPrice(AONContext ctx, Item item, Customer customer) {
 		if(item!=null && item.getId()!=null
 			&& customer!=null && customer.getId()!=null){
-			return ElaborationDAO.getCustomerItemPrice(ctx, item.getId(), customer.getId());
+			Double price = ElaborationDAO.getCustomerItemPrice(ctx, item.getId(), customer.getId());
+			return price!=null && price!=0.0?price:item.getPrice();
 		}
 		return null;
 	}
