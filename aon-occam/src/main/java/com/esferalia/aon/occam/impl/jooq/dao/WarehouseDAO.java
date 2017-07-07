@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -351,6 +352,7 @@ public class WarehouseDAO {
 	
 	public static Optional<Stock> insertStock(AONContext ctx, Stock stock){
 		ctx.checkWrite();
+		ProductValidation.validateStocking(ctx, stock.getItem());
 		return ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE)
 				.values(stock.getDomain(), stock.getItem(), stock.getQuantity(), stock.getWarehouse())
 				.returning().fetch().stream().map(new FullStockFiller()).findFirst();
