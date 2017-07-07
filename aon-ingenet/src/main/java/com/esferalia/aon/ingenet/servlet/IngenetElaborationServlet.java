@@ -144,7 +144,10 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 						ElaborationDAO.updateElaboration(ctx, elaboration);
 					} else {
 						String reference = elaboration.getSeries()+"/"+elaboration.getNumber();
-						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
+//						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
+						String subject = "[AON-DEV] Envío automático de elaboraciones";
+						String content = "Imposible localizar el pedido de origen de la elaboracion "+reference;
+						sendEmail(subject, content, null, null, RECIPIENTS_TO_FAILURES);
 					}
 				});
 				 
