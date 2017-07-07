@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
@@ -193,8 +194,14 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			bf.append("<li>Albarán " + alb.getSERIE()+"/"+ alb.getNUMERO()+" del " + alb.getFECHAEMISION()+"</li>");
 		});
 		bf.append("</ul>");
-		
-		// TODO append warning messages
+		if(warningList!=null && warningList.size()>0){
+			bf.append("<h1>Avisos:</h1>");
+			bf.append("<ul>");
+			warningList.forEach(msg -> {
+				bf.append("<li>" + msg + "</li>");
+			});
+			bf.append("</ul>");
+		}		
 		return bf.toString();
 	}
 	
@@ -279,6 +286,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						try {
 							albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
 								manageElaborations(ctx, albaran, linea, test);
+								manageSalesDetail(ctx, albaran, linea, test);
 							});
 						} catch (Throwable th) {
 							addError(albaran, th.getLocalizedMessage());
@@ -332,7 +340,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		try {
 			number = Integer.parseInt(albaran.getNUMERO());
 		} catch (Exception e) {
-			String errorMsg = "Error desconocido comprobando el numero"
+			String errorMsg = "Error desconocido comprobando el numero de albaran "
 					+ albaran.getNUMERO() + ": " + e.getMessage();
 			addError(albaran, errorMsg);
 		}
@@ -347,26 +355,18 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 									.and(f.getNumberProperty().eq(Integer.parseInt(albaran.getNUMERO()))))
 					.stream().count();
 		} catch (Exception e) {
-			String errorMsg = "Error desconocido comprobando si existe " 
+			String errorMsg = "Error desconocido comprobando si existe el albaran " 
 					+ albaran.getSERIE() + "/" + albaran.getNUMERO();
 			addError(albaran, errorMsg);
 		}
-		if(deliveryCount>0 || number==0){
+		if(deliveryCount>0){
+			series = series.length()<5
+					? series+"*"
+					: "IGN"+new SimpleDateFormat("yy").format(new Date());
 			String errorMsg = "El albaran " + albaran.getSERIE()
 					+ "/" + albaran.getNUMERO() + " ya existe: "
-					+ ". Se asigna numeracion automatica al nuevo albaran";
-			addError(albaran, errorMsg);
-			series = "IGN"+new SimpleDateFormat("yy").format(new Date());
-			number = WarehouseDAO
-					.getDeliveryList(
-							ctx,
-							f -> f.getDomainProperty().eq(ctx.getDomainId())
-							.and(f.getSeriesProperty().eq(albaran.getSERIE())))
-					.stream()
-					.sorted((d1, d2) -> Integer.compare(d2.getNumber(),
-							d1.getNumber())).findFirst().orElse(new Delivery())
-					.getNumber();
-			++number;
+					+ ". Se guarda con " + series + "/" + number;
+			warningList.add(errorMsg);			
 		}
 		delivery.setSeries(series);
 		delivery.setNumber(number);
@@ -660,6 +660,31 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 	}
 	
+	private void manageSalesDetail(AONContext ctx, ALBARANTYPE albaran, DATOSLINEAALBARANTYPE linea,
+			boolean test) {
+		Elaboration elaboration = obtainElaboration(ctx,
+				linea.getDATOSELABORACIONORIGEN());
+		if (elaboration != null && elaboration.getId() != null
+				&& elaboration.getSource() == 0 // SALES
+				&& elaboration.getSourceId() != null) {
+			Integer salesDetailId = elaboration.getSourceId();
+			try {
+				SalesDetail sd = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+						f -> f.getIdProperty().eq(salesDetailId)).findFirst().orElse(null);
+				if (!test) {
+					if(sd!=null && sd.getId()!=null){
+						Double delivered = sd.getDelivered();
+						delivered += Double.valueOf(linea.getCANTIDAD());
+						sd.setDelivered(delivered);
+					}
+				}
+			} catch (Exception e) {
+				String msg = "[Pedido origen] ";
+				addError(albaran, msg + e.getMessage());
+			}
+		}
+	}
+			
 	
 	private void createCarrierPacking(AONContext ctx, ALBARANTYPE albaran, Delivery delivery, boolean test) {
 		if(albaran.getDATOSHOJARUTA()!=null) {
