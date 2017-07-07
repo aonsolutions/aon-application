@@ -149,7 +149,7 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 			Integer agreementId, Date startDate, Date endDate)
 			throws IllegalArgumentException;
 	
-	Map<String, String> getEmployeeEventsVariables(Integer employeeId,
+	ContextDescriptor getEmployeeEventsVariables(Integer employeeId,
 			Date startDate, Date endDate)
 			throws IllegalArgumentException;
 

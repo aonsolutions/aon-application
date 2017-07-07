@@ -429,10 +429,10 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	
 	@Override
 	public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
-			AsyncCallback<Map<String, String>> callback) {
+			AsyncCallback<ContextDescriptor> callback) {
 		AON.start();
 		employeesServiceAsync.getEmployeeEventsVariables(employeeId, startDate, endDate,
-				new AsyncCallbackWrapper<Map<String, String>>(callback));
+				new AsyncCallbackWrapper<ContextDescriptor>(callback));
 		
 	}
 

@@ -531,7 +531,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<String, String> getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
+	public ContextDescriptor getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;

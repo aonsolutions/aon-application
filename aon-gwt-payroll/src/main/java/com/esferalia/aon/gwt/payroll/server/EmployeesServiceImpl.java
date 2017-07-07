@@ -1006,7 +1006,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public Map<String, String> getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
+	public ContextDescriptor getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 		
 		Connection connection = null;
@@ -1017,10 +1017,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Integer agreementId = SQLEvents.getAgreementId(connection, employeeId);
 			
-			return getEmployeeMapEventsVariables(connection, employeeId, agreementId,
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, employeeId);
+			
+			ContextDescriptor contextDescriptor = getContext(connection,
+					   new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria), 
+					   startDate, 
+					   endDate);
+			
+			
+			ContextDescriptor contextDescriptorPayments = getEmployeeMapEventsVariables(connection, employeeId, agreementId,
 					startDate, endDate, getDomainID(), getParentDomainID());
 			
-		} catch (SQLException e) {
+			contextDescriptor.add(contextDescriptorPayments);
+			
+//			return getEmployeeMapEventsVariables(connection, employeeId, agreementId,
+//					startDate, endDate, getDomainID(), getParentDomainID());
+			return contextDescriptor;
+			
+		} catch (SQLException | ExpressionException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
 			releaseFacesContext();
@@ -3200,10 +3215,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
-	private Map<String, String> getEmployeeMapEventsVariables(Connection connection, Integer employeeId, Integer agreementId,
+	private ContextDescriptor getEmployeeMapEventsVariables(Connection connection, Integer employeeId, Integer agreementId,
 			Date startDate, Date endDate, Integer domainID, Integer parentDomainID) throws SQLException{
 		
 		ArrayList<String> eraseAgreements = new ArrayList<>();
+		
 		
 		try {
 			Set<Payment> payments = SQLEvents.getEmployeePayments(connection,
@@ -3218,7 +3234,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						agreementId, startDate, endDate));
 			}
 
-			Map<String, String> variables = new HashMap<String, String>();
+			//Map<String, String> variables = new HashMap<String, String>();
+			ContextDescriptor result = new ContextDescriptor();
 
 			for (Payment payment : payments) {
 
@@ -3231,11 +3248,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				for (String var : paymentVars) {
 					if (var.endsWith("_ACTUAL"))
 						continue; // This is awfull ... very awful
-					variables.put(var, String.format("%s",
-							payment.getDescription(), payment.getExpression()));
+//					variables.put(var, String.format("%s",
+//							payment.getDescription(), payment.getExpression()));
+					result.add(var, payment.getDescription(), String.class, payment.getExpression());
+			
 				}
 
-				variables.remove(payment.getName());
+//				variables.remove(payment.getName());
+				result.remove(payment.getName());
+				
 			}
 			
 			// Add Filter Allways Variables
@@ -3249,7 +3270,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			// Filter Agreement Variables
 			for (String varName : eraseAgreements)
-				variables.remove(varName);
+				result.remove(varName);
+//				variables.remove(varName);
 						
 //			// Filter ContextVariable
 //			for (ContextVariable ctxVar : ContextVariable.values())
@@ -3273,7 +3295,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection, agreementId, startDate, endDate,domainID, parentDomainID);
 
 			if(null != levels && null != salaryTable){
-				Set<String> names = variables.keySet();
+				//Set<String> names = variables.keySet();
+				Set<String> names = result.getVariables();
 				for (Level level : levels) {
 					Iterator<String> namesIt = names.iterator();
 					while (namesIt.hasNext()) {
@@ -3284,7 +3307,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 
-			return variables;
+//			return variables;
+			return result;
 		}catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -3473,6 +3497,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			IContractSalaryCalculatorContext calculatorCtx, Date startDate,
 			Date endDate) {
 		try {
+			
+			
 			ExpressionContext expressionContext = notNull(
 					calculatorCtx.getExpressionContext(),
 					calculatorCtx.getSystemExpressionContext());

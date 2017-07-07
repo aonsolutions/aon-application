@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 import com.vaadin.polymer.iron.widget.IronLabel;
@@ -170,7 +171,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					panel.add(checkBox);
 					panel.add(label);
 					panel.addStyleName(style.showVariablesStyle());
-					showVariablesContent.add(panel);
+					//TODO: no funciona bien el scroll dentro del Dialog
+					ScrollPanel scrollPanel = new ScrollPanel();
+					scrollPanel.add(panel);
+					showVariablesContent.add(scrollPanel);
 					
 					showVariablesMap.put(var, checkBox);
 				}
@@ -340,7 +344,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
 	private void refreshWindow() {
-		clearEventsGrid();
 		changeYear(0);
 		//fillCellsEvents();	
 	}

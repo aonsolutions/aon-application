@@ -17,7 +17,7 @@
 			border-collapse: collapse;
 			cursor: pointer;
 			margin-left: 0.8em;
-			width: 100%;
+			width: 99%;
 		}
 
 		.tableStyle tr {
@@ -74,6 +74,16 @@
 			-moz-user-select: none; /* Firefox */
 			-ms-user-select: none; /* Internet Explorer/Edge */
 			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+		}
+
+		.scrollStyle {
+			position: absolute !important;
+			right: 5px !important;
+			bottom: 50px !important;
+		}
+
+		.scrollStyle1 {
+			top: 50px !important;
 		}
 
 		/* ESTILOS CELDA TABLA */
@@ -253,73 +263,7 @@
 					withBackdrop="true">
 					<a:CustomDialogBar ui:field="customDialogBarShowVariables"
 						styleName="{style.marginTopCloseDialog}" caption="Variables mostradas" />
-					<g:HTMLPanel ui:field="showVariablesContent">
-					    
-					</g:HTMLPanel>
-					<!--  g:HTMLPanel>
-						<p:PaperCheckbox checked="true" ui:field="dtCheckBox1" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_TRABAJADOS</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="deCheckBox2" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_EFECTIVOS</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="deCheckBox3" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_ERE</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="dhCheckBox4" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_HUELGA</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="daCheckBox5" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_AUSENCIA</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="htCheckBox6" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">HORAS_TRABAJADAS</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="hcCheckBox7" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">HORAS_COMPLEMENTARIAS</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="dpCheckBox8" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_PECNORTA</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="dmCheckBox9" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_MANUTENCION</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="dpeCheckBox10" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_PECNORTA_EXTRAJERO</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="dmeCheckBox11" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_MANUTENCION_EXTRAJERO</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="kmCheckBox12" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">KMS</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="dvCheckBox13" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">DIAS_VACACIONES</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="jrCheckBox14" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">JORNADAS_REALES</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="heCheckBox15" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">HORAS_EXTRAS</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.marginTopShowVariablesDialog}">
-						<p:PaperCheckbox checked="true" ui:field="hefCheckBox16" />
-						<i:IronLabel styleName="{style.paddingLeftShowVaribalesDialog}">HORAS_EXTRAS_FZA</i:IronLabel>
-					</g:HTMLPanel -->
+					<g:HTMLPanel ui:field="showVariablesContent"></g:HTMLPanel>
 					<HTMLPanel class="buttons">
 						<p:PaperButton ui:field="showVariablesDialogCancel"
 							attributes="dialog-dismiss">Cancel</p:PaperButton>
@@ -359,57 +303,11 @@
 				</g:HorizontalPanel>
 
 
-				<g:DockLayoutPanel unit="EM" height="90%">
-
+				<g:DockLayoutPanel unit="PX" height="90%">
 					<!-- DataGrid. -->
-					<!--g:north size="1">
-						< g:Grid width="99%" styleName="{style.tableStyle}">
-							<g:row>
-								<g:customCell styleName="{style.firstHeadStyleHide}">
-									<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>ENERO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>FEBRERO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>MARZO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>ABRIL</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>MAYO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>JUNIO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>JULIO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>AGOSTO</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>SEPTIEMBRE</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>OCTUBRE</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>NOVIEMBRE</g:Label>
-								</g:customCell>
-								<g:customCell styleName="{style.cabeceraStyleHide}">
-									<g:Label>DICIEMBRE</g:Label>
-								</g:customCell>
-							</g:row>
-						</g:Grid>
-					</g:north -->
 					<g:center>
-						<g:ScrollPanel>
-							<g:Grid ui:field="eventsGrid" width="99%"
+						<g:ScrollPanel styleName="{style.scrollStyle}">
+							<g:Grid ui:field="eventsGrid"
 								styleName="{style.tableStyle} {style.noselect}">
 								<!-- PARTE OCULTA PARA REDIMENSIONAR LA TABLA -->
 								<g:row>
@@ -453,94 +351,6 @@
 										<g:Label>DICIEMBRE</g:Label>
 									</g:customCell>
 								</g:row>
-								<!-- g:row styleName="{style.oddRowStyle}">
-									<g:customCell styleName="{style.firstHeadStyle}">
-									    <g:HTMLPanel>
-											<i:IronLabel>HORAS_COMPLEMENTARIAS</i:IronLabel>
-											<g:Button ui:field='calendarButton6' styleName='aon-editDataTable-button aon-icon-calendar'/>
-										</g:HTMLPanel>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyle}">
-									    <g:HTMLPanel>
-											<i:IronLabel>DIAS_EFECTIVOS</i:IronLabel>
-											<g:Button ui:field='calendarButton1' styleName='aon-editDataTable-button aon-icon-calendar'/>
-										</g:HTMLPanel>
-									</g:customCell>
-								</g:row>
-								<g:row styleName="{style.oddRowStyle}">
-									<g:customCell styleName="{style.firstHeadStyle}">
-									    <g:HTMLPanel>
-											<i:IronLabel>DIAS_ERE</i:IronLabel>
-											<g:Button ui:field='calendarButton2' styleName='aon-editDataTable-button aon-icon-calendar'/>
-										</g:HTMLPanel>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyle}">
-									    <g:HTMLPanel>
-											<i:IronLabel>DIAS_HUELGA</i:IronLabel>
-											<g:Button ui:field='calendarButton3' styleName='aon-editDataTable-button aon-icon-calendar'/>
-										</g:HTMLPanel>
-									</g:customCell>
-								</g:row>
-								<g:row styleName="{style.oddRowStyle}">
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:HTMLPanel>
-											<i:IronLabel>DIAS_AUSENCIA</i:IronLabel>
-											<g:Button ui:field='calendarButton4' styleName='aon-editDataTable-button aon-icon-calendar'/>
-										</g:HTMLPanel>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:HTMLPanel>
-											<i:IronLabel>DIAS_VACACIONES</i:IronLabel>
-											<g:Button ui:field='calendarButton7' styleName='aon-editDataTable-button aon-icon-calendar'/>
-										</g:HTMLPanel>
-									</g:customCell>
-								</g:row>
-								<g:row styleName="{style.oddRowStyle}">
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>DIAS_MANUTENCION</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>DIAS_PECNORTA</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row styleName="{style.oddRowStyle}">
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>DIAS_MANUTENCION_EXTRANJERO</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>DIAS_PECNORTA_EXTRAJERO</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row styleName="{style.oddRowStyle}">
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>KMS</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>JORNADAS_REALES</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row styleName="{style.oddRowStyle}">
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>HORAS_EXTRAS</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyle}">
-										<g:Label>HORAS_EXTRAS_FZA</g:Label>
-									</g:customCell>
-								</g:row -->
 							</g:Grid>
 						</g:ScrollPanel>
 					</g:center>

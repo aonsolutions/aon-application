@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+
 public class VariableDescriptor implements Serializable  {
 	
 	
@@ -12,6 +14,8 @@ public class VariableDescriptor implements Serializable  {
 	Integer type;
 	String value;
 	String description;
+	String expression;
+	Scope scope;
 	
 	public String getSyntax() {
 		return "";

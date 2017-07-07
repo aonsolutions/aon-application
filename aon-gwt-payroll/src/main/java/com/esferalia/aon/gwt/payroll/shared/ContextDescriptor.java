@@ -13,6 +13,10 @@ public class ContextDescriptor implements Serializable {
 	public ContextDescriptor() {
 		variableDescriptors = new HashMap<String, VariableDescriptor>();
 	}
+	
+	public Map<String, VariableDescriptor> getVariableDescriptors(){
+		return this.variableDescriptors;
+	}
 
 	public Set<String> getVariables() {
 		return variableDescriptors.keySet();
@@ -58,5 +62,14 @@ public class ContextDescriptor implements Serializable {
 		} while ( type != null );
 		
 		return false;
+	}
+
+	public void remove(String varName) {
+		this.variableDescriptors.remove(varName);
+		
+	}
+
+	public void add(ContextDescriptor contextDescriptorPayments) {
+		this.variableDescriptors.putAll(contextDescriptorPayments.getVariableDescriptors());
 	}
 }

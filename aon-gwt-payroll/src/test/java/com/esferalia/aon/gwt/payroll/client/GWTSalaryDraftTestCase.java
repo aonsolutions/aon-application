@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.junit.Before;
 
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
@@ -79,7 +80,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
-					AsyncCallback<Map<String, String>> callback) {
+					AsyncCallback<ContextDescriptor> callback) {
 				// TODO Auto-generated method stub
 				
 			}

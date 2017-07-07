@@ -87,7 +87,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
-				AsyncCallback<Map<String, String>> callback) {
+				AsyncCallback<ContextDescriptor> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -166,7 +166,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
-							AsyncCallback<Map<String, String>> callback) {
+							AsyncCallback<ContextDescriptor> callback) {
 						// TODO Auto-generated method stub
 						
 					}

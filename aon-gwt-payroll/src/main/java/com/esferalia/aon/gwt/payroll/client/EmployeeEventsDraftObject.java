@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -345,10 +346,10 @@ public class EmployeeEventsDraftObject {
 		
 		
 		employeesService.getEmployeeEventsVariables(idEmployee, this.startContractDate, endDateGetVariables, 
-				new AsyncCallback<Map<String,String>>() {
+				new AsyncCallback<ContextDescriptor>() {
 			
 			@Override
-			public void onSuccess(Map<String, String> result) {
+			public void onSuccess(ContextDescriptor result) {
 				
 				employeeContractVariables.clear();
 				
@@ -359,7 +360,8 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariables.add("HORAS_EXTRAS");
 				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
 				
-				for (String k : result.keySet()){
+//				for (String k : result.keySet()){
+				for (String k : result.getVariables()){
 					employeeContractVariables.add(k);
 				}	
 			}
