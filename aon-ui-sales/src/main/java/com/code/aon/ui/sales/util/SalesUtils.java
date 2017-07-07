@@ -278,6 +278,7 @@ public class SalesUtils {
 		elaboration.setQuantity(salesDetail.getQuantity());
 		elaboration.setStatus(ElaborationStatus.PENDING.value());
 		elaboration.setComments(salesDetail.getSales().getComments());
+		elaboration.setRemarks("Pedido "+salesDetail.getSales().getSeries()+"/"+salesDetail.getSales().getNumber());
 		elaboration.setSource(ElaborationSource.SALES.value());
 		elaboration.setSourceId(salesDetail.getId());
 		
