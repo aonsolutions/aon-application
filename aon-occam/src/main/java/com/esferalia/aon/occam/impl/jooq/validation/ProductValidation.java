@@ -337,7 +337,7 @@ public class ProductValidation {
 			int count = ctx.getDslContext().selectCount()
 				.from(ITEM)
 				.where(ITEM.DOMAIN.eq(i.getDomain()))
-				.and(ITEM.PRODUCT.eq(i.getProduct().getId()))
+				.and(ITEM.PRODUCT.eq(i.getProductId()))
 				.and(ITEM.SERIAL_NUMBER.eq(i.getSerialNumber()))
 				.fetchOne(0,int.class);
 			if(count>0)
