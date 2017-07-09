@@ -323,9 +323,10 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
 				elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
 				if(customer!=null && customer.getId()!=null){
-					Double price = obtainCustomerProductPrice(ctx, elaboration.getItem(), customer);
+					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", salesDetail.getPrice()));
+//					Double price = obtainCustomerProductPrice(ctx, elaboration.getItem(), customer);
+//					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", price));
 					String code = obtainCustomerProductCode(ctx, elaboration.getItem(), customer);
-					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", price));
 					elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(code);
 				} else {
 					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));

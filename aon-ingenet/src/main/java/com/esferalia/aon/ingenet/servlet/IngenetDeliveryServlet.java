@@ -1,5 +1,6 @@
 package com.esferalia.aon.ingenet.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
@@ -109,11 +111,13 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			errorList.add("Es necesario el parametro 'value'");
 		} else {
 			try {
-//				super.validateAlbaranesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
+				super.validateAlbaranesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
 				deliveryList = (ALBARANES) IngenetXmlValidator.extractValue(_xml, ALBARANES.class);
-//			} catch (SAXException e) {
-//				errorList.add("Los datos no han pasado el proceso de validacion");
-//				errorList.add(e.getMessage());
+				deliveryList.setERRORES(null);
+				deliveryList.getDATOSALBARANES().forEach(alb->alb.setERRORES(null));
+			} catch (SAXException e) {
+				errorList.add("Los datos no han pasado el proceso de validacion");
+				errorList.add(e.getMessage());
 			} catch (Exception e) {
 				errorList.add("Error desconocido al validar los datos");
 				errorList.add(e.getMessage());
