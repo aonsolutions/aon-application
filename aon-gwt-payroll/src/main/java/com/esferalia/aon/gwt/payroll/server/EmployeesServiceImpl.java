@@ -135,6 +135,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
@@ -1029,11 +1030,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ContextDescriptor contextDescriptorPayments = getEmployeeMapEventsVariables(connection, employeeId, agreementId,
 					startDate, endDate, getDomainID(), getParentDomainID());
 			
-			contextDescriptor.add(contextDescriptorPayments);
+			contextDescriptorPayments.mix(contextDescriptor);
+			ContextDescriptor contextResult = new ContextDescriptor();
 			
-//			return getEmployeeMapEventsVariables(connection, employeeId, agreementId,
-//					startDate, endDate, getDomainID(), getParentDomainID());
-			return contextDescriptor;
+			for (String key : contextDescriptorPayments.getVariables()){
+				VariableDescriptor variable = contextDescriptorPayments.get(key);
+				if (Number.class != variable.getType())
+					continue;
+				if (Scope.AGREEMENT == variable.getScope())
+					continue;
+				
+				contextResult.add(key, variable);
+				
+			}
+			
+			
+			for(String key : contextResult.getVariables())
+				for(VariableDescriptor var : contextResult.getList(key))
+					System.out.println(key+", descripcion :"+var.getDescription()+", expresion :"+var.getExpression()
+					+", value :"+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+			
+			return contextResult;
 			
 		} catch (SQLException | ExpressionException e) {
 			throw new IllegalArgumentException(e);
@@ -3241,6 +3258,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
+				
+				//if ( Date.class == payment.getType() || Boolean.class == payment.getType())
 
 				Set<String> paymentVars = ExpressionContext
 						.getVariableSet(payment.getExpression());
@@ -3250,7 +3269,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						continue; // This is awfull ... very awful
 //					variables.put(var, String.format("%s",
 //							payment.getDescription(), payment.getExpression()));
-					result.add(var, payment.getDescription(), String.class, payment.getExpression());
+					result.add(var, payment.getDescription(), Number.class, payment.getExpression());
 			
 				}
 
@@ -3516,46 +3535,64 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			for (String varName : varNames) {
 				Object value = null;
-				try {
-					value = expressionContext.getVariable(varName, start, end,
-							Object.class);
-				} catch (Throwable e) {
-
-				}
-				if (value == null)
-					continue;
-
-				String description = null;
-
-				ContextVariable ctxVar = ContextVariable
-						.getVariableByName(varName);
-
-				if (ctxVar != null) {
+				List<ITimedVariable<Object>> vars = expressionContext.getVariables(varName, start, end);
+				for ( ITimedVariable<Object> var : vars ) {
 					try {
-						description = ctxVar.getDescription(new Locale("es",
-								"ES"));
-					} catch (MissingResourceException e) {
+							value = var.getValue(var.getPeriod());
+					} catch (Throwable e) {
+	
 					}
-					if (description != null)
-						description = String.format(description, start, end);
-				}
-				if (description == null)
-					description = descriptions.get(varName);
-
-				if (Function.class == value.getClass()) {
-					Class<?> type = ctxVar != null ? ctxVar.getType()
-							.getJavaType() : Object.class;
-					contextDescriptor.add(varName, description, type,
-							((Function) value).getParameters());
-				} else if (MethodStub.class == value.getClass()) {
-					Method method = ((MethodStub) value).getMethod();
-					contextDescriptor.add(varName, description,
-							method.getReturnType(), method.getParameterTypes());
-				} else {
-					Class<?> type = value.getClass();
-					if (ContextDescriptor.isKnownType(type))
+					if (value == null)
+						continue;
+	
+					String description = null;
+	
+					ContextVariable ctxVar = ContextVariable
+							.getVariableByName(varName);
+	
+					if (ctxVar != null) {
+						try {
+							description = ctxVar.getDescription(new Locale("es",
+									"ES"));
+						} catch (MissingResourceException e) {
+						}
+						if (description != null)
+							description = String.format(description, start, end);
+					}
+					if (description == null)
+						description = descriptions.get(varName);
+	
+					if (Function.class == value.getClass()) {
+						Class<?> type = ctxVar != null ? ctxVar.getType()
+								.getJavaType() : Object.class;
 						contextDescriptor.add(varName, description, type,
-								value.toString());
+								((Function) value).getParameters());
+					} else if (MethodStub.class == value.getClass()) {
+						Method method = ((MethodStub) value).getMethod();
+						contextDescriptor.add(varName, description,
+								method.getReturnType(), method.getParameterTypes());
+					} else {
+						Class<?> type = value.getClass();
+						if (ContextDescriptor.isKnownType(type)){
+							VariableDescriptor variableDescriptor = new VariableDescriptor();
+							variableDescriptor.setType(type);
+							variableDescriptor.setValue(value.toString());
+							variableDescriptor.setDescription(description);
+							variableDescriptor.setStartDate(var.getPeriod().getStart());
+							variableDescriptor.setEndDate(var.getPeriod().getEnd());
+							
+							if ( var instanceof IExpressionVariable<?>) {
+								IExpression expression = ((IExpressionVariable<?>) var).getExpression();
+								variableDescriptor.setExpression(expression.getExpression());
+								variableDescriptor.setScope((expression
+										.getScope() != null )? Scope
+										.values()[expression
+										.getScope()
+										.ordinal()]: null );
+							}
+							contextDescriptor.add(varName, variableDescriptor);
+						}
+					}
 				}
 
 			}

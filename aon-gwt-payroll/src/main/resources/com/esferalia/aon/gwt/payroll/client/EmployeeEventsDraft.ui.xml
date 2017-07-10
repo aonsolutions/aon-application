@@ -263,6 +263,7 @@
 					withBackdrop="true">
 					<a:CustomDialogBar ui:field="customDialogBarShowVariables"
 						styleName="{style.marginTopCloseDialog}" caption="Variables mostradas" />
+					<!-- p:PaperDialogScrollable ui:field="showVariablesContent"/ -->
 					<g:HTMLPanel ui:field="showVariablesContent"></g:HTMLPanel>
 					<HTMLPanel class="buttons">
 						<p:PaperButton ui:field="showVariablesDialogCancel"
@@ -278,7 +279,7 @@
 					withBackdrop="true">
 					<a:CustomDialogBar ui:field="customDialogBarNewValue"
 						styleName="{style.marginTopCloseDialog}" caption="Nuevo valor" />
-					<g:HTMLPanel ui:field="newValueContent"></g:HTMLPanel>
+					<g:HTMLPanel ui:field="newValueContent"/>
 					<g:HTMLPanel>
 						<i:IronLabel ui:field="nameVariableDialog" />
 						<g:DoubleBox ui:field="newValueBox" />

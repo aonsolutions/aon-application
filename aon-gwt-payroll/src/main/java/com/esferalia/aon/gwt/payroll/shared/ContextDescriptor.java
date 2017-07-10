@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -8,14 +10,14 @@ import java.util.Set;
 public class ContextDescriptor implements Serializable {
 
 
-	private Map<String, VariableDescriptor> variableDescriptors;
+	private Map<String, ArrayList<VariableDescriptor>> variableDescriptors;
 
 	public ContextDescriptor() {
-		variableDescriptors = new HashMap<String, VariableDescriptor>();
+		variableDescriptors = new HashMap<String, ArrayList<VariableDescriptor>>();
 	}
 	
-	public Map<String, VariableDescriptor> getVariableDescriptors(){
-		return this.variableDescriptors;
+	public Map<String, ArrayList<VariableDescriptor>> getVariableDescriptors(){
+		return Collections.unmodifiableMap(this.variableDescriptors);
 	}
 
 	public Set<String> getVariables() {
@@ -23,7 +25,15 @@ public class ContextDescriptor implements Serializable {
 	}
 
 	public VariableDescriptor get(String var) {
-		return variableDescriptors.get(var);
+		if(null != variableDescriptors.get(var))
+			return variableDescriptors.get(var).get(0);
+		return null;
+	}
+	
+	public ArrayList<VariableDescriptor> getList(String var) {
+		if(null != variableDescriptors.get(var))
+			return variableDescriptors.get(var);
+		return null;
 	}
 
 	public <T> void add(String name, String description, Class<?> type, String value) {
@@ -31,7 +41,15 @@ public class ContextDescriptor implements Serializable {
 		variable.setType(type);
 		variable.setValue(value);
 		variable.setDescription(description);
-		variableDescriptors.put(name, variable);
+		
+		if (null == this.variableDescriptors.get(name)){
+			ArrayList<VariableDescriptor> variableList = new ArrayList<>();
+			variableList.add(variable);
+			variableDescriptors.put(name, variableList);
+		}else
+			variableDescriptors.get(name).add(variable);
+		
+		
 	}
 
 	public void add(String name, String description, Class<?> returnType,
@@ -40,7 +58,13 @@ public class ContextDescriptor implements Serializable {
 		function.setDescription(description);
 		function.setType(returnType);
 		function.setParametersTypes(parametersTypes);
-		variableDescriptors.put(name, function);
+		
+		if (null == this.variableDescriptors.get(name)){
+			ArrayList<VariableDescriptor> variableList = new ArrayList<>();
+			variableList.add(function);
+			variableDescriptors.put(name, variableList);
+		}else
+			variableDescriptors.get(name).add(function);
 	}
 
 	public <T> void add(String name, String description, Class<T> returnType,
@@ -49,7 +73,13 @@ public class ContextDescriptor implements Serializable {
 		function.setType(returnType);
 		function.setParameters(parameters);
 		function.setDescription(description);
-		variableDescriptors.put(name, function);
+		
+		if (null == this.variableDescriptors.get(name)){
+			ArrayList<VariableDescriptor> variableList = new ArrayList<>();
+			variableList.add(function);
+			variableDescriptors.put(name, variableList);
+		}else
+			variableDescriptors.get(name).add(function);
 	}
 
 	public static boolean isKnownType(Class<?> type) {
@@ -66,10 +96,31 @@ public class ContextDescriptor implements Serializable {
 
 	public void remove(String varName) {
 		this.variableDescriptors.remove(varName);
-		
+	}
+	
+	public void removeListVar(String varName) {
+		this.variableDescriptors.get(varName).clear();
 	}
 
-	public void add(ContextDescriptor contextDescriptorPayments) {
-		this.variableDescriptors.putAll(contextDescriptorPayments.getVariableDescriptors());
+	public void add(String key, ArrayList<VariableDescriptor> variables) {
+		this.variableDescriptors.put(key, variables);
+	}
+	
+	public void add(String key, VariableDescriptor variable) {
+		if (null == this.variableDescriptors.get(key)){
+			ArrayList<VariableDescriptor> variableList = new ArrayList<>();
+			variableList.add(variable);
+			variableDescriptors.put(key, variableList);
+		}else
+			variableDescriptors.get(key).add(variable);
+	}
+
+	public void mix(ContextDescriptor contextDescriptor) {
+		for (String key : contextDescriptor.getVariables()){
+			if(this.variableDescriptors.containsKey(key))
+				this.variableDescriptors.put(key, contextDescriptor.getList(key));
+		}
+		
+		
 	}
 }

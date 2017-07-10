@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.esferalia.aon.gwt.common.client.widget.CustomDialogBar;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -29,6 +30,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 import com.vaadin.polymer.iron.widget.IronLabel;
@@ -68,6 +70,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiField
 	HTMLPanel showVariablesContent;
 	
+//	@UiField
+//	PaperDialogScrollable showVariablesContent;
+	
 	@UiField
 	PaperButton showVariablesDialogOk;
 	
@@ -96,7 +101,13 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	PaperDialog showVariablesDialog;
 	
 	@UiField
+	CustomDialogBar customDialogBarShowVariables;
+	
+	@UiField
 	PaperDialog newValueDialog;
+	
+	@UiField
+	CustomDialogBar customDialogBarNewValue;
 	
 	@UiField
 	IronLabel nameVariableDialog;
@@ -156,6 +167,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			private void createShowVariablesDialog() {
 				showVariablesContent.clear();
 				ArrayList<String> list = getVariablesLocalStorage();
+				ScrollPanel scroll = new ScrollPanel();
+				scroll.setHeight("300px");
+				VerticalPanel verticalPanel = new VerticalPanel();
+				scroll.add(verticalPanel);
+				showVariablesContent.add(scroll);
 					
 				for(String var : employeeEventsDraft.getEmployeeContractVariables()){
 					FlowPanel panel = new FlowPanel();
@@ -171,16 +187,16 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					panel.add(checkBox);
 					panel.add(label);
 					panel.addStyleName(style.showVariablesStyle());
-					//TODO: no funciona bien el scroll dentro del Dialog
-					ScrollPanel scrollPanel = new ScrollPanel();
-					scrollPanel.add(panel);
-					showVariablesContent.add(scrollPanel);
+					verticalPanel.add(panel);
 					
 					showVariablesMap.put(var, checkBox);
 				}
 			}
 
 		});
+		
+		customDialogBarShowVariables.addCloseHandler(()->{showVariablesDialog.close();});
+		customDialogBarNewValue.addCloseHandler(()->{newValueDialog.close();});
 		
 		//#ifndef env.SNAPSHOT
 		saveButton.setVisible(false);
