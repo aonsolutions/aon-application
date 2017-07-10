@@ -348,6 +348,8 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	    public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
 	        InputElement input = elem.getFirstChild().cast();
 	        Boolean isChecked = input.isChecked();
+	        parent.getSendAll().setVisible(isChecked);
+	        parent.getBaja().setVisible(isChecked);
 	        for (JsInvoice element : provider.getList()) {
 	            selectionModel.setSelected(element, isChecked);
 	            if(isChecked){
@@ -515,6 +517,20 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		l.setVisible(false);
 		TextBox t = new TextBox();t.setStyleName(AON.AON_CSS.aonInputText());
 		t.setVisible(false);
+		hp3.add(l);
+		hp3.add(t);
+		
+		HorizontalPanel hp4 = new HorizontalPanel();
+		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
+		Label l4 = new Label("Autorizaci\u00f3n");
+		l4.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		l4.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		l4.setVisible(false);
+		TextBox t4 = new TextBox();t4.setStyleName(AON.AON_CSS.aonInputText());
+		t4.setVisible(false);
+		hp4.add(l4);
+		hp4.add(t4);
+		
 		CheckBox cb = new CheckBox("Por terceros");
 		cb.addClickHandler(new ClickHandler() {
 			
@@ -522,12 +538,13 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			public void onClick(ClickEvent event) {
 				l.setVisible(cb.getValue());
 				t.setVisible(cb.getValue());	
+				l4.setVisible(cb.getValue());
+				t4.setVisible(cb.getValue());	
 			}
 		});
-		hp3.add(cb);
-		hp3.add(l);
-		hp3.add(t);
+		vp.add(cb);
 		vp.add(hp3);
+	//	vp.add(hp4);
 		
 		AonDialog dialog = new AonDialog("Enviar Facturas", vp) {
 			
@@ -562,6 +579,11 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		    	list = new LinkedList<>();
 		    	list.add(cb.getValue() ? t.getValue() : "false");
 		    	map.put("terceros", list);
+		  /*  	
+		    	list = new LinkedList<>();
+		    	list.add(cb.getValue() ? t4.getValue() : "");
+		    	map.put("auth", list);
+		    */
 		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
