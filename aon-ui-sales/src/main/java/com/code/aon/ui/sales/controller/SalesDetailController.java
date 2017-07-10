@@ -71,7 +71,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	private boolean showCarrierWindow;
 	
 	private Map<Integer, PurchaseDetail> purchaseDetailMap = new HashMap<>();
-	private Map<Integer, PurchaseDetail> manufactureDetailMap = new HashMap<>();
+	private Map<Integer, Integer> elaborationMap = new HashMap<>();
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -239,10 +239,10 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		return salesDetail.getOfferDetail() == null || salesDetail.getOfferDetail().getId() == null;
 	}
 	
-	public boolean isManufactured() throws ManagerBeanException {
+	public boolean isElaborated() throws ManagerBeanException {
 		if(this.getModel().isRowAvailable()) {
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-			return manufactureDetailMap.containsKey(salesDetail.getId());
+			return elaborationMap.containsKey(salesDetail.getId());
 		}
 		return false;
 	}
@@ -261,6 +261,15 @@ public class SalesDetailController extends LinesController implements ISalesCons
 			Sales sales = (Sales) this.getMasterController().getTo();
 			SalesUtils utils = new SalesUtils();
 			purchaseDetailMap = utils.getTargetPurchaseDetailMap(sales);
+		}
+	}
+	
+	public void loadElaborationMap() {
+		elaborationMap = new HashMap<>();
+		if(this.getMasterController().getTo()!=null){
+			Sales sales = (Sales) this.getMasterController().getTo();
+			SalesUtils utils = new SalesUtils();
+			elaborationMap = utils.getTargetElaborationMap(sales);
 		}
 	}
 	
@@ -543,31 +552,6 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		return info.toString();
 	}
 	
-	public String getLineManufactureInfo() throws ManagerBeanException {
-		StringBuffer info = new StringBuffer(64);
-		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
-		
-		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-		PurchaseDetail purchaseDetail = manufactureDetailMap.get(salesDetail.getId());
-		if(purchaseDetail!=null && purchaseDetail.getId()!=null){
-			info.append(AonUtil.getMessage(ICommonMessages.WAREHOUSE_MANUFACTURING_ORDER));
-			info.append(' ');
-			info.append(purchaseDetail.getPurchase().getReferenceCode());
-			info.append(" - ");
-			info.append(AonUtil.getMessage(ICommonMessages.LINE));
-			info.append(' ');
-			info.append(purchaseDetail.getLine());
-			if (salesDetail.getQuantity() > purchaseDetail.getQuantity()) {
-				info.append(" (");
-				info.append(formatter.format(purchaseDetail.getQuantity()));
-				info.append(' ');
-				info.append(AonUtil.getMessage(ICommonMessages.UNITS));
-				info.append(')');
-			}
-		}
-		return info.toString();
-	}
-	
 	public String getLinePurchaseInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
 		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
@@ -620,16 +604,6 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		onSearch(event);
 	}
 
-	public void onLoadManufacturingOrder(ActionEvent event) throws ManagerBeanException {
-		if(this.getModel().isRowAvailable()){
-			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-			PurchaseDetail purchaseDetail = manufactureDetailMap.get(salesDetail.getId());
-			if(purchaseDetail!=null && purchaseDetail.getId()!=null){
-				BasicController sourceController = (BasicController)AonUtil.getRegisteredBean("manufacturingOrder");
-				loadSourceLink(event, sourceController, purchaseDetail.getPurchase().getId());
-			}
-		}
-	}
 	public void onLoadPurchase(ActionEvent event) throws ManagerBeanException {
 		if(this.getModel().isRowAvailable()){
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();

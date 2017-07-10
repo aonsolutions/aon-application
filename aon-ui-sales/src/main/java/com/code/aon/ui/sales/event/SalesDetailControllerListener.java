@@ -87,6 +87,7 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		SalesDetailController controller = (SalesDetailController)event.getController();
 		controller.loadPurchaseDetailMap();
+		controller.loadElaborationMap();
 	}
 	
 	private	Integer calculateNextLine(Sales sales) throws ManagerBeanException {

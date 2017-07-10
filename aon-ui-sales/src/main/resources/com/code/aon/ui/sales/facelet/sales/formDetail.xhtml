@@ -105,7 +105,8 @@
 					styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
 					rendered="#{formList and to.item.wildCard}"
 					actionListener="#{salesDetail.onAssignSerialNumberShow}" 
-					reRender="showSerialNumberWindow" ajaxSingle="true">
+					reRender="showSerialNumberWindow" ajaxSingle="true"
+					onclick="if(#{salesDetail.elaborated}){alert('En elaboracion');return false;}">
 					<f:setPropertyActionListener target="#{salesDetail.showSerialNumberWindow}"
 						value="#{true}" />
 					<f:setPropertyActionListener target="#{controller.createSerialNumbers}"
@@ -374,16 +375,6 @@
 					action="delivery_form"
 					reRender="aonContent">
 					<rich:toolTip value="#{controller.lineStatusInfo}" />
-				</aon:commandLink>
-				<aon:commandLink id="salesDetailManufacturingOrderLink" immediate="true"
-					styleClass="aon-button-goto"
-					style="padding-right: 20px;" 
-					value="&#160;" title="#{bundle.aon_go}" 
-					rendered="#{controller.manufactured}"
-					actionListener="#{controller.onLoadManufacturingOrder}"
-					action="manufacturingOrder_form"
-					reRender="aonContent">
-					<rich:toolTip value="#{controller.lineManufactureInfo}" />
 				</aon:commandLink>
 				<aon:commandLink id="salesDetailPurchaseLink" immediate="true"
 					styleClass="aon-button-goto"
