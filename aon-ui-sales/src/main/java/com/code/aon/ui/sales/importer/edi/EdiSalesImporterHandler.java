@@ -256,8 +256,7 @@ public class EdiSalesImporterHandler implements Serializable {
 					sales.setPurchaseGenerated(false);
 					sales.setPurchaseReference(rectl.ere1c.getNumeroDePedido());
 					
-					String remarks = "Pedido: " + rectl.ere1c.getNumeroDePedido();
-					remarks += System.getProperty("line.separator");
+					String remarks = "";
 					for(ERE1T value: rectl.ere1tList){
 						remarks += (StringUtils.isNotBlank(value.getTexto1())?value.getTexto1().trim():"") +
 								(StringUtils.isNotBlank(value.getTexto2())?", " + value.getTexto2().trim():"") +
@@ -289,13 +288,7 @@ public class EdiSalesImporterHandler implements Serializable {
 									+ ")");
 						} else {
 							Integer line = Integer.valueOf(ere1l.getNumeroDeLineaArticulo());
-							String description = String.format("%s. %s. %s.",
-									StringUtils.trimToEmpty(ere1l
-											.getDescripcion1Articulo()), StringUtils
-											.trimToEmpty(ere1l
-													.getDescripcion2Articulo()),
-													StringUtils.trimToEmpty(ere1l
-															.getDescripcionDelModelo_BRN_()));
+							String description = rItem.getItem().getProduct().getName();
 							Double ediLineQuantity = ere1l.getCantidadPedida_21_();
 							Tag customerPackingTag = searchPackingTag(customerRegistryNote);
 							Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
@@ -309,7 +302,6 @@ public class EdiSalesImporterHandler implements Serializable {
 								detail.setDescription(description);
 								detail.setQuantity(quantity);
 								detail.setPrice(price);
-//								detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
 								detail.setTaxes(0.0);
 								detail.setStatus(SalesDetailStatus.PENDING);
 								detail.setOfferDetail(null);
