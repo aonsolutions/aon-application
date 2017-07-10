@@ -463,4 +463,30 @@ public class SalesUtils {
 		});		
 		return map;
 	}
+	
+	public Map<Integer, Integer> getTargetElaborationMap(Sales sales) {
+		AONContext ctx = AONContext
+				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
+		try {
+			Integer[] ids = sales.getDetailList().stream()
+					.map(to->(SalesDetail)to)
+					.map(SalesDetail::getId)
+					.toArray(Integer[]::new);
+			List<Elaboration> list = AON.getElaborationStream(
+					AonUtil.getDomainName(),
+					sales.getDomain(),
+					AonUtil.getRemoteUser(),
+					f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
+						.and(f.getSourceIdProperty().in(ids)))
+						.collect(Collectors.toList());
+			Map<Integer, Integer> map = new HashMap<>(); 
+			list.forEach(e -> {
+				map.put(e.getSourceId(), e.getId());
+			});		
+			return map;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }
