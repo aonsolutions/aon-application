@@ -680,6 +680,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						Double delivered = sd.getDelivered();
 						delivered += Double.valueOf(linea.getCANTIDAD());
 						sd.setDelivered(delivered);
+						SalesDAO.updateSalesDetail(ctx, sd);
 					}
 				}
 			} catch (Exception e) {
