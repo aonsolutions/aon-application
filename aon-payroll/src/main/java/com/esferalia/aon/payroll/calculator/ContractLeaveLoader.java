@@ -25,18 +25,14 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.watson.util.AonDateUtils;
-
-import net.sf.cglib.transform.impl.AddDelegateTransformer;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ContractLeaveLoader {
-
-
 
 	public static class Leave extends Period {
 		private Integer id;
 		private LeaveType type;
-		private int  parentDays;
+		private int parentDays;
 
 		public Leave(Integer id, Date start, Date end, LeaveType type, int parentDays) {
 			super(start, end);
@@ -51,11 +47,10 @@ public class ContractLeaveLoader {
 		public LeaveType getType() {
 			return type;
 		}
-		
+
 		public int getParentDays() {
 			return parentDays;
 		}
-		
 
 	}
 
@@ -74,8 +69,7 @@ public class ContractLeaveLoader {
 		}
 
 		public Long getDays(long parentDays, long leaveDays) {
-			long rangeEnd = end != null ? Math.min(parentDays + leaveDays, end)
-					: parentDays + leaveDays;
+			long rangeEnd = end != null ? Math.min(parentDays + leaveDays, end) : parentDays + leaveDays;
 			long rangeStart = Math.max(start, parentDays + 1);
 
 			return rangeEnd >= rangeStart ? (rangeEnd - rangeStart) + 1 : 0;
@@ -90,33 +84,75 @@ public class ContractLeaveLoader {
 		}
 	}
 
-	//@formatter:off
-	protected static final DaysRange COMMON_RANGES[] = { 
-			new DaysRange(1, 3),
-			new DaysRange(4, 15), 
-			new DaysRange(16, 20), 
-			new DaysRange(21, 365){
+	// @formatter:off
+	protected static final DaysRange _COMMON_RANGES[] = { new DaysRange(1, 3), new DaysRange(4, 15),
+			new DaysRange(16, 20), new DaysRange(21, 365) {
 				public String getName(ContextVariable variable) {
 					return String.format("%s_%d", variable, start);
 				};
-			}, 
-			new DaysRange(366), 
-			};
-	//@formatter:on
-	//@formatter:off
-	protected static final DaysRange PROFESSIONAL_RANGES[] = { 
-			new DaysRange(1, 365){
-				public String getName(ContextVariable variable) {
-					return String.format("%s", variable);
-				};
-			}, 
-			new DaysRange(366), 
-			};
-	//@formatter:on
-	
-	
+			}, new DaysRange(366), };
+	// @formatter:on
+	// @formatter:off
+	protected static final DaysRange _PROFESSIONAL_RANGES[] = { new DaysRange(1, 365) {
+		public String getName(ContextVariable variable) {
+			return String.format("%s", variable);
+		};
+	}, new DaysRange(366), };
+	// @formatter:on
+
+	protected static final DaysRange[] getCommonRanges(Date start, ExpressionContext ctx) {
+		Date directPayStart = ctx.getVariable(ContextVariable.DIRECT_PAY_START, start, null, Date.class);
+
+		long delegatePayDays = directPayStart != null ? AonDateUtils.getDaysBetweenDates(start, directPayStart) : 365;
+
+		DaysRange commonRanges[] = new DaysRange[5];
+		commonRanges[0] = new DaysRange(1, 3);
+		commonRanges[1] = new DaysRange(4, 15);
+		commonRanges[2] = new DaysRange(16, 20);
+		commonRanges[3] = new DaysRange(21, delegatePayDays) {
+			@Override
+			public String getName(ContextVariable variable) {
+				return String.format("%s_%d", variable, start);
+			}
+		};
+
+		long directPayStartDay = delegatePayDays + 1;
+		commonRanges[4] = new DaysRange(directPayStartDay) {
+			@Override
+			public String getName(ContextVariable variable) {
+				return String.format("%s_%d", variable, 366);
+			}
+		};
+		return commonRanges;
+	}
+
+	protected static final DaysRange[] getProfessionalRanges(Date start, ExpressionContext ctx) {
+		Date directPayStart = ctx.getVariable(ContextVariable.DIRECT_PAY_START, start, null, Date.class);
+
+		long delegatePayDays = directPayStart != null ? AonDateUtils.getDaysBetweenDates(start, directPayStart) : 365;
+
+		DaysRange professionalRanges[] = new DaysRange[2];
+		professionalRanges[0] = new DaysRange(1, delegatePayDays) {
+			@Override
+			public String getName(ContextVariable variable) {
+				return String.format("%s", variable);
+			}
+		};
+
+		long directPayStartDay = delegatePayDays + 1;
+
+		professionalRanges[1] = new DaysRange(directPayStartDay) {
+			@Override
+			public String getName(ContextVariable variable) {
+				return String.format("%s_%d", variable, 366);
+			}
+		};
+
+		return professionalRanges;
+	}
+
 	protected final class QuoteDays implements ITimedVariable<Double> {
-		
+
 		private final Date end;
 		private final Date start;
 		private final ExpressionContext exprCtx;
@@ -129,7 +165,7 @@ public class ContractLeaveLoader {
 
 		@Override
 		public Period getPeriod() {
-			return new Period(start, end );
+			return new Period(start, end);
 		}
 
 		@Override
@@ -193,15 +229,11 @@ public class ContractLeaveLoader {
 		return days;
 	}
 
-	public void loadContractLeave(final Integer id, final Date leaveStart,
-			final Date leaveEnd, final long parentDays, final LeaveType type,
-			String dailyRegBase, final ExpressionContext exprCtx)
-			throws ExpressionException {
+	public void loadContractLeave(final Integer id, final Date leaveStart, final Date leaveEnd, final long parentDays,
+			final LeaveType type, String dailyRegBase, final ExpressionContext exprCtx) throws ExpressionException {
 
-		
-		
 		final Date start = Period.max(leaveStart, startDate);
-		
+
 		final ITimedVariable<?> contractEnd = exprCtx.getVariable(ContextVariable.CONTRACT_END, startDate, endDate);
 		final Date end = Period.min(leaveEnd, (Date) contractEnd.getValue(contractEnd.getPeriod()));
 
@@ -214,95 +246,85 @@ public class ContractLeaveLoader {
 		if (dailyRegBase != null) {
 			exp.setExpression(dailyRegBase);
 		} else {
-			exp.setExpression(String.format("SELF.br(%s)",
-					ContextVariable.IT_START));
+			exp.setExpression(String.format("SELF.br(%s)", ContextVariable.IT_START));
 		}
 		exprCtx.addLazyExpression(exp, start, end);
 
 		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
-		
-		
+
 		type.accept(new LeaveTypeVisitor<Void>() {
 
 			@Override
 			public Void visitCommonDisease(LeaveType leaveType) {
-				
-				for (DaysRange range : COMMON_RANGES) {
-					
-					String name = range
-							.getName(ContextVariable.COMMON_DISEASE_DAYS);
+
+				//for (DaysRange range : COMMON_RANGES) {
+				for (DaysRange range : getCommonRanges(leaveStart, exprCtx)) {
+
+					String name = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
 
 					long days = range.getDays(parentDays, leaveDays);
 
 					if (days == 0) {
-						//exprCtx.setVariable(name, days, start, end);
+						// exprCtx.setVariable(name, days, start, end);
 						continue;
 					}
 
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(start);
-					calendar.add(Calendar.DATE,
-							(int) (range.start - 1 - parentDays));
+					calendar.add(Calendar.DATE, (int) (range.start - 1 - parentDays));
 					Date rangeStart = Period.max(calendar.getTime(), start);
 
 					calendar.setTime(rangeStart);
 					calendar.add(Calendar.DATE, (int) days - 1);
 					Date rangeEnd = calendar.getTime();
-					
+
 					Date varStart = Period.max(rangeStart, start);
-					exprCtx.setVariable(name, days,
-							varStart, rangeEnd);
-					exprCtx.putVariable(QUOTE_DAYS, 
-							new QuoteDays(exprCtx, start, end));
+					exprCtx.setVariable(name, days, varStart, rangeEnd);
+					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
 				}
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
-				exprCtx.setVariable(ContextVariable.COMMON_DISEASE_DAYS,
-						leaveDays, start, end);
+				exprCtx.setVariable(ContextVariable.COMMON_DISEASE_DAYS, leaveDays, start, end);
 
-				
 				return null;
 			}
 
 			@Override
 			public Void visitOcupationalDisease(LeaveType leaveType) {
-				
-				for (DaysRange range : PROFESSIONAL_RANGES) {
-					
-					String name = range
-							.getName(ContextVariable.OCCUPATIONAL_DISEASE_DAYS);
+
+				// for (DaysRange range : PROFESSIONAL_RANGES) {
+				for (DaysRange range : getProfessionalRanges(leaveStart, exprCtx)) {
+
+					String name = range.getName(ContextVariable.OCCUPATIONAL_DISEASE_DAYS);
 
 					long days = range.getDays(parentDays, leaveDays);
 
 					if (days == 0) {
-						//exprCtx.setVariable(name, days, start, end);
+						// exprCtx.setVariable(name, days, start, end);
 						continue;
 					}
 
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(start);
-					calendar.add(Calendar.DATE,
-							(int) (range.start - 1 - parentDays));
+					calendar.add(Calendar.DATE, (int) (range.start - 1 - parentDays));
 					Date rangeStart = Period.max(calendar.getTime(), start);
 
 					calendar.setTime(rangeStart);
 					calendar.add(Calendar.DATE, (int) days - 1);
 					Date rangeEnd = calendar.getTime();
-					
+
 					Date varStart = Period.max(rangeStart, start);
-					exprCtx.setVariable(name, days,
-							varStart, rangeEnd);
-					exprCtx.putVariable(QUOTE_DAYS, 
-							new QuoteDays(exprCtx, start, end));
+					exprCtx.setVariable(name, days, varStart, rangeEnd);
+					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
 				}
 
-//				long days = parentDays == 0 ? leaveDays - 1 : leaveDays;
-//				if (days <= 0)
-//					return null;
-//				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
-//						days, start, end);
-//				exprCtx.putVariable(QUOTE_DAYS, 
-//						new QuoteDays(exprCtx, start, end));
+				// long days = parentDays == 0 ? leaveDays - 1 : leaveDays;
+				// if (days <= 0)
+				// return null;
+				// exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
+				// days, start, end);
+				// exprCtx.putVariable(QUOTE_DAYS,
+				// new QuoteDays(exprCtx, start, end));
 				return null;
 			}
 
@@ -334,100 +356,90 @@ public class ContractLeaveLoader {
 			public Void visitNonOcupationalDisease(LeaveType leaveType) {
 				return this.visitCommonDisease(leaveType);
 			}
-			
-			
+
 			private void visit(ContextVariable factorVariable, ContextVariable daysVariable) {
 				List<ITimedVariable<Number>> factors = exprCtx.getVariables(factorVariable, start, end);
 				List<Period> periods = new ArrayList<Period>();
 
-				for ( ITimedVariable<Number> factor: factors ) {
-					
+				for (ITimedVariable<Number> factor : factors) {
+
 					Period period = factor.getPeriod();
 					Number number = factor.getValue(period);
-					
-					if ( number == null )
+
+					if (number == null)
 						continue;
 					Double value = number.doubleValue();
-					if ( value < 0.00 || value >= 1.00 )
+					if (value < 0.00 || value >= 1.00)
 						continue;
-					exprCtx.putVariable(daysVariable, 
-							new ITimedVariable<Double>() {
+					exprCtx.putVariable(daysVariable, new ITimedVariable<Double>() {
 
-								@Override
-								public Period getPeriod() {
-									return period;
-								}
+						@Override
+						public Period getPeriod() {
+							return period;
+						}
 
-								@Override
-								public Double getValue(Period period) {
-									
-									ExpressionContext.getCurrentBindings()
-									.get(factorVariable, value -> value, 1.00);
-									
-									return leaveDays * value;
-								}
-							});
-					
-					exprCtx.putVariable(ContextVariable.WORKED_DAYS, 
-							new ITimedVariable<Double>() {
+						@Override
+						public Double getValue(Period period) {
 
-								@Override
-								public Period getPeriod() {
-									return period;
-								}
+							ExpressionContext.getCurrentBindings().get(factorVariable, value -> value, 1.00);
 
-								@Override
-								public Double getValue(Period period) {
-									
-									ExpressionContext.getCurrentBindings()
-									.get(factorVariable, value -> value, 1.00);
-									
-									return getQuoteDays(exprCtx, period) * (1.00 - value);
-								}
-							});
-//					exprCtx.setVariable(ContextVariable.WORKED_DAYS, 
-//							leaveDays * (1.00 - value) ,
-//							period.getStart(), 
-//							period.getEnd());
-					
+							return leaveDays * value;
+						}
+					});
+
+					exprCtx.putVariable(ContextVariable.WORKED_DAYS, new ITimedVariable<Double>() {
+
+						@Override
+						public Period getPeriod() {
+							return period;
+						}
+
+						@Override
+						public Double getValue(Period period) {
+
+							ExpressionContext.getCurrentBindings().get(factorVariable, value -> value, 1.00);
+
+							return getQuoteDays(exprCtx, period) * (1.00 - value);
+						}
+					});
+					// exprCtx.setVariable(ContextVariable.WORKED_DAYS,
+					// leaveDays * (1.00 - value) ,
+					// period.getStart(),
+					// period.getEnd());
+
 					periods.add(period);
 				}
-				
-				for ( Period period : Period.sub(new Period(start,end), periods) ){
+
+				for (Period period : Period.sub(new Period(start, end), periods)) {
 					ExpressionImpl factorExpression = new ExpressionImpl();
 					factorExpression.setName(factorVariable.getName());
 					factorExpression.setScope(ExpressionScope.CONTRACT);
 					factorExpression.setExpression("1.00");
 					try {
-						exprCtx.addExpression(factorExpression, 
-								period.getStart(), 
-								period.getEnd());
+						exprCtx.addExpression(factorExpression, period.getStart(), period.getEnd());
 					} catch (ExpressionException e) {
 					}
-					
-					exprCtx.putVariable(daysVariable, 
-							new ITimedVariable<Double>() {
 
-								@Override
-								public Period getPeriod() {
-									return period;
-								}
+					exprCtx.putVariable(daysVariable, new ITimedVariable<Double>() {
 
-								@Override
-								public Double getValue(Period period) {
-									ExpressionContext.getCurrentBindings()
-									.get(factorVariable, value -> 1.00, 1.00);
-									return leaveDays * 1.00;
-								}
-							});
+						@Override
+						public Period getPeriod() {
+							return period;
+						}
+
+						@Override
+						public Double getValue(Period period) {
+							ExpressionContext.getCurrentBindings().get(factorVariable, value -> 1.00, 1.00);
+							return leaveDays * 1.00;
+						}
+					});
 				}
 
-				exprCtx.putVariable(QUOTE_DAYS, 
-						new QuoteDays(exprCtx, start, end));
+				exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
 			}
 
 		});
-		add(new Leave(id, start, end, type, (int)parentDays));
+		add(new Leave(id, start, end, type, (int) parentDays));
 	}
 
 	public void clear() {
@@ -447,76 +459,69 @@ public class ContractLeaveLoader {
 	}
 
 	public void clean(ExpressionContext exprCtx, Leave leave) {
-		exprCtx.removeVariable(ContextVariable.IT_START, leave.getStart(),
-				leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.IT_START, leave.getStart(), leave.getEnd());
 
-		for (DaysRange range : COMMON_RANGES) {
+//		for (DaysRange range : COMMON_RANGES) {
+		for (DaysRange range : getCommonRanges(leave.getStart(), exprCtx)) {
 
 			String common = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
 			exprCtx.removeVariable(common, leave.getStart(), leave.getEnd());
 		}
 
-		exprCtx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS,
-				leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.REGULATORY_BASE.getName(),
-				leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.BR, leave.getStart(),
-				leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.REGULATORY_BASE.getName(), leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.BR, leave.getStart(), leave.getEnd());
 
-		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(),
-				leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
-				leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS,
-				leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS, leave.getStart(), leave.getEnd());
 
 	}
 
 	// ---------------------------------------------------------------- Private
-	
+
 	protected double getQuoteDays(ExpressionContext ctx, Period p) {
 
-		Long days = getDaysBetweenDates(p.getStart(), p.getEnd())+1;
+		Long days = getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 
-		if ( !leaves.last().getEnd().equals(p.getEnd()))
+		if (!leaves.last().getEnd().equals(p.getEnd()))
 			return days;
-		
-		return getAdjustDays(ctx, p, days);	
+
+		return getAdjustDays(ctx, p, days);
 	}
-	
+
 	protected double getAdjustDays(ExpressionContext ctx, Period p, long days) {
-		
+
 		try {
 			;
-			if ( !ctx.getVariable(FULL_TIME , p.getStart(), p.getEnd(), Boolean.class) )
+			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
 				return days;
-		} catch ( Exception e ){
+		} catch (Exception e) {
 		}
 
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
-		
+
 		double quoteMonthDays = 0.00;
 		try {
 			quoteMonthDays = ctx.getVariable(MONTH_DAYS, p.getStart(), p.getEnd(), Number.class).doubleValue();
-		} catch ( Exception e ){
+		} catch (Exception e) {
 			try {
-				for ( ITimedResult<Number> result : ctx.eval(MONTH_DAYS.getName(), p.getStart(), p.getEnd(), Number.class) )
+				for (ITimedResult<Number> result : ctx.eval(MONTH_DAYS.getName(), p.getStart(), p.getEnd(),
+						Number.class))
 					quoteMonthDays = result.getValue().doubleValue();
 			} catch (ExpressionException e1) {
 			}
 		}
-		
-		if ( naturalMonthDays == quoteMonthDays )
+
+		if (naturalMonthDays == quoteMonthDays)
 			return days;
-		
-	
-		// Yes adjust... . 
+
+		// Yes adjust... .
 		// X = 30 - WORKED_DAYS
 		// X = 30 - (NATURAL_DAYS - IT_DAYS)
 		// X = 30 - NATURAL_DAYS + IT_DAYS
 		// X = IT_DAYS + 30 - NATURAL_DAYS
-		return days + ( 30 - naturalMonthDays );
+		return days + (30 - naturalMonthDays);
 	}
-	
 
 }

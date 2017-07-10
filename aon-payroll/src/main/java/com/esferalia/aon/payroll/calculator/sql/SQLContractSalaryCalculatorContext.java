@@ -16,6 +16,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
@@ -374,7 +375,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " FROM contract_leave" 
 			+ " LEFT JOIN contract_data ON ( "
 				+ " contract_leave.contract = contract_data.contract "
-				+ " AND contract_data.name IN ('" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR+ "')"
+				+ " AND contract_data.name IN ('" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" +DIRECT_PAY_START + "')"
 				+ " AND ( contract_leave.end_date  IS NULL OR contract_data.start_date <= contract_leave.end_date )"
 				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= contract_leave.start_date ) "
 				+ ")"
@@ -3941,7 +3942,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
-	protected void loadLeaveFactor(ResultSet rs, ExpressionContext ctx)
+	protected void loadLeaveContractFactor(ResultSet rs, ExpressionContext ctx)
 			throws SQLException{
 		
 		String name = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.NAME);
@@ -3962,7 +3963,17 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		Date leaveStart = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
 		Date leaveEnd = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
-
+		
+		if ( name.equals(DIRECT_PAY_START.getName())) {
+			try {
+				ctx.addExpression(expr, start, end);
+			} catch (ExpressionException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+			
+		
 		try {
 			List<ITimedResult<Number>> factors = ctx.addExpression(expr, start, end, Number.class);
 			
@@ -3985,11 +3996,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						period.getEnd());
 			}
 			
-			
+			return;
 
 		} catch (ExpressionException e) {
 			e.printStackTrace();
 		} 
+		
 		
 		
 	}
@@ -4030,7 +4042,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			rs = cleaveStmt.executeQuery();
 			leaveLoader.clear();
 			while (rs.next()) {
-				loadLeaveFactor(rs, ctx);
+				loadLeaveContractFactor(rs, ctx);
 				leaveLoader.loadContractLeave(rs, ctx);
 				onContractLeaveLoaded(rs, ctx);
 			}
