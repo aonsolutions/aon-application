@@ -87,6 +87,23 @@ public class SalesElaborationProcess implements Serializable {
 		}
 		return null;
 	}
+
+	public String getRowReferenceCode(){
+		if(getModel().isRowAvailable()){
+			SalesDetail detail = (SalesDetail) getModel().getRowData();
+			String referenceCode =
+					AON.getElaborationStream(
+					AonUtil.getDomainName(),
+					detail.getDomain(),
+					AonUtil.getRemoteUser(),
+					f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
+							.and(f.getSourceIdProperty().eq(detail.getId())))
+							.map(e->e.getSeries()+"/"+e.getNumber())
+							.findFirst().orElse(null);
+			return referenceCode!=null?referenceCode:"-";
+		}
+		return null;
+	}
 	
 	public void onFullExecute(ActionEvent event) {
 		Sales sales = (Sales) salesController.getTo();

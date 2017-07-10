@@ -126,6 +126,13 @@
 												</aon:outputText>
 											</aon:column>
 											
+											<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+												<f:facet name="header">
+													<aon:outputLabel value="#{bundle.aon_reference}" />
+												</f:facet>
+												<aon:outputText value="#{sales.elaborationProcess.rowReferenceCode}" />
+											</aon:column>
+											
 											<aon:column alias="Sales.status"
 												styleClass="aon-editDataTable-iconColumn aon-width-20 aon-text-center">
 												<f:facet name="header">
