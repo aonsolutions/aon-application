@@ -618,17 +618,23 @@ public abstract class PageAbs extends ResizeComposite {
 		if(mapDraft.containsKey(key))
 			mapDraft.remove(key);
 		mapDraft.put(key, value);
-		inma.calculate(mapDraft, new AsyncCallback<Map<String,String>>() {
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				normalizedMemory.getD2Deposit().setMapDraft(result);
-				normalizedMemory.getD2Deposit().setModify(true);
-				normalizedMemory.update();
-			}
+		if(year == 2014  && (D2DepositHeaderKey.BA2121300.getCode().equals(key) || D2DepositHeaderKey.BA21213009.getCode().equals(key))){
+			normalizedMemory.getD2Deposit().setMapDraft(mapDraft);
+			normalizedMemory.getD2Deposit().setModify(true);
+			normalizedMemory.update();
+		} else {
+			inma.calculate(mapDraft, new AsyncCallback<Map<String,String>>() {
+				@Override
+				public void onSuccess(Map<String, String> result) {
+					normalizedMemory.getD2Deposit().setMapDraft(result);
+					normalizedMemory.getD2Deposit().setModify(true);
+					normalizedMemory.update();
+				}
 
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 	}
 	
 	protected void defineBalanceTable( FlexTable tab, String title, D2DepositHeaderKey[][] keys){
