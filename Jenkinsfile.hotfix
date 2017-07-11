@@ -43,7 +43,7 @@ node {
       // Prepare hotfix   
       //sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
       sh "${mvnHome}/bin/mvn versions:set -DnewVersion=${hotfix}"
-      sh "${mvnHome}/bin/mvn versions:use-latest-releases -Dincludes=net.aonsolutions:aeat,net.aonsolutions:sii"
+      sh "${mvnHome}/bin/mvn versions:use-latest-releases -Dincludes=net.aonsolutions.core"
       sh "${mvnHome}/bin/mvn versions:commit"
 
       // Reread pom
