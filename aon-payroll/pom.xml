@@ -166,7 +166,7 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>net.aonsolutions</groupId>
+			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>aeat</artifactId>
 			<version>9.00-SNAPSHOT</version>
 			<scope>compile</scope>

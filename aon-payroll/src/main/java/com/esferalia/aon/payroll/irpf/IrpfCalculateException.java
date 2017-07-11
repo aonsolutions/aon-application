@@ -1,8 +1,8 @@
 package com.esferalia.aon.payroll.irpf;
 
 import com.code.aon.AonVersion;
-import net.aonsolutions.aeat.jaxb.AEATRetencionesError2016;
-import net.aonsolutions.aeat.v2017.jaxb.AEATRetencionesError2017;
+import net.aonsolutions.core.aeat.jaxb.AEATRetencionesError2016;
+import net.aonsolutions.core.aeat.v2017.jaxb.AEATRetencionesError2017;
 
 import es.aeat.pret.rw13.jaxb.AEATRetencionesError2013;
 

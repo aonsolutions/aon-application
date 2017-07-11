@@ -5,12 +5,12 @@ import java.math.MathContext;
 import java.sql.SQLException;
 import java.util.List;
 
-import net.aonsolutions.aeat.jaxb.AEATRetencionesEntrada2016;
-import net.aonsolutions.aeat.jaxb.TipoRetenedorEntrada2016;
-import net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016;
-import net.aonsolutions.aeat.v2017.jaxb.AEATRetencionesEntrada2017;
-import net.aonsolutions.aeat.v2017.jaxb.TipoRetenedorEntrada2017;
-import net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017;
+import net.aonsolutions.core.aeat.jaxb.AEATRetencionesEntrada2016;
+import net.aonsolutions.core.aeat.jaxb.TipoRetenedorEntrada2016;
+import net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016;
+import net.aonsolutions.core.aeat.v2017.jaxb.AEATRetencionesEntrada2017;
+import net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenedorEntrada2017;
+import net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente.Convivencia;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.CausaRegularizacion;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Contrato;
@@ -81,7 +81,7 @@ public class AEATRetencionesEntradaFactory {
 
 		AEATRetencionesEntrada2016 entrada2016 = new AEATRetencionesEntrada2016();
 
-		net.aonsolutions.aeat.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.aeat.jaxb.TipoRetenciones();
+		net.aonsolutions.core.aeat.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.core.aeat.jaxb.TipoRetenciones();
 		tipoRetenciones.setEjercicio(2016);
 		tipoRetenciones.setCodModelo("RET");
 		entrada2016.setIdDoc(tipoRetenciones);
@@ -106,7 +106,7 @@ public class AEATRetencionesEntradaFactory {
 
 		AEATRetencionesEntrada2017 entrada2017 = new AEATRetencionesEntrada2017();
 
-		net.aonsolutions.aeat.v2017.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.aeat.v2017.jaxb.TipoRetenciones();
+		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenciones();
 		tipoRetenciones.setEjercicio(2017);
 		tipoRetenciones.setCodModelo("RET");
 		entrada2017.setIdDoc(tipoRetenciones);
@@ -309,7 +309,7 @@ public class AEATRetencionesEntradaFactory {
 
 		if (ctx.getResidenciaCeutaMelilla()) {
 
-			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.ResidenciaCeutaMelilla());
+			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.ResidenciaCeutaMelilla());
 		}
 		retenido.setDiscapacidad(getAeat15Discapacidad2016(ctx.getDiscapacidad(),
 				ctx.getMovilidadReducida()));
@@ -319,13 +319,13 @@ public class AEATRetencionesEntradaFactory {
 				ctx.getSituacionLaboral(), ctx.getContrato(),
 				ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
 		// --------------------------------------- Descendientes
-		List<net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente> descendientes = retenido.getDescendiente();
+		List<net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente> descendientes = retenido.getDescendiente();
 		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
 				.getDescendientes()) {
 			descendientes.add(getAeat15Descendiente2016(descendiente));
 		}
 		// ---------------------------------------- Ascendientes
-		List<net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente> ascendientes = retenido.getAscendiente();
+		List<net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente> ascendientes = retenido.getAscendiente();
 		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
 				.getAscendientes()) {
 			ascendientes.add(getAeat15Ascendiente2016(ascendiente));
@@ -337,7 +337,7 @@ public class AEATRetencionesEntradaFactory {
 		BigDecimal irregularidad1 = ctx.getIrregularidad1();
 		BigDecimal irregularidad2 = ctx.getIrregularidad2();
 		if (irregularidad1 != null || irregularidad2 != null) {
-			net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones reducciones = new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones();
+			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones reducciones = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones();
 			reducciones.setIrregularidad1(irregularidad1);
 			reducciones.setIrregularidad2(irregularidad2);
 			retenido.setReducciones(reducciones);
@@ -347,17 +347,17 @@ public class AEATRetencionesEntradaFactory {
 		retenido.setCotizaciones(ctx.getGastosAnuales());
 		
 		if (ctx.getRdtosObtenidosCeutaMelilla())
-			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.RdtosObtenidosCeutaMelilla());
+			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.RdtosObtenidosCeutaMelilla());
 		retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
 		retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
 		if (ctx.getPagoPrestamosVivienda())
-			retenido.setPagoPrestamosVivienda(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.PagoPrestamosVivienda());
+			retenido.setPagoPrestamosVivienda(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.PagoPrestamosVivienda());
 
 		// -------------------------------------- Regularización
 		CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
 		if (causaRegularizacion != null) {
-			net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion regularizacion = 
-					new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion();
+			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion regularizacion = 
+					new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion();
 			List<Integer> causas = regularizacion.getCausa();
 			causas.add(causaRegularizacion.getValue());
 
@@ -369,7 +369,7 @@ public class AEATRetencionesEntradaFactory {
 					.getRetencionAnualInicial());
 			if (ctx.getResidenciaInicialCeutaMelilla())
 				regularizacion
-						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion.ResidenciaInicialCeutaMelilla());
+						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion.ResidenciaInicialCeutaMelilla());
 			regularizacion.setBaseRetencion(ctx.getBaseRetencion());
 			regularizacion.setMinimoPersonalFamiliarInicial(ctx
 					.getMinimoPersonalFamiliarInicial());
@@ -396,7 +396,7 @@ public class AEATRetencionesEntradaFactory {
 
 		if (ctx.getResidenciaCeutaMelilla()) {
 
-			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.ResidenciaCeutaMelilla());
+			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.ResidenciaCeutaMelilla());
 		}
 		retenido.setDiscapacidad(getAeat15Discapacidad2017(ctx.getDiscapacidad(),
 				ctx.getMovilidadReducida()));
@@ -406,13 +406,13 @@ public class AEATRetencionesEntradaFactory {
 				ctx.getSituacionLaboral(), ctx.getContrato(),
 				ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
 		// --------------------------------------- Descendientes
-		List<net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente> descendientes = retenido.getDescendiente();
+		List<net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente> descendientes = retenido.getDescendiente();
 		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
 				.getDescendientes()) {
 			descendientes.add(getAeat15Descendiente2017(descendiente));
 		}
 		// ---------------------------------------- Ascendientes
-		List<net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente> ascendientes = retenido.getAscendiente();
+		List<net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente> ascendientes = retenido.getAscendiente();
 		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
 				.getAscendientes()) {
 			ascendientes.add(getAeat15Ascendiente2017(ascendiente));
@@ -424,7 +424,7 @@ public class AEATRetencionesEntradaFactory {
 		BigDecimal irregularidad1 = ctx.getIrregularidad1();
 		BigDecimal irregularidad2 = ctx.getIrregularidad2();
 		if (irregularidad1 != null || irregularidad2 != null) {
-			net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Reducciones reducciones = new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Reducciones();
+			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Reducciones reducciones = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Reducciones();
 			reducciones.setIrregularidad1(irregularidad1);
 			reducciones.setIrregularidad2(irregularidad2);
 			retenido.setReducciones(reducciones);
@@ -434,17 +434,17 @@ public class AEATRetencionesEntradaFactory {
 		retenido.setCotizaciones(ctx.getGastosAnuales());
 		
 		if (ctx.getRdtosObtenidosCeutaMelilla())
-			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.RdtosObtenidosCeutaMelilla());
+			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.RdtosObtenidosCeutaMelilla());
 		retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
 		retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
 		if (ctx.getPagoPrestamosVivienda())
-			retenido.setPagoPrestamosVivienda(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.PagoPrestamosVivienda());
+			retenido.setPagoPrestamosVivienda(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.PagoPrestamosVivienda());
 
 		// -------------------------------------- Regularización
 		CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
 		if (causaRegularizacion != null) {
-			net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion regularizacion = 
-					new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion();
+			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion regularizacion = 
+					new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion();
 			List<Integer> causas = regularizacion.getCausa();
 			causas.add(causaRegularizacion.getValue());
 
@@ -456,7 +456,7 @@ public class AEATRetencionesEntradaFactory {
 					.getRetencionAnualInicial());
 			if (ctx.getResidenciaInicialCeutaMelilla())
 				regularizacion
-						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion.ResidenciaInicialCeutaMelilla());
+						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion.ResidenciaInicialCeutaMelilla());
 			regularizacion.setBaseRetencion(ctx.getBaseRetencion());
 			regularizacion.setMinimoPersonalFamiliarInicial(ctx
 					.getMinimoPersonalFamiliarInicial());
@@ -471,102 +471,102 @@ public class AEATRetencionesEntradaFactory {
 
 	}
 
-	private static net.aonsolutions.aeat.jaxb.TipoDiscapacidad getAeat15Discapacidad2016(
+	private static net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad getAeat15Discapacidad2016(
 			Discapacidad discapacidad, boolean movilidadReducida) {
 		if (discapacidad == Discapacidad.GRADO0)
 			return null;
-		net.aonsolutions.aeat.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.aeat.jaxb.TipoDiscapacidad();
+		net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad();
 		if (discapacidad == Discapacidad.GRADO1) {
-			net.aonsolutions.aeat.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.aeat.jaxb.TipoDiscapacidad.Grado1();
+			net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado1();
 			if (movilidadReducida) {
-				grado1.setMovilidadReducida(new net.aonsolutions.aeat.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
+				grado1.setMovilidadReducida(new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
 			}
 			tipoDiscapacidad.setGrado1(grado1);
 		} else if (discapacidad == Discapacidad.GRADO2) {
-			tipoDiscapacidad.setGrado2(new net.aonsolutions.aeat.jaxb.TipoDiscapacidad.Grado2());
+			tipoDiscapacidad.setGrado2(new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado2());
 		}
 		return tipoDiscapacidad;
 	}
 
-	private static net.aonsolutions.aeat.v2017.jaxb.TipoDiscapacidad getAeat15Discapacidad2017(
+	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad getAeat15Discapacidad2017(
 			Discapacidad discapacidad, boolean movilidadReducida) {
 		if (discapacidad == Discapacidad.GRADO0)
 			return null;
-		net.aonsolutions.aeat.v2017.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.aeat.v2017.jaxb.TipoDiscapacidad();
+		net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad();
 		if (discapacidad == Discapacidad.GRADO1) {
-			net.aonsolutions.aeat.v2017.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.aeat.v2017.jaxb.TipoDiscapacidad.Grado1();
+			net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado1();
 			if (movilidadReducida) {
-				grado1.setMovilidadReducida(new net.aonsolutions.aeat.v2017.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
+				grado1.setMovilidadReducida(new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
 			}
 			tipoDiscapacidad.setGrado1(grado1);
 		} else if (discapacidad == Discapacidad.GRADO2) {
-			tipoDiscapacidad.setGrado2(new net.aonsolutions.aeat.v2017.jaxb.TipoDiscapacidad.Grado2());
+			tipoDiscapacidad.setGrado2(new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado2());
 		}
 		return tipoDiscapacidad;
 	}
 
-	private static net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar getAeat15Situacionfamiliar2016(
+	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar getAeat15Situacionfamiliar2016(
 			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
-		net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar situacionFamiliar = new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar();
+		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar();
 		if (SituacionFamiliar.UNO == _situacionFamiliar) {
-			situacionFamiliar.setSituacion1(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion1());
+			situacionFamiliar.setSituacion1(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion1());
 		} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
-			net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2 situacion2 = 
-					new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2();
+			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2 situacion2 = 
+					new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2();
 			situacion2.setNifConyuge(nifConyuge);
 			situacionFamiliar.setSituacion2(situacion2);
 		} else {
-			situacionFamiliar.setSituacion3(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion3());
+			situacionFamiliar.setSituacion3(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion3());
 		}
 		return situacionFamiliar;
 	}
 
-	private static net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar getAeat15Situacionfamiliar2017(
+	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar getAeat15Situacionfamiliar2017(
 			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
-		net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar situacionFamiliar = new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar();
+		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar();
 		if (SituacionFamiliar.UNO == _situacionFamiliar) {
-			situacionFamiliar.setSituacion1(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion1());
+			situacionFamiliar.setSituacion1(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion1());
 		} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
-			net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion2 situacion2 = 
-					new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion2();
+			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion2 situacion2 = 
+					new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion2();
 			situacion2.setNifConyuge(nifConyuge);
 			situacionFamiliar.setSituacion2(situacion2);
 		} else {
-			situacionFamiliar.setSituacion3(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion3());
+			situacionFamiliar.setSituacion3(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion3());
 		}
 		return situacionFamiliar;
 	}
 
-	private static net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente getAeat15Descendiente2016(
+	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente getAeat15Descendiente2016(
 			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
-		net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente descendiente = new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente();
+		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente descendiente = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente();
 		descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
 		descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
 		descendiente.setDiscapacidad(getAeat15Discapacidad2016(
 				_descendiente.getDiscapacidad(),
 				_descendiente.getMovilidadReducida()));
 		if (_descendiente.getComputadoEntero())
-			descendiente.setComputadoEntero(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente.ComputadoEntero());
+			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente.ComputadoEntero());
 		return descendiente;
 	}
 
-	private static net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente getAeat15Descendiente2017(
+	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente getAeat15Descendiente2017(
 			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
-		net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente descendiente = new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente();
+		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente descendiente = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente();
 		descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
 		descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
 		descendiente.setDiscapacidad(getAeat15Discapacidad2017(
 				_descendiente.getDiscapacidad(),
 				_descendiente.getMovilidadReducida()));
 		if (_descendiente.getComputadoEntero())
-			descendiente.setComputadoEntero(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente.ComputadoEntero());
+			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente.ComputadoEntero());
 		return descendiente;
 	}
 
 
-	private static net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente getAeat15Ascendiente2016(
+	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente getAeat15Ascendiente2016(
 			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
-		net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente ascendiente = new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente();
+		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente ascendiente = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente();
 		ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
 		ascendiente.setDiscapacidad(getAeat15Discapacidad2016(
 				_ascendiente.getDiscapacidad(),
@@ -579,9 +579,9 @@ public class AEATRetencionesEntradaFactory {
 		return ascendiente;
 	}
 
-	private static net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente getAeat15Ascendiente2017(
+	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente getAeat15Ascendiente2017(
 			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
-		net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente ascendiente = new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente();
+		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente ascendiente = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente();
 		ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
 		ascendiente.setDiscapacidad(getAeat15Discapacidad2017(
 				_ascendiente.getDiscapacidad(),
@@ -594,22 +594,22 @@ public class AEATRetencionesEntradaFactory {
 		return ascendiente;
 	}
 
-	private static net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral getAeat15SituacionLaboral2016(
+	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral getAeat15SituacionLaboral2016(
 			SituacionLaboral _situacionLaboral, Contrato contrato,
 			boolean movilidadGeografica, boolean prolongacionLaboral) {
-		net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral situacionLaboral = new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral();
+		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral situacionLaboral = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral();
 		if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
-			situacionLaboral.setDesempleado(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Desempleado());
+			situacionLaboral.setDesempleado(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Desempleado());
 		} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
-			situacionLaboral.setPensionista(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Pensionista());
+			situacionLaboral.setPensionista(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Pensionista());
 		} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
-			net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo();
+			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo();
 			if (contrato == null)
 				contrato = Contrato.UNO;
 			trabajadorActivo.setContrato(contrato.getValue());
 			if (movilidadGeografica)
 				trabajadorActivo
-						.setMovilidadGeografica(new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
+						.setMovilidadGeografica(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
 			
 			/* At 2016 NOT Found
 			if (prolongacionLaboral)
@@ -619,27 +619,27 @@ public class AEATRetencionesEntradaFactory {
 			
 			situacionLaboral.setTrabajadorActivo(trabajadorActivo);
 		} else {
-			situacionLaboral.setOtraSituacion( new net.aonsolutions.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.OtraSituacion());
+			situacionLaboral.setOtraSituacion( new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.OtraSituacion());
 		}
 		return situacionLaboral;
 	}
 
-	private static net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral getAeat15SituacionLaboral2017(
+	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral getAeat15SituacionLaboral2017(
 			SituacionLaboral _situacionLaboral, Contrato contrato,
 			boolean movilidadGeografica, boolean prolongacionLaboral) {
-		net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral situacionLaboral = new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral();
+		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral situacionLaboral = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral();
 		if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
-			situacionLaboral.setDesempleado(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.Desempleado());
+			situacionLaboral.setDesempleado(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.Desempleado());
 		} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
-			situacionLaboral.setPensionista(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.Pensionista());
+			situacionLaboral.setPensionista(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.Pensionista());
 		} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
-			net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo();
+			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo();
 			if (contrato == null)
 				contrato = Contrato.UNO;
 			trabajadorActivo.setContrato(contrato.getValue());
 			if (movilidadGeografica)
 				trabajadorActivo
-						.setMovilidadGeografica(new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
+						.setMovilidadGeografica(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
 			
 			/* At 2016 NOT Found
 			if (prolongacionLaboral)
@@ -649,7 +649,7 @@ public class AEATRetencionesEntradaFactory {
 			
 			situacionLaboral.setTrabajadorActivo(trabajadorActivo);
 		} else {
-			situacionLaboral.setOtraSituacion( new net.aonsolutions.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.OtraSituacion());
+			situacionLaboral.setOtraSituacion( new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.OtraSituacion());
 		}
 		return situacionLaboral;
 	}
