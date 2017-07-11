@@ -504,7 +504,7 @@ public class FillerDAO {
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
 			company.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
-			company.setNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY))); // TODO
+			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
 			company.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
 			company.setType(r.getValue(REGISTRY.TYPE));	
 			return company
