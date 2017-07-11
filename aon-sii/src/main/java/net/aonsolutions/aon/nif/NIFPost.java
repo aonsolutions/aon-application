@@ -10,10 +10,10 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
-import net.aonsolutions.aeat.nif.ObjectFactory;
-import net.aonsolutions.aeat.nif.VNifV1Ent;
-import net.aonsolutions.aeat.nif.VNifV2Ent;
-import net.aonsolutions.aeat.nif.VNifV2Sal;
+import net.aonsolutions.core.aeat.nif.ObjectFactory;
+import net.aonsolutions.core.aeat.nif.VNifV1Ent;
+import net.aonsolutions.core.aeat.nif.VNifV2Ent;
+import net.aonsolutions.core.aeat.nif.VNifV2Sal;
 
 public class NIFPost extends WebServiceGatewaySupport{
 		
@@ -38,7 +38,7 @@ public class NIFPost extends WebServiceGatewaySupport{
     	
         	Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         	marshaller.setCheckForXmlRootElement(false);
-        	marshaller.setContextPath("net.aonsolutions.aeat.nif");
+        	marshaller.setContextPath("net.aonsolutions.core.aeat.nif");
         	setMarshaller(marshaller);
         	setUnmarshaller(marshaller);
 		}catch (Exception e) {
