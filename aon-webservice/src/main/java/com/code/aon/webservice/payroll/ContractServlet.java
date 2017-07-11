@@ -92,7 +92,7 @@ public class ContractServlet extends HttpServlet{
 					Date start = AonDateUtils.getYear(c.getStartDate()) == year ? c.getStartDate() : ejInitDate;
 					Date end = c.getEndDate() != null && AonDateUtils.getYear(c.getEndDate()) == year ? c.getStartDate() : ejFinalDate;
 					Double coef = Double.parseDouble(c.getExpression());
-					list.stream().filter(o -> o.getName().equals("TC2") && o.getEndDate().compareTo(start) > 0 && o.getStartDate().compareTo(end) <= 0).forEach(h -> {
+					list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0).forEach(h -> {
 						Date start2 = h.getStartDate().compareTo(start) > 0 ? h.getStartDate() : start;
 						Date end2 = (h.getEndDate() != null && h.getEndDate().compareTo(end) < 0) ? AonDateUtils.addDays(h.getEndDate(),1) : end;
 						Long a = AonDateUtils.getDaysBetweenDates(start2, end2);
