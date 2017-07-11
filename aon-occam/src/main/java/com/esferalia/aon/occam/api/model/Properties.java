@@ -829,12 +829,13 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<String> getNumberProperty();
 		Property<Date> getIssueDateProperty();
-
-		Property<String> getTypeProperty();
-		Property<String> getSourceProperty();
-
-		Property<Byte> getSource2Property();
+		Property<Byte> getSourceProperty();
 		Property<Integer> getSourceIdProperty();
+		
+		// DATA RESPONSE DETAIL
+		Property<String> getDetailVariableProperty();
+		Property<String> getDetailValueProperty();
+		
 	}
 	
 	public interface DataResponseDetailProperties extends AuditProperties{

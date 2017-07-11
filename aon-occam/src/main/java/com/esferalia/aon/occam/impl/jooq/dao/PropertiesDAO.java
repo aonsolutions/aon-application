@@ -763,11 +763,11 @@ public class PropertiesDAO {
 		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CODE);}
 		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.RESPONSE_DATE);}
 		
-		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
-		@Override public Property<String> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
-		@Override public Property<Byte> getSource2Property() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE);}
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE_ID);}
 
+		@Override public Property<String> getDetailVariableProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VARIABLE);}
+		@Override public Property<String> getDetailValueProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
 	}
 	
 	protected static class DataResponseDetailPropertiesDAO implements DataResponseDetailProperties{

@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
@@ -620,15 +621,16 @@ public class FillerDAO {
 		
 		@Override
 		public DataResponse apply(Record r) {
-			DataResponse dataResponse = new DataResponse();
-			dataResponse.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE));
-			dataResponse.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER));
-			dataResponse.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE));
-			dataResponse.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER));
-			return dataResponse.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
+			return new DataResponse().setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
 					.setId(r.getValue(DATA_RESPONSE.ID))
 					.setIssueDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
-					.setNumber(r.getValue(DATA_RESPONSE.CODE));
+					.setNumber(r.getValue(DATA_RESPONSE.CODE))
+					.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
+					.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
+					.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
+					.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
+					.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER));
 		}
 	}
 	

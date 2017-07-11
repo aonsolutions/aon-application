@@ -4,19 +4,19 @@ public enum SendType {
 
 	// TODO ¿? ó -> \u00f3
 	
-	ALTA_EMITIDAS("Altas Emitidas"),
-	MOD_EMITIDAS("Modificación Emitidas"),
-	BAJA_EMITIDAS("Baja Emitidas"),
-	ALTA_RECIBIDAS("Alta Recibidas"),
-	MOD_RECIBIDAS("Modificación Recibidas"),
-	BAJA_RECIBIDAS("Baja Recibidas"),
-	ALTA_INTRACOMUNITARIAS("Alta Intracomunitarias"),
-	MOD_INTRACOMUNITARIAS("Modificación Intracomunitarias"),
-	BAJA_INTRACOMUNITARIAS("Baja Intracomunitarias"),
-	ALTA_INVERSION("Alta Inversión"),
-	MOD_INVERSION("Modificación Inversión"),
-	BAJA_INVERSION("Baja Inversión"),
-	COBROS_PAGOS("Cobros/Pagos")
+	ALTA_EMITIDAS("Alta Facturas Emitidas"),
+	MOD_EMITIDAS("Modificación Facturas Emitidas"),
+	BAJA_EMITIDAS("Baja Facturas Emitidas"),
+	ALTA_RECIBIDAS("Alta Facturas Recibidas"),
+	MOD_RECIBIDAS("Modificación Facturas Recibidas"),
+	BAJA_RECIBIDAS("Baja Facturas Recibidas"),
+	ALTA_INTRACOMUNITARIAS("Alta Operaciones Intracomunitarias"),
+	MOD_INTRACOMUNITARIAS("Modificación Operaciones Intracomunitarias"),
+	BAJA_INTRACOMUNITARIAS("Baja Operaciones Intracomunitarias"),
+	ALTA_INVERSION("Alta Bienes de Inversión"),
+	MOD_INVERSION("Modificación Bienes de Inversión"),
+	BAJA_INVERSION("Baja Bienes de Inversión"),
+	COBROS_PAGOS("Operaciones Cobros/Pagos")
 	;	
 	
 	String description;

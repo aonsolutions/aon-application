@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SIIDB {
 	
@@ -31,10 +30,11 @@ public class SIIDB {
 	}
 	
     protected void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<String> status, LinkedList<VatContext> vatList, SendType sendType){
+    	
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
-    			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+    			.setNumber(sendType.getDescription())
     			.setIssueDate(new Date())
     			.setSource(DataResponseSource.SII));
     
@@ -44,17 +44,24 @@ public class SIIDB {
 			.setDataVariable("type") 
 			.setValue(Integer.toString(sendType.ordinal()));
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd0);
+
+		DataResponseDetail drd01= new DataResponseDetail();
+		drd01.setDomain(domain.getId())
+			.setDataResponse(dr.getId())
+			.setDataVariable("status") 
+			.setValue("enviado"); // "enviado" || "descargado"
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd01);
     	
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
     		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
-    				f -> f.getSource2Property().eq(DataResponseSource.SII_INVOICE.value())
+    				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
     				.and(f.getSourceIdProperty().eq(invoice)));
     		if(di == null){
     			di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     					new DataResponse()
     					.setDomain(domain.getId())
-    					.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+    					.setNumber("")
     					.setIssueDate(new Date())
     					.setSource(DataResponseSource.SII_INVOICE)
     					.setSourceId(invoiceList.get(i)));
@@ -193,7 +200,7 @@ public class SIIDB {
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
-    			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+    			.setNumber(sendType.getDescription())
     			.setIssueDate(new Date())
     			.setSource(DataResponseSource.SII));
     	
@@ -207,7 +214,7 @@ public class SIIDB {
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
     		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
-    				f -> f.getSource2Property().eq(DataResponseSource.SII_INVOICE.value())
+    				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
     				.and(f.getSourceIdProperty().eq(invoice)));
     		if(di != null && (status.get(invoice).equals("Correcto") || status.get(invoice).equals("Correcto"))){
     			String estado = "status";
@@ -249,7 +256,7 @@ public class SIIDB {
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
-    			.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+    			.setNumber(SendType.COBROS_PAGOS.getDescription())
     			.setIssueDate(new Date())
     			.setSource(DataResponseSource.SII));
 
@@ -265,7 +272,7 @@ public class SIIDB {
     			DataResponse di = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
 					new DataResponse()
 					.setDomain(domain.getId())
-					.setNumber("SII" + AonDateUtils.format(new Date(), "yyyyMMddHHmm"))
+					.setNumber("")
 					.setIssueDate(new Date())
 					.setSource(DataResponseSource.SII_FINANCE)
 					.setSourceId(f.getId()));
@@ -281,7 +288,7 @@ public class SIIDB {
     	
     	for(Integer i : invoiceList){
     		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
-    				f -> f.getSource2Property().eq(DataResponseSource.SII_INVOICE.value())
+    				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
     				.and(f.getSourceIdProperty().eq(i)));
     		
     		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq("status_cp")));

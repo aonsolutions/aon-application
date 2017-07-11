@@ -456,6 +456,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 							vp.add(label);
 						});
 						parent.errorPanel.setWidget(vp);
+						parent.tabLayout.selectTab(0);
 						parent.openFootPanel();
 						parent.gridContent();
 					}
@@ -599,6 +600,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 							vp.add(label);
 						});
 						parent.errorPanel.setWidget(vp);
+						parent.tabLayout.selectTab(0);
 						parent.openFootPanel();
 						parent.gridContent();
 					}

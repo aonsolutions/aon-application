@@ -171,17 +171,17 @@ public class CommonServlet extends HttpServlet{
 		} 
 		
 		if(filterMap.containsKey("source")){
-			Filter fsourceValue = f.getTypeProperty().eq("source").and(f.getSourceProperty().like(filterMap.get("source")[0] + "@%"));				
+			Filter fsourceValue = f.getDetailVariableProperty().eq("source").and(f.getDetailValueProperty().like(filterMap.get("source")[0] + "@%"));				
 			for(Integer i = 1; i < filterMap.get("source").length ; i++){
-				fsourceValue = fsourceValue.or(f.getTypeProperty().eq("source").and(f.getSourceProperty().like(filterMap.get("source")[i] + "@%")));
+				fsourceValue = fsourceValue.or(f.getDetailVariableProperty().eq("source").and(f.getDetailValueProperty().like(filterMap.get("source")[i] + "@%")));
 			}
 			filter = filter.and(fsourceValue);
 		}
 		
 		if(filterMap.containsKey("type")){
-			Filter ftypeValue = f.getTypeProperty().eq("type").and(f.getSourceProperty().eq(filterMap.get("type")[0]));				
+			Filter ftypeValue = f.getDetailVariableProperty().eq("type").and(f.getDetailValueProperty().eq(filterMap.get("type")[0]));				
 			for(Integer i = 1; i < filterMap.get("type").length ; i++){
-				ftypeValue = ftypeValue.or(f.getTypeProperty().eq("type").and(f.getSourceProperty().like(filterMap.get("type")[i])));
+				ftypeValue = ftypeValue.or(f.getDetailVariableProperty().eq("type").and(f.getDetailValueProperty().like(filterMap.get("type")[i])));
 			}
 			filter = filter.and(ftypeValue);
 		}

@@ -30,6 +30,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
+import net.aonsolutions.aon.nif.NIFPost;
 import net.aonsolutions.core.aeat.nif.VNifV1Ent;
 import net.aonsolutions.core.aeat.sii.BajaLRBienesInversion;
 import net.aonsolutions.core.aeat.sii.BajaLRDetOperacionIntracomunitaria;
@@ -122,7 +123,6 @@ import net.aonsolutions.core.aeat.sii.TipoOperacionSujetaNoExentaType;
 import net.aonsolutions.core.aeat.sii.TipoSinDesglosePrestacionType;
 import net.aonsolutions.core.aeat.sii.TipoSinDesgloseType;
 import net.aonsolutions.core.aeat.sii.VariosDestinatariosType;
-import net.aonsolutions.aon.nif.NIFPost;
 
 
 public class SIIBuilt {
@@ -137,11 +137,6 @@ public class SIIBuilt {
 	
 	// ------------------- FACTURAS EMITIDAS
 	 
-	protected byte[] getSuministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) throws JAXBException, IOException{
-		JAXBContext ctx = JAXBContext.newInstance(SuministroLRFacturasEmitidas.class);
-		return writeXml(ctx, suministroFacturasEmitidas(domain, login, company, invoiceList, contextList, cert, pass, false, "false"));
-	}
-
 	protected byte[] getSuministroFacturasEmitidas(SuministroLRFacturasEmitidas suministro){
 		JAXBContext ctx;
 		byte[] b = null;
@@ -200,7 +195,7 @@ public class SIIBuilt {
 	 * @param vatList
 	 */
 	protected SuministroLRFacturasEmitidas suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList
-			, byte[] cert, String pass, Boolean mod, String terceros) {
+			, byte[] cert, String pass, Boolean mod, String terceros, String auth) {
 		this.cert = cert;
 		this.pass = pass;
 		SuministroLRFacturasEmitidas suministro = new SuministroLRFacturasEmitidas();
@@ -303,7 +298,7 @@ public class SIIBuilt {
 			//fet.setClaveRegimenEspecialOTrascendenciaAdicional2("");//TODO OPTIONAL
 	
 			// NUMERO REGISTRO AUTORIZACION
-			fet.setNumRegistroAcuerdoFacturacion("");//TODO TIENE K DARLO EL CLIENTE
+			fet.setNumRegistroAcuerdoFacturacion("");//auth);//TODO TIENE K DARLO EL CLIENTE
 			
 			// IMPORTE TOTAL 
 			Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
@@ -488,7 +483,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 	
-	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
+	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
 		BajaLRFacturasEmitidas baja = new BajaLRFacturasEmitidas();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		
@@ -638,7 +633,7 @@ public class SIIBuilt {
 	 * @param invoiceList
 	 */
 	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, 
-			byte[] cert, String pass, Boolean mod, String terceros) {
+			byte[] cert, String pass, Boolean mod, String terceros, String auth) {
 		this.cert = cert;
 		this.pass = pass;
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
@@ -758,7 +753,7 @@ public class SIIBuilt {
 			frt.setImporteTotal(Double.toString(AonMathUtils.round(total)));//TODO
 			
 			// NUM REGISTRO ACUERDO FACTURACION
-			frt.setNumRegistroAcuerdoFacturacion("");//TODO
+			frt.setNumRegistroAcuerdoFacturacion("");//auth);//TODO
 			// TIPO FACTURA
 			frt.setTipoFactura(ClaveTipoFacturaType.F_1);//TODO De momento a piñon fijo!!!
 			if(vat.isIntracommunity()){
@@ -845,7 +840,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 		
-	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company,LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
+	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company,LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
 		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		
@@ -1019,7 +1014,7 @@ public class SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRBienesInversion suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
+	protected SuministroLRBienesInversion suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, Boolean mod, String terceros, String auth) {
 		SuministroLRBienesInversion suministro = new SuministroLRBienesInversion();
 		
 		// CABECERA
@@ -1062,7 +1057,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 	
-	protected BajaLRBienesInversion bajaBienesInversion(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
+	protected BajaLRBienesInversion bajaBienesInversion(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
 		BajaLRBienesInversion baja = new BajaLRBienesInversion();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		
@@ -1143,7 +1138,7 @@ public class SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros) {
+	protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros, String auth) {
 		SuministroLRDetOperacionIntracomunitaria suministro = new SuministroLRDetOperacionIntracomunitaria();
 		
 		// CABECERA
@@ -1204,7 +1199,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 		
-	protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
+	protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
 		BajaLRDetOperacionIntracomunitaria baja = new BajaLRDetOperacionIntracomunitaria();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		

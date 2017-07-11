@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.payroll.Payroll;
 import com.esferalia.aon.gwt.api.client.product.Product;
 import com.esferalia.aon.gwt.api.client.registry.Registry;
+import com.esferalia.aon.gwt.api.client.sii.Sii;
 import com.esferalia.aon.gwt.api.client.warehouse.Warehouse;
 
 public class API {
@@ -52,5 +53,9 @@ public class API {
 	
 	public Payroll getPayroll() {
 		return new Payroll(url, accessToken, domainName, userName);
+	}
+	
+	public Sii getSii() {
+		return new Sii(url, accessToken, domainName, userName);
 	}
 }

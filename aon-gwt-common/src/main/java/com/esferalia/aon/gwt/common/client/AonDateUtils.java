@@ -1,11 +1,11 @@
-package net.aonsolutions.aon.gwt.warehouse.client;
+package com.esferalia.aon.gwt.common.client;
 
 import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class Utils {
-	
+public class AonDateUtils {
+
 	public static final DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	public static final DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
 	public static final DateTimeFormat hourFormat = DateTimeFormat.getFormat("HH:mm");

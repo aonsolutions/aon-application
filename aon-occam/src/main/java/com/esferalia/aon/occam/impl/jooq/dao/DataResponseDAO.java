@@ -24,7 +24,7 @@ public class DataResponseDAO {
 	
 	public static Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseFilter filter){	
 		return DATA_RESPONSE_PROPERTIES.build( ctx.getDslContext()
-				.select().from(DATA_RESPONSE).join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE)), filter)
+				.selectDistinct(DATA_RESPONSE.fields()).from(DATA_RESPONSE).leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE)), filter)
 			.fetchInto(DATA_RESPONSE).stream().map(new DataResponseFiller());		
 	}
 	

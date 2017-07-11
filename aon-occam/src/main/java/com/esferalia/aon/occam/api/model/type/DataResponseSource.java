@@ -18,4 +18,18 @@ public enum DataResponseSource implements Serializable{
 	public String getValue(){
 		return this.toString();
 	}
+	
+	public static DataResponseSource safeValueOf(Byte i) {
+		if (i == null)
+			return null;
+		return safeValueOf(i.intValue());
+	}
+
+	public static DataResponseSource safeValueOf(Integer i) {
+		if (i == null)
+			return null;
+		if (i < 0 || i >= DataResponseSource.values().length)
+			return null;
+		return DataResponseSource.values()[i];
+	}
 }

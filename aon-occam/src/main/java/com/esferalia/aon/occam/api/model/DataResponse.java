@@ -23,9 +23,6 @@ public class DataResponse implements Serializable {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
-		  
-		
-	
 	
 	public Integer getId() {
 		return id;

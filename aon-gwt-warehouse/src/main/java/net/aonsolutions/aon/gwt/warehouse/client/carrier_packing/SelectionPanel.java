@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsWarehouse;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -57,7 +58,6 @@ import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
-import net.aonsolutions.aon.gwt.warehouse.client.Utils;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 import net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent;
 import net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler;
@@ -617,7 +617,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	   	ironIcon.setIcon("arrow-drop-up");
 	    pi.add(ironIcon);
 	    String title = (order.getIssueDate() != null 
-	    		? Utils.formatDate(Utils.parseDateTime(order.getIssueDate())) + " - "
+	    		? AonDateUtils.formatDate(AonDateUtils.parseDateTime(order.getIssueDate())) + " - "
 	    		: "") + (isReception(panel) ? order.getReferenceCode() : order.getSeriesNumber()) + " - " + order.getRegistry().getName(); // + WORKPLACE!
 	   
 	    Label ot = new Label(title.length() > 70 ? title.substring(0,70) + "..." : title);
@@ -935,7 +935,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	}	
 	
 	private void addToIncome(JsOrder order, JsOrderDetail detail, Double total){
-		String serie = Utils.format("yyMMdd", new Date());
+		String serie = AonDateUtils.format("yyMMdd", new Date());
 		VerticalPanel panel = new VerticalPanel();
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
 		Label label = new Label(detail.getDescription());
@@ -989,7 +989,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		panel.add(warehouse);
 		PaperInput param = new PaperInput();
 		param.setLabel("Fecha");
-		param.setValue(Utils.formatDate(new Date()));
+		param.setValue(AonDateUtils.formatDate(new Date()));
 		param.setMaxlength(10);
 
 		panel.add(param);
@@ -1131,7 +1131,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 				} else {
 					JsWarehouse js = (JsWarehouse) warehouse.getSelectedItem();
 					String number = ref.getValue();
-					String date = Utils.formatDateTime(Utils.parseDate(param.getValue()));
+					String date = AonDateUtils.formatDateTime(AonDateUtils.parseDate(param.getValue()));
 					String requestData = "{\"reference_code\":\""+ number +"\","
 							+ "\"issue_time\":\""+ date +"\","
 							+ "\"supplier\":\""+ order.getRegistry().getId() +"\","
@@ -1391,12 +1391,12 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					Double tare = Double.parseDouble(quantity.getValue());
 					json.put("tare", new JSONNumber(tare));
 					json.put("net", new JSONNumber(getCarrierPacking().getGross() - tare));	
-					json.put("reception_end_date", new JSONString(Utils.formatDateTime(new Date())));
+					json.put("reception_end_date", new JSONString(AonDateUtils.formatDateTime(new Date())));
 					requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				} else {
 					Double gross = Double.parseDouble(quantity.getValue()); 
 					json.put("gross", new JSONNumber(gross));
-					json.put("reception_start_date", new JSONString(Utils.formatDateTime(new Date())));
+					json.put("reception_start_date", new JSONString(AonDateUtils.formatDateTime(new Date())));
 					requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				}
 				getAPI().getWarehouse().updateCarrierPacking(getCarrierPacking().getId(), requestData, new AsyncCallback<JsCarrierPacking>() {

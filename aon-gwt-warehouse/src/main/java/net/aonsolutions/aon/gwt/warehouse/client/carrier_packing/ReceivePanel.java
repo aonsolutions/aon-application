@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsWarehouse;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -40,7 +41,6 @@ import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
 
-import net.aonsolutions.aon.gwt.warehouse.client.Utils;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class ReceivePanel extends Composite{
@@ -158,7 +158,7 @@ public class ReceivePanel extends Composite{
 	   	ironIcon.setIcon("arrow-drop-down");
 	    pi.add(ironIcon);
 	    String title = (js.getIssueDate() != null 
-	    		? Utils.formatDate(Utils.parseDateTime(js.getIssueDate())) + " - "
+	    		? AonDateUtils.formatDate(AonDateUtils.parseDateTime(js.getIssueDate())) + " - "
 	    		: "") + js.getReferenceCode(); // + WORKPLACE!
 	    pi.add(new Label(title));
 	    pi.setStyle("min-height:24px;font-size:12px;padding:0px;font-weight: bold;");
@@ -386,7 +386,7 @@ public class ReceivePanel extends Composite{
 			protected void onAccept() {	
 				JsWarehouse js = (JsWarehouse) warehouse.getSelectedItem();
 				String number = ref.getValue();
-				String date = Utils.formatDateTime(Utils.parseDate(param.getValue()));
+				String date = AonDateUtils.formatDateTime(AonDateUtils.parseDate(param.getValue()));
 				String requestData = "{\"reference_code\":\""+ number +"\","
 						+ "\"issue_time\":\""+ date +"\","
 						+ "\"supplier\":\""+ supplier +"\","

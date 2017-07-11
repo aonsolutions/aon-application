@@ -643,8 +643,6 @@ public class WarehouseDAO {
 				.set(CARRIER_PACKING.DRIVER_DOCUMENT, carrierPacking.getDriverDocument())
 				.set(CARRIER_PACKING.DRIVER_NAME, carrierPacking.getDriverName())
 				.set(CARRIER_PACKING.ISSUE_DATE, carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null)
-				.set(CARRIER_PACKING.MODIFICATION_DATE, carrierPacking.getModificationDate() != null ? new Timestamp(carrierPacking.getModificationDate().getTime()) : null)
-				.set(CARRIER_PACKING.MODIFICATION_USER, carrierPacking.getModificationUser())
 				.set(CARRIER_PACKING.NUMBER, carrierPacking.getNumber())
 				.set(CARRIER_PACKING.NUMBER_PLATE, carrierPacking.getNumberPlate())
 				.set(CARRIER_PACKING.SERIES, carrierPacking.getSeries())

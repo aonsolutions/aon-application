@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
@@ -12,6 +13,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,7 +39,6 @@ public class SiiPrincipal extends Composite{
 	public static final AonGwtIssuesCSS I_CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 	private static final Binder binder = GWT.create(Binder.class);
 	
-	
 	@UiField SplitLayoutPanel splitLayoutPanel;
 	@UiField DockLayoutPanel contentDockLayoutPanel;
 	@UiField SimpleLayoutPanel northContent;
@@ -45,7 +47,8 @@ public class SiiPrincipal extends Composite{
 	@UiField MinimizePanel footPanel;
 	@UiField TabLayoutPanel tabLayout; 
 	@UiField ScrollPanel errorPanel;
-	
+	@UiField ScrollPanel historyPanel;
+
 	private SiiMain parent;
 	private SiiPrincipal me;
 	
@@ -76,6 +79,26 @@ public class SiiPrincipal extends Composite{
 		this.me = this;
 		filterContent();
 		gridContent();
+
+		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> arg0) {
+				Integer value  = arg0.getSelectedItem();
+				if(value == 1){
+					openFootPanel();
+					getAPI().getSii().getSiiHistory(new AsyncCallback<JSON<JsDataResponse>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsDataResponse> result) {
+							historyPanel.add(new HistoryPanel(me, result.getData()));
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				}
+			}
+		});
 	}
 	
 	public void filterContent(){			
