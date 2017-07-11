@@ -16,8 +16,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculosBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculosBuilder;
 
 public class SolicitudCalculos {
 
@@ -119,7 +119,7 @@ public class SolicitudCalculos {
 			.addLiquidacion()
 			;
 		}
-		net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculos solicitud = builder.createSolicitudCalculos();
+		net.aonsolutions.core.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculos solicitud = builder.createSolicitudCalculos();
 
 		Utils.marshal(solicitud, os);
 	}

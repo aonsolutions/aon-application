@@ -70,24 +70,24 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.tgss.creta.jaxb.CtaCot;
-import net.aonsolutions.tgss.creta.jaxb.Dato;
-import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
-import net.aonsolutions.tgss.creta.jaxb.DatosLiquidacion;
-import net.aonsolutions.tgss.creta.jaxb.Fecha;
-import net.aonsolutions.tgss.creta.jaxb.Liquidacion;
-import net.aonsolutions.tgss.creta.jaxb.LiquidacionMes;
-import net.aonsolutions.tgss.creta.jaxb.Periodo;
-import net.aonsolutions.tgss.creta.jaxb.Trabajador;
-import net.aonsolutions.tgss.creta.jaxb.Tramo;
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.bases.BasesBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.DatoBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionMesBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.TrabajadorBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.Tramos;
+import net.aonsolutions.core.tgss.creta.jaxb.CtaCot;
+import net.aonsolutions.core.tgss.creta.jaxb.Dato;
+import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
+import net.aonsolutions.core.tgss.creta.jaxb.DatosLiquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.Fecha;
+import net.aonsolutions.core.tgss.creta.jaxb.Liquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.LiquidacionMes;
+import net.aonsolutions.core.tgss.creta.jaxb.Periodo;
+import net.aonsolutions.core.tgss.creta.jaxb.Trabajador;
+import net.aonsolutions.core.tgss.creta.jaxb.Tramo;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.BasesBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.DatoBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMesBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.TrabajadorBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.TramoBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.Tramos;
 
 public class Bases {
 
@@ -117,7 +117,7 @@ public class Bases {
 		
 		// ------------------------------------------------------ BasesCallback
 		@Override
-		public void bases(net.aonsolutions.tgss.creta.jaxb.bases.Bases bases) {
+		public void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
 			if ( reftificationMark)
 				bases.setIndicadorRectificacion("S");
 		}
@@ -330,27 +330,27 @@ public class Bases {
 
 	public static interface BasesCallback {
 
-		default void bases(net.aonsolutions.tgss.creta.jaxb.bases.Bases bases) {
+		default void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
 		};
 
 
 		default void noDiffs(
-				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 
 		}
 		
 		default void trabajadorAdded(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 		};
 
 		default void trabajadorSkipped(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 		};
 
 		default void trabajadorEmpty(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 		};
 
@@ -436,7 +436,7 @@ public class Bases {
 	private static class SkipExistingCallback implements BasesCallback {
 		@Override
 		public void trabajadorAdded(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 			skip(trabajadorAon, trabajadorCreta);
 		}
@@ -460,7 +460,7 @@ public class Bases {
 
 		@Override
 		public void trabajadorAdded(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 			if (!nafs.contains(trabajadorAon.getNaf()))
 				throw new SkipExisting();
@@ -759,11 +759,11 @@ public class Bases {
 		private static class TrabajadorData extends Data {
 
 			Trabajador<?> trabajadorCreta;
-			net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon;
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon;
 
 			public TrabajadorData(String name, String nif, String ss,
 					Trabajador<?> trabajadorCreta,
-					net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon) {
+					net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon) {
 				super(name, nif, ss);
 				this.trabajadorCreta = trabajadorCreta;
 				this.trabajadorAon = trabajadorAon;
@@ -791,25 +791,25 @@ public class Bases {
 		@Override
 		public void beforeMarshal(Object source) {
 
-			if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.Trabajador)
+			if (source instanceof net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador)
 				beforeMarshalTrabajador(
-						(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador) source);
-			else if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.Dato)
+						(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador) source);
+			else if (source instanceof net.aonsolutions.core.tgss.creta.jaxb.bases.Dato)
 				beforeMarshalDato(
-						(net.aonsolutions.tgss.creta.jaxb.bases.Dato) source);
-			else if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.CtaCot)
+						(net.aonsolutions.core.tgss.creta.jaxb.bases.Dato) source);
+			else if (source instanceof net.aonsolutions.core.tgss.creta.jaxb.bases.CtaCot)
 				beforeMarshalCtaCot(
-						(net.aonsolutions.tgss.creta.jaxb.bases.CtaCot) source);
-			else if (source instanceof net.aonsolutions.tgss.creta.jaxb.bases.Tramo)
+						(net.aonsolutions.core.tgss.creta.jaxb.bases.CtaCot) source);
+			else if (source instanceof net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo)
 				beforeMarshalTramo(
-						(net.aonsolutions.tgss.creta.jaxb.bases.Tramo) source);
+						(net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo) source);
 
 			super.beforeMarshal(source);
 		}
 
 		@Override
 		public void trabajadorAdded(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 
 			if (!addedTrabajadorDataMap.containsKey(trabajadorCreta.getNaf()))
@@ -828,7 +828,7 @@ public class Bases {
 
 		@Override
 		public void trabajadorSkipped(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 			// skippedTrabajadorList.add(new TrabajadorData(salary
 			// .getEmployeeName(), salary.getEmployeeDocument(), salary
@@ -836,7 +836,7 @@ public class Bases {
 		};
 
 		public void beforeMarshalTrabajador(
-				net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajador) {
 			marshallSkipped();
 			TrabajadorData data = addedTrabajadorDataMap
 					.get(trabajador.getNaf());
@@ -851,7 +851,7 @@ public class Bases {
 		}
 
 		public void beforeMarshalCtaCot(
-				net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
+				net.aonsolutions.core.tgss.creta.jaxb.bases.CtaCot ctaCot) {
 			String ccc = ctaCot.getProvincia() + ctaCot.getNumero();
 			Data data = addedEnterpriseDataMap.get(ccc);
 			try {
@@ -862,7 +862,7 @@ public class Bases {
 		}
 
 		public void beforeMarshalDato(
-				net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon) {
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon) {
 
 			if (tramoCreta == null)
 				return;
@@ -897,7 +897,7 @@ public class Bases {
 		}
 
 		public void beforeMarshalTramo(
-				net.aonsolutions.tgss.creta.jaxb.bases.Tramo tramoAon) {
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoAon) {
 			for (Tramo<?> tramo : trabajadorCreta.getTramos().getTramo()) {
 				if (compare(tramo, tramoAon) == 0) {
 					tramoCreta = tramo;
@@ -1249,7 +1249,7 @@ public class Bases {
 				liquidacion(ctx, liquidacion, aceptarBasesAnteriores, cbs));
 	}
 
-	private static <D extends DatoSolicitado> net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion(
+	private static <D extends DatoSolicitado> net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion(
 			AONContext ctx, Liquidacion<?, ?, ?, ?, ?> liquidacion,
 			boolean aceptarBasesAnteriores, BasesCallback... cbs) {
 		LiquidacionBuilder liquidacionBuilder = new LiquidacionBuilder()
@@ -1438,7 +1438,7 @@ public class Bases {
 
 		trabajadores.remove(salary.getEmployeeSSNumber());
 
-		net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon = trabajadorBuilder
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon = trabajadorBuilder
 				.create();
 		
 		try {
@@ -1654,20 +1654,20 @@ public class Bases {
 	}
 
 
-	private static net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion(
-			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos,
+	private static net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion(
+			net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos,
 			AONContext ctx, boolean aceptarBasesAnteriores, XMLStreamWriter xsw,
 			BasesCallback... cbs) {
 		return liquidacion(ctx, trabajadoresTramos.getLiquidacion(),
 				aceptarBasesAnteriores, cbs);
 	}
 
-	private static List<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion> liquidaciones(
-			net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta respuesta,
+	private static List<net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion> liquidaciones(
+			net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta respuesta,
 			AONContext ctx, boolean aceptarBasesAnteriores, XMLStreamWriter xsw,
 			BasesCallback... cbs) {
 
-		List<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new ArrayList<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion>();
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new ArrayList<net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion>();
 
 		for (Liquidacion<?, ?, ?, ?, ?> liquidacion : respuesta.getLiquidacion())
 			liquidaciones.add(
@@ -1726,8 +1726,8 @@ public class Bases {
 		return d1.getCodigo().compareToIgnoreCase(d2.getCodigo());
 	}
 
-	private static int compare(net.aonsolutions.tgss.creta.jaxb.bases.Dato d1,
-			net.aonsolutions.tgss.creta.jaxb.bases.Dato d2) {
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Dato d1,
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Dato d2) {
 		int compare = d1.getTipoDato().compareToIgnoreCase(d2.getTipoDato());
 		if (compare != 0)
 			return compare;
@@ -1739,8 +1739,8 @@ public class Bases {
 		return toDate(t1.getFechaDesde()).compareTo(toDate(t2.getFechaDesde()));
 	}
 
-	private static int compare(net.aonsolutions.tgss.creta.jaxb.bases.Tramo t1,
-			net.aonsolutions.tgss.creta.jaxb.bases.Tramo t2) {
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo t1,
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo t2) {
 		return toDate(t1.getFechaDesde().getAnho(), t1.getFechaDesde().getMes(),
 				t1.getFechaDesde().getDia())
 						.compareTo(toDate(t2.getFechaDesde().getAnho(),
@@ -1749,14 +1749,14 @@ public class Bases {
 	}
 
 	private static int compare(Tramo t1,
-			net.aonsolutions.tgss.creta.jaxb.bases.Tramo t2) {
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo t2) {
 		return toDate(t1.getFechaDesde()).compareTo(toDate(
 				t2.getFechaDesde().getAnho(), t2.getFechaDesde().getMes(),
 				t2.getFechaDesde().getDia()));
 	}
 
 	private static void different(
-			net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon,
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon,
 			Dato datoCreta) {
 
 		if (AonStringUtils.isEmpty(datoCreta.getValor()))
@@ -1779,7 +1779,7 @@ public class Bases {
 	}
 
 	private static void different(
-			net.aonsolutions.tgss.creta.jaxb.bases.Tramo tramoAon,
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoAon,
 			Tramo tramoCreta) {
 		Date dateFromAon = toDate(tramoAon.getFechaDesde().getAnho(),
 				tramoAon.getFechaDesde().getMes(),
@@ -1797,25 +1797,25 @@ public class Bases {
 
 		List<DatoSolicitado> datosCreta = new ArrayList<DatoSolicitado>(
 				tramoCreta.getDatosTramo().getDato());
-		// List<net.aonsolutions.tgss.creta.jaxb.DatoSolicitado> datosCreta =
+		// List<net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado> datosCreta =
 		// tramoCreta
 		// .getDatosTramo().getDato();
 		Collections.sort(datosCreta, Bases::compare);
-		List<net.aonsolutions.tgss.creta.jaxb.bases.Dato> datosAon = new ArrayList<net.aonsolutions.tgss.creta.jaxb.bases.Dato>(
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Dato> datosAon = new ArrayList<net.aonsolutions.core.tgss.creta.jaxb.bases.Dato>(
 				tramoAon.getDatosTramo().getDato());
 		Collections.sort(datosAon, Bases::compare);
 
 		int j = 0;
 		for (int i = 0; i < datosCreta.size(); i++) {
 			DatoSolicitado datoCreta = datosCreta.get(i);
-			// net.aonsolutions.tgss.creta.jaxb.DatoSolicitado datoCreta =
+			// net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado datoCreta =
 			// datosCreta
 			// .get(i);
 
 			if (j >= datosAon.size())
 				throw new Different();
 
-			net.aonsolutions.tgss.creta.jaxb.bases.Dato datoAon = datosAon
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon = datosAon
 					.get(j);
 
 			if (!datoCreta.getTipoDato().equalsIgnoreCase(datoAon.getTipoDato())
@@ -1840,10 +1840,10 @@ public class Bases {
 	}
 
 	private static void skip(
-			net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 			Trabajador trabajadorCreta) {
 
-		List<net.aonsolutions.tgss.creta.jaxb.bases.Tramo> tramosAon = new ArrayList<net.aonsolutions.tgss.creta.jaxb.bases.Tramo>(
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosAon = new ArrayList<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo>(
 				(trabajadorAon.getTramos().getTramo()));
 
 		List<Tramo> tramosCreta = trabajadorCreta.getTramos().getTramo();
@@ -1866,14 +1866,14 @@ public class Bases {
 	}
 
 	private static String toString(
-			net.aonsolutions.tgss.creta.jaxb.bases.CtaCot ctaCot) {
+			net.aonsolutions.core.tgss.creta.jaxb.bases.CtaCot ctaCot) {
 		return String.format("%s%s%s", ctaCot.getProvincia(),
 				ctaCot.getRegimen(), ctaCot.getNumero());
 
 	}
 
 	private static int compare(Liquidacion<?,?,?,?,?> l1,
-			net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion l2) {
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion l2) {
 		if (l2 == null)
 			return l1 == null ? 0 : 1;
 		if (l1 == null)
@@ -2220,18 +2220,18 @@ public class Bases {
 
 		BasesBuilder builder = new BasesBuilder();
 
-		Map<String, net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new HashMap<String, net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion>();
+		Map<String, net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new HashMap<String, net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion>();
 
 		for (InputStream trabajadoresTramosIs : trabajadoresTramosIss) {
 
 			try {
-				net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+				net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 						.unmarshal(
-								net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+								net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 								trabajadoresTramosIs);
 				String ccc = Utils.toString(
 						trabajadoresTramos.getLiquidacion().getCcc());
-				net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion = liquidaciones
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion = liquidaciones
 						.get(ccc);
 
 				if (compare(trabajadoresTramos.getLiquidacion(),
@@ -2265,9 +2265,9 @@ public class Bases {
 
 		for (InputStream respuestaIs : respuestaIss) {
 			try {
-				net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta respuesta = Utils
+				net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta respuesta = Utils
 						.unmarshal(
-								net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class,
+								net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class,
 								respuestaIs);
 
 				autorizados.add(respuesta.getAutorizado());
@@ -2299,7 +2299,7 @@ public class Bases {
 			throw new EmptyBasesException().setAutorizado(autorizado);
 
 		builder.addLiquidaciones(liquidaciones.values());
-		net.aonsolutions.tgss.creta.jaxb.bases.Bases bases = builder.create();
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = builder.create();
 
 		for (BasesCallback cb : callbacks)
 			cb.bases(bases);
@@ -2325,11 +2325,11 @@ public class Bases {
 	}
 
 	
-	private static void checkTrabajador(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajador) {
+	private static void checkTrabajador(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajador) {
 		Tramos tramos = trabajador.getTramos();
 		if ( tramos == null )
 			throw new InvalidTrabajador();
-		List<net.aonsolutions.tgss.creta.jaxb.bases.Tramo> tramo = tramos.getTramo();
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramo = tramos.getTramo();
 		if ( tramo == null || tramo.isEmpty() )
 			throw new InvalidTrabajador();
 		

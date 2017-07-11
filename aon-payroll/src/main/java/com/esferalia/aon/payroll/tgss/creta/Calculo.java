@@ -16,9 +16,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculos;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculosBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculos;
+import net.aonsolutions.core.tgss.creta.jaxb.solicitud.calculos.SolicitudCalculosBuilder;
 
 public class Calculo {
 

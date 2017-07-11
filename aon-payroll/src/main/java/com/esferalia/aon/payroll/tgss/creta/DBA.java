@@ -1,6 +1,6 @@
 package com.esferalia.aon.payroll.tgss.creta;
 
-import static net.aonsolutions.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.valueOfTipo;
+import static net.aonsolutions.core.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.valueOfTipo;
 
 import java.io.OutputStream;
 
@@ -16,13 +16,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder;
-import net.aonsolutions.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.TipoAccion;
-import net.aonsolutions.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.TipoDocumento;
-import net.aonsolutions.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.TipoMoviento;
-import net.aonsolutions.tgss.creta.jaxb.dba.ComunicacionDatosBancarios;
-import net.aonsolutions.tgss.creta.jaxb.dba.ComunicacionDatosBancariosBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.TipoAccion;
+import net.aonsolutions.core.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.TipoDocumento;
+import net.aonsolutions.core.tgss.creta.jaxb.dba.AccionDatosBancariosBuilder.TipoMoviento;
+import net.aonsolutions.core.tgss.creta.jaxb.dba.ComunicacionDatosBancarios;
+import net.aonsolutions.core.tgss.creta.jaxb.dba.ComunicacionDatosBancariosBuilder;
 
 public class DBA {
 

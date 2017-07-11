@@ -36,9 +36,9 @@ import com.esferalia.aon.occam.api.model.Salary.Cost;
 import com.esferalia.aon.occam.api.model.Salary.Deduction;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 
-import net.aonsolutions.tgss.creta.jaxb.CtaCot;
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.dcl.LineaDCL;
+import net.aonsolutions.core.tgss.creta.jaxb.CtaCot;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.dcl.LineaDCL;
 
 public class DCL {
 
@@ -80,7 +80,7 @@ public class DCL {
 
 	}
 
-	public static void check(Connection connection, net.aonsolutions.tgss.creta.jaxb.dcl.DCL dcl, BiConsumer<LineaDCL, LineaSalary> biConsumer ) {
+	public static void check(Connection connection, net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL dcl, BiConsumer<LineaDCL, LineaSalary> biConsumer ) {
 
 		Map<String, LineaSalary> lineasSalary = new HashMap<String, LineaSalary>();
 		lineasSalary.put(CONTINGENCIAS_COMUNES, new LineaSalary());
@@ -183,8 +183,8 @@ public class DCL {
 
 			InputStream is = cmd.getArgList().isEmpty() ? System.in : new FileInputStream(cmd.getArgs()[0]);
 
-			net.aonsolutions.tgss.creta.jaxb.dcl.DCL dcl = Utils
-					.unmarshal(net.aonsolutions.tgss.creta.jaxb.dcl.DCL.class, is);
+			net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL dcl = Utils
+					.unmarshal(net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL.class, is);
 
 			String ansiError = cmd.hasOption(pretty.getLongOpt()) ? ANSI_RED : "";
 			String ansiSuccess = cmd.hasOption(pretty.getLongOpt()) ? ANSI_GREEN : "";

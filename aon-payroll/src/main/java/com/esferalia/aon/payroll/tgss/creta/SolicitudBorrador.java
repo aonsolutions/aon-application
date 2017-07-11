@@ -10,8 +10,8 @@ import javax.xml.bind.Marshaller.Listener;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.stream.XMLStreamWriter;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.borrador.SolicitudBorradorBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador.SolicitudBorradorBuilder;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -214,7 +214,7 @@ public class SolicitudBorrador {
 		}
 		//@formatter:on
 
-		net.aonsolutions.tgss.creta.jaxb.solicitud.borrador.SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
+		net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador.SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
 
 		Utils.marshal(solicitudBorrador, os);
 	}
@@ -289,7 +289,7 @@ public class SolicitudBorrador {
 		}
 		//@formatter:on
 
-		net.aonsolutions.tgss.creta.jaxb.solicitud.borrador.SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
+		net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador.SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
 
 		Utils.marshal(solicitudBorrador, os, listeners);
 
@@ -317,7 +317,7 @@ public class SolicitudBorrador {
 		}
 		//@formatter:on
 
-		net.aonsolutions.tgss.creta.jaxb.solicitud.borrador.SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
+		net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador.SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
 
 		Utils.marshal(solicitudBorrador, writer, listeners);
 

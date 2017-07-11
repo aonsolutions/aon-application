@@ -15,8 +15,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion.SolicitudConfirmacionBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.solicitud.confirmacion.SolicitudConfirmacionBuilder;
 
 public class SolicitudConfirmacion {
 
@@ -108,7 +108,7 @@ public class SolicitudConfirmacion {
 			.addLiquidacion()
 			;
 		}
-		net.aonsolutions.tgss.creta.jaxb.solicitud.confirmacion.SolicitudConfirmacion solicitudConfirmacion = builder.createSolicitudConfirmacion();
+		net.aonsolutions.core.tgss.creta.jaxb.solicitud.confirmacion.SolicitudConfirmacion solicitudConfirmacion = builder.createSolicitudConfirmacion();
 
 		Utils.marshal(solicitudConfirmacion, os);
 		

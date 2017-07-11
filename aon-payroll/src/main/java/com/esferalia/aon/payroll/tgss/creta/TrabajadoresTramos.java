@@ -49,13 +49,13 @@ import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Trabajador;
-import net.aonsolutions.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
-import net.aonsolutions.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
-import net.aonsolutions.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
-import net.aonsolutions.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
-import net.aonsolutions.tgss.jaxb.trabajadorestramos.TramoBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class TrabajadoresTramos {
 	
@@ -143,9 +143,9 @@ public class TrabajadoresTramos {
 			
 			InputStream trabajadoresTramosIs= new StringBufferInputStream(String.format("%s", trabajadoresYTramosOs.toString(), "UTF-8"));
 			
-			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+			net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 					.unmarshal(
-							net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+							net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 							trabajadoresTramosIs);
 			
 			Utils.marshal(trabajadoresTramos, System.out);
@@ -208,7 +208,7 @@ public class TrabajadoresTramos {
 			}
 		
 
-		net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = trabajadoresTramosBuilder
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = trabajadoresTramosBuilder
 				.create();
 
 		Utils.marshal(trabajadoresTramos, os);

@@ -72,9 +72,9 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.mchange.util.AssertException;
 
 import junit.framework.Assert;
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
-import net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.Tramo;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 
 public class SQLCretaTestCase extends AbstractSQLTestCase {
 
@@ -2148,9 +2148,9 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 							}
 		).start();
 		
-		net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 				.unmarshal(
-						net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 						trabajadoresTramosIs);
 		
 		trabajadoresTramosIs.close();

@@ -15,8 +15,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
 
 public class SolicitudTrabajadoresTramos {
 
@@ -119,7 +119,7 @@ public class SolicitudTrabajadoresTramos {
 			.setAnhoControl(ctrlAnho)
 			.addLiquidacion();
 		}
-		net.aonsolutions.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder
+		net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder
 				.createSolicitudBorrador();
 
 		Utils.marshal(solicitudTrabajadoresTramos, os);

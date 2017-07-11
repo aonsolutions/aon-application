@@ -24,9 +24,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.rnt.Liquidacion;
-import net.aonsolutions.tgss.creta.jaxb.rnt.RelacionNominalTrabajadores;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.rnt.Liquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.rnt.RelacionNominalTrabajadores;
 
 public class RNT {
 	
