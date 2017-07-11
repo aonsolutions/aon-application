@@ -41,7 +41,10 @@ node {
       sh "git cherry-pick ${commits}"
 
       // Prepare hotfix   
-      sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
+      //sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
+      sh "${mvnHome}/bin/mvn versions:set -DnewVersion=${hotfix}"
+      sh "${mvnHome}/bin/mvn versions:use-latest-releases -Dincludes=net.aonsolutions:aeat,net.aonsolutions:sii"
+      sh "${mvnHome}/bin/mvn versions:commit"
 
       // Reread pom
       pom = readMavenPom file: 'pom.xml'
