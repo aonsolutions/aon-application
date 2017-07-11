@@ -388,7 +388,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		});
 		
 		//Descargar Variables actualizadas
-		employeeEventsDraft.initializeDBEventsVariables();
+		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
+		employeeEventsDraft.initializeDBEventsVariables(actualYear);
 		
 		//Pintar la tabla
 		employeeEventsDraft.initializeDBCalendar(

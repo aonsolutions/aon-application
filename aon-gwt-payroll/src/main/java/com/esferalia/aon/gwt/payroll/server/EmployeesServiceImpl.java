@@ -1021,11 +1021,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, employeeId);
 			
-			ContextDescriptor contextDescriptor = getContext(connection,
-					   new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria), 
-					   startDate, 
-					   endDate);
+			SQLContractSalaryCalculatorContext context = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria);
+			context.next();
 			
+			ContextDescriptor contextDescriptor = getContext(connection, context, startDate,  endDate);
 			
 			ContextDescriptor contextDescriptorPayments = getEmployeeMapEventsVariables(connection, employeeId, agreementId,
 					startDate, endDate, getDomainID(), getParentDomainID());
@@ -1034,21 +1033,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ContextDescriptor contextResult = new ContextDescriptor();
 			
 			for (String key : contextDescriptorPayments.getVariables()){
-				VariableDescriptor variable = contextDescriptorPayments.get(key);
-				if (Number.class != variable.getType())
+				if(contextDescriptorPayments.getList(key).isEmpty()){
+					contextResult.add(key, contextDescriptorPayments.getList(key));
 					continue;
-				if (Scope.AGREEMENT == variable.getScope())
-					continue;
+				}
 				
-				contextResult.add(key, variable);
-				
+				for(VariableDescriptor variable : contextDescriptorPayments.getList(key)){
+					if (Number.class != variable.getType())
+						continue;
+					if (Scope.AGREEMENT == variable.getScope())
+						continue;
+					
+					contextResult.add(key, variable);
+				}
 			}
 			
 			
-			for(String key : contextResult.getVariables())
+			for(String key : contextResult.getVariables()){
+				if(contextResult.getList(key).isEmpty()){
+					System.out.println("RESULT :"+key+", value : null, type :null, startDate :null, endDate :null");
+					continue;
+				}
 				for(VariableDescriptor var : contextResult.getList(key))
-					System.out.println(key+", descripcion :"+var.getDescription()+", expresion :"+var.getExpression()
-					+", value :"+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+					System.out.println("RESULT :"+key+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+			}
 			
 			return contextResult;
 			
@@ -3269,8 +3277,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						continue; // This is awfull ... very awful
 //					variables.put(var, String.format("%s",
 //							payment.getDescription(), payment.getExpression()));
-					result.add(var, payment.getDescription(), Number.class, payment.getExpression());
-			
+					//result.add(var, payment.getDescription(), Number.class, payment.getExpression());
+					result.add(var);
 				}
 
 //				variables.remove(payment.getName());
@@ -3327,6 +3335,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 
 //			return variables;
+			
+//			for(String key : result.getVariables())
+//				for(VariableDescriptor var : result.getList(key))
+//					System.out.println("PAYMENTS :"+key+", descripcion :"+var.getDescription()+", expresion :"+var.getExpression()
+//					+", value :"+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+			
 			return result;
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -3536,12 +3550,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			for (String varName : varNames) {
 				Object value = null;
 				List<ITimedVariable<Object>> vars = expressionContext.getVariables(varName, start, end);
+				
 				for ( ITimedVariable<Object> var : vars ) {
 					try {
 							value = var.getValue(var.getPeriod());
 					} catch (Throwable e) {
 	
 					}
+					
 					if (value == null)
 						continue;
 	
@@ -3596,6 +3612,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 
 			}
+				
 
 			return contextDescriptor;
 

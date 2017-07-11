@@ -123,4 +123,8 @@ public class ContextDescriptor implements Serializable {
 		
 		
 	}
+
+	public void add(String key) {
+		this.variableDescriptors.put(key, new ArrayList<VariableDescriptor>());	
+	}
 }

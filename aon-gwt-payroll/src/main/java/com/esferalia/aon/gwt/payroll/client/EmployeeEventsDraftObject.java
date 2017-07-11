@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -137,6 +138,7 @@ public class EmployeeEventsDraftObject {
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
 	private ArrayList<String> employeeContractVariables;
+	private ArrayList<String> employeeContractVariablesDB;
 	
 	public EmployeeEventsDraftObject(Integer idEmployee, Date startContractDate, Date endContractDate, EmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
@@ -148,10 +150,9 @@ public class EmployeeEventsDraftObject {
 		this.employeesService = employeesService;
 		
 		this.employeeContractVariables = new ArrayList<String>();
+		this.employeeContractVariablesDB = new ArrayList<String>();
 		
 		this.undoManager = new UndoManager<>();
-		
-		initializeDBEventsVariables();
 	}
 
 
@@ -335,21 +336,13 @@ public class EmployeeEventsDraftObject {
 	 * METODOS SYNC DATABASE
 	 */
 	
-	public void initializeDBEventsVariables() {
+	public void initializeDBEventsVariables(int year) {
 		
-		Date endDateGetVariables;
-		
-		if(null != this.endContractDate)
-			endDateGetVariables = DateUtils.copyDateOnly(this.endContractDate);
-		else
-			endDateGetVariables = new Date(217, 11, 31);
-		
-		
-		employeesService.getEmployeeEventsVariables(idEmployee, this.startContractDate, endDateGetVariables, 
+		employeesService.getEmployeeEventsVariables(idEmployee, new Date(year,0,1), new Date(year,11,31), 
 				new AsyncCallback<ContextDescriptor>() {
 			
 			@Override
-			public void onSuccess(ContextDescriptor result) {
+			public void onSuccess(ContextDescriptor context) {
 				
 				employeeContractVariables.clear();
 				
@@ -359,10 +352,29 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariables.add("DIAS_ERE");
 				employeeContractVariables.add("HORAS_EXTRAS");
 				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
-				
-//				for (String k : result.keySet()){
-				for (String k : result.getVariables()){
-					employeeContractVariables.add(k);
+				employeeContractVariablesDB.add("DIAS_VACACIONES");
+				employeeContractVariablesDB.add("DIAS_AUSENCIA");
+				employeeContractVariablesDB.add("DIAS_HUELGA");
+				employeeContractVariablesDB.add("DIAS_ERE");
+				employeeContractVariablesDB.add("HORAS_EXTRAS");
+				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
+
+				for (String varName : context.getVariables()){
+					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
+					employeeContractVariables.add(varName);
+					if(context.getList(varName).isEmpty()){
+						mapEventsVar.put(varName, varList);
+						continue;
+					}
+					for (VariableDescriptor var : context.getList(varName)){
+						Date startDate = var.getStartDate();
+						Date endDate = var.getEndDate();
+						Double value = Double.valueOf(var.getValue());
+						EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
+						varList.add(eVar);
+					}
+					sortListByStartDate(varList);
+					mapEventsVar.put(varName, varList);
 				}	
 			}
 			
@@ -374,7 +386,7 @@ public class EmployeeEventsDraftObject {
 	
 	public void initializeDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
 		
-		employeesService.getEmployeeEvents(this.idEmployee, this.employeeContractVariables, new AsyncCallback<EmployeeEventsData>(){
+		employeesService.getEmployeeEvents(this.idEmployee, this.employeeContractVariablesDB, new AsyncCallback<EmployeeEventsData>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
