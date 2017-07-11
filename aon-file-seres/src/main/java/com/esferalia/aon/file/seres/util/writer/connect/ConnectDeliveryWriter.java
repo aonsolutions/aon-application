@@ -279,9 +279,7 @@ public class ConnectDeliveryWriter {
 		SEH1D record = new SEH1D();
 		record.setCalificadorDelInterlocutor(type.getValue());
 		record.setCodigoInterlocutor(ediCode);
-		if(type == SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS){
-			record.setAgenciaResponsableDeLaListaDeCodigos(SEH1D.SEH1D_4.EAN_9.getValue());
-		}
+		record.setAgenciaResponsableDeLaListaDeCodigos(SEH1D.SEH1D_4.EAN_9.getValue());
 		record.setNombre1(registry.getRegistry().getName());
 		record.setNombre2(null);
 		record.setNombre3(null);
