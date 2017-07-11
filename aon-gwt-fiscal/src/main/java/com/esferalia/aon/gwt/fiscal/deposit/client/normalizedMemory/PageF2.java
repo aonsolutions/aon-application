@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.google.gwt.core.client.GWT;
@@ -172,9 +173,17 @@ public class PageF2 extends PageAbs {
 	}
 
 	private void init() {
-		if(map.containsKey("IDA01010")) IDA01010.setText(map.get("IDA01010"));
-		if(map.containsKey("IDA01020")) IDA01020.setText(map.get("IDA01020"));
-		if(map.containsKey("IDA01101")) IDA01101.setText(map.get("IDA01101"));
+		if(map.containsKey(D2DepositHeaderKey.IDA01010.getCode())){
+			IDA01010.setText(map.get(D2DepositHeaderKey.IDA01010.getCode()));// "IDA01010"));
+		}
+		
+		if(map.containsKey(D2DepositHeaderKey.IDA01020.getCode())){
+			IDA01020.setText(map.get(D2DepositHeaderKey.IDA01020.getCode()));// "IDA01020"));
+		}
+		
+		if(map.containsKey(D2DepositHeaderKey.IDA01101.getCode())){ 
+			IDA01101.setText(map.get(D2DepositHeaderKey.IDA01101.getCode()));// "IDA01101"));
+		}
 				
 		listBoxItemAddCities(PR8081001);
 		keyExe("8081001", PR8081001, "list", true);
