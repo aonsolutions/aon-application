@@ -71,18 +71,18 @@ import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.tgss.creta.jaxb.Dato;
-import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
-import net.aonsolutions.tgss.creta.jaxb.Fecha;
-import net.aonsolutions.tgss.creta.jaxb.Liquidacion;
-import net.aonsolutions.tgss.creta.jaxb.Periodo;
-import net.aonsolutions.tgss.creta.jaxb.Trabajador;
-import net.aonsolutions.tgss.creta.jaxb.Tramo;
-import net.aonsolutions.tgss.creta.jaxb.Utils;
-import net.aonsolutions.tgss.creta.jaxb.bases.LiquidacionBuilder;
-import net.aonsolutions.tgss.creta.jaxb.bases.TramoBuilder;
-import net.aonsolutions.tgss.creta.jaxb.dcl.LineaDCL;
-import net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta;
+import net.aonsolutions.core.tgss.creta.jaxb.Dato;
+import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
+import net.aonsolutions.core.tgss.creta.jaxb.Fecha;
+import net.aonsolutions.core.tgss.creta.jaxb.Liquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.Periodo;
+import net.aonsolutions.core.tgss.creta.jaxb.Trabajador;
+import net.aonsolutions.core.tgss.creta.jaxb.Tramo;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.TramoBuilder;
+import net.aonsolutions.core.tgss.creta.jaxb.dcl.LineaDCL;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -201,7 +201,7 @@ public class CretaServlet extends HttpServlet
 		NoSkippedCallback skippedCallback = new NoSkippedCallback();
 		NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
 			@Override
-			public void noDiffs(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+			public void noDiffs(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 				super.noDiffs(liquidacion);
 				pickerBasesCb.noDiffs(liquidacion);
 			}
@@ -307,7 +307,7 @@ public class CretaServlet extends HttpServlet
 		__onTrabajadoresYTramos(os, 
 				Stream.concat(
 					req.getParts().stream()
-					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, part))
+					.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, part))
 					.filter(optional -> optional.isPresent())
 					.map(optional -> optional.get())
 					.peek(t -> {saveTrabajadoresYTramos(req, t);})
@@ -320,7 +320,7 @@ public class CretaServlet extends HttpServlet
 				.filter(t -> toDate(t.getLiquidacion().getFechaHoraRecaudacion()).after(fromDate)),
 				Stream.concat(
 					req.getParts().stream()
-					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, part))
+					.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class, part))
 					.filter(optional -> optional.isPresent())
 					.map(optional -> optional.get())
 					.peek(r -> {saveRespuesta(req, r);})
@@ -385,7 +385,7 @@ public class CretaServlet extends HttpServlet
 					getConnection(), 
 					os, 
 					req.getParts().stream()
-					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.dcl.DCL.class, part))
+					.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL.class, part))
 					.filter(optional -> optional.isPresent())
 					.map(optional -> optional.get())
 		);
@@ -553,21 +553,21 @@ public class CretaServlet extends HttpServlet
 		}
 	}
 
-	private static int compare(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t1,
-			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t2) {
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t1,
+			net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t2) {
 		return toString(t2.getLiquidacion().getPeriodoDesde())
 				.compareTo(toString(t1.getLiquidacion().getPeriodoDesde()));
 	}
 
-	private static String toString(net.aonsolutions.tgss.creta.jaxb.Fecha f) {
+	private static String toString(net.aonsolutions.core.tgss.creta.jaxb.Fecha f) {
 		return String.format("%s-%02d-%02d", f.getAnho(), Integer.parseInt(f.getMes()), Integer.parseInt(f.getDia()));
 	}
 
-	private static String toString(net.aonsolutions.tgss.creta.jaxb.Periodo p) {
+	private static String toString(net.aonsolutions.core.tgss.creta.jaxb.Periodo p) {
 		return String.format("%s-%02d", p.getAnho(), Integer.parseInt(p.getMes()));
 	}
 
-	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?, ?> l) {
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?, ?> l) {
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(String.format("\"ccc\":\"%s%s%s\",", l.getCcc().getRegimen(), l.getCcc().getProvincia(),
@@ -580,7 +580,7 @@ public class CretaServlet extends HttpServlet
 		return buffer.toString();
 	}
 
-	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.respuesta.Errores errs) {
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Errores errs) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(errs.getError().stream().map(err -> String.format("{\"code\":\"%s\", \"msg\":\"%s\"}",
 				err.getCodigoErr(), safeEncode(err.getDescripcion()))).collect(Collectors.joining(",")));
@@ -590,7 +590,7 @@ public class CretaServlet extends HttpServlet
 		return buffer.toString();
 	}
 
-	private static String toJSON(net.aonsolutions.tgss.creta.jaxb.respuesta.Trabajadores trabajadores) {
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Trabajadores trabajadores) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(trabajadores.getTrabajador().stream()
 				.map(trabajador -> String.format("{\"naf\":\"%s\"}", trabajador.getNaf()))
@@ -599,7 +599,7 @@ public class CretaServlet extends HttpServlet
 		return buffer.toString();
 	}
 
-	private static String toJSON(Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.LiquidacionMes> liquidacionesMes) {
+	private static String toJSON(Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.LiquidacionMes> liquidacionesMes) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(
 				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
@@ -663,9 +663,9 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static class NoDiffs extends Event<NoDiffs> {
-		private net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion;
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion;
 
-		public NoDiffs setLiquidacion(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+		public NoDiffs setLiquidacion(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 			this.liquidacion = liquidacion;
 			return this;
 		}
@@ -680,10 +680,10 @@ public class CretaServlet extends HttpServlet
 
 	private static class NoDiffsBasesCallback implements BasesCallback {
 
-		List<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new ArrayList<net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion>();
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion> liquidaciones = new ArrayList<net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion>();
 
 		@Override
-		public void noDiffs(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+		public void noDiffs(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 			liquidaciones.add(liquidacion);
 		}
 
@@ -859,7 +859,7 @@ public class CretaServlet extends HttpServlet
 		}
 
 		@Override
-		public void noDiffs(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+		public void noDiffs(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
 			warnings.add(new NoDiffs().setMessage(
 					format("No es necesario comunicar nada nuevo respecto a la información del mes anterior (%s%s%s).",
 							liquidacion.getCcc().getProvincia(), liquidacion.getCcc().getRegimen(),
@@ -916,14 +916,14 @@ public class CretaServlet extends HttpServlet
 		private boolean skipped = false;
 		
 		@Override
-		public void bases(net.aonsolutions.tgss.creta.jaxb.bases.Bases bases) {
+		public void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
 			if ( skipped )
 				return;
 			throw new NoneSkippedException();
 		}
 		
 		@Override
-		public void trabajadorSkipped(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+		public void trabajadorSkipped(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
 			skipped = true;
 		}
@@ -947,7 +947,7 @@ public class CretaServlet extends HttpServlet
 	}
 
 	
-	private static Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req){
+	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req){
 		String login = AonServletUtils.getRequestUser(req);
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
@@ -956,13 +956,13 @@ public class CretaServlet extends HttpServlet
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from)
-		.map(attach-> unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, attach.getData()))
+		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class, attach.getData()))
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
 		;
 	}
 
-	private static Stream<net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req){
+	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req){
 		String login = AonServletUtils.getRequestUser(req);
 		Integer domainId = AonServletUtils.getRequestDomain(req);
 		String domainName = AonServletUtils.getRequestDomainName(req);
@@ -971,19 +971,19 @@ public class CretaServlet extends HttpServlet
 
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
-		.map(attach-> unmarshall(net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
+		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
 		;
 	}
 	
 	private static void saveRespuesta(HttpServletRequest req,
-			net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta t) {
+			net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta t) {
 		saveAttach(req, CRETA_RESPUESTA, t);
 	}
 
 	private static void saveTrabajadoresYTramos(HttpServletRequest req,
-			net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t) {
+			net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t) {
 		saveAttach(req, CRETA_TRABAJADORES_Y_TRAMOS, t);
 	}
 	
@@ -1061,8 +1061,8 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	private static void __onTrabajadoresYTramos (PrintWriter os, 
-			Stream<net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts,
-			Stream<net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta> rs) {
+			Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts,
+			Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> rs) {
 		
 			os.println("parent.__onTrabajadoresYTramos(");
 			os.println("[");
@@ -1070,10 +1070,10 @@ public class CretaServlet extends HttpServlet
 			os.flush();
 			
 			// @formatter:off
-			Iterator<net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> tsIt = ts.sorted(CretaServlet::compare).iterator();
+			Iterator<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> tsIt = ts.sorted(CretaServlet::compare).iterator();
 			String sep = "";
 			while ( tsIt.hasNext() ){
-				net.aonsolutions.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t = tsIt.next();
+				net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t = tsIt.next();
 				os.printf("%s\r\n{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, toJSON(t.getLiquidacion()), marshallAndEncode(t));
 				os.flush();
 				sep = ",";
@@ -1094,8 +1094,8 @@ public class CretaServlet extends HttpServlet
 			sep = "";
 			while ( rsIt.hasNext() ){
 				Respuesta r = rsIt.next();
-				List<net.aonsolutions.tgss.creta.jaxb.respuesta.Liquidacion> liquidacion = r.getLiquidacion();
-				for  (net.aonsolutions.tgss.creta.jaxb.respuesta.Liquidacion l : liquidacion ){
+				List<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion> liquidacion = r.getLiquidacion();
+				for  (net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion l : liquidacion ){
 					os.printf("%s\r\n{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(r));
 					os.flush();
 					sep = ",";
@@ -1113,7 +1113,7 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	private static void __onDocumentoCalculoLiquidacion(Connection connection, PrintWriter os, 
-			Stream<net.aonsolutions.tgss.creta.jaxb.dcl.DCL> dlcs) {
+			Stream<net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL> dlcs) {
 		
 			
 			
@@ -1206,7 +1206,7 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
-	private static <F extends net.aonsolutions.tgss.creta.jaxb.Fecha> Date toDate(net.aonsolutions.tgss.creta.jaxb.FechaHoraRecaudacion<F> fechaHoraRecaudacion){
+	private static <F extends net.aonsolutions.core.tgss.creta.jaxb.Fecha> Date toDate(net.aonsolutions.core.tgss.creta.jaxb.FechaHoraRecaudacion<F> fechaHoraRecaudacion){
 		
 		
 		Calendar calendar = Calendar.getInstance();

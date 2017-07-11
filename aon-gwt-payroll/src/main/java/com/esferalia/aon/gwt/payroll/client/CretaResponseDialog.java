@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.XMLParser;
 
-import net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
 
 public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 
