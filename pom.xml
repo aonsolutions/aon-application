@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.parent</artifactId>
-	<version>8.111</version>
+	<version>8.111.1</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos AON</description>
 	<name>AON PARENT</name>
