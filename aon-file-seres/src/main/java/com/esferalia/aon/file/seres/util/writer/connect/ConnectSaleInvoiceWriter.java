@@ -186,7 +186,7 @@ public class ConnectSaleInvoiceWriter {
 			sincc.setFechaDeVencimientoUnico(Integer.valueOf(SeresUtils.dateFormat()
 					.format(financeList.get(0).getDueDate())));
 		}		
-		sincc.setImporteNetoTotalDeFactura_79_(invoice.getTaxableBase());
+		sincc.setImporteNetoTotalDeFactura_79_(invoice.getTotal());
 		sincc.setBaseImponible_125_(invoice.getTaxableBase());
 		Double rawAmount = detailList
 				.stream()
