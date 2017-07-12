@@ -16,166 +16,168 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 
-		<aon:panelCollapsible expanded="false" 
-			label="#{bundle.admin_advanced_search}">
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-
-				<aon:outputLabel for="ProjectReservation_crsCode" 
-					value="#{bundle.aon_id} #{bundle.pms_crs}" />
-				<aon:inputText id="ProjectReservation_crsCode"
-					valueChangeListener="#{controller.addExpression}"
-					size="20" />
-
-				<aon:outputLabel value="#{bundle.aon_invoice_number}" />
-				<aon:inputText id="ProjectReservation_invoices_referenceCode"
-					valueChangeListener="#{controller.addExpression}"
-					size="20" maxlength="25" />
-
-				<aon:outputLabel value="#{bundle.pms_reservation_insideDate}" />
-				<aon:div>
-					<aon:outputLabel for="ProjectReservation_insideDate-From"
-						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-					<aon:selectInputDate id="ProjectReservation_insideDate-From"
-						value="#{searchController.insideDateFrom}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					<aon:outputLabel for="ProjectReservation_insideDate-To"
-						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-					<aon:selectInputDate id="ProjectReservation_insideDate-To"
-						value="#{searchController.insideDateTo}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-				</aon:div>
-	
-				<aon:outputLabel for="ProjectReservation_seller" 
-					value="#{bundle.pms_seller}" />
-				<aon:selectOneMenu id="ProjectReservation_seller" 
-					value="#{searchController.seller}"
-					styleClass="aon-width-350">
-					<f:selectItem itemLabel="-" value="#{null}" />		
-					<f:selectItems value="#{pmsCollections.sellers}" />
-				</aon:selectOneMenu>
-
-				<aon:outputLabel for="ProjectReservation_tariff" 
-					value="#{bundle.report_tariff}" />
-				<aon:selectOneMenu id="ProjectReservation_tariff" 
-					value="#{searchController.tariff}"
-					styleClass="aon-width-350">
-					<f:selectItem itemLabel="-" value="#{null}" />		
-					<f:selectItems value="#{pmsCollections.tariffs}" />
-				</aon:selectOneMenu>
-
-				<aon:outputLabel for="ProjectReservation_remarks" 
-					value="#{bundle.aon_remark}" />
-				<aon:inputText id="ProjectReservation_remarks"
-					valueChangeListener="#{controller.addExpression}"
-					size="64" />
-
-				<aon:outputLabel for="ProjectReservation_prepay" 
-					value="#{bundle.pms_prepay}" />
-				<aon:selectOneRadio id="ProjectReservation_prepay"
-					valueChangeListener="#{controller.addExpression}">
-					<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-					<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-				</aon:selectOneRadio>				
-
-				<aon:outputLabel for="ProjectReservation_earlyCheckOut" 
-					value="#{bundle.pms_early_check_out}" />
-				<aon:selectOneRadio id="ProjectReservation_earlyCheckOut"
-					valueChangeListener="#{controller.addExpression}">
-					<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-					<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-				</aon:selectOneRadio>				
-
-			</aon:panelGrid>
-		</aon:panelCollapsible>
-
-		<aon:panelCollapsible expanded="false" 
-			label="#{bundle.pms_check}">
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-
-				<aon:outputText value="&#160;" />
-				<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}" layout="pageDirection">
-					<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
-				</aon:selectManyCheckbox>
-
-			</aon:panelGrid>
-		</aon:panelCollapsible>
-
-		<aon:if test="#{aonRole.commercialOperator or aonRole.financeOperator}">
+		<aon:if test="#{lookup == null}">
 			<aon:panelCollapsible expanded="false" 
-				label="#{bundle.aon_external_conexFlow}">
+				label="#{bundle.admin_advanced_search}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 
-					<aon:outputLabel for="ProjectReservation_conexFlowOperation" 
-						value="#{bundle.aon_operation}" />
-					<aon:selectOneMenu id="ProjectReservation_conexFlowOperation" 
-						value="#{searchController.conexFlowOperation}">
-						<f:selectItem itemLabel="-" value="#{null}" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_without_token}" itemValue="0" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_preauthorization_ok}" itemValue="1" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_preauthorization_fail}" itemValue="2" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_confirm_ok}" itemValue="3" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_confirm_fail}" itemValue="4" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_sale_ok}" itemValue="5" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_sale_fail}" itemValue="6" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_refund_ok}" itemValue="7" />		
-						<f:selectItem itemLabel="#{bundle.conexflow_refund_fail}" itemValue="8" />		
-					</aon:selectOneMenu>
+					<aon:outputLabel for="ProjectReservation_crsCode" 
+						value="#{bundle.aon_id} #{bundle.pms_crs}" />
+					<aon:inputText id="ProjectReservation_crsCode"
+						valueChangeListener="#{controller.addExpression}"
+						size="20" />
 
-					<aon:outputLabel for="ProjectReservation_conexFlowAmount" 
-						value="#{bundle.aon_amount}" />
-					<aon:inputText id="ProjectReservation_conexFlowAmount"
-						value="#{searchController.conexFlowAmount}"
-						size="10" maxlength="8">
-						<f:validateDoubleRange />
-					</aon:inputText>
+					<aon:outputLabel value="#{bundle.aon_invoice_number}" />
+					<aon:inputText id="ProjectReservation_invoices_referenceCode"
+						valueChangeListener="#{controller.addExpression}"
+						size="20" maxlength="25" />
 
-					<aon:outputLabel value="#{bundle.aon_operation_date}" />
+					<aon:outputLabel value="#{bundle.pms_reservation_insideDate}" />
 					<aon:div>
-						<aon:outputLabel for="ProjectReservation_conexFlowDate-From"
+						<aon:outputLabel for="ProjectReservation_insideDate-From"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="ProjectReservation_conexFlowDate-From"
-							value="#{searchController.conexFlowDateFrom}"
+						<aon:selectInputDate id="ProjectReservation_insideDate-From"
+							value="#{searchController.insideDateFrom}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
-						<aon:outputLabel for="ProjectReservation_conexFlowDate-To"
+						<aon:outputLabel for="ProjectReservation_insideDate-To"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="ProjectReservation_conexFlowDate-To"
-							value="#{searchController.conexFlowDateTo}"
+						<aon:selectInputDate id="ProjectReservation_insideDate-To"
+							value="#{searchController.insideDateTo}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
+	
+					<aon:outputLabel for="ProjectReservation_seller" 
+						value="#{bundle.pms_seller}" />
+					<aon:selectOneMenu id="ProjectReservation_seller" 
+						value="#{searchController.seller}"
+						styleClass="aon-width-350">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItems value="#{pmsCollections.sellers}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProjectReservation_tariff" 
+						value="#{bundle.report_tariff}" />
+					<aon:selectOneMenu id="ProjectReservation_tariff" 
+						value="#{searchController.tariff}"
+						styleClass="aon-width-350">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItems value="#{pmsCollections.tariffs}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProjectReservation_remarks" 
+						value="#{bundle.aon_remark}" />
+					<aon:inputText id="ProjectReservation_remarks"
+						valueChangeListener="#{controller.addExpression}"
+						size="64" />
+
+					<aon:outputLabel for="ProjectReservation_prepay" 
+						value="#{bundle.pms_prepay}" />
+					<aon:selectOneRadio id="ProjectReservation_prepay"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneRadio>				
+
+					<aon:outputLabel for="ProjectReservation_earlyCheckOut" 
+						value="#{bundle.pms_early_check_out}" />
+					<aon:selectOneRadio id="ProjectReservation_earlyCheckOut"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneRadio>				
 
 				</aon:panelGrid>
 			</aon:panelCollapsible>
+
+			<aon:panelCollapsible expanded="false" 
+				label="#{bundle.pms_check}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+
+					<aon:outputText value="&#160;" />
+					<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}" layout="pageDirection">
+						<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
+					</aon:selectManyCheckbox>
+
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+
+			<aon:if test="#{controller.reservationPermission.conexFlowVisible}">
+				<aon:panelCollapsible expanded="false" 
+					label="#{bundle.aon_external_conexFlow}">
+					<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+
+						<aon:outputLabel for="ProjectReservation_conexFlowOperation" 
+							value="#{bundle.aon_operation}" />
+						<aon:selectOneMenu id="ProjectReservation_conexFlowOperation" 
+							value="#{searchController.conexFlowOperation}">
+							<f:selectItem itemLabel="-" value="#{null}" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_without_token}" itemValue="0" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_preauthorization_ok}" itemValue="1" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_preauthorization_fail}" itemValue="2" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_confirm_ok}" itemValue="3" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_confirm_fail}" itemValue="4" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_sale_ok}" itemValue="5" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_sale_fail}" itemValue="6" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_refund_ok}" itemValue="7" />		
+							<f:selectItem itemLabel="#{bundle.conexflow_refund_fail}" itemValue="8" />		
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="ProjectReservation_conexFlowAmount" 
+							value="#{bundle.aon_amount}" />
+						<aon:inputText id="ProjectReservation_conexFlowAmount"
+							value="#{searchController.conexFlowAmount}"
+							size="10" maxlength="8">
+							<f:validateDoubleRange />
+						</aon:inputText>
+
+						<aon:outputLabel value="#{bundle.aon_operation_date}" />
+						<aon:div>
+							<aon:outputLabel for="ProjectReservation_conexFlowDate-From"
+								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+							<aon:selectInputDate id="ProjectReservation_conexFlowDate-From"
+								value="#{searchController.conexFlowDateFrom}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+							<aon:outputLabel for="ProjectReservation_conexFlowDate-To"
+								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+							<aon:selectInputDate id="ProjectReservation_conexFlowDate-To"
+								value="#{searchController.conexFlowDateTo}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+						</aon:div>
+
+					</aon:panelGrid>
+				</aon:panelCollapsible>
+			</aon:if>
+
+			<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml">
+				<ui:define name="additionalAuditableContent">
+					<aon:outputLabel for="ProjectReservation_cancellationUser"
+						value="#{bundle.aon_cancellation_user}" />
+					<aon:inputText id="ProjectReservation_cancellationUser" size="20"
+						valueChangeListener="#{controller.addExpression}" />			
+	
+					<aon:outputLabel value="#{bundle.aon_cancellation_date}" />
+					<aon:div>
+						<aon:outputLabel for="ProjectReservation_cancellationDate-From" styleClass="aon-form-date-label aon-padding-right" 
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="ProjectReservation_cancellationDate-From"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+				
+						<aon:outputLabel for="ProjectReservation_cancellationDate-To" styleClass="aon-form-date-label aon-padding-right" 
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="ProjectReservation_cancellationDate-To"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:div>
+				</ui:define>
+			</ui:decorate>
 		</aon:if>
-
-		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/searchContent.xhtml">
-			<ui:define name="additionalAuditableContent">
-				<aon:outputLabel for="ProjectReservation_cancellationUser"
-					value="#{bundle.aon_cancellation_user}" />
-				<aon:inputText id="ProjectReservation_cancellationUser" size="20"
-					valueChangeListener="#{controller.addExpression}" />			
-
-				<aon:outputLabel value="#{bundle.aon_cancellation_date}" />
-				<aon:div>
-					<aon:outputLabel for="ProjectReservation_cancellationDate-From" styleClass="aon-form-date-label aon-padding-right" 
-						value="#{bundle.aon_date_from}:" />
-					<aon:selectInputDate id="ProjectReservation_cancellationDate-From"
-						valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-			
-					<aon:outputLabel for="ProjectReservation_cancellationDate-To" styleClass="aon-form-date-label aon-padding-right" 
-						value="#{bundle.aon_date_to}:" />
-					<aon:selectInputDate id="ProjectReservation_cancellationDate-To"
-						valueChangeListener="#{controller.addLessThanOrEqualExpression}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-				</aon:div>
-			</ui:define>
-		</ui:decorate>
 
 	</aon:div>
 
