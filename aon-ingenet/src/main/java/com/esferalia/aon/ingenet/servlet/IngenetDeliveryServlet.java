@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
@@ -63,6 +62,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -681,10 +681,22 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						Double delivered = sd.getDelivered();
 						delivered += Double.valueOf(linea.getCANTIDAD());
 						sd.setDelivered(delivered);
+						if(delivered>0.0 && delivered<=sd.getQuantity()) {
+							if(delivered<sd.getQuantity()) {
+								sd.setStatus(SalesDetailStatus.PARTIAL_SETTLED);
+							} else {
+								sd.setStatus(SalesDetailStatus.SETTLED);
+							}
+						}
 						SalesDAO.updateSalesDetail(ctx, sd);
-						// TODO if sales.pendingLinesQuantity == 0
-						sd.getSales().setStatus(SalesStatus.SERVED);
-						SalesDAO.updateSales(ctx, sd.getSales());
+						
+						Double totalPending = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+								f -> f.getSalesProperty().eq(sd.getSales().getId()))
+							.mapToDouble(o->o.getQuantity()-o.getDelivered()).sum();
+						if(totalPending==0.0){
+							sd.getSales().setStatus(SalesStatus.SERVED);
+							SalesDAO.updateSales(ctx, sd.getSales());
+						}
 					}
 				}
 			} catch (Exception e) {
