@@ -647,7 +647,7 @@
 			<xsd:element name="DOCUMENTO">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:pattern value="[0-9A-Z]\d{7}[0-9A-Z]" />
+						<xsd:maxLength value="16" />
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
