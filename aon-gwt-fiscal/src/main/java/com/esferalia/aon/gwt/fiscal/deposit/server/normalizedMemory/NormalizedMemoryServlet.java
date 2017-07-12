@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCu
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2PrevioustoD2Current;
@@ -46,6 +47,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002015toD2;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002016toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -376,19 +378,19 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
 			Integer domainId, String cif, Map<String, String> map, Integer year) {
 		String domainName = getDomainName(domainId);
-		if (type.equals("Balance (I.S.)")) {
-			if (ejercicio.equals("2013")) {
+		if ("Balance (I.S.)".equals(type)) {
+			if("2013".equals(ejercicio)) {
 				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillBalance(ctx, mod2002013);
 
-				for (D2DepositHeaderKey key : ctx.keySet()) {
+				for(D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
-			} else if (ejercicio.equals("2014")) {
+			} else if("2014".equals(ejercicio)) {
 				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillBalance(ctx, mod2002014, year);
@@ -399,20 +401,31 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
-			} else if (ejercicio.equals("2015")){
+			} else if("2015".equals(ejercicio)){
 				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(domainName, domainId, getUserLogin(), 2015);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002015toD2.fillBalance(ctx, mod2002015);
+				Mod2002015toD2.fillBalance(ctx, mod2002015, year.toString().equals(ejercicio));
 
-				for (D2DepositHeaderKey key : ctx.keySet()) {
+				for(D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
+				}
+			} else if("2016".equals(ejercicio)){
+				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002016toD2.fillBalance(ctx, mod2002016);
+
+				for(D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
 						map.remove(key.getCode().toString());
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
 			}
-		} else if (type.equals("Perdidas y ganancias (I.S.)")) {
-			if (ejercicio.equals("2013")) {
+		} else if("Perdidas y ganancias (I.S.)".equals(type)) {
+			if("2013".equals(ejercicio)) {
 				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillPyg(ctx, mod2002013);
@@ -423,7 +436,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
-			} else if (ejercicio.equals("2014")) {
+			} else if("2014".equals(ejercicio)) {
 				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillPyg(ctx, mod2002014, year);
@@ -434,10 +447,21 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
-			} else if (ejercicio.equals("2015")){
+			} else if("2015".equals(ejercicio)){
 				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(domainName, domainId, getUserLogin(), 2015);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002015toD2.fillPyg(ctx, mod2002015);
+				Mod2002015toD2.fillPyg(ctx, mod2002015, year.toString().equals(ejercicio));
+
+				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
+				}
+			} else if("2016".equals(ejercicio)){
+				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002016toD2.fillPyg(ctx, mod2002016);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
@@ -446,8 +470,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			}
-		} else if (type.equals("ECPN (I.S.)")) {
-			if (ejercicio.equals("2013")) {
+		} else if("ECPN (I.S.)".equals(type)) {
+			if ("2013".equals(ejercicio)) {
 				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillEcpn(ctx, mod2002013);
@@ -459,7 +483,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
-			} else if (ejercicio.equals("2014")) {
+			} else if("2014".equals(ejercicio)) {
 				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillEcpn(ctx, mod2002014, year);
@@ -471,11 +495,23 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
-			} else if (ejercicio.equals("2015")){
+			} else if("2015".equals(ejercicio)){
 				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(domainName, domainId, getUserLogin(), 2015);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002015toD2.fillEcpn(ctx, mod2002015);
-				Mod2002015toD2.fillEcpn2(ctx, mod2002015);
+				Mod2002015toD2.fillEcpn(ctx, mod2002015, year.toString().equals(ejercicio));
+				Mod2002015toD2.fillEcpn2(ctx, mod2002015, year.toString().equals(ejercicio));
+
+				for (D2DepositHeaderKey key : ctx.keySet()) {
+					if(map.containsKey(key.getCode().toString()))
+						map.remove(key.getCode().toString());
+					map.put(key.getCode(), ctx.get(key)
+							.toString());
+				}
+			} else if("2016".equals(ejercicio)){
+				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
+				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+				Mod2002016toD2.fillEcpn(ctx, mod2002016);
+				Mod2002016toD2.fillEcpn2(ctx, mod2002016);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
@@ -484,27 +520,22 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			}
-		} else if (type.equals("Memoria (Deposito.xml)")) {
+		} else if ("Memoria (Deposito.xml)".equals(type)) {
 			byte[] b = getFile(domainId);
-
-			if (ejercicio.equals("2013")) {
-
-			} else if (ejercicio.equals("2014")) {
-				try {
-					Esquema schema = Utils.readXml(b);
-					if(schema.getCabecera().getCIF().equals(cif)){
-						List<Clave> claves = schema.getClaves().getClave();
-						map = new HashMap<String, String>();
-						String typeSch = schema.getCabecera().getTipoCuestionario();
-						map.put(D2DepositConstants.DEPOSIT_TYPE, typeSch);
-						for (Integer i = 0; i < claves.size(); i++) {
-							if(!map.containsKey(claves.get(i).getCodigo().toString()))
-								map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
-						}
+			try {
+				Esquema schema = Utils.readXml(b);
+				if(schema.getCabecera().getCIF().equals(cif)){
+					List<Clave> claves = schema.getClaves().getClave();
+					map = new HashMap<String, String>();
+					String typeSch = schema.getCabecera().getTipoCuestionario();
+					map.put(D2DepositConstants.DEPOSIT_TYPE, typeSch);
+					for (Integer i = 0; i < claves.size(); i++) {
+						if(!map.containsKey(claves.get(i).getCodigo().toString()))
+							map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
 					}
-				} catch (JAXBException e) {
-					e.printStackTrace();
 				}
+			} catch (JAXBException e) {
+				e.printStackTrace();
 			}
 		}
 		return map;

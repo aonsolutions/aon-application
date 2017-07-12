@@ -224,6 +224,7 @@ public class D2DepositBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PA49300.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PA493009.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PA49500.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(D2DepositHeaderKey.PA495009.toString(),new Boolean[]{FALSE,TRUE});
 	}
 	
 	static{ 	// ESTADO DE INGRESOS Y GASTOS RECONOCIDOS EN EL EJERCICIO

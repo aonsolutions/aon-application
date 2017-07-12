@@ -265,9 +265,10 @@ public abstract class DepositDialog extends CustomDialogB {
 		lb.addItem("Memoria predefinida");
 		lb.addItem("Balance (I.S.)");
 		lb.addItem("Perdidas y ganancias (I.S.)");
-		lb.addItem("ECPN (I.S.)");
+		if(year < 2016){ // TODO && !ABREVIATE && !PYMES
+			lb.addItem("ECPN (I.S.)");
+		}
 		lb.addItem("Memoria (Deposito.xml)");
-		//lb.addItem("Documento Memoria");
 		
 		mtsAux = mts;urlAux = url; enterpriseAux = enterprise;
 		lb.addChangeHandler(new ChangeHandler() {

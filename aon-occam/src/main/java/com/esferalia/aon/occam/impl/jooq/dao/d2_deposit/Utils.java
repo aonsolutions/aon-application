@@ -493,6 +493,19 @@ public class Utils {
 		c1037.setValor(enterprise.getEmail() != null ? enterprise.getEmail() : "");
 		keys.getClave().add(c1037);
 		
+/*		// TODO CNAE
+
+		Clave c2001 = new Clave();
+		c2001.setCodigo(BigInteger.valueOf(2001));
+		c2001.setValor("");
+		keys.getClave().add(c2001);
+		
+		Clave c2009 = new Clave();
+		c2009.setCodigo(BigInteger.valueOf(2009));
+		c2009.setValor("");
+		keys.getClave().add(c2009);
+*/		
+		
 		//---------- //
 		
 		Clave c11021 = new Clave();
