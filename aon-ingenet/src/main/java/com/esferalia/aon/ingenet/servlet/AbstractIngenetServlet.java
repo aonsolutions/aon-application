@@ -35,9 +35,11 @@ import org.xml.sax.SAXException;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 
 public abstract class AbstractIngenetServlet extends HttpServlet {
@@ -52,7 +54,6 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	protected static final String RECIPIENTS_TO_LOG = "udapalog@aonsolutions.es";
 	protected static final String RECIPIENTS_TO_SUCCESS = "udapasuccess@aonsolutions.es";
 	protected static final String RECIPIENTS_TO_FAILURES = "udapafailures@aonsolutions.es";
-	protected static final String RECIPIENTS_TO_DEV = "eagirrezabal@aonsolutions.es";
 	
 	private String scheme;
 	private boolean devEnabled;
@@ -110,6 +111,11 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		return timeFormatter;
 	}
 	
+	protected String getMailingDevelopers(AONContext ctx) {
+		ApplicationParameter p = AppParamDAO.fetchOne(ctx, "MAILING_DEVELOPER");
+		return p!=null?p.getValue():null;
+	}
+	
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -122,8 +128,6 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		LOGGER.info("***** INGENET GET - " + this.getClass().getSimpleName());
 		process(request, response);
-//		TODO do not allow GET method
-//		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 	
 	protected void process(HttpServletRequest httpRequest,
