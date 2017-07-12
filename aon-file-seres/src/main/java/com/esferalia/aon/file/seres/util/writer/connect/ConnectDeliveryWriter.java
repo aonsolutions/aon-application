@@ -101,7 +101,7 @@ public class ConnectDeliveryWriter {
 				.getValue());
 		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery
 				.getDate()));
-		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(null);
+		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(delivery.getIssueTime()));
 		seh1c.setCalificadorFecha_Hora1_2_11_64_(null);
 		seh1c.setFecha_hora1(null);
 		seh1c.setCalificadorFecha_Hora2_2_11_63_(null);
@@ -109,7 +109,7 @@ public class ConnectDeliveryWriter {
 		seh1c.setInformacionAdicional(null);
 		seh1c.setNumeroPedido_comprador__ON_(obtainPurchaseReference(delivery));
 		seh1c.setFecha_horaNumeroPedido_171__102_203_(null);
-		seh1c.setNumeroAlbaran_DQ_(null);
+		seh1c.setNumeroAlbaran_DQ_(delivery.getReferenceCode());
 		seh1c.setFecha_horaNumeroAlbaran_171__102_203_(null);
 		seh1c.setCalificadorDeReferencia1(null);
 		seh1c.setNumeroDeReferencia1(null);
