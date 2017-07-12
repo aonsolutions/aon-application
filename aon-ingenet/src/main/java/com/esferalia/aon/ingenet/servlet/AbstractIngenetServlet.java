@@ -52,6 +52,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	protected static final String RECIPIENTS_TO_LOG = "udapalog@aonsolutions.es";
 	protected static final String RECIPIENTS_TO_SUCCESS = "udapasuccess@aonsolutions.es";
 	protected static final String RECIPIENTS_TO_FAILURES = "udapafailures@aonsolutions.es";
+	protected static final String RECIPIENTS_TO_DEV = "eagirrezabal@aonsolutions.es";
 	
 	private String scheme;
 	private boolean devEnabled;

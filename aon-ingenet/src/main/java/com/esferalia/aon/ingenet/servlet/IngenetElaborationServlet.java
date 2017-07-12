@@ -147,7 +147,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 //						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
 						String subject = "[AON-DEV] Envío automático de elaboraciones";
 						String content = "Imposible localizar el pedido de origen de la elaboracion "+reference;
-						sendEmail(subject, content, null, null, "eagirrezabal@aonsolutions.es");
+						sendEmail(subject, content, null, null, RECIPIENTS_TO_DEV);
 					}
 				});
 				 

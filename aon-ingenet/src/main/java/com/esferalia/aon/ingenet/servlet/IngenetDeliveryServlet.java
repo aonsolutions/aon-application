@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -108,19 +109,19 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		errorList = new LinkedList<>();
 		warningList = new LinkedList<>();
 		if(_xml==null){
-			errorList.add("Es necesario el parametro 'value'");
+			errorList.add("Contenido del mensaje vacío, es necesario el parametro 'value'.");
 		} else {
 			try {
 				super.validateAlbaranesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
 				deliveryList = (ALBARANES) IngenetXmlValidator.extractValue(_xml, ALBARANES.class);
 				deliveryList.setERRORES(null);
 				deliveryList.getDATOSALBARANES().forEach(alb->alb.setERRORES(null));
-			} catch (SAXException e) {
+			} catch (Exception e) {
 				errorList.add("Los datos no han pasado el proceso de validacion");
 				errorList.add(e.getMessage());
-			} catch (Exception e) {
-				errorList.add("Error desconocido al validar los datos");
-				errorList.add(e.getMessage());
+				subject += "[AON-DEV] (ERROR) ";
+				content = e.getMessage();
+				sendEmail(subject, content, "invalid_pattern", _xml, RECIPIENTS_TO_SUCCESS);
 			}
 			if(deliveryList!=null && deliveryList.getDATOSALBARANES()!=null 
 					&& deliveryList.getDATOSALBARANES().size()>0){
@@ -681,6 +682,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						delivered += Double.valueOf(linea.getCANTIDAD());
 						sd.setDelivered(delivered);
 						SalesDAO.updateSalesDetail(ctx, sd);
+						// TODO if sales.pendingLinesQuantity == 0
+						sd.getSales().setStatus(SalesStatus.SERVED);
+						SalesDAO.updateSales(ctx, sd.getSales());
 					}
 				}
 			} catch (Exception e) {
