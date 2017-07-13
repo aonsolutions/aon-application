@@ -754,7 +754,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				}
 			} catch (Exception e) {
 				String msg = "[Pedido origen] ";
-				addError(albaran, msg + e.getMessage());
+				warningList.add(msg + e.getMessage());
 			}
 		}
 		
