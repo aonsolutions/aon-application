@@ -876,6 +876,12 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		invoiceController.onLoad(event, id, SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");		
 	}
 	
+	public void loadElaborationMap() {
+		SalesDetailController detailController = (SalesDetailController) AonUtil
+				.getRegisteredBean(SALES_DETAIL_CONTROLLER_NAME);
+		detailController.loadElaborationMap();
+	}
+	
 	public void onElaborationShow(ActionEvent event) throws ManagerBeanException {
 		getElaborationProcess().init();
 	}
@@ -1013,7 +1019,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		SalesInvoiceProcess sip = new SalesInvoiceProcess(this);
 		LongProcessThread thread = new LongProcessThread(sip); 
 		thread.start();		
-	}
-	
+	}	
 	
 }

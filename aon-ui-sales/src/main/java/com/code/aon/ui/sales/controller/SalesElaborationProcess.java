@@ -118,6 +118,7 @@ public class SalesElaborationProcess implements Serializable {
 				utils.createElaboration(salesDetail, getDate(), getWarehouse().getId());
 			});
 		}
+		salesController.loadElaborationMap();
 	}
 
 	public void onExecute(ActionEvent event) {
@@ -126,6 +127,7 @@ public class SalesElaborationProcess implements Serializable {
 			SalesUtils utils = new SalesUtils();
 			utils.createElaboration(detail, getDate(), getWarehouse().getId());
 		}
+		salesController.loadElaborationMap();
 	}
 	
 }
