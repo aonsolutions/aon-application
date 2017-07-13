@@ -1353,7 +1353,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, dataObject, employeesService);
 			salaryDraftItem.setUserObject(draftObject);
-			draftObject.setEmployeeCalendarDraftObjectData(employeeCalendarDraftobjectData);
+//			draftObject.setEmployeeCalendarDraftObjectData(employeeCalendarDraftobjectData);
 
 			final TreeItem employeeEventsItem = addImageItem(employeeItem, "Incidencias", images.data());
 			//final TreeItem employeeEventsItem = new TreeItem();
@@ -1364,44 +1364,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			employeeEventsItem.setUserObject(employeeEventsDraftObject);
 			
 			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
-
-//			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
-			
-//			final EmployeeEventsDraftObject_COPIA employeeEventsDraftObject;
-//
-//			employeeEventsDraftObject = new EmployeeEventsDraftObject_COPIA(employee, employeesService,
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_TRABAJADOS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_EFECTIVOS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_ERE", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_HUELGA", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_AUSENCIA", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_TRABAJADAS", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_COMPLEMENTARIAS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_PECNORTA", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_MANUTENCION", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_PECNORTA_EXTRANJERO", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_MANUTENCION_EXTRANJERO", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("KMS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_VACACIONES", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("JORNADAS_REALES", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_EXTRAS", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_EXTRAS_FZA", DateField.DAY));
-//
-//			Date date = new Date();
-//
-//			employeeEventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date),
-//					DateUtils.getLastDayOfWorkWeek(date), new EmployeeEventsDraftObject_COPIA.Callback() {
-//
-//						@Override
-//						public void onSucces() {
-//							employeeEventsItem.setUserObject(employeeEventsDraftObject);
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable throwable) {
-//							employeeEventsItem.setUserObject(employeeEventsDraftObject);
-//						}
-//					});
 
 			// A.E.T
 			// addImageItem(employeeItem, "Regularizaciones", images.aet());
