@@ -3,6 +3,7 @@ package com.esferalia.aon.ingenet.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -101,11 +103,10 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		
 		String subject = "Recepcion automatica de albaranes";
 		String content = "Se ha detectado una nueva comunicación para albaranes";
-		sendEmail(subject, content, "delivery", _xml, RECIPIENTS_TO_LOG);
-		saveToDisk("delivery", "delivery", _xml!=null?_xml:"");
+		log("delivery", IngenetLogLevel.DEBUG, subject, content, "delivery", _xml, RECIPIENTS_TO_LOG);
 		
 		
-		ALBARANES deliveryList = null;
+		ALBARANES albaranes = null;
 		errorList = new LinkedList<>();
 		warningList = new LinkedList<>();
 		if(_xml==null){
@@ -113,23 +114,25 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		} else {
 			try {
 				super.validateAlbaranesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
-				deliveryList = (ALBARANES) IngenetXmlValidator.extractValue(_xml, ALBARANES.class);
-				deliveryList.setERRORES(null);
-				deliveryList.getDATOSALBARANES().forEach(alb->alb.setERRORES(null));
+				albaranes = (ALBARANES) IngenetXmlValidator.extractValue(_xml, ALBARANES.class);
+				albaranes.setERRORES(null);
+				albaranes.getDATOSALBARANES().forEach(alb->alb.setERRORES(null));
 			} catch (Exception e) {
 				errorList.add("Los datos no han pasado el proceso de validacion");
 				errorList.add(e.getMessage());
-				subject += "[AON-DEV] (ERROR) ";
 				content = e.getMessage();
-				sendEmail(subject, content, "invalid_pattern", _xml, RECIPIENTS_TO_SUCCESS);
+				log(IngenetLogLevel.ERROR, subject, content, "invalid_pattern", _xml, RECIPIENTS_TO_FAILURES);
 			}
-			if(deliveryList!=null && deliveryList.getDATOSALBARANES()!=null 
-					&& deliveryList.getDATOSALBARANES().size()>0){
+			if(albaranes!=null && albaranes.getDATOSALBARANES()!=null 
+					&& albaranes.getDATOSALBARANES().size()>0){
 				
-				processData(deliveryList.getDATOSALBARANES(), true);
-				test = "S".equals(deliveryList.getPRUEBA());
+				processData(albaranes.getDATOSALBARANES(), true);
+				
+				test = "S".equals(albaranes.getPRUEBA());
 				if (!test && (errorList == null || errorList.size() <= 0)) {
-					processData(deliveryList.getDATOSALBARANES(), test);
+					errorList.clear();
+					warningList.clear();
+					processData(albaranes.getDATOSALBARANES(), test);
 				}
 			} else {
 				errorList.add("No se han encontrado datos de albaranes");
@@ -137,11 +140,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		
 		List<ALBARANTYPE> invalidDeliveries = null;
-		if(deliveryList==null){
-			deliveryList = new ALBARANES();
-		} else if(deliveryList.getDATOSALBARANES()!=null
-				&& !deliveryList.getDATOSALBARANES().isEmpty()) {
-			invalidDeliveries = deliveryList
+		if(albaranes==null){
+			albaranes = new ALBARANES();
+		} else if(albaranes.getDATOSALBARANES()!=null
+				&& !albaranes.getDATOSALBARANES().isEmpty()) {
+			invalidDeliveries = albaranes
 					.getDATOSALBARANES()
 					.stream()
 					.filter(o -> o.getERRORES() != null
@@ -149,8 +152,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							&& !o.getERRORES().getERRORES().isEmpty())
 					.collect(Collectors.toList());
 			if(invalidDeliveries!=null && invalidDeliveries.size()>0){				
-				deliveryList.getDATOSALBARANES().clear();
-				deliveryList.getDATOSALBARANES().addAll(invalidDeliveries);
+				albaranes.getDATOSALBARANES().clear();
+				albaranes.getDATOSALBARANES().addAll(invalidDeliveries);
 				errorList.add("Albaranes con errores: " + invalidDeliveries.size());
 			}
 		}
@@ -162,13 +165,13 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			List<String> list = new LinkedList<>();
 			list.addAll(errorList);
 			list.addAll(warningList);
-			flushErrors(httpResponse, deliveryList, list);
+			flushErrors(httpResponse, albaranes, list);
 		} else {
 			httpResponse.setStatus(HttpServletResponse.SC_OK);
 			if (!test) {
-				subject = "Recepcion automatica de albaranes";
-				content = fillSuccessMessage(deliveryList.getDATOSALBARANES());
-				sendEmail(subject, content, null, null, RECIPIENTS_TO_SUCCESS);
+				subject = "Recepción automática de albaranes";
+				content = fillSuccessMessage(albaranes.getDATOSALBARANES());
+				log(IngenetLogLevel.INFO, subject, content, null, null, RECIPIENTS_TO_SUCCESS);
 			}
 		}
 	}
@@ -181,9 +184,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		});
 		String xml = IngenetXmlValidator.convertToXml(deliveryList, ALBARANES.class);
 		
-		String subject = "ERRORES en la recepcion de albaranes";
+		String subject = "Fallos en la recepción de albaranes";
 		String content = fillErrorMessage(deliveryList.getDATOSALBARANES(), errorList);
-		sendEmail(subject, content, "albaranes", xml, RECIPIENTS_TO_FAILURES);
+		log(IngenetLogLevel.ERROR, subject, content, "albaranes", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
@@ -196,17 +199,26 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		StringBuffer bf = new StringBuffer("<h1>Recepción de albaranes.</h1>");
 		bf.append("<ul>");
 		deliveryList.forEach(alb -> {
-			bf.append("<li>Albarán " + alb.getSERIE()+"/"+ alb.getNUMERO()+" del " + alb.getFECHAEMISION()+"</li>");
+			bf.append("<li>Nuevo albarán ");
+			bf.append("<b>").append(alb.getSERIE()).append("/").append(alb.getNUMERO()).append("</b> del ")
+					.append(alb.getFECHAEMISION());
+			bf.append("<ul>");
+			alb.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(lin -> {
+				bf.append("<li>Elaboración finalizada: <b>").append(lin.getDATOSELABORACIONORIGEN().getSERIE())
+						.append("/").append(lin.getDATOSELABORACIONORIGEN().getNUMERO()).append("</b></li>");
+			});
+			bf.append("</ul>");
+			bf.append("</li>");
 		});
 		bf.append("</ul>");
-		if(warningList!=null && warningList.size()>0){
+		if (warningList != null && warningList.size() > 0) {
 			bf.append("<h1>Avisos:</h1>");
 			bf.append("<ul>");
 			warningList.forEach(msg -> {
-				bf.append("<li>" + msg + "</li>");
+				bf.append("<li>").append(msg).append("</li>");
 			});
 			bf.append("</ul>");
-		}		
+		}
 		return bf.toString();
 	}
 	
@@ -215,15 +227,15 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		bf.append("<ul>");
 		errorList.forEach(error -> {
 			if(error!=null)
-				bf.append("<li>"+error+"</li>");
+				bf.append("<li>").append(error).append("</li>");
 		});
 		bf.append("</ul>");
 		deliveryList.forEach(alb -> {
-			bf.append("<h2>Albarán "+alb.getSERIE()+"/"+ alb.getNUMERO()+"</h2>");
+			bf.append("<h2>Albarán ").append(alb.getSERIE()).append("/").append(alb.getNUMERO()).append("</h2>");
 			bf.append("<ul>");
 			alb.getERRORES().getERRORES().forEach(error -> {
 				if(error!=null)
-					bf.append("<li>"+error+"</li>");
+					bf.append("<li>").append(error).append("</li>");
 			});
 			bf.append("</ul>");
 		});
@@ -243,8 +255,27 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			if (ctx != null)
 				ctx.close();
 		}
+		
+		manageSales(list, test);
+		
 	}
 	
+	private void manageSales(List<ALBARANTYPE> list, boolean test) {
+		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+		try {
+			ctx.getDslContext().transaction(configuration -> {
+				list.forEach(albaran -> {
+					albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
+						manageSales(ctx, albaran, linea, test);
+					});
+				});
+			});
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	private void addError(ALBARANTYPE albaran, String msg){
 		LOGGER.error(msg);
 		if(albaran.getERRORES()==null){
@@ -254,6 +285,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 
 	private Delivery createDelivery(AONContext ctx, ALBARANTYPE albaran, boolean test) {
+		albaran.setERRORES(null);
 		Delivery delivery = new Delivery(); 
 		List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
 		Attach attach = new Attach(); 
@@ -394,7 +426,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 		delivery.setSecurityLevel((byte) 0);
 		delivery.setStatus(DeliveryStatus.PENDING);
-		delivery.setComments("Ref. Ingenet " + albaran.getSERIE()+"/"+ albaran.getNUMERO() + ". " + albaran.getCOMENTARIOS());
+		delivery.setComments(null);
 		delivery.setRemarks("Creado por '"+ctx.getUser()+"' el "
 				+ new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()) + "."
 				+ "\n" + "La unidad de la cantidad es KILOS." );
@@ -689,13 +721,34 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							}
 						}
 						SalesDAO.updateSalesDetail(ctx, sd);
-						
-						Double totalPending = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-								f -> f.getSalesProperty().eq(sd.getSales().getId()))
-							.mapToDouble(o->o.getQuantity()-o.getDelivered()).sum();
-						if(totalPending==0.0){
-							sd.getSales().setStatus(SalesStatus.SERVED);
-							SalesDAO.updateSales(ctx, sd.getSales());
+					}
+				}
+			} catch (Exception e) {
+				String msg = "[Linea pedido origen] ";
+				addError(albaran, msg + e.getMessage());
+			}
+		}
+	}
+	
+	private void manageSales(AONContext ctx, ALBARANTYPE albaran, DATOSLINEAALBARANTYPE linea, boolean test) {
+		Elaboration elaboration = obtainElaboration(ctx,
+				linea.getDATOSELABORACIONORIGEN());
+		if (elaboration != null && elaboration.getId() != null
+				&& elaboration.getSource() == 0 // SALES
+				&& elaboration.getSourceId() != null) {
+			Integer salesDetailId = elaboration.getSourceId();
+			try {
+				SalesDetail sd = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+						f -> f.getIdProperty().eq(salesDetailId)).findFirst().orElse(null);
+				if (!test) {
+					if(sd!=null && sd.getId()!=null){
+						Sales sales = sd.getSales();
+						Double totalSalesPending = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+								f -> f.getSalesProperty().eq(sales.getId()))
+								.mapToDouble(o->o.getQuantity()-o.getDelivered()).sum();
+						if(totalSalesPending==0.0){
+							sales.setStatus(SalesStatus.SERVED);
+							SalesDAO.updateSales(ctx, sales);
 						}
 					}
 				}
@@ -704,6 +757,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				addError(albaran, msg + e.getMessage());
 			}
 		}
+		
 	}
 			
 	
@@ -981,6 +1035,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		if(producttype.getNUMEROLOTESERIE()!=null){
 			item.setSerialNumber(producttype.getNUMEROLOTESERIE());
 		}
+		item.setActive(false);
+		item.setCreationUser(ctx.getUser());
+		item.setCreationDate(new Timestamp(new Date().getTime()));
 		ProductDAO.insertItem(ctx, item);
 	}
 	
