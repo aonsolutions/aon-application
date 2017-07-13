@@ -185,15 +185,15 @@ public class ConnectSaleInvoiceWriter {
 		if (financeList != null && financeList.size() == 1) {
 			sincc.setFechaDeVencimientoUnico(Integer.valueOf(SeresUtils.dateFormat()
 					.format(financeList.get(0).getDueDate())));
-		}		
-		sincc.setImporteNetoTotalDeFactura_79_(invoice.getTotal());
+		}
+		sincc.setImporteNetoTotalDeFactura_79_(CommonUtil.round(invoice.getTaxableBase(), 3));
 		sincc.setBaseImponible_125_(invoice.getTaxableBase());
-		Double rawAmount = detailList
-				.stream()
-				.mapToDouble(detail -> detail.getQuantity() * detail.getPrice())
-				.sum();
-		sincc.setImporteBrutoTotalDeFactura_98_(CommonUtil.round(rawAmount, 3));
-		sincc.setImporteTotalDeImpuestos_Tasas_176_(invoice.getVatQuota());
+		sincc.setImporteBrutoTotalDeFactura_98_(CommonUtil.round(invoice.getTotal(), 3));
+		try {
+			sincc.setImporteTotalDeImpuestos_Tasas_176_(CommonUtil.round(invoice.getFinanceTotal(), 3));
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
 		sincc.setImporteTotalAPagar_139_(invoice.getTotal());
 		sincc.setSubvencionesVinculadasAlPrecio_80A_(null);
 		sincc.setTotalIncrementosDelImporteBruto_259_(null);
@@ -438,10 +438,9 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setUnidadesEntregadas(null);
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
 		sincl.setImporteTotalNetoDeLaLineaDeArticulo(detail
-				.getTotalSalesPrice());
+				.getTaxableBase());
 		sincl.setPrecioBrutoUnitario(detail.getPrice());
-		sincl.setPrecioNetoUnitario(detail.getTotalSalesPrice()
-				/ detail.getQuantity());
+		sincl.setPrecioNetoUnitario(detail.getPrice());
 		sincl.setUnidadDeMedidaDelPrecio(null);
 		sincl.setCalificadorIVA_IGIG(SINCL.SINCL_20.IVA_VAT.getValue());
 		sincl.setPorcentajeImpuestoIVA_IGIG(detail.getVatPercent());
@@ -463,7 +462,7 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setNumeroDeAlbaran_DQ_(obtainDeliveryNumber(detail));
 		sincl.setNumeroDeEmbalajes(null);
 		sincl.setTipoDeEmbalaje(null);
-		sincl.setImporteTotalBrutoDeLaLineaDeDetalle(detail.getTaxableBase());
+		sincl.setImporteTotalBrutoDeLaLineaDeDetalle(detail.getTotalSalesPrice());
 		sincl.setNumeroDeLineaSuperior(null);
 		sincl.setNumeroDeLineaDelPedido_ON_(null);
 		sincl.setUnidadBasePrecio(null);
