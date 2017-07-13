@@ -22,7 +22,7 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showElaborationWindow" immediate="true">
+							reRender="showElaborationWindow, salesForm" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{sales.showElaborationWindow}"
@@ -39,7 +39,7 @@
 									<aon:commandButton id="elaboration-accept"
 										value="#{bundle.warehouse_manufacture} #{bundle.aon_all}"
 										actionListener="#{sales.elaborationProcess.onFullExecute}"
-										reRender="showElaborationWindow"
+										reRender="showElaborationWindow, salesForm"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 										oncomplete="Richfaces.hideModalPanel('waitProccess')">
@@ -51,7 +51,7 @@
 									</aon:commandButton>
 									<aon:commandButton id="elaboration-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showElaborationWindow"
+										reRender="showElaborationWindow, salesForm"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
