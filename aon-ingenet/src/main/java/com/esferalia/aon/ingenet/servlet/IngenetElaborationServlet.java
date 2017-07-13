@@ -145,9 +145,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					} else {
 						String reference = elaboration.getSeries()+"/"+elaboration.getNumber();
 //						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
-						String subject = "[AON-DEV] Envío automático de elaboraciones";
+						String subject = "Envío automático de elaboraciones";
 						String content = "Imposible localizar el pedido de origen de la elaboracion "+reference;
-						sendEmail(subject, content, "elaboraciones", _xml, getMailingDevelopers(ctx));
+						log(IngenetLogLevel.DEBUG, subject, content, "elaboraciones", _xml, getMailingDevelopers(ctx));
 					}
 				});
 				 
@@ -169,8 +169,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				
 				String subject = "Cancelación automática de elaboraciones";
 				String content = fillCancellationMessage(params.getELABORACIONES().getREFERENCIAS());
-				sendEmail(subject, content, "cancelar", _xml, RECIPIENTS_TO_LOG);
-				saveToDisk("elaboration", "elaboration-cancellation", _xml!=null?_xml:"");
+				log("elaboration", IngenetLogLevel.DEBUG, subject, content, "elaboration_cancelation", _xml, RECIPIENTS_TO_LOG);
 			} else {
 				errorList.add("No se ha indicado la accion a realizar");
 			}
@@ -214,8 +213,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		StringBuffer bf = new StringBuffer("<h1>Recuperación de elaboraciones.</h1>");
 		bf.append("<ul>");
 		elaborationList.forEach(elab -> {
-			bf.append("<li>Elaboración " + elab.getSeries() + "/"
-					+ elab.getNumber() + " del " + elab.getDate() + "</li>");
+			bf.append("<li>Elaboración ").append(elab.getSeries()).append("/").append(elab.getNumber()).append(" del ")
+					.append(elab.getDate()).append("</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();
@@ -225,9 +224,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		StringBuffer bf = new StringBuffer("<h1>Cancelación de elaboraciones.</h1>");
 		bf.append("<ul>");
 		list.forEach(elab -> {
-			bf.append("<li>Elaboración " + elab.getSERIE() + "/"
-					+ elab.getNUMERO() + "</li>");
-			bf.append("<li>" + elab.getOBSERVACIONES() + "</li>");
+			bf.append("<li>Elaboración ").append(elab.getSERIE()).append("/").append(elab.getNUMERO()).append("</li>");
+			bf.append("<li>").append(elab.getOBSERVACIONES()).append("</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();
@@ -237,14 +235,14 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		StringBuffer bf = new StringBuffer("<h1>Envío de elaboraciones.</h1>");
 		bf.append("<ul>");
 		errorList.forEach(error -> {
-			if(error!=null)
-				bf.append("<li>"+error+"</li>");
+			if (error != null)
+				bf.append("<li>").append(error).append("</li>");
 		});
 		bf.append("</ul>");
 		bf.append("<ul>");
 		errorestype.getERRORES().forEach(error -> {
-			if(error!=null)
-				bf.append("<li>"+error+"</li>");
+			if (error != null)
+				bf.append("<li>").append(error).append("</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();
@@ -261,7 +259,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		
 		String subject = "Envío automático de elaboraciones";
 		String content = fillErrorMessage(respuesta.getERRORES(), errorList);
-		sendEmail(subject, content, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
+		log(IngenetLogLevel.ERROR, subject, content, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());

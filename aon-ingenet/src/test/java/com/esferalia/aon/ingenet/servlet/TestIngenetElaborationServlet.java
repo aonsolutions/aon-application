@@ -29,21 +29,11 @@ public class TestIngenetElaborationServlet {
 			e.printStackTrace();
 		}
 		
-		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
-				
-				// *****************
-				// RECUPERAR
-				// *****************
-				+ "<ACCION>RECUPERAR</ACCION>"
-//				+ "<FECHA>20170704</FECHA>"
-				+ "<ESTADO>PENDIENTE</ESTADO>"
-				+ "<ESTADO>PROCESANDO</ESTADO>"
-				+ "<ESTADO>FINALIZADO</ESTADO>"
-
-				// *****************
-				// CANCELAR
-				// *****************
+		/** 
+		 * CANCELAR 
+		 */
+//		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
 //				+ "<ACCION>CANCELAR</ACCION>"
 //				+ "<ELABORACIONES>"
 //				+ "<REFERENCIAS>"
@@ -53,7 +43,18 @@ public class TestIngenetElaborationServlet {
 //				+ "<SERIE>PV17</SERIE><NUMERO>112</NUMERO><OBSERVACIONES>"+sampleText+"</OBSERVACIONES>"
 //				+ "</REFERENCIAS>"
 //				+ "</ELABORACIONES>"
-
+//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
+		
+		/**
+		 * RECUPERAR
+		 */
+		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"				
+				+ "<ACCION>RECUPERAR</ACCION>"
+				+ "<FECHA>20170710</FECHA>"
+				+ "<ESTADO>PENDIENTE</ESTADO>"
+				+ "<ESTADO>PROCESANDO</ESTADO>"
+				+ "<ESTADO>FINALIZADO</ESTADO>"
 				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
 
 		return xml;

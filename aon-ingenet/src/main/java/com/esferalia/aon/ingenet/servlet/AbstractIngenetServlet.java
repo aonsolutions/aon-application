@@ -260,7 +260,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		return list!=null && !list.isEmpty()?list.getFirst():null;
 	}
 	
-	protected void sendEmail(String subject, String content, String attachName,
+	protected void sendEmail2(IngenetLogLevel logLevel, String subject, String content, String attachName,
 			String attachValue, String... recipients) {
 		JSONObject json = new JSONObject();
 		try {
@@ -271,7 +271,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 				String recipientsTo = "";
 				if (isDevEnabled()) {
 					recipientsTo = "eagirrezabal@aonsolutions.es";
-					subject = "[AON/Test] " + subject;
+					subject = "[AON/Test-"+logLevel+"] " + subject;
 					LOGGER.info("*** RUNNING TEST ENVIRONMENT, AVOID SPAM RECIPIENTS TO.");
 				} else {
 					if (recipients != null) {
@@ -281,7 +281,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 							recipientsTo += to;
 						}
 					}
-					subject = "[AON] " + subject;
+					subject = "[AON-"+logLevel+"] " + subject;
 				}
 				json.put("mailAccountId", mail.getId())
 						.put("recipientsTo", recipientsTo)
@@ -315,13 +315,13 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 				System.out.println(resp);
 			}
 		} catch (JSONException e) {
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Error on mailing", e.getMessage());
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Error on mailing", e.getMessage());
 		}
 	}
 	
-	protected void saveToDisk(String folder, String namePrefix, String value) {
+	protected void saveToDisk2(String folder, String namePrefix, String value) {
 		byte data[] = (value != null ? value : "").getBytes();
 		Path file = Paths.get(
 				"/var",
@@ -338,13 +338,37 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 				Files.createDirectories(parentDir);
 			Files.write(file, data, StandardOpenOption.CREATE_NEW);
 		} catch (IOException e) {
-			LOGGER.error("Error guardando el fichero recibido: "
-					+ e.getMessage());
+			LOGGER.error("Error guardando el fichero recibido: ",
+					e.getMessage());
 		} catch (Exception e) {
-			LOGGER.error("Error guardando el fichero recibido: "
-					+ e.getMessage());
+			LOGGER.error("Error guardando el fichero recibido: ",
+					e.getMessage());
 		}
 	}
 	
-
+	protected void log(IngenetLogLevel logLevel, String subject, String content, String fileName,
+			String fileValue, String... recipients) {
+		log(null, logLevel, subject, content, fileName, fileValue, recipients);
+	}
+	
+	protected void log(String folder, IngenetLogLevel logLevel, String subject,
+			String content, String fileName, String fileValue, String... recipients) {
+		
+		if(IngenetLogLevel.DEBUG==logLevel)
+			LOGGER.debug(content);
+		else if(IngenetLogLevel.WARN==logLevel)
+			LOGGER.warn(content);
+		else if(IngenetLogLevel.ERROR==logLevel)
+			LOGGER.error(content);
+		
+		sendEmail2(logLevel, subject, content, fileName, fileValue, recipients);
+		if(folder!=null){
+			saveToDisk2(folder, fileName, fileValue);
+		}
+	}
+	
+	public enum IngenetLogLevel {
+		DEBUG, INFO, WARN, ERROR;
+	}
+	
 }
