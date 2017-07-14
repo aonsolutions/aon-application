@@ -189,11 +189,7 @@ public class ConnectSaleInvoiceWriter {
 		sincc.setImporteNetoTotalDeFactura_79_(CommonUtil.round(invoice.getTaxableBase(), 3));
 		sincc.setBaseImponible_125_(invoice.getTaxableBase());
 		sincc.setImporteBrutoTotalDeFactura_98_(CommonUtil.round(invoice.getTotal(), 3));
-		try {
-			sincc.setImporteTotalDeImpuestos_Tasas_176_(CommonUtil.round(invoice.getFinanceTotal(), 3));
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage());
-		}
+		sincc.setImporteTotalDeImpuestos_Tasas_176_(CommonUtil.round(invoice.getVatQuota(), 3));
 		sincc.setImporteTotalAPagar_139_(invoice.getTotal());
 		sincc.setSubvencionesVinculadasAlPrecio_80A_(null);
 		sincc.setTotalIncrementosDelImporteBruto_259_(null);
