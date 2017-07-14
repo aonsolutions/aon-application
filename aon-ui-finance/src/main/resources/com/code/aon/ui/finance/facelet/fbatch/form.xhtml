@@ -64,7 +64,7 @@
 					</aon:if>
 					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:commandButton id="recordPopup" value="#{bundle.finance_record}"
-							rendered="#{!fbatch.nevv and !fbatch.readOnly and (fbatch.done or !fbatch.diskMode)}"
+							rendered="#{!fbatch.nevv and !fbatch.readOnly and (fbatch.done or !fbatch.diskMode) and fBatchDetail.model.rowCount > 0}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
 							reRender="showFbatchRecordWindow">	
 							<f:setPropertyActionListener target="#{fbatch.showFbatchRecordWindow}"
