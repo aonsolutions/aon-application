@@ -459,6 +459,14 @@
 					<key>prorata</key>
 					<value>vatTax.prorata</value>
 				</map-entry>
+				<map-entry>
+					<key>complementary</key>
+					<value>vatTax.complementary</value>
+				</map-entry>
+				<map-entry>
+					<key>replacedNumber</key>
+					<value>vatTax.replacedNumber</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 		<managed-property>

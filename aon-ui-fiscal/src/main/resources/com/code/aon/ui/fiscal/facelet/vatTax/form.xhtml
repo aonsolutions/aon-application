@@ -132,7 +132,7 @@
 								,aon-panelGrid-even aon-width-auto">
 					
 					<aon:outputLabel for="VatTax_comments" value="#{bundle.aon_comment}" />
-					<aon:inputTextarea id="VatTax_comments" cols="80" rows="2" value="#{vatTax.to.comments}"
+					<aon:inputTextarea id="VatTax_comments" cols="50" rows="2" value="#{vatTax.to.comments}"
 						disabled="#{vatTax.detailNew}"/>
 
 					<aon:div>
@@ -154,9 +154,9 @@
 							<aon:outputLabel for="VatTax_complementary" styleClass="aon-italic"
 								value="Complementaria" />
 
-							<aon:panelGroup rendered="#{!vatTax.nevv and vatTax.to.complementary}" styleClass="aon-italic aon-margin-left">		
+							<aon:panelGroup rendered="#{vatTax.to.complementary}" styleClass="aon-italic aon-margin-left">		
 								<aon:outputLabel for="VatTax_number" styleClass="aon-margin-left aon-margin-right" 
-									value="Número sustituida/complementada: " />
+									value="Número justificante anterior: " />
 								<aon:inputText id="VatTax_number" size="13" maxlength="13" value="#{vatTax.to.replacedNumber}"
 									required="true" 
 									disabled="#{vatTax.to.finished or vatTax.detailNew}"/>

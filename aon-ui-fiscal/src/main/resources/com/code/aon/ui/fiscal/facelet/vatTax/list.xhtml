@@ -37,9 +37,9 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-text-center aon-width-50">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.fiscal_replacement_abbr}" />
+								<aon:outputText value="Compl." />
 							</f:facet>
-							<aon:div styleClass="#{to.replacement?'aon-icon-checked':'aon-icon-check'}">
+							<aon:div styleClass="#{to.complementary?'aon-icon-checked':'aon-icon-check'}">
 								<aon:outputText value="&#160;" />
 							</aon:div>
 						</aon:column>
@@ -48,7 +48,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_number}" />
 							</f:facet>
-							<aon:outputText value="#{to.number}" rendered="#{to.complementary or to.replacement}" />
+							<aon:outputText value="#{to.replacedNumber}" rendered="#{to.complementary or to.replacement}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto #{to.replaced?'aon-line-through':''}">

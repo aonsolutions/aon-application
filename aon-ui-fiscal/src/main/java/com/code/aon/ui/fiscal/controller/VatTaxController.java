@@ -374,7 +374,6 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 			Expression e3 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_QUOTA_ADJUST), 0.0);
 			Expression e4 = ExpressionUtilities.getOrExpression(e1, e2);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(e3, e4));
-			System.out.println(criteria);
 			int count = bean.getCount(criteria);
 			setAnyPreviousAdjust(count>0);
 		} catch (ManagerBeanException e) {
