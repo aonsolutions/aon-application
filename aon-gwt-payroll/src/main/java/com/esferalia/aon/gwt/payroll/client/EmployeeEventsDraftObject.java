@@ -336,7 +336,7 @@ public class EmployeeEventsDraftObject {
 	 * METODOS SYNC DATABASE
 	 */
 	
-	public void initializeDBEventsVariables(int year, Consumer<ContextDescriptor> success, Consumer<Throwable> failure) {
+	public void initializeDBEventsVariables(int year) {
 		
 		employeesService.getEmployeeEventsVariables(idEmployee, new Date(year,0,1), new Date(year,11,31), 
 				new AsyncCallback<ContextDescriptor>() {
@@ -375,18 +375,11 @@ public class EmployeeEventsDraftObject {
 					}
 					sortListByStartDate(varList);
 					mapEventsVar.put(varName, varList);
-				}
-				
-				initializeDBCalendar(
-						s -> { success.accept(context);}, 
-						f -> {}
-				);
-				
+				}	
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				failure.accept(caught);
 			}
 		});
 	}
