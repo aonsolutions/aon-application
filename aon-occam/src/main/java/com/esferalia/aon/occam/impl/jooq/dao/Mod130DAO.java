@@ -130,16 +130,16 @@ public class Mod130DAO extends FiscalModelDAO {
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C05, getInitialC05(ctx,mod))
 			,null
 			,"<li>Trimestres anteriores:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c07Sum = 0.0;c13Sum = 0.0;}"
+			+"@code{c07Sum = 0.0;c16Sum = 0.0;}"
 			+"@foreach{fm : previousModels}" 
-				+"@code{X07 =  fm.getAmount('"+Mod130Key.C07.getValue()+"'); X13 =  fm.getAmount('"+Mod130Key.C13.getValue()+"')}"
-				+"@code{c07Sum = c07Sum + X07;c13Sum = c13Sum + X13;}"
+				+"@code{X07 =  fm.getAmount('"+Mod130Key.C07.getValue()+"'); X16 =  fm.getAmount('"+Mod130Key.C16.getValue()+"')}"
+				+"@code{c07Sum = c07Sum + X07;c16Sum = c16Sum + X16;}"
 				+"<li>@{fm.getPeriod().getDescription()}			Casilla [007] --> @{X07}</li>"
-				+"<li>				Casilla [013] --> @{X13}</li>"
+				+"<li>				Casilla [016] --> @{X16}</li>"
 			+"@end{}"
 			+"</ul></li>"
 			+"<li>Sumatorio de las casillas [007] --> @{c07Sum}</li>"
-			+"<li>Sumatorio de las casillas [013] --> @{c13Sum}</li>"
+			+"<li>Sumatorio de las casillas [016] --> @{c16Sum}</li>"
 			+"<li>Resultado: <b>@{C05}</b></li>")
 		,C06 (Mod130Key.C06 , (mod -> mod.isAEAT())
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C06, 
