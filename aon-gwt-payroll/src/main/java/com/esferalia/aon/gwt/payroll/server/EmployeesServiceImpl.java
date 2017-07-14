@@ -33,6 +33,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.chrono.Era;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -209,6 +210,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+import com.google.gwt.user.client.Window;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
@@ -1024,7 +1026,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ContextDescriptor contextDescriptor = getContext(connection, context, startDate,  endDate);
 			
-			ContextDescriptor contextDescriptorPayments = getEmployeePayments(connection, employeeId, agreementId,
+			ContextDescriptor contextDescriptorPayments = getEmployeeMapEventsVariables(connection, employeeId, agreementId,
 					startDate, endDate, getDomainID(), getParentDomainID());
 			
 			contextDescriptorPayments.mix(contextDescriptor);
@@ -1047,14 +1049,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			
 			
-//			for(String key : contextResult.getVariables()){
-//				if(contextResult.getList(key).isEmpty()){
-//					System.out.println("RESULT :"+key+", value : null, type :null, startDate :null, endDate :null");
-//					continue;
-//				}
-//				for(VariableDescriptor var : contextResult.getList(key))
-//					System.out.println("RESULT :"+key+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
-//			}
+			for(String key : contextResult.getVariables()){
+				if(contextResult.getList(key).isEmpty()){
+					System.out.println("RESULT :"+key+", value : null, type :null, startDate :null, endDate :null");
+					continue;
+				}
+				for(VariableDescriptor var : contextResult.getList(key))
+					System.out.println("RESULT :"+key+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+			}
 			
 			return contextResult;
 			
@@ -3238,10 +3240,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
-	private ContextDescriptor getEmployeePayments(Connection connection, Integer employeeId, Integer agreementId,
+	private ContextDescriptor getEmployeeMapEventsVariables(Connection connection, Integer employeeId, Integer agreementId,
 			Date startDate, Date endDate, Integer domainID, Integer parentDomainID) throws SQLException{
 		
 		ArrayList<String> eraseAgreements = new ArrayList<>();
+		
 		
 		try {
 			Set<Payment> payments = SQLEvents.getEmployeePayments(connection,
@@ -3256,6 +3259,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						agreementId, startDate, endDate));
 			}
 
+			//Map<String, String> variables = new HashMap<String, String>();
 			ContextDescriptor result = new ContextDescriptor();
 
 			for (Payment payment : payments) {
@@ -3263,16 +3267,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
 				
+				//if ( Date.class == payment.getType() || Boolean.class == payment.getType())
+
 				Set<String> paymentVars = ExpressionContext
 						.getVariableSet(payment.getExpression());
 
 				for (String var : paymentVars) {
 					if (var.endsWith("_ACTUAL"))
 						continue; // This is awfull ... very awful
-					
+//					variables.put(var, String.format("%s",
+//							payment.getDescription(), payment.getExpression()));
+					//result.add(var, payment.getDescription(), Number.class, payment.getExpression());
 					result.add(var);
 				}
 
+//				variables.remove(payment.getName());
 				result.remove(payment.getName());
 				
 			}
@@ -3289,7 +3298,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// Filter Agreement Variables
 			for (String varName : eraseAgreements)
 				result.remove(varName);
+//				variables.remove(varName);
 						
+//			// Filter ContextVariable
+//			for (ContextVariable ctxVar : ContextVariable.values())
+//				variables.remove(ctxVar.getName());
+//
+//			// Clean system variables.
+//			Set<String> systemVars = getSystemVariables(connection, startDate,
+//					endDate);
+//			for (String var : systemVars)
+//				variables.remove(var);
+
 			Set<Level> levels = null;
 			SalaryTable salaryTable = null;
 			
@@ -3302,6 +3322,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection, agreementId, startDate, endDate,domainID, parentDomainID);
 
 			if(null != levels && null != salaryTable){
+				//Set<String> names = variables.keySet();
 				Set<String> names = result.getVariables();
 				for (Level level : levels) {
 					Iterator<String> namesIt = names.iterator();
@@ -3313,17 +3334,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 
+//			return variables;
+			
 //			for(String key : result.getVariables())
 //				for(VariableDescriptor var : result.getList(key))
 //					System.out.println("PAYMENTS :"+key+", descripcion :"+var.getDescription()+", expresion :"+var.getExpression()
 //					+", value :"+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
 			
 			return result;
-		
 		}catch (Exception e) {
 			e.printStackTrace();
 			throw e;
-		
 		}finally {
 			if (connection != null)
 				connection.close();

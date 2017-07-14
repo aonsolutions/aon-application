@@ -249,24 +249,24 @@ public class EmployeeEventsDraftObject {
 	@SuppressWarnings("deprecation")
 	public void setValueByMonths(String variableName, ArrayList<Integer> months, Double newValue, Integer year) {
 		List<Undoable> undos = new ArrayList<Undoable>();
+		
 		for (Integer month : months){
 			EmployeeEventsVariable oldVar = null;
-			if (null != draftMapEventsVar.get(variableName)){
+			if (null != draftMapEventsVar.get(variableName))
 				for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
 					if (year != e.getStartDate().getYear())
 						continue;
-					if(month == e.getStartDate().getMonth())
+					if(month == e.getStartDate().getMonth()){
 						oldVar = e;
+					}
 				}
-			}else{
+			else{
 				draftMapEventsVar.put(variableName, new ArrayList<EmployeeEventsVariable>());
 			}
 			
 			EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue, year);
-			if(null != oldVar)
-				draftMapEventsVar.get(variableName).remove(oldVar);
+			draftMapEventsVar.get(variableName).remove(oldVar);
 			draftMapEventsVar.get(variableName).add(newVar);
-			
 			undos.add(new SetVariableEdit(oldVar, newVar, variableName));
 		}
 		this.undoManager.add(new CompositeUndoable<Undoable>(undos));
@@ -336,7 +336,6 @@ public class EmployeeEventsDraftObject {
 	 * METODOS SYNC DATABASE
 	 */
 	
-	@SuppressWarnings("deprecation")
 	public void initializeDBEventsVariables(int year, Consumer<ContextDescriptor> success, Consumer<Throwable> failure) {
 		
 		employeesService.getEmployeeEventsVariables(idEmployee, new Date(year,0,1), new Date(year,11,31), 

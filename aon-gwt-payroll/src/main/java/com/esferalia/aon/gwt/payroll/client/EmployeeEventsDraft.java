@@ -446,7 +446,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					EmployeeTree.showEmployeeCalendar(employeeEventsDraft.getEmployeeCalendar());
+					EmployeeTree.showEmployeeCalendar((employeeEventsDraft.getEmployeeCalendar()));
+					
 				}
 			});
 			
@@ -477,7 +478,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			else
 				eventValue.removeStyleName(style.setBlockVariableStyle());
 			
-			if(null == varList){
+			if(null == varList || varList.isEmpty()){
 				eventValue.setText("-");
 				eventsGrid.setWidget(newRow, col, eventValue);
 				continue;
