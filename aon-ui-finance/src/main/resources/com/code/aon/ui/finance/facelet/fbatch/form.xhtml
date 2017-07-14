@@ -187,19 +187,17 @@
 
 				<aon:div id="fbatchPanelTabSet" >
 					<aon:panelTabSet rendered="#{!fbatch.nevv}">
-	
-						<aon:if test="#{fBatchDetail.model.rowCount > 0}" >
-							<aon:panelTab id="fBatchDetailTab" label="#{bundle.finance_included_finance}">
-								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formDetail.xhtml" />
-							</aon:panelTab>
-						</aon:if>
-	
-						<aon:if test="#{!fbatch.readOnly}" >
-							<aon:panelTab id="financeTab" label="#{bundle.finance_not_batched_finances}">
-								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
-							</aon:panelTab>
-						</aon:if>
-	
+
+						<aon:panelTab id="fBatchDetailTab" label="#{bundle.finance_included_finance}" 
+							rendered="#{fBatchDetail.model.rowCount > 0}">
+							<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formDetail.xhtml" />
+						</aon:panelTab>
+
+						<aon:panelTab id="financeTab" label="#{bundle.finance_not_batched_finances}" 
+							rendered="#{!fbatch.readOnly}">
+							<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
+						</aon:panelTab>
+
 					</aon:panelTabSet>
 				</aon:div>
 				
