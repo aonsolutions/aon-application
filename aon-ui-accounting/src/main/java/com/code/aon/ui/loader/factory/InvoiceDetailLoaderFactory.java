@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
+import com.code.aon.account.bridge.InvoiceTaxAccount;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -273,9 +274,13 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 						vatAed2 = mergeAccountEntryDetail(vatAed2,vatAccountEntryDetail2);
 					}
 				}
+
+				IManagerBean itaBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
+				InvoiceTaxAccount ita = new InvoiceTaxAccount();
+				ita.setInvoiceTax(invoiceTax);
+				ida.setAccount(vatAed.getAccount());
+				itaBean.insert(ita);
 			}
-			
-			
 			
 			if (!invoice.isRetentionFree()) {
 				if (loaded.getPorcentajeIrpf() != null && loaded.getPorcentajeIrpf() > 0) {
@@ -314,6 +319,12 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 					} else {
 						retentionAed = mergeAccountEntryDetail(retentionAed,retentionAccountEntryDetail);
 					}
+
+					IManagerBean itaBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
+					InvoiceTaxAccount ita = new InvoiceTaxAccount();
+					ita.setInvoiceTax(invoiceTax);
+					ida.setAccount(retentionAed.getAccount());
+					itaBean.insert(ita);
 				}
 			}
 		}
