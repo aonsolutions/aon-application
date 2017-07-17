@@ -30,7 +30,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.marketing.News;
 import com.code.aon.registry.Category;

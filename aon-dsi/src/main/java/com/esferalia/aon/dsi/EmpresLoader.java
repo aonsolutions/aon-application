@@ -33,7 +33,7 @@ import org.jooq.Record;
 import org.jooq.exception.InvalidResultException;
 
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;

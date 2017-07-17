@@ -14,7 +14,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonConnectionException;
 import com.mchange.v2.c3p0.DataSources;
 
 public class IngenetDataSource {

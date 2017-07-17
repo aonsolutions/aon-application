@@ -15,7 +15,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.common.util.AdminUtil;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.reservation.ReservationUtils;

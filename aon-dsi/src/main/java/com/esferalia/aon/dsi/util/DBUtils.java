@@ -18,7 +18,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;

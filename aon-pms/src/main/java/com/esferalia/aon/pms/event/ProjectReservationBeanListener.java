@@ -8,7 +8,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.AdminUtil;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.sql.SQLBooking;
 import com.esferalia.aon.pms.sql.SQLUtils;

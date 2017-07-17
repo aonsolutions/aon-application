@@ -19,8 +19,8 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.AonVersion;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckCategory;
 import com.code.aon.ui.accounting.check.CheckParams;

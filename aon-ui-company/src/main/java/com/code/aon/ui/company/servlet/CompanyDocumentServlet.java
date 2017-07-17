@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;

@@ -15,7 +15,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class IngenetConnectionInfo {
 

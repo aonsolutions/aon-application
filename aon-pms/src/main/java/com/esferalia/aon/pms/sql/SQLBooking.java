@@ -10,7 +10,7 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.esferalia.aon.pms.Booking;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;

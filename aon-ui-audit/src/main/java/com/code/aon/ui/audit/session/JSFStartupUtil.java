@@ -38,11 +38,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.util.Classpath;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 import com.code.aon.ui.common.session.MockHttpServletRequest;
 import com.code.aon.ui.common.session.MockHttpServletResponse;
 import com.sun.facelets.FaceletFactory;

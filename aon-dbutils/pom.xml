@@ -18,46 +18,14 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.pool</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
+			<groupId>net.aonsolutions.core</groupId>
+			<artifactId>dbutils</artifactId>
+			<version>9.00-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 		    <groupId>commons-dbutils</groupId>
 		    <artifactId>commons-dbutils</artifactId>
 		    <version>1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.3</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.5</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.5.11</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8</version>
-			<type>jar</type>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -108,25 +76,19 @@
                                                                         <directory>/usr/share/java</directory>
 
 									<sources>
-										<source>
-											<location>target</location>
-											<includes>												
-												<include>${project.artifactId}-${project.version}.jar</include>
-											</includes>
-										</source>
-										<softlinkSource>
-											
-											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
+										<softlinkSource>											
+											<location>/usr/share/java/dbutils.jar</location>
 											<destination>${project.artifactId}.jar</destination>
 										</softlinkSource>
 										<softlinkSource>											
-											<location>/usr/share/java/commons-dbutils-1.5.jar</location>
+											<location>/usr/share/java/commons-dbutil.jar</location>
 											<destination>commons-dbutils.jar</destination>
 										</softlinkSource>
 									</sources>
 									<dependency>
 										<includes>
-											<include>commons-dbutils:commons-dbutils:1.5</include>
+											<include>net.aonsolutions.core:dbutils</include>
+											<include>commons-dbutils:commons-dbutils</include>
 										</includes>
 									</dependency>
 

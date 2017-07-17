@@ -1,4 +1,4 @@
-package com.code.aon.pool;
+package net.aonsolutions.core.pool;
 
 public class AonConnectionException extends Exception {
 

@@ -42,7 +42,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.data.enumeration.DataAttachmentSource;
 import com.code.aon.data.enumeration.DataAttachmentType;
 import com.code.aon.data.enumeration.DataResponseSource;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.esferalia.aon.dex.IDataLoadConstants;
 import com.esferalia.aon.dex.nav.produccion.BandejaDatosEstadisticos;
 import com.esferalia.aon.dex.nav.produccion.BandejaImportesProduccion;

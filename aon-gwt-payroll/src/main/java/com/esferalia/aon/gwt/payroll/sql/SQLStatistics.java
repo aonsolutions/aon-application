@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Locale;
 
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 

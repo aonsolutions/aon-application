@@ -10,8 +10,8 @@ import java.util.List;
 import org.jooq.tools.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class OperationReportManager {
 

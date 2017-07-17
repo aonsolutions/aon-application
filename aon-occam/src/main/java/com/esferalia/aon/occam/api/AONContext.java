@@ -17,8 +17,8 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.AonDataSource;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;

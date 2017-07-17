@@ -17,9 +17,9 @@ import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.dbutils.AonSQLException;
-import com.code.aon.dbutils.AonSQLFile;
-import com.code.aon.dbutils.AonSQLScript;
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLFile;
+import net.aonsolutions.core.dbutils.AonSQLScript;
 
 public class VersionManager {
 

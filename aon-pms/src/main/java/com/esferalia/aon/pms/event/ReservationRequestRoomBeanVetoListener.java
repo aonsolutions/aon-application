@@ -12,7 +12,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.common.util.AdminUtil;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.sql.SQLStopSales;
 import com.esferalia.aon.pms.sql.SQLUtils;

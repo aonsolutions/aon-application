@@ -12,7 +12,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.esferalia.aon.dsi.DSI2AON.Listener;
 import com.esferalia.aon.dsi.util.DBUtils;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;

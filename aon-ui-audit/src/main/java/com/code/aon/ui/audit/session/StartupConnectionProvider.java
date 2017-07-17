@@ -9,8 +9,8 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.connection.ConnectionProvider;
 import org.hibernate.connection.ConnectionProviderFactory;
 
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class StartupConnectionProvider implements ConnectionProvider {
 	

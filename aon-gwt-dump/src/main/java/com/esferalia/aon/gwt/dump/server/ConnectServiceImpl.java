@@ -35,8 +35,8 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.code.aon.groupware.enumeration.TaskStatus;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;

@@ -27,7 +27,7 @@ import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;

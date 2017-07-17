@@ -38,7 +38,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
 
 /**

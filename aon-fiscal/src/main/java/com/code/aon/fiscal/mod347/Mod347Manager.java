@@ -19,11 +19,11 @@ import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.fiscal.enumeration.Mod347Type;
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class Mod347Manager {
 

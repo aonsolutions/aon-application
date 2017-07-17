@@ -12,12 +12,12 @@ import org.richfaces.event.UploadEvent;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.dbutils.AonSQLException;
-import com.code.aon.dbutils.AonSQLFile;
-import com.code.aon.dbutils.AonSQLScript;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLFile;
+import net.aonsolutions.core.dbutils.AonSQLScript;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 
 public class SQLScriptController implements Serializable {

@@ -55,7 +55,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.data.DataResponse;
 import com.code.aon.data.DataResponseDetail;
 import com.code.aon.data.enumeration.DataResponseSource;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;

@@ -30,7 +30,7 @@ import org.xml.sax.InputSource;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Allotment;

@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.product.Item;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;

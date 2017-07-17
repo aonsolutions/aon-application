@@ -16,7 +16,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.product.Item;
 import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.Hotel;

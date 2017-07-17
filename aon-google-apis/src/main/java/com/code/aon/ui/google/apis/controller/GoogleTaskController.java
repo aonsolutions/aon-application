@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import com.code.aon.AonVersion;
 import com.code.aon.google.apis.TaskUtils;
 import com.code.aon.oauth2.sessionInfo.SessionInfo;
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 import com.google.api.services.tasks.Tasks;
 

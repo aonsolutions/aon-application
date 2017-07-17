@@ -28,6 +28,7 @@
 		<module>aon-sql-payroll</module>
 		<module>aon-sql-google</module>
 		<module>aon-accounting-mining</module>
+		<module>aon.pool</module>
 		 -->
 
 		<!-- MAVEN PLUGINS -->
@@ -52,7 +53,6 @@
 		<module>aon-occam</module>
 		
 		<!-- FRAMEWORK -->
-		<module>aon.pool</module>
 		<module>aon-audit</module>
 		<module>aon-ui-audit</module>
 		<module>aon-jaas</module>

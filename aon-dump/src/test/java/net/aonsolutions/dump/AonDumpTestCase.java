@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
 import com.esferalia.aon.jooq.tables.Supplier;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;

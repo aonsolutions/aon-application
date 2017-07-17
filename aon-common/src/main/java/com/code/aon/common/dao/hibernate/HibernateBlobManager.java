@@ -23,8 +23,8 @@ import com.code.aon.common.BlobObjectUtil;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.AonDataSource;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
 
 public class HibernateBlobManager implements IBlobManager {
 

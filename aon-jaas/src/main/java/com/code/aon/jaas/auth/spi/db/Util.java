@@ -18,8 +18,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class Util {
 	

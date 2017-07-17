@@ -38,7 +38,7 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
 
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnominlRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntconceRecord;

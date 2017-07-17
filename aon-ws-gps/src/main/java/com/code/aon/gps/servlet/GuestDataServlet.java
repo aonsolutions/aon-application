@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.gps.servlet.util.ServletUtils;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.registry.enumeration.DocumentType;

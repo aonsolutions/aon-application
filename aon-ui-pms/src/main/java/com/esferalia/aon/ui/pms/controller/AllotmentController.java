@@ -18,7 +18,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;

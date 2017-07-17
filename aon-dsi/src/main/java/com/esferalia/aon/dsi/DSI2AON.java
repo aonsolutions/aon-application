@@ -18,7 +18,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.PersonRecord;

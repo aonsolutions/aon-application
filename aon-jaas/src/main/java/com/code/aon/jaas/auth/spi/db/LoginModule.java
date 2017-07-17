@@ -27,8 +27,8 @@ import com.code.aon.jaas.auth.SimpleGroup;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.spi.UsernamePasswordLoginModule;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class LoginModule extends UsernamePasswordLoginModule {
 

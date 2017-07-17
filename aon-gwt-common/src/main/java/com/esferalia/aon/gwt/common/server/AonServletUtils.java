@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.AonDataSource;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
 
 public class AonServletUtils {
 	

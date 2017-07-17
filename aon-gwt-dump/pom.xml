@@ -103,16 +103,16 @@
 		</exclusion>
 		</exclusions>
 	</dependency>
-	<dependency>
-		<groupId>com.code.aon</groupId>
-		<artifactId>aon-dbutils</artifactId>
-		<version>${project.version}</version>
+	<!--dependency>
+		<groupId>net.aonsolutions.core</groupId>
+		<artifactId>dbutils</artifactId>
+		<version>9.00-SNAPSHOT</version>
 		<scope>compile</scope>
-	</dependency>
+	</dependency-->
 	<dependency>
-		<groupId>com.code.aon</groupId>
-		<artifactId>aon.pool</artifactId>
-		<version>${project.version}</version>
+		<groupId>net.aonsolutions.core</groupId>
+		<artifactId>pool</artifactId>
+		<version>9.00-SNAPSHOT</version>
 		<scope>compile</scope>
 	</dependency>
 	<dependency>

@@ -17,8 +17,8 @@ import com.code.aon.jaas.auth.spi.db.Domain;
 import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.oauth2.Utils;
 import com.code.aon.oauth2.sessionInfo.SessionInfo;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class GoogleLoginCallbackServlet extends HttpServlet {
 	/**

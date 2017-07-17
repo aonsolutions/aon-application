@@ -14,7 +14,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.AdminUtil;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.person.Person;
 import com.code.aon.registry.RegistryDocument;
 import com.code.aon.registry.enumeration.DocumentType;

@@ -39,7 +39,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.data.enumeration.DataAttachmentSource;
 import com.code.aon.data.enumeration.DataAttachmentType;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.esferalia.aon.dex.IDataLoadConstants;
 import com.esferalia.aon.dex.nav.remesas.BandejaDocRemesas;

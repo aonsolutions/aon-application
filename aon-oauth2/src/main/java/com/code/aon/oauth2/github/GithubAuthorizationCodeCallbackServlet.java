@@ -25,8 +25,8 @@ import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.oauth2.Utils;
 import com.code.aon.oauth2.sessionInfo.SessionInfo;
 import com.code.aon.oauth2.sessionInfo.SessionUserInfo;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.http.GenericUrl;
 

@@ -12,12 +12,6 @@
   <dependencies>
     <dependency>
       <groupId>com.code.aon</groupId>
-      <artifactId>aon.pool</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
       <artifactId>aon.jaas</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -27,12 +21,6 @@
       <artifactId>aon.rich.components</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon-dbutils</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>

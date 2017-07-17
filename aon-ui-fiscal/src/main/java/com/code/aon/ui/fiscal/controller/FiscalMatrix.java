@@ -17,7 +17,7 @@ import org.jooq.tools.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.config.Model;
 import com.code.aon.fiscal.config.ModelConfig;
 import com.code.aon.fiscal.config.ModelManager;

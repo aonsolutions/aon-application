@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class OpenIDLoginModule extends LoginModule {
 	private final static Logger LOGGER = LoggerFactory

@@ -40,7 +40,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.velocity.app.Velocity;
 import org.codehaus.plexus.util.StringUtils;
 
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
 
 /**

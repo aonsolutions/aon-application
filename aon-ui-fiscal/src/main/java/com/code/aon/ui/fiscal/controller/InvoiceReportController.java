@@ -15,10 +15,10 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.invoice.InvoiceReportManager;
 import com.code.aon.fiscal.invoice.InvoiceReportParams;
-import com.code.aon.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.util.AonUtil;
 

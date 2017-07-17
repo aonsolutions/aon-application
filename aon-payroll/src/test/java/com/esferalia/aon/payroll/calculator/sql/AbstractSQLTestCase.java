@@ -60,7 +60,7 @@ import org.junit.Before;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.config.enumeration.Administration;
-import com.code.aon.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLException;
 import com.code.aon.master.CreateDB;
 import com.code.aon.master.VersionManager;
 import com.code.aon.person.enumeration.Gender;

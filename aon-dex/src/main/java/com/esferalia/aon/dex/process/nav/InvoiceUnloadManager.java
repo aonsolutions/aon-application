@@ -45,7 +45,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.data.enumeration.DataAttachmentSource;
 import com.code.aon.data.enumeration.DataAttachmentType;
-import com.code.aon.dbutils.DatabaseUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.esferalia.aon.dex.IDataLoadConstants;
