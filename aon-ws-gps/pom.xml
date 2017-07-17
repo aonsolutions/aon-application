@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -52,7 +52,7 @@
           <execution>
             <id>execution1</id>
             <phase>package</phase>
-            <configuration />
+            <configuration/>
             <goals>
               <goal>manifest</goal>
             </goals>
@@ -68,12 +68,12 @@
     </plugins>
   </build>
   <dependencies>
-	<dependency>
-		<groupId>com.code.aon</groupId>
-		<artifactId>aon.pool</artifactId>
-		<version>${project.version}</version>
-		<scope>provided</scope>
-	</dependency>
+    <dependency>
+      <groupId>net.aonsolutions.core</groupId>
+      <artifactId>pool</artifactId>
+      <version>9.00-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.pms</artifactId>

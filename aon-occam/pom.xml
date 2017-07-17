@@ -39,9 +39,9 @@
 		 -->
 		
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.pool</artifactId>
-			<version>${project.version}</version>
+			<groupId>net.aonsolutions.core</groupId>
+			<artifactId>pool</artifactId>
+			<version>9.00-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

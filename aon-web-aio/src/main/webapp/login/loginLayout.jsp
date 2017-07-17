@@ -43,13 +43,13 @@ try {
 <%
 	com.code.aon.ui.dbutils.controller.DatabaseUptodate du = new com.code.aon.ui.dbutils.controller.DatabaseUptodate();
 	if (du.isUpdatable()) {
-		throw new com.code.aon.pool.AonConnectionException("La base de datos necesita ser actualizada. <br/> Versión actual de la BD: " + du.getCurrentVersion());
+		throw new net.aonsolutions.core.pool.AonConnectionException("La base de datos necesita ser actualizada. <br/> Versión actual de la BD: " + du.getCurrentVersion());
 	}
 	HttpSession session = request.getSession(false);
 	if ( session != null ) {
 		boolean loginServletFail = "true".equals(session.getAttribute("loginServletFail"));
 		if ( loginServletFail ) {
-			throw new com.code.aon.pool.AonConnectionException(commonBundle.getString("aon_login_err"));
+			throw new net.aonsolutions.core.pool.AonConnectionException(commonBundle.getString("aon_login_err"));
 		}		
 	}
 %>	
@@ -274,7 +274,7 @@ try {
 	</div>
 </body>
 <%
-	} catch (com.code.aon.pool.AonConnectionException e){
+	} catch (net.aonsolutions.core.pool.AonConnectionException e){
 %>
 <head>
 <style type="text/css">

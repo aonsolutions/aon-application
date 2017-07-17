@@ -77,11 +77,11 @@
 
 									<sources>
 										<softlinkSource>											
-											<location>/usr/share/java/dbutils.jar</location>
+											<location>/usr/share/java/dbutils-${project.dependencies[0].version}.jar</location>
 											<destination>${project.artifactId}.jar</destination>
 										</softlinkSource>
 										<softlinkSource>											
-											<location>/usr/share/java/commons-dbutil.jar</location>
+											<location>/usr/share/java/commons-dbutils-${project.dependencies[1].version}.jar</location>
 											<destination>commons-dbutils.jar</destination>
 										</softlinkSource>
 									</sources>
