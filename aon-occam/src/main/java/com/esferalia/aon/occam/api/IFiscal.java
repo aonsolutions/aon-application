@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
 public interface IFiscal {
 	// 			        VAT
@@ -99,6 +101,20 @@ public interface IFiscal {
 	public void deleteMod3902015(AONContext ctx,Mod3902015 mod390);
 	public Mod3902015 initializeMod3902015(AONContext ctx, int year);
 	
+	// 				   		  MOD303
+	public Mod303 getMod303(AONContext ctx, int id);
+	public LinkedList<Mod303> getMod303s(AONContext ctx, int domain);
+	public Mod303 calculateMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 saveMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 saveCommentsMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 initializeForFinishMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 finishMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 reopenMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 createMod303(AONContext ctx, Mod303 mod303);
+	public void deleteMod303(AONContext ctx, Mod303 mod303);
+	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
+
 	// 				   		  MOD111
 	public Mod111 getMod111(AONContext ctx, int id);
 	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain);

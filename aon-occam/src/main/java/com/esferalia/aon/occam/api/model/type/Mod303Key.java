@@ -1,266 +1,503 @@
 package com.esferalia.aon.occam.api.model.type;
 
-import java.io.Serializable;
-
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum Mod303Key implements Serializable  {
+public enum Mod303Key implements IFiscalModelKey  {
+	// Á --> \u00C1 á --> \u00E1 
+	// É --> \u00C9 é --> \u00E9 
+	// Í --> \u00CD í --> \u00ED 
+	// Ó --> \u00D3 ó --> \u00F3 
+	// Ú --> \u00DA ú --> \u00FA ... acento
+	// Ü --> \u00DC ü --> \u00fc ... diéresis
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// º --> \u00BA ª --> \u00AA 
+	// ¿ --> \u00BF
 
+	// 	----------------------------------------------------------------------------------  
+	// 	--------------------------------------------------------------------  AEAT -------
+	// 	----------------------------------------------------------------------------------
+	 CT_X01("303-CTX01", 0,"Porcentaje de prorrata.")
+	 
+	,CT_A01("303-CTA01", 0,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual (Art. 30 RIVA)?")
+	,CT_A02("303-CTA02", 0,"\u00BFTributa exclusivamente en r\u00E9gimen simplificado?")
+	,CT_A03("303-CTA03", 0,"\u00BFEs autoliquidaci\u00F3n conjunta?")
+	,CT_A04("303-CTA04", 0,"\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?")
+	,CT_A05("303-CTA05", 0,"Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")
+	,CT_A06("303-CTA06", 0,"Auto de declaraci\u00F3n de concurso dictado en el per\u00EDodo")
+	,CT_A07("303-CTA07", 0,"\u00BFHa optado por el r\u00E9gimen especial del criterio de Caja (art. 163 undecies LIVA)?")
+	,CT_A08("303-CTA08", 0,"\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
+	,CT_A09("303-CTA09", 0,"Opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
+	,CT_A10("303-CTA10", 0,"Revocaci\u00F3n de la opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
+	,CT_A11("303-CTA11", 0,"Tipo de delcaraci\u00F3n")
 	
-	H1       ("303-H1"),
-	CAG1     ("303-AG1"),
-		CAG1_V1  ("303-AG1V1"),
-		CAG1_V2  ("303-AG1V2"),	
-		CAG1_V3  ("303-AG1V3"),	
-		CAG1_V4  ("303-AG1V4"),
-		CAG1_V5  ("303-AG1V5"),
-		CAG1_V6  ("303-AG1V6"),
-		CAG1_V7  ("303-AG1V7"),	
-	CAG2     ("303-AG2"  ),
-		CAG2_V1  ("303-AG2V1"),
-		CAG2_V2  ("303-AG2V2"),	
-		CAG2_V3  ("303-AG2V3"),	
-		CAG2_V4  ("303-AG2V4"),
-		CAG2_V5  ("303-AG2V5"),
-		CAG2_V6  ("303-AG2V6"),
-		CAG2_V7  ("303-AG2V7"),	
-	CAG3     ("303-AG3"  ),
-		CAG3_V1  ("303-AG3V1"),
-		CAG3_V2  ("303-AG3V2"),	
-		CAG3_V3  ("303-AG3V3"),	
-		CAG3_V4  ("303-AG3V4"),
-		CAG3_V5  ("303-AG3V5"),
-		CAG3_V6  ("303-AG3V6"),
-		CAG3_V7  ("303-AG3V7"),	
-	CAG4     ("303-AG4"  ),
-		CAG4_V1  ("303-AG4V1"),
-		CAG4_V2  ("303-AG4V2"),	
-		CAG4_V3  ("303-AG4V3"),	
-		CAG4_V4  ("303-AG4V4"),
-		CAG4_V5  ("303-AG4V5"),
-		CAG4_V6  ("303-AG4V6"),
-		CAG4_V7  ("303-AG4V7"),
-	H2       ("303-H2"   ),
-	CAC1     ("303-AC1"  ),
-		CAC1_M1U ("303-AC1M1U" ),
-		CAC1_M1I ("303-AC1M1I" ),
-		CAC1_M2U ("303-AC1M2U" ),
-		CAC1_M2I ("303-AC1M2I" ),
-		CAC1_M3U ("303-AC1M3U" ),
-		CAC1_M3I ("303-AC1M3I" ),
-		CAC1_M4U ("303-AC1M4U" ),
-		CAC1_M4I ("303-AC1M4I" ),
-		CAC1_M5U ("303-AC1M5U" ),
-		CAC1_M5I ("303-AC1M5I" ),
-		CAC1_M6U ("303-AC1M6U" ),
-		CAC1_M6I ("303-AC1M6I" ),
-		CAC1_M7U ("303-AC1M7U" ),
-		CAC1_M7I ("303-AC1M7I" ),
-		CAC1_C   ("303-AC1C"   ),
-		CAC1_D   ("303-AC1D"   ),
-		CAC1_Z   ("303-AC1Z"   ),
-		CAC1_ZA  ("303-AC1ZA"  ),
-		CAC1_ZD  ("303-AC1ZD"  ),
-		CAC1_E   ("303-AC1E"   ),
-		CAC1_F   ("303-AC1F"   ),
-		CAC1_G0  ("303-AC1G0"   ),
-		CAC1_G   ("303-AC1G"   ),
-		CAC1_H   ("303-AC1H"   ),
-		CAC1_HA  ("303-AC1HA"  ),
-		CAC1_HD  ("303-AC1HD"  ),
-		CAC1_HT  ("303-AC1HT"  ),
-		CAC1_I   ("303-AC1I"   ),
-		CAC1_J   ("303-AC1J"   ),
-		CAC1_K   ("303-AC1K"   ),
-		CAC1_L   ("303-AC1L"   ),
-		CAC1_M   ("303-AC1M"   ),
-	CAC2     ("303-AC2"  ),
-		CAC2_M1U ("303-AC2M1U" ),
-		CAC2_M1I ("303-AC2M1I" ),
-		CAC2_M2U ("303-AC2M2U" ),
-		CAC2_M2I ("303-AC2M2I" ),
-		CAC2_M3U ("303-AC2M3U" ),
-		CAC2_M3I ("303-AC2M3I" ),
-		CAC2_M4U ("303-AC2M4U" ),
-		CAC2_M4I ("303-AC2M4I" ),
-		CAC2_M5U ("303-AC2M5U" ),
-		CAC2_M5I ("303-AC2M5I" ),
-		CAC2_M6U ("303-AC2M6U" ),
-		CAC2_M6I ("303-AC2M6I" ),
-		CAC2_M7U ("303-AC2M7U" ),
-		CAC2_M7I ("303-AC2M7I" ),
-		CAC2_C   ("303-AC2C"   ),
-		CAC2_D   ("303-AC2D"   ),
-		CAC2_Z   ("303-AC2Z"   ),
-		CAC2_ZA  ("303-AC2ZA"  ),
-		CAC2_ZD  ("303-AC2ZD"  ),
-		CAC2_E   ("303-AC2E"   ),
-		CAC2_F   ("303-AC2F"   ),
-		CAC2_G0  ("303-AC2G0"   ),
-		CAC2_G   ("303-AC2G"   ),
-		CAC2_H   ("303-AC2H"   ),
-		CAC2_HA  ("303-AC2HA"  ),
-		CAC2_HD  ("303-AC2HD"  ),
-		CAC2_HT  ("303-AC2HT"  ),
-		CAC2_I   ("303-AC2I"   ),
-		CAC2_J   ("303-AC2J"   ),
-		CAC2_K   ("303-AC2K"   ),
-		CAC2_L   ("303-AC2L"   ),
-		CAC2_M   ("303-AC2M"   ),
-	CAC3     ("303-AC3"  ),
-		CAC3_M1U ("303-AC3M1U" ), 
-		CAC3_M1I ("303-AC3M1I" ),
-		CAC3_M2U ("303-AC3M2U" ),
-		CAC3_M2I ("303-AC3M2I" ),
-		CAC3_M3U ("303-AC3M3U" ),
-		CAC3_M3I ("303-AC3M3I" ),
-		CAC3_M4U ("303-AC3M4U" ),
-		CAC3_M4I ("303-AC3M4I" ),
-		CAC3_M5U ("303-AC3M5U" ),
-		CAC3_M5I ("303-AC3M5I" ),
-		CAC3_M6U ("303-AC3M6U" ),
-		CAC3_M6I ("303-AC3M6I" ),
-		CAC3_M7U ("303-AC3M7U" ),
-		CAC3_M7I ("303-AC3M7I" ),
-		CAC3_C   ("303-AC3C"   ),
-		CAC3_D   ("303-AC3D"   ),
-		CAC3_Z   ("303-AC3Z"   ),
-		CAC3_ZA  ("303-AC3ZA"  ),
-		CAC3_ZD  ("303-AC3ZD"  ),
-		CAC3_E   ("303-AC3E"   ),
-		CAC3_F   ("303-AC3F"   ),
-		CAC3_G0  ("303-AC3G0"   ),
-		CAC3_G   ("303-AC3G"   ),
-		CAC3_H   ("303-AC3H"   ),
-		CAC3_HA  ("303-AC3HA"  ),
-		CAC3_HD  ("303-AC3HD"  ),
-		CAC3_HT  ("303-AC3HT"  ),
-		CAC3_I   ("303-AC3I"   ),
-		CAC3_J   ("303-AC3J"   ),
-		CAC3_K   ("303-AC3K"   ),
-		CAC3_L   ("303-AC3L"   ),
-		CAC3_M   ("303-AC3M"   ),
-	CAC4     ("303-AC4"  ),
-		CAC4_M1U ("303-AC4M1U"), 
-		CAC4_M1I ("303-AC4M1I" ),
-		CAC4_M2U ("303-AC4M2U" ),
-		CAC4_M2I ("303-AC4M2I" ),
-		CAC4_M3U ("303-AC4M3U" ),
-		CAC4_M3I ("303-AC4M3I" ),
-		CAC4_M4U ("303-AC4M4U" ),
-		CAC4_M4I ("303-AC4M4I" ),
-		CAC4_M5U ("303-AC4M5U" ),
-		CAC4_M5I ("303-AC4M5I" ),
-		CAC4_M6U ("303-AC4M6U" ),
-		CAC4_M6I ("303-AC4M6I" ),
-		CAC4_M7U ("303-AC4M7U" ),
-		CAC4_M7I ("303-AC4M7I" ),
-		CAC4_C   ("303-AC4C"   ),
-		CAC4_D   ("303-AC4D"   ),
-		CAC4_Z   ("303-AC4Z"   ),
-		CAC4_ZA  ("303-AC4ZA"  ),
-		CAC4_ZD  ("303-AC4ZD"  ),
-		CAC4_E   ("303-AC4E"   ),
-		CAC4_F   ("303-AC4F"   ),
-		CAC4_G0  ("303-AC4G0"   ),
-		CAC4_G   ("303-AC4G"   ),
-		CAC4_H   ("303-AC4H"   ),
-		CAC4_HA  ("303-AC4HA"  ),
-		CAC4_HD  ("303-AC4HD"  ),
-		CAC4_HT  ("303-AC4HT"  ),
-		CAC4_I   ("303-AC4I"   ),
-		CAC4_J   ("303-AC4J"   ),
-		CAC4_K   ("303-AC4K"   ),
-		CAC4_L   ("303-AC4L"   ),
-		CAC4_M   ("303-AC4M"   ),
-	C47      ("303-47"   ),
-	C48      ("303-48"   ),
-	C49      ("303-49"   ),
-	C50      ("303-50"   ),
-	H3       ("303-H3"   ),
-	C51      ("303-51"   ),
-	C52      ("303-52"   ),
-	C53      ("303-53"   ),
-	C54      ("303-54"   ),
-	H4       ("303-H4"   ),
-	C55      ("303-55"   ),
-	C56      ("303-56"   ),
-	C57      ("303-57"   ),
-	C58      ("303-58"   ),
-	H5       ("303-H5"   ),
-	C64      ("303-64"   ),
-	C65      ("303-65"   ),
-	C66      ("303-66"   ),
-	C67      ("303-67"   ),
-	C68      ("303-68"   ),
-	C69      ("303-69"   ),
-	C70      ("303-70"   ),
-	C71      ("303-71"   ),
-	PBK  	 ("303-PBK"  ),
-	C59      ("303-59"   ),
-	C60      ("303-60"   ),
-	C61      ("303-61"   ),
-	C62      ("303-62"   ),
-	C63      ("303-63"   ),
-	C74      ("303-74"   ),
-	C75      ("303-75"   ),
-	IAC_01	 ("303-IAC01"),
-	IAE_01	 ("303-IAE01"),
-	IAD_01	 ("303-IAD01"),
-	IAC_02	 ("303-IAC02"),
-	IAE_02	 ("303-IAE02"),
-	IAD_02	 ("303-IAD02"),
-	IAC_03	 ("303-IAC03"),
-	IAE_03	 ("303-IAE03"),
-	IAD_03	 ("303-IAD03"),
-	IAC_04	 ("303-IAC04"),
-	IAE_04	 ("303-IAE04"),
-	IAD_04	 ("303-IAD04"),
-	IAC_05	 ("303-IAC05"),
-	IAE_05	 ("303-IAE05"),
-	IAD_05	 ("303-IAD05"),
-	IAC_06	 ("303-IAC06"),
-	IAE_06	 ("303-IAE06"),
-	IAD_06	 ("303-IAD06"),
-	D		 ("303-D"    ),
-	C80      ("303-80"   ),
-	C81      ("303-81"   ),
-	C82      ("303-82"   ),
-	C83      ("303-83"   ),
-	C84      ("303-84"   ),
-	C85      ("303-85"   ),
-	C86      ("303-86"   ),
-	C87      ("303-87"   ),
-	C88      ("303-88"   )
+	,CT_C01("303-CTC01", 1,"R\u00E9gimen general - Base imponible")
+	,CT_C02("303-CTC02", 2,"R\u00E9gimen general - Tipo %")
+	,CT_C03("303-CTC03", 3,"R\u00E9gimen general - Cuota")
+	,CT_C04("303-CTC04", 4,"R\u00E9gimen general - Base imponible")
+	,CT_C05("303-CTC05", 5,"R\u00E9gimen general - Tipo %")
+	,CT_C06("303-CTC06", 6,"R\u00E9gimen general - Cuota")
+	,CT_C07("303-CTC07", 7,"R\u00E9gimen general - Base imponible")
+	,CT_C08("303-CTC08", 8,"R\u00E9gimen general - Tipo %")
+	,CT_C09("303-CTC09", 9,"R\u00E9gimen general - Cuota")
+	
+	,CT_C10("303-CTC10",10,"Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
+	,CT_C11("303-CTC11",11,"Adquisiciones intracomunitarias de bienes y servicios - Cuota")
+	,CT_C12("303-CTC12",12,"Otras operaciones con inversi\u00F3n del sujeto pasivo (excepto. adq. intracom) - Base imponible")
+	,CT_C13("303-CTC13",13,"Otras operaciones con inversi\u00F3n del sujeto pasivo (excepto. adq. intracom) - Cuota")
+	,CT_C14("303-CTC14",14,"Modificaci\u00F3n bases y cuotas - Base imponible")
+	,CT_C15("303-CTC15",15,"Modificaci\u00F3n bases y cuotas - Cuota")
+	,CT_C16("303-CTC16",16,"Recargo equivalencia - Base imponible")
+	,CT_C17("303-CTC17",17,"Recargo equivalencia - Tipo %")
+	,CT_C18("303-CTC18",18,"Recargo equivalencia - Cuota")
+	,CT_C19("303-CTC19",19,"Recargo equivalencia - Base imponible")
+	,CT_C20("303-CTC20",20,"Recargo equivalencia - Tipo")
+	,CT_C21("303-CTC21",21,"Recargo equivalencia - Cuota")
+	,CT_C22("303-CTC22",22,"Recargo equivalencia - Base imponible")
+	,CT_C23("303-CTC23",23,"Recargo equivalencia - Tipo")
+	,CT_C24("303-CTC24",24,"Recargo equivalencia - Cuota")
+	,CT_C25("303-CTC25",25,"Modificaciones bases y cuotas del recargo de equivalencia - Base imponible")
+	,CT_C26("303-CTC26",26,"Modificaciones bases y cuotas del recargo de equivalencia - Cuota")
+	,CT_C27("303-CTC27",27,"Total cuota devengada")
+	
+	,CT_C28("303-CTC28",28,"Por cuotas soportadas en operaciones interiores corrientes - Base")
+	,CT_C29("303-CTC29",29,"Por cuotas soportadas en operaciones interiores corrientes - Cuota")
+	,CT_C30("303-CTC30",30,"Por cuotas soportadas en operaciones interiores con bienes de inversi\u00F3n - Base") 
+	,CT_C31("303-CTC31",31,"Por cuotas soportadas en operaciones interiores con bienes de inversi\u00F3n - Cuota")
+	,CT_C32("303-CTC32",32,"Por cuotas soportadas en las importaciones de bienes corrientes - Base")
+	,CT_C33("303-CTC33",33,"Por cuotas soportadas en las importaciones de bienes corrientes - Cuota")
+	,CT_C34("303-CTC34",34,"Por cuotas soportadas en las importaciones de bienes de inversi\u00F3n - Base")
+	,CT_C35("303-CTC35",35,"Por cuotas soportadas en las importaciones de bienes de inversi\u00F3n - Cuota")
+	,CT_C36("303-CTC36",36,"En adquisiciones intracomunitarias de bienes y servicios corrientes - Base")
+	,CT_C37("303-CTC37",37,"En adquisiciones intracomunitarias de bienes y servicios corrientes - Cuota")
+	,CT_C38("303-CTC38",38,"En adquisiciones intracomunitarias de bienes de inversi\u00F3n - Base")
+	,CT_C39("303-CTC39",39,"En adquisiciones intracomunitarias de bienes de inversi\u00F3n - Cuota")
+	,CT_C40("303-CTC40",40,"Rectificaci\u00F3n de deducciones - Base")
+	,CT_C41("303-CTC41",41,"Rectificaci\u00F3n de deducciones - Cuota")
+	,CT_C42("303-CTC42",42,"Compensaciones R\u00E9gimen Especial A.G. y P. - Cuota")
+	,CT_C43("303-CTC43",43,"Regularizaci\u00F3n inversiones - Cuota")
+	,CT_C44("303-CTC44",44,"Regularizaci\u00F3n por aplicaci\u00F3n del porcentaje definitivo de prorrata - Cuota")
+	,CT_C45("303-CTC45",45,"Total a deducir - Cuota")
+	,CT_C46("303-CTC46",46,"Resultado r\u00E9gimen general - Cuota") 
+
+	,CT_SA11("303-CTS11", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - C\u00F3digo")
+	,CT_SA12("303-CTS12", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - Volumen de ingresos")
+	,CT_SA13("303-CTS13", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - Indice de cuota")
+	,CT_SA14("303-CTS14", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - Cuota devengada")
+	,CT_SA15("303-CTS15", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - 1T/2T/3T - Porcentaje trimestral")
+	,CT_SA16("303-CTS16", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - 1T/2T/3T - Ingreso a cuenta [A]")
+	,CT_SA17("303-CTS17", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - 4T - Cuota soportada")
+	,CT_SA18("303-CTS18", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 1 - 4T - Cuota anual derivada del regimen simplificado [B]")
+	,CT_SA21("303-CTS21", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - C\u00F3digo")
+	,CT_SA22("303-CTS22", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - Volumen de ingresos")
+	,CT_SA23("303-CTS23", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - Indice de cuota")
+	,CT_SA24("303-CTS24", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - Cuota devengada")
+	,CT_SA25("303-CTS25", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - 1T/2T/3T - Porcentaje trimestral")
+	,CT_SA26("303-CTS26", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - 1T/2T/3T - Ingreso a cuenta [A]")
+	,CT_SA27("303-CTS27", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - 4T - Cuota soportada")
+	,CT_SA28("303-CTS28", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 2 - 4T - Cuota anual derivada del regimen simplificado [B]")
+	,CT_SA31("303-CTS31", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - C\u00F3digo")
+	,CT_SA32("303-CTS32", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - Volumen de ingresos")
+	,CT_SA33("303-CTS33", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - Indice de cuota")
+	,CT_SA34("303-CTS34", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - Cuota devengada")
+	,CT_SA35("303-CTS35", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - 1T/2T/3T - Porcentaje trimestral")
+	,CT_SA36("303-CTS36", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - 1T/2T/3T - Ingreso a cuenta [A]")
+	,CT_SA37("303-CTS37", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - 4T - Cuota soportada")
+	,CT_SA38("303-CTS38", 0,"Actividades agr\u00EDcolas, ganaderas y forestales - Actividad 3 - 4T - Cuota anual derivada del regimen simplificado [B]")
+	
+	,CT_S101("303-CTS101", 0,"Actividad 1 - Epigrafe IAE")
+	,CT_S102("303-CTS102", 0,"Actividad 1 - Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722")
+	,CT_S103("303-CTS103", 0,"Actividad 1 - M\u00F3dulo 1 - N\u00BA Unidades")
+	,CT_S104("303-CTS104", 0,"Actividad 1 - M\u00F3dulo 1 - Importe")
+	,CT_S105("303-CTS105", 0,"Actividad 1 - M\u00F3dulo 2 - N\u00BA Unidades")
+	,CT_S106("303-CTS106", 0,"Actividad 1 - M\u00F3dulo 2 - Importe")
+	,CT_S107("303-CTS107", 0,"Actividad 1 - M\u00F3dulo 3 - N\u00BA Unidades")
+	,CT_S108("303-CTS108", 0,"Actividad 1 - M\u00F3dulo 3 - Importe")
+	,CT_S109("303-CTS109", 0,"Actividad 1 - M\u00F3dulo 4 - N\u00BA Unidades")
+	,CT_S110("303-CTS110", 0,"Actividad 1 - M\u00F3dulo 4 - Importe")
+	,CT_S111("303-CTS111", 0,"Actividad 1 - M\u00F3dulo 5 - N\u00BA Unidades")
+	,CT_S112("303-CTS112", 0,"Actividad 1 - M\u00F3dulo 5 - Importe")
+	,CT_S113("303-CTS113", 0,"Actividad 1 - M\u00F3dulo 6 - N\u00BA Unidades")
+	,CT_S114("303-CTS114", 0,"Actividad 1 - M\u00F3dulo 6 - Importe")
+	,CT_S115("303-CTS115", 0,"Actividad 1 - M\u00F3dulo 7 - N\u00BA Unidades")
+	,CT_S116("303-CTS116", 0,"Actividad 1 - M\u00F3dulo 7 - Importe")
+	,CT_S117("303-CTS117", 0,"Actividad 1 - Cuota devengada operaciones corrientes [C]")
+	,CT_S118("303-CTS118", 0,"Actividad 1 - Reducciones [D]")
+	,CT_S119("303-CTS119", 0,"Actividad 1 - 1T/2T/3T - Indice corrector activ. de temporada [Z]")
+	,CT_S120("303-CTS120", 0,"Actividad 1 - 1T/2T/3T - Porcentaje ingreso a cuenta [E]")
+	,CT_S121("303-CTS121", 0,"Actividad 1 - 1T/2T/3T - Ingreso a cuenta ( ([C] - [D] ) x [E]) [F]")
+	,CT_S122("303-CTS122", 0,"Actividad 1 - 4T - Cuotas soportadas operaciones corrientes [G]")
+	,CT_S123("303-CTS123", 0,"Actividad 1 - 4T - \u00CDndice corrector de actividades de temporada [H]")
+	,CT_S124("303-CTS124", 0,"Actividad 1 - 4T - RESULTADO (( [C] - [D] - [G] ) x [H]) [I]")
+	,CT_S125("303-CTS125", 0,"Actividad 1 - 4T - Porcentaje cuota m\u00EDnima [J]")
+	,CT_S126("303-CTS126", 0,"Actividad 1 - 4T - Devoluci\u00F3n cuotas soportadas otros pa\u00EDses [K]")
+	,CT_S127("303-CTS127", 0,"Actividad 1 - 4T - Cuota m\u00EDnima [L]")
+	,CT_S128("303-CTS128", 0,"Actividad 1 - 4T - Cuota anual derivada RS [M]")
+
+	,CT_S201("303-CTS201", 0,"Actividad 2 - Epigrafe IAE")
+	,CT_S202("303-CTS202", 0,"Actividad 2 - Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722")
+	,CT_S203("303-CTS203", 0,"Actividad 2 - M\u00F3dulo 1 - N\u00BA Unidades")
+	,CT_S204("303-CTS204", 0,"Actividad 2 - M\u00F3dulo 1 - Importe")
+	,CT_S205("303-CTS205", 0,"Actividad 2 - M\u00F3dulo 2 - N\u00BA Unidades")
+	,CT_S206("303-CTS206", 0,"Actividad 2 - M\u00F3dulo 2 - Importe")
+	,CT_S207("303-CTS207", 0,"Actividad 2 - M\u00F3dulo 3 - N\u00BA Unidades")
+	,CT_S208("303-CTS208", 0,"Actividad 2 - M\u00F3dulo 3 - Importe")
+	,CT_S209("303-CTS209", 0,"Actividad 2 - M\u00F3dulo 4 - N\u00BA Unidades")
+	,CT_S210("303-CTS210", 0,"Actividad 2 - M\u00F3dulo 4 - Importe")
+	,CT_S211("303-CTS211", 0,"Actividad 2 - M\u00F3dulo 5 - N\u00BA Unidades")
+	,CT_S212("303-CTS212", 0,"Actividad 2 - M\u00F3dulo 5 - Importe")
+	,CT_S213("303-CTS213", 0,"Actividad 2 - M\u00F3dulo 6 - N\u00BA Unidades")
+	,CT_S214("303-CTS214", 0,"Actividad 2 - M\u00F3dulo 6 - Importe")
+	,CT_S215("303-CTS215", 0,"Actividad 2 - M\u00F3dulo 7 - N\u00BA Unidades")
+	,CT_S216("303-CTS216", 0,"Actividad 2 - M\u00F3dulo 7 - Importe")
+	,CT_S217("303-CTS217", 0,"Actividad 2 - Cuota devengada operaciones corrientes [C]")
+	,CT_S218("303-CTS218", 0,"Actividad 2 - Reducciones [D]")
+	,CT_S219("303-CTS219", 0,"Actividad 2 - 1T/2T/3T - Indice corrector activ. de temporada [Z]")
+	,CT_S220("303-CTS220", 0,"Actividad 2 - 1T/2T/3T - Porcentaje ingreso a cuenta [E]")
+	,CT_S221("303-CTS221", 0,"Actividad 2 - 1T/2T/3T - Ingreso a cuenta ( ([C] - [D] ) x [E]) [F]")
+	,CT_S222("303-CTS222", 0,"Actividad 2 - 4T - Cuotas soportadas operaciones corrientes [G]")
+	,CT_S223("303-CTS223", 0,"Actividad 2 - 4T - \u00CDndice corrector de actividades de temporada [H]")
+	,CT_S224("303-CTS224", 0,"Actividad 2 - 4T - RESULTADO (( [C] - [D] - [G] ) x [H]) [I]")
+	,CT_S225("303-CTS225", 0,"Actividad 2 - 4T - Porcentaje cuota m\u00EDnima [J]")
+	,CT_S226("303-CTS226", 0,"Actividad 2 - 4T - Devoluci\u00F3n cuotas soportadas otros pa\u00EDses [K]")
+	,CT_S227("303-CTS227", 0,"Actividad 2 - 4T - Cuota m\u00EDnima [L]")
+	,CT_S228("303-CTS228", 0,"Actividad 2 - 4T - Cuota anual derivada RS [M]")
+
+	,CT_S301("303-CTS301", 0,"Actividad 3 - Epigrafe IAE")
+	,CT_S302("303-CTS302", 0,"Actividad 3 - Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722")
+	,CT_S303("303-CTS303", 0,"Actividad 3 - M\u00F3dulo 1 - N\u00BA Unidades")
+	,CT_S304("303-CTS304", 0,"Actividad 3 - M\u00F3dulo 1 - Importe")
+	,CT_S305("303-CTS305", 0,"Actividad 3 - M\u00F3dulo 2 - N\u00BA Unidades")
+	,CT_S306("303-CTS306", 0,"Actividad 3 - M\u00F3dulo 2 - Importe")
+	,CT_S307("303-CTS307", 0,"Actividad 3 - M\u00F3dulo 3 - N\u00BA Unidades")
+	,CT_S308("303-CTS308", 0,"Actividad 3 - M\u00F3dulo 3 - Importe")
+	,CT_S309("303-CTS309", 0,"Actividad 3 - M\u00F3dulo 4 - N\u00BA Unidades")
+	,CT_S310("303-CTS310", 0,"Actividad 3 - M\u00F3dulo 4 - Importe")
+	,CT_S311("303-CTS311", 0,"Actividad 3 - M\u00F3dulo 5 - N\u00BA Unidades")
+	,CT_S312("303-CTS312", 0,"Actividad 3 - M\u00F3dulo 5 - Importe")
+	,CT_S313("303-CTS313", 0,"Actividad 3 - M\u00F3dulo 6 - N\u00BA Unidades")
+	,CT_S314("303-CTS314", 0,"Actividad 3 - M\u00F3dulo 6 - Importe")
+	,CT_S315("303-CTS315", 0,"Actividad 3 - M\u00F3dulo 7 - N\u00BA Unidades")
+	,CT_S316("303-CTS316", 0,"Actividad 3 - M\u00F3dulo 7 - Importe")
+	,CT_S317("303-CTS317", 0,"Actividad 3 - Cuota devengada operaciones corrientes [C]")
+	,CT_S318("303-CTS318", 0,"Actividad 3 - Reducciones [D]")
+	,CT_S319("303-CTS319", 0,"Actividad 3 - 1T/2T/3T - Indice corrector activ. de temporada [Z]")
+	,CT_S320("303-CTS320", 0,"Actividad 3 - 1T/2T/3T - Porcentaje ingreso a cuenta [E]")
+	,CT_S321("303-CTS321", 0,"Actividad 3 - 1T/2T/3T - Ingreso a cuenta ( ([C] - [D] ) x [E]) [F]")
+	,CT_S322("303-CTS322", 0,"Actividad 3 - 4T - Cuotas soportadas operaciones corrientes [G]")
+	,CT_S323("303-CTS323", 0,"Actividad 3 - 4T - \u00CDndice corrector de actividades de temporada [H]")
+	,CT_S324("303-CTS324", 0,"Actividad 3 - 4T - RESULTADO (( [C] - [D] - [G] ) x [H]) [I]")
+	,CT_S325("303-CTS325", 0,"Actividad 3 - 4T - Porcentaje cuota m\u00EDnima [J]")
+	,CT_S326("303-CTS326", 0,"Actividad 3 - 4T - Devoluci\u00F3n cuotas soportadas otros pa\u00EDses [K]")
+	,CT_S327("303-CTS327", 0,"Actividad 3 - 4T - Cuota m\u00EDnima [L]")
+	,CT_S328("303-CTS328", 0,"Actividad 3 - 4T - Cuota anual derivada RS [M]")
+	
+	,CT_S47("303-CTS47",47,"Actividades en RS - 1T/2T/3T - Suma de ingresos a cuenta del conjunto de actividades")
+	,CT_S48("303-CTS48",48,"Actividades en RS - 4T - Suma de cuotas derivadas RS del conjunto de actividades")
+	,CT_S49("303-CTS49",49,"Liquidaci\u00F3n - RS - (A+B) Actividades en RS - 4T - Suma de ingresos a cuenta realizados en el ejercicio")
+	,CT_S50("303-CTS50",50,"Liquidaci\u00F3n - RS - (A+B) Actividades en RS - 4T - Resultado")
+	,CT_S51("303-CTS51",51,"Liquidaci\u00F3n - RS - Cuotas devengadas - Adquisiciones intracomunitarias de bienes")
+	,CT_S52("303-CTS52",52,"Liquidaci\u00F3n - RS - Cuotas devengadas - Entregas de activos fijos")
+	,CT_S53("303-CTS53",53,"Liquidaci\u00F3n - RS - Cuotas devengadas - IVA devengado por inversi\u00F3n del sujeto pasivo")
+	,CT_S54("303-CTS54",54,"Liquidaci\u00F3n - RS - Cuotas devengadas - Total cuota resultante")
+	,CT_S55("303-CTS55",55,"Liquidaci\u00F3n - RS - IVA deducible - Adquisici\u00F3n o importaci\u00F3n de activos fijos")
+	,CT_S56("303-CTS56",56,"Liquidaci\u00F3n - RS - IVA deducible - Regularizaci\u00F3n bienes de inversi\u00F3n")
+	,CT_S57("303-CTS57",57,"Liquidaci\u00F3n - RS - IVA deducible - Total IVA deducible")
+	,CT_S58("303-CTS58",58,"Liquidaci\u00F3n - RS - Resultado RS")
+	
+
+	,CT_C59("303-CTA59",59,"Entregas intracomunitarias de bienes y servicios")
+	,CT_C60("303-CTA60",60,"Exportaciones y operaciones asimiladas")
+	,CT_C61("303-CTA61",61,"Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n") 
+	,CT_C62("303-CTA62",62,"Criterio de Caja. Importes devengados en per\u00EDodo de liquidaci\u00F3n seg\u00FAn art. 75 LIVA. - Base Imponible")
+	,CT_C63("303-CTA63",63,"Criterio de Caja. Importes devengados en per\u00EDodo de liquidaci\u00F3n seg\u00FAn art. 75 LIVA. - Cuota")
+	,CT_C74("303-CTA74",74,"Criterio de Caja. Cuotas de IVA soportados conforme a la regla general de devengo seg\u00FAn art. 75 LIVA. - Base Imponible")
+	,CT_C75("303-CTA75",75,"Criterio de Caja. Cuotas totales de IVA soportados conforme a la regla general de devengo seg\u00FAn art. 75 LIVA. - Cuota")
+	,CT_C76("303-CTA76",76,"Regularizaci\u00F3n cuotas art. 80.cinco.5\u00AA LIVA")  
+	,CT_C64("303-CTA64",64,"Suma de resultados")
+	,CT_C65("303-CTA65",65,"% Atribuible a la Administraci\u00F3n del Estado") 
+	,CT_C66("303-CTA66",66,"Atribuible a la Administraci\u00F3n del Estado")
+	,CT_C77("303-CTA77",77,"IVA a la importaci\u00F3n liquidado por la Aduana pendiente de ingreso")  
+	,CT_C67("303-CTA67",67,"Cuotas a compensar de periodos anteriores") 
+	,CT_C68("303-CTA68",68,"Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administraci\u00F3n del Estado y a las Diputaciones Forales Resultado de la regularizaci\u00F3n anual") 
+	,CT_C69("303-CTA69",69,"Resultado") 
+	,CT_C70("303-CTA70",70,"A deducir")
+	,CT_C71("303-CTA71",71,"Resultado de la liquidaci\u00F3n") 
+	,CT_U01("303-CTU01", 0,"B - Clave - Principal")
+	,CT_U02("303-CTU02", 0,"C - Ep\u00EDgrafe IAE - Principal")
+	,CT_U03("303-CTU03", 0,"B - Clave - Otras - 1\u00AA")
+	,CT_U04("303-CTU04", 0,"C - Ep\u00EDgrafe IAE - Otras - 1\u00AA")
+	,CT_U05("303-CTU05", 0,"B - Clave - Otras - 2\u00AA")
+	,CT_U06("303-CTU06", 0,"C - Ep\u00EDgrafe IAE - Otras - 2\u00AA")
+	,CT_U07("303-CTU07", 0,"B - Clave - Otras - 3\u00AA")
+	,CT_U08("303-CTU08", 0,"C - Ep\u00EDgrafe IAE - Otras - 3\u00AA")
+	,CT_U09("303-CTU09", 0,"B - Clave - Otras - 4\u00AA")
+	,CT_U10("303-CTU10", 0,"C - Ep\u00EDgrafe IAE - Otras - 4\u00AA")
+	,CT_U11("303-CTU11", 0,"B - Clave - Otras - 5\u00AA")
+	,CT_U12("303-CTU12", 0,"C - Ep\u00EDgrafe IAE - Otras - 5\u00AA")
+	,CT_U13("303-CTU13", 0,"D - Marque si ha efectuado operaciones por las que tenga obligaci\u00F3n de presentar la declaraci\u00F3n anual de operaciones con terceras personas.")
+	,CT_C80("303-CTA80",80,"Operaciones en r\u00E9gimen general")
+	,CT_C81("303-CTA81",81,"Operaciones en r\u00E9gimen especial del criterio de caja conforme art. 75 LIVA")
+	,CT_C82("303-CTA82",82,"Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n") 
+	,CT_C83("303-CTA83",83,"Operaciones exentas sin derecho a deducci\u00F3n")
+	,CT_C84("303-CTA84",84,"Operaciones no sujetas por reglas de localizaci\u00F3n o con inversi\u00F3n del sujeto pasivo") 
+	,CT_C85("303-CTA85",85,"Entregas de bienes objeto de instalaci\u00F3n o montaje en otros Estados miembros") 
+	,CT_C86("303-CTA86",86,"Operaciones en r\u00E9gimen simplificado")
+	,CT_C87("303-CTA87",87,"Entregas de bienes inmuebles y de inversi\u00F3n y operaciones financieras no habituales")  
+	,CT_C88("303-CTA88",88,"Total volumen de operaciones")
+	,CT_U14("303-CTU14", 0,"Exonerado de presentar el modelo 390 y con volumen de operaciones cero.")
+
+	// 	----------------------------------------------------------------------------------  
+	// 	--------------------------------------------------------------------  ARABA ------
+	// 	----------------------------------------------------------------------------------
+	,AR_X01 ("303-ARX01", 0,"Porcentaje de prorrata.")
+	,AR_C907("303-AR907", 907,"\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?")
+	,AR_C092("303-AR092", 92,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual?")
+	,AR_C910("303-AR910", 910,"\u00BFHa optado por el r\u00E9gimen especial del criterio de Caja?")
+	,AR_C911("303-AR911", 911,"\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
+	,AR_C908("303-AR908", 908,"Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")
+	,AR_C909("303-AR909", 909,"Si se ha dictado auto de declaraci\u00F3n de concurso en este periodo, indique el tipo de autoliquidaci\u00F3n")
+	 
+	,AR_C001("303-AR001", 1,"R\u00E9gimen general - Base imponible")
+	,AR_C002("303-AR002", 2,"R\u00E9gimen general - Tipo %")
+	,AR_C003("303-AR003", 3,"R\u00E9gimen general - Cuota")
+	,AR_C204("303-AR204", 204,"R\u00E9gimen general - Base imponible")
+	,AR_C205("303-AR205", 205,"R\u00E9gimen general - Tipo %")
+	,AR_C206("303-AR206", 206,"R\u00E9gimen general - Cuota")
+	,AR_C207("303-AR207", 207,"R\u00E9gimen general - Base imponible")
+	,AR_C208("303-AR208", 208,"R\u00E9gimen general - Tipo %")
+	,AR_C209("303-AR209", 209,"R\u00E9gimen general - Cuota")
+	
+	,AR_C370("303-AR370",370,"Modificaci\u00F3n bases y cuotas - Base imponible")
+	,AR_C371("303-AR371",371,"Modificaci\u00F3n bases y cuotas - Cuota")
+	,AR_C372("303-AR372",372,"Inversi\u00F3n del sujeto pasivo - Base imponible")
+	,AR_C373("303-AR373",373,"Inversi\u00F3n del sujeto pasivo - Cuota")
+	
+	,AR_C010("303-AR010",10,"Recargo equivalencia - Base imponible")
+	,AR_C011("303-AR011",11,"Recargo equivalencia - Tipo %")
+	,AR_C012("303-AR012",12,"Recargo equivalencia - Cuota")
+	,AR_C213("303-AR213",213,"Recargo equivalencia - Base imponible")
+	,AR_C214("303-AR214",214,"Recargo equivalencia - Tipo")
+	,AR_C215("303-AR215",215,"Recargo equivalencia - Cuota")
+	,AR_C216("303-AR216",216,"Recargo equivalencia - Base imponible")
+	,AR_C217("303-AR217",217,"Recargo equivalencia - Tipo")
+	,AR_C218("303-AR218",218,"Recargo equivalencia - Cuota")
+	
+	,AR_C374("303-AR374",3745,"Modificaciones bases y cuotas del recargo de equivalencia - Base imponible")
+	,AR_C375("303-AR375",375,"Modificaciones bases y cuotas del recargo de equivalencia - Cuota")
+
+	,AR_C019("303-AR019",19,"Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
+	,AR_C020("303-AR020",20,"Adquisiciones intracomunitarias de bienes y servicios - Tipo %")
+	,AR_C021("303-AR021",21,"Adquisiciones intracomunitarias de bienes y servicios - Cuota")
+	,AR_C222("303-AR222",222,"Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
+	,AR_C223("303-AR223",223,"Adquisiciones intracomunitarias de bienes y servicios - Tipo %")
+	,AR_C224("303-AR224",224,"Adquisiciones intracomunitarias de bienes y servicios - Cuota")
+	,AR_C225("303-AR225",225,"Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
+	,AR_C226("303-AR226",226,"Adquisiciones intracomunitarias de bienes y servicios - Tipo %")
+	,AR_C227("303-AR227",227,"Adquisiciones intracomunitarias de bienes y servicios - Cuota")
+	
+	,AR_C376("303-AR376",376,"Modificaciones bases y cuotas Adq. Intrac. - Base imponible")
+	,AR_C377("303-AR377",377,"Modificaciones bases y cuotas Adq. Intrac. - Cuota")
+	
+	,AR_C028("303-AR028",28,"Total cuota devengada")
+	
+	,AR_C030("303-AR030",30,"IVA deducible en operaciones interiores de bienes y servicios corrientes")
+	,AR_C031("303-AR031",31,"IVA deducible en operaciones interiores de bienes de inversión")
+	,AR_C032("303-AR032",32,"IVA deducible en importaciones de bienes corrientes")
+	,AR_C033("303-AR033",33,"IVA deducible en importaciones de bienes de inversión")
+	,AR_C034("303-AR034",34,"IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes")
+	,AR_C035("303-AR035",35,"IVA deducible en adquisiciones intracomunitarias de bienes de inversión")
+	,AR_C036("303-AR036",36,"Compensaciones Régimen Especial A.G. y P .")
+	,AR_C037("303-AR037",37,"Regularización Inversiones")
+	,AR_C038("303-AR038",38,"Total a deducir")
+	
+	,AR_C039("303-AR039",39,"Diferencia")
+	
+	,AR_C040("303-AR040",40,"Volumen operaciones - % ARABA/ÁLAVA")
+	,AR_C041("303-AR041",41,"Volumen operaciones - % GIPUZKOA")
+	,AR_C042("303-AR042",42,"Volumen operaciones - % BIZKAIA")
+	,AR_C043("303-AR043",43,"Volumen operaciones - % RESTO")
+	,AR_C044("303-AR044",44,"Cuota atribuible al Territorio Histórico de Álava")
+	,AR_C045("303-AR045",45,"Cuotas a compensar de períodos anteriores en el Territorio Histórico de Álava")
+	,AR_C060("303-AR060",60,"Resultado de la autoliquidación")
+	,AR_C061("303-AR061",61,"Recargo presentación extemporánea")
+	,AR_C062("303-AR062",62,"Intereses demora")
+	,AR_C063("303-AR063",63,"A deducir (exclusivamente en el caso de autoliquidación sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y período)")
+	
+	,AR_C080("303-AR080",80,"Total deuda tributaria")
+	,AR_C081("303-AR081",81,"Total a devolver")
+	,AR_C082("303-AR082",82,"Total a compensar")
+	
+	,AR_C050("303-AR050",50,"Total entregas de bienes y prestaciones de servicios intracomunitarias")
+	,AR_C051("303-AR051",51,"Total exportaciones y operaciones asimiladas")
+	,AR_C052("303-AR052",52,"Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción")
+	
+	,AR_C180("303-AR180",180,"Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles sido aplicado el Régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Base Imponible")
+	,AR_C181("303-AR181",181,"Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles sido aplicado el Régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")
+	,AR_C182("303-AR182",182,"Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicación o afecte el Régimen especial del criterio de caja - Base Imponible")
+	,AR_C183("303-AR183",183,"Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicación o afecte el Régimen especial del criterio de caja - Cuota")
+	
+	// 	----------------------------------------------------------------------------------  
+	// 	--------------------------------------------------------------------  BIZKAIA ----
+	// 	----------------------------------------------------------------------------------
+	,BZ_C185_1("303-BZ1851", 185,"Fraccionamiento de período en concursal. Desde.")
+	,BZ_C185_2("303-BZ1852", 185,"Fraccionamiento de período en concursal. Hasta.")
+	,BZ_C186  ("303-BZ186" , 186,"Sujeto pasivo acogido al régimen especial del criterio de caja.")
+	,BZ_C187  ("303-BZ187" , 187,"Destinatario/a de operaciones a las que se aplica el régimen especial del criterio de caja")
+	,BZ_C002  ("303-BZ002" , 2  ,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual?")
+	,BZ_C003("303-BZ003",  3,"R\u00E9gimen general - Base imponible")
+	,BZ_X003("303-BZX03",  0,"R\u00E9gimen general - Tipo %")
+	,BZ_C004("303-BZ004",  4,"R\u00E9gimen general - Cuota")
+	,BZ_C005("303-BZ005",  5,"R\u00E9gimen general - Base imponible")
+	,BZ_X005("303-BZX05",  0,"R\u00E9gimen general - Tipo %")
+	,BZ_C006("303-BZ006",  6,"R\u00E9gimen general - Cuota")
+	,BZ_C007("303-BZ007",  7,"R\u00E9gimen general - Base imponible")
+	,BZ_X007("303-BZX07",  0,"R\u00E9gimen general - Tipo %")
+	,BZ_C008("303-BZ008",  8,"R\u00E9gimen general - Cuota")
+	,BZ_C009("303-BZ009",  9,"Recargo equivalencia - Base imponible")
+	,BZ_X009("303-BZX09",  0,"Recargo equivalencia - Tipo %")
+	,BZ_C010("303-BZ010", 10,"Recargo equivalencia - Cuota")
+	,BZ_C011("303-BZ011", 11,"Recargo equivalencia - Base imponible")
+	,BZ_X011("303-BZX11",  0,"Recargo equivalencia - Tipo %")
+	,BZ_C012("303-BZ012", 12,"Recargo equivalencia - Cuota")
+	,BZ_C013("303-BZ013", 13,"Recargo equivalencia - Base imponible")
+	,BZ_X013("303-BZX13",  0,"Recargo equivalencia - Tipo %")
+	,BZ_C014("303-BZ014", 14,"Recargo equivalencia - Cuota")
+	,BZ_C015("303-BZ015", 15,"Recargo equivalencia - Base imponible")
+	,BZ_X015("303-BZX15",  0,"Recargo equivalencia - Tipo %")
+	,BZ_C016("303-BZ016", 16,"Recargo equivalencia - Cuota")
+	,BZ_C017("303-BZ017", 17,"Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
+	,BZ_C018("303-BZ018", 18,"Adquisiciones intracomunitarias de bienes y servicios - Cuota")
+	,BZ_C019("303-BZ019", 19,"IVA devengado por inversión del sujeto pasivo - Base imponible")
+	,BZ_C020("303-BZ020", 20,"IVA devengado por inversión del sujeto pasivo - Cuota")
+	,BZ_C021("303-BZ021", 21,"Modificación de bases y cuotas, general - Base imponible")
+	,BZ_C022("303-BZ022", 22,"Modificación de bases y cuotas, general - Cuota")
+	,BZ_C046("303-BZ046", 46,"Modificación de bases y cuotas, artículo 80.3 y 80.4 NFIVA - Base imponible")
+	,BZ_C047("303-BZ047", 47,"Modificación de bases y cuotas, artículo 80.3 y 80.4 NFIVA - Cuota")
+	,BZ_C023("303-BZ023", 23,"Total cuota devengada")
+	,BZ_C024("303-BZ024", 24,"IVA deducible en operaciones interiores")
+	,BZ_C025("303-BZ025", 25,"IVA deducible en importaciones")
+	,BZ_C026("303-BZ026", 26,"IVA deducible en adquisiciones intracomunitarias")
+	,BZ_C027("303-BZ027", 27,"Compensaciones Régimen Especial A.G. y P .")
+	,BZ_C028("303-BZ028", 28,"Regularización Inversiones")
+	,BZ_C030("303-BZ030", 30,"Total a deducir")
+	,BZ_C031("303-BZ031", 31,"Diferencia")
+	,BZ_C045("303-BZ045", 45,"Regularización de cuotas (art.80.cinco.5a Norma Foral del IVA)")
+	,BZ_C032("303-BZ032", 32,"Porcentaje de tributación en Bizkaia")
+	,BZ_C033("303-BZ033", 33,"Cuota atribuible a Bizkaia")
+	,BZ_C034("303-BZ034", 34,"Cuota a compensar de periodos anteriores")
+	,BZ_C035("303-BZ035", 35,"Resultado de la regularización anual")
+	,BZ_C036("303-BZ036", 36,"Resultado")
+	,BZ_C038("303-BZ038", 38,"A compensar")
+	,BZ_C039("303-BZ039", 39,"A devolver")
+	,BZ_C040("303-BZ040", 40,"A ingresar")
+	,BZ_C041("303-BZ041", 41,"Cumplimentar sólo en caso de que se trate de una autoliquidación complementaria: ingresado anteriormente")
+	,BZ_C042("303-BZ042", 42,"Cumplimentar sólo en caso de que se trate de una autoliquidación complementaria: devuelto anteriormente")
+	,BZ_C043("303-BZ043", 43,"Total deuda tributaria")
+	,BZ_C200("303-BZ200",200,"Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles sido aplicado el Régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Base Imponible")
+	,BZ_C201("303-BZ201",201,"Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles sido aplicado el Régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")
+	,BZ_C202("303-BZ202",202,"Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicación o afecte el Régimen especial del criterio de caja - Base Imponible")
+	,BZ_C203("303-BZ203",203,"Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicación o afecte el Régimen especial del criterio de caja - Cuota")
+	
+	,BZ_C050("303-BZ050", 50,"Compras de bienes corrientes - Base imponible")
+	,BZ_X050("303-BZX50",  0,"Compras de bienes corrientes - Tipo %")
+	,BZ_C051("303-BZ051", 51,"Compras de bienes corrientes - Cuota")
+	,BZ_C052("303-BZ052", 52,"Compras de bienes corrientes - Cuota deducible")
+	,BZ_C053("303-BZ053", 53,"Compras de bienes corrientes - Base imponible")
+	,BZ_X053("303-BZX53",  0,"Compras de bienes corrientes - Tipo %")
+	,BZ_C054("303-BZ054", 54,"Compras de bienes corrientes - Cuota")
+	,BZ_C055("303-BZ055", 55,"Compras de bienes corrientes - Cuota deducible")
+	,BZ_C056("303-BZ056", 56,"Compras de bienes corrientes - Base imponible")
+	,BZ_X056("303-BZX56",  0,"Compras de bienes corrientes - Tipo %")
+	,BZ_C057("303-BZ057", 57,"Compras de bienes corrientes - Cuota")
+	,BZ_C058("303-BZ058", 58,"Compras de bienes corrientes - Cuota deducible")
+	,BZ_C059("303-BZ059", 59,"Compras de bienes corrientes - Base imponible")
+	,BZ_C060("303-BZ060", 60,"Compras de bienes corrientes - Cuota")
+	,BZ_C061("303-BZ061", 61,"Compras de bienes corrientes - Cuota deducible")
+	,BZ_C062("303-BZ062", 62,"Compras de bienes corrientes - Base imponible")
+	,BZ_C063("303-BZ063", 63,"Compras de bienes corrientes - Cuota")
+	,BZ_C064("303-BZ064", 64,"Compras de bienes corrientes - Cuota deducible")
+	,BZ_C065("303-BZ065", 65,"Compras de bienes corrientes - Base imponible")
+	,BZ_C066("303-BZ066", 66,"Compras de bienes corrientes - Cuota")
+	,BZ_C067("303-BZ067", 67,"Compras de bienes corrientes - Cuota deducible")
+	,BZ_C068("303-BZ068", 68,"Gastos - Base imponible")
+	,BZ_X068("303-BZX68",  0,"Gastos - Tipo %")
+	,BZ_C069("303-BZ069", 69,"Gastos - Cuota")
+	,BZ_C070("303-BZ070", 70,"Gastos - Cuota deducible")
+	,BZ_C071("303-BZ071", 71,"Gastos - Base imponible")
+	,BZ_X071("303-BZX71",  0,"Gastos - Tipo %")
+	,BZ_C072("303-BZ072", 72,"Gastos - Cuota")
+	,BZ_C073("303-BZ073", 73,"Gastos - Cuota deducible")
+	,BZ_C074("303-BZ074", 74,"Gastos - Base imponible")
+	,BZ_X074("303-BZX74",  0,"Gastos - Tipo %")
+	,BZ_C075("303-BZ075", 75,"Gastos - Cuota")
+	,BZ_C076("303-BZ076", 76,"Gastos - Cuota deducible")
+	,BZ_C077("303-BZ077", 77,"Gastos - Base imponible")
+	,BZ_C078("303-BZ078", 78,"Gastos - Cuota")
+	,BZ_C079("303-BZ079", 79,"Gastos - Cuota deducible")
+	,BZ_C080("303-BZ080", 80,"Gastos - Base imponible")
+	,BZ_C081("303-BZ081", 81,"Gastos - Cuota")
+	,BZ_C082("303-BZ082", 82,"Gastos - Cuota deducible")
+	,BZ_C083("303-BZ083", 83,"Bienes de inversión - Base imponible")
+	,BZ_X083("303-BZX83",  0,"Bienes de inversión - Tipo %")
+	,BZ_C084("303-BZ084", 84,"Bienes de inversión - Cuota")
+	,BZ_C085("303-BZ085", 85,"Bienes de inversión - Cuota deducible")
+	,BZ_C086("303-BZ086", 86,"Bienes de inversión - Base imponible")
+	,BZ_X086("303-BZX86",  0,"Bienes de inversión - Tipo %")
+	,BZ_C087("303-BZ087", 87,"Bienes de inversión - Cuota")
+	,BZ_C088("303-BZ088", 88,"Bienes de inversión - Cuota deducible")
+	,BZ_C089("303-BZ089", 89,"Bienes de inversión - Base imponible")
+	,BZ_X089("303-BZX89",  0,"Bienes de inversión - Tipo %")
+	,BZ_C090("303-BZ090", 90,"Bienes de inversión - Cuota")
+	,BZ_C091("303-BZ091", 91,"Bienes de inversión - Cuota deducible")
+	,BZ_C092("303-BZ092", 92,"Bienes de inversión - Base imponible")
+	,BZ_C093("303-BZ093", 93,"Bienes de inversión - Cuota")
+	,BZ_C094("303-BZ094", 94,"Bienes de inversión - Cuota deducible")
+	,BZ_C095("303-BZ095", 95,"Bienes de inversión - Base imponible")
+	,BZ_C096("303-BZ096", 96,"Bienes de inversión - Cuota")
+	,BZ_C097("303-BZ097", 97,"Bienes de inversión - Cuota deducible")
+	,BZ_C098("303-BZ098", 98,"Total - Base imponible")
+	,BZ_C099("303-BZ099", 99,"Total - Cuota")
+	,BZ_C100("303-BZ100",100,"Total - Cuota deducible")
+	
+	,BZ_C101("303-BZ101",101,"Prorrata general")
+	,BZ_C102("303-BZ102",102,"Prorrata especial")
+	,BZ_C103("303-BZ103",103,"Porcentaje prorrata aplicado.")
+	
+	
+	,BZ_C104("303-BZ104",104,"Exportaciones y operaciones asimiladas")
+	,BZ_C105("303-BZ105",105,"Entregas intracomunitarias")
+	,BZ_C106("303-BZ106",106,"Otras operaciones no sujetas o exentas con derecho a deducción")
+	,BZ_C107("303-BZ107",107,"Operaciones por inversión del sujeto pasivo no incluidas en liquidación")
+	,BZ_C108("303-BZ108",108,"Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicación del impuesto")
 	;
+	private String value;
+	private int box;
+	private String description;
 	
-    public static Mod303Key getKeyWithValue( String value ) {
-    	for (Mod303Key key : Mod303Key.values() ) {
-    		if (AonStringUtils.equals(value, key.getValue())) {
-    			return key;
-    		}
-    	}
-    	throw new IllegalArgumentException("No enum constant " + Mod303Key.class.getName() + " for value " + value);
-    }
-    
-    public static final String ACTIVITIES_PREFIX = "303-AC";
-    public static final String FARMING_ACTIVITIES_PREFIX = "303-AG";
-    
-    private String value;
-    
-	private Mod303Key(String value) {
+	private Mod303Key(String value,int box,String description) {
 		this.value = value;
+		this.box = box;
+		this.description = description;
 	}
     
-	public boolean isFarmer(){
-		return getValue().startsWith(FARMING_ACTIVITIES_PREFIX);
-	}
-
-	public boolean isActivity(){
-		return getValue().startsWith(ACTIVITIES_PREFIX);
-	}
-
 	public String getValue() {
 		return value;
 	}
+	public int getBox() {
+		return box;
+	}
+	public String getDescription() {
+		return description;
+	}
+	
+	public static Mod303Key getKey(String value) {
+		for (Mod303Key key : Mod303Key.values()) {
+			if (AonStringUtils.equals(key.getValue(), value)) {
+				return key;
+			}
+		}
+		return null;
+	}
+	
 }

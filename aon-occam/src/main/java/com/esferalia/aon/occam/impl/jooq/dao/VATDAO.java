@@ -125,6 +125,9 @@ public class VATDAO  {
 				});
 		return list;
 	}
+	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate) {
+		return getVatBreakdown(ctx, fromDate, toDate,null);
+	}
 	
 	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		return Stream.concat(

@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -398,6 +399,10 @@ public class FiscalModelDAO {
 		}
 	}
 	
+	public static Mod303 map303(Mod303 mod303,Record record) {
+		FiscalModelBuilder<Mod303> builder = new FiscalModelBuilder<Mod303>(new Mod303());
+		return builder.create( new FiscalModelTemplate(record) );
+	}
 	public static Mod111 map111(Mod111 mod111,Record record) {
 		FiscalModelBuilder<Mod111> builder = new FiscalModelBuilder<Mod111>(new Mod111());
 		return builder.create( new FiscalModelTemplate(record) );
