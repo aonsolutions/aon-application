@@ -87,7 +87,7 @@ public class ConnectDeliveryWriter {
 		return rectl;
 	}
 	
-	/*
+	/**
 	 * Cabecera
 	 */
 	private SEH1C createSEH1CRecord(Delivery delivery, String companyEdiCode,
@@ -258,21 +258,19 @@ public class ConnectDeliveryWriter {
 	}
 	
 
-	// TODO createSEH1GList
 	private List<SEH1G> createSEH1GList(Delivery delivery) {
 		List<SEH1G> list = new ArrayList<>();
 		createSEH1GRecord(delivery);
 		return list;
 	}
 
-	// TODO createSEH1BList
 	private List<SEH1B> createSEH1BList(Delivery delivery) {
 		List<SEH1B> list = new ArrayList<>();
 		createSEH1BRecord(delivery);
 		return list;
 	}
 
-	/*
+	/**
 	 * Información de partes
 	 */
 	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, IRegistry registry) {
@@ -307,52 +305,9 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	/*
+	/**
 	 * Secuencia de embalajes
 	 */
-	private SEH1P createSEH1PRecord(DeliveryDetail detail, int lineNumber) {
-		// TODO createSEH1PRecord
-		
-		String format = "";
-//		CT - Caja de cartón
-//		CS - Caja rígida
-//		PK - Paquete
-//		SL - Placa de Plástico
-//		SW - Retractilado
-//		RO - Enrollado
-//		09 - Pallet retornable
-//		08 - Pallet no retornable
-//		201 - Pallet ISO 1 - 1/1 EURO Pallet
-		try {
-			if(detail.getItem().getProduct().getName()!=null){
-				format = detail.getItem().getProduct().getName();
-			}
-			if(detail.getItem().getProduct().getBaseItem().getPackFormatTag()!=null){
-				format = detail.getItem().getProduct().getBaseItem().getPackFormatTag().getName();
-			}
-		} catch (ManagerBeanException e) {
-			// nada
-		}
-		
-		if(format.toLowerCase().contains("bolsa")){
-			format = "CT";
-		} else if(format.toLowerCase().contains("box")){
-			format = "CT";
-		} else if(format.toLowerCase().contains("caja")){
-			format = "CT";
-		} else if(format.toLowerCase().contains("kg")){
-			format = "CT";
-		} else if(format.toLowerCase().contains("palet")){
-			format = "201";
-		} else if(format.toLowerCase().contains("saco")){
-			format = "CT";
-		} else {
-			format = "CT";
-		}
-		
-		return createSEH1PRecord(lineNumber, (int)detail.getQuantity(), format);
-	}
-		
 	private SEH1P createSEH1PRecord(int lineNumber, int quantity, String format) {
 		SEH1P record = new SEH1P();
 		record.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
@@ -403,7 +358,7 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	/*
+	/**
 	 * Línea de artículos
 	 */
 	private SEH1L createSEH1LRecord(DeliveryDetail detail,
@@ -432,16 +387,18 @@ public class ConnectDeliveryWriter {
 		record.setCodigoACU_ACU_(null);
 		record.setNumeroDeLote_NB_(item.getSerialNumber());
 		record.setNumeroDeArticuloDelComprador_IN_(null);
-		// TODO packageQuantity
+		
+		double quantity = 0.0;
+		double packUnits = detail.getItem().getPackUnits();
 		if(packageQuantity==null){
-			record.setCantidadEnviada_12_(obtainPackageQuantity(detail, customerPackage));
+			quantity = obtainPackageQuantity(detail, customerPackage);
 		} else {
-			double quantity = detail.getItem().getPackUnits() * packageQuantity;
-			record.setCantidadEnviada_12_(quantity);
+			quantity = packUnits * packageQuantity;
 		}
+		record.setCantidadEnviada_12_(quantity);
 		
 		record.setUnidadDeMedidaCantidadEnviada(null);
-		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(null);
+		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		record.setFechaDeCaducidad_36__102_203_(null);
 		record.setCalificadorReferencia1(null);
 		record.setNumeroReferencia1(null);
@@ -486,7 +443,7 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	/*
+	/**
 	 * Desglose cantidad/Localizaciones
 	 */
 	private SEH1G createSEH1GRecord(Delivery delivery) {
@@ -503,7 +460,7 @@ public class ConnectDeliveryWriter {
 		return record;
 	}
 
-	/*
+	/**
 	 * Información de lotes
 	 */
 	private SEH1B createSEH1BRecord(Delivery delivery) {
@@ -599,61 +556,6 @@ public class ConnectDeliveryWriter {
 		}
 		return null;
 	}
-	
-	
-	// TODO
-//	private Map<Integer, List<Integer>> obtainSeh1pMap(Delivery delivery) {
-//		String remarks = delivery.getRemarks();
-//		
-//		if(remarks!=null && !"".equals(remarks)){
-//			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
-//			
-//			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(CONT=\\d{1,3})\\]");
-//			Matcher matcher = pattern.matcher(remarks);
-//			while (matcher.find()) {	
-//				String value1 = matcher.group(1).replaceFirst("ENV=", "");
-//				String value2 = matcher.group(2).replaceFirst("CONT=", "");
-//				Integer key = Integer.parseInt(value2);
-//				Integer value = Integer.parseInt(value1);
-//				List<Integer> list = new LinkedList<>();
-//				list.add(value);
-//				if(seh1pMap.containsKey(key))
-//					seh1pMap.get(key).addAll(list);
-//				else
-//					seh1pMap.put(key, list);
-//			}
-//			
-//			return seh1pMap;
-//		}
-//		return null;
-//	}
-	
-	// TODO
-//	private Map<Integer, List<Integer>> obtainSeh1lMap(Delivery delivery) {
-//		String remarks = delivery.getRemarks();
-//		
-//		if(remarks!=null && !"".equals(remarks)){
-//			Map<Integer, List<Integer>> seh1pMap = new HashMap<>();
-//			
-//			Pattern pattern = Pattern.compile("\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]");
-//			Matcher matcher = pattern.matcher(remarks);
-//			while (matcher.find()) {
-//				String value1 = matcher.group(1).replaceFirst("ENV=", "");
-//				String value2 = matcher.group(2).replaceFirst("LIN=", "");
-//				Integer key = Integer.parseInt(value1);
-//				Integer value = Integer.parseInt(value2);
-//				List<Integer> list = new LinkedList<>();
-//				list.add(value);
-//				if(seh1pMap.containsKey(key))
-//					seh1pMap.get(key).addAll(list);
-//				else
-//					seh1pMap.put(key, list);
-//			}
-//			
-//			return seh1pMap;
-//		}
-//		return null;
-//	}
 	
 
 }
