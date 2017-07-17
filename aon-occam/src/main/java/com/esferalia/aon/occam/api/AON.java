@@ -1348,6 +1348,7 @@ public class AON {
 		return sales;
 	}
 
+	// ------------------ SALES DETAIL
 	public static Stream<SalesDetail> getSalesDetailStream(String domainName,
 			Integer domainId, String login, SalesDetailFilter filter) {
 		AONContext ctx = null;
@@ -1379,7 +1380,16 @@ public class AON {
 				ctx.close();
 		}
 	}
-		
+	
+	public static void updateSalesDetail(String domainName, Integer domainId, String login, SalesDetail salesDetail) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getManagement().updateSalesDetail(ctx, salesDetail);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	
 	// ------------------ PURCHASE
 	
