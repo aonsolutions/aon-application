@@ -251,6 +251,7 @@ public class DeliveryDAO {
 				,DELIVERY_DETAIL.QUANTITY
 				,DELIVERY_DETAIL.PRICE
 				,DELIVERY_DETAIL.DISCOUNT_EXPR
+				,DELIVERY_DETAIL.SALES_DETAIL
 				,WORKPLACE.DESCRIPTION
 			)
 			.from(DELIVERY)
@@ -317,7 +318,8 @@ public class DeliveryDAO {
 						.setDetail(record.getValue( ITEM.DETAIL ))
 						.setDetail2(record.getValue( ITEM.DETAIL2 ))
 						.setDetail3(record.getValue( ITEM.DETAIL3 ))
-						.setDescription(record.getValue( ITEM.DESCRIPTION )));
+						.setDescription(record.getValue( ITEM.DESCRIPTION )))
+				.setSalesDetail(record.getValue(DELIVERY_DETAIL.SALES_DETAIL));
 		}
 	}
 	

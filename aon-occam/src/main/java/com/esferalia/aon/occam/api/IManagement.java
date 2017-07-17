@@ -29,10 +29,11 @@ public interface IManagement {
 
 	// -------------------- SALES 
 	Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter);
-	Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter);
 	
+	// -------------------- SALES DETAIL
+	Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter);
 	Stream<SalesDetail> getSalesDetails(AONContext ctx, SalesFilter filter);
-
+	void updateSalesDetail(AONContext ctx, SalesDetail salesDetail);
 	
 	// -------------------- PURCHASE 
 	Stream<Purchase> getPurchaseStream(AONContext ctx, PurchaseFilter filter);

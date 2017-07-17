@@ -40,6 +40,8 @@ public class ManagementImpl implements IManagement {
 				configuration -> SalesDAO.getSalesStream(ctx, filter));
 	}
 	
+	// ------------------ SALES DETAIL
+	
 	@Override
 	public Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter) {
 		return ctx.getDslContext().transactionResult(
@@ -50,6 +52,12 @@ public class ManagementImpl implements IManagement {
 	public Stream<SalesDetail> getSalesDetails(AONContext ctx, SalesFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SalesDAO.getSalesDetails(ctx, filter));
+	}
+
+	@Override
+	public void updateSalesDetail(AONContext ctx, SalesDetail salesDetail) {
+		ctx.getDslContext().transaction(
+				configuration -> SalesDAO.updateSalesDetail(ctx, salesDetail));
 	}
 
 	

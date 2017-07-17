@@ -243,11 +243,19 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	}
 	
 	private void processData(List<ALBARANTYPE> list, boolean test){
+		List<Delivery> deliveryList = new LinkedList<>();
+		processDelivery(list, deliveryList, test);
+		processSourceSales(list, deliveryList, test);
+	}
+	
+	private void processDelivery(List<ALBARANTYPE> list, List<Delivery> deliveryList, boolean test){
+		deliveryList.clear();
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		try {
 			ctx.getDslContext().transaction(configuration -> {
 				list.forEach(albaran -> {
 					Delivery delivery = createDelivery(ctx, albaran, test);
+					deliveryList.add(delivery);
 					createCarrierPacking(ctx, albaran, delivery, test);
 				});
 			});
@@ -255,24 +263,25 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			if (ctx != null)
 				ctx.close();
 		}
-		
-		manageSales(list, test);
-		
 	}
 	
-	private void manageSales(List<ALBARANTYPE> list, boolean test) {
-		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
-		try {
-			ctx.getDslContext().transaction(configuration -> {
-				list.forEach(albaran -> {
-					albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
-						manageSales(ctx, albaran, linea, test);
+	private void processSourceSales(List<ALBARANTYPE> list, List<Delivery> deliveryList, boolean test) {
+		if(!test){
+			manageSalesDetail(deliveryList);
+			
+			AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+			try {
+				ctx.getDslContext().transaction(configuration -> {
+					list.forEach(albaran -> {
+						albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
+							manageSales(ctx, albaran, linea, test);
+						});
 					});
 				});
-			});
-		} finally {
-			if (ctx != null)
-				ctx.close();
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
 		}
 	}
 
@@ -323,7 +332,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						try {
 							albaran.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(linea -> {
 								manageElaborations(ctx, albaran, linea, test);
-								manageSalesDetail(ctx, albaran, linea, test);
 							});
 						} catch (Throwable th) {
 							addError(albaran, th.getLocalizedMessage());
@@ -697,37 +705,31 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		}
 	}
 	
-	private void manageSalesDetail(AONContext ctx, ALBARANTYPE albaran, DATOSLINEAALBARANTYPE linea,
-			boolean test) {
-		Elaboration elaboration = obtainElaboration(ctx,
-				linea.getDATOSELABORACIONORIGEN());
-		if (elaboration != null && elaboration.getId() != null
-				&& elaboration.getSource() == 0 // SALES
-				&& elaboration.getSourceId() != null) {
-			Integer salesDetailId = elaboration.getSourceId();
-			try {
-				SalesDetail sd = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-						f -> f.getIdProperty().eq(salesDetailId)).findFirst().orElse(null);
-				if (!test) {
-					if(sd!=null && sd.getId()!=null){
-						Double delivered = sd.getDelivered();
-						delivered += Double.valueOf(linea.getCANTIDAD());
-						sd.setDelivered(delivered);
-						if(delivered>0.0 && delivered<=sd.getQuantity()) {
-							if(delivered<sd.getQuantity()) {
-								sd.setStatus(SalesDetailStatus.PARTIAL_SETTLED);
+	private void manageSalesDetail(List<Delivery> deliveryList){
+		deliveryList.forEach(delivery->{			
+			AON.getDeliveryDetails(getDomain(), getDomainId(), getUser(),
+					f->f.getIdProperty().eq(delivery.getId()))
+			.filter(d->d.getSalesDetail()!=null)
+			.collect(Collectors.groupingBy(DeliveryDetail::getSalesDetail,
+					Collectors.summingDouble(DeliveryDetail::getQuantity)))
+				.forEach((salesDetailId, totalQuantity) -> {
+					SalesDetail salesDetail = AON.getSalesDetailStream(getDomain(), getDomainId(), getUser(),
+							f->f.getIdProperty().eq(salesDetailId)).findFirst().orElse(null);
+					if(salesDetail!=null){
+						Double delivered = salesDetail.getDelivered();
+						delivered += totalQuantity;
+						salesDetail.setDelivered(delivered);
+						if(delivered>0.0 && delivered<=salesDetail.getQuantity()) {
+							if(delivered<salesDetail.getQuantity()) {
+								salesDetail.setStatus(SalesDetailStatus.PARTIAL_SETTLED);
 							} else {
-								sd.setStatus(SalesDetailStatus.SETTLED);
+								salesDetail.setStatus(SalesDetailStatus.SETTLED);
 							}
 						}
-						SalesDAO.updateSalesDetail(ctx, sd);
+						AON.updateSalesDetail(getDomain(), getDomainId(), getUser(), salesDetail);
 					}
-				}
-			} catch (Exception e) {
-				String msg = "[Linea pedido origen] ";
-				addError(albaran, msg + e.getMessage());
-			}
-		}
+				});
+		});
 	}
 	
 	private void manageSales(AONContext ctx, ALBARANTYPE albaran, DATOSLINEAALBARANTYPE linea, boolean test) {
@@ -1036,6 +1038,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			item.setSerialNumber(producttype.getNUMEROLOTESERIE());
 		}
 		item.setActive(false);
+		item.setStatus((byte)0);
 		item.setCreationUser(ctx.getUser());
 		item.setCreationDate(new Timestamp(new Date().getTime()));
 		ProductDAO.insertItem(ctx, item);
