@@ -603,24 +603,48 @@ public class ProductDAO {
 		ProductValidation.validateItem(ctx, i);
 		ctx.checkWrite();
 		ctx.getDslContext()
-			.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE,
-					ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG)
-			.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber()
-					, i.getSerialDate(), i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate(),
-					i.getPackFormatTag().getId(), i.getPackUnits(), i.getPackUnitsTag().getId(), i.getPackMeasurement(), i.getPackMeasurementTag().getId())
-			.execute();
+				.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION,
+						ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT,
+						ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE,
+						ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE,
+						ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT,
+						ITEM.PACK_MEASUREMENT_TAG, ITEM.STOCK_UNIT_TAG)
+				.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(),
+						i.getDescription(), i.getSerialNumber(), i.getSerialDate(), i.getPrice(), i.getStatus(),
+						i.getExpensesPercent(), i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(),
+						(byte) 0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(),
+						i.getModificationDate(),
+						i.getPackFormatTag()!=null?i.getPackFormatTag().getId():null,
+						i.getPackUnits(),
+						i.getPackUnitsTag()!=null?i.getPackUnitsTag().getId():null,
+						i.getPackMeasurement(),
+						i.getPackMeasurementTag()!=null?i.getPackMeasurementTag().getId():null,
+						i.getStockUnitTag()!=null?i.getStockUnitTag().getId():null)
+				.execute();
 	}
 	
-	public static Item insertItemResult(AONContext ctx, Item i){
+	public static Item insertItemResult(AONContext ctx, Item i) {
 		ctx.checkWrite();
 		ProductValidation.validateItem(ctx, i);
 		return ctx.getDslContext()
-			.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE,
-					ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG)
-			.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber()
-					, i.getSerialDate(), i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate(),
-					i.getPackFormatTag().getId(), i.getPackUnits(), i.getPackUnitsTag().getId(), i.getPackMeasurement(), i.getPackMeasurementTag().getId())
-			.returning().fetch().stream().map(new BasicItemFiller()).findFirst().orElse(null);
+				.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION,
+						ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT,
+						ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE,
+						ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE,
+						ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT,
+						ITEM.PACK_MEASUREMENT_TAG, ITEM.STOCK_UNIT_TAG)
+				.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(),
+						i.getDescription(), i.getSerialNumber(), i.getSerialDate(), i.getPrice(), i.getStatus(),
+						i.getExpensesPercent(), i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(),
+						(byte) 0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(),
+						i.getModificationDate(),
+						i.getPackFormatTag()!=null?i.getPackFormatTag().getId():null,
+						i.getPackUnits(),
+						i.getPackUnitsTag()!=null?i.getPackUnitsTag().getId():null,
+						i.getPackMeasurement(),
+						i.getPackMeasurementTag()!=null?i.getPackMeasurementTag().getId():null,
+						i.getStockUnitTag()!=null?i.getStockUnitTag().getId():null)
+				.returning().fetch().stream().map(new BasicItemFiller()).findFirst().orElse(null);
 	}
 	
 	public static void insertItem(AONContext ctx, Item i) {
@@ -628,13 +652,25 @@ public class ProductDAO {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductValidation.validateItem(ctx, i);
 			ctx.getDslContext()
-				.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE,
-						ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG)
-				.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber()
-						, i.getSerialDate(), i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate(),
-						i.getPackFormatTag().getId(), i.getPackUnits(), i.getPackUnitsTag().getId(), i.getPackMeasurement(), i.getPackMeasurementTag().getId())
-				.execute();
-		});	
+					.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3,
+							ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS,
+							ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE,
+							ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER,
+							ITEM.MODIFICATION_DATE, ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG,
+							ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG, ITEM.STOCK_UNIT_TAG)
+					.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(),
+							i.getDescription(), i.getSerialNumber(), i.getSerialDate(), i.getPrice(), i.getStatus(),
+							i.getExpensesPercent(), i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(),
+							(byte) 0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(),
+							i.getModificationDate(),
+							i.getPackFormatTag()!=null?i.getPackFormatTag().getId():null,
+							i.getPackUnits(),
+							i.getPackUnitsTag()!=null?i.getPackUnitsTag().getId():null,
+							i.getPackMeasurement(),
+							i.getPackMeasurementTag()!=null?i.getPackMeasurementTag().getId():null,
+							i.getStockUnitTag()!=null?i.getStockUnitTag().getId():null)
+					.execute();
+		});
 	}
 
 	public static void insertItem(AONContext ctx, Stream<Item> is) {
@@ -644,14 +680,19 @@ public class ProductDAO {
 					ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS,
 					ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE,
 					ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE, ITEM.PACK_FORMAT_TAG,
-					ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG);
+					ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG, ITEM.STOCK_UNIT_TAG);
 			is.forEach(i ->{
 				ProductValidation.validateItem(ctx, i);
 				insertQuery.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(),
 						i.getSerialNumber(), null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(),
 						i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(),
-						i.getModificationDate(), i.getPackFormatTag().getId(), i.getPackUnits(), i.getPackUnitsTag().getId(),
-						i.getPackMeasurement(), i.getPackMeasurementTag().getId());
+						i.getModificationDate(),
+						i.getPackFormatTag()!=null?i.getPackFormatTag().getId():null,
+						i.getPackUnits(),
+						i.getPackUnitsTag()!=null?i.getPackUnitsTag().getId():null,
+						i.getPackMeasurement(),
+						i.getPackMeasurementTag()!=null?i.getPackMeasurementTag().getId():null,
+						i.getStockUnitTag()!=null?i.getStockUnitTag().getId():null);
 			});
 			insertQuery.execute();
 		});		
