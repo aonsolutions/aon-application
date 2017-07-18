@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
+import com.code.aon.account.bridge.InvoiceTaxAccount;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -224,8 +225,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			invoiceTax.setSurchargeQuota(loaded.getCuotaRe()!=null?loaded.getCuotaRe():0.0);
 			invoiceTax.setTaxType(TaxType.VAT);
 			invoiceTax.setVatDeductionType(loaded.getVatDeductionType());
-			invoiceTaxBean.insert(invoiceTax);
-
+			invoiceTax = (InvoiceTax) invoiceTaxBean.insert(invoiceTax);
 
 			boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP());
 			if (!invoice.isVatFree() || ignoreTaxFree) {
@@ -233,10 +233,13 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 				vatAccountEntryDetail.setDocumento(invoice.getDocumentNumber());
 				vatAccountEntryDetail.setEntry(entry);
 				vatAccountEntryDetail.setConcepto(concept);
+				Account vatAccount = null;
 				if (StringUtils.isBlank(vatAccountEntryDetail.getCuenta())) {
-					Account vatAccount = (entry.getType() == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
+					vatAccount = (entry.getType() == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
 					vatAccountEntryDetail.setCuenta( vatAccount.getCode() );
 					vatAccountEntryDetail.setDescripcionCuenta( vatAccount.getDescription() );
+				} else {
+					vatAccount = getLoaderUtils().ensureAccount( vatAccountEntryDetail.getCuenta(), "IVA" );
 				}
 				if (balancingAccount != null) {
 					vatAccountEntryDetail.setContrapartida(balancingAccount.getCode());	
@@ -244,7 +247,14 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 				AccountEntryDetail vatAed = (AccountEntryDetail) engine.get(params, vatAccountEntryDetail);
 				if (vatAed == null) {
 					if ( vatAccountEntryDetail.hasSaldo()) {
-						engine.insertAonEntity(params, vatAccountEntryDetail);	
+						engine.insertAonEntity(params, vatAccountEntryDetail);
+						
+						IManagerBean itaBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
+						InvoiceTaxAccount ita = new InvoiceTaxAccount();
+						ita.setInvoiceTax(invoiceTax);
+						ita.setAccount(vatAccount);
+						itaBean.insert(ita);
+						
 					}
 				} else {
 					vatAed = mergeAccountEntryDetail(vatAed,vatAccountEntryDetail);
@@ -257,9 +267,9 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 					vatAccountEntryDetail2.setConcepto(concept);
 					vatAccountEntryDetail2.setCuenta(null);
 					if (StringUtils.isBlank(vatAccountEntryDetail2.getCuenta())) {
-						Account vatAccount = (type == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
-						vatAccountEntryDetail2.setCuenta( vatAccount.getCode() );
-						vatAccountEntryDetail2.setDescripcionCuenta( vatAccount.getDescription() );
+						Account acc = (type == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
+						vatAccountEntryDetail2.setCuenta( acc.getCode() );
+						vatAccountEntryDetail2.setDescripcionCuenta( acc.getDescription() );
 					}
 					if (balancingAccount != null) {
 						vatAccountEntryDetail2.setContrapartida(balancingAccount.getCode());	
@@ -274,8 +284,6 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 					}
 				}
 			}
-			
-			
 			
 			if (!invoice.isRetentionFree()) {
 				if (loaded.getPorcentajeIrpf() != null && loaded.getPorcentajeIrpf() > 0) {
@@ -300,8 +308,9 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 					if (balancingAccount != null) {
 						retentionAccountEntryDetail.setContrapartida(balancingAccount.getCode());	
 					}
+					Account retentionAccount = null;
 					if (StringUtils.isEmpty(retentionAccountEntryDetail.getCuenta())) {
-						Account retentionAccount = getLoaderUtils().getRetentionAccount();
+						retentionAccount = getLoaderUtils().getRetentionAccount();
 						if (retentionAccount == null) {
 							throw new ManagerBeanException("No existe una cuenta de retención definida en los parámetros contables");
 						}
@@ -311,6 +320,13 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 					AccountEntryDetail retentionAed = (AccountEntryDetail) engine.get(params, retentionAccountEntryDetail);
 					if (retentionAed == null) {
 						engine.insertAonEntity(params, retentionAccountEntryDetail);
+
+						IManagerBean itaBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
+						InvoiceTaxAccount ita = new InvoiceTaxAccount();
+						ita.setInvoiceTax(invoiceTax);
+						ita.setAccount(retentionAccount);
+						itaBean.insert(ita);
+
 					} else {
 						retentionAed = mergeAccountEntryDetail(retentionAed,retentionAccountEntryDetail);
 					}
