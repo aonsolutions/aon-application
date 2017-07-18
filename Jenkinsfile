@@ -90,80 +90,43 @@ node {
       stage 'Build'
    
       // Run the maven build
-      sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=true -Dmaven.test.failure.ignore=true -Dgwt.working=true -DSNAPSHOT clean deploy"
+      sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -Dmaven.test.failure.ignore=true -Dgwt.working=true -DSNAPSHOT clean deploy"
 
       // Recording fingerprints of files to track usage
       fingerprint '**/target/*SNAPSHOT.jar'
 
-      // Mark the RPMs deploy 'stage'....
-      stage 'Deploy RPMs'
-    
-      // Upload RPMs 
-      sh "scp `find -name *.noarch.rpm` dev.esferalia.net:/var/www/rpms/aon-inetserver/noarch"
-   
-      // Remove oldest RPMs. Keep 2 newest RPMs
-      sh "ssh dev.esferalia.net 'repomanage --keep=2 --old /var/www/rpms/aon-inetserver/noarch | xargs rm -rf'"
-   
-      // Create RPMs repository
-      sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-inetserver'"
-   
+      // Docker 
+      stage 'Docker Build'
+
+      // Run the docker build
+      sh "docker build --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
+
       // Mark the Integration Tests 'stage'....
       stage 'Integration Tests'
-   
-      // 
-      sh "sudo yum clean all"
-
-      // 
-      sh "sudo yum update -y --enablerepo=aon-testing"
-   
-      //    
-      sh "[ -f /var/run/tomcat8.pid ] && sudo service tomcat8 stop || echo 'no pid file'"
-
-      sh "sudo service tomcat8 start"
-
+      
       sh 'sudo mysql -e "DROP DATABASE IF EXISTS \\`test-aonsolutions-org\\`"'
 
-      //       
       sh "sudo mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql"
    
-      //
-      sh "sudo /usr/share/aon-master/bin/up2datedbs.sh"
-   
-      //
+      sh "sudo docker stop aon-application && sudo docker rm aon-application || echo 'No previous aon-application running'"
+
+      sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
+	   
       sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
       sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
       // Run the maven integration tests
-      sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/aon-aio/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/aon-aio/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/aon-aio/ -f aon-htmlunit/pom.xml integration-test"
+      sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -f aon-htmlunit/pom.xml integration-test"
   
       // Recording test results
       step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 
-      // Mark the AWS deploy 'stage'....
-      stage 'AWS CodeDeploy'
-
-      env.VERSION=pom.version
-
-      // RPMs 2 AWS
-      //def rpms2aws = readFile 'rpms2aws.sh'
-      sh "/bin/sh rpms2aws.sh"
-      
-      sh "aws s3api list-objects --bucket aon-solutions --prefix aon-snapshot-app > aon-snapshot-apps.json"
-      def aon_snapshot_apps_json = readFile 'aon-snapshot-apps.json'    
-      def keys = getKeys(aon_snapshot_apps_json)
-      for (int i = 0; i < keys.size() - 20; i++){
-         def key = keys[i]
-         sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
-      }
-      
       echo "currentBuild.result = ${currentBuild.result}"
 
       if ( currentBuild.result != 'UNSTABLE' ) {
 
-      stage 'Docker Build'
-
-      sh "docker build --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
+      stage 'Docker Publish'
 
       sh "docker login -u rtrepiana -p aon945121010"
 
@@ -193,23 +156,6 @@ node {
 
       }
 
-      //stage 'SonarQube Analysis'
-      //
-      // requires SonarQube Scanner 2.8+
-      //def scannerHome = tool 'SonarQube Scanner 2.8'
-      //withSonarQubeEnv('My SonarQube Server') {
-      //
-      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=net.aonsolutions:aon-dump -Dsonar.sources=aon-dump/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-      //
-      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.occam -Dsonar.sources=aon-occam/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-      //
-      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.watson -Dsonar.sources=aon-watson/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-      //
-      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.esferalia.aon:aon.payroll -Dsonar.sources=aon-payroll/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-      //
-      //sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=com.code.aon:aon.webservice -Dsonar.sources=aon-webservice/src/main/java -Dsonar.sourceEncoding=ISO-8859-1"
-      //}
-      
       
    }   
 
