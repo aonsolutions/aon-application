@@ -106,6 +106,8 @@ node {
       
       sh 'sudo mysql -e "DROP DATABASE IF EXISTS \\`test-aonsolutions-org\\`"'
 
+      sh 'sudo mysql -e "GRANT ALL ON *.* TO \\'dbuser\\'@\\'172.17.0.2\\' IDENTIFIED BY \\'serubd2000\\';"'
+
       sh "sudo mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql"
    
       sh "sudo docker stop aon-application && sudo docker rm aon-application || echo 'No previous aon-application running'"
