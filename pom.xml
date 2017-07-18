@@ -13,6 +13,7 @@
 		<compileSource>1.8</compileSource>
 		<compileTarget>1.8</compileTarget>
 		<svnkitVersion>1.7.4-v1</svnkitVersion>
+		<aonCoreLibsVersion>8.112</aonCoreLibsVersion>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
 		<jasperReportsVersion>5.1.0</jasperReportsVersion>
@@ -22,14 +23,6 @@
 	</properties>
 
 	<modules>
-		<!-- OBSOLETOS
-		<module>aon-messaging</module>
-		<module>aon-ui-messaging</module>
-		<module>aon-sql-payroll</module>
-		<module>aon-sql-google</module>
-		<module>aon-accounting-mining</module>
-		<module>aon.pool</module>
-		 -->
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
@@ -72,7 +65,6 @@
 		<module>aon-google-apis</module>
 		<module>aon-google-apis-v2</module>
 		<module>aon-conexflow</module>
-		<module>aon-aeat</module>
 		<module>aon-oauth2</module>
 		<module>aon-hhg-webservice</module>
 		<module>aon-webservice</module>
@@ -203,7 +195,6 @@
 		<module>aon-common-resources</module>
 		
 		<!-- COMMING SOON -->
-		<module>aon-tgss</module>
 		<module>aon-creta</module>
 		
 	</modules>
@@ -560,7 +551,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.3</version>
+				<version>2.4</version>
 			</plugin>
 
 		</plugins>
