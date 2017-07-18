@@ -6,6 +6,7 @@ ENV CATALINA_HOME /usr/local/tomcat
 
 ENV AON_AIO_HOME $CATALINA_HOME/webapps/ROOT
 
+ENV NET_MAVEN_REPOSITORY_URL=http://repo.maven.aonsolutions.net/maven2/net/aonsolutions/
 ENV AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse_snapshot/com/code/aon
 
 ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
@@ -15,7 +16,7 @@ WORKDIR $TOMCAT_LIBDIR
 RUN set -x \
 	\
 	&& wget $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/aon.jaas-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)"`.jar \
-	&& wget $AON_MAVEN_REPOSITORY_URL/aon.pool/$AON_VERSION/aon.pool-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.pool/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)"`.jar
+	&& wget $NET_MAVEN_REPOSITORY_URL/core/pool/$AON_VERSION/pool-`wget -O - $NET_MAVEN_REPOSITORY_URL/core/pool/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)"`.jar
 
 
 ENV SLF4J_API_URL=http://central.maven.org/maven2/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar

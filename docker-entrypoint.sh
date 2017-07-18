@@ -36,8 +36,8 @@ password=$DB_PASSWD
 EOF
 
 	CLASSPATH=`find $TOMCAT_LIBDIR -name 'mysql-connector-java-*.jar'`
+	CLASSPATH=$CLASSPATH:`find $AON_AIO_HOME -name 'dbutils-*.jar'`
 	CLASSPATH=$CLASSPATH:`find $AON_AIO_HOME -name 'aon-master-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $AON_AIO_HOME -name 'aon-dbutils-*.jar'`
 	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'slf4j-api-*.jar'`
 	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'slf4j-jdk14-*.jar'`
 	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'commons-lang-*.jar'`
