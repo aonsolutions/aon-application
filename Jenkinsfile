@@ -110,8 +110,8 @@ node {
    
       sh "sudo docker stop aon-application && sudo docker rm aon-application || echo 'No previous aon-application running'"
 
-      sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
-	   
+      sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"   
+
       sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
       sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
