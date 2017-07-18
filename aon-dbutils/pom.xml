@@ -19,8 +19,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
+<<<<<<< Updated upstream
 			<artifactId>dbutils</artifactId>
 			<version>9.00-SNAPSHOT</version>
+=======
+			<artifactId>pool</artifactId>
+			<version>9.00-SNAPSHOT</version>
+			<scope>provided</scope>
+>>>>>>> Stashed changes
 		</dependency>
 		<dependency>
 		    <groupId>commons-dbutils</groupId>
