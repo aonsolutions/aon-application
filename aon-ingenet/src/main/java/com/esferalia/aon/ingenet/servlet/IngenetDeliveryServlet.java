@@ -1038,7 +1038,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			item.setSerialNumber(producttype.getNUMEROLOTESERIE());
 		}
 		item.setActive(false);
-		item.setStatus((byte)0);
+		item.setStatus((byte)1);
 		item.setCreationUser(ctx.getUser());
 		item.setCreationDate(new Timestamp(new Date().getTime()));
 		ProductDAO.insertItem(ctx, item);
