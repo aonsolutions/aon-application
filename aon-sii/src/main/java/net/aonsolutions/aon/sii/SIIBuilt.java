@@ -729,7 +729,7 @@ public class SIIBuilt {
 			}			
 
 			// CUOTA DEDUCIBLE
-			frt.setCuotaDeducible(contextList.stream().mapToDouble(a -> a.getDeductibleQuota()).sum() + ""); // TODO
+			frt.setCuotaDeducible(contextList.stream().filter(a -> a.getInvoice().equals(invoice)).mapToDouble(a -> a.getDeductibleQuota()).sum() + ""); // TODO
 
 			// DESCRIPCION OPERACION
 			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoice);
