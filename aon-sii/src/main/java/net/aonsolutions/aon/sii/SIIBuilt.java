@@ -375,23 +375,24 @@ public class SIIBuilt {
 					exenta3.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
 					exenta3.setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!
 					st3.setExenta(exenta3); 
-					net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA diva3 = new net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA();
-					
-					noExenta.stream().forEach(r->{
-						DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
-						diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase()))); 
-						diet.setCuotaRepercutida(Double.toString(AonMathUtils.round(r.getQuota()))); 
-						diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage()))); 
+					if(!noExenta.isEmpty()){
+						net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA diva3 = new net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta.DesgloseIVA();
+						noExenta.stream().forEach(r->{
+							DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
+							diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase()))); 
+							diet.setCuotaRepercutida(Double.toString(AonMathUtils.round(r.getQuota()))); 
+							diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage()))); 
 						
-						diva3.getDetalleIVA().add(diet);
-					});	
-					net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta noExenta3 = new net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta();
-					noExenta3.setDesgloseIVA(diva3);
-					noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
-					if(vat.isOtherISP()){
-						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);
+							diva3.getDetalleIVA().add(diet);
+						});	
+						net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta noExenta3 = new net.aonsolutions.core.aeat.sii.SujetaPrestacionType.NoExenta();
+						noExenta3.setDesgloseIVA(diva3);
+						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+						if(vat.isOtherISP()){
+							noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);
+						}	
+						st3.setNoExenta(noExenta3);
 					}
-					st3.setNoExenta(noExenta3);
 					prestacion.setSujeta(st3);		
 					tcdt.setPrestacionServicios(prestacion);
 				} else {
@@ -416,7 +417,7 @@ public class SIIBuilt {
 						exenta2.setCausaExencion(CausaExencionType.E_6);
 					}
 					st2.setExenta(exenta2); // TODO
-					if(noExenta.size()> 0){
+					if(!noExenta.isEmpty()){
 						DesgloseIVA diva2 = new DesgloseIVA();
 						noExenta.stream().forEach(r -> {
 							DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
@@ -451,27 +452,28 @@ public class SIIBuilt {
 				exenta1.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
 				exenta1.setCausaExencion(CausaExencionType.E_6); // TODO
 				st.setExenta(exenta1);
-					
-				DesgloseIVA diva = new DesgloseIVA();
 				
-				noExenta.stream().forEach(r->{
-					DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
-					diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
-					diet.setCuotaRepercutida(Double.toString(AonMathUtils.round(r.getQuota())));
-					diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage())));
-					if(r.getSurchargePercent() > 0.0 && r.getSurchargeQuota() > 0.0){
-						diet.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargePercent())));
-						diet.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
-					}
-					diva.getDetalleIVA().add(diet);
-				});
-				NoExenta noExenta1 = new NoExenta();
-				noExenta1.setDesgloseIVA(diva);
-				TipoOperacionSujetaNoExentaType noExType = TipoOperacionSujetaNoExentaType.S_1;
-				// TODO inversion sujeto pasivo 
-				noExenta1.setTipoNoExenta(noExType); // TODO 
-				st.setNoExenta(noExenta1);
-
+				if(!noExenta.isEmpty()){
+					DesgloseIVA diva = new DesgloseIVA();
+				
+					noExenta.stream().forEach(r->{
+						DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
+						diet.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
+						diet.setCuotaRepercutida(Double.toString(AonMathUtils.round(r.getQuota())));
+						diet.setTipoImpositivo(Double.toString(AonMathUtils.round(r.getPercentage())));
+						if(r.getSurchargePercent() > 0.0 && r.getSurchargeQuota() > 0.0){
+							diet.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargePercent())));
+							diet.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
+						}
+						diva.getDetalleIVA().add(diet);
+					});
+					NoExenta noExenta1 = new NoExenta();
+					noExenta1.setDesgloseIVA(diva);
+					TipoOperacionSujetaNoExentaType noExType = TipoOperacionSujetaNoExentaType.S_1;
+					// TODO inversion sujeto pasivo 
+					noExenta1.setTipoNoExenta(noExType); // TODO 
+					st.setNoExenta(noExenta1);
+				}
 				tsdt.setSujeta(st);
 				tipoDesglose.setDesgloseFactura(tsdt);
 			}
