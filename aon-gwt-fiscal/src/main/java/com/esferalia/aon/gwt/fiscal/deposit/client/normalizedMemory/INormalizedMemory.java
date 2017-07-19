@@ -51,7 +51,7 @@ public interface INormalizedMemory extends RemoteService{
 
 	public void deleteFreeText(Integer domainId, Integer rattachId, Integer year);
 	
-	public Map<String, String> calculate(Map<String, String> map);
+	public Map<String, String> calculate(Map<String, String> map, Integer year);
 	
 	public Vector<MemoryFiles> getMemoryFiles(Integer domainId);
 	

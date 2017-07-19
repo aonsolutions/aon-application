@@ -48,7 +48,7 @@ public interface INormalizedMemoryAsync {
 	void saveDeposit(String cif, Integer domainId, D2Deposit d2Deposit,
 			Boolean textMode, Integer year, AsyncCallback<Void> callback);
 
-	void calculate(Map<String, String> map,
+	void calculate(Map<String, String> map, Integer year,
 			AsyncCallback<Map<String, String>> callback);
 
 	void getMemoryFiles(Integer domainId, AsyncCallback<Vector<MemoryFiles>> callback);
