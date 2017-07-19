@@ -130,8 +130,16 @@ public class InvoiceDAO {
 			if(incorrecta) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Incorrecto"));
 			if(anulada) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Anulada"));
 			FilterDAO d = (FilterDAO) filter.filter(INVOICE_PROPERTIES);
-			return ctx.getDslContext().select()
-					.from(INVOICE).join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+			
+			Field[] f = new Field[INVOICE.fields().length + 2];
+			for(Integer i = 0 ; i < INVOICE.fields().length; i++)
+				f[i] = INVOICE.fields()[i];
+			f[INVOICE.fields().length] = SCOPE.DESCRIPTION;
+			f[INVOICE.fields().length + 1] = DATA_RESPONSE_DETAIL.DATA_VALUE;
+			
+			return ctx.getDslContext().selectDistinct(f)
+					.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
+					.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
 					.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
 					.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
 					.where(INVOICE_PROPERTIES.getConditions(filter))
@@ -425,7 +433,7 @@ public class InvoiceDAO {
 				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
 				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(record.getValue(INVOICE.RNAME))
-				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
+				.setScope(new Scope().setId(record.getValue(INVOICE.SCOPE)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				.setActivity(record.getValue(INVOICE.ACTIVITY))	
 				.setInvestAsset(record.getValue(INVOICE.INVEST_ASSET))
 				.setProject(record.getValue(INVOICE.PROJECT))
