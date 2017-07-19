@@ -149,7 +149,7 @@ public class ConnectDeliveryWriter {
 				companyEdiCode, delivery.getWorkPlace().getEnterprise()));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				customerEdiCode, delivery.getCustomer()));
+				deliveryPointEdiCode, delivery.getCustomer()));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
 		// null, null));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
