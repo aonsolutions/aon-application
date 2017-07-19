@@ -151,7 +151,7 @@ public class ConnectSaleInvoiceWriter {
 		return rectl;
 	}
 
-	/*
+	/**
 	 * Cabecera
 	 */
 	private SINCC createSINCCRecord(Invoice invoice, List<InvoiceDetail> detailList, String companyEdiCode,
@@ -309,14 +309,16 @@ public class ConnectSaleInvoiceWriter {
 			Invoice invoice, String companyEdiCode, String customerEdiMainCode) {
 		List<SINCI> list = new ArrayList<>();
 		for (TaxBreakDown tax : taxList) {
-			list.add(createSINCIRecord(tax,
+			SINCI sinci = createSINCIRecord(tax,
 					list.size()+1, invoice,
-					companyEdiCode, customerEdiMainCode));
+					companyEdiCode, customerEdiMainCode);
+			if(sinci!=null)
+				list.add(sinci);
 		}
 		return list;
 	}
 
-	/*
+	/**
 	 * Información partes involucradas
 	 */
 	private SINCP createSINCPRecord(SINCP.SINCP_2 type, Registry registry, String ediCode) {
@@ -357,7 +359,7 @@ public class ConnectSaleInvoiceWriter {
 		return sincp;
 	}
 	
-	/*
+	/**
 	 * Observaciones cabecera
 	 */
 	private SINCT createSINCTRecord(Invoice invoice, String companyEdiCode,
@@ -374,7 +376,7 @@ public class ConnectSaleInvoiceWriter {
 		return sinct;
 	}
 
-	/*
+	/**
 	 * Vencimientos
 	 */
 	private SINCV createSINCVRecord(Finance finance, int lineNumber,
@@ -387,7 +389,7 @@ public class ConnectSaleInvoiceWriter {
 		return sincv;
 	}
 
-	/*
+	/**
 	 * Descuentos y cargos cabecera
 	 */
 	private SINCD createSINCDRecord(Invoice invoice, InvoiceDetail detail, int lineNumber) {
@@ -395,7 +397,7 @@ public class ConnectSaleInvoiceWriter {
 		return null;
 	}
 
-	/*
+	/**
 	 * Línea detalle
 	 */
 	private SINCL createSINCLRecord(InvoiceDetail detail, int lineNumber,
@@ -472,7 +474,7 @@ public class ConnectSaleInvoiceWriter {
 		return sincl;
 	}
 
-	/*
+	/**
 	 * Observaciones de línea de detalle
 	 */
 	private SINCU createSINCURecord(InvoiceDetail detail, int lineNumber) {
@@ -480,7 +482,7 @@ public class ConnectSaleInvoiceWriter {
 		return null;
 	}
 
-	/*
+	/**
 	 * Descuentos y cargos línea de detalle
 	 */
 	private SINCE createSINCERecord(InvoiceDetail detail, int lineNumber) {
@@ -501,22 +503,26 @@ public class ConnectSaleInvoiceWriter {
 		return record;
 	}
 
-	/*
+	/**
 	 * Impuestos
 	 */
 	private SINCI createSINCIRecord(TaxBreakDown tax, int lineNumber,
 			Invoice invoice, String companyEdiCode, String customerEdiMainCode) {
-		SINCI sinci = new SINCI();		
-		sinci.setNumeroDeLineaDeImpuesto(lineNumber);
-		if(tax.getTaxType()==TaxType.VAT){
-			sinci.setCalificadorTipoDeImpuesto(SINCI.SINCI_3.IVA_VAT.getValue());
+		SINCI sinci = null;		
+		if(tax.getBase()>0.0) {
+			sinci = new SINCI();
+			sinci.setNumeroDeLineaDeImpuesto(lineNumber);
+			if(tax.getTaxType()==TaxType.VAT){
+				sinci.setCalificadorTipoDeImpuesto(SINCI.SINCI_3.IVA_VAT.getValue());
+			}
+			sinci.setPorcentajeTipoDeImpuesto(CommonUtil.round(tax.getTaxPercent()));
+			sinci.setImporteTipoDeImpuesto(CommonUtil.round(tax.getBase() * tax.getTaxPercent()
+					/ 100, 3));
+			sinci.setBaseImponible(tax.getBase());
 		}
-		sinci.setPorcentajeTipoDeImpuesto(CommonUtil.round(tax.getTaxPercent()));
-		sinci.setImporteTipoDeImpuesto(CommonUtil.round(tax.getBase() * tax.getTaxPercent()
-				/ 100, 3));
-		sinci.setBaseImponible(tax.getBase());
 		return sinci;
 	}
+	
 	
 
 	///////////////////////////////////////////////
