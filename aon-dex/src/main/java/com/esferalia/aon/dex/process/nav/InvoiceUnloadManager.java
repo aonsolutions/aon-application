@@ -79,6 +79,12 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 			stmt = connection.prepareStatement(getInvoiceListSQL(params));
 			stmt.setObject(1, params.getFromDate(), Types.DATE);
 			stmt.setObject(2, params.getToDate(), Types.DATE);
+			/*if (params.getInvoiceId() != 0) {
+				stmt.setObject(1, params.getInvoiceId(), Types.INTEGER);
+			} else {
+				stmt.setObject(1, params.getFromDate(), Types.DATE);
+				stmt.setObject(2, params.getToDate(), Types.DATE);
+			}*/
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				String invoice = rs.getString(INVOICE);
@@ -201,7 +207,7 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 		query.append(", I.rname AS " + CUSTOMER_NAME + ", I.rdocument AS " + CUSTOMER_DOCUMENT + ", I.total AS " + TOTAL);
 		query.append(", (SELECT MAX(RA.value) FROM raddinfo AS RA WHERE RA.registry = I.registry AND RA.attribute = '" + NAV_ACCOUNT+ "') AS " + CUSTOMER); 
 		query.append(", IA.street_type AS " + STREET_TYPE + ", IA.address AS " + ADDRESS + ", IA.number AS " + ADDRESS_NUMBER + ", IA.address2 AS " + ADDRESS_EXT);
-		query.append(", IA.zip AS " + ZIP + ", IA.city AS " + CITY + ", IFNULL(IA.province, G.name) AS " + PROVINCE + ", IFNULL(G2.code,G.code) AS " + COUNTRY);
+		query.append(", IA.zip AS " + ZIP + ", IA.city AS " + CITY + ", IFNULL(IA.province, G.name) AS " + PROVINCE + ", I.rdocument_country AS " + COUNTRY); //", IFNULL(G2.code,G.code) AS " + COUNTRY);
 		query.append(", PR.project AS " + RESERVATION + ", PR.code AS " + CODE + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		query.append(", H.code AS " + HOTEL + ", IFNULL(AP.id,0) AS " + ADVANCE + ", SUM(ID.taxable_base) AS " + TAXABLE_BASE);
 		query.append(", IT.percentage AS " + TAX_PERCENT + ", SUM(IT.quota) AS " + TAX_QUOTA);
@@ -225,6 +231,11 @@ public class InvoiceUnloadManager implements IDataLoadConstants {
 		query.append(" AND I.status = " + InvoiceStatus.SCORED.ordinal());
 		query.append(" AND I.signed = 0");
 		query.append(" AND I.issue_date BETWEEN ? AND ?");
+		/*if (params.getInvoiceId() != 0) {
+			query.append(" AND I.id = ?");
+		} else {
+			query.append(" AND I.issue_date BETWEEN ? AND ?");
+		}*/
 		query.append(" AND 0 = (SELECT COUNT(*) FROM data_attach AS DA WHERE DA.source_id = I.id AND DA.source = " + DataAttachmentSource.INVOICE.ordinal());
 		query.append("   AND DA.type = " + DataAttachmentType.RESPONSE_OK.ordinal() + ")");
 		query.append(" GROUP BY " + INVOICE + "," + ADVANCE + "," + TAX_PERCENT);
