@@ -117,7 +117,9 @@ node {
       sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
       sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
-
+      
+      sleep 30      
+	
       // Run the maven integration tests
       sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -f aon-htmlunit/pom.xml integration-test"
   
