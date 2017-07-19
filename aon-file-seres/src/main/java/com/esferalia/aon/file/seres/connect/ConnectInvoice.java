@@ -111,16 +111,20 @@ public class ConnectInvoice extends AbstractFileFiller {
 				for (SINCL value: rectl.sinclList) {
 					properties.put(SINCL, value);
 					createLine(SINCL, properties);
+					if(value.since!=null){
+						properties.put(SINCE, value.since);
+						createLine(SINCE, properties);		
+					}
 				}
 			}
 			for (SINCU value: rectl.sincuList) {
 				properties.put(SINCU, value);
 				createLine(SINCU, properties);
 			}
-			for (SINCE value: rectl.sinceList) {
-				properties.put(SINCE, value);
-				createLine(SINCE, properties);
-			}
+//			for (SINCE value: rectl.sinceList) {
+//				properties.put(SINCE, value);
+//				createLine(SINCE, properties);
+//			}
 			if(rectl.sinciList==null || rectl.sinciList.isEmpty()) {
 				Fd0Exception e = new Fd0Exception( "SINCI", "Impuestos. La entidad 'SINCI' es obligatoria");
 				exceptions.add (e);
