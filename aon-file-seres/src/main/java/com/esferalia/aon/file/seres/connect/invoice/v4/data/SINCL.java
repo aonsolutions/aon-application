@@ -69,6 +69,7 @@ public class SINCL {
 	private Integer fechaPedido_ON_171_;
 	private Integer fechaAlbaran_DQ_171_;
 
+	public SINCE since;
 
 	private static Pattern PATTERN_SINCL_numeroDeLinea = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SINCL_codigoArticulo = Pattern.compile("^.{12}(.{15}).*");

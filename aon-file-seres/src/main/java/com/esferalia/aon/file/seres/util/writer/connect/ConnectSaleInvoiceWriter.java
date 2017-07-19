@@ -136,11 +136,11 @@ public class ConnectSaleInvoiceWriter {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
-		try {
-			rectl.sinceList = createSINCEList(detailList);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-		}
+//		try {
+//			rectl.sinceList = createSINCEList(detailList);
+//		} catch (Exception e) {
+//			LOGGER.error(e.getMessage());
+//		}
 		try {
 			rectl.sinciList = createSINCIList(taxList, invoice,
 					companyEdiCode, customerEdiMainCode);
@@ -471,6 +471,15 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setNumeroDeLineaConfirmacionDeEntrega(null);
 		sincl.setFechaPedido_ON_171_(null);
 		sincl.setFechaAlbaran_DQ_171_(null);
+		
+		if(detail.getDiscountExpression()!=null
+				&& detail.getDiscountExpression().getDiscountExpr()!=null
+				&& detail.getDiscountExpression().getDiscounts().length>0
+				&& !detail.getDiscountExpression().getDiscountExpr().equals("0.0")
+				&& !detail.getDiscountExpression().getDiscountExpr().equals("0")){
+			sincl.since = createSINCERecord(detail, 1);
+		}
+		
 		return sincl;
 	}
 
