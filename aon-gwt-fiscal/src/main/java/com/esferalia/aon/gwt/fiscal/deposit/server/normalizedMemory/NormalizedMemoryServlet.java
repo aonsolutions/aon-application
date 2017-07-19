@@ -590,7 +590,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return getSchema(enterprise.getDocument(), domainId, false, year);
 	}
 	
-	public Map<String, String> calculate(Map<String, String> map) {
+	public Map<String, String> calculate(Map<String, String> map, Integer year) {
 		AccMiningMVELContext ctx = new AccMiningMVELContext(new IAccMiningKeyAccept() {
 			@Override
 			public boolean acceptKey(Object key) {
@@ -609,6 +609,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			}
 		}
 		ctx.put("PYMES", map.get(D2DepositConstants.DEPOSIT_TYPE).equals("Pymes"));		
+		ctx.put("Y2014", year == 2014);		
 		
 		ctx.setExpressionMap(D2Compute.COMPUTE_MAP_CURRENT);
 		map = calculate(map, ctx, D2Compute.COMPUTE_MAP_CURRENT);

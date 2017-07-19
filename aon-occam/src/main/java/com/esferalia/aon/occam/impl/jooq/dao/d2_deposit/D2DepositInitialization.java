@@ -46,6 +46,7 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2121110.toString(),"sab({100,101,102})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2121120.toString(),"sdb({1030,1040})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2121200.toString(),"sab({110})");
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2121300.toString(),"ABREVIADO?sab({112,113,114,115,119}):sab({112,113,114,119})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2121350.toString(),"ABREVIADO?sab({}):0.0");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2121360.toString(),"ABREVIADO?sab({112,113,114,115,119}):sab({112,113,114,119})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2121400.toString(),"sdb({108,109})");

@@ -675,7 +675,7 @@ public class Utils {
 				}
 			}
 
-			Map<String, String> c = compute(computeMap, type);
+			Map<String, String> c = compute(computeMap, year, type);
 
 			for (String key : c.keySet()) {
 				// TODO ARREGLO PROVISIONAL 32580 & 12380
@@ -736,7 +736,6 @@ public class Utils {
 		}
 		mvlCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 		mvlCtx.put("ABREVIADO", type.equals(ABREVIATE));
-
 		for (String stringKey : INITIALIZE_EXPRESSION_MAP.keySet()) {
 			String expression = INITIALIZE_EXPRESSION_MAP.get(stringKey);
 			mvlCtx.put(stringKey, 0.0 );
@@ -766,7 +765,7 @@ public class Utils {
 		return mvlCtx;
 	}	
 
-	public static Map<String, String> compute(Map<String, String> map, String type) {
+	public static Map<String, String> compute(Map<String, String> map, Integer year, String type) {
 		AccMiningMVELContext ctx = new AccMiningMVELContext(new IAccMiningKeyAccept() {
 			@Override
 			public boolean acceptKey(Object key) {
@@ -787,6 +786,7 @@ public class Utils {
 		}
 		Map<String, String> m = new HashMap<String, String>();
 		ctx.put("PYMES", type.equals(PYMES));
+		ctx.put("Y2014", year == 2014);
 		for (String key : D2Compute.COMPUTE_MAP_CURRENT.keySet()) {
 			String expression = D2Compute.COMPUTE_MAP_CURRENT.get(key);
 			Object ret = ctx.evaluateExpression(key,expression);
