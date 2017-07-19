@@ -749,6 +749,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //
 //		draft("NOMINA, OFICINAS Y DESPACHOS");
 	}
+	
+	@Test
+	public void TestComplementoIncidencias() throws Exception {
+
+		open("5883-events");
+		wait4Id("COMPLEMENTO_I");
+		
+	}
+	
 	// -------------------------------------------------------------------------
 	
 	private void expand(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {

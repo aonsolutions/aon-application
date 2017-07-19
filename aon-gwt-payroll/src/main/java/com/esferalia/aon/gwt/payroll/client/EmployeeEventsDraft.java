@@ -20,6 +20,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -440,6 +441,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		HorizontalPanel headPanel = new HorizontalPanel();
 		Label headLabel = new Label(var);
 		headLabel.addStyleName(style.firstHeadStyle());
+		
+		/**
+		 * CREAR IDs PARA TEST
+		 */
+		
+		if(var.equals("COMPLEMENTO_I")){
+			headLabel.ensureDebugId("COMPLEMENTO_I");
+		}
+		
 		headPanel.add(headLabel);
 		
 		if (this.blockVariableList.contains(var)){
@@ -449,8 +459,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					EmployeeTree.showEmployeeCalendar((employeeEventsDraft.getEmployeeCalendar()));
-					
+					EmployeeTree.showEmployeeCalendar((employeeEventsDraft.getEmployeeCalendar()));	
 				}
 			});
 			
@@ -465,6 +474,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			headLabel.addStyleName(style.cellFormat());
 		
 		eventsGrid.setWidget(newRow, 0, headPanel);
+		
 		
 		//Rellenamos el resto de la fila
 		
@@ -500,6 +510,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				eventValue.setStyleName(style.onChange());
 			else
 				eventValue.removeStyleName(style.onChange());
+			
+			/**
+			 * CREAR IDs PARA TEST
+			 */
+			
+			if(var.equals("COMPLEMENTO_I")){
+				eventValue.ensureDebugId("COMPLEMENTO_I_"+col+"_"+varMonth.getValue().toString());
+			}
 			
 			eventValue.setText(varMonth.getValue().toString());
 			eventsGrid.setWidget(newRow, col, eventValue);
