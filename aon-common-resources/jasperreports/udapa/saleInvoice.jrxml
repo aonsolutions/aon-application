@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-07-18T13:44:50 -->
+<!-- 2017-07-19T13:23:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="688163e4-9f2f-471f-a4ea-83d3db2b5215">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -1232,7 +1232,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 									<bottomPen lineWidth="0.0"/>
 								</box>
 								<textField pattern="" isBlankWhenNull="false">
-									<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="315" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="10cd6881-8152-4716-8906-0564e83d0b09"/>
+									<reportElement key="textField-1" mode="Transparent" x="0" y="0" width="315" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="10cd6881-8152-4716-8906-0564e83d0b09"/>
 									<box leftPadding="5">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1257,7 +1257,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 									<reportElement key="textField-5" x="0" y="0" width="315" height="12" uuid="2b2bbdcf-618f-4bf7-8c0e-6655d045b3a2"/>
-									<box>
+									<box leftPadding="5">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1283,7 +1283,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 							<jr:cell height="24" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<textField pattern="" isBlankWhenNull="false">
-									<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="55" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="4211be99-1b9f-40a0-a5de-e3758f00ecdc"/>
+									<reportElement key="textField-1" mode="Transparent" x="0" y="0" width="55" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="4211be99-1b9f-40a0-a5de-e3758f00ecdc"/>
 									<box leftPadding="5">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1329,7 +1329,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 							<jr:cell height="24" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<textField pattern="" isBlankWhenNull="false">
-									<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="55" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="cb2bda2e-76a1-4778-b349-aa236a01a4e8"/>
+									<reportElement key="textField-1" mode="Transparent" x="0" y="0" width="55" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="cb2bda2e-76a1-4778-b349-aa236a01a4e8"/>
 									<box leftPadding="5">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1372,7 +1372,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 						<jr:groupHeader groupName="pCategory">
 							<jr:cell height="24" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
-									<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="35" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="5122f9f3-17d1-4b19-9b9b-c1caa6907fb3"/>
+									<reportElement key="textField-1" mode="Transparent" x="0" y="0" width="35" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="5122f9f3-17d1-4b19-9b9b-c1caa6907fb3"/>
 									<box leftPadding="5">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1399,7 +1399,7 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 							<jr:cell height="24" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<textField pattern="" isBlankWhenNull="false">
-									<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="75" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="2dd36191-3f24-4631-8559-ad48f6d90e06"/>
+									<reportElement key="textField-1" mode="Transparent" x="0" y="0" width="75" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="2dd36191-3f24-4631-8559-ad48f6d90e06"/>
 									<box leftPadding="5">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
