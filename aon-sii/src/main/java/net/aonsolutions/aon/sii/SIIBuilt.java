@@ -359,7 +359,7 @@ public class SIIBuilt {
 			TipoDesglose tipoDesglose = new TipoDesglose(); 
 
 			if(!fet.getTipoFactura().equals(ClaveTipoFacturaType.F_2) && !fet.getTipoFactura().equals(ClaveTipoFacturaType.F_4) 
-				&& (vat.isService() || vat.isIntracommunity())){
+				&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity())){
 				TipoConDesgloseType tcdt = new TipoConDesgloseType();
 				
 				if(vat.isService() && !vat.isIntracommunity()){
