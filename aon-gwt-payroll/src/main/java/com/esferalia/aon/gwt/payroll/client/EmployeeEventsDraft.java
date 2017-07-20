@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogBar;
@@ -362,7 +363,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private void refreshWindow() {
 		changeYear(0);
-		//fillCellsEvents();	
 	}
 
 	/**
@@ -389,14 +389,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		});
 		
 		//Descargar Variables actualizadas
-		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
-		employeeEventsDraft.initializeDBEventsVariables(actualYear);
-		
-		//Pintar la tabla
-		employeeEventsDraft.initializeDBCalendar(
-				r -> { fillCellsEvents();
-					 }, t -> {});
-		
+		Integer actualYear = new Date().getYear();
+		employeeEventsDraft.initializeDBEventsVariables(
+				actualYear,
+				r -> { fillCellsEvents(); },
+				t -> {});
 	}
 	
 	private void clearEventsGrid() {
