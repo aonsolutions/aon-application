@@ -19,18 +19,9 @@ public class PageF1 extends PageAbs {
 	@UiField CheckBox A18009050;
 
 	String codeAux;
-
-	public PageF1() {
-		super();
-		
-		A18009050 = new CheckBox();
-		
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
 	
 	public PageF1(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		

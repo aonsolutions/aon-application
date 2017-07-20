@@ -33,14 +33,8 @@ public class PageF1C extends PageAbs {
 
 	String codeAux;
 
-	public PageF1C() {
-		super();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
-	
 	public PageF1C(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		Widget ui = pageBinder.createAndBindUi(this);

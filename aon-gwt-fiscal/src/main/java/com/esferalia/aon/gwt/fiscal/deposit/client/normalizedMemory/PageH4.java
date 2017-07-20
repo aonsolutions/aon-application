@@ -54,18 +54,14 @@ public class PageH4 extends PageAbs {
 	@UiField FlexTable table1;
 	@UiField TabPanel tabPanel;
 
-	public PageH4() {
-		super();
+	public PageH4(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
+		this.enterprise = enterprise;
+		this.normalizedMemory = nm;
+		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		tabPanel.selectTab(0);
-	}
-	
-	public PageH4(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		this();
-		this.enterprise = enterprise;
-		this.normalizedMemory = nm;
-		this.year = year;
 	}
 
 	@Override

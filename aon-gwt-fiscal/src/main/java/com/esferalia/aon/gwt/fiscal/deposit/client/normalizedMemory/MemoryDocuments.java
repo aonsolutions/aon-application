@@ -58,11 +58,8 @@ public class MemoryDocuments extends PageAbs {
 	TreeNode<Enterprise> memory;
 	TreeNode<Enterprise> autocartera;
 	Integer year;
-	public MemoryDocuments( Enterprise enterprise, NormalizedMemory nm, TreeNode<Enterprise> memory, TreeNode<Enterprise> autocartera, Integer year) {
-		
-		
-		super();
-		
+	public MemoryDocuments( Enterprise enterprise, NormalizedMemory nm, TreeNode<Enterprise> memory, TreeNode<Enterprise> autocartera) {
+		super(nm.getYear());
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 
 		RESOURCES.css().ensureInjected();
@@ -71,7 +68,6 @@ public class MemoryDocuments extends PageAbs {
 		this.normalizedMemory = nm;
 		this.memory = memory;
 		this.autocartera = autocartera;
-		this.year = year;
 		
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);

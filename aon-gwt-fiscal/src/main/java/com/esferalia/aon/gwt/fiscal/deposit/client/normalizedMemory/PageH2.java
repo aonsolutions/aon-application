@@ -21,19 +21,15 @@ public class PageH2 extends PageAbs {
 	@UiField FlexTable table1;
 	@UiField FlexTable table2;
 	@UiField TabPanel tabPanel;
-
-	public PageH2() {
-		super();
+	
+	public PageH2(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
+		this.enterprise = enterprise;
+		this.normalizedMemory = nm;
+		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		tabPanel.selectTab(0);
-	}
-	
-	public PageH2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		this();
-		this.enterprise = enterprise;
-		this.normalizedMemory = nm;
-		this.year = year;
 	}
 
 	@Override

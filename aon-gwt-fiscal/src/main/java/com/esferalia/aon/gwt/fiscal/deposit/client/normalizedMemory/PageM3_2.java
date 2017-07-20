@@ -23,20 +23,16 @@ public class PageM3_2 extends PageAbs {
 	@UiField TabPanel tabPanel;
 	@UiField(provided = true) FlexTable table1;
 	@UiField(provided = true) FlexTable table2;
-	
-	public PageM3_2() {
-		super();
+		
+	public PageM3_2(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
+		this.enterprise = enterprise;
+		this.normalizedMemory = nm;
+
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-	}
-	
-	public PageM3_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		this();
-		this.enterprise = enterprise;
-		this.normalizedMemory = nm;
-		this.year = year;
 	}
 
 	@Override

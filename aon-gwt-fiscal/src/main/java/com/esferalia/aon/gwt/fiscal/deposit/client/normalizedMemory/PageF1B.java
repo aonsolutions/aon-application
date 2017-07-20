@@ -32,15 +32,9 @@ public class PageF1B extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
 	String codeAux;
-
-	public PageF1B() {
-		super();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
 	
 	public PageF1B(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 

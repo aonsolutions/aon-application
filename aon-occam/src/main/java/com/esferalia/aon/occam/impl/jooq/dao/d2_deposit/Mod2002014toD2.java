@@ -698,7 +698,7 @@ public class Mod2002014toD2 {
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA2532129,Mod2002014Key.TC741)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA2532139,Mod2002014Key.TC742)
 			
-			
+/*			
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA251101,Mod2002014Key.TC632)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA251102,Mod2002014Key.TC633)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA251103,Mod2002014Key.TC634)
@@ -712,6 +712,7 @@ public class Mod2002014toD2 {
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA251111,Mod2002014Key.TC642)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA251112,Mod2002014Key.TC644)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PNA251113,Mod2002014Key.TC645)
+*/
 		};
 	
 	private static void set(Map<D2DepositHeaderKey, Double> ctx, Mod2002014 mod200, D2DepositHeaderKey D2Key, Mod2002014Key mod200Key) {

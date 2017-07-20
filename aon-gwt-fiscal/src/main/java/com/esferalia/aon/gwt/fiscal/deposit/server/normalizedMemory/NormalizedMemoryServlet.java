@@ -415,7 +415,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			} else if("2016".equals(ejercicio)){
 				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002016toD2.fillBalance(ctx, mod2002016);
+				Mod2002016toD2.fillBalance(ctx, mod2002016, year.toString().equals(ejercicio));
 
 				for(D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
@@ -461,7 +461,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			} else if("2016".equals(ejercicio)){
 				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002016toD2.fillPyg(ctx, mod2002016);
+				Mod2002016toD2.fillPyg(ctx, mod2002016, year.toString().equals(ejercicio));
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
@@ -510,8 +510,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			} else if("2016".equals(ejercicio)){
 				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002016toD2.fillEcpn(ctx, mod2002016);
-				Mod2002016toD2.fillEcpn2(ctx, mod2002016);
+				Mod2002016toD2.fillEcpn(ctx, mod2002016, year.toString().equals(ejercicio));
+				Mod2002016toD2.fillEcpn2(ctx, mod2002016, year.toString().equals(ejercicio));
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))

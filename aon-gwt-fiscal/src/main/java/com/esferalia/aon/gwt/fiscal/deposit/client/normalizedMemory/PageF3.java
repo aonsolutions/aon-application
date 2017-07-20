@@ -23,15 +23,9 @@ public class PageF3 extends PageAbs {
 	}
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
-
-	public PageF3() {
-		super();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
 	
 	public PageF3(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 

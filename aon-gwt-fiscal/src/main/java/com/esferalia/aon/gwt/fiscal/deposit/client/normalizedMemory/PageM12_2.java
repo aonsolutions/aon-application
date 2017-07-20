@@ -45,42 +45,28 @@ public class PageM12_2 extends PageAbs {
 	@UiField InlineLabel table1Title;
 	@UiField InlineLabel table2Title;
 	@UiField InlineLabel table3Title;
-	
-	@UiField(provided = true)
-	FlexTable table1;
-	
-	@UiField(provided = true)
-	FlexTable table2;
-	
-	@UiField(provided = true)
-	FlexTable table3;
-	
-	@UiField(provided = true)
-	FlexTable table4;
-	
-	@UiField(provided = true)
-	FlexTable table5;
-
+	@UiField(provided = true) FlexTable table1;
+	@UiField(provided = true) FlexTable table2;
+	@UiField(provided = true) FlexTable table3;
+	@UiField(provided = true) FlexTable table4;
+	@UiField(provided = true) FlexTable table5;
 	@UiField TabPanel tabPanel;
-	
-	public PageM12_2() {
-		super();
+		
+	public PageM12_2(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
+		this.enterprise = enterprise;
+		this.normalizedMemory = nm;
+		
 		table1 = new FlexTable();
 		table2 = new FlexTable();
 		table3 = new FlexTable();
 		table4 = new FlexTable();
 		table5 = new FlexTable();
 		tabPanel = new TabPanel();
+		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		tabPanel.selectTab(0);
-	}
-	
-	public PageM12_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		this();
-		this.enterprise = enterprise;
-		this.normalizedMemory = nm;
-		this.year = year;
 	}
 
 	@Override
