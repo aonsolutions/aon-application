@@ -19,30 +19,16 @@ public class PageH5 extends PageAbs {
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
-	@UiField
-	Label LMA8099000;
-	@UiField
-	CheckBox IMA8099000;
-	@UiField
-	Label LMA8099010;
-	@UiField
-	CheckBox IMA8099010;
-	@UiField
-	TabPanel tabPanel;
+	@UiField Label LMA8099000;
+	@UiField CheckBox IMA8099000;
+	@UiField Label LMA8099010;
+	@UiField CheckBox IMA8099010;
+	@UiField TabPanel tabPanel;
 
-	public PageH5() {
-		super();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		init();
-		tabPanel.selectTab(0);
-	}
-
-	public PageH5(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		super();
+	public PageH5(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
-		this.year = year;
 		
 		LMA8099000 = new Label(); 
 		IMA8099000 = new CheckBox();

@@ -38,21 +38,9 @@ public class PageF1A extends PageAbs {
 	@UiField DoubleBox A18009040;
 	
 	String codeAux;
-
-	public PageF1A() {
-		super();
-		
-		A18009010 = new DoubleBox();
-		A18009020 = new DoubleBox();
-		A18009030 = new DoubleBox();
-		A18009040 = new DoubleBox();
-
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
 	
 	public PageF1A(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		

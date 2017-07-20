@@ -75,54 +75,9 @@ public class PageF2 extends PageAbs {
 	
 	@UiField TextBox ROAC; // ROAC
 	@UiField Label ROACLabel; // ROAC
-
-	public PageF2() {
-		super();
-		IDA01010 = new Label();
-		IDA01020 = new Label();
-		
-		IDA01101 = new Label();
-		
-		PR8081001 = new ListBox(); // ciudad / provinci
-		PR8081002 = new TextBox(); // tomo
-		PR8081003 = new TextBox(); // folio
-		PR8081004 = new TextBox(); // num hojas registral
-		
-		PR8080805 = new CheckBox(); //CHECKBOX Abreviado - memoria
-		PR8080854 = new CheckBox(); //CHECKBOX Abreviado - ecpn
-		PR8080801 = new CheckBox(); //CHECKBOX Abreviado - balance
-		PR8080803 = new CheckBox(); //CHECKBOX Abreviado - pyg
-		PR8080811 = new CheckBox(); //CHECKBOX Abreviado - certificacion acuerdo
-		PR8080800 = new CheckBox(); //CHECKBOX Abreviado - hoja identificacion
-		PR8080819 = new CheckBox(); //CHECKBOX Abreviado - declaracion medioambiental
-		
-		PR8080855 = new CheckBox(); //CHECKBOX Pymes - ecpn
-		PR8080850 = new CheckBox(); //CHECKBOX Abreviado - balance
-		PR8080851 = new CheckBox(); //CHECKBOX Abreviado - pyg
-		PR8080852 = new CheckBox(); //CHECKBOX Abreviado - memoria
-		
-		PR8080807 = new CheckBox(); //CHECKBOX  INFORME DE GESTION
-		PR8080817 = new CheckBox(); //CHECKBOX  INFORME DE AUDITORIA
-		PR8080809 = new CheckBox(); //CHECKBOX  MODELO DE AUTOCARTERA
-		PR8080823 = new CheckBox(); //CHECKBOX  ANUNCIOS DE CONVOCATORIA
-		PR8080821 = new CheckBox(); //CHECKBOX  SICAV
-		
-		PR8081201 = new TextBox(); //Nombre y apellidos
-		PR8081202 = new TextBox(); //  dni
-		PR8081203 = new TextBox(); // domicilio
-		PR8081204 = new TextBox(); // ciudad
-		PR8081205 = new TextBox(); // codigo postal
-		PR8081206 = new ListBox(); // provincia
-		PR8081207 = new TextBox(); // fax
-		PR8081208 = new TextBox(); // telefono
-		PR8081209 = new TextBox(); // email
-		
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
 	
-	public PageF2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		super(year);
+	public PageF2(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		IDA01010 = new Label();

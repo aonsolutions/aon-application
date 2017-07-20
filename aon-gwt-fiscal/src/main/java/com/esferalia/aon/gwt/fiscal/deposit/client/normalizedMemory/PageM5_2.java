@@ -36,24 +36,12 @@ public class PageM5_2 extends PageAbs {
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
-	@UiField
-	TabPanel tabPanel;
-	@UiField(provided = true)
-	FlexTable table1;
-	
-	@UiField(provided = true)
-	FlexTable table2;
+	@UiField TabPanel tabPanel;
+	@UiField(provided = true) FlexTable table1;
+	@UiField(provided = true) FlexTable table2;
 
-	public PageM5_2() {
-		super();
-		table1 = new FlexTable();
-		table2 = new FlexTable();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
-	
-	public PageM5_2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		super(year);
+	public PageM5_2(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		table1 = new FlexTable();

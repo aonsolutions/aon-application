@@ -21,23 +21,15 @@ public class PageM15 extends PageAbs {
 	interface PageBinder extends UiBinder<Widget, PageM15> {
 	}
 	
-	@UiField 
-	TabPanel tabPanel;
+	@UiField TabPanel tabPanel;
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
-	public PageM15() {
-		super();
-
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-	}
-
-	public PageM15(Enterprise enterprise, NormalizedMemory nm, Integer year) {
-		super();
+	public PageM15(Enterprise enterprise, NormalizedMemory nm) {
+		super(nm.getYear());
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
-		this.year = year;
+
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}

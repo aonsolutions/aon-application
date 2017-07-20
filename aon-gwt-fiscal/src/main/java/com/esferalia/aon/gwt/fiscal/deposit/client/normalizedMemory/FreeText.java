@@ -43,16 +43,15 @@ public class FreeText extends PageAbs {
 	private final static AonResources RESOURCES = GWT
 			.create(AonResources.class);
 
-	public FreeText(String pageHeader, boolean isFreeText, String part, Enterprise enterprise, NormalizedMemory nm, Boolean textMode, Integer year) {
+	public FreeText(String pageHeader, boolean isFreeText, String part, Enterprise enterprise, NormalizedMemory nm, Boolean textMode) {
+		super(nm.getYear());
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		RESOURCES.css().ensureInjected();
 		this.enterprise = enterprise;
 		this.part = part;
 		this.normalizedMemory = nm;
 		this.textMode = textMode;
-		this.year = year;
-
-
+		
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
 		
