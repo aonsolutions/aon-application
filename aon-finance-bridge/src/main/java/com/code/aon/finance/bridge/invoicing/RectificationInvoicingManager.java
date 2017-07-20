@@ -60,6 +60,8 @@ public class RectificationInvoicingManager {
 	private Invoice createRectifierInvoice(Invoice invoice, String series, int number, String referenceCode, Date issueDate, String cause, 
 			RectificationType rectificationtype) throws ManagerBeanException {
 		Invoice rectifier = new Invoice();
+		rectifier.setActivity(invoice.getActivity());
+		rectifier.setInvestAsset(invoice.getInvestAsset());
 		rectifier.setProject(invoice.getProject());
 		if (invoice.isSales()) {
 			rectifier.setSeries(series);
@@ -78,10 +80,18 @@ public class RectificationInvoicingManager {
 		rectifier.setSecurityLevel(invoice.getSecurityLevel());
 		rectifier.setStatus(InvoiceStatus.PENDING);
 		rectifier.setType(invoice.getType());
+		rectifier.setDefaultTaxInfo(false);
+		rectifier.setSurcharge(invoice.isSurcharge());
+		rectifier.setWithholding(invoice.isWithholding());
+		rectifier.setWithholdingFarmer(invoice.isWithholdingFarmer());
+		rectifier.setVatAccrualPayment(invoice.isVatAccrualPayment());
 		rectifier.setComments(cause);
+		rectifier.setInvestment(invoice.isInvestment());
+		rectifier.setTransaction(invoice.getTransaction());
 		rectifier.setScope(invoice.getScope());
 		rectifier.setService(invoice.isService());
 		rectifier.setAdvance(invoice.isAdvance());
+		rectifier.setSeller(invoice.getSeller());
 		rectifier.setRectificationType(rectificationtype);
 		rectifier.setRectificationInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -119,6 +129,7 @@ public class RectificationInvoicingManager {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			InvoiceDetail rectifierDetail = new InvoiceDetail();
 			rectifierDetail.setInvoice(rectifier);
+			rectifierDetail.setInvestAsset(invoiceDetail.getInvestAsset());
 			rectifierDetail.setProject(invoiceDetail.getProject());
 			rectifierDetail.setLine(invoiceDetail.getLine());
 			rectifierDetail.setItem(invoiceDetail.getItem());
@@ -129,7 +140,11 @@ public class RectificationInvoicingManager {
 			rectifierDetail.setSource((invoiceDetail.getSource() == InvoiceSource.RESERVATION) ? invoiceDetail.getSource() : InvoiceSource.DIRECT_INVOICE);
 			rectifierDetail.setSourceId((invoiceDetail.getSource() == InvoiceSource.RESERVATION) ? invoiceDetail.getSourceId() : null);
 			rectifierDetail.setTaxableBase((invoice.isSpecialRectifier()) ? 0.0 : CommonUtil.round(invoiceDetail.getTaxableBase() * (-1), 4));
+			rectifierDetail.setTaxes(invoiceDetail.getTaxes());
+			rectifierDetail.setPrepayment(invoiceDetail.isPrepayment());
+			rectifierDetail.setSeller(invoiceDetail.getSeller());
 			rectifierDetail.setWorkPlace(invoiceDetail.getWorkPlace());
+			rectifierDetail.setWarehouse(invoiceDetail.getWarehouse());
 			rectifierDetail.setTaxDataInDetail(true);
 
 			InvoiceTax invoiceVatTax = obtainInvoiceTax(invoiceDetail, TaxType.VAT);
@@ -192,6 +207,10 @@ public class RectificationInvoicingManager {
 			rectifierFinance.setFinanceStatus(FinanceStatus.PENDING);
 			rectifierFinance.setSecurityLevel(finance.getSecurityLevel());
 			rectifierFinance.setScope(finance.getScope());
+			rectifierFinance.setManual(finance.isManual());
+			rectifierFinance.setAdvance(finance.isAdvance());
+			rectifierFinance.setPayroll(finance.isPayroll());
+			rectifierFinance.setPrepayment(finance.isPrepayment());
 			financeBean.insert(rectifierFinance);
 
 			if (settleFinance && finance.getFinanceStatus() == FinanceStatus.PENDING) {
