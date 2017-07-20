@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -141,12 +142,10 @@ public class CRAWriter {
 	}
 		
 	private void cleanEmptyTRBSegment(DDE dde) {
-		for(TRB trb: dde.getTrbList()){
-			if(trb.getCreList()==null || 
-					trb.getCreList().isEmpty()){
-				dde.getTrbList().remove(trb);
-			}
-		}
+		List<TRB> list = dde.getTrbList().stream()
+				.filter(trb->trb.getCreList()!=null && !trb.getCreList().isEmpty())
+				.collect(Collectors.toList());
+		dde.setTrbList(list);
 	}
 	
 	private ETI createETIRecord(Integer year, Month month) throws ManagerBeanException {
