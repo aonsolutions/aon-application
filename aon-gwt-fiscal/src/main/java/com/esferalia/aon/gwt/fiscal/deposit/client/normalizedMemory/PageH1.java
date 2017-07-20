@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-public class Header1 extends PageAbs {
+public class PageH1 extends PageAbs {
 
 	@UiField HTMLPanel micropymePanel;
 	@UiField HTMLPanel unityPanel;
@@ -100,7 +100,7 @@ public class Header1 extends PageAbs {
 
 	
 
-	interface Header1Binder extends UiBinder<Widget, Header1> {
+	interface Header1Binder extends UiBinder<Widget, PageH1> {
 	}
 
 	private static final Header1Binder header1Binder = GWT
@@ -110,7 +110,7 @@ public class Header1 extends PageAbs {
 			.create(AonResources.class);
 	
 
-	public Header1(Enterprise enterprise, NormalizedMemory nm) {
+	public PageH1(Enterprise enterprise, NormalizedMemory nm) {
 		super(nm.getYear());
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		RESOURCES.css().ensureInjected();
@@ -194,10 +194,10 @@ public class Header1 extends PageAbs {
 			@Override
 			public void onSelect(CNAE2009 selected) {
 				IDA02001.setEnabled(false);
-				IDA02001.setText(selected.getCode());
+				IDA02001.setText(selected.getCodeWithoutPoint());
 				normalizedMemory.saveButton.setEnabled(true);
 				normalizedMemory.cancelButton.setVisible(true);
-				onEdit("2001", selected.getCode());
+				onEdit("2001", selected.getCodeWithoutPoint());
 
 				IDA02009.setText(selected.getDescription());
 				onEdit("2009", selected.getDescription());				
