@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.FreeText;
-import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.Header1;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.PageH1;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.MemoryDocuments;
@@ -208,7 +208,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
     		@Override
     		public void select(Deposit fiscalPanel) {
     			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit.getYear().toString());
-    			Header1 header1Page = new Header1(d2Deposit.getEnterprise(), normalizedMemory);
+    			PageH1 header1Page = new PageH1(d2Deposit.getEnterprise(), normalizedMemory);
     			normalizedMemory.setPagesPanel(header1Page);
     			fiscalPanel.setContent(normalizedMemory);	
     		}

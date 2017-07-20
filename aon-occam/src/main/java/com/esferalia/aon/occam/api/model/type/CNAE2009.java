@@ -658,6 +658,10 @@ public enum CNAE2009 implements Serializable {
 		return code;
 	}
 	
+	public String getCodeWithoutPoint() {
+		return code.replace(".", "");
+	}
+	
 	public String getDescription() {
 		return description;
 	}
