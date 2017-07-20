@@ -86,7 +86,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	}
 
 	private Warehouse obtainWarehouse(Invoice invoice, InvoiceSource source, WorkPlace workPlace) throws ManagerBeanException {
-		if ((invoice.isSales() || invoice.isPurchase()) && source != InvoiceSource.DELIVERY && source != InvoiceSource.INCOME) {
+		if ((invoice.isSales() || invoice.isPurchase()) && invoice.isNoRectification() && source != InvoiceSource.DELIVERY && source != InvoiceSource.INCOME) {
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			if (warehouseBean.getCount(null) == 1) {
 				return (Warehouse)warehouseBean.getList(null).get(0);
