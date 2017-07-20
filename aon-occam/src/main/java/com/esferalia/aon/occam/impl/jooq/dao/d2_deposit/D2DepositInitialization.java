@@ -98,9 +98,9 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA40400.toString(), "sap({606,608,609,61,7931,7932,7933})-sdp({600,601,602,607,6931,6932,6933})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA40500.toString(), "sap({740,747,75})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA40600.toString(), "ABREVIADO?sap({7950,7957})-sdp({64})"
-																				+ ":sdp({64})");
+																				+ ":sap({64})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA40700.toString(), "sap({636,639,794,7954})-sdp({62,631,634,65,694,695})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA40800.toString(), "sdp({68})");
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA40800.toString(), "sap({68})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA40900.toString(), "sap({746})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41000.toString(), "ABREVIADO?sap({7951,7952,7955,7956})"
 																				+ ": sap({7951,7952,7955})");
@@ -112,7 +112,7 @@ public class D2DepositInitialization {
 																					 // TODO 746;NECA 6.ª 4 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41490.toString(), "ABREVIADO?sap({760,761,762,767,769})"
 																				+ ": sap({760,761,762,769})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41500.toString(), "sdp({660,661,662,664,665,669})");
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41500.toString(), "sap({660,661,662,664,665,669})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41600.toString(), "sap({763})-sdp({663})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41700.toString(), "sap({768})-sdp({668})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41800.toString(), "sap({766,773,775,796,797,798,799})-sdp({666,667,673,675,696,697,698,699})");
