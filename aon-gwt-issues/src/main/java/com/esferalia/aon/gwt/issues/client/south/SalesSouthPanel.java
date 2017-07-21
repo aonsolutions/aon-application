@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.issues.client.south;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.finance.JsBoughtProduct;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -49,6 +50,7 @@ public class SalesSouthPanel extends SouthPanel {
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("receipt");
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = js.getCode() + " - " + js.getName() + ", Total: " + js.getArray().length() + " - Ultima venta el " + js.getDate();
     	pi.add(new Label(str));
@@ -60,6 +62,7 @@ public class SalesSouthPanel extends SouthPanel {
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("receipt");
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = "El " + js.getDate() + " - " + js.getQuantity() + (js.getQuantity() == 1 ? "unidad" : " unidades") + " en Fra.: " + js.getReferenceCode() + " - " 
     			+ js.getDescription();

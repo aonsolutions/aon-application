@@ -42,6 +42,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-margin-auto")
 	String aonMarginAuto();
 
+	@ClassName("aon-min-width24")
+	String aonMinWidth24();
+	
 	@ClassName("aon-no-print")
 	String aonNoPrint();
 

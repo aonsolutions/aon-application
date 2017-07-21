@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.AonUrlApi;
 import com.esferalia.aon.occam.api.model.type.Priority;
@@ -140,11 +142,16 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
     	c12.setCellStyle(style);
     	
     	cont = 1;
+    	
+    	// TASK HOLDER MAP
+    	Map<Integer, String> taskHolderMap = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()))
+    			.collect(Collectors.toMap(TaskHolder::getId, TaskHolder::getName));
+
     	AON.getStatTaskStream(domain.getName(), domain.getId(), userName, 
     			new StatParams().setIssueFilter(Utils.getFilter(parameters))).forEach(task -> {
-    		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
+			
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
 			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 
@@ -200,7 +207,7 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
 	    	ct10.setCellStyle(style3);
 	    	
 	    	Cell ct11 = taskrow.createCell(11);
-	    	ct11.setCellValue(assignee.getName());	//"Operario"
+	    	ct11.setCellValue(taskHolderMap.get(task.getTaskHolder())); //"Operario"
 	    	ct11.setCellStyle(style3);
 
 	    	for (Integer h = 0; h < labels.size(); h++) {

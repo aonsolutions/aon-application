@@ -356,14 +356,14 @@ public class Incidence extends Methods{
 	
 	//-------------------- EVENTS
 	
-	public void getEvents(String url, AsyncCallback<JSON<JsEvent>> callback){
-		get(url, callback);
+	public void getEvents(JsIssue issue, AsyncCallback<JSON<JsEvent>> callback){
+		get(url + "repos/" + getUserName() + "/" + getDomainName() + "/issues/" + issue.getNumber() + "/events", callback);
 	}
 	
 	//-------------------- COMMENTS
 	
-	public void getComments(String url, AsyncCallback<JSON<JsComment>> callback){
-		get(url, callback);
+	public void getComments(JsIssue issue, AsyncCallback<JSON<JsComment>> callback){
+		get(url + "repos/" + getUserName() + "/" + getDomainName() + "/issues/" + issue.getNumber() + "/comments", callback);
 	}
 	
 	public void newComment(JsIssue issue, String requestData, AsyncCallback<JsComment> callback){

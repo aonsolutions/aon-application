@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.issues.client.south;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
@@ -45,6 +46,7 @@ public abstract class TaskSouthPanel extends SouthPanel {
     	ironIcon.setIcon("error-outline");
     	ironIcon.setStyle("color:" + js.getColor());
     	ironIcon.setTitle(js.getBody());
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String enterprise =js.getEnterprise().getLogin() != null && !js.getEnterprise().getLogin().equals("") && !js.getEnterprise().getLogin().equals("Sin Asignar")?
     			"[" + js.getEnterprise().getLogin() + "]" : "";

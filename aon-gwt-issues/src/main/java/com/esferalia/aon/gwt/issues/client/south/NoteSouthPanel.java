@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.issues.client.south;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.user.client.ui.Label;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperItem;
@@ -25,6 +26,7 @@ public class NoteSouthPanel extends SouthPanel {
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("speaker-notes");
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = js.getNoteDate() + " - "+ js.getDescription() + " - " + js.getComments(); 
     	pi.add(new Label(str));

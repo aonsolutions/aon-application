@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.issues.client.south;
 
 import com.esferalia.aon.gwt.api.client.incidence.JsGeneral;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.user.client.ui.Label;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperItem;
@@ -43,6 +44,7 @@ public class GeneralInfoSouthPanel extends SouthPanel {
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon(icon);
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	pi.add(new Label(str));
     	pi.setStyle("min-height:24px;font-size:12px;padding:0px;");
@@ -53,6 +55,7 @@ public class GeneralInfoSouthPanel extends SouthPanel {
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon(js.getIcon());
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = js.getValue() + " - " + js.getComment();
     	pi.add(new Label(str));

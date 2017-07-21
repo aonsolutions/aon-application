@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.issues.client.south;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.project.JsCommercialTracking;
 import com.esferalia.aon.gwt.api.client.project.JsProject;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -52,6 +53,7 @@ public class CommercialSouthPanel extends SouthPanel {
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("work");
     	ironIcon.setTitle(js.getComment());
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = js.getDate() + " - " + js.getName() + ", comercial: " + js.getSeller().getName() ;
     	pi.add(new Label(str));
@@ -64,6 +66,7 @@ public class CommercialSouthPanel extends SouthPanel {
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("assignment");
     	ironIcon.setTitle(js.getComment());
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = js.getDate() + " - comercial: " + js.getSeller().getName(); // + " - " + js.getComment();
     	pi.add(new Label(str));

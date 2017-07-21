@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.issues.client.south;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.registry.JsProfile;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -49,6 +50,7 @@ public class ProfileSouthPanel extends SouthPanel {
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("account-box");
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = js.getQuestion();
     	pi.add(new Label(str));
@@ -60,6 +62,7 @@ public class ProfileSouthPanel extends SouthPanel {
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("account-box");
+    	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
     	String str = "El " + js.getDate() + " - " + js.getName();
     	pi.add(new Label(str));

@@ -451,7 +451,7 @@ public class IssuePanel extends Composite{
 		});
 		vp.add(title);
 		if(!issue.isDuplicate()){
-			incidence.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
+			incidence.getEvents(issue, new AsyncCallback<JSON<JsEvent>>() {
 				@Override
 				public void onSuccess(JSON<JsEvent> result) {
 					LinkedList<JsEvent> list = new LinkedList<JsEvent>();
@@ -533,7 +533,7 @@ public class IssuePanel extends Composite{
 		if(!issue.isFaq()) printNotification(issue);
 		printDescription(issue);
 		if(issue.getComments()>0){
-			incidence.getComments(issue.getCommentsUrl(), new AsyncCallback<JSON<JsComment>>() {
+			incidence.getComments(issue, new AsyncCallback<JSON<JsComment>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsComment> result) {
