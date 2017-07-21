@@ -22,6 +22,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationConexFlow implements Serializable {
@@ -143,6 +144,18 @@ public class ProjectReservationConexFlow implements Serializable {
 		this.showNotifyWindow = showNotifyWindow;
 	}
 
+	public boolean isPaid(){
+		Double paid = DBConsults.getConexFlowDescription(getDomain(), getLogin(), ConexFlowStatus.PAYSLIP, getReservation().getId())
+				.mapToDouble(r -> {
+					String[] s =  r.split("#");
+					return Double.parseDouble(s[s.length - 1]);
+				}).sum();
+		Double total = ReservationStatus.ACTIVE.equals(getReservation().getStatus()) ? getReservation().getTotal()
+				: ((ReservationStatus.BLOCKED.equals(getReservation().getStatus()) || ReservationStatus.CANCELLED.equals(getReservation().getStatus()))
+				? getReservation().getPenaltyAmount() : 0.0);
+		return paid >= total;	
+	}
+	
 	public boolean isPreauthorization() {
 		return isOperation(ConexFlowStatus.PREAUTHORIZATION);
 	}
@@ -176,7 +189,8 @@ public class ProjectReservationConexFlow implements Serializable {
 	}
 
 	public boolean isShowSale() {
-		return (!isConfirmPreauthorization() && !isSale());
+		return (!isConfirmPreauthorization() && !isSale())
+				|| !isPaid();
 	}
 
 	public boolean isShowConfirmPreauthorization() {

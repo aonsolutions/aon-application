@@ -31,9 +31,7 @@ import com.code.aon.conexflow.ConexFlowConnection;
 import com.code.aon.conexflow.ConexFlowStatus;
 import com.code.aon.conexflow.XMLUtils;
 import com.code.aon.customer.Customer;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.google.apis.DriveUtils;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -54,9 +52,20 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
+
 public class DBConsults {
 	
 	private static final Logger LOGGER  = Logger.getLogger(DBConsults.class.getName());
+	
+	public static Stream<String> getConexFlowDescription(Domain domain, String login, ConexFlowStatus status, Integer project){
+		return AON.getAttachStream(domain.getName(), domain.getId(), login,
+				f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getDescriptionProperty().like(getStatusDescriptionWithoutToken(status)))
+				.and(f.getAttachModuleProperty().eq(project))
+				, AttachType.PROJECT, false).map(r -> r.getDescription());
+	}
 	
 	//-------------------- GETS
 
@@ -119,6 +128,10 @@ public class DBConsults {
 	
 	public static String getStatusDescription(String token, ConexFlowStatus status) {
 		return "CONEXFLOW_(" + token.substring(token.length()-5) + ")_" + status.getName() + "#%";
+	}
+	
+	public static String getStatusDescriptionWithoutToken(ConexFlowStatus status) {
+		return "CONEXFLOW%" + status.getName() + "#%";
 	}
 	
 	public static ConexFlow getConexFlowX(Domain domain, String login, Integer project, String description){
