@@ -46,6 +46,12 @@ public enum TaskChartType implements Serializable {
 			chartVisitor. visitTaskByDay();
 		}
 	})
+	,TASK_BY_CUSTOMER("Tareas por cliente", new ITypeVisitor(){
+		@Override
+		public void visit(ITaskChartTypeVisitor chartVisitor) {
+			chartVisitor. visitTaskByCustomer();
+		}
+	})
 	;
 	
 	public static interface ITypeVisitor {

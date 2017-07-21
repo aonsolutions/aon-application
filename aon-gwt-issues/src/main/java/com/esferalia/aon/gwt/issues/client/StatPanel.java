@@ -161,6 +161,16 @@ public class StatPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
+		} else if(sct.equals(TaskChartType.TASK_BY_CUSTOMER)){
+			incidence.getStatDataByCustomer(getIssueFilter(),new AsyncCallback<JSON<JsStatData>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsStatData> result) {
+					content.setWidget(pieChart(result.getData()));
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
 		} 
 	}
 	

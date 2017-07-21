@@ -513,6 +513,11 @@ public class Incidence extends Methods{
 				+ getIssueFilter(filter), callback);
 	}
 	
+	public void getStatDataByCustomer(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
+		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/customer"
+				+ getIssueFilter(filter), callback);
+	}
+	
 	// -------------------- STATUS
 	public void getStatuses( AsyncCallback<JSON<JsObject>> callback){
 		get(url + "repos/"+getUserName()+"/"+getDomainName()+"/statuses", callback);

@@ -87,6 +87,8 @@ public class StatServlet extends HttpServlet{
 			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_MONTH, filter);
 		case "day":
 			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_DAY, filter);
+		case "customer":
+			return getTaskStatData(domain, userName, TaskChartType.TASK_BY_CUSTOMER, filter);
 		default:
 			return new JSONArray();
 		}

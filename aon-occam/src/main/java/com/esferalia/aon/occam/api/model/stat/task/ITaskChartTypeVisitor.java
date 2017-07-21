@@ -15,4 +15,6 @@ public interface ITaskChartTypeVisitor {
 	void visitTaskByMonth();
 	
 	void visitTaskByDay();
+	
+	void visitTaskByCustomer();
 }

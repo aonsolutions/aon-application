@@ -496,6 +496,15 @@ public class StatDAO {
 							table.put(date1, TaskStatus.values()[rec.getValue(TASK.STATUS)].getESName(), amount);
 						});
 				}
+
+				@Override
+				public void visitTaskByCustomer() {
+					ctx.getDslContext().select(DSL.count(TASK.ID), REGISTRY.NAME)
+					.from(TASK).join(REGISTRY).on(TASK.REGISTRY.eq(REGISTRY.ID))
+					.where(getTaskCondition(ctx, params))
+					.groupBy(TASK.REGISTRY).fetch().stream().forEach(r -> 
+						table.put(r.getValue(REGISTRY.NAME), "CANTIDAD", r.value1().doubleValue()));
+				}
 			});
 		} else if(params.getStatType().equals(StatType.FEE)){
 			FeeChartType.values()[params.getChartType()].visit(new IFeeChartTypeVisitor() {
