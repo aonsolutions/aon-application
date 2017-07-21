@@ -32,6 +32,7 @@ import com.code.aon.product.strategy.BasicPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistryMode;
@@ -203,31 +204,36 @@ public class ConnectSaleInvoiceWriter {
 	
 	private List<SINCP> createSINCPList(Invoice invoice, Company company,
 			String companyEdiCode, String customerEdiMainCode) {
-		List<SINCP> list = new ArrayList<>();
+		Registry customer = invoice.getRegistry();
+		RegistryAddress invoiceAddress = invoice.getRegistryAddress();
+		RegistryAddress companyAddress = null;
+		try {
+			companyAddress = company.getRegistry().getDefaultAddress();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
 
+		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
-				company.getRegistry(), companyEdiCode));
-		list.add(createSINCPRecord(
-				SINCP.SINCP_2.EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA__II,
-				company.getRegistry(), companyEdiCode));
-		list.add(createSINCPRecord(
-				SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				invoice.getRegistry(), customerEdiMainCode));
+				company, companyAddress, companyEdiCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA__II,
+				company, companyAddress, companyEdiCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
+				customer, invoiceAddress, customerEdiMainCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
-				invoice.getRegistry(), customerEdiMainCode));
+				customer, invoiceAddress, customerEdiMainCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
-				invoice.getRegistry(), customerEdiMainCode));
+				customer, invoiceAddress, customerEdiMainCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
-				invoice.getRegistry(), customerEdiMainCode));
-		list.add(createSINCPRecord(
-				SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
-				company.getRegistry(), companyEdiCode));
+				customer, invoiceAddress, customerEdiMainCode));
+		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
+				company, companyAddress, companyEdiCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,
-				invoice.getRegistry(), customerEdiMainCode));
+				customer, invoiceAddress, customerEdiMainCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS,
-				invoice.getRegistry(), companyEdiCode));
+				company, companyAddress, companyEdiCode));
 		list.add(createSINCPRecord(SINCP.SINCP_2.RECEPTOR_DEL_MENSAJE_MR,
-				invoice.getRegistry(), customerEdiMainCode));
+				customer, invoiceAddress, customerEdiMainCode));
 
 		return list;
 	}
@@ -321,7 +327,7 @@ public class ConnectSaleInvoiceWriter {
 	/**
 	 * Información partes involucradas
 	 */
-	private SINCP createSINCPRecord(SINCP.SINCP_2 type, Registry registry, String ediCode) {
+	private SINCP createSINCPRecord(SINCP.SINCP_2 type, Registry registry, RegistryAddress rAddress, String ediCode) {
 		SINCP sincp = new SINCP();
 		sincp.setCalificadorDelInterlocutor(type.getValue());
 		sincp.setCodigoInterlocutor(ediCode);
@@ -333,14 +339,14 @@ public class ConnectSaleInvoiceWriter {
 		sincp.setNombre4(null);
 		sincp.setNombre5(null);
 		try {
-			sincp.setDireccion1_Calle_Numero_(registry.getRegistry().getDefaultAddress().getAddress());
-			sincp.setDireccion2_Calle_Numero_(registry.getRegistry().getDefaultAddress().getAddress2());
-			sincp.setDireccion3_Calle_Numero_(registry.getRegistry().getDefaultAddress().getAddress3());
-			sincp.setDireccion4_Calle_Numero_(registry.getRegistry().getDefaultAddress().getNumber());
-			sincp.setCiudad(registry.getRegistry().getDefaultAddress().getCity());
-			sincp.setProvincia(registry.getRegistry().getDefaultAddress().getGeozone().getName());
-			sincp.setCodigoPostal(registry.getRegistry().getDefaultAddress().getZip());
-			sincp.setCodigoPais(registry.getRegistry().getDefaultAddress().getGeozone().getGeoZoneCountry().getCode());
+			sincp.setDireccion1_Calle_Numero_(rAddress.getAddress());
+			sincp.setDireccion2_Calle_Numero_(rAddress.getAddress2());
+			sincp.setDireccion3_Calle_Numero_(rAddress.getAddress3());
+			sincp.setDireccion4_Calle_Numero_(rAddress.getNumber());
+			sincp.setCiudad(rAddress.getCity());
+			sincp.setCodigoPostal(rAddress.getZip());
+			sincp.setProvincia(rAddress.getGeozone().getName());
+			sincp.setCodigoPais(rAddress.getGeozone().getGeoZoneCountry().getCode());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
