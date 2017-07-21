@@ -375,6 +375,7 @@ public class EmployeeEventsDraftObject {
 						varList.add(eVar);
 					}
 					sortListByStartDate(varList);
+					
 					mapEventsVar.put(varName, varList);
 				}
 				
