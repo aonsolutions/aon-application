@@ -754,7 +754,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	public void TestComplementoIncidencias() throws Exception {
 
 		open("incidencias");
-		wait4Id("COMPLEMENTO_I, INCIDENCIA");
+		wait4Id("COMPLEMENTO_I,_INCIDENCIA");
 		
 	}
 	
