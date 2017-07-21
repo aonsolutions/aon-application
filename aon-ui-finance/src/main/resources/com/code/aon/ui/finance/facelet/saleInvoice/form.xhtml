@@ -30,6 +30,14 @@
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 								style="width: 14px;" reRender="showNewMessageWindow">
 							</aon:commandButton>
+							<aon:if test="#{domainSwitcher.betaDomain}">
+								<aon:commandButton value="&#160;" id="email2"
+									actionListener="#{saleInvoice.onSendInvoiceByEmail2}"
+									rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+									styleClass="aon-finding-toolbar-item aon-icon-webmail aon-finding-toolbar-item-no-border"
+									style="width: 14px;" reRender="showNewMessageWindow">
+								</aon:commandButton>
+							</aon:if>
 						</aon:if>
 						<aon:if test="#{saleInvoice.printWord}">
 							<aon:htmlCommandLink id="saleInvoice-reportWord"

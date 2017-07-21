@@ -1606,6 +1606,22 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 	}
 	
+	public void onSendInvoiceByEmail2(ActionEvent event) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {
+			try {
+				controller.onNewMessage(event);
+				Invoice invoice = getInvoice();
+				emailController.initMessageController(controller, invoice, null, isIncludeFacturae(invoice));
+			} catch (Throwable th) {
+				LOGGER.error(th.getMessage(), th);
+				AonUtil.addErrorMessage(th.getMessage());
+				throw new AbortProcessingException(th.getMessage(), th);
+			}						
+		}
+	}
+	
 	public List<SelectItem> getInvoiceAttachmentTypes() {
 		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
 		if (! isAttachmentAvailable() ) {

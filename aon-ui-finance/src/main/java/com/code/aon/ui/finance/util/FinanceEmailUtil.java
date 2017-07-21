@@ -6,6 +6,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJE
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_WITHOUT_EMAIL;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -14,8 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
 
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
@@ -39,6 +43,7 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.finance.SddMandateObject;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
@@ -74,7 +79,15 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	
 	public void initMessageController( MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae ) throws ManagerBeanException, IOException{
 		String[] emails = getAdministrativeEmails(invoice.getRegistry());
-		initMessageController(messageController, emails, getEmailBody(invoice));
+		if(attach!=null){
+			initMessageController(messageController, emails, getEmailBody(invoice));
+		} else {
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			String domain = ds.getCurrentDomainURL();
+			String remain_url = "domain="+domain+"&login="+AonUtil.getRemoteUser()+"&invoice="+invoice.getId();
+			remain_url = "sid/"+Base64.getEncoder().encodeToString(remain_url.getBytes(StandardCharsets.UTF_8));
+			initMessageController(messageController, emails, getEmailBody(invoice, remain_url));
+		}
 		messageController.setSubject( getEmailSubject(invoice) );
 		if ( attach != null ) {
 			messageController.addAttachment( getInvoiceFile(attach, invoice) );	
@@ -104,6 +117,18 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	public String getEmailBody( Invoice invoice )  {
 		String message = AonUtil.getMessage(FINANCE_INVOICE_EMAIL_BODY); 
 		return formatEmailBody(invoice, message);
+	}
+	
+	public String getEmailBody( Invoice invoice, String url)  {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Puede descargar la factura ");
+		sb.append("<a href='").append(url).append("'>");
+		sb.append(invoice.getReferenceCode());
+		sb.append("</a>");
+		sb.append(" emitida el ");
+		sb.append(new SimpleDateFormat("dd/MM/yyyy").format(invoice.getIssueDate()));
+		sb.append("<br/>");
+		return sb.toString();
 	}
 	
 	public String getEmailBody()  {

@@ -165,7 +165,7 @@ public class CompanyEmailUtil implements Serializable {
 		body.append( "</head><body>" );
 		
 		body.append(StringUtils.isEmpty(bodyHeader)?AonUtil.getMessage(COMPANY_EMAIL_BODY_HEADER):bodyHeader );
-		body.append( text );
+		body.append( text ).append( "<br/>" );
 		body.append(AonUtil.getMessage(COMPANY_EMAIL_BODY_FOOTER) );		
 		
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
