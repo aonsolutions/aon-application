@@ -194,8 +194,6 @@
 		<module>aon-solutions-release</module>
 		<module>aon-common-resources</module>
 		
-		<!-- COMMING SOON -->
-		<module>aon-creta</module>
 		
 	</modules>
 
