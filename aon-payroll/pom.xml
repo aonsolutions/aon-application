@@ -109,7 +109,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>tgss</artifactId>
-      <version>8.113</version>
+      <version>9.00-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -165,7 +165,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>aeat</artifactId>
-      <version>8.113</version>
+      <version>9.00-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -177,7 +177,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>8.113</version>
+      <version>9.00-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
