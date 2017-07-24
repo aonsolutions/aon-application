@@ -620,7 +620,7 @@ public class ConnectSaleInvoiceWriter {
 					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID),
 					customerId);
 			criteria.addEqualExpression(
-					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ID),
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID),
 					baseItem.getId());
 			criteria.addEqualExpression(
 					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE),
