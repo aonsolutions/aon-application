@@ -1,5 +1,10 @@
 FROM tomcat:9.0-jre8
 
+RUN apt-get update && apt-get install -y \
+	procps \
+	libreoffice-calc \
+	libreoffice-writer
+
 ARG AON_VERSION=8.95-SNAPSHOT
 
 ENV CATALINA_HOME /usr/local/tomcat
