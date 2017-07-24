@@ -123,6 +123,18 @@ public abstract class BaseIntegralTestCase {
 		select(employeeId + "-draft");
 		wait4Text("employeeNameLabel", employeeName);
 	}
+	
+	protected static void events(String employeeName) throws IndexOutOfBoundsException, IOException, InterruptedException {
+		String employeeId = normalize(employeeName);
+		
+		DomElement draft = getElementById(employeeId + "-events");
+		if ( draft == null || !draft.isDisplayed() )
+			open(employeeId);
+		
+		select(employeeId + "-events");
+		wait4Id("complemento_i");
+		//wait4Text("employeeNameLabel", employeeName);
+	}
 
 	protected static boolean hasElementById(String id) {
 		LOGGER.warning(GWT_DEBUG_ID_PREFIX +id + ": " +htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id));

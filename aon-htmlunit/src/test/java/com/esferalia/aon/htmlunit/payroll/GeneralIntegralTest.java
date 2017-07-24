@@ -17,6 +17,7 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
@@ -751,11 +752,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 	
 	@Test
-	public void TestComplementoIncidencias() throws Exception {
+	public void TestIncidencias() throws Exception {
 
 		open("incidencias");
 		wait4Id("complemento_i,_incidencia");
+		events("COMPLEMENTO_I, INCIDENCIA");
+
 		
+		assertValue("complemento_i_7_3",3);
 	}
 	
 	// -------------------------------------------------------------------------

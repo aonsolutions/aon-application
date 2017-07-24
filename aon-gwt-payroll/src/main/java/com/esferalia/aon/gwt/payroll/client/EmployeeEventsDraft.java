@@ -443,7 +443,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		 * CREAR IDs PARA TEST
 		 */
 		
-		headLabel.ensureDebugId(var);
+		headLabel.ensureDebugId(var.toLowerCase());
 		
 		headPanel.add(headLabel);
 		
@@ -510,7 +510,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			 * CREAR IDs PARA TEST
 			 */
 			
-			eventValue.ensureDebugId(var+"value"+varMonth.getValue());
+			eventValue.ensureDebugId(var.toLowerCase()+"_"+col+"_"+varMonth.getValue());
 			
 			eventValue.setText(varMonth.getValue().toString());
 			eventsGrid.setWidget(newRow, col, eventValue);
