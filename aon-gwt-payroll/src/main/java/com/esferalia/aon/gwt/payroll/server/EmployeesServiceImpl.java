@@ -1047,14 +1047,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			
 			
-//			for(String key : contextResult.getVariables()){
-//				if(contextResult.getList(key).isEmpty()){
-//					System.out.println("RESULT :"+key+", value : null, type :null, startDate :null, endDate :null");
-//					continue;
-//				}
-//				for(VariableDescriptor var : contextResult.getList(key))
-//					System.out.println("RESULT :"+key+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
-//			}
+			for(String key : contextResult.getVariables()){
+				if(contextResult.getList(key).isEmpty()){
+					System.out.println("RESULT :"+key+", value : null, type :null, startDate :null, endDate :null");
+					continue;
+				}
+				for(VariableDescriptor var : contextResult.getList(key))
+					System.out.println("RESULT :"+key+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+			}
 			
 			return contextResult;
 			

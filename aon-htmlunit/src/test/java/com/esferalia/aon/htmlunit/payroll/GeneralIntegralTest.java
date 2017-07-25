@@ -756,8 +756,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		open("incidencias");
 		wait4Id("complemento_i,_incidencia");
-//		events("COMPLEMENTO_I, INCIDENCIA");
-//		assertValue("complemento_i_7_3",3);
+		events("COMPLEMENTO_I, INCIDENCIA");
+
+		for(int i = 7; i<13; i++){
+			if(i == 8)
+				assertText("complemento_i_"+i+"_4","4");
+			else if (i == 7)
+				assertText("complemento_i_"+i+"_3","3");
+			else
+				assertText("complemento_i_"+i+"_2","2");
+		}
+		
 	}
 	
 	// -------------------------------------------------------------------------

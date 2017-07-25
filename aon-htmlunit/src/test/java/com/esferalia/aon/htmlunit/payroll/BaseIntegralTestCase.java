@@ -133,7 +133,6 @@ public abstract class BaseIntegralTestCase {
 		
 		select(employeeId + "-events");
 		wait4Id("complemento_i");
-		//wait4Text("employeeNameLabel", employeeName);
 	}
 
 	protected static boolean hasElementById(String id) {
