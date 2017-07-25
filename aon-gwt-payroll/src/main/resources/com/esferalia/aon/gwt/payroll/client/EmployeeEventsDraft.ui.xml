@@ -279,8 +279,7 @@
 					withBackdrop="true">
 					<a:CustomDialogBar ui:field="customDialogBarNewValue"
 						styleName="{style.marginTopCloseDialog}" caption="Nuevo valor" />
-					<g:HTMLPanel ui:field="newValueContent"/>
-					<g:HTMLPanel>
+					<g:HTMLPanel ui:field="newValueContent">
 						<i:IronLabel ui:field="nameVariableDialog" />
 						<g:DoubleBox ui:field="newValueBox" />
 					</g:HTMLPanel>

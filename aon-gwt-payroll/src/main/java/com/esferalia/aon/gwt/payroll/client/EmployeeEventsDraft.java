@@ -21,7 +21,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -110,6 +109,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiField
 	CustomDialogBar customDialogBarNewValue;
+	
+	@UiField
+	HTMLPanel newValueContent;
 	
 	@UiField
 	IronLabel nameVariableDialog;
@@ -388,6 +390,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}
 		});
 		
+		//Nombre variables para TEST
+		newValueButton.ensureDebugId("new_value_complemento_i");
+		newValueContent.ensureDebugId("new_value_content");
+		newValueBox.ensureDebugId("new_value_box");
+		newValueDialogOk.ensureDebugId("new_value_ok");
+		undoButton.ensureDebugId("undo_complemento_i");
+		undoButton.ensureDebugId("redo_complemento_i");
+		
 		//Descargar Variables actualizadas
 		Integer actualYear = new Date().getYear();
 		employeeEventsDraft.initializeDBEventsVariables(
@@ -510,7 +520,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			 * CREAR IDs PARA TEST
 			 */
 			
-			eventValue.ensureDebugId(var.toLowerCase()+"_"+col+"_"+varMonth.getValue());
+			eventValue.ensureDebugId(var.toLowerCase()+"_"+col);
 			
 			eventValue.setText(varMonth.getValue().toString());
 			eventsGrid.setWidget(newRow, col, eventValue);

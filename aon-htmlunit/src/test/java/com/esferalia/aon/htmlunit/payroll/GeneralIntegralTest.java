@@ -16,8 +16,11 @@ import org.junit.Test;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
+import com.gargoylesoftware.htmlunit.html.HtmlMenuItem;
 
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
@@ -758,14 +761,50 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("complemento_i,_incidencia");
 		events("COMPLEMENTO_I, INCIDENCIA");
 
+		//Verificar valores iniciales
 		for(int i = 7; i<13; i++){
 			if(i == 8)
-				assertText("complemento_i_"+i+"_4","4");
+				assertText("complemento_i_"+i,"4");
 			else if (i == 7)
-				assertText("complemento_i_"+i+"_3","3");
+				assertText("complemento_i_"+i,"3");
 			else
-				assertText("complemento_i_"+i+"_2","2");
+				assertText("complemento_i_"+i,"2");
 		}
+		
+		//Click al complemento de agosto
+		HtmlDivision complementoAgosto = getElementById("complemento_i_8");
+		complementoAgosto.click();
+		
+		//Click a new value
+		HtmlButton newValue = getElementById("new_value_complemento_i");
+		newValue.click();
+		//wait4Id("new_value_box");
+		
+		//Poner nuevo valor DoubleBox
+		wait4Id("new_value_content");
+		HtmlInput input = getElementById("new_value_box");
+		input.click();
+		input.setValueAttribute("7");
+		
+		//Click OK new value
+		HtmlButton newValueOk = getElementById("new_value_ok");
+		newValueOk.click();
+		wait4Id("complemento_i");
+		
+		//Comparar nuevo valor
+		assertText("complemento_i_8","7");
+		
+		//Comparar nuevo valor al hacer undo
+		HtmlButton undo = getElementById("undo_complemento_i");
+		wait4Id("complemento_i");
+		assertText("complemento_i_8","4");
+		
+		//Comparar nuevo valor al hacer redo
+		HtmlButton redo = getElementById("redo_complemento_i");
+		wait4Id("complemento_i");
+		assertText("complemento_i_8","7");
+		
+		
 		
 	}
 	
