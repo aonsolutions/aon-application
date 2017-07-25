@@ -144,7 +144,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		,C06 (Mod130Key.C06 , (mod -> mod.isAEAT())
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C06, 
 					IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod)
-						.filter( i -> !i.isFarmer())
+					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )					
 						.mapToDouble(br -> br.getQuota())
 						.sum())
 			,null
@@ -507,11 +507,26 @@ public class Mod130DAO extends FiscalModelDAO {
 				+ mod130.getModelName() 
 				+ " DEL " + mod130.getPeriod().getDescription()
 				+ " DE " + mod130.getYear();
-		return IRPFFormatter.formatInvoices(title,script.getLabel()
-			,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
-					.filter(i -> i.isFarmer() == farmer)
-					.collect(Collectors.toCollection(LinkedList::new))
-		);
+		
+		if (farmer)
+		{
+			// Llamada desde la casilla 10
+			return IRPFFormatter.formatInvoices(title,script.getLabel()
+			            ,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+						 .filter(i -> i.isFarmer() == farmer)
+						 .collect(Collectors.toCollection(LinkedList::new))
+			);
+		}
+		else 
+		{
+			// Llamada desde la casilla 06
+			return IRPFFormatter.formatInvoices(title,script.getLabel()
+					   ,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
+						.collect(Collectors.toCollection(LinkedList::new))
+			);
+		}
+		
 	}
 	
 	private static String getDiffInvoicesInfo(AONContext ctx, final Mod130 mod130
@@ -520,15 +535,33 @@ public class Mod130DAO extends FiscalModelDAO {
 			+ mod130.getModelName() 
 			+ " DEL " + mod130.getPeriod().getDescription()
 			+ " DE " + mod130.getYear();
-		return IRPFFormatter.formatDiffInvoices(title
-			,script.getLabel()
-			,script.getKeys()
-			, getPreviousModels(ctx,mod130)
-			 	.collect(Collectors.toCollection(LinkedList::new))	
-			,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
-				.filter(i -> i.isFarmer() == farmer)
-				.collect(Collectors.toCollection(LinkedList::new))
-		);
+		
+		if (farmer)
+		{
+			// Llamada desde la Casilla 10
+			return IRPFFormatter.formatDiffInvoices(title
+				,script.getLabel()
+				,script.getKeys()
+				, getPreviousModels(ctx,mod130)
+				 	.collect(Collectors.toCollection(LinkedList::new))	
+				,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+					.filter(i -> i.isFarmer() == farmer)
+					.collect(Collectors.toCollection(LinkedList::new))
+			);
+		}
+		else
+		{
+			// Llamada desde la Casilla 06
+			return IRPFFormatter.formatDiffInvoices(title
+					,script.getLabel()
+					,script.getKeys()
+					, getPreviousModels(ctx,mod130)
+					 	.collect(Collectors.toCollection(LinkedList::new))	
+					,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+						.filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
+						.collect(Collectors.toCollection(LinkedList::new))
+			);			
+		}
 	}
 	// -------------------------------------------------------------------- UTIL
 	public static Mod130 finish(AONContext ctx,Mod130 mod130) {
