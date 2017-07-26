@@ -37,12 +37,8 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPage;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
@@ -87,20 +83,6 @@ public class printContractMediaList extends HttpServlet{
 		LOGGER.log(Level.INFO, "Print Salaried Staff - POST METHOD");
 	}
 	
-	public static class Rotate extends PdfPageEventHelper {
-		 
-        protected PdfNumber orientation = PdfPage.PORTRAIT;
- 
-        public void setOrientation(PdfNumber orientation) {
-            this.orientation = orientation;
-        }
- 
-        @Override
-        public void onStartPage(PdfWriter writer, Document document) {
-            writer.addPageDictEntry(PdfName.ROTATE, orientation);
-        }
-    }
-	
 	public static File createPdf(JSONObject json) {
 		File archivoPDF = null;
 		try {
@@ -109,15 +91,11 @@ public class printContractMediaList extends HttpServlet{
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		
-		Document document = new Document(PageSize.A4);
+		Document document = new Document(PageSize.A4.rotate());
 		try {
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
-			Rotate event = new Rotate();
-			writer.setPageEvent(event);
-			event.setOrientation(PdfPage.LANDSCAPE);
+			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
 			document.open();
 			writeDocument(document, json);	
-			
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		} catch (JSONException e) {

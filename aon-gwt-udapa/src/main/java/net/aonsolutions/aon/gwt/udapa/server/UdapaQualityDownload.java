@@ -3,8 +3,6 @@ package net.aonsolutions.aon.gwt.udapa.server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -36,52 +34,66 @@ public class UdapaQualityDownload extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {	       
-		HashMap<String, String> parameters = getParameters(req.getPathInfo().substring(1));
+		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
 		String domainName = parameters.get("domain");
 		String login = parameters.get("login");
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));	
-		String dataResponseIdStr = parameters.get("id");
-		Integer dataResponseId = Integer.parseInt(dataResponseIdStr);
-		
-		UdapaImpl udp = new UdapaImpl();
-		HashMap<String, String> map = udp.getValues(domain.getName(), domain.getId(), dataResponseId);
-		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(dataResponseId));
-		map.put("number", dr.getNumber());
-		
-		
-		// TODO AÑADIR DATOS K FALTAN!
-		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
-		RAddress raddress = AON.getRAddres(domain.getName(), domain.getId(), login, company.getId());
-		map.put("registry_document", company.getDocument());
-		map.put("registry_name", company.getName());
-		map.put("registry_full_address", raddress.getFullAddress());
-		map.put("registry_end_address", raddress.getZip() + " " + raddress.getCity() + " " + raddress.getGeozoneName());
+		String option = parameters.get("option");
+		Boolean isList = "list".equals(option);
 
-		LinkedList<RegistryMedia> list = AON.getRMediaList(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(company.getId()));
-		String phone = list.stream().filter(a -> a.getMedia() == MediaType.FIXED_PHONE.value()).map(r -> r.getValue()).findFirst().orElse("-");
-		String fax = list.stream().filter(a -> a.getMedia() == MediaType.FAX.value()).map(r -> r.getValue()).findFirst().orElse("-");
-		String mail = list.stream().filter(a -> a.getMedia() == MediaType.EMAIL.value()).map(r -> r.getValue()).findFirst().orElse("-");
-		String web = list.stream().filter(a -> a.getMedia() == MediaType.WEB.value()).map(r -> r.getValue()).findFirst().orElse("-");
+		File file = null;
+		if(isList){
+			HashMap<String, String[]> map = SecurityUtils.getInstance().getParametersMap(req.getPathInfo().substring(1));
+
+			String type = parameters.get("type");
+			if("excel".equals(type)){
+		//		file = com.code.aon.webservice.udapa.printQualityList.createExcel(array);
+			} else {
+		//		file = com.code.aon.webservice.udapa.printQualityList.createPdf(array);
+			}
+
+		} else {
+			String dataResponseIdStr = parameters.get("id");
+			Integer dataResponseId = Integer.parseInt(dataResponseIdStr);
 		
-		map.put("phone", phone);
-		map.put("fax", fax);
-		map.put("mail", mail);
-		map.put("web", web);
+			UdapaImpl udp = new UdapaImpl();
+			HashMap<String, String> map = udp.getValues(domain.getName(), domain.getId(), dataResponseId);
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(dataResponseId));
+			map.put("number", dr.getCode());
 		
-		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, 
+		
+			// TODO AÑADIR DATOS K FALTAN!
+			Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
+			RAddress raddress = AON.getRAddres(domain.getName(), domain.getId(), login, company.getId());
+			map.put("registry_document", company.getDocument());
+			map.put("registry_name", company.getName());
+			map.put("registry_full_address", raddress.getFullAddress());
+			map.put("registry_end_address", raddress.getZip() + " " + raddress.getCity() + " " + raddress.getGeozoneName());
+
+			LinkedList<RegistryMedia> list = AON.getRMediaList(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(company.getId()));
+			String phone = list.stream().filter(a -> a.getMedia() == MediaType.FIXED_PHONE.value()).map(r -> r.getValue()).findFirst().orElse("-");
+			String fax = list.stream().filter(a -> a.getMedia() == MediaType.FAX.value()).map(r -> r.getValue()).findFirst().orElse("-");
+			String mail = list.stream().filter(a -> a.getMedia() == MediaType.EMAIL.value()).map(r -> r.getValue()).findFirst().orElse("-");
+			String web = list.stream().filter(a -> a.getMedia() == MediaType.WEB.value()).map(r -> r.getValue()).findFirst().orElse("-");
+		
+			map.put("phone", phone);
+			map.put("fax", fax);
+			map.put("mail", mail);
+			map.put("web", web);
+			
+			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, 
 					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
 					.and(f.getDomainProperty().eq(domain.getId())),
 				AttachType.REGISTRY);
 		
-		LinkedList<byte[]> images = new LinkedList<>();
-		AON.getAttachStream(domain.getName(), domain.getId(), login, 
-				f-> f.getDomainProperty().eq(domain.getId())
-				.and(f.getSourceTypeProperty().eq((byte)0))
-				.and(f.getSourceBatchProperty().eq(dataResponseId)),
+			LinkedList<byte[]> images = new LinkedList<>();
+			AON.getAttachStream(domain.getName(), domain.getId(), login, 
+					f-> f.getDomainProperty().eq(domain.getId())
+					.and(f.getSourceTypeProperty().eq((byte)0))
+					.and(f.getSourceBatchProperty().eq(dataResponseId)),
 				AttachType.DATA, true).forEach(d -> images.add(d.getData()));
-		
-		File file = printQuality.createPdf(map, attach.getData(), images);
-		
+			file = printQuality.createPdf(map, attach.getData(), images);
+		}
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 	    resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
 	    resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
@@ -94,25 +106,4 @@ public class UdapaQualityDownload extends HttpServlet{
 
 		fileInpurOs.close();
 	}
-	
-	public HashMap<String, String> getParameters(String value){
-		HashMap<String, String> map = new HashMap<String, String>();
-		String[] parameters = decode(value.getBytes()).split("&");
-		for(String parameter : parameters){
-			String[] values = parameter.split("=");
-			map.put(values[0], values[1]);
-		}
-		return map;
-	}
-	
-	public String decode(byte[] value){
-		String decode = "";
-		try{
-			decode = new String(Base64.getDecoder().decode(value), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return decode;
-	}
-
 }

@@ -15,8 +15,8 @@ public class DataResponse implements Serializable {
 	
 	private Integer id;
 	private Integer domain;
-	private String number;
-	private Date issueDate;
+	private String code;
+	private Date responseDate;
 	private DataResponseSource source;
 	private Integer sourceId;
 	private String creationUser;
@@ -38,18 +38,18 @@ public class DataResponse implements Serializable {
 		this.domain = domain;
 		return this;
 	}
-	public String getNumber() {
-		return number;
+	public String getCode() {
+		return code;
 	}
-	public DataResponse setNumber(String number) {
-		this.number = number;
+	public DataResponse setCode(String code) {
+		this.code = code;
 		return this;
 	}
-	public Date getIssueDate() {
-		return issueDate;
+	public Date getResponseDate() {
+		return responseDate;
 	}
-	public DataResponse setIssueDate(Date issueDate) {
-		this.issueDate = issueDate;
+	public DataResponse setResponseDate(Date responseDate) {
+		this.responseDate = responseDate;
 		return this;
 	}
 	public Date getCreationDate() {

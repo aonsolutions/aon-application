@@ -33,6 +33,11 @@
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
 					<g:Button ui:field="email" text="Enviar"  visible="false"
 						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-mail" />
+						
+					<g:Button ui:field='excelDownload'
+						styleName='aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel' text="" visible="true"/>
+					<g:Button ui:field='pdfDownload'
+						styleName='aon-finding-toolbar-item aon-icon-pdf' text="DESCARGAR" visible="true"/>
 				
 					<p:PaperIconButton ui:field="ant" noink="true" visible="false" style="margin:0px;padding:0px;height:20px;right:40px;position:absolute;" icon="chevron-left"/>
 					<p:PaperIconButton ui:field="next" noink="true" visible="false" style="margin:0px;padding:0px;height:20px;right:0px;position:absolute;" icon="chevron-right"/>

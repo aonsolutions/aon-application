@@ -138,9 +138,21 @@ public class UdapaQuality extends AonTemplate2{
 			
 			@Override
 			protected void ant() {}
+
+			@Override
+			protected void excelDownload() {
+				printQualityList("excel");
+			}
+
+			@Override
+			protected void pdfDownload() {
+				printQualityList("pdf");
+			}
 		};
 		toolbar.setAllVisible(false);
 		toolbar.setResetVisible(true);
+		toolbar.setExcelVisible(true);
+		toolbar.setPdfVisible(true);
 		setToolbar(toolbar);
 	}
 	
@@ -159,6 +171,8 @@ public class UdapaQuality extends AonTemplate2{
 		toolbar.setBackVisible(true);
 		toolbar.setPrintVisible(true);
 		toolbar.setRemoveVisible(true);
+		toolbar.setExcelVisible(false);
+		toolbar.setPdfVisible(false);
 		setContent(new QualitySheet(this, js));
 	}
 
@@ -173,6 +187,10 @@ public class UdapaQuality extends AonTemplate2{
 	private void printQuality() {
 		QualitySheet sheet = (QualitySheet) getContent().getWidget();
 		getAPI().getWarehouse().downloadUdapaQuality(sheet.getDataResponse().getId());
+	}
+	
+	private void printQualityList(String type) {
+		getAPI().getWarehouse().downloadUdapaQualityList(getFilterMap(), type);
 	}
 	
 	private void removeQuality() {

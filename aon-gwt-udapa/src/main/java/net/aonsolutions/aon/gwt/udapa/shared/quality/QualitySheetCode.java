@@ -42,7 +42,7 @@ public enum QualitySheetCode implements IsSerializable{
 	/** ANALISIS CALIDAD - PLAGA */
 	UFQAC5("ufqac5"),
 	
-	/** ANALISIS CALIDAD - APTITUD LIMPIEZA */
+	/** ANALISIS CALIDAD - APTITUD LAVADO */
 	UFQAC6("ufqac6"),
 	
 	/** ANALISIS CALIDAD - MATERIA SECA */
@@ -74,7 +74,7 @@ public enum QualitySheetCode implements IsSerializable{
 	/** CONTROL CALIBRES - PESO CALIBRE SIEMBRA 45-55 */
 	UFQCC18("ufqcc18"), 
 	
-	/** CONTROL CALIBRES - % CALIBRE SIEMBRA 25-40 */
+	/** CONTROL CALIBRES - % CALIBRE SIEMBRA 45-55 */
 	UFQCC181("ufqcc181"), 
 	
 	/** CONTROL CALIBRES - PESO CALIBRE SIEMBRA 28-35 */

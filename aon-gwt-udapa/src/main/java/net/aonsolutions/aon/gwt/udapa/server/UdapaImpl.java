@@ -41,7 +41,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		AON.getDataResponseDetailStream(domainName, domainId, login, 
 				f -> f.getDataResponseProperty().eq(drId))
 		.forEach(drd -> {
-			map.put(drd.getDataVariable(), drd.getValue());
+			map.put(drd.getDataVariable(), drd.getDataValue());
 		});
 		String source = map.get("source");
 		System.out.println(source);
@@ -92,7 +92,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		drd.setDomain(domainId);
 		drd.setDataResponse(drId);
 		drd.setDataVariable(code.getName());
-		drd.setValue(value);
+		drd.setDataValue(value);
 		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domainName, domainId, login, f ->
 			f.getDomainProperty().eq(domainId).and(f.getDataVariableProperty().eq(code.getName())));
 		if(opt.isPresent()){			

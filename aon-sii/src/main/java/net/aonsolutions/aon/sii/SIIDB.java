@@ -34,22 +34,22 @@ public class SIIDB {
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
-    			.setNumber(sendType.getDescription())
-    			.setIssueDate(new Date())
+    			.setCode(sendType.getDescription())
+    			.setResponseDate(new Date())
     			.setSource(DataResponseSource.SII));
     
     	DataResponseDetail drd0= new DataResponseDetail();
 		drd0.setDomain(domain.getId())
 			.setDataResponse(dr.getId())
 			.setDataVariable("type") 
-			.setValue(Integer.toString(sendType.ordinal()));
+			.setDataValue(Integer.toString(sendType.ordinal()));
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd0);
 
 		DataResponseDetail drd01= new DataResponseDetail();
 		drd01.setDomain(domain.getId())
 			.setDataResponse(dr.getId())
 			.setDataVariable("status") 
-			.setValue("enviado"); // "enviado" || "descargado"
+			.setDataValue("enviado"); // "enviado" || "descargado"
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd01);
     	
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
@@ -61,8 +61,8 @@ public class SIIDB {
     			di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     					new DataResponse()
     					.setDomain(domain.getId())
-    					.setNumber("")
-    					.setIssueDate(new Date())
+    					.setCode("")
+    					.setResponseDate(new Date())
     					.setSource(DataResponseSource.SII_INVOICE)
     					.setSourceId(invoiceList.get(i)));
     		}
@@ -77,7 +77,7 @@ public class SIIDB {
         		drd.setDomain(domain.getId())
         			.setDataResponse(di.getId())
         			.setDataVariable("status_intra") 
-        			.setValue(status.get(i));
+        			.setDataValue(status.get(i));
         		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
         		
         		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("send_intra")));
@@ -89,7 +89,7 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send_intra") 
-    				.setValue(dr.getId().toString());
+    				.setDataValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     		} else if(sendType.isInversion()){
     			Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("status_bienes")));
@@ -101,7 +101,7 @@ public class SIIDB {
         		drd.setDomain(domain.getId())
         			.setDataResponse(di.getId())
         			.setDataVariable("status_bienes") 
-        			.setValue(status.get(i));
+        			.setDataValue(status.get(i));
         		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
         		
         		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("send_bienes")));
@@ -113,7 +113,7 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send_bienes") 
-    				.setValue(dr.getId().toString());
+    				.setDataValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
 
     		} else {
@@ -126,7 +126,7 @@ public class SIIDB {
     			drd.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("status") 
-    				.setValue(status.get(i));
+    				.setDataValue(status.get(i));
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     	
     			Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(diID).and(f.getDataVariableProperty().eq("send")));
@@ -138,7 +138,7 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send") 
-    				.setValue(dr.getId().toString());
+    				.setDataValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     		
     			if(sendType.isAlta() && (status.get(i).equals("Correcto") || status.get(i).equals("AceptadoConErrores"))
@@ -147,7 +147,7 @@ public class SIIDB {
     				drd3.setDomain(domain.getId())
     					.setDataResponse(di.getId())
     					.setDataVariable("status_intra") 
-    					.setValue("Pendiente");
+    					.setDataValue("Pendiente");
     				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd3);
     			}
     			
@@ -157,7 +157,7 @@ public class SIIDB {
         			drd3.setDomain(domain.getId())
         				.setDataResponse(di.getId())
         				.setDataVariable("status_cp") 
-        				.setValue("Pendiente");
+        				.setDataValue("Pendiente");
         			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd3);
         		}
     			
@@ -167,7 +167,7 @@ public class SIIDB {
             			drd4.setDomain(domain.getId())
             				.setDataResponse(di.getId())
             				.setDataVariable("status_bienes") 
-            				.setValue("Pendiente");
+            				.setDataValue("Pendiente");
             			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd4);
             		}
     		}	
@@ -178,7 +178,7 @@ public class SIIDB {
     			.setAttachType(AttachType.DATA)
     			.setSourceType(DataAttachSource.SII.value())
     			.setSourceBatch(dr.getId())
-    			.setDescription(dr.getNumber())
+    			.setDescription(dr.getCode())
     			.setData(requestXml)
     			.setType(DataAttachType.REQUEST.value())
     			.setMimeType(MimeType.XML);
@@ -189,7 +189,7 @@ public class SIIDB {
     			.setAttachType(AttachType.DATA)
     			.setSourceType(DataAttachSource.SII.value())
     			.setSourceBatch(dr.getId())
-    			.setDescription(dr.getNumber())
+    			.setDescription(dr.getCode())
     			.setData(responseXml)
     			.setType(DataAttachType.RESPONSE_OK.value()) // || DataAttachType.RESPONSE_ERROR
     			.setMimeType(MimeType.XML);
@@ -200,15 +200,15 @@ public class SIIDB {
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
-    			.setNumber(sendType.getDescription())
-    			.setIssueDate(new Date())
+    			.setCode(sendType.getDescription())
+    			.setResponseDate(new Date())
     			.setSource(DataResponseSource.SII));
     	
     	DataResponseDetail drd0= new DataResponseDetail();
 		drd0.setDomain(domain.getId())
 			.setDataResponse(dr.getId())
 			.setDataVariable("type") 
-			.setValue(Integer.toString(sendType.ordinal()));
+			.setDataValue(Integer.toString(sendType.ordinal()));
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd0);
 		
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
@@ -230,7 +230,7 @@ public class SIIDB {
     			drd.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable(estado) 
-    				.setValue("Anulada");
+    				.setDataValue("Anulada");
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     	
     			String send = "send";
@@ -246,7 +246,7 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable(send) 
-    				.setValue(dr.getId().toString());
+    				.setDataValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     		}
     	}
@@ -256,15 +256,15 @@ public class SIIDB {
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
-    			.setNumber(SendType.COBROS_PAGOS.getDescription())
-    			.setIssueDate(new Date())
+    			.setCode(SendType.COBROS_PAGOS.getDescription())
+    			.setResponseDate(new Date())
     			.setSource(DataResponseSource.SII));
 
     	DataResponseDetail drd0= new DataResponseDetail();
 		drd0.setDomain(domain.getId())
 			.setDataResponse(dr.getId())
 			.setDataVariable("type") 
-			.setValue(Integer.toString(SendType.COBROS_PAGOS.ordinal()));
+			.setDataValue(Integer.toString(SendType.COBROS_PAGOS.ordinal()));
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd0);
     	
 		for(Finance f : financeList){
@@ -272,8 +272,8 @@ public class SIIDB {
     			DataResponse di = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
 					new DataResponse()
 					.setDomain(domain.getId())
-					.setNumber("")
-					.setIssueDate(new Date())
+					.setCode("")
+					.setResponseDate(new Date())
 					.setSource(DataResponseSource.SII_FINANCE)
 					.setSourceId(f.getId()));
     		
@@ -281,7 +281,7 @@ public class SIIDB {
     			drd2.setDomain(domain.getId())
     				.setDataResponse(di.getId())
     				.setDataVariable("send") 
-    				.setValue(dr.getId().toString());
+    				.setDataValue(dr.getId().toString());
     			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     		}
     	}
@@ -303,7 +303,7 @@ public class SIIDB {
     		drd.setDomain(domain.getId())
     			.setDataResponse(di.getId())
     			.setDataVariable("status_cp") 
-    			.setValue(incorrect ? "Incorrecto" : (invoice.getTotal() > paid ? "Parcial" : "Pagado"));
+    			.setDataValue(incorrect ? "Incorrecto" : (invoice.getTotal() > paid ? "Parcial" : "Pagado"));
     		AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
     		
     		Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(di.getId()).and(f.getDataVariableProperty().eq("send_cp")));
@@ -315,7 +315,7 @@ public class SIIDB {
 			drd2.setDomain(domain.getId())
 				.setDataResponse(di.getId())
 				.setDataVariable("send_cp") 
-				.setValue(dr.getId().toString());
+				.setDataValue(dr.getId().toString());
 			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
     	}
     	
@@ -324,7 +324,7 @@ public class SIIDB {
     			.setAttachType(AttachType.DATA)
     			.setSourceType(DataAttachSource.SII.value())
     			.setSourceBatch(dr.getId())
-    			.setDescription(dr.getNumber())
+    			.setDescription(dr.getCode())
     			.setData(requestXml)
     			.setType(DataAttachType.REQUEST.value())
     			.setMimeType(MimeType.XML);
@@ -335,7 +335,7 @@ public class SIIDB {
     			.setAttachType(AttachType.DATA)
     			.setSourceType(DataAttachSource.SII.value())
     			.setSourceBatch(dr.getId())
-    			.setDescription(dr.getNumber())
+    			.setDescription(dr.getCode())
     			.setData(responseXml)
     			.setType(DataAttachType.RESPONSE_OK.value()) // || DataAttachType.RESPONSE_ERROR
     			.setMimeType(MimeType.XML);

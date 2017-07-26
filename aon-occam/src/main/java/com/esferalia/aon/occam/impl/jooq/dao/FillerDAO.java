@@ -623,8 +623,8 @@ public class FillerDAO {
 		public DataResponse apply(Record r) {
 			return new DataResponse().setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
 					.setId(r.getValue(DATA_RESPONSE.ID))
-					.setIssueDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
-					.setNumber(r.getValue(DATA_RESPONSE.CODE))
+					.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+					.setCode(r.getValue(DATA_RESPONSE.CODE))
 					.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
 					.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
 					.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
@@ -647,7 +647,7 @@ public class FillerDAO {
 					.setId(r.getValue(DATA_RESPONSE_DETAIL.ID))
 					.setDataResponse(r.getValue(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
 					.setDataVariable(r.getValue(DATA_RESPONSE_DETAIL.DATA_VARIABLE))
-					.setValue(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
+					.setDataValue(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
 		}
 	}
 	
