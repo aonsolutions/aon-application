@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showPurchaseReferenceWindow">
+		<aon:if test="#{sales.showPurchaseReferenceWindow}">
+			<rich:modalPanel id="purchaseReferenceModalPanel" minHeight="440"
+				minWidth="520" rendered="#{sales.showPurchaseReferenceWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_update}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showPurchaseReferenceWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{sales.showPurchaseReferenceWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="purchaseReferenceForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="purchaseReference-accept"
+										value="#{bundle.aon_accept}"
+										actionListener="#{sales.accept}"
+										action="salesForm"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="purchaseReferenceModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{sales.showPurchaseReferenceWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="purchaseReference-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showPurchaseReferenceWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{sales.showPurchaseReferenceWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="serialNumberGrid" columns="2" dir="true" styleClass="aon-width-all">
+										<aon:outputLabel for="Sales_purchaseReference-change"
+											value="#{bundle.sales_purchase_reference}" />
+										<aon:inputText id="Sales_purchaseReference-change"
+											value="#{sales.to.purchaseReference}"
+											size="35" maxlength="32" />
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

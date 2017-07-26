@@ -116,6 +116,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private BankAccountHelper accountHelper;
 	private Date savedDeliveryDate;
 	private Carrier savedCarrier;
+	private boolean showPurchaseReferenceWindow;
 
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
@@ -337,6 +338,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 
 	public void setSavedCarrier(Carrier savedCarrier) {
 		this.savedCarrier = savedCarrier;
+	}
+	
+	public boolean isShowPurchaseReferenceWindow() {
+		return showPurchaseReferenceWindow;
+	}
+
+	public void setShowPurchaseReferenceWindow(boolean showPurchaseReferenceWindow) {
+		this.showPurchaseReferenceWindow = showPurchaseReferenceWindow;
 	}
 
 	public EdiSalesImporterHandler getEdiImporter() {

@@ -253,6 +253,15 @@
 							<a4j:support event="onchange" ajaxSingle="#{true}"
 								reRender="purchaseReference-div" />
 						</aon:inputText>
+						<aon:commandLink id="Sales_purchaseReference_edit" immediate="true"
+							value="&#160;" title="#{bundle.aon_edit}"
+							styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
+							style="margin-left: 5px; padding-right: 12px;"
+							rendered="#{sales.served}"
+							reRender="showPurchaseReferenceWindow" ajaxSingle="true" >
+							<f:setPropertyActionListener target="#{sales.showPurchaseReferenceWindow}"
+								value="#{true}" />
+						</aon:commandLink>
 						<aon:outputText id="sales-existPurchaseReference"
 							rendered="#{sales.existPurchaseReference}"
 							title="#{bundle.sales_purchase_reference_previously_used}"
@@ -523,6 +532,7 @@
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalUdapaImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalEdiFtp.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalPurchaseReference.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include
