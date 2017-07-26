@@ -18,6 +18,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tariff;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
@@ -60,6 +61,9 @@ public class PmsParamsController implements Serializable {
 	private String productionReportCloseHour;
 	private Tariff undefinedTariff;
 	private RegistryBank autoFbatchBank;
+	private PayMethodType autoFbatchPayMethod0;
+	private PayMethodType autoFbatchPayMethod1;
+	private PayMethodType autoFbatchPayMethod2;
 	private String dailyCashLimit;
 	private String cleanDays;
 	private String policeCount;
@@ -635,6 +639,49 @@ public class PmsParamsController implements Serializable {
 		}
 	}
 
+	public PayMethodType getAutoFbatchPayMethod0() {
+		return autoFbatchPayMethod0;
+	}
+	public void setAutoFbatchPayMethod0(PayMethodType autoFbatchPayMethod0) {
+		this.autoFbatchPayMethod0 = autoFbatchPayMethod0;
+	}
+
+	public PayMethodType getAutoFbatchPayMethod1() {
+		return autoFbatchPayMethod1;
+	}
+	public void setAutoFbatchPayMethod1(PayMethodType autoFbatchPayMethod1) {
+		this.autoFbatchPayMethod1 = autoFbatchPayMethod1;
+	}
+
+	public PayMethodType getAutoFbatchPayMethod2() {
+		return autoFbatchPayMethod2;
+	}
+	public void setAutoFbatchPayMethod2(PayMethodType autoFbatchPayMethod2) {
+		this.autoFbatchPayMethod2 = autoFbatchPayMethod2;
+		setAutoFbatchPayMethod();
+	}
+
+	public void setAutoFbatchPayMethod() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_AUTO_FBATCH_PAY_METHOD);
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.PMS_AUTO_FBATCH_PAY_METHOD.getValue());
+		}
+		appParam.setValue("[" + (autoFbatchPayMethod0 != null ? autoFbatchPayMethod0.ordinal() : "") + "]");
+		appParam.setValue(appParam.getValue() + "[" + (autoFbatchPayMethod1 != null ? autoFbatchPayMethod1.ordinal() : "") + "]");
+		appParam.setValue(appParam.getValue() + "[" + (autoFbatchPayMethod2 != null ? autoFbatchPayMethod2.ordinal() : "") + "]");
+		getParameters().put(AppParam.PMS_AUTO_FBATCH_PAY_METHOD, appParam);
+	}
+	private void initializeAutoFbatchPayMethod() {
+		ApplicationParameter appParam = getParameters().get(AppParam.PMS_AUTO_FBATCH_PAY_METHOD);
+		if (appParam != null && StringUtils.isNotEmpty(appParam.getValue())) {
+			String[] payMethodTypeIds = StringUtils.substringsBetween(appParam.getValue(), "[", "]");
+			setAutoFbatchPayMethod0(StringUtils.isNotEmpty(payMethodTypeIds[0]) ? PayMethodType.values()[Integer.parseInt(payMethodTypeIds[0])] : null);
+			setAutoFbatchPayMethod1(StringUtils.isNotEmpty(payMethodTypeIds[1]) ? PayMethodType.values()[Integer.parseInt(payMethodTypeIds[1])] : null);
+			setAutoFbatchPayMethod2(StringUtils.isNotEmpty(payMethodTypeIds[2]) ? PayMethodType.values()[Integer.parseInt(payMethodTypeIds[2])] : null);
+		}
+	}
+
 	public String getDailyCashLimit() {
 		return dailyCashLimit;
 	}
@@ -744,6 +791,7 @@ public class PmsParamsController implements Serializable {
 		initializeProductionReportCloseHour();
 		initializeUndefinedTariff();
 		initializeAutoFbatchBank();
+		initializeAutoFbatchPayMethod();
 		initializeDailyCashLimit();
 		initializeCleanDays();
 		initializePoliceCount();

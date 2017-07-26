@@ -26,7 +26,7 @@
 				<aon:outputText value="#{bundle.aon_categories} PMS" />
 			</aon:div>
 			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
-				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+				columnClasses="aon-panelGrid-odd aon-width-250,aon-panelGrid-even aon-width-auto">
 	
 				<aon:outputLabel for="PMS_Room_Category"
 					value="#{bundle.report_rooms}" />
@@ -68,7 +68,7 @@
 				<aon:outputText value="#{bundle.aon_role_product} PMS" />
 			</aon:div>
 			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
-				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+				columnClasses="aon-panelGrid-odd aon-width-250,aon-panelGrid-even aon-width-auto">
 	
 				<aon:outputLabel for="Item_id_PMS_Undefined_Room"
 					value="#{bundle.pms_room} #{bundle.aon_undefined}" />
@@ -174,7 +174,7 @@
 				<aon:outputText value="#{bundle.aon_external_services}" />
 			</aon:div>
 			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
-				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+				columnClasses="aon-panelGrid-odd aon-width-250,aon-panelGrid-even aon-width-auto">
 	
 				<aon:outputLabel for="PMS_Simple_Availability_URL"
 					value="#{bundle.pms_url_simple_availability_crs}" />
@@ -224,7 +224,7 @@
 				<aon:outputText value="#{bundle.pms_productionReport_module}" />
 			</aon:div>
 			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
-				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+				columnClasses="aon-panelGrid-odd aon-width-250,aon-panelGrid-even aon-width-auto">
 	
 				<aon:outputLabel for="PMS_ProductionReport_Category"
 					value="#{bundle.aon_category}" />
@@ -252,7 +252,7 @@
 				<aon:outputText value="#{bundle.aon_other_parameters}" />
 			</aon:div>
 			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
-				columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+				columnClasses="aon-panelGrid-odd aon-width-250,aon-panelGrid-even aon-width-auto">
 	
 				<aon:outputLabel for="PMS_Undefined_Tariff"
 					value="#{bundle.report_tariff} #{bundle.aon_undefined}" />
@@ -269,6 +269,29 @@
 					<f:selectItem  itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 				</aon:selectOneMenu>
+
+				<aon:outputLabel for="PMS_Auto_Fbatch_PayMethod0"
+					value="#{bundle.pms_auto_fbatch_paymethod}" />
+				<aon:div>
+					<aon:selectOneMenu id="PMS_Auto_Fbatch_PayMethod0"
+						styleClass="aon-margin-right"
+						value="#{pmsParams.autoFbatchPayMethod0}">
+						<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{configCollections.payMethodTypes}" />
+					</aon:selectOneMenu>
+					<aon:selectOneMenu id="PMS_Auto_Fbatch_PayMethod1"
+						styleClass="aon-margin-right"
+						value="#{pmsParams.autoFbatchPayMethod1}">
+						<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{configCollections.payMethodTypes}" />
+					</aon:selectOneMenu>
+					<aon:selectOneMenu id="PMS_Auto_Fbatch_PayMethod2"
+						styleClass="aon-margin-right"
+						value="#{pmsParams.autoFbatchPayMethod2}">
+						<f:selectItem  itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{configCollections.payMethodTypes}" />
+					</aon:selectOneMenu>
+				</aon:div>
 
 				<aon:outputLabel for="PMS_Daily_Cash_Limit"
 					value="#{bundle.pms_daily_cash_limit}" />

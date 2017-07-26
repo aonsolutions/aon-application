@@ -216,12 +216,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 	}
 
 	public void onAutoFbatch() throws ManagerBeanException {
-		RegistryBank rBank = null;
-		ApplicationParameter autoFBatchBankParam = AppParamUtil.getParameter(AppParam.PMS_AUTO_FBATCH_BANK);
-		if (autoFBatchBankParam != null && StringUtils.isNotBlank(autoFBatchBankParam.getValue())) {
-			rBank = (RegistryBank)BeanManager.getManagerBean(RegistryBank.class).get(Integer.parseInt(autoFBatchBankParam.getValue()));
-		}
-
+		RegistryBank rBank = obtainAutoRegistryBank();
 		if (rBank != null) {
 			PosFinanceController posFinanceController = (PosFinanceController)AonUtil.getRegisteredBean(IFinanceConstants.POS_FINANCE_CONTROLLER_NAME);
 			ReservationUtils reservationUtils = new ReservationUtils();
@@ -231,8 +226,10 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 			Criteria criteria = new Criteria();
-			PayMethodType[] payMethodTypes = new PayMethodType[]{PayMethodType.CASH_BASIS, PayMethodType.DEBIT_CARD, PayMethodType.CREDIT_CARD};
-			criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), payMethodTypes));
+			PayMethodType[] payMethodTypes = obtainAutoPayMethodType();
+			if (payMethodTypes != null) {
+				criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), payMethodTypes));
+			}
 			criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE));
 			criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
 			for (ITransferObject ito : payMethodBean.getList(criteria)) {
@@ -260,6 +257,32 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 				}
 			}
 		}
+	}
+
+	private RegistryBank obtainAutoRegistryBank() throws ManagerBeanException {
+		ApplicationParameter autoFBatchBankParam = AppParamUtil.getParameter(AppParam.PMS_AUTO_FBATCH_BANK);
+		if (autoFBatchBankParam != null && StringUtils.isNotBlank(autoFBatchBankParam.getValue())) {
+			return (RegistryBank)BeanManager.getManagerBean(RegistryBank.class).get(Integer.parseInt(autoFBatchBankParam.getValue()));
+		}
+		return null;
+	}
+
+	private PayMethodType[] obtainAutoPayMethodType() {
+		ApplicationParameter autoFBatchPayMethodParam = AppParamUtil.getParameter(AppParam.PMS_AUTO_FBATCH_PAY_METHOD);
+		if (autoFBatchPayMethodParam != null) { 
+			autoFBatchPayMethodParam.setValue(StringUtils.replace(autoFBatchPayMethodParam.getValue(), "[]", ""));
+			if (StringUtils.isNotBlank(autoFBatchPayMethodParam.getValue())) {
+				String[] payMethodTypeIds = StringUtils.substringsBetween(autoFBatchPayMethodParam.getValue(), "[", "]");
+				if (payMethodTypeIds.length > 0) {
+					PayMethodType[] payMethodTypes = new PayMethodType[payMethodTypeIds.length];
+					for (int i=0; i<payMethodTypeIds.length; i++) {
+						payMethodTypes[i] = PayMethodType.values()[Integer.parseInt(payMethodTypeIds[i])];
+					}
+					return payMethodTypes;
+				}
+			}
+		}
+		return null;
 	}
 
 	private FinanceBatch obtainFinanceBatch(RegistryBank rBank, String description, Date issueDate) throws ManagerBeanException {
