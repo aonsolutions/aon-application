@@ -203,7 +203,12 @@ public class printQualityList extends HttpServlet{
 						Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
 						Double e = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
 						Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
+						
 						Double merma = a + b + c + d + e + f; 
+						
+						if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+							merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+						}
 					
 						Row row = hoja.createRow(cont++);
 						
@@ -282,6 +287,10 @@ public class printQualityList extends HttpServlet{
 
 						Double merma = a + b + c + d + e + f + g + h + i + j + k; 
 					
+						if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+							merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+						}
+						
 						Row row = hoja2.createRow(cont++);
 						
 						cell(libro, row, 0, r.getCode());
@@ -386,7 +395,12 @@ public class printQualityList extends HttpServlet{
 					Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
 					Double e = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
 					Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
+					
 					Double merma = a + b + c + d + e + f; 
+				
+					if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+						merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+					}
 					
 					PdfPTable ta = new PdfPTable(15);
 					try {
@@ -482,6 +496,10 @@ public class printQualityList extends HttpServlet{
 
 					Double merma = a + b + c + d + e + f + g + h + i + j + k; 
 					
+					if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+						merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+					}
+
 					PdfPTable tb = new PdfPTable(20);
 					try {
 						tb.setWidths(medidaCeldasB);
