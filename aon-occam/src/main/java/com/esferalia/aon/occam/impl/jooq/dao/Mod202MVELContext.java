@@ -9,6 +9,8 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 	public static final String X08_1 = "202-X08-1";
 	public static final String X08_2 = "202-X08-2";
 	
+	public int year;
+	
 	public boolean isMethodA() {
 		Double x00 = (Double) get(Mod202Key.X00.toString());
 		return x00 == 0;
@@ -42,10 +44,19 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 		return x08;
 	}
 	
+	public boolean isX04Empty() {
+		Double x04 = (Double) get(Mod202Key.X04.toString());
+		return x04 == 0;
+	}
+	
 	public double computeC17() {
 		double x08 = getPercent();
-		double c17;
-		if (isX09Empty()) {
+		double c17;		
+		if (!isX04Empty() &&  year >= 2017  ) {
+			// A partir del 2017 si está marcado lo de las entidades navieras, el porcentaje es del 25%
+			c17 = 25;
+		} 
+		else if (isX09Empty()) {
 			c17 = AonMathUtils.floor((5.0/7.0) * x08,0);	
 		} else {
 			c17 = AonMathUtils.ceil((19.0/20.0) * x08,0);

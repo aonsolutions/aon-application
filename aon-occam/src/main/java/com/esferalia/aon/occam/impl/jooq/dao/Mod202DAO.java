@@ -149,9 +149,12 @@ public class Mod202DAO extends FiscalModelDAO {
 			 +	"<li>Al ser la casilla [13]-[14]+[45]-[46] menor que cero, el resultado es <b>cero.</b></li>"
 			 +"@end{}"
 		)
+		
 		,C17(Mod202Key.C17,(mod -> mod.isAEAT()),null,"isMethodB1()?computeC17():0.0"
 			,"<li>Si la modalidad de c\u00E1lculo es B.1) :</li>"
-			+"@if{X09 > 0 }"
+			+"@if{X04 > 0 }"
+			+	"<li>Entidad que aplica el r\u00E9gimen de las entidades navieras en funci\u00F3n del tonelaje: <b>@{C17}</b></li>"
+			+"@elseif{X09 > 0 }"
 			+	"@code{c17Raw = 19/20*X08;}"
 			+	"<li>(19/20) de @{X08}, @{c17Raw}, redondeado al alza, igual <b>@{C17}</b></li>"		
 			+"@else{}"
@@ -348,6 +351,7 @@ public class Mod202DAO extends FiscalModelDAO {
 
 	private static Mod202MVELContext getMVELcontext(AONContext ctx,Mod202 mod202) {
 		Mod202MVELContext mvelCtx = new Mod202MVELContext();
+		mvelCtx.year = mod202.getYear();
 		for (String key : mod202.getMap().keySet()) {
 			Mod202Key mod202Key = Mod202Key.getKey(key);
 			if (mod202Key != null) {
