@@ -361,8 +361,8 @@ public class ConnectDeliveryWriter {
 	/**
 	 * Línea de artículos
 	 */
-	private SEH1L createSEH1LRecord(DeliveryDetail detail,
-			Double packageQuantity, String companyEdiCode, String customerEdiCode, String customerPackage) {
+	private SEH1L createSEH1LRecord(DeliveryDetail detail, Double packageQuantity,
+			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		Item item = detail.getItem();
 		Customer customer = detail.getDelivery().getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customer);

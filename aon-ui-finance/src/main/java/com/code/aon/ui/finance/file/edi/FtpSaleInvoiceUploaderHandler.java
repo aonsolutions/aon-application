@@ -228,6 +228,10 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				String customerEdiFacturaCode = ediSupport.getEdiCodes(
 						invoice.getRegistry(), invoice.getRegistryAddress())
 						.get(CustomerEdiSupportController.FACTURA);
+				
+				String customerPackage = ediSupport.obtainPackingTag(
+						invoice.getRegistry(),
+						invoice.getRegistryAddress()).getName();
 
 				CompanyController company = (CompanyController) AonUtil
 						.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
@@ -236,7 +240,8 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				// writer file
 				ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
 				output = writer.createFile(invoice, (Company)company.getTo(), companyEdiCode,
-						customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode);
+						customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode,
+						customerPackage);
 
 				return output;
 			} else {

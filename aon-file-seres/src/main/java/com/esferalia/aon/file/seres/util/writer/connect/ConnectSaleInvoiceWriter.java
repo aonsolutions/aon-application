@@ -21,6 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
+import com.code.aon.config.Tag;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
@@ -63,11 +64,12 @@ public class ConnectSaleInvoiceWriter {
 
 
 	public FileOutput createFile(Invoice invoice, Company company, String companyEdiCode,
-			String customerEdiCabeceraCode, String customerEdiPtoEntregaCode, String customerEdiFacturaCode)
+			String customerEdiCabeceraCode, String customerEdiPtoEntregaCode, String customerEdiFacturaCode,
+			String customerPackage)
 			throws FileNotFoundException, UnsupportedEncodingException {
 
 		RECTL rectl = createRECTLRecord(invoice, company, companyEdiCode, customerEdiCabeceraCode,
-				customerEdiPtoEntregaCode, customerEdiFacturaCode);
+				customerEdiPtoEntregaCode, customerEdiFacturaCode, customerPackage);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new ConnectInvoice(rectl, writer);
@@ -80,7 +82,7 @@ public class ConnectSaleInvoiceWriter {
 
 	private RECTL createRECTLRecord(Invoice invoice, Company company,
 			String companyEdiCode, String customerEdiCabeceraCode,
-			String customerEdiPtoEntregaCode, String customerEdiFacturaCode) {
+			String customerEdiPtoEntregaCode, String customerEdiFacturaCode, String customerPackage) {
 
 		List<InvoiceDetail> detailList = invoice.getDetailList().stream()
 				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
@@ -130,7 +132,7 @@ public class ConnectSaleInvoiceWriter {
 		}
 		try {
 			rectl.sinclList = createSINCLList(detailList, companyEdiCode,
-					customerEdiCabeceraCode);
+					customerEdiCabeceraCode, customerPackage);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -287,12 +289,12 @@ public class ConnectSaleInvoiceWriter {
 	}
 
 	private List<SINCL> createSINCLList(List<InvoiceDetail> detailList,
-			String companyEdiCode, String customerEdiMainCode) {
+			String companyEdiCode, String customerEdiMainCode, String customerPackage) {
 		List<SINCL> list = new ArrayList<>();
 		detailList.forEach(detail -> {
 			if(detail.getTaxableBase()!=0.0){
 				list.add(createSINCLRecord(detail, detailList.indexOf(detail)+1,
-						companyEdiCode, customerEdiMainCode));
+						companyEdiCode, customerEdiMainCode, customerPackage));
 			}
 		});
 		return list;
@@ -459,7 +461,7 @@ public class ConnectSaleInvoiceWriter {
 	 * Línea detalle
 	 */
 	private SINCL createSINCLRecord(InvoiceDetail detail, int lineNumber,
-			String companyEdiCode, String customerEdiMainCode) {
+			String companyEdiCode, String customerEdiMainCode, String customerPackage) {
 		detail.fillTaxDataInDetail();
 		Item item = detail.getItem();
 		Integer customerId = detail.getInvoice().getRegistry().getId();
@@ -488,9 +490,11 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setCodigoVariablePromocional_PV_(null);
 		sincl.setCodigoUnidadDeExpedicion_EN_(null);
 		sincl.setNumeroDeLote_BN_(detail.getItem().getSerialNumber());
-		sincl.setCantidadFacturada_47_(detail.getQuantity());
+		
+		double quantity = obtainPackageQuantity(detail, customerPackage);
+		sincl.setCantidadFacturada_47_(quantity);
 		sincl.setCantidadBonificada_15E_(null);
-		sincl.setUnidadDeMedida(SINCL.SINCL_13.KILOGRAMO_KGM.getValue());
+		sincl.setUnidadDeMedida(null);
 		sincl.setUnidadesEntregadas(null);
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
 		sincl.setImporteTotalNetoDeLaLineaDeArticulo(detail
@@ -688,6 +692,33 @@ public class ConnectSaleInvoiceWriter {
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
+		}
+		return null;
+	}
+	
+	private Double obtainPackageQuantity(InvoiceDetail detail,
+			String customerPackingTag) {
+		if(detail!=null && customerPackingTag!=null){
+			Item item = detail.getItem();
+			Double quantity = detail.getQuantity();
+			Tag itemPackFormatTag = item.getPackFormatTag();
+			Tag itemPackMeasurementTag = item.getPackMeasurementTag();
+			Tag itemPackingTag = item.getPackUnitsTag();
+			double itemPackMeasurement = item.getPackMeasurement();
+			int itemPackUnits = item.getPackUnits();
+			if (customerPackingTag != null && itemPackingTag != null
+					&& itemPackFormatTag != null && itemPackMeasurementTag != null) {
+				if (customerPackingTag.equals(itemPackMeasurementTag.getName())) {
+					return quantity;
+				} else if (customerPackingTag.equals(
+						itemPackingTag.getName())) {
+					return quantity / itemPackMeasurement;
+				} else if (customerPackingTag.equals(
+						itemPackFormatTag.getName())) {
+					return (quantity / itemPackMeasurement) / itemPackUnits;
+				}
+			}
+			return quantity;
 		}
 		return null;
 	}
