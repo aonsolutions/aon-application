@@ -396,7 +396,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		newValueBox.ensureDebugId("new_value_box");
 		newValueDialogOk.ensureDebugId("new_value_ok");
 		undoButton.ensureDebugId("undo_complemento_i");
-		undoButton.ensureDebugId("redo_complemento_i");
+		redoButton.ensureDebugId("redo_complemento_i");
 		
 		//Descargar Variables actualizadas
 		Integer actualYear = new Date().getYear();

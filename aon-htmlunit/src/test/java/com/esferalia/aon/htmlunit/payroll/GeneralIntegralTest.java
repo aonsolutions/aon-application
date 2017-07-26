@@ -3,6 +3,7 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +22,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlMenuItem;
+import com.gargoylesoftware.htmlunit.html.Keyboard;
+import com.gargoylesoftware.htmlunit.javascript.host.event.KeyboardEvent;
 
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
@@ -778,29 +781,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		//Click a new value
 		HtmlButton newValue = getElementById("new_value_complemento_i");
 		newValue.click();
-		//wait4Id("new_value_box");
 		
 		//Poner nuevo valor DoubleBox
 		wait4Id("new_value_content");
 		HtmlInput input = getElementById("new_value_box");
-		input.click();
+		input.focus();
 		input.setValueAttribute("7");
-		
-		//Click OK new value
-		HtmlButton newValueOk = getElementById("new_value_ok");
-		newValueOk.click();
-		wait4Id("complemento_i");
+		input.blur();
+		input.type(KeyEvent.VK_ENTER);
 		
 		//Comparar nuevo valor
+		wait4Id("complemento_i");
 		assertText("complemento_i_8","7");
 		
 		//Comparar nuevo valor al hacer undo
 		HtmlButton undo = getElementById("undo_complemento_i");
+		undo.click();
 		wait4Id("complemento_i");
 		assertText("complemento_i_8","4");
 		
 		//Comparar nuevo valor al hacer redo
 		HtmlButton redo = getElementById("redo_complemento_i");
+		redo.click();
 		wait4Id("complemento_i");
 		assertText("complemento_i_8","7");
 		
