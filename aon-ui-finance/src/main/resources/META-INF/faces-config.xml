@@ -1674,6 +1674,10 @@
 					<value>invoice.transaction</value>
 				</map-entry>
 				<map-entry>
+					<key>rectificationType</key>
+					<value>invoice.rectificationType</value>
+				</map-entry>
+				<map-entry>
 					<key>taxableBase</key>
 					<value>invoice.taxableBase</value>
 				</map-entry>
@@ -2114,6 +2118,10 @@
 					<value>invoice.transaction</value>
 				</map-entry>
 				<map-entry>
+					<key>rectificationType</key>
+					<value>invoice.rectificationType</value>
+				</map-entry>
+				<map-entry>
 					<key>taxableBase</key>
 					<value>invoice.taxableBase</value>
 				</map-entry>
@@ -2544,6 +2552,10 @@
 				<map-entry>
 					<key>transaction</key>
 					<value>invoice.transaction</value>
+				</map-entry>
+				<map-entry>
+					<key>rectificationType</key>
+					<value>invoice.rectificationType</value>
 				</map-entry>
 				<map-entry>
 					<key>taxableBase</key>
@@ -2978,6 +2990,10 @@
 					<value>invoice.transaction</value>
 				</map-entry>
 				<map-entry>
+					<key>rectificationType</key>
+					<value>invoice.rectificationType</value>
+				</map-entry>
+				<map-entry>
 					<key>taxableBase</key>
 					<value>invoice.taxableBase</value>
 				</map-entry>
@@ -3406,6 +3422,10 @@
 				<map-entry>
 					<key>transaction</key>
 					<value>invoice.transaction</value>
+				</map-entry>
+				<map-entry>
+					<key>rectificationType</key>
+					<value>invoice.rectificationType</value>
 				</map-entry>
 				<map-entry>
 					<key>taxableBase</key>
