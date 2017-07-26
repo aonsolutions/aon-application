@@ -219,10 +219,13 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 					AonUtil.addErrorMessage(e.getMessage());
 					throw new AbortProcessingException(e.getMessage());
 				}
-				String customerEdiMainCode = ediSupport.getEdiCodes(
+				String customerEdiCabeceraCode = ediSupport.getEdiCodes(
 						invoice.getRegistry(), invoice.getRegistryAddress())
 						.get(CustomerEdiSupportController.CABECERA);
-				String customerEdiOperationCode = ediSupport.getEdiCodes(
+				String customerEdiPtoEntregaCode = ediSupport.getEdiCodes(
+						invoice.getRegistry(), invoice.getRegistryAddress())
+						.get(CustomerEdiSupportController.PTO_ENTREGA);
+				String customerEdiFacturaCode = ediSupport.getEdiCodes(
 						invoice.getRegistry(), invoice.getRegistryAddress())
 						.get(CustomerEdiSupportController.FACTURA);
 
@@ -233,7 +236,7 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				// writer file
 				ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
 				output = writer.createFile(invoice, (Company)company.getTo(), companyEdiCode,
-						customerEdiMainCode, customerEdiOperationCode);
+						customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode);
 
 				return output;
 			} else {
