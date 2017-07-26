@@ -25,6 +25,11 @@ public abstract class Toolbar extends Composite {
 	@UiField Button remove;
 	@UiField Button print;
 	@UiField Button email;
+	
+	@UiField Button excelDownload;
+	@UiField Button pdfDownload;
+		
+	
 	@UiField PaperIconButton ant;
 	@UiField PaperIconButton next;
 	
@@ -41,10 +46,31 @@ public abstract class Toolbar extends Composite {
 	protected abstract void print();
 	protected abstract void email();
 	
+	protected abstract void excelDownload();
+	protected abstract void pdfDownload();
+	
 	protected abstract void ant();
 	protected abstract void next();
 
 
+	@UiHandler("excelDownload")
+	public void onExcelClick(ClickEvent event) {
+		excelDownload();
+	}
+	
+	public void setExcelVisible(Boolean visible){
+		excelDownload.setVisible(visible);
+	}
+	
+	@UiHandler("pdfDownload")
+	public void onPdfClick(ClickEvent event) {
+		pdfDownload();
+	}
+	
+	public void setPdfVisible(Boolean visible){
+		pdfDownload.setVisible(visible);
+	}
+	
 	@UiHandler("back")
 	public void onBackClick(ClickEvent event) {
 		back();
@@ -119,6 +145,8 @@ public abstract class Toolbar extends Composite {
 		setPrintVisible(visible);
 		setResetVisible(visible);
 		setRemoveVisible(visible);
+		setExcelVisible(visible);
+		setPdfVisible(visible);
 	}
 	
 	

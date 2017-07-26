@@ -15,7 +15,7 @@ public class DataResponseDetail implements Serializable {
 	private Integer domain;
 	private Integer dataResponse;
 	private String dataVariable;
-	private String value;
+	private String dataValue;
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -49,11 +49,11 @@ public class DataResponseDetail implements Serializable {
 		this.dataVariable = dataVariable;
 		return this;
 	}
-	public String getValue() {
-		return value;
+	public String getDataValue() {
+		return dataValue;
 	}
-	public DataResponseDetail setValue(String value) {
-		this.value = value;
+	public DataResponseDetail setDataValue(String dataValue) {
+		this.dataValue = dataValue;
 		return this;
 	}
 	public Date getCreationDate() {

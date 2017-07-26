@@ -166,9 +166,15 @@ public class CarrierPacking extends AonTemplate2{
 					@Override public void onFailure(Throwable caught) {}
 				});
 			}
+
+			@Override protected void excelDownload() {}
+
+			@Override protected void pdfDownload() {}
 		};
 		toolbar.setAntVisible(false);
 		toolbar.setNextVisible(false);
+		toolbar.setExcelVisible(false);
+		toolbar.setPdfVisible(false);
 		setToolbar(toolbar);
 	}
 

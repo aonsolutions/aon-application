@@ -130,7 +130,7 @@ public class CommonServlet extends HttpServlet{
 		.forEach(dr -> {
 			String source = AON.getDataResponseDetail(domain.getName(), domain.getId(), login,
 					f -> f.getDataResponseProperty().eq(dr.getId())
-					.and(f.getDataVariableProperty().eq("source"))).get().getValue();
+					.and(f.getDataVariableProperty().eq("source"))).get().getDataValue();
 			String[] s = source.split("@");
 			if("income_detail".equals(s[0])){
 				Integer id =Integer.parseInt(s[1]);
@@ -241,9 +241,9 @@ public class CommonServlet extends HttpServlet{
 		DataResponse dataResponse = new DataResponse()
 				.setSource(DataResponseSource.QUALITY)// TODO 
 				.setSourceId(Integer.parseInt(idStr))
-				.setNumber(json.getString("number"))
+				.setCode(json.getString("number"))
 				.setDomain(domain.getId())
-				.setIssueDate(date);
+				.setResponseDate(date);
 		
 		DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dataResponse);
 		return ToJSON.dataResponseToJSON(dr);
@@ -259,7 +259,7 @@ public class CommonServlet extends HttpServlet{
 						.setDomain(domain.getId())
 						.setDataResponse(dataResponseId)
 						.setDataVariable(key)
-						.setValue(json.getString(key));
+						.setDataValue(json.getString(key));
 				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
 			}
 		}

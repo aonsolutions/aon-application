@@ -154,6 +154,20 @@ public class Warehouse extends Methods{
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	public void downloadUdapaQualityList(HashMap<String, LinkedList<String>> filterMap, String type){
+		String filter = filterMap.size() > 0 ? getFilter(filterMap) : "";
+		String str = filter + "&domain="+ getDomainName() + "&login="+getUserName() + "&option=list&type=" + type;
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_udapa_quality_list/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
 
 	public void sendPackingList(String requestData){
 		post(getUrl() + "packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);
