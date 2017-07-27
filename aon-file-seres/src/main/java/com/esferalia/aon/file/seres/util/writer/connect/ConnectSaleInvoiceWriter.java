@@ -491,29 +491,32 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setCodigoUnidadDeExpedicion_EN_(null);
 		sincl.setNumeroDeLote_BN_(detail.getItem().getSerialNumber());
 		
-		double quantity = obtainPackageQuantity(detail, customerPackage);
-		sincl.setCantidadFacturada_47_(quantity);
+		double unitQuantity = obtainPackageQuantity(detail, customerPackage);
+		double unitPriceFactor = detail.getQuantity() / unitQuantity;
+		sincl.setCantidadFacturada_47_(unitQuantity);
 		sincl.setCantidadBonificada_15E_(null);
 		sincl.setUnidadDeMedida(null);
 		sincl.setUnidadesEntregadas(null);
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
-		sincl.setImporteTotalNetoDeLaLineaDeArticulo(detail
-				.getTaxableBase());
-		sincl.setPrecioBrutoUnitario(detail.getPrice());
-		sincl.setPrecioNetoUnitario(detail.getPrice());
+		sincl.setImporteTotalNetoDeLaLineaDeArticulo(CommonUtil.round(detail
+				.getTaxableBase(), 3));
+		sincl.setPrecioBrutoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
+		sincl.setPrecioNetoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
 		sincl.setUnidadDeMedidaDelPrecio(null);
 		sincl.setCalificadorIVA_IGIG(SINCL.SINCL_20.IVA_VAT.getValue());
-		sincl.setPorcentajeImpuestoIVA_IGIG(detail.getVatPercent());
+		sincl.setPorcentajeImpuestoIVA_IGIG(CommonUtil.round(detail.getVatPercent()));
 		if (detail.getVatQuota() == 0 ){
-			sincl.setImporteImpuestoIVA_IGIG(detail.getTaxableBase() * (detail.getVatPercent() / 100));
+			sincl.setImporteImpuestoIVA_IGIG(
+					CommonUtil.round(detail.getTaxableBase() * (detail.getVatPercent() / 100), 3));
 		} else {
-			sincl.setImporteImpuestoIVA_IGIG(detail.getVatQuota());
+			sincl.setImporteImpuestoIVA_IGIG(CommonUtil.round(detail.getVatQuota(), 3));
 		}
-		sincl.setPorcentajeRecargoDeEquivalencia(detail.getRetentionPercent());
+		sincl.setPorcentajeRecargoDeEquivalencia(CommonUtil.round(detail.getRetentionPercent()));
 		if (detail.getRetentionQuota() == 0) {
-			sincl.setImporteRecargoDeEquivalencia(detail.getTaxableBase() * (detail.getRetentionPercent() / 100));
+			sincl.setImporteRecargoDeEquivalencia(
+					CommonUtil.round(detail.getTaxableBase() * (detail.getRetentionPercent() / 100), 3));
 		} else {
-			sincl.setImporteRecargoDeEquivalencia(detail.getRetentionQuota());
+			sincl.setImporteRecargoDeEquivalencia(CommonUtil.round(detail.getRetentionQuota(), 3));
 		}
 		sincl.setCalificadorOtroTipoDeImpuesto(null);
 		sincl.setPorcentajeOtroTipoDeImpuesto(null);
@@ -522,7 +525,7 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setNumeroDeAlbaran_DQ_(obtainDeliveryNumber(detail));
 		sincl.setNumeroDeEmbalajes(null);
 		sincl.setTipoDeEmbalaje(null);
-		sincl.setImporteTotalBrutoDeLaLineaDeDetalle(detail.getTotalSalesPrice());
+		sincl.setImporteTotalBrutoDeLaLineaDeDetalle(CommonUtil.round(detail.getTotalSalesPrice(), 3));
 		sincl.setNumeroDeLineaSuperior(null);
 		sincl.setNumeroDeLineaDelPedido_ON_(null);
 		sincl.setUnidadBasePrecio(null);
