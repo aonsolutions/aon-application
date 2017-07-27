@@ -12,18 +12,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -103,24 +100,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiField
 	CustomDialogBar customDialogBarShowVariables;
-	
-	@UiField
-	PaperDialog newValueDialog;
-	
-	@UiField
-	CustomDialogBar customDialogBarNewValue;
-	
-	@UiField
-	HTMLPanel newValueContent;
-	
-	@UiField
-	IronLabel nameVariableDialog;
-	
-	@UiField
-	DoubleBox newValueBox;
-	
-	@UiField
-	PaperButton newValueDialogOk;
 
 	@UiField
 	Button lastYearButton;
@@ -200,7 +179,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		});
 		
 		customDialogBarShowVariables.addCloseHandler(()->{showVariablesDialog.close();});
-		customDialogBarNewValue.addCloseHandler(()->{newValueDialog.close();});
 		
 		//#ifndef env.SNAPSHOT
 		saveButton.setVisible(false);
@@ -248,32 +226,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
+		Window.alert("***********newValueButton**************");
 		openNewValueDialog();
-		newValueBox.addKeyDownHandler(new KeyDownHandler() {
-			
-			@Override
-			public void onKeyDown(KeyDownEvent key) {
-				if(key.getNativeKeyCode() == KeyCodes.KEY_ENTER)
-					newValueOk();	
-			}
-
-			private void newValueOk() {
-				setNewValue(newValueBox.getValue());
-			}
-		});
-	}
-
-	@UiHandler("newValueDialogOk")
-	public void onNewValueDialogOkClick(ClickEvent event) {
-		setNewValue(newValueBox.getValue());
-	}
-	
-	protected void setNewValue(Double value) {
-		addValueSelectedPositions(value);
-		newValueBox.setText("");
-		eraseSelectedPositions();
-		newValueDialog.close();
-		changeYear(0);	
+		Window.alert("***********newValueButton22**************");
 	}
 	
 	@UiHandler("saveButton")
@@ -373,6 +328,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraft) {
 		
+		Window.alert("***********CARGAR EMPLOYEE EVENTS DRAT**************");
+		
 		clearEventsGrid();
 		
 		this.employeeEventsDraft = employeeEventsDraft;
@@ -392,9 +349,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		//Nombre variables para TEST
 		newValueButton.ensureDebugId("new_value_complemento_i");
-		newValueContent.ensureDebugId("new_value_content");
-		newValueBox.ensureDebugId("new_value_box");
-		newValueDialogOk.ensureDebugId("new_value_ok");
 		undoButton.ensureDebugId("undo_complemento_i");
 		redoButton.ensureDebugId("redo_complemento_i");
 		
@@ -404,6 +358,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				actualYear,
 				r -> { fillCellsEvents(); },
 				t -> {});
+	
+	
+		Window.alert("***********FINAL CARGA EMPLOYEE EVENTS DRAT**************");
 	}
 	
 	private void clearEventsGrid() {
@@ -548,16 +505,26 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
 	private void openNewValueDialog(){
-		newValueDialog.open();
 		int row = calculateRow(selectedPositions.getSelectedList().get(0));
 		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
-		nameVariableDialog.getElement().setInnerText(variableName+" : ");
 		
-		//TODO: PORQUE NO FUNCIONA!!!
-		newValueDialog.addAttachHandler(t -> newValueBox.setFocus(true));
-		
-		
-		
+		EmployeeInputDialog inputDialog = new EmployeeInputDialog(){
+			@Override
+			protected void onAccept() {
+				// TODO Auto-generated method stub	
+				String value = this.getValue();
+				setNewValue(Double.parseDouble(value));
+			}
+		};
+		inputDialog.setNameLabel(variableName+" : ");	
+		inputDialog.show();
+		inputDialog.center();
+	}
+	
+	protected void setNewValue(Double value) {
+		addValueSelectedPositions(value);
+		eraseSelectedPositions();
+		changeYear(0);	
 	}
 	
 	private void addValueSelectedPositions(Double newValue) {

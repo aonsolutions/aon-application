@@ -1,0 +1,83 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+	<ui:Style>
+
+		.form {
+			padding: 10px;
+		}
+
+		.label {
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+
+		.labeltop {
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			vertical-align: top;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+
+		.field {
+			padding: 1px 0.5em;
+		}
+
+		.buttons {
+			padding-top: 10px;
+			text-align: right;
+		}
+
+		.info {
+		}
+
+		.warn {
+		}
+
+		.error {
+		}
+
+		.messages {
+			padding-left: 0.5em;
+			padding-bottom: 10px;
+		}
+
+		.form textarea {
+			resize: none;
+		}
+
+	</ui:Style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<div class="{style.messages}">
+			<g:Label styleName="{style.info}" ui:field="filterLabel">Añadir nuevo valor:</g:Label>
+		</div>
+
+		<g:Grid width="100%">
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label ui:field="nameLabel" />
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:TextBox width="100%" ui:field="valueTextBox" />
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+
+		<div class="{style.buttons}">
+			<g:Button ui:field="cancelButton">Cancelar</g:Button>
+			<g:Button ui:field="acceptButton">Aceptar</g:Button>
+		</div>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>
