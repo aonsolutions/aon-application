@@ -74,6 +74,7 @@ public class Preauthorization {
 		Stream<ProjectReservation> stream = DBConsults.getProjectReservationStream(domain, login,
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getTokenProperty().isNotNull())
 				.and(f.getCreditCardTypeProperty().ne(ccType).or(f.getCreditCardTypeProperty().isNull()))
+				.and(f.getPrepayProperty().eq((byte) 1))
 				.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
 					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))
 					.or(f.getStatusProperty().eq(ReservationStatus.CANCELLED.value())
@@ -196,6 +197,7 @@ public class Preauthorization {
 		final int[] cont = {0};
 		DBConsults.getProjectReservationStream(domain, login, f ->
 				f.getPenaltyDateProperty().le(new Timestamp(new java.util.Date().getTime()))
+				.and(f.getPrepayProperty().eq((byte) 1))
 				.and(f.getTokenProperty().isNotNull())
 				.and(f.getCreditCardTypeProperty().ne(ccType).or(f.getCreditCardTypeProperty().isNull()))
 				.and(f.getAdvanceInvoicedProperty().eq((byte) 0))
@@ -288,6 +290,7 @@ public class Preauthorization {
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getStartDateProperty().le(date))
 			.and(f.getTokenProperty().isNotNull())
 			.and(f.getCreditCardTypeProperty().ne(ccType).or(f.getCreditCardTypeProperty().isNull()))
+			.and(f.getPrepayProperty().eq((byte) 1))
 			.and(f.getAdvanceInvoicedProperty().eq((byte) 0))
 			.and(f.getStatusProperty().eq(ReservationStatus.ACTIVE.value())
 					.or(f.getStatusProperty().eq(ReservationStatus.BLOCKED.value()))

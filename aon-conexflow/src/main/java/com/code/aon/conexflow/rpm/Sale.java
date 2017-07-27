@@ -60,8 +60,8 @@ public class Sale {
 				Domain d = AON.getDomain(domain.getName(), r.getDomain().getId(), login);
 				
 				String[] checkDescriptions = {
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
-					DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK)
+					//DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.PREAUTHORIZATION_CHECK),
+					//DBConsults.getStatusDescription(r.getToken(), ConexFlowStatus.SALE_CHECK)
 				};
 				
 				String[] differenceDescriptions = {
@@ -78,7 +78,7 @@ public class Sale {
 				};
 			
 				if(!DBConsults.hasConexFlow(d, login, r.getProject(), difference ? differenceDescriptions : descriptions)
-						&& DBConsults.hasConexFlow(domain, login, r.getProject(), checkDescriptions)){
+						/*&& DBConsults.hasConexFlow(domain, login, r.getProject(), checkDescriptions)*/){
 					Double amount = difference ? getDiference(d, login, r.getToken()) : r.getAdvance();
 					if(amount != 0.0){
 						ConexFlowConnection connection = DBConsults.getConection(d);
