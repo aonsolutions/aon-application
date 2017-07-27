@@ -870,6 +870,7 @@ public class ReposServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getName())
+					.setAlias(r.getAlias())
 					.setStatus(r.getStatus());
 		}
 	}

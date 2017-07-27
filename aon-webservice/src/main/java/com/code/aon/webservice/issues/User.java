@@ -13,6 +13,7 @@ public class User {
 	String login;
 	String type;
 	String email;
+	String alias;
 	CustomerStatus status;
 	LinkedList<User> workgroups;
 	
@@ -50,7 +51,15 @@ public class User {
 		return this;
 	}
 	
-	
+	public String getAlias() {
+		return alias;
+	}
+
+	public User setAlias(String alias) {
+		this.alias = alias;
+		return this;
+	}
+
 	public LinkedList<User> getWorkgroups() {
 		return workgroups;
 	}
@@ -93,6 +102,10 @@ public class User {
 				json.put("description", "[B] " + getLogin());
 			if(getStatus().equals(CustomerStatus.INACTIVE))
 				json.put("description", "[I] " + getLogin());
+		}
+		if(getAlias() != null && !getAlias().equals("") && !getAlias().equals(" ")){
+			String desc = json.get("description") + " (" + getAlias() + ")";
+			json.put("description", desc);
 		}
 		return json;
 	}

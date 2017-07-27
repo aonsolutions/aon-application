@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.SortField;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
@@ -716,7 +716,7 @@ public class TaskDAO {
 	}
 	
 	public static Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter){
-		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.NAME, CUSTOMER.STATUS)
+		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.NAME, REGISTRY.ALIAS, CUSTOMER.STATUS)
 				.from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
 							.leftOuterJoin(RMEDIA).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId()))
@@ -900,12 +900,13 @@ public class TaskDAO {
 		}
 	}
 	
-	private static class TaskFilterCustomerFiller implements Function<Record3<Integer, String, Byte>, Customer> {
+	private static class TaskFilterCustomerFiller implements Function<Record4<Integer, String, String, Byte>, Customer> {
 		@Override
-		public Customer apply(Record3<Integer, String, Byte> r) {
+		public Customer apply(Record4<Integer, String, String, Byte> r) {
 			Customer customer = new Customer();
 			customer.setId(r.getValue(REGISTRY.ID));
-			customer.setName(r.getValue(REGISTRY.NAME));			
+			customer.setName(r.getValue(REGISTRY.NAME));	
+			customer.setAlias(r.getValue(REGISTRY.ALIAS));
 			return customer.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
