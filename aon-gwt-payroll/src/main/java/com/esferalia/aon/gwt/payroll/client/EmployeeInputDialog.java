@@ -38,7 +38,7 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 	Button cancelButton;
 
 	public EmployeeInputDialog() {
-		setCaption("Nuevo valor...");
+		setCaption("Nuevo valor");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -68,6 +68,10 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 				
 			}
 		});
+		
+		//EnsureDebugID para TEST
+		this.acceptButton.ensureDebugId("input_accept");
+		this.valueTextBox.ensureDebugId("value_box");
 	}
 
 	protected abstract void onAccept();
@@ -92,7 +96,7 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 		filterLabel.setVisible(bool);
 	}
 
-	public void setFocusOnNameTextBox(boolean focus) {
+	public void setFocusOnValueTextBox(boolean focus) {
 		valueTextBox.setFocus(focus);
 	}
 

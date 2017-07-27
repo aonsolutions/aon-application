@@ -132,7 +132,7 @@ public abstract class BaseIntegralTestCase {
 			open(employeeId);
 		
 		select(employeeId + "-events");
-		wait4Id("complemento_i");
+		wait4Id("dias_vacaciones");
 	}
 
 	protected static boolean hasElementById(String id) {

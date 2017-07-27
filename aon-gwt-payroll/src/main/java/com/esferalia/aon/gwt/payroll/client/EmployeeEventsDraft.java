@@ -18,7 +18,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -226,9 +225,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
-		Window.alert("***********newValueButton**************");
+		//Window.alert("***********newValueButton**************");
 		openNewValueDialog();
-		Window.alert("***********newValueButton22**************");
+		//Window.alert("***********newValueButton22**************");
 	}
 	
 	@UiHandler("saveButton")
@@ -328,8 +327,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraft) {
 		
-		Window.alert("***********CARGAR EMPLOYEE EVENTS DRAT**************");
-		
 		clearEventsGrid();
 		
 		this.employeeEventsDraft = employeeEventsDraft;
@@ -360,7 +357,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				t -> {});
 	
 	
-		Window.alert("***********FINAL CARGA EMPLOYEE EVENTS DRAT**************");
 	}
 	
 	private void clearEventsGrid() {
@@ -443,7 +439,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(var);
 		
 		for (int col = 1; col < eventsGrid.getColumnCount(); col++){
+			
+			
 			Label eventValue = new Label();
+			eventValue.ensureDebugId(var.toLowerCase()+"_"+col);
 			eventValue.addStyleName(style.cellFormat());
 			if (newRow % 2 == 1)
 				eventValue.addStyleName(style.cellOddFormat());
@@ -472,12 +471,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				eventValue.setStyleName(style.onChange());
 			else
 				eventValue.removeStyleName(style.onChange());
-			
-			/**
-			 * CREAR IDs PARA TEST
-			 */
-			
-			eventValue.ensureDebugId(var.toLowerCase()+"_"+col);
 			
 			eventValue.setText(varMonth.getValue().toString());
 			eventsGrid.setWidget(newRow, col, eventValue);
@@ -519,6 +512,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		inputDialog.setNameLabel(variableName+" : ");	
 		inputDialog.show();
 		inputDialog.center();
+		inputDialog.setFocusOnValueTextBox(true);
 	}
 	
 	protected void setNewValue(Double value) {
